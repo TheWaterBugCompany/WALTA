@@ -1,3 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/taxonomy" xmlns:tns="http://www.example.org/taxonomy" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://thewaterbug.net/taxonomy" xmlns:tns="http://thewaterbug.net/taxonomy" elementFormDefault="qualified">
+
+    <complexType name="TaxonType">
+     	<annotation>
+	        <documentation>
+	        	<![CDATA[
+		         The TaxonType is the heart of the taxonomy schema, the intention is that each taxon has a number of 
+			     media files associated with it and a number of (sub) taxon nodes that can further refine the
+			     identification. 
+			     
+			     Because each taxon has a decisionText attribute the identification can be performed
+			     by deciding YES or NO to that question. 
+			     
+			     In the event of a YES this taxon is selected and can be further refined by the sub taxons. 
+			     If NO then this taxon is incorrect and the next taxon is selected in the sequence. 
+			     
+			     If there is no decisionText question then this taxon always is selected.
+			     ]]>
+		     </documentation>
+        </annotation>
+    	<sequence>
+    		<element name="media" maxOccurs="unbounded" minOccurs="0">
+    		    <complexType>
+    				<attribute name="id" type="ID"></attribute>
+    				<attribute name="path" type="string"></attribute>
+    			</complexType>
+    		</element>
+    		
+    		<element name="taxon" type="tns:TaxonType" maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    	
+    	<attribute name="id" type="ID"></attribute>
+    	<attribute name="size" type="double"></attribute>
+    	<attribute name="habitat" type="string"></attribute>
+    	<attribute name="movement" type="string"></attribute>
+    	<attribute name="confusedWith" type="string"></attribute>
+    	<attribute name="decisionText" type="string">
+
+    	</attribute>
+    </complexType>
+
+    <element name="taxon" type="tns:TaxonType"></element>
 </schema>
