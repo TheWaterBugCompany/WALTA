@@ -180,12 +180,24 @@
 	<element name="keyNode">
 		<complexType>
 			<sequence>
-				<element name="question" type="string"/>
-				<element ref="tax:mediaRef" minOccurs="0" maxOccurs="unbounded"></element>
-				<element ref="tax:keyNode" minOccurs="0" maxOccurs="unbounded"/>
+				<element name="question" minOccurs="0" maxOccurs="2">
+					<complexType>
+						<sequence>
+							<element ref="tax:mediaRef" minOccurs="0" maxOccurs="unbounded"></element>
+							<choice>
+								<element ref="tax:keyNode" />
+								<element name="taxonLink">
+									<complexType>
+										<attribute name="ref" type = "IDREF"/>
+									</complexType>
+								</element>
+							</choice>
+						</sequence>
+						<attribute name="text" type="token"></attribute>
+					</complexType>
+				</element>
 			</sequence>
 			<attribute name="id" type="ID"></attribute>
-			<attribute name="taxonRef" type="IDREF"></attribute>
 		</complexType>
 	</element>
     
