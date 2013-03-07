@@ -1,13 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taxon xmlns="http://thewaterbug.net/taxonomy" 
-	id="topLevel"
-	habitat="water"
-	movement="could be anything really"
-	confusedWith="amphibuous aliens"
-	size="8.5"
-	decisionText="Are you here ..." >
-	
-	<media id="FRED" path=""/>
-	<taxon>
+<key xmlns="http://thewaterbug.net/taxonomy" name="WALTA" >
+	<taxon id="arthropoda" name="Arthropoda">
+		<taxon id="crustacea" name="Crustacea">
+			<description>
+				Crustaceans can vary in size quite a lot.  Large freshwater crayfish start life smaller 
+				than 5mm, so be aware that the sizes in this section all refer to maximum length. 
+				
+				Many of the larger crustaceans can be recognised by their distinctive shapes and often we 
+				are familiar with them because their less fortunate relatives feature on restaurant menus. 
+				
+				Yabbies, shrimp and shield shrimp are simpler to recognise from pictures than descriptions
+				so the first part of the following key introduces the larger, commoner crustaceans you are 
+				likely to find.
+			</description>
+			
+			<taxon id="decapoda" name="Decapoda">
+				
+				<taxon id="parastacidae" name="Parastacidae" commonName="freshwater crayfish or yabbies" size="300" signalScore="4">
+					
+					<habitat>Crayfish in rivers (upper photo) yabbies in wetlands/pools (lower photo).</habitat>
+					<movement>walking, with sudden flips when disturbed. </movement>
+					<confusedWith>
+						Nothing, very distinctive.  We have left crayfish and Yabbies grouped together 
+						because they mostly turn up as juveniles in samples and are difficult to separate when young.
+					</confusedWith>
+					
+					<mediaRef url="parastacide_1.jpg"/>
+					<mediaRef url="parastacide_2.jpg"/>
+					
+					<!-- The taxonomy may optionally continue here, but not for us ... -->
+				</taxon>
+				
+				<taxon id="palaemonidae" name="Palaemonidae">
+					<taxon id="macrobrachium" name="Macrobrachium" size="50" commonName="freshwater prawn" signalScore="4">
+						<habitat>Lowland rivers on wood or amongst water weeds.</habitat>
+						<movement>Walking, flips in shallow water.</movement>
+						<confusedWith>Atyidae, but pincers on second leg very distinctive when fully grown.</confusedWith>
+					
+						<mediaRef url="macrobrachium.jpg"/>
+					
+					</taxon>
+				</taxon>
+				
+				<taxon id="atyidae" name="Atyidae" commonName="glass shrimp" size="35" signalScore="4" >
+					<habitat>slow moving parts of rivers near wood and weeds. Common and often abundant.</habitat>
+					<movement>Fast, with lots of flipping when in a tray.</movement>
+					<confusedWith>Palaemonidae, but front 2 pairs of Atyidae legs are shorter and usually with brushes.</confusedWith>
+				</taxon>
+				
+			</taxon>
+			
+			<taxon id="Isopoda" name="Isopoda" />
+				
+			<taxon id="amphipoda" name="Amphipoda" commonName="scuds, sideswimmers">
+				<mediaRef url="amphipoda.jpg"/>
+				
+			</taxon>
+		</taxon>
 	</taxon>
-</taxon>
+	
+	<!-- Node 1; note that this node has no nested keyNodes and has a taxonRef; this is a terminal node -->
+	<keyNode taxonRef="parastacidae">
+		<question>
+			Robust animals, freshwater crayfish or yabbies with obvious front pincers, movement walking 
+			or sometimes 'flips' of the tail that propel the animal backwards.
+		</question>
+	</keyNode>
+	
+	<!-- Node 2 -->
+	<keyNode>
+		<question>
+			Shrimp or prawn-like animals (see pictures below).
+		</question>
+		<mediaRef url="shrimp_1.jpg"/>
+		<mediaRef url="shrimp_2.jpg"/>
+		<mediaRef url="shrimp_3.jpg"/>
+		<mediaRef url="shrimp_4.jpg"/>
+		
+		<!-- Node 3; this refines an affirmative response to the above -->
+		<keyNode taxonRef="macrobrachium">
+			<question>
+				Second leg with pincers and noticeably longer than others. Body translucent/opaque.
+			</question>
+		</keyNode>
+		
+		<keyNode taxonRef="atyidae">
+			<question>
+				Transparent (or at least translucent) front pairs of legs similar sized.
+			</question>
+		</keyNode>
+	</keyNode>
+	
+	<!-- Node 4 would continue here.... -->
+	
+</key>

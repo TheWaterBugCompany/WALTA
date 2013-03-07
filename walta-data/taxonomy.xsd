@@ -1,45 +1,193 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://thewaterbug.net/taxonomy" xmlns:tns="http://thewaterbug.net/taxonomy" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://thewaterbug.net/taxonomy" xmlns:tax="http://thewaterbug.net/taxonomy" elementFormDefault="qualified">
+   <!-- 
+   			Overview
+   			========================================================================================================
+   			
+   			This XML schema describes a key in the form of questions with links to a taxonomy structure
+   			that describes, with optional media, the creatures that the key identifies.
+   			
+   			The idea is that a zip file would be created with the following structure:
+   			
+   				example.zip                 <=== name of KEY set, extension .zip
+   				    |
+   				    +- taxonomy.xml        <=== MUST have this eaxact name and be an instance of this schema
+   				    |
+   				    +- /media				<=== MUST have this exact name, but anything can be stored underneath.
+   				    		|
+   				    		+- mayflys
+   				    		|		|
+   				    		|		+- mayfly_01.jpg
+   				    		|		|
+   				    		|		+- mayfly_02.jpg
+   				    		|
+   				    		+- amphipoda.jpg
+   				    		
+   			Wherever a "mediaRef" element is allowed would be a link to a media file
+   			for example:
+   				 
+   				 <mediaRef url="mayflys/mayfly_01.jpg"/> 
+   				 
+   			would reference the "mayfly_01.jpg" file in the above example.
+   			
+   			Example of encoding
+   			========================================================================================================
+   
+   			The top level node is a "key" node, for the moment this just has a name:
+   			
+   			<key name="WALTA">
+   				.....
+   			</key>
+   			
+   			It serves simply to have a single root node for the entire document.
+   			
+   			As children on the "key" node there is first a "taxon" node which provides the
+   			description and media files used to the summary the details for a selected taxon.
+   			
+   			So we add a "taxon" node:
+   			
+   			<key name="WALTA">
+   				<taxon id="athropoda" name="Arthropoda">
+   					<taxon id="crustacea" name="Crustacea">
+   						<taxon id="decapoda" name="Decapoda">
+   							<taxon id="parastacidae" name="Parastacidae">
+   								<mediaRef url="parastacidae1.jpg"/>
+   								<mediaRef url="parastacidae2.jpg"/>
+   							</taxon>
+   						</taxon>
+   						<taxon id="isopoda" name="Isopoda">
+   							......
+   						</taxon>
+   					</taxon>
+   				</taxon>
+   			</key>
+   			
+   			Now media references can be added at the taxon level, but these are only useful
+   			after a taxon has been identified.
+   			
+   			To encode the decision tree we add two or more "keyNode" attributes which will be listed
+   			in the order they appear in this file.
+   			
+   			NOTE: With any arbitrarily long sequence the user interface makes the decision to
+   			use "Not like this" links according to screen size (or some other criteria).
+   			
+   			As an example:
+   			
+   			<key name="WALTA">
+   				<taxon id="athropoda" name="Arthropoda">
+   					<taxon id="crustacea" name="Crustacea">
+   						....
+   					</taxon>
+   				</taxon>
+   				
+   									
+   				<keyNode>			<=== The first node of the binary choice 
+   					
+   					<question> If you squint your eyes do you hear a nearby voice whispering "Decapoda" ? </question>
+   					
+   					<keyNode taxonRef="parastacidae">
+   						<question> Does it begin with para ? </question>
+   						<mediaRef url="parastacidae.jpg"/>
+   					</keyNode>
+   					
+   					<keyNode taxonRef="paleamonidae">
+   						<question> Does it begin with palea ? </question>
+   						<mediaRef url="paleamonidae.jpg"/>
+   					</keyNode>
+   				</keyNode>
+   				
+   				<keyNode>			<=== The second node of the binary choice 
+   					.....
+   				</keyNode>
+   			</key>
+   			
+   			So in this example the first two questions are displayed simultaneously on the screen and the
+   			user selects either one.
+   			
+   			If the first one is selected the nested "keyNode" elements describe the next question sequence.
+   			
+   			If there are no nested "keyNode" elements then the taxonRef is a link to the identified
+   			taxonomic level which contains a description, physical characteristics and media files 
+   			that can be used to construct a summary screen of the identification.
+   
+   
+   
+    -->
+   
+    <!-- A top level node that defines a key -->
+    <element name="key">
+    	<complexType>
+	    	<sequence>
+	    		<element ref="tax:taxon" minOccurs="1" maxOccurs="1"/>
+	    		<element ref="tax:keyNode" minOccurs="0" maxOccurs="2"/>
+	    	</sequence>
+	    	<attribute name="name" type="token" use="required" />
+    	</complexType>
+    </element>   
+    
+    <!-- A mediaRef element references a file within the media sub folder in the package 
+    	 where this element is allowed, media files may be attached.
+    -->
+    <element name="mediaRef">
+    	<complexType>
+    		<attribute name="url" type="anyURI"/>
+    	</complexType>
+    </element>
+    
+    <!-- A taxonomy created by nesting taxons -->
+	<element name="taxon">
+		<complexType>
+	    	<sequence>
+	    			<!-- 
+	    				Presumably everything could have a description, but for the sake of laziness
+	    				I've made this optional also.
+	    			 -->
+		    		<element name="description" type="string" minOccurs="0" maxOccurs="1"/>
+		    		
+		    		<!-- 
+		    		    Only the lower taxa will have physical characteristics but we don't encode a distinction, 
+		    			if a physical characteristic is listed then we assume that they generally apply to all 
+		    			taxa lower down, if not listed then this taxon is too high to have similar characteristics.
+		    		-->
+		   			<element name="habitat" type="string" minOccurs="0" maxOccurs="1"/>
+		   			<element name="movement" type="string" minOccurs="0" maxOccurs="1"/>
+		   			<element name="confusedWith" type="string" minOccurs="0" maxOccurs="1"/>
 
-    <complexType name="TaxonType">
-     	<annotation>
-	        <documentation>
-	        	<![CDATA[
-		         The TaxonType is the heart of the taxonomy schema, the intention is that each taxon has a number of 
-			     media files associated with it and a number of (sub) taxon nodes that can further refine the
-			     identification. 
-			     
-			     Because each taxon has a decisionText attribute the identification can be performed
-			     by deciding YES or NO to that question. 
-			     
-			     In the event of a YES this taxon is selected and can be further refined by the sub taxons. 
-			     If NO then this taxon is incorrect and the next taxon is selected in the sequence. 
-			     
-			     If there is no decisionText question then this taxon always is selected.
-			     ]]>
-		     </documentation>
-        </annotation>
-    	<sequence>
-    		<element name="media" maxOccurs="unbounded" minOccurs="0">
-    		    <complexType>
-    				<attribute name="id" type="ID"></attribute>
-    				<attribute name="path" type="string"></attribute>
-    			</complexType>
-    		</element>
-    		
-    		<element name="taxon" type="tns:TaxonType" maxOccurs="unbounded" minOccurs="0">
-    		</element>
-    	</sequence>
-    	
-    	<attribute name="id" type="ID"></attribute>
-    	<attribute name="size" type="double"></attribute>
-    	<attribute name="habitat" type="string"></attribute>
-    	<attribute name="movement" type="string"></attribute>
-    	<attribute name="confusedWith" type="string"></attribute>
-    	<attribute name="decisionText" type="string">
+		   			<!-- Stick your media reference here -->
+		   			<element ref="tax:mediaRef" minOccurs="0" maxOccurs="unbounded" />
+		   			
+		   			<!-- Sub taxons to refine this group further -->
+	    			<element ref="tax:taxon" minOccurs="0" maxOccurs="unbounded"/>
+	    	</sequence>
+	    	<attribute name="id" type="ID" use="required" />
+	    	<attribute name="name" type="token" use="required" />
+	    	<attribute name="commonName" type="token"/>
+	    	<attribute name="size" type="decimal" />
+	    	<attribute name="signalScore" type="int" />
+	    	<attribute name="level">
+	    		<simpleType>
+	    			<restriction base="string">
+	    				<pattern value="kingdom|phylum|class|order|family|genus|species"/>
+	    			</restriction>
+	    		</simpleType>
+	    	</attribute>
+	    </complexType>
+	</element>
+	
+	<!-- A key is made up of nested key nodes, up to 2 nested key nodes
+	     determine which keyNode to display next.
+	 -->
+	<element name="keyNode">
+		<complexType>
+			<sequence>
+				<element name="question" type="string"/>
+				<element ref="tax:mediaRef" minOccurs="0" maxOccurs="unbounded"></element>
+				<element ref="tax:keyNode" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="id" type="ID"></attribute>
+			<attribute name="taxonRef" type="IDREF"></attribute>
+		</complexType>
+	</element>
+    
 
-    	</attribute>
-    </complexType>
-
-    <element name="taxon" type="tns:TaxonType"></element>
 </schema>
