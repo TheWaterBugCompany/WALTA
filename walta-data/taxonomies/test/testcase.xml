@@ -62,50 +62,88 @@
 	<!-- Node 1 -->
 	<keyNode>
 	
-		<question text="Robust animals, freshwater crayfish or yabbies with obvious front pincers, movement walking or sometimes 'flips' of the tail that propel the animal backwards." >
-			<taxonLink ref="parastacidae"/>
+		<!-- First list the questions -->
+		<question num="1">
+			<text>
+				Robust animals, freshwater crayfish or yabbies with obvious front pincers, movement 
+				walking or sometimes 'flips' of the tail that propel the animal backwards.
+			</text>
+			
 		</question>
 		
-		<question text="Not as above">
+		<question num="2">
+			<text>Not as above</text>
+		</question>
 		
+		<!-- Then list the outcomes if a question is selected in the affirmative.
+			 The outcome has a recursive nested keyNode element so a tree can be
+			 constructed that closely matches the conceptual decision tree.
+		 -->
+		<outcome for="1">
+			<taxonLink ref="parastacidae"/>
+		</outcome>
+		
+		<outcome for="2">
 			<!-- Node 2 -->
 			<keyNode>
 			
-				<question text="Shrimp or prawn-like animals (see pictures below).">
+				<question num="1">
+					<text>Shrimp or prawn-like animals (see pictures below).</text>
 					<mediaRef url="shrimp_1.jpg"/>
 					<mediaRef url="shrimp_2.jpg"/>
 					<mediaRef url="shrimp_3.jpg"/>
 					<mediaRef url="shrimp_4.jpg"/>
+				</question>
+				
+				<question num="2">
+					<text>Not as above.</text>
+				</question>
+				
+				<outcome for="1">
 					
 					<!-- Node 3 -->
 					<keyNode>
 					
-						<question text="Second leg with pincers and noticeably longer than others. Body translucent/opaque.">
-							<taxonLink ref="macrobrachium"/>
+						<question num="1">
+							<text>Second leg with pincers and noticeably longer than others. Body translucent/opaque.</text>
+							
 						</question>
 						
-						<question text="Transparent (or at least translucent) front pairs of legs similar sized.">
-							<taxonLink ref="atyidae"/>
+						<question num="2">
+							<text>Transparent (or at least translucent) front pairs of legs similar sized</text>
 						</question>	
 						
+						<outcome for="1">
+							<taxonLink ref="macrobrachium"/>
+						</outcome>
+						
+						<outcome for="2">
+							<taxonLink ref="atyidae"/>
+						</outcome>
+						
 					</keyNode>
 					
-				</question>
+				</outcome>
 				
-				<question text="Not as above">
-					
+				<outcome for="2">	
+				
 					<!-- Node 4 -->
 					<keyNode>
-						<question text="Round body, slow-moving, obviously crab-like (see image).">
-								<taxonLink/>
+						<question num="1">
+							<text>Round body, slow-moving, obviously crab-like (see image).</text>
 						</question>
-						<question text="Not as above.">
-								<keyNode/>  <!-- <<<< INSERT NODE 5 HERE <<<<< -->
+						<question num="2">
+							<text>"Not as above.</text>
 						</question>
+						
+						<!-- FIXME: Continue the key down to all the terminal nodes -->
+						<outcome></outcome> 
+						
 					</keyNode>
-				</question>
+					
+				</outcome>
 			</keyNode>
-		</question>
+		</outcome>
 	</keyNode>
 	
 	
