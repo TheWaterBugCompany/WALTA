@@ -1,38 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Dojo Boilerplate</title>
-    <!-- Application-specific CSS should be stored in your application’s package to ensure portability and to allow
-         the build system to combine & minify it. -->
+    <meta name="viewport" content="width=device-wdith,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>WALTA</title>
     <link rel="stylesheet" href="walta/resources/walta.css">
 </head>
 <body class="claro">
-    <!-- dojo.js is an AMD-compliant loader script. It accepts configuration either from a data-dojo-config attribute,
-         as shown here, from a global dojoConfig object (which must be defined *before* dojo.js is loaded), or from
-         a global require object.
-
-         Configuration options for the loader can be viewed at http://dojotoolkit.org/reference-guide/loader/amd.html
-         along with a bunch of additional information about its features.
-
-         Below, we’re doing the following:
-
-         1. Enabling the AMD loader. (async: 1)
-         2. Fixing the loader to use normal AMD resolution of unregistered module paths (relative to baseDir)
-            instead of the traditional Dojo resolution method (relative to the parent of baseDir).
-            (tlmSiblingOfDojo: 0)
-         3. Enabling debugging. (isDebug: 1)
-
-         The remainder of Dojo configuration, as well as our application’s instantiation, occurs within
-         app/run.js.
-
-		 NOTE: `build.sh` is responsible for removing the "isDebug" flag when deploying to production. If you modify
-		 this flag at all, you will break the build! -->
     <script data-dojo-config="async: 1, tlmSiblingOfDojo: 0, isDebug: 1" src="dojo/dojo.js"></script>
-
-    <!-- Load the loader configuration script. Note that this module ID is hard-coded in build.sh in order to provide
-         an optimised build that loads as few as one script for the entire application. If you change the name or
-         location of this module, you will need to update build.sh too. -->
-    <script src="walta/run.js"></script>
+    <script>
+    	require(["dojox/mobile/parser", "dojox/mobile/deviceTheme", "dojox/mobile/compat", "dojox/mobile"], function(parser) {
+    		parser.parse();
+    	});
+    </script>
+    
+    <!-- the view or "page"; select it as the "home" screen -->
+	<div id="settings" data-dojo-type="dojox.mobile.View" data-dojo-props="selected: true">
+	 
+	    <!-- a sample heading -->
+	    <h1 data-dojo-type="dojox.mobile.Heading">Settings</h1>
+	 
+	    <!-- a rounded rectangle list container -->
+	    <ul data-dojo-type="dojox.mobile.RoundRectList">
+	 
+	        <!-- list item with an icon containing a switch -->
+	        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="icon:'../../app/images/i-icon-1.png'">
+	            Airplane Mode
+	            <!-- the switch -->
+	            <div class="mblItemSwitch" data-dojo-type="dojox.mobile.Switch"></div>
+	        </li>
+	        <li data-dojo-type="dojox.mobile.ListItem"
+	              data-dojo-props="icon:'../../app/images/i-icon-2.png', rightText:'mac', moveTo: 'general'">
+	            Wi-Fi
+	        </li>
+	        <li data-dojo-type="dojox.mobile.ListItem"
+	              data-dojo-props="icon:'../../app/images/i-icon-3.png', rightText:'AcmePhone'">
+	            Carrier
+	        </li>
+	    </ul>
+	</div>
+	
+	<div id="general" data-dojo-type="dojox.mobile.View">
+    <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Settings', moveTo:'settings'">
+            General
+    </h1>
+    <ul data-dojo-type="dojox.mobile.RoundRectList">
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="moveTo:'about'">
+            About
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText: '2h 40m', moveTo: 'about'">
+            Usage
+        </li>
+    </ul>
+</div>
+ 
+<div id="about" data-dojo-type="dojox.mobile.View">
+    <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'General', moveTo:'general'">
+            About
+    </h1>
+    <h2 data-dojo-type="dojox.mobile.RoundRectCategory">Generic Mobile Device</h2>
+    <ul data-dojo-type="dojox.mobile.RoundRectList">
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'AcmePhone'">
+            Network
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'AcmePhone'">
+            Line
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'1024'">
+            Songs
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'10'">
+            Videos
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'96'">
+            Photos
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'2'">
+            Applications
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'29.3 BG'">
+            Capacity
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'28.0 BG'">
+            Available
+        </li>
+        <li data-dojo-type="dojox.mobile.ListItem" data-dojo-props="rightText:'3.0 (7A341)'">
+            Version
+        </li>
+    </ul>
+</div>
 </body>
 </html>

@@ -15,13 +15,13 @@ TOOLSDIR="$SRCDIR/util/buildscripts"
 DISTDIR="$BASEDIR/dist"
 
 # Module ID of the main application package loader configuration
-LOADERMID="app/run"
+LOADERMID="walta/run"
 
 # Main application package loader configuration
 LOADERCONF="$SRCDIR/$LOADERMID.js"
 
 # Main application package build configuration
-PROFILE="$BASEDIR/profiles/app.profile.js"
+PROFILE="$BASEDIR/profiles/walta.profile.js"
 
 # Configuration over. Main application start up!
 
