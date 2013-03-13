@@ -13,6 +13,3 @@
 [submodule "walta-app/src/phonegap"]
 	path = walta-app/src/phonegap
 	url = https://github.com/phonegap/phonegap
-[submodule "walta-app/dist"]
-	path = walta-app/dist
-	url = https://github.com/TheWaterBugCompany/walta-phone-gap-build.git
