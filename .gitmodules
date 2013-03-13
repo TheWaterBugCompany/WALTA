@@ -16,3 +16,6 @@
 [submodule "build"]
 	path = build
 	url = https://github.com/TheWaterBugCompany/walta-phone-gap-build.git
+[submodule "walta-build/phonegap"]
+	path = walta-build/phonegap
+	url = https://github.com/phonegap/phonegap.git

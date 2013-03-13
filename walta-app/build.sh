@@ -12,7 +12,7 @@ SRCDIR="$BASEDIR/src"
 TOOLSDIR="$SRCDIR/util/buildscripts"
 
 # Destination directory for built code
-DISTDIR="$BASEDIR/../build/www"
+DISTDIR="$BASEDIR/../walta-build/platform/android/assets/www"
 
 # Main application package build configuration
 PROFILE="$BASEDIR/profiles/walta.profile.js"
@@ -30,9 +30,22 @@ java -Xms256m -Xmx256m  -cp ../shrinksafe/js.jar:../closureCompiler/compiler.jar
 
 cd "$BASEDIR"
 
-cat "$SRCDIR/index.html" | \
-perl -pe "
-  s/isDebug: *true//;        # Remove isDebug
-  " > "$DISTDIR/index.html"
+#cat "$SRCDIR/index.html" | \
+#perl -pe "
+#  s/isDebug: *true,//;        # Remove isDebug
+#  " > "$DISTDIR/index.html"
+
+# copy across PhoneGap resources
+
+cp -r $SRCDIR/css $DISTDIR
+cp -r $SRCDIR/img $DISTDIR
+cp -r $SRCDIR/js $DISTDIR
+cp -r $SRCDIR/res $DISTDIR
+cp -r $SRCDIR/spec $DISTDIR
+cp $SRCDIR/cordova-2.5.0.js $DISTDIR
+cp $SRCDIR/index.html $DISTDIR
+cp $SRCDIR/main.js $DISTDIR
+cp $SRCDIR/master.css $DISTDIR
+cp $SRCDIR/spec.html $DISTDIR
 
 echo "Build complete"
