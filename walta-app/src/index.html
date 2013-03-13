@@ -7,7 +7,16 @@
     <link rel="stylesheet" href="walta/resources/walta.css">
 </head>
 <body>
-    <script data-dojo-config="async: 1, tlmSiblingOfDojo: 0, isDebug: 1" src="dojo/dojo.js"></script>
+	<script>
+	    dojoConfig= {
+	        async: true,
+	        tlmSiblingOfDojo: true,
+	        isDebug: true,
+	        baseUrl: '',
+	        packages: [ 'dojo', 'dijit', 'dojox', 'walta' ]
+	    };
+	</script>
+    <script src="dojo/dojo.js"></script>
     <script>
     	require(["dojox/mobile/parser", "dojox/mobile/deviceTheme", "dojox/mobile/compat", "dojox/mobile"], function(parser) {
     		parser.parse();
