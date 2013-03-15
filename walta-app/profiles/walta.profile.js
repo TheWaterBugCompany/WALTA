@@ -37,7 +37,6 @@ var profile = {
 		'dojo-publish-privates': false,
 		'dojo-sync-loader': false,
 		'dojo-xhr-factory': false,
-		'dojo-test-sniff': false,
-		'config-tlmSiblingOfDojo': true
+		'dojo-test-sniff': false
 	}
 };
