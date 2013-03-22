@@ -1,5 +1,5 @@
 /*
- * walta/KeyTreeView
+ * walta/KeyView
  * 
  * A mobile view that allows the identification of a critter species using a key.
  * 
@@ -14,7 +14,7 @@ define( [ "dojo/_base/declare", "dojo/aspect", "dojo/request/xhr", "dojo/_base/l
 		keyUrl: null,
 		
 		// API
-		onKeyLoaded: function(){}, // Called when the key has been loaded ready to populate the view.
+		onKeyLoaded: function(){ }, // Called when the key has been loaded ready to populate the view.
 								   // connect an aspect.after to be informed when this happens.
 		
 		// private
@@ -24,19 +24,20 @@ define( [ "dojo/_base/declare", "dojo/aspect", "dojo/request/xhr", "dojo/_base/l
 			this.inherited(arguments);
 			
 			this._key = new Key( { url: this.keyUrl });
-			
-			aspect.after( this._key, "onKeyLoaded", 
-					// Need to call via a wrapper function for the onKeyLoaded to be available
-					// as an extension point.
-					lang.hitch( this, function() { this.onKeyLoaded(); } ) );
-			
+
 			this.addChild( new Heading({label: "Key Tree"}) );
 
 		},
 		
 		startup: function() {
 			this.inherited(arguments);
-			this._key.load();
+			
+			// Load the key
+			this._key.load().then( lang.hitch( this, function() { 
+					// Fire the onKeyLoaded event
+					this.onKeyLoaded(); 
+				} 
+			) );
 		}
 		
 	});

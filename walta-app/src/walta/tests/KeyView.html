@@ -11,12 +11,11 @@
 						var key = new KeyView( { keyUrl: "../../../../walta-data/taxonomies/test" }, "keyTree");
     					
     					// when the key is loaded continue the test
-    					aspect.after( key, "onKeyLoaded", function() {
-    						
-    							// Check that the basic key has been loaded
+    					aspect.after( key, "onKeyLoaded", 
+    						deferred.getTestCallback( function() { 
     							doh.assertEqual( key._key.name, "WALTA" );
-    							deferred.callback(true);
-    					});	
+    						})
+    					);	
     					
     					// start up the widget
     					key.startup();
