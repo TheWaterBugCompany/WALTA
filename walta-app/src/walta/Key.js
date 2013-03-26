@@ -1,9 +1,10 @@
 /*
- * walta/Key
- * 
- * Loads a key and allows the navigation of key by following the encoding inside the
- * key packages xml.
- * 
+ *  walta/Key
+ *   
+ *  Keeps track of the relationship between KeyNodes, Questions and Taxons and initialises the model 
+ *  from the supplied key URL. 
+ *  
+ *  Key, KeyNode, Question and Taxon constitute the model in the MVC pattern.
  */
 define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/XmlDocument", "walta/KeyNode"  ], function( declare, xhr, lang, XmlDocument, KeyNode ) {
 	return declare( null, {
@@ -55,7 +56,8 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 		},
 		
 		choose: function( i ) {
-			return this.currentDecision.questions[i].outcome();
+			this.currentDecision = this.currentDecision.questions[i].outcome();
+			return this.currentDecision;
 		},
 		
 		constructor: function(args) {	

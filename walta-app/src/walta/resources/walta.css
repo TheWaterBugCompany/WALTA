@@ -7,3 +7,11 @@
  */
 
 @import '../../dojo/resources/dojo.css';
+
+html, body{
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.question { height: 100px; width: 400px;  }

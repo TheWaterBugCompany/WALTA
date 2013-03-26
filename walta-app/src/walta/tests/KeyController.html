@@ -4,28 +4,36 @@
 		<title>Testing walta.KeyView</title>
 		<script type="text/javascript" src="../../dojo/dojo.js"></script>
 		<script type="text/javascript">
-			require(["dojo", "doh", "dojo/aspect", "walta/KeyView", "dojox/mobile/deviceTheme", "dojo/domReady!"], function(dojo, doh, aspect, KeyView ){
+			require(["dojo", "doh", "dojo/aspect", "walta/KeyController", "dojox/mobile/deviceTheme", "dojo/domReady!"], function(dojo, doh, aspect, KeyController ){
 				doh.register("Instantiation", 
 					function loadKey() {
-						var deferred = new doh.Deferred();
-						var key = new KeyView( { keyUrl: "../../../../walta-data/taxonomies/test" }, "keyTree");
+						
+						var key = new KeyController( { keyUrl: "../../../../walta-data/taxonomies/test", divNode: "keyTree" } );
     					
     					// when the key is loaded continue the test
+    					/*
+    					var deferred = new doh.Deferred();
     					aspect.after( key, "onKeyLoaded", 
     						deferred.getTestCallback( function() { 
     							doh.assertEqual( key._key.name, "WALTA" );
     						})
-    					);	
+    					); 
+    					*/	
+    			
+    					key.startIdentification();
     					
-    					// start up the widget
-    					key.startup();
+    					doh.assertTrue( true );
     					
-    					return deferred;
+    					/*return deferred;*/
 					}
 				);
 				doh.run();
 			});
 		</script>
+		<style type="text/css">
+				
+		</style>
+		<link rel="stylesheet" href="../resources/walta.css">
 	</head>
 	<body>
 		<div id="keyTree"></div>
