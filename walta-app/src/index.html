@@ -13,16 +13,22 @@
 	<script>
 	    dojoConfig= {
 	        async: true,
-	        isDebug: true,
+	        isDebug: false,
 	        baseUrl: '',
-	        packages: [ 'dojo', 'dijit', 'dojox', 'walta' ]
+	        packages: [ 
+		         { name: "dojo", location: "dojo" }, 
+		         { name: "dijit", location: "dijit" },
+		         { name: "dojox", location: "dojox" }, 
+		         { name: "walta", location: "walta" } 
+	         ]
 	    };
 	</script>
 	<script src="dojo/dojo.js"></script>
+	<script src="walta/walta.js"></script>
 	<script>
-    	require(["walta/KeyTree", "dojox/mobile/deviceTheme", "dojo/domReady!" ], function( KeyTree ) {
-    		var keyTree = new KeyTree( null, "waltaApp");
-    		keyTree.startup();
+    	require(["walta/KeyController", "dojox/mobile/deviceTheme", "dojo/domReady!" ], function( KeyController ) {
+    		var keyController = new KeyController( { keyUrl: "taxonomy", divNode: "waltaApp" } );
+    		keyController.startIdentification();
     	});
     </script>
     <div id="waltaApp"></div>

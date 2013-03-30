@@ -63,7 +63,7 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 		constructor: function(args) {	
 			// Mix in the arguments
 			declare.safeMixin(this,args);
-		},
+		}
 		
 		
 		

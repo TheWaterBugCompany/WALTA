@@ -14,6 +14,8 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/aspect", "dojox/mobile/
 			// public
 			keyNode: null, // KeyNode
 			
+			"class": "waltaKeyNode",
+			
 			onChoose: function( id ) {}, // Fired when a question is choosen
 			
 			_createAndBindQuestion: function( id ) {

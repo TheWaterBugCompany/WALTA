@@ -54,6 +54,14 @@ cp $SRCDIR/master.css $DISTDIR
 cp $SRCDIR/spec.html $DISTDIR
 
 # copy across data sets
-cp -r $TAXONDIR $DISTDIR/www/taxonomy
+cp -r $TAXONDIR $DISTDIR/taxonomy
+
+# remove files not needed from Dojo build
+cd $DISTDIR
+find dojo ! -name dojo ! -name dojo.js -delete
+find dijit ! -name dijit ! -name dijit.js -delete
+find dojox ! -path "dojox/mobile/themes/iphone/*" ! -path "dojox/mobile/themes/android" ! -path "dojox" ! -path "dojox/mobile" ! -path "dojox/mobile/themes" ! -path "dojox/mobile/themes/iphone" ! -path "dojox/mobile/themes/android" ! -path "dojox/mobile/deviceTheme.js" ! -path "dojox/dojox.js" -delete
+rm -rf $DISTDIR/util
+
 
 echo "Build complete"

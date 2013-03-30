@@ -8,6 +8,8 @@ define( [ "dojo/_base/declare", "dojo/_base/lang",  "dojox/mobile/ContentPane" ]
 
 		taxon: null, // Taxon
 		
+		"class": "waltaTaxon",
+		
 		postMixInProperties: function() {
 			this.inherited(arguments);
 			this.content = "<strong>" + this.taxon.name + "</strong>";
