@@ -20,5 +20,15 @@
 .waltaKeyNode { height: 100%; width: 100%; }
 .waltaQuestion { height: 50%; width: 100%; }
 .waltaQuestion button { height: 100%; width: 100%; font-size: 3em; line-height: inherit; }
-.waltaTaxon { height: 100%; width: 100%; font-size: 8em; display: table; }
-.waltaTaxon strong { display: table-cell; text-align: center; vertical-align: middle; }
+.waltaTaxon { height: 100%; width: 100%; display: table; }
+.waltaTaxon strong { display: table-cell; text-align: center; vertical-align: middle; font-size: 8em; }
+
+.waltaBackButton { 
+	position: absolute; 
+	bottom: 0.2em; 
+	right: 0.2em; 
+	width: 8em; 
+	height: 2em; 
+	font-size: 4em;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#00fd00), to(#00ce00), color-stop(0.5, #00f800), color-stop(0.5, #00ee00));
+}

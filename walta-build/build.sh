@@ -42,17 +42,9 @@ cd "$BASEDIR"
 
 # copy across PhoneGap resources
 
-cp -r $SRCDIR/css $DISTDIR
-cp -r $SRCDIR/img $DISTDIR
-cp -r $SRCDIR/js $DISTDIR
 cp -r $SRCDIR/res $DISTDIR
-cp -r $SRCDIR/spec $DISTDIR
-cp $SRCDIR/cordova-2.5.0.js $DISTDIR
 cp $SRCDIR/index.html $DISTDIR
-cp $SRCDIR/main.js $DISTDIR
-cp $SRCDIR/master.css $DISTDIR
-cp $SRCDIR/spec.html $DISTDIR
-
+cp $SRCDIR/config.xml $DISTDIR
 # copy across data sets
 cp -r $TAXONDIR $DISTDIR/taxonomy
 

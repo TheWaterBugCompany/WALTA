@@ -22,15 +22,10 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 		//
 		_xml: null, 		// XmlDocument
 		
-		_taxonomy: null,
-		
-		_topKeyNode: null,
-		
-		_currentKeyNode: null,
-		
 		//
 		// methods
 		//
+		
 		
 		// Load the key and initialise it to the start node
 		load: function() {
@@ -46,17 +41,21 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 					lang.hitch( this, function() {
 						// Initialise the decision tree
 						this.name = this._xml.getString( null, "/tax:key/@name" );
-			    		this._taxonomy = this._xml.getNode( null, "/tax:key/tax:taxon" );
-			    		this._topKeyNode = this._xml.getNode( null, "/tax:key/tax:keyNode");
-			    		this._currentKeyNode = this._topKeyNode;
-			    		this.currentDecision = new KeyNode( this.url, this._xml, this._currentKeyNode );
-			    		
+			    		this.currentDecision = new KeyNode( this.url, this._xml, this._xml.getNode( null, "/tax:key/tax:keyNode") );
 					})
 				);	
 		},
 		
 		choose: function( i ) {
 			this.currentDecision = this.currentDecision.questions[i].outcome();
+			return this.currentDecision;
+		},
+		
+		back: function() {
+			var parent = this.currentDecision.back();
+			if ( parent != null ) {
+				this.currentDecision = parent;
+			}
 			return this.currentDecision;
 		},
 		

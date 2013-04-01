@@ -1,4 +1,4 @@
-define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang" ], function( declare, array, lang ) {
+define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "walta/KeyNode" ], function( declare, array, lang, KeyNode ) {
 	return declare( null, {
 		
 		id: null,			// XML based id
@@ -12,8 +12,16 @@ define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang" ], functio
 		confusedWith: "",   // This species is often confused with
 		
 		mediaUrls: [],		// List of media URLs
+		
+		back: null, // A function to go back
 	
-		constructor: function( baseUri, doc, node ) {
+		_buildBackFunction: function( KeyNode, baseUri, doc, parent ) {
+			return function() {
+				return new KeyNode( baseUri, doc, parent );
+			};
+		},
+		
+		constructor: function( KeyNode, baseUri, doc, parent, node ) {
 			this.id = doc.getString( node, "@id" );
 			this.name = doc.getString( node, "@name" );
 			this.commonName = doc.getString( node, "@commonName" );
@@ -28,6 +36,7 @@ define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang" ], functio
 					lang.hitch( this, function( ref ) {
 						this.mediaUrls.push( baseUri + "/media/" + ref );
 				}));
+			this.back = this._buildBackFunction( KeyNode, baseUri, doc, parent );
 		}
 	});
 });

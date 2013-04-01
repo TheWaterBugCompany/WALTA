@@ -21,7 +21,8 @@ define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "walta/Ta
 				if ( outcome.tagName === "taxonLink"  ) {
 					var ref = doc.getString( outcome, "@ref" );
 					var taxon = doc.getNode( null, "/tax:key//tax:taxon[@id='" + ref + "']");
-					return new Taxon( baseUri, doc, taxon );
+					var parent = doc.getNode( node, ".." );
+					return new Taxon( KeyNode, baseUri, doc, parent, taxon );
 				} else if ( outcome.tagName === "keyNode" ) {
 					return new KeyNode( baseUri, doc, outcome );
 				} else {

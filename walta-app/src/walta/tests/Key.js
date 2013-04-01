@@ -67,7 +67,55 @@ define(["doh", "dojo/aspect", "walta/Key", "walta/KeyNode", "walta/Taxon" ], fun
  	
 	
     	 });
+     },
+     
+  // Test the returning of a taxonLink outcome
+     function testBackFromTaxon() {
+    	 return loadKeyAndTest( function(key) { 
+ 		 	// Check the Taxon outcome
+ 		 	var outcome = key.choose( 1 );
+ 
+ 		 	
+ 		 	doh.assertTrue( outcome instanceof Taxon );
+ 		 	
+ 		 	doh.assertEqual( "parastacidae", outcome.id  );
+ 		 	doh.assertEqual( "Parastacidae", outcome.name  );
+ 		 	
+ 		 	key.back();
+ 		 	
+ 		 	var nd = key.currentDecision;
+ 		 	
+ 		 	doh.assertTrue( nd instanceof KeyNode );
+ 		 	
+ 		 	doh.assertEqual( "Animals strongly flattened from the sides (like dogs and cats); often lying on their side or moving with their side flat against the substrate.", nd.questions[0].text );
+   		 
+	
+    	 });
+     },
+     
+     function testBackFromNode() {
+    	 return loadKeyAndTest( function(key) { 
+ 		 	// Check the Taxon outcome
+ 		 	var outcome = key.choose( 0 );
+ 
+ 		 	
+ 		 	doh.assertTrue( outcome instanceof KeyNode );
+ 		 	
+ 		 	doh.assertEqual( "Animal rests on its side, swims in swift bursts (below left).", outcome.questions[0].text );
+ 				 
+ 		 	
+ 		 	key.back();
+ 		 	
+ 		 	var nd = key.currentDecision;
+ 		 	
+ 		 	doh.assertTrue( nd instanceof KeyNode );
+ 		 	
+ 		 	doh.assertEqual( "Animals strongly flattened from the sides (like dogs and cats); often lying on their side or moving with their side flat against the substrate.", nd.questions[0].text );
+   		 
+	
+    	 });
      }
+    	
     	 
      
                         
