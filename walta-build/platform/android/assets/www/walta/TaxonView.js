@@ -1,0 +1,2 @@
+//>>built
+define("walta/TaxonView",["dojo/_base/declare","dojo/aspect","dojo/_base/lang","dojox/mobile/ContentPane","dojox/mobile/Button"],function(b,c,d,e,f){return b("walta.TaxonView",[e],{taxon:null,"class":"waltaTaxon",onBack:function(){},postMixInProperties:function(){this.inherited(arguments);this.content="<strong>"+this.taxon.name+"</strong>"},postCreate:function(){var a=new f({label:"Back","class":"waltaBackButton",duration:500});c.after(a,"onClick",d.hitch(this,function(){this.onBack()}));this.addChild(a)}})});

@@ -1,0 +1,3 @@
+//>>built
+define("walta/KeyNodeView","dojo/_base/declare,dojo/_base/lang,dojo/aspect,dojox/mobile/View,dojox/mobile/Button,walta/QuestionView".split(","),function(e,b,c,f,g,h){return e("walta.KeyNodeView",[f],{keyNode:null,"class":"waltaKeyNode",onChoose:function(){},onBack:function(){},_createAndBindQuestion:function(a){var d=new h({question:this.keyNode.questions[a]});c.after(d,"onClick",b.hitch(this,function(){this.onChoose(a)}));this.addChild(d)},postCreate:function(){this.inherited(arguments);for(var a=
+0;a<this.keyNode.questions.length;a++)this._createAndBindQuestion(a);a=new g({label:"Back","class":"waltaBackButton",duration:500});c.after(a,"onClick",b.hitch(this,function(){this.onBack()}));this.addChild(a)}})});

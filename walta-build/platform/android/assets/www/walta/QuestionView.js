@@ -1,0 +1,2 @@
+//>>built
+define("walta/QuestionView",["dojo/_base/declare","dojo/aspect","dojo/_base/lang","dojox/mobile/Container","dojox/mobile/Button"],function(b,c,d,e,f){return b("walta.QuestionView",[e],{question:null,onClick:function(){},"class":"waltaQuestion",postCreate:function(){this.inherited(arguments);var a=new f({label:this.question.text,"class":"question",duration:500});this.addChild(a);c.after(a,"onClick",d.hitch(this,function(){this.onClick()}))}})});

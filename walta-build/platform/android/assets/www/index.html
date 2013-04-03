@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta name="format-detection" content="telephone=no" />
+<meta name="viewport" content="user-scalable=no" />
+
+
+
+<link rel="stylesheet" href="walta/resources/walta.css">
+
+<title>WALTA</title>
+</head>
+<body>
+	<script>
+	    dojoConfig= {
+	        async: true,
+	        isDebug: false,
+	        baseUrl: '',
+	        packages: [ 
+		         { name: "dojo", location: "dojo" }, 
+		         { name: "dijit", location: "dijit" },
+		         { name: "dojox", location: "dojox" }, 
+		         { name: "walta", location: "walta" } 
+	         ]
+	    };
+	</script>
+	<script src="dojo/dojo.js"></script>
+	<script src="walta/walta.js"></script>
+	<script>
+    	require(["walta/KeyController", "dojox/mobile/deviceTheme", "dojo/domReady!" ], function( KeyController ) {
+    		var keyController = new KeyController( { keyUrl: "taxonomy", divNode: "waltaApp" } );
+    		keyController.startIdentification();
+    	});
+    </script>
+    <div id="waltaApp"></div>
+</body>
+</html>
