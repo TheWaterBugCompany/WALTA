@@ -9,8 +9,6 @@
 <meta name="format-detection" content="telephone=no" />
 <meta id="viewport" name="viewport" content="user-scalable=no, initial-scale=1.66, width=device-width" />
 
-
-
 <link rel="stylesheet" href="walta/resources/walta.css">
 
 <title>WALTA</title>
@@ -19,7 +17,7 @@
 	<script>
 	    dojoConfig= {
 	        async: true,
-	        isDebug: false,
+	        isDebug: true,
 	        baseUrl: '',
 	        packages: [ 
 		         { name: "dojo", location: "dojo" }, 
@@ -31,10 +29,22 @@
 	</script>
 	<script src="dojo/dojo.js"></script>
 	<script src="walta/walta.js"></script>
+	<script type="text/javascript" src="cordova-2.5.0.js"></script>
 	<script>
-    	require(["walta/AppController", "dojox/mobile/deviceTheme", "dojo/domReady!" ], function( AppController ) {
-    		var app = new AppController( { keyUrl: "taxonomy", divNode: "waltaApp" } );
-    		app.startApp();
+    	require(["walta/AppController", "dojo/domReady!" ], function( AppController ) {
+    	
+    		var bootMe = function() { 
+    			console.log("Got deviceready event - booting the walta/AppController");
+    		    var app = new AppController( { keyUrl: "taxonomy", divNode: "waltaApp" } );
+    			app.startApp();
+    		};
+    		if (document.location.protocol == "file:") {
+    			document.addEventListener('deviceready', function() {
+    				bootMe();
+    			}, false);
+    		} else {
+    			bootMe();
+    		}
     	});
     </script>
 </body>

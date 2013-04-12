@@ -6,22 +6,22 @@
  * It is highly, highly recommended that you develop your CSS using Stylus: http://learnboost.github.com/stylus/.
  */
 
+@import '../../dojox/mobile/themes/iphone/iphone.css';
+
 /* Set default styles */
-body {
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+html,body {
+	height: 100%;
+	width: 100%;
+
   
 	font-family: Tahoma, sans-serif !important;
-    font-size: 5mm !important;   
+    font-size: 4mm !important;   
     background-color: white !important;
 
 }
 
 .waltaFullscreen { 
+	position: relative;
 	width: 100%; 
 	height: 100%;  
 }
@@ -45,40 +45,48 @@ body {
 }
 
 /* The home screen */
-.waltaHomeView { min-width: 600px; min-height: 750px; }
+
 .waltaHomeView h1 {
-	font-size: 20mm;
+	font-size: 14mm;
 	font-weight: bold;
-	margin-top: 0.5em;
-	margin-right: 20mm;
+	margin-top: 2mm;
 	margin-bottom: 0;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.waltaHomeView h2 {
+	margin-top: 1%;
+	margin-bottom: 1%;
+	font-size: 6mm;
+	font-weight: bold;
+	color: rgba(47,97,204,0.8); 
 }
 
 .waltaHomeView h3 {
-	font-size: 7mm;
+	font-size: 4.5mm;
 	font-weight: normal;
 	font-family: Times;
 	margin-top: -0.5em;
-	margin-right: 20mm;
+	margin-right: 15mm;
 	margin-bottom: 10mm;
-	position: relative;
-	left: 1em;
+	margin-left: 42mm;
 }
 
 .waltaHomeView .waltaLogo {
 	background-image: url( "logo.svg");
 	background-repeat: no-repeat;
 	background-size: cover;
-	height: 5em;
-	width: 7em;
-	float: left;
-	margin-left: 20mm;
-	margin-top: 2em;
-	margin-right: 1.5em;
+	height: 15mm;
+	width: 20mm;
+	margin-top: 5mm;
+	margin-left: 7mm;
+	margin-right: 10mm;
+	display: inline-block;
+	vertical-align: middle;
 }
 
 .waltaHomeView .waltaPanel { 
-	clear: left; 
 	-webkit-border-radius: 1em 1em; 
 	background-color:  rgba(47,97,204,0.3); 
 	margin-left: 2%;
@@ -88,6 +96,10 @@ body {
 	padding-top: 2%;
 	width: 95%;
 	height: 21%;
+}
+
+.waltaHomeView .waltaPanel p {
+	margin: 0;
 }
 
 .waltaPanel:nth-last-child(-n+2) {
@@ -104,23 +116,19 @@ body {
 
 .waltaMenuIcon {
 	margin-left: 4%;
-	margin-right: 2%;
-	width: 40mm;
-	height: 30mm;
+	margin-right: 6%;
+	margin-top: 1%;
+	width: 20mm;
+	height: 18mm;
 	float: left;
 	background-color: red;
 }
 
-.waltaHomeView h2 {
-	margin-top: 1%;
-	margin-bottom: 1%;
-	font-size: 10mm;
-	color: rgba(47,97,204,0.8); 
-}
+
 
 .waltaHomeView .waltaMenuPanel {
 	position: absolute;
-	top: 9em;
+	top: 26mm;
 	width: 100%;
 	bottom: 0;
 }

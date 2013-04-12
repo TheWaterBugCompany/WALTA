@@ -5,7 +5,7 @@ var profile = {
 	mini: true,
 	optimize: 'closure',
 	layerOptimize: 'closure',
-	stripConsole: 'normal',
+	stripConsole: 'none',
 	selectorEngine: 'lite',
     
 	
@@ -48,14 +48,16 @@ var profile = {
 			   "dojo/selector/lite",
 			   "dojox/mobile/deviceTheme",
 			   "walta/Key",
-			   "walta/KeyController",
 			   "walta/KeyNode",
 			   "walta/KeyNodeView",
 			   "walta/Question",
 			   "walta/QuestionView",
 			   "walta/Taxon",
 			   "walta/TaxonView",
-			   "walta/XmlDocument"
+			   "walta/XmlDocument",
+			   "walta/AnchorBar",
+			   "walta/AppController",
+			   "walta/HomeView"
 			   ]
 		}
 	},

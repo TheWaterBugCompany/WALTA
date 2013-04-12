@@ -4,13 +4,13 @@
 define( [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/View" ], 
 	function( declare, on, domConstruct, lang, View ) {
 		return declare( "walta.HomeView", [View], {
-			"class": "waltaHomeView", 
+			"class": "waltaHomeView waltaFullscreen", 
 			
-			onSpeedbug: null,
-			onAltKey: null,
-			onBrowse: null,
-			onHelp: null,
-			onAbout: null,
+			onSpeedbug: function() {},
+			onAltKey: function() {},
+			onBrowse: function() {},
+			onHelp: function() {},
+			onAbout: function() {},
 			
 			buildRendering: function() {
 				this.inherited(arguments);
@@ -26,7 +26,7 @@ define( [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lan
 				var speedbug = domConstruct.create("div", { "class": "waltaPanel" }, menu);
 				domConstruct.create("div", { "class":"waltaMenuIcon waltaSpeedbugLogo"}, speedbug );
 				domConstruct.create("h2", { innerHTML: "Speedbug"}, speedbug );	
-				domConstruct.create("p", { innerHTML: "Look at silhouettes of bugs to choose the bext match."}, speedbug );	
+				domConstruct.create("p", { innerHTML: "Look at silhouettes of bugs to choose the best match."}, speedbug );	
 				
 				var altkey = domConstruct.create("div", { "class": "waltaPanel" }, menu );
 				domConstruct.create("div", { "class":"waltaMenuIcon waltaAltKeyLogo"}, altkey );

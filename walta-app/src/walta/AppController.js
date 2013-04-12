@@ -1,5 +1,5 @@
 /*
- * walta/KeyController 
+ * walta/AppController 
  *
  * The Controller in the MVC pattern.
  * 
@@ -33,6 +33,7 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 			},
 			
 			_startAltKey: function() {
+				console.log( "Alt key activated");
 				this._doTransition( this._createDecisionView(), 1 );
 			},
 			
@@ -50,12 +51,16 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 			},
 			
 			_doTransition: function( view, dir ) {
+				console.log("view: " + view.get("id"));
+				console.log("current view: " + this._currentView.get("id"));
 				this._currentView.performTransition( view.get("id"), dir, "slide" );
 				this._currentView = view;
 			},
 			
 			// Creata an wire up a new decision view
 			_createDecisionView: function() {
+				
+				console.log("createdecisionview");
 				
 				var decisionView = null;
 				var decisionViewNode =  domConstruct.create("div", { id: "waltaDecisionView" + this._decisionCounter++ }, this.divNode );
@@ -82,7 +87,7 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 					this._decisionCounter = this._decisionCounter % 3;
 				}
 				
-				
+				console.log("return " + decisionView);
 				return decisionView;
 				
 			},
