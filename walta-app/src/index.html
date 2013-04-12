@@ -2,14 +2,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <meta name="format-detection" content="telephone=no" />
-<meta name="viewport"
-	content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-<link rel="stylesheet" type="text/css" href="css/index.css" />
+<meta id="viewport" name="viewport" content="user-scalable=no, initial-scale=1.66, width=device-width" />
+
+
+
 <link rel="stylesheet" href="walta/resources/walta.css">
+
 <title>WALTA</title>
 </head>
-<body>
+<body id="waltaApp">
 	<script>
 	    dojoConfig= {
 	        async: true,
@@ -26,11 +32,10 @@
 	<script src="dojo/dojo.js"></script>
 	<script src="walta/walta.js"></script>
 	<script>
-    	require(["walta/KeyController", "dojox/mobile/deviceTheme", "dojo/domReady!" ], function( KeyController ) {
-    		var keyController = new KeyController( { keyUrl: "taxonomy", divNode: "waltaApp" } );
-    		keyController.startIdentification();
+    	require(["walta/AppController", "dojox/mobile/deviceTheme", "dojo/domReady!" ], function( AppController ) {
+    		var app = new AppController( { keyUrl: "taxonomy", divNode: "waltaApp" } );
+    		app.startApp();
     	});
     </script>
-    <div id="waltaApp"></div>
 </body>
 </html>

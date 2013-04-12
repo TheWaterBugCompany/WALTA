@@ -7,29 +7,41 @@
  * 
  * 
  */
-define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/aspect", "dojox/mobile/View", "dojox/mobile/Button", "walta/QuestionView"  ], 
-	function( declare, lang, aspect, View, Button, QuestionView ) {
+define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/aspect", "dojo/dom-construct", "dojox/mobile/View", "dojox/mobile/Button", "dojox/mobile/Container", "walta/QuestionView", "walta/AnchorBar"  ], 
+	function( declare, lang, aspect, domConstruct, View, Button, Container, QuestionView, AnchorBar ) {
 		return declare( "walta.KeyNodeView", [View], {
 			
 			// public
 			keyNode: null, // KeyNode
 			
-			"class": "waltaKeyNode",
+			"class": "waltaFullscreen waltaKey",
 			
 			onChoose: function( id ) {}, // Fired when a question is choosen
 			onBack: function() {}, // Fired when the back button is pressed
 			
-			_createAndBindQuestion: function( id ) {
+			_createAndBindQuestion: function( id, parent ) {
+				
 				var qv = new QuestionView( { question: this.keyNode.questions[id] } );
 				aspect.after( qv, "onClick", lang.hitch( this, function() { this.onChoose( id ); } ) );
-				this.addChild( qv );
+				parent.addChild( qv );
 			},
 			
-			postCreate: function() {
+			buildRendering: function() {
 				this.inherited(arguments);
+				var ab = new AnchorBar( { title: "ALT Key" } );
+				this.addChild(ab);
+				
+				domConstruct.create("h4", { innerHTML: "Choose the best match" }, this.containerNode );
+				
+				
+				var questions = new Container( { "class" : "waltaQuestionContainer" } );
+				
 				for( var i = 0; i < this.keyNode.questions.length; i++ )
-					this._createAndBindQuestion( i );
-				var b = new Button( { label: "Back", "class": "waltaBackButton",  duration: 500 } );
+					this._createAndBindQuestion( i, questions );
+				
+				this.addChild( questions );
+				
+				var b = new Button( { label: "No match? Start over", "class": "waltaBackButton",  duration: 500 } );
 				aspect.after( b, "onClick", lang.hitch( this, function() { this.onBack(); } ) );
 				this.addChild( b );
 				

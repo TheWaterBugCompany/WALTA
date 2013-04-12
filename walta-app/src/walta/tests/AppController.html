@@ -4,11 +4,11 @@
 		<title>Testing walta.KeyView</title>
 		<script type="text/javascript" src="../../dojo/dojo.js"></script>
 		<script type="text/javascript">
-			require(["dojo", "doh", "dojo/aspect", "walta/KeyController", "dojox/mobile/deviceTheme", "dojo/domReady!"], function(dojo, doh, aspect, KeyController ){
+			require(["dojo", "doh", "dojo/aspect", "walta/AppController", "dojox/mobile/deviceTheme", "dojo/domReady!"], function(dojo, doh, aspect, AppController ){
 				doh.register("Instantiation", 
 					function loadKey() {
 						
-						var key = new KeyController( { keyUrl: "../../../../walta-data/taxonomies/test", divNode: "waltaApp" } );
+						var app = new AppController( { keyUrl: "../../../../walta-data/taxonomies/test", divNode: "waltaApp" } );
     					
     					// when the key is loaded continue the test
     					/*
@@ -20,7 +20,7 @@
     					); 
     					*/	
     			
-    					key.startIdentification();
+    					app.startApp();
     					
     					doh.assertTrue( true );
     					
@@ -35,7 +35,6 @@
 		</style>
 		<link rel="stylesheet" href="../resources/walta.css">
 	</head>
-	<body>
-		<div id="waltaApp"></div>
+	<body id="waltaApp">
 	</body>
 </html>

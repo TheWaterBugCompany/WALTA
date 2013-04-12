@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Testing walta.QuestionView</title>
+		<script type="text/javascript" src="../../dojo/dojo.js"></script>
+		<script type="text/javascript">
+			require(["dojo", "doh", "dojo/aspect", "walta/QuestionView", "dojox/mobile/deviceTheme", "dojo/domReady!"], function(dojo, doh, aspect, QuestionView ){
+				doh.register("Instantiation", 
+					function loadKey() {
+						var qv1 = new QuestionView( { question: { text: "This is a test question text!", mediaUrls: [] } }, "questionView1" );
+    					qv1.startup();
+    					var qv2 = new QuestionView( { 
+    						question: { 
+    									text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images", 
+    									mediaUrls: [ 
+    										"resources/simpleKey1/media/amphipoda_01.jpg", 
+    										"resources/simpleKey1/media/amphipoda_02.jpg" 
+    									] 
+    						} 
+    					}, "questionView2" );
+    					qv2.startup();
+    					doh.assertTrue( true );
+					}
+				);
+				doh.run();
+			});
+		</script>
+		<style type="text/css">
+			#waltaApp { width: 700px; height: 400px }
+		</style>
+		<link rel="stylesheet" href="../resources/walta.css">
+	</head>
+	<body>
+		<div id="waltaApp">
+
+			<div id="questionView1"></div>
+			<div id="questionView2"></div>
+		</div>
+	</body>
+</html>

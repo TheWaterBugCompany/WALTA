@@ -56,7 +56,7 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 			if ( parent != null ) {
 				this.currentDecision = parent;
 			}
-			return this.currentDecision;
+			return parent;
 		},
 		
 		constructor: function(args) {	
