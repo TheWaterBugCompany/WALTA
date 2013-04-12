@@ -56,7 +56,7 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
 			if ( parent != null ) {
 				this.currentDecision = parent;
 			}
-			return this.currentDecision;
+			return parent;
 		},
 		
 		constructor: function(args) {	

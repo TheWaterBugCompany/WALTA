@@ -715,148 +715,6 @@ define("dojox/mobile/TransitionEvent", [
 });
 
 },
-'dojox/mobile/_ExecScriptMixin':function(){
-define("dojox/mobile/_ExecScriptMixin", [
-	"dojo/_base/kernel",
-	"dojo/_base/declare",
-	"dojo/_base/window",
-	"dojo/dom-construct"
-], function(kernel, declare, win, domConstruct){
-	// module:
-	//		dojox/mobile/_ExecScriptMixin
-
-	return declare("dojox.mobile._ExecScriptMixin", null, {
-		// summary:
-		//		Mixin for providing script execution capability to content handlers.
-		// description:
-		//		This module defines the execScript method, which is called
-		//		from an HTML content handler.
-
-		execScript: function(/*String*/ html){
-			// summary:
-			//		Finds script tags and executes the script.
-			// html: String
-			//		The HTML input.
-			// returns: String
-			//		The given HTML text from which &lt;script&gt; blocks are removed.
-			var s = html.replace(/\f/g, " ").replace(/<\/script>/g, "\f");
-			s = s.replace(/<script [^>]*src=['"]([^'"]+)['"][^>]*>([^\f]*)\f/ig, function(ignore, path){
-				domConstruct.create("script", {
-					type: "text/javascript",
-					src: path}, win.doc.getElementsByTagName("head")[0]);
-				return "";
-			});
-
-			s = s.replace(/<script>([^\f]*)\f/ig, function(ignore, code){
-				kernel.eval(code);
-				return "";
-			});
-
-			return s;
-		}
-	});
-});
-
-},
-'dojox/mobile/lazyLoadUtils':function(){
-define("dojox/mobile/lazyLoadUtils", [
-	"dojo/_base/kernel",
-	"dojo/_base/array",
-	"dojo/_base/config",
-	"dojo/_base/window",
-	"dojo/_base/Deferred",
-	"dojo/ready"
-], function(dojo, array, config, win, Deferred, ready){
-
-	// module:
-	//		dojox/mobile/lazyLoadUtils
-
-	var LazyLoadUtils = function(){
-		// summary:
-		//		Utilities to lazy-loading of Dojo widgets.
-
-		this._lazyNodes = [];
-		var _this = this;
-		if(config.parseOnLoad){
-			ready(90, function(){
-				var lazyNodes = array.filter(win.body().getElementsByTagName("*"), // avoid use of dojo.query
-					function(n){ return n.getAttribute("lazy") === "true" || (n.getAttribute("data-dojo-props")||"").match(/lazy\s*:\s*true/); });
-				var i, j, nodes, s, n;
-				for(i = 0; i < lazyNodes.length; i++){
-					array.forEach(["dojoType", "data-dojo-type"], function(a){
-						nodes = array.filter(lazyNodes[i].getElementsByTagName("*"),
-											function(n){ return n.getAttribute(a); });
-						for(j = 0; j < nodes.length; j++){
-							n = nodes[j];
-							n.setAttribute("__" + a, n.getAttribute(a));
-							n.removeAttribute(a);
-							_this._lazyNodes.push(n);
-						}
-					});
-				}
-			});
-		}
-
-		ready(function(){
-			for(var i = 0; i < _this._lazyNodes.length; i++){ /* 1.8 */
-				var n = _this._lazyNodes[i];
-				array.forEach(["dojoType", "data-dojo-type"], function(a){
-					if(n.getAttribute("__" + a)){
-						n.setAttribute(a, n.getAttribute("__" + a));
-						n.removeAttribute("__" + a);
-					}
-				});
-			}
-			delete _this._lazyNodes;
-
-		});
-
-		this.instantiateLazyWidgets = function(root, requires, callback){
-			// summary:
-			//		Instantiates dojo widgets under the root node.
-			// description:
-			//		Finds DOM nodes that have the dojoType or data-dojo-type attributes,
-			//		requires the found Dojo modules, and runs the parser.
-			var d = new Deferred();
-			var req = requires ? requires.split(/,/) : [];
-			var nodes = root.getElementsByTagName("*"); // avoid use of dojo.query
-			var len = nodes.length;
-			for(var i = 0; i < len; i++){
-				var s = nodes[i].getAttribute("dojoType") || nodes[i].getAttribute("data-dojo-type");
-				if(s){
-					req.push(s);
-					var m = nodes[i].getAttribute("data-dojo-mixins"),
-						mixins = m ? m.split(/, */) : [];
-					req = req.concat(mixins);
-				}
-			}
-			if(req.length === 0){ return true; }
-
-			if(dojo.require){
-				array.forEach(req, function(c){
-					dojo["require"](c);
-				});
-				dojo.parser.parse(root);
-				if(callback){ callback(root); }
-				return true;
-			}else{
-				req = array.map(req, function(s){ return s.replace(/\./g, "/"); });
-				require(req, function(){
-					dojo.parser.parse(root);
-					if(callback){ callback(root); }
-					d.resolve(true);
-				});
-			}
-			return d;
-		}	
-	};
-
-	// Return singleton.  (TODO: can we replace LazyLoadUtils class and singleton w/a simple hash of functions?)
-	return new LazyLoadUtils();
-});
-
-
-},
 'dijit/_WidgetBase':function(){
 define("dijit/_WidgetBase", [
 	"require",			// require.toUrl
@@ -5116,24 +4974,23 @@ define( "walta/XmlDocument", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/re
  * 
  * 
  */
-define( "walta/TaxonView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang",  "dojox/mobile/ContentPane", "dojox/mobile/Button" ], function( declare, aspect, lang, ContentPane, Button ) {
-	return declare( "walta.TaxonView", [ContentPane], {
+define( "walta/TaxonView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojo/dom-construct", "dojox/mobile/View", "dojox/mobile/Button" ], 
+   function( declare, aspect, lang, domConstruct, View, Button ) {
+	return declare( "walta.TaxonView", [View], {
 
 		taxon: null, // Taxon
 		
 		"class": "waltaTaxon",
 		
 		onBack: function() {}, // Fires when on back pressed 
-		
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this.content = "<strong>" + this.taxon.name + "</strong>";
-		},
 	
-		postCreate: function() {
+		buildRendering: function() {
+			this.inherited(arguments);
+			
+			domConstruct.create("strong", { innerHTML: this.taxon.name }, this.containerNode );
 			var b = new Button( { label: "Back", "class": "waltaBackButton", duration: 500 } );
 			aspect.after( b, "onClick", lang.hitch( this, function() { this.onBack(); } ) );
-			this.addChild( b );
+			this.addChild( b );	
 		}
 		
 	});
@@ -5819,29 +5676,41 @@ return declare("dijit.form._ButtonMixin", null, {
  * 
  * 
  */
-define( "walta/KeyNodeView", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/aspect", "dojox/mobile/View", "dojox/mobile/Button", "walta/QuestionView"  ], 
-	function( declare, lang, aspect, View, Button, QuestionView ) {
+define( "walta/KeyNodeView", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/aspect", "dojo/dom-construct", "dojox/mobile/View", "dojox/mobile/Button", "dojox/mobile/Container", "walta/QuestionView", "walta/AnchorBar"  ], 
+	function( declare, lang, aspect, domConstruct, View, Button, Container, QuestionView, AnchorBar ) {
 		return declare( "walta.KeyNodeView", [View], {
 			
 			// public
 			keyNode: null, // KeyNode
 			
-			"class": "waltaKeyNode",
+			"class": "waltaFullscreen waltaKey",
 			
 			onChoose: function( id ) {}, // Fired when a question is choosen
 			onBack: function() {}, // Fired when the back button is pressed
 			
-			_createAndBindQuestion: function( id ) {
+			_createAndBindQuestion: function( id, parent ) {
+				
 				var qv = new QuestionView( { question: this.keyNode.questions[id] } );
 				aspect.after( qv, "onClick", lang.hitch( this, function() { this.onChoose( id ); } ) );
-				this.addChild( qv );
+				parent.addChild( qv );
 			},
 			
-			postCreate: function() {
+			buildRendering: function() {
 				this.inherited(arguments);
+				var ab = new AnchorBar( { title: "ALT Key" } );
+				this.addChild(ab);
+				
+				domConstruct.create("h4", { innerHTML: "Choose the best match" }, this.containerNode );
+				
+				
+				var questions = new Container( { "class" : "waltaQuestionContainer" } );
+				
 				for( var i = 0; i < this.keyNode.questions.length; i++ )
-					this._createAndBindQuestion( i );
-				var b = new Button( { label: "Back", "class": "waltaBackButton",  duration: 500 } );
+					this._createAndBindQuestion( i, questions );
+				
+				this.addChild( questions );
+				
+				var b = new Button( { label: "No match? Start over", "class": "waltaBackButton",  duration: 500 } );
 				aspect.after( b, "onClick", lang.hitch( this, function() { this.onBack(); } ) );
 				this.addChild( b );
 				
@@ -7164,34 +7033,9 @@ return unload;
 });
 
 },
-'dojox/mobile/ContentPane':function(){
-define("dojox/mobile/ContentPane", [
-	"dojo/_base/declare",
-	"./Container",
-	"./_ContentPaneMixin"
-], function(declare, Container, ContentPaneMixin){
-
-	// module:
-	//		dojox/mobile/ContentPane
-
-	return declare("dojox.mobile.ContentPane", [Container, ContentPaneMixin], {
-		// summary:
-		//		A very simple content pane to embed an HTML fragment.
-		// description:
-		//		This widget embeds an HTML fragment and runs the parser. It has
-		//		the ability to load external content using dojo/_base/xhr. onLoad()
-		//		is called when parsing is done and the content is
-		//		ready. Compared with dijit/layout/ContentPane, this widget
-		//		provides only basic fuctionality, but it is much lighter.
-
-		baseClass: "mblContentPane"
-	});
-});
-
-},
-'walta/KeyController':function(){
+'walta/AppController':function(){
 /*
- * walta/KeyController 
+ * walta/AppController 
  *
  * The Controller in the MVC pattern.
  * 
@@ -7201,8 +7045,9 @@ define("dojox/mobile/ContentPane", [
  *   - navigation of the key via events on KeyNodeView 
  * 
  */
-define( "walta/KeyController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/aspect", "walta/Key", "walta/KeyNode", "walta/Taxon", "walta/KeyNodeView", "walta/TaxonView"], 
-	function( declare, lang, domConstruct, aspect, Key, KeyNode, Taxon, KeyNodeView, TaxonView ) {
+define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/aspect", 
+          "walta/Key", "walta/KeyNode", "walta/Taxon", "walta/KeyNodeView", "walta/TaxonView", "walta/HomeView"], 
+	function( declare, lang, domConstruct, aspect, Key, KeyNode, Taxon, KeyNodeView, TaxonView, HomeView ) {
 		return declare( null, {
 			
 			// public
@@ -7211,7 +7056,11 @@ define( "walta/KeyController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/
 			
 			// privates
 			_key: null,
-			_view: null,
+			_currentView: null,
+			
+			_views: {},
+			_decisionCounter: 0,
+			_decisionViews: [],
 			
 			
 			constructor: function( args ) {
@@ -7219,45 +7068,76 @@ define( "walta/KeyController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/
 				this._key = new Key( { url: this.keyUrl });
 			},
 			
-			_questionChosen: function( id ) {
+			_startAltKey: function() {
+				console.log( "Alt key activated");
+				this._doTransition( this._createDecisionView(), 1 );
+			},
+			
+			_questionChosen: function( id ) {			
 				this._key.choose( id );
-				this._initView();
+				this._doTransition( this._createDecisionView(), 1 );
 			},
 			
 			_goBack: function() {
-				this._key.back();
-				this._initView();
+				if ( this._key.back() ) {
+					this._doTransition( this._createDecisionView(), -1 );
+				} else {
+					this._doTransition( this._views["home"], -1 ); 
+				}
 			},
 			
-			_initView: function() {
+			_doTransition: function( view, dir ) {
+				console.log("view: " + view.get("id"));
+				console.log("current view: " + this._currentView.get("id"));
+				this._currentView.performTransition( view.get("id"), dir, "slide" );
+				this._currentView = view;
+			},
+			
+			// Creata an wire up a new decision view
+			_createDecisionView: function() {
 				
-				// TODO: create whole new object ? 
-				// seems more rational to have the view update on changing the key via events?
-				// also the navigation buttons should be pulled up out of child Views ?
-				if ( this._view ) {
-					this._view.destroyRecursive(false);
-				} 
+				console.log("createdecisionview");
 				
-				this._domNode = domConstruct.create("div", null, this.divNode );
+				var decisionView = null;
+				var decisionViewNode =  domConstruct.create("div", { id: "waltaDecisionView" + this._decisionCounter++ }, this.divNode );
 				
 				if ( this._key.currentDecision instanceof KeyNode ) {
-					this._view = new KeyNodeView( { keyNode: this._key.currentDecision }, this._domNode );
+					decisionView = new KeyNodeView( { keyNode: this._key.currentDecision }, decisionViewNode );
 					
-					aspect.after( this._view, "onChoose", lang.hitch( this, this._questionChosen ), true );
-					aspect.after( this._view, "onBack", lang.hitch( this, this._goBack ), true );
+					aspect.after( decisionView, "onChoose", lang.hitch( this, this._questionChosen ), true );
+					aspect.after( decisionView, "onBack", lang.hitch( this, this._goBack ), true );
 					
 				} else if ( this._key.currentDecision instanceof Taxon ) {
-					this._view = new TaxonView( { taxon: this._key.currentDecision }, this._domNode );
-					aspect.after( this._view, "onBack", lang.hitch( this, this._goBack ), true );
+					decisionView = new TaxonView( { taxon: this._key.currentDecision }, decisionViewNode );
+					aspect.after( decisionView, "onBack", lang.hitch( this, this._goBack ), true );
 					
 				}
+				decisionView.startup();
 				
-				this._view.startup();
+				// keep track of views created
+				this._decisionViews.unshift( decisionView );
+				
+				if ( this._decisionViews.length > 2 ) {
+					var oldDecision = this._decisionViews.pop();
+					oldDecision.destroyRecursive(); // Clean up our junk
+					this._decisionCounter = this._decisionCounter % 3;
+				}
+				
+				console.log("return " + decisionView);
+				return decisionView;
 				
 			},
 			
-			startIdentification: function() {
-				this._key.load().then( lang.hitch( this, this._initView) );
+			_createHomeView: function() {
+				var home = new HomeView( {selected: true}, domConstruct.create("div", { id: "waltaHomeView" }, this.divNode ));
+				aspect.after( home, "onAltKey", lang.hitch( this, this._startAltKey ) );
+				this._views["home"] = home;
+				home.startup(); 
+				this._currentView = home;
+			},
+			
+			startApp: function() {
+				this._key.load().then( lang.hitch( this, this._createHomeView ) );
 			}
 			
 			
@@ -7756,6 +7636,67 @@ return liteEngine;
 });
 
 },
+'walta/HomeView':function(){
+/*
+ * walta/HomeView
+ */
+define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/View" ], 
+	function( declare, on, domConstruct, lang, View ) {
+		return declare( "walta.HomeView", [View], {
+			"class": "waltaHomeView waltaFullscreen", 
+			
+			onSpeedbug: function() {},
+			onAltKey: function() {},
+			onBrowse: function() {},
+			onHelp: function() {},
+			onAbout: function() {},
+			
+			buildRendering: function() {
+				this.inherited(arguments);
+				
+				
+				
+				domConstruct.create("div", { "class":"waltaLogo"}, this.domNode );
+				domConstruct.create("h1", { innerHTML: "WALTA"}, this.domNode );
+				domConstruct.create("h3", { innerHTML: "Waterbug ALT app"}, this.domNode );
+				
+				var menu = domConstruct.create("div", { "class":"waltaMenuPanel"}, this.domNode );
+				
+				var speedbug = domConstruct.create("div", { "class": "waltaPanel" }, menu);
+				domConstruct.create("div", { "class":"waltaMenuIcon waltaSpeedbugLogo"}, speedbug );
+				domConstruct.create("h2", { innerHTML: "Speedbug"}, speedbug );	
+				domConstruct.create("p", { innerHTML: "Look at silhouettes of bugs to choose the best match."}, speedbug );	
+				
+				var altkey = domConstruct.create("div", { "class": "waltaPanel" }, menu );
+				domConstruct.create("div", { "class":"waltaMenuIcon waltaAltKeyLogo"}, altkey );
+				domConstruct.create("h2", { innerHTML: "ALT key"}, altkey );	
+				domConstruct.create("p", { innerHTML: "Choose from ...."}, altkey );
+				
+				var browse = domConstruct.create("div", { "class": "waltaPanel" }, menu );
+				domConstruct.create("div", { "class":"waltaMenuIcon waltaBrowseLogo"}, browse );
+				domConstruct.create("h2", { innerHTML: "Browse list"}, browse );	
+				domConstruct.create("p", { innerHTML: "If you know the name of your bug."}, browse );
+				
+				var about = domConstruct.create("div", { "class": "waltaPanel" }, menu );
+				domConstruct.create("h2", { innerHTML: "About"}, about );	
+				domConstruct.create("p", { innerHTML: "About the app and the people behind it."}, about );	
+				
+				var help = domConstruct.create("div", { "class": "waltaPanel" }, menu);
+				domConstruct.create("h2", { innerHTML: "Help"}, help );	
+				domConstruct.create("p", { innerHTML: "Info to get you started."}, help );
+				
+					
+				
+				on( about, "click", lang.hitch( this, function(e) { this.onAbout(); } ) );
+				on( help, "click", lang.hitch( this, function(e) { this.onHelp(); } ) );
+				on( browse, "click", lang.hitch( this, function(e) { this.onBrowse(); } ) );
+				on( altkey, "click", lang.hitch( this, function(e) { this.onAltKey(); } ) );
+				on( speedbug, "click", lang.hitch( this, function(e) { this.onSpeedbug(); } ) );
+				
+			}
+		});
+});
+},
 'dojox/mobile/Container':function(){
 define("dojox/mobile/Container", [
 	"dojo/_base/declare",
@@ -7883,7 +7824,7 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
 			if ( parent != null ) {
 				this.currentDecision = parent;
 			}
-			return this.currentDecision;
+			return parent;
 		},
 		
 		constructor: function(args) {	
@@ -7896,139 +7837,6 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
 	});
 });
 },
-'dojox/mobile/_ContentPaneMixin':function(){
-define("dojox/mobile/_ContentPaneMixin", [
-	"dojo/_base/declare",
-	"dojo/_base/Deferred",
-	"dojo/_base/lang",
-	"dojo/_base/window",
-	"dojo/_base/xhr",
-	"./_ExecScriptMixin",
-	"./ProgressIndicator",
-	"./lazyLoadUtils"
-], function(declare, Deferred, lang, win, xhr, ExecScriptMixin, ProgressIndicator, lazyLoadUtils){
-
-	// module:
-	//		dojox/mobile/_ContentPaneMixin
-
-	return declare("dojox.mobile._ContentPaneMixin", ExecScriptMixin, {
-		// summary:
-		//		Mixin for a very simple content pane to embed an HTML fragment.
-		// description:
-		//		By mixing this class into a widget, the widget can have the ability
-		//		to embed an external HTML fragment and to run the parser.
-
-		// href: String
-		//		URL of the content to embed.
-		href: "",
-
-		// lazy: String
-		//		If true, external content specified with the href property is
-		//		not loaded at startup time. It can be loaded by calling load().
-		lazy: false,
-
-		// content: String
-		//		An HTML fragment to embed.
-		content: "",
-
-		// parseOnLoad: Boolean
-		//		If true, runs the parser when the load completes.
-		parseOnLoad: true,
-
-		// prog: Boolean
-		//		If true, shows progress indicator while loading an HTML fragment
-		//		specified by href.
-		prog: true,
-
-		// executeScripts: Boolean
-		//		If true, executes scripts that is found in the content.
-		executeScripts: true,
-
-		constructor: function(){
-			// summary:
-			//		Creates a new instance of the class.
-			// tags:
-			//		private
-			if(this.prog){
-				this._p = ProgressIndicator.getInstance();
-			}
-		},
-
-		loadHandler: function(/*String*/response){
-			// summary:
-			//		A handler called when load completes.
-			this.set("content", response);
-		},
-
-		errorHandler: function(err){
-			// summary:
-			//		An error handler called when load fails.
-			if(this._p){ this._p.stop(); }
-		},
-
-		load: function(){
-			// summary:
-			//		Loads external content specified with href.
-			this.lazy = false;
-			this.set("href", this.href);
-		},
-
-		onLoad: function(){
-			// summary:
-			//		Stub method to allow the application to connect to the
-			//		loading of external content (see load()).
-			//		Called when parsing is done and the content is ready.
-			return true;
-		},
-
-		_setHrefAttr: function(/*String*/href){
-			// tags:
-			//		private
-			if(this.lazy || !href || href === this._loaded){
-				this.lazy = false;
-				return null;
-			}
-			var p = this._p;
-			if(p){
-				win.body().appendChild(p.domNode);
-				p.start();
-			}
-			this._set("href", href);
-			this._loaded = href;
-			return xhr.get({
-				url: href,
-				handleAs: "text",
-				load: lang.hitch(this, "loadHandler"),
-				error: lang.hitch(this, "errorHandler")
-			});
-		},
-
-		_setContentAttr: function(/*String|DomNode*/data){
-			// tags:
-			//		private			
-			this.destroyDescendants();
-			if(typeof data === "object"){
-				this.containerNode.appendChild(data);
-			}else{
-				if(this.executeScripts){
-					data = this.execScript(data);
-				}
-				this.containerNode.innerHTML = data;
-			}
-			if(this.parseOnLoad){
-				var _this = this;
-				return Deferred.when(lazyLoadUtils.instantiateLazyWidgets(_this.containerNode), function(){
-					if(_this._p){ _this._p.stop(); }
-					return _this.onLoad();
-				});
-			}
-			if(this._p){ this._p.stop(); }
-			return this.onLoad();
-		}
-	});
-});
-
-},
 'walta/QuestionView':function(){
 /*
  * walta/QuestionView
@@ -8036,8 +7844,8 @@ define("dojox/mobile/_ContentPaneMixin", [
  * Represents a single question
  *  
  */
-define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojox/mobile/Container", "dojox/mobile/Button"  ], 
-	function( declare, aspect, lang, Container,  Button ) {
+define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container" ], 
+	function( declare, on, domConstruct, lang, Container ) {
 		return declare( "walta.QuestionView", [Container], {
 			
 			// public
@@ -8047,13 +7855,18 @@ define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base
 			
 			"class": "waltaQuestion", 
 			
-			postCreate: function() {
+			buildRendering: function() {
 				this.inherited(arguments);
+				domConstruct.create("p", { innerHTML: this.question.text }, this.containerNode );
 				
-				var b = new Button( { label: this.question.text, "class": "question", duration: 500 } );
-				this.addChild( b );
+				// put the first image in the question itself
+				if ( this.question.mediaUrls[0] ) {
+					var cell = domConstruct.create("div", { "class":"waltaImageContainer" }, this.containerNode );
+					domConstruct.create("img", { src: this.question.mediaUrls[0] }, cell );
+				}
 				
-				aspect.after( b, "onClick", lang.hitch( this, function() { this.onClick(); }  ) );
+				// connect events
+				on( this.containerNode, "click", lang.hitch( this, function(e) { this.onClick(); } ) );
 				
 			}
 		});
@@ -9519,5 +9332,39 @@ define("dojo/ready", ["./_base/kernel", "./has", "require", "./domReady", "./_ba
 	return ready;
 });
 
+},
+'walta/AnchorBar':function(){
+/*
+ * walta/AnchorBar
+ */
+define( "walta/AnchorBar", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container" ], 
+	function( declare, on, domConstruct, lang, Container ) {
+		return declare( "walta.AnchorBar", [Container], {
+			
+			// public
+			title: "",
+			
+			"class": "waltaAnchorBar", 
+			
+			onHome: null,
+			onSettings: null,
+			onInfo: null,
+			
+			buildRendering: function() {
+				this.inherited(arguments);
+				var home = domConstruct.create("div", { "class": "waltaHome" }, this.containerNode );
+				domConstruct.create("h1", { innerHTML: this.title}, this.containerNode );	
+				
+				var info = domConstruct.create("div", { "class": "waltaInfo" }, this.containerNode );
+				var settings = domConstruct.create("div", { "class": "waltaSettings" }, this.containerNode );
+				
+				
+				on( home, "click", lang.hitch( this, function(e) { this.onHome(); } ) );
+				on( settings, "click", lang.hitch( this, function(e) { this.onSettings(); } ) );
+				on( info, "click", lang.hitch( this, function(e) { this.onInfo(); } ) );
+				
+			}
+		});
+});
 }}});
 define("walta/walta", [], 1);

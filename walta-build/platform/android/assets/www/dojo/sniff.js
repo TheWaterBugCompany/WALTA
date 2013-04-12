@@ -1,0 +1,2 @@
+//>>built
+define("dojo/sniff",["./has"],function(a){var b=navigator,c=b.userAgent,b=b.appVersion,d=parseFloat(b);a.add("khtml",0<=b.indexOf("Konqueror")?d:void 0);a.add("chrome",parseFloat(c.split("Chrome/")[1])||void 0);a.add("safari",0<=b.indexOf("Safari")&&!a("chrome")?parseFloat(b.split("Version/")[1]):void 0);a.add("mac",0<=b.indexOf("Macintosh"));a.add("ios",/iPhone|iPod|iPad/.test(c));a.add("android",parseFloat(c.split("Android ")[1])||void 0);return a});

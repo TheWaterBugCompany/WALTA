@@ -1,0 +1,2 @@
+//>>built
+define("dojo/dom",["./sniff","./_base/window"],function(e,d){var c={byId:function(a,b){return("string"==typeof a?(b||d.doc).getElementById(a):a)||null}};c.isDescendant=function(a,b){try{a=c.byId(a);for(b=c.byId(b);a;){if(a==b)return!0;a=a.parentNode}}catch(d){}return!1};c.setSelectable=function(a,b){c.byId(a).style.WebkitUserSelect=b?"":"none"};return c});

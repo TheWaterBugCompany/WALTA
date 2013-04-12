@@ -4,8 +4,8 @@
  * Represents a single question
  *  
  */
-define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojox/mobile/Container", "dojox/mobile/Button"  ], 
-	function( declare, aspect, lang, Container,  Button ) {
+define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container" ], 
+	function( declare, on, domConstruct, lang, Container ) {
 		return declare( "walta.QuestionView", [Container], {
 			
 			// public
@@ -15,13 +15,18 @@ define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base
 			
 			"class": "waltaQuestion", 
 			
-			postCreate: function() {
+			buildRendering: function() {
 				this.inherited(arguments);
+				domConstruct.create("p", { innerHTML: this.question.text }, this.containerNode );
 				
-				var b = new Button( { label: this.question.text, "class": "question", duration: 500 } );
-				this.addChild( b );
+				// put the first image in the question itself
+				if ( this.question.mediaUrls[0] ) {
+					var cell = domConstruct.create("div", { "class":"waltaImageContainer" }, this.containerNode );
+					domConstruct.create("img", { src: this.question.mediaUrls[0] }, cell );
+				}
 				
-				aspect.after( b, "onClick", lang.hitch( this, function() { this.onClick(); }  ) );
+				// connect events
+				on( this.containerNode, "click", lang.hitch( this, function(e) { this.onClick(); } ) );
 				
 			}
 		});

@@ -47,13 +47,13 @@ cp $SRCDIR/index.html $DISTDIR
 cp $SRCDIR/config.xml $DISTDIR
 # copy across data sets
 cp -r $TAXONDIR $DISTDIR/taxonomy
-
+cp $SRCDIR/cordova*.js $DISTDIR
 # remove files not needed from Dojo build
 cd $DISTDIR
-find dojo ! -name dojo ! -name dojo.js -delete
-find dijit ! -name dijit ! -name dijit.js -delete
-find dojox ! -path "dojox/mobile/themes/iphone/*" ! -path "dojox/mobile/themes/android" ! -path "dojox" ! -path "dojox/mobile" ! -path "dojox/mobile/themes" ! -path "dojox/mobile/themes/iphone" ! -path "dojox/mobile/themes/android" ! -path "dojox/mobile/deviceTheme.js" ! -path "dojox/dojox.js" -delete
-rm -rf $DISTDIR/util
+#find dojo ! -name dojo ! -name dojo.js -delete
+#find dijit ! -name dijit ! -name dijit.js -delete
+#find dojox ! -path "dojox/mobile" ! -path "dojox/dojox.js" -delete
+#rm -rf $DISTDIR/util
 
 
 echo "Build complete"

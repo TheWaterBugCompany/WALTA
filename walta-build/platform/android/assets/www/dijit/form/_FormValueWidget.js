@@ -1,0 +1,2 @@
+//>>built
+define("dijit/form/_FormValueWidget",["dojo/_base/declare","dojo/sniff","./_FormWidget","./_FormValueMixin"],function(a,d,b,c){return a("dijit.form._FormValueWidget",[b,c],{_layoutHackIE7:function(){}})});

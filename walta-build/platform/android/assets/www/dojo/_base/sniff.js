@@ -1,0 +1,2 @@
+//>>built
+define("dojo/_base/sniff",["./kernel","./lang","../sniff"],function(b,c,a){b._name="browser";c.mixin(b,{isBrowser:!0,isFF:void 0,isIE:void 0,isKhtml:a("khtml"),isWebKit:!0,isMozilla:void 0,isMoz:void 0,isOpera:a("opera"),isSafari:a("safari"),isChrome:a("chrome"),isMac:a("mac"),isIos:a("ios"),isAndroid:a("android"),isWii:a("wii"),isQuirks:!1,isAir:!1});b.locale=b.locale||navigator.language.toLowerCase();return a});
