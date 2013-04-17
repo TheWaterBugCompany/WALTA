@@ -8,11 +8,16 @@
 
 @import '../../dojox/mobile/themes/iphone/iphone.css';
 
+@font-face {
+	font-family: Boulder;
+	src: url("boulder.ttf");
+}
+
 /* Set default styles */
 html,body {
 	height: 100%;
 	width: 100%;
-
+	min-width: 320px;
   
 	font-family: Tahoma, sans-serif !important;
     font-size: 4mm !important;   
@@ -39,6 +44,7 @@ html,body {
 .waltaAnchorBar h1 {
 	font-size: 4mm;
 	font-weight: bold;
+	font-faimly: 
 	color: white;
 	display: inline;
 	height: 1em;
@@ -48,40 +54,39 @@ html,body {
 
 .waltaHomeView h1 {
 	font-size: 14mm;
-	font-weight: bold;
 	margin-top: 2mm;
 	margin-bottom: 0;
+	font-family: Boulder;
 	display: inline-block;
 	vertical-align: middle;
 }
 
 .waltaHomeView h2 {
-	margin-top: 1%;
-	margin-bottom: 1%;
+	margin-top: 2mm;
+	margin-bottom: 1mm;
 	font-size: 6mm;
-	font-weight: bold;
-	color: rgba(47,97,204,0.8); 
+	font-family: Boulder;
+	font-weight: normal;
+	color: rgba(47,97,204,1); 
 }
 
 .waltaHomeView h3 {
 	font-size: 4.5mm;
 	font-weight: normal;
 	font-family: Times;
-	margin-top: -0.5em;
-	margin-right: 15mm;
-	margin-bottom: 10mm;
-	margin-left: 42mm;
+	margin-top: -3mm;
+	margin-left: 37mm;
 }
 
 .waltaHomeView .waltaLogo {
 	background-image: url( "logo.svg");
 	background-repeat: no-repeat;
 	background-size: cover;
-	height: 15mm;
-	width: 20mm;
+	height: 14mm;
+	width: 19mm;
 	margin-top: 5mm;
-	margin-left: 7mm;
-	margin-right: 10mm;
+	margin-left: 10mm;
+	margin-right: 5mm;
 	display: inline-block;
 	vertical-align: middle;
 }
@@ -89,48 +94,74 @@ html,body {
 .waltaHomeView .waltaPanel { 
 	-webkit-border-radius: 1em 1em; 
 	background-color:  rgba(47,97,204,0.3); 
-	margin-left: 2%;
-	margin-right: 2%;
-	margin-bottom: 2%;
-	margin-top: 0;
-	padding-top: 2%;
-	width: 95%;
+	margin-left: 2mm;
+	margin-right: 2mm;
+	margin-bottom: 2mm;
+	margin-top: 2mm;
+	padding-top: 1mm;
+	padding-right: 2mm;
+	padding-left: 2mm;
+	padding-bottom: 1mm;
+	min-height: 70px;
 	height: 21%;
 }
 
-.waltaHomeView .waltaPanel p {
-	margin: 0;
-}
-
-.waltaPanel:nth-last-child(-n+2) {
-	width: 47%;
-	margin-left: 0.2%;
-	margin-right: 3%;
-	float: right;
+.waltaHomeView .waltaMenuPanelSecondary {
+	margin-top: 0mm;
+	margin-bottom: 0mm;
+	margin-left: 1mm;
+	margin-right: 1mm;
 	text-align: center;
 }
 
-.waltaPanel:nth-last-child(-n+1) {
-	margin-right: 1%;
+.waltaHomeView .waltaMenuPanelSecondary .waltaPanel {
+	width: 81px;
+	height: 80px;
+	margin-left: 3px;
+	margin-right: 3px;
+	margin-bottom: 3px;
+	margin-top: 4px;
+	vertical-align: middle;
+	text-align: center;
+	display: inline-block;
 }
 
-.waltaMenuIcon {
-	margin-left: 4%;
-	margin-right: 6%;
-	margin-top: 1%;
-	width: 20mm;
-	height: 18mm;
+.waltaHomeView .waltaMenuIcon {
+	margin-left: 0mm;
+	margin-right: 0mm;
+	margin-top: 0mm;
+	width: 92px;
+	height: 92px;
 	float: left;
-	background-color: red;
 }
 
+.waltaSpeedbugLogo { 
+	background-image: url("speedbug.png"); 
+}
 
+.waltaAltKeyLogo { 
+	background-image: url("altkey.png"); 
+}
+
+.waltaBrowseLogo { 
+	background-image: url("browse.png"); 
+}
 
 .waltaHomeView .waltaMenuPanel {
 	position: absolute;
-	top: 26mm;
-	width: 100%;
+	top: 22mm;
+	left: 0;
+	right: 0;
 	bottom: 0;
+}
+
+.waltaHomeView .waltaMenuPanel p {
+	margin-top: 0.05mm;
+}
+
+.waltaHomeView .waltaMenuPanel .waltaMenuPanelSecondary h2 {
+	margin-top: 0.2mm;
+	margin-bottom: 0.05mm;
 }
 
 /* Lay out the questions and media images */
@@ -150,11 +181,11 @@ html,body {
 	position: relative;
 	height: 47.5%; 
 	width: 97.5%;
-	margin-top: 1.25%;
-	margin-bottom: 1.25%;
-	margin-left: 1.25%;
-	margin-right: 1.25%;
-	padding-right: 1%;
+	margin-top: 1.25mm;
+	margin-bottom: 1.25mm;
+	margin-left: 1.25mm;
+	margin-right: 1.25mm;
+	padding-right: 1mm;
 	-webkit-border-radius: 1em 1em; 
 	background-color:  rgba(47,97,204,0.3); 
 }
@@ -177,7 +208,7 @@ html,body {
 
 .waltaImageContainer img {
 	position: absolute;
-	top: 5%; left: 0;
+	top: 5mm; left: 0;
 	width: 90%;
 	height: 90%;
 	
