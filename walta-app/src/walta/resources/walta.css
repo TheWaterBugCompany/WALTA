@@ -15,20 +15,11 @@
 
 /* Set default styles */
 html,body {
-	height: 100%;
-	width: 100%;
 	min-width: 320px;
-  
+	height: 100%;
 	font-family: Tahoma, sans-serif !important;
     font-size: 4mm !important;   
     background-color: white !important;
-
-}
-
-.waltaFullscreen { 
-	position: relative;
-	width: 100%; 
-	height: 100%;  
 }
 
 /* Anchor bar */
@@ -52,6 +43,67 @@ html,body {
 
 /* The home screen */
 
+ @media only screen and (orientation: landscape) {
+  .waltaHomeView p {
+  	margin: 0;
+  }
+  
+  .waltaHomeView h1 {
+  	font-size: 12mm !important;
+  }
+  
+  .waltaHomeView h3 {
+  	font-size: 4.1mm !important;
+  	margin-left: 34px;
+  }
+  
+  .waltaLogo {
+	
+	height: 12mm;
+	width: 15mm;
+	margin-top: 3mm;
+}
+  
+  .waltaMenu { 
+  	width: 31% !important;
+  } 
+  .waltaMenu h2 {
+  	font-size: 4.2mm !important;
+  }
+  
+  .waltaMenu p {
+  	text-align: left !important;
+	font-size: 3.2mm !important;
+  }
+  
+  .waltaMenuIcon {
+    margin-top: 10px !important;
+    margin-bottom: 12px !important;
+  	width: 65px !important;
+	height: 65px !important;
+	background-size: cover;
+  }
+  
+  .waltaSecondary { 
+  	width: 25% !important;
+  	  
+  } 
+  .waltaSecondary h2, .waltaSecondary p {
+	margin-left: 1em;
+  }
+} 
+
+.waltaFullscreen {
+	width: 100%;
+	height: 100%;
+}
+
+.waltaHomeView { 
+	text-align: center;
+	margin-top: 0.05mm;
+	margin-left: auto;;
+}
+
 .waltaHomeView h1 {
 	font-size: 14mm;
 	margin-top: 2mm;
@@ -67,7 +119,12 @@ html,body {
 	font-size: 6mm;
 	font-family: Boulder;
 	font-weight: normal;
+	text-align: left;
 	color: rgba(47,97,204,1); 
+}
+
+.waltaHomeView p {
+	text-align: left;
 }
 
 .waltaHomeView h3 {
@@ -75,58 +132,37 @@ html,body {
 	font-weight: normal;
 	font-family: Times;
 	margin-top: -3mm;
-	margin-left: 37mm;
+	margin-left: 6em;
+	margin-bottom: 0;
 }
 
-.waltaHomeView .waltaLogo {
+
+
+.waltaPanel {
+	display: block;
+	margin: 0;
+}
+
+.waltaHeader {
+	margin-left: auto;
+	margin-right: auto;
+	width: 320px;
+}
+
+.waltaLogo {
 	background-image: url( "logo.svg");
 	background-repeat: no-repeat;
 	background-size: cover;
 	height: 14mm;
 	width: 19mm;
 	margin-top: 5mm;
-	margin-left: 10mm;
+	margin-left: 1mm;
 	margin-right: 5mm;
 	display: inline-block;
 	vertical-align: middle;
 }
 
-.waltaHomeView .waltaPanel { 
-	-webkit-border-radius: 1em 1em; 
-	background-color:  rgba(47,97,204,0.3); 
-	margin-left: 2mm;
-	margin-right: 2mm;
-	margin-bottom: 2mm;
-	margin-top: 2mm;
-	padding-top: 1mm;
-	padding-right: 2mm;
-	padding-left: 2mm;
-	padding-bottom: 1mm;
-	min-height: 70px;
-	height: 21%;
-}
-
-.waltaHomeView .waltaMenuPanelSecondary {
-	margin-top: 0mm;
-	margin-bottom: 0mm;
-	margin-left: 1mm;
-	margin-right: 1mm;
-	text-align: center;
-}
-
-.waltaHomeView .waltaMenuPanelSecondary .waltaPanel {
-	width: 81px;
-	height: 80px;
-	margin-left: 3px;
-	margin-right: 3px;
-	margin-bottom: 3px;
-	margin-top: 4px;
-	vertical-align: middle;
-	text-align: center;
-	display: inline-block;
-}
-
-.waltaHomeView .waltaMenuIcon {
+.waltaMenuIcon {
 	margin-left: 0mm;
 	margin-right: 0mm;
 	margin-top: 0mm;
@@ -147,33 +183,55 @@ html,body {
 	background-image: url("browse.png"); 
 }
 
-.waltaHomeView .waltaMenuPanel {
-	position: absolute;
-	top: 22mm;
-	left: 0;
-	right: 0;
-	bottom: 0;
+.waltaMenu { 
+	clear: left;
+	width: 93%;
+	height: 100px;
+	-webkit-border-radius: 3mm 3mm; 
+	background-color:  rgba(47,97,204,0.3); 
+	margin-bottom: 1%;
+	margin-top: 1%;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-left: 2px;
+	padding-bottom: 2px;
+	vertical-align: middle;
+	display: inline-block;
 }
 
-.waltaHomeView .waltaMenuPanel p {
-	margin-top: 0.05mm;
+
+.waltaSecondary {
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	margin-top: 4px;
+	display: inline-block;
+	width: 25%;
 }
 
-.waltaHomeView .waltaMenuPanel .waltaMenuPanelSecondary h2 {
+.waltaSecondary h2 {
 	margin-top: 0.2mm;
 	margin-bottom: 0.05mm;
+	text-align: center;
 }
+
+
+
+
 
 /* Lay out the questions and media images */
 .waltaKey h4 { 
 	margin-top: 0.2em;
+	margin-bottom: 0.2em;
 	font-size: 4mm; 
 	text-align: center;
 }
 
 .waltaQuestionContainer {
 	position: absolute;
-	left: 0; right: 0; top: 2em; bottom: 2em;
+	left: 0; right: 0; top: 10mm; bottom: 2.1em;
 }
 
 .waltaQuestion { 
