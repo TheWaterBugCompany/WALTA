@@ -16,11 +16,11 @@ define( [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lan
 			
 			buildRendering: function() {
 				this.inherited(arguments);
-				var home = domConstruct.create("div", { "class": "waltaHome" }, this.containerNode );
+				var home = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaHome" }, this.containerNode );
 				domConstruct.create("h1", { innerHTML: this.title}, this.containerNode );	
 				
-				var info = domConstruct.create("div", { "class": "waltaInfo" }, this.containerNode );
-				var settings = domConstruct.create("div", { "class": "waltaSettings" }, this.containerNode );
+				var info = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaInfo" }, this.containerNode );
+				var settings = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaSettings" }, this.containerNode );
 				
 				
 				on( home, "click", lang.hitch( this, function(e) { this.onHome(); } ) );

@@ -20,29 +20,52 @@ html,body {
 	font-family: Tahoma, sans-serif !important;
     font-size: 4mm !important;   
     background-color: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Anchor bar */
 .waltaAnchorBar {
 	width: 100%;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#2f61cc), to(#ffffff) );
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#2f61cc), to(#7797de) );
+	color: white;
 	text-align: center;
 }
 
-.waltaHome     { float: left; width: 1em; height: 1em; }
-.waltaSettings { float: right; width: 1em; height: 1em; }
-.waltaInfo     { float: right; width: 1em; height: 1em; }
+.waltaAnchorBarIcon {
+	width: 20px; 
+	height: 20px; 
+	margin-top: 2px;
+	margin-left: 2px;
+	background-size: cover;
+}
+
+.waltaHome     { 
+	float: left; 
+	background-image: url("home.png"); 
+}
+
+.waltaSettings { 
+	float: right; 
+	background-image: url("settings.png");
+}
+
+.waltaInfo { 
+	float: right; 
+	background-image: url("info.png");
+}
+
 .waltaAnchorBar h1 {
 	font-size: 4mm;
-	font-weight: bold;
-	font-faimly: 
+	font-weight: normal;
+	font-faimly: Tahoma;
 	color: white;
-	display: inline;
-	height: 1em;
+	display: inline-block;
+	margin-top: 4px;
+	margin-bottom: 4px;
 }
 
 /* The home screen */
-
  @media only screen and (orientation: landscape) {
   .waltaHomeView p {
   	margin: 0;
