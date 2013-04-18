@@ -109,8 +109,8 @@ html,body {
   
   .waltaSecondary { 
   	width: 25% !important;
-  	  
-  } 
+  }
+  
   .waltaSecondary h2, .waltaSecondary p {
 	margin-left: 1em;
   }
@@ -159,11 +159,18 @@ html,body {
 	margin-bottom: 0;
 }
 
-
-
 .waltaPanel {
 	display: block;
-	margin: 0;
+	-webkit-border-radius: 3mm 3mm; 
+	background-color:  rgba(47,97,204,0.3); 
+	margin-bottom: 1%;
+	margin-top: 1%;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-left: 2px;
+	padding-bottom: 2px;
 }
 
 .waltaHeader {
@@ -210,16 +217,6 @@ html,body {
 	clear: left;
 	width: 93%;
 	height: 100px;
-	-webkit-border-radius: 3mm 3mm; 
-	background-color:  rgba(47,97,204,0.3); 
-	margin-bottom: 1%;
-	margin-top: 1%;
-	margin-left: 2px;
-	margin-right: 2px;
-	padding-top: 2px;
-	padding-right: 2px;
-	padding-left: 2px;
-	padding-bottom: 2px;
 	vertical-align: middle;
 	display: inline-block;
 }
@@ -240,15 +237,34 @@ html,body {
 	text-align: center;
 }
 
-
-
-
-
 /* Lay out the questions and media images */
+
+
+.waltaBackButton { 
+	font-size: 3.5mm;
+	font-family: Tahoma, sans-serif;
+	background-color: #2f61cc;
+	background-size: 48px;
+	background-position: -8px -14px;
+	background-repeat: no-repeat;
+	background-image: url("back.png");
+	border-color: white;
+	padding-top: 0; 
+	padding-bottom: 0;
+	padding-left: 32px; 
+	padding-right: 6px;
+	position: absolute;
+	bottom: 2px;
+	right: 4px;
+	height: 6mm;
+	margin: 0;
+	line-height: 1em;
+}
+
 .waltaKey h4 { 
-	margin-top: 0.2em;
-	margin-bottom: 0.2em;
-	font-size: 4mm; 
+	margin-top: 2px;
+	font-size: 3.5mm;
+	font-weight: normal; 
 	text-align: center;
 }
 
@@ -258,65 +274,148 @@ html,body {
 }
 
 .waltaQuestion { 
-	display: table;	
 	position: relative;
-	height: 47.5%; 
-	width: 97.5%;
-	margin-top: 1.25mm;
-	margin-bottom: 1.25mm;
-	margin-left: 1.25mm;
-	margin-right: 1.25mm;
-	padding-right: 1mm;
+	vertical-align: middle;
+	height: 45%; 
+	width: 96.7%;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	margin-left: 4px;
+	margin-right: 4px;
+	padding-right: 4px;
+	padding-bottom: 4px;
+	padding-top: 4px;
+	padding-left: 4px;
 	-webkit-border-radius: 1em 1em; 
 	background-color:  rgba(47,97,204,0.3); 
 }
 
 .waltaQuestion p { 
-	display: table-cell;
-	vertical-align: middle;
+	display: inline-block;
 	padding-left: 1em;
 	padding-right: 1em;
 	text-align: left;
+	font-size: 5mm;
+	width: 48%;
+	margin: 0;
+}
+
+.waltaQuestion .waltaImageContainer {
+	display: inline-block;
+	overflow: hidden;
+	position: relative;
+	margin-right: 16px;
+	padding-top: 0;
+	padding-bottom: 0;
 }
 
 .waltaImageContainer {
-	display: table-cell;
-	position: relative;
-	vertical-align: middle;
-	width: 40%;
+	display: inline-block;
 	overflow: hidden;
+	position: relative;
 }
 
 .waltaImageContainer img {
+	width: 180px;
+	height: 110px;
+}
+.waltaImageContainer .waltaZoom {
 	position: absolute;
-	top: 5mm; left: 0;
-	width: 90%;
-	height: 90%;
-	
+	right: -8px;
+	bottom: -4px;
+	width: 42px;
+	height: 42px;
+	background-size: 48px;
+	background-position: center;
+	background-image: url("zoom.png");
 }
 
 .waltaQuestion:after {
 	position: absolute;
 	content: ">";
-	font-size: 2em;
+	font-size: 6mm;
 	right: 0.1em;
 	top: 50%;
 	margin-top: -0.5em;
 }
 
 /* Layout the taxon summary */
-.waltaTaxon { height: 100%; width: 100%; display: table; }
-.waltaTaxon strong { display: table-cell; text-align: center; vertical-align: middle; font-size: 8mm; }
+.waltaTaxon { 
+}
 
-.waltaBackButton { 
+.waltaTaxon h5 {
+	color: #2f61cc;
+	margin-left: 4px;
+	margin-top: 2px;
+	margin-right: 4px;
+	margin-bottom: 2px;
+	padding: 0;
 	font-size: 4mm;
-	font-family: Tahoma, sans-serif;
-	background-color: #2f61cc;
-	background-image: none;
-	border-color: white;
-	padding-top: 0; padding-bottom: 2em;
-	padding-left: 2em; padding-right: 0.5em;
-	position: absolute;
-	bottom: 0.2em;
-	right: 0.3em;
+	font-weight: normal;
+}
+.waltaTaxon .waltaPanel {
+	width: 52%;
+	height: 75%;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-right: 12px;
+	float: left;
+}
+.waltaTaxon .waltaPanel p {
+	font-size: 2.5mm;
+}
+
+.waltaTaxon .waltaPanel span {
+	margin-left: 4px;
+	
+}
+
+.waltaTaxon .waltaImageContainer {
+	margin-top: 5px;
+}
+
+.waltaGoBack {
+	background-image: url("goback.png");
+	padding: 0;
+}
+
+.waltaGallery {
+	background-image: url("gallery.png");
+}
+
+.waltaVideo {
+	background-image: url("video.png");
+}
+
+.waltaAudio {
+	background-image: url("audio.png");
+}
+
+.waltaNotes {
+	background-image: url("notes.png");
+}
+
+.waltaEmail {
+	background-image: url("email.png");
+}
+
+.waltaFacebook {
+	background-image: url("facebook.png");
+}
+
+.waltaTwitter {
+	background-image: url("twitter.png");
+}
+
+.waltaActionIcon {
+	width: 48px;
+	height: 62px;
+	font-size: 2mm;
+	line-height: 1.1em;
+	background-color: transparent;
+	background-size: 48px;
+	background-repeat: no-repeat;
+	background-position: 2px 0px;
+	border: none;
+	-webkit-box-align: end;
 }
