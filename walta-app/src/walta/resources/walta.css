@@ -177,6 +177,7 @@ html,body {
 	margin-left: auto;
 	margin-right: auto;
 	width: 320px;
+	background: none;
 }
 
 .waltaLogo {
@@ -275,50 +276,52 @@ html,body {
 
 .waltaQuestion { 
 	position: relative;
-	vertical-align: middle;
-	height: 45%; 
+	height: 46%; 
 	width: 96.7%;
+	display: table;
+	vertical-align: middle;
 	margin-top: 4px;
 	margin-bottom: 4px;
 	margin-left: 4px;
 	margin-right: 4px;
 	padding-right: 4px;
-	padding-bottom: 4px;
-	padding-top: 4px;
 	padding-left: 4px;
 	-webkit-border-radius: 1em 1em; 
 	background-color:  rgba(47,97,204,0.3); 
 }
 
+.waltaQuestion > * {
+	display: table-cell !important;
+	vertical-align: middle;
+}
+
 .waltaQuestion p { 
-	display: inline-block;
 	padding-left: 1em;
 	padding-right: 1em;
 	text-align: left;
-	font-size: 5mm;
-	width: 48%;
-	margin: 0;
+	font-size: 4mm;
+	line-height: 1.2em;
 }
 
 .waltaQuestion .waltaImageContainer {
-	display: inline-block;
 	overflow: hidden;
 	position: relative;
-	margin-right: 16px;
+	padding-right: 16px;
 	padding-top: 0;
 	padding-bottom: 0;
 }
 
 .waltaImageContainer {
-	display: inline-block;
+	display: block;
 	overflow: hidden;
-	position: relative;
 }
 
-.waltaImageContainer img {
+.waltaImageInner, .waltaImageInner img {
+	position: relative;
 	width: 180px;
 	height: 110px;
 }
+
 .waltaImageContainer .waltaZoom {
 	position: absolute;
 	right: -8px;

@@ -23,7 +23,6 @@ define( [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lan
 					this.addChild( new MediaView( { mediaUrls: this.question.mediaUrls } ) );
 				}
 				
-				
 				// connect events
 				on( this.containerNode, "click", lang.hitch( this, function(e) { this.onClick(); } ) );
 				
