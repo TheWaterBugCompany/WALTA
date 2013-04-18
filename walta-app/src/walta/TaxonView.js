@@ -35,14 +35,14 @@ define( [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojo/dom-cons
 			
 			this._buildButton( "Go back and try again", "waltaGoBack", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Photo gallery", "waltaGallery", lang.hitch( this, function() { this.onBack(); } ) );
-			
+			/*
 			this._buildButton( "Watch video", "waltaVideo", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Listen to audio", "waltaAudio", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Nerd Notes", "waltaNotes", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Email Info", "waltaEmail", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Post to facebook", "waltaFacebook", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Post to Twitter", "waltaTwitter", lang.hitch( this, function() { this.onBack(); } ) );
-			
+			*/
 		},
 		
 		_buildNamedField: function( parent, label, text) {		
