@@ -340,6 +340,67 @@ html,body {
 	right: 0.1em;
 	top: 50%;
 	margin-top: -0.5em;
+
+}
+
+.waltaCarousel {
+
+	height: 100%;
+}
+
+.waltaCarousel .mblCarouselPages {
+	position: fixed;
+	top: 25px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba( 0, 0, 0, 0.8 );
+	padding-top: 8px;
+	z-index: 50;
+}
+
+.waltaCarousel .mblCarouselHeaderBar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 51;
+	height: 20px;
+	width: 100%;
+	background: none;
+}
+
+.waltaZoomedImage {
+	height: 100%;
+	
+}
+
+.waltaZoomedImage img {
+	border: solid 2px black;
+	height: 94% !important;
+	width: 94% !important;
+	margin-left: 3% !important;
+	margin-right: 3% !important;
+}
+
+.waltaCarousel .waltaCloseButton {
+	background-image: url("close.png");
+	background-size: cover;
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	top: 12px;
+	right: 6%;
+	opacity: 0.8;
+}
+
+.waltaCarousel .mblPageIndicator {
+	float: none;
+}
+
+.waltaCarousel .mblPageIndicatorContainer {
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* Layout the taxon summary */
