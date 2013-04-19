@@ -31,8 +31,8 @@ the key grows, this may become impractical.
 						Nothing, very distinctive.  We have left crayfish and Yabbies grouped together 
 						because they mostly turn up as juveniles in samples and are difficult to separate when young.
 					</confusedWith>
-					<mediaRef url="parastacide_01.jpg"/>
-					<mediaRef url="parastacide_02.jpg"/>	
+					<mediaRef url="parastacidae_01.jpg"/>
+					<mediaRef url="parastacidae_02.jpg"/>	
 				</taxon>
 				
 				<taxon id="hymenosomatidae" name="Hymenosomatidae" commonName="five cent crab, false spider crab" size="15" signalScore="3">
@@ -154,7 +154,7 @@ the key grows, this may become impractical.
 										</question>
 										<question num="2">
 											<text>Animal slow moving, walks (below right), relatively robust looking animal, bovine.</text>
-											<mediaRef url="phreatoicidae.jpg"/>
+											<mediaRef url="phreatoicidae_01.jpg"/>
 										</question>
 										<outcome for="1"><taxonLink ref="amphipoda"/></outcome>
 										<outcome for="2"><taxonLink ref="phreatoicidae"/></outcome>

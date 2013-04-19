@@ -1,3 +1,0 @@
-//>>built
-define("dojo/_base/window",["./kernel","./lang","../sniff"],function(a,h){var c={global:a.global,doc:this.document||null,body:function(b){b=b||a.doc;return b.body||b.getElementsByTagName("body")[0]},setContext:function(b,d){a.global=c.global=b;a.doc=c.doc=d},withGlobal:function(b,d,e,f){var g=a.global;try{return a.global=c.global=b,c.withDoc.call(null,b.document,d,e,f)}finally{a.global=c.global=g}},withDoc:function(b,d,e,f){var g=c.doc;try{return a.doc=c.doc=b,a.isQuirks=!1,e&&"string"==typeof d&&
-(d=e[d]),d.apply(e,f||[])}finally{a.doc=c.doc=g,a.isQuirks=!1,a.isIE=void 0}}};h.mixin(a,c);return c});

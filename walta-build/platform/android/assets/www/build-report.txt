@@ -1,4 +1,4 @@
-Build started: Fri Apr 12 2013 23:29:22 GMT+1000 (EST)
+Build started: Fri Apr 19 2013 11:58:05 GMT+1000 (EST)
 Build application version: 1.7.0dev (23930)
 Messages:
 info(100) Assumed module uses legacy loader API.
@@ -2970,6 +2970,7 @@ info(102) Optimizing module
 	module: walta/Question
 	module: walta/HomeView
 	module: walta/KeyNode
+	module: walta/MediaView
 	module: walta/AppController
 	module: walta/KeyNodeView
 	module: walta/AnchorBar
@@ -3691,7 +3692,7 @@ info(107) Package Version:
 	package: dojox; version: 1.8.3
 	package: dijit; version: 1.8.3
 	package: dojo; version: 1.8.3
-	package: walta; version: 0.01
+	package: walta; version: 0.0.2
 warn(216) dojo/has plugin resource could not be resolved during build-time.
 	plugin resource id: dojo-parser?:dojo/_base/window; reference module id: dojox/mvc/parserExtension
 	plugin resource id: dojo-mobile-parser?:dojo/parser; reference module id: dojox/mvc/parserExtension
@@ -3751,9 +3752,12 @@ walta/walta:
 	dojox/mobile/Container
 	dijit/_Contained
 	walta/TaxonView
+	dojox/mobile/scrollable
 	dijit/_Container
 	walta/XmlDocument
 	dojo/topic
+	dojox/mobile/SwapView
+	dojox/mobile/PageIndicator
 	dojo/_base/connect
 	dojo/_base/unload
 	dojo/_base/declare
@@ -3768,18 +3772,25 @@ walta/walta:
 	dojox/mobile/viewRegistry
 	dojox/mobile/deviceTheme
 	dojo/dom-prop
+	walta/MediaView
 	dojo/keys
+	dojox/mobile/Carousel
 	dijit/registry
+	dojox/mobile/ContentPane
 	dijit/Destroyable
 	dojox/mobile/View
+	dojox/mobile/CarouselItem
 	dojo/mouse
 	walta/walta
 	dijit/a11y
+	dojox/mobile/_ExecScriptMixin
 	walta/Key
 	walta/Taxon
+	dojox/mobile/_ContentPaneMixin
 	walta/QuestionView
 	walta/AppController
 	dojox/mobile/Button
+	dojox/mobile/_ScrollableMixin
 	dojo/dom-class
 	dojo/dom-attr
 	dojox/mobile/Pane
@@ -3791,6 +3802,7 @@ walta/walta:
 	walta/Question
 	dojo/ready
 	dojox/mobile/transition
+	dojox/mobile/lazyLoadUtils
 	walta/KeyNodeView
 	dojo/window
 	dojox/mobile/uacss
@@ -3801,4 +3813,4 @@ walta/walta:
 Process finished normally
 	errors: 0
 	warnings: 12
-	build time: 50.058 seconds
+	build time: 48.97 seconds

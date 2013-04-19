@@ -41,7 +41,7 @@ define( "walta/KeyNodeView", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/as
 				
 				this.addChild( questions );
 				
-				var b = new Button( { label: "No match? Start over", "class": "waltaBackButton",  duration: 500 } );
+				var b = new Button( { label: "No match? Go back", "class": "waltaBackButton",  duration: 500 } );
 				aspect.after( b, "onClick", lang.hitch( this, function() { this.onBack(); } ) );
 				this.addChild( b );
 				

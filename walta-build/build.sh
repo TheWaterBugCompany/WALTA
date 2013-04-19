@@ -19,6 +19,8 @@ TOOLSDIR="$SRCDIR/util/buildscripts"
 # Destination directory for built code
 DISTDIR="$BASEDIR/walta-build/platform/android/assets/www"
 
+PGDISTDIR="$BASEDIR/walta-build/phonegapbuild/"
+
 # Main application package build configuration
 PROFILE="$BASEDIR/walta-app/profiles/walta.profile.js"
 
@@ -48,6 +50,8 @@ cp $SRCDIR/config.xml $DISTDIR
 # copy across data sets
 cp -r $TAXONDIR $DISTDIR/taxonomy
 cp $SRCDIR/cordova*.js $DISTDIR
+cp $SRCDIR/icon.png $DISTDIR
+
 # remove files not needed from Dojo build
 cd $DISTDIR
 find dojo ! -name dojo ! -name dojo.js -delete
@@ -55,5 +59,10 @@ find dijit ! -name dijit ! -name dijit.js -delete
 find dojox ! -path "dojox/dojox.js" -delete
 rm -rf $DISTDIR/util
 
+# update the phoengp build repo
+rm -rf $PGDISTDIR/www
+
+cp -r $DISTDIR $PGDISTDIR/www
+rm $PGDISTDIR/www/cordova-*.js
 
 echo "Build complete"

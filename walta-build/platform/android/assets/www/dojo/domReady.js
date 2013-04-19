@@ -1,3 +1,0 @@
-//>>built
-define("dojo/domReady",["./has"],function(){function f(b){c?b(a):d.push(b)}var k=this,a=document,g={loaded:1,complete:1},h="string"!=typeof a.readyState,c=!!g[a.readyState];if(h)a.readyState="loading";if(!c){var d=[],e=[],i=function(b){b=b||k.event;if(!(c||"readystatechange"==b.type&&!g[a.readyState])){c=1;if(h)a.readyState="complete";for(;d.length;)d.shift()(a)}},j=function(b,a){b.addEventListener(a,i,!1);d.push(function(){b.removeEventListener(a,i,!1)})};j(a,"DOMContentLoaded");j(k,"load");"onreadystatechange"in
-a?j(a,"readystatechange"):h||e.push(function(){return g[a.readyState]});if(e.length){var l=function(){if(!c){for(var a=e.length;a--;)if(e[a]()){i("poller");return}setTimeout(l,30)}};l()}}f.load=function(a,c,d){f(d)};return f});

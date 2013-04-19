@@ -4,8 +4,8 @@
  * Represents a single question
  *  
  */
-define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container" ], 
-	function( declare, on, domConstruct, lang, Container ) {
+define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container", "walta/MediaView" ], 
+	function( declare, on, domConstruct, lang, Container, MediaView ) {
 		return declare( "walta.QuestionView", [Container], {
 			
 			// public
@@ -19,10 +19,8 @@ define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-const
 				this.inherited(arguments);
 				domConstruct.create("p", { innerHTML: this.question.text }, this.containerNode );
 				
-				// put the first image in the question itself
 				if ( this.question.mediaUrls[0] ) {
-					var cell = domConstruct.create("div", { "class":"waltaImageContainer" }, this.containerNode );
-					domConstruct.create("img", { src: this.question.mediaUrls[0] }, cell );
+					this.addChild( new MediaView( { mediaUrls: this.question.mediaUrls } ) );
 				}
 				
 				// connect events

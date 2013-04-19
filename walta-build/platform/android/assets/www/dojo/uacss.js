@@ -1,3 +1,0 @@
-//>>built
-define("dojo/uacss",["./dom-geometry","./_base/lang","./ready","./sniff","./_base/window"],function(g,h,i,a,e){var d=e.doc.documentElement,b=a("opera"),e=g.boxModel.replace(/-/,""),b={dj_quirks:!1,dj_opera:b,dj_khtml:a("khtml"),dj_webkit:!0,dj_safari:a("safari"),dj_chrome:a("chrome"),dj_gecko:void 0};b["dj_"+e]=!0;var c="",f;for(f in b)b[f]&&(c+=f+" ");d.className=h.trim(d.className+" "+c);i(90,function(){if(!g.isBodyLtr()){var a="dj_rtl dijitRtl "+c.replace(/ /g,"-rtl ");d.className=h.trim(d.className+
-" "+a+"dj_rtl dijitRtl "+c.replace(/ /g,"-rtl "))}});return a});

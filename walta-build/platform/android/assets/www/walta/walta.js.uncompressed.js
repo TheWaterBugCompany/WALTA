@@ -434,6 +434,144 @@ define("dijit/a11y", [
 });
 
 },
+'dojox/mobile/_ScrollableMixin':function(){
+define("dojox/mobile/_ScrollableMixin", [
+	"dojo/_base/kernel",
+	"dojo/_base/config",
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/window",
+	"dojo/dom",
+	"dojo/dom-class",
+	"dijit/registry",	// registry.byNode
+	"./scrollable"
+], function(dojo, config, declare, lang, win, dom, domClass, registry, Scrollable){
+	// module:
+	//		dojox/mobile/_ScrollableMixin
+
+	var cls = declare("dojox.mobile._ScrollableMixin", Scrollable, {
+		// summary:
+		//		Mixin for widgets to have a touch scrolling capability.
+	
+		// fixedHeader: String
+		//		Id of the fixed header.
+		fixedHeader: "",
+
+		// fixedFooter: String
+		//		Id of the fixed footer.
+		fixedFooter: "",
+
+		// scrollableParams: Object
+		//		Parameters for dojox/mobile/scrollable.init().
+		scrollableParams: null,
+
+		// allowNestedScrolls: Boolean
+		//		Flag to allow scrolling in nested containers, e.g. to allow ScrollableView in a SwapView.
+		allowNestedScrolls: true,
+
+		// appBars: Boolean
+		//		Enables the search for application-specific bars (header or footer).
+		appBars: true, 
+
+		constructor: function(){
+			// summary:
+			//		Creates a new instance of the class.
+			// tags:
+			//		private
+			this.scrollableParams = {};
+		},
+
+		destroy: function(){
+			this.cleanup();
+			this.inherited(arguments);
+		},
+
+		startup: function(){
+			if(this._started){ return; }
+			this.findAppBars();
+			var node, params = this.scrollableParams;
+			if(this.fixedHeader){
+				node = dom.byId(this.fixedHeader);
+				if(node.parentNode == this.domNode){ // local footer
+					this.isLocalHeader = true;
+				}
+				params.fixedHeaderHeight = node.offsetHeight;
+			}
+			if(this.fixedFooter){
+				node = dom.byId(this.fixedFooter);
+				if(node.parentNode == this.domNode){ // local footer
+					this.isLocalFooter = true;
+					node.style.bottom = "0px";
+				}
+				params.fixedFooterHeight = node.offsetHeight;
+			}
+			this.scrollType = this.scrollType || config["mblScrollableScrollType"] || 0;
+			this.init(params);
+			if(this.allowNestedScrolls){
+				for(var p = this.getParent(); p; p = p.getParent()){
+					if(p && p.scrollableParams){
+						this.dirLock = true;
+						p.dirLock = true;
+						break;
+					}
+				}
+			}
+			// subscribe to afterResizeAll to scroll the focused input field into view
+			// so as not to break layout on orientation changes while keyboard is shown (#14991)
+			this._resizeHandle = this.subscribe("/dojox/mobile/afterResizeAll", function(){
+				if(this.domNode.style.display === 'none'){ return; }
+				var elem = win.doc.activeElement;
+				if(this.isFormElement(elem) && dom.isDescendant(elem, this.containerNode)){
+					this.scrollIntoView(elem);
+				}
+			});
+			this.inherited(arguments);
+		},
+
+		findAppBars: function(){
+			// summary:
+			//		Search for application-specific header or footer.
+			if(!this.appBars){ return; }
+			var i, len, c;
+			for(i = 0, len = win.body().childNodes.length; i < len; i++){
+				c = win.body().childNodes[i];
+				this.checkFixedBar(c, false);
+			}
+			if(this.domNode.parentNode){
+				for(i = 0, len = this.domNode.parentNode.childNodes.length; i < len; i++){
+					c = this.domNode.parentNode.childNodes[i];
+					this.checkFixedBar(c, false);
+				}
+			}
+			this.fixedFooterHeight = this.fixedFooter ? this.fixedFooter.offsetHeight : 0;
+		},
+
+		checkFixedBar: function(/*DomNode*/node, /*Boolean*/local){
+			// summary:
+			//		Checks if the given node is a fixed bar or not.
+			if(node.nodeType === 1){
+				var fixed = node.getAttribute("fixed")
+					|| (registry.byNode(node) && registry.byNode(node).fixed);
+				if(fixed === "top"){
+					domClass.add(node, "mblFixedHeaderBar");
+					if(local){
+						node.style.top = "0px";
+						this.fixedHeader = node;
+					}
+					return fixed;
+				}else if(fixed === "bottom"){
+					domClass.add(node, "mblFixedBottomBar");
+					this.fixedFooter = node;
+					return fixed;
+				}
+			}
+			return null;
+		}
+	});
+	return cls;
+});
+
+},
 'dojox/mobile/viewRegistry':function(){
 define("dojox/mobile/viewRegistry", [
 	"dojo/_base/array",
@@ -713,6 +851,599 @@ define("dojox/mobile/TransitionEvent", [
 		}
 	});
 });
+
+},
+'dojox/mobile/Carousel':function(){
+define("dojox/mobile/Carousel", [
+	"dojo/_base/array",
+	"dojo/_base/connect",
+	"dojo/_base/declare",
+	"dojo/_base/event",
+	"dojo/_base/sniff",
+	"dojo/dom-class",
+	"dojo/dom-construct",
+	"dojo/dom-style",
+	"dijit/registry",
+	"dijit/_Contained",
+	"dijit/_Container",
+	"dijit/_WidgetBase",
+	"./lazyLoadUtils",
+	"./CarouselItem",
+	"./PageIndicator",
+	"./SwapView",
+	"require"
+], function(array, connect, declare, event, has, domClass, domConstruct, domStyle, registry, Contained, Container, WidgetBase, lazyLoadUtils, CarouselItem, PageIndicator, SwapView, require){
+
+	// module:
+	//		dojox/mobile/Carousel
+
+	return declare("dojox.mobile.Carousel", [WidgetBase, Container, Contained], {
+		// summary:
+		//		A carousel widget that manages a list of images.
+		// description:
+		//		The carousel widget manages a list of images that can be
+		//		displayed horizontally, and allows the user to scroll through
+		//		the list and select a single item.
+		//
+		//		This widget itself has no data store support, but there are two
+		//		subclasses, dojox/mobile/DataCarousel and dojox/mobile/StoreCarousel,
+		//		available for generating the contents from a data store.
+		//		To feed data into a Carousel through a dojo/data, use DataCarousel.
+		//		To feed data into a Carousel through a dojo/store, use StoreCarousel.
+		//
+		//		The Carousel widget loads and instantiates its item contents in
+		//		a lazy manner. For example, if the number of visible items
+		//		(see the property numVisible) is 2, the widget creates 4 items, 2 for the
+		//		initial pane and 2 for the next page, at startup time. If you
+		//		swipe the page to open the second page, the widget creates 2 more
+		//		items for the third page. If the item to create is a dojo widget,
+		//		its module is dynamically loaded automatically before instantiation.
+
+		// numVisible: Number
+		//		The number of visible items.
+		numVisible: 2,
+
+		// itemWidth: Number
+		//		The number of visible items (=numVisible) is determined by
+		//		(carousel_width / itemWidth).
+		//		If itemWidth is specified, numVisible is automatically calculated.
+		//		If resize() is called, numVisible is recalculated and the layout
+		//		is changed accordingly.
+		itemWidth: 0,
+
+		// title: String
+		//		A title of the carousel to be displayed on the title bar.
+		title: "",
+
+		// pageIndicator: Boolean
+		//		If true, a page indicator, a series of small dots that indicate
+		//		the current page, is displayed on the title bar.
+		pageIndicator: true,
+
+		// navButton: Boolean
+		//		If true, navigation buttons are displyed on the title bar.
+		navButton: false,
+
+		// height: String
+		//		Explicitly specified height of the widget (ex. "300px"). If
+		//		"inherit" is specified, the height is inherited from its offset
+		//		parent.
+		height: "",
+
+		// selectable: Boolean
+		//		If true, an item can be selected by clicking it.
+		selectable: true,
+
+		/* internal properties */	
+		
+		// baseClass: String
+		//		The name of the CSS class of this widget.
+		baseClass: "mblCarousel",
+
+		buildRendering: function(){
+			this.containerNode = domConstruct.create("div", {className: "mblCarouselPages"});
+			this.inherited(arguments);
+			if(this.srcNodeRef){
+				// reparent
+				for(var i = 0, len = this.srcNodeRef.childNodes.length; i < len; i++){
+					this.containerNode.appendChild(this.srcNodeRef.firstChild);
+				}
+			}
+
+			this.headerNode = domConstruct.create("div", {className: "mblCarouselHeaderBar"}, this.domNode);
+
+			if(this.navButton){
+				this.btnContainerNode = domConstruct.create("div", {
+					className: "mblCarouselBtnContainer"
+				}, this.headerNode);
+				domStyle.set(this.btnContainerNode, "float", "right"); // workaround for webkit rendering problem
+				this.prevBtnNode = domConstruct.create("button", {
+					className: "mblCarouselBtn",
+					title: "Previous",
+					innerHTML: "&lt;"
+				}, this.btnContainerNode);
+				this.nextBtnNode = domConstruct.create("button", {
+					className: "mblCarouselBtn",
+					title: "Next",
+					innerHTML: "&gt;"
+				}, this.btnContainerNode);
+				this._prevHandle = this.connect(this.prevBtnNode, "onclick", "onPrevBtnClick");
+				this._nextHandle = this.connect(this.nextBtnNode, "onclick", "onNextBtnClick");
+			}
+
+			if(this.pageIndicator){
+				if(!this.title){
+					this.title = "&nbsp;";
+				}
+				this.piw = new PageIndicator();
+				domStyle.set(this.piw, "float", "right"); // workaround for webkit rendering problem
+				this.headerNode.appendChild(this.piw.domNode);
+			}
+
+			this.titleNode = domConstruct.create("div", {
+				className: "mblCarouselTitle"
+			}, this.headerNode);
+
+			this.domNode.appendChild(this.containerNode);
+			this.subscribe("/dojox/mobile/viewChanged", "handleViewChanged");
+			this._clickHandle = this.connect(this.domNode, "onclick", "_onClick");
+			this._keydownHandle = this.connect(this.domNode, "onkeydown", "_onClick");
+			this._dragstartHandle = this.connect(this.domNode, "ondragstart", event.stop);
+			this.selectedItemIndex = -1;
+			this.items = [];
+		},
+
+		startup: function(){
+			if(this._started){ return; }
+
+			var h;
+			if(this.height === "inherit"){
+				if(this.domNode.offsetParent){
+					h = this.domNode.offsetParent.offsetHeight + "px";
+				}
+			}else if(this.height){
+				h = this.height;
+			}
+			if(h){
+				this.domNode.style.height = h;
+			}
+
+			if(this.store){
+				if(!this.setStore){
+					throw new Error("Use StoreCarousel or DataCarousel instead of Carousel.");
+				}
+				var store = this.store;
+				this.store = null;
+				this.setStore(store, this.query, this.queryOptions);
+			}else{
+				this.resizeItems();
+			}
+			this.inherited(arguments);
+
+			this.currentView = array.filter(this.getChildren(), function(view){
+				return view.isVisible();
+			})[0];
+		},
+
+		resizeItems: function(){
+			// summary:
+			//		Resizes the child items of the carousel.
+			var idx = 0;
+			var h = this.domNode.offsetHeight - (this.headerNode ? this.headerNode.offsetHeight : 0);
+			var m =  undefined  ? 5 / this.numVisible-1 : 5 / this.numVisible;
+			array.forEach(this.getChildren(), function(view){
+				if(!(view instanceof SwapView)){ return; }
+				if(!(view.lazy || view.domNode.getAttribute("lazy"))){
+					view._instantiated = true;
+				}
+				var ch = view.containerNode.childNodes;
+				for(var i = 0, len = ch.length; i < len; i++){
+					var node = ch[i];
+					if(node.nodeType !== 1){ continue; }
+					var item = this.items[idx] || {};
+					domStyle.set(node, {
+						width: item.width || (90 / this.numVisible + "%"),
+						height: item.height || h + "px",
+						margin: "0 " + (item.margin || m + "%")
+					});
+					domClass.add(node, "mblCarouselSlot");
+					idx++;
+				}
+			}, this);
+
+			if(this.piw){
+				this.piw.refId = this.containerNode.firstChild;
+				this.piw.reset();
+			}
+		},
+
+		resize: function(){
+			if(!this.itemWidth){ return; }
+			var num = Math.floor(this.domNode.offsetWidth / this.itemWidth);
+			if(num === this.numVisible){ return; }
+			this.selectedItemIndex = this.getIndexByItemWidget(this.selectedItem);
+			this.numVisible = num;
+			if(this.items.length > 0){
+				this.onComplete(this.items);
+				this.select(this.selectedItemIndex);
+			}
+		},
+
+		fillPages: function(){
+			array.forEach(this.getChildren(), function(child, i){
+				var s = "";
+				for(var j = 0; j < this.numVisible; j++){
+					var type, props = "", mixins;
+					var idx = i * this.numVisible + j;
+					var item = {};
+					if(idx < this.items.length){
+						item = this.items[idx];
+						type = this.store.getValue(item, "type");
+						if(type){
+							props = this.store.getValue(item, "props");
+							mixins = this.store.getValue(item, "mixins");
+						}else{
+							type = "dojox.mobile.CarouselItem";
+							array.forEach(["alt", "src", "headerText", "footerText"], function(p){
+								var v = this.store.getValue(item, p);
+								if(v !== undefined){
+									if(props){ props += ','; }
+									props += p + ':"' + v + '"';
+								}
+							}, this);
+						}
+					}else{
+						type = "dojox.mobile.CarouselItem";
+						props = 'src:"' + require.toUrl("dojo/resources/blank.gif") + '"' +
+							', className:"mblCarouselItemBlank"';
+					}
+
+					s += '<div data-dojo-type="' + type + '"';
+					if(props){
+						s += ' data-dojo-props=\'' + props + '\'';
+					}
+					if(mixins){
+						s += ' data-dojo-mixins=\'' + mixins + '\'';
+					}
+					s += '></div>';
+				}
+				child.containerNode.innerHTML = s;
+			}, this);
+		},
+
+		onComplete: function(/*Array*/items){
+			// summary:
+			//		A handler that is called after the fetch completes.
+			array.forEach(this.getChildren(), function(child){
+				if(child instanceof SwapView){
+					child.destroyRecursive();
+				}
+			});
+			this.selectedItem = null;
+			this.items = items;
+			var nPages = Math.ceil(items.length / this.numVisible),
+				i, h = this.domNode.offsetHeight - this.headerNode.offsetHeight,
+				idx = this.selectedItemIndex === -1 ? 0 : this.selectedItemIndex;
+				pg = Math.floor(idx / this.numVisible); // current page
+			for(i = 0; i < nPages; i++){
+				var w = new SwapView({height: h + "px", lazy:true});
+				this.addChild(w);
+				if(i === pg){
+					w.show();
+					this.currentView = w;
+				}else{
+					w.hide();
+				}
+			}
+			this.fillPages();
+			this.resizeItems();
+			var children = this.getChildren();
+			var from = pg - 1 < 0 ? 0 : pg - 1;
+			var to = pg + 1 > nPages - 1 ? nPages - 1 : pg + 1;
+			for(i = from; i <= to; i++){
+				this.instantiateView(children[i]);
+			}
+		},
+
+		onError: function(/*String*/ /*===== errText =====*/){
+			// summary:
+			//		An error handler.
+		},
+
+		onUpdate: function(/*Object*/ /*===== item, =====*/ /*Number*/ /*===== insertedInto =====*/){
+			// summary:
+			//		Adds a new item or updates an existing item.
+		},
+
+		onDelete: function(/*Object*/ /*===== item, =====*/ /*Number*/ /*===== removedFrom =====*/){
+			// summary:
+			//		Deletes an existing item.
+		},
+
+		onSet: function(item, attribute, oldValue, newValue){
+		},
+
+		onNew: function(newItem, parentInfo){
+		},
+
+		onStoreClose: function(request){
+			// summary:
+			//		Called when the store is closed.
+		},
+
+		getParentView: function(/*DomNode*/node){
+			// summary:
+			//		Returns the parent view of the given DOM node.
+			for(var w = registry.getEnclosingWidget(node); w; w = w.getParent()){
+				if(w.getParent() instanceof SwapView){ return w; }
+			}
+			return null;
+		},
+
+		getIndexByItemWidget: function(/*Widget*/w){
+			// summary:
+			//		Returns the index of a given item widget.
+			if(!w){ return -1; }
+			var view = w.getParent();
+			return array.indexOf(this.getChildren(), view) * this.numVisible +
+				array.indexOf(view.getChildren(), w);
+		},
+
+		getItemWidgetByIndex: function(/*Number*/index){
+			// summary:
+			//		Returns the index of an item widget at a given index.
+			if(index === -1){ return null; }
+			var view = this.getChildren()[Math.floor(index / this.numVisible)];
+			return view.getChildren()[index % this.numVisible];
+		},
+
+		onPrevBtnClick: function(/*Event*/ /*===== e =====*/){
+			// summary:
+			//		Called when the "previous" button is clicked.
+			if(this.currentView){
+				this.currentView.goTo(-1);
+			}
+		},
+
+		onNextBtnClick: function(/*Event*/ /*===== e =====*/){
+			// summary:
+			//		Called when the "next" button is clicked.
+			if(this.currentView){
+				this.currentView.goTo(1);
+			}
+		},
+
+		_onClick: function(e){
+			// summary:
+			//		Internal handler for click events.
+			// tags:
+			//		private
+			if(this.onClick(e) === false){ return; } // user's click action
+			if(e && e.type === "keydown"){ // keyboard navigation for accessibility
+				if(e.keyCode === 39){ // right arrow
+					this.onNextBtnClick();
+				}else if(e.keyCode === 37){ // left arrow
+					this.onPrevBtnClick();
+				}else if(e.keyCode !== 13){ // !Enter
+					return;
+				}
+			}
+
+			var w;
+			for(w = registry.getEnclosingWidget(e.target); ; w = w.getParent()){
+				if(!w){ return; }
+				if(w.getParent() instanceof SwapView){ break; }
+			}
+			this.select(w);
+			var idx = this.getIndexByItemWidget(w);
+			connect.publish("/dojox/mobile/carouselSelect", [this, w, this.items[idx], idx]);
+		},
+
+		select: function(/*Widget|Number*/itemWidget){
+			// summary:
+			//		Selects the given widget.
+			if(typeof(itemWidget) === "number"){
+				itemWidget = this.getItemWidgetByIndex(itemWidget);
+			}
+			if(this.selectable){
+				if(this.selectedItem){
+					this.selectedItem.set("selected", false);
+					domClass.remove(this.selectedItem.domNode, "mblCarouselSlotSelected");
+				}
+				if(itemWidget){
+					itemWidget.set("selected", true);
+					domClass.add(itemWidget.domNode, "mblCarouselSlotSelected");
+				}
+				this.selectedItem = itemWidget;
+			}
+		},
+
+		onClick: function(/*Event*/ /*===== e =====*/){
+			// summary:
+			//		User-defined function to handle clicks.
+			// tags:
+			//		callback
+		},
+
+		instantiateView: function(view){
+			// summary:
+			//		Instantiates the given view.
+			if(view && !view._instantiated){
+				var isHidden = (domStyle.get(view.domNode, "display") === "none");
+				if(isHidden){
+					domStyle.set(view.domNode, {visibility:"hidden", display:""});
+				}
+				lazyLoadUtils.instantiateLazyWidgets(view.containerNode, null, function(root){
+					if(isHidden){
+						domStyle.set(view.domNode, {visibility:"visible", display:"none"});
+					}
+				});
+				view._instantiated = true;
+			}
+		},
+
+		handleViewChanged: function(view){
+			// summary:
+			//		Listens to "/dojox/mobile/viewChanged" events.
+			if(view.getParent() !== this){ return; }
+			if(this.currentView.nextView(this.currentView.domNode) === view){
+				this.instantiateView(view.nextView(view.domNode));
+			}else{
+				this.instantiateView(view.previousView(view.domNode));
+			}
+			this.currentView = view;
+		},
+
+		_setTitleAttr: function(/*String*/title){
+			// tags:
+			//		private
+			this.titleNode.innerHTML = this._cv ? this._cv(title) : title;
+			this._set("title", title);
+		}
+	});
+});
+
+},
+'dojox/mobile/_ExecScriptMixin':function(){
+define("dojox/mobile/_ExecScriptMixin", [
+	"dojo/_base/kernel",
+	"dojo/_base/declare",
+	"dojo/_base/window",
+	"dojo/dom-construct"
+], function(kernel, declare, win, domConstruct){
+	// module:
+	//		dojox/mobile/_ExecScriptMixin
+
+	return declare("dojox.mobile._ExecScriptMixin", null, {
+		// summary:
+		//		Mixin for providing script execution capability to content handlers.
+		// description:
+		//		This module defines the execScript method, which is called
+		//		from an HTML content handler.
+
+		execScript: function(/*String*/ html){
+			// summary:
+			//		Finds script tags and executes the script.
+			// html: String
+			//		The HTML input.
+			// returns: String
+			//		The given HTML text from which &lt;script&gt; blocks are removed.
+			var s = html.replace(/\f/g, " ").replace(/<\/script>/g, "\f");
+			s = s.replace(/<script [^>]*src=['"]([^'"]+)['"][^>]*>([^\f]*)\f/ig, function(ignore, path){
+				domConstruct.create("script", {
+					type: "text/javascript",
+					src: path}, win.doc.getElementsByTagName("head")[0]);
+				return "";
+			});
+
+			s = s.replace(/<script>([^\f]*)\f/ig, function(ignore, code){
+				kernel.eval(code);
+				return "";
+			});
+
+			return s;
+		}
+	});
+});
+
+},
+'dojox/mobile/lazyLoadUtils':function(){
+define("dojox/mobile/lazyLoadUtils", [
+	"dojo/_base/kernel",
+	"dojo/_base/array",
+	"dojo/_base/config",
+	"dojo/_base/window",
+	"dojo/_base/Deferred",
+	"dojo/ready"
+], function(dojo, array, config, win, Deferred, ready){
+
+	// module:
+	//		dojox/mobile/lazyLoadUtils
+
+	var LazyLoadUtils = function(){
+		// summary:
+		//		Utilities to lazy-loading of Dojo widgets.
+
+		this._lazyNodes = [];
+		var _this = this;
+		if(config.parseOnLoad){
+			ready(90, function(){
+				var lazyNodes = array.filter(win.body().getElementsByTagName("*"), // avoid use of dojo.query
+					function(n){ return n.getAttribute("lazy") === "true" || (n.getAttribute("data-dojo-props")||"").match(/lazy\s*:\s*true/); });
+				var i, j, nodes, s, n;
+				for(i = 0; i < lazyNodes.length; i++){
+					array.forEach(["dojoType", "data-dojo-type"], function(a){
+						nodes = array.filter(lazyNodes[i].getElementsByTagName("*"),
+											function(n){ return n.getAttribute(a); });
+						for(j = 0; j < nodes.length; j++){
+							n = nodes[j];
+							n.setAttribute("__" + a, n.getAttribute(a));
+							n.removeAttribute(a);
+							_this._lazyNodes.push(n);
+						}
+					});
+				}
+			});
+		}
+
+		ready(function(){
+			for(var i = 0; i < _this._lazyNodes.length; i++){ /* 1.8 */
+				var n = _this._lazyNodes[i];
+				array.forEach(["dojoType", "data-dojo-type"], function(a){
+					if(n.getAttribute("__" + a)){
+						n.setAttribute(a, n.getAttribute("__" + a));
+						n.removeAttribute("__" + a);
+					}
+				});
+			}
+			delete _this._lazyNodes;
+
+		});
+
+		this.instantiateLazyWidgets = function(root, requires, callback){
+			// summary:
+			//		Instantiates dojo widgets under the root node.
+			// description:
+			//		Finds DOM nodes that have the dojoType or data-dojo-type attributes,
+			//		requires the found Dojo modules, and runs the parser.
+			var d = new Deferred();
+			var req = requires ? requires.split(/,/) : [];
+			var nodes = root.getElementsByTagName("*"); // avoid use of dojo.query
+			var len = nodes.length;
+			for(var i = 0; i < len; i++){
+				var s = nodes[i].getAttribute("dojoType") || nodes[i].getAttribute("data-dojo-type");
+				if(s){
+					req.push(s);
+					var m = nodes[i].getAttribute("data-dojo-mixins"),
+						mixins = m ? m.split(/, */) : [];
+					req = req.concat(mixins);
+				}
+			}
+			if(req.length === 0){ return true; }
+
+			if(dojo.require){
+				array.forEach(req, function(c){
+					dojo["require"](c);
+				});
+				dojo.parser.parse(root);
+				if(callback){ callback(root); }
+				return true;
+			}else{
+				req = array.map(req, function(s){ return s.replace(/\./g, "/"); });
+				require(req, function(){
+					dojo.parser.parse(root);
+					if(callback){ callback(root); }
+					d.resolve(true);
+				});
+			}
+			return d;
+		}	
+	};
+
+	// Return singleton.  (TODO: can we replace LazyLoadUtils class and singleton w/a simple hash of functions?)
+	return new LazyLoadUtils();
+});
+
 
 },
 'dijit/_WidgetBase':function(){
@@ -4974,23 +5705,60 @@ define( "walta/XmlDocument", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/re
  * 
  * 
  */
-define( "walta/TaxonView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojo/dom-construct", "dojox/mobile/View", "dojox/mobile/Button" ], 
-   function( declare, aspect, lang, domConstruct, View, Button ) {
+define( "walta/TaxonView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojo/dom-construct", "dojox/mobile/View", "dojox/mobile/Button", "walta/AnchorBar", "walta/MediaView" ], 
+   function( declare, aspect, lang, domConstruct, View, Button, AnchorBar, MediaView ) {
 	return declare( "walta.TaxonView", [View], {
 
 		taxon: null, // Taxon
 		
-		"class": "waltaTaxon",
+		"class": "waltaTaxon waltaFullscreen",
 		
 		onBack: function() {}, // Fires when on back pressed 
 	
 		buildRendering: function() {
 			this.inherited(arguments);
 			
-			domConstruct.create("strong", { innerHTML: this.taxon.name }, this.containerNode );
-			var b = new Button( { label: "Back", "class": "waltaBackButton", duration: 500 } );
-			aspect.after( b, "onClick", lang.hitch( this, function() { this.onBack(); } ) );
-			this.addChild( b );	
+			var ab = new AnchorBar( { title: "ALT Key" } );
+			this.addChild(ab);
+			
+			domConstruct.create("h5", { innerHTML: this.taxon.name }, this.containerNode );
+			domConstruct.create("h5", { innerHTML: "(" + this.taxon.commonName + ")" }, this.containerNode );
+			
+			var details = domConstruct.create("div", { "class" : "waltaPanel" }, this.containerNode );
+			this._buildNamedField( details, "Size", "Up to " + this.taxon.size + "mm." );
+			this._buildNamedField( details, "Habitat", this.taxon.habitat  );
+			this._buildNamedField( details, "Movement", this.taxon.movement  );
+			this._buildNamedField( details, "Confused with", this.taxon.confusedWith );
+			this._buildNamedField( details, "SIGNAL score",  this.taxon.signalScore );
+
+			if ( this.taxon.mediaUrls[0] ) {
+				this.addChild( new MediaView( { mediaUrls: this.taxon.mediaUrls } ) );
+			}
+			
+			this._buildButton( "Go back and try again", "waltaGoBack", lang.hitch( this, function() { this.onBack(); } ) );
+			this._buildButton( "Photo gallery", "waltaGallery", lang.hitch( this, function() { this.onBack(); } ) );
+			/*
+			this._buildButton( "Watch video", "waltaVideo", lang.hitch( this, function() { this.onBack(); } ) );
+			this._buildButton( "Listen to audio", "waltaAudio", lang.hitch( this, function() { this.onBack(); } ) );
+			this._buildButton( "Nerd Notes", "waltaNotes", lang.hitch( this, function() { this.onBack(); } ) );
+			this._buildButton( "Email Info", "waltaEmail", lang.hitch( this, function() { this.onBack(); } ) );
+			this._buildButton( "Post to facebook", "waltaFacebook", lang.hitch( this, function() { this.onBack(); } ) );
+			this._buildButton( "Post to Twitter", "waltaTwitter", lang.hitch( this, function() { this.onBack(); } ) );
+			*/
+		},
+		
+		_buildNamedField: function( parent, label, text) {		
+			if ( text != "" ) {
+				var field = domConstruct.create("p", {}, parent );
+				domConstruct.create("strong", { innerHTML: label + ":" }, field );
+				domConstruct.create("span", { innerHTML: text }, field );
+			}
+		},
+		
+		_buildButton: function( label, className, onclick ) {
+			var b = new Button( { label: label, "class": "waltaActionIcon " + className, duration: 500 } );
+			aspect.after( b, "onClick", onclick );
+			this.addChild( b );
 		}
 		
 	});
@@ -5710,7 +6478,7 @@ define( "walta/KeyNodeView", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/as
 				
 				this.addChild( questions );
 				
-				var b = new Button( { label: "No match? Start over", "class": "waltaBackButton",  duration: 500 } );
+				var b = new Button( { label: "No match? Go back", "class": "waltaBackButton",  duration: 500 } );
 				aspect.after( b, "onClick", lang.hitch( this, function() { this.onBack(); } ) );
 				this.addChild( b );
 				
@@ -7033,6 +7801,31 @@ return unload;
 });
 
 },
+'dojox/mobile/ContentPane':function(){
+define("dojox/mobile/ContentPane", [
+	"dojo/_base/declare",
+	"./Container",
+	"./_ContentPaneMixin"
+], function(declare, Container, ContentPaneMixin){
+
+	// module:
+	//		dojox/mobile/ContentPane
+
+	return declare("dojox.mobile.ContentPane", [Container, ContentPaneMixin], {
+		// summary:
+		//		A very simple content pane to embed an HTML fragment.
+		// description:
+		//		This widget embeds an HTML fragment and runs the parser. It has
+		//		the ability to load external content using dojo/_base/xhr. onLoad()
+		//		is called when parsing is done and the content is
+		//		ready. Compared with dijit/layout/ContentPane, this widget
+		//		provides only basic fuctionality, but it is much lighter.
+
+		baseClass: "mblContentPane"
+	});
+});
+
+},
 'walta/AppController':function(){
 /*
  * walta/AppController 
@@ -7140,6 +7933,339 @@ define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/
 				this._key.load().then( lang.hitch( this, this._createHomeView ) );
 			}
 			
+			
+		});
+});
+},
+'dojox/mobile/SwapView':function(){
+define("dojox/mobile/SwapView", [
+	"dojo/_base/array",
+	"dojo/_base/connect",
+	"dojo/_base/declare",
+	"dojo/dom",
+	"dojo/dom-class",
+	"dijit/registry",
+	"./View",
+	"./_ScrollableMixin",
+	"./sniff"
+], function(array, connect, declare, dom, domClass, registry, View, ScrollableMixin, has){
+
+	// module:
+	//		dojox/mobile/SwapView
+
+	return declare("dojox.mobile.SwapView", [View, ScrollableMixin], {
+		// summary:
+		//		A container that can be swiped horizontally.
+		// description:
+		//		SwapView is a container widget that represents entire mobile
+		//		device screen, and can be swiped horizontally. (In dojo-1.6, it
+		//		was called 'FlippableView'.) SwapView is a subclass of
+		//		dojox/mobile/View. SwapView allows the user to swipe the screen
+		//		left or right to move between the views. When SwapView is
+		//		swiped, it finds an adjacent SwapView to open.
+		//		When the transition is done, a topic "/dojox/mobile/viewChanged"
+		//		is published.
+
+		/* internal properties */	
+		// scrollDir: [private] String
+		//		Scroll direction, used by dojox/mobile/scrollable (always "f" for this class).
+		scrollDir: "f",
+		// weight: [private] Number
+		//		Frictional weight used to compute scrolling speed.
+		weight: 1.2,
+
+		buildRendering: function(){
+			this.inherited(arguments);
+			domClass.add(this.domNode, "mblSwapView");
+			this.setSelectable(this.domNode, false);
+			this.containerNode = this.domNode;
+			this.subscribe("/dojox/mobile/nextPage", "handleNextPage");
+			this.subscribe("/dojox/mobile/prevPage", "handlePrevPage");
+			this.noResize = true; // not to call resize() from scrollable#init
+		},
+
+		startup: function(){
+			if(this._started){ return; }
+			this.inherited(arguments);
+		},
+
+		resize: function(){
+			// summary:
+			//		Calls resize() of each child widget.
+			this.inherited(arguments); // scrollable#resize() will be called
+			array.forEach(this.getChildren(), function(child){
+				if(child.resize){ child.resize(); }
+			});
+		},
+
+		onTouchStart: function(/*Event*/e){
+			// summary:
+			//		Internal function to handle touchStart events.
+			var fromTop = this.domNode.offsetTop;
+			var nextView = this.nextView(this.domNode);
+			if(nextView){
+				nextView.stopAnimation();
+				domClass.add(nextView.domNode, "mblIn");
+				// Temporarily add padding to align with the fromNode while transition
+				nextView.containerNode.style.paddingTop = fromTop + "px";
+			}
+			var prevView = this.previousView(this.domNode);
+			if(prevView){
+				prevView.stopAnimation();
+				domClass.add(prevView.domNode, "mblIn");
+				// Temporarily add padding to align with the fromNode while transition
+				prevView.containerNode.style.paddingTop = fromTop + "px";
+			}
+			this.inherited(arguments);
+		},
+
+		handleNextPage: function(/*Widget*/w){
+			// summary:
+			//		Called when the "/dojox/mobile/nextPage" topic is published.
+			var refNode = w.refId && dom.byId(w.refId) || w.domNode;
+			if(this.domNode.parentNode !== refNode.parentNode){ return; }
+			if(this.getShowingView() !== this){ return; }
+			this.goTo(1);
+		},
+
+		handlePrevPage: function(/*Widget*/w){
+			// summary:
+			//		Called when the "/dojox/mobile/prevPage" topic is published.
+			var refNode = w.refId && dom.byId(w.refId) || w.domNode;
+			if(this.domNode.parentNode !== refNode.parentNode){ return; }
+			if(this.getShowingView() !== this){ return; }
+			this.goTo(-1);
+		},
+
+		goTo: function(/*Number*/dir, /*String?*/moveTo){
+			// summary:
+			//		Moves to the next or previous view.
+			var view = moveTo ? registry.byId(moveTo) :
+				((dir == 1) ? this.nextView(this.domNode) : this.previousView(this.domNode));
+			if(view && view !== this){
+				this.stopAnimation(); // clean-up animation states
+				view.stopAnimation();
+				this.domNode._isShowing = false; // update isShowing flag
+				view.domNode._isShowing = true;
+				this.performTransition(view.id, dir, "slide", null, function(){
+					connect.publish("/dojox/mobile/viewChanged", [view]);
+				});
+			}
+		},
+
+		isSwapView: function(/*DomNode*/node){
+			// summary:
+			//		Returns true if the given node is a SwapView widget.
+			return (node && node.nodeType === 1 && domClass.contains(node, "mblSwapView"));
+		},
+
+		nextView: function(/*DomNode*/node){
+			// summary:
+			//		Returns the next view.
+			for(var n = node.nextSibling; n; n = n.nextSibling){
+				if(this.isSwapView(n)){ return registry.byNode(n); }
+			}
+			return null;
+		},
+
+		previousView: function(/*DomNode*/node){
+			// summary:
+			//		Returns the previous view.
+			for(var n = node.previousSibling; n; n = n.previousSibling){
+				if(this.isSwapView(n)){ return registry.byNode(n); }
+			}
+			return null;
+		},
+
+		scrollTo: function(/*Object*/to){
+			// summary:
+			//		Overrides dojox/mobile/scrollable.scrollTo().
+			if(!this._beingFlipped){
+				var newView, x;
+				if(to.x < 0){
+					newView = this.nextView(this.domNode);
+					x = to.x + this.domNode.offsetWidth;
+				}else{
+					newView = this.previousView(this.domNode);
+					x = to.x - this.domNode.offsetWidth;
+				}
+				if(newView){
+					if(newView.domNode.style.display === "none"){
+						newView.domNode.style.display = "";
+						newView.resize();
+					}
+					newView._beingFlipped = true;
+					newView.scrollTo({x:x});
+					newView._beingFlipped = false;
+				}
+			}
+			this.inherited(arguments);
+		},
+
+		findDisp: function(/*DomNode*/node){
+			// summary:
+			//		Overrides dojox/mobile/scrollable.findDisp().
+			// description:
+			//		When this function is called from scrollable.js, there are
+			//		two visible views, one is the current view, the other is the
+			//		next view. This function returns the current view, not the
+			//		next view, which has the mblIn class.
+			if(!domClass.contains(node, "mblSwapView")){
+				return this.inherited(arguments);
+			}
+			if(!node.parentNode){ return null; }
+			var nodes = node.parentNode.childNodes;
+			for(var i = 0; i < nodes.length; i++){
+				var n = nodes[i];
+				if(n.nodeType === 1 && domClass.contains(n, "mblSwapView")
+				    && !domClass.contains(n, "mblIn") && n.style.display !== "none"){
+					return n;
+				}
+			}
+			return node;
+		},
+
+		slideTo: function(/*Object*/to, /*Number*/duration, /*String*/easing, /*Object?*/fake_pos){
+			// summary:
+			//		Overrides dojox/mobile/scrollable.slideTo().
+			if(!this._beingFlipped){
+				var w = this.domNode.offsetWidth;
+				var pos = fake_pos || this.getPos();
+				var newView, newX;
+				if(pos.x < 0){ // moving to left
+					newView = this.nextView(this.domNode);
+					if(pos.x < -w/4){ // slide to next
+						if(newView){
+							to.x = -w;
+							newX = 0;
+						}
+					}else{ // go back
+						if(newView){
+							newX = w;
+						}
+					}
+				}else{ // moving to right
+					newView = this.previousView(this.domNode);
+					if(pos.x > w/4){ // slide to previous
+						if(newView){
+							to.x = w;
+							newX = 0;
+						}
+					}else{ // go back
+						if(newView){
+							newX = -w;
+						}
+					}
+				}
+
+				if(newView){
+					newView._beingFlipped = true;
+					newView.slideTo({x:newX}, duration, easing);
+					newView._beingFlipped = false;
+					newView.domNode._isShowing = (newView && newX === 0);
+				}
+				this.domNode._isShowing = !(newView && newX === 0);
+			}
+			this.inherited(arguments);
+		},
+
+		onAnimationEnd: function(/*Event*/e){
+			// summary:
+			//		Overrides dojox/mobile/View.onAnimationEnd().
+			if(e && e.target && domClass.contains(e.target, "mblScrollableScrollTo2")){ return; }
+			this.inherited(arguments);
+		},
+
+		onFlickAnimationEnd: function(/*Event*/e){
+			// summary:
+			//		Overrides dojox/mobile/scrollable.onFlickAnimationEnd().
+			if(e && e.target && !domClass.contains(e.target, "mblScrollableScrollTo2")){ return; }
+			this.inherited(arguments);
+
+			if(this.domNode._isShowing){
+				// Hide all the views other than the currently showing one.
+				// Otherwise, when the orientation is changed, other views
+				// may appear unexpectedly.
+				array.forEach(this.domNode.parentNode.childNodes, function(c){
+					if(this.isSwapView(c)){
+						domClass.remove(c, "mblIn");
+						if(!c._isShowing){
+							c.style.display = "none";
+							c.style.webkitTransform = "";
+							c.style.left = "0px"; // top/left mode needs this
+						}
+					}
+				}, this);
+				connect.publish("/dojox/mobile/viewChanged", [this]);
+				// Reset the temporary padding
+				this.containerNode.style.paddingTop = "";
+			}else if(! true ){
+				this.containerNode.style.left = "0px"; // compat mode needs this
+			}
+		}
+	});
+});
+
+},
+'walta/MediaView':function(){
+/*
+ * walta/MediaView
+ *
+ * Creates a thumbnail image with a zoom to gallery icon.
+ *  
+ */
+define( "walta/MediaView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/ContentPane", "dojox/mobile/SwapView", "dojox/mobile/Carousel" ], 
+	function( declare, array, on, domConstruct, lang, ContentPane, SwapView, Carousel ) {
+		return declare( "walta.MediaView", [ContentPane], {
+			
+			mediaUrls: [],
+			
+			"class": "waltaImageContainer", 
+			
+			_carousel: null,
+			
+			buildRendering: function() {
+				this.inherited(arguments);
+				
+				if ( this.mediaUrls[0] ) {
+					var cn = domConstruct.create("div", { "class" : "waltaImageInner" }, this.containerNode );
+					domConstruct.create("img", { src: this.mediaUrls[0] }, cn );
+					domConstruct.create("div", { "class" : "waltaZoom" }, cn );
+					on( cn, "click", lang.hitch( this, function(e) { 
+							this._openCarousel();  
+							e.stopPropagation();
+						} ) );
+				}
+				
+			},
+			
+			_openCarousel: function() {
+				if ( ! this._carousel ) {
+					this._carousel = new Carousel( { navButton: false, numVisible: 1, "class" : "waltaCarousel" } );
+					array.forEach( this.mediaUrls, 
+						lang.hitch( this, function( url ) {
+							this._carousel.addChild( this._buildImageView( url ) );
+						})
+					);
+					var close = domConstruct.create("div", { "class" : "waltaCloseButton" }, this._carousel.containerNode );
+					on( close, "click", lang.hitch( this, function(e) { 
+							this._carousel.destroyRecursive(); 
+							this._carousel = null; 
+							e.stopPropagation();
+						} ) );
+					
+					this.addChild( this._carousel );
+					this._carousel.startup();
+				}
+				
+			},
+			
+			_buildImageView: function( url ) {
+				var iv = new SwapView( { "class" : "waltaZoomedImage"});
+				domConstruct.create("img", { src: url }, iv.containerNode );
+				return iv;
+			}
+		
 			
 		});
 });
@@ -7347,6 +8473,110 @@ define("dojox/mobile/ProgressIndicator", [
 	};
 
 	return cls;
+});
+
+},
+'dojox/mobile/CarouselItem':function(){
+define("dojox/mobile/CarouselItem", [
+	"dojo/_base/declare",
+	"dojo/dom-construct",
+	"dojo/dom-geometry",
+	"dojo/dom-style",
+	"dijit/_Contained",
+	"dijit/_WidgetBase"
+], function(declare, domConstruct, domGeometry, domStyle, Contained, WidgetBase, iconUtils){
+
+	// module:
+	//		dojox/mobile/CarouselItem
+
+	return declare("dojox.mobile.CarouselItem", [WidgetBase, Contained], {
+		// summary:
+		//		An item of dojox/mobile/Carousel.
+		// description:
+		//		CarouselItem represents an item of dojox/mobile/Carousel. In
+		//		typical use cases, users do not use this widget alone. Instead,
+		//		it is used in conjunction with the Carousel widget.
+
+		// alt: String
+		//		An alt text for the carousel item image.
+		alt: "",
+
+		// src: String
+		//		A path for an image to be displayed as a carousel item.
+		src: "",
+
+		// headerText: String
+		//		A text that is displayed above the carousel item image.
+		headerText: "",
+
+		// footerText: String
+		//		A text that is displayed below the carousel item image.
+		footerText: "",
+
+		/* internal properties */	
+		
+		// baseClass: String
+		//		The name of the CSS class of this widget.
+		baseClass: "mblCarouselItem",
+
+		buildRendering: function(){
+			this.inherited(arguments);
+			this.domNode.tabIndex = "0";
+			this.headerTextNode = domConstruct.create("div", { className: "mblCarouselItemHeaderText" }, this.domNode);
+			this.imageNode = domConstruct.create("img", { className: "mblCarouselItemImage" }, this.domNode);
+			this.footerTextNode = domConstruct.create("div", { className: "mblCarouselItemFooterText" }, this.domNode);
+		},
+
+		startup: function(){
+			if(this._started){ return; }
+			this.inherited(arguments);
+			this.resize();
+		},
+
+		resize: function(size){
+			var box = domGeometry.getMarginBox(this.domNode);
+			if(box.h === 0){ return; }
+			var h1 = domGeometry.getMarginBox(this.headerTextNode).h;
+			var h2 = domGeometry.getMarginBox(this.footerTextNode).h;
+			domGeometry.setMarginBox(this.imageNode, {h:box.h - h1 - h2});
+		},
+
+		select: function(){
+			// summary:
+			//		Highlights the item.
+			var img = this.imageNode
+			domStyle.set(img, "opacity", 0.4);
+			setTimeout(function(){
+				domStyle.set(img, "opacity", 1);
+			}, 1000);
+		},
+
+		_setAltAttr: function(/*String*/alt){
+			// tags:
+			//		private
+			this._set("alt", alt);
+			this.imageNode.alt = alt;
+		},
+
+		_setSrcAttr: function(/*String*/src){
+			// tags:
+			//		private
+			this._set("src", src);
+			this.imageNode.src = src;
+		},
+
+		_setHeaderTextAttr: function(/*String*/text){
+			this._set("headerText", text);
+			this.headerTextNode.innerHTML = this._cv ? this._cv(text) : text;
+		},
+
+		_setFooterTextAttr: function(/*String*/text){
+			// tags:
+			//		private
+			this._set("footerText", text);
+			this.footerTextNode.innerHTML = this._cv ? this._cv(text) : text;
+		}
+	});
 });
 
 },
@@ -7653,40 +8883,42 @@ define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct
 			
 			buildRendering: function() {
 				this.inherited(arguments);
+
+				var header = domConstruct.create("div", { "class":"waltaPanel waltaHeader"}, this.domNode );
 				
+				domConstruct.create("div", { "class":"waltaLogo"}, header );
+				domConstruct.create("h1", { innerHTML: "WALTA"}, header );
+				domConstruct.create("h3", { innerHTML: "Waterbug ALT App"}, header );
 				
+				var menu = this.domNode;
 				
-				domConstruct.create("div", { "class":"waltaLogo"}, this.domNode );
-				domConstruct.create("h1", { innerHTML: "WALTA"}, this.domNode );
-				domConstruct.create("h3", { innerHTML: "Waterbug ALT app"}, this.domNode );
-				
-				var menu = domConstruct.create("div", { "class":"waltaMenuPanel"}, this.domNode );
-				
-				var speedbug = domConstruct.create("div", { "class": "waltaPanel" }, menu);
+				var speedbug = domConstruct.create("div", { "class": "waltaPanel waltaMenu" }, menu);
 				domConstruct.create("div", { "class":"waltaMenuIcon waltaSpeedbugLogo"}, speedbug );
 				domConstruct.create("h2", { innerHTML: "Speedbug"}, speedbug );	
 				domConstruct.create("p", { innerHTML: "Look at silhouettes of bugs to choose the best match."}, speedbug );	
 				
-				var altkey = domConstruct.create("div", { "class": "waltaPanel" }, menu );
+				var altkey = domConstruct.create("div", { "class": "waltaPanel waltaMenu" }, menu );
 				domConstruct.create("div", { "class":"waltaMenuIcon waltaAltKeyLogo"}, altkey );
 				domConstruct.create("h2", { innerHTML: "ALT key"}, altkey );	
-				domConstruct.create("p", { innerHTML: "Choose from ...."}, altkey );
+				domConstruct.create("p", { innerHTML: "Questions to help identify your waterbug."}, altkey );
 				
-				var browse = domConstruct.create("div", { "class": "waltaPanel" }, menu );
+				var browse = domConstruct.create("div", { "class": "waltaPanel waltaMenu" }, menu );
 				domConstruct.create("div", { "class":"waltaMenuIcon waltaBrowseLogo"}, browse );
 				domConstruct.create("h2", { innerHTML: "Browse list"}, browse );	
-				domConstruct.create("p", { innerHTML: "If you know the name of your bug."}, browse );
+				domConstruct.create("p", { innerHTML: "If you know the name or scientific name of your bug."}, browse );
 				
-				var about = domConstruct.create("div", { "class": "waltaPanel" }, menu );
-				domConstruct.create("h2", { innerHTML: "About"}, about );	
-				domConstruct.create("p", { innerHTML: "About the app and the people behind it."}, about );	
-				
-				var help = domConstruct.create("div", { "class": "waltaPanel" }, menu);
+				var help = domConstruct.create("div", { "class": "waltaPanel waltaMenu waltaSecondary" }, menu);
 				domConstruct.create("h2", { innerHTML: "Help"}, help );	
 				domConstruct.create("p", { innerHTML: "Info to get you started."}, help );
 				
-					
+				var gallery = domConstruct.create("div", { "class": "waltaPanel waltaMenu waltaSecondary" }, menu );
+				domConstruct.create("h2", { innerHTML: "Gallery"}, gallery );	
+				domConstruct.create("p", { innerHTML: "Browse photos & videos."}, gallery );	
 				
+				var about = domConstruct.create("div", { "class": "waltaPanel waltaMenu waltaSecondary" }, menu );
+				domConstruct.create("h2", { innerHTML: "About"}, about );	
+				domConstruct.create("p", { innerHTML: "About the app."}, about );	
+
 				on( about, "click", lang.hitch( this, function(e) { this.onAbout(); } ) );
 				on( help, "click", lang.hitch( this, function(e) { this.onHelp(); } ) );
 				on( browse, "click", lang.hitch( this, function(e) { this.onBrowse(); } ) );
@@ -7720,50 +8952,6 @@ define("dojox/mobile/Container", [
 	});
 });
 
-},
-'walta/Taxon':function(){
-define( "walta/Taxon", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "walta/KeyNode" ], function( declare, array, lang, KeyNode ) {
-	return declare( null, {
-		
-		id: null,			// XML based id
-		name: "",			// User readable species scientific name
-		commonName: "",		// Common name for species
-		size: 0,			// Size in mm
-		signalScore: 0,		// The signal score scalar
-		
-		habitat: "",		// Description of habitat
-		movement: "",		// Description of how species moves
-		confusedWith: "",   // This species is often confused with
-		
-		mediaUrls: [],		// List of media URLs
-		
-		back: null, // A function to go back
-	
-		_buildBackFunction: function( KeyNode, baseUri, doc, parent ) {
-			return function() {
-				return new KeyNode( baseUri, doc, parent );
-			};
-		},
-		
-		constructor: function( KeyNode, baseUri, doc, parent, node ) {
-			this.id = doc.getString( node, "@id" );
-			this.name = doc.getString( node, "@name" );
-			this.commonName = doc.getString( node, "@commonName" );
-			this.size = doc.getNumber( node, "@size" );
-			this.signalScore = doc.getNumber( node, "@signalScore" );
-			this.habitat = doc.getString( node, "tax:habitat");
-			this.movement = doc.getString( node, "tax:movement");
-			this.confusedWith = doc.getString( node, "tax:confusedWith");
-			this.mediaUrls = [];
-			array.forEach(
-				doc.getStringArray( node, "child::tax:mediaRef/@url" ),
-					lang.hitch( this, function( ref ) {
-						this.mediaUrls.push( baseUri + "/media/" + ref );
-				}));
-			this.back = this._buildBackFunction( KeyNode, baseUri, doc, parent );
-		}
-	});
-});
 },
 'walta/Key':function(){
 /*
@@ -7837,6 +9025,183 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
 	});
 });
 },
+'walta/Taxon':function(){
+define( "walta/Taxon", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "walta/KeyNode" ], function( declare, array, lang, KeyNode ) {
+	return declare( null, {
+		
+		id: null,			// XML based id
+		name: "",			// User readable species scientific name
+		commonName: "",		// Common name for species
+		size: 0,			// Size in mm
+		signalScore: 0,		// The signal score scalar
+		
+		habitat: "",		// Description of habitat
+		movement: "",		// Description of how species moves
+		confusedWith: "",   // This species is often confused with
+		
+		mediaUrls: [],		// List of media URLs
+		
+		back: null, // A function to go back
+	
+		_buildBackFunction: function( KeyNode, baseUri, doc, parent ) {
+			return function() {
+				return new KeyNode( baseUri, doc, parent );
+			};
+		},
+		
+		constructor: function( KeyNode, baseUri, doc, parent, node ) {
+			this.id = doc.getString( node, "@id" );
+			this.name = doc.getString( node, "@name" );
+			this.commonName = doc.getString( node, "@commonName" );
+			this.size = doc.getNumber( node, "@size" );
+			this.signalScore = doc.getNumber( node, "@signalScore" );
+			this.habitat = doc.getString( node, "tax:habitat");
+			this.movement = doc.getString( node, "tax:movement");
+			this.confusedWith = doc.getString( node, "tax:confusedWith");
+			this.mediaUrls = [];
+			array.forEach(
+				doc.getStringArray( node, "child::tax:mediaRef/@url" ),
+					lang.hitch( this, function( ref ) {
+						this.mediaUrls.push( baseUri + "/media/" + ref );
+				}));
+			this.back = this._buildBackFunction( KeyNode, baseUri, doc, parent );
+		}
+	});
+});
+},
+'dojox/mobile/_ContentPaneMixin':function(){
+define("dojox/mobile/_ContentPaneMixin", [
+	"dojo/_base/declare",
+	"dojo/_base/Deferred",
+	"dojo/_base/lang",
+	"dojo/_base/window",
+	"dojo/_base/xhr",
+	"./_ExecScriptMixin",
+	"./ProgressIndicator",
+	"./lazyLoadUtils"
+], function(declare, Deferred, lang, win, xhr, ExecScriptMixin, ProgressIndicator, lazyLoadUtils){
+
+	// module:
+	//		dojox/mobile/_ContentPaneMixin
+
+	return declare("dojox.mobile._ContentPaneMixin", ExecScriptMixin, {
+		// summary:
+		//		Mixin for a very simple content pane to embed an HTML fragment.
+		// description:
+		//		By mixing this class into a widget, the widget can have the ability
+		//		to embed an external HTML fragment and to run the parser.
+
+		// href: String
+		//		URL of the content to embed.
+		href: "",
+
+		// lazy: String
+		//		If true, external content specified with the href property is
+		//		not loaded at startup time. It can be loaded by calling load().
+		lazy: false,
+
+		// content: String
+		//		An HTML fragment to embed.
+		content: "",
+
+		// parseOnLoad: Boolean
+		//		If true, runs the parser when the load completes.
+		parseOnLoad: true,
+
+		// prog: Boolean
+		//		If true, shows progress indicator while loading an HTML fragment
+		//		specified by href.
+		prog: true,
+
+		// executeScripts: Boolean
+		//		If true, executes scripts that is found in the content.
+		executeScripts: true,
+
+		constructor: function(){
+			// summary:
+			//		Creates a new instance of the class.
+			// tags:
+			//		private
+			if(this.prog){
+				this._p = ProgressIndicator.getInstance();
+			}
+		},
+
+		loadHandler: function(/*String*/response){
+			// summary:
+			//		A handler called when load completes.
+			this.set("content", response);
+		},
+
+		errorHandler: function(err){
+			// summary:
+			//		An error handler called when load fails.
+			if(this._p){ this._p.stop(); }
+		},
+
+		load: function(){
+			// summary:
+			//		Loads external content specified with href.
+			this.lazy = false;
+			this.set("href", this.href);
+		},
+
+		onLoad: function(){
+			// summary:
+			//		Stub method to allow the application to connect to the
+			//		loading of external content (see load()).
+			//		Called when parsing is done and the content is ready.
+			return true;
+		},
+
+		_setHrefAttr: function(/*String*/href){
+			// tags:
+			//		private
+			if(this.lazy || !href || href === this._loaded){
+				this.lazy = false;
+				return null;
+			}
+			var p = this._p;
+			if(p){
+				win.body().appendChild(p.domNode);
+				p.start();
+			}
+			this._set("href", href);
+			this._loaded = href;
+			return xhr.get({
+				url: href,
+				handleAs: "text",
+				load: lang.hitch(this, "loadHandler"),
+				error: lang.hitch(this, "errorHandler")
+			});
+		},
+
+		_setContentAttr: function(/*String|DomNode*/data){
+			// tags:
+			//		private			
+			this.destroyDescendants();
+			if(typeof data === "object"){
+				this.containerNode.appendChild(data);
+			}else{
+				if(this.executeScripts){
+					data = this.execScript(data);
+				}
+				this.containerNode.innerHTML = data;
+			}
+			if(this.parseOnLoad){
+				var _this = this;
+				return Deferred.when(lazyLoadUtils.instantiateLazyWidgets(_this.containerNode), function(){
+					if(_this._p){ _this._p.stop(); }
+					return _this.onLoad();
+				});
+			}
+			if(this._p){ this._p.stop(); }
+			return this.onLoad();
+		}
+	});
+});
+
+},
 'walta/QuestionView':function(){
 /*
  * walta/QuestionView
@@ -7844,8 +9209,8 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
  * Represents a single question
  *  
  */
-define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container" ], 
-	function( declare, on, domConstruct, lang, Container ) {
+define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container", "walta/MediaView" ], 
+	function( declare, on, domConstruct, lang, Container, MediaView ) {
 		return declare( "walta.QuestionView", [Container], {
 			
 			// public
@@ -7859,10 +9224,8 @@ define( "walta/QuestionView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-const
 				this.inherited(arguments);
 				domConstruct.create("p", { innerHTML: this.question.text }, this.containerNode );
 				
-				// put the first image in the question itself
 				if ( this.question.mediaUrls[0] ) {
-					var cell = domConstruct.create("div", { "class":"waltaImageContainer" }, this.containerNode );
-					domConstruct.create("img", { src: this.question.mediaUrls[0] }, cell );
+					this.addChild( new MediaView( { mediaUrls: this.question.mediaUrls } ) );
 				}
 				
 				// connect events
@@ -7968,6 +9331,1421 @@ define("dijit/_Contained", [
 				return -1; // int
 			}
 			return p.getIndexOfChild(this); // int
+		}
+	});
+});
+
+},
+'dojox/mobile/scrollable':function(){
+define("dojox/mobile/scrollable", [
+	"dojo/_base/kernel",
+	"dojo/_base/connect",
+	"dojo/_base/event",
+	"dojo/_base/lang",
+	"dojo/_base/window",
+	"dojo/dom-class",
+	"dojo/dom-construct",
+	"dojo/dom-style",
+	"./sniff"
+], function(dojo, connect, event, lang, win, domClass, domConstruct, domStyle, has){
+
+	// module:
+	//		dojox/mobile/scrollable
+
+	// TODO: rename to Scrollable.js (capital S) for 2.0
+
+	// TODO: shouldn't be referencing this dojox/mobile variable, would be better to require the mobile.js module
+	var dm = lang.getObject("dojox.mobile", true);
+
+	// feature detection
+	has.add("translate3d", function(){
+		if( true ){
+			var elem = win.doc.createElement("div");
+			elem.style.webkitTransform = "translate3d(0px,1px,0px)";
+			win.doc.documentElement.appendChild(elem);
+			var v = win.doc.defaultView.getComputedStyle(elem, '')["-webkit-transform"];
+			var hasTranslate3d = v && v.indexOf("matrix") === 0;
+			win.doc.documentElement.removeChild(elem);
+			return hasTranslate3d;
+		}
+	});
+
+	var Scrollable = function(){
+		// summary:
+		//		Mixin for enabling touch scrolling capability.
+		// description:
+		//		Mixin for enabling touch scrolling capability.
+		//		Mobile WebKit browsers do not allow scrolling inner DIVs. (For instance,
+		//		on iOS you need the two-finger operation to scroll them.)
+		//		That means you cannot have fixed-positioned header/footer bars.
+		//		To solve this issue, this module disables the browsers default scrolling
+		//		behavior, and rebuilds its own scrolling machinery by handling touch
+		//		events. In this module, this.domNode has height "100%" and is fixed to
+		//		the window, and this.containerNode scrolls. If you place a bar outside
+		//		of this.containerNode, then it will be fixed-positioned while
+		//		this.containerNode is scrollable.
+		//
+		//		This module has the following features:
+		//
+		//		- Scrolls inner DIVs vertically, horizontally, or both.
+		//		- Vertical and horizontal scroll bars.
+		//		- Flashes the scroll bars when a view is shown.
+		//		- Simulates the flick operation using animation.
+		//		- Respects header/footer bars if any.
+	};
+
+	lang.extend(Scrollable, {
+		// fixedHeaderHeight: Number
+		//		height of a fixed header
+		fixedHeaderHeight: 0,
+
+		// fixedFooterHeight: Number
+		//		height of a fixed footer
+		fixedFooterHeight: 0,
+
+		// isLocalFooter: Boolean
+		//		footer is view-local (as opposed to application-wide)
+		isLocalFooter: false,
+
+		// scrollBar: Boolean
+		//		show scroll bar or not
+		scrollBar: true,
+
+		// scrollDir: String
+		//		v: vertical, h: horizontal, vh: both, f: flip
+		scrollDir: "v",
+
+		// weight: Number
+		//		frictional drag
+		weight: 0.6,
+
+		// fadeScrollBar: Boolean
+		fadeScrollBar: true,
+
+		// disableFlashScrollBar: Boolean
+		disableFlashScrollBar: false,
+
+		// threshold: Number
+		//		drag threshold value in pixels
+		threshold: 4,
+
+		// constraint: Boolean
+		//		bounce back to the content area
+		constraint: true,
+
+		// touchNode: DOMNode
+		//		a node that will have touch event handlers
+		touchNode: null,
+
+		// propagatable: Boolean
+		//		let touchstart event propagate up
+		propagatable: true,
+
+		// dirLock: Boolean
+		//		disable the move handler if scroll starts in the unexpected direction
+		dirLock: false,
+
+		// height: String
+		//		explicitly specified height of this widget (ex. "300px")
+		height: "",
+
+		// scrollType: Number
+		//		- 1: use -webkit-transform:translate3d(x,y,z) style, use -webkit-animation for slide anim
+		//		- 2: use top/left style,
+		//		- 3: use -webkit-transform:translate3d(x,y,z) style, use -webkit-transition for slide anim
+		//		- 0: use default value (2 in case of Android < 3, 3 if iOS6, otherwise 1)
+		scrollType: 0,
+
+		init: function(/*Object?*/params){
+			// summary:
+			//		Initialize according to the given params.
+			// description:
+			//		Mixes in the given params into this instance. At least domNode
+			//		and containerNode have to be given.
+			//		Starts listening to the touchstart events.
+			//		Calls resize(), if this widget is a top level widget.
+			if(params){
+				for(var p in params){
+					if(params.hasOwnProperty(p)){
+						this[p] = ((p == "domNode" || p == "containerNode") && typeof params[p] == "string") ?
+							win.doc.getElementById(params[p]) : params[p]; // mix-in params
+					}
+				}
+			}
+			this.touchNode = this.touchNode || this.containerNode;
+			this._v = (this.scrollDir.indexOf("v") != -1); // vertical scrolling
+			this._h = (this.scrollDir.indexOf("h") != -1); // horizontal scrolling
+			this._f = (this.scrollDir == "f"); // flipping views
+
+			this._ch = []; // connect handlers
+			this._ch.push(connect.connect(this.touchNode,
+				 true  ? "ontouchstart" : "onmousedown", this, "onTouchStart"));
+			if( true ){
+				// flag for whether to use -webkit-transform:translate3d(x,y,z) or top/left style.
+				// top/left style works fine as a workaround for input fields auto-scrolling issue,
+				// so use top/left in case of Android by default.
+				this._useTopLeft = this.scrollType ? this.scrollType === 2 : has('android') < 3;
+				// Flag for using webkit transition on transform, instead of animation + keyframes.
+				// (keyframes create a slight delay before the slide animation...)
+				if(!this._useTopLeft){
+					this._useTransformTransition = this.scrollType ? this.scrollType === 3 : has('iphone') >= 6;
+				}
+				if(!this._useTopLeft){
+					if(this._useTransformTransition){
+						this._ch.push(connect.connect(this.domNode, "webkitTransitionEnd", this, "onFlickAnimationEnd"));
+						this._ch.push(connect.connect(this.domNode, "webkitTransitionStart", this, "onFlickAnimationStart"));
+					}else{
+						this._ch.push(connect.connect(this.domNode, "webkitAnimationEnd", this, "onFlickAnimationEnd"));
+						this._ch.push(connect.connect(this.domNode, "webkitAnimationStart", this, "onFlickAnimationStart"));
+	
+						// Creation of keyframes takes a little time. If they are created
+						// in a lazy manner, a slight delay is noticeable when you start
+						// scrolling for the first time. This is to create keyframes up front.
+						for(var i = 0; i < 3; i++){
+							this.setKeyframes(null, null, i);
+						}
+					}
+					if(has("translate3d")){ // workaround for flicker issue on iPhone and Android 3.x/4.0
+						domStyle.set(this.containerNode, "webkitTransform", "translate3d(0,0,0)");
+					}
+				}else{
+					this._ch.push(connect.connect(this.domNode, "webkitTransitionEnd", this, "onFlickAnimationEnd"));
+					this._ch.push(connect.connect(this.domNode, "webkitTransitionStart", this, "onFlickAnimationStart"));
+				}
+			}
+
+			this._speed = {x:0, y:0};
+			this._appFooterHeight = 0;
+			if(this.isTopLevel() && !this.noResize){
+				this.resize();
+			}
+			var _this = this;
+			setTimeout(function(){
+				_this.flashScrollBar();
+			}, 600);
+		},
+
+		isTopLevel: function(){
+			// summary:
+			//		Returns true if this is a top-level widget.
+			// description:
+			//		Subclass may want to override.
+			return true;
+		},
+
+		cleanup: function(){
+			// summary:
+			//		Uninitialize the module.
+			if(this._ch){
+				for(var i = 0; i < this._ch.length; i++){
+					connect.disconnect(this._ch[i]);
+				}
+				this._ch = null;
+			}
+		},
+
+		findDisp: function(/*DomNode*/node){
+			// summary:
+			//		Finds the currently displayed view node from my sibling nodes.
+			if(!node.parentNode){ return null; }
+
+			// the given node is the first candidate
+			if(node.nodeType === 1 && domClass.contains(node, "mblSwapView") && node.style.display !== "none"){
+				return node;
+			}
+
+			var nodes = node.parentNode.childNodes;
+			for(var i = 0; i < nodes.length; i++){
+				var n = nodes[i];
+				if(n.nodeType === 1 && domClass.contains(n, "mblView") && n.style.display !== "none"){
+					return n;
+				}
+			}
+			return node;
+		},
+
+		getScreenSize: function(){
+			// summary:
+			//		Returns the dimensions of the browser window.
+			return {
+				h: win.global.innerHeight||win.doc.documentElement.clientHeight||win.doc.documentElement.offsetHeight,
+				w: win.global.innerWidth||win.doc.documentElement.clientWidth||win.doc.documentElement.offsetWidth
+			};
+		},
+
+		resize: function(e){
+			// summary:
+			//		Adjusts the height of the widget.
+			// description:
+			//		If the height property is 'inherit', the height is inherited
+			//		from its offset parent. If 'auto', the content height, which
+			//		could be smaller than the entire screen height, is used. If an
+			//		explicit height value (ex. "300px"), it is used as the new
+			//		height. If nothing is specified as the height property, from the
+			//		current top position of the widget to the bottom of the screen
+			//		will be the new height.
+
+			// moved from init() to support dynamically added fixed bars
+			this._appFooterHeight = (this.fixedFooterHeight && !this.isLocalFooter) ?
+				this.fixedFooterHeight : 0;
+			if(this.isLocalHeader){
+				this.containerNode.style.marginTop = this.fixedHeaderHeight + "px";
+			}
+
+			// Get the top position. Same as dojo.position(node, true).y
+			var top = 0;
+			for(var n = this.domNode; n && n.tagName != "BODY"; n = n.offsetParent){
+				n = this.findDisp(n); // find the first displayed view node
+				if(!n){ break; }
+				top += n.offsetTop;
+			}
+
+			// adjust the height of this view
+			var	h,
+				screenHeight = this.getScreenSize().h,
+				dh = screenHeight - top - this._appFooterHeight; // default height
+			if(this.height === "inherit"){
+				if(this.domNode.offsetParent){
+					h = this.domNode.offsetParent.offsetHeight + "px";
+				}
+			}else if(this.height === "auto"){
+				var parent = this.domNode.offsetParent;
+				if(parent){
+					this.domNode.style.height = "0px";
+					var	parentRect = parent.getBoundingClientRect(),
+						scrollableRect = this.domNode.getBoundingClientRect(),
+						contentBottom = parentRect.bottom - this._appFooterHeight;
+					if(scrollableRect.bottom >= contentBottom){ // use entire screen
+						dh = screenHeight - (scrollableRect.top - parentRect.top) - this._appFooterHeight;
+					}else{ // stretch to fill predefined area
+						dh = contentBottom - scrollableRect.bottom;
+					}
+				}
+				// content could be smaller than entire screen height
+				var contentHeight = Math.max(this.domNode.scrollHeight, this.containerNode.scrollHeight);
+				h = (contentHeight ? Math.min(contentHeight, dh) : dh) + "px";
+			}else if(this.height){
+				h = this.height;
+			}
+			if(!h){
+				h = dh + "px";
+			}
+			if(h.charAt(0) !== "-" && // to ensure that h is not negative (e.g. "-10px")
+				h !== "default"){
+				this.domNode.style.height = h;
+			}
+
+			// to ensure that the view is within a scrolling area when resized.
+			this.onTouchEnd();
+		},
+
+		onFlickAnimationStart: function(e){
+			event.stop(e);
+		},
+
+		onFlickAnimationEnd: function(e){
+			var an = e && e.animationName;
+			if(an && an.indexOf("scrollableViewScroll2") === -1){
+				if(an.indexOf("scrollableViewScroll0") !== -1){ // scrollBarV
+					if(this._scrollBarNodeV){ domClass.remove(this._scrollBarNodeV, "mblScrollableScrollTo0"); }
+				}else if(an.indexOf("scrollableViewScroll1") !== -1){ // scrollBarH
+					if(this._scrollBarNodeH){ domClass.remove(this._scrollBarNodeH, "mblScrollableScrollTo1"); }
+				}else{ // fade or others
+					if(this._scrollBarNodeV){ this._scrollBarNodeV.className = ""; }
+					if(this._scrollBarNodeH){ this._scrollBarNodeH.className = ""; }
+				}
+				return;
+			}
+			if(this._useTransformTransition || this._useTopLeft){
+				var n = e.target;
+				if(n === this._scrollBarV || n === this._scrollBarH){
+					var cls = "mblScrollableScrollTo" + (n === this._scrollBarV ? "0" : "1");
+					if(domClass.contains(n, cls)){
+						domClass.remove(n, cls);
+					}else{
+						n.className = "";
+					}
+					return;
+				}
+			}
+			if(e && e.srcElement){
+				event.stop(e);
+			}
+			this.stopAnimation();
+			if(this._bounce){
+				var _this = this;
+				var bounce = _this._bounce;
+				setTimeout(function(){
+					_this.slideTo(bounce, 0.3, "ease-out");
+				}, 0);
+				_this._bounce = undefined;
+			}else{
+				this.hideScrollBar();
+				this.removeCover();
+			}
+		},
+
+		isFormElement: function(/*DOMNode*/node){
+			// summary:
+			//		Returns true if the given node is a form control.
+			if(node && node.nodeType !== 1){ node = node.parentNode; }
+			if(!node || node.nodeType !== 1){ return false; }
+			var t = node.tagName;
+			return (t === "SELECT" || t === "INPUT" || t === "TEXTAREA" || t === "BUTTON");
+		},
+
+		onTouchStart: function(e){
+			// summary:
+			//		User-defined function to handle touchStart events.
+			if(this.disableTouchScroll){ return; }
+			if(this._conn && (new Date()).getTime() - this.startTime < 500){
+				return; // ignore successive onTouchStart calls
+			}
+			if(!this._conn){
+				this._conn = [];
+				this._conn.push(connect.connect(win.doc,  true  ? "ontouchmove" : "onmousemove", this, "onTouchMove"));
+				this._conn.push(connect.connect(win.doc,  true  ? "ontouchend" : "onmouseup", this, "onTouchEnd"));
+			}
+
+			this._aborted = false;
+			if(domClass.contains(this.containerNode, "mblScrollableScrollTo2")){
+				this.abort();
+			}else{ // reset scrollbar class especially for reseting fade-out animation
+				if(this._scrollBarNodeV){ this._scrollBarNodeV.className = ""; }
+				if(this._scrollBarNodeH){ this._scrollBarNodeH.className = ""; }
+			}
+			this.touchStartX = e.touches ? e.touches[0].pageX : e.clientX;
+			this.touchStartY = e.touches ? e.touches[0].pageY : e.clientY;
+			this.startTime = (new Date()).getTime();
+			this.startPos = this.getPos();
+			this._dim = this.getDim();
+			this._time = [0];
+			this._posX = [this.touchStartX];
+			this._posY = [this.touchStartY];
+			this._locked = false;
+
+			if(!this.isFormElement(e.target)){
+				this.propagatable ? e.preventDefault() : event.stop(e);
+			}
+		},
+
+		onTouchMove: function(e){
+			// summary:
+			//		User-defined function to handle touchMove events.
+			if(this._locked){ return; }
+			var x = e.touches ? e.touches[0].pageX : e.clientX;
+			var y = e.touches ? e.touches[0].pageY : e.clientY;
+			var dx = x - this.touchStartX;
+			var dy = y - this.touchStartY;
+			var to = {x:this.startPos.x + dx, y:this.startPos.y + dy};
+			var dim = this._dim;
+
+			dx = Math.abs(dx);
+			dy = Math.abs(dy);
+			if(this._time.length == 1){ // the first TouchMove after TouchStart
+				if(this.dirLock){
+					if(this._v && !this._h && dx >= this.threshold && dx >= dy ||
+						(this._h || this._f) && !this._v && dy >= this.threshold && dy >= dx){
+						this._locked = true;
+						return;
+					}
+				}
+				if(this._v && this._h){ // scrollDir="hv"
+					if(dy < this.threshold &&
+					   dx < this.threshold){
+						return;
+					}
+				}else{
+					if(this._v && dy < this.threshold ||
+					   (this._h || this._f) && dx < this.threshold){
+						return;
+					}
+				}
+				this.addCover();
+				this.showScrollBar();
+			}
+
+			var weight = this.weight;
+			if(this._v && this.constraint){
+				if(to.y > 0){ // content is below the screen area
+					to.y = Math.round(to.y * weight);
+				}else if(to.y < -dim.o.h){ // content is above the screen area
+					if(dim.c.h < dim.d.h){ // content is shorter than display
+						to.y = Math.round(to.y * weight);
+					}else{
+						to.y = -dim.o.h - Math.round((-dim.o.h - to.y) * weight);
+					}
+				}
+			}
+			if((this._h || this._f) && this.constraint){
+				if(to.x > 0){
+					to.x = Math.round(to.x * weight);
+				}else if(to.x < -dim.o.w){
+					if(dim.c.w < dim.d.w){
+						to.x = Math.round(to.x * weight);
+					}else{
+						to.x = -dim.o.w - Math.round((-dim.o.w - to.x) * weight);
+					}
+				}
+			}
+			this.scrollTo(to);
+
+			var max = 10;
+			var n = this._time.length; // # of samples
+			if(n >= 2){
+				// Check the direction of the finger move.
+				// If the direction has been changed, discard the old data.
+				var d0, d1;
+				if(this._v && !this._h){
+					d0 = this._posY[n - 1] - this._posY[n - 2];
+					d1 = y - this._posY[n - 1];
+				}else if(!this._v && this._h){
+					d0 = this._posX[n - 1] - this._posX[n - 2];
+					d1 = x - this._posX[n - 1];
+				}
+				if(d0 * d1 < 0){ // direction changed
+					// leave only the latest data
+					this._time = [this._time[n - 1]];
+					this._posX = [this._posX[n - 1]];
+					this._posY = [this._posY[n - 1]];
+					n = 1;
+				}
+			}
+			if(n == max){
+				this._time.shift();
+				this._posX.shift();
+				this._posY.shift();
+			}
+			this._time.push((new Date()).getTime() - this.startTime);
+			this._posX.push(x);
+			this._posY.push(y);
+		},
+
+		onTouchEnd: function(/*Event*/e){
+			// summary:
+			//		User-defined function to handle touchEnd events.
+			if(this._locked){ return; }
+			var speed = this._speed = {x:0, y:0};
+			var dim = this._dim;
+			var pos = this.getPos();
+			var to = {}; // destination
+			if(e){
+				if(!this._conn){ return; } // if we get onTouchEnd without onTouchStart, ignore it.
+				for(var i = 0; i < this._conn.length; i++){
+					connect.disconnect(this._conn[i]);
+				}
+				this._conn = null;
+
+				var n = this._time.length; // # of samples
+				var clicked = false;
+				if(!this._aborted){
+					if(n <= 1){
+						clicked = true;
+					}else if(n == 2 && Math.abs(this._posY[1] - this._posY[0]) < 4
+						&&  true ){ // for desktop browsers, posY could be the same, since we're using clientY, see onTouchMove()
+						clicked = true;
+					}
+				}
+				if(clicked){ // clicked, not dragged or flicked
+					this.hideScrollBar();
+					this.removeCover();
+					// #12697 Do not generate a click event programmatically when a
+					// form element (input, select, etc.) is clicked.
+					// Otherwise, in particular, when checkbox is clicked, its state
+					// is reversed again by the generated event.
+					// #15878 The reason we send this synthetic click event is that we assume that the OS
+					// will not send the click because we prevented/stopped the touchstart.
+					// However, this does not seem true any more in Android 4.1 where the click is
+					// actually sent by the OS. So we must not send it a second time.
+					if( true  && !this.isFormElement(e.target) && !(has("android") >= 4.1)){
+						var elem = e.target;
+						if(elem.nodeType != 1){
+							elem = elem.parentNode;
+						}
+						var ev = win.doc.createEvent("MouseEvents");
+						ev.initMouseEvent("click", true, true, win.global, 1, e.screenX, e.screenY, e.clientX, e.clientY);
+						setTimeout(function(){
+							elem.dispatchEvent(ev);
+						}, 0);
+					}
+					return;
+				}
+				speed = this._speed = this.getSpeed();
+			}else{
+				if(pos.x == 0 && pos.y == 0){ return; } // initializing
+				dim = this.getDim();
+			}
+
+			if(this._v){
+				to.y = pos.y + speed.y;
+			}
+			if(this._h || this._f){
+				to.x = pos.x + speed.x;
+			}
+
+			if(this.adjustDestination(to, pos, dim) === false){ return; }
+
+			if(this.scrollDir == "v" && dim.c.h < dim.d.h){ // content is shorter than display
+				this.slideTo({y:0}, 0.3, "ease-out"); // go back to the top
+				return;
+			}else if(this.scrollDir == "h" && dim.c.w < dim.d.w){ // content is narrower than display
+				this.slideTo({x:0}, 0.3, "ease-out"); // go back to the left
+				return;
+			}else if(this._v && this._h && dim.c.h < dim.d.h && dim.c.w < dim.d.w){
+				this.slideTo({x:0, y:0}, 0.3, "ease-out"); // go back to the top-left
+				return;
+			}
+
+			var duration, easing = "ease-out";
+			var bounce = {};
+			if(this._v && this.constraint){
+				if(to.y > 0){ // going down. bounce back to the top.
+					if(pos.y > 0){ // started from below the screen area. return quickly.
+						duration = 0.3;
+						to.y = 0;
+					}else{
+						to.y = Math.min(to.y, 20);
+						easing = "linear";
+						bounce.y = 0;
+					}
+				}else if(-speed.y > dim.o.h - (-pos.y)){ // going up. bounce back to the bottom.
+					if(pos.y < -dim.o.h){ // started from above the screen top. return quickly.
+						duration = 0.3;
+						to.y = dim.c.h <= dim.d.h ? 0 : -dim.o.h; // if shorter, move to 0
+					}else{
+						to.y = Math.max(to.y, -dim.o.h - 20);
+						easing = "linear";
+						bounce.y = -dim.o.h;
+					}
+				}
+			}
+			if((this._h || this._f) && this.constraint){
+				if(to.x > 0){ // going right. bounce back to the left.
+					if(pos.x > 0){ // started from right of the screen area. return quickly.
+						duration = 0.3;
+						to.x = 0;
+					}else{
+						to.x = Math.min(to.x, 20);
+						easing = "linear";
+						bounce.x = 0;
+					}
+				}else if(-speed.x > dim.o.w - (-pos.x)){ // going left. bounce back to the right.
+					if(pos.x < -dim.o.w){ // started from left of the screen top. return quickly.
+						duration = 0.3;
+						to.x = dim.c.w <= dim.d.w ? 0 : -dim.o.w; // if narrower, move to 0
+					}else{
+						to.x = Math.max(to.x, -dim.o.w - 20);
+						easing = "linear";
+						bounce.x = -dim.o.w;
+					}
+				}
+			}
+			this._bounce = (bounce.x !== undefined || bounce.y !== undefined) ? bounce : undefined;
+
+			if(duration === undefined){
+				var distance, velocity;
+				if(this._v && this._h){
+					velocity = Math.sqrt(speed.x*speed.x + speed.y*speed.y);
+					distance = Math.sqrt(Math.pow(to.y - pos.y, 2) + Math.pow(to.x - pos.x, 2));
+				}else if(this._v){
+					velocity = speed.y;
+					distance = to.y - pos.y;
+				}else if(this._h){
+					velocity = speed.x;
+					distance = to.x - pos.x;
+				}
+				if(distance === 0 && !e){ return; } // #13154
+				duration = velocity !== 0 ? Math.abs(distance / velocity) : 0.01; // time = distance / velocity
+			}
+			this.slideTo(to, duration, easing);
+		},
+
+		adjustDestination: function(/*Object*/to, /*Object*/pos, /*Object*/dim){
+			// summary:
+			//		A stub function to be overridden by subclasses.
+			// description:
+			//		This function is called from onTouchEnd(). The purpose is to give its
+			//		subclasses a chance to adjust the destination position. If this
+			//		function returns false, onTouchEnd() returns immediately without
+			//		performing scroll.
+			// to:
+			//		The destination position. An object with x and y.
+			// pos:
+			//		The current position. An object with x and y.
+			// dim:
+			//		Dimension information returned by getDim().			
+
+			// subclass may want to implement
+			return true; // Boolean
+		},
+
+		abort: function(){
+			// summary:
+			//		Aborts scrolling.
+			// description:
+			//		This function stops the scrolling animation that is currently
+			//		running. It is called when the user touches the screen while
+			//		scrolling.
+			this.scrollTo(this.getPos());
+			this.stopAnimation();
+			this._aborted = true;
+		},
+
+		stopAnimation: function(){
+			// summary:
+			//		Stops the currently running animation.
+			domClass.remove(this.containerNode, "mblScrollableScrollTo2");
+			if(this._scrollBarV){
+				this._scrollBarV.className = "";
+			}
+			if(this._scrollBarH){
+				this._scrollBarH.className = "";
+			}
+			if(this._useTransformTransition || this._useTopLeft){
+				this.containerNode.style.webkitTransition = "";
+				if(this._scrollBarV) { this._scrollBarV.style.webkitTransition = ""; }
+				if(this._scrollBarH) { this._scrollBarH.style.webkitTransition = ""; }
+			}
+		},
+
+		scrollIntoView: function(/*DOMNode*/node, /*Boolean?*/alignWithTop, /*Number?*/duration){
+			// summary:
+			//		Scrolls the pane until the searching node is in the view.
+			// node:
+			//		A DOM node to be searched for view.
+			// alignWithTop:
+			//		If true, aligns the node at the top of the pane.
+			//		If false, aligns the node at the bottom of the pane.
+			// duration:
+			//		Duration of scrolling in seconds. (ex. 0.3)
+			//		If not specified, scrolls without animation.
+			// description:
+			//		Just like the scrollIntoView method of DOM elements, this
+			//		function causes the given node to scroll into view, aligning it
+			//		either at the top or bottom of the pane.
+
+			if(!this._v){ return; } // cannot scroll vertically
+
+			var c = this.containerNode,
+				h = this.getDim().d.h, // the height of ScrollableView's content display area
+				top = 0;
+
+			// Get the top position of node relative to containerNode
+			for(var n = node; n !== c; n = n.offsetParent){
+				if(!n || n.tagName === "BODY"){ return; } // exit if node is not a child of scrollableView
+				top += n.offsetTop;
+			}
+			// Calculate scroll destination position
+			var y = alignWithTop ? Math.max(h - c.offsetHeight, -top) : Math.min(0, h - top - node.offsetHeight);
+
+			// Scroll to destination position
+			(duration && typeof duration === "number") ? 
+				this.slideTo({y: y}, duration, "ease-out") : this.scrollTo({y: y});
+		},
+
+		getSpeed: function(){
+			// summary:
+			//		Returns an object that indicates the scrolling speed.
+			// description:
+			//		From the position and elapsed time information, calculates the
+			//		scrolling speed, and returns an object with x and y.
+			var x = 0, y = 0, n = this._time.length;
+			// if the user holds the mouse or finger more than 0.5 sec, do not move.
+			if(n >= 2 && (new Date()).getTime() - this.startTime - this._time[n - 1] < 500){
+				var dy = this._posY[n - (n > 3 ? 2 : 1)] - this._posY[(n - 6) >= 0 ? n - 6 : 0];
+				var dx = this._posX[n - (n > 3 ? 2 : 1)] - this._posX[(n - 6) >= 0 ? n - 6 : 0];
+				var dt = this._time[n - (n > 3 ? 2 : 1)] - this._time[(n - 6) >= 0 ? n - 6 : 0];
+				y = this.calcSpeed(dy, dt);
+				x = this.calcSpeed(dx, dt);
+			}
+			return {x:x, y:y};
+		},
+
+		calcSpeed: function(/*Number*/distance, /*Number*/time){
+			// summary:
+			//		Calculate the speed given the distance and time.
+			return Math.round(distance / time * 100) * 4;
+		},
+
+		scrollTo: function(/*Object*/to, /*Boolean?*/doNotMoveScrollBar, /*DomNode?*/node){
+			// summary:
+			//		Scrolls to the given position immediately without animation.
+			// to:
+			//		The destination position. An object with x and y.
+			//		ex. {x:0, y:-5}
+			// doNotMoveScrollBar:
+			//		If true, the scroll bar will not be updated. If not specified,
+			//		it will be updated.
+			// node:
+			//		A DOM node to scroll. If not specified, defaults to
+			//		this.containerNode.
+
+			var s = (node || this.containerNode).style;
+			if( true ){
+				if(!this._useTopLeft){
+					if(this._useTransformTransition){
+						s.webkitTransition = "";	
+					}
+					s.webkitTransform = this.makeTranslateStr(to);
+				}else{
+					s.webkitTransition = "";
+					if(this._v){
+						s.top = to.y + "px";
+					}
+					if(this._h || this._f){
+						s.left = to.x + "px";
+					}
+				}
+			}else{
+				if(this._v){
+					s.top = to.y + "px";
+				}
+				if(this._h || this._f){
+					s.left = to.x + "px";
+				}
+			}
+			if(!doNotMoveScrollBar){
+				this.scrollScrollBarTo(this.calcScrollBarPos(to));
+			}
+		},
+
+		slideTo: function(/*Object*/to, /*Number*/duration, /*String*/easing){
+			// summary:
+			//		Scrolls to the given position with the slide animation.
+			// to:
+			//		The scroll destination position. An object with x and/or y.
+			//		ex. {x:0, y:-5}, {y:-29}, etc.
+			// duration:
+			//		Duration of scrolling in seconds. (ex. 0.3)
+			// easing:
+			//		The name of easing effect which webkit supports.
+			//		"ease", "linear", "ease-in", "ease-out", etc.
+
+			this._runSlideAnimation(this.getPos(), to, duration, easing, this.containerNode, 2);
+			this.slideScrollBarTo(to, duration, easing);
+		},
+
+		makeTranslateStr: function(/*Object*/to){
+			// summary:
+			//		Constructs a string value that is passed to the -webkit-transform property.
+			// to:
+			//		The destination position. An object with x and/or y.
+			// description:
+			//		Return value example: "translate3d(0px,-8px,0px)"
+
+			var y = this._v && typeof to.y == "number" ? to.y+"px" : "0px";
+			var x = (this._h||this._f) && typeof to.x == "number" ? to.x+"px" : "0px";
+			return has("translate3d") ?
+					"translate3d("+x+","+y+",0px)" : "translate("+x+","+y+")";
+		},
+
+		getPos: function(){
+			// summary:
+			//		Gets the top position in the midst of animation.
+			if( true ){
+				var s = win.doc.defaultView.getComputedStyle(this.containerNode, '');
+				if(!this._useTopLeft){
+					var m = s["-webkit-transform"];
+					if(m && m.indexOf("matrix") === 0){
+						var arr = m.split(/[,\s\)]+/);
+						return {y:arr[5] - 0, x:arr[4] - 0};
+					}
+					return {x:0, y:0};
+				}else{
+					return {x:parseInt(s.left) || 0, y:parseInt(s.top) || 0};
+				}
+			}else{
+				// this.containerNode.offsetTop does not work here,
+				// because it adds the height of the top margin.
+				var y = parseInt(this.containerNode.style.top) || 0;
+				return {y:y, x:this.containerNode.offsetLeft};
+			}
+		},
+
+		getDim: function(){
+			// summary:
+			//		Returns various internal dimensional information needed for calculation.
+
+			var d = {};
+			// content width/height
+			d.c = {h:this.containerNode.offsetHeight, w:this.containerNode.offsetWidth};
+
+			// view width/height
+			d.v = {h:this.domNode.offsetHeight + this._appFooterHeight, w:this.domNode.offsetWidth};
+
+			// display width/height
+			d.d = {h:d.v.h - this.fixedHeaderHeight - this.fixedFooterHeight, w:d.v.w};
+
+			// overflowed width/height
+			d.o = {h:d.c.h - d.v.h + this.fixedHeaderHeight + this.fixedFooterHeight, w:d.c.w - d.v.w};
+			return d;
+		},
+
+		showScrollBar: function(){
+			// summary:
+			//		Shows the scroll bar.
+			// description:
+			//		This function creates the scroll bar instance if it does not
+			//		exist yet, and calls resetScrollBar() to reset its length and
+			//		position.
+
+			if(!this.scrollBar){ return; }
+
+			var dim = this._dim;
+			if(this.scrollDir == "v" && dim.c.h <= dim.d.h){ return; }
+			if(this.scrollDir == "h" && dim.c.w <= dim.d.w){ return; }
+			if(this._v && this._h && dim.c.h <= dim.d.h && dim.c.w <= dim.d.w){ return; }
+
+			var createBar = function(self, dir){
+				var bar = self["_scrollBarNode" + dir];
+				if(!bar){
+					var wrapper = domConstruct.create("div", null, self.domNode);
+					var props = { position: "absolute", overflow: "hidden" };
+					if(dir == "V"){
+						props.right = "2px";
+						props.width = "5px";
+					}else{
+						props.bottom = (self.isLocalFooter ? self.fixedFooterHeight : 0) + 2 + "px";
+						props.height = "5px";
+					}
+					domStyle.set(wrapper, props);
+					wrapper.className = "mblScrollBarWrapper";
+					self["_scrollBarWrapper"+dir] = wrapper;
+
+					bar = domConstruct.create("div", null, wrapper);
+					domStyle.set(bar, {
+						opacity: 0.6,
+						position: "absolute",
+						backgroundColor: "#606060",
+						fontSize: "1px",
+						webkitBorderRadius: "2px",
+						MozBorderRadius: "2px",
+						webkitTransformOrigin: "0 0",
+						zIndex: 2147483647 // max of signed 32-bit integer
+					});
+					domStyle.set(bar, dir == "V" ? {width: "5px"} : {height: "5px"});
+					self["_scrollBarNode" + dir] = bar;
+				}
+				return bar;
+			};
+			if(this._v && !this._scrollBarV){
+				this._scrollBarV = createBar(this, "V");
+			}
+			if(this._h && !this._scrollBarH){
+				this._scrollBarH = createBar(this, "H");
+			}
+			this.resetScrollBar();
+		},
+
+		hideScrollBar: function(){
+			// summary:
+			//		Hides the scroll bar.
+			// description:
+			//		If the fadeScrollBar property is true, hides the scroll bar with
+			//		the fade animation.
+
+			if(this.fadeScrollBar &&  true ){
+				if(!dm._fadeRule){
+					var node = domConstruct.create("style", null, win.doc.getElementsByTagName("head")[0]);
+					node.textContent =
+						".mblScrollableFadeScrollBar{"+
+						"  -webkit-animation-duration: 1s;"+
+						"  -webkit-animation-name: scrollableViewFadeScrollBar;}"+
+						"@-webkit-keyframes scrollableViewFadeScrollBar{"+
+						"  from { opacity: 0.6; }"+
+						"  to { opacity: 0; }}";
+					dm._fadeRule = node.sheet.cssRules[1];
+				}
+			}
+			if(!this.scrollBar){ return; }
+			var f = function(bar, self){
+				domStyle.set(bar, {
+					opacity: 0,
+					webkitAnimationDuration: ""
+				});
+				// do not use fade animation in case of using top/left on Android
+				// since it causes screen flicker during adress bar's fading out
+				if(!(self._useTopLeft && has('android'))){
+					bar.className = "mblScrollableFadeScrollBar";
+				}
+			};
+			if(this._scrollBarV){
+				f(this._scrollBarV, this);
+				this._scrollBarV = null;
+			}
+			if(this._scrollBarH){
+				f(this._scrollBarH, this);
+				this._scrollBarH = null;
+			}
+		},
+
+		calcScrollBarPos: function(/*Object*/to){
+			// summary:
+			//		Calculates the scroll bar position.
+			// description:
+			//		Given the scroll destination position, calculates the top and/or
+			//		the left of the scroll bar(s). Returns an object with x and y.
+			// to:
+			//		The scroll destination position. An object with x and y.
+			//		ex. {x:0, y:-5}			
+
+			var pos = {};
+			var dim = this._dim;
+			var f = function(wrapperH, barH, t, d, c){
+				var y = Math.round((d - barH - 8) / (d - c) * t);
+				if(y < -barH + 5){
+					y = -barH + 5;
+				}
+				if(y > wrapperH - 5){
+					y = wrapperH - 5;
+				}
+				return y;
+			};
+			if(typeof to.y == "number" && this._scrollBarV){
+				pos.y = f(this._scrollBarWrapperV.offsetHeight, this._scrollBarV.offsetHeight, to.y, dim.d.h, dim.c.h);
+			}
+			if(typeof to.x == "number" && this._scrollBarH){
+				pos.x = f(this._scrollBarWrapperH.offsetWidth, this._scrollBarH.offsetWidth, to.x, dim.d.w, dim.c.w);
+			}
+			return pos;
+		},
+
+		scrollScrollBarTo: function(/*Object*/to){
+			// summary:
+			//		Moves the scroll bar(s) to the given position without animation.
+			// to:
+			//		The destination position. An object with x and/or y.
+			//		ex. {x:2, y:5}, {y:20}, etc.
+
+			if(!this.scrollBar){ return; }
+			if(this._v && this._scrollBarV && typeof to.y == "number"){
+				if( true ){
+					if(!this._useTopLeft){
+						if(this._useTransformTransition){
+							this._scrollBarV.style.webkitTransition = "";
+						}
+						this._scrollBarV.style.webkitTransform = this.makeTranslateStr({y:to.y});
+					}else{
+						domStyle.set(this._scrollBarV, {
+							webkitTransition: "",
+							top: to.y + "px"
+						});
+					}
+				}else{
+					this._scrollBarV.style.top = to.y + "px";
+				}
+			}
+			if(this._h && this._scrollBarH && typeof to.x == "number"){
+				if( true ){
+					if(!this._useTopLeft){
+						if(this._useTransformTransition){
+							this._scrollBarH.style.webkitTransition = "";
+						}
+						this._scrollBarH.style.webkitTransform = this.makeTranslateStr({x:to.x});
+					}else{
+						domStyle.set(this._scrollBarH, {
+							webkitTransition: "",
+							left: to.x + "px"
+						});
+					}
+				}else{
+					this._scrollBarH.style.left = to.x + "px";
+				}
+			}
+		},
+
+		slideScrollBarTo: function(/*Object*/to, /*Number*/duration, /*String*/easing){
+			// summary:
+			//		Moves the scroll bar(s) to the given position with the slide animation.
+			// to:
+			//		The destination position. An object with x and y.
+			//		ex. {x:0, y:-5}
+			// duration:
+			//		Duration of the animation in seconds. (ex. 0.3)
+			// easing:
+			//		The name of easing effect which webkit supports.
+			//		"ease", "linear", "ease-in", "ease-out", etc.
+
+			if(!this.scrollBar){ return; }
+			var fromPos = this.calcScrollBarPos(this.getPos());
+			var toPos = this.calcScrollBarPos(to);
+			if(this._v && this._scrollBarV){
+				this._runSlideAnimation({y:fromPos.y}, {y:toPos.y}, duration, easing, this._scrollBarV, 0);
+			}
+			if(this._h && this._scrollBarH){
+				this._runSlideAnimation({x:fromPos.x}, {x:toPos.x}, duration, easing, this._scrollBarH, 1);
+			}
+		},
+
+		_runSlideAnimation: function(/*Object*/from, /*Object*/to, /*Number*/duration, /*String*/easing, /*DomNode*/node, /*Number*/idx){
+			// tags:
+			//		private
+			
+			// idx: 0:scrollbarV, 1:scrollbarH, 2:content
+			if( true ){
+				if(!this._useTopLeft){
+					if(this._useTransformTransition){
+						// for iOS6 (maybe others?): use -webkit-transform + -webkit-transition
+						if(to.x === undefined){ to.x = from.x; }
+						if(to.y === undefined){ to.y = from.y; }
+						 // make sure we actually change the transform, otherwise no webkitTransitionEnd is fired.
+						if(to.x !== from.x || to.y !== from.y){
+							domStyle.set(node, {
+								webkitTransitionProperty: "-webkit-transform",
+								webkitTransitionDuration: duration + "s",
+								webkitTransitionTimingFunction: easing
+							});
+							var t = this.makeTranslateStr(to);
+							setTimeout(function(){ // setTimeout is needed to prevent webkitTransitionEnd not fired
+								domStyle.set(node, {
+									webkitTransform: t
+								});
+							}, 0);
+							domClass.add(node, "mblScrollableScrollTo"+idx);
+						} else {
+							// transform not changed, just hide the scrollbar
+							this.hideScrollBar();
+							this.removeCover();
+						}
+					}else{
+						// use -webkit-transform + -webkit-animation
+						this.setKeyframes(from, to, idx);
+						domStyle.set(node, {
+							webkitAnimationDuration: duration + "s",
+							webkitAnimationTimingFunction: easing
+						});
+						domClass.add(node, "mblScrollableScrollTo"+idx);
+						if(idx == 2){
+							this.scrollTo(to, true, node);
+						}else{
+							this.scrollScrollBarTo(to);
+						}
+					}
+				}else{
+					domStyle.set(node, {
+						webkitTransitionProperty: "top, left",
+						webkitTransitionDuration: duration + "s",
+						webkitTransitionTimingFunction: easing
+					});
+					setTimeout(function(){ // setTimeout is needed to prevent webkitTransitionEnd not fired
+						domStyle.set(node, {
+							top: (to.y || 0) + "px",
+							left: (to.x || 0) + "px"
+						});
+					}, 0);
+					domClass.add(node, "mblScrollableScrollTo"+idx);
+				}
+			}else if(dojo.fx && dojo.fx.easing && duration){
+				// If you want to support non-webkit browsers,
+				// your application needs to load necessary modules as follows:
+				//
+				// | dojo.require("dojo.fx");
+				// | dojo.require("dojo.fx.easing");
+				//
+				// This module itself does not make dependency on them.
+				// TODO: for 2.0 the dojo global is going away.   Use require("dojo/fx") and require("dojo/fx/easing") instead.
+				var s = dojo.fx.slideTo({
+					node: node,
+					duration: duration*1000,
+					left: to.x,
+					top: to.y,
+					easing: (easing == "ease-out") ? dojo.fx.easing.quadOut : dojo.fx.easing.linear
+				}).play();
+				if(idx == 2){
+					connect.connect(s, "onEnd", this, "onFlickAnimationEnd");
+				}
+			}else{
+				// directly jump to the destination without animation
+				if(idx == 2){
+					this.scrollTo(to, false, node);
+					this.onFlickAnimationEnd();
+				}else{
+					this.scrollScrollBarTo(to);
+				}
+			}
+		},
+
+		resetScrollBar: function(){
+			// summary:
+			//		Resets the scroll bar length, position, etc.
+			var f = function(wrapper, bar, d, c, hd, v){
+				if(!bar){ return; }
+				var props = {};
+				props[v ? "top" : "left"] = hd + 4 + "px"; // +4 is for top or left margin
+				var t = (d - 8) <= 0 ? 1 : d - 8;
+				props[v ? "height" : "width"] = t + "px";
+				domStyle.set(wrapper, props);
+				var l = Math.round(d * d / c); // scroll bar length
+				l = Math.min(Math.max(l - 8, 5), t); // -8 is for margin for both ends
+				bar.style[v ? "height" : "width"] = l + "px";
+				domStyle.set(bar, {"opacity": 0.6});
+			};
+			var dim = this.getDim();
+			f(this._scrollBarWrapperV, this._scrollBarV, dim.d.h, dim.c.h, this.fixedHeaderHeight, true);
+			f(this._scrollBarWrapperH, this._scrollBarH, dim.d.w, dim.c.w, 0);
+			this.createMask();
+		},
+
+		createMask: function(){
+			// summary:
+			//		Creates a mask for a scroll bar edge.
+			// description:
+			//		This function creates a mask that hides corners of one scroll
+			//		bar edge to make it round edge. The other side of the edge is
+			//		always visible and round shaped with the border-radius style.
+			if(! true ){ return; }
+			var ctx;
+			if(this._scrollBarWrapperV){
+				var h = this._scrollBarWrapperV.offsetHeight;
+				ctx = win.doc.getCSSCanvasContext("2d", "scrollBarMaskV", 5, h);
+				ctx.fillStyle = "rgba(0,0,0,0.5)";
+				ctx.fillRect(1, 0, 3, 2);
+				ctx.fillRect(0, 1, 5, 1);
+				ctx.fillRect(0, h - 2, 5, 1);
+				ctx.fillRect(1, h - 1, 3, 2);
+				ctx.fillStyle = "rgb(0,0,0)";
+				ctx.fillRect(0, 2, 5, h - 4);
+				this._scrollBarWrapperV.style.webkitMaskImage = "-webkit-canvas(scrollBarMaskV)";
+			}
+			if(this._scrollBarWrapperH){
+				var w = this._scrollBarWrapperH.offsetWidth;
+				ctx = win.doc.getCSSCanvasContext("2d", "scrollBarMaskH", w, 5);
+				ctx.fillStyle = "rgba(0,0,0,0.5)";
+				ctx.fillRect(0, 1, 2, 3);
+				ctx.fillRect(1, 0, 1, 5);
+				ctx.fillRect(w - 2, 0, 1, 5);
+				ctx.fillRect(w - 1, 1, 2, 3);
+				ctx.fillStyle = "rgb(0,0,0)";
+				ctx.fillRect(2, 0, w - 4, 5);
+				this._scrollBarWrapperH.style.webkitMaskImage = "-webkit-canvas(scrollBarMaskH)";
+			}
+		},
+
+		flashScrollBar: function(){
+			// summary:
+			//		Shows the scroll bar instantly.
+			// description:
+			//		This function shows the scroll bar, and then hides it 300ms
+			//		later. This is used to show the scroll bar to the user for a
+			//		short period of time when a hidden view is revealed.
+			if(this.disableFlashScrollBar || !this.domNode){ return; }
+			this._dim = this.getDim();
+			if(this._dim.d.h <= 0){ return; } // dom is not ready
+			this.showScrollBar();
+			var _this = this;
+			setTimeout(function(){
+				_this.hideScrollBar();
+			}, 300);
+		},
+
+		addCover: function(){
+			// summary:
+			//		Adds the transparent DIV cover.
+			// description:
+			//		The cover is to prevent DOM events from affecting the child
+			//		widgets such as a list widget. Without the cover, for example,
+			//		child widgets may receive a click event and respond to it
+			//		unexpectedly when the user flicks the screen to scroll.
+			//		Note that only the desktop browsers need the cover.
+
+			if(! true  && !this.noCover){
+				if(!dm._cover){
+					dm._cover = domConstruct.create("div", null, win.doc.body);
+					dm._cover.className = "mblScrollableCover";
+					domStyle.set(dm._cover, {
+						backgroundColor: "#ffff00",
+						opacity: 0,
+						position: "absolute",
+						top: "0px",
+						left: "0px",
+						width: "100%",
+						height: "100%",
+						zIndex: 2147483647 // max of signed 32-bit integer
+					});
+					this._ch.push(connect.connect(dm._cover,
+						 true  ? "ontouchstart" : "onmousedown", this, "onTouchEnd"));
+				}else{
+					dm._cover.style.display = "";
+				}
+				this.setSelectable(dm._cover, false);
+				this.setSelectable(this.domNode, false);
+			}
+		},
+
+		removeCover: function(){
+			// summary:
+			//		Removes the transparent DIV cover.
+
+			if(! true  && dm._cover){
+				dm._cover.style.display = "none";
+				this.setSelectable(dm._cover, true);
+				this.setSelectable(this.domNode, true);
+			}
+		},
+
+		setKeyframes: function(/*Object*/from, /*Object*/to, /*Number*/idx){
+			// summary:
+			//		Programmatically sets key frames for the scroll animation.
+
+			if(!dm._rule){
+				dm._rule = [];
+			}
+			// idx: 0:scrollbarV, 1:scrollbarH, 2:content
+			if(!dm._rule[idx]){
+				var node = domConstruct.create("style", null, win.doc.getElementsByTagName("head")[0]);
+				node.textContent =
+					".mblScrollableScrollTo"+idx+"{-webkit-animation-name: scrollableViewScroll"+idx+";}"+
+					"@-webkit-keyframes scrollableViewScroll"+idx+"{}";
+				dm._rule[idx] = node.sheet.cssRules[1];
+			}
+			var rule = dm._rule[idx];
+			if(rule){
+				if(from){
+					rule.deleteRule("from");
+					rule.insertRule("from { -webkit-transform: "+this.makeTranslateStr(from)+"; }");
+				}
+				if(to){
+					if(to.x === undefined){ to.x = from.x; }
+					if(to.y === undefined){ to.y = from.y; }
+					rule.deleteRule("to");
+					rule.insertRule("to { -webkit-transform: "+this.makeTranslateStr(to)+"; }");
+				}
+			}
+		},
+
+		setSelectable: function(/*DomNode*/node, /*Boolean*/selectable){
+			// summary:
+			//		Sets the given node as selectable or unselectable.
+			 
+			// dojo.setSelectable has dependency on dojo.query. Redefine our own.
+			node.style.KhtmlUserSelect = selectable ? "auto" : "none";
+			node.style.MozUserSelect = selectable ? "" : "none";
+			node.onselectstart = selectable ? null : function(){return false;};
+			if( undefined ){
+				node.unselectable = selectable ? "" : "on";
+				var nodes = node.getElementsByTagName("*");
+				for(var i = 0; i < nodes.length; i++){
+					nodes[i].unselectable = selectable ? "" : "on";
+				}
+			}
+		}
+	});
+
+	lang.setObject("dojox.mobile.scrollable", Scrollable);
+
+	return Scrollable;
+});
+
+},
+'dojox/mobile/PageIndicator':function(){
+define("dojox/mobile/PageIndicator", [
+	"dojo/_base/connect",
+	"dojo/_base/declare",
+	"dojo/dom",
+	"dojo/dom-class",
+	"dojo/dom-construct",
+	"dijit/registry",
+	"dijit/_Contained",
+	"dijit/_WidgetBase"
+], function(connect, declare, dom, domClass, domConstruct, registry, Contained, WidgetBase){
+
+	// module:
+	//		dojox/mobile/PageIndicator
+
+	return declare("dojox.mobile.PageIndicator", [WidgetBase, Contained],{
+		// summary:
+		//		A current page indicator.
+		// description:
+		//		PageIndicator displays a series of gray and white dots to
+		//		indicate which page is currently being viewed. It can typically
+		//		be used with dojox/mobile/SwapView. It is also internally used
+		//		in dojox/mobile/Carousel.
+
+		// refId: String
+		//		An ID of a DOM node to be searched. Siblings of the reference
+		//		node will be searched for views. If not specified, this.domNode
+		//		will be the reference node.
+		refId: "",
+
+		// baseClass: String
+		//		The name of the CSS class of this widget.
+		baseClass: "mblPageIndicator",
+
+		buildRendering: function(){
+			this.inherited(arguments);
+			this._tblNode = domConstruct.create("table", {className:"mblPageIndicatorContainer"}, this.domNode);
+			this._tblNode.insertRow(-1);
+			this._clickHandle = this.connect(this.domNode, "onclick", "_onClick");
+			this.subscribe("/dojox/mobile/viewChanged", function(view){
+				this.reset();
+			});
+		},
+
+		startup: function(){
+			var _this = this;
+			setTimeout(function(){ // to wait until views' visibility is determined
+				_this.reset();
+			}, 0);
+		},
+
+		reset: function(){
+			// summary:
+			//		Updates the indicator.
+			var r = this._tblNode.rows[0];
+			var i, c, a = [], dot;
+			var refNode = (this.refId && dom.byId(this.refId)) || this.domNode;
+			var children = refNode.parentNode.childNodes;
+			for(i = 0; i < children.length; i++){
+				c = children[i];
+				if(this.isView(c)){
+					a.push(c);
+				}
+			}
+			if(r.cells.length !== a.length){
+				domConstruct.empty(r);
+				for(i = 0; i < a.length; i++){
+					c = a[i];
+					dot = domConstruct.create("div", {className:"mblPageIndicatorDot"});
+					r.insertCell(-1).appendChild(dot);
+				}
+			}
+			if(a.length === 0){ return; }
+			var currentView = registry.byNode(a[0]).getShowingView();
+			for(i = 0; i < r.cells.length; i++){
+				dot = r.cells[i].firstChild;
+				if(a[i] === currentView.domNode){
+					domClass.add(dot, "mblPageIndicatorDotSelected");
+				}else{
+					domClass.remove(dot, "mblPageIndicatorDotSelected");
+				}
+			}
+		},
+
+		isView: function(node){
+			// summary:
+			//		Returns true if the given node is a view.
+			return (node && node.nodeType === 1 && domClass.contains(node, "mblView")); // Boolean
+		},
+
+		_onClick: function(e){
+			// summary:
+			//		Internal handler for click events.
+			// tags:
+			//		private
+			if(this.onClick(e) === false){ return; } // user's click action
+			if(e.target !== this.domNode){ return; }
+			if(e.layerX < this._tblNode.offsetLeft){
+				connect.publish("/dojox/mobile/prevPage", [this]);
+			}else if(e.layerX > this._tblNode.offsetLeft + this._tblNode.offsetWidth){
+				connect.publish("/dojox/mobile/nextPage", [this]);
+			}
+		},
+
+		onClick: function(/*Event*/ /*===== e =====*/){
+			// summary:
+			//		User-defined function to handle clicks.
+			// tags:
+			//		callback
 		}
 	});
 });
@@ -9352,12 +12130,13 @@ define( "walta/AnchorBar", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construc
 			
 			buildRendering: function() {
 				this.inherited(arguments);
-				var home = domConstruct.create("div", { "class": "waltaHome" }, this.containerNode );
+				var home = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaHome" }, this.containerNode );
+				
+				
+				var info = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaInfo" }, this.containerNode );
+				var settings = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaSettings" }, this.containerNode );
+				
 				domConstruct.create("h1", { innerHTML: this.title}, this.containerNode );	
-				
-				var info = domConstruct.create("div", { "class": "waltaInfo" }, this.containerNode );
-				var settings = domConstruct.create("div", { "class": "waltaSettings" }, this.containerNode );
-				
 				
 				on( home, "click", lang.hitch( this, function(e) { this.onHome(); } ) );
 				on( settings, "click", lang.hitch( this, function(e) { this.onSettings(); } ) );

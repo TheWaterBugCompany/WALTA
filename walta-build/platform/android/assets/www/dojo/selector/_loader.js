@@ -1,2 +1,0 @@
-//>>built
-define("dojo/selector/_loader",["../has","require"],function(e,f){document.createElement("div");var c;return{load:function(a,g,d){var b=f,a="default"==a?"./lite":a,a="css2"==a||"lite"==a?"./lite":"css2.1"==a?"./lite":"css3"==a?"./lite":"acme"==a?"./acme":(b=g)&&a;if("?"==a.charAt(a.length-1))var a=a.substring(0,a.length-1),h=!0;if(h&&(e("dom-compliant-qsa")||c))return d(c);b([a],function(b){"./lite"!=a&&(c=b);d(b)})}}});

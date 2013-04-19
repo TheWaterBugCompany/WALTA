@@ -1,2 +1,0 @@
-//>>built
-define("dojox/mobile/_compat","dojo/_base/array,dojo/_base/config,dojo/_base/connect,dojo/_base/fx,dojo/_base/lang,dojo/_base/sniff,dojo/_base/window,dojo/dom-class,dojo/dom-construct,dojo/dom-geometry,dojo/dom-style,dojo/fx,dojo/fx/easing,dojo/ready,dojo/uacss,dijit/registry,dojox/fx,dojox/fx/flip,./EdgeToEdgeList,./IconContainer,./ProgressIndicator,./RoundRect,./RoundRectList,./ScrollableView,./Switch,./View,require".split(","),function(b,c,d,e,a){return a.getObject("dojox.mobile",!0)});

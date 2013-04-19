@@ -16,12 +16,13 @@ define( "walta/AnchorBar", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construc
 			
 			buildRendering: function() {
 				this.inherited(arguments);
-				var home = domConstruct.create("div", { "class": "waltaHome" }, this.containerNode );
+				var home = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaHome" }, this.containerNode );
+				
+				
+				var info = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaInfo" }, this.containerNode );
+				var settings = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaSettings" }, this.containerNode );
+				
 				domConstruct.create("h1", { innerHTML: this.title}, this.containerNode );	
-				
-				var info = domConstruct.create("div", { "class": "waltaInfo" }, this.containerNode );
-				var settings = domConstruct.create("div", { "class": "waltaSettings" }, this.containerNode );
-				
 				
 				on( home, "click", lang.hitch( this, function(e) { this.onHome(); } ) );
 				on( settings, "click", lang.hitch( this, function(e) { this.onSettings(); } ) );

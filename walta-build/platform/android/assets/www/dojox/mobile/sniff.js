@@ -1,2 +1,0 @@
-//>>built
-define("dojox/mobile/sniff",["dojo/_base/window","dojo/_base/sniff"],function(d,b){var a=navigator.userAgent;b.add("bb",(0<=a.indexOf("BlackBerry")||a.indexOf("BB10"))&&parseFloat(a.split("Version/")[1])||void 0,void 0,!0);b.add("android",parseFloat(a.split("Android ")[1])||void 0,void 0,!0);if(a.match(/(iPhone|iPod|iPad)/)){var c=RegExp.$1.replace(/P/,"p"),a=a.match(/OS ([\d_]+)/)?RegExp.$1:"1",a=parseFloat(a.replace(/_/,".").replace(/_/g,""));b.add(c,a,void 0,!0);b.add("iphone",a,void 0,!0)}return b});
