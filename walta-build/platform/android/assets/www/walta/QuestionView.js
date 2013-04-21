@@ -1,0 +1,3 @@
+//>>built
+define("walta/QuestionView","dojo/_base/declare,dojo/on,dojo/dom-construct,dojo/_base/lang,dojox/mobile/Container,walta/MediaView".split(","),function(a,b,c,d,e,f){return a("walta.QuestionView",[e],{question:null,onClick:function(){},"class":"waltaQuestion",buildRendering:function(){this.inherited(arguments);c.create("p",{innerHTML:this.question.text},this.containerNode);this.question.mediaUrls[0]&&this.addChild(new f({mediaUrls:this.question.mediaUrls}));b(this.containerNode,"click",d.hitch(this,
+function(){this.onClick()}))}})});

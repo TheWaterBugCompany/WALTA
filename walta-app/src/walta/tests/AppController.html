@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Testing walta.KeyView</title>
+		<script type="text/javascript" src="../../dojo/dojo.js"></script>
+		<script type="text/javascript">
+			require(["dojo", "doh", "dojo/aspect", "walta/AppController", "dojox/mobile/deviceTheme", "dojo/domReady!"], function(dojo, doh, aspect, AppController ){
+				doh.register("Instantiation", 
+					function loadKey() {
+						
+						var app = new AppController( { keyUrl: "../../../../walta-data/taxonomies/test", divNode: "waltaApp" } );
+    					
+    					// when the key is loaded continue the test
+    					/*
+    					var deferred = new doh.Deferred();
+    					aspect.after( key, "onKeyLoaded", 
+    						deferred.getTestCallback( function() { 
+    							doh.assertEqual( key._key.name, "WALTA" );
+    						})
+    					); 
+    					*/	
+    			
+    					app.startApp();
+    					
+    					doh.assertTrue( true );
+    					
+    					/*return deferred;*/
+					}
+				);
+				doh.run();
+			});
+		</script>
+		<style type="text/css">
+				
+		</style>
+		<link rel="stylesheet" href="../resources/walta.css">
+	</head>
+	<body id="waltaApp">
+	</body>
+</html>

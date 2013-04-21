@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<key xmlns="http://thewaterbug.net/taxonomy" name="SIMPLE1">
+	<taxon id="parastacidae" name="Parastacidae" commonName="freshwater crayfish or yabbies" size="300" signalScore="4">
+		<habitat>Crayfish in rivers (upper photo) yabbies in wetlands/pools (lower photo).</habitat>
+		<movement>walking, with sudden flips when disturbed.</movement>
+		<confusedWith>Nothing, very distinctive.  We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to separate when young.</confusedWith>
+		<mediaRef url="parastacide_01.jpg"/>
+		<mediaRef url="parastacide_02.jpg"/>	
+	</taxon>
+
+	<keyNode>
+		<question num="1">
+			<text>Animals strongly flattened from the sides (like dogs and cats); often lying on their side or moving with their side flat against the substrate.</text>
+			<mediaRef url="couplet5p1.jpg"/>
+		</question>
+		
+		<question num="2">
+			<text>Animals not flattened or flattened 'front to back' (like humans or cockroaches).</text>
+			<mediaRef url="couplet5p2.jpg"/>
+		</question>
+		
+		<outcome for="1">
+			<keyNode>
+				<question num="1">
+					<text>Animal rests on its side, swims in swift bursts (below left).</text>
+					<mediaRef url="amphipoda_01.jpg"/>
+				</question>
+				<question num="2">
+					<text>Animal slow moving, walks (below right), relatively robust looking animal, bovine.</text>
+					<mediaRef url="phreatoicidae.jpg"/>
+				</question>
+				<outcome for="1"><taxonLink ref="parastacidae"/></outcome>
+				<outcome for="2"><taxonLink ref="parastacidae"/></outcome>
+			</keyNode>
+		</outcome>
+		
+		<outcome for="2"><taxonLink ref="parastacidae"/></outcome>
+	</keyNode>
+						
+		
+	
+</key>
