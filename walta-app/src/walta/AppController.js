@@ -9,9 +9,9 @@
  *   - navigation of the key via events on KeyNodeView 
  * 
  */
-define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/aspect", 
+define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/aspect", "dojo/topic",
           "walta/Key", "walta/KeyNode", "walta/Taxon", "walta/KeyNodeView", "walta/TaxonView", "walta/HomeView"], 
-	function( declare, lang, domConstruct, aspect, Key, KeyNode, Taxon, KeyNodeView, TaxonView, HomeView ) {
+	function( declare, lang, domConstruct, aspect, topic, Key, KeyNode, Taxon, KeyNodeView, TaxonView, HomeView ) {
 		return declare( null, {
 			
 			// public
@@ -51,17 +51,13 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 			},
 			
 			_doTransition: function( view, dir ) {
-				console.log("view: " + view.get("id"));
-				console.log("current view: " + this._currentView.get("id"));
 				this._currentView.performTransition( view.get("id"), dir, "slide" );
 				this._currentView = view;
 			},
 			
 			// Creata an wire up a new decision view
 			_createDecisionView: function() {
-				
-				console.log("createdecisionview");
-				
+	
 				var decisionView = null;
 				var decisionViewNode =  domConstruct.create("div", { id: "waltaDecisionView" + this._decisionCounter++ }, this.divNode );
 				
@@ -87,7 +83,6 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 					this._decisionCounter = this._decisionCounter % 3;
 				}
 				
-				console.log("return " + decisionView);
 				return decisionView;
 				
 			},
@@ -101,7 +96,12 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 			},
 			
 			startApp: function() {
-				this._key.load().then( lang.hitch( this, this._createHomeView ) );
+				this._key.load()
+					.then( lang.hitch( this, this._createHomeView ) );
+				topic.subscribe("anchorbar/home", lang.hitch( this, function() { 
+						this._key.reset();
+						this._doTransition( this._views["home"], -1 ); 
+					} ) );
 			}
 			
 			

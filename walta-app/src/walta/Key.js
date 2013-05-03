@@ -15,12 +15,14 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 		url: null,	 		// URL to load the key package from
 		name: null,  		// name of the current key
 		
+		
 		currentDecision: null, // Either a KeyNode or a Taxon
 		
 		//
 		// private
 		//
 		_xml: null, 		// XmlDocument
+		_startNode: null,
 		
 		//
 		// methods
@@ -42,6 +44,7 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 						// Initialise the decision tree
 						this.name = this._xml.getString( null, "/tax:key/@name" );
 			    		this.currentDecision = new KeyNode( this.url, this._xml, this._xml.getNode( null, "/tax:key/tax:keyNode") );
+			    		this._startNode = this.currentDecision;
 					})
 				);	
 		},
@@ -57,6 +60,10 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 				this.currentDecision = parent;
 			}
 			return parent;
+		},
+		
+		reset: function() {
+			this.currentDecision = this._startNode;
 		},
 		
 		constructor: function(args) {	

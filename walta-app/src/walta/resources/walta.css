@@ -22,7 +22,9 @@ html,body {
     background-color: white !important;
     margin: 0 !important;
     padding: 0 !important;
+    color: black;
 }
+.mblView { color: black; }
 
 /* Anchor bar */
 .waltaAnchorBar {
@@ -111,8 +113,13 @@ html,body {
   	width: 25% !important;
   }
   
-  .waltaSecondary h2, .waltaSecondary p {
+  .waltaSecondary h2{
 	margin-left: 1em;
+	  	text-align: center !important;
+  }
+  
+  .waltaSecondary p {
+  	text-align: center !important;
   }
 } 
 
@@ -235,6 +242,10 @@ html,body {
 .waltaSecondary h2 {
 	margin-top: 0.2mm;
 	margin-bottom: 0.05mm;
+	text-align: center;
+}
+
+.waltaSecondary p {
 	text-align: center;
 }
 
@@ -385,12 +396,14 @@ html,body {
 
 .waltaCarousel .waltaCloseButton {
 	background-image: url("close.png");
-	background-size: cover;
-	width: 16px;
-	height: 16px;
+	background-repeat: no-repeat;
+	background-position: 36px 0px;
+	background-size: 16px 16px;
+	width: 64px;
+	height: 64px;
 	position: absolute;
 	top: 12px;
-	right: 6%;
+	right: 0;
 	opacity: 0.8;
 }
 
