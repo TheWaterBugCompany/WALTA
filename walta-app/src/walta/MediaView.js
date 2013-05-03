@@ -4,8 +4,8 @@
  * Creates a thumbnail image with a zoom to gallery icon.
  *  
  */
-define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/ContentPane", "dojox/mobile/SwapView", "dojox/mobile/Carousel" ], 
-	function( declare, array, on, domConstruct, lang, ContentPane, SwapView, Carousel ) {
+define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/on", "dojo/aspect", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/ContentPane", "dojox/mobile/SwapView", "dojox/mobile/Carousel" ], 
+	function( declare, array, on, aspect, domConstruct, lang, ContentPane, SwapView, Carousel ) {
 		return declare( "walta.MediaView", [ContentPane], {
 			
 			mediaUrls: [],
@@ -43,6 +43,10 @@ define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/on", "dojo/dom-constru
 							this._carousel = null; 
 							e.stopPropagation();
 						} ) );
+					on( this._carousel.domNode, "click", function(e) { 
+						e.stopPropagation(); 
+					});
+					
 					
 					this.addChild( this._carousel );
 					this._carousel.startup();
