@@ -36,6 +36,18 @@
 		
 		<outcome for="2"><taxonLink ref="parastacidae"/></outcome>
 	</keyNode>
+	
+	<speedBugIndex>
+	    <speedBugGroup ref="maggots">
+	        <speedBugLink image="speedbug/athericidae.svg" ref="athericidae"/>
+			<speedBugLink image="speedbug/blepheraceridae.svg" ref="blepheraceridae"/>
+	    </speedBugGroup>
+	    <speedBugLink image="speedbug/ranatra.svg" ref="ranatra"/>
+	    <speedBugGroup ref="larval">
+	        <speedBugLink image="speedbug/hydrobiosidae.svg" ref="hydrobiosidae"/>
+			<speedBugLink image="speedbug/megaloptera.svg" ref="corydalidae"/>
+	    </speedBugGroup>
+	</speedBugIndex>
 						
 		
 	
