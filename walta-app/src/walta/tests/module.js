@@ -1,5 +1,5 @@
 define([
     "walta/tests/XmlDocument",
 	"walta/tests/Key", 
-	"walta/tests/KeyController"
+	"walta/tests/AppController"
 ], 1);
