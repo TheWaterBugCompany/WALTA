@@ -14,19 +14,16 @@
 }
 
 /* Set default styles */
-html {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+html, body {
+	width:100%;
+	height:100%;
 	font-family: Tahoma, sans-serif !important;
     font-size: 4mm !important;   
     margin: 0 !important;
     padding: 0 !important;
     color: black;
 }
-body { width: 100%; height: 100%; background-color: white !important; }
+body { background-color: white !important; }
 .mblView { color: black; }
 
 /* Anchor bar */
@@ -498,3 +495,22 @@ body { width: 100%; height: 100%; background-color: white !important; }
 	border: none;
 	-webkit-box-align: end;
 }
+
+/* Speed Bug */
+.waltaSpeedBug { width: 100%; height: 100%;}
+.waltaSpeedBugImage { width: 100%; height: 100%; }
+
+.waltaSpeedBug .mblCarouselPages {
+	width: 100%;
+	height: 100%;
+}
+
+.waltaSpeedBugTile {
+	height: 100%;
+}
+
+.waltaSpeedBug .mblCarouselHeaderBar {
+	display:none;
+}
+
+

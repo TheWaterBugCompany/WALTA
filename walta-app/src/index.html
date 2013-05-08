@@ -9,7 +9,14 @@
 <meta name="format-detection" content="telephone=no" >
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
 
-<link rel="stylesheet" href="walta/resources/walta.css">
+
+<style type="text/css">
+	/*
+	 * Load the CSS styles syncronously, if we use a <link/> then the layout defining styles are not
+	 * always loaded before the JS positioning code is run. Resulting in rendering issues.
+	 */
+	@import url("walta/resources/walta.css");
+</style>
 
 <title>WALTA</title>
 </head>
