@@ -8,10 +8,14 @@
  *   - which view to display KeyNodeView or TaxonView
  *   - navigation of the key via events on KeyNodeView 
  * 
+ * TODO: Investigate converting to MVC classes in dojox/app
+ * 
  */
 define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/aspect", "dojo/topic",
-          "walta/Key", "walta/KeyNode", "walta/Taxon", "walta/KeyNodeView", "walta/TaxonView", "walta/HomeView"], 
-	function( declare, lang, domConstruct, aspect, topic, Key, KeyNode, Taxon, KeyNodeView, TaxonView, HomeView ) {
+          "walta/Key", "walta/KeyNode", "walta/Taxon", "walta/KeyNodeView", "walta/TaxonView", "walta/HomeView", 
+          "walta/SpeedBug", "walta/SpeedBugView"], 
+	function( declare, lang, domConstruct, aspect, topic,  Key, KeyNode, Taxon, KeyNodeView, TaxonView, HomeView, 
+			SpeedBug, SpeedBugView ) {
 		return declare( null, {
 			
 			// public
@@ -20,6 +24,7 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 			
 			// privates
 			_key: null,
+			_speedBug: null,
 			_currentView: null,
 			
 			_views: {},
@@ -33,7 +38,6 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 			},
 			
 			_startAltKey: function() {
-				console.log( "Alt key activated");
 				this._doTransition( this._createDecisionView(), 1 );
 			},
 			
@@ -88,20 +92,45 @@ define( [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/a
 			},
 			
 			_createHomeView: function() {
-				var home = new HomeView( {selected: true}, domConstruct.create("div", { id: "waltaHomeView" }, this.divNode ));
-				aspect.after( home, "onAltKey", lang.hitch( this, this._startAltKey ) );
+				var home = new HomeView( {selected: true}, domConstruct.create("div", { id: "waltaHomeView" }, this.divNode ));				
 				this._views["home"] = home;
 				home.startup(); 
 				this._currentView = home;
 			},
 			
+			_createSpeedBug: function() {
+				this._speedBug = new SpeedBug( this._key.url, this._key._xml );
+				var speedBugView = new SpeedBugView( { speedBug: this._speedBug }, domConstruct.create("div", { id: "waltaSpeedBug" }, this.divNode ) );
+				this._views["speedBug"] = speedBugView;
+				speedBugView.startup(); 
+			},
+			
 			startApp: function() {
+				
+				// Load key and initialize sub components
 				this._key.load()
-					.then( lang.hitch( this, this._createHomeView ) );
+					.then( lang.hitch( this, this._createHomeView ) )
+					.then( lang.hitch( this, this._createSpeedBug ) );
+				
+				// Wire up events
 				topic.subscribe("anchorbar/home", lang.hitch( this, function() { 
-						this._key.reset();
 						this._doTransition( this._views["home"], -1 ); 
 					} ) );
+				
+				topic.subscribe("key/jump", lang.hitch( this, function( ref ) { 
+					this._key.lookupNode( ref );
+					this._doTransition( this._createDecisionView(), 1 );
+				} ) );
+				
+				topic.subscribe("key/start", lang.hitch( this, function() { 
+					this._key.reset();
+					this._startAltKey();
+				} ) );
+				
+				topic.subscribe("speedbug/open", lang.hitch( this, function() { 
+					this._doTransition( this._views["speedBug"], 1 ); 
+				} ) );
+				
 			}
 			
 			
