@@ -144,28 +144,17 @@
 	 -->
 	<element name="speedBugLink">
 		<complexType>
-			<sequence>
-				<element ref="tax:mediaRef" minOccurs="1" maxOccurs="1"></element>
-				<choice>
-					<element ref="tax:keyNodeLink"/>
-					<element ref="tax:taxonLink" />
-				</choice>
-			</sequence>
+			<attribute name="image" type = "anyURI"/>
+			<attribute name="ref" type = "IDREF"/>
 		</complexType>
 	</element>
 	
 	<element name="speedBugGroup">
 		<complexType>
 			<sequence>
-				<element name="notSure">
-					<complexType>
-						<sequence>
-							<element ref="tax:keyNodeLink" />
-						</sequence>
-					</complexType>
-				</element>
 				<element ref="tax:speedBugLink" minOccurs="1" maxOccurs="unbounded" />
 			</sequence>
+			<attribute name="ref" type = "IDREF"/>
 		</complexType>
 	</element>
 	

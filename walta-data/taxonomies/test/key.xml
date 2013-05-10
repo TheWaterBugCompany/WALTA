@@ -176,4 +176,18 @@ the key grows, this may become impractical.
 		
 	</keyNode>
 	
+	
+	<!-- These links are total rubbish ... -->
+	<speedBugIndex>
+	    <speedBugGroup ref="maggots">
+	        <speedBugLink image="speedbug/athericidae.svg" ref="macrobrachium"/>
+			<speedBugLink image="speedbug/blepheraceridae.svg" ref="hymenosomatidae"/>
+	    </speedBugGroup>
+	    <speedBugLink image="speedbug/ranatra.svg" ref="N5"/>
+	    <speedBugGroup ref="larval">
+	        <speedBugLink image="speedbug/hydrobiosidae.svg" ref="janiridae"/>
+			<speedBugLink image="speedbug/megaloptera.svg" ref="phreatoicidae"/>
+	    </speedBugGroup>
+	</speedBugIndex>
+	
 </key>
