@@ -14,15 +14,17 @@
 }
 
 /* Set default styles */
-html,body {
-	min-width: 320px;
-	height: 100%;
+html, body {
+	width:100%;
+	height:100%;
 	font-family: Tahoma, sans-serif !important;
     font-size: 4mm !important;   
-    background-color: white !important;
     margin: 0 !important;
     padding: 0 !important;
+    color: black;
 }
+body { background-color: white !important; }
+.mblView { color: black; }
 
 /* Anchor bar */
 .waltaAnchorBar {
@@ -111,8 +113,13 @@ html,body {
   	width: 25% !important;
   }
   
-  .waltaSecondary h2, .waltaSecondary p {
+  .waltaSecondary h2{
 	margin-left: 1em;
+	  	text-align: center !important;
+  }
+  
+  .waltaSecondary p {
+  	text-align: center !important;
   }
 } 
 
@@ -123,8 +130,7 @@ html,body {
 
 .waltaHomeView { 
 	text-align: center;
-	margin-top: 0.05mm;
-	margin-left: auto;;
+	margin-left: auto;
 }
 
 .waltaHomeView h1 {
@@ -164,7 +170,6 @@ html,body {
 	-webkit-border-radius: 3mm 3mm; 
 	background-color:  rgba(47,97,204,0.3); 
 	margin-bottom: 1%;
-	margin-top: 1%;
 	margin-left: 2px;
 	margin-right: 2px;
 	padding-top: 2px;
@@ -235,6 +240,10 @@ html,body {
 .waltaSecondary h2 {
 	margin-top: 0.2mm;
 	margin-bottom: 0.05mm;
+	text-align: center;
+}
+
+.waltaSecondary p {
 	text-align: center;
 }
 
@@ -385,12 +394,14 @@ html,body {
 
 .waltaCarousel .waltaCloseButton {
 	background-image: url("close.png");
-	background-size: cover;
-	width: 16px;
-	height: 16px;
+	background-repeat: no-repeat;
+	background-position: 36px 0px;
+	background-size: 16px 16px;
+	width: 64px;
+	height: 64px;
 	position: absolute;
 	top: 12px;
-	right: 6%;
+	right: 0;
 	opacity: 0.8;
 }
 
@@ -484,3 +495,18 @@ html,body {
 	border: none;
 	-webkit-box-align: end;
 }
+
+/* Speed Bug */
+.waltaSpeedBug { position: fixed; top: 0; bottom: 0; left: 0; right: 0; }
+.waltaSpeedBugImage { width: 100%; height: 100%; }
+
+.waltaSpeedBug .mblCarouselPages {
+	width: 100%;
+	height: 100%;
+}
+
+.waltaSpeedBug .mblCarouselHeaderBar {
+	display:none;
+}
+
+

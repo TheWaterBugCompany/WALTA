@@ -20,7 +20,7 @@
 		</question>
 		
 		<outcome for="1">
-			<keyNode>
+			<keyNode id="testNode">
 				<question num="1">
 					<text>Animal rests on its side, swims in swift bursts (below left).</text>
 					<mediaRef url="amphipoda_01.jpg"/>
@@ -30,12 +30,24 @@
 					<mediaRef url="phreatoicidae.jpg"/>
 				</question>
 				<outcome for="1"><taxonLink ref="parastacidae"/></outcome>
-				<outcome for="2"><taxonLink ref="parastacidae"/></outcome>
+				<outcome for="2"><keyNodeLink ref="testNode" /></outcome>
 			</keyNode>
 		</outcome>
 		
 		<outcome for="2"><taxonLink ref="parastacidae"/></outcome>
 	</keyNode>
+	
+	<speedBugIndex>
+	    <speedBugGroup ref="maggots">
+	        <speedBugLink image="speedbug/athericidae.svg" ref="athericidae"/>
+			<speedBugLink image="speedbug/blepheraceridae.svg" ref="blepheraceridae"/>
+	    </speedBugGroup>
+	    <speedBugLink image="speedbug/ranatra.svg" ref="ranatra"/>
+	    <speedBugGroup ref="larval">
+	        <speedBugLink image="speedbug/hydrobiosidae.svg" ref="hydrobiosidae"/>
+			<speedBugLink image="speedbug/megaloptera.svg" ref="corydalidae"/>
+	    </speedBugGroup>
+	</speedBugIndex>
 						
 		
 	

@@ -92,6 +92,20 @@
 	    </complexType>
 	</element>
 	
+	<!--  link to a keyNode defined elsewhere -->
+	<element name="keyNodeLink"> 
+		<complexType>
+			<attribute name="ref" type = "IDREF"/>
+		</complexType>
+	</element>
+	
+	 <!-- link to a taxon summary node -->
+	<element name="taxonLink">
+		<complexType>
+			<attribute name="ref" type = "IDREF"/>
+		</complexType>
+	</element>
+	
 	<!-- A key is made up of nested key nodes, up to 2 nested key nodes
 	     determine which keyNode to display next.
 	 -->
@@ -111,17 +125,45 @@
 					<complexType>
 						<choice>
 							<element ref="tax:keyNode" />
-							<element name="taxonLink">
-								<complexType>
-									<attribute name="ref" type = "IDREF"/>
-								</complexType>
-							</element>
+							<element ref="tax:keyNodeLink"/>
+							<element ref="tax:taxonLink" />
 						</choice>
 						<attribute name="for" type="int"></attribute>
 					</complexType>
 				</element>
 			</sequence>
 			<attribute name="id" type="ID"></attribute>
+		</complexType>
+	</element>
+	
+	<!-- 
+		Speed Bug, is a kind of index that links various key nodes/taxons together.
+		An index is a list of groups or links. A group put adjacent bugs that can
+		easily be confused side by side. The "notSure" node links into a part
+		of the key that can be used to further narrow down the selection.
+	 -->
+	<element name="speedBugLink">
+		<complexType>
+			<attribute name="image" type = "anyURI"/>
+			<attribute name="ref" type = "IDREF"/>
+		</complexType>
+	</element>
+	
+	<element name="speedBugGroup">
+		<complexType>
+			<sequence>
+				<element ref="tax:speedBugLink" minOccurs="1" maxOccurs="unbounded" />
+			</sequence>
+			<attribute name="ref" type = "IDREF"/>
+		</complexType>
+	</element>
+	
+	<element name="speedBugIndex">
+		<complexType>
+			<choice minOccurs="1" maxOccurs="unbounded">
+				<element ref="tax:speedBugGroup"/>
+				<element ref="tax:speedBugLink"/>
+			</choice>
 		</complexType>
 	</element>
     

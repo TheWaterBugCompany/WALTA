@@ -6,7 +6,8 @@
  *  
  *  Key, KeyNode, Question and Taxon constitute the model in the MVC pattern.
  */
-define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/XmlDocument", "walta/KeyNode"  ], function( declare, xhr, lang, XmlDocument, KeyNode ) {
+define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/XmlDocument", "walta/KeyNode", "walta/Taxon"  ], 
+		function( declare, xhr, lang, XmlDocument, KeyNode, Taxon ) {
 	return declare( null, {
 		
 		//
@@ -15,12 +16,14 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 		url: null,	 		// URL to load the key package from
 		name: null,  		// name of the current key
 		
+		
 		currentDecision: null, // Either a KeyNode or a Taxon
 		
 		//
 		// private
 		//
 		_xml: null, 		// XmlDocument
+		_startNode: null,
 		
 		//
 		// methods
@@ -42,6 +45,7 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 						// Initialise the decision tree
 						this.name = this._xml.getString( null, "/tax:key/@name" );
 			    		this.currentDecision = new KeyNode( this.url, this._xml, this._xml.getNode( null, "/tax:key/tax:keyNode") );
+			    		this._startNode = this.currentDecision;
 					})
 				);	
 		},
@@ -57,6 +61,29 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/Xm
 				this.currentDecision = parent;
 			}
 			return parent;
+		},
+		
+		reset: function() {
+			this.currentDecision = this._startNode;
+		},
+		
+		lookupNode: function( refId ) {
+			var node = this._xml.getNode( null, 
+					"/tax:key//tax:taxon[@id='" + refId +"'] | /tax:key//tax:keyNode[@id='" + refId + "']"
+			);
+			var decision = null;
+			
+			if ( node.tagName === "taxon"  ) {
+				var parent = this._xml.getNode( node, ".." );
+				decision = new Taxon( KeyNode, this.url, this._xml, parent, node );
+			} else if ( node.tagName === "keyNode" ) {
+				decision = new KeyNode( this.url, this._xml, node );
+			} else {
+				throw "Error: not a taxon or keyNode element!";
+			}
+			
+			this.currentDecision = decision;
+			return decision;
 		},
 		
 		constructor: function(args) {	

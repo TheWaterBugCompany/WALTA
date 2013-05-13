@@ -1,3 +1,3 @@
 define(["doh/runner"], function(doh){
-    doh.register( "KeyController", "../../walta/tests/AppController.html" );
+    doh.register( "AppController", "../../walta/tests/AppController.html" );
 });

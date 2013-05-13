@@ -31,7 +31,12 @@
 			});
 		</script>
 		<style type="text/css">
-				
+	/*
+	 * Load the CSS styles syncronously, if we use a <link/> then the layout defining styles are not
+	 * always loaded before the JS positioning code is run. Resulting in rendering issues.
+	 */
+	@import url("./resources/walta.css");
+</style>
 		</style>
 		<link rel="stylesheet" href="../resources/walta.css">
 	</head>
