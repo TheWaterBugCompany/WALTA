@@ -1,4 +1,4 @@
-Build started: Tue May 14 2013 13:44:47 GMT+1000 (EST)
+Build started: Tue May 14 2013 14:08:57 GMT+1000 (EST)
 Build application version: 1.7.0dev (23930)
 Messages:
 info(100) Assumed module uses legacy loader API.
@@ -3824,4 +3824,4 @@ walta/walta:
 Process finished normally
 	errors: 0
 	warnings: 12
-	build time: 47.776 seconds
+	build time: 47.696 seconds

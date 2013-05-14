@@ -10,12 +10,6 @@
 [submodule "walta-app/src/util"]
 	path = walta-app/src/util
 	url = https://github.com/dojo/util.git
-[submodule "walta-app/src/phonegap"]
-	path = walta-app/src/phonegap
-	url = https://github.com/phonegap/phonegap
-[submodule "build"]
-	path = build
-	url = https://github.com/TheWaterBugCompany/walta-phone-gap-build.git
 [submodule "walta-build/phonegap"]
 	path = walta-build/phonegap
 	url = https://github.com/phonegap/phonegap.git
