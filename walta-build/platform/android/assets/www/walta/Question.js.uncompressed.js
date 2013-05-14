@@ -25,8 +25,10 @@ define( "walta/Question", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_bas
 					return new Taxon( KeyNode, baseUri, doc, parent, taxon );
 				} else if ( outcome.tagName === "keyNode" ) {
 					return new KeyNode( baseUri, doc, outcome );
-				} else {
-					console.error( "Unexpected outcome !!" );
+				} else if ( outcome.tagName === "keyNodeLink"){
+					var ref = doc.getString( outcome, "@ref" );
+					var keyNode = doc.getNode( null, "/tax:key//tax:keyNode[@id='" + ref + "']");
+					return new KeyNode( baseUri, doc, keyNode );
 				}
 			};
 		}

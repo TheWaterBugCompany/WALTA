@@ -1,4 +1,171 @@
 require({cache:{
+'dojo/store/Memory':function(){
+define("dojo/store/Memory", ["../_base/declare", "./util/QueryResults", "./util/SimpleQueryEngine" /*=====, "./api/Store" =====*/],
+function(declare, QueryResults, SimpleQueryEngine /*=====, Store =====*/){
+
+// module:
+//		dojo/store/Memory
+
+// No base class, but for purposes of documentation, the base class is dojo/store/api/Store
+var base = null;
+/*===== base = Store; =====*/
+
+return declare("dojo.store.Memory", base, {
+	// summary:
+	//		This is a basic in-memory object store. It implements dojo/store/api/Store.
+	constructor: function(options){
+		// summary:
+		//		Creates a memory object store.
+		// options: dojo/store/Memory
+		//		This provides any configuration information that will be mixed into the store.
+		//		This should generally include the data property to provide the starting set of data.
+		for(var i in options){
+			this[i] = options[i];
+		}
+		this.setData(this.data || []);
+	},
+	// data: Array
+	//		The array of all the objects in the memory store
+	data:null,
+
+	// idProperty: String
+	//		Indicates the property to use as the identity property. The values of this
+	//		property should be unique.
+	idProperty: "id",
+
+	// index: Object
+	//		An index of data indices into the data array by id
+	index:null,
+
+	// queryEngine: Function
+	//		Defines the query engine to use for querying the data store
+	queryEngine: SimpleQueryEngine,
+	get: function(id){
+		// summary:
+		//		Retrieves an object by its identity
+		// id: Number
+		//		The identity to use to lookup the object
+		// returns: Object
+		//		The object in the store that matches the given id.
+		return this.data[this.index[id]];
+	},
+	getIdentity: function(object){
+		// summary:
+		//		Returns an object's identity
+		// object: Object
+		//		The object to get the identity from
+		// returns: Number
+		return object[this.idProperty];
+	},
+	put: function(object, options){
+		// summary:
+		//		Stores an object
+		// object: Object
+		//		The object to store.
+		// options: dojo/store/api/Store.PutDirectives?
+		//		Additional metadata for storing the data.  Includes an "id"
+		//		property if a specific id is to be used.
+		// returns: Number
+		var data = this.data,
+			index = this.index,
+			idProperty = this.idProperty;
+		var id = object[idProperty] = (options && "id" in options) ? options.id : idProperty in object ? object[idProperty] : Math.random();
+		if(id in index){
+			// object exists
+			if(options && options.overwrite === false){
+				throw new Error("Object already exists");
+			}
+			// replace the entry in data
+			data[index[id]] = object;
+		}else{
+			// add the new object
+			index[id] = data.push(object) - 1;
+		}
+		return id;
+	},
+	add: function(object, options){
+		// summary:
+		//		Creates an object, throws an error if the object already exists
+		// object: Object
+		//		The object to store.
+		// options: dojo/store/api/Store.PutDirectives?
+		//		Additional metadata for storing the data.  Includes an "id"
+		//		property if a specific id is to be used.
+		// returns: Number
+		(options = options || {}).overwrite = false;
+		// call put with overwrite being false
+		return this.put(object, options);
+	},
+	remove: function(id){
+		// summary:
+		//		Deletes an object by its identity
+		// id: Number
+		//		The identity to use to delete the object
+		// returns: Boolean
+		//		Returns true if an object was removed, falsy (undefined) if no object matched the id
+		var index = this.index;
+		var data = this.data;
+		if(id in index){
+			data.splice(index[id], 1);
+			// now we have to reindex
+			this.setData(data);
+			return true;
+		}
+	},
+	query: function(query, options){
+		// summary:
+		//		Queries the store for objects.
+		// query: Object
+		//		The query to use for retrieving objects from the store.
+		// options: dojo/store/api/Store.QueryOptions?
+		//		The optional arguments to apply to the resultset.
+		// returns: dojo/store/api/Store.QueryResults
+		//		The results of the query, extended with iterative methods.
+		//
+		// example:
+		//		Given the following store:
+		//
+		// 	|	var store = new Memory({
+		// 	|		data: [
+		// 	|			{id: 1, name: "one", prime: false },
+		//	|			{id: 2, name: "two", even: true, prime: true},
+		//	|			{id: 3, name: "three", prime: true},
+		//	|			{id: 4, name: "four", even: true, prime: false},
+		//	|			{id: 5, name: "five", prime: true}
+		//	|		]
+		//	|	});
+		//
+		//	...find all items where "prime" is true:
+		//
+		//	|	var results = store.query({ prime: true });
+		//
+		//	...or find all items where "even" is true:
+		//
+		//	|	var results = store.query({ even: true });
+		return QueryResults(this.queryEngine(query, options)(this.data));
+	},
+	setData: function(data){
+		// summary:
+		//		Sets the given data as the source for this store, and indexes it
+		// data: Object[]
+		//		An array of objects to use as the source of data.
+		if(data.items){
+			// just for convenience with the data format IFRS expects
+			this.idProperty = data.identifier;
+			data = this.data = data.items;
+		}else{
+			this.data = data;
+		}
+		this.index = {};
+		for(var i = 0, l = data.length; i < l; i++){
+			this.index[data[i][this.idProperty]] = i;
+		}
+	}
+});
+
+});
+
+},
 'dojox/mobile/ViewController':function(){
 define("dojox/mobile/ViewController", [
 	"dojo/_base/kernel",
@@ -706,6 +873,119 @@ define("dojox/mobile/sniff", [
 	};
 	=====*/
 	return has;
+});
+
+},
+'dojo/store/util/SimpleQueryEngine':function(){
+define("dojo/store/util/SimpleQueryEngine", ["../../_base/array" /*=====, "../api/Store" =====*/], function(arrayUtil /*=====, Store =====*/){
+
+// module:
+//		dojo/store/util/SimpleQueryEngine
+
+return function(query, options){
+	// summary:
+	//		Simple query engine that matches using filter functions, named filter
+	//		functions or objects by name-value on a query object hash
+	//
+	// description:
+	//		The SimpleQueryEngine provides a way of getting a QueryResults through
+	//		the use of a simple object hash as a filter.  The hash will be used to
+	//		match properties on data objects with the corresponding value given. In
+	//		other words, only exact matches will be returned.
+	//
+	//		This function can be used as a template for more complex query engines;
+	//		for example, an engine can be created that accepts an object hash that
+	//		contains filtering functions, or a string that gets evaluated, etc.
+	//
+	//		When creating a new dojo.store, simply set the store's queryEngine
+	//		field as a reference to this function.
+	//
+	// query: Object
+	//		An object hash with fields that may match fields of items in the store.
+	//		Values in the hash will be compared by normal == operator, but regular expressions
+	//		or any object that provides a test() method are also supported and can be
+	//		used to match strings by more complex expressions
+	//		(and then the regex's or object's test() method will be used to match values).
+	//
+	// options: dojo/store/api/Store.QueryOptions?
+	//		An object that contains optional information such as sort, start, and count.
+	//
+	// returns: Function
+	//		A function that caches the passed query under the field "matches".  See any
+	//		of the "query" methods on dojo.stores.
+	//
+	// example:
+	//		Define a store with a reference to this engine, and set up a query method.
+	//
+	//	|	var myStore = function(options){
+	//	|		//	...more properties here
+	//	|		this.queryEngine = SimpleQueryEngine;
+	//	|		//	define our query method
+	//	|		this.query = function(query, options){
+	//	|			return QueryResults(this.queryEngine(query, options)(this.data));
+	//	|		};
+	//	|	};
+
+	// create our matching query function
+	switch(typeof query){
+		default:
+			throw new Error("Can not query with a " + typeof query);
+		case "object": case "undefined":
+			var queryObject = query;
+			query = function(object){
+				for(var key in queryObject){
+					var required = queryObject[key];
+					if(required && required.test){
+						// an object can provide a test method, which makes it work with regex
+						if(!required.test(object[key], object)){
+							return false;
+						}
+					}else if(required != object[key]){
+						return false;
+					}
+				}
+				return true;
+			};
+			break;
+		case "string":
+			// named query
+			if(!this[query]){
+				throw new Error("No filter function " + query + " was found in store");
+			}
+			query = this[query];
+			// fall through
+		case "function":
+			// fall through
+	}
+	function execute(array){
+		// execute the whole query, first we filter
+		var results = arrayUtil.filter(array, query);
+		// next we sort
+		var sortSet = options && options.sort;
+		if(sortSet){
+			results.sort(typeof sortSet == "function" ? sortSet : function(a, b){
+				for(var sort, i=0; sort = sortSet[i]; i++){
+					var aValue = a[sort.attribute];
+					var bValue = b[sort.attribute];
+					if (aValue != bValue){
+						return !!sort.descending == (aValue == null || aValue > bValue) ? -1 : 1;
+					}
+				}
+				return 0;
+			});
+		}
+		// now we paginate
+		if(options && (options.start || options.count)){
+			var total = results.length;
+			results = results.slice(options.start || 0, (options.start || 0) + (options.count || Infinity));
+			results.total = total;
+		}
+		return results;
+	}
+	execute.matches = query;
+	return execute;
+};
+
 });
 
 },
@@ -4308,6 +4588,57 @@ define("dojox/mobile/transition", [
 });
 
 },
+'walta/SpeedBugView':function(){
+/*
+ * walta/SpeedBugView
+ *
+ * Creates a SpeedBug index selector
+ *  
+ */
+
+// NB dojox/mobile/parser is needed for StoreCarousel to work properly
+define( "walta/SpeedBugView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/dom-construct", "dojox/mobile/parser", "dojo/store/Memory", "dojox/mobile/View", 
+          "dojox/mobile/StoreCarousel", "walta/AnchorBar" ], 
+	function( declare, array, domConstruct, parser, Memory, View, StoreCarousel, AnchorBar ) {
+		return declare( "walta.SpeedBugView", [View], {
+			
+			speedBug: null,
+			
+			"class": "waltaSpeedBug", 
+			
+			postMixInProperties: function() {
+				this.inherited(arguments);
+				
+				// Create store from speed bug data
+				this._speedBugData = [];
+				array.forEach( this.speedBug.bugsList, this._renderGroupOrBug, this );
+				
+				this._store = new Memory( { data: this._speedBugData });
+			},
+			
+			postCreate: function() {
+				var ab = new AnchorBar( { title: "SpeedBug" } );
+				this.addChild(ab);
+				var cs = new StoreCarousel( { navButton: false, height: "100%", pageIndicator: false, numVisible: 2, store: this._store } );
+				this.addChild(cs);
+			},
+			
+			_renderGroupOrBug: function( itm ) {
+				if ( itm.groupRef ) {
+					array.forEach( itm.bugs, this._renderBug, this );
+				} else {
+					this._renderBug(itm);
+				}
+			},
+			
+			_renderBug: function( itm ) {
+				this._speedBugData.push(  { "type": "walta/SpeedBugTile", "props": 'image:"' + itm.image + '",ref:"' + itm.ref + '"' });
+			}
+		
+			
+		});
+});
+},
 'dojo/dom-style':function(){
 define("dojo/dom-style", ["./sniff", "./dom"], function(has, dom){
 	// module:
@@ -6319,6 +6650,166 @@ define("dojo/dom-construct", ["exports", "./_base/kernel", "./sniff", "./_base/w
 });
 
 },
+'dojox/mobile/parser':function(){
+define("dojox/mobile/parser", [
+	"dojo/_base/kernel",
+	"dojo/_base/array",
+	"dojo/_base/config",
+	"dojo/_base/lang",
+	"dojo/_base/window",
+	"dojo/ready"
+], function(dojo, array, config, lang, win, ready){
+
+	// module:
+	//		dojox/mobile/parser
+
+	var dm = lang.getObject("dojox.mobile", true);
+
+	var Parser = function(){
+		// summary:
+		//		A lightweight parser.
+		// description:
+		//		dojox/mobile/parser is an extremely small subset of dojo/parser.
+		//		It has no additional features over dojo/parser, so there is no
+		//		benefit in terms of features by using dojox/mobile/parser instead 
+		//		of dojo/parser.	However, if dojox/mobile/parser's capabilities are
+		//		enough for your	application, using it could reduce the total code size.
+
+		var _ctorMap = {};
+		var getCtor = function(type, mixins){
+			if(typeof(mixins) === "string"){
+				var t = type + ":" + mixins.replace(/ /g, "");
+				return _ctorMap[t] ||
+					(_ctorMap[t] = getCtor(type).createSubclass(array.map(mixins.split(/, */), getCtor)));
+			}
+			return _ctorMap[type] || (_ctorMap[type] = lang.getObject(type) || require(type));
+		};
+		var _eval = function(js){ return eval(js); };
+
+		this.instantiate = function(/* DomNode[] */nodes, /* Object? */mixin, /* Object? */options){
+			// summary:
+			//		Function for instantiating a list of widget nodes.
+			// nodes:
+			//		The list of DomNodes to walk and instantiate widgets on.
+			mixin = mixin || {};
+			options = options || {};
+			var i, ws = [];
+			if(nodes){
+				for(i = 0; i < nodes.length; i++){
+					var n = nodes[i],
+						type = n._type,
+						ctor = getCtor(type, n.getAttribute("data-dojo-mixins")),
+						proto = ctor.prototype,
+						params = {}, prop, v, t;
+					lang.mixin(params, _eval.call(options.propsThis, '({'+(n.getAttribute("data-dojo-props")||"")+'})'));
+					lang.mixin(params, options.defaults);
+					lang.mixin(params, mixin);
+					for(prop in proto){
+						v = n.getAttributeNode(prop);
+						v = v && v.nodeValue;
+						t = typeof proto[prop];
+						if(!v && (t !== "boolean" || v !== "")){ continue; }
+						if(lang.isArray(proto[prop])){
+							params[prop] = v.split(/\s*,\s*/);
+						}else if(t === "string"){
+							params[prop] = v;
+						}else if(t === "number"){
+							params[prop] = v - 0;
+						}else if(t === "boolean"){
+							params[prop] = (v !== "false");
+						}else if(t === "object"){
+							params[prop] = eval("(" + v + ")");
+						}else if(t === "function"){
+							params[prop] = lang.getObject(v, false) || new Function(v);
+							n.removeAttribute(prop);
+						}
+					}
+					params["class"] = n.className;
+					if(!params.style){ params.style = n.style.cssText; }
+					v = n.getAttribute("data-dojo-attach-point");
+					if(v){ params.dojoAttachPoint = v; }
+					v = n.getAttribute("data-dojo-attach-event");
+					if(v){ params.dojoAttachEvent = v; }
+					var instance = new ctor(params, n);
+					ws.push(instance);
+					var jsId = n.getAttribute("jsId") || n.getAttribute("data-dojo-id");
+					if(jsId){
+						lang.setObject(jsId, instance);
+					}
+				}
+				for(i = 0; i < ws.length; i++){
+					var w = ws[i];
+					!options.noStart && w.startup && !w._started && w.startup();
+				}
+			}
+			return ws;
+		};
+
+		this.parse = function(/* DomNode */ rootNode, /* Object? */ options){
+			// summary:
+			//		Function to handle parsing for widgets in the current document.
+			//		It is not as powerful as the full parser, but it will handle basic
+			//		use cases fine.
+			// rootNode:
+			//		The root node in the document to parse from
+			if(!rootNode){
+				rootNode = win.body();
+			}else if(!options && rootNode.rootNode){
+				// Case where 'rootNode' is really a params object.
+				options = rootNode;
+				rootNode = rootNode.rootNode;
+			}
+
+			var nodes = rootNode.getElementsByTagName("*");
+			var i, j, list = [];
+			for(i = 0; i < nodes.length; i++){
+				var n = nodes[i],
+					type = (n._type = n.getAttribute("dojoType") || n.getAttribute("data-dojo-type"));
+				if(type){
+					if(n._skip){
+						n._skip = "";
+						continue;
+					}
+					if(getCtor(type).prototype.stopParser && !(options && options.template)){
+						var arr = n.getElementsByTagName("*");
+						for(j = 0; j < arr.length; j++){
+							arr[j]._skip = "1";
+						}
+					}
+					list.push(n);
+				}
+			}
+			var mixin = options && options.template ? {template: true} : null;
+			return this.instantiate(list, mixin, options);
+		};
+	};
+
+	// Singleton.   (TODO: replace parser class and singleton w/a simple hash of functions)
+	var parser = new Parser();
+
+	if(config.parseOnLoad){
+		ready(100, function(){
+			// Now that all the modules are loaded, check if the app loaded dojo/parser too.
+			// If it did, let dojo/parser handle the parseOnLoad flag instead of me.
+			try{
+				if(!require("dojo/parser")){
+					// IE6 takes this path when dojo/parser unavailable, rather than catch() block below,
+					// due to http://support.microsoft.com/kb/944397
+					parser.parse();
+				}
+			}catch(e){
+				// Other browsers (and later versions of IE) take this path when dojo/parser unavailable
+				parser.parse();
+			}
+		});
+	}
+	dm.parser = parser; // for backward compatibility
+	dojo.parser = dojo.parser || parser; // in case user application calls dojo.parser
+
+	return parser;
+});
+
+},
 'walta/KeyNode':function(){
 define( "walta/KeyNode", [ "dojo/_base/declare", "walta/Question" ], function( declare, Question ) {
 	var KeyNode = declare( null, {
@@ -7837,10 +8328,14 @@ define("dojox/mobile/ContentPane", [
  *   - which view to display KeyNodeView or TaxonView
  *   - navigation of the key via events on KeyNodeView 
  * 
+ * TODO: Investigate converting to MVC classes in dojox/app
+ * 
  */
-define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/aspect", 
-          "walta/Key", "walta/KeyNode", "walta/Taxon", "walta/KeyNodeView", "walta/TaxonView", "walta/HomeView"], 
-	function( declare, lang, domConstruct, aspect, Key, KeyNode, Taxon, KeyNodeView, TaxonView, HomeView ) {
+define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/dom-construct", "dojo/aspect", "dojo/topic",
+          "walta/Key", "walta/KeyNode", "walta/Taxon", "walta/KeyNodeView", "walta/TaxonView", "walta/HomeView", 
+          "walta/SpeedBug", "walta/SpeedBugView"], 
+	function( declare, lang, domConstruct, aspect, topic,  Key, KeyNode, Taxon, KeyNodeView, TaxonView, HomeView, 
+			SpeedBug, SpeedBugView ) {
 		return declare( null, {
 			
 			// public
@@ -7849,6 +8344,7 @@ define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/
 			
 			// privates
 			_key: null,
+			_speedBug: null,
 			_currentView: null,
 			
 			_views: {},
@@ -7862,7 +8358,6 @@ define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/
 			},
 			
 			_startAltKey: function() {
-				console.log( "Alt key activated");
 				this._doTransition( this._createDecisionView(), 1 );
 			},
 			
@@ -7880,17 +8375,13 @@ define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/
 			},
 			
 			_doTransition: function( view, dir ) {
-				console.log("view: " + view.get("id"));
-				console.log("current view: " + this._currentView.get("id"));
 				this._currentView.performTransition( view.get("id"), dir, "slide" );
 				this._currentView = view;
 			},
 			
 			// Creata an wire up a new decision view
 			_createDecisionView: function() {
-				
-				console.log("createdecisionview");
-				
+	
 				var decisionView = null;
 				var decisionViewNode =  domConstruct.create("div", { id: "waltaDecisionView" + this._decisionCounter++ }, this.divNode );
 				
@@ -7916,21 +8407,50 @@ define( "walta/AppController", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/
 					this._decisionCounter = this._decisionCounter % 3;
 				}
 				
-				console.log("return " + decisionView);
 				return decisionView;
 				
 			},
 			
 			_createHomeView: function() {
-				var home = new HomeView( {selected: true}, domConstruct.create("div", { id: "waltaHomeView" }, this.divNode ));
-				aspect.after( home, "onAltKey", lang.hitch( this, this._startAltKey ) );
+				var home = new HomeView( {selected: true}, domConstruct.create("div", { id: "waltaHomeView" }, this.divNode ));				
 				this._views["home"] = home;
 				home.startup(); 
 				this._currentView = home;
 			},
 			
+			_createSpeedBug: function() {
+				this._speedBug = new SpeedBug( this._key.url, this._key._xml );
+				var speedBugView = new SpeedBugView( { speedBug: this._speedBug }, domConstruct.create("div", { id: "waltaSpeedBug" }, this.divNode ) );
+				this._views["speedBug"] = speedBugView;
+				speedBugView.startup(); 
+			},
+			
 			startApp: function() {
-				this._key.load().then( lang.hitch( this, this._createHomeView ) );
+				
+				// Load key and initialize sub components
+				this._key.load()
+					.then( lang.hitch( this, this._createHomeView ) )
+					.then( lang.hitch( this, this._createSpeedBug ) );
+				
+				// Wire up events
+				topic.subscribe("anchorbar/home", lang.hitch( this, function() { 
+						this._doTransition( this._views["home"], -1 ); 
+					} ) );
+				
+				topic.subscribe("key/jump", lang.hitch( this, function( ref ) { 
+					this._key.lookupNode( ref );
+					this._doTransition( this._createDecisionView(), 1 );
+				} ) );
+				
+				topic.subscribe("key/start", lang.hitch( this, function() { 
+					this._key.reset();
+					this._startAltKey();
+				} ) );
+				
+				topic.subscribe("speedbug/open", lang.hitch( this, function() { 
+					this._doTransition( this._views["speedBug"], 1 ); 
+				} ) );
+				
 			}
 			
 			
@@ -8214,8 +8734,8 @@ define("dojox/mobile/SwapView", [
  * Creates a thumbnail image with a zoom to gallery icon.
  *  
  */
-define( "walta/MediaView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/ContentPane", "dojox/mobile/SwapView", "dojox/mobile/Carousel" ], 
-	function( declare, array, on, domConstruct, lang, ContentPane, SwapView, Carousel ) {
+define( "walta/MediaView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/on", "dojo/aspect", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/ContentPane", "dojox/mobile/SwapView", "dojox/mobile/Carousel" ], 
+	function( declare, array, on, aspect, domConstruct, lang, ContentPane, SwapView, Carousel ) {
 		return declare( "walta.MediaView", [ContentPane], {
 			
 			mediaUrls: [],
@@ -8253,6 +8773,10 @@ define( "walta/MediaView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/on"
 							this._carousel = null; 
 							e.stopPropagation();
 						} ) );
+					on( this._carousel.domNode, "click", function(e) { 
+						e.stopPropagation(); 
+					});
+					
 					
 					this.addChild( this._carousel );
 					this._carousel.startup();
@@ -8870,16 +9394,10 @@ return liteEngine;
 /*
  * walta/HomeView
  */
-define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/View" ], 
-	function( declare, on, domConstruct, lang, View ) {
+define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/View" ], 
+	function( declare, on, topic, domConstruct, lang, View ) {
 		return declare( "walta.HomeView", [View], {
 			"class": "waltaHomeView waltaFullscreen", 
-			
-			onSpeedbug: function() {},
-			onAltKey: function() {},
-			onBrowse: function() {},
-			onHelp: function() {},
-			onAbout: function() {},
 			
 			buildRendering: function() {
 				this.inherited(arguments);
@@ -8919,11 +9437,11 @@ define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct
 				domConstruct.create("h2", { innerHTML: "About"}, about );	
 				domConstruct.create("p", { innerHTML: "About the app."}, about );	
 
-				on( about, "click", lang.hitch( this, function(e) { this.onAbout(); } ) );
-				on( help, "click", lang.hitch( this, function(e) { this.onHelp(); } ) );
-				on( browse, "click", lang.hitch( this, function(e) { this.onBrowse(); } ) );
-				on( altkey, "click", lang.hitch( this, function(e) { this.onAltKey(); } ) );
-				on( speedbug, "click", lang.hitch( this, function(e) { this.onSpeedbug(); } ) );
+				on( about,    "click", function(e) { topic.publish( "about/open"); });
+				on( help,     "click", function(e) { topic.publish( "help/open" ); });
+				on( browse,   "click", function(e) { topic.publish( "browse/open" ); });
+				on( altkey,   "click", function(e) { topic.publish( "key/start"); });
+				on( speedbug, "click", function(e) { topic.publish( "speedbug/open" ); });
 				
 			}
 		});
@@ -8953,6 +9471,26 @@ define("dojox/mobile/Container", [
 });
 
 },
+'dojox/mobile/StoreCarousel':function(){
+define("dojox/mobile/StoreCarousel", [
+	"dojo/_base/declare",
+	"./Carousel",
+	"./_StoreMixin"
+], function(declare, Carousel, StoreMixin){
+
+	// module:
+	//		dojox/mobile/StoreCarousel
+
+	return declare("dojox.mobile.StoreCarousel", [Carousel, StoreMixin], {
+		// summary:
+		//		A dojo/store enabled Carousel.
+		// description:
+		//		StoreCarousel is an enhanced version of dojox/mobile/Carousel. It
+		//		can generate contents according to the given dojo/store store.
+	});
+});
+
+},
 'walta/Key':function(){
 /*
  *  walta/Key
@@ -8962,7 +9500,8 @@ define("dojox/mobile/Container", [
  *  
  *  Key, KeyNode, Question and Taxon constitute the model in the MVC pattern.
  */
-define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/XmlDocument", "walta/KeyNode"  ], function( declare, xhr, lang, XmlDocument, KeyNode ) {
+define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "walta/XmlDocument", "walta/KeyNode", "walta/Taxon"  ], 
+		function( declare, xhr, lang, XmlDocument, KeyNode, Taxon ) {
 	return declare( null, {
 		
 		//
@@ -8971,12 +9510,14 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
 		url: null,	 		// URL to load the key package from
 		name: null,  		// name of the current key
 		
+		
 		currentDecision: null, // Either a KeyNode or a Taxon
 		
 		//
 		// private
 		//
 		_xml: null, 		// XmlDocument
+		_startNode: null,
 		
 		//
 		// methods
@@ -8998,6 +9539,7 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
 						// Initialise the decision tree
 						this.name = this._xml.getString( null, "/tax:key/@name" );
 			    		this.currentDecision = new KeyNode( this.url, this._xml, this._xml.getNode( null, "/tax:key/tax:keyNode") );
+			    		this._startNode = this.currentDecision;
 					})
 				);	
 		},
@@ -9013,6 +9555,29 @@ define( "walta/Key", [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lan
 				this.currentDecision = parent;
 			}
 			return parent;
+		},
+		
+		reset: function() {
+			this.currentDecision = this._startNode;
+		},
+		
+		lookupNode: function( refId ) {
+			var node = this._xml.getNode( null, 
+					"/tax:key//tax:taxon[@id='" + refId +"'] | /tax:key//tax:keyNode[@id='" + refId + "']"
+			);
+			var decision = null;
+			
+			if ( node.tagName === "taxon"  ) {
+				var parent = this._xml.getNode( node, ".." );
+				decision = new Taxon( KeyNode, this.url, this._xml, parent, node );
+			} else if ( node.tagName === "keyNode" ) {
+				decision = new KeyNode( this.url, this._xml, node );
+			} else {
+				throw "Error: not a taxon or keyNode element!";
+			}
+			
+			this.currentDecision = decision;
+			return decision;
 		},
 		
 		constructor: function(args) {	
@@ -9202,6 +9767,169 @@ define("dojox/mobile/_ContentPaneMixin", [
 });
 
 },
+'dojox/mobile/_StoreMixin':function(){
+define("dojox/mobile/_StoreMixin", [
+	"dojo/_base/Deferred",
+	"dojo/_base/declare"
+], function(Deferred, declare){
+
+	// module:
+	//		dojox/mobile/_StoreMixin
+
+	return declare("dojox.mobile._StoreMixin", null, {
+		// summary:
+		//		Mixin for widgets to enable dojo/store data store.
+		// description:
+		//		By mixing this class into a widget, it can get data through a
+		//		dojo/store data store. The widget must implement the following
+		//		methods to handle the retrieved data:
+		//
+		//		- onComplete(/*Array*/items), onError(/*Object*/errorData),
+		//		- onUpdate(/*Object*/item, /*Number*/insertedInto), and
+		//		- onDelete(/*Object*/item, /*Number*/removedFrom).
+	
+		// store: Object
+		//		Reference to data provider object used by this widget.
+		store: null,
+
+		// query: Object
+		//		A query that can be passed to 'store' to initially filter the items.
+		query: null,
+
+		// queryOptions: Object
+		//		An optional parameter for the query.
+		queryOptions: null,
+
+		// labelProperty: String
+		//		A property name (a property in the dojo/store item) that specifies that item's label.
+		labelProperty: "label",
+
+		// childrenProperty: String
+		//		A property name (a property in the dojo/store item) that specifies that item's children.
+		childrenProperty: "children",
+
+		setStore: function(/*dojo/store/api/Store*/store, /*String*/query, /*Object*/queryOptions){
+			// summary:
+			//		Sets the store to use with this widget.
+			if(store === this.store){ return null; }
+			if(store){
+				store.getValue = function(item, property){
+					return item[property];
+				};
+			}
+			this.store = store;
+			this._setQuery(query, queryOptions);
+			return this.refresh();
+		},
+
+		setQuery: function(/*String*/query, /*Object*/queryOptions){
+			this._setQuery(query, queryOptions);
+			return this.refresh();
+		},
+
+		_setQuery: function(/*String*/query, /*Object*/queryOptions){
+			// tags:
+			//		private
+			this.query = query;
+			this.queryOptions = queryOptions || this.queryOptions;
+		},
+
+		refresh: function(){
+			// summary:
+			//		Fetches the data and generates the list items.
+			if(!this.store){ return null; }
+			var _this = this;
+			var promise = this.store.query(this.query, this.queryOptions);
+			Deferred.when(promise, function(results){
+				if(results.items){
+					results = results.items; // looks like dojo/data style items array
+				}
+				if(promise.observe){
+					promise.observe(function(object, removedFrom, insertedInto){
+						if(removedFrom > -1){ // existing object removed
+							_this.onDelete(object, removedFrom);
+						}else if(insertedInto > -1){ // new or updated object inserted
+							_this.onUpdate(object, insertedInto);
+						}
+					});
+				}
+				_this.onComplete(results);
+			}, function(error){
+				_this.onError(error);
+			});
+			return promise;
+		}
+
+/*=====
+		// Subclass MUST implement the following methods.
+
+		, onComplete: function(items){
+			// summary:
+			//		An handler that is called after the fetch completes.
+		},
+
+		onError: function(errorData){
+			// summary:
+			//		An error handler.
+		},
+
+		onUpdate: function(item, insertedInto){
+			// summary:
+			//		Adds a new item or updates an existing item.
+		},
+
+		onDelete: function(item, removedFrom){
+			// summary:
+			//		Deletes an existing item.
+		}
+=====*/
+	});
+});
+
+},
+'walta/SpeedBug':function(){
+define( "walta/SpeedBug", [ "dojo/_base/declare", "dojo/_base/array" ], function( declare, array ) {
+	return declare( null, {
+		bugsList: [], // An array of questions
+		
+		_baseUri: "",
+		
+		// Recursive descent parser for the speed bug xml
+		_parseSpeedBugGroup: function( nd ) {
+			var grp =  { groupRef: nd.getAttribute("ref") };
+			grp.bugs = array.map( this._removeTextNodes( nd.childNodes ), this._parseSpeedBugLinkOrGroup, this );
+			return grp;
+		},
+		
+		_parseSpeedBugLink: function( nd ) {
+			return { image: this._baseUri + "/media/" + nd.getAttribute("image"), ref: nd.getAttribute("ref") };
+		},
+		
+		_parseSpeedBugLinkOrGroup: function( nd ) {
+			if ( nd.tagName === "speedBugGroup" ) {
+				return this._parseSpeedBugGroup( nd );
+			} else if ( nd.tagName === "speedBugLink" ) {
+				return this._parseSpeedBugLink( nd );
+			} else {
+				throw "Expecting element speedBugGroup or speedBugLink";
+			}
+		},
+		
+		_removeTextNodes: function( nds ) {
+			return array.filter( nds, function(nd) { return nd.tagName; } );
+		},
+		
+		constructor: function( baseUri, doc ) {
+			this._baseUri = baseUri;
+			var speedBugIndex = doc.getNode( null, "tax:speedBugIndex" );
+			if ( speedBugIndex )
+				this.bugsList = array.map( this._removeTextNodes( speedBugIndex.childNodes ), this._parseSpeedBugLinkOrGroup, this);
+			else
+				throw "Unable to find tax:speedBugIndex in taxonomy description!";
+		}
+	});
+});
+},
 'walta/QuestionView':function(){
 /*
  * walta/QuestionView
@@ -9263,8 +9991,10 @@ define( "walta/Question", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_bas
 					return new Taxon( KeyNode, baseUri, doc, parent, taxon );
 				} else if ( outcome.tagName === "keyNode" ) {
 					return new KeyNode( baseUri, doc, outcome );
-				} else {
-					console.error( "Unexpected outcome !!" );
+				} else if ( outcome.tagName === "keyNodeLink"){
+					var ref = doc.getString( outcome, "@ref" );
+					var keyNode = doc.getNode( null, "/tax:key//tax:keyNode[@id='" + ref + "']");
+					return new KeyNode( baseUri, doc, keyNode );
 				}
 			};
 		}
@@ -9272,6 +10002,72 @@ define( "walta/Question", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_bas
 		
 	});
 });
+},
+'dojo/store/util/QueryResults':function(){
+define("dojo/store/util/QueryResults", ["../../_base/array", "../../_base/lang", "../../_base/Deferred"
+], function(array, lang, Deferred){
+
+// module:
+//		dojo/store/util/QueryResults
+
+var QueryResults = function(results){
+	// summary:
+	//		A function that wraps the results of a store query with additional
+	//		methods.
+	// description:
+	//		QueryResults is a basic wrapper that allows for array-like iteration
+	//		over any kind of returned data from a query.  While the simplest store
+	//		will return a plain array of data, other stores may return deferreds or
+	//		promises; this wrapper makes sure that *all* results can be treated
+	//		the same.
+	//
+	//		Additional methods include `forEach`, `filter` and `map`.
+	// results: Array|dojo/promise/Promise
+	//		The result set as an array, or a promise for an array.
+	// returns:
+	//		An array-like object that can be used for iterating over.
+	// example:
+	//		Query a store and iterate over the results.
+	//
+	//	|	store.query({ prime: true }).forEach(function(item){
+	//	|		//	do something
+	//	|	});
+
+	if(!results){
+		return results;
+	}
+	// if it is a promise it may be frozen
+	if(results.then){
+		results = lang.delegate(results);
+	}
+	function addIterativeMethod(method){
+		if(!results[method]){
+			results[method] = function(){
+				var args = arguments;
+				return Deferred.when(results, function(results){
+					Array.prototype.unshift.call(args, results);
+					return QueryResults(array[method].apply(array, args));
+				});
+			};
+		}
+	}
+	addIterativeMethod("forEach");
+	addIterativeMethod("filter");
+	addIterativeMethod("map");
+	if(!results.total){
+		results.total = Deferred.when(results, function(results){
+			return results.length;
+		});
+	}
+	return results; // Object
+};
+
+lang.setObject("dojo.store.util.QueryResults", QueryResults);
+
+return QueryResults;
+
+});
+
 },
 'dijit/_Contained':function(){
 define("dijit/_Contained", [
@@ -12115,19 +12911,15 @@ define("dojo/ready", ["./_base/kernel", "./has", "require", "./domReady", "./_ba
 /*
  * walta/AnchorBar
  */
-define( "walta/AnchorBar", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/Container" ], 
-	function( declare, on, domConstruct, lang, Container ) {
+define( "walta/AnchorBar", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojo/topic", "dojox/mobile/Container" ], 
+	function( declare, on, domConstruct, lang, topic, Container ) {
 		return declare( "walta.AnchorBar", [Container], {
 			
 			// public
 			title: "",
 			
 			"class": "waltaAnchorBar", 
-			
-			onHome: null,
-			onSettings: null,
-			onInfo: null,
-			
+
 			buildRendering: function() {
 				this.inherited(arguments);
 				var home = domConstruct.create("div", { "class": "waltaAnchorBarIcon waltaHome" }, this.containerNode );
@@ -12138,9 +12930,9 @@ define( "walta/AnchorBar", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construc
 				
 				domConstruct.create("h1", { innerHTML: this.title}, this.containerNode );	
 				
-				on( home, "click", lang.hitch( this, function(e) { this.onHome(); } ) );
-				on( settings, "click", lang.hitch( this, function(e) { this.onSettings(); } ) );
-				on( info, "click", lang.hitch( this, function(e) { this.onInfo(); } ) );
+				on( home, "click", lang.hitch( this, function(e) { topic.publish("anchorbar/home"); } ) );
+				on( settings, "click", lang.hitch( this, function(e) { topic.publish("anchorbar/settings"); } ) );
+				on( info, "click", lang.hitch( this, function(e) { topic.publish("anchorbar/info"); } ) );
 				
 			}
 		});

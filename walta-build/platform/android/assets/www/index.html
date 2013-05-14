@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<meta name="format-detection" content="telephone=no" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="format-detection" content="telephone=no" >
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
 
-<link rel="stylesheet" href="walta/resources/walta.css">
+
+<style type="text/css">
+	/*
+	 * Load the CSS styles syncronously, if we use a <link/> then the layout defining styles are not
+	 * always loaded before the JS positioning code is run. Resulting in rendering issues.
+	 */
+	@import url("walta/resources/walta.css");
+</style>
 
 <title>WALTA</title>
 </head>
 <body id="waltaApp">
+
+<!-- 	<script src="http://office-desktop.internal:8081/target/target-script-min.js"></script> -->
+
 	<script>
 	    dojoConfig= {
 	        async: true,
@@ -29,7 +39,7 @@
 	</script>
 	<script src="dojo/dojo.js"></script>
 	<script src="walta/walta.js"></script>
-	<script src="cordova-2.4.0.js"></script>
+	<script src="cordova-2.2.0.js"></script>
 	<script>
     	require(["walta/AppController", "dojo/domReady!" ], function( AppController ) {
     	

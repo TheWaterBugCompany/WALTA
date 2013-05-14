@@ -8,13 +8,8 @@ BASEDIR=$(cd $(dirname $0) && pwd)/..
 # Source directory for unbuilt code
 SRCDIR="$BASEDIR/walta-app/src"
 
-# Taqxonomy data
-TAXONDIR="$BASEDIR/walta-data/taxonomies/test"
-
 # Directory containing dojo build utilities
 TOOLSDIR="$SRCDIR/util/buildscripts"
-
-
 
 # Destination directory for built code
 DISTDIR="$BASEDIR/walta-build/platform/android/assets/www"
@@ -37,18 +32,12 @@ java -Xms256m -Xmx256m  -cp ../shrinksafe/js.jar:../closureCompiler/compiler.jar
 
 cd "$BASEDIR"
 
-#cat "$SRCDIR/index.html" | \
-#perl -pe "
-#  s/isDebug: *true,//;        # Remove isDebug
-#  " > "$DISTDIR/index.html"
-
 # copy across PhoneGap resources
-
 cp -r $SRCDIR/res $DISTDIR
 cp $SRCDIR/index.html $DISTDIR
 cp $SRCDIR/config.xml $DISTDIR
+
 # copy across data sets
-cp -r $TAXONDIR $DISTDIR/taxonomy
 cp $SRCDIR/cordova*.js $DISTDIR
 cp $SRCDIR/icon.png $DISTDIR
 
@@ -59,10 +48,14 @@ find dijit ! -name dijit ! -name dijit.js -delete
 find dojox ! -path "dojox/dojox.js" -delete
 rm -rf $DISTDIR/util
 
-# update the phoengp build repo
-rm -rf $PGDISTDIR/www
+# update the phonegap build repo
+cd $PGDISTDIR
+find ./www -name ".*" -or -path ./www -or -path "./www/taxonomy*" -o -delete
+cp --no-dereference -r $DISTDIR/* ./www/
+rm ./www/cordova-*.js
 
-cp -r $DISTDIR $PGDISTDIR/www
-rm $PGDISTDIR/www/cordova-*.js
+# create symbolic link for testing purposes
+cd $DISTDIR
+ln -s $PGDISTDIR/www/taxonomy taxonomy
 
 echo "Build complete"

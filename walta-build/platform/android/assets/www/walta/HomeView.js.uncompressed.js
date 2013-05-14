@@ -1,16 +1,10 @@
 /*
  * walta/HomeView
  */
-define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/View" ], 
-	function( declare, on, domConstruct, lang, View ) {
+define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-construct", "dojo/_base/lang", "dojox/mobile/View" ], 
+	function( declare, on, topic, domConstruct, lang, View ) {
 		return declare( "walta.HomeView", [View], {
 			"class": "waltaHomeView waltaFullscreen", 
-			
-			onSpeedbug: function() {},
-			onAltKey: function() {},
-			onBrowse: function() {},
-			onHelp: function() {},
-			onAbout: function() {},
 			
 			buildRendering: function() {
 				this.inherited(arguments);
@@ -50,11 +44,11 @@ define( "walta/HomeView", [ "dojo/_base/declare", "dojo/on", "dojo/dom-construct
 				domConstruct.create("h2", { innerHTML: "About"}, about );	
 				domConstruct.create("p", { innerHTML: "About the app."}, about );	
 
-				on( about, "click", lang.hitch( this, function(e) { this.onAbout(); } ) );
-				on( help, "click", lang.hitch( this, function(e) { this.onHelp(); } ) );
-				on( browse, "click", lang.hitch( this, function(e) { this.onBrowse(); } ) );
-				on( altkey, "click", lang.hitch( this, function(e) { this.onAltKey(); } ) );
-				on( speedbug, "click", lang.hitch( this, function(e) { this.onSpeedbug(); } ) );
+				on( about,    "click", function(e) { topic.publish( "about/open"); });
+				on( help,     "click", function(e) { topic.publish( "help/open" ); });
+				on( browse,   "click", function(e) { topic.publish( "browse/open" ); });
+				on( altkey,   "click", function(e) { topic.publish( "key/start"); });
+				on( speedbug, "click", function(e) { topic.publish( "speedbug/open" ); });
 				
 			}
 		});
