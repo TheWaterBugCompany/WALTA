@@ -741,7 +741,6 @@
 				<mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_01.jpg"/>
 				<mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_02.jpg"/>
 				<mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_03.jpg"/>
-				<mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_04.jpg"/>
 															
 				</taxon>
 				
@@ -2187,8 +2186,7 @@
 							<keyNode>
 							
 								<question num="1">
-									<text>Snails are coiled small (less than 10 mm), often jet black with dextrally (see illustration) coiled shell and a black disk (operculum) on the foot used for shutting the shell. This can be hard to see without magnification.</text>
-									<mediaRef url="shelltypes.jpg"
+									<text>Snails are coiled small (less than 10 mm), often jet black with dextrally coiled shell and a black disk (operculum) on the foot used for shutting the shell. This can be hard to see without magnification.</text>
 								</question>
 								
 								<question num ="2">
