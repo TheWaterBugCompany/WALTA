@@ -1080,6 +1080,59 @@ define("dojox/mobile/Button", [
 });
 
 },
+'dijit/Viewport':function(){
+define("dijit/Viewport", [
+	"dojo/Evented",
+	"dojo/on",
+	"dojo/ready",
+	"dojo/sniff",
+	"dojo/_base/window", // global
+	"dojo/window" // getBox()
+], function(Evented, on, ready, has, win, winUtils){
+
+	// module:
+	//		dijit/Viewport
+
+	/*=====
+	return {
+		// summary:
+		//		Utility singleton to watch for viewport resizes, avoiding duplicate notifications
+		//		which can lead to infinite loops.
+		// description:
+		//		Usage: Viewport.on("resize", myCallback).
+		//
+		//		myCallback() is called without arguments in case it's _WidgetBase.resize(),
+		//		which would interpret the argument as the size to make the widget.
+	};
+	=====*/
+
+	var Viewport = new Evented();
+
+	ready(200, function(){
+		var oldBox = winUtils.getBox();
+		Viewport._rlh = on(win.global, "resize", function(){
+			var newBox = winUtils.getBox();
+			if(oldBox.h == newBox.h && oldBox.w == newBox.w){ return; }
+			oldBox = newBox;
+			Viewport.emit("resize");
+		});
+
+		// Also catch zoom changes on IE8, since they don't naturally generate resize events
+		if( undefined  == 8){
+			var deviceXDPI = screen.deviceXDPI;
+			setInterval(function(){
+				if(screen.deviceXDPI != deviceXDPI){
+					deviceXDPI = screen.deviceXDPI;
+					Viewport.emit("resize");
+				}
+			}, 500);
+		}
+	});
+
+	return Viewport;
+});
+
+},
 'dojox/mobile/TransitionEvent':function(){
 define("dojox/mobile/TransitionEvent", [
 	"dojo/_base/declare",
@@ -1276,17 +1329,7 @@ define("dojox/mobile/Carousel", [
 		startup: function(){
 			if(this._started){ return; }
 
-			var h;
-			if(this.height === "inherit"){
-				if(this.domNode.offsetParent){
-					h = this.domNode.offsetParent.offsetHeight + "px";
-				}
-			}else if(this.height){
-				h = this.height;
-			}
-			if(h){
-				this.domNode.style.height = h;
-			}
+			this._updateHeight();
 
 			if(this.store){
 				if(!this.setStore){
@@ -1303,6 +1346,20 @@ define("dojox/mobile/Carousel", [
 			this.currentView = array.filter(this.getChildren(), function(view){
 				return view.isVisible();
 			})[0];
+		},
+		
+		_updateHeight: function() {
+			var h;
+			if(this.height === "inherit"){
+				if(this.domNode.offsetParent){
+					h = this.domNode.offsetParent.offsetHeight + "px";
+				}
+			}else if(this.height){
+				h = this.height;
+			}
+			if(h){
+				this.domNode.style.height = h;
+			}
 		},
 
 		resizeItems: function(){
@@ -1338,11 +1395,12 @@ define("dojox/mobile/Carousel", [
 		},
 
 		resize: function(){
-			if(!this.itemWidth){ return; }
-			var num = Math.floor(this.domNode.offsetWidth / this.itemWidth);
-			if(num === this.numVisible){ return; }
+			if(this.itemWidth){ 
+				this.numVisible = Math.floor(this.domNode.offsetWidth / this.itemWidth);
+			}
+
 			this.selectedItemIndex = this.getIndexByItemWidget(this.selectedItem);
-			this.numVisible = num;
+			this._updateHeight();
 			if(this.items.length > 0){
 				this.onComplete(this.items);
 				this.select(this.selectedItemIndex);
@@ -4597,9 +4655,9 @@ define("dojox/mobile/transition", [
  */
 
 // NB dojox/mobile/parser is needed for StoreCarousel to work properly
-define( "walta/SpeedBugView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/dom-construct", "dojox/mobile/parser", "dojo/store/Memory", "dojox/mobile/View", 
-          "dojox/mobile/StoreCarousel", "walta/AnchorBar" ], 
-	function( declare, array, domConstruct, parser, Memory, View, StoreCarousel, AnchorBar ) {
+define( "walta/SpeedBugView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "dojo/dom-construct", "dojox/mobile/parser", "dojo/store/Memory", "dojox/mobile/View", 
+          "dojox/mobile/StoreCarousel", "walta/AnchorBar", "dijit/Viewport" ], 
+	function( declare, array, lang, domConstruct, parser, Memory, View, StoreCarousel, AnchorBar, Viewport ) {
 		return declare( "walta.SpeedBugView", [View], {
 			
 			speedBug: null,
@@ -4619,8 +4677,10 @@ define( "walta/SpeedBugView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/
 			postCreate: function() {
 				var ab = new AnchorBar( { title: "SpeedBug" } );
 				this.addChild(ab);
-				var cs = new StoreCarousel( { navButton: false, height: "100%", pageIndicator: false, numVisible: 2, store: this._store } );
+				var cs = new StoreCarousel( { navButton: false, height: "inherit", pageIndicator: false, numVisible: 2, store: this._store } );
 				this.addChild(cs);
+				
+				//Viewport.on( "resize", lang.hitch( this, function() { cs.resize(); } ) );
 			},
 			
 			_renderGroupOrBug: function( itm ) {

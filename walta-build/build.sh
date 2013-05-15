@@ -39,7 +39,6 @@ cp $SRCDIR/config.xml $DISTDIR
 
 # copy across data sets
 cp $SRCDIR/cordova*.js $DISTDIR
-cp $SRCDIR/icon.png $DISTDIR
 
 # remove files not needed from Dojo build
 cd $DISTDIR

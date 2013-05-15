@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "net.thewaterbug.walta"
-        version   = "0.0.2">
+        version   = "0.0.I3">
 
     <name>WALTA</name>
 
@@ -50,24 +50,24 @@
     -->
 
     <!-- Define app icon for each platform. -->
-    <icon src="icon.png" />
-    <icon src="res/icon/android/icon-36-ldpi.png"   gap:platform="android"    gap:density="ldpi" />
-    <icon src="res/icon/android/icon-48-mdpi.png"   gap:platform="android"    gap:density="mdpi" />
-    <icon src="res/icon/android/icon-72-hdpi.png"   gap:platform="android"    gap:density="hdpi" />
-    <icon src="res/icon/android/icon-96-xhdpi.png"  gap:platform="android"    gap:density="xhdpi" />
-    <icon src="res/icon/ios/icon-57.png"            gap:platform="ios"        width="57" height="57" />
-    <icon src="res/icon/ios/icon-72.png"            gap:platform="ios"        width="72" height="72" />
-    <icon src="res/icon/ios/icon-57-2x.png"         gap:platform="ios"        width="114" height="114" />
-    <icon src="res/icon/ios/icon-72-2x.png"         gap:platform="ios"        width="144" height="144" />
+    <icon src="res/icon/Icon-96x96.png" />
+    <icon src="res/icon/icon-36x36.png"   gap:platform="android"    gap:density="ldpi" />
+    <icon src="res/icon/icon-48x48.png"   gap:platform="android"    gap:density="mdpi" />
+    <icon src="res/icon/Icon-72x72.png"   gap:platform="android"    gap:density="hdpi" />
+    <icon src="res/icon/Icon-96x96.png"  gap:platform="android"    gap:density="xhdpi" />
+    <icon src="res/icon/Icon-57x57.png"            gap:platform="ios"        width="57" height="57" />
+    <icon src="res/icon/Icon-72x72.png"            gap:platform="ios"        width="72" height="72" />
+    <icon src="res/icon/ios/Icon-114x114.png"         gap:platform="ios"        width="114" height="114" />
+    <icon src="res/icon/ios/icon-144x144.png"         gap:platform="ios"        width="144" height="144" />
 
     <!-- Define app splash screen for each platform. -->
-    <gap:splash src="res/screen/android/screen-ldpi-landscape.png"  gap:platform="android" gap:density="ldpi" />
-    <gap:splash src="res/screen/android/screen-mdpi-landscape.png"  gap:platform="android" gap:density="mdpi" />
-    <gap:splash src="res/screen/android/screen-hdpi-landscape.png"  gap:platform="android" gap:density="hdpi" />
-    <gap:splash src="res/screen/android/screen-xhdpi-landscape.png" gap:platform="android" gap:density="xhdpi" />
-    <gap:splash src="res/screen/ios/screen-iphone-landscape.png"    gap:platform="ios"     width="320" height="480" />
-    <gap:splash src="res/screen/ios/screen-iphone-landscape-2x.png" gap:platform="ios"     width="640" height="960" />
-    <gap:splash src="res/screen/ios/screen-iphone5-landscape-2x.png"      gap:platform="ios"     width="640" height="1136" />
+    <gap:splash src="res/screen/screen-320x200.png"  gap:platform="android" gap:density="ldpi" />
+    <gap:splash src="res/screen/Splash-screen-480x320png"  gap:platform="android" gap:density="mdpi" />
+    <gap:splash src="res/screen/Splash-screen-1136x720.png"  gap:platform="android" gap:density="hdpi" />
+    <gap:splash src="res/screen/Splash-screen-1280x720.png" gap:platform="android" gap:density="xhdpi" />
+    <gap:splash src="res/screen/Splash-screen-480x320.png"    gap:platform="ios"     width="480" height="320" />
+    <gap:splash src="res/screen/Splash-screen-960x640.png" gap:platform="ios"     width="960" height="640" />
+    <gap:splash src="res/screen/Splash-screen-1136x720.png"      gap:platform="ios"     width="1136" height="720" />
 
     <!--
         Define access to external domains.

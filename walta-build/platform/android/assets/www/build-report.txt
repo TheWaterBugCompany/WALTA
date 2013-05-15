@@ -1,4 +1,4 @@
-Build started: Tue May 14 2013 14:08:57 GMT+1000 (EST)
+Build started: Wed May 15 2013 17:47:42 GMT+1000 (EST)
 Build application version: 1.7.0dev (23930)
 Messages:
 info(100) Assumed module uses legacy loader API.
@@ -3695,7 +3695,7 @@ info(107) Package Version:
 	package: dojox; version: 1.8.3
 	package: dijit; version: 1.8.3
 	package: dojo; version: 1.8.3
-	package: walta; version: 0.0.2
+	package: walta; version: 0.0.I3
 warn(216) dojo/has plugin resource could not be resolved during build-time.
 	plugin resource id: dojo-parser?:dojo/_base/window; reference module id: dojox/mvc/parserExtension
 	plugin resource id: dojo-mobile-parser?:dojo/parser; reference module id: dojox/mvc/parserExtension
@@ -3757,6 +3757,7 @@ walta/walta:
 	walta/TaxonView
 	dojo/store/util/SimpleQueryEngine
 	dojox/mobile/parser
+	dijit/Viewport
 	dojox/mobile/scrollable
 	dijit/_Container
 	walta/XmlDocument
@@ -3824,4 +3825,4 @@ walta/walta:
 Process finished normally
 	errors: 0
 	warnings: 12
-	build time: 47.696 seconds
+	build time: 47.58 seconds
