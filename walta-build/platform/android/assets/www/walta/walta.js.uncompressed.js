@@ -1080,59 +1080,6 @@ define("dojox/mobile/Button", [
 });
 
 },
-'dijit/Viewport':function(){
-define("dijit/Viewport", [
-	"dojo/Evented",
-	"dojo/on",
-	"dojo/ready",
-	"dojo/sniff",
-	"dojo/_base/window", // global
-	"dojo/window" // getBox()
-], function(Evented, on, ready, has, win, winUtils){
-
-	// module:
-	//		dijit/Viewport
-
-	/*=====
-	return {
-		// summary:
-		//		Utility singleton to watch for viewport resizes, avoiding duplicate notifications
-		//		which can lead to infinite loops.
-		// description:
-		//		Usage: Viewport.on("resize", myCallback).
-		//
-		//		myCallback() is called without arguments in case it's _WidgetBase.resize(),
-		//		which would interpret the argument as the size to make the widget.
-	};
-	=====*/
-
-	var Viewport = new Evented();
-
-	ready(200, function(){
-		var oldBox = winUtils.getBox();
-		Viewport._rlh = on(win.global, "resize", function(){
-			var newBox = winUtils.getBox();
-			if(oldBox.h == newBox.h && oldBox.w == newBox.w){ return; }
-			oldBox = newBox;
-			Viewport.emit("resize");
-		});
-
-		// Also catch zoom changes on IE8, since they don't naturally generate resize events
-		if( undefined  == 8){
-			var deviceXDPI = screen.deviceXDPI;
-			setInterval(function(){
-				if(screen.deviceXDPI != deviceXDPI){
-					deviceXDPI = screen.deviceXDPI;
-					Viewport.emit("resize");
-				}
-			}, 500);
-		}
-	});
-
-	return Viewport;
-});
-
-},
 'dojox/mobile/TransitionEvent':function(){
 define("dojox/mobile/TransitionEvent", [
 	"dojo/_base/declare",
@@ -4656,8 +4603,8 @@ define("dojox/mobile/transition", [
 
 // NB dojox/mobile/parser is needed for StoreCarousel to work properly
 define( "walta/SpeedBugView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "dojo/dom-construct", "dojox/mobile/parser", "dojo/store/Memory", "dojox/mobile/View", 
-          "dojox/mobile/StoreCarousel", "walta/AnchorBar", "dijit/Viewport" ], 
-	function( declare, array, lang, domConstruct, parser, Memory, View, StoreCarousel, AnchorBar, Viewport ) {
+          "dojox/mobile/StoreCarousel", "walta/AnchorBar" ], 
+	function( declare, array, lang, domConstruct, parser, Memory, View, StoreCarousel, AnchorBar ) {
 		return declare( "walta.SpeedBugView", [View], {
 			
 			speedBug: null,
@@ -4679,8 +4626,6 @@ define( "walta/SpeedBugView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/
 				this.addChild(ab);
 				var cs = new StoreCarousel( { navButton: false, height: "inherit", pageIndicator: false, numVisible: 2, store: this._store } );
 				this.addChild(cs);
-				
-				//Viewport.on( "resize", lang.hitch( this, function() { cs.resize(); } ) );
 			},
 			
 			_renderGroupOrBug: function( itm ) {
@@ -4698,6 +4643,7 @@ define( "walta/SpeedBugView", [ "dojo/_base/declare", "dojo/_base/array", "dojo/
 			
 		});
 });
+
 },
 'dojo/dom-style':function(){
 define("dojo/dom-style", ["./sniff", "./dom"], function(has, dom){

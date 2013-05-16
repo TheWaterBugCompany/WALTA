@@ -57,7 +57,11 @@ var profile = {
 			   "walta/XmlDocument",
 			   "walta/AnchorBar",
 			   "walta/AppController",
-			   "walta/HomeView"
+			   "walta/HomeView",
+			   "walta/MediaView",
+			   "walta/SpeedBug",
+			   "walta/SpeedBugTile",
+			   "walta/SpeedBugView"
 			   ]
 		}
 	},

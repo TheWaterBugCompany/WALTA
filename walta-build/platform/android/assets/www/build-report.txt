@@ -1,4 +1,4 @@
-Build started: Wed May 15 2013 17:47:42 GMT+1000 (EST)
+Build started: Thu May 16 2013 10:33:44 GMT+1000 (EST)
 Build application version: 1.7.0dev (23930)
 Messages:
 info(100) Assumed module uses legacy loader API.
@@ -3757,7 +3757,6 @@ walta/walta:
 	walta/TaxonView
 	dojo/store/util/SimpleQueryEngine
 	dojox/mobile/parser
-	dijit/Viewport
 	dojox/mobile/scrollable
 	dijit/_Container
 	walta/XmlDocument
@@ -3825,4 +3824,4 @@ walta/walta:
 Process finished normally
 	errors: 0
 	warnings: 12
-	build time: 47.58 seconds
+	build time: 49.041 seconds
