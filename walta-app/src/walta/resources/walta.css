@@ -325,9 +325,14 @@ body { background-color: white !important; }
 	overflow: hidden;
 }
 
-.waltaImageInner, .waltaImageInner img {
+.waltaImageInner {
 	position: relative;
 	width: 180px;
+	height: 110px;	
+	text-align: right;
+}
+
+.waltaImageInner img {
 	height: 110px;
 }
 
@@ -387,9 +392,10 @@ body { background-color: white !important; }
 .waltaZoomedImage img {
 	border: solid 2px black;
 	height: 94% !important;
-	width: 94% !important;
-	margin-left: 3% !important;
-	margin-right: 3% !important;
+	width: initial !important; /* retain the image aspect ratio */
+	margin-left: auto !important;
+	margin-right: auto !important;
+	float: none !important;
 }
 
 .waltaCarousel .waltaCloseButton {
