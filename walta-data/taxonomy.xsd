@@ -80,7 +80,7 @@
 	    	<attribute name="id" type="ID" use="required" />
 	    	<attribute name="name" type="token" use="required" />
 	    	<attribute name="commonName" type="token"/>
-	    	<attribute name="size" type="decimal" />
+	    	<attribute name="size" type="string" />
 	    	<attribute name="signalScore" type="int" />
 	    	<attribute name="level">
 	    		<simpleType>
