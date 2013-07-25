@@ -7,6 +7,12 @@
 		<mediaRef url="parastacide_01.jpg"/>
 		<mediaRef url="parastacide_02.jpg"/>	
 	</taxon>
+  
+  <taxon id="dummyTaxon1" name="Dummy1" commonName="test dummy 1" >
+  </taxon>
+  
+  <taxon id="dummyTaxon2" name="Dummy2" commonName="test dummy 2" >
+  </taxon>
 
 	<keyNode>
 		<question num="1">
@@ -21,21 +27,37 @@
 		
 		<outcome for="1">
 			<keyNode id="testNode">
-				<question num="1">
-					<text>Animal rests on its side, swims in swift bursts (below left).</text>
-					<mediaRef url="amphipoda_01.jpg"/>
-				</question>
-				<question num="2">
-					<text>Animal slow moving, walks (below right), relatively robust looking animal, bovine.</text>
-					<mediaRef url="phreatoicidae.jpg"/>
-				</question>
-				<outcome for="1"><taxonLink ref="parastacidae"/></outcome>
-				<outcome for="2"><keyNodeLink ref="testNode" /></outcome>
-			</keyNode>
+              <question num="1">
+                <text>Animal rests on its side, swims in swift bursts (below left).</text>
+                <mediaRef url="amphipoda_01.jpg"/>
+              </question>
+              <question num="2">
+                <text>Animal slow moving, walks (below right), relatively robust looking animal, bovine.</text>
+                <mediaRef url="phreatoicidae.jpg"/>
+              </question>
+              <outcome for="1"><taxonLink ref="parastacidae"/></outcome>
+              <outcome for="2"><keyNodeLink ref="linkTest" /></outcome>
+            </keyNode>
 		</outcome>
 		
 		<outcome for="2"><taxonLink ref="parastacidae"/></outcome>
 	</keyNode>
+  
+    <keyNode id="linkTest">
+        <question num="1">
+          <text>Question 1 Link Test</text>
+          <mediaRef url="couplet5p1.jpg"/>
+        </question>
+        
+        <question num="2">
+          <text>Question 2 Link Test</text>
+          <mediaRef url="couplet5p2.jpg"/>
+        </question>
+        
+        <outcome for="1"><taxonLink ref="dummyTaxon1"/></outcome>
+      
+      <outcome for="2"><taxonLink ref="dummyTaxon2"/></outcome>
+    </keyNode>
 	
 	<speedBugIndex>
 	    <speedBugGroup ref="maggots">

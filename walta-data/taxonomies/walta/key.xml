@@ -129,7 +129,7 @@
 
     </taxon>
 
-    <taxon id="tx_chelicerata" name="Chelicerata" level="">
+    <taxon id="tx_chelicerata" name="Chelicerata">
 
       <taxon id="araneae" name="Araneae">
 
@@ -1735,7 +1735,7 @@
     </question>
 
     <outcome for="1">
-      <keyNodeLink ref="mollusca" />
+      <keyNodeLink ref="ky_mollusca" />
     </outcome>
 
     <outcome for="2">
@@ -1767,7 +1767,7 @@
             </question>
 
             <outcome for="1">
-              <keyNodeLink ref="crustacea" />
+              <keyNodeLink ref="ky_crustacea" />
             </outcome>
 
             <outcome for="2">
@@ -1785,7 +1785,7 @@
                 </question>
 
                 <outcome for="1">
-                  <keyNodeLink ref="chelicerata" />
+                  <keyNodeLink ref="ky_chelicerata" />
                 </outcome>
 
                 <outcome for="2">
@@ -1816,11 +1816,11 @@
                         </question>
 
                         <outcome for="1">
-                          <keyNodeLink ref="coleoptera" />
+                          <keyNodeLink ref="ky_coleoptera" />
                         </outcome>
 
                         <outcome for="2">
-                          <keyNodeLink ref="hemiptera" />
+                          <keyNodeLink ref="ky_hemiptera" />
                         </outcome>
 
                       </keyNode>
@@ -1868,7 +1868,7 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="trichoptera" />
+                                  <keyNodeLink ref="ky_trichoptera" />
                                 </outcome>
 
                                 <outcome for="2">
@@ -1892,7 +1892,7 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="odonata" />
+                                  <keyNodeLink ref="ky_odonata" />
                                 </outcome>
 
                                 <outcome for="2">
@@ -1975,11 +1975,11 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="plecoptera" />
+                                  <keyNodeLink ref="ky_plecoptera" />
                                 </outcome>
 
                                 <outcome for="2">
-                                  <keyNodeLink ref="coleoptera_larvae" />
+                                  <keyNodeLink ref="ky_coleoptera_larvae" />
                                 </outcome>
 
                               </keyNode>
@@ -2000,11 +2000,11 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="odonata" />
+                                  <keyNodeLink ref="ky_odonata" />
                                 </outcome>
 
                                 <outcome for="2">
-                                  <keyNodeLink ref="ephemeroptera" />
+                                  <keyNodeLink ref="ky_ephemeroptera" />
                                 </outcome>
                               </keyNode>
                             </outcome>
@@ -2059,7 +2059,7 @@
                     </question>
 
                     <outcome for="1">
-                      <keyNodeLink ref="diptera" />
+                      <keyNodeLink ref="ky_diptera" />
                     </outcome>
 
                     <outcome for="2">
@@ -2089,7 +2089,7 @@
                     </outcome>
 
                     <outcome for="2">
-                      <keyNodeLink ref="diptera" />
+                      <keyNodeLink ref="ky_diptera" />
                     </outcome>
                   </keyNode>
                 </outcome>
@@ -2147,7 +2147,7 @@
     </outcome>
   </keyNode>
 
-  <keyNode id="mollusca">
+  <keyNode id="ky_mollusca">
     <question num="1">
       <text>Animals look like snails or limpets.</text>
     </question>
@@ -2464,7 +2464,7 @@
       <taxonLink ref="pisauridae_and_lycosidae" />
     </outcome>
   </keyNode>
-  <keyNode id="coleoptera">
+  <keyNode id="ky_coleoptera">
 
     <question num="1">
       <text>Beetles active swimmers</text>
@@ -2777,7 +2777,7 @@
 
     </outcome>
   </keyNode>
-  <keyNode id="hemiptera">
+  <keyNode id="ky_hemiptera">
 
     <question num="1">
       <text>Bugs walking/running on the water surface.</text>
@@ -2972,7 +2972,7 @@
                 <outcome for="2">
 
                   <!-- couplet 12 -->
-                  <keyNode id="corixidae">
+                  <keyNode id="ky_corixidae">
 
                     <question num="1">
                       <text>Head with 'nostrils' (Ocelli, they are more like eyes - see photo). Usually distinctly orange or yellow coloured head and underneath.</text>
@@ -3041,7 +3041,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="trichoptera">
+  <keyNode id="ky_trichoptera">
 
     <question num="1">
       <text>Caddis living in a portable case. Most crawl slowly, some swim by head-thrashing or arm-waving; if out of case, body blunt ending with tiny prolegs and hooks.</text>
@@ -3389,7 +3389,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="odonata">
+  <keyNode id="ky_odonata">
 
     <question num="1">
       <text>Slender larvae, with 3 terminal gills. Swim by undulating (snake-like).</text>
@@ -3582,7 +3582,7 @@
 
         <outcome for="2">
 
-          <keynode>
+          <keyNode>
 
             <question num="1">
               <text>Larvae with a strong 'nose'.</text>
@@ -3618,7 +3618,7 @@
 
               </keyNode>
             </outcome>
-          </keynode>
+          </keyNode>
         </outcome>
       </keyNode>
     </outcome>
@@ -3754,7 +3754,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="plecoptera">
+  <keyNode id="ky_plecoptera">
 
     <question num="1">
       <text>Large nymphs up to 40mm usually bright green, orange or blue. Animals have gills along the side of the abdomen.</text>
@@ -3882,7 +3882,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="ephemeroptera">
+  <keyNode id="ky_ephemeroptera">
 
     <question num="1">
       <text>Nymphs with gills along the side of the abdomen.</text>
@@ -3940,9 +3940,9 @@
 
                   <keyNode>
 
-                    <quesion num="1">
+                    <question num="1">
                       <text>With a conspicuous set of horns.</text>
-                    </quesion>
+                    </question>
 
                     <question num="2">
                       <text>Not as above.</text>
@@ -4008,9 +4008,9 @@
 
       <keyNode>
 
-        <quesion num="1">
+        <question num="1">
           <text>Very small &lt;5mm grey brown nymphs with a fuzzy silt covered appearance. Slow moving but may swim lazily. Flat gill covers large, meeting along the midline like a mini skirt.</text>
-        </quesion>
+        </question>
 
         <question num="2">
           <text>Larger nymphs with a camouflage pattern and eyes which may appear to shine in bright light. Rarely crawl but swim rapidly. Gill covers small, elliptical, not meeting in the middle. </text>
@@ -4026,7 +4026,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="diptera">
+  <keyNode id="ky_diptera">
 
     <question num="1">
       <text>Maggots break the surface of the water to breathe; their bodies are buoyant in deeper water (floaters).</text>
@@ -4177,7 +4177,7 @@
 
                 <outcome for="2">
 
-                  <keyNode id="chironomid">
+                  <keyNode id="ky_chironomid">
 
                     <question num="1">
                       <text>Animals obviously red.</text>

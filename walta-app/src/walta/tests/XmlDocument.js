@@ -49,6 +49,19 @@ define(["doh", "walta/XmlDocument"], function(doh, XmlDocument){
     	 return loadXmlAndThen( function( xml ) {
     			doh.assertEqual( [ "one", "two", "three" ], xml.getStringArray( null, "//test:uri/@ref")  );
     		} );
+     },
+     
+     function queryNodeArray() {
+    	 return loadXmlAndThen( function( xml ) {
+    		 var ndArray = xml.getNodeArray( null, "//test:uri");
+    		 doh.assertEqual( 3, ndArray.length  );
+    		 
+    		 var cnt = 0;
+    		 for( var i = 0; i < ndArray.length; i++ )
+    			 if ( ndArray[i].tagName === "uri" )
+    				 cnt++;
+    		 doh.assertEqual( 3, cnt );
+    		} );
      }  
      
      ]                    

@@ -97,7 +97,6 @@ define(["doh", "dojo/aspect", "walta/Key", "walta/KeyNode", "walta/Taxon" ], fun
     	 return loadKeyAndTest( function(key) { 
  		 	// Check the Taxon outcome
  		 	var outcome = key.choose( 0 );
- 
  		 	
  		 	doh.assertTrue( outcome instanceof KeyNode );
  		 	
@@ -116,26 +115,50 @@ define(["doh", "dojo/aspect", "walta/Key", "walta/KeyNode", "walta/Taxon" ], fun
     	 });
      },
      
+     function testBackFromRoot() {
+    	 return loadKeyAndTest( function(key) { 
+ 		 
+    		 doh.assertEqual( false, key.back() );
+ 		 	
+    	 });
+     },
+     
      function testKeyNodeLink() {
     	 return loadKeyAndTest( function(key) { 
  		 	// Check the Taxon outcome
  		 	var outcome = key.choose( 0 );
+ 		 	outcome = key.choose(1);
  
  		 	
  		 	doh.assertTrue( outcome instanceof KeyNode );
  		 	
- 		 	doh.assertEqual( "Animal rests on its side, swims in swift bursts (below left).", outcome.questions[0].text );
+ 		 	doh.assertEqual( "Question 1 Link Test", outcome.questions[0].text );
  				 
+	
+    	 });
+     },
+     
+     function testKeyNodeLinkBack() {
+    	 return loadKeyAndTest( function(key) { 
+ 		 	// Check the Taxon outcome
+ 		 	var outcome = key.choose( 0 );
+ 		 	outcome = key.choose(1);
+ 
  		 	
- 		 	outcome = key.choose( 1 );
- 		 	 
+ 		 	doh.assertTrue( outcome instanceof KeyNode );
  		 	
- 		 	var nd = key.currentDecision;
+ 		 	doh.assertEqual( "Question 1 Link Test", outcome.questions[0].text );
  		 	
- 		 	doh.assertTrue( nd instanceof KeyNode );
+ 		 	key.back();
  		 	
- 		 	doh.assertEqual( "Animal rests on its side, swims in swift bursts (below left).", nd.questions[0].text );
-   		 
+ 		 	outcome = key.currentDecision;
+ 		 	
+ 		 	doh.assertTrue( outcome instanceof KeyNode );
+ 		 	
+ 		 	doh.assertEqual( "Animal rests on its side, swims in swift bursts (below left).", outcome.questions[0].text );
+ 		 	
+ 		 	
+ 				 
 	
     	 });
      },
