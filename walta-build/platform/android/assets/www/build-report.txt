@@ -1,4 +1,4 @@
-Build started: Thu Jul 25 2013 16:13:52 GMT+1000 (EST)
+Build started: Thu Jul 25 2013 18:42:31 GMT+1000 (EST)
 Build application version: 1.7.0dev (23930)
 Messages:
 info(100) Assumed module uses legacy loader API.
@@ -3778,7 +3778,6 @@ walta/walta:
 	dojo/Stateful
 	dojox/mobile/viewRegistry
 	dojo/store/util/QueryResults
-	dojox/mobile/deviceTheme
 	dojox/mobile/_StoreMixin
 	dojox/mobile/StoreCarousel
 	dojo/dom-prop
@@ -3816,8 +3815,8 @@ walta/walta:
 	dojo/ready
 	dojox/mobile/transition
 	dojox/mobile/lazyLoadUtils
-	walta/KeyNodeView
 	dojo/window
+	walta/KeyNodeView
 	walta/SpeedBugView
 	dojox/mobile/uacss
 	dijit/_WidgetBase
@@ -3827,4 +3826,4 @@ walta/walta:
 Process finished normally
 	errors: 0
 	warnings: 12
-	build time: 45.583 seconds
+	build time: 49.38 seconds

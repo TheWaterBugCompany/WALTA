@@ -1916,7 +1916,7 @@
 
                                     <outcome for="2">
                                       <!-- Node 12 -->
-                                      <keynode>
+                                      <keyNode>
                                         <question num="1">
                                           <text>something to distinguish coleoptera from megaloptera</text>
                                           <mediaRef url="beetlelarvae.jpg" />
@@ -1935,7 +1935,7 @@
                                           <taxonLink ref="corydalidae" />
                                         </outcome>
 
-                                      </keynode>
+                                      </keyNode>
                                     </outcome>
                                   </keyNode>
 
@@ -2279,7 +2279,8 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="crustacea">
+  
+  <keyNode id="crustaceas">
     <question num="1">
       <text>Robust animals, freshwater crayfish or yabbies with obvious front pincers, movement walking or sometimes 'flips' of the tail that propel the animal backwards.</text>
     </question>

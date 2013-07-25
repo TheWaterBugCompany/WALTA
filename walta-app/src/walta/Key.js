@@ -81,7 +81,8 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 		//
 		// private
 		//
-		_mapFromIdToNode: {},     // A way to jump around the tree by ID
+		_taxIdToNode: {},     // A way to jump around the tree by ID
+		_keyIdToNode: {},     // A way to jump around the tree by ID
 		_rootNode: null,          // The root of the KeyNode tree
 		
 		
@@ -93,7 +94,11 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 		_forwardLinks: [],        // Any unresolved links are placed here for a second pass   
 
 		_lookUpNodeByRef: function ( refId ) {
-			return this._mapFromIdToNode[refId];
+			var node = this._taxIdToNode[refId];
+			if ( ! node ) {
+				node = this._keyIdToNode[refId];
+			}
+			return node;
 		},
 		
 		_parseKeyXML: function( baseUri, doc ) {
@@ -120,6 +125,7 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 					res.questions.push( this._parseQuestionFromXML( baseUri, doc, doc.getNode( node, "tax:question[@num=" + num + "]"), res ) );
 				} catch( e ) {
 					console.error( "Parsing failed for question " + num + ": " + e);
+					console.debug( node );
 				}
 			}
 
@@ -140,11 +146,9 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 					delete this._forwardLinks[id];
 				}
 				// Store this node for future reference regardless
-				this._mapFromIdToNode[id] = res;
+				this._keyIdToNode[id] = res;
 			}
-			
-			// Note any unnamed nodes (except for the first) will be discarded
-			
+
 			return res;
 			
 		},
@@ -161,9 +165,9 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 			if ( isNaN(num) ) {
 				var txt = doc.getString( node, "@num" );
 				if ( txt === "" ) {
-					throw "Missing num attribute on question node.";
+					throw "Missing num attribute on question node: " + qn.text;
 				} else {
-					throw "Unable to interpret @num as an integer: @num = '" +  + "'";
+					throw "Unable to interpret @num as an integer: @num = '" +  num + "' on question node: " + qn.text;
 				}
 			}
 			
@@ -178,8 +182,7 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 			
 			if ( outNode.tagName === "taxonLink" || outNode.tagName === "keyNodeLink" ) {
 				ref = doc.getString( outNode, "@ref" );
-				var oc = this._lookUpNodeByRef( ref );
-				qn.outcome = oc; 
+				qn.outcome = ( outNode.tagName === "taxonLink" ? this._taxIdToNode[ref] : this._keyIdToNode[ref] );
 			} else if ( outNode.tagName === "keyNode" ) {
 				// Recursive descent for nested keyNodes
 				qn.outcome =  this._parseKeyNodeFromXML( baseUri, doc, outNode );
@@ -217,7 +220,7 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 				});
 				
 				if ( tx.id !== "")
-					this._mapFromIdToNode[tx.id] = tx;
+					this._taxIdToNode[tx.id] = tx;
 			}
 			
 			// Look for immediate child nodes

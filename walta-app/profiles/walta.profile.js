@@ -46,7 +46,6 @@ var profile = {
 			   "dijit/_Contained",
 			   "dijit/registry",
 			   "dojo/selector/lite",
-			   "dojox/mobile/deviceTheme",
 			   "walta/Key",
 			   "walta/KeyNode",
 			   "walta/KeyNodeView",
