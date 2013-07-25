@@ -58,7 +58,8 @@ var profile = {
 			   "walta/AnchorBar",
 			   "walta/AppController",
 			   "walta/HomeView",
-			   "walta/MediaView",
+			   "walta/PhotoView",
+			   "walta/VideoView",
 			   "walta/SpeedBug",
 			   "walta/SpeedBugTile",
 			   "walta/SpeedBugView"

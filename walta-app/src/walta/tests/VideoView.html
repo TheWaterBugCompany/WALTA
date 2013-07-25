@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Testing walta.VideoView</title>
+		<script type="text/javascript" src="../../dojo/dojo.js"></script>
+		<script type="text/javascript">
+			require(["dojo", "doh", "dojo/aspect", "walta/VideoView", "dojo/domReady!"], function(dojo, doh, aspect, VideoView ){
+				doh.register("Instantiation", 
+					function playVideo() {
+						var mv = new VideoView(  { 
+							videoUrl: "resources/simpleKey1/media/attack_caddis_01_x264.webm"
+    						}, "mediaView" );
+    					mv.startup();
+    					mv.show();
+    					
+    					doh.assertTrue( true );
+					}
+				);
+				doh.run();
+			});
+		</script>
+
+		<link rel="stylesheet" href="../resources/walta.css">
+	</head>
+	<body>
+		
+
+			<div id="mediaView" ></div>
+		
+	</body>
+</html>

@@ -1,2 +1,2 @@
 //>>built
-define("walta/KeyNode",["dojo/_base/declare","walta/Question"],function(f,b){var c=f(null,{questions:[],back:null,constructor:function(d,a,e){this.questions=[new b(c,d,a,a.getNode(e,"tax:question[@num=1]")),new b(c,d,a,a.getNode(e,"tax:question[@num=2]"))];this.back=function(){var b=a.getNode(e,"../..");return"keyNode"==b.tagName?new c(d,a,b):null}}});return c});
+define("walta/KeyNode",["dojo/_base/declare","walta/Question"],function(a){return a(null,{constructor:function(){this.questions=[];this.parentLink=null}})});

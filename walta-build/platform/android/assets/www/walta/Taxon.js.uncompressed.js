@@ -13,30 +13,33 @@ define( "walta/Taxon", [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/l
 		
 		mediaUrls: [],		// List of media URLs
 		
-		back: null, // A function to go back
-	
-		_buildBackFunction: function( KeyNode, baseUri, doc, parent ) {
-			return function() {
-				return new KeyNode( baseUri, doc, parent );
-			};
+		photoUrls: null,
+		videoUrl: null,
+		
+		parent: null,
+		
+		_hasExtension: function( path, exts ) {
+			var ext = path.split('.').pop();
+			return array.indexOf( exts, ext ) >= 0;
 		},
 		
-		constructor: function( KeyNode, baseUri, doc, parent, node ) {
-			this.id = doc.getString( node, "@id" );
-			this.name = doc.getString( node, "@name" );
-			this.commonName = doc.getString( node, "@commonName" );
-			this.size = doc.getNumber( node, "@size" );
-			this.signalScore = doc.getNumber( node, "@signalScore" );
-			this.habitat = doc.getString( node, "tax:habitat");
-			this.movement = doc.getString( node, "tax:movement");
-			this.confusedWith = doc.getString( node, "tax:confusedWith");
-			this.mediaUrls = [];
-			array.forEach(
-				doc.getStringArray( node, "child::tax:mediaRef/@url" ),
-					lang.hitch( this, function( ref ) {
-						this.mediaUrls.push( baseUri + "/media/" + ref );
-				}));
-			this.back = this._buildBackFunction( KeyNode, baseUri, doc, parent );
+		constructor: function( args ) {
+			declare.safeMixin(this,args);
+			
+			// Process the media URLs to set media properties
+			this.photoUrls = array.filter( this.mediaUrls, function(url) {
+				return this._hasExtension(url, [ "jpg", "png", "gif", "jpeg" ] );
+			}, this );
+			
+			var videoUrls = array.filter( this.mediaUrls, function(url) {
+				return this._hasExtension(url, [ "mp4", "webm", "ogv" ] );
+			}, this );
+			
+			if ( videoUrls.length > 0 ) {
+				this.videoUrl = videoUrls[0];
+			}
+			
+			
 		}
 	});
 });

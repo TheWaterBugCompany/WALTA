@@ -204,16 +204,17 @@ define( [ "dojo/_base/declare", "dojo/request/xhr", "dojo/_base/lang", "dojo/_ba
 		_parseTaxonFromXML: function( baseUri, doc, node ) {
 			// Note the initial parent can be tax:key hence the check below
 			if ( node.tagName === "taxon") {
-				var tx = new Taxon();
-				tx.id = doc.getString( node, "@id" );
-				tx.name = doc.getString( node, "@name" );
-				tx.commonName = doc.getString( node, "@commonName" );
-				tx.size = doc.getNumber( node, "@size" );
-				tx.signalScore = doc.getNumber( node, "@signalScore" );
-				tx.habitat = doc.getString( node, "tax:habitat");
-				tx.movement = doc.getString( node, "tax:movement");
-				tx.confusedWith = doc.getString( node, "tax:confusedWith");
-				tx.mediaUrls = this._parseMediaUrls( baseUri, doc, node );
+				var tx = new Taxon( {
+						id: doc.getString( node, "@id" ),
+						name: doc.getString( node, "@name" ),
+						commonName: doc.getString( node, "@commonName" ),
+						size: doc.getNumber( node, "@size" ),
+						signalScore: doc.getNumber( node, "@signalScore" ),
+						habitat: doc.getString( node, "tax:habitat"),
+						movement: doc.getString( node, "tax:movement"),
+						confusedWith: doc.getString( node, "tax:confusedWith"),
+						mediaUrls: this._parseMediaUrls( baseUri, doc, node )
+				});
 				
 				if ( tx.id !== "")
 					this._mapFromIdToNode[tx.id] = tx;

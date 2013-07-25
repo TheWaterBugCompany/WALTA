@@ -3,8 +3,10 @@
  * 
  * 
  */
-define( "walta/TaxonView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojo/dom-construct", "dojox/mobile/View", "dojox/mobile/Button", "walta/AnchorBar", "walta/MediaView" ], 
-   function( declare, aspect, lang, domConstruct, View, Button, AnchorBar, MediaView ) {
+define( "walta/TaxonView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/lang", "dojo/dom-construct", "dojox/mobile/View",
+          "dojox/mobile/Button", "walta/AnchorBar", "walta/PhotoView", "walta/VideoView" ], 
+   function( declare, aspect, lang, domConstruct, View, 
+		   Button, AnchorBar, PhotoView, VideoView ) {
 	return declare( "walta.TaxonView", [View], {
 
 		taxon: null, // Taxon
@@ -29,15 +31,30 @@ define( "walta/TaxonView", [ "dojo/_base/declare", "dojo/aspect", "dojo/_base/la
 			this._buildNamedField( details, "Confused with", this.taxon.confusedWith );
 			this._buildNamedField( details, "SIGNAL score",  this.taxon.signalScore );
 
-			if ( this.taxon.mediaUrls[0] ) {
-				this.addChild( new MediaView( { mediaUrls: this.taxon.mediaUrls } ) );
+			if ( this.taxon.photoUrls.length > 0 ) {
+				this._photoView = new PhotoView( { photoUrls: this.taxon.photoUrls } );
+				this.addChild( this._photoView );
+			}
+			
+			if ( this.taxon.videoUrl !== null ) {
+				this._videoView = new VideoView( { videoUrl: this.taxon.videoUrl } );
+				this.addChild( this._videoView );
 			}
 			
 			this._buildButton( "Go back and try again", "waltaGoBack", lang.hitch( this, function() { this.onBack(); } ) );
-			this._buildButton( "Photo gallery", "waltaGallery", lang.hitch( this, function() { this.onBack(); } ) );
-			/*
-			this._buildButton( "Watch video", "waltaVideo", lang.hitch( this, function() { this.onBack(); } ) );
-			this._buildButton( "Listen to audio", "waltaAudio", lang.hitch( this, function() { this.onBack(); } ) );
+			
+			if ( this._photoView ) {
+				this._buildButton( "Photo gallery", "waltaGallery", lang.hitch( this, function() { 
+					this._photoView.show();
+					} ) );
+			}
+			
+			if ( this._videoView ) {
+				this._buildButton( "Watch video", "waltaVideo", lang.hitch( this, function() { 
+					this._videoView.show();
+				} ) );
+			}
+			/*this._buildButton( "Listen to audio", "waltaAudio", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Nerd Notes", "waltaNotes", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Email Info", "waltaEmail", lang.hitch( this, function() { this.onBack(); } ) );
 			this._buildButton( "Post to facebook", "waltaFacebook", lang.hitch( this, function() { this.onBack(); } ) );

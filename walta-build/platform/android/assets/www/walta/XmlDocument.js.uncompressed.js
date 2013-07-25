@@ -45,12 +45,29 @@ define( "walta/XmlDocument", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/re
 		// Evaluates the passed xpath (from context node) and casts the result to a string
 		getNumber: function( node, xpath ) {
 			var res = this._xml.evaluate( xpath, (node === null ? this._xml.documentElement : node ),  this._xmlNSResolver, XPathResult.NUMBER_TYPE, null );
+
 			return res.numberValue;
 		},
 		
 		// Evaluates the passed xpath (from context node) and casts the result to a node iterator
 		getStringArray: function( node, xpath ) {
 			var res = this._xml.evaluate( xpath, (node === null ? this._xml.documentElement : node ),  this._xmlNSResolver, XPathResult.ANY_TYPE, null );
+			return this._convertDOMArrayToJSValueArray( res );
+		},
+		
+		// Evaluates the passed xpath (from context node) and casts the result to a node
+		getNode: function( node, xpath ) {
+			var res = this._xml.evaluate( xpath, (node === null ? this._xml.documentElement : node ),  this._xmlNSResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null );
+			return res.singleNodeValue;
+		},
+		
+		getNodeArray: function( node, xpath ) {
+			var res = this._xml.evaluate( xpath, (node === null ? this._xml.documentElement : node ),  this._xmlNSResolver, XPathResult.ANY_TYPE, null );
+			return this._convertDOMArrayToJSArray( res );
+		},
+		
+		// Private
+		_convertDOMArrayToJSValueArray: function( res ) {
 			var arr = [];
 			var nd;
 			
@@ -62,11 +79,19 @@ define( "walta/XmlDocument", [ "dojo/_base/declare", "dojo/_base/lang", "dojo/re
 			return arr;
 		},
 		
-		// Evaluates the passed xpath (from context node) and casts the result to a node
-		getNode: function( node, xpath ) {
-			var res = this._xml.evaluate( xpath, (node === null ? this._xml.documentElement : node ),  this._xmlNSResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null );
-			return res.singleNodeValue;
+		
+		_convertDOMArrayToJSArray: function( res ) {
+			var arr = [];
+			var nd;
+			
+			// extract into an array
+			while( nd = res.iterateNext() ) {
+				arr.push( nd );
+			}
+			
+			return arr;
 		}
+		
 	});
 });
 		

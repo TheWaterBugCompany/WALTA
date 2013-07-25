@@ -13,6 +13,33 @@ define( [ "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "walta/Ke
 		
 		mediaUrls: [],		// List of media URLs
 		
-		parent: null
+		photoUrls: null,
+		videoUrl: null,
+		
+		parent: null,
+		
+		_hasExtension: function( path, exts ) {
+			var ext = path.split('.').pop();
+			return array.indexOf( exts, ext ) >= 0;
+		},
+		
+		constructor: function( args ) {
+			declare.safeMixin(this,args);
+			
+			// Process the media URLs to set media properties
+			this.photoUrls = array.filter( this.mediaUrls, function(url) {
+				return this._hasExtension(url, [ "jpg", "png", "gif", "jpeg" ] );
+			}, this );
+			
+			var videoUrls = array.filter( this.mediaUrls, function(url) {
+				return this._hasExtension(url, [ "mp4", "webm", "ogv" ] );
+			}, this );
+			
+			if ( videoUrls.length > 0 ) {
+				this.videoUrl = videoUrls[0];
+			}
+			
+			
+		}
 	});
 });

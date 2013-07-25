@@ -1,4 +1,4 @@
-Build started: Tue Jul 16 2013 19:37:32 GMT+1000 (EST)
+Build started: Thu Jul 25 2013 16:13:52 GMT+1000 (EST)
 Build application version: 1.7.0dev (23930)
 Messages:
 info(100) Assumed module uses legacy loader API.
@@ -2964,11 +2964,12 @@ info(102) Optimizing module
 	module: dojo/cldr/nls/ar/gregorian
 	module: walta/QuestionView
 	module: walta/SpeedBug
+	module: walta/PhotoView
 	module: walta/KeyNode
 	module: walta/SpeedBugView
 	module: walta/Key
-	module: walta/MediaView
 	module: walta/AppController
+	module: walta/VideoView
 	module: walta/Question
 	module: walta/TaxonView
 	module: walta/AnchorBar
@@ -3781,9 +3782,9 @@ walta/walta:
 	dojox/mobile/_StoreMixin
 	dojox/mobile/StoreCarousel
 	dojo/dom-prop
-	walta/MediaView
 	dojo/keys
 	dojox/mobile/Carousel
+	walta/PhotoView
 	dijit/registry
 	dojox/mobile/ContentPane
 	dijit/Destroyable
@@ -3799,6 +3800,7 @@ walta/walta:
 	dojox/mobile/_ContentPaneMixin
 	walta/QuestionView
 	walta/AppController
+	walta/VideoView
 	dojox/mobile/Button
 	dojox/mobile/_ScrollableMixin
 	dojo/dom-class
@@ -3825,4 +3827,4 @@ walta/walta:
 Process finished normally
 	errors: 0
 	warnings: 12
-	build time: 47.446 seconds
+	build time: 45.583 seconds
