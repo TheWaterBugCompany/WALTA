@@ -1,0 +1,543 @@
+/**
+ * If you are developing a project that makes use of Dijit widgets, you will probably want to include the two files
+ * below; otherwise, you can remove them. When building for release, Dojo will automatically combine all of your
+ * @imported CSS files into a single file.
+ *
+ * It is highly, highly recommended that you develop your CSS using Stylus: http://learnboost.github.com/stylus/.
+ */
+
+@import '../../dojox/mobile/themes/iphone/iphone.css';
+
+@font-face {
+	font-family: Boulder;
+	src: url("boulder.ttf");
+}
+
+/* Set default styles */
+html, body {
+	width:100%;
+	height:100%;
+	font-family: Tahoma, sans-serif !important;
+    font-size: 4mm !important;   
+    margin: 0 !important;
+    padding: 0 !important;
+    color: black;
+}
+body { background-color: white !important; }
+.mblView { color: black; }
+
+/* Anchor bar */
+.waltaAnchorBar {
+	width: 100%;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#2f61cc), to(#7797de) );
+	color: white;
+	text-align: center;
+}
+
+.waltaAnchorBarIcon {
+	width: 20px; 
+	height: 20px; 
+	margin-top: 2px;
+	margin-left: 2px;
+	background-size: cover;
+}
+
+.waltaHome     { 
+	float: left; 
+	background-image: url("home.png"); 
+}
+
+.waltaSettings { 
+	float: right; 
+	background-image: url("settings.png");
+}
+
+.waltaInfo { 
+	float: right; 
+	background-image: url("info.png");
+}
+
+.waltaAnchorBar h1 {
+	font-size: 4mm;
+	font-weight: normal;
+	font-faimly: Tahoma;
+	color: white;
+	display: inline-block;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+/* The home screen */
+ @media only screen and (orientation: landscape) {
+  .waltaHomeView p {
+  	margin: 0;
+  }
+  
+  .waltaHomeView h1 {
+  	font-size: 12mm !important;
+  }
+  
+  .waltaHomeView h3 {
+  	font-size: 4.1mm !important;
+  	margin-left: 34px;
+  }
+  
+  .waltaLogo {
+	
+	height: 12mm;
+	width: 15mm;
+	margin-top: 3mm;
+}
+  
+  .waltaMenu { 
+  	width: 31% !important;
+  } 
+  .waltaMenu h2 {
+  	font-size: 4.2mm !important;
+  }
+  
+  .waltaMenu p {
+  	text-align: left !important;
+	font-size: 3.2mm !important;
+  }
+  
+  .waltaMenuIcon {
+    margin-top: 10px !important;
+    margin-bottom: 12px !important;
+  	width: 65px !important;
+	height: 65px !important;
+	background-size: cover;
+  }
+  
+  .waltaSecondary { 
+  	width: 25% !important;
+  }
+  
+  .waltaSecondary h2{
+	margin-left: 1em;
+	  	text-align: center !important;
+  }
+  
+  .waltaSecondary p {
+  	text-align: center !important;
+  }
+} 
+
+.waltaFullscreen {
+	width: 100%;
+	height: 100%;
+}
+
+.waltaHomeView { 
+	text-align: center;
+	margin-left: auto;
+}
+
+.waltaHomeView h1 {
+	font-size: 14mm;
+	margin-top: 2mm;
+	margin-bottom: 0;
+	font-family: Boulder;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.waltaHomeView h2 {
+	margin-top: 2mm;
+	margin-bottom: 1mm;
+	font-size: 6mm;
+	font-family: Boulder;
+	font-weight: normal;
+	text-align: left;
+	color: rgba(47,97,204,1); 
+}
+
+.waltaHomeView p {
+	text-align: left;
+}
+
+.waltaHomeView h3 {
+	font-size: 4.5mm;
+	font-weight: normal;
+	font-family: Times;
+	margin-top: -3mm;
+	margin-left: 6em;
+	margin-bottom: 0;
+}
+
+.waltaPanel {
+	display: block;
+	-webkit-border-radius: 3mm 3mm; 
+	background-color:  rgba(47,97,204,0.3); 
+	margin-bottom: 1%;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-left: 2px;
+	padding-bottom: 2px;
+}
+
+.waltaHeader {
+	margin-left: auto;
+	margin-right: auto;
+	width: 320px;
+	background: none;
+}
+
+.waltaLogo {
+	background-image: url( "logo.svg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 14mm;
+	width: 19mm;
+	margin-top: 5mm;
+	margin-left: 1mm;
+	margin-right: 5mm;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.waltaMenuIcon {
+	margin-left: 0mm;
+	margin-right: 0mm;
+	margin-top: 0mm;
+	width: 92px;
+	height: 92px;
+	float: left;
+}
+
+.waltaSpeedbugLogo { 
+	background-image: url("speedbug.png"); 
+}
+
+.waltaAltKeyLogo { 
+	background-image: url("altkey.png"); 
+}
+
+.waltaBrowseLogo { 
+	background-image: url("browse.png"); 
+}
+
+.waltaMenu { 
+	clear: left;
+	width: 93%;
+	height: 100px;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+
+.waltaSecondary {
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	margin-top: 4px;
+	display: inline-block;
+	width: 25%;
+}
+
+.waltaSecondary h2 {
+	margin-top: 0.2mm;
+	margin-bottom: 0.05mm;
+	text-align: center;
+}
+
+.waltaSecondary p {
+	text-align: center;
+}
+
+/* Lay out the questions and media images */
+
+
+.waltaBackButton { 
+	font-size: 3.5mm;
+	font-family: Tahoma, sans-serif;
+	background-color: #2f61cc;
+	background-size: 48px;
+	background-position: -8px -14px;
+	background-repeat: no-repeat;
+	background-image: url("back.png");
+	border-color: white;
+	padding-top: 0; 
+	padding-bottom: 0;
+	padding-left: 32px; 
+	padding-right: 6px;
+	position: absolute;
+	bottom: 2px;
+	right: 4px;
+	height: 6mm;
+	margin: 0;
+	line-height: 1em;
+}
+
+.waltaKey h4 { 
+	margin-top: 2px;
+	font-size: 3.5mm;
+	font-weight: normal; 
+	text-align: center;
+}
+
+.waltaQuestionContainer {
+	position: absolute;
+	left: 0; right: 0; top: 10mm; bottom: 2.1em;
+}
+
+.waltaQuestion { 
+	position: relative;
+	height: 46%; 
+	width: 96.7%;
+	display: table;
+	vertical-align: middle;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	margin-left: 4px;
+	margin-right: 4px;
+	padding-right: 4px;
+	padding-left: 4px;
+	-webkit-border-radius: 1em 1em; 
+	background-color:  rgba(47,97,204,0.3); 
+}
+
+.waltaQuestion > * {
+	display: table-cell !important;
+	vertical-align: middle;
+}
+
+.waltaQuestion p { 
+	padding-left: 1em;
+	padding-right: 1em;
+	text-align: left;
+	font-size: 4mm;
+	line-height: 1.2em;
+}
+
+.waltaQuestion .waltaImageContainer {
+	overflow: hidden;
+	position: relative;
+	padding-right: 16px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.waltaImageContainer {
+	display: block;
+	overflow: hidden;
+}
+
+.waltaImageInner {
+	position: relative;
+	width: 180px;
+	height: 110px;	
+	text-align: right;
+}
+
+.waltaImageInner img {
+	height: 110px;
+}
+
+.waltaImageContainer .waltaZoom {
+	position: absolute;
+	right: -8px;
+	bottom: -4px;
+	width: 42px;
+	height: 42px;
+	background-size: 48px;
+	background-position: center;
+	background-image: url("zoom.png");
+}
+
+.waltaQuestion:after {
+	position: absolute;
+	content: ">";
+	font-size: 6mm;
+	right: 0.1em;
+	top: 50%;
+	margin-top: -0.5em;
+
+}
+
+.waltaCarousel {
+
+	height: 100%;
+}
+
+
+/* Full screen overlay for VideoView and Carousel based widgets */
+.waltaVideoView,
+.waltaCarousel .mblCarouselPages {
+	position: fixed;
+	top: 25px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba( 0, 0, 0, 0.8 );
+	padding-top: 8px;
+	z-index: 50;
+}
+
+
+
+
+.waltaCarousel .mblCarouselHeaderBar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 51;
+	height: 20px;
+	width: 100%;
+	background: none;
+}
+
+.waltaZoomedImage {
+	height: 100%;
+	
+}
+
+.waltaZoomedImage img {
+	border: solid 2px black;
+	height: 94% !important;
+	width: initial !important; /* retain the image aspect ratio */
+	margin-left: auto !important;
+	margin-right: auto !important;
+	float: none !important;
+}
+
+.waltaCloseButton {
+	background-image: url("close.png");
+	background-repeat: no-repeat;
+	background-position: 36px 0px;
+	background-size: 16px 16px;
+	width: 64px;
+	height: 64px;
+	position: absolute;
+	top: 12px;
+	right: 0;
+	opacity: 0.8;
+}
+
+.waltaCarousel .mblPageIndicator {
+	float: none;
+}
+
+.waltaCarousel .mblPageIndicatorContainer {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Layout the taxon summary */
+.waltaTaxon { 
+}
+
+.waltaTaxon h5 {
+	color: #2f61cc;
+	margin-left: 8px;
+	margin-top: 2px;
+	margin-right: 4px;
+	margin-bottom: 2px;
+	padding: 0;
+	font-size: 4mm;
+	font-weight: normal;
+}
+.waltaTaxon .waltaPanel {
+	width: 52%;
+	height: 75%;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-right: 12px;
+	margin-left: 8px;
+	float: left;
+}
+.waltaTaxon .waltaPanel p {
+	font-size: 2.5mm;
+}
+
+.waltaTaxon .waltaPanel span {
+	margin-left: 4px;
+	
+}
+
+.waltaTaxon .waltaImageContainer {
+	margin-top: 5px;
+}
+
+.waltaGoBack {
+	background-image: url("goback.png");
+	padding: 0;
+}
+
+.waltaGallery {
+	background-image: url("gallery.png");
+}
+
+.waltaVideo {
+	background-image: url("video.png");
+}
+
+.waltaAudio {
+	background-image: url("audio.png");
+}
+
+.waltaNotes {
+	background-image: url("notes.png");
+}
+
+.waltaEmail {
+	background-image: url("email.png");
+}
+
+.waltaFacebook {
+	background-image: url("facebook.png");
+}
+
+.waltaTwitter {
+	background-image: url("twitter.png");
+}
+
+.waltaActionIcon {
+	width: 48px;
+	height: 108px;
+	font-size: 2mm;
+	line-height: 1.1em;
+	background-color: transparent;
+	background-size: 48px;
+	background-repeat: no-repeat;
+	background-position: 2px 0px;
+	border: none;
+	-webkit-box-align: end;
+}
+
+/* Speed Bug */
+.waltaSpeedBug { position: fixed; top: 0; bottom: 0; left: 0; right: 0; }
+.waltaSpeedBugImage { width: 100%; height: 100%; }
+
+.waltaSpeedBug .mblCarouselPages {
+	width: 100%;
+	height: 100%;
+}
+
+.waltaSpeedBug .mblCarouselHeaderBar {
+	display:none;
+}
+
+/* Video Player Controls */
+.waltaVideoView video {
+	width: 100%;
+	height: 100%;
+}
+.waltaVideoPlayButton {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-none;
+}
+
+.waltaVideoPaused {
+	background-image: url("play.png");
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+
