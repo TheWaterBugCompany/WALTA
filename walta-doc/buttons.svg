@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="buttons.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,16 +25,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.7692308"
-     inkscape:cx="207.40448"
-     inkscape:cy="951.42857"
+     inkscape:cx="160.7106"
+     inkscape:cy="887.7551"
      inkscape:document-units="px"
      inkscape:current-layer="g3757-1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1021"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="786"
+     inkscape:window-height="439"
+     inkscape:window-x="2611"
+     inkscape:window-y="299"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -117,6 +117,19 @@
          y="69.831268"
          rx="0.94148648"
          ry="0.75316697" />
+      <path
+         sodipodi:type="arc"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         id="path2989"
+         sodipodi:cx="118.06123"
+         sodipodi:cy="216.51524"
+         sodipodi:rx="11.67347"
+         sodipodi:ry="11.540816"
+         d="m 129.7347,216.51524 a 11.67347,11.540816 0 1 1 -23.34694,0 11.67347,11.540816 0 1 1 23.34694,0 z"
+         transform="translate(-135.93878,-0.10233804)"
+         inkscape:export-filename="/home/msharman/Documents/Projects/walta.Titanium/WALTA/walta-app-new/Resources/images/dot.png"
+         inkscape:export-xdpi="38.548939"
+         inkscape:export-ydpi="38.548939" />
     </g>
   </g>
 </svg>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<node1 xmlns="http://thewaterbug.net/test" attr1="an attribute" attr2="123">
+    <child>Hello this is a child text node.</child>
+    <uri ref="one"/>
+    <uri ref="two"/>
+    <uri ref="three"/>
+</node1>

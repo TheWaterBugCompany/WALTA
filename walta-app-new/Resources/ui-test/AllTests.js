@@ -6,14 +6,15 @@
 var _ = require('lib/underscore')._;
 
 var AllTests = [
-	'AnchorBarTest'
+	'AnchorBarTest',
+	'PhotoViewTest'
 ];
 
 function displayTestChooser() {	
 	var testList = Ti.UI.createListView();
 	var listSection = Ti.UI.createListSection({ headerTitle: 'Tests' });
 	listSection.setItems( 
-		_(AllTests).map( function( t ) { return { properties: { title: t, itemId: t, height: 25 } } } )
+		_(AllTests).map( function( t ) { return { properties: { title: t, itemId: t, height: '25dip' } } } )
 	); 
 	testList.appendSection( listSection );
 	
@@ -23,7 +24,7 @@ function displayTestChooser() {
 			test.run();
 		});
 	
-	var win = Ti.UI.createWindow( { backgroundColor: 'white', navBarHidden: true } );
+	var win = Ti.UI.createWindow( { backgroundColor: 'white', orientationModes: [ Ti.UI.LANDSCAPE_LEFT ]} );
 	win.add(testList);
 	win.open();
 }

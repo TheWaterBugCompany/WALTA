@@ -47,7 +47,7 @@ function createAnchorBar( args ) {
 		title: 'Title'
 	});
 	
-	var abr = Ti.UI.createView({
+	var vw = Ti.UI.createView({
    		backgroundGradient: {
    			type: 'linear',
    			startPoint: { x: '0%', y: '0%' },
@@ -70,7 +70,6 @@ function createAnchorBar( args ) {
 		horizontalWrap: false
 	});
 	
-	
 	var title = Ti.UI.createLabel({
 		text: anchorBar.title,
 		font: { font: TITLE_FONT, fontSize: TITLE_SIZE },
@@ -79,7 +78,6 @@ function createAnchorBar( args ) {
 		width: Ti.UI.SIZE,
 		height: Ti.UI.FILL
 	});
-	
 	
 	var rightTools = Ti.UI.createView({
 		top: 0,
@@ -91,15 +89,17 @@ function createAnchorBar( args ) {
 	});
 	
 	// Create tool bar buttons
-	leftTools.add( createToolBarButton( '../images/home.png', topics.HOME ) );
-	rightTools.add( createToolBarButton( '../images/settings.png', topics.SETTINGS ) );
-	rightTools.add( createToolBarButton( '../images/info.png', topics.INFO ) );
+	leftTools.add( createToolBarButton( '/images/home.png', topics.HOME ) );
+	rightTools.add( createToolBarButton( '/images/settings.png', topics.SETTINGS ) );
+	rightTools.add( createToolBarButton( '/images/info.png', topics.INFO ) );
 	
-	abr.add( leftTools );
-	abr.add( title );
-	abr.add( rightTools );
+	vw.add( leftTools );
+	vw.add( title );
+	vw.add( rightTools );
 	
-	return abr;
+	anchorBar.view = vw;
+	
+	return anchorBar;
 };
 
 exports.topics = topics;
