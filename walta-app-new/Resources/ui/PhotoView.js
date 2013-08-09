@@ -7,14 +7,13 @@
  */
 
 var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
 
 // Create a dot view
 function createDot() {
 	var dot = Ti.UI.createView( { 
 		backgroundImage: '/images/dot.png', 
-		width: '8dip', 
-		height: '8dip',
+		width: '12dip', 
+		height: '12dip',
 		left: '8dip',
 		bottom: '2dip',
 		opacity: 0.5 } );
@@ -28,12 +27,8 @@ function updateCurrentPage( dots, selPage ) {
 	}	
 }
 
-// Create an anchor bar View
-function createPhotoView( args ) {
-	
-	var photoView = _(args || {} ).defaults({
-		photoUrls: []
-	});
+// Create photo View
+function createPhotoView( photoUrls ) {
 	
 	var galleryWin = Ti.UI.createWindow({ 
 			backgroundColor: 'black', 
@@ -41,29 +36,30 @@ function createPhotoView( args ) {
 			fullscreen: true 
 	});
 	var scrollView = Ti.UI.createScrollableView({
-		views: _(photoView.photoUrls).map( 
+		views: _(photoUrls).map( 
 			function(url) { 
 				var view = Ti.UI.createView({});
 				view.add( Ti.UI.createImageView( { image: url, top: '3%', bottom: '3%', left: '3%', right: '3%' } ) );
 				return view; 
 			}),
-		showPagingControl: true,
+		showPagingControl: false,
 		bottom: '12dip'
 	});
 	galleryWin.add(scrollView);
-	
+
 	var pager = Ti.UI.createView({
 		width: Ti.UI.SIZE,
-		height: '12dip',
+		height: '16dip',
 		backgroundColor: 'black',
 		bottom: 0,
 		layout: 'horizontal',
 		horizontalWrap: 'false'
 	})
 	galleryWin.add(pager);
+
 	
 	var dots = [];
-	_(photoView.photoUrls).each( function() {
+	_(photoUrls).each( function() {
 		var dot = createDot();
 		dots.push( dot )
 		pager.add( dot );
@@ -100,7 +96,7 @@ function createPhotoView( args ) {
 	});
 	
 	var photo = Ti.UI.createImageView( { 
-		image: photoView.photoUrls[0],
+		image: photoUrls[0],
 	});
 	
 	var zoomIcon = Ti.UI.createView( {
@@ -117,9 +113,7 @@ function createPhotoView( args ) {
 			galleryWin.open();	
 			e.cancelBubble = true;
 		});
-	
-	photoView.view = vw;
-	return photoView;
+	return vw;
 };
 
 exports.createPhotoView = createPhotoView;

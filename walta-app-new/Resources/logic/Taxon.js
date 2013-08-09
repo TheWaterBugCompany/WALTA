@@ -1,9 +1,6 @@
 var _ = require('lib/underscore')._;
 
-function hasExtension( path, exts ) {
-		var ext = path.split('.').pop();
-		return _(exts).contains( ext );
-};
+var MediaUtil = require('logic/MediaUtil');
 
 function createTaxon( args ) {
 	var txn = _.defaults( args, {
@@ -19,22 +16,11 @@ function createTaxon( args ) {
 		
 		mediaUrls: [],		// List of media URLs
 		
-		photoUrls: [],
-		videoUrl: null,
-		
 		parent: null		// A link to the parent taxon
 	} );
 	
-	// Resolve any mediaUrls into correct typed variables
-	txn.photoUrls = _(txn.mediaUrls)
-		.filter( function(url) { return hasExtension(url, [ "jpg", "png", "gif", "jpeg" ] ); });
-	
-	txn.videoUrl = _.chain(txn.mediaUrls)
-		.filter( function(url) { return hasExtension(url, [ "mp4", "webm", "ogv" ] ); } )
-		.first()
-		.value();
-		
-	return txn;
+	return _(txn).extend( MediaUtil.resolveMediaUrls( txn.mediaUrls ) );
+
 };
 
 exports.createTaxon = createTaxon;
