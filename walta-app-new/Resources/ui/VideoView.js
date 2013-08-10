@@ -23,7 +23,13 @@ function createVideoView( url ) {
 	});
 	var vv = {
 		open: function() {
+			var win = Ti.UI.createWindow( { 
+					backgroundColor: 'black', 
+					orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] 
+				} );
 			var vp = Ti.Media.createVideoPlayer({
+				width: Ti.UI.FILL,
+				height: Ti.UI.FILL,
 				url: url,
 				autoplay: true,
 				backgroundColor: 'black',
@@ -31,13 +37,9 @@ function createVideoView( url ) {
 				mediaControlStyle: Ti.Media.VIDEO_CONTROL_NONE,
 				scalingMode: Ti.Media.VIDEO_SCALING_ASPECT_FIT
 			});
-			
-			closeButton.addEventListener( 'click', function(e){ 
-				vp.hide();
-			});
-			
+			win.add( vp );
 			vp.add( closeButton );
-			
+
 			playButton.addEventListener( 'click', function(e){
 				vp.play();
 				vp.remove( playButton );
@@ -45,6 +47,7 @@ function createVideoView( url ) {
 			});
 			
 			vp.addEventListener( 'complete', function(e) {
+				vp.setCurrentPlaybackTime( 0 );
 				vp.add( playButton );
 			});
 			
@@ -53,6 +56,20 @@ function createVideoView( url ) {
 				vp.add( playButton );
 				e.cancelBubble = true;
 			});
+			// On android this opens fullscreen automatically
+			// but on iOS it doesn't. Why is this API is so different??
+			if ( Ti.Platform.osname === 'android') {
+				closeButton.addEventListener( 'click', function(e){ 
+					vp.hide();
+				});
+			} else {
+				closeButton.addEventListener( 'click', function(e){ 
+					win.close();
+				});
+				vp.setFullscreen( false );
+				win.open();
+			}
+			
 		}
 	}
 	return vv;
