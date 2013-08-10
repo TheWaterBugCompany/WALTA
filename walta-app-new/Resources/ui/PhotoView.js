@@ -7,16 +7,16 @@
  */
 
 var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
+var Layout = require('ui/Layout');
 
 // Create a dot view
 function createDot() {
 	var dot = Ti.UI.createView( { 
 		backgroundImage: '/images/dot.png', 
-		width: '8dip', 
-		height: '8dip',
-		left: '8dip',
-		bottom: '2dip',
+		width: Layout.PAGER_HEIGHT - Layout.BUTTON_MARGIN*2, 
+		height: Layout.PAGER_HEIGHT  - Layout.BUTTON_MARGIN*2,
+		left: Layout.WHITESPACE_GAP,
+		bottom: Layout.BUTTON_MARGIN,
 		opacity: 0.5 } );
 	return dot;
 } 
@@ -28,12 +28,8 @@ function updateCurrentPage( dots, selPage ) {
 	}	
 }
 
-// Create an anchor bar View
-function createPhotoView( args ) {
-	
-	var photoView = _(args || {} ).defaults({
-		photoUrls: []
-	});
+// Create photo View
+function createPhotoView( photoUrls ) {
 	
 	var galleryWin = Ti.UI.createWindow({ 
 			backgroundColor: 'black', 
@@ -41,29 +37,30 @@ function createPhotoView( args ) {
 			fullscreen: true 
 	});
 	var scrollView = Ti.UI.createScrollableView({
-		views: _(photoView.photoUrls).map( 
+		views: _(photoUrls).map( 
 			function(url) { 
 				var view = Ti.UI.createView({});
 				view.add( Ti.UI.createImageView( { image: url, top: '3%', bottom: '3%', left: '3%', right: '3%' } ) );
 				return view; 
 			}),
-		showPagingControl: true,
-		bottom: '12dip'
+		showPagingControl: false,
+		bottom: Layout.PAGER_HEIGHT
 	});
 	galleryWin.add(scrollView);
-	
+
 	var pager = Ti.UI.createView({
 		width: Ti.UI.SIZE,
-		height: '12dip',
+		height: Layout.PAGER_HEIGHT,
 		backgroundColor: 'black',
 		bottom: 0,
 		layout: 'horizontal',
 		horizontalWrap: 'false'
 	})
 	galleryWin.add(pager);
+
 	
 	var dots = [];
-	_(photoView.photoUrls).each( function() {
+	_(photoUrls).each( function() {
 		var dot = createDot();
 		dots.push( dot )
 		pager.add( dot );
@@ -80,11 +77,11 @@ function createPhotoView( args ) {
 	});
 	
 	var close = Ti.UI.createView({
-		width: '14dip',
-		height: '14dip',
+		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
+		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		backgroundImage: '/images/close.png',
-		top: '8dip',
-		right: '8dip'
+		top: Layout.WHITESPACE_GAP,
+		right: Layout.WHITESPACE_GAP
 	})
 	galleryWin.add(close);
 	
@@ -100,7 +97,7 @@ function createPhotoView( args ) {
 	});
 	
 	var photo = Ti.UI.createImageView( { 
-		image: photoView.photoUrls[0],
+		image: photoUrls[0],
 	});
 	
 	var zoomIcon = Ti.UI.createView( {
@@ -118,8 +115,13 @@ function createPhotoView( args ) {
 			e.cancelBubble = true;
 		});
 	
-	photoView.view = vw;
-	return photoView;
+	var photoViewObj = {
+		view: vw,
+		open: function() {
+			galleryWin.open();
+		}
+	};
+	return photoViewObj;
 };
 
 exports.createPhotoView = createPhotoView;

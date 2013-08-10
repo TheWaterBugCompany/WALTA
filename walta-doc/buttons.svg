@@ -24,16 +24,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.7692308"
-     inkscape:cx="160.7106"
-     inkscape:cy="887.7551"
+     inkscape:zoom="3.0159877"
+     inkscape:cx="83.040037"
+     inkscape:cy="737.17517"
      inkscape:document-units="px"
-     inkscape:current-layer="g3757-1"
+     inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="786"
-     inkscape:window-height="439"
-     inkscape:window-x="2611"
-     inkscape:window-y="299"
+     inkscape:window-width="1268"
+     inkscape:window-height="924"
+     inkscape:window-x="301"
+     inkscape:window-y="86"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -52,7 +52,8 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g3757">
+       id="g3757"
+       transform="translate(-11.08554,-11.08554)">
       <rect
          inkscape:export-ydpi="90"
          inkscape:export-xdpi="90"
@@ -64,7 +65,7 @@
          height="128"
          width="128"
          id="rect3755"
-         style="fill:#000000;stroke:none;stroke-opacity:1;fill-opacity:1" />
+         style="fill:#000000;fill-opacity:1;stroke:none" />
       <path
          transform="matrix(0.12902788,0,0,0.12902788,91.82954,64.814038)"
          inkscape:transform-center-y="-2.7621538"
@@ -85,7 +86,7 @@
          sodipodi:type="star" />
     </g>
     <g
-       transform="translate(135.93878,0.10233804)"
+       transform="translate(124.85324,-10.983202)"
        id="g3757-1">
       <rect
          inkscape:export-ydpi="90"
@@ -125,11 +126,36 @@
          sodipodi:cy="216.51524"
          sodipodi:rx="11.67347"
          sodipodi:ry="11.540816"
-         d="m 129.7347,216.51524 a 11.67347,11.540816 0 1 1 -23.34694,0 11.67347,11.540816 0 1 1 23.34694,0 z"
+         d="m 129.7347,216.51524 c 0,6.37382 -5.22639,11.54082 -11.67347,11.54082 -6.44708,0 -11.67347,-5.167 -11.67347,-11.54082 0,-6.37381 5.22639,-11.54081 11.67347,-11.54081 6.44708,0 11.67347,5.167 11.67347,11.54081 z"
          transform="translate(-135.93878,-0.10233804)"
          inkscape:export-filename="/home/msharman/Documents/Projects/walta.Titanium/WALTA/walta-app-new/Resources/images/dot.png"
          inkscape:export-xdpi="38.548939"
          inkscape:export-ydpi="38.548939" />
     </g>
+    <g
+       transform="translate(279.5445,-153.36748)"
+       id="g3757-2">
+      <rect
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/msharman/Documents/Projects/walta/walta-app/src/walta/resources/play.png"
+         ry="0.79993224"
+         rx="1.0971938"
+         y="191.01494"
+         x="37.244896"
+         height="128"
+         width="128"
+         id="rect3755-5"
+         style="fill:#000000;fill-opacity:1;stroke:none" />
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:7.44350147;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:none"
+       d="m 75.215715,220.41117 23.856447,25.25977 -23.640254,29.21788"
+       id="path3014"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/msharman/Documents/Projects/walta.Titanium/WALTA/walta-app-new/Resources/images/rightarrow.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
   </g>
 </svg>
