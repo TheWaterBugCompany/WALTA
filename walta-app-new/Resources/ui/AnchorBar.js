@@ -9,13 +9,8 @@
 
 var _ = require('lib/underscore')._;
 var PubSub = require('lib/pubsub');
+var Layout = require('ui/Layout');
 
-// Constants
-var TOOLBAR_HEIGHT = '32dip';
-var BUTTON_SIZE =  '28dip';
-var BUTTON_MARGIN = '2dip';
-var TITLE_SIZE = '24dip';
-var TITLE_FONT = 'Tahoma';
 
 // Topics that this module publishes
 var topics = { 
@@ -27,10 +22,10 @@ var topics = {
 // Create a tool bar button
 function createToolBarButton( image, topic ) {
 	var btn = Ti.UI.createButton({
-		top: BUTTON_MARGIN,
-		left: BUTTON_MARGIN,
-		width: BUTTON_SIZE,
-		height: BUTTON_SIZE,
+		top: Layout.BUTTON_MARGIN,
+		left: Layout.BUTTON_MARGIN,
+		width: Layout.TOOLBAR_BUTTON_SIZE,
+		height: Layout.TOOLBAR_BUTTON_SIZE,
 		backgroundImage: image
 	});
 	btn.addEventListener( 'click', function(e) {
@@ -57,7 +52,7 @@ function createAnchorBar( args ) {
    		left:0,
    		right:0,
    		top:0,
-   		height: TOOLBAR_HEIGHT,
+   		height: Layout.TOOLBAR_HEIGHT,
    		layout: 'composite'
 	});
 	
@@ -72,7 +67,7 @@ function createAnchorBar( args ) {
 	
 	var title = Ti.UI.createLabel({
 		text: anchorBar.title,
-		font: { font: TITLE_FONT, fontSize: TITLE_SIZE },
+		font: { font: Layout.HEADING_FONT, fontSize: Layout.HEADING_SIZE },
 		color: 'white',
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 		width: Ti.UI.SIZE,

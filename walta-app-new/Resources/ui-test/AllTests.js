@@ -8,7 +8,8 @@ var _ = require('lib/underscore')._;
 var AllTests = [
 	'AnchorBarTest',
 	'PhotoViewTest',
-	'QuestionViewTest'
+	'QuestionViewTest',
+	'TaxonViewTest'
 ];
 
 function displayTestChooser() {	

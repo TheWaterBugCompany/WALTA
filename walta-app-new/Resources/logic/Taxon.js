@@ -16,7 +16,28 @@ function createTaxon( args ) {
 		
 		mediaUrls: [],		// List of media URLs
 		
-		parent: null		// A link to the parent taxon
+		parent: null,		// A link to the parent taxon
+		
+		// Returns the full scientific name
+		getScientificName: function() {
+			return this.name;
+		},
+		
+		// Returns the details formatted as HTML
+		asDetailHtml: function() {
+			return String.format(
+				"<p><b>Size:</b> Up to %dmm</p>"
+			+   "<p><b>Habitat:</b> %s</p>"
+			+   "<p><b>Movement:</b> %s</p>"
+			+	"<p><b>Confused with:</b> %s</p>"
+			+	"<p><b>SIGNAL score: %d</b></p>",
+				this.size,
+				this.habitat,
+				this.movement,
+				this.confusedWith,
+				this.signalScore
+			);
+		}
 	} );
 	
 	return _(txn).extend( MediaUtil.resolveMediaUrls( txn.mediaUrls ) );
