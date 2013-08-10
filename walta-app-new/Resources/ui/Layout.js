@@ -17,4 +17,6 @@ exports.HEADING_SIZE = '16dip';
 exports.HEADING_FONT = 'Tahoma';
 exports.TEXT_FONT = 'Tahoma';
 exports.DETAILS_TEXT_SIZE = '12dip';
-
+exports.VIDEO_OVERLAY_BUTTON_SIZE = '64dip';
+exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '14dip';
+exports.PAGER_HEIGHT = '16dip';

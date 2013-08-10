@@ -7,15 +7,16 @@
  */
 
 var _ = require('lib/underscore')._;
+var Layout = require('ui/Layout');
 
 // Create a dot view
 function createDot() {
 	var dot = Ti.UI.createView( { 
 		backgroundImage: '/images/dot.png', 
-		width: '12dip', 
-		height: '12dip',
-		left: '8dip',
-		bottom: '2dip',
+		width: Layout.PAGER_HEIGHT - Layout.BUTTON_MARGIN*2, 
+		height: Layout.PAGER_HEIGHT  - Layout.BUTTON_MARGIN*2,
+		left: Layout.WHITESPACE_GAP,
+		bottom: Layout.BUTTON_MARGIN,
 		opacity: 0.5 } );
 	return dot;
 } 
@@ -43,13 +44,13 @@ function createPhotoView( photoUrls ) {
 				return view; 
 			}),
 		showPagingControl: false,
-		bottom: '12dip'
+		bottom: Layout.PAGER_HEIGHT
 	});
 	galleryWin.add(scrollView);
 
 	var pager = Ti.UI.createView({
 		width: Ti.UI.SIZE,
-		height: '16dip',
+		height: Layout.PAGER_HEIGHT,
 		backgroundColor: 'black',
 		bottom: 0,
 		layout: 'horizontal',
@@ -76,11 +77,11 @@ function createPhotoView( photoUrls ) {
 	});
 	
 	var close = Ti.UI.createView({
-		width: '14dip',
-		height: '14dip',
+		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
+		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		backgroundImage: '/images/close.png',
-		top: '8dip',
-		right: '8dip'
+		top: Layout.WHITESPACE_GAP,
+		right: Layout.WHITESPACE_GAP
 	})
 	galleryWin.add(close);
 	

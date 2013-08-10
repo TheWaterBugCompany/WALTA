@@ -9,7 +9,8 @@ var AllTests = [
 	'AnchorBarTest',
 	'PhotoViewTest',
 	'QuestionViewTest',
-	'TaxonViewTest'
+	'TaxonViewTest',
+	'VideoViewTest'
 ];
 
 function displayTestChooser() {	
