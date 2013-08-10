@@ -113,7 +113,14 @@ function createPhotoView( photoUrls ) {
 			galleryWin.open();	
 			e.cancelBubble = true;
 		});
-	return vw;
+	
+	var photoViewObj = {
+		view: vw,
+		open: function() {
+			galleryWin.open();
+		}
+	};
+	return photoViewObj;
 };
 
 exports.createPhotoView = createPhotoView;

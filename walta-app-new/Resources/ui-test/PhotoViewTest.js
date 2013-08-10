@@ -15,7 +15,7 @@ var win = Ti.UI.createWindow( {
 	orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } 
 );
 var vw = Ti.UI.createView( { width: '300dip', height: '250dip' })
-vw.add(pv);
+vw.add( pv.view );
 win.add( vw );
 win.addEventListener( 'click',  function(e) { win.close();  e.cancelBubble = true; } );
 
