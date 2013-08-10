@@ -20,7 +20,7 @@ function displayTestChooser() {
 	
 	testList.addEventListener( 'itemclick', 
 		function(e){
-			var test = require(e.itemId);
+			var test = require('ui-test/' + e.itemId);
 			test.run();
 		});
 	
