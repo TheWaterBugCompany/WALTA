@@ -11,6 +11,13 @@ var _ = require('lib/underscore')._;
 var PhotoView = require('ui/PhotoView');
 
 function createQuestionView(  /* Question */ qn ) {
+	
+	var qnViewObj = {
+		view: null,					 // The Ti.UI.View for the user interface
+		question: qn,                // The Question data object associated with this view
+		onSelect: function( e ) {}   // Event called when question is selected.
+	};
+	
 	var qnLabel = Ti.UI.createLabel({
 		width: '40%',
 		height: Ti.UI.FILL,
@@ -43,8 +50,15 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	qnView.add( arrow );
 	
+	// Clicking anywhere on the View raises the onSelect() event
+	qnView.addEventListener( 'click', function(e) {
+		qnViewObj.onSelect( e );
+		e.cancelBubble = true;
+	});
+
+	qnViewObj.view = qnView;
 	
-	return qnView;
+	return qnViewObj;
 };
 
 exports.createQuestionView = createQuestionView;

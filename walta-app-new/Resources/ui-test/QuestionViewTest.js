@@ -1,5 +1,5 @@
 var _ = require('lib/underscore')._;
-
+var meld = require('lib/meld');
 
 var QuestionView = require('ui/QuestionView');
 var Question = require('logic/Question');
@@ -18,8 +18,11 @@ var win = Ti.UI.createWindow( {
 	backgroundColor: 'white', 
 	orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } 
 );
-win.add( _(qv).extend( { height: '45%', width: '90%' } ) );
+win.add( _(qv.view).extend( { height: '45%', width: '90%' } ) );
 win.addEventListener( 'click',  function(e) { win.close();  e.cancelBubble = true; } );
+meld.on( qv, "onSelect", function(e) {
+	alert( "Question selected: test = '" + this.question.text + "'" );
+} );
 
 function run() {
 	win.open();
