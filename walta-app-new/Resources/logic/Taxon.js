@@ -16,7 +16,7 @@ function createTaxon( args ) {
 		
 		mediaUrls: [],		// List of media URLs
 		
-		parent: null,		// A link to the parent taxon
+		parentLink: null,		// A link to the parent taxon
 		
 		// Returns the full scientific name
 		getScientificName: function() {

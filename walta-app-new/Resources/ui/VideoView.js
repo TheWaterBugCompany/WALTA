@@ -1,5 +1,5 @@
 /*
- * Module: ViewView
+ * Module: VideoView
  * 
  * Plays a video full screen with simple controls
  * 

@@ -114,7 +114,7 @@ function createActionsView( txnViewObj ) {
 function createTaxonView(  /* Taxon */ txn ) {
 	
 	var txnViewObj = {
-		view: null,					// The Ti.UI.View for the user interface
+		view: null,				   // The Ti.UI.View for the user interface
 		taxon: txn,                // The Question data object associated with this view
 		onBack: function( e ) {}   // Event called when back button is selected.
 	};
