@@ -10,14 +10,16 @@ var AllTests = [
 	'PhotoViewTest',
 	'QuestionViewTest',
 	'TaxonViewTest',
-	'VideoViewTest'
+	'VideoViewTest',
+	'KeyViewTest',
+	'KeyLoaderTest'
 ];
 
 function displayTestChooser() {	
 	var testList = Ti.UI.createListView();
 	var listSection = Ti.UI.createListSection({ headerTitle: 'Tests' });
 	listSection.setItems( 
-		_(AllTests).map( function( t ) { return { properties: { title: t, itemId: t, height: '25dip' } } } )
+		_(AllTests).map( function( t ) { return { properties: { title: t, itemId: t, font: { fontSize: 24, font: 'Tahoma' }  } } } )
 	); 
 	testList.appendSection( listSection );
 	
