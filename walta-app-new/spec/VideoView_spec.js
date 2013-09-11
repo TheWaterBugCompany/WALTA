@@ -12,7 +12,7 @@ describe('VideoView', function() {
 		vv.close();
 	});
 	
-	it('should fire the INFO event when the settings button is clicked', function() {
+	it('should fire the onComplete event when the video has finished playing', function() {
 		var evtFires = false;	
 			
 		runs(function() {
