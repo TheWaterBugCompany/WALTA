@@ -14,5 +14,5 @@ describe('Question tests', function() {
 	it('should determine the media type from the extension names', function(){
 		expect(qn.photoUrls).toEqual([ "resources/simpleKey1/media/amphipoda_01.jpg", "resources/simpleKey1/media/amphipoda_02.jpg" ] );
 		expect(qn.videoUrl).toEqual( "resources/simpleKey1/media/attack_caddis_01_x264.mp4" );
-	})
+	});
 });
