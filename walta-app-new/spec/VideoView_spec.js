@@ -1,14 +1,33 @@
-var PubSub = require('lib/pubsub');
-
-
+var meld = require('lib/meld');
 var VideoView = require('ui/VideoView');
 
-
 describe('VideoView', function() {
-	var vv = VideoView.createVideoView( "/ui-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4" );
+	var vv;
 	
-	it('should display the video view', function() {
-		vv.open();
-		expect( true ).toEqual(true);
+	beforeEach(function() { 
+		vv = VideoView.createVideoView( "/ui-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4" );
+	});
+	
+	afterEach( function() {
+		vv.close();
+	});
+	
+	it('should fire the INFO event when the settings button is clicked', function() {
+		var evtFires = false;	
+			
+		runs(function() {
+			meld.on( vv, "onComplete", function(uri) { evtFires = true; } );	
+			vv.open();
+			
+		});
+		
+		waitsFor(function() {
+			return evtFires;
+		}, "onComplete to be called", 75000 );
+		
+		runs(function() {
+			expect( evtFires, true );
+		});
+		
 	});
 });
