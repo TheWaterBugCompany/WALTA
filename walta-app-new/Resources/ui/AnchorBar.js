@@ -17,7 +17,7 @@ var topics = {
 	HOME: 'home',
 	SETTINGS: 'settings',
 	INFO: 'info'
-}
+};
 
 // Create a tool bar button
 function createToolBarButton( image, topic ) {
@@ -42,7 +42,9 @@ function createAnchorBar( args ) {
 		title: 'Title'
 	});
 	
-	var vw = Ti.UI.createView({
+	anchorBar._views = {};
+	
+	anchorBar.view = Ti.UI.createView({
    		backgroundGradient: {
    			type: 'linear',
    			startPoint: { x: '0%', y: '0%' },
@@ -56,7 +58,7 @@ function createAnchorBar( args ) {
    		layout: 'composite'
 	});
 	
-	var leftTools = Ti.UI.createView({
+	anchorBar._views.leftTools = Ti.UI.createView({
 		top: 0,
 		left: 0,
 		width: Ti.UI.SIZE,
@@ -65,7 +67,7 @@ function createAnchorBar( args ) {
 		horizontalWrap: false
 	});
 	
-	var title = Ti.UI.createLabel({
+	anchorBar._views.title = Ti.UI.createLabel({
 		text: anchorBar.title,
 		font: { font: Layout.HEADING_FONT, fontSize: Layout.HEADING_SIZE },
 		color: 'white',
@@ -74,7 +76,7 @@ function createAnchorBar( args ) {
 		height: Ti.UI.FILL
 	});
 	
-	var rightTools = Ti.UI.createView({
+	anchorBar._views.rightTools = Ti.UI.createView({
 		top: 0,
 		right: 0,
 		width: Ti.UI.SIZE,
@@ -84,15 +86,18 @@ function createAnchorBar( args ) {
 	});
 	
 	// Create tool bar buttons
-	leftTools.add( createToolBarButton( '/images/home.png', topics.HOME ) );
-	rightTools.add( createToolBarButton( '/images/settings.png', topics.SETTINGS ) );
-	rightTools.add( createToolBarButton( '/images/info.png', topics.INFO ) );
+	anchorBar._views.home = createToolBarButton( '/images/home.png', topics.HOME );
+	anchorBar._views.settings = createToolBarButton( '/images/settings.png', topics.SETTINGS );
+	anchorBar._views.info = createToolBarButton( '/images/info.png', topics.INFO );
 	
-	vw.add( leftTools );
-	vw.add( title );
-	vw.add( rightTools );
+	anchorBar._views.leftTools.add( anchorBar._views.home );
+	anchorBar._views.rightTools.add( anchorBar._views.settings );
+	anchorBar._views.rightTools.add( anchorBar._views.info );
 	
-	anchorBar.view = vw;
+	anchorBar.view.add( anchorBar._views.leftTools );
+	anchorBar.view.add( anchorBar._views.title );
+	anchorBar.view.add( anchorBar._views.rightTools );
+	
 	
 	return anchorBar;
 };

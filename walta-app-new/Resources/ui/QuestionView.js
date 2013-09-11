@@ -13,12 +13,15 @@ var PhotoView = require('ui/PhotoView');
 function createQuestionView(  /* Question */ qn ) {
 	
 	var qnViewObj = {
+		_views: {},
 		view: null,					 // The Ti.UI.View for the user interface
 		question: qn,                // The Question data object associated with this view
 		onSelect: function( e ) {}   // Event called when question is selected.
 	};
 	
-	var qnLabel = Ti.UI.createLabel({
+	var vws = qnViewObj._views;
+	
+	vws.qnLabel = Ti.UI.createLabel({
 		width: '40%',
 		height: Ti.UI.FILL,
 		left: '25dip',
@@ -35,20 +38,20 @@ function createQuestionView(  /* Question */ qn ) {
 		layout: 'horizontal'
 	});
 	
-	qnView.add( qnLabel );
+	qnView.add( vws.qnLabel );
 	
 	if ( qn.photoUrls.length > 0 ) {
-		var photoView = _(PhotoView.createPhotoView( qn.photoUrls )).extend( { height: '90%', left: '20dip', right: '16dip' });
-		qnView.add( photoView );
+		vws.photoView = _(PhotoView.createPhotoView( qn.photoUrls )).extend( { height: '90%', left: '20dip', right: '16dip' });
+		qnView.add( vws.photoView.view );
 	}
 	
-	var arrow = Ti.UI.createView({
+	vws.arrow = Ti.UI.createView({
 		width: '14dip',
 		height: '28dip',
 		backgroundImage: '/images/rightarrow.png',
 	});
 	
-	qnView.add( arrow );
+	qnView.add( vws.arrow );
 	
 	// Clicking anywhere on the View raises the onSelect() event
 	qnView.addEventListener( 'click', function(e) {

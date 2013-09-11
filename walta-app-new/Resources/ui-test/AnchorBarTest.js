@@ -1,7 +1,7 @@
 var PubSub = require('lib/pubsub');
 
 
-var AnchorBar = require('ui/AnchorBar')
+var AnchorBar = require('ui/AnchorBar');
 var acb = AnchorBar.createAnchorBar();
 var win = Ti.UI.createWindow( { backgroundColor: 'white', orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } );
 win.add(acb.view);

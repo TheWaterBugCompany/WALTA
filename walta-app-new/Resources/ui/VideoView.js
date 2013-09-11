@@ -71,7 +71,7 @@ function createVideoView( url ) {
 			}
 			
 		}
-	}
+	};
 	return vv;
 }
 

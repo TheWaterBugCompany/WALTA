@@ -1,7 +1,7 @@
 var PubSub = require('lib/pubsub');
 
 
-var PhotoView = require('ui/PhotoView')
+var PhotoView = require('ui/PhotoView');
 var pv = PhotoView.createPhotoView(
 		[ 
 			'/ui-test/resources/simpleKey1/media/amphipoda_01.jpg',
@@ -14,7 +14,7 @@ var win = Ti.UI.createWindow( {
 	backgroundColor: 'white', 
 	orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } 
 );
-var vw = Ti.UI.createView( { width: '300dip', height: '250dip' })
+var vw = Ti.UI.createView( { width: '300dip', height: '250dip' });
 vw.add( pv.view );
 win.add( vw );
 win.addEventListener( 'click',  function(e) { win.close();  e.cancelBubble = true; } );
