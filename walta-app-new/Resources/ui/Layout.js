@@ -15,8 +15,14 @@ exports.BUTTON_SIZE = '48dip';
 exports.WHITESPACE_GAP = '8dip';
 exports.HEADING_SIZE = '16dip';
 exports.HEADING_FONT = 'Tahoma';
-exports.TEXT_FONT = 'sans';
-exports.DETAILS_TEXT_SIZE = '11pt';
+exports.TEXT_FONT = 'sans-serif';
+exports.DETAILS_TEXT_SIZE = '10dip';
+exports.QUESTION_TEXT_SIZE = '16dip';
 exports.VIDEO_OVERLAY_BUTTON_SIZE = '64dip';
 exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '14dip';
 exports.PAGER_HEIGHT = '16dip';
+exports.THUMBNAIL_WIDTH = '200dip';
+if ( Ti.Platform.osname === 'android' )
+	exports.BORDER_RADIUS = 45;
+else
+	exports.BORDER_RADIUS = 25;

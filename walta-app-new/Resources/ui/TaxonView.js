@@ -81,6 +81,7 @@ function createDetailsView(txnViewObj) {
 	*/
 	
 	vws.details = Ti.UI.createWebView({
+		setScalesPageToFit: true,
 		disableBounce: true,
 		enableZoomControls: false,
 		backgroundColor: 'transparent',

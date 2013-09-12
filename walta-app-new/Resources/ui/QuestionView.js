@@ -9,6 +9,7 @@
 var _ = require('lib/underscore')._;
 
 var PhotoView = require('ui/PhotoView');
+var Layout = require('ui/Layout');
 
 function createQuestionView(  /* Question */ qn ) {
 	
@@ -21,37 +22,40 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	var vws = qnViewObj._views;
 	
-	vws.qnLabel = Ti.UI.createLabel({
-		width: '40%',
-		height: Ti.UI.FILL,
-		left: '25dip',
-		text: qn.text,
-		font: { font: 'Tahoma', fontSize: '20dip' },
-		color: 'black'
-	});
-	
 	var qnView = Ti.UI.createView({
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
-		borderRadius: 45,
+		borderRadius: Layout.BORDER_RADIUS,
 		backgroundColor: '#552F61CC',
-		layout: 'horizontal'
+		layout: 'composite',
+		horizontalWrap: false
 	});
-	
-	qnView.add( vws.qnLabel );
-	
-	if ( qn.photoUrls.length > 0 ) {
-		vws.photoView = _(PhotoView.createPhotoView( qn.photoUrls )).extend( { height: '90%', left: '20dip', right: '16dip' });
-		qnView.add( vws.photoView.view );
-	}
-	
+
 	vws.arrow = Ti.UI.createView({
 		width: '14dip',
 		height: '28dip',
+		right: '8dip',
 		backgroundImage: '/images/rightarrow.png',
 	});
 	
 	qnView.add( vws.arrow );
+	
+	if ( qn.photoUrls.length > 0 ) {
+		vws.photoView = PhotoView.createPhotoView( qn.photoUrls );
+		qnView.add( _(vws.photoView.view ).extend( { height: '90%', width: Layout.THUMBNAIL_WIDTH, right: '30dip' }));
+	}
+
+	vws.qnLabel = Ti.UI.createLabel({
+		width: Ti.UI.FILL,
+		height: Ti.UI.FILL,
+		left: '10dip',
+		right: '232dip',
+		text: qn.text,
+		font: { font: 'Tahoma', fontSize: Layout.QUESTION_TEXT_SIZE },
+		color: 'black'
+	});
+	qnView.add( vws.qnLabel );
+
 	
 	// Clicking anywhere on the View raises the onSelect() event
 	qnView.addEventListener( 'click', function(e) {
@@ -59,6 +63,10 @@ function createQuestionView(  /* Question */ qn ) {
 		e.cancelBubble = true;
 	});
 
+	
+	
+
+	
 	qnViewObj.view = qnView;
 	
 	return qnViewObj;

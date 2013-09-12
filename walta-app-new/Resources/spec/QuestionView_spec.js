@@ -6,29 +6,23 @@ var Question = require('logic/Question');
 
 describe('QuestionView', function() {
 	var qv, win;
-	
-	beforeEach( function() {
-		qv = QuestionView.createQuestionView( 
-		Question.createQuestion( { 
-				text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images", 
-				mediaUrls: [ 
-					'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
-					'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
-					'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
-					] 
-				})
-		);
-		win = Ti.UI.createWindow( { 
-			backgroundColor: 'white', 
-			orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } 
-		);
-		win.add( _(qv.view).extend( { height: '45%', width: '90%' } ) );
-	});
-	
-	afterEach(function() {
-		win.close();
-	});
 
+	qv = QuestionView.createQuestionView( 
+	Question.createQuestion( { 
+			text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images", 
+			mediaUrls: [ 
+				'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
+				'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
+				'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
+				] 
+			})
+	);
+	win = Ti.UI.createWindow( { 
+		backgroundColor: 'white', 
+		orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } 
+	);
+	win.add( _(qv.view).extend( { height: '45%', width: '98%' } ) );
+	
 	it('should display the question view', function() {
 		var openCalled = false;		
 		runs(function() {		
@@ -64,4 +58,11 @@ describe('QuestionView', function() {
 		});
 		
 	});
+	
+	runs(function() {
+		if ( ! TestUtils.isManualTests() ) {
+			win.close();
+		}
+	});
+	
 });
