@@ -1,10 +1,10 @@
 // Load WALTA or the test harness
 (function() {
-	if ( true ) {
-		// bootstrap the tests
-		var uiTest = require('ui-test/AllTests');
-		uiTest.run();
-	} else {
-		// bootstrap the application	
-	}
+		var TestUtils = require('util/TestUtils');
+		TestUtils.setManualTests(true);		
+		Ti.include('/lib/jasmine.js');
+		Ti.include('/spec/TaxonView_spec.js');
+		
+		var jasmineEnv = jasmine.getEnv();
+		jasmineEnv.execute();	
 })();

@@ -3,13 +3,13 @@ var meld = require('lib/meld');
 
 var TaxonView = require('ui/TaxonView');
 var Taxon = require('logic/Taxon');
+var TestUtils = require('util/TestUtils');
 
 describe('TaxonView', function() {
+
 	var tv, win;
 	
-	beforeEach( function() {
-		
-		tv = TaxonView.createTaxonView( 
+	tv = TaxonView.createTaxonView( 
 			Taxon.createTaxon({
 				id: "testTaxon",
 				name: "Family Palaemonidae, Genus Macrobrachium",
@@ -19,20 +19,12 @@ describe('TaxonView', function() {
 				movement: "walking, with sudden flips when disturbed.",
 				confusedWith: "Nothing, very distinctive, We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to spearate when young.",
 				signalScore: 4,
-				mediaUrls: [ "/ui-test/resources/simpleKey1/media/amphipoda_01.jpg", "/ui-test/resources/simpleKey1/media/amphipoda_02.jpg", "/ui-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ] 
+				mediaUrls: [ "spec/resources/simpleKey1/media/amphipoda_01.jpg", "spec/resources/simpleKey1/media/amphipoda_02.jpg", "spec/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ] 
 			})
 		);
-		win = Ti.UI.createWindow( { 
-			backgroundColor: 'white', 
-			orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } 
-		);
-		win.add( tv.view );
-	});
-	
-	afterEach( function() {
-		win.close();
-	});
-	
+		
+	win = TestUtils.wrapViewInWindow( tv.view );
+
 	it('should display the taxon view', function() {
 		var openCalled = false;		
 		runs(function() {		
@@ -49,11 +41,10 @@ describe('TaxonView', function() {
 		});
 	});
 	
-	it('should fire the onBack event when theback button is clicked', function() {
+	it('should fire the onBack event when the back button is clicked', function() {
 		var evtFires = false;	
 		runs(function() {	
 			meld.on( tv, "onBack", function(uri) { evtFires = true; } );
-			win.open();
 			tv._views.goBack._views.btn.fireEvent('click');
 		});
 		
@@ -66,4 +57,25 @@ describe('TaxonView', function() {
 		});
 		
 	});
+	
+	it('the description text should be visible', function() {
+		
+		runs(function() {
+			expect( tv._views.details.rect.height ).toBeGreaterThan( 0 );
+		});
+		
+	});
+	
+	runs(function() {
+		if ( ! TestUtils.isManualTests() ) {
+			win.close();
+		}
+	});
+	
+
+
+
+	
 });
+
+

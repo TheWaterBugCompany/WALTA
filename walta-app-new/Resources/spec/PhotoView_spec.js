@@ -5,9 +5,9 @@ describe('PhotoView', function() {
 	
 	beforeEach(function() {
 		pv = PhotoView.createPhotoView([ 
-				'/ui-test/resources/simpleKey1/media/amphipoda_01.jpg',
-				'/ui-test/resources/simpleKey1/media/amphipoda_02.jpg',
-				'/ui-test/resources/simpleKey1/media/amphipoda_03.jpg'
+				'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
+				'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
+				'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
 			]);
 		win = Ti.UI.createWindow( { 
 			backgroundColor: 'white', 

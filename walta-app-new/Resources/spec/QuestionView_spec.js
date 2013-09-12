@@ -12,9 +12,9 @@ describe('QuestionView', function() {
 		Question.createQuestion( { 
 				text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images", 
 				mediaUrls: [ 
-					'/ui-test/resources/simpleKey1/media/amphipoda_01.jpg',
-					'/ui-test/resources/simpleKey1/media/amphipoda_02.jpg',
-					'/ui-test/resources/simpleKey1/media/amphipoda_03.jpg'
+					'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
+					'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
+					'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
 					] 
 				})
 		);

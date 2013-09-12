@@ -5,7 +5,7 @@ describe('VideoView', function() {
 	var vv;
 	
 	beforeEach(function() { 
-		vv = VideoView.createVideoView( "/ui-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4" );
+		vv = VideoView.createVideoView( "/spec/resources/simpleKey1/media/attack_caddis_01_x264.mp4" );
 	});
 	
 	afterEach( function() {

@@ -12,14 +12,14 @@ var key = Key.createKey( {
 					Question.createQuestion( { 
 						text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images", 
 						mediaUrls: [ 
-							'/ui-test/resources/simpleKey1/media/amphipoda_01.jpg'
+							'/spec/resources/simpleKey1/media/amphipoda_01.jpg'
 							] 
 						}),
 						Question.createQuestion( { 
 						text: "This is the a second test question", 
 						mediaUrls: [ 
-							"/ui-test/resources/simpleKey1/media/amphipoda_02.jpg", 
-							"/ui-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4"
+							"/spec/resources/simpleKey1/media/amphipoda_02.jpg", 
+							"/spec/resources/simpleKey1/media/attack_caddis_01_x264.mp4"
 							] 
 						})
 					]

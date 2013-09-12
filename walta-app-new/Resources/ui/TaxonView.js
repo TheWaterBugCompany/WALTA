@@ -12,8 +12,54 @@ var PhotoView = require('ui/PhotoView');
 var AnchorBar = require('ui/AnchorBar');
 var Layout = require('ui/Layout');
 
+
+function createLabelText( label, text ) {
+	var cnt = Ti.UI.createView({
+		left : Layout.BUTTON_MARGIN,
+		top : Layout.BUTTON_MARGIN,
+		width: Ti.UI.FILL,
+		height: Ti.UI.SIZE,
+		layout: 'horizontal',
+		horizontalWrap: false
+	});
+	
+	cnt.add( 
+		Ti.UI.createLabel( {
+			font : {
+				font : Layout.TEXT_FONT,
+				fontSize : Layout.DETAILS_TEXT_SIZE,
+				fontWeight: 'bold'
+			},
+			text: label,
+			textAlign: Ti.UI.TEXT_ALIGNMENT_RIGHT,
+			color : 'black',
+			width: '100dip',
+			height: Ti.UI.SIZE,
+			top: 0
+		})
+	);
+	
+	cnt.add( 
+		Ti.UI.createLabel( {
+			font : {
+				font : Layout.TEXT_FONT,
+				fontSize : Layout.DETAILS_TEXT_SIZE
+			},
+			text: text,
+			color : 'black',
+			width: Ti.UI.FILL,
+			height: Ti.UI.SIZE,
+			top: 0
+		})
+	);
+	
+	return cnt;
+}
+
 function createDetailsView(txnViewObj) {
-	var view = Ti.UI.createView({
+	var vws = txnViewObj._views;
+	
+	vws.detailsBox = Ti.UI.createView({
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		borderRadius : 25,
@@ -21,19 +67,37 @@ function createDetailsView(txnViewObj) {
 		layout : 'vertical'
 	});
 
-	view.add(Ti.UI.createLabel({
-		left : Layout.WHITESPACE_GAP,
-		top : Layout.WHITESPACE_GAP,
+	/*vws.details = Ti.UI.createView({
 		width : Ti.UI.FILL,
 		height : Ti.UI.SIZE,
-		html : txnViewObj.taxon.asDetailHtml(),
-		font : {
-			font : Layout.TEXT_FONT,
-			fontSize : Layout.DETAILS_TEXT_SIZE
-		},
-		color : 'black'
-	}));
-	return view;
+		layout : 'vertical'
+	});
+	
+    vws.details.add( createLabelText( 'Size:', 'Up to ' + txnViewObj.taxon.size + 'mm' ) );
+    vws.details.add( createLabelText( 'Habitat:', txnViewObj.taxon.habitat ) );
+	vws.details.add( createLabelText( 'Movement:', txnViewObj.taxon.movement ) );
+	vws.details.add( createLabelText( 'Confused with:', txnViewObj.taxon.confusedWith ) );
+	vws.details.add( createLabelText( 'SIGNAL score:', txnViewObj.taxon.signalScore ) );
+	*/
+	
+	vws.details = Ti.UI.createWebView({
+		disableBounce: true,
+		enableZoomControls: false,
+		backgroundColor: 'transparent',
+		width : Ti.UI.FILL,
+		height : Ti.UI.FILL,
+		left: Layout.WHITESPACE_GAP,
+		top: Layout.WHITESPACE_GAP,
+		bottom: Layout.WHITESPACE_GAP,
+		right: Layout.WHITESPACE_GAP,
+		html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no" />'
+			+ '<style>html,body {color:black;margin:0;padding:0;font-family:' + Layout.TEXT_FONT +';font-size:'
+			+ Layout.DETAILS_TEXT_SIZE + ';}</style>'
+			+ '</head><body>' + txnViewObj.taxon.asDetailHtml() + '</body></html>'
+	});
+	
+	
+	vws.detailsBox.add( vws.details );
 };
 
 function createActionButton(imageUrl, label, onClick) {
@@ -160,7 +224,7 @@ function createTaxonView(/* Taxon */txn) {
 	vws.anchor = AnchorBar.createAnchorBar({
 		title : "ALT Key"
 	});
-	vws.details = createDetailsView(txnViewObj);
+	createDetailsView(txnViewObj);
 	createActionsView(txnViewObj);
 
 	var txnView = Ti.UI.createView({
@@ -181,7 +245,7 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.anchor.view);
 	txnView.add(vws.title);
 
-	vws.subView.add(_(vws.details).extend({
+	vws.subView.add(_(vws.detailsBox).extend({
 		left : Layout.WHITESPACE_GAP,
 		top : Layout.WHITESPACE_GAP,
 		bottom : Layout.WHITESPACE_GAP,
