@@ -19,7 +19,7 @@ describe('TaxonView', function() {
 				movement: "walking, with sudden flips when disturbed.",
 				confusedWith: "Nothing, very distinctive, We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to spearate when young.",
 				signalScore: 4,
-				mediaUrls: [ "spec/resources/simpleKey1/media/amphipoda_01.jpg", "spec/resources/simpleKey1/media/amphipoda_02.jpg", "spec/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ] 
+				mediaUrls: [ "/spec/resources/simpleKey1/media/amphipoda_01.jpg", "/spec/resources/simpleKey1/media/amphipoda_02.jpg", "/spec/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ] 
 			})
 		);
 		

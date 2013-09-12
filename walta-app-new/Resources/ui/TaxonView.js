@@ -62,7 +62,7 @@ function createDetailsView(txnViewObj) {
 	vws.detailsBox = Ti.UI.createView({
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
-		borderRadius : 25,
+		borderRadius : Layout.BORDER_RADIUS,
 		backgroundColor : '#552F61CC',
 		layout : 'vertical'
 	});
@@ -91,14 +91,30 @@ function createDetailsView(txnViewObj) {
 		top: Layout.WHITESPACE_GAP,
 		bottom: Layout.WHITESPACE_GAP,
 		right: Layout.WHITESPACE_GAP,
-		html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no" />'
-			+ '<style>html,body {color:black;margin:0;padding:0;font-family:' + Layout.TEXT_FONT +';font-size:'
-			+ Layout.DETAILS_TEXT_SIZE + ';}</style>'
+		html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no"></meta>'
+			+ '<style>html,body {margin:0;padding:0;color:black;font-family:' + Layout.TEXT_FONT +';font-size:' + Layout.DETAILS_TEXT_SIZE + ';}</style>'
 			+ '</head><body>' + txnViewObj.taxon.asDetailHtml() + '</body></html>'
 	});
-	
-	
-	vws.detailsBox.add( vws.details );
+
+	vws.detailsBox.add( vws.details );	
+
+	/* 
+	 * =============== HACK: Workaround for odd WebView resizing bug under iOS ===============
+	 * 
+	 * Under iOS the WebView seems to mysteriously change zoom level after the initial layout.
+	 * 
+	 * To fix this we set the explicit width of the view on the postlayout event to make sure 
+	 * it won't change from the value first caclulated.
+	 */
+	var hackListener = function() {
+		vws.details.width = vws.details.size.width;
+		vws.details.removeEventListener( 'postlayout', hackListener );
+	};
+	vws.details.addEventListener( 'postlayout', hackListener );
+	/*
+	 * ============================== END HACK ================================================
+	 */
+
 };
 
 function createActionButton(imageUrl, label, onClick) {
@@ -174,7 +190,7 @@ function createActionsView(txnViewObj) {
 		vws.photoView = PhotoView.createPhotoView(txnViewObj.taxon.photoUrls);
 		vws.actions.add(_(vws.photoView.view).extend({
 			left : 0,
-			width : '225dip',
+			width : Layout.THUMBNAIL_WIDTH,
 			top : Layout.WHITESPACE_GAP
 		}));
 
@@ -214,7 +230,7 @@ function createTaxonView(/* Taxon */txn) {
 		height : Ti.UI.SIZE,
 		top : Layout.WHITESPACE_GAP,
 		left : Layout.WHITESPACE_GAP,
-		text : txn.getScientificName() + '\n(' + txn.commonName + ')',
+		text : txn.getScientificName() + ' (' + txn.commonName + ')',
 		font : {
 			font : Layout.HEADING_FONT,
 			fontSize : Layout.HEADING_SIZE
@@ -239,7 +255,7 @@ function createTaxonView(/* Taxon */txn) {
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		backgroundColor : 'white',
-		layout : 'horizontal',
+		layout : 'composite',
 		horizontalWrap : false
 	});
 
@@ -247,13 +263,14 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.title);
 
 	vws.subView.add(_(vws.detailsBox).extend({
-		left : Layout.WHITESPACE_GAP,
-		top : Layout.WHITESPACE_GAP,
-		bottom : Layout.WHITESPACE_GAP,
-		width : '55%'
+		left: Layout.WHITESPACE_GAP,
+		top: Layout.WHITESPACE_GAP,
+		bottom: Layout.WHITESPACE_GAP,
+		width: Ti.UI.FILL,
+		right: '232dip'
 	}));
 	vws.subView.add(_(vws.actions).extend({
-		left : Layout.WHITESPACE_GAP,
+		width: '208dip',
 		right : Layout.WHITESPACE_GAP
 	}));
 
