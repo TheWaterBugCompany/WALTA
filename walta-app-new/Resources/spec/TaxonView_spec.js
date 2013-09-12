@@ -25,6 +25,7 @@ describe('TaxonView', function() {
 		
 	win = TestUtils.wrapViewInWindow( tv.view );
 
+
 	it('should display the taxon view', function() {
 		var openCalled = false;		
 		runs(function() {		
@@ -63,6 +64,35 @@ describe('TaxonView', function() {
 		runs(function() {
 			expect( tv._views.details.rect.height ).toBeGreaterThan( 0 );
 		});
+		
+	});
+	
+	it('the size of the text in the webview should be stable', function() {
+		var oldHeight, flag;
+		
+		runs(function() {
+			oldHeight = tv._views.details.evalJS("document.body.children[0].offsetHeight");
+			
+			// Open and close the gallery to make resize bug occur
+			tv._views.photoView._views.galleryWin.addEventListener( 'open', function() { 
+					tv._views.photoView._views.close.fireEvent('click');
+				} );
+				
+			tv._views.photoView._views.galleryWin.addEventListener( 'close', function() {
+				flag = true; 
+			});
+			
+			tv._views.photoView._views.zoomIcon.fireEvent('click');
+		});
+		
+		waitsFor(function() {
+			return flag;
+		}, "gallery window opened to be called", 750 );
+		
+		runs(function() {
+		expect( tv._views.details.evalJS("document.body.children[0].offsetHeight") ).toEqual( oldHeight );
+		});
+		
 		
 	});
 	

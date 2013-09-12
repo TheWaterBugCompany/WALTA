@@ -1,4 +1,5 @@
 var PhotoView = require('ui/PhotoView');
+var TestUtils = require('util/TestUtils');
 
 describe('PhotoView', function() {
 	var win, vw, pv;

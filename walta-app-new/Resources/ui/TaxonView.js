@@ -93,24 +93,26 @@ function createDetailsView(txnViewObj) {
 		right: Layout.WHITESPACE_GAP,
 		html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no"></meta>'
 			+ '<style>html,body {margin:0;padding:0;color:black;font-family:' + Layout.TEXT_FONT +';font-size:' + Layout.DETAILS_TEXT_SIZE + ';}</style>'
-			+ '</head><body>' + txnViewObj.taxon.asDetailHtml() + '</body></html>'
+			+ '</head><body id="details">' + txnViewObj.taxon.asDetailHtml() + '</body></html>'
 	});
 
 	vws.detailsBox.add( vws.details );	
 
 	/* 
 	 * =============== HACK: Workaround for odd WebView resizing bug under iOS ===============
-	 * 
+	 * See Trac issue #72
 	 * Under iOS the WebView seems to mysteriously change zoom level after the initial layout.
 	 * 
 	 * To fix this we set the explicit width of the view on the postlayout event to make sure 
 	 * it won't change from the value first caclulated.
 	 */
+	
 	var hackListener = function() {
 		vws.details.width = vws.details.size.width;
 		vws.details.removeEventListener( 'postlayout', hackListener );
 	};
 	vws.details.addEventListener( 'postlayout', hackListener );
+	
 	/*
 	 * ============================== END HACK ================================================
 	 */
