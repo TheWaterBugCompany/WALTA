@@ -12,50 +12,6 @@ var PhotoView = require('ui/PhotoView');
 var AnchorBar = require('ui/AnchorBar');
 var Layout = require('ui/Layout');
 
-
-function createLabelText( label, text ) {
-	var cnt = Ti.UI.createView({
-		left : Layout.BUTTON_MARGIN,
-		top : Layout.BUTTON_MARGIN,
-		width: Ti.UI.FILL,
-		height: Ti.UI.SIZE,
-		layout: 'horizontal',
-		horizontalWrap: false
-	});
-	
-	cnt.add( 
-		Ti.UI.createLabel( {
-			font : {
-				font : Layout.TEXT_FONT,
-				fontSize : Layout.DETAILS_TEXT_SIZE,
-				fontWeight: 'bold'
-			},
-			text: label,
-			textAlign: Ti.UI.TEXT_ALIGNMENT_RIGHT,
-			color : 'black',
-			width: '100dip',
-			height: Ti.UI.SIZE,
-			top: 0
-		})
-	);
-	
-	cnt.add( 
-		Ti.UI.createLabel( {
-			font : {
-				font : Layout.TEXT_FONT,
-				fontSize : Layout.DETAILS_TEXT_SIZE
-			},
-			text: text,
-			color : 'black',
-			width: Ti.UI.FILL,
-			height: Ti.UI.SIZE,
-			top: 0
-		})
-	);
-	
-	return cnt;
-}
-
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
 	
@@ -67,19 +23,6 @@ function createDetailsView(txnViewObj) {
 		layout : 'vertical'
 	});
 
-	/*vws.details = Ti.UI.createView({
-		width : Ti.UI.FILL,
-		height : Ti.UI.SIZE,
-		layout : 'vertical'
-	});
-	
-    vws.details.add( createLabelText( 'Size:', 'Up to ' + txnViewObj.taxon.size + 'mm' ) );
-    vws.details.add( createLabelText( 'Habitat:', txnViewObj.taxon.habitat ) );
-	vws.details.add( createLabelText( 'Movement:', txnViewObj.taxon.movement ) );
-	vws.details.add( createLabelText( 'Confused with:', txnViewObj.taxon.confusedWith ) );
-	vws.details.add( createLabelText( 'SIGNAL score:', txnViewObj.taxon.signalScore ) );
-	*/
-	
 	vws.details = Ti.UI.createWebView({
 		setScalesPageToFit: true,
 		disableBounce: true,

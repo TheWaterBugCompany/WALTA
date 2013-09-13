@@ -1,9 +1,11 @@
+Ti.include('/util/TestUtils.js');
+
 var _ = require('lib/underscore')._;
 var meld = require('lib/meld');
 
 var TaxonView = require('ui/TaxonView');
 var Taxon = require('logic/Taxon');
-var TestUtils = require('util/TestUtils');
+
 
 describe('TaxonView', function() {
 
@@ -68,10 +70,13 @@ describe('TaxonView', function() {
 	});
 	
 	it('the size of the text in the webview should be stable', function() {
-		var oldHeight, flag;
+		var oldHeight, flag, flag2;
 		
 		runs(function() {
+			tv._views.details.addEventListener( 'postlayout', function() { flag2 = true; } );
+			
 			oldHeight = tv._views.details.evalJS("document.body.children[0].offsetHeight");
+			
 			
 			// Open and close the gallery to make resize bug occur
 			tv._views.photoView._views.galleryWin.addEventListener( 'open', function() { 
@@ -86,7 +91,7 @@ describe('TaxonView', function() {
 		});
 		
 		waitsFor(function() {
-			return flag;
+			return flag && flag2;
 		}, "gallery window opened to be called", 750 );
 		
 		runs(function() {

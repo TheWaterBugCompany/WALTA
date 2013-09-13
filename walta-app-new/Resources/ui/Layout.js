@@ -22,7 +22,14 @@ exports.VIDEO_OVERLAY_BUTTON_SIZE = '64dip';
 exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '14dip';
 exports.PAGER_HEIGHT = '16dip';
 exports.THUMBNAIL_WIDTH = '200dip';
-if ( Ti.Platform.osname === 'android' )
+exports.MENU_ITEM_HEIGHT = '84dip';
+exports.MENU_ITEM_WIDTH = '288dip';
+if ( Ti.Platform.osname === 'android' ) {
 	exports.BORDER_RADIUS = 45;
-else
+	exports.BORDER_RADIUS_MENU_BIG = 35;
+	exports.BORDER_RADIUS_MENU_SMALL = 15;
+} else {
 	exports.BORDER_RADIUS = 25;
+	exports.BORDER_RADIUS_MENU_BIG = 15;
+	exports.BORDER_RADIUS_MENU_SMALL = 4;
+}

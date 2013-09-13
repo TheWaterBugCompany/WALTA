@@ -1,9 +1,10 @@
+Ti.include('/util/TestUtils.js');
+
 var _ = require('lib/underscore')._;
 var meld = require('lib/meld');
 
 var QuestionView = require('ui/QuestionView');
 var Question = require('logic/Question');
-var TestUtils = require('util/TestUtils');
 
 describe('QuestionView', function() {
 	var qv, win;
@@ -64,6 +65,7 @@ describe('QuestionView', function() {
 		if ( ! TestUtils.isManualTests() ) {
 			win.close();
 		}
+		
 	});
 	
 });
