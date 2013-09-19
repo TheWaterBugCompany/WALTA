@@ -1,3 +1,5 @@
+var TestUtils = require('util/TestUtils');
+
 var meld = require('lib/meld');
 var VideoView = require('ui/VideoView');
 
@@ -13,21 +15,6 @@ describe('VideoView', function() {
 	});
 	
 	it('should fire the onComplete event when the video has finished playing', function() {
-		var evtFires = false;	
-			
-		runs(function() {
-			meld.on( vv, "onComplete", function(uri) { evtFires = true; } );	
-			vv.open();
-			
-		});
-		
-		waitsFor(function() {
-			return evtFires;
-		}, "onComplete to be called", 75000 );
-		
-		runs(function() {
-			expect( evtFires, true );
-		});
-		
+		TestUtils.waitForMeldEvent( vv, 'onComplete', function() { vv.open(); }, 75000 );		
 	});
 });

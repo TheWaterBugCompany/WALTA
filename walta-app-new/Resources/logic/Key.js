@@ -44,7 +44,7 @@ function createKey( args ) {
 		
 		// Go backs up the key to the parent
 		back: function() {
-			if ( ! _.isNull( this.currentDecision.parentLink ) ) {
+			if ( ! this.isRoot() ) {
 				this.currentDecision = this.currentDecision.parentLink;
 			}
 		},
@@ -52,6 +52,11 @@ function createKey( args ) {
 		// Reset to the root Node
 		reset: function() {
 			this.currentDecision = this.root;
+		},
+		
+		// Returns true is we are currently at the root node
+		isRoot: function() {
+			return _.isNull( this.currentDecision.parentLink );
 		},
 		
 		// Functions to determine if the object looks like a Node or a Taxon ?

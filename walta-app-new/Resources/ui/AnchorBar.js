@@ -10,14 +10,7 @@
 var _ = require('lib/underscore')._;
 var PubSub = require('lib/pubsub');
 var Layout = require('ui/Layout');
-
-
-// Topics that this module publishes
-var topics = { 
-	HOME: 'home',
-	SETTINGS: 'settings',
-	INFO: 'info'
-};
+var Topics = require('Topics');
 
 // Create a tool bar button
 function createToolBarButton( image, topic ) {
@@ -36,11 +29,11 @@ function createToolBarButton( image, topic ) {
 }
 
 // Create an anchor bar View
-function createAnchorBar( args ) {
+function createAnchorBar( title ) {
 	
-	var anchorBar = _(args || {} ).defaults({
-		title: 'Title'
-	});
+	var anchorBar = {
+		title: title
+	};
 	
 	anchorBar._views = {};
 	
@@ -86,9 +79,9 @@ function createAnchorBar( args ) {
 	});
 	
 	// Create tool bar buttons
-	anchorBar._views.home = createToolBarButton( '/images/home.png', topics.HOME );
-	anchorBar._views.settings = createToolBarButton( '/images/settings.png', topics.SETTINGS );
-	anchorBar._views.info = createToolBarButton( '/images/info.png', topics.INFO );
+	anchorBar._views.home = createToolBarButton( '/images/home.png', Topics.HOME );
+	anchorBar._views.settings = createToolBarButton( '/images/settings.png', Topics.SETTINGS );
+	anchorBar._views.info = createToolBarButton( '/images/info.png', Topics.INFO );
 	
 	anchorBar._views.leftTools.add( anchorBar._views.home );
 	anchorBar._views.rightTools.add( anchorBar._views.settings );
@@ -102,5 +95,4 @@ function createAnchorBar( args ) {
 	return anchorBar;
 };
 
-exports.topics = topics;
 exports.createAnchorBar = createAnchorBar;

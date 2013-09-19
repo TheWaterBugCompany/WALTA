@@ -1,4 +1,4 @@
-Ti.include('/util/TestUtils.js');
+var TestUtils = require('util/TestUtils');
 
 var _ = require('lib/underscore')._;
 var meld = require('lib/meld');
@@ -26,46 +26,13 @@ describe('QuestionView', function() {
 	win.add( _(qv.view).extend( { height: '45%', width: '98%' } ) );
 	
 	it('should display the question view', function() {
-		var openCalled = false;		
-		runs(function() {		
-			win.addEventListener( 'open', function(e) { openCalled = true; } );
-			win.open();
-		});
-		
-		waitsFor(function() {
-			return openCalled;
-		}, "Window to open", 750 );
-		
-		runs(function() {
-			expect( openCalled, true );
-		});
+		TestUtils.windowOpenTest( win );
 	});
 	
 	it('should fire the onSelect event when a question is clicked', function() {
-		var evtFires = false;	
-		var evt = null;
-		runs(function() {	
-			meld.on( qv, "onSelect", function(e) { evt = this; evtFires = true; } );
-			win.open();
-			qv.view.fireEvent('click');
-		});
-		
-		waitsFor(function() {
-			return evtFires;
-		}, "onSelect to be called", 750 );
-		
-		runs(function() {
-			expect( evtFires, true );
-			expect( evt.question.text).toEqual("This is a test question text! With an longer question text that needs to wrap plus a couple of media images" );
-		});
-		
+		TestUtils.actionFiresEventTest( qv.view, 'click', qv, 'onSelect' );
 	});
 	
-	runs(function() {
-		if ( ! TestUtils.isManualTests() ) {
-			win.close();
-		}
-		
-	});
+	TestUtils.closeWindow( win );
 	
 });

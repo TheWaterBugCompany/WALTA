@@ -1,9 +1,12 @@
+var TestUtils = require('util/TestUtils');
+
 var Question = require('logic/Question');
 var Key = require('logic/Key');
 var KeyView = require('ui/KeyView');
 
-// Create a test key to display
+var Topics = require('Topics');
 
+// Create a test key to display
 var key = Key.createKey( {
 			url: 'https://example.com/',
 			name: 'TestTaxonomy',
@@ -28,34 +31,19 @@ var key = Key.createKey( {
 
 describe('KeyView', function() {
 	var  win,knv;
-	beforeEach(function(){
-		win = Ti.UI.createWindow( { 
-			backgroundColor: 'white', 
-			orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] } 
-		);
-		
-		knv = KeyView.createKeyView( key );
-		win.add( _(knv.view).extend( { height: '100%', width: '100%' } ) );
-	});
-	
-	afterEach(function() {
-		win.close();
-	});
-	
+	knv = KeyView.createKeyView( key.getCurrentNode() );
+	win = TestUtils.wrapViewInWindow( knv.view );
+
 	it('should display the key view', function() {
-		var openCalled = false;		
-		runs(function() {		
-			win.addEventListener( 'open', function(e) { openCalled = true; } );
-			win.open();
-		});
-		
-		waitsFor(function() {
-			return openCalled;
-		}, "Window to open", 750 );
-		
-		runs(function() {
-			expect( openCalled, true );
-			// can we check things like actual height and width here??
+		TestUtils.windowOpenTest( win ); 
+	});
+	
+	it('should fire the FORWARD topic', function() { 
+		var result = TestUtils.actionFiresTopicTest( knv._views.questions[1].view, 'click', Topics.FORWARD );
+		runs( function() {
+			expect( result.data ).toEqual( 1 );	
 		});
 	});
+	
+	TestUtils.closeWindow( win );
 });

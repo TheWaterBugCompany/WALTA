@@ -8,16 +8,7 @@ var _ = require('lib/underscore')._;
 var PubSub = require('lib/pubsub');
 var Layout = require('ui/Layout');
 
-
-// Topics that this module publishes
-var topics = { 
-	KEYSEARCH: 'keysearch',
-	SPEEDBUG: 'speedbug',
-	HELP: 'help',
-	BROWSE: 'browse',
-	GALLERY: 'gallery',
-	ABOUT: 'about'
-};
+var Topics = require('Topics');
 
 // Create a menu button
 function createLargeMenuButton( image, topic, label, text ) {
@@ -162,39 +153,39 @@ function createMenuView() {
 		
 	vws.speedbug = createLargeMenuButton( 
 		'/images/speedbug.png', 
-		topics.SPEEDBUG, 
+		Topics.SPEEDBUG, 
 		'Speedbug', 
 		'Look at silhouettes of bugs to choose the best match.' 
 	);
 	
 	vws.keysearch = createLargeMenuButton( 
 		'/images/altkey.png', 
-		topics.KEYSEARCH, 
+		Topics.KEYSEARCH, 
 		'ALT key', 
 		'Questions to help identify your waterbug.' 
 	);
 	
 	vws.browse = createLargeMenuButton( 
 		'/images/browse.png', 
-		topics.BROWSE, 
+		Topics.BROWSE, 
 		'Browse list', 
 		'If you know the name or scientific name of your bug.' 
 	);
 	
 	vws.help = createSmallMenuButton( 
-		topics.HELP, 
+		Topics.HELP, 
 		'Help', 
 		'Info to get you started.' 
 	);
 	
 	vws.gallery = createSmallMenuButton( 
-		topics.GALLERY, 
+		Topics.GALLERY, 
 		'Gallery', 
 		'Browse photos & videos.' 
 	);
 	
 	vws.about = createSmallMenuButton( 
-		topics.ABOUT, 
+		Topics.ABOUT, 
 		'About', 
 		'About the app.' 
 	);
@@ -206,5 +197,4 @@ function createMenuView() {
 	return menu;
 };
 
-exports.topics = topics;
 exports.createMenuView = createMenuView;

@@ -9,7 +9,6 @@
 var _ = require('lib/underscore')._;
 
 var PhotoView = require('ui/PhotoView');
-var AnchorBar = require('ui/AnchorBar');
 var Layout = require('ui/Layout');
 
 function createDetailsView(txnViewObj) {
@@ -183,9 +182,6 @@ function createTaxonView(/* Taxon */txn) {
 		color : '#2F61CC'
 	});
 
-	vws.anchor = AnchorBar.createAnchorBar({
-		title : "ALT Key"
-	});
 	createDetailsView(txnViewObj);
 	createActionsView(txnViewObj);
 
@@ -204,7 +200,6 @@ function createTaxonView(/* Taxon */txn) {
 		horizontalWrap : false
 	});
 
-	txnView.add(vws.anchor.view);
 	txnView.add(vws.title);
 
 	vws.subView.add(_(vws.detailsBox).extend({

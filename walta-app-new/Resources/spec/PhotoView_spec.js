@@ -1,3 +1,5 @@
+var TestUtils = require('util/TestUtils');
+
 var PhotoView = require('ui/PhotoView');
 var TestUtils = require('util/TestUtils');
 
@@ -18,24 +20,8 @@ describe('PhotoView', function() {
 	win.add( vw );
 
 	it('should display the photo view thumbnail', function() {
-		var openCalled = false;		
-		runs(function() {		
-			win.addEventListener( 'open', function(e) { openCalled = true; } );
-			win.open();
-		});
-		
-		waitsFor(function() {
-			return openCalled;
-		}, "Window to open", 750 );
-		
-		runs(function() {
-			expect( openCalled, true );
-		});
+		TestUtils.windowOpenTest( win ); 
 	});
 	
-	runs(function() {
-		if ( ! TestUtils.isManualTests() ) {
-			win.close();
-		}
-	});
+	TestUtils.closeWindow( win );
 });

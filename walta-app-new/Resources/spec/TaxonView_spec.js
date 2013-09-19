@@ -1,4 +1,4 @@
-Ti.include('/util/TestUtils.js');
+var TestUtils = require('util/TestUtils');
 
 var _ = require('lib/underscore')._;
 var meld = require('lib/meld');
@@ -29,36 +29,11 @@ describe('TaxonView', function() {
 
 
 	it('should display the taxon view', function() {
-		var openCalled = false;		
-		runs(function() {		
-			win.addEventListener( 'open', function(e) { openCalled = true; } );
-			win.open();
-		});
-		
-		waitsFor(function() {
-			return openCalled;
-		}, "Window to open", 750 );
-		
-		runs(function() {
-			expect( openCalled, true );
-		});
+		TestUtils.windowOpenTest( win ); 
 	});
 	
 	it('should fire the onBack event when the back button is clicked', function() {
-		var evtFires = false;	
-		runs(function() {	
-			meld.on( tv, "onBack", function(uri) { evtFires = true; } );
-			tv._views.goBack._views.btn.fireEvent('click');
-		});
-		
-		waitsFor(function() {
-			return evtFires;
-		}, "onBack to be called", 750 );
-		
-		runs(function() {
-			expect( evtFires, true );
-		});
-		
+		TestUtils.actionFiresEventTest( tv._views.goBack._views.btn, 'click', tv, 'onBack' );
 	});
 	
 	it('the description text should be visible', function() {
@@ -101,15 +76,7 @@ describe('TaxonView', function() {
 		
 	});
 	
-	runs(function() {
-		if ( ! TestUtils.isManualTests() ) {
-			win.close();
-		}
-	});
-	
-
-
-
+	TestUtils.closeWindow( win );
 	
 });
 

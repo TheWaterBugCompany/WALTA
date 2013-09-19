@@ -7,21 +7,18 @@
  */
 var _ = require('lib/underscore')._;
 var PubSub = require('lib/pubsub');
+var meld = require('lib/meld');
 var AnchorBar = require('ui/AnchorBar');
 var Layout = require('ui/Layout');
 var QuestionView = require('ui/QuestionView');
 
-var topics = {
-	BACK: 'back'
-};
+var Topics = require('Topics');
 
-function createKeyView( key ) {
+function createKeyView( keyNode ) {
 	var obj = {
 		view: null,		 // The Ti.UI.View for the user interface
-		key: key         // The Key data object associated with this view
+		keyNode: keyNode // The Key data object associated with this view
 	};
-	var anchor = AnchorBar.createAnchorBar( { title: "ALT Key" } );
-	
 	obj._views = {};
 	
 	obj.view = Ti.UI.createView({
@@ -31,16 +28,18 @@ function createKeyView( key ) {
 		layout: 'vertical'
 	});
 	
-	// Add the anchor bar
-	obj.view.add( anchor.view );
-	
 	// Add each question
 	obj._views.questions = [];
-	_(key.currentDecision.questions).each(
+	_(keyNode.questions).each(
 		function( q ) {
 			var qv = QuestionView.createQuestionView( q );
-			obj.view.add( _(qv.view).extend( { width: '95%', height: '42%'}) );
+			obj.view.add( _(qv.view).extend( { width: '95%', height: '42%', top: Layout.WHITESPACE_GAP }) );
+			var index = obj._views.questions.length;
 			obj._views.questions.push( qv );
+			
+			meld.on( qv, 'onSelect', function() { 
+				PubSub.publish( Topics.FORWARD, index );
+			} );
 		}
 	);
 	
@@ -51,7 +50,7 @@ function createKeyView( key ) {
 		backgroundImage: '/images/back.png'
 	} );
 	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topics.BACK, null );
+		PubSub.publish( Topics.BACK, null );
 		e.cancelBubble = true;
 	} );
 	
@@ -61,4 +60,3 @@ function createKeyView( key ) {
 }
 
 exports.createKeyView = createKeyView;
-exports.topics = topics;

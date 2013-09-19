@@ -84,6 +84,13 @@ describe('Key', function() {
 		expect( testKey.getCurrentNode().id ).toEqual( 'n2' );
 	});
 	
+	it('should return true when at the root with isRoot()', function() {
+		testKey.reset();
+		expect( testKey.isRoot() ).toEqual( true );
+		testKey.choose(0);
+		expect( testKey.isRoot() ).toEqual( false );
+	});
+	
 	it('should set the current node to the the parent on back()', function() {
 		testKey.back();
 		expect( testKey.getCurrentNode().id ).toEqual( 'n1' );
@@ -107,6 +114,6 @@ describe('Key', function() {
 	
 	it('should return the the root on reset()', function() {
 		testKey.reset();
-		expect( testKey.getCurrentNode().id ).toEqual( 'n1' );
+		expect( testKey.isRoot() ).toEqual( true );
 	});
 });
