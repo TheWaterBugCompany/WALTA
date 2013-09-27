@@ -2,7 +2,7 @@ var TestUtils = require('util/TestUtils');
 
 var PubSub = require('lib/pubsub');
 var AnchorBar = require('ui/AnchorBar');
-var Topics = require('Topics');
+var Topics = require('ui/Topics');
 
 describe('AnchorBar', function() {
 	var acb, win;

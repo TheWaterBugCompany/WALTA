@@ -11,7 +11,7 @@ var _ = require('lib/underscore')._;
 var PubSub = require('lib/pubsub');
 var Layout = require('ui/Layout');
 
-var Topics = require('Topics');
+var Topics = require('ui/Topics');
 
 var KeyLoader = require('logic/KeyLoaderXml');
 var AnchorBar = require('ui/AnchorBar');
@@ -27,7 +27,7 @@ function createAppWindow( keyUrl ) {
 	// Private variables that are not to be exposed as API
 	var privates = {
 		key: null,
-		windows: {},
+		//windows: {},
 		currentWindow: null,
 		callbacks: [],
 		
@@ -60,7 +60,20 @@ function createAppWindow( keyUrl ) {
 				width: Ti.UI.FILL, 
 				height: Ti.UI.FILL 
 			}));
-			this.storeTopLevelWindow( args.name, args.uiObj, win );
+			//this.storeTopLevelWindow( args.name, args.uiObj, win );
+			
+			// Transition the windows
+			win.open();
+			if ( this.currentWindow )
+				this.currentWindow.close();
+			this.currentWindow = win;
+		},
+		
+		menuWindow: function() {
+			this.makeTopLevelWindow({
+				name: 'home',
+				uiObj: MenuView.createMenuView()
+			});
 		},
 		
 		updateDecisionWindow: function() {
@@ -97,13 +110,13 @@ function createAppWindow( keyUrl ) {
 		 * TODO: Add transition effect 
 		 */
 		transitionToFront: function( name ) {
-			var oldWindow = null;
+		/*	var oldWindow = null;
 			if ( this.currentWindow ) 
-			 oldWindow =  this.currentWindow.win;
+			    oldWindow =  this.currentWindow.win;
 			this.currentWindow = this.windows[name];
-			this.currentWindow.win.open();
+			this.currentWindow.win.open( { fullscreen: true } );
 			if ( oldWindow ) 
-				oldWindow.hide();
+				oldWindow.hide(); */
 		},
 		
 		subscribe: function( topic, cb ) {
@@ -127,26 +140,21 @@ function createAppWindow( keyUrl ) {
 	
 	privates.loadKey( appWin.keyUrl );
 	
-	privates.makeTopLevelWindow({
-		name: 'home',
-		uiObj: MenuView.createMenuView()
-	});
+	privates.menuWindow();
 	
-	privates.subscribe( Topics.HOME, function() { privates.transitionToFront( 'home' ); } );
+	privates.subscribe( Topics.HOME, function() { privates.menuWindow();  } );
 	
     privates.subscribe( Topics.KEYSEARCH, function() { 
     	privates.key.reset();
     	privates.updateDecisionWindow();
-    	privates.transitionToFront( 'decision' ); 
     });
     
     privates.subscribe( Topics.BACK, function() { 
     	privates.key.back();
     	if ( privates.key.isRoot() ) {
-    		privates.transitionToFront( 'home' ); 
+    		privates.menuWindow(); 
     	} else {
 	    	privates.updateDecisionWindow();
-	    	privates.transitionToFront( 'decision' ); 
 	    }
     });
     

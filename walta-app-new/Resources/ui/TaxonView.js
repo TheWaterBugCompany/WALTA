@@ -7,9 +7,10 @@
  */
 
 var _ = require('lib/underscore')._;
-
+var PubSub = require('lib/pubsub');
 var PhotoView = require('ui/PhotoView');
 var Layout = require('ui/Layout');
+var Topics = require('ui/Topics');
 
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
@@ -124,7 +125,7 @@ function createActionsView(txnViewObj) {
 
 	// Add the go back button
 	vws.goBack = createActionButton("/images/goback.png", "Go back and try again", function(e) {
-		txnViewObj.onBack(e);
+		PubSub.publish( Topics.BACK, null );
 		e.cancelBubble = true;
 	});
 	vws.actionBtns.add(vws.goBack.view);
@@ -139,14 +140,14 @@ function createActionsView(txnViewObj) {
 		}));
 
 		vws.openGallery = createActionButton("/images/gallery.png", "Photo gallery", function(e) {
-			photoView.open();
+			vws.photoView.open();
 			e.cancelBubble = true;
 		});
 		vws.actionBtns.add(vws.openGallery.view);
 	}
 
 	// If there is a video add the video button
-	if (txnViewObj.taxon.videoUrl !== null) {
+	if (txnViewObj.taxon.videoUrl) {
 		vws.watchVideo = createActionButton("/images/video.png", "Watch video", function(e) {
 			// open video player
 			e.cancelBubble = true;
@@ -162,9 +163,7 @@ function createTaxonView(/* Taxon */txn) {
 	var txnViewObj = {
 		_views : {},
 		view : null, // The Ti.UI.View for the user interface
-		taxon : txn, // The Question data object associated with this view
-		onBack : function(e) {
-		} // Event called when back button is selected.
+		taxon : txn // The Question data object associated with this view
 	};
 
 	var vws = txnViewObj._views;

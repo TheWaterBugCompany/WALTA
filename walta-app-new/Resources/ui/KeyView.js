@@ -12,7 +12,7 @@ var AnchorBar = require('ui/AnchorBar');
 var Layout = require('ui/Layout');
 var QuestionView = require('ui/QuestionView');
 
-var Topics = require('Topics');
+var Topics = require('ui/Topics');
 
 function createKeyView( keyNode ) {
 	var obj = {
@@ -45,8 +45,14 @@ function createKeyView( keyNode ) {
 	
 	// Add the go back button
 	var btn = Ti.UI.createButton( {
-		width: Layout.BUTTON_SIZE,
-		height: Layout.BUTTON_SIZE,
+		title: 'Go back',
+		top: Layout.WHITESPACE_GAP,
+		bottom: Layout.WHITESPACE_GAP,
+		right: Layout.WHITESPACE_GAP,
+		width: Ti.UI.SIZE,
+		height: Ti.UI.FILL,
+		borderRadius: Layout.BORDER_RADIUS_MENU_SMALL,
+		backgroundColor: '#552F61CC',
 		backgroundImage: '/images/back.png'
 	} );
 	btn.addEventListener( 'click', function(e) {

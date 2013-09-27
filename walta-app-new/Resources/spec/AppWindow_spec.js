@@ -1,14 +1,14 @@
 var TestUtils = require('util/TestUtils');
-var AppWindow = require('AppWindow');
+var AppWindow = require('control/AppWindow');
 
-var Topics = require('Topics');
+var Topics = require('ui/Topics');
 
 describe('AppWindow', function() {
 	var app;
 
 	beforeEach( function() {
 		runs( function() {
-			app = AppWindow.createAppWindow( 'spec/resources/simpleKey1' );
+			app = AppWindow.createAppWindow( '/spec/resources/simpleKey1' );
 			app.start();
 		});
 		
@@ -18,7 +18,7 @@ describe('AppWindow', function() {
 	});
 	
 	afterEach( function() {
-			TestUtils.ifNotManual(function() { app.close(); });
+		TestUtils.ifNotManual(function() { app.close(); });
 	});
 
 	it('should open the main window after start() is called', function() {

@@ -1,6 +1,6 @@
 var TestUtils = require('util/TestUtils');
 var MenuView = require('ui/MenuView');
-var Topics = require('Topics');
+var Topics = require('ui/Topics');
 
 describe('MenuView', function() {
 	var mnu, win;

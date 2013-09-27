@@ -3,57 +3,15 @@ var _ = require('lib/underscore')._;
 var Key = require('logic/Key');
 var Question = require('logic/Question');
 var Taxon = require('logic/Taxon');
+var XmlUtils = require('util/XmlUtils');
 
 var WALTA_KEY_NS = 'http://thewaterbug.net/taxonomy';
 
 // A list of nodes that haven't been seen yet and need to be linked
 var forwardLinks = {};
 
-Ti.XML.applyProperties({
-	namespaceAware: true
-});
-
-function loadXml( path ) {
-	// Load a DOM Level 2 respresentation of the XML file
-	var file = Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, path );
-	return Ti.XML.parseString( file.read().text );
-}
-
-function isXmlNode( node, tagName, ns ) {
-	return ( node.tagName === tagName && node.namespaceURI === ns );
-}
-
-// Searches for the first Element child of node
-function getFirstChildElement( node ) {
-	if ( ! node.hasChildNodes() ) return null;
-	var cs = node.getChildNodes();
-	var rn = null;
-	var i = 0;
-	while( _.isNull(rn) && i < cs.length ) {
-		var c = cs.item(i++);
-		if ( c.nodeType === node.ELEMENT_NODE ) {
-			rn = c;
-		}
-	}
-	return rn;
-}
-
-function childElementsByTag( node, tagName, ns, func ) {
-	iterateXmlNodeList( node.getChildNodes(), function(nd) {
-		if ( isXmlNode( nd, tagName, ns ) ) {
-			func( nd );
-		}
-	});
-}
-
-function iterateXmlNodeList( nodeList, func ) {
-	for( var i = 0; i < nodeList.length; i++ ) {
-		func( nodeList.item( i ) );
-	}
-}
-
 function expectNode( node, tagName ) {
-	if ( ! isXmlNode( node, tagName, WALTA_KEY_NS ) ) {
+	if ( ! XmlUtils.isXmlNode( node, WALTA_KEY_NS, tagName) ) {
 		throw "Expecting a {" + WALTA_KEY_NS + "}" + tagName 
 				+ " but got {" + node.namespaceURI + "}" + node.tagName + " instead?";
 	} else {
@@ -61,17 +19,9 @@ function expectNode( node, tagName ) {
 	}
 }
 
-function getAttr( node, attrName ) {
-	if ( node.hasAttribute( attrName ) ) {
-		return node.getAttribute( attrName );
-	} else {
-		return undefined;
-	}
-}
-
-function getText( node, tagName ) {
+function getText( node, ns, tagName ) {
 	var nds = [];
-	childElementsByTag( node, tagName, WALTA_KEY_NS, function( nd ) { nds.push(nd); } );
+	XmlUtils.childElementsByTag( node, ns, tagName, function( nd ) { nds.push(nd); } );
 	if ( nds.length > 0 ) {
 		return nds[0].getTextContent();
 	} else {
@@ -81,7 +31,7 @@ function getText( node, tagName ) {
 
 function parseMediaUrls( key, nd ) {
 	var urls = [];
-	childElementsByTag( nd, 'mediaRef', WALTA_KEY_NS,
+	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'mediaRef',
 		function( mr ) {
 			urls.push( key.url + "/media/" + mr.getAttribute( 'url' ) );
 			
@@ -94,20 +44,20 @@ function parseTaxon( key, nd ) {
 	var xTxn = expectNode( nd, 'taxon' );
 	key.attachTaxon(
 		Taxon.createTaxon({
-			id: getAttr( xTxn, 'id'),
-			name: getAttr( xTxn, 'name'),
-			commonName: getAttr( xTxn, 'commonName'),
-			size: getAttr( xTxn, 'size'),
-			signalScore: getAttr( xTxn, 'signalScore'),
-			habitat: getText( xTxn, 'habitat' ),
-			movement: getText( xTxn, 'movement' ),
-			confusedWith: getText( xTxn, 'confusedWith' ),
+			id: XmlUtils.getAttr( xTxn, 'id'),
+			name: XmlUtils.getAttr( xTxn, 'name'),
+			commonName: XmlUtils.getAttr( xTxn, 'commonName'),
+			size: parseInt( XmlUtils.getAttr( xTxn, 'size') ),
+			signalScore: parseInt( XmlUtils.getAttr( xTxn, 'signalScore') ),
+			habitat: getText( xTxn, WALTA_KEY_NS, 'habitat'),
+			movement: getText( xTxn, WALTA_KEY_NS, 'movement'),
+			confusedWith: getText( xTxn, WALTA_KEY_NS, 'confusedWith'),
 			mediaUrls: parseMediaUrls( key, xTxn )
 		})
 	);
 	
 	// Parse any sub Taxon nodes
-	childElementsByTag( nd, 'taxon', WALTA_KEY_NS, 
+	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'taxon', 
 		function(nd){
 			parseTaxon( key, nd );
 		});
@@ -116,8 +66,8 @@ function parseTaxon( key, nd ) {
 function parseQuestion( key, nd, parentLink ) {
 	
 	// Parse the attributes
-	var num = getAttr( nd, 'num' );
-	var text = getText( nd, 'text' );
+	var num = XmlUtils.getAttr( nd, 'num' );
+	var text = getText( nd, WALTA_KEY_NS, 'text' );
 	var media = parseMediaUrls( key, nd );
 	
 	if ( _.isUndefined( num ) ) {
@@ -129,11 +79,11 @@ function parseQuestion( key, nd, parentLink ) {
 	var foundOutcome = false;
 	
 	// Search for outcome for this question num
-	childElementsByTag( nd.getParentNode(), 'outcome', WALTA_KEY_NS, 
+	XmlUtils.childElementsByTag( nd.getParentNode(), WALTA_KEY_NS, 'outcome', 
 		function( nd ) {
-			if ( getAttr( nd, 'for' ) == num ) {
+			if ( XmlUtils.getAttr( nd, 'for' ) == num ) {
 				
-				var nd2 = getFirstChildElement( nd );
+				var nd2 = XmlUtils.getFirstChildElement( nd );
 				if ( ! _.isNull( nd2 ) ) {
 					// If it is a nested keyNode then recursive descent
 					if ( nd2.tagName === 'keyNode' ) {
@@ -144,7 +94,7 @@ function parseQuestion( key, nd, parentLink ) {
 					// If it is a link then deference if possible, otherwise add to futureLinks
 					// to resolve if the node is found in the future.
 					else if ( nd2.tagName === 'taxonLink' || nd2.tagName === 'keyNodeLink' ) {
-						ref = getAttr( nd2, 'ref' );
+						ref = XmlUtils.getAttr( nd2, 'ref' );
 						if ( _.isUndefined( ref ) ) {
 							throw "Missing ref attribute on outcome for question node: " + text;
 						} else {
@@ -180,7 +130,7 @@ function parseQuestion( key, nd, parentLink ) {
 function parseKeyNode( key, nd ) {
 	var xKeyNode = expectNode( nd, 'keyNode' );
 	var kn = Key.createKeyNode({
-			id: getAttr( nd, 'id'),
+			id: XmlUtils.getAttr( nd, 'id'),
 			questions: []
 	});
 		
@@ -188,7 +138,7 @@ function parseKeyNode( key, nd ) {
 		key.setRootNode( kn );
 	}
 	
-	childElementsByTag( nd, 'question', WALTA_KEY_NS,
+	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'question',
 		function( nd ) {
 			kn.questions.push( parseQuestion( key, nd, kn ) );
 		});
@@ -218,10 +168,10 @@ function parseKey( node, path ) {
 }
 
 function loadKey( path ) {
-	var xml = loadXml( path + "/key.xml" );
+	var xml = XmlUtils.loadXml( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, path, "key.xml" ) );
 	var key = parseKey( xml.documentElement, path );
-	childElementsByTag( xml.documentElement, 'taxon', WALTA_KEY_NS, _.partial( parseTaxon, key ) );
-	childElementsByTag( xml.documentElement, 'keyNode', WALTA_KEY_NS, _.partial( parseKeyNode, key ) );
+	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
+	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'keyNode', _.partial( parseKeyNode, key ) );
 	return key;
 }
 

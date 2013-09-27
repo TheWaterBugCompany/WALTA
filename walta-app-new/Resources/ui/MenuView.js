@@ -8,7 +8,7 @@ var _ = require('lib/underscore')._;
 var PubSub = require('lib/pubsub');
 var Layout = require('ui/Layout');
 
-var Topics = require('Topics');
+var Topics = require('ui/Topics');
 
 // Create a menu button
 function createLargeMenuButton( image, topic, label, text ) {

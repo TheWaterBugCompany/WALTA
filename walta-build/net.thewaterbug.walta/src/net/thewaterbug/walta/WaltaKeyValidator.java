@@ -10,9 +10,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.wst.validation.AbstractValidator;
 import org.eclipse.wst.validation.ValidationResult;
 import org.eclipse.wst.validation.ValidationState;
@@ -22,12 +20,12 @@ import org.xml.sax.XMLReader;
 
 public class WaltaKeyValidator extends AbstractValidator  {
 	
-	private ILog log = WaltaPlugin.getInstance().getLog();
+	//private ILog log = WaltaPlugin.getInstance().getLog();
 	
 	@Override
 	public ValidationResult validate(IResource resource, int kind, ValidationState state, IProgressMonitor monitor) {
 		
-		log.log( new Status(Status.INFO, "net.waterbug.walta", Status.OK, "validate() method called", null ) );
+		//log.log( new Status(Status.INFO, "net.waterbug.walta", Status.OK, "validate() method called", null ) );
 		
 		ValidationResult res = new ValidationResult();
 		

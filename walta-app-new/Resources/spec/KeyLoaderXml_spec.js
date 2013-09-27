@@ -8,7 +8,7 @@ var KeyLoaderXml = require('logic/KeyLoaderXml');
 describe('KeyLoaderXml', function() {
 	var key;
 	it('should load a key from XML', function(){
-		key = KeyLoaderXml.loadKey( 'spec/resources/simpleKey1' );
+		key = KeyLoaderXml.loadKey( '/spec/resources/simpleKey1' );
 		expect( key ).toBeDefined();
 	});
 	it('should have the correct toplevel node', function(){	
@@ -19,13 +19,13 @@ describe('KeyLoaderXml', function() {
 			+ "often lying on their side or moving with their side flat against "
 			+ "the substrate." );
 		expect( nd.questions[0].mediaUrls ).toEqual( 
-			[ 'spec/resources/simpleKey1/media/couplet5p1.jpg' ]
+			[ 'appdata-private:///WALTA//spec/resources/simpleKey1/media/couplet5p1.jpg' ]
 		);
 		expect( nd.questions[1].text ).toEqual( 
 			"Animals not flattened or flattened 'front to back' (like humans or "
 			+ "cockroaches)." );
 		expect( nd.questions[1].mediaUrls ).toEqual( 
-			[ 'spec/resources/simpleKey1/media/couplet5p2.jpg' ]
+			[ 'appdata-private:///WALTA//spec/resources/simpleKey1/media/couplet5p2.jpg' ]
 		);
 		
 	});
@@ -41,8 +41,8 @@ describe('KeyLoaderXml', function() {
 		expect( nd.id ).toEqual( "parastacidae" );
 		expect( nd.name ).toEqual( "Parastacidae" );
 		expect( nd.commonName ).toEqual( "freshwater crayfish or yabbies" );
-		expect( nd.size ).toEqual( '300' );
-		expect( nd.signalScore ).toEqual( '4' );
+		expect( nd.size ).toEqual( 300 );
+		expect( nd.signalScore ).toEqual( 4 );
 		expect( nd.habitat ).toEqual( "Crayfish in rivers (upper photo) yabbies "
 			+ "in wetlands/pools (lower photo)." );
 		expect( nd.movement ).toEqual( "walking, with sudden flips when disturbed." );
@@ -50,8 +50,8 @@ describe('KeyLoaderXml', function() {
 			+ "crayfish and Yabbies grouped together because they mostly turn up as "
 			+ "juveniles in samples and are difficult to separate when young." );
 		expect( nd.mediaUrls ).toEqual( 
-			[ 'spec/resources/simpleKey1/media/parastacide_01.jpg',
-			  'spec/resources/simpleKey1/media/parastacide_02.jpg' ]
+			[ 'appdata-private:///WALTA//spec/resources/simpleKey1/media/parastacide_01.jpg',
+			  'appdata-private:///WALTA//spec/resources/simpleKey1/media/parastacide_02.jpg' ]
 		);
 	});
 	it('should have the correct outcome for root[0][1] (keyNodeRef)', function(){

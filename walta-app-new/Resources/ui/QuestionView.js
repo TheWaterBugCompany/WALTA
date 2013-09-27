@@ -63,13 +63,8 @@ function createQuestionView(  /* Question */ qn ) {
 		e.cancelBubble = true;
 	});
 
-	
-	
-
-	
 	qnViewObj.view = qnView;
 	
 	return qnViewObj;
 };
-
 exports.createQuestionView = createQuestionView;

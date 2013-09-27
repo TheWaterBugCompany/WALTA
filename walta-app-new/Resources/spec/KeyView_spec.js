@@ -4,7 +4,7 @@ var Question = require('logic/Question');
 var Key = require('logic/Key');
 var KeyView = require('ui/KeyView');
 
-var Topics = require('Topics');
+var Topics = require('ui/Topics');
 
 // Create a test key to display
 var key = Key.createKey( {
