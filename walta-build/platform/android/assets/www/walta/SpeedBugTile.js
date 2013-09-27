@@ -1,2 +1,0 @@
-//>>built
-define("walta/SpeedBugTile","dojo/_base/declare,dojo/_base/lang,dojo/dom-construct,dojo/on,dojo/topic,dojox/mobile/Pane,dijit/_Contained".split(","),function(a,b,c,d,e,f,g){return a("walta.SpeedBugTile",[f,g],{image:"",ref:"",baseClass:"waltaSpeedBugTile",buildRendering:function(){this.inherited(arguments);var a=c.create("img",{"class":"waltaSpeedBugImage",src:this.image},this.containerNode);d(a,"click",b.hitch(this,function(){e.publish("key/jump",this.ref)}))}})});

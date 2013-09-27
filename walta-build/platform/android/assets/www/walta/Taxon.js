@@ -1,3 +1,0 @@
-//>>built
-define("walta/Taxon",["dojo/_base/declare","dojo/_base/array","dojo/_base/lang","walta/KeyNode"],function(b,c){return b(null,{id:null,name:"",commonName:"",size:0,signalScore:0,habitat:"",movement:"",confusedWith:"",mediaUrls:[],photoUrls:null,videoUrl:null,parent:null,_hasExtension:function(a,d){var b=a.split(".").pop();return 0<=c.indexOf(d,b)},constructor:function(a){b.safeMixin(this,a);this.photoUrls=c.filter(this.mediaUrls,function(a){return this._hasExtension(a,["jpg","png","gif","jpeg"])},
-this);a=c.filter(this.mediaUrls,function(a){return this._hasExtension(a,["mp4","webm","ogv"])},this);if(0<a.length)this.videoUrl=a[0]}})});
