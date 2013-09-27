@@ -18,6 +18,7 @@ var AnchorBar = require('ui/AnchorBar');
 var MenuView = require('ui/MenuView');
 var TaxonView = require('ui/TaxonView');
 var KeyView = require('ui/KeyView');
+var VideoView = require('ui/VideoView');
 
 function createAppWindow( keyUrl ) {
 	if ( ! keyUrl ) {
@@ -162,6 +163,11 @@ function createAppWindow( keyUrl ) {
     	privates.key.choose(data);
 	    privates.updateDecisionWindow();
 	    privates.transitionToFront( 'decision' ); 
+    });
+    
+    privates.subscribe( Topics.VIDEO, function( msg, data ) { 
+    	var videoview = VideoView.createVideoView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, data ) );
+    	videoview.open();
     });
 	
 

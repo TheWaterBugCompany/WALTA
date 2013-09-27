@@ -8,7 +8,7 @@
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
 
-function createVideoView( url ) {
+function createVideoView( file ) {
 	
 	var vv = { _views: {}, win: null, vp: null };
 	
@@ -40,7 +40,7 @@ function createVideoView( url ) {
 			vv.vp = Ti.Media.createVideoPlayer({
 				width: Ti.UI.FILL,
 				height: Ti.UI.FILL,
-				url: url,
+				url: file.getNativePath(),
 				autoplay: true,
 				backgroundColor: 'black',
 				fullscreen: true,
@@ -51,8 +51,8 @@ function createVideoView( url ) {
 			vv.vp.add( vv._views.closeButton );
 
 			vv._views.playButton.addEventListener( 'click', function(e){
-				vp.play();
-				vp.remove( playButton );
+				vv.vp.play();
+				vv.vp.remove( playButton );
 				e.cancelBubble = true;
 			});
 			

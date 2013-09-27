@@ -150,6 +150,7 @@ function createActionsView(txnViewObj) {
 	if (txnViewObj.taxon.videoUrl) {
 		vws.watchVideo = createActionButton("/images/video.png", "Watch video", function(e) {
 			// open video player
+			PubSub.publish( Topics.VIDEO, txnViewObj.taxon.videoUrl );
 			e.cancelBubble = true;
 		});
 		vws.actionBtns.add(vws.watchVideo.view);

@@ -9,13 +9,16 @@ var topics = {
 	SETTINGS: 'settings',
 	INFO: 'info',
 	
+	// Open the video player
+	VIDEO: 'video', // the filename is passed as parameter
+	
 	// Backwards on the decision tree
 	BACK: 'back',
 	
 	// Forwards on the decision tree passing choice as parameter
-	FORWARD: 'forward',
+	FORWARD: 'forward', // the choice number is passed as parameter
 	
-	// Start the deciosn process from the beginning
+	// Start the decision process from the beginning
 	KEYSEARCH: 'keysearch',
 	
 	SPEEDBUG: 'speedbug',
