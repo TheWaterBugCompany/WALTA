@@ -11,6 +11,8 @@ Ti.XML.applyProperties({
 });
 
 function loadXml( file ) {
+	if ( ! file.exists() ) 
+		throw "Unable to find file: " + file.getNativePath();
 	return Ti.XML.parseString( file.read().text );
 }
 

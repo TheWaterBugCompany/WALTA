@@ -70,7 +70,15 @@ function createKey( args ) {
 		
 		// Move the current decision to the referenced node
 		setCurrentNode: function( refId ) {
-			this.currentDecision = this.findNode( refId );
+			var node = this.findNode( refId );
+			if ( _.isUndefined( node ) ) {
+				node = this.findTaxon( refId );
+			} 
+			if ( _.isUndefined( node ) ) {
+				throw "Unable to find key node " + refId;
+			}
+			
+			this.currentDecision = node;
 		},
 		
 		// Return the current decision
@@ -86,6 +94,11 @@ function createKey( args ) {
 		// Find a Taxon by id
 		findTaxon: function( refId ) {
 			return taxIdToNode[refId];
+		},
+		
+		// Return a list of all Taxons
+		findAllTaxons: function() {
+			return _.values( taxIdToNode );
 		},
 		
 		// Used to attach a node to the tree

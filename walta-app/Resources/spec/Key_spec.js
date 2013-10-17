@@ -5,7 +5,7 @@ var Question = require('logic/Question');
 var Taxon = require('logic/Taxon');
 
 describe('Key', function() {
-	
+	var taxons;
 	// Create a new key and add some taxons and nodes
 	var testKey = Key.createKey( {
 		url: 'https://example.com',
@@ -13,7 +13,7 @@ describe('Key', function() {
 	});
 	
 	it( 'should be able to construct a key', function() {
-		var taxons = [
+		taxons = [
 		 Taxon.createTaxon({ id: "t1", name: "Taxon 1" }),
 		 Taxon.createTaxon({ id: "t2", name: "Taxon 2" }),
 		 Taxon.createTaxon({ id: "t3", name: "Taxon 3" })
@@ -115,5 +115,12 @@ describe('Key', function() {
 	it('should return the the root on reset()', function() {
 		testKey.reset();
 		expect( testKey.isRoot() ).toEqual( true );
+	});
+	
+	it('should list all the taxons with findAllTaxons()', function() {
+		txns = testKey.findAllTaxons();
+		expect( txns ).toContain( taxons[0] );
+		expect( txns ).toContain( taxons[1] );
+		expect( txns ).toContain( taxons[2] );
 	});
 });

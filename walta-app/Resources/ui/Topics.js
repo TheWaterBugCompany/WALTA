@@ -18,6 +18,9 @@ var topics = {
 	// Forwards on the decision tree passing choice as parameter
 	FORWARD: 'forward', // the choice number is passed as parameter
 	
+	// Jumps to a position in the key
+	JUMPTO: 'jumpto',
+	
 	// Start the decision process from the beginning
 	KEYSEARCH: 'keysearch',
 	

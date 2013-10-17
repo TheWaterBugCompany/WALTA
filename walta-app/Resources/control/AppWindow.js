@@ -5,7 +5,6 @@
  * TODO: Worthwhile converting app to alloy ??
  * 
  */
-
 var _ = require('lib/underscore')._;
 
 var PubSub = require('lib/pubsub');
@@ -19,6 +18,7 @@ var MenuView = require('ui/MenuView');
 var TaxonView = require('ui/TaxonView');
 var KeyView = require('ui/KeyView');
 var VideoView = require('ui/VideoView');
+var BrowseView = require('ui/BrowseView');
 
 function createAppWindow( keyUrl ) {
 	if ( ! keyUrl ) {
@@ -77,6 +77,14 @@ function createAppWindow( keyUrl ) {
 			});
 		},
 		
+		browseWindow: function() {
+			this.makeTopLevelWindow({
+				name: 'browse',
+				title: 'Browse',
+				uiObj: BrowseView.createBrowseView(privates.key)
+			});	
+		},
+		
 		updateDecisionWindow: function() {
 			var node = this.key.getCurrentNode();
 			
@@ -118,6 +126,7 @@ function createAppWindow( keyUrl ) {
 			this.currentWindow.win.open( { fullscreen: true } );
 			if ( oldWindow ) 
 				oldWindow.hide(); */
+			return null;
 		},
 		
 		subscribe: function( topic, cb ) {
@@ -166,8 +175,18 @@ function createAppWindow( keyUrl ) {
     });
     
     privates.subscribe( Topics.VIDEO, function( msg, data ) { 
-    	var videoview = VideoView.createVideoView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, data ) );
-    	videoview.open();
+    	var vv = VideoView.createVideoView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, data ) );
+    	vv.open();
+    });
+    
+    privates.subscribe( Topics.BROWSE, function() { 
+    	privates.browseWindow();
+    });
+    
+    privates.subscribe( Topics.JUMPTO, function( msg, id ) { 
+    	privates.key.setCurrentNode(id);
+	    privates.updateDecisionWindow();
+	    privates.transitionToFront( 'decision' ); 
     });
 	
 
@@ -186,5 +205,4 @@ function createAppWindow( keyUrl ) {
 
 	return appWin;
 }
-
 exports.createAppWindow = createAppWindow;

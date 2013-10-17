@@ -4,7 +4,6 @@
  * Plays a video full screen with simple controls
  * 
  */
-
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
 
@@ -83,5 +82,4 @@ function createVideoView( file ) {
 		};
 	return vv;
 }
-
 exports.createVideoView = createVideoView;
