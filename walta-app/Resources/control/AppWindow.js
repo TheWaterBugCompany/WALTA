@@ -19,6 +19,7 @@ var TaxonView = require('ui/TaxonView');
 var KeyView = require('ui/KeyView');
 var VideoView = require('ui/VideoView');
 var BrowseView = require('ui/BrowseView');
+var SpeedbugView = require('ui/SpeedbugView');
 
 function createAppWindow( keyUrl ) {
 	if ( ! keyUrl ) {
@@ -61,7 +62,7 @@ function createAppWindow( keyUrl ) {
 				width: Ti.UI.FILL, 
 				height: Ti.UI.FILL 
 			}));
-			//this.storeTopLevelWindow( args.name, args.uiObj, win );
+		
 			
 			// Transition the windows
 			win.open();
@@ -85,6 +86,14 @@ function createAppWindow( keyUrl ) {
 			});	
 		},
 		
+		speedBugWindow: function() {
+			this.makeTopLevelWindow({
+				name: 'speedbug',
+				title: 'Speedbug',
+				uiObj: SpeedbugView.createSpeedbugView(privates.key)
+			});	
+		},
+		
 		updateDecisionWindow: function() {
 			var node = this.key.getCurrentNode();
 			
@@ -103,30 +112,6 @@ function createAppWindow( keyUrl ) {
 					uiObj: TaxonView.createTaxonView( node )
 				});
 			}
-		},
-		
-		storeTopLevelWindow: function( name, uiObj, win ) {
-			this.windows[name] = {
-				name: name,
-				uiObj: uiObj,
-				win: win
-			};
-		},
-		
-		/* 
-		 * Bring the named window to the front and close
-		 * the previous window behind it.
-		 * TODO: Add transition effect 
-		 */
-		transitionToFront: function( name ) {
-		/*	var oldWindow = null;
-			if ( this.currentWindow ) 
-			    oldWindow =  this.currentWindow.win;
-			this.currentWindow = this.windows[name];
-			this.currentWindow.win.open( { fullscreen: true } );
-			if ( oldWindow ) 
-				oldWindow.hide(); */
-			return null;
 		},
 		
 		subscribe: function( topic, cb ) {
@@ -149,9 +134,7 @@ function createAppWindow( keyUrl ) {
 	var appWin = { keyUrl: keyUrl };
 	
 	privates.loadKey( appWin.keyUrl );
-	
-	privates.menuWindow();
-	
+
 	privates.subscribe( Topics.HOME, function() { privates.menuWindow();  } );
 	
     privates.subscribe( Topics.KEYSEARCH, function() { 
@@ -171,7 +154,6 @@ function createAppWindow( keyUrl ) {
     privates.subscribe( Topics.FORWARD, function( msg, data ) { 
     	privates.key.choose(data);
 	    privates.updateDecisionWindow();
-	    privates.transitionToFront( 'decision' ); 
     });
     
     privates.subscribe( Topics.VIDEO, function( msg, data ) { 
@@ -186,7 +168,10 @@ function createAppWindow( keyUrl ) {
     privates.subscribe( Topics.JUMPTO, function( msg, id ) { 
     	privates.key.setCurrentNode(id);
 	    privates.updateDecisionWindow();
-	    privates.transitionToFront( 'decision' ); 
+    });
+    
+    privates.subscribe( Topics.SPEEDBUG, function() { 
+    	privates.speedBugWindow();
     });
 	
 
@@ -196,7 +181,7 @@ function createAppWindow( keyUrl ) {
 			return privates.currentWindow;
 		},
 		start: function() {
-			privates.transitionToFront( 'home' );
+			privates.menuWindow();
 		},
 		close: function() {
 			privates.cleanUp();

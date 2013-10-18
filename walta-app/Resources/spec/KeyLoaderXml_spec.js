@@ -70,4 +70,15 @@ describe('KeyLoaderXml', function() {
 		var nd = key.root.questions[0].outcome;
 		expect( nd.questions[1].outcome.parentLink ).toBe( nd );
 	});
+		
+	it('should list the speed bug index with getSpeedbugIndex()', function() {
+		sbug = key.getSpeedbugIndex();
+		expect( sbug ).toBeDefined();
+		expect( sbug['maggots'] ).toBeDefined();
+		expect( sbug['maggots'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/athericidae.svg", refId: "athericidae" } );
+		expect( sbug['maggots'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/blepheraceridae.svg", refId: "blepheraceridae" }  );
+		expect( sbug['ranatra'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/ranatra.svg", refId: "ranatra" } );
+		expect( sbug['larval'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/hydrobiosidae.svg", refId: "hydrobiosidae" } );
+		expect( sbug['larval'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/megaloptera.svg", refId: "corydalidae" } );
+	});
 });

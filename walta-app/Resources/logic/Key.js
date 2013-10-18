@@ -30,6 +30,7 @@ function createKey( args ) {
 	// Private variables here
 	var taxIdToNode = {};
 	var keyIdToNode = {};
+	var speedBugIndex = {};
 	
 	if ( _.isNull( obj.currentDecision ) ) {
 		obj.currentDecision = obj.root;
@@ -75,7 +76,7 @@ function createKey( args ) {
 				node = this.findTaxon( refId );
 			} 
 			if ( _.isUndefined( node ) ) {
-				throw "Unable to find key node " + refId;
+				throw "Unable to find key node '" + refId +"'";
 			}
 			
 			this.currentDecision = node;
@@ -109,28 +110,38 @@ function createKey( args ) {
 			}
 		},
 		
-		// Attach node and link to parent
 		linkNodeToParent: function( parent, qn, node ) {
 			this.attachNode( node );
 			parent.questions[qn].outcome = node;
 			node.parentLink = parent;
 		},
 		
-		// Attach a taxon
 		attachTaxon: function( taxon ) {
 			if ( ! _.isUndefined( taxon.id ) ) {
 				taxIdToNode[taxon.id] = taxon;
 			}
 		},
 		
-		// Attach taxon and link to parent
 		linkTaxonToParent: function( parent, qn, taxon ) {
 			this.attachTaxon( taxon );
 			parent.questions[qn].outcome = taxon;
 			taxon.parentLink = parent;
 		},
 		
-		// Set the root node
+		// Adds a "Speed Bug" link, this allows a special index
+		// to be displayed that jumps directly to a node within
+		// a key by touching a silhouette image.
+		addSpeedbugIndex: function( imgUrl, grpId, refId) {
+			if ( ! _(speedBugIndex).has(grpId) ) {
+				speedBugIndex[grpId] = [];
+			} 
+			speedBugIndex[grpId].push( { imgUrl: imgUrl, refId: refId } );
+		},
+		
+		getSpeedbugIndex: function() {
+			return speedBugIndex;
+		},
+		
 		setRootNode: function( node ) {
 			this.attachNode( node );
 			this.root = node;

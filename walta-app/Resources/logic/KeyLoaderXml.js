@@ -128,7 +128,7 @@ function parseQuestion( key, nd, parentLink ) {
 }
 
 function parseKeyNode( key, nd ) {
-	var xKeyNode = expectNode( nd, 'keyNode' );
+	expectNode( nd, 'keyNode' );
 	var kn = Key.createKeyNode({
 			id: XmlUtils.getAttr( nd, 'id'),
 			questions: []
@@ -159,6 +159,25 @@ function parseKeyNode( key, nd ) {
 	return kn;
 }
 
+function parseSpeedBug( key, nd ) {
+	expectNode( nd, 'speedBugIndex' );
+	XmlUtils.childElements( nd, function( sg ) {
+		if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugGroup' ) ) {
+			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
+				key.addSpeedbugIndex( 
+					key.url + "/media/" + XmlUtils.getAttr( sb, "image" ), 
+					XmlUtils.getAttr( sg, "ref" ),
+					XmlUtils.getAttr( sb, "ref" ) );
+			});
+		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
+			key.addSpeedbugIndex( 
+					key.url + "/media/" + XmlUtils.getAttr( sg, "image" ), 
+					XmlUtils.getAttr( sg, "ref" ),
+					XmlUtils.getAttr( sg, "ref" ) );
+		}
+	});
+}
+
 function parseKey( node, path ) {
 	var xKey = expectNode( node, 'key' );
 	return Key.createKey( {
@@ -172,6 +191,7 @@ function loadKey( path ) {
 	var key = parseKey( xml.documentElement, path );
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'keyNode', _.partial( parseKeyNode, key ) );
+	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'speedBugIndex', _.partial( parseSpeedBug, key ) );
 	return key;
 }
 

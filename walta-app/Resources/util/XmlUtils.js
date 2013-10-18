@@ -16,6 +16,10 @@ function loadXml( file ) {
 	return Ti.XML.parseString( file.read().text );
 }
 
+function isXmlElement( node ) {
+	return node.nodeType === node.ELEMENT_NODE;
+}
+
 function isXmlNode( node, ns, tagName ) {
 	return ( node.tagName === tagName && node.namespaceURI === ns );
 }
@@ -33,6 +37,14 @@ function getFirstChildElement( node ) {
 		}
 	}
 	return rn;
+}
+
+function childElements( node, func ) {
+	iterateXmlNodeList( node.getChildNodes(), function(nd) {
+		if ( isXmlElement( nd ) ) {
+			func( nd );
+		}
+	});
 }
 
 function childElementsByTag( node, ns, tagName, func ) {
@@ -60,6 +72,7 @@ function getAttr( node, attrName ) {
 exports.loadXml = loadXml;
 exports.isXmlNode = isXmlNode;
 exports.getFirstChildElement = getFirstChildElement;
+exports.childElements = childElements;
 exports.childElementsByTag = childElementsByTag;
 exports.iterateXmlNodeList = iterateXmlNodeList;
 exports.getAttr = getAttr;

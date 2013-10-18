@@ -4266,13 +4266,13 @@
   <!-- These links are total rubbish ... but this is an example of how the speed bug data is encoded -->
   <speedBugIndex>
       <speedBugGroup ref="maggots">
-          <speedBugLink image="speedbug/athericidae.svg" ref="philorheithridae"/>
-      <speedBugLink image="speedbug/blepheraceridae.svg" ref="hymenosomatidae"/>
+          <speedBugLink image="speedbug/athericidae_b.gif" ref="chelicerata"/>
+      <speedBugLink image="speedbug/blepheraceridae_b.gif" ref="hymenosomatidae"/>
       </speedBugGroup>
-      <speedBugLink image="speedbug/ranatra.svg" ref="N5"/>
+      <speedBugLink image="speedbug/ranatra_b.gif" ref="helicopsychidae"/>
       <speedBugGroup ref="larval">
-          <speedBugLink image="speedbug/hydrobiosidae.svg" ref="janiridae"/>
-      <speedBugLink image="speedbug/megaloptera.svg" ref="phreatoicidae"/>
+          <speedBugLink image="speedbug/hydrobiosidae_b.gif" ref="hydrobiosidae"/>
+      <speedBugLink image="speedbug/megaloptera_b.gif" ref="leptoceridae"/>
       </speedBugGroup>
   </speedBugIndex>
   
