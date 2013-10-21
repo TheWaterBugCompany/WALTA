@@ -81,6 +81,8 @@ function createAppWindow( keyUrl ) {
 						activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
 						activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
 					});
+				} else {
+					win.open();	
 				}
 			} else if ( args.slide == 'left' ) {
 				if ( Ti.Platform.osname === 'android') {
@@ -88,10 +90,11 @@ function createAppWindow( keyUrl ) {
 						activityEnterAnimation: Ti.App.Android.R.anim.key_enter_left,
 						activityExitAnimation: Ti.App.Android.R.anim.key_exit_right
 					});
+				} else {
+					win.open();	
 				}
 			} else {
 				win.open();
-				
 			}
 			if ( this.currentWindow ) {
 				// Need to delay closing the window until the animation has had time to complete
