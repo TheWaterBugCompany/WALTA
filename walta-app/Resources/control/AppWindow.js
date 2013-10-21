@@ -76,15 +76,19 @@ function createAppWindow( keyUrl ) {
 			
 			// Transition the windows
 			if ( args.slide == 'right' ) {
-				win.open({
-					activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
-					activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
-				});
+				if ( Ti.Platform.osname === 'android') {
+					win.open({
+						activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
+						activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
+					});
+				}
 			} else if ( args.slide == 'left' ) {
-				win.open({
-					activityEnterAnimation: Ti.App.Android.R.anim.key_enter_left,
-					activityExitAnimation: Ti.App.Android.R.anim.key_exit_right
-				});
+				if ( Ti.Platform.osname === 'android') {
+					win.open({
+						activityEnterAnimation: Ti.App.Android.R.anim.key_enter_left,
+						activityExitAnimation: Ti.App.Android.R.anim.key_exit_right
+					});
+				}
 			} else {
 				win.open();
 				
