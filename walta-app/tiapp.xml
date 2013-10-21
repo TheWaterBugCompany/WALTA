@@ -3,10 +3,10 @@
     <id>net.thewaterbug.walta</id>
     <name>WALTA</name>
     <version>1.0</version>
-    <publisher>msharman</publisher>
+    <publisher>The Code Sharman</publisher>
     <url>http://www.thewaterbug.net/</url>
-    <description>not specified</description>
-    <copyright>2013 by msharman</copyright>
+    <description>The Waterbug App Beta Test</description>
+    <copyright>2013 by The Waterbug Company</copyright>
     <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
@@ -14,15 +14,9 @@
     <statusbar-hidden>true</statusbar-hidden>
     <fullscreen>true</fullscreen>
     <navbar-hidden>true</navbar-hidden>
-    <analytics>true</analytics>
+    <analytics>false</analytics>
     <guid>0e4d6897-097c-4adc-8ccb-1e12ba3dfdc9</guid>
     <property name="ti.ui.defaultunit" type="string">dip</property>
-    <property name="ti.android.fastdev" type="bool">false</property>
-    <iphone>
-        <orientations device="iphone">
-            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
-        </orientations>
-    </iphone>
     <modules/>
     <deployment-targets>
         <target device="iphone">true</target>

@@ -47,11 +47,21 @@ function createAppWindow( keyUrl ) {
 		 * in a window and adds an AnchorBar to the top. 
 		 */
 		makeTopLevelWindow: function ( args ) {
+			var oModes;
+			if ( args.portrait ) {
+				oModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
+			} else if ( args.swivel ) {
+				oModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
+			} else {
+				oModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT ];
+			}
 			var win = Ti.UI.createWindow( { 
+				navBarHidden: true, // necessary for Android to support orientationModes by forcing heavy weight windows
 				width: Ti.UI.FILL,
 				height: Ti.UI.FILL,
 				backgroundColor: 'white',
-				layout: 'vertical'
+				layout: 'vertical',
+				orientationModes:  oModes
 			});
 			
 			if ( args.title ) {
@@ -65,16 +75,34 @@ function createAppWindow( keyUrl ) {
 		
 			
 			// Transition the windows
-			win.open();
-			if ( this.currentWindow )
-				this.currentWindow.close();
+			if ( args.slide == 'right' ) {
+				win.open({
+					activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
+					activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
+				});
+			} else if ( args.slide == 'left' ) {
+				win.open({
+					activityEnterAnimation: Ti.App.Android.R.anim.key_enter_left,
+					activityExitAnimation: Ti.App.Android.R.anim.key_exit_right
+				});
+			} else {
+				win.open();
+				
+			}
+			if ( this.currentWindow ) {
+				// Need to delay closing the window until the animation has had time to complete
+				var cwin = this.currentWindow;
+				setTimeout( function() { cwin.close(); }, 400 );
+			}
+			
 			this.currentWindow = win;
 		},
 		
 		menuWindow: function() {
 			this.makeTopLevelWindow({
 				name: 'home',
-				uiObj: MenuView.createMenuView()
+				uiObj: MenuView.createMenuView(),
+				portrait: true
 			});
 		},
 		
@@ -82,7 +110,8 @@ function createAppWindow( keyUrl ) {
 			this.makeTopLevelWindow({
 				name: 'browse',
 				title: 'Browse',
-				uiObj: BrowseView.createBrowseView(privates.key)
+				uiObj: BrowseView.createBrowseView(privates.key),
+				swivel: true
 			});	
 		},
 		
@@ -94,8 +123,9 @@ function createAppWindow( keyUrl ) {
 			});	
 		},
 		
-		updateDecisionWindow: function() {
+		updateDecisionWindow: function( backwards ) {
 			var node = this.key.getCurrentNode();
+			var slideDir = ( backwards ? 'left' : 'right');
 			
 			// KeyView when on a decision point
 			// but TaxonView when on a leaf node
@@ -103,13 +133,15 @@ function createAppWindow( keyUrl ) {
 				this.makeTopLevelWindow( {
 					name: 'decision',
 					title: 'ALT Key',
-					uiObj: KeyView.createKeyView( node )
+					uiObj: KeyView.createKeyView( node ),
+					slide: slideDir
 				});
 			} else {
 				this.makeTopLevelWindow( {
 					name: 'decision',
 					title: 'ALT Key',
-					uiObj: TaxonView.createTaxonView( node )
+					uiObj: TaxonView.createTaxonView( node ),
+					slide: slideDir
 				});
 			}
 		},
@@ -139,7 +171,7 @@ function createAppWindow( keyUrl ) {
 	
     privates.subscribe( Topics.KEYSEARCH, function() { 
     	privates.key.reset();
-    	privates.updateDecisionWindow();
+    	privates.updateDecisionWindow( false );
     });
     
     privates.subscribe( Topics.BACK, function() { 
@@ -147,7 +179,7 @@ function createAppWindow( keyUrl ) {
     	if ( privates.key.isRoot() ) {
     		privates.menuWindow(); 
     	} else {
-	    	privates.updateDecisionWindow();
+	    	privates.updateDecisionWindow( true );
 	    }
     });
     

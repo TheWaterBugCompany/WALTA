@@ -13,11 +13,9 @@ var Topics = require('ui/Topics');
 // Create a menu button
 function createLargeMenuButton( image, topic, label, text ) {
 	var btn = wrap( 'horizontal', [
-		Ti.UI.createImageView({
-			top: Layout.WHITESPACE_GAP,
-			left: Layout.WHITESPACE_GAP,
-			width: '98dip',
-			height: '73dip',
+		icon({
+			width: Layout.MENU_ICON_WIDTH,
+			height: Layout.MENU_ICON_HEIGHT,
 			image: image
 		}),
 		wrap( 'vertical',[
@@ -48,8 +46,8 @@ function createLargeMenuButton( image, topic, label, text ) {
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
-			top: Layout.WHITESPACE_GAP,
-			left: Layout.WHITESPACE_GAP,
+			top: Layout.MENU_GAP,
+			left: Layout.MENU_GAP,
 			width: Layout.MENU_ITEM_WIDTH,
 			height: Layout.MENU_ITEM_HEIGHT,
 			borderRadius: Layout.BORDER_RADIUS_MENU_BIG,
@@ -83,9 +81,9 @@ function createSmallMenuButton( topic, label, text ) {
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
-			top: Layout.WHITESPACE_GAP,
-			left: Layout.WHITESPACE_GAP,
-			width: '95dip',
+			top: Layout.MENU_GAP,
+			left: Layout.MENU_GAP,
+			width: Layout.MENU_ITEM_WIDTH_2,
 			height: Layout.MENU_ITEM_HEIGHT,
 			borderRadius: Layout.BORDER_RADIUS_MENU_SMALL,
 			backgroundColor: '#552F61CC'
@@ -95,12 +93,23 @@ function createSmallMenuButton( topic, label, text ) {
 function wrap( dir, views ) {
 	var wrp = Ti.UI.createView({
 		layout: dir,
-		//horizontalWrap: false,
 		width: Ti.UI.FILL,
 		height: Ti.UI.SIZE
 	});
 	_(views).each( function(v) { wrp.add(v); });
 	return wrp;
+}
+
+function icon( args ) {
+	var ic = Ti.UI.createImageView(
+		args	
+	);
+	var cnt = Ti.UI.createView({
+		width: Ti.UI.SIZE,
+		height: Ti.UI.FILL
+	});
+	cnt.add( ic );
+	return cnt;
 }
 
 function createMenuView() {
@@ -117,18 +126,17 @@ function createMenuView() {
 	});
 	
 	vws.logo = _(wrap( 'horizontal',[
-		Ti.UI.createImageView({
-			top: Layout.WHITESPACE_GAP,
-			left: Layout.WHITESPACE_GAP,
-			width: '98dip',
-			height: '73dip',
+		icon({
+			width: Layout.MENU_LOGO_WIDTH,
+			height: Layout.MENU_LOGO_HEIGHT,
 			image: '/images/logo.png'
 		}),
 		wrap( 'vertical',[
 			Ti.UI.createLabel({
 				top: Layout.WHITESPACE_GAP,
 				left: Layout.WHITESPACE_GAP,
-				bottom: 0,
+				right: Layout.WHITESPACE_GAP,
+				bottom: Layout.WHITESPACE_GAP,
 				width: Ti.UI.FILL,
 				height: Ti.UI.SIZE,
 				text: 'WALTA',
@@ -146,7 +154,7 @@ function createMenuView() {
 			})
 		])
 	])).extend( {
-			left: Layout.WHITESPACE_GAP,
+			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
 			width: Layout.MENU_ITEM_WIDTH
 		});
