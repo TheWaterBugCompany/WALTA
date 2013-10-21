@@ -57,6 +57,7 @@ function createAppWindow( keyUrl ) {
 			}
 			var win = Ti.UI.createWindow( { 
 				navBarHidden: true, // necessary for Android to support orientationModes by forcing heavy weight windows
+				fullscreen: true,
 				width: Ti.UI.FILL,
 				height: Ti.UI.FILL,
 				backgroundColor: 'white',
@@ -82,7 +83,17 @@ function createAppWindow( keyUrl ) {
 						activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
 					});
 				} else {
-					win.open();	
+					// Slide old window to the left and new window from the right
+					win.setTransform( Ti.UI.create2DMatrix().translate( win.size.width, 0 ) );
+					win.open();
+					win.animate({ animate: Ti.UI.createAnimation( {
+						transform: Ti.UI.create2DMatrix(),
+						duration: 400
+					})});
+					this.currentWindow.animate({ animate: Ti.UI.createAnimation( {
+						transform: Ti.UI.create2DMatrix().translate( -win.size.width, 0 ),
+						duration: 400
+					})});
 				}
 			} else if ( args.slide == 'left' ) {
 				if ( Ti.Platform.osname === 'android') {
@@ -91,7 +102,17 @@ function createAppWindow( keyUrl ) {
 						activityExitAnimation: Ti.App.Android.R.anim.key_exit_right
 					});
 				} else {
-					win.open();	
+					// Slide old window to the right and new window from the left
+					win.setTransform( Ti.UI.create2DMatrix().translate( -win.size.width, 0 ) );
+					win.open();
+					win.animate({ animate: Ti.UI.createAnimation( {
+						transform: Ti.UI.create2DMatrix(),
+						duration: 400
+					})});
+					this.currentWindow.animate({ animate: Ti.UI.createAnimation( {
+						transform: Ti.UI.create2DMatrix().translate( win.size.width, 0 ),
+						duration: 400
+					})});
 				}
 			} else {
 				win.open();
