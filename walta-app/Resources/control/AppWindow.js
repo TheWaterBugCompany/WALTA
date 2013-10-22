@@ -21,6 +21,29 @@ var VideoView = require('ui/VideoView');
 var BrowseView = require('ui/BrowseView');
 var SpeedbugView = require('ui/SpeedbugView');
 
+
+function iPhone_Slide( win1, win2, dir ) {
+	var tx1, tx2;
+	
+	if ( dir == 'right' ) {
+		tx1 = win1.size.width;
+		tx2 = -tx1; 
+	} else {
+		tx2 = win1.size.width;
+		tx1 = -tx2;	
+	}
+	
+	win2.setTransform( Ti.UI.create2DMatrix().translate( tx1, 0 ) );
+	win1.close( Ti.UI.createAnimation({
+		transform: Ti.UI.create2DMatrix().translate( tx2, 0 ),
+		duration: 300
+	}));
+    win2.open( Ti.UI.createAnimation({
+		transform: Ti.UI.create2DMatrix(),
+		duration: 300
+	})); 
+}
+
 function createAppWindow( keyUrl ) {
 	if ( ! keyUrl ) {
 		throw "Must provide a keyUrl argument";
@@ -82,18 +105,10 @@ function createAppWindow( keyUrl ) {
 						activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
 						activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
 					});
+					var cwin = this.currentWindow;
+					setTimeout( function() { cwin.close(); }, 400 );
 				} else {
-					// Slide old window to the left and new window from the right
-					win.setTransform( Ti.UI.create2DMatrix().translate( win.size.width, 0 ) );
-					win.open();
-					win.animate({ animate: Ti.UI.createAnimation( {
-						transform: Ti.UI.create2DMatrix(),
-						duration: 400
-					})});
-					this.currentWindow.animate({ animate: Ti.UI.createAnimation( {
-						transform: Ti.UI.create2DMatrix().translate( -win.size.width, 0 ),
-						duration: 400
-					})});
+					iPhone_Slide( this.currentWindow, win, args.slide );
 				}
 			} else if ( args.slide == 'left' ) {
 				if ( Ti.Platform.osname === 'android') {
@@ -101,24 +116,15 @@ function createAppWindow( keyUrl ) {
 						activityEnterAnimation: Ti.App.Android.R.anim.key_enter_left,
 						activityExitAnimation: Ti.App.Android.R.anim.key_exit_right
 					});
+					
 				} else {
-					// Slide old window to the right and new window from the left
-					win.setTransform( Ti.UI.create2DMatrix().translate( -win.size.width, 0 ) );
-					win.open();
-					win.animate({ animate: Ti.UI.createAnimation( {
-						transform: Ti.UI.create2DMatrix(),
-						duration: 400
-					})});
-					this.currentWindow.animate({ animate: Ti.UI.createAnimation( {
-						transform: Ti.UI.create2DMatrix().translate( win.size.width, 0 ),
-						duration: 400
-					})});
+					iPhone_Slide( this.currentWindow, win, args.slide );
 				}
 			} else {
 				win.open();
 			}
-			if ( this.currentWindow ) {
-				// Need to delay closing the window until the animation has had time to complete
+			
+			if ( Ti.Platform.osname === 'android' && this.currentWindow ) {
 				var cwin = this.currentWindow;
 				setTimeout( function() { cwin.close(); }, 400 );
 			}
