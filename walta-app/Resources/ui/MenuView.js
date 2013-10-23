@@ -133,23 +133,17 @@ function createMenuView() {
 		}),
 		wrap( 'vertical',[
 			Ti.UI.createLabel({
-				top: Layout.WHITESPACE_GAP,
-				left: Layout.WHITESPACE_GAP,
-				right: Layout.WHITESPACE_GAP,
-				bottom: Layout.WHITESPACE_GAP,
-				width: Ti.UI.FILL,
+				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: 'WALTA',
 				font: { fontFamily: 'Boulder', fontSize: '50dip' },
 				color: 'black'
 			}),
 			Ti.UI.createLabel({
-				top: '-8dip',
-				left: Layout.WHITESPACE_GAP,
-				width: Ti.UI.FILL,
+				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: 'Waterbug ALT App',
-				font: { fontFamily: 'Tahoma', fontSize: '20dip' },
+				font: { fontFamily: 'Tahoma', fontSize: '18dip' },
 				color: 'black'
 			})
 		])
@@ -199,7 +193,7 @@ function createMenuView() {
 	);
 	menu.view.add( wrap( 'horizontal', [  
 		vws.logo, vws.speedbug, vws.keysearch, vws.browse, 
-		vws.help, vws.gallery, vws.about 
+		vws.help, vws.gallery, vws.about
 	]));
 	
 	return menu;
