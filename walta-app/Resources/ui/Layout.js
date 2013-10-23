@@ -34,8 +34,10 @@ if ( Ti.Platform.osname === 'android' ) {
 	exports.BORDER_RADIUS = 45;
 	exports.BORDER_RADIUS_MENU_BIG = 35;
 	exports.BORDER_RADIUS_MENU_SMALL = 15;
+	exports.BORDER_RADIUS_BUTTON = 7;
 } else {
 	exports.BORDER_RADIUS = 25;
 	exports.BORDER_RADIUS_MENU_BIG = 15;
 	exports.BORDER_RADIUS_MENU_SMALL = 4;
+	exports.BORDER_RADIUS_BUTTON = 2;
 }
