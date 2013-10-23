@@ -58,7 +58,7 @@ function createAppWindow( keyUrl ) {
 	// Private variables that are not to be exposed as API
 	var privates = {
 		key: null,
-		//windows: {},
+		isMenuWindow: false,
 		currentWindow: null,
 		callbacks: [],
 		
@@ -94,6 +94,8 @@ function createAppWindow( keyUrl ) {
 				orientationModes:  oModes
 			});
 			
+			
+			
 			if ( args.title ) {
 				win.add( AnchorBar.createAnchorBar( args.title ).view );
 			}
@@ -107,6 +109,10 @@ function createAppWindow( keyUrl ) {
 				win.addEventListener( 'open', args.onOpen );
 			}
 		
+			win.addEventListener( 'android:back', function(e) {
+				e.cancelBubble = true;
+				PubSub.publish( Topics.BACK, null );
+			});
 			
 			// Transition the windows
 			if ( args.slide == 'right' ) {
@@ -138,6 +144,7 @@ function createAppWindow( keyUrl ) {
 			}
 			
 			this.currentWindow = win;
+			this.isMenuWindow = false;
 		},
 		
 		menuWindow: function(args) {
@@ -146,6 +153,7 @@ function createAppWindow( keyUrl ) {
 				uiObj: MenuView.createMenuView(),
 				portrait: true
 			}).extend(args));
+			this.isMenuWindow = true;
 		},
 		
 		browseWindow: function() {
@@ -212,10 +220,14 @@ function createAppWindow( keyUrl ) {
     });
     
     privates.subscribe( Topics.BACK, function() { 
-    	
     	if ( privates.key.isRoot() ) {
-    		
-    		privates.menuWindow(); 
+    		if ( privates.isMenuWindow ) {
+    			if ( Ti.Platform.osname === 'android'  ) {
+    				Ti.Android.currentActivity.finish();
+    			}
+    		} else {
+    			privates.menuWindow();
+    		} 
     	} else {
     		privates.key.back();
 	    	privates.updateDecisionWindow({ slide: 'left' } );
