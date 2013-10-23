@@ -255,8 +255,15 @@ function createAppWindow( keyUrl ) {
 
 			// Overlay a windows on the splash screen to show loading indicator
 			var args = {};
+			
+			// Under iPhone the splash screen is not display transparently underneath
+			// the app so we need to set the background to an appropriate image.
 			if ( Ti.Platform.osname === 'iphone' ) {
-				args['backgroundImage'] = 'Default@2x.png';
+				if ( Ti.Platform.displayCaps.density === 'high' ) {
+					args['backgroundImage'] = 'Default@2x.png';
+				} else {
+					args['backgroundImage'] = 'Default.png';
+				}
 			}
 			
 			var actWin = Ti.UI.createWindow(args);
