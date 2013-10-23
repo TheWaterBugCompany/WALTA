@@ -34,17 +34,20 @@ function iPhone_Slide( win1, win2, dir ) {
 	}
 	
 	win2.setTransform( Ti.UI.create2DMatrix().translate( tx1, 0 ) );
-	win2.open(); // Open window first
+	win2.open(); // Open window first: opening a window is a heavy operation
+	             // so we open it early to make sure it is ready to be
+	             // animated instantly in the following code.
 	var a1 = Ti.UI.createAnimation({ 
 		transform: Ti.UI.create2DMatrix().translate( tx2, 0 ),
-		duration: 300
+		duration: 400
 	});
 	var a2 = Ti.UI.createAnimation({
 		transform: Ti.UI.create2DMatrix(),
-		duration: 300
+		duration: 400
 	});
+	win2.animate( a2 ); 
 	win1.close( a1 );
-    win2.animate( a2 ); 
+
 }
 
 function createAppWindow( keyUrl ) {
@@ -158,26 +161,23 @@ function createAppWindow( keyUrl ) {
 			});	
 		},
 		
-		updateDecisionWindow: function( backwards ) {
+		updateDecisionWindow: function( args ) {
 			var node = this.key.getCurrentNode();
-			var slideDir = ( backwards ? 'left' : 'right');
 			
 			// KeyView when on a decision point
 			// but TaxonView when on a leaf node
 			if ( this.key.isNode( node ) ) {
-				this.makeTopLevelWindow( {
+				this.makeTopLevelWindow( _({
 					name: 'decision',
 					title: 'ALT Key',
-					uiObj: KeyView.createKeyView( node ),
-					slide: slideDir
-				});
+					uiObj: KeyView.createKeyView( node )
+				}).extend( args ));
 			} else {
-				this.makeTopLevelWindow( {
+				this.makeTopLevelWindow( _({
 					name: 'decision',
 					title: 'ALT Key',
-					uiObj: TaxonView.createTaxonView( node ),
-					slide: slideDir
-				});
+					uiObj: TaxonView.createTaxonView( node )
+				}).extend( args ));
 			}
 		},
 		
@@ -206,21 +206,23 @@ function createAppWindow( keyUrl ) {
 	
     privates.subscribe( Topics.KEYSEARCH, function() { 
     	privates.key.reset();
-    	privates.updateDecisionWindow( false );
+    	privates.updateDecisionWindow();
     });
     
     privates.subscribe( Topics.BACK, function() { 
-    	privates.key.back();
+    	
     	if ( privates.key.isRoot() ) {
+    		
     		privates.menuWindow(); 
     	} else {
-	    	privates.updateDecisionWindow( true );
+    		privates.key.back();
+	    	privates.updateDecisionWindow({ slide: 'left' } );
 	    }
     });
     
     privates.subscribe( Topics.FORWARD, function( msg, data ) { 
     	privates.key.choose(data);
-	    privates.updateDecisionWindow();
+	    privates.updateDecisionWindow({ slide: 'right' });
     });
     
     privates.subscribe( Topics.VIDEO, function( msg, data ) { 
