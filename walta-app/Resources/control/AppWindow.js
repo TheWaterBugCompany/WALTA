@@ -102,6 +102,10 @@ function createAppWindow( keyUrl ) {
 				width: Ti.UI.FILL, 
 				height: Ti.UI.FILL 
 			}));
+			
+			if ( args.onOpen ) {
+				win.addEventListener( 'open', args.onOpen );
+			}
 		
 			
 			// Transition the windows
@@ -136,12 +140,12 @@ function createAppWindow( keyUrl ) {
 			this.currentWindow = win;
 		},
 		
-		menuWindow: function() {
-			this.makeTopLevelWindow({
+		menuWindow: function(args) {
+			this.makeTopLevelWindow(_({
 				name: 'home',
 				uiObj: MenuView.createMenuView(),
 				portrait: true
-			});
+			}).extend(args));
 		},
 		
 		browseWindow: function() {
@@ -200,8 +204,6 @@ function createAppWindow( keyUrl ) {
 	
 	var appWin = { keyUrl: keyUrl };
 	
-	privates.loadKey( appWin.keyUrl );
-
 	privates.subscribe( Topics.HOME, function() { privates.menuWindow();  } );
 	
     privates.subscribe( Topics.KEYSEARCH, function() { 
@@ -250,7 +252,31 @@ function createAppWindow( keyUrl ) {
 			return privates.currentWindow;
 		},
 		start: function() {
-			privates.menuWindow();
+
+			// Overlay a windows on the splash screen to show loading indicator
+			var actWin = Ti.UI.createWindow();
+			var actInd = Ti.UI.createActivityIndicator({
+				height: Ti.UI.SIZE,
+				width: Ti.UI.SIZE,
+				color: 'white',
+				font: { fontFamily: 'Tahoma', fontSize:'28dip' },
+				bottom: '30dip',
+				right: '120dip',
+				style: ( Ti.Platform.osname === 'iphone' ? Titanium.UI.iPhone.ActivityIndicatorStyle.BIG : Titanium.UI.ActivityIndicatorStyle.BIG )
+			});
+			
+			actWin.add( actInd );
+			actWin.open();
+			actInd.show();
+		
+			privates.loadKey( appWin.keyUrl );
+			privates.menuWindow( {
+				onOpen: function() {			
+					actInd.hide();
+					actWin.close();
+				}
+			});
+
 		},
 		close: function() {
 			privates.cleanUp();
