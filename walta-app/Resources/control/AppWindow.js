@@ -34,14 +34,17 @@ function iPhone_Slide( win1, win2, dir ) {
 	}
 	
 	win2.setTransform( Ti.UI.create2DMatrix().translate( tx1, 0 ) );
-	win1.close( Ti.UI.createAnimation({
+	win2.open(); // Open window first
+	var a1 = Ti.UI.createAnimation({ 
 		transform: Ti.UI.create2DMatrix().translate( tx2, 0 ),
 		duration: 300
-	}));
-    win2.open( Ti.UI.createAnimation({
+	});
+	var a2 = Ti.UI.createAnimation({
 		transform: Ti.UI.create2DMatrix(),
 		duration: 300
-	})); 
+	});
+	win1.close( a1 );
+    win2.animate( a2 ); 
 }
 
 function createAppWindow( keyUrl ) {
@@ -105,8 +108,6 @@ function createAppWindow( keyUrl ) {
 						activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
 						activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
 					});
-					var cwin = this.currentWindow;
-					setTimeout( function() { cwin.close(); }, 400 );
 				} else {
 					iPhone_Slide( this.currentWindow, win, args.slide );
 				}
