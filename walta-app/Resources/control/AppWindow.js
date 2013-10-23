@@ -254,7 +254,9 @@ function createAppWindow( keyUrl ) {
 		start: function() {
 
 			// Overlay a windows on the splash screen to show loading indicator
-			var actWin = Ti.UI.createWindow();
+			var actWin = Ti.UI.createWindow({
+				backgroundColor: 'transparent'
+			});
 			var actInd = Ti.UI.createActivityIndicator({
 				height: Ti.UI.SIZE,
 				width: Ti.UI.SIZE,
