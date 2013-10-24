@@ -18,11 +18,10 @@ function createLargeMenuButton( image, topic, label, text ) {
 			height: Layout.MENU_ICON_HEIGHT,
 			image: image
 		}),
-		wrap( 'vertical',[
+		vertCentre( 
+			wrap( 'vertical',[
 			Ti.UI.createLabel({
-				top: 0,
 				left: 0,
-				right: Layout.WHITESPACE_GAP,
 				width: Ti.UI.FILL,
 				height: Ti.UI.SIZE,
 				text: label,
@@ -30,16 +29,14 @@ function createLargeMenuButton( image, topic, label, text ) {
 				color: '#882F61CC'
 			}),
 			Ti.UI.createLabel({
-				top: 0,
 				left: 0,
-				right: Layout.WHITESPACE_GAP,
 				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: text,
 				font: { fontFamily: 'Tahoma', fontSize: '14dip' },
 				color: 'black'
 			})
-		])
+		]))
 	]);
 	btn.addEventListener( 'click', function(e) {
 		PubSub.publish( topic, null );
@@ -56,26 +53,25 @@ function createLargeMenuButton( image, topic, label, text ) {
 }
 
 function createSmallMenuButton( topic, label, text ) {
-	var btn = wrap( 'vertical',[
-			Ti.UI.createLabel({
-				top: Layout.BUTTON_MARGIN,
-				left: Layout.WHITESPACE_GAP,
-				width: Ti.UI.FILL,
-				height: Ti.UI.SIZE,
-				text: label,
-				font: { fontFamily: 'Boulder', fontSize: '20dip' },
-				color: '#882F61CC'
-			}),
-			Ti.UI.createLabel({
-				top: 0,
-				left: Layout.WHITESPACE_GAP,
-				width: Ti.UI.FILL,
-				height: Ti.UI.SIZE,
-				text: text,
-				font: { fontFamily: 'Tahoma', fontSize: '14dip' },
-				color: 'black'
-			})
-	]);
+	var btn = 
+			wrap( 'vertical',[
+				Ti.UI.createLabel({
+					left: Layout.WHITESPACE_GAP,
+					width: Ti.UI.FILL,
+					height: Ti.UI.SIZE,
+					text: label,
+					font: { fontFamily: 'Boulder', fontSize: '20dip' },
+					color: '#882F61CC'
+				}),
+				Ti.UI.createLabel({
+					left: Layout.WHITESPACE_GAP,
+					width: Ti.UI.FILL,
+					height: Ti.UI.SIZE,
+					text: text,
+					font: { fontFamily: 'Tahoma', fontSize: '14dip' },
+					color: 'black'
+				}) 
+		]);
 	btn.addEventListener( 'click', function(e) {
 		PubSub.publish( topic, null );
 		e.cancelBubble = true;
@@ -88,6 +84,15 @@ function createSmallMenuButton( topic, label, text ) {
 			borderRadius: Layout.BORDER_RADIUS_MENU_SMALL,
 			backgroundColor: '#552F61CC'
 		} );
+}
+
+function vertCentre( view ) {
+	var wrp = Ti.UI.createView({
+		width: Ti.UI.FILL,
+		height: Ti.UI.FILL
+	});
+	wrp.add(view);
+	return wrp;
 }
 
 function wrap( dir, views ) {
@@ -131,22 +136,23 @@ function createMenuView() {
 			height: Layout.MENU_LOGO_HEIGHT,
 			image: '/images/logo.png'
 		}),
-		wrap( 'vertical',[
-			Ti.UI.createLabel({
-				width: Ti.UI.SIZE,
-				height: Ti.UI.SIZE,
-				text: 'WALTA',
-				font: { fontFamily: 'Boulder', fontSize: '50dip' },
-				color: 'black'
-			}),
-			Ti.UI.createLabel({
-				width: Ti.UI.SIZE,
-				height: Ti.UI.SIZE,
-				text: 'Waterbug ALT App',
-				font: { fontFamily: 'Tahoma', fontSize: '18dip' },
-				color: 'black'
-			})
-		])
+		vertCentre(
+			wrap( 'vertical',[
+				Ti.UI.createLabel({
+					width: Ti.UI.SIZE,
+					height: Ti.UI.SIZE,
+					text: 'WALTA',
+					font: { fontFamily: 'Boulder', fontSize: '50dip' },
+					color: 'black'
+				}),
+				Ti.UI.createLabel({
+					width: Ti.UI.SIZE,
+					height: Ti.UI.SIZE,
+					text: 'Waterbug ALT App',
+					font: { fontFamily: 'Tahoma', fontSize: '18dip' },
+					color: 'black'
+				})
+			]))
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
