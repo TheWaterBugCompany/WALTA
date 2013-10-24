@@ -40,16 +40,19 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	qnView.add( vws.arrow );
 	
+	var rightMargin = '32dip';
+	
 	if ( qn.photoUrls.length > 0 ) {
 		vws.photoView = PhotoView.createPhotoView( qn.photoUrls );
 		qnView.add( _(vws.photoView.view ).extend( { height: '90%', width: Layout.THUMBNAIL_WIDTH, right: '30dip' }));
+		rightMargin = '232dip';
 	}
 
 	vws.qnLabel = Ti.UI.createLabel({
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		left: '10dip',
-		right: '232dip',
+		right: rightMargin,
 		text: qn.text,
 		font: { font: 'Tahoma', fontSize: Layout.QUESTION_TEXT_SIZE },
 		color: 'black'
