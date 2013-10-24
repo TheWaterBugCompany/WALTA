@@ -41,11 +41,15 @@ function createSpeedbugView(  /* Key */ key ) {
 	_(sbug).each( function( sg ) {
 		var grpCnt = Ti.UI.createView( { 
 				layout: 'vertical', 
-				width: Ti.UI.SIZE , 
+				width: Ti.UI.SIZE, 
 				height: Ti.UI.FILL
 			 } );
 			 
-		var bugsCnt = Ti.UI.createView( { layout: 'horizontal', horizontalWrap: false, height: '83%', width: Ti.UI.SIZE } );
+		var bugsCnt = Ti.UI.createView( { 
+			layout: 'horizontal', 
+			horizontalWrap: false, 
+			height: '83%', 
+			width: Ti.UI.SIZE } );
 		
 		_(sg).each( function( sb ) {
 			var cnt = Ti.UI.createView( {
@@ -76,6 +80,7 @@ function createSpeedbugView(  /* Key */ key ) {
 		if ( bugsCnt.children.length >= 2 ) {
 			var notSureBtn = Ti.UI.createLabel( {
 				height: '10%',
+				width: bugsCnt.children.length*150, // FIXME: Ti.UI.FILL doesn't get correct size on iOS
 				left: Layout.BUTTON_MARGIN,
 				right: Layout.BUTTON_MARGIN,
 				top: Layout.WHITESPACE_GAP,

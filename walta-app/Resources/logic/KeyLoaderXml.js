@@ -195,5 +195,4 @@ function loadKey( path ) {
 	return key;
 }
 
-
 exports.loadKey = loadKey;
