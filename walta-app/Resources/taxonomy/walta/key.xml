@@ -91,7 +91,8 @@
 
         <mediaRef url="amphipoda_01.jpg" />
         <mediaRef url="amphipoda_02.jpg" />
-
+        <mediaRef url="amphipoda_03.jpg" />
+        
       </taxon>
 
       <taxon id="anostraca" name="Anostraca" commonName="fairy shrimp" size="25" signalScore="1">
@@ -104,6 +105,10 @@
 
         <mediaRef url="anostraca_01.jpg" />
         <mediaRef url="anostraca_02.jpg" />
+        <mediaRef url="anostraca_03.jpg" />
+        <mediaRef url="anostraca_m1.mp4" />
+        
+        
 
       </taxon>
 
@@ -387,7 +392,6 @@
             <confusedWith>Small individuals from the two-tailed tigers will unavoidably key out as swimming water tigers.</confusedWith>
 
             <mediaRef url="swimming_water_tiger_larvae_01.jpg" />
-            <mediaRef url="swimming_water_tiger_larvae_02.jpg" />
 
 
           </taxon>
@@ -494,7 +498,6 @@
             <confusedWith>Nothing. Nothing else gets this big.</confusedWith>
 
             <mediaRef url="hydrophilus_01.jpg" />
-            <mediaRef url="hydrophilus_m1.mp4" />
 
           </taxon>
 
@@ -591,7 +594,6 @@
           <confusedWith>Nothing, very distinctive once you have definitely seen the side projections.</confusedWith>
 
           <mediaRef url="athericidae_01.jpg" />
-          <mediaRef url="athericidae_02.jpg" />
 
         </taxon>
 
@@ -741,7 +743,6 @@
           <mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_01.jpg" />
           <mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_02.jpg" />
           <mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_03.jpg" />
-          <mediaRef url="tabanidae_dolichopodidae_empididae_some_tipulidae_04.jpg" />
 
         </taxon>
 
@@ -784,6 +785,7 @@
           <confusedWith>Siphlonurids.</confusedWith>
 
           <mediaRef url="baetidae_01.jpg" />
+          <mediaRef url="baetidae_m1.mp4" />
 
         </taxon>
 
@@ -822,6 +824,7 @@
             <confusedWith>Other leptophlebs, but the banded legs and fluffy gills are VERY distinctive.</confusedWith>
 
             <mediaRef url="atalophlebia_01.jpg" />
+            <mediaRef url="atalophlebia_m1.mp4" />            
 
           </taxon>
 
@@ -1014,6 +1017,7 @@
             <confusedWith>Younger robust backswimmers Enithares.</confusedWith>
 
             <mediaRef url="anisops_01.jpg" />
+            <mediaRef url="backswimmer_m1.mp4" />
 
           </taxon>
 
@@ -1024,6 +1028,8 @@
             <confusedWith>Slender backswimmers Anisops.</confusedWith>
 
             <mediaRef url="enithares_01.jpg" />
+            <mediaRef url="backswimmer_m1.mp4" />
+            
 
           </taxon>
 
@@ -1046,7 +1052,7 @@
           <confusedWith>Nothing. If they are in large numbers and are dark or black they are probably Veliidae (two lower photos). Pale individuals are likely to be Mesoveliidae (top photo). Hebridae are relatively rare.</confusedWith>
 
           <mediaRef url="veliidae_Mesoveliidae_and_herbridae_01.jpg" />
-          <mediaRef url="veliidae_Mesoveliidae_and_herbridae_m1.mp4" />
+          <mediaRef url="veliidae_Mesoveliidae_and_hebridae_m1.mp4" />
 
         </taxon>
 
@@ -1060,6 +1066,9 @@
           <confusedWith>Telephlebiidae.</confusedWith>
 
           <mediaRef url="aeshnidae_01.jpg" />
+          <mediaRef url="aeshnidae_m1.mp4" />
+          <mediaRef url="aeshnidae_m2.mp4" />
+          
 
         </taxon>
 
@@ -1080,7 +1089,6 @@
           <confusedWith>Nothing so long as you get a good look at the antennae. These are obvious even on juveniles.</confusedWith>
 
           <mediaRef url="gomphidae_01.jpg" />
-          <mediaRef url="gomphidae_m1.mp4" />
 
         </taxon>
 
@@ -1399,7 +1407,7 @@
             <confusedWith>Nothing, case and movement are distinctive.</confusedWith>
 
             <mediaRef url="notalina_01.jpg" />
-            <mediaRef url="notalina_m1.mp4" />
+            <mediaRef url="leptocerid_head_bang_m1.mp4" />
 
           </taxon>
 
@@ -1412,7 +1420,6 @@
               <confusedWith>Young leptocerids have a tubular sand case, but they have much longer hind legs.</confusedWith>
 
               <mediaRef url="oecetis_01.jpg" />
-              <mediaRef url="oecetis_m1.mp4" />
 
             </taxon>
 
@@ -1478,7 +1485,7 @@
           <confusedWith>Young leptocerids have a tubular sand case, but they have much longer hind legs.</confusedWith>
 
           <mediaRef url="philorheithridae_01.jpg" />
-          <mediaRef url="attack_caddis_01_x264.mp4" />
+          <mediaRef url="attack_caddis_01.mp4" />
 
         </taxon>
 
@@ -1585,7 +1592,7 @@
           <movement>Very slow. Can stick to the sorting tray, so they are worth checking for after a live-pick once you have tipped the rest of the sample out.</movement>
           <confusedWith>Nothing, but they can be very small and the shell can be transparent so they are sometimes hard to see.</confusedWith>
 
-          <mediaRef url="ancylidae_01.jpg" />
+          <mediaRef url="ancylidae.jpg" />
 
         </taxon>
 
@@ -1625,7 +1632,7 @@
             <movement>Slow, will retract into shell and drop off vegetation, so it is sometimes worth panning through sand at the end of a live pick to see if you can find them.</movement>
             <confusedWith>Nothing, really distinctive. Etymology: 'plan'-flat + 'orbi'-circle.</confusedWith>
 
-            <mediaRef url="flat_snails_01.jpg" />
+            <mediaRef url="flatsnails_01.jpg" />
 
           </taxon>
 
@@ -1859,12 +1866,12 @@
 
                                 <question num="1">
                                   <text>longlegs,case never with coarse vegetation attached lengthways</text>
-                                  <mediaRef url="casedcaddisflies.jpg" />
+                                  <mediaRef url="casedcaddisflies.gif" />
                                 </question>
 
                                 <question num="2">
                                   <text>short, stumpy legs, case with coarse vegetation attached lengthways</text>
-                                  <mediaRef url="aquaticcaterpillas.gif" />
+                                  <mediaRef url="aquatic_caterpillers_01.gif" />
                                 </question>
 
                                 <outcome for="1">
@@ -1906,7 +1913,7 @@
 
                                     <question num="2">
                                       <text>mouthparts short and curved</text>
-                                      <mediaRef url="shortcurvedmouth.jpg" />
+                                      <mediaRef url="shortcurvedmouth.gif" />
                                     </question>
 
                                     <outcome for="1">
@@ -1923,7 +1930,7 @@
 
                                         <question num="2">
                                           <text>not as above</text>
-                                          <mediaRef url="toebiter.jpg" />
+                                          <mediaRef url="toebiter.gif" />
                                         </question>
 
                                         <outcome for="1">
@@ -1971,7 +1978,7 @@
 
                                 <question num="2">
                                   <text>not as above</text>
-                                  <mediaRef url="beetlelarvaetails.jpg" />
+                                  <mediaRef url="swimming_water_tiger_larvae_01.jpg" />
                                 </question>
 
                                 <outcome for="1">
@@ -2190,7 +2197,7 @@
 
                 <question num="1">
                   <text>Snails are coiled small (less than 10 mm), often jet black with dextrally (see illustration) coiled shell and a black disk (operculum) on the foot used for shutting the shell. This can be hard to see without magnification.</text>
-                  <mediaRef url="shelltypes.gif" />
+                  <mediaRef url="potamopyrgus_02.gif" />
                 </question>
 
                 <question num="2">
@@ -2207,12 +2214,12 @@
 
                     <question num="1">
                       <text>Shell sinistral (left handed - or footed)</text>
-                      <mediaRef url="sinistral.gif" />
+                      <mediaRef url="shell_sinistral.gif" />
                     </question>
 
                     <question num="2">
                       <text>Shell dextral (right handed)</text>
-                      <mediaRef url="dextral.gif" />
+                      <mediaRef url="shell_dextral.gif" />
                     </question>
 
                     <outcome for="1">
@@ -2296,7 +2303,7 @@
       <keyNode>
         <question num="1">
           <text>Shrimp or prawn-like animals (see pictures).</text>
-          <mediaRef url="shrimplike.jpg" />
+          <mediaRef url="shrimplike.gif" />
         </question>
 
         <question num="2">
@@ -2350,7 +2357,7 @@
 
                 <question num="2">
                   <text>Animals not flattened or flattened 'front to back' (like humans or cockroaches).</text>
-                  <mediaRef url="frontbacksquash.jpg" />
+                  <mediaRef url="frontbacksquashed.jpg" />
                 </question>
 
                 <outcome for="1">
@@ -2358,7 +2365,7 @@
 
                     <question num="1">
                       <text>Animal rests on its side, swims in swift bursts.</text>
-                      <mediaRef url="amphipodlike.jpg" />
+                      <mediaRef url="amphipoda_02.jpg" />
                     </question>
 
                     <question num="2">
@@ -2398,7 +2405,7 @@
 
                         <question num="1">
                           <text>Animal looks like this.</text>
-                          <mediaRef url="anostraca_01" />
+                          <mediaRef url="anostraca_01.jpg" />
                         </question>
 
                         <question num="2">
@@ -2495,11 +2502,17 @@
           <keyNode>
 
             <question num="1">
-              <text>Beetles appear to swim with all 3 or at least 2 pairs of legs. Legs move alternately. </text>
+              <text>Beetles move with all 3 or at least 2 pairs of legs. Legs move alternately. </text>
+              <mediaRef url="beetles_not_swimming_m1.mp4"/>
+              
             </question>
 
             <question num="2">
-              <text>Beetles appear to swim with only the rear pair of legs, legs move in unison; motion is like breast stroke. Rear swimming legs held upwards when beetle rests.</text>
+              <text>Beetles appear to swim smoothly with only the rear pair of legs, legs move in unison; motion is like breast stroke. Rear swimming legs held upwards when beetle rests.</text>
+              <mediaRef url="beetles_swim_m1.mp4"/>
+              <mediaRef url="beetles_swim_m2.mp4"/>
+              
+
             </question>
 
             <outcome for="1">
@@ -3526,7 +3539,7 @@
                 </outcome>
 
                 <outcome for="2">
-                  <taxonLink ref="aeshnida" />
+                  <taxonLink ref="aeshnidae" />
                 </outcome>
               </keyNode>
             </outcome>
