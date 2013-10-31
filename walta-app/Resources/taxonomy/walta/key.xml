@@ -1626,7 +1626,7 @@
 
         <taxon id="planorbidae" name="Planorbidae">
 
-          <taxon id="flat_snails" name="Planorbids (flat snails)" commonName="flat snails" size="6" signalScore="6">
+          <taxon id="flat_snails" name="Planorbidae" commonName="flat snails" size="6" signalScore="6">
 
             <habitat>Wetlands / Rivers, temporary waters.</habitat>
             <movement>Slow, will retract into shell and drop off vegetation, so it is sometimes worth panning through sand at the end of a live pick to see if you can find them.</movement>
@@ -1733,12 +1733,12 @@
 
     <question num="1">
       <text>Animal with a shell</text>
-      <mediaRef url="withshell.jpg" />
+      <mediaRef url="withshell.gif" />
     </question>
 
     <question num="2">
       <text>Animal without a shell</text>
-      <mediaRef url="withoutshell.jpg" />
+      <mediaRef url="withoutshell.gif" />
     </question>
 
     <outcome for="1">
