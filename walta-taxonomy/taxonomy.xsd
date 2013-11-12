@@ -83,7 +83,8 @@
 	    	<attribute name="commonName" type="token"/>
 	    	<attribute name="size" type="string" />
 	    	<attribute name="signalScore" type="int" />
-	    	<attribute name="level">
+	    	<attribute name="ref" type="token" />
+	    	<attribute name="taxonomicLevel">
 	    		<simpleType>
 	    			<restriction base="string">
 	    				<pattern value="kingdom|phylum|class|order|family|genus|species"/>
@@ -96,7 +97,7 @@
 	<!--  link to a keyNode defined elsewhere -->
 	<element name="keyNodeLink"> 
 		<complexType>
-			<attribute name="ref" type = "string"/>
+			<attribute name="ref" type = "token"/>
 		</complexType>
 	</element>
 	
