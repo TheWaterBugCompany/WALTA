@@ -186,9 +186,20 @@ function parseKey( node, path ) {
 	});
 }
 
-function loadKey( path ) {
-	var xml = XmlUtils.loadXml( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, path, "key.xml" ) );
-	var key = parseKey( xml.documentElement, path );
+// takes a variable list of path elements like the getFile() API call does
+function loadKey() {
+	
+	// Manipulate the arguments array to find both the root path to
+	// the key.xml file and a File object ready to load via loadXml.
+	var args = _.toArray( arguments );
+	var root = _.reduceRight( args, function(a,b) { return "/" + b + a; }, "" );
+	args.push( "key.xml" );
+	
+	var file = Ti.Filesystem.getFile.call( args );
+	
+	var xml = XmlUtils.loadXml( file  );
+	
+	var key = parseKey( xml.documentElement, root );
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'keyNode', _.partial( parseKeyNode, key ) );
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'speedBugIndex', _.partial( parseSpeedBug, key ) );

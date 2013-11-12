@@ -8,7 +8,7 @@ var KeyLoaderXml = require('logic/KeyLoaderXml');
 describe('KeyLoaderXml', function() {
 	var key;
 	it('should load a key from XML', function(){
-		key = KeyLoaderXml.loadKey( '/spec/resources/simpleKey1' );
+		key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory, '/spec/resources/simpleKey1' );
 		expect( key ).toBeDefined();
 	});
 	it('should have the correct toplevel node', function(){	
