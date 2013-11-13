@@ -192,10 +192,10 @@ function loadKey() {
 	// Manipulate the arguments array to find both the root path to
 	// the key.xml file and a File object ready to load via loadXml.
 	var args = _.toArray( arguments );
-	var root = _.reduceRight( args, function(a,b) { return "/" + b + a; }, "" );
+	var root = _.reduceRight( args, function(a,b) { return b + "/" + a; }, "" );
 	args.push( "key.xml" );
 	
-	var file = Ti.Filesystem.getFile.call( args );
+	var file = Ti.Filesystem.getFile.apply( Ti.Filesystem, args );
 	
 	var xml = XmlUtils.loadXml( file  );
 	
