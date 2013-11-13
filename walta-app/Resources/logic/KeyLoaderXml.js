@@ -33,7 +33,7 @@ function parseMediaUrls( key, nd ) {
 	var urls = [];
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'mediaRef',
 		function( mr ) {
-			urls.push( key.url + "/media/" + mr.getAttribute( 'url' ) );
+			urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
 			
 		});
 	return urls;
@@ -165,13 +165,13 @@ function parseSpeedBug( key, nd ) {
 		if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugGroup' ) ) {
 			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
 				key.addSpeedbugIndex( 
-					key.url + "/media/" + XmlUtils.getAttr( sb, "image" ), 
+					key.url + "media/" + XmlUtils.getAttr( sb, "image" ), 
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sb, "ref" ) );
 			});
 		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
 			key.addSpeedbugIndex( 
-					key.url + "/media/" + XmlUtils.getAttr( sg, "image" ), 
+					key.url + "media/" + XmlUtils.getAttr( sg, "image" ), 
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sg, "ref" ) );
 		}

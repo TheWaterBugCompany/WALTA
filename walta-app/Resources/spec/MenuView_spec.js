@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 var MenuView = require('ui/MenuView');
 var Topics = require('ui/Topics');

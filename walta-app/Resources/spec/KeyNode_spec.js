@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var KeyNode = require('logic/Key');
 var Question = require('logic/Question');
 

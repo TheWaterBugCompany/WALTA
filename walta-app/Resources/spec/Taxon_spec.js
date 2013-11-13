@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var Taxon = require('logic/Taxon');
 describe('Taxon tests', function() {
 	var txn = Taxon.createTaxon({

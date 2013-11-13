@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 
 var _ = require('lib/underscore')._;

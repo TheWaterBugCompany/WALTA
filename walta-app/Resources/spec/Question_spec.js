@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var Question = require('logic/Question');
 
 describe('Question tests', function() {

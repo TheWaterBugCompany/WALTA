@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 var AppWindow = require('control/AppWindow');
 
@@ -8,7 +9,7 @@ describe('AppWindow', function() {
 
 	beforeEach( function() {
 		runs( function() {
-			app = AppWindow.createAppWindow( '/spec/resources/simpleKey1' );
+			app = AppWindow.createAppWindow( Ti.Filesystem.resourcesDirectory, 'spec/resources/simpleKey1' );
 			app.start();
 		});
 		
