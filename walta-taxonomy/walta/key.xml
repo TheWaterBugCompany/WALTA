@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <key xmlns="http://thewaterbug.net/taxonomy" name="WALTA">
   <taxon id="arthropoda" name="Arthropoda">
-    <taxon id="crustacea" name="Crustacea">
+    <taxon id="crustacea" name="Crustacea" ref="crustacea" taxonomicLevel="class">
       <description>
         Crustaceans can vary in size quite a lot. Large freshwater crayfish start life smaller
         than 5mm, so be aware that the sizes in this section all refer to maximum length.
@@ -18,7 +18,7 @@
 
         <taxon id="parastacidae" name="Parastacidae" commonName="freshwater crayfish or yabbies" size="300" signalScore="4">
 
-          <habitat>Crayfish in rivers (upper photo) yabbies in wetlands/pools (lower photo).</habitat>
+          <habitat>Crayfish in rivers (with spines) yabbies in wetlands/pools (more leathery).</habitat>
           <movement>walking, with sudden flips when disturbed. </movement>
           <confusedWith>
             Nothing, very distinctive. We have left crayfish and Yabbies grouped together
@@ -51,7 +51,7 @@
           </taxon>
         </taxon>
 
-        <taxon id="atyidae" name="Atyidae" commonName="glass shrimp" size="35" signalScore="4">
+        <taxon id="atyidae" name="Family: Atyidae" commonName="glass shrimp" size="35" signalScore="4">
           <habitat>slow moving parts of rivers near wood and weeds. Common and often abundant.</habitat>
           <movement>Fast, with lots of flipping when in a tray.</movement>
           <confusedWith>Palaemonidae, but front 2 pairs of Atyidae legs are shorter and usually with brushes.</confusedWith>
@@ -63,7 +63,7 @@
 
       <taxon id="isopoda" name="Isopoda">
 
-        <taxon id="janiridae" name="Janiridae" commonName="water slaters" size="7" signalScore="3">
+        <taxon id="janiridae" name="Family: Janiridae" commonName="water slaters" size="7" signalScore="3">
           <habitat>Wetlands and river edges. Rare.</habitat>
           <movement>Slow.</movement>
           <confusedWith>If terrestrial slaters fall in they look similar. Can be extremely small.</confusedWith>
@@ -72,7 +72,7 @@
 
         </taxon>
 
-        <taxon id="phreatoicidae" name="Phreatoicidae" commonName="phreatoicids, cow shrimp" size="25" signalScore="4">
+        <taxon id="phreatoicidae" name="Family: Phreatoicidae" commonName="phreatoicids, cow shrimp" size="25" signalScore="4">
           <habitat>Wetlands. Rivers. Usually not common but can occur in large numbers.</habitat>
           <movement>Slow walking.</movement>
           <confusedWith> Amphipods, but they are far more robust looking and slow moving.</confusedWith>
@@ -84,7 +84,7 @@
 
       </taxon>
 
-      <taxon id="amphipoda" name="Amphipoda" commonName="scuds, sideswimmers" size="15" signalScore="3">
+      <taxon id="amphipoda" name="Order: Amphipoda" commonName="scuds, sideswimmers" size="15" signalScore="3">
         <habitat>Wetlands. Weeds in slower parts of rivers, or leaf packs in faster rivers. Very Common.</habitat>
         <movement>Bursts of movement, usually on their sides.</movement>
         <confusedWith>Phreatoicids, but faster.</confusedWith>
@@ -112,7 +112,7 @@
 
       </taxon>
 
-      <taxon id="conchostraca" name="Conchostraca" commonName="clam shrimp" size="5-8" signalScore="1">
+      <taxon id="conchostraca" name="Order: Conchostraca" commonName="clam shrimp" size="5-8" signalScore="1">
 
         <habitat>Temporary Wetlands. Common but cryptic and short lived.</habitat>
         <movement>Busy, haphazard then they drop from the water column.</movement>
@@ -122,7 +122,7 @@
 
       </taxon>
 
-      <taxon id="notostraca" name="Notostraca" commonName="shield shrimp, tadpole shrimp" size="40" signalScore="1">
+      <taxon id="notostraca" name="Order: Notostraca" commonName="shield shrimp, tadpole shrimp" size="40" signalScore="1">
 
         <habitat>Wetlands.</habitat>
         <movement>Swimming.</movement>
@@ -138,7 +138,7 @@
 
       <taxon id="araneae" name="Araneae">
 
-        <taxon id="pisauridae_and_lycosidae" name="Pisauridae and Lycosidae" commonName="fishing and wolf spiders" size="120" signalScore="5">
+        <taxon id="pisauridae_and_lycosidae" name="Family: Pisauridae and Lycosidae" commonName="fishing and wolf spiders" size="120" signalScore="5">
 
           <habitat>Edges of rivers and wetlands.</habitat>
           <movement>Running rapidly on the surface, then crawling underwater leaving a silvery layer of air trapped against the body.</movement>
@@ -150,7 +150,7 @@
 
       </taxon>
 
-      <taxon id="acarina" name="Acarina" commonName="water mites" size="5" signalScore="5">
+      <taxon id="acarina" name="Order: Acarina" commonName="water mites" size="5" signalScore="5">
 
         <habitat>Rivers, wetlands.</habitat>
         <movement>Very active swimmers, legs move very fast.</movement>
@@ -162,11 +162,11 @@
 
     </taxon>
 
-    <taxon id="insecta" name="Insecta">
+    <taxon id="insecta" name="Class: Insecta">
 
-      <taxon id="megaloptera" name="Megaloptera">
+      <taxon id="megaloptera" name="Order: Megaloptera">
 
-        <taxon id="corydalidae" name="Corydalidae" commonName="toebiters" size="35" signalScore="10">
+        <taxon id="corydalidae" name="Family: Corydalidae" commonName="toebiters" size="35" signalScore="10">
 
           <habitat>Fast flowing stony rivers.</habitat>
           <movement>Slow deliberate crawl.</movement>
@@ -212,9 +212,9 @@
 
       </taxon>
 
-      <taxon id="coleoptera" name="Coleoptera">
+      <taxon id="coleoptera" name="Order: Coleoptera">
 
-        <taxon id="curculionidae" name="Curculionidae" commonName="weevils" size="9" signalScore="2">
+        <taxon id="curculionidae" name="Family: Curculionidae" commonName="weevils" size="9" signalScore="2">
 
           <habitat>Vegetation in wetlands.</habitat>
           <movement>Slow, ponderous.</movement>
