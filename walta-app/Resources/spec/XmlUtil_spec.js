@@ -1,0 +1,1 @@
+require("spec/lib/tijasmine").infect(this);

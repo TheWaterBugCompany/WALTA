@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var _ = require('lib/underscore')._;
 
 var Key = require('logic/Key');
@@ -8,7 +9,7 @@ var KeyLoaderXml = require('logic/KeyLoaderXml');
 describe('KeyLoaderXml', function() {
 	var key;
 	it('should load a key from XML', function(){
-		key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory, '/spec/resources/simpleKey1' );
+		key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory, 'spec/resources/simpleKey1' );
 		expect( key ).toBeDefined();
 	});
 	it('should have the correct toplevel node', function(){	
@@ -19,13 +20,13 @@ describe('KeyLoaderXml', function() {
 			+ "often lying on their side or moving with their side flat against "
 			+ "the substrate." );
 		expect( nd.questions[0].mediaUrls ).toEqual( 
-			[ 'spec/resources/simpleKey1/media/couplet5p1.jpg' ]
+			[ Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/couplet5p1.jpg' ]
 		);
 		expect( nd.questions[1].text ).toEqual( 
 			"Animals not flattened or flattened 'front to back' (like humans or "
 			+ "cockroaches)." );
 		expect( nd.questions[1].mediaUrls ).toEqual( 
-			[ 'spec/resources/simpleKey1/media/couplet5p2.jpg' ]
+			[ Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/couplet5p2.jpg' ]
 		);
 		
 	});
@@ -50,8 +51,8 @@ describe('KeyLoaderXml', function() {
 			+ "crayfish and Yabbies grouped together because they mostly turn up as "
 			+ "juveniles in samples and are difficult to separate when young." );
 		expect( nd.mediaUrls ).toEqual( 
-			[ 'spec/resources/simpleKey1/media/parastacide_01.jpg',
-			  'spec/resources/simpleKey1/media/parastacide_02.jpg' ]
+			[ Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/parastacide_01.jpg',
+			  Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/parastacide_02.jpg' ]
 		);
 	});
 	it('should have the correct outcome for root[0][1] (keyNodeRef)', function(){
@@ -75,10 +76,10 @@ describe('KeyLoaderXml', function() {
 		sbug = key.getSpeedbugIndex();
 		expect( sbug ).toBeDefined();
 		expect( sbug['maggots'] ).toBeDefined();
-		expect( sbug['maggots'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/athericidae.svg", refId: "athericidae" } );
-		expect( sbug['maggots'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/blepheraceridae.svg", refId: "blepheraceridae" }  );
-		expect( sbug['ranatra'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/ranatra.svg", refId: "ranatra" } );
-		expect( sbug['larval'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/hydrobiosidae.svg", refId: "hydrobiosidae" } );
-		expect( sbug['larval'] ).toContain( { imgUrl: "spec/resources/simpleKey1/media/speedbug/megaloptera.svg", refId: "corydalidae" } );
+		expect( sbug['maggots'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/athericidae.svg', refId: "athericidae" } );
+		expect( sbug['maggots'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/blepheraceridae.svg', refId: "blepheraceridae" }  );
+		expect( sbug['ranatra'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/ranatra.svg', refId: "ranatra" } );
+		expect( sbug['larval'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/hydrobiosidae.svg', refId: "hydrobiosidae" } );
+		expect( sbug['larval'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/megaloptera.svg', refId: "corydalidae" } );
 	});
 });

@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 
 var meld = require('lib/meld');
@@ -7,7 +8,7 @@ describe('VideoView', function() {
 	var vv;
 	
 	beforeEach(function() { 
-		vv = VideoView.createVideoView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, "/spec/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ) );
+		vv = VideoView.createVideoView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, "spec/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ) );
 	});
 	
 	afterEach( function() {

@@ -33,7 +33,7 @@ function parseMediaUrls( key, nd ) {
 	var urls = [];
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'mediaRef',
 		function( mr ) {
-			urls.push( key.url + "/media/" + mr.getAttribute( 'url' ) );
+			urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
 			
 		});
 	return urls;
@@ -165,13 +165,13 @@ function parseSpeedBug( key, nd ) {
 		if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugGroup' ) ) {
 			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
 				key.addSpeedbugIndex( 
-					key.url + "/media/" + XmlUtils.getAttr( sb, "image" ), 
+					key.url + "media/" + XmlUtils.getAttr( sb, "image" ), 
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sb, "ref" ) );
 			});
 		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
 			key.addSpeedbugIndex( 
-					key.url + "/media/" + XmlUtils.getAttr( sg, "image" ), 
+					key.url + "media/" + XmlUtils.getAttr( sg, "image" ), 
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sg, "ref" ) );
 		}
@@ -192,10 +192,10 @@ function loadKey() {
 	// Manipulate the arguments array to find both the root path to
 	// the key.xml file and a File object ready to load via loadXml.
 	var args = _.toArray( arguments );
-	var root = _.reduceRight( args, function(a,b) { return "/" + b + a; }, "" );
+	var root = _.reduceRight( args, function(a,b) { return b + "/" + a; }, "" );
 	args.push( "key.xml" );
 	
-	var file = Ti.Filesystem.getFile.call( args );
+	var file = Ti.Filesystem.getFile.apply( Ti.Filesystem, args );
 	
 	var xml = XmlUtils.loadXml( file  );
 	

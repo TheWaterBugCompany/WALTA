@@ -50,8 +50,9 @@ function iPhone_Slide( win1, win2, dir ) {
 
 }
 
-function createAppWindow( keyUrl ) {
-	if ( ! keyUrl ) {
+function createAppWindow() {
+	var keyUrl = _.toArray( arguments );
+	if ( keyUrl.length == 0 ){
 		throw "Must provide a keyUrl argument";
 	} 
 	
@@ -63,10 +64,10 @@ function createAppWindow( keyUrl ) {
 		callbacks: [],
 		
 		// Load the key
-		loadKey: function( url ) {
-			this.key = KeyLoader.loadKey( url );
+		loadKey: function() {
+			this.key = KeyLoader.loadKey.apply( KeyLoader, arguments );
 			if ( ! this.key ) {
-				throw "Failed to load the key: " + url;
+				throw "Failed to load the key: " + arguments;
 			}
 		},
 		
@@ -293,7 +294,7 @@ function createAppWindow( keyUrl ) {
 			actWin.open();
 			actInd.show();
 		
-			privates.loadKey( appWin.keyUrl );
+			privates.loadKey.apply( privates, appWin.keyUrl );
 			privates.menuWindow( {
 				onOpen: function() {			
 					actInd.hide();

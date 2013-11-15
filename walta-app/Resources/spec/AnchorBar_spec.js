@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 
 var PubSub = require('lib/pubsub');

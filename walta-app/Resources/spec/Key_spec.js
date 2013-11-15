@@ -1,3 +1,4 @@
+require("spec/lib/tijasmine").infect(this);
 var _ = require('lib/underscore')._;
 
 var Key = require('logic/Key');
