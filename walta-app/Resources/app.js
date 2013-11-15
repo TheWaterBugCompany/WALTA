@@ -2,7 +2,7 @@
  * Bootstrap the application 
  */
 
-var tests = true;
+var tests = false;
 if ( ! tests ) {
 	var AppWindow = require('control/AppWindow');
 	var keyPath;

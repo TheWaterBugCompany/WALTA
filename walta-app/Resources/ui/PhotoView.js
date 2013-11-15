@@ -44,7 +44,10 @@ function createPhotoView( photoUrls ) {
 	photoViewObj._views.scrollView = Ti.UI.createScrollableView({
 		views: _(photoUrls).map( 
 			function(url) { 
-				var view = Ti.UI.createView({});
+				var view = Ti.UI.createScrollView({
+					minZoomScale: 1.0,
+					maxZoomScale: 4.0
+				});
 				view.add( Ti.UI.createImageView( { image: url, top: '3%', bottom: '3%', left: '3%', right: '3%' } ) );
 				return view; 
 			}),
