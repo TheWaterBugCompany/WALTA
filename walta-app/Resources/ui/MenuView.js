@@ -177,7 +177,7 @@ function createMenuView() {
 		'/images/browse.png', 
 		Topics.BROWSE, 
 		'Browse list', 
-		'If you know the name or scientific name of your bug.' 
+		'If you know the name of your bug.' 
 	);
 	
 	vws.help = createSmallMenuButton( 

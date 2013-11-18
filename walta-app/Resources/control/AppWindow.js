@@ -20,6 +20,8 @@ var KeyView = require('ui/KeyView');
 var VideoView = require('ui/VideoView');
 var BrowseView = require('ui/BrowseView');
 var SpeedbugView = require('ui/SpeedbugView');
+var PhotoView = require('ui/PhotoView');
+var HtmlView = require('ui/HtmlView');
 
 
 function iPhone_Slide( win1, win2, dir ) {
@@ -174,6 +176,26 @@ function createAppWindow() {
 			});	
 		},
 		
+		galleryWindow: function() {
+			this.makeTopLevelWindow({
+				name: 'gallery',
+				title: 'Gallery',
+				uiObj: PhotoView.createPhotoView([ 
+						'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
+						'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
+						'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
+					])
+			});	
+		},
+		
+		helpWindow: function() {
+			this.makeTopLevelWindow({
+				name: 'help',
+				title: 'Help',
+				uiObj: HtmlView.createHtmlView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, 'help/help.html' ))
+			});	
+		},
+		
 		updateDecisionWindow: function( args ) {
 			var node = this.key.getCurrentNode();
 			
@@ -257,6 +279,15 @@ function createAppWindow() {
     privates.subscribe( Topics.SPEEDBUG, function() { 
     	privates.speedBugWindow();
     });
+    
+    privates.subscribe( Topics.GALLERY, function() { 
+    	privates.galleryWindow();
+    });
+    
+    privates.subscribe( Topics.HELP, function() { 
+    	privates.helpWindow();
+    });
+	
 	
 
 	// Return public API
