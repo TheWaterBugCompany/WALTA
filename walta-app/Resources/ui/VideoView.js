@@ -51,7 +51,7 @@ function createVideoView( file ) {
 
 			vv._views.playButton.addEventListener( 'click', function(e){
 				vv.vp.play();
-				vv.vp.remove( playButton );
+				vv.vp.remove( vv._views.playButton );
 				e.cancelBubble = true;
 			});
 			
