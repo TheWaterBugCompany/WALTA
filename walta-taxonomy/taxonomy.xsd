@@ -11,7 +11,7 @@
    			
    				example.zip                 <=== name of KEY set, extension .zip
    				    |
-   				    +- taxonomy.xml        <=== MUST have this eaxact name and be an instance of this schema
+   				    +- taxonomy.xml        <=== MUST have this exact name and be an instance of this schema
    				    |
    				    +- /media				<=== MUST have this exact name, but anything can be stored underneath.
    				    		|
