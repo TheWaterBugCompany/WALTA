@@ -44,11 +44,28 @@ function createPhotoView( photoUrls ) {
 	photoViewObj._views.scrollView = Ti.UI.createScrollableView({
 		views: _(photoUrls).map( 
 			function(url) { 
-				var view = Ti.UI.createScrollView({
-					minZoomScale: 1.0,
-					maxZoomScale: 4.0
-				});
-				view.add( Ti.UI.createImageView( { image: url, top: '3%', bottom: '3%', left: '3%', right: '3%' } ) );
+				
+				// NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
+				// we cheat by using a WebView.
+				if (Ti.Platform.osname === 'android') {
+					var file = Ti.Filesystem.getFile(url);
+					var view =  Ti.UI.createWebView({
+						setScalesPageToFit: false,
+						disableBounce: true,
+						enableZoomControls: true,
+						backgroundColor: 'transparent',
+						width : Ti.UI.FILL,
+						height : Ti.UI.FILL,
+						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body,img {margin:0;padding:0;width:100%;height:100%;}</style></head><body><img src="' + file.getNativePath() + '"></body></html>'
+					});
+					
+			   	} else {
+			   		var view = Ti.UI.createScrollView({
+						minZoomScale: 1.0,
+						maxZoomScale: 4.0
+					});
+					view.add( Ti.UI.createImageView( { image: url /*, top: '3%', bottom: '3%', left: '3%', right: '3%'*/ } ) );
+			   	}
 				return view; 
 			}),
 		showPagingControl: false,
