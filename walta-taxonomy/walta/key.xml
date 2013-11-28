@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <key xmlns="http://thewaterbug.net/taxonomy" name="WALTA">
-  <taxon id="arthropoda" name="Arthropoda" ref="arthropoda" taxonomicLevel="class">
-    <taxon id="crustacea" name="Crustacea" ref="crustacea">
-      <description>
-        Crustaceans can vary in size quite a lot. Even large freshwater crayfish start life smaller
-        than 5mm, so be aware that the sizes in this section all refer to maximum length.
+  <taxon id="arthropoda" name="Arthropoda" taxonomicLevel="phylum">
+    <taxon id="crustacea" name="Crustacea" ref="k_crustacea" taxonomicLevel="subphylum">
 
-        Many of the larger crustaceans can be recognised by their distinctive shapes and often we
-        are familiar with them because their less fortunate relatives feature on restaurant menus.
+      <taxon id="decapoda" name="Decapoda" ref="k_crustacea" taxonomicLevel="class">
 
-        Yabbies, shrimp and shield shrimp are simpler to recognise from pictures than descriptions
-        so the first part of the following key introduces the larger, commoner crustaceans you are
-        likely to find.
-      </description>
-
-      <taxon id="decapoda" name="Decapoda" ref="xxxx" taxonomicLevel="xxxx">
-
-        <taxon id="parastacidae" name="Parastacidae" commonName="freshwater crayfish or yabbies"  ref="xxxx" taxonomicLevel="xxxx" size="300" signalScore="4">
+        <taxon id="parastacidae" name="Parastacidae" commonName="freshwater crayfish or yabbies"  taxonomicLevel="family" size="300" signalScore="4">
 
           <habitat>Crayfish in rivers (with spines) yabbies in wetlands/pools (more leathery).</habitat>
           <movement>walking, with sudden flips when disturbed. </movement>
           <confusedWith>
-            Nothing, very distinctive. We have left crayfish and Yabbies grouped together
+            Nothing, very distinctive. We have left crayfish and yabbies grouped together
             because they mostly turn up as juveniles in samples and are difficult to separate when young.
           </confusedWith>
 		 
@@ -30,7 +19,7 @@
 
         </taxon>
 
-        <taxon id="hymenosomatidae" name="Hymenosomatidae" commonName="five cent crab, false spider crab" ref="xxxx" taxonomicLevel="xxxx" size="15" signalScore="3">
+        <taxon id="hymenosomatidae" name="Hymenosomatidae" commonName="five cent crab, false spider crab" taxonomicLevel="family" size="15" signalScore="3">
 
           <habitat>Lakes, and the sluggish, estuarine ends of rivers.</habitat>
           <movement>Slow. </movement>
@@ -40,8 +29,9 @@
 
         </taxon>
 
-        <taxon id="palaemonidae" name="Palaemonidae" ref="xxxx" taxonomicLevel="xxxx">
-          <taxon id="macrobrachium" name="Macrobrachium" ref="xxxx" taxonomicLevel="xxxx" size="50" commonName="freshwater prawn" signalScore="4">
+        <taxon id="palaemonidae" name="Palaemonidae" ref="macrobrachium" taxonomicLevel="family">
+        
+          <taxon id="macrobrachium" name="Macrobrachium" taxonomicLevel="genus" size="50" commonName="freshwater prawn" signalScore="4">
             <habitat>Lowland rivers on wood or amongst water weeds.</habitat>
             <movement>Walking, flips in shallow water.</movement>
             <confusedWith>Atyidae, but pincers on second leg very distinctive when fully grown.</confusedWith>
@@ -51,7 +41,7 @@
           </taxon>
         </taxon>
 
-        <taxon id="atyidae" name="Atyidae" commonName="glass shrimp" ref="xxxx" taxonomicLevel="xxxx" size="35" signalScore="4">
+        <taxon id="atyidae" name="Atyidae" commonName="glass shrimp" taxonomicLevel="family" size="35" signalScore="4">
           <habitat>slow moving parts of rivers near wood and weeds. Common and often abundant.</habitat>
           <movement>Fast, with lots of flipping when in a tray.</movement>
           <confusedWith>Palaemonidae, but front 2 pairs of Atyidae legs are shorter and usually with brushes.</confusedWith>
@@ -61,9 +51,9 @@
 
       </taxon>
 
-      <taxon id="isopoda" name="Isopoda" ref="xxxx" taxonomicLevel="xxxx">
+      <taxon id="isopoda" name="Isopoda" ref="k_crustacea" taxonomicLevel="class">
 
-        <taxon id="janiridae" name="Family: Janiridae" commonName="water slaters" ref="xxxx" taxonomicLevel="xxxx" size="7" signalScore="3">
+        <taxon id="janiridae" name="Janiridae" commonName="water slaters" taxonomicLevel="family" size="7" signalScore="3">
           <habitat>Wetlands and river edges. Rare.</habitat>
           <movement>Slow.</movement>
           <confusedWith>If terrestrial slaters fall in they look similar. Can be extremely small.</confusedWith>
@@ -72,7 +62,7 @@
 
         </taxon>
 
-        <taxon id="phreatoicidae" name="Phreatoicidae" commonName="phreatoicids, cow shrimp" ref="xxxx" taxonomicLevel="xxxx" size="25" signalScore="4">
+        <taxon id="phreatoicidae" name="Phreatoicidae" commonName="phreatoicids, cow shrimp" taxonomicLevel="family" size="25" signalScore="4">
           <habitat>Wetlands. Rivers. Usually not common but can occur in large numbers.</habitat>
           <movement>Slow walking.</movement>
           <confusedWith> Amphipods, but they are far more robust looking and slow moving.</confusedWith>
@@ -84,7 +74,7 @@
 
       </taxon>
 
-      <taxon id="amphipoda" name="Order: Amphipoda" commonName="scuds, sideswimmers" ref="xxxx" taxonomicLevel="xxxx" size="15" signalScore="3">
+      <taxon id="amphipoda" name="Amphipoda" commonName="scuds, sideswimmers" taxonomicLevel="class" size="15" signalScore="3">
         <habitat>Wetlands. Weeds in slower parts of rivers, or leaf packs in faster rivers. Very Common.</habitat>
         <movement>Bursts of movement, usually on their sides.</movement>
         <confusedWith>Phreatoicids, but faster.</confusedWith>
@@ -95,7 +85,7 @@
         
       </taxon>
 
-      <taxon id="anostraca" name="Anostraca" commonName="fairy shrimp" ref="xxxx" taxonomicLevel="xxxx" size="25" signalScore="1">
+      <taxon id="anostraca" name="Anostraca" commonName="fairy shrimp" taxonomicLevel="order" size="25" signalScore="1">
         <description>
           Native fairy shrimp (left) tend to be larger (up to 25mm) and paler coloured, while the introduced sea monkeys (right) tend to be smaller (up to 10mm) and pink or orange. Native fairy shrimp can live in fresh or salty waters, while sea monkeys prefer salty waters
         </description>
@@ -112,7 +102,7 @@
 
       </taxon>
 
-      <taxon id="conchostraca" name="Conchostraca" commonName="clam shrimp" ref="xxxx" taxonomicLevel="xxxx" size="5-8" signalScore="1">
+      <taxon id="conchostraca" name="Conchostraca" commonName="clam shrimp" taxonomicLevel="order" size="5-8" signalScore="1">
 
         <habitat>Temporary Wetlands. Common but cryptic and short lived.</habitat>
         <movement>Busy, haphazard then they drop from the water column.</movement>
@@ -122,7 +112,7 @@
 
       </taxon>
 
-      <taxon id="notostraca" name="Notostraca" commonName="shield shrimp, tadpole shrimp" ref="xxxx" taxonomicLevel="xxxx" size="40" signalScore="1">
+      <taxon id="notostraca" name="Notostraca" commonName="shield shrimp, tadpole shrimp" taxonomicLevel="order" size="40" signalScore="1">
 
         <habitat>Wetlands.</habitat>
         <movement>Swimming.</movement>
@@ -134,11 +124,11 @@
 
     </taxon>
 
-    <taxon id="chelicerata" name="Chelicerata" ref="xxxx" taxonomicLevel="xxxx">
+    <taxon id="chelicerata" name="Chelicerata" ref="k_chelicerata" taxonomicLevel="subphylum">
 
-      <taxon id="araneae" name="Araneae" ref="xxxx" taxonomicLevel="xxxx">
+      <taxon id="araneae" name="Araneae" ref="k_chelicerata" taxonomicLevel="order">
 
-        <taxon id="pisauridae_and_lycosidae" name="Pisauridae and Lycosidae" commonName="fishing and wolf spiders" ref="xxxx" taxonomicLevel="xxxx" size="120" signalScore="5">
+        <taxon id="pisauridae_and_lycosidae" name="Pisauridae and Lycosidae" commonName="fishing and wolf spiders" taxonomicLevel="family" size="120" signalScore="5">
 
           <habitat>Edges of rivers and wetlands.</habitat>
           <movement>Running rapidly on the surface, then crawling underwater leaving a silvery layer of air trapped against the body.</movement>
@@ -150,7 +140,7 @@
 
       </taxon>
 
-      <taxon id="acarina" name="Acarina" commonName="water mites" ref="xxxx" taxonomicLevel="xxxx" size="5" signalScore="5">
+      <taxon id="acarina" name="Acarina" commonName="water mites" taxonomicLevel="order" size="5" signalScore="5">
 
         <habitat>Rivers, wetlands.</habitat>
         <movement>Very active swimmers, legs move very fast.</movement>
@@ -162,15 +152,17 @@
 
     </taxon>
 
-    <taxon id="insecta" name="Class: Insecta">
+    <taxon id="hexapoda" name="Hexapoda" ref="k_hexapoda" taxonomicLevel="subphylum" >
 
-      <taxon id="megaloptera" name="Order: Megaloptera">
+    <taxon id="insecta" name="Insecta" ref="k_hexapoda" taxonomicLevel="class" >
 
-        <taxon id="corydalidae" name="Family: Corydalidae" commonName="toebiters" size="35" signalScore="10">
+      <taxon id="megaloptera" name="Megaloptera" ref="corydalidae" taxonomicLevel="order" >
+
+        <taxon id="corydalidae" name="Corydalidae" commonName="toebiters" taxonomicLevel="family" size="35" signalScore="10">
 
           <habitat>Fast flowing stony rivers.</habitat>
           <movement>Slow deliberate crawl.</movement>
-          <confusedWith>: Gyrinid and Hydrophilid beetle larvae, which are much smaller and are not found in fast flowing rivers.</confusedWith>
+          <confusedWith>Gyrinid and Hydrophilid beetle larvae, which are much smaller and are not found in fast flowing rivers.</confusedWith>
 
           <mediaRef url="corydalidae_01.jpg" />
 
@@ -178,43 +170,31 @@
 
       </taxon>
 
-      <taxon id="neuroptera" name="Neuroptera">
-
-        <taxon id="neurorthridae" name="Neurorthridae" commonName="neurorthrid lacewing larvae" size="20" signalScore="8">
+      <taxon id="neuroptera" name="Neuroptera" taxonomicLevel="order" size="20" signalScore="8">
 
           <habitat>Fast flowing streams.</habitat>
-          <movement>Very fast moving.</movement>
+          <movement>Very fast moving (underwater)or slow moving (semi terrestrial)</movement>
           <confusedWith>Beetle larvae, but lacewings often have a distinct neck and their jaws are longer and straighter.</confusedWith>
 
           <mediaRef url="neurorthridae_01.jpg" />
-
-        </taxon>
-
-        <taxon id="osmylidae" name="Osmylidae" commonName="osmylid lacewing larvae" size="20" signalScore="8">
-
-          <habitat>Fast flowing streams.</habitat>
-          <movement>Very slow moving.</movement>
-          <confusedWith>Beetle larvae, but lacewings often have a distinct neck and their jaws are longer and straighter.</confusedWith>
-
           <mediaRef url="osmylidae_01.jpg" />
 
-        </taxon>
 
       </taxon>
 
-      <taxon id="lepidoptera" name="Lepidoptera" commonName="caterpillars" size="20" signalScore="2">
+      <taxon id="lepidoptera" name="Lepidoptera" commonName="caterpillars" taxonomicLevel="order" size="20" signalScore="2">
 
         <habitat>Slow moving or still water in amongst aquatic vegetation.</habitat>
         <movement>Slow moving.</movement>
-        <confusedWith>Beetle larvae or uncased caddis larvae, but caterpillas have abdominal pro-legs.</confusedWith>
+        <confusedWith>Beetle larvae or uncased caddis larvae, but caterpillars have rows of extra grasping organs along their abdomen.</confusedWith>
 
         <mediaRef url="lepidoptera_01.jpg" />
 
       </taxon>
 
-      <taxon id="coleoptera" name="Order: Coleoptera">
+      <taxon id="coleoptera" name="Coleoptera" ref="k_coleoptera" taxonomicLevel="order">
 
-        <taxon id="curculionidae" name="Family: Curculionidae" commonName="weevils" size="9" signalScore="2">
+        <taxon id="curculionidae" name="Curculionidae" commonName="weevils" taxonomicLevel="family" size="9" signalScore="2">
 
           <habitat>Vegetation in wetlands.</habitat>
           <movement>Slow, ponderous.</movement>
@@ -225,9 +205,9 @@
 
         </taxon>
 
-        <taxon id="dytiscidae" name="Dytiscidae">
+        <taxon id="dytiscidae" name="Dytiscidae" ref="k_dytiscidae" taxonomicLevel="family">
 
-          <taxon id="australphilus" name="Australphilus" commonName="Australphilus" size="3" signalScore="7">
+          <taxon id="australphilus" name="Australphilus" commonName="Australphilus" taxonomicLevel="genus" size="3" signalScore="7">
 
             <habitat>Running water. Rare. </habitat>
             <movement>Strong fast swimmer.</movement>
@@ -237,7 +217,7 @@
 
           </taxon>
 
-          <taxon id="carabhydrus" name="Carabhydrus" commonName="waisted diving beetle" size="3.5" signalScore="7">
+          <taxon id="carabhydrus" name="Carabhydrus" commonName="waisted diving beetle" taxonomicLevel="genus" size="3.5" signalScore="7">
 
             <habitat>Running water. Rare. </habitat>
             <movement>Less coordinated than other dytiscids</movement>
@@ -247,7 +227,7 @@
 
           </taxon>
 
-          <taxon id="eretes" name="Eretes" commonName="Eretes" size="16" signalScore="1">
+          <taxon id="eretes" name="Eretes" commonName="Eretes" taxonomicLevel="genus" size="16" signalScore="1">
 
             <habitat>Wetlands and slow moving water in rivers. </habitat>
             <movement>Strong swimmer using hind legs.</movement>
@@ -258,7 +238,7 @@
 
           </taxon>
 
-          <taxon id="hyderodes" name="Hyderodes" commonName="Hyderodes" size="20" signalScore="2">
+          <taxon id="hyderodes" name="Hyderodes" commonName="Hyderodes" taxonomicLevel="genus" size="20" signalScore="2">
 
             <habitat>Temporary wetlands. </habitat>
             <movement>Strong swimmer using hind legs.</movement>
@@ -268,7 +248,7 @@
 
           </taxon>
 
-          <taxon id="lancetes" name="Lancetes" commonName="Lancetes" size="10" signalScore="2">
+          <taxon id="lancetes" name="Lancetes" commonName="Lancetes" taxonomicLevel="genus" size="10" signalScore="2">
 
             <habitat>Wetlands and rivers. </habitat>
             <movement>Strong swimmer using hind legs.</movement>
@@ -278,7 +258,7 @@
 
           </taxon>
 
-          <taxon id="onychohydrus" name="Onychohydrus" commonName="Onychohydrus" size="28" signalScore="5">
+          <taxon id="onychohydrus" name="Onychohydrus" commonName="Onychohydrus" taxonomicLevel="genus" size="28" signalScore="5">
 
             <habitat>Temporary wetlands. </habitat>
             <movement>Strong swimmer using hind legs.</movement>
@@ -288,7 +268,7 @@
 
           </taxon>
 
-          <taxon id="rhantus" name="Rhantus" commonName="Rhantus" size="14" signalScore="1">
+          <taxon id="rhantus" name="Rhantus" commonName="Rhantus" taxonomicLevel="genus" size="14" signalScore="1">
 
             <habitat>Wetlands and slow moving water in rivers. </habitat>
             <movement>Strong swimmer using hind legs.</movement>
@@ -298,7 +278,7 @@
 
           </taxon>
 
-          <taxon id="spencerhydrus" name="Spencerhydrus" commonName="Spencerhydrus" size="18" signalScore="5">
+          <taxon id="spencerhydrus" name="Spencerhydrus" commonName="Spencerhydrus" taxonomicLevel="genus" size="18" signalScore="5">
 
             <habitat>Temporary wetlands.  </habitat>
             <movement>Strong swimmer using hind legs.</movement>
@@ -308,7 +288,7 @@
 
           </taxon>
 
-          <taxon id="little_diving_beetles" name="little diving beetles" commonName="little diving beetles" size="4" signalScore="1">
+          <taxon id="little_diving_beetles" name="little diving beetles" commonName="little diving beetles" taxonomicLevel="alt" size="4" signalScore="1">
 
             <habitat>Wetlands and slow moving water in rivers. </habitat>
             <movement>Strong swimmer using hind legs, rarely stops moving. </movement>
@@ -319,7 +299,7 @@
 
           </taxon>
 
-          <taxon id="mixed_diving_beetles" name="mixed diving beetles" commonName="mixed diving beetles" size="8" signalScore="1">
+          <taxon id="mixed_diving_beetles" name="mixed diving beetles" commonName="mixed diving beetles" taxonomicLevel="alt" size="8" signalScore="1">
 
             <habitat>Wetlands and slow moving water in rivers. </habitat>
             <movement>Strong swimmer using hind legs. </movement>
@@ -332,7 +312,7 @@
 
           </taxon>
 
-          <taxon id="stealth_diving_beetles" name="stealth diving beetles" commonName="stealth diving beetles" size="10" signalScore="1">
+          <taxon id="stealth_diving_beetles" name="stealth diving beetles" commonName="stealth diving beetles" taxonomicLevel="alt" size="10" signalScore="1">
 
             <habitat>Wetlands and Rivers. </habitat>
             <movement>Some of these may move quite slowly for diving beetles.</movement>
@@ -341,8 +321,9 @@
             <mediaRef url="stealth_diving_beetles_01.jpg" />
 
           </taxon>
+        <taxon id="dytiscidae_larvae" name="Dytiscidae" ref="k_dytiscidae_L" taxonomicLevel="family">
 
-          <taxon id="taper-tailed_tiger_larvae" name="taper-tailed tiger larvae" commonName="taper-tailed tigers larvae" size="12-50" signalScore="2">
+          <taxon id="taper-tailed_tiger_larvae" name="taper-tailed tiger larvae" commonName="taper-tailed tigers larvae" taxonomicLevel="alt" size="12-50" signalScore="2">
 
             <habitat>Wetlands / temporary water.</habitat>
             <movement>Constant, all legs moving.</movement>
@@ -352,7 +333,7 @@
 
           </taxon>
 
-          <taxon id="two-tailed_tiger_larvae" name="two-tailed tiger larvae" commonName="two-tailed tigers larvae" size="12-35" signalScore="2">
+          <taxon id="two-tailed_tiger_larvae" name="two-tailed tiger larvae" commonName="two-tailed tigers larvae" taxonomicLevel="alt" size="12-35" signalScore="2">
 
             <habitat>Wetlands / temporary water.</habitat>
             <movement>Constant, all legs moving.</movement>
@@ -362,7 +343,7 @@
 
           </taxon>
 
-          <taxon id="nosey_tiger_larvae" name="nosey tiger larvae" commonName="nosey tigers larvae" size="12" signalScore="2">
+          <taxon id="nosey_tiger_larvae" name="nosey tiger larvae" commonName="nosey tigers larvae" taxonomicLevel="alt" size="12" signalScore="2">
 
             <habitat>Wetlands and river edges. Very common.</habitat>
             <movement>Constant, all legs moving.</movement>
@@ -374,7 +355,7 @@
 
           </taxon>
 
-          <taxon id="crawling_water_tiger_larvae" name="crawling water tiger larvae" commonName="crawling water tiger larvae" size="12" signalScore="2">
+          <taxon id="crawling_water_tiger_larvae" name="crawling water tiger larvae" commonName="crawling water tiger larvae" taxonomicLevel="alt" size="12" signalScore="2">
 
             <habitat>Wetlands and temporary waters.</habitat>
             <movement>Slow.</movement>
@@ -385,7 +366,7 @@
 
           </taxon>
 
-          <taxon id="swimming_water_tiger_larvae" name="swimming water tiger larvae" commonName="swimming water tiger larvae" size="12" signalScore="2">
+          <taxon id="swimming_water_tiger_larvae" name="swimming water tiger larvae" commonName="swimming water tiger larvae" taxonomicLevel="alt" size="12" signalScore="2">
 
             <habitat>Wetlands and river edges. Common.</habitat>
             <movement>Constant, all legs moving.</movement>
@@ -395,10 +376,11 @@
 
 
           </taxon>
-
+         </taxon>
         </taxon>
-        <taxon id="elmidae" name="Elmidae">
-          <taxon id="elmidae_adult" name="Elmidae adult" commonName="Riffle beetle" size="3-6" signalScore="7">
+        <taxon id="elmidae" name="Elmidae" ref="elmidae_adult" taxonomicLevel="family">
+        
+          <taxon id="elmidae_adult" name="Elmidae adult" commonName="Riffle beetle" taxonomicLevel="family" size="3-6" signalScore="7">
 
             <habitat>Cool flowing waters (riffles), often found on wood, common but hard to see. </habitat>
             <movement>Hangs in the water or clings to detritus, slow.</movement>
@@ -409,7 +391,7 @@
 
           </taxon>
 
-          <taxon id="elmidae_larvae" name="Elmidae larvae" commonName="Riffle beetle larvae" size="up to 6" signalScore="7">
+          <taxon id="elmidae_larvae" name="Elmidae larvae" commonName="Riffle beetle larvae" taxonomicLevel="family" size="up to 6" signalScore="7">
 
             <habitat>Cool flowing water. Very common. Often found on wood.</habitat>
             <movement>Slow or still, very difficult to see, some species are very small and camouflaged.....good luck.</movement>
@@ -420,11 +402,11 @@
           </taxon>
 
         </taxon>
-        <taxon id="gyrinidae" name="Gyrinidae">
-          <taxon id="gyrinidae_adult" name="Gyrinidae adult" commonName="Whirligig beetle" size="12" signalScore="4">
+        <taxon id="gyrinidae" name="Gyrinidae" ref="gyrinidae_adult" taxonomicLevel="family">
+          <taxon id="gyrinidae_adult" name="Gyrinidae adult" commonName="Whirligig beetle" taxonomicLevel="family" size="12" signalScore="4">
 
             <habitat>Wetlands and river edges, common and conspicuous.</habitat>
-            <movement>Fast, and mainly on the surface in circular patterns, although they will dive if threatened.</movement>
+            <movement>Fast, and mainly on the surface in circular patterns, although they will dive underwater if threatened.</movement>
             <confusedWith>Nothing, movement and appearance are both very distinctive.</confusedWith>
 
             <mediaRef url="gyrinidae_adult_01.jpg" />
@@ -432,7 +414,7 @@
 
           </taxon>
 
-          <taxon id="gyrinidae_larvae" name="Gyrinidae larvae" commonName="Whirligig beetle larvae" size="15" signalScore="4">
+          <taxon id="gyrinidae_larvae" name="Gyrinidae larvae" commonName="Whirligig beetle larvae" taxonomicLevel="family" size="15" signalScore="4">
 
             <habitat>Wetlands and river edges. Uncommon. </habitat>
             <movement>Fast, mix of swimming with legs and undulating the abdomen.</movement>
@@ -444,9 +426,9 @@
 
         </taxon>
 
-        <taxon id="haliplidae" name="Haliplidae">
+        <taxon id="haliplidae" name="Haliplidae" ref="haliplus" taxonomicLevel="family">
 
-          <taxon id="haliplus" name="Haliplus" commonName="Tortoise beetle larvae" size="5" signalScore="4">
+          <taxon id="haliplus" name="Haliplus" commonName="Tortoise beetle larvae" taxonomicLevel="family" size="5" signalScore="4">
 
             <description>Elongate larvae with 3 rows of spines on the body and long tail. Yellow/pale with dark bands.</description>
             <habitat>Wetlands, river edges. Rare.</habitat>
@@ -458,7 +440,7 @@
           </taxon>
         </taxon>
 
-        <taxon id="hydraenidae_and_hydrochidae" name="Hydraenidae and Hydrochidae" commonName="Crawling water beetle" size="1-4" signalScore="3">
+        <taxon id="hydraenidae_and_hydrochidae" name="Hydraenidae and Hydrochidae" commonName="Crawling water beetle" taxonomicLevel="family" size="1-4" signalScore="3">
 
           <habitat>Wetlands, wet rock surfaces near waterfalls. Uncommon, but can be abundant. Hydraenids in wetlands can walk on the water undersurface. </habitat>
           <movement>Slow walking.</movement>
@@ -468,9 +450,9 @@
 
         </taxon>
 
-        <taxon id="hydrophilidae" name="Hydrophilidae">
+        <taxon id="hydrophilidae" name="Hydrophilidae" ref="hydrophilidae_adult" taxonomicLevel="family">
 
-          <taxon id="berosus" name="Berosus" commonName="Tasselled scavenger" size="8" signalScore="2">
+          <taxon id="berosus" name="Berosus" commonName="Tasselled scavenger" taxonomicLevel="genus" size="8" signalScore="2">
 
             <habitat>Wetlands, river edges.</habitat>
             <movement>Slow crawl.</movement>
@@ -480,7 +462,7 @@
 
           </taxon>
 
-          <taxon id="helochares" name="Helochares" commonName="Helochares" size="8" signalScore="2">
+          <taxon id="helochares" name="Helochares" commonName="Helochares" taxonomicLevel="genus" size="8" signalScore="2">
 
             <habitat>Wetlands, river edges.</habitat>
             <movement>Slow, sometimes walk on the water undersurface.</movement>
@@ -491,17 +473,17 @@
 
           </taxon>
 
-          <taxon id="hydrophilus" name="Hydrophilus" commonName="Ugly Bob" size="50" signalScore="2">
+          <taxon id="hydrophilus" name="Hydrophilus" commonName="Ugly Bob" taxonomicLevel="genus" size="50" signalScore="2">
 
             <habitat>Wetlands.</habitat>
-            <movement>Slow crawl.</movement>
+            <movement>Slow crawl or swimming with all legs.</movement>
             <confusedWith>Nothing. Nothing else gets this big.</confusedWith>
 
             <mediaRef url="hydrophilus_01.jpg" />
 
           </taxon>
 
-          <taxon id="water_scavenger_beetle_adult" name="Water scavenger beetle adult" commonName="Water scavenger beetle adult" size="very variable: 2-35" signalScore="2">
+          <taxon id="hydrophilidae_adult" name="Water scavenger beetle adult" taxonomicLevel="alt" commonName="Water scavenger beetle adult" size="very variable: 2-35" signalScore="2">
 
             <habitat>Wetlands and river edges. Common and abundant.</habitat>
             <movement>Ambling swim.</movement>
@@ -511,7 +493,7 @@
 
           </taxon>
 
-          <taxon id="water_scavenger_beetle_larvae" name="Water scavenger beetle larvae" commonName="Water scavenger beetle larvae" size="up to 10" signalScore="2">
+          <taxon id="water_scavenger_beetle_larvae" name="Water scavenger beetle larvae" commonName="Water scavenger beetle larvae" taxonomicLevel="alt" size="up to 10" signalScore="2">
 
             <habitat>Wetlands and river edges.</habitat>
             <movement>Slow crawl.</movement>
@@ -522,9 +504,9 @@
           </taxon>
 
         </taxon>
-        <taxon id="hygrobiidae" name="Hygrobiidae">
+        <taxon id="hygrobiidae" name="Hygrobiidae" ref="hygrobia_adult" taxonomicLevel="family" >
 
-          <taxon id="hygrobia_adult" name="Hygrobia adult" commonName="Screetch beetle adult" size="10" signalScore="1">
+          <taxon id="hygrobia_adult" name="Hygrobia adult" taxonomicLevel="genus" commonName="Screetch beetle adult" size="10" signalScore="1">
 
             <habitat>Wetlands. Rare. </habitat>
             <movement>Ambling swim.</movement>
@@ -534,7 +516,7 @@
 
           </taxon>
 
-          <taxon id="hygrobia_larvae" name="Hygrobia larvae" commonName="Screetch beetle larvae" size="10" signalScore="1">
+          <taxon id="hygrobia_larvae" name="Hygrobia larvae" taxonomicLevel="genus" commonName="Screetch beetle larvae" size="10" signalScore="1">
 
             <habitat>Wetlands. Rare.</habitat>
             <movement>Slow, some swimming.</movement>
@@ -546,9 +528,9 @@
 
         </taxon>
 
-        <taxon id="psephenidae" name="Psephenidae">
+        <taxon id="psephenidae" name="Psephenidae" ref="sclerocyphon" taxonomicLevel="family">
 
-          <taxon id="sclerocyphon" name="Sclerocyphon" commonName="Water penny" size="10" signalScore="6">
+          <taxon id="sclerocyphon" name="Sclerocyphon" taxonomicLevel="genus" commonName="Water penny" size="10" signalScore="6">
 
             <habitat>Fast flowing water. </habitat>
             <movement>Slow or not at all.</movement>
@@ -559,9 +541,9 @@
           </taxon>
 
         </taxon>
-        <taxon id="ptilodactylidae" name="Ptilodactylidae">
+        <taxon id="ptilodactylidae" name="Ptilodactylidae" ref="byrrocryptus" taxonomicLevel="family">
 
-          <taxon id="byrrocryptus" name="Byrrocryptus" commonName="Byrrocryptus" size="20" signalScore="10">
+          <taxon id="byrrocryptus" name="Byrrocryptus" taxonomicLevel="genus" commonName="Byrrocryptus" size="20" signalScore="10">
 
             <habitat>cool flowing water, river edges. </habitat>
             <movement>Slow, often holding onto vegetation, or trapped in surface tension.</movement>
@@ -573,7 +555,7 @@
 
         </taxon>
 
-        <taxon id="scirtidae" name="Scirtidae" commonName="Marsh beetle larvae" size="up to 10" signalScore="6">
+        <taxon id="scirtidae" name="Scirtidae" taxonomicLevel="family" commonName="Marsh beetle larvae" size="up to 10" signalScore="6">
 
           <habitat>Flowing water, wetlands, river edges. Fairly common.</habitat>
           <movement>Slow.</movement>
@@ -585,9 +567,9 @@
 
       </taxon>
 
-      <taxon id="diptera" name="Diptera">
+      <taxon id="diptera" name="Diptera" ref="k_diptera" taxonomicLevel="order">
 
-        <taxon id="athericidae" name="Athericidae" commonName="Tasselled maggot" size="10" signalScore="8">
+        <taxon id="athericidae" name="Athericidae" taxonomicLevel="family" commonName="Tasselled maggot" size="10" signalScore="8">
 
           <habitat>Rivers, gravel and sand.</habitat>
           <movement>Slow moving</movement>
@@ -597,7 +579,7 @@
 
         </taxon>
 
-        <taxon id="blephariceridae" name="Blephariceridae" commonName="Bleff" size="13" signalScore="10">
+        <taxon id="blephariceridae" name="Blephariceridae" taxonomicLevel="family" commonName="Bleff" size="13" signalScore="10">
 
           <habitat>Fast flowing streams with stable boulders, lives in the fastest bits.</habitat>
           <movement>Strange sideways shuffle.</movement>
@@ -607,7 +589,7 @@
 
         </taxon>
 
-        <taxon id="ceratopogonidae" name="Ceratopogonidae" commonName="Pog" size="10" signalScore="4">
+        <taxon id="ceratopogonidae" name="Ceratopogonidae" taxonomicLevel="family" commonName="Pog" size="10" signalScore="4">
 
           <habitat>Wetlands, still water, river edges. Common.</habitat>
           <movement>Like a stiff snake, or a swimming eyelash, very distinctive.</movement>
@@ -618,7 +600,7 @@
 
         </taxon>
 
-        <taxon id="chaoboridae" name="Chaoboridae" commonName="Phantom midge" size="10" signalScore="2">
+        <taxon id="chaoboridae" name="Chaoboridae" taxonomicLevel="family" commonName="Phantom midge" size="10" signalScore="2">
 
           <habitat>Lakes, shallow pools.</habitat>
           <movement>Still, and then flicks of the body. </movement>
@@ -628,9 +610,9 @@
           <mediaRef url="chaoboridae_m1.mp4" />
 
         </taxon>
-        <taxon id="chironomidae" name="Chironomidae">
+        <taxon id="chironomidae" name="Chironomidae" ref="chironomid" taxonomicLevel="family">
 
-          <taxon id="symbiocladius" name="Symbiocladius" commonName="Backpack midge" size="6" signalScore="8">
+          <taxon id="symbiocladius" name="Symbiocladius" taxonomicLevel="genus" commonName="Backpack midge" size="6" signalScore="8">
 
             <habitat>Rivers (possibly more in the edges).</habitat>
             <movement>With the host or not at all. </movement>
@@ -640,7 +622,7 @@
 
           </taxon>
 
-          <taxon id="blood_worm" name="Blood worm" commonName="Blood worm" size="14" signalScore="1">
+          <taxon id="blood_worm" name="Blood worm" taxonomicLevel="alt" commonName="Blood worm" size="14" signalScore="1">
 
             <habitat>Wetlands, still water. Common.</habitat>
             <movement>: Coil and uncoil quickly in a figure of eight, sometimes thrashing or using prolegs to drag themselves along the ground.</movement>
@@ -651,7 +633,7 @@
 
           </taxon>
 
-          <taxon id="chironomid" name="Chironomid" commonName="Chironomid" size="13" signalScore="3">
+          <taxon id="chironomid" name="Chironomid" taxonomicLevel="alt" commonName="Chironomid" size="13" signalScore="3">
 
             <habitat>All habitats. Common.</habitat>
             <movement>: Coil and uncoil quickly in a figure of eight, sometimes thrashing or using prolegs to drag themselves along the ground.</movement>
@@ -662,7 +644,7 @@
           </taxon>
 
         </taxon>
-        <taxon id="culicidae" name="Culicidae" commonName="Mosquito larvae, wrigglers" size="9" signalScore="1">
+        <taxon id="culicidae" name="Culicidae" taxonomicLevel="family" commonName="Mosquito larvae, wrigglers" size="9" signalScore="1">
 
           <habitat>Wetlands, still water, even buckets left out for too long. Common.</habitat>
           <movement>Thrashing and tumbling. </movement>
@@ -673,7 +655,7 @@
 
         </taxon>
 
-        <taxon id="dixidae" name="Dixidae" commonName="'U' bent midges" size="6" signalScore="7">
+        <taxon id="dixidae" name="Dixidae" taxonomicLevel="family" commonName="'U' bent midges" size="6" signalScore="7">
 
           <habitat>Wetlands, still water, the edges of farm dams. Uncommon.</habitat>
           <movement>Bend and unbend just under water surface.</movement>
@@ -683,7 +665,7 @@
 
         </taxon>
 
-        <taxon id="ephydridae_and_sciomyzidae" name="Ephydridae and Sciomyzidae" commonName="Wetland maggots" size="15" signalScore="2">
+        <taxon id="ephydridae_and_sciomyzidae" name="Ephydridae and Sciomyzidae" taxonomicLevel="family" commonName="Wetland maggots" size="15" signalScore="2">
 
           <habitat>Wetlands, still water, Ephydrids in salty lakes. Widespread.</habitat>
           <movement>Slow moving. </movement>
@@ -693,7 +675,7 @@
 
         </taxon>
 
-        <taxon id="psychodidae" name="Psychodidae" commonName="Moth fly larvae" size="4" signalScore="3">
+        <taxon id="psychodidae" name="Psychodidae" taxonomicLevel="family" commonName="Moth fly larvae" size="4" signalScore="3">
 
           <habitat>Wetlands, still water. Often overlooked.</habitat>
           <movement>Slow moving. </movement>
@@ -703,7 +685,7 @@
 
         </taxon>
 
-        <taxon id="simuliidae" name="Simuliidae" commonName="Black fly larvae" size="5" signalScore="5">
+        <taxon id="simuliidae" name="Simuliidae" taxonomicLevel="family" commonName="Black fly larvae" size="5" signalScore="5">
 
           <habitat>Fast flowing waters. Common and abundant.</habitat>
           <movement>leech-like.</movement>
@@ -714,7 +696,7 @@
 
         </taxon>
 
-        <taxon id="stratiomyidae" name="Stratiomyidae" commonName="Soldier fly larvae" size="20" signalScore="2">
+        <taxon id="stratiomyidae" name="Stratiomyidae" taxonomicLevel="family" commonName="Soldier fly larvae" size="20" signalScore="2">
 
           <habitat>Wetlands, still water, salt lakes. Common.</habitat>
           <movement>Slow moving almost still but floating.</movement>
@@ -725,7 +707,7 @@
 
         </taxon>
 
-        <taxon id="syrphidae" name="Syrphidae" commonName="Rat tailed maggot" size="up to 20" signalScore="1">
+        <taxon id="syrphidae" name="Syrphidae" taxonomicLevel="family" commonName="Rat tailed maggot" size="up to 20" signalScore="1">
 
           <habitat>Still, nutrient rich (liquid faeces) waters.</habitat>
           <movement>Slow moving by stretching.</movement>
@@ -735,7 +717,7 @@
 
         </taxon>
 
-        <taxon id="tabanidae_dolichopodidae_empididae_some_tipulidae" name="Tabanidae, Dolichopodidae, Empididae &amp; some Tipulidae" commonName="River maggots" size="variable" signalScore="4">
+        <taxon id="tabanidae_dolichopodidae_empididae_some_tipulidae" name="Tabanidae, Dolichopodidae, Empididae &amp; some Tipulidae" taxonomicLevel="family" commonName="River maggots" size="variable" signalScore="4">
 
           <habitat>Rivers, usually amongst gravels. Common.</habitat>
           <movement>Slow moving. </movement>
@@ -746,7 +728,7 @@
 
         </taxon>
 
-        <taxon id="tipulidae" name="Tipulidae" commonName="Crane fly larvae" size="Up to 36mm" signalScore="5">
+        <taxon id="tipulidae" name="Tipulidae" taxonomicLevel="family" commonName="Crane fly larvae" size="Up to 36mm" signalScore="5">
 
           <habitat>All habitats. Common but not abundant.</habitat>
           <movement>Slow moving burrowing with twists, or with expansion and contraction.</movement>
@@ -762,11 +744,11 @@
 
       </taxon>
 
-      <taxon id="ephemeroptera" name="Ephemeroptera">
+      <taxon id="ephemeroptera" name="Ephemeroptera" ref="k_ephemeroptera" taxonomicLevel="order">
 
-        <taxon id="ameletopsidae" name="Ameletopsidae">
+        <taxon id="ameletopsidae" name="Ameletopsidae" ref="mirawara" taxonomicLevel="family">
 
-          <taxon id="mirawara" name="Mirawara" commonName="killer mayflies/purple perils" size="20" signalScore="7">
+          <taxon id="mirawara" name="Mirawara" taxonomicLevel="genus" commonName="killer mayflies/purple perils" size="20" signalScore="7">
 
             <habitat>Fast flowing cool cobbly streams. Rare.</habitat>
             <movement>Fast and searching for prey. Regularly 'shuffles' gills.</movement>
@@ -778,7 +760,7 @@
 
         </taxon>
 
-        <taxon id="baetidae" name="Baetidae" commonName="Baetids" size="5-10" signalScore="5">
+        <taxon id="baetidae" name="Baetidae" taxonomicLevel="family" commonName="Baetids" size="5-10" signalScore="5">
 
           <habitat>Still and flowing waters. Common.</habitat>
           <movement>Bursts of movement like a tiny fish.</movement>
@@ -789,7 +771,7 @@
 
         </taxon>
 
-        <taxon id="caenidae" name="Caenidae" commonName="Caenids" size="8" signalScore="4">
+        <taxon id="caenidae" name="Caenidae" taxonomicLevel="family" commonName="Caenids" size="8" signalScore="4">
 
           <habitat>Still and slow moving waters with silty areas. Common. </habitat>
           <movement>Slow moving. </movement>
@@ -800,9 +782,9 @@
 
         </taxon>
 
-        <taxon id="coloburiscidae" name="Coloburiscidae">
+        <taxon id="coloburiscidae" name="Coloburiscidae" ref="coloburiscoides" taxonomicLevel="family">
 
-          <taxon id="coloburiscoides" name="Coloburiscoides" commonName="stream horses" size="20" signalScore="8">
+          <taxon id="coloburiscoides" name="Coloburiscoides" taxonomicLevel="genus" commonName="stream horses" size="20" signalScore="8">
 
             <habitat>Cool upland streams. Common and abundant in healthy boulder streams.</habitat>
             <movement>Like a rocking-horse.</movement>
@@ -815,9 +797,9 @@
 
         </taxon>
 
-        <taxon id="leptophlebiidae" name="Leptophlebiidae">
+        <taxon id="leptophlebiidae" name="Leptophlebiidae" ref="k_leptophlebiidae" taxonomicLevel="family">
 
-          <taxon id="atalophlebia" name="Atalophlebia" commonName="Atalophlebia" size="22" signalScore="5">
+          <taxon id="atalophlebia" name="Atalophlebia" taxonomicLevel="genus" commonName="Atalophlebia" size="22" signalScore="5">
 
             <habitat>Slower flowing waters, sometimes wetlands. Very common.</habitat>
             <movement>Can sometimes 'dolphin' when disturbed, but otherwise walks.</movement>
@@ -828,7 +810,7 @@
 
           </taxon>
 
-          <taxon id="jappa" name="Jappa" commonName="Jappa" size="20" signalScore="8">
+          <taxon id="jappa" name="Jappa" commonName="Jappa" taxonomicLevel="genus" size="20" signalScore="8">
 
             <habitat>Slower flowing rivers. Rare.</habitat>
             <movement>Slow.</movement>
@@ -838,7 +820,7 @@
 
           </taxon>
 
-          <taxon id="leptophlebs" name="Leptophlebs" commonName="Leptophlebs" size="20" signalScore="8">
+          <taxon id="leptophlebs" name="Leptophlebs" taxonomicLevel="alt" commonName="Leptophlebs" size="20" signalScore="8">
 
             <habitat>Cool running water. Very common.</habitat>
             <movement>Scurry, then stay still. A bit like a huntsman spider, can sometimes 'dolphin' when disturbed.</movement>
@@ -850,9 +832,9 @@
 
         </taxon>
 
-        <taxon id="oniscigastridae" name="Oniscigastridae">
+        <taxon id="oniscigastridae" name="Oniscigastridae" ref="tasmanophlebia" taxonomicLevel="family">
 
-          <taxon id="tasmanophlebia" name="Tasmanophlebia" commonName="oniscigastrids" size="15" signalScore="8">
+          <taxon id="tasmanophlebia" name="Tasmanophlebia" taxonomicLevel="genus" commonName="oniscigastrids" size="15" signalScore="8">
 
             <habitat>Cool flowing water, edges, backwaters, forest streams. Uncommon.</habitat>
             <movement>Slow moving. </movement>
@@ -863,7 +845,7 @@
           </taxon>
         </taxon>
 
-        <taxon id="siphlonuridae" name="Siphlonuridae" commonName="siphlonurids" size="17" signalScore="3">
+        <taxon id="siphlonuridae" name="Siphlonuridae" taxonomicLevel="family" commonName="siphlonurids" size="17" signalScore="3">
 
           <habitat>Cool, fish free alpine streams and lakes. Very rare. </habitat>
           <movement>Walks slowly, infrequent bursts of movement. </movement>
@@ -876,11 +858,11 @@
       </taxon>
 
 
-      <taxon id="hemiptera" name="Hemiptera">
+      <taxon id="hemiptera" name="Hemiptera" ref="k_hemiptera" taxonomicLevel="order">
 
-        <taxon id="Belostomatidae" name="Belostomatidae">
+        <taxon id="Belostomatidae" name="Belostomatidae" ref="diplonychus" taxonomicLevel="family">
 
-          <taxon id="diplonychus" name="Diplonychus" commonName="Giant water bug" size="30" signalScore="1">
+          <taxon id="diplonychus" name="Diplonychus" taxonomicLevel="genus" commonName="Giant water bug" size="30" signalScore="1">
 
             <habitat>Wetlands. Uncommon.</habitat>
             <movement>Slow, may crawl or swim.</movement>
@@ -892,9 +874,9 @@
 
         </taxon>
 
-        <taxon id="corixidae" name="Corixidae">
+        <taxon id="corixidae" name="Corixidae" ref="k_corixidae" taxonomicLevel="family">
 
-          <taxon id="agraptocorixa" name="Agraptocorixa" commonName="Static boatmen" size="10" signalScore="6">
+          <taxon id="agraptocorixa" name="Agraptocorixa" taxonomicLevel="genus" commonName="Static boatmen" size="10" signalScore="6">
 
             <habitat>Wetlands and slow river sections. Slow moving water. Common.</habitat>
             <movement>In bursts.</movement>
@@ -904,9 +886,7 @@
 
           </taxon>
 
-          <taxon id="diaprepocoris" name="Diaprepocoris">
-
-            <taxon id="diaprepocoris_barycephala" name="Diaprepocoris barycephala" commonName="Barry four-eyes" size="8" signalScore="6">
+            <taxon id="diaprepocoris_barycephala" name="Diaprepocoris barycephala" taxonomicLevel="species" commonName="Barry four-eyes" size="8" signalScore="6">
 
               <habitat>Wetlands and slow river sections. Slow moving water. </habitat>
               <movement>In bursts.</movement>
@@ -916,9 +896,8 @@
 
             </taxon>
 
-          </taxon>
 
-          <taxon id="micronecta" name="Micronecta" commonName="Little brindle boatman" size="4.5" signalScore="2">
+          <taxon id="micronecta" name="Micronecta" taxonomicLevel="genus" commonName="Little brindle boatman" size="4.5" signalScore="2">
 
             <habitat>Wetlands and slow river sections. Very very common. Often found in large numbers (see soup picture).</habitat>
             <movement>In bursts.</movement>
@@ -927,7 +906,7 @@
             <mediaRef url="micronecta_01.jpg" />
 
           </taxon>
-          <taxon id="sigara" name="Sigara" commonName="Striped boatman" size="8" signalScore="3">
+          <taxon id="sigara" name="Sigara" taxonomicLevel="genus" commonName="Striped boatman" size="8" signalScore="3">
 
             <habitat>Wetlands and slow river sections. Slow moving water. Common.</habitat>
             <movement>In bursts.</movement>
@@ -939,7 +918,7 @@
 
         </taxon>
 
-        <taxon id="gelastocoridae" name="Gelastocoridae" commonName="Toad bug" size="10" signalScore="5">
+        <taxon id="gelastocoridae" name="Gelastocoridae" taxonomicLevel="family" commonName="Toad bug" size="10" signalScore="5">
 
           <habitat>Wetlands and river edges. Rare.</habitat>
           <movement>Slow, ponderous, but surprisingly can jump.</movement>
@@ -949,7 +928,7 @@
 
         </taxon>
 
-        <taxon id="gerridae" name="Gerridae" commonName="Water striders" size="Body to 20mm leg span to 70" signalScore="4">
+        <taxon id="gerridae" name="Gerridae" taxonomicLevel="family" commonName="Water striders" size="Body to 20mm leg span to 70" signalScore="4">
 
           <habitat>Wetlands and river edges. Common.</habitat>
           <movement>Fast, jerky.</movement>
@@ -960,7 +939,7 @@
 
         </taxon>
 
-        <taxon id="hydrometridae" name="Hydrometridae" commonName="Water measurers" size="15" signalScore="3">
+        <taxon id="hydrometridae" name="Hydrometridae" taxonomicLevel="family" commonName="Water measurers" size="15" signalScore="3">
 
           <habitat>Wetlands, still water. Uncommon, but very cool.</habitat>
           <movement>Slow moving.</movement>
@@ -970,9 +949,9 @@
 
         </taxon>
 
-        <taxon id="naucoridae" name="Naucoridae">
+        <taxon id="naucoridae" name="Naucoridae" ref="naucoris" taxonomicLevel="family">
 
-          <taxon id="naucoris" name="Naucoris" commonName="Creeping water bugs" size="12" signalScore="2">
+          <taxon id="naucoris" name="Naucoris" taxonomicLevel="genus" commonName="Creeping water bugs" size="12" signalScore="2">
 
             <habitat>Wetlands and weedy river edges. Common.</habitat>
             <movement>Slow, may crawl or swim.</movement>
@@ -984,9 +963,9 @@
 
         </taxon>
 
-        <taxon id="nepidae" name="Nepidae">
+        <taxon id="nepidae" name="Nepidae" ref="k_nepidae" taxonomicLevel="family">
 
-          <taxon id="laccotrephes" name="Laccotrephes" commonName="Leafy water scorpion" size="90" signalScore="3">
+          <taxon id="laccotrephes" name="Laccotrephes" taxonomicLevel="genus" commonName="Leafy water scorpion" size="90" signalScore="3">
 
             <habitat>Wetlands. Still water. Uncommon but spectacular.</habitat>
             <movement>Slow or not at all (sit-and-wait predator).</movement>
@@ -996,7 +975,7 @@
 
           </taxon>
 
-          <taxon id="ranatra" name="Ranatra" commonName="Slender water scorpions/stick bug" size="90" signalScore="3">
+          <taxon id="ranatra" name="Ranatra" taxonomicLevel="genus" commonName="Slender water scorpions/stick bug" size="90" signalScore="3">
 
             <habitat>Still water. Uncommon but spectacular.</habitat>
             <movement>Swims awkwardly or not at all (sit-and-wait predator).</movement>
@@ -1008,9 +987,9 @@
 
         </taxon>
 
-        <taxon id="notonectidae" name="Notonectidae">
+        <taxon id="notonectidae" name="Notonectidae" ref="k_notonectidae" taxonomicLevel="family">
 
-          <taxon id="anisops" name="Anisops" commonName="Slender backswimmer" size="9" signalScore="1">
+          <taxon id="anisops" name="Anisops" taxonomicLevel="genus" commonName="Slender backswimmer" size="9" signalScore="1">
 
             <habitat>Wetlands and slow river sections. Still water, very common</habitat>
             <movement>Deliberate strokes of swimming legs, sometimes still, mid-water. Less relaxed in an ice cube tray.</movement>
@@ -1021,7 +1000,7 @@
 
           </taxon>
 
-          <taxon id="enithares" name="Enithares" commonName="Robust backswimmer" size="12" signalScore="1">
+          <taxon id="enithares" name="Enithares" taxonomicLevel="genus" commonName="Robust backswimmer" size="12" signalScore="1">
 
             <habitat>Wetlands and slow river sections. Still water, very common.</habitat>
             <movement>In bursts. Still when it is at the surface re-filling air supplies.</movement>
@@ -1035,7 +1014,7 @@
 
         </taxon>
 
-        <taxon id="pleidae" name="Pleidae" commonName="Pygmy backswimmer" size="3" signalScore="2">
+        <taxon id="pleidae" name="Pleidae" taxonomicLevel="family" commonName="Pygmy backswimmer" size="3" signalScore="2">
 
           <habitat>Wetlands and river edges. Common but cryptic.</habitat>
           <movement>Swift then stopped.</movement>
@@ -1045,7 +1024,7 @@
 
         </taxon>
 
-        <taxon id="veliidae_mesoveliidae_and_hebridae" name="Veliidae, Mesoveliidae and Hebridae" commonName="Water treader" size="3-5" signalScore="3">
+        <taxon id="veliidae_mesoveliidae_and_hebridae" name="Veliidae, Mesoveliidae and Hebridae" taxonomicLevel="family" commonName="Water treader" size="3-5" signalScore="3">
 
           <habitat>Wetlands and river edges. Very common.</habitat>
           <movement>Fast, look a bit like they have been sped up.</movement>
@@ -1057,9 +1036,10 @@
         </taxon>
 
       </taxon>
-      <taxon id="odonata" name="Odonata">
+      <taxon id="odonata" name="Odonata" ref="k_odonata" taxonomicLevel="order">
+      <taxon id="epiproctophora" name="Epiproctophora" ref="k_epiproctophora" taxonomicLevel="suborder">
 
-        <taxon id="aeshnidae" name="Aeshnidae" commonName="Couta mud eye" size="40" signalScore="5">
+        <taxon id="aeshnidae" name="Aeshnidae" taxonomicLevel="family" commonName="Couta mud eye" size="40" signalScore="5">
 
           <habitat>Wetlands, slow rivers or lakes. Common.</habitat>
           <movement>Slow and careful, but can use a bum jet if disturbed.</movement>
@@ -1072,17 +1052,7 @@
 
         </taxon>
 
-        <taxon id="diphlebiidae" name="Diphlebiidae" commonName="Diphlebiidae" size="30" signalScore="2">
-
-          <habitat>Wetlands, or slow moving water in rivers.</habitat>
-          <movement>Slow, but may swim with a sideways undulating motion if disturbed.</movement>
-          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
-
-          <mediaRef url="diphlebiidae_01.jpg" />
-
-        </taxon>
-
-        <taxon id="gomphidae" name="Gomphidae" commonName="Gomphids" size="30" signalScore="5">
+        <taxon id="gomphidae" name="Gomphidae" taxonomicLevel="family" commonName="Gomphids" size="30" signalScore="5">
 
           <habitat>Rivers, among detritus and silt, and sometimes wetlands or lakes.</habitat>
           <movement>Slow and careful, but can use a bum jet if disturbed.</movement>
@@ -1092,47 +1062,7 @@
 
         </taxon>
 
-        <taxon id="isostictidae" name="Isostictidae" commonName="Isostictidae" size="20" signalScore="3">
-
-          <habitat>At the edge of streams amongst tree roots and vegetation. Rare.</habitat>
-          <movement>Slow and cautious.</movement>
-          <confusedWith>Will look almost exactly like a synlestid (stripy legs and all), but with longer, obviously divided gills.</confusedWith>
-
-          <mediaRef url="isostictidae_01.jpg" />
-
-        </taxon>
-
-        <taxon id="lestidae_and_coenagrionidae" name="Lestidae and Coenagrionidae" commonName="Lestidae and Coenagrionidae" size="30" signalScore="2">
-
-          <habitat>Wetlands, or slow moving water in rivers. Very common and sometimes abundant.</habitat>
-          <movement>Slow, but may swim with a rapid sideways undulating motion if disturbed.</movement>
-          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
-
-          <mediaRef url="lestidae_and_coenagrionidae_01.jpg" />
-
-        </taxon>
-
-        <taxon id="megapodagrionidae" name="Megapodagrionidae" commonName="Megapodagrionidae" size="26" signalScore="5">
-
-          <habitat>Occurs in slow flowing waters, at the edges of streams, in bogs and seepages. Uncommon.</habitat>
-          <movement>Slow and deliberate.</movement>
-          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
-
-          <mediaRef url="megapodagrionidae_01.jpg" />
-
-        </taxon>
-
-        <taxon id="synlestidae" name="Synlestidae" commonName="Synlestidae" size="20" signalScore="3">
-
-          <habitat>At the edge of streams amongst tree roots and vegetation. Rare.</habitat>
-          <movement>Slow and cautious.</movement>
-          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
-
-          <mediaRef url="synlestidae_01.jpg" />
-
-        </taxon>
-
-        <taxon id="telephlebiidae" name="Telephlebiidae" commonName="Telephlebs" size="30" signalScore="9">
+        <taxon id="telephlebiidae" name="Telephlebiidae" taxonomicLevel="family" commonName="Telephlebs" size="30" signalScore="9">
 
           <habitat>Rivers. Common. </habitat>
           <movement>Slow and careful, but can use a bum jet if disturbed.</movement>
@@ -1142,24 +1072,77 @@
 
         </taxon>
 
-        <taxon id="spider_mud_eye" name="spider mud eye" commonName="Spider mud eye" size="30" signalScore="5">
+        <taxon id="spider_mud_eye" name="spider mud eye" taxonomicLevel="alt" commonName="Spider mud eye" size="30" signalScore="5">
 
           <habitat>Slow flowing waters, among detritus and silt.</habitat>
           <movement>Slow and careful, but can use a bum jet if disturbed.</movement>
           <confusedWith />
 
           <mediaRef url="spider_mud_eye_01.jpg" />
+        </taxon>
+
+      </taxon>
+        <taxon id="zygoptera" name="Zygoptera" ref="k_zygoptera" taxonomicLevel="suborder">
+      
+        <taxon id="diphlebiidae" name="Diphlebiidae" taxonomicLevel="family" commonName="Diphlebiidae" size="30" signalScore="2">
+
+          <habitat>Wetlands, or slow moving water in rivers.</habitat>
+          <movement>Slow, but may swim with a sideways undulating motion if disturbed.</movement>
+          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
+
+          <mediaRef url="diphlebiidae_01.jpg" />
+
+        </taxon>
+
+        <taxon id="isostictidae" name="Isostictidae" taxonomicLevel="family" commonName="Isostictidae" size="20" signalScore="3">
+
+          <habitat>At the edge of streams amongst tree roots and vegetation. Rare.</habitat>
+          <movement>Slow and cautious.</movement>
+          <confusedWith>Will look almost exactly like a synlestid (stripy legs and all), but with longer, obviously divided gills.</confusedWith>
+
+          <mediaRef url="isostictidae_01.jpg" />
+
+        </taxon>
+
+        <taxon id="lestidae_and_coenagrionidae" name="Lestidae and Coenagrionidae" taxonomicLevel="family" commonName="Lestidae and Coenagrionidae" size="30" signalScore="2">
+
+          <habitat>Wetlands, or slow moving water in rivers. Very common and sometimes abundant.</habitat>
+          <movement>Slow, but may swim with a rapid sideways undulating motion if disturbed.</movement>
+          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
+
+          <mediaRef url="lestidae_and_coenagrionidae_01.jpg" />
+
+        </taxon>
+
+        <taxon id="megapodagrionidae" name="Megapodagrionidae" taxonomicLevel="family" commonName="Megapodagrionidae" size="26" signalScore="5">
+
+          <habitat>Occurs in slow flowing waters, at the edges of streams, in bogs and seepages. Uncommon.</habitat>
+          <movement>Slow and deliberate.</movement>
+          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
+
+          <mediaRef url="megapodagrionidae_01.jpg" />
+
+        </taxon>
+
+        <taxon id="synlestidae" name="Synlestidae" taxonomicLevel="family" commonName="Synlestidae" size="20" signalScore="3">
+
+          <habitat>At the edge of streams amongst tree roots and vegetation. Rare.</habitat>
+          <movement>Slow and cautious.</movement>
+          <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
+
+          <mediaRef url="synlestidae_01.jpg" />
 
         </taxon>
 
       </taxon>
 
-      <taxon id="plecoptera" name="Plecoptera">
+      </taxon>
 
-        <taxon id="austroperlidae" name="Austroperlidae">
-          <taxon id="acruroperla" name="Acruroperla">
+      <taxon id="plecoptera" name="Plecoptera" ref="k_plecoptera" taxonomicLevel="order">
 
-            <taxon id="acruroperla_atra" name="Acruroperla atra" commonName="Acruroperla atra" size="18" signalScore="10">
+        <taxon id="austroperlidae" name="Austroperlidae" ref="austroperlids" taxonomicLevel="family">
+
+            <taxon id="acruroperla_atra" name="Acruroperla atra" taxonomicLevel="species" commonName="Acruroperla atra" size="18" signalScore="10">
 
               <habitat>Often associated with submerged wood in upland streams.</habitat>
               <movement>Slow, but deliberate.</movement>
@@ -1169,9 +1152,8 @@
 
             </taxon>
 
-          </taxon>
 
-          <taxon id="austroperlids" name="Austroperlids" commonName="Austroperlids" size="30" signalScore="10">
+          <taxon id="austroperlids" name="Austroperlids" taxonomicLevel="alt" commonName="Austroperlids" size="30" signalScore="10">
 
             <habitat>Cool upland forested streams, often amongst bark and leaf litter.</habitat>
             <movement>Slow moving.</movement>
@@ -1183,7 +1165,7 @@
 
         </taxon>
 
-        <taxon id="eustheniidae" name="Eustheniidae" commonName="U sthenids" size="40" signalScore="10">
+        <taxon id="eustheniidae" name="Eustheniidae" taxonomicLevel="family" commonName="U sthenids" size="40" signalScore="10">
 
           <habitat>Upland streams, more often in alpine and sub-alpine areas.</habitat>
           <movement>Deliberate, may try and crawl out of picking tray.</movement>
@@ -1193,9 +1175,9 @@
 
         </taxon>
 
-        <taxon id="gripopterygidae" name="Gripopterygidae">
+        <taxon id="gripopterygidae" name="Gripopterygidae" ref="gripops_or_fluffy_bums" taxonomicLevel="family">
 
-          <taxon id="illiesoperla" name="Illiesoperla" commonName="Blond sprawler" size="18" signalScore="10">
+          <taxon id="illiesoperla" name="Illiesoperla" taxonomicLevel="genus" commonName="Blond sprawler" size="18" signalScore="10">
 
             <habitat>Rivers and streams.</habitat>
             <movement>Slow, sometimes flex side to side while unattached.</movement>
@@ -1206,7 +1188,7 @@
 
           </taxon>
 
-          <taxon id="riekoperla" name="Riekoperla" commonName="Spiky reek o perla" size="10" signalScore="8">
+          <taxon id="riekoperla" name="Riekoperla" taxonomicLevel="genus" commonName="Spiky reek o perla" size="10" signalScore="8">
 
             <habitat>Upland streams.</habitat>
             <movement />
@@ -1216,7 +1198,7 @@
 
           </taxon>
 
-          <taxon id="hairy_sprawler" name="Hairy sprawler" commonName="Hairy sprawler" size="18" signalScore="10">
+          <taxon id="hairy_sprawler" name="Hairy sprawler" taxonomicLevel="alt" commonName="Hairy sprawler" size="18" signalScore="10">
 
             <habitat>Fast flowing rivers and streams.</habitat>
             <movement>Slow, sometimes flex side to side while unattached.</movement>
@@ -1226,7 +1208,7 @@
 
           </taxon>
 
-          <taxon id="gripops_or_fluffy_bums" name="Gripops or Fluffy bums" commonName="Gripops or Fluffy bums" size="10" signalScore="7">
+          <taxon id="gripops_or_fluffy_bums" name="Gripops or Fluffy bums" taxonomicLevel="alt" commonName="Gripops or Fluffy bums" size="10" signalScore="7">
 
             <habitat>Rivers and wetlands.</habitat>
             <movement />
@@ -1238,7 +1220,7 @@
 
         </taxon>
 
-        <taxon id="notonemouridae" name="Notonemouridae" commonName="Noto nemoor ids" size="12" signalScore="6">
+        <taxon id="notonemouridae" name="Notonemouridae" taxonomicLevel="family" commonName="Noto nemoor ids" size="12" signalScore="6">
 
           <description>Notice the 'alert' posture. Inset photo shows the abdomen without gills.</description>
           <habitat>Occurs in small upland streams and in small lowland streams. Sometimes found in wetlands.</habitat>
@@ -1251,11 +1233,11 @@
 
 
       </taxon>
-      <taxon id="trichoptera" name="Trichoptera">
+      <taxon id="trichoptera" name="Trichoptera" ref="k_trichoptera" taxonomicLevel="order">
 
-        <taxon id="atriplectididae" name="Atriplectididae">
+        <taxon id="atriplectididae" name="Atriplectididae" ref="atriplectides" taxonomicLevel="family">
 
-          <taxon id="atriplectides" name="Atriplectides" commonName="Vulture caddis" size="15" signalScore="3">
+          <taxon id="atriplectides" name="Atriplectides" taxonomicLevel="genus" commonName="Vulture caddis" size="15" signalScore="3">
 
             <habitat>Lakes and rivers amongst deposits of sand and debris where it finds carrion. Uncommon, but very cool.</habitat>
             <movement>Slow moving.</movement>
@@ -1267,9 +1249,9 @@
 
         </taxon>
 
-        <taxon id="calamoceratidae" name="Calamoceratidae">
+        <taxon id="calamoceratidae" name="Calamoceratidae" ref="anisocentropus" taxonomicLevel="family">
 
-          <taxon id="anisocentropus" name="Anisocentropus" commonName="Sleeping bag caddis" size="20" signalScore="7">
+          <taxon id="anisocentropus" name="Anisocentropus" taxonomicLevel="genus" commonName="Sleeping bag caddis" size="20" signalScore="7">
 
             <habitat>Slow flowing water, backwaters, edges, in leaf packs. Uncommon. </habitat>
             <movement>Slow moving. </movement>
@@ -1281,9 +1263,8 @@
 
         </taxon>
 
-        <taxon id="calocidae" name="Calocidae">
+        <taxon id="calocidae" name="Calocidae" ref="caenota_plicata" taxonomicLevel="family">
 
-          <taxon id="caenota" name="Caenota">
 
             <taxon id="caenota_plicata" name="Caenota plicata" commonName="Shingle caddis" size="20" signalScore="7">
 
@@ -1295,11 +1276,10 @@
 
             </taxon>
 
-          </taxon>
 
         </taxon>
 
-        <taxon id="conoesucidae_calocidae_and_helicophidae" name="Conoesucidae, Calocidae and Helicophidae" commonName="Bullet caddis" size="13" signalScore="7">
+        <taxon id="conoesucidae_calocidae_and_helicophidae" name="Conoesucidae, Calocidae and Helicophidae" taxonomicLevel="family" commonName="Bullet caddis" size="13" signalScore="7">
 
           <habitat>Cool flowing water, riffles.</habitat>
           <movement>Slow moving. </movement>
@@ -1309,9 +1289,9 @@
 
         </taxon>
 
-        <taxon id="ecnomidae" name="Ecnomidae">
+        <taxon id="ecnomidae" name="Ecnomidae" ref="ecnomus" taxonomicLevel="family">
 
-          <taxon id="ecnomus" name="Ecnomus" commonName="Bandit caddis" size="15" signalScore="4">
+          <taxon id="ecnomus" name="Ecnomus" taxonomicLevel="genus" commonName="Bandit caddis" size="15" signalScore="4">
 
             <habitat>Still and flowing water, edges. Common.</habitat>
             <movement> Fidgets but slow moving.</movement>
@@ -1323,9 +1303,9 @@
 
         </taxon>
 
-        <taxon id="glossosomatidae" name="Glossosomatidae">
+        <taxon id="glossosomatidae" name="Glossosomatidae" ref="agapetus" taxonomicLevel="family">
 
-          <taxon id="agapetus" name="Agapetus" commonName="Igloo caddis" size="6" signalScore="9">
+          <taxon id="agapetus" name="Agapetus" taxonomicLevel="genus" commonName="Igloo caddis" size="6" signalScore="9">
 
             <habitat>Cool flowing waters, forest streams, riffles. Uncommon, but abundant when they do occur.</habitat>
             <movement>Slow moving. </movement>
@@ -1337,9 +1317,9 @@
 
         </taxon>
 
-        <taxon id="helicopsychidae" name="Helicopsychidae">
+        <taxon id="helicopsychidae" name="Helicopsychidae" ref="helicopsyche" taxonomicLevel="family">
 
-          <taxon id="helicopsyche" name="Helicopsyche" commonName="Snail caddis" size="5" signalScore="8">
+          <taxon id="helicopsyche" name="Helicopsyche" taxonomicLevel="genus" commonName="Snail caddis" size="5" signalScore="8">
 
             <habitat>Cool flowing water, forest streams, riffles. Rare, but can be abundant.</habitat>
             <movement>Slow moving. </movement>
@@ -1351,7 +1331,7 @@
 
         </taxon>
 
-        <taxon id="hydrobiosidae" name="Hydrobiosidae" commonName="Hunter caddis" size="20" signalScore="8">
+        <taxon id="hydrobiosidae" name="Hydrobiosidae" taxonomicLevel="family" commonName="Hunter caddis" size="20" signalScore="8">
 
           <habitat>Cool flowing water, riffles, and forest streams. Common.</habitat>
           <movement>Fast moving, hunt with front legs in front of their body on the off-chance they might hit prey.</movement>
@@ -1362,7 +1342,7 @@
 
         </taxon>
 
-        <taxon id="hydropsychidae" name="Hydropsychidae" commonName="Net spinning caddis" size="12" signalScore="6">
+        <taxon id="hydropsychidae" name="Hydropsychidae" taxonomicLevel="family" commonName="Net spinning caddis" size="12" signalScore="6">
 
           <habitat>Cool flowing water, riffles. Common.</habitat>
           <movement>Slow moving, sometimes thrashes in open water. Will undulate the abdomen to aerate their gills.</movement>
@@ -1372,7 +1352,7 @@
 
         </taxon>
 
-        <taxon id="hydroptilidae" name="Hydroptilidae" commonName="Micro caddis" size="5" signalScore="4">
+        <taxon id="hydroptilidae" name="Hydroptilidae" taxonomicLevel="family" commonName="Micro caddis" size="5" signalScore="4">
 
           <habitat>All water bodies, cases vary accordingly.</habitat>
           <movement>Slow moving, don't move at all immediately after being disturbed...will need 10-15 minutes to get over shock.</movement>
@@ -1382,11 +1362,9 @@
 
         </taxon>
 
-        <taxon id="leptoceridae" name="Leptoceridae">
+        <taxon id="leptoceridae" name="Leptoceridae" ref="k_leptoceridae" taxonomicLevel="family">
 
-          <taxon id="lectrides" name="Lectrides">
-
-            <taxon id="lectrides_varians" name="Lectrides varians" commonName="Flat shack caddis" size="25" signalScore="4">
+            <taxon id="lectrides_varians" name="Lectrides varians" taxonomicLevel="species" commonName="Flat shack caddis" size="25" signalScore="4">
 
               <habitat>Wetlands, lakes and pools in rivers. Common and often abundant.</habitat>
               <movement>Slow ungainly with waiving legs.</movement>
@@ -1396,9 +1374,7 @@
 
             </taxon>
 
-          </taxon>
-
-          <taxon id="notalina" name="Notalina" commonName="Headbanger caddis" size="21" signalScore="6">
+          <taxon id="notalina" name="Notalina" taxonomicLevel="genus" commonName="Headbanger caddis" size="21" signalScore="6">
 
             <description>Notalina are special for the way they move. They thrash their thorax, head and legs back and forth to move through the water. This exhausting movement earns them the name head banger caddis. They always have slender cases. Cases can sometimes be made of spirally arranged
               bits of vegetation</description>
@@ -1411,7 +1387,7 @@
 
           </taxon>
 
-          <taxon id="oecetis" name="Oecetis">
+          <taxon id="oecetis" name="Oecetis" taxonomicLevel="genus">
 
             <taxon id="attack_caddis_lowlander" name="Attack caddis - lowlander" commonName="Attack caddis - lowlander" size="25" signalScore="8">
 
@@ -1423,7 +1399,7 @@
 
             </taxon>
 
-            <taxon id="log_cabin_caddis" name="Log cabin caddis" commonName="Log cabin caddis" size="20" signalScore="5">
+            <taxon id="log_cabin_caddis" name="Log cabin caddis" taxonomicLevel="genus" commonName="Log cabin caddis" size="20" signalScore="5">
 
               <habitat>Wetlands, lakes pools in rivers.</habitat>
               <movement>Hovers with flailing arms, like a helicopter.</movement>
@@ -1435,7 +1411,7 @@
 
           </taxon>
 
-          <taxon id="symphitoneuria" name="Symphitoneuria" commonName="Dart caddis" size="15" signalScore="6">
+          <taxon id="symphitoneuria" name="Symphitoneuria" taxonomicLevel="genus" commonName="Dart caddis" size="15" signalScore="6">
 
             <habitat>Lower end of rivers.</habitat>
             <movement>Crawls on veg, when dislodged, the case falls like a dart with the heavy end first (the sandy bit).</movement>
@@ -1445,7 +1421,7 @@
 
           </taxon>
 
-          <taxon id="triplectides" name="Triplectides" commonName="Stick caddis" size="30" signalScore="4">
+          <taxon id="triplectides" name="Triplectides" taxonomicLevel="genus" commonName="Stick caddis" size="30" signalScore="4">
 
             <habitat>Wetlands, lakes, slow flowing sections in rivers. Common and often abundant.</habitat>
             <movement>Ungainly crawl.</movement>
@@ -1455,7 +1431,7 @@
 
           </taxon>
 
-          <taxon id="leptocerids" name="Leptocerids" commonName="Leptocerids" signalScore="6">
+          <taxon id="leptocerids" name="Leptocerids" taxonomicLevel="alt" commonName="Leptocerids" signalScore="6">
 
             <description>Unidentified, various genera. No further info.</description>
             <habitat />
@@ -1468,7 +1444,7 @@
 
         </taxon>
 
-        <taxon id="philopotamidae_polycentropodidae_and_ecnomidae" name="Philopotamidae, Polycentropodidae and Ecnomidae" commonName="Ginger nuts" size="18" signalScore="7">
+        <taxon id="philopotamidae_polycentropodidae_and_ecnomidae" taxonomicLevel="genus" name="Philopotamidae, Polycentropodidae and Ecnomidae" commonName="Ginger nuts" size="18" signalScore="7">
 
           <habitat>Cool flowing water, riffles, edges, forest streams. Rare.</habitat>
           <movement>Slow moving. </movement>
@@ -1478,7 +1454,7 @@
 
         </taxon>
 
-        <taxon id="philorheithridae" name="Philorheithridae" commonName="Attack caddis - Highlander" size="25" signalScore="8">
+        <taxon id="philorheithridae" name="Philorheithridae" taxonomicLevel="family" commonName="Attack caddis - Highlander" size="25" signalScore="8">
 
           <habitat>Cold flowing water, edges, riffles. Common but sparse (as are most predators). </habitat>
           <movement>Fast moving.</movement>
@@ -1489,7 +1465,7 @@
 
         </taxon>
 
-        <taxon id="tasimiidae" name="Tasimiidae" commonName="Tasimiids" size="10" signalScore="8">
+        <taxon id="tasimiidae" name="Tasimiidae" taxonomicLevel="family" commonName="Tasimiids" size="10" signalScore="8">
 
           <habitat>Small mountain streams, amongst coarse, stable substrate.</habitat>
           <movement>Slow moving.</movement>
@@ -1505,9 +1481,9 @@
 
   </taxon>
 
-  <taxon id="annelida" name="Annelida">
+  <taxon id="annelida" name="Annelida" ref="k_worm_like" taxonomicLevel="phylum">
 
-    <taxon id="hirudinea" name="Hirudinea" commonName="Leeches" size="10" signalScore="1">
+    <taxon id="hirudinea" name="Hirudinea" taxonomicLevel="class" commonName="Leeches" size="10" signalScore="1">
 
       <habitat>Rivers, wetlands.</habitat>
       <movement>Characteristic looping motion, elongation and contraction of body.</movement>
@@ -1517,7 +1493,7 @@
 
     </taxon>
 
-    <taxon id="oligochaeta" name="Oligochaeta" commonName="Worms" size="10" signalScore="1">
+    <taxon id="oligochaeta" name="Oligochaeta" taxonomicLevel="class" commonName="Worms" size="10" signalScore="1">
 
       <habitat>Rivers, wetlands, in sediment.</habitat>
       <movement>Like an earthworm. Smaller worms may swim by wriggling.</movement>
@@ -1529,13 +1505,11 @@
 
   </taxon>
 
-  <taxon id="tx_mollusca" name="Mollusca">
+  <taxon id="mollusca" name="Mollusca" ref="k_mollusca" taxonomicLevel="phylum">
 
-    <taxon id="bivalvia" name="Bivalvia">
+    <taxon id="bivalvia" name="Bivalvia" ref="k_bivalvia" taxonomicLevel="class">
 
-      <taxon id="unionoida" name="Unionoida">
-
-        <taxon id="hyriidae" name="Hyriidae" commonName="Freshwater mussels" size="120" signalScore="5">
+        <taxon id="hyriidae" name="Hyriidae" taxonomicLevel="family" commonName="Freshwater mussels" size="120" signalScore="5">
 
           <habitat>Often found in groups, almost completely dug into the sandy bottom of slow flowing rivers.</habitat>
           <movement>Not really.</movement>
@@ -1547,9 +1521,8 @@
 
       </taxon>
 
-      <taxon id="veneroida" name="Veneroida">
 
-        <taxon id="sphaeriidae_and_corbiculidae" name="Sphaeriidae and Corbiculidae" commonName="Basket and pea shells" size="25" signalScore="4">
+        <taxon id="sphaeriidae_and_corbiculidae" name="Sphaeriidae and Corbiculidae" taxonomicLevel="family" commonName="Basket and pea shells" size="25" signalScore="4">
 
           <habitat>Often found in groups, almost completely dug into the sandy bottom of slow flowing rivers.Flowing and still waters, usually amongst sand or finer sediments. Can be found in large numbers. Common.</habitat>
           <movement>Usually doesn't.</movement>
@@ -1563,13 +1536,11 @@
 
     </taxon>
 
-    <taxon id="gastropoda" name="Gastropoda">
+    <taxon id="gastropoda" name="Gastropoda" ref="k_gastropoda" taxonomicLevel="class">
 
-      <taxon id="architaenioglossa" name="Architaenioglossa">
+        <taxon id="viviparidae" name="Viviparidae" ref="notopala" taxonomicLevel="family">
 
-        <taxon id="viviparidae" name="Viviparidae">
-
-          <taxon id="notopala" name="Notopala" commonName="Notopala" size="20" signalScore="7">
+          <taxon id="notopala" name="Notopala" taxonomicLevel="genus" commonName="Notopala" size="20" signalScore="7">
 
             <habitat>Pools of the lower Murray.</habitat>
             <movement />
@@ -1582,11 +1553,10 @@
         </taxon>
 
 
-      </taxon>
 
-      <taxon id="hygrohpila" name="Hygrohpila">
+      
 
-        <taxon id="ancylidae" name="Ancylidae" commonName="Freshwater limpets" size="4" signalScore="4">
+        <taxon id="ancylidae" name="Ancylidae" taxonomicLevel="family" commonName="Freshwater limpets" size="4" signalScore="4">
 
           <habitat>Both still and flowing waters, on rocks or vegetation. Common.</habitat>
           <movement>Very slow. Can stick to the sorting tray, so they are worth checking for after a live-pick once you have tipped the rest of the sample out.</movement>
@@ -1596,21 +1566,20 @@
 
         </taxon>
 
-        <taxon id="lymnaeidae" name="Lymnaeidae" commonName="Lim nay ids" size="12-40" signalScore="1">
+        <taxon id="lymnaeidae" name="Lymnaeidae" taxonomicLevel="family" commonName="Lim nay ids" size="12-40" signalScore="1">
 
           <habitat>Wetlands / slower lowland rivers.</habitat>
           <movement>Snail's pace.</movement>
-          <confusedWith>Nothing, most other dextral snails are much smaller. Lymaeids can be mottled but they are dextral so they cannot be confused with Physa acuta.</confusedWith>
+          <confusedWith>Nothing, most other dextral snails are much smaller. Lymnaeids can be mottled but they are dextral so they cannot be confused with Physa acuta.</confusedWith>
 
           <mediaRef url="lymnaeidae_01.jpg" />
 
         </taxon>
 
-        <taxon id="physidae" name="Physidae">
+        <taxon id="physidae" name="Physidae" ref="physa_acuta" taxonomicLevel="family">
 
-          <taxon id="physa" name="Physa">
 
-            <taxon id="physa_acuta" name="Physa acuta" commonName="Physa acuta" size="10" signalScore="1">
+            <taxon id="physa_acuta" name="Physa acuta" taxonomicLevel="species" commonName="Physa acuta" size="10" signalScore="1">
 
               <habitat>Flowing water or wetlands widespread. INTRODUCED SPECIES (from the USA)</habitat>
               <movement>Fast... for a snail.</movement>
@@ -1620,13 +1589,12 @@
 
             </taxon>
 
-          </taxon>
 
         </taxon>
 
-        <taxon id="planorbidae" name="Planorbidae">
+        <taxon id="planorbidae" name="Planorbidae" ref="planorbidae" taxonomicLevel="family">
 
-          <taxon id="flat_snails" name="Planorbidae" commonName="flat snails" size="6" signalScore="6">
+          <taxon id="flat_snails" name="Planorbidae" taxonomicLevel="alt" commonName="flat snails" size="6" signalScore="6">
 
             <habitat>Wetlands / Rivers, temporary waters.</habitat>
             <movement>Slow, will retract into shell and drop off vegetation, so it is sometimes worth panning through sand at the end of a live pick to see if you can find them.</movement>
@@ -1636,7 +1604,7 @@
 
           </taxon>
 
-          <taxon id="planorbids" name="Planorbids" commonName="Planorbids" size="15" signalScore="2">
+          <taxon id="planorbids" name="Planorbids" taxonomicLevel="alt" commonName="Planorbids" size="15" signalScore="2">
 
             <habitat>Wetlands / rivers with slow water and lots of water plants. Common and diverse.</habitat>
             <movement>Slow and steady.</movement>
@@ -1647,13 +1615,11 @@
           </taxon>
 
         </taxon>
-      </taxon>
 
-      <taxon id="hypsogastropoda" name="Hypsogastropoda">
 
-        <taxon id="hydrobiidae" name="Hydrobiidae">
+        <taxon id="hydrobiidae" name="Hydrobiidae" ref="hydrobiidae" taxonomicLevel="family">
 
-          <taxon id="beddomeia" name="Beddomeia" commonName="Beddomeia" size="5" signalScore="8">
+          <taxon id="beddomeia" name="Beddomeia" taxonomicLevel="genus" commonName="Beddomeia" size="5" signalScore="8">
 
             <habitat>Cold, fast flowing rocky streams.</habitat>
             <movement />
@@ -1663,9 +1629,7 @@
 
           </taxon>
 
-          <taxon id="potamopyrgus" name="Potamopyrgus">
-
-            <taxon id="potamopyrgus_antipodarum" name="Potamopyrgus antipodarum" commonName="New Zealand mud snail" size="4" signalScore="1">
+            <taxon id="potamopyrgus_antipodarum" name="Potamopyrgus antipodarum" taxonomicLevel="species" commonName="New Zealand mud snail" size="4" signalScore="1">
 
               <habitat>In very large numbers in impacted, high nutrient streams. INTRODUCED SPECIES (from New Zealand)</habitat>
               <movement>Slow, like a snail.</movement>
@@ -1675,13 +1639,11 @@
 
             </taxon>
 
-          </taxon>
-
         </taxon>
 
-        <taxon id="pomatiopsidae" name="Pomatiopsidae">
+        <taxon id="pomatiopsidae" name="Pomatiopsidae" ref="coxiella" taxonomicLevel="family">
 
-          <taxon id="coxiella" name="Coxiella" commonName="Coxiella" size="8" signalScore="2">
+          <taxon id="coxiella" name="Coxiella" taxonomicLevel="genus" commonName="Coxiella" size="8" signalScore="2">
 
             <habitat>Salt lakes of Western Victoria.</habitat>
             <movement />
@@ -1694,11 +1656,9 @@
         </taxon>
 
       </taxon>
-    </taxon>
 
-  </taxon>
 
-  <taxon id="nematoda" name="Nematoda" commonName="Roundworms" size="5" signalScore="1">
+  <taxon id="nematoda" name="Nematoda" taxonomicLevel="phylum" commonName="Roundworms" size="5" signalScore="1">
 
     <habitat>Rivers, wetlands, all habitats in sediment.</habitat>
     <movement>Thrashing, coiling and uncoiling.</movement>
@@ -1708,7 +1668,7 @@
 
   </taxon>
 
-  <taxon id="nematomorpha" name="Nematomorpha" commonName="Gordian worms" size="50" signalScore="5">
+  <taxon id="nematomorpha" name="Nematomorpha" taxonomicLevel="phylum" commonName="Gordian worms" size="50" signalScore="5">
 
     <habitat>Rivers.</habitat>
     <movement>Very slow and deliberate coiling and uncoiling.</movement>
@@ -1718,7 +1678,7 @@
 
   </taxon>
 
-  <taxon id="turbellaria" name="Turbellaria" commonName="flatworms" size="20" signalScore="1">
+  <taxon id="turbellaria" name="Turbellaria" taxonomicLevel="phylum" commonName="flatworms" size="20" signalScore="1">
 
     <habitat>Rivers, wetlands.</habitat>
     <movement>Slow glide.</movement>
@@ -1742,7 +1702,7 @@
     </question>
 
     <outcome for="1">
-      <keyNodeLink ref="mollusca" />
+      <keyNodeLink ref="k_mollusca" />
     </outcome>
 
     <outcome for="2">
@@ -1762,7 +1722,7 @@
         <outcome for="1">
 
           <!-- Node 3 -->
-          <keyNode ref="arthropoda">
+          <keyNode id="k_arthropoda">
 
             <question num="1">
               <text>With more than eight legs</text>
@@ -1774,7 +1734,7 @@
             </question>
 
             <outcome for="1">
-              <keyNodeLink ref="crustacea" />
+              <keyNodeLink ref="k_crustacea" />
             </outcome>
 
             <outcome for="2">
@@ -1792,12 +1752,13 @@
                 </question>
 
                 <outcome for="1">
-                  <keyNodeLink ref="chelicerata" />
+                  <keyNodeLink ref="k_chelicerata" />
                 </outcome>
 
                 <outcome for="2">
                   <!-- Node 5 -->
-                  <keyNode>
+                  <keyNode id="k_hexapoda">
+                  
                     <question num="1">
                       <text>with wing covers</text>
                       <mediaRef url="wingcovers.gif" />
@@ -1823,11 +1784,11 @@
                         </question>
 
                         <outcome for="1">
-                          <keyNodeLink ref="coleoptera" />
+                          <keyNodeLink ref="k_coleoptera" />
                         </outcome>
 
                         <outcome for="2">
-                          <keyNodeLink ref="hemiptera" />
+                          <keyNodeLink ref="k_hemiptera" />
                         </outcome>
 
                       </keyNode>
@@ -1875,7 +1836,7 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="trichoptera" />
+                                  <keyNodeLink ref="k_trichoptera" />
                                 </outcome>
 
                                 <outcome for="2">
@@ -1899,12 +1860,13 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="odonata" />
+                                  <keyNodeLink ref="k_odonata" />
                                 </outcome>
 
                                 <outcome for="2">
+                                
                                   <!-- Node 11 -->
-                                  <keyNode id="larval">
+                                  <keyNode id="k_larval">
 
                                     <question num="1">
                                       <text>mouthparts straight and longer than head</text>
@@ -1917,7 +1879,7 @@
                                     </question>
 
                                     <outcome for="1">
-                                      <taxonLink ref="neurorthridae" />
+                                      <taxonLink ref="neuroptera" />
                                     </outcome>
 
                                     <outcome for="2">
@@ -1934,7 +1896,7 @@
                                         </question>
 
                                         <outcome for="1">
-                                          <keyNodeLink ref="coleoptera_larvae" />
+                                          <keyNodeLink ref="k_coleoptera_larvae" />
                                         </outcome>
 
                                         <outcome for="2">
@@ -1982,11 +1944,11 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="plecoptera" />
+                                  <keyNodeLink ref="k_plecoptera" />
                                 </outcome>
 
                                 <outcome for="2">
-                                  <keyNodeLink ref="coleoptera_larvae" />
+                                  <keyNodeLink ref="k_coleoptera_larvae" />
                                 </outcome>
 
                               </keyNode>
@@ -2007,11 +1969,11 @@
                                 </question>
 
                                 <outcome for="1">
-                                  <keyNodeLink ref="odonata" />
+                                  <keyNodeLink ref="k_odonata" />
                                 </outcome>
 
                                 <outcome for="2">
-                                  <keyNodeLink ref="ephemeroptera" />
+                                  <keyNodeLink ref="k_ephemeroptera" />
                                 </outcome>
                               </keyNode>
                             </outcome>
@@ -2027,7 +1989,7 @@
         </outcome>
         <outcome for="2">
           <!-- Node 16 -->
-          <keyNode id="worm_like">
+          <keyNode id="k_worm_like">
             <question num="1">
               <text>segmented</text>
               <mediaRef url="segmented.gif" />
@@ -2066,7 +2028,7 @@
                     </question>
 
                     <outcome for="1">
-                      <keyNodeLink ref="diptera" />
+                      <keyNodeLink ref="k_diptera" />
                     </outcome>
 
                     <outcome for="2">
@@ -2096,7 +2058,7 @@
                     </outcome>
 
                     <outcome for="2">
-                      <keyNodeLink ref="diptera" />
+                      <keyNodeLink ref="k_diptera" />
                     </outcome>
                   </keyNode>
                 </outcome>
@@ -2154,7 +2116,7 @@
     </outcome>
   </keyNode>
 
-  <keyNode id="mollusca">
+  <keyNode id="k_mollusca">
     <question num="1">
       <text>Animals look like snails or limpets.</text>
     </question>
@@ -2177,7 +2139,7 @@
 
         <outcome for="1">
 
-          <keyNode>
+          <keyNode id="k_gastropoda">
 
             <question num="1">
               <text>Snails with flat shells.</text>
@@ -2264,7 +2226,7 @@
 
     <outcome for="2">
 
-      <keyNode>
+      <keyNode id="k_bivalvia">
 
         <question num="1">
           <text>Shell halves are large (longer than 25 mm), dark, thick and usually not symmetrical.</text>
@@ -2285,7 +2247,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="crustacea">
+  <keyNode id="k_crustacea">
     <question num="1">
       <text>Robust animals, freshwater crayfish or yabbies with obvious front pincers, movement walking or sometimes 'flips' of the tail that propel the animal backwards.</text>
     </question>
@@ -2302,7 +2264,7 @@
 
       <keyNode>
         <question num="1">
-          <text>Shrimp or prawn-like animals (see pictures).</text>
+          <text>Shrimp or prawn-like animals.</text>
           <mediaRef url="shrimplike.gif" />
         </question>
 
@@ -2453,7 +2415,7 @@
     </outcome>
   </keyNode>
 
-  <keyNode id="chelicerata">
+  <keyNode id="k_chelicerata">
 
     <question num="1">
       <text>found under water</text>
@@ -2471,7 +2433,7 @@
       <taxonLink ref="pisauridae_and_lycosidae" />
     </outcome>
   </keyNode>
-  <keyNode id="coleoptera">
+  <keyNode id="k_coleoptera">
 
     <question num="1">
       <text>Beetles active swimmers</text>
@@ -2532,7 +2494,7 @@
                 </outcome>
 
                 <outcome for="2">
-                  <taxonLink ref="water_scavenger_beetle_adult" />
+                  <taxonLink ref="hydrophilidae_adult" />
                 </outcome>
 
               </keyNode>
@@ -2540,7 +2502,7 @@
 
             <outcome for="2">
 
-              <keyNode>
+              <keyNode id="k_dytiscidae">
 
                 <question num="1">
                   <text>less than 10mm </text>
@@ -2790,7 +2752,7 @@
 
     </outcome>
   </keyNode>
-  <keyNode id="hemiptera">
+  <keyNode id="k_hemiptera">
 
     <question num="1">
       <text>Bugs walking/running on the water surface.</text>
@@ -2871,7 +2833,7 @@
 
             <outcome for="2">
 
-              <keyNode>
+              <keyNode id="k_nepidae">
 
                 <question num="1">
                   <text>Long, thin, skinny bug, pale coloured. Looks like a stick or a piece of sedge.</text>
@@ -2923,7 +2885,7 @@
 
                 <outcome for="2">
 
-                  <keyNode>
+                  <keyNode id="k_notonectidae">
 
                     <question num="1">
                       <text>Robust, chunky, fast moving. Either at water surface or holding onto something. Triangular when viewed from above (animal on left of image).</text>
@@ -2950,7 +2912,7 @@
 
             <outcome for="2">
 
-              <keyNode>
+              <keyNode id="k_bugs">
 
                 <question num="1">
                   <text>Larger 10-30mm bugs. Front legs pointed for piercing prey. Do not flick swimming legs when at rest.</text>
@@ -2985,7 +2947,7 @@
                 <outcome for="2">
 
                   <!-- couplet 12 -->
-                  <keyNode id="corixidae">
+                  <keyNode id="k_corixidae">
 
                     <question num="1">
                       <text>Head with 'nostrils' (Ocelli, they are more like eyes - see photo). Usually distinctly orange or yellow coloured head and underneath.</text>
@@ -3054,7 +3016,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="trichoptera">
+  <keyNode id="k_trichoptera">
 
     <question num="1">
       <text>Caddis living in a portable case. Most crawl slowly, some swim by head-thrashing or arm-waving; if out of case, body blunt ending with tiny prolegs and hooks.</text>
@@ -3066,7 +3028,7 @@
 
     <outcome for="1">
 
-      <keyNode id="cased_caddis">
+      <keyNode id="k_cased">
 
         <question num="1">
           <text>Tiny larvae &lt;5mm long. Abdomen yellow, swollen, thicker than thorax. Purse shaped case of translucent silk, sometimes with sand or algae. Slow moving, hard to see.</text>
@@ -3257,7 +3219,7 @@
 
                         <outcome for="2">
 
-                          <keyNode>
+                          <keyNode id="k_leptoceridae">
 
                             <question num="1">
                               <text>Case constructed from a single stick or piece of aquatic plant.</text>
@@ -3402,7 +3364,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="odonata">
+  <keyNode id="k_odonata">
 
     <question num="1">
       <text>Slender larvae, with 3 terminal gills. Swim by undulating (snake-like).</text>
@@ -3414,7 +3376,7 @@
 
     <outcome for="1">
 
-      <keyNode>
+      <keyNode id="k_zygoptera">
 
         <question num="1">
           <text>Leaf-like terminal gills held flat and fanned out horizontally.</text>
@@ -3490,7 +3452,7 @@
 
     <outcome for="2">
 
-      <keyNode>
+      <keyNode id="k_epiproctophora">
 
         <question num="1">
           <text>Fat, round ended body and long legs make them look spider-like. Mouthparts form a ladle-shaped mask in front of face.</text>
@@ -3549,7 +3511,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="coleoptera_larvae">
+  <keyNode id="k_coleoptera_larvae">
 
     <question num="1">
       <text>Beetle larvae swim actively with all legs; usually with wide flat heads and prominent mandibles; middle of the head sometimes projected forwards like a nose on smaller examples; may be biting and killing other animals in the tray.</text>
@@ -3561,7 +3523,7 @@
 
     <outcome for="1">
 
-      <keyNode id="dytiscidae_L">
+      <keyNode id="k_dytiscidae_L">
 
         <question num="1">
           <text>Larvae larger than 12mm long.</text>
@@ -3666,7 +3628,7 @@
 
             <outcome for="1">
 
-              <keyNode>
+              <keyNode id="k_crunchy_beetle_larvae">
 
                 <question num="1">
                   <text>Flattened, cockroach-like larvae with simple bodies and long antennae. Yellow, brown to black. </text>
@@ -3706,7 +3668,7 @@
 
             <outcome for="2">
 
-              <keyNode>
+              <keyNode >
 
                 <question num="1">
                   <text>Elongate, slender larvae with feathery lateral gills and terminal anal claws (see picture); head dark, body pale. </text>
@@ -3767,7 +3729,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="plecoptera">
+  <keyNode id="k_plecoptera">
 
     <question num="1">
       <text>Large nymphs up to 40mm usually bright green, orange or blue. Animals have gills along the side of the abdomen.</text>
@@ -3895,7 +3857,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="ephemeroptera">
+  <keyNode id="k_ephemeroptera">
 
     <question num="1">
       <text>Nymphs with gills along the side of the abdomen.</text>
@@ -3951,7 +3913,7 @@
 
                 <outcome for="1">
 
-                  <keyNode>
+                  <keyNode id="k_leptophlebiidae">
 
                     <question num="1">
                       <text>With a conspicuous set of horns.</text>
@@ -4039,7 +4001,7 @@
       </keyNode>
     </outcome>
   </keyNode>
-  <keyNode id="diptera">
+  <keyNode id="k_diptera">
 
     <question num="1">
       <text>Maggots break the surface of the water to breathe; their bodies are buoyant in deeper water (floaters).</text>
@@ -4145,7 +4107,7 @@
 
     <outcome for="2">
 
-      <keyNode id="maggots">
+      <keyNode id="k_maggots">
 
         <question num="1">
           <text>Bleffs (very distinctive, see picture), only found in fast flowing water.</text>
@@ -4190,7 +4152,7 @@
 
                 <outcome for="2">
 
-                  <keyNode id="chironomid">
+                  <keyNode id="k_chironomid">
 
                     <question num="1">
                       <text>Animals obviously red.</text>
@@ -4278,15 +4240,104 @@
   
   <!-- These links are total rubbish ... but this is an example of how the speed bug data is encoded -->
   <speedBugIndex>
-      <speedBugGroup ref="maggots">
-          <speedBugLink image="speedbug/athericidae_b.gif" ref="chelicerata"/>
-      <speedBugLink image="speedbug/blepheraceridae_b.gif" ref="hymenosomatidae"/>
+     
+        <speedBugLink image="speedbug/bivalve_b.gif" ref="k_bivalvia"/>
+		<speedBugLink image="speedbug/gastropod_b.gif" ref="k_gastropoda"/>
+		<speedBugLink image="speedbug/turbellaria_b.gif" ref="turbellaria"/>
+
+    <speedBugGroup ref="k_worm_like">
+
+	<speedBugLink image="speedbug/oligochaeta_b.gif" ref="oligochaeta"/>
+	<speedBugLink image="speedbug/hirudinea_b.gif" ref="hirudinea"/>
+	<speedBugLink image="speedbug/nematoda_b.gif" ref="nematoda"/>
+	<speedBugLink image="speedbug/gordian_b.gif" ref="nematomorpha"/>
+	<speedBugLink image="speedbug/bloodworm_b.gif" ref="chironomidae"/>
+	<speedBugLink image="speedbug/tipulidae_b.gif" ref="tipulidae"/>
       </speedBugGroup>
-      <speedBugLink image="speedbug/ranatra_b.gif" ref="helicopsychidae"/>
-      <speedBugGroup ref="larval">
-          <speedBugLink image="speedbug/hydrobiosidae_b.gif" ref="hydrobiosidae"/>
-      <speedBugLink image="speedbug/megaloptera_b.gif" ref="leptoceridae"/>
+    <speedBugGroup ref="k_maggots">
+<speedBugLink image="speedbug/athericidae_b.gif" ref="athericidae"/>
+<speedBugLink image="speedbug/blephariceridae_b.gif" ref="blephariceridae"/>
       </speedBugGroup>
+<speedBugLink image="speedbug/simuliidae_b.gif" ref="simuliidae"/>
+<speedBugLink image="speedbug/psephenidae_b.gif" ref="psephenidae"/>
+
+    <speedBugGroup ref="k_crunchy_beetle_larvae">
+<speedBugLink image="speedbug/elmidae_b.gif" ref="elmidae"/> 
+      </speedBugGroup>
+
+    <speedBugGroup ref="k_larval">
+<speedBugLink image="speedbug/hydrobiosidae_b.gif" ref="hydrobiosidae"/>
+<speedBugLink image="speedbug/hydropsychidae_b.gif" ref="hydropsychidae"/>
+<speedBugLink image="speedbug/megaloptera_b.gif" ref="megaloptera"/>
+<speedBugLink image="speedbug/berosus_b.gif" ref="berosus"/>
+<speedBugLink image="speedbug/dytiscidae_L_b.gif" ref="k_dytiscidae_L"/>
+<speedBugLink image="speedbug/neuroptera_b.gif" ref="neuroptera"/>
+      </speedBugGroup>
+
+    <speedBugGroup ref="k_cased">
+<speedBugLink image="speedbug/lepidoptera_b.gif" ref="lepidoptera"/>
+<speedBugLink image="speedbug/atriplectides_b.gif" ref="atriplectides"/>
+<speedBugLink image="speedbug/philorheithridae_b.gif" ref="philorheithridae"/>
+      </speedBugGroup>
+      
+    <speedBugGroup ref="k_notonectidae">
+<speedBugLink image="speedbug/anisops_b.gif" ref="anisops"/>
+<speedBugLink image="speedbug/enithares_b.gif" ref="enithares"/>
+      </speedBugGroup>
+
+<speedBugLink image="speedbug/veliids_b.gif" ref="veliidae_mesoveliidae_and_hebridae"/>
+
+    <speedBugGroup ref="k_bugs">
+    <speedBugLink image="speedbug/corixidae_b.gif" ref="corixidae"/>
+<speedBugLink image="speedbug/naucoridae_b.gif" ref="naucoridae"/>
+      </speedBugGroup>
+
+    <speedBugGroup ref="k_coleoptera">
+<speedBugLink image="speedbug/diving_beetles_b.gif" ref="k_dytiscidae"/>
+<speedBugLink image="speedbug/hydrophilus_b.gif" ref="hydrophilus"/>
+<speedBugLink image="speedbug/gyrinidae_b.gif" ref="gyrinidae"/>
+      </speedBugGroup>
+
+    <speedBugGroup ref="k_nepidae">
+<speedBugLink image="speedbug/ranatra_b.gif" ref="ranatra"/>
+<speedBugLink image="speedbug/laccotrephes_b.gif" ref="laccotrephes"/>
+      </speedBugGroup>
+
+<speedBugLink image="speedbug/gerridae_b.gif" ref="gerridae"/>
+
+    <speedBugGroup ref="k_epiproctophora">
+<speedBugLink image="speedbug/dragonfly_b.gif" ref="k_epiproctophora"/>
+      </speedBugGroup>
+
+    <speedBugGroup ref="k_zygoptera">
+<speedBugLink image="speedbug/megapodagrionidae_b.gif" ref="megapodagrionidae"/>
+<speedBugLink image="speedbug/damsels_b.gif" ref="k_zygoptera"/>
+      </speedBugGroup>
+
+    <speedBugGroup ref="k_plecoptera">
+<speedBugLink image="speedbug/illiesoperla_b.gif" ref="illiesoperla"/>
+<speedBugLink image="speedbug/eusthenia_b.gif" ref="eustheniidae"/>
+      </speedBugGroup>
+
+    <speedBugGroup ref="k_ephemeroptera">
+<speedBugLink image="speedbug/leptophlebiidae_b.gif" ref="leptophlebiidae"/>
+<speedBugLink image="speedbug/atalophlebia_b.gif" ref="atalophlebia"/>
+<speedBugLink image="speedbug/coloburiscidae_b.gif" ref="coloburiscidae"/>
+      </speedBugGroup>
+
+<speedBugLink image="speedbug/hydracarina_b.gif" ref="acarina"/>
+<speedBugLink image="speedbug/pisauridae_b.gif" ref="pisauridae_and_lycosidae"/>
+
+    <speedBugGroup ref="k_crustacea">
+<speedBugLink image="speedbug/hymenosomatidae_b.gif" ref="hymenosomatidae"/>
+<speedBugLink image="speedbug/atyidae_b.gif" ref="atyidae"/>
+<speedBugLink image="speedbug/parastacidae_b.gif" ref="parastacidae"/>
+<speedBugLink image="speedbug/amphipoda_b.gif" ref="amphipoda"/>
+<speedBugLink image="speedbug/anostraca_b.gif" ref="anostraca"/>
+<speedBugLink image="speedbug/notostraca_b.gif" ref="notostraca"/>
+      </speedBugGroup>
+
+      
   </speedBugIndex>
   
 </key>
