@@ -263,7 +263,7 @@ function createAppWindow() {
     });
     
     privates.subscribe( Topics.VIDEO, function( msg, data ) { 
-    	var vv = VideoView.createVideoView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, data ) );
+    	var vv = VideoView.createVideoView( Ti.Filesystem.getFile( data ) );
     	vv.open();
     });
     
