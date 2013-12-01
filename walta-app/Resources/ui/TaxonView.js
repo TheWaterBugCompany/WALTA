@@ -23,6 +23,7 @@ function createDetailsView(txnViewObj) {
 		layout : 'vertical'
 	});
 
+	
 	vws.details = Ti.UI.createWebView({
 		setScalesPageToFit: true,
 		disableBounce: true,
@@ -39,7 +40,7 @@ function createDetailsView(txnViewObj) {
 			+ '</head><body id="details">' + txnViewObj.taxon.asDetailHtml() + '</body></html>'
 	});
 
-	vws.detailsBox.add( vws.details );	
+	vws.detailsBox.add( vws.details );
 
 	/* 
 	 * =============== HACK: Workaround for odd WebView resizing bug under iOS ===============
@@ -47,14 +48,16 @@ function createDetailsView(txnViewObj) {
 	 * Under iOS the WebView seems to mysteriously change zoom level after the initial layout.
 	 * 
 	 * To fix this we set the explicit width of the view on the postlayout event to make sure 
-	 * it won't change from the value first caclulated.
+	 * it won't change from the value first calculated.
 	 */
 	
-	var hackListener = function() {
-		vws.details.width = vws.details.size.width;
-		vws.details.removeEventListener( 'postlayout', hackListener );
-	};
-	vws.details.addEventListener( 'postlayout', hackListener );
+	if ( Ti.Platform.osname === 'iphone' ) {			
+		var hackListener = function() {
+			vws.details.width = vws.details.size.width;
+			vws.details.removeEventListener( 'postlayout', hackListener );
+		};
+		vws.details.addEventListener( 'postlayout', hackListener );
+	}
 	
 	/*
 	 * ============================== END HACK ================================================
