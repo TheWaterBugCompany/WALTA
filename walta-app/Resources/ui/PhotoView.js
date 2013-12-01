@@ -31,7 +31,13 @@ function updateCurrentPage( dots, selPage ) {
 // Create photo View
 function createPhotoView( photoUrls ) {
 	
-	var photoViewObj = { _views: {} };
+	/* See bug TIMOB-14393; we can't rely on the Java GC not collecting Ti objects unless
+	 * they are safely attached to a view or window in scope or are a global reference.
+	 * 
+	 * Under memory pressure scenarios if photoViewObj below is a local variable then the app
+	 * will crash.
+	 **/
+	/*var*/ photoViewObj = { _views: {} };
 	
 	photoViewObj._views.galleryWin = Ti.UI.createWindow({ 
 			backgroundColor: 'black', 
@@ -44,12 +50,12 @@ function createPhotoView( photoUrls ) {
 	photoViewObj._views.scrollView = Ti.UI.createScrollableView({
 		views: _(photoUrls).map( 
 			function(url) { 
-				
+				var view = null;
 				// NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
 				// we cheat by using a WebView.
-				if (Ti.Platform.osname === 'android') {
+				if ( Ti.Platform.osname === 'android' ) {
 					var file = Ti.Filesystem.getFile(url);
-					var view =  Ti.UI.createWebView({
+					view =  Ti.UI.createWebView({
 						setScalesPageToFit: false,
 						disableBounce: true,
 						enableZoomControls: true,
@@ -60,17 +66,17 @@ function createPhotoView( photoUrls ) {
 					});
 					
 			   	} else {
-			   		var view = Ti.UI.createScrollView({
+			   		view = Ti.UI.createScrollView({
 						minZoomScale: 1.0,
 						maxZoomScale: 4.0
 					});
-					view.add( Ti.UI.createImageView( { image: url /*, top: '3%', bottom: '3%', left: '3%', right: '3%'*/ } ) );
+					view.add( Ti.UI.createImageView( { image: url } ) );
 			   	}
 				return view; 
 			}),
 		showPagingControl: false,
 		bottom: Layout.PAGER_HEIGHT
-	});
+	}); 
 	photoViewObj._views.galleryWin.add(photoViewObj._views.scrollView);
 
 	photoViewObj._views.pager = Ti.UI.createView({
