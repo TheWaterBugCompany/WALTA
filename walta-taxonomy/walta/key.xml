@@ -119,7 +119,8 @@
         <confusedWith>Nothing in wetlands ...but they do look like horseshoe crabs.</confusedWith>
 
         <mediaRef url="notostraca_01.jpg" />
-
+ 		<mediaRef url="notostraca_m1.mp4" />
+ 		
       </taxon>
 
     </taxon>
@@ -254,6 +255,7 @@
             <confusedWith>Nothing, very distinctive stripes.</confusedWith>
 
             <mediaRef url="lancetes_01.jpg" />
+          	<mediaRef url="lancetes_m1.mp4" />
 
           </taxon>
 
@@ -338,7 +340,8 @@
             <confusedWith>See taper-tailed tigers.Small individuals might key out as swimming water tigers, but swimming water tigers usually have better developed tails.</confusedWith>
 
             <mediaRef url="two-tailed_tiger_larvae_01.jpg" />
-
+ 			<mediaRef url="dytiscidae_larva_m1.mp4" />
+ 			
           </taxon>
 
           <taxon id="nosey_tiger_larvae" name="nosey tiger larvae" commonName="nosey tigers larvae" taxonomicLevel="alt" size="12" signalScore="2">
@@ -409,6 +412,8 @@
 
             <mediaRef url="gyrinidae_adult_01.jpg" />
             <mediaRef url="gyrinidae_adult_m1.mp4" />
+            <mediaRef url="gyrinidae_adult_m2.mp4" />
+            
 
           </taxon>
 
@@ -488,6 +493,7 @@
             <confusedWith>Dytiscids</confusedWith>
 
             <mediaRef url="water_scavenger_beetle_adult_01.jpg" />
+            <mediaRef url="hydrophilidae_m1.mp4" />
 
           </taxon>
 
@@ -535,6 +541,7 @@
             <confusedWith>Trilobites, but they have been extinct since the Carboniferous (280,000,000 years ago), and are marine.</confusedWith>
 
             <mediaRef url="sclerocyphon_01.jpg" />
+            <mediaRef url="sclerocyphon_02.jpg" />
 
           </taxon>
 
@@ -574,7 +581,7 @@
           <confusedWith>Nothing, very distinctive once you have definitely seen the side projections.</confusedWith>
 
           <mediaRef url="athericidae_01.jpg" />
-
+		  <mediaRef url="athericidae_02.jpg" />
         </taxon>
 
         <taxon id="blephariceridae" name="Blephariceridae" taxonomicLevel="family" commonName="Bleff" size="13" signalScore="10">
@@ -690,6 +697,7 @@
           <confusedWith>Nothing, other than chicken drumsticks. Very distinctive.</confusedWith>
 
           <mediaRef url="simuliidae_01.jpg" />
+          <mediaRef url="simuliidae_02.jpg" />
           <mediaRef url="simuliidae_m1.mp4" />
 
         </taxon>
@@ -823,6 +831,7 @@
             <confusedWith>Nothing.</confusedWith>
 
             <mediaRef url="leptophlebs_01.jpg" />
+            <mediaRef url="leptophlebiidae_m1.mp4" />
 
           </taxon>
 
@@ -977,6 +986,7 @@
             <confusedWith>Nothing, very distinctive.</confusedWith>
 
             <mediaRef url="ranatra_01.jpg" />
+            <mediaRef url="ranatra_m1.mp4" />
 
           </taxon>
 
@@ -1097,6 +1107,7 @@
           <confusedWith>Will look almost exactly like a synlestid (stripy legs and all), but with longer, obviously divided gills.</confusedWith>
 
           <mediaRef url="isostictidae_01.jpg" />
+          <mediaRef url="isostictidae_02.jpg" />
 
         </taxon>
 
@@ -1107,6 +1118,8 @@
           <confusedWith>Nothing, unless it has lost its gills.</confusedWith>
 
           <mediaRef url="lestidae_and_coenagrionidae_01.jpg" />
+          <mediaRef url="zygoptera_m1.mp4" />
+          
 
         </taxon>
 
@@ -1211,7 +1224,8 @@
             <confusedWith>This is a diverse group of leftovers, check carefully for projections and hairy legs before using this name.</confusedWith>
 
             <mediaRef url="gripops_or_fluffy_bums_01.jpg" />
-
+			<mediaRef url="gripopterygidae_m1.mp4" />
+			
           </taxon>
 
         </taxon>
@@ -1282,6 +1296,7 @@
           <confusedWith>Young leptocerids; the distinction between long and short hind legs is not as great with juveniles.</confusedWith>
 
           <mediaRef url="conoesucidae_calocidae_and_helicophidae_01.jpg" />
+          <mediaRef url="conoesucidae_calocidae_and_helicophidae_02.jpg" />
 
         </taxon>
 
@@ -1308,6 +1323,8 @@
             <confusedWith>Coarser case might look like Tasimiidae, but glossosomatids don't have tapered/triangular cases.</confusedWith>
 
             <mediaRef url="agapetus_01.jpg" />
+	        <mediaRef url="glossosomatidae_m1.mp4" />
+			
 
           </taxon>
 
@@ -1335,6 +1352,8 @@
 
           <mediaRef url="hydrobiosidae_01.jpg" />
           <mediaRef url="hydrobiosidae_m1.mp4" />
+          <mediaRef url="hydrobiosidae_m2.mp4" />
+          
 
         </taxon>
 
@@ -1424,6 +1443,7 @@
             <confusedWith>All stick cases are from the Genus Triplectides, but not all Triplectides have stick cases.</confusedWith>
 
             <mediaRef url="triplectides_01.jpg" />
+            <mediaRef url="triplectides_m1.mp4" />
 
           </taxon>
 
@@ -1446,6 +1466,7 @@
           <confusedWith>Nothing, very distinctive.</confusedWith>
 
           <mediaRef url="philopotamidae_polycentropodidae_and_ecnomidae_01.jpg" />
+          <mediaRef url="philopotamidae_m1.mp4" />
 
         </taxon>
 
@@ -1581,6 +1602,7 @@
               <confusedWith>Planorbids can look very similar, but Physa acuta has a mottled mantle that is usually visible through the shell.</confusedWith>
 
               <mediaRef url="physa_acuta_01.jpg" />
+              <mediaRef url="physa_acuta_closeup.jpg" />
 
             </taxon>
 
@@ -1631,6 +1653,8 @@
               <confusedWith>Some snails from the same family in healthy streams, see Genus Beddomeia, family Hydrobiidae, at the end of this section.</confusedWith>
 
               <mediaRef url="potamopyrgus_antipodarum_01.jpg" />
+              <mediaRef url="potamopyrgus_antipodarum_02.jpg" />
+              <mediaRef url="potamopyrgus_02.gif" />
 
             </taxon>
 
@@ -2914,6 +2938,7 @@
 
                 <question num="2">
                   <text>Small (&lt;10mm) active bugs with two broad paddle like swimming legs which they flick back and forth when at rest. Streamlined body, blunt head. An air bubble may be visible under the body. May make buzzing or squeaking sounds in the tray.</text>
+               <mediaRef url="corixidae_m2.mp4" />
                 </question>
 
                 <outcome for="1">
@@ -3509,6 +3534,7 @@
 
     <question num="1">
       <text>Beetle larvae swim actively with all legs; usually with wide flat heads and prominent mandibles; middle of the head sometimes projected forwards like a nose on smaller examples; may be biting and killing other animals in the tray.</text>
+     <mediaRef url="dytiscidae_larva_m1.mp4" />
     </question>
 
     <question num="2">
