@@ -4258,11 +4258,19 @@
     </outcome>
   </keyNode>
   
-  <!-- These links are total rubbish ... but this is an example of how the speed bug data is encoded -->
+  <!-- speedbug data  -->
   <speedBugIndex>
+        <speedBugGroup ref="k_bivalvia">
      
-        <speedBugLink image="speedbug/bivalve_b.gif" ref="k_bivalvia"/>
-		<speedBugLink image="speedbug/gastropod_b.gif" ref="k_gastropoda"/>
+        <speedBugLink image="speedbug/hyriidae_b.gif" ref="hyriidae"/>
+        <speedBugLink image="speedbug/sphaeriidae_and_corbiculidae_b.gif" ref="sphaeriidae_and_corbiculidae"/>
+        </speedBugGroup>
+        
+        <speedBugGroup ref="k_gastropoda">
+		<speedBugLink image="speedbug/potamopyrgus_antipodarum_b.gif" ref="potamopyrgus_antipodarum"/>
+        <speedBugLink image="speedbug/snails_b.gif" ref="k_gastropoda"/>
+		</speedBugGroup>
+		
 		<speedBugLink image="speedbug/turbellaria_b.gif" ref="turbellaria"/>
 
     <speedBugGroup ref="k_worm_like">
@@ -4279,25 +4287,32 @@
 <speedBugLink image="speedbug/blephariceridae_b.gif" ref="blephariceridae"/>
       </speedBugGroup>
 <speedBugLink image="speedbug/simuliidae_b.gif" ref="simuliidae"/>
+<speedBugLink image="speedbug/mosquitolarva_b.gif" ref="culicidae"/>
 <speedBugLink image="speedbug/psephenidae_b.gif" ref="psephenidae"/>
 
     <speedBugGroup ref="k_crunchy_beetle_larvae">
 <speedBugLink image="speedbug/elmidae_b.gif" ref="elmidae"/> 
+<speedBugLink image="speedbug/ptilodactylidae_b.gif" ref="byrrocryptus"/> 
       </speedBugGroup>
 
     <speedBugGroup ref="k_larval">
 <speedBugLink image="speedbug/hydrobiosidae_b.gif" ref="hydrobiosidae"/>
 <speedBugLink image="speedbug/hydropsychidae_b.gif" ref="hydropsychidae"/>
+<speedBugLink image="speedbug/dytiscidae_L_b.gif" ref="k_dytiscidae_L"/>
+<speedBugLink image="speedbug/twotailedtiger_b.gif" ref="k_dytiscidae_L"/>
+<speedBugLink image="speedbug/neuroptera_b.gif" ref="neuroptera"/>
 <speedBugLink image="speedbug/megaloptera_b.gif" ref="megaloptera"/>
 <speedBugLink image="speedbug/berosus_b.gif" ref="berosus"/>
-<speedBugLink image="speedbug/dytiscidae_L_b.gif" ref="k_dytiscidae_L"/>
-<speedBugLink image="speedbug/neuroptera_b.gif" ref="neuroptera"/>
+<speedBugLink image="speedbug/gyrinidae_larva_b.gif" ref="megaloptera"/>
       </speedBugGroup>
 
     <speedBugGroup ref="k_cased">
 <speedBugLink image="speedbug/lepidoptera_b.gif" ref="lepidoptera"/>
 <speedBugLink image="speedbug/atriplectides_b.gif" ref="atriplectides"/>
+<speedBugLink image="speedbug/conoesucidae_b.gif" ref="k_cased"/>
+
 <speedBugLink image="speedbug/philorheithridae_b.gif" ref="philorheithridae"/>
+<speedBugLink image="speedbug/triplectides_b.gif" ref="triplectides"/>
       </speedBugGroup>
       
     <speedBugGroup ref="k_notonectidae">
@@ -4314,6 +4329,7 @@
 
     <speedBugGroup ref="k_coleoptera">
 <speedBugLink image="speedbug/diving_beetles_b.gif" ref="k_dytiscidae"/>
+<speedBugLink image="speedbug/diving_beetletop_b.gif" ref="k_dytiscidae"/>
 <speedBugLink image="speedbug/hydrophilus_b.gif" ref="hydrophilus"/>
 <speedBugLink image="speedbug/gyrinidae_b.gif" ref="gyrinidae"/>
       </speedBugGroup>
@@ -4322,11 +4338,12 @@
 <speedBugLink image="speedbug/ranatra_b.gif" ref="ranatra"/>
 <speedBugLink image="speedbug/laccotrephes_b.gif" ref="laccotrephes"/>
       </speedBugGroup>
-
+<speedBugLink image="speedbug/hydrometridae_b.gif" ref="hydrometridae"/>
 <speedBugLink image="speedbug/gerridae_b.gif" ref="gerridae"/>
 
     <speedBugGroup ref="k_epiproctophora">
-<speedBugLink image="speedbug/dragonfly_b.gif" ref="k_epiproctophora"/>
+<speedBugLink image="speedbug/aeshnidae_telephleb_b.gif" ref="k_epiproctophora"/>
+<speedBugLink image="speedbug/spidermudeye_b.gif" ref="spider_mud_eye"/>
       </speedBugGroup>
 
     <speedBugGroup ref="k_zygoptera">
@@ -4340,6 +4357,7 @@
       </speedBugGroup>
 
     <speedBugGroup ref="k_ephemeroptera">
+<speedBugLink image="speedbug/baetidae_b.gif" ref="baetidae"/>
 <speedBugLink image="speedbug/leptophlebiidae_b.gif" ref="leptophlebiidae"/>
 <speedBugLink image="speedbug/atalophlebia_b.gif" ref="atalophlebia"/>
 <speedBugLink image="speedbug/coloburiscidae_b.gif" ref="coloburiscidae"/>
@@ -4353,8 +4371,8 @@
 <speedBugLink image="speedbug/atyidae_b.gif" ref="atyidae"/>
 <speedBugLink image="speedbug/parastacidae_b.gif" ref="parastacidae"/>
 <speedBugLink image="speedbug/amphipoda_b.gif" ref="amphipoda"/>
-<speedBugLink image="speedbug/anostraca_b.gif" ref="anostraca"/>
 <speedBugLink image="speedbug/notostraca_b.gif" ref="notostraca"/>
+<speedBugLink image="speedbug/anostraca_b.gif" ref="anostraca"/>
       </speedBugGroup>
 
       
