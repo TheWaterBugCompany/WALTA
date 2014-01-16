@@ -795,6 +795,11 @@
             <confusedWith>Nothing, very distinctive in robustness and movement. Look for spiky V shaped gills for confirmation.</confusedWith>
 
             <mediaRef url="coloburiscoides_01.jpg" />
+            <mediaRef url="coloburiscoides_1000.jpg" />
+            <mediaRef url="coloburiscoides_800.jpg" />
+            <mediaRef url="coloburiscoides_600.jpg" />
+            <mediaRef url="coloburiscoides_500.jpg" />
+            
             <mediaRef url="coloburiscoides_m1.mp4" />
 
           </taxon>
@@ -1013,6 +1018,10 @@
 
             <mediaRef url="enithares_01.jpg" />
             <mediaRef url="enithares_m1.mp4" />
+            <mediaRef url="enithares_1000.jpg" />
+            <mediaRef url="enithares_800.jpg" />
+            <mediaRef url="enithares_600.jpg" />
+            <mediaRef url="enithares_500.jpg" />
             
 
           </taxon>
