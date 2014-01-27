@@ -78,16 +78,16 @@
 		   			<!-- Sub taxons to refine this group further -->
 	    			<element ref="tax:taxon" minOccurs="0" maxOccurs="unbounded"/>
 	    	</sequence>
-	    	<attribute name="id" type="token" use="required" />
+	    	<attribute name="id" type="ID" use="required" />
 	    	<attribute name="name" type="token" use="required" />
 	        <attribute name="commonName" type="token"/>
 	    	<attribute name="size" type="string" />
 	    	<attribute name="signalScore" type="int" />
-	    	<attribute name="ref" type="token" />
+	    	<attribute name="ref" type="IDREF" />
 	    	<attribute name="taxonomicLevel">
 	    		<simpleType>
 	    			<restriction base="string">
-	    				<pattern value="kingdom|phylum|class|order|family|genus|species"/>
+	    				<pattern value="kingdom|phylum|subphylum|class|order|suborder|family|genus|species|alt"/>
 	    			</restriction>
 	    		</simpleType>
 	    	</attribute>
@@ -97,14 +97,14 @@
 	<!--  link to a keyNode defined elsewhere -->
 	<element name="keyNodeLink"> 
 		<complexType>
-			<attribute name="ref" type = "token"/>
+			<attribute name="ref" type = "IDREF"/>
 		</complexType>
 	</element>
 	
 	 <!-- link to a taxon summary node -->
 	<element name="taxonLink">
 		<complexType>
-			<attribute name="ref" type = "token"/>
+			<attribute name="ref" type = "IDREF"/>
 		</complexType>
 	</element>
 	
@@ -134,7 +134,7 @@
 					</complexType>
 				</element>
 			</sequence>
-			<attribute name="id" type="token"></attribute>
+			<attribute name="id" type="ID"></attribute>
 		</complexType>
 	</element>
 	
@@ -147,7 +147,7 @@
 	<element name="speedBugLink">
 		<complexType>
 			<attribute name="image" type = "anyURI"/>
-			<attribute name="ref" type = "token"/>
+			<attribute name="ref" type = "IDREF"/>
 		</complexType>
 	</element>
 	
@@ -156,7 +156,7 @@
 			<sequence>
 				<element ref="tax:speedBugLink" minOccurs="1" maxOccurs="unbounded" />
 			</sequence>
-			<attribute name="ref" type = "token"/>
+			<attribute name="ref" type = "IDREF"/>
 		</complexType>
 	</element>
 	
