@@ -39,7 +39,7 @@ function createVideoView( file ) {
 			vv.vp = Ti.Media.createVideoPlayer({
 				width: Ti.UI.FILL,
 				height: Ti.UI.FILL,
-				url: file.getNativePath(),
+				url: file,
 				autoplay: true,
 				backgroundColor: 'black',
 				fullscreen: true,

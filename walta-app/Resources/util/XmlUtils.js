@@ -10,7 +10,8 @@ Ti.XML.applyProperties({
 	namespaceAware: true
 });
 
-function loadXml( file ) {
+function loadXml( path ) {
+	var file = Ti.Filesystem.getFile( path );
 	if ( ! file.exists() ) 
 		throw "Unable to find file: " + file.getNativePath();
 	return Ti.XML.parseString( file.read().text );

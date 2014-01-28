@@ -52,11 +52,7 @@ function iPhone_Slide( win1, win2, dir ) {
 
 }
 
-function createAppWindow() {
-	var keyUrl = _.toArray( arguments );
-	if ( keyUrl.length == 0 ){
-		throw "Must provide a keyUrl argument";
-	} 
+function createAppWindow( keyUrl ) {
 	
 	// Private variables that are not to be exposed as API
 	var privates = {
@@ -66,10 +62,10 @@ function createAppWindow() {
 		callbacks: [],
 		
 		// Load the key
-		loadKey: function() {
-			this.key = KeyLoader.loadKey.apply( KeyLoader, arguments );
+		loadKey: function( keyUrl ) {
+			this.key = KeyLoader.loadKey(keyUrl);
 			if ( ! this.key ) {
-				throw "Failed to load the key: " + arguments;
+				throw "Failed to load the key: " + keyUrl;
 			}
 		},
 		
@@ -263,7 +259,7 @@ function createAppWindow() {
     });
     
     privates.subscribe( Topics.VIDEO, function( msg, data ) { 
-    	var vv = VideoView.createVideoView( Ti.Filesystem.getFile( data ) );
+    	var vv = VideoView.createVideoView( data );
     	vv.open();
     });
     
@@ -325,7 +321,7 @@ function createAppWindow() {
 			actWin.open();
 			actInd.show();
 		
-			privates.loadKey.apply( privates, appWin.keyUrl );
+			privates.loadKey( appWin.keyUrl );
 			privates.menuWindow( {
 				onOpen: function() {			
 					actInd.hide();

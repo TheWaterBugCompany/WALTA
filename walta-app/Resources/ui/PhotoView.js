@@ -33,93 +33,98 @@ function createPhotoView( photoUrls ) {
 	
 	/* See bug TIMOB-14393; we can't rely on the Java GC not collecting Ti objects unless
 	 * they are safely attached to a view or window in scope or are a global reference.
-	 * 
-	 * Under memory pressure scenarios if photoViewObj below is a local variable then the app
-	 * will crash.
 	 **/
-	/*var*/ photoViewObj = { _views: {} };
+	var photoViewObj = { _views: {} }; 
 	
-	photoViewObj._views.galleryWin = Ti.UI.createWindow({ 
-			backgroundColor: 'black', 
-			navBarHidden: true,
-			fullscreen: true 
-	});
 	
-	photoViewObj.open = function() { photoViewObj._views.galleryWin.open(); };
 	
-	photoViewObj._views.scrollView = Ti.UI.createScrollableView({
-		views: _(photoUrls).map( 
-			function(url) { 
-				var view = null;
-				// NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
-				// we cheat by using a WebView.
-				if ( Ti.Platform.osname === 'android' ) {
-					var file = Ti.Filesystem.getFile(url);
-					view =  Ti.UI.createWebView({
-						setScalesPageToFit: false,
-						disableBounce: true,
-						enableZoomControls: true,
-						backgroundColor: 'transparent',
-						width : Ti.UI.FILL,
-						height : Ti.UI.FILL,
-						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body,img {margin:0;padding:0;width:100%;height:100%;}</style></head><body><img src="' + file.getNativePath() + '"></body></html>'
-					});
-					
-			   	} else {
-			   		view = Ti.UI.createScrollView({
-						minZoomScale: 1.0,
-						maxZoomScale: 4.0
-					});
-					view.add( Ti.UI.createImageView( { image: url } ) );
-			   	}
-				return view; 
-			}),
-		showPagingControl: false,
-		bottom: Layout.PAGER_HEIGHT
-	}); 
-	photoViewObj._views.galleryWin.add(photoViewObj._views.scrollView);
-
-	photoViewObj._views.pager = Ti.UI.createView({
-		width: Ti.UI.SIZE,
-		height: Layout.PAGER_HEIGHT,
-		backgroundColor: 'black',
-		bottom: 0,
-		layout: 'horizontal',
-		horizontalWrap: 'false'
-	});
-
-	var dots = [];
-	_(photoUrls).each( function() {
-		var dot = createDot();
-		dots.push( dot );
-		photoViewObj._views.pager.add( dot );
-	});
-	photoViewObj._views.galleryWin.add( photoViewObj._views.pager );
+	photoViewObj.open = function() { 
+		
+			photoViewObj._views.galleryWin = Ti.UI.createWindow({ 
+					backgroundColor: 'black', 
+					navBarHidden: true,
+					fullscreen: true
+			});
+		
+			photoViewObj._views.scrollView = Ti.UI.createScrollableView({
+			views: _(photoUrls).map( 
+				function(url) { 
+					var view = null;
+					// NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
+					// we cheat by using a WebView.
+					if ( Ti.Platform.osname === 'android' ) {
+						//var file = Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, url);
+						view =  Ti.UI.createWebView({
+							setScalesPageToFit: false,
+							disableBounce: true,
+							enableZoomControls: true,
+							backgroundColor: 'transparent',
+							width : Ti.UI.FILL,
+							height : Ti.UI.FILL,
+							html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body,img {margin:0;padding:0;width:100%;height:100%;}</style></head><body><img src="' + url + '"></body></html>'
+						});
+						
+				   	} else {
+				   		view = Ti.UI.createScrollView({
+							minZoomScale: 1.0,
+							maxZoomScale: 4.0
+						});
+						view.add( Ti.UI.createImageView( { image: url } ) );
+				   	}
+					return view; 
+				}),
+			showPagingControl: false,
+			bottom: Layout.PAGER_HEIGHT
+		}); 
+		photoViewObj._views.galleryWin.add(photoViewObj._views.scrollView);
 	
-	var lastPage = photoViewObj._views.scrollView.getCurrentPage();
-	updateCurrentPage( dots, lastPage );
+		photoViewObj._views.pager = Ti.UI.createView({
+			width: Ti.UI.SIZE,
+			height: Layout.PAGER_HEIGHT,
+			backgroundColor: 'black',
+			bottom: 0,
+			layout: 'horizontal',
+			horizontalWrap: 'false'
+		});
 	
-	photoViewObj._views.scrollView.addEventListener( 'scroll', function(e) {
-		if ( e.currentPage !== lastPage ) {
-			updateCurrentPage( dots, e.currentPage );
-			lastPage = e.currentPage;
-		}
-	});
+		var dots = [];
+		_(photoUrls).each( function() {
+			var dot = createDot();
+			dots.push( dot );
+			photoViewObj._views.pager.add( dot );
+		});
+		photoViewObj._views.galleryWin.add( photoViewObj._views.pager );
+		
+		var lastPage = photoViewObj._views.scrollView.getCurrentPage();
+		updateCurrentPage( dots, lastPage );
+		
+		photoViewObj._views.scrollView.addEventListener( 'scroll', function(e) {
+			if ( e.currentPage !== lastPage ) {
+				updateCurrentPage( dots, e.currentPage );
+				lastPage = e.currentPage;
+			}
+		});
+		
+		photoViewObj._views.close = Ti.UI.createView({
+			width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
+			height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
+			backgroundImage: '/images/close.png',
+			top: Layout.WHITESPACE_GAP,
+			right: Layout.WHITESPACE_GAP
+		});
+		
+		photoViewObj._views.galleryWin.add( photoViewObj._views.close );
+		
+		photoViewObj._views.close.addEventListener( 'click', function(e) {
+			photoViewObj._views.galleryWin.close();
+			e.cancelBubble = true;
+		});
+		
+		photoViewObj._views.galleryWin.open(); 
+		
+	};
 	
-	photoViewObj._views.close = Ti.UI.createView({
-		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
-		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
-		backgroundImage: '/images/close.png',
-		top: Layout.WHITESPACE_GAP,
-		right: Layout.WHITESPACE_GAP
-	});
 	
-	photoViewObj._views.galleryWin.add( photoViewObj._views.close );
-	
-	photoViewObj._views.close.addEventListener( 'click', function(e) {
-		photoViewObj._views.galleryWin.close();
-		e.cancelBubble = true;
-	});
 	
 	// Embedded view
 	photoViewObj.view = Ti.UI.createView({
@@ -142,7 +147,7 @@ function createPhotoView( photoUrls ) {
 	photoViewObj.view.add( photoViewObj._views.zoomIcon );
 	photoViewObj._views.zoomIcon.addEventListener( 'click',
 		function(e) {
-			photoViewObj._views.galleryWin.open();	
+			photoViewObj.open();	
 			e.cancelBubble = true;
 		});
 	
