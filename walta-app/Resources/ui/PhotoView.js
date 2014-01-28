@@ -31,7 +31,6 @@ function updateCurrentPage( dots, selPage ) {
 // Create photo View
 function createPhotoView( photoUrls ) {
 	
-	
 	var photoViewObj = { _views: {} }; 
 	
 	
