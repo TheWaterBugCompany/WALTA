@@ -187,18 +187,8 @@ function parseKey( node, path ) {
 }
 
 // takes a variable list of path elements like the getFile() API call does
-function loadKey() {
-	
-	// Manipulate the arguments array to find both the root path to
-	// the key.xml file and a File object ready to load via loadXml.
-	var args = _.toArray( arguments );
-	var root = _.reduceRight( args, function(a,b) { return b + "/" + a; }, "" );
-	args.push( "key.xml" );
-	
-	var file = Ti.Filesystem.getFile.apply( Ti.Filesystem, args );
-	
-	var xml = XmlUtils.loadXml( file  );
-	
+function loadKey( root ) {
+	var xml = XmlUtils.loadXml( root + "key.xml"  );
 	var key = parseKey( xml.documentElement, root );
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'keyNode', _.partial( parseKeyNode, key ) );
