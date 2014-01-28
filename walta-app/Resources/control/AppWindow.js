@@ -188,7 +188,15 @@ function createAppWindow( keyUrl ) {
 			this.makeTopLevelWindow({
 				name: 'help',
 				title: 'Help',
-				uiObj: HtmlView.createHtmlView( Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, 'help/help.html' ))
+				uiObj: HtmlView.createHtmlView( "file:///android_asset/Resources/taxonomy/walta/help/WBAhelp.xhtml" )
+			});	
+		},
+		
+		aboutWindow: function() {
+			this.makeTopLevelWindow({
+				name: 'about',
+				title: 'About',
+				uiObj: HtmlView.createHtmlView( "file:///android_asset/Resources/taxonomy/walta/credits/credits.xhtml" )
 			});	
 		},
 		
@@ -282,6 +290,10 @@ function createAppWindow( keyUrl ) {
     
     privates.subscribe( Topics.HELP, function() { 
     	privates.helpWindow();
+    });
+    
+    privates.subscribe( Topics.ABOUT, function() { 
+    	privates.aboutWindow();
     });
 	
 	
