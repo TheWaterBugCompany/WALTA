@@ -4337,8 +4337,8 @@
       </speedBugGroup>
 
     <speedBugGroup ref="k_coleoptera">
-<speedBugLink image="speedbug/diving_beetles_b.gif" ref="k_dytiscidae"/>
-<speedBugLink image="speedbug/diving_beetletop_b.gif" ref="k_dytiscidae"/>
+<speedBugLink image="speedbug/divingbeetles_b.gif" ref="k_dytiscidae"/>
+<speedBugLink image="speedbug/divingbeetletop_b.gif" ref="k_dytiscidae"/>
 <speedBugLink image="speedbug/hydrophilus_b.gif" ref="hydrophilus"/>
 <speedBugLink image="speedbug/gyrinidae_b.gif" ref="gyrinidae"/>
       </speedBugGroup>
