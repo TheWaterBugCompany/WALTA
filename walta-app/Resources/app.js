@@ -6,9 +6,11 @@ var tests = false;
 if ( ! tests ) {
 	var AppWindow = require('control/AppWindow');
 	var keyPath;
-	//keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/walta/"; // <== NOTE trailing "/"
-	keyPath = "file:///android_asset/Resources/taxonomy/walta/";
-	//keyPath = Ti.Filesystem.externalStorageDirectory + "walta/";
+
+	keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/walta/";
+	if ( Ti.Platform.osname === 'android' ) {
+			keyPath = "file:///android_asset/Resources/taxonomy/walta/"; // WTF works on android	
+	}
 	var app = AppWindow.createAppWindow( keyPath );
 	app.start();
 } else {
