@@ -795,11 +795,7 @@
             <confusedWith>Nothing, very distinctive in robustness and movement. Look for spiky V shaped gills for confirmation.</confusedWith>
 
             <mediaRef url="coloburiscoides_01.jpg" />
-            <mediaRef url="coloburiscoides_1000.jpg" />
-            <mediaRef url="coloburiscoides_800.jpg" />
-            <mediaRef url="coloburiscoides_600.jpg" />
-            <mediaRef url="coloburiscoides_500.jpg" />
-            
+        
             <mediaRef url="coloburiscoides_m1.mp4" />
 
           </taxon>
@@ -1018,10 +1014,7 @@
 
             <mediaRef url="enithares_01.jpg" />
             <mediaRef url="enithares_m1.mp4" />
-            <mediaRef url="enithares_1000.jpg" />
-            <mediaRef url="enithares_800.jpg" />
-            <mediaRef url="enithares_600.jpg" />
-            <mediaRef url="enithares_500.jpg" />
+           
             
 
           </taxon>
@@ -4337,8 +4330,8 @@
       </speedBugGroup>
 
     <speedBugGroup ref="k_coleoptera">
-<speedBugLink image="speedbug/diving_beetles_b.gif" ref="k_dytiscidae"/>
-<speedBugLink image="speedbug/diving_beetletop_b.gif" ref="k_dytiscidae"/>
+<speedBugLink image="speedbug/divingbeetles_b.gif" ref="k_dytiscidae"/>
+<speedBugLink image="speedbug/divingbeetletop_b.gif" ref="k_dytiscidae"/>
 <speedBugLink image="speedbug/hydrophilus_b.gif" ref="hydrophilus"/>
 <speedBugLink image="speedbug/gyrinidae_b.gif" ref="gyrinidae"/>
       </speedBugGroup>
@@ -4357,7 +4350,7 @@
 
     <speedBugGroup ref="k_zygoptera">
 <speedBugLink image="speedbug/megapodagrionidae_b.gif" ref="megapodagrionidae"/>
-<speedBugLink image="speedbug/damsels_b.gif" ref="k_zygoptera"/>
+<speedBugLink image="speedbug/damselfly_b.gif" ref="k_zygoptera"/>
       </speedBugGroup>
 
     <speedBugGroup ref="k_plecoptera">
@@ -4369,7 +4362,7 @@
 <speedBugLink image="speedbug/baetidae_b.gif" ref="baetidae"/>
 <speedBugLink image="speedbug/leptophlebiidae_b.gif" ref="leptophlebiidae"/>
 <speedBugLink image="speedbug/atalophlebia_b.gif" ref="atalophlebia"/>
-<speedBugLink image="speedbug/coloburiscidae_b.gif" ref="coloburiscidae"/>
+<speedBugLink image="speedbug/coloburiscidae_b.gif" ref="coloburiscoides"/>
       </speedBugGroup>
 
 <speedBugLink image="speedbug/hydracarina_b.gif" ref="acarina"/>
