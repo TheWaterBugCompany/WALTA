@@ -4,3 +4,5 @@ tmp
 ._*
 .DS_Store
 Resources/taxonomy
+manifest
+.fastdev.lock
