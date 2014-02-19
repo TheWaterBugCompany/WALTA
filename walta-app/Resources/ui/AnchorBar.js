@@ -81,7 +81,7 @@ function createAnchorBar( title ) {
 	
 	// Create tool bar buttons
 	anchorBar._views.home = createToolBarButton( '/images/home.png', Topics.HOME );
-	anchorBar._views.settings = createToolBarButton( '/images/settings.png', Topics.SETTINGS );
+	//anchorBar._views.settings = createToolBarButton( '/images/settings.png', Topics.SETTINGS );
 	anchorBar._views.info = createToolBarButton( '/images/info.png', Topics.INFO );
 	
 	anchorBar._views.leftTools.add( anchorBar._views.home );

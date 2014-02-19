@@ -41,7 +41,7 @@ function createKeyView( keyNode ) {
 	_(keyNode.questions).each(
 		function( q ) {
 			var qv = QuestionView.createQuestionView( q );
-			obj.view.add( _(qv.view).extend( { width: '95%', height: '45%', top: '1%', bottom: '1%' }) );
+			obj.view.add( _(qv.view).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
 			var index = obj._views.questions.length;
 			obj._views.questions.push( qv );
 			
@@ -82,8 +82,13 @@ function createKeyView( keyNode ) {
 	
 	_(obj).extend({
 		openingFromMenu: function( args ) {
+			
 			if ( args.anchorBar ) {
-				args.anchorBar.addTool( obj._views.backBtn );
+				var anchorBar = args.anchorBar;
+				anchorBar.addTool( AnchorBar.createToolBarButton( '/images/litlespeedbug.png', Topics.SPEEDBUG ) );
+				anchorBar.addTool( AnchorBar.createToolBarButton( '/images/littlebrowse.png', Topics.BROWSE ) );
+				anchorBar.addTool( obj._views.backBtn );
+				
 			}
 		}
 	});
