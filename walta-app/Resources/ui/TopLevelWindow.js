@@ -47,7 +47,7 @@ function	makeTopLevelWindow( args, lastWindow ) {
 	} else if ( args.swivel ) {
 		oModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
 	} else {
-		oModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT ];
+		oModes = [ Ti.UI.LANDSCAPE_LEFT ];
 	}
 	var win = Ti.UI.createWindow( { 
 		navBarHidden: true, // necessary for Android to support orientationModes by forcing heavy weight windows
@@ -59,17 +59,18 @@ function	makeTopLevelWindow( args, lastWindow ) {
 		orientationModes:  oModes
 	});
 	
-	if ( args.title ) {
-		win.add( AnchorBar.createAnchorBar( args.title ).view );
-	}
+	var panelHeight = Ti.UI.FILL;
 	
-	var screenHeight = Ti.Platform.displayCaps.getPlatformWidth();
-	screenHeight = Ti.UI.convertUnits( screenHeight + "px", "dip" );
-	var toolbarHeight = Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
+	if ( args.title ) {
+		win.add( AnchorBar.createAnchorBar( args.title ).view );	
+		panelHeight = Ti.Platform.displayCaps.getPlatformHeight();
+		panelHeight = Ti.UI.convertUnits( panelHeight + "px", "dip" ) - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
+	}
+
 	win.add( _(args.uiObj.view).extend({
 		top: 0,
 		width: Ti.UI.FILL,
-		height: screenHeight - toolbarHeight // dips is set as default
+		height: panelHeight
 	}) );
 
 	win.addEventListener( 'android:back', function(e) {

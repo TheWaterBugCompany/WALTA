@@ -73,7 +73,7 @@ function createAppWindow( keyName, keyPath ) {
 				this.makeTopLevelWindow(_({
 					name: 'home',
 					uiObj: MenuView.createMenuView(),
-					portrait: true
+					portrait: false
 				}).extend(args));
 				this.isMenuWindow = true;
 			},
@@ -83,7 +83,7 @@ function createAppWindow( keyName, keyPath ) {
 					name: 'browse',
 					title: 'Browse',
 					uiObj: BrowseView.createBrowseView(privates.key),
-					swivel: true
+					swivel: false
 				});	
 			},
 			

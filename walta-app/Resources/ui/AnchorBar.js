@@ -20,10 +20,13 @@ function createToolBarButton( image, topic ) {
 		height: Layout.TOOLBAR_BUTTON_SIZE,
 		backgroundImage: image
 	});
-	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topic, null );
-		e.cancelBubble = true;
-	});
+	
+	if ( topic ) {
+		btn.addEventListener( 'click', function(e) {
+			PubSub.publish( topic, null );
+			e.cancelBubble = true;
+		});
+	}
 	return btn;
 }
 
@@ -87,8 +90,15 @@ function createAnchorBar( title ) {
 	anchorBar.view.add( anchorBar._views.title );
 	anchorBar.view.add( anchorBar._views.rightTools );
 	
+	anchorBar.extend({
+		addTool: function( view ) {
+			anchorBar._views.rightTools.add( view );
+		}
+	});
+	
 	
 	return anchorBar;
 };
 
+exports.createToolBarButton = createToolBarButton;
 exports.createAnchorBar = createAnchorBar;

@@ -22,17 +22,18 @@ exports.VIDEO_OVERLAY_BUTTON_SIZE = '64dip';
 exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '4%';
 exports.PAGER_HEIGHT = '16dip';
 exports.THUMBNAIL_WIDTH = '200dip';
-exports.MENU_ITEM_HEIGHT = '18%';
+exports.MENU_ITEM_HEIGHT = '23.5%';
 exports.MENU_ITEM_WIDTH = '96%';
-exports.MENU_ITEM_WIDTH_2 = '30.5%';
-exports.MENU_GAP = '2%';
+exports.MENU_ITEM_WIDTH_2 = '48%';
+exports.MENU_GAP = '1.2%';
 exports.MENU_LOGO_WIDTH = '92dip';
 exports.MENU_LOGO_HEIGHT = '69dip';
+exports.MENU_LOGO_LEFT = '40%';
 exports.MENU_ICON_WIDTH = '92dip';
 exports.MENU_ICON_HEIGHT = '92dip';
 if ( Ti.Platform.osname === 'android' ) {
 	exports.BORDER_RADIUS = 45;
-	exports.BORDER_RADIUS_MENU_BIG = 35;
+	exports.BORDER_RADIUS_MENU_BIG = 25;
 	exports.BORDER_RADIUS_MENU_SMALL = 15;
 	exports.BORDER_RADIUS_BUTTON = 7;
 } else {
@@ -41,3 +42,5 @@ if ( Ti.Platform.osname === 'android' ) {
 	exports.BORDER_RADIUS_MENU_SMALL = 4;
 	exports.BORDER_RADIUS_BUTTON = 2;
 }
+
+

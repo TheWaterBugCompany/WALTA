@@ -18,8 +18,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 			height: Layout.MENU_ICON_HEIGHT,
 			image: image
 		}),
-		vertCentre( 
-			wrap( 'vertical',[
+		_(wrap( 'vertical',[
 			Ti.UI.createLabel({
 				left: 0,
 				width: Ti.UI.FILL,
@@ -35,8 +34,8 @@ function createLargeMenuButton( image, topic, label, text ) {
 				text: text,
 				font: { fontFamily: 'Tahoma', fontSize: '14dip' },
 				color: 'black'
-			})
-		]))
+			})]
+		)).extend( { width: Ti.UI.FILL, height: Ti.UI.FILL })
 	]);
 	btn.addEventListener( 'click', function(e) {
 		PubSub.publish( topic, null );
@@ -45,7 +44,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 	return _(btn).extend( { 
 			top: Layout.MENU_GAP,
 			left: Layout.MENU_GAP,
-			width: Layout.MENU_ITEM_WIDTH,
+			width: Layout.MENU_ITEM_WIDTH_2,
 			height: Layout.MENU_ITEM_HEIGHT,
 			borderRadius: Layout.BORDER_RADIUS_MENU_BIG,
 			backgroundColor: '#552F61CC'
@@ -86,20 +85,11 @@ function createSmallMenuButton( topic, label, text ) {
 		} );
 }
 
-function vertCentre( view ) {
-	var wrp = Ti.UI.createView({
-		width: Ti.UI.FILL,
-		height: Ti.UI.FILL
-	});
-	wrp.add(view);
-	return wrp;
-}
-
 function wrap( dir, views ) {
 	var wrp = Ti.UI.createView({
 		layout: dir,
-		width: Ti.UI.FILL,
-		height: Ti.UI.SIZE
+		width: ( dir == 'horizontal' ? Ti.UI.FILL : Ti.UI.SIZE ),
+		height: ( dir == 'vertical' ? Ti.UI.FILL : Ti.UI.SIZE )
 	});
 	_(views).each( function(v) { wrp.add(v); });
 	return wrp;
@@ -131,32 +121,30 @@ function createMenuView() {
 	});
 	
 	vws.logo = _(wrap( 'horizontal',[
-		icon({
+		_(icon({
 			width: Layout.MENU_LOGO_WIDTH,
 			height: Layout.MENU_LOGO_HEIGHT,
 			image: '/images/logo.png'
-		}),
-		vertCentre(
-			wrap( 'vertical',[
-				Ti.UI.createLabel({
-					width: Ti.UI.SIZE,
-					height: Ti.UI.SIZE,
-					text: 'WALTA',
-					font: { fontFamily: 'Boulder', fontSize: '50dip' },
-					color: 'black'
-				}),
-				Ti.UI.createLabel({
-					width: Ti.UI.SIZE,
-					height: Ti.UI.SIZE,
-					text: 'Waterbug ALT App',
-					font: { fontFamily: 'Tahoma', fontSize: '18dip' },
-					color: 'black'
-				})
-			]))
+		})).extend( { width: Layout.MENU_LOGO_LEFT }),
+		wrap( 'vertical',[
+			Ti.UI.createLabel({
+				width: Ti.UI.SIZE,
+				height: Ti.UI.SIZE,
+				text: 'WALTA',
+				font: { fontFamily: 'Boulder', fontSize: '50dip' },
+				color: 'black'
+			}),
+			Ti.UI.createLabel({
+				width: Ti.UI.SIZE,
+				height: Ti.UI.SIZE,
+				text: 'Waterbug ALT App',
+				font: { fontFamily: 'Tahoma', fontSize: '18dip' },
+				color: 'black'
+			})])
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
-			width: Layout.MENU_ITEM_WIDTH
+			width: Ti.UI.FILL
 		});
 		
 	vws.speedbug = createLargeMenuButton( 
@@ -180,19 +168,22 @@ function createMenuView() {
 		'If you know the name of your bug.' 
 	);
 	
-	vws.help = createSmallMenuButton( 
+	vws.help = createLargeMenuButton( 
+		'/images/help.png',
 		Topics.HELP, 
 		'Help', 
 		'Info to get you started.' 
 	);
 	
-	vws.gallery = createSmallMenuButton( 
+	vws.gallery = createLargeMenuButton( 
+		'/images/gallery.png',
 		Topics.GALLERY, 
 		'Gallery', 
 		'Browse photos & videos.' 
 	);
 	
-	vws.about = createSmallMenuButton( 
+	vws.about = createLargeMenuButton( 
+		'/images/about.png',
 		Topics.ABOUT, 
 		'About', 
 		'About the app.' 
