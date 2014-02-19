@@ -41,7 +41,7 @@ function createKeyView( keyNode ) {
 	_(keyNode.questions).each(
 		function( q ) {
 			var qv = QuestionView.createQuestionView( q );
-			obj.view.add( _(qv.view).extend( { width: '95%', height: '40%', top: '1%', bottom: '1%' }) );
+			obj.view.add( _(qv.view).extend( { width: '95%', height: '45%', top: '1%', bottom: '1%' }) );
 			var index = obj._views.questions.length;
 			obj._views.questions.push( qv );
 			
@@ -53,35 +53,40 @@ function createKeyView( keyNode ) {
 	
 	// Add the go back button
 	var goBack = Ti.UI.createView({
-		right: '2.5%',
 		width: Ti.UI.SIZE,
-		bottom: '1%',
-		height: '8%',
+		height: Ti.UI.SIZE,
 		borderRadius: Layout.BORDER_RADIUS_BUTTON,
 		backgroundColor: '#BB2F61CC',
 		layout: 'horizontal',
 		horizontalWrap: false
 	});
 	goBack.add( Ti.UI.createImageView( { 
-		width: '45dip', 
-		height: '45dip', 
+		width: '55dip', 
+		height: '55dip', 
 		image: '/images/back.png'
 	} ) );
 	goBack.add( Ti.UI.createLabel( { 
-		width: Ti.UI.SIZE, 
+		width: Layout.GOBACK_BUTTON_TEXT_WIDTH, 
 		height: Ti.UI.SIZE, 
-		right: Layout.WHITESPACE_GAP,
+		right: '4dip',
 		text: 'No match? Go back', 
-		font: { fontFamily: 'Tahoma', fontSize: '15dip' },
-		color: 'black' 
+		font: { fontFamily: 'Tahoma', fontSize: Layout.TOOLBAR_BUTTON_TEXT },
+		color: 'white' 
 	} ) );
 	goBack.addEventListener( 'click', function(e) {
 		PubSub.publish( Topics.BACK, null );
 		e.cancelBubble = true;
 	} );
 	
-	obj.view.add( goBack );
 	obj._views.backBtn = goBack;
+	
+	_(obj).extend({
+		openingFromMenu: function( args ) {
+			if ( args.anchorBar ) {
+				args.anchorBar.addTool( obj._views.backBtn );
+			}
+		}
+	});
 	return obj;
 }
 

@@ -62,9 +62,15 @@ function	makeTopLevelWindow( args, lastWindow ) {
 	var panelHeight = Ti.UI.FILL;
 	
 	if ( args.title ) {
-		win.add( AnchorBar.createAnchorBar( args.title ).view );	
+		var anchorBar = AnchorBar.createAnchorBar( args.title );
+		win.add( anchorBar.view );	
 		panelHeight = Ti.Platform.displayCaps.getPlatformHeight();
 		panelHeight = Ti.UI.convertUnits( panelHeight + "px", "dip" ) - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
+		
+	}
+	
+	if ( args.uiObj.openingFromMenu ) {
+		args.uiObj.openingFromMenu( { anchorBar: anchorBar });
 	}
 
 	win.add( _(args.uiObj.view).extend({

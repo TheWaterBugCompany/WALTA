@@ -70,8 +70,9 @@ function createAnchorBar( title ) {
 	});
 	
 	anchorBar._views.rightTools = Ti.UI.createView({
-		top: 0,
-		right: 0,
+		top: '2dip',
+		bottom: '2dip',
+		right: '4dip',
 		width: Ti.UI.SIZE,
 		height: Ti.UI.FILL,
 		layout: 'horizontal',
@@ -90,7 +91,7 @@ function createAnchorBar( title ) {
 	anchorBar.view.add( anchorBar._views.title );
 	anchorBar.view.add( anchorBar._views.rightTools );
 	
-	anchorBar.extend({
+	_(anchorBar).extend({
 		addTool: function( view ) {
 			anchorBar._views.rightTools.add( view );
 		}

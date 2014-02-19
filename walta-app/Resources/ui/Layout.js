@@ -31,6 +31,8 @@ exports.MENU_LOGO_HEIGHT = '69dip';
 exports.MENU_LOGO_LEFT = '40%';
 exports.MENU_ICON_WIDTH = '92dip';
 exports.MENU_ICON_HEIGHT = '92dip';
+exports.GOBACK_BUTTON_TEXT_WIDTH = '80dip';
+exports.TOOLBAR_BUTTON_TEXT = '14dip';
 if ( Ti.Platform.osname === 'android' ) {
 	exports.BORDER_RADIUS = 45;
 	exports.BORDER_RADIUS_MENU_BIG = 25;
