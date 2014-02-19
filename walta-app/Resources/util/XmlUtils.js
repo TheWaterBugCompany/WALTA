@@ -13,7 +13,7 @@ Ti.XML.applyProperties({
 function loadXml( path ) {
 	var file = Ti.Filesystem.getFile( path );
 	if ( ! file.exists() ) 
-		throw "Unable to find file: " + file.getNativePath();
+		throw 'Unable to find file: ' + path;
 	return Ti.XML.parseString( file.read().text );
 }
 

@@ -15,7 +15,6 @@ var Topics = require('ui/Topics');
 // Create a tool bar button
 function createToolBarButton( image, topic ) {
 	var btn = Ti.UI.createButton({
-		top: Layout.BUTTON_MARGIN,
 		left: Layout.BUTTON_MARGIN,
 		width: Layout.TOOLBAR_BUTTON_SIZE,
 		height: Layout.TOOLBAR_BUTTON_SIZE,
@@ -44,9 +43,7 @@ function createAnchorBar( title ) {
    			endPoint: { x: '0%', y: '100%' },
    			colors: [ {color: '#2f61cc', offset: 0.0 }, {color: '#7797de', offset: 1.0 } ] 
    		},
-   		left:0,
-   		right:0,
-   		top:0,
+   		bottom:0,
    		height: Layout.TOOLBAR_HEIGHT,
    		layout: 'composite'
 	});
@@ -84,8 +81,7 @@ function createAnchorBar( title ) {
 	anchorBar._views.info = createToolBarButton( '/images/info.png', Topics.INFO );
 	
 	anchorBar._views.leftTools.add( anchorBar._views.home );
-	anchorBar._views.rightTools.add( anchorBar._views.settings );
-	anchorBar._views.rightTools.add( anchorBar._views.info );
+	anchorBar._views.leftTools.add( anchorBar._views.info );
 	
 	anchorBar.view.add( anchorBar._views.leftTools );
 	anchorBar.view.add( anchorBar._views.title );

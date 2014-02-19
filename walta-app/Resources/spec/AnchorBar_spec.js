@@ -20,13 +20,13 @@ describe('AnchorBar', function() {
 		TestUtils.actionFiresTopicTest( acb._views.home, 'click', Topics.HOME );
 	});
 	
-	it('should fire the SETTINGS event when the settings button is clicked', function() {
-		TestUtils.actionFiresTopicTest( acb._views.settings, 'click', Topics.SETTINGS );
-	});
-	
-	it('should fire the INFO event when the settings button is clicked', function() {
-		TestUtils.actionFiresTopicTest( acb._views.info, 'click', Topics.INFO );
-	});
+	// it('should fire the SETTINGS event when the settings button is clicked', function() {
+		// TestUtils.actionFiresTopicTest( acb._views.settings, 'click', Topics.SETTINGS );
+	// });
+// 	
+	// it('should fire the INFO event when the settings button is clicked', function() {
+		// TestUtils.actionFiresTopicTest( acb._views.info, 'click', Topics.INFO );
+	// });
 
 	TestUtils.closeWindow( win );
 });
