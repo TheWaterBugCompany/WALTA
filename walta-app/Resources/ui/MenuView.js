@@ -121,26 +121,32 @@ function createMenuView() {
 	});
 	
 	vws.logo = _(wrap( 'horizontal',[
-		_(icon({
-			width: Layout.MENU_LOGO_WIDTH,
-			height: Layout.MENU_LOGO_HEIGHT,
-			image: '/images/logo.png'
-		})).extend( { width: Layout.MENU_LOGO_LEFT }),
-		wrap( 'vertical',[
-			Ti.UI.createLabel({
-				width: Ti.UI.SIZE,
-				height: Ti.UI.SIZE,
-				text: 'WALTA',
-				font: { fontFamily: 'Boulder', fontSize: '50dip' },
-				color: 'black'
+			_(wrap( 'vertical',[
+				_(icon({
+					top: '8dip',
+					width: Layout.MENU_LOGO_WIDTH,
+					height: Layout.MENU_LOGO_HEIGHT,
+					image: '/images/logo.png'
+				})).extend( { height: Ti.UI.SIZE } ),
+				Ti.UI.createLabel({
+					top: '8dip',
+					width: Ti.UI.SIZE,
+					height: Ti.UI.SIZE,
+					text: 'The Waterbug Company',
+					font: { fontFamily: 'Tahoma', fontSize: '13dip' },
+					color: '#882F61CC'
+				})
+			])).extend( { 
+				width: Layout.MENU_LOGO_LEFT,
+				height: Ti.UI.FILL
 			}),
 			Ti.UI.createLabel({
 				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
-				text: 'Waterbug ALT App',
-				font: { fontFamily: 'Tahoma', fontSize: '18dip' },
+				text: 'The Waterbug App',
+				font: { fontFamily: 'Boulder', fontSize: '40dip' },
 				color: 'black'
-			})])
+			})
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
@@ -190,7 +196,7 @@ function createMenuView() {
 	);
 	menu.view.add( wrap( 'horizontal', [  
 		vws.logo, vws.speedbug, vws.keysearch, vws.browse, 
-		vws.help, vws.gallery, vws.about
+		vws.gallery, vws.help,  vws.about
 	]));
 	
 	return menu;
