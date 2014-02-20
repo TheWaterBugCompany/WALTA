@@ -36,7 +36,6 @@ var errorHandler = function(err) {
 
 function createAppWindow( keyName, keyPath ) {
 		
-	
 		if ( ! keyPath ) {
 			keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
 		}
@@ -111,7 +110,7 @@ function createAppWindow( keyName, keyPath ) {
 				this.makeTopLevelWindow({
 					name: 'help',
 					title: 'Help',
-					uiObj: HtmlView.createHtmlView( keyPath + 'help/WBAhelp.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'help/WBAhelp.xhtml' )
 				});	
 			},
 			
@@ -119,7 +118,7 @@ function createAppWindow( keyName, keyPath ) {
 				this.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
-					uiObj: HtmlView.createHtmlView( keyPath + 'credits/credits.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.xhtml' )
 				});	
 			},
 			

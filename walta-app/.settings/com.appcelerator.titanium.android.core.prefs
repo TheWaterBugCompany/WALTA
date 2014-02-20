@@ -1,0 +1,10 @@
+android/ATTR_MINIFY=true
+android/ATTR_PROJECT_NAME=walta-app
+android/abi=armeabi
+android/distribute_path=/home/msharman/Documents/Projects/walta
+android/keystore_alias=thecodesharman
+android/keystore_password=Turpent1n3\!
+android/keystore_path=/home/msharman/Tools/keystore/thecodesharman.keystore
+android/recent_output=/home/msharman/Documents/Projects/walta
+android/sdk_version=2.3.3
+eclipse.preferences.version=1
