@@ -24,7 +24,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 				width: Ti.UI.FILL,
 				height: Ti.UI.SIZE,
 				text: label,
-				font: { fontFamily: 'Boulder', fontSize: '25dip' },
+				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_LARGE_BUTTON_HEADING_FONT_SIZE },
 				color: '#882F61CC'
 			}),
 			Ti.UI.createLabel({
@@ -32,7 +32,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: text,
-				font: { fontFamily: 'Tahoma', fontSize: '14dip' },
+				font: { fontFamily: 'Tahoma', fontSize: Layout.MENU_LARGE_BUTTON_TEXT_FONT_SIZE },
 				color: 'black'
 			})]
 		)).extend( { width: Ti.UI.FILL, height: Ti.UI.FILL })
