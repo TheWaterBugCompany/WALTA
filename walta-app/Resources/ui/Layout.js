@@ -26,11 +26,16 @@ exports.MENU_ITEM_HEIGHT = '23.5%';
 exports.MENU_ITEM_WIDTH = '96%';
 exports.MENU_ITEM_WIDTH_2 = '48%';
 exports.MENU_GAP = '1.2%';
-exports.MENU_LOGO_WIDTH = '72dip';
-exports.MENU_LOGO_HEIGHT = '49dip';
+exports.MENU_LOGO_WIDTH = '58dip';
+exports.MENU_LOGO_HEIGHT = '48dip';
 exports.MENU_LOGO_LEFT = '30%';
-exports.MENU_ICON_WIDTH = '92dip';
-exports.MENU_ICON_HEIGHT = '92dip';
+exports.MENU_LOGO_TOP = '8%';
+exports.MENU_ICON_WIDTH = '72dip';
+exports.MENU_ICON_HEIGHT = '72dip';
+
+exports.MENU_TITLE_FONT_SIZE = '36dip';
+exports.MENU_LOGO_FONT_SIZE = '8dip';
+
 exports.GOBACK_BUTTON_TEXT_WIDTH = '80dip';
 exports.TOOLBAR_BUTTON_TEXT = '14dip';
 if ( Ti.Platform.osname === 'android' ) {

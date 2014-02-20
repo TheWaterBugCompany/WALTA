@@ -123,17 +123,17 @@ function createMenuView() {
 	vws.logo = _(wrap( 'horizontal',[
 			_(wrap( 'vertical',[
 				_(icon({
-					top: '8dip',
+					top: Layout.MENU_LOGO_TOP,
 					width: Layout.MENU_LOGO_WIDTH,
 					height: Layout.MENU_LOGO_HEIGHT,
 					image: '/images/logo.png'
 				})).extend( { height: Ti.UI.SIZE } ),
 				Ti.UI.createLabel({
-					top: '8dip',
+					top: '1dip',
 					width: Ti.UI.SIZE,
 					height: Ti.UI.SIZE,
 					text: 'The Waterbug Company',
-					font: { fontFamily: 'Tahoma', fontSize: '13dip' },
+					font: { fontFamily: 'Tahoma', fontSize: Layout.MENU_LOGO_FONT_SIZE },
 					color: '#882F61CC'
 				})
 			])).extend( { 
@@ -144,7 +144,7 @@ function createMenuView() {
 				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: 'The Waterbug App',
-				font: { fontFamily: 'Boulder', fontSize: '40dip' },
+				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
 				color: 'black'
 			})
 	])).extend( {

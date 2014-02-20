@@ -101,7 +101,7 @@ function	makeTopLevelWindow( args, lastWindow ) {
 				activityExitAnimation: Ti.App.Android.R.anim.key_exit_left
 			});
 		} else {
-			iPhone_Slide( this.currentWindow, win, args.slide );
+			iPhone_Slide( lastWindow, win, args.slide );
 		}
 	} else if ( args.slide == 'left' ) {
 		if ( Ti.Platform.osname === 'android') {

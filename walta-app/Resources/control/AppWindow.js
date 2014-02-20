@@ -164,7 +164,7 @@ function createAppWindow( keyName, keyPath ) {
 		
 	    privates.subscribe( Topics.KEYSEARCH, function() { 
 	    	privates.key.reset();
-	    	privates.updateDecisionWindow();
+	    	privates.updateDecisionWindow({ slide: 'right' });
 	    });
 	    
 	    privates.subscribe( Topics.BACK, function() { 
@@ -174,7 +174,7 @@ function createAppWindow( keyName, keyPath ) {
 	    				Ti.Android.currentActivity.finish();
 	    			}
 	    		} else {
-	    			privates.menuWindow();
+	    			privates.menuWindow({ slide: 'left' });
 	    		} 
 	    	} else {
 	    		privates.key.back();
