@@ -232,11 +232,7 @@ function createAppWindow( keyName, keyPath ) {
 					// Under iPhone the splash screen is not display transparently underneath
 					// the app so we need to set the background to an appropriate image.
 					if ( Ti.Platform.osname === 'iphone' ) {
-						if ( Ti.Platform.displayCaps.density === 'high' ) {
-							args['backgroundImage'] = 'Default@2x.png';
-						} else {
-							args['backgroundImage'] = 'Default.png';
-						}
+						args['backgroundImage'] = 'Default-Landscape.png';
 					}
 					
 					var actWin = Ti.UI.createWindow(args);
