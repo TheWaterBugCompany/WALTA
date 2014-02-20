@@ -64,9 +64,10 @@ function createAnchorBar( title ) {
 		text: anchorBar.title,
 		font: { font: Layout.HEADING_FONT, fontSize: Layout.HEADING_SIZE },
 		color: 'white',
-		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+		textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
 		width: Ti.UI.SIZE,
-		height: Ti.UI.FILL
+		height: Ti.UI.FILL,
+		right: '50%'
 	});
 	
 	anchorBar._views.rightTools = Ti.UI.createView({
@@ -82,7 +83,7 @@ function createAnchorBar( title ) {
 	// Create tool bar buttons
 	anchorBar._views.home = createToolBarButton( '/images/home.png', Topics.HOME );
 	//anchorBar._views.settings = createToolBarButton( '/images/settings.png', Topics.SETTINGS );
-	anchorBar._views.info = createToolBarButton( '/images/info.png', Topics.INFO );
+	anchorBar._views.info = createToolBarButton( '/images/info.png', Topics.HELP );
 	
 	anchorBar._views.leftTools.add( anchorBar._views.home );
 	anchorBar._views.leftTools.add( anchorBar._views.info );
