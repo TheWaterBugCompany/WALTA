@@ -85,7 +85,7 @@ function createKeyView( keyNode ) {
 			
 			if ( args.anchorBar ) {
 				var anchorBar = args.anchorBar;
-				anchorBar.addTool( AnchorBar.createToolBarButton( '/images/litlespeedbug.png', Topics.SPEEDBUG ) );
+				anchorBar.addTool( AnchorBar.createToolBarButton( '/images/littlespeedbug.png', Topics.SPEEDBUG ) );
 				anchorBar.addTool( AnchorBar.createToolBarButton( '/images/littlebrowse.png', Topics.BROWSE ) );
 				anchorBar.addTool( obj._views.backBtn );
 				

@@ -8,17 +8,18 @@ if ( ! tests ) {
     AppWindow.createAppWindow( 'walta' ).start();
 } else {
 	
-	
+	var TestUtils = require('util/TestUtils');
+	TestUtils.setManualTests(true);
 	
 	var tests = [  
-		'spec/TopLevelWindow_spec'
+		//'spec/TopLevelWindow_spec'
 		//"spec/AnchorBar_spec", 
 		//"spec/AppWindow_spec" 
 		// "spec/BrowseView_spec", 
 		// "spec/Key_spec", 
 		// "spec/KeyLoaderXml_spec", 
 		// "spec/KeyNode_spec", 
-		// "spec/KeyView_spec", 
+		 "spec/KeyView_spec", 
 		// "spec/MediaUtil_spec", 
 		// "spec/MenuView_spec", 
 		// "spec/PhotoView_spec", 
@@ -45,7 +46,8 @@ if ( ! tests ) {
 	var win = Ti.UI.createWindow({
 		title: 'WALTA Test Harness',
 		exitOnClose: true,
-		fullscreen: true
+		fullscreen: true,
+		navBarHidden: true
 	});
 	var btn = Ti.UI.createButton({
 		title: 'Run Tests'

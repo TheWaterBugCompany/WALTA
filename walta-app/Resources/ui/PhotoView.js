@@ -142,8 +142,8 @@ function createPhotoView( photoUrls ) {
 		bottom: 0,
 		right: 0,
 		backgroundImage: '/images/zoom.png',
-		width: '50dip',
-		height: '50dip'
+		width: '30dip',
+		height: '30dip'
 	});
 	photoViewObj.view.add( photoViewObj._views.photo );
 	photoViewObj.view.add( photoViewObj._views.zoomIcon );

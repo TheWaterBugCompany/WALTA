@@ -4,6 +4,7 @@ var TestUtils = require('util/TestUtils');
 var Question = require('logic/Question');
 var Key = require('logic/Key');
 var KeyView = require('ui/KeyView');
+var TopLevelWindow = require('ui/TopLevelWindow');
 
 var Topics = require('ui/Topics');
 
@@ -31,12 +32,15 @@ var key = Key.createKey( {
 		});
 
 describe('KeyView', function() {
-	var  win,knv;
-	knv = KeyView.createKeyView( key.getCurrentNode() );
-	win = TestUtils.wrapViewInWindow( knv.view );
+	var knv = KeyView.createKeyView( key.getCurrentNode() );
+	var win;
 
 	it('should display the key view', function() {
-		TestUtils.windowOpenTest( win ); 
+				
+		win = TopLevelWindow.makeTopLevelWindow({
+				title: 'ALT Key',
+				uiObj: knv
+			});
 	});
 	
 	it('should fire the FORWARD topic', function() { 

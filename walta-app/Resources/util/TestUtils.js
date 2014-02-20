@@ -7,7 +7,7 @@ var meld = require('lib/meld');
 
 var manualTests = false;
 
-function setManualTests( bl ) { manualTests = b; }
+function setManualTests( b ) { manualTests = b; }
 
 function isManualTests() { return manualTests; }
 		
