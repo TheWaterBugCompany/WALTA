@@ -71,6 +71,7 @@
 		   			<element name="habitat" type="string" minOccurs="0" maxOccurs="1"/>
 		   			<element name="movement" type="string" minOccurs="0" maxOccurs="1"/>
 		   			<element name="confusedWith" type="string" minOccurs="0" maxOccurs="1"/>
+		   			
 
 		   			<!-- Stick your media reference here -->
 		   			<element ref="tax:mediaRef" minOccurs="0" maxOccurs="unbounded" />
@@ -81,7 +82,7 @@
 	    	<attribute name="id" type="ID" use="required" />
 	    	<attribute name="name" type="token" use="required" />
 	        <attribute name="commonName" type="token"/>
-	    	<attribute name="size" type="string" />
+	    	<attribute name="size" type="float" />
 	    	<attribute name="signalScore" type="int" />
 	    	<attribute name="ref" type="IDREF" />
 	    	<attribute name="taxonomicLevel">
