@@ -7,6 +7,7 @@
  *  Key, KeyNode, Question and Taxon constitute the data model describing a key
  */
 var _ = require('lib/underscore')._;
+var MediaUtil = require('logic/MediaUtil');
 
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
@@ -100,6 +101,23 @@ function createKey( args ) {
 		// Return a list of all Taxons
 		findAllTaxons: function() {
 			return _.values( taxIdToNode );
+		},
+		
+		// Retrieves all the media
+		findAllMedia: function( type ) {
+			var media = [];
+			_( this.findAllTaxons() ).forEach( function(txn ) {
+				media.push( _.filter( txn.mediaUrls, function(url) {
+						if ( type == 'photo' ) {
+							return MediaUtil.isPhotoUrl( url );
+						} else if ( type == 'video' ) {
+							return MediaUtil.isVideoUrl( url );
+						} else {
+							return url;
+						}
+					}));
+				});
+			return media;
 		},
 		
 		// Used to attach a node to the tree

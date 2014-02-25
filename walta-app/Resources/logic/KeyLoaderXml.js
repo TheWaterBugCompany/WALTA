@@ -52,7 +52,8 @@ function parseTaxon( key, nd ) {
 			habitat: getText( xTxn, WALTA_KEY_NS, 'habitat'),
 			movement: getText( xTxn, WALTA_KEY_NS, 'movement'),
 			confusedWith: getText( xTxn, WALTA_KEY_NS, 'confusedWith'),
-			mediaUrls: parseMediaUrls( key, xTxn )
+			mediaUrls: parseMediaUrls( key, xTxn ),
+			taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel')
 		})
 	);
 	

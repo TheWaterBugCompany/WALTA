@@ -23,23 +23,38 @@ function createBrowseView(  /* Key */ key ) {
 	
 	// Create a data set that displays all the taxon species
 	var dataSet = [];
-	_.each(bvObj.key.findAllTaxons(),function( txn ) {
+	var taxonList = bvObj.key.findAllTaxons();
+	
+	_.each( taxonList, function( txn ) {
 		dataSet.push( {
 			title: { text: txn.name },
-			properties: { 
-				itemId: txn.id,
-				backgroundColor: (dataSet.length % 2 == 0 ? 'white' : '#552F61CC')
-			}
+			template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpecies': 'default' ),
+			properties: { itemId: txn.id }
 		});
+		if ( txn.commonName != '') {
+			dataSet.push( {
+				title: { text: txn.commonName },
+				properties: { itemId: txn.id }
+			});
+		}
 	});
+		
+	// Sort list
+	dataSet =_.sortBy(dataSet, function(i) { return i.title.text; });
 	
+	// Colour list backgrounds
+	var row = 0;	
+	_.each( dataSet, function( i ) {
+		i.properties.backgroundColor = (row%2 == 0 ? 'white' : '#552F61CC');
+		row++;
+	});	
 	var taxonSection = Ti.UI.createListSection();
 	taxonSection.setItems( dataSet );
 	
 	
 	var bView = Ti.UI.createListView({
 		templates: { 
-			'template': {
+			'default': {
 		    	childTemplates: [
 			        {                             
 			            type: 'Ti.UI.Label',  
@@ -53,9 +68,24 @@ function createBrowseView(  /* Key */ key ) {
 			     events: {click: function(e) {
 			     	PubSub.publish( Topics.JUMPTO, e.itemId );
 			     } }
+			   },
+			'genusOrSpecies': {
+		    	childTemplates: [
+			        {                             
+			            type: 'Ti.UI.Label',  
+			            bindId: 'title',            
+			            properties: {           
+			                color: 'black',
+			                font: { fontFamily: Layout.TEXT_FONT, fontSize: Layout.QUESTION_TEXT_SIZE, fontStyle: 'italic' },
+			                left: Layout.WHITESPACE_GAP
+			            }
+			        } ],
+			     events: {click: function(e) {
+			     	PubSub.publish( Topics.JUMPTO, e.itemId );
+			     }}
 			   } 
 			},
-		defaultItemTemplate: 'template'
+		defaultItemTemplate: 'default'
 	});
 	
 	

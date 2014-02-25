@@ -14,6 +14,8 @@ function createTaxon( args ) {
 		movement: "",		// Description of how species moves
 		confusedWith: "",   // This species is often confused with
 		
+		taxonomicLevel: "", // The taxonomic level
+		
 		mediaUrls: [],		// List of media URLs
 		
 		parentLink: null,		// A link to the parent taxon
