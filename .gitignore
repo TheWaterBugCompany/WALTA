@@ -1,3 +1,4 @@
 .metadata
 *.apk
 *.ipa
+**/*.lock

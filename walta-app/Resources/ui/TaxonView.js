@@ -11,6 +11,8 @@ var PubSub = require('lib/pubsub');
 var PhotoView = require('ui/PhotoView');
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var GoBackButton = require('ui/GoBackButton');
+
 
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
@@ -220,6 +222,15 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.subView);
 
 	txnViewObj.view = txnView;
+	
+	_(txnViewObj).extend({
+		openingFromMenu: function( args ) {
+			if ( args.anchorBar ) {
+				var anchorBar = args.anchorBar;
+				anchorBar.addTool( GoBackButton.createGoBackButton() );
+			}
+		}
+	});
 
 	return txnViewObj;
 };

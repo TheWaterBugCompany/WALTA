@@ -11,6 +11,7 @@ var meld = require('lib/meld');
 var AnchorBar = require('ui/AnchorBar');
 var Layout = require('ui/Layout');
 var QuestionView = require('ui/QuestionView');
+var GoBackButton = require('ui/GoBackButton');
 
 var Topics = require('ui/Topics');
 
@@ -51,44 +52,11 @@ function createKeyView( keyNode ) {
 		}
 	);
 	
-	// Add the go back button
-	var goBack = Ti.UI.createView({
-		width: Ti.UI.SIZE,
-		height: Ti.UI.SIZE,
-		borderRadius: Layout.BORDER_RADIUS_BUTTON,
-		backgroundColor: '#BB2F61CC',
-		layout: 'horizontal',
-		horizontalWrap: false
-	});
-	goBack.add( Ti.UI.createImageView( { 
-		width: '55dip', 
-		height: '55dip', 
-		image: '/images/back.png'
-	} ) );
-	goBack.add( Ti.UI.createLabel( { 
-		width: Layout.GOBACK_BUTTON_TEXT_WIDTH, 
-		height: Ti.UI.SIZE, 
-		right: '4dip',
-		text: 'No match? Go back', 
-		font: { fontFamily: 'Tahoma', fontSize: Layout.TOOLBAR_BUTTON_TEXT },
-		color: 'white' 
-	} ) );
-	goBack.addEventListener( 'click', function(e) {
-		PubSub.publish( Topics.BACK, null );
-		e.cancelBubble = true;
-	} );
-	
-	obj._views.backBtn = goBack;
-	
 	_(obj).extend({
 		openingFromMenu: function( args ) {
-			
 			if ( args.anchorBar ) {
 				var anchorBar = args.anchorBar;
-				anchorBar.addTool( AnchorBar.createToolBarButton( '/images/littlespeedbug.png', Topics.SPEEDBUG ) );
-				anchorBar.addTool( AnchorBar.createToolBarButton( '/images/littlebrowse.png', Topics.BROWSE ) );
-				anchorBar.addTool( obj._views.backBtn );
-				
+				anchorBar.addTool( GoBackButton.createGoBackButton() );
 			}
 		}
 	});

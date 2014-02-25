@@ -98,6 +98,8 @@ function createAnchorBar( title ) {
 		}
 	});
 	
+	anchorBar.addTool( createToolBarButton( '/images/littlespeedbug.png', Topics.SPEEDBUG ) );
+	anchorBar.addTool( createToolBarButton( '/images/littlebrowse.png', Topics.BROWSE ) );
 	
 	return anchorBar;
 };

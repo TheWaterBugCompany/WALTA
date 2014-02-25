@@ -1,4 +1,3 @@
-android/ATTR_MINIFY=true
 android/ATTR_PROJECT_NAME=walta-app
 android/abi=no ABIs.
 android/distribute_path=/home/msharman/Documents/Projects/walta
