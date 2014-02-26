@@ -1,9 +1,6 @@
 /*
  * Module: AppWindow
  * 
- * This is really the controller in a "MVC"-ish pattern.
- * TODO: Worthwhile converting app to alloy ??
- * 
  */
 function createAppWindow( keyName, keyPath ) {
 	
@@ -12,6 +9,7 @@ function createAppWindow( keyName, keyPath ) {
 		var Topics = require('ui/Topics');
 		var KeyLoader = require('logic/KeyLoaderXml');
 		var TopLevelWindow = require('ui/TopLevelWindow');
+		var PlatformSpecific = require('ui/PlatformSpecific');
 		
 		if ( ! keyPath ) {
 			keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
@@ -194,7 +192,7 @@ function createAppWindow( keyName, keyPath ) {
 						font: { fontFamily: 'Tahoma', fontSize:'28dip' },
 						bottom: '30dip',
 						right: '120dip',
-						style: ( Ti.Platform.osname === 'iphone' ? Titanium.UI.iPhone.ActivityIndicatorStyle.BIG : Titanium.UI.ActivityIndicatorStyle.BIG )
+						style: PlatformSpecific.getLoadingIndicatorStyle
 					});
 					
 					actWin.add( actInd );
