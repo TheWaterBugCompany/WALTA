@@ -17,6 +17,8 @@ function createTaxon( args ) {
 		
 		taxonomicLevel: "", // The taxonomic level
 		
+		description: "",    // Textual notes
+		
 		mediaUrls: [],		// List of media URLs
 		
 		parentLink: null,		// A link to the parent taxon
@@ -33,12 +35,14 @@ function createTaxon( args ) {
 			+   "<p><b>Habitat:</b> %s</p>"
 			+   "<p><b>Movement:</b> %s</p>"
 			+	"<p><b>Confused with:</b> %s</p>"
-			+	"<p><b>SIGNAL score: %d</b></p>",
+			+	"<p><b>SIGNAL score: %d</b></p>"
+			+   "<p>%s</p>",
 				this.size,
 				this.habitat,
 				this.movement,
 				this.confusedWith,
-				this.signalScore
+				this.signalScore,
+				this.description
 			);
 		}
 	} );

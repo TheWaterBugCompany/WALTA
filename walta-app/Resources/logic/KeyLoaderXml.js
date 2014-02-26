@@ -20,7 +20,7 @@ function getText( node, ns, tagName ) {
 	if ( nds.length > 0 ) {
 		return nds[0].getTextContent();
 	} else {
-		return undefined;
+		return "";
 	}
 }
 
@@ -49,7 +49,8 @@ function parseTaxon( key, nd ) {
 			movement: getText( xTxn, WALTA_KEY_NS, 'movement'),
 			confusedWith: getText( xTxn, WALTA_KEY_NS, 'confusedWith'),
 			mediaUrls: parseMediaUrls( key, xTxn ),
-			taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel')
+			taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel'),
+			description: getText( xTxn, WALTA_KEY_NS, 'description')
 		})
 	);
 	
