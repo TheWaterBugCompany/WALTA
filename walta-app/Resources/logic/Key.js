@@ -7,7 +7,7 @@
  *  Key, KeyNode, Question and Taxon constitute the data model describing a key
  */
 var _ = require('lib/underscore')._;
-var MediaUtil = require('logic/MediaUtil');
+
 
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
@@ -19,6 +19,7 @@ function createKeyNode( args ) {
 }
 
 function createKey( args ) {
+	var MediaUtil = require('logic/MediaUtil');
 	
 	// Set up properties
 	var obj = _(args).defaults({
@@ -32,6 +33,9 @@ function createKey( args ) {
 	var taxIdToNode = {};
 	var keyIdToNode = {};
 	var speedBugIndex = {};
+	
+	var allTaxons = [];
+	var allNodes = [];
 	
 	if ( _.isNull( obj.currentDecision ) ) {
 		obj.currentDecision = obj.root;
@@ -77,7 +81,7 @@ function createKey( args ) {
 				node = this.findTaxon( refId );
 			} 
 			if ( _.isUndefined( node ) ) {
-				throw "Unable to find key node '" + refId +"'";
+				Ti.API.error( "Unable to find key node '" + refId +"'" );
 			}
 			
 			this.currentDecision = node;
@@ -100,20 +104,20 @@ function createKey( args ) {
 		
 		// Return a list of all Taxons
 		findAllTaxons: function() {
-			return _.values( taxIdToNode );
+			return allTaxons;
 		},
 		
 		// Retrieves all the media
 		findAllMedia: function( type ) {
 			var media = [];
 			_( this.findAllTaxons() ).forEach( function(txn ) {
-				media.push( _.filter( txn.mediaUrls, function(url) {
+				media.concat( _.filter( txn.mediaUrls, function(url) {
 						if ( type == 'photo' ) {
 							return MediaUtil.isPhotoUrl( url );
 						} else if ( type == 'video' ) {
 							return MediaUtil.isVideoUrl( url );
 						} else {
-							return url;
+							return true;
 						}
 					}));
 				});
@@ -123,9 +127,17 @@ function createKey( args ) {
 		// Used to attach a node to the tree
 		// intended to be used by the key loader module
 		attachNode: function( node ) {
-			if ( ! _.isUndefined( node.id ) ) {
+			if ( node.id  ) {
 				keyIdToNode[node.id] = node;
 			}
+			allNodes.push( node );
+		},
+		
+		attachTaxon: function( taxon ) {
+			if ( taxon.id ) {
+				taxIdToNode[taxon.id] = taxon;
+			}
+			allTaxons.push(taxon);
 		},
 		
 		linkNodeToParent: function( parent, qn, node ) {
@@ -133,12 +145,8 @@ function createKey( args ) {
 			parent.questions[qn].outcome = node;
 			node.parentLink = parent;
 		},
+				
 		
-		attachTaxon: function( taxon ) {
-			if ( ! _.isUndefined( taxon.id ) ) {
-				taxIdToNode[taxon.id] = taxon;
-			}
-		},
 		
 		linkTaxonToParent: function( parent, qn, taxon ) {
 			this.attachTaxon( taxon );

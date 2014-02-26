@@ -4,13 +4,12 @@
  * Enables the taxonomy endpoints to be browsed.
  *  
  */
-
-var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
-var Layout = require('ui/Layout');
-var Topics = require('ui/Topics');
-
 function createBrowseView(  /* Key */ key ) {
+	
+	var _ = require('lib/underscore')._;
+	var PubSub = require('lib/pubsub');
+	var Layout = require('ui/Layout');
+	var Topics = require('ui/Topics');
 	
 	var bvObj = {
 		view: null,			 	// The Ti.UI.View for the user interface

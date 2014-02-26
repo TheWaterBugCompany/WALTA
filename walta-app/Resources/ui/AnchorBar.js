@@ -8,9 +8,10 @@
  */
 
 var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var PubSub = require('lib/pubsub');
+
 
 // Create a tool bar button
 function createToolBarButton( image, topic ) {
@@ -33,6 +34,7 @@ function createToolBarButton( image, topic ) {
 // Create an anchor bar View
 function createAnchorBar( title ) {
 	
+
 	var anchorBar = {
 		title: title
 	};

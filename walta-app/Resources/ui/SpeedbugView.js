@@ -6,12 +6,14 @@
  *  
  */
 
-var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
-var Layout = require('ui/Layout');
-var Topics = require('ui/Topics');
+
 
 function createSpeedbugView(  /* Key */ key ) {
+	var _ = require('lib/underscore')._;
+	var PubSub = require('lib/pubsub');
+	var Layout = require('ui/Layout');
+	var Topics = require('ui/Topics');
+	
 	var sbvObj = {
 		view: null,		// The Ti.UI.View for the user interface
 		_views: {},		// sub views

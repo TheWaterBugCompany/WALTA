@@ -5,17 +5,18 @@
  * KeyNode object.
  * 
  */
-var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
-var meld = require('lib/meld');
-var AnchorBar = require('ui/AnchorBar');
-var Layout = require('ui/Layout');
-var QuestionView = require('ui/QuestionView');
-var GoBackButton = require('ui/GoBackButton');
 
-var Topics = require('ui/Topics');
 
 function createKeyView( keyNode ) {
+	var _ = require('lib/underscore')._;
+	var PubSub = require('lib/pubsub');
+	var meld = require('lib/meld');
+	var AnchorBar = require('ui/AnchorBar');
+	var Layout = require('ui/Layout');
+	var QuestionView = require('ui/QuestionView');
+	var GoBackButton = require('ui/GoBackButton');
+	var Topics = require('ui/Topics');
+	
 	var obj = {
 		view: null,		 // The Ti.UI.View for the user interface
 		keyNode: keyNode // The Key data object associated with this view

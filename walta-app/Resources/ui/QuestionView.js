@@ -6,12 +6,12 @@
  *  
  */
 
-var _ = require('lib/underscore')._;
 
-var PhotoView = require('ui/PhotoView');
-var Layout = require('ui/Layout');
 
 function createQuestionView(  /* Question */ qn ) {
+	var _ = require('lib/underscore')._;
+	var PhotoView = require('ui/PhotoView');
+	var Layout = require('ui/Layout');	
 	
 	var qnViewObj = {
 		_views: {},

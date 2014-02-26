@@ -1,8 +1,9 @@
-var _ = require('lib/underscore')._;
 
-var MediaUtil = require('logic/MediaUtil');
 
 function createTaxon( args ) {
+	var _ = require('lib/underscore')._;
+	var MediaUtil = require('logic/MediaUtil');
+	
 	var txn = _.defaults( args, {
 		id: null,			// XML based id
 		name: "",			// User readable species scientific name

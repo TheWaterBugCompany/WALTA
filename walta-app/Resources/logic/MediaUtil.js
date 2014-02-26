@@ -1,6 +1,14 @@
 var _ = require('lib/underscore')._;
 
-function hasExtension( path, exts ) {
+function isPhotoUrl( url ) {
+	return _hasExtension(url, [ "jpg", "png", "gif", "jpeg" ] );
+}
+
+function isVideoUrl( url ) {
+	return _hasExtension(url, [ "mp4", "webm", "ogv" ] );
+}
+
+function _hasExtension( path, exts ) {
 		var ext = path.split('.').pop();
 		return _(exts).contains( ext );
 };
@@ -9,14 +17,16 @@ function resolveMediaUrls( mediaUrls ) {
 	return {
 		photoUrls: _(mediaUrls).filter( 
 			function(url) { 
-				return hasExtension(url, [ "jpg", "png", "gif", "jpeg" ] ); 
+				return isPhotoUrl(url); 
 			}),
 	
 		videoUrl: _.chain(mediaUrls).filter( 
 			function(url) { 
-				return hasExtension(url, [ "mp4", "webm", "ogv" ] ); 
+				return isVideoUrl(url); 
 			}).first().value()
 	};
 }
 
+exports.isPhotoUrl = isPhotoUrl;
+exports.isVideoUrl = isVideoUrl;
 exports.resolveMediaUrls = resolveMediaUrls;

@@ -7,11 +7,8 @@
  */
 
 var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
-var PhotoView = require('ui/PhotoView');
 var Layout = require('ui/Layout');
-var Topics = require('ui/Topics');
-var GoBackButton = require('ui/GoBackButton');
+
 
 
 function createDetailsView(txnViewObj) {
@@ -114,6 +111,11 @@ function createActionButton(imageUrl, label, onClick) {
 
 function createActionsView(txnViewObj) {
 
+	var PhotoView = require('ui/PhotoView');
+	var PubSub = require('lib/pubsub');
+	var Topics = require('ui/Topics');
+	
+
 	var vws = txnViewObj._views;
 
 	vws.actions = Ti.UI.createView({
@@ -127,13 +129,6 @@ function createActionsView(txnViewObj) {
 		height : Ti.UI.FILL,
 		layout : 'horizontal'
 	});
-
-	// Add the go back button
-	vws.goBack = createActionButton("/images/goback.png", "Go back and try again", function(e) {
-		PubSub.publish( Topics.BACK, null );
-		e.cancelBubble = true;
-	});
-	vws.actionBtns.add(vws.goBack.view);
 
 	// If there are photos add the photo view and button
 	if (txnViewObj.taxon.photoUrls.length > 0) {
@@ -165,7 +160,7 @@ function createActionsView(txnViewObj) {
 };
 
 function createTaxonView(/* Taxon */txn) {
-
+	var GoBackButton = require('ui/GoBackButton');
 	var txnViewObj = {
 		_views : {},
 		view : null, // The Ti.UI.View for the user interface

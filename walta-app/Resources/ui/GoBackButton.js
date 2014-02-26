@@ -2,11 +2,13 @@
  * Module: GoBackButton
  * 
  */
-var Layout = require('ui/Layout');
-var PubSub = require('lib/pubsub');
-var Topics = require('ui/Topics');
+
 
 function createGoBackButton() {
+	var Layout = require('ui/Layout');
+	var PubSub = require('lib/pubsub');
+	var Topics = require('ui/Topics');
+	
 	var goBack = Ti.UI.createView({
 		width: Ti.UI.SIZE,
 		height: Ti.UI.SIZE,

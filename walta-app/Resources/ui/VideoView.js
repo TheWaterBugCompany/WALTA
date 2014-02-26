@@ -4,11 +4,12 @@
  * Plays a video full screen with simple controls
  * 
  */
-var _ = require('lib/underscore')._;
-var Layout = require('ui/Layout');
+
 
 function createVideoView( file ) {
-	
+	var _ = require('lib/underscore')._;
+	var Layout = require('ui/Layout');
+
 	var vv = { _views: {}, win: null, vp: null };
 	
 	vv._views.playButton = Ti.UI.createButton({

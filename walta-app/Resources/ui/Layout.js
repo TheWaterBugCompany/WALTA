@@ -24,9 +24,12 @@ exports.DETAILS_TEXT_SIZE = '10dip';
 exports.QUESTION_TEXT_SIZE = '16dip';
 exports.VIDEO_OVERLAY_BUTTON_SIZE = '64dip';
 
-exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '4%';
+exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '12dip';
+exports.FULLSCREEN_CLOSE_BUTTON_BUFFER = '48dip';
 
 exports.PAGER_HEIGHT = '16dip';
+exports.PAGER_DOT_SIZE = '12dip';
+
 exports.THUMBNAIL_WIDTH = '200dip';
 
 exports.MENU_ITEM_HEIGHT = '23.5%';
@@ -41,6 +44,7 @@ exports.MENU_ICON_WIDTH = '72dip';
 exports.MENU_ICON_HEIGHT = '72dip';
 exports.MENU_LARGE_BUTTON_HEADING_FONT_SIZE = '23dip';
 exports.MENU_LARGE_BUTTON_TEXT_FONT_SIZE = '11dip';
+
 
 
 exports.MENU_TITLE_FONT_SIZE = '36dip';

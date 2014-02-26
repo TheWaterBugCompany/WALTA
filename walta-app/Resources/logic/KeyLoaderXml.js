@@ -1,10 +1,5 @@
 var _ = require('lib/underscore')._;
-
-var Key = require('logic/Key');
-var Question = require('logic/Question');
-var Taxon = require('logic/Taxon');
 var XmlUtils = require('util/XmlUtils');
-
 var WALTA_KEY_NS = 'http://thewaterbug.net/taxonomy';
 
 // A list of nodes that haven't been seen yet and need to be linked
@@ -40,6 +35,7 @@ function parseMediaUrls( key, nd ) {
 }
 
 function parseTaxon( key, nd ) {
+	var Taxon = require('logic/Taxon');
 	// Parse this Taxon node
 	var xTxn = expectNode( nd, 'taxon' );
 	key.attachTaxon(
@@ -65,7 +61,7 @@ function parseTaxon( key, nd ) {
 }
 
 function parseQuestion( key, nd, parentLink ) {
-	
+	var Question = require('logic/Question');
 	// Parse the attributes
 	var num = XmlUtils.getAttr( nd, 'num' );
 	var text = getText( nd, WALTA_KEY_NS, 'text' );
@@ -129,8 +125,13 @@ function parseQuestion( key, nd, parentLink ) {
 }
 
 function parseKeyNode( key, nd ) {
+	var kn;
+
+	var Key = require('logic/Key');
+	
 	expectNode( nd, 'keyNode' );
-	var kn = Key.createKeyNode({
+	
+	kn = Key.createKeyNode({
 			id: XmlUtils.getAttr( nd, 'id'),
 			questions: []
 	});
@@ -156,7 +157,6 @@ function parseKeyNode( key, nd ) {
 			delete forwardLinks[kn.id];
 		}
 	}
-	
 	return kn;
 }
 
@@ -180,6 +180,7 @@ function parseSpeedBug( key, nd ) {
 }
 
 function parseKey( node, path ) {
+	var Key = require('logic/Key');
 	var xKey = expectNode( node, 'key' );
 	return Key.createKey( {
 		url: path,

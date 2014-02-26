@@ -5,36 +5,13 @@
  * TODO: Worthwhile converting app to alloy ??
  * 
  */
-var _ = require('lib/underscore')._;
-
-var PubSub = require('lib/pubsub');
-var Layout = require('ui/Layout');
-
-var Topics = require('ui/Topics');
-
-var KeyLoader = require('logic/KeyLoaderXml');
-var AnchorBar = require('ui/AnchorBar');
-var MenuView = require('ui/MenuView');
-var TaxonView = require('ui/TaxonView');
-var KeyView = require('ui/KeyView');
-var VideoView = require('ui/VideoView');
-var BrowseView = require('ui/BrowseView');
-var SpeedbugView = require('ui/SpeedbugView');
-var PhotoView = require('ui/PhotoView');
-var HtmlView = require('ui/HtmlView');
-var TopLevelWindow = require('ui/TopLevelWindow');
-
-var errorHandler = function(err) {
-	var errWin = Ti.UI.createWindow({
-					title: 'Internal error',
-					background: 'red'
-		});
-	errWin.open();
-};
-
-
-
 function createAppWindow( keyName, keyPath ) {
+	
+		var _ = require('lib/underscore')._;
+		var PubSub = require('lib/pubsub');
+		var Topics = require('ui/Topics');
+		var KeyLoader = require('logic/KeyLoaderXml');
+		var TopLevelWindow = require('ui/TopLevelWindow');
 		
 		if ( ! keyPath ) {
 			keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
@@ -46,11 +23,9 @@ function createAppWindow( keyName, keyPath ) {
 		var privates = {
 			key: null,
 			isMenuWindow: false,
-			currentWindow: null,
 
 			callbacks: [],
 			
-			// Load the key
 			loadKey: function( keyUrl ) {
 				this.key = KeyLoader.loadKey(keyUrl);
 				if ( ! this.key ) {
@@ -58,18 +33,9 @@ function createAppWindow( keyName, keyPath ) {
 				}
 			},
 			
-			
-			makeTopLevelWindow: function(args) {
-				var lastWindow = ( this.currentWindow && this.currentWindow.window ? this.currentWindow.window : null );
-				win = TopLevelWindow.makeTopLevelWindow(args, lastWindow);
-				
-				args.window = win;
-				this.currentWindow = args;
-				this.isMenuWindow = false;
-			},
-			
 			menuWindow: function(args) {
-				this.makeTopLevelWindow(_({
+				var MenuView = require('ui/MenuView');
+				TopLevelWindow.makeTopLevelWindow(_({
 					name: 'home',
 					uiObj: MenuView.createMenuView(),
 					portrait: false
@@ -78,68 +44,72 @@ function createAppWindow( keyName, keyPath ) {
 			},
 			
 			browseWindow: function() {
-				this.makeTopLevelWindow({
+				var BrowseView = require('ui/BrowseView');
+				TopLevelWindow.makeTopLevelWindow({
 					name: 'browse',
 					title: 'Browse',
 					uiObj: BrowseView.createBrowseView(privates.key),
 					swivel: false
 				});	
+				this.isMenuWindow = false;
 			},
 			
 			speedBugWindow: function() {
-				this.makeTopLevelWindow({
+				var SpeedbugView = require('ui/SpeedbugView');
+				TopLevelWindow.makeTopLevelWindow({
 					name: 'speedbug',
 					title: 'Speedbug',
 					uiObj: SpeedbugView.createSpeedbugView(privates.key)
 				});	
+				this.isMenuWindow = false;
 			},
 			
 			galleryWindow: function() {
-				this.makeTopLevelWindow({
-					name: 'gallery',
-					title: 'Gallery',
-					uiObj: PhotoView.createPhotoView([ 
-							'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
-							'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
-							'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
-						])
-				});	
+				var GalleryWindow = require('ui/GalleryWindow');
+				TopLevelWindow.transitionWindows( GalleryWindow.createGalleryWindow( privates.key.findAllMedia('photo') ), 'left' );
+				this.isMenuWindow = false;
 			},
 			
 			helpWindow: function() {
-				this.makeTopLevelWindow({
+				var HtmlView = require('ui/HtmlView');
+				TopLevelWindow.makeTopLevelWindow({
 					name: 'help',
 					title: 'Help',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'help/WBAhelp.xhtml' )
 				});	
+				this.isMenuWindow = false;
 			},
 			
 			aboutWindow: function() {
-				this.makeTopLevelWindow({
+				var HtmlView = require('ui/HtmlView');
+				TopLevelWindow.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.xhtml' )
 				});	
+				this.isMenuWindow = false;
 			},
 			
 			updateDecisionWindow: function( args ) {
 				var node = this.key.getCurrentNode();
-				
+				if ( ! args ) args = {};
+				_(args).extend({
+					name: 'decision',
+					title: 'ALT Key'
+				});
 				// KeyView when on a decision point
 				// but TaxonView when on a leaf node
 				if ( this.key.isNode( node ) ) {
-					this.makeTopLevelWindow( _({
-						name: 'decision',
-						title: 'ALT Key',
-						uiObj: KeyView.createKeyView( node )
-					}).extend( args ));
+					var KeyView = require('ui/KeyView');
+					args.uiObj = KeyView.createKeyView( node );
 				} else {
-					this.makeTopLevelWindow( _({
-						name: 'decision',
-						title: 'ALT Key',
-						uiObj: TaxonView.createTaxonView( node )
-					}).extend( args ));
+					var TaxonView = require('ui/TaxonView');
+				 	args.uiObj = TaxonView.createTaxonView( node );
 				}
+				
+				TopLevelWindow.makeTopLevelWindow(args);
+				
+				this.isMenuWindow = false;
 			},
 			
 			subscribe: function( topic, cb ) {
@@ -147,10 +117,6 @@ function createAppWindow( keyName, keyPath ) {
 			},
 			
 			cleanUp: function() {
-				if ( this.currentWindow && this.currentWindow.window ) {
-					this.currentWindow.window.close();
-					this.currentWindow = null;
-				}
 				_(this.callbacks).each(function(cb) {
 					PubSub.unsubscribe( cb );
 				});
@@ -169,11 +135,7 @@ function createAppWindow( keyName, keyPath ) {
 	    
 	    privates.subscribe( Topics.BACK, function() { 
 	    	if ( privates.key.isRoot() ) {
-	    		if ( privates.isMenuWindow ) {
-	    			if ( Ti.Platform.osname === 'android'  ) {
-	    				Ti.Android.currentActivity.finish();
-	    			}
-	    		} else {
+	    		if ( ! privates.isMenuWindow ) {
 	    			privates.menuWindow({ slide: 'left' });
 	    		} 
 	    	} else {
@@ -217,23 +179,14 @@ function createAppWindow( keyName, keyPath ) {
 	    	privates.aboutWindow();
 	    });
 		
-		
-	
 		// Return public API
 		_(appWin).extend({
-			getCurrentWindow: function() {
-				return privates.currentWindow;
-			},
 			start: function() {
-		
-					// Overlay a windows on the splash screen to show loading indicator
-					var args = {
+					var actWin = Ti.UI.createWindow({
 						backgroundImage: Ti.Filesystem.resourcesDirectory + 'images/background.png',
 						fullscreen: true,
 						navBarHidden: true
-					};
-					
-					var actWin = Ti.UI.createWindow(args);
+					});
 					var actInd = Ti.UI.createActivityIndicator({
 						height: Ti.UI.SIZE,
 						width: Ti.UI.SIZE,
@@ -245,16 +198,13 @@ function createAppWindow( keyName, keyPath ) {
 					});
 					
 					actWin.add( actInd );
-					actWin.open();
-					actInd.show();
-				
-					privates.loadKey( appWin.keyUrl );
-					privates.menuWindow( {
-						onOpen: function() {			
-							actInd.hide();
-							actWin.close();
-						}
+					actWin.addEventListener( 'open', function() {
+						// Do long work of loading key
+						privates.loadKey( appWin.keyUrl );
+						PubSub.publish( Topics.HOME );
 					});
+					TopLevelWindow.transitionWindows( actWin );
+					actInd.show();
 	
 			},
 			close: function() {
