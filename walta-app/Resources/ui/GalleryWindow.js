@@ -29,12 +29,10 @@ function updateCurrentPage( dots, selPage ) {
 
 function createGalleryWindow(photoUrls, showPager ) {
 	var _ = require('lib/underscore')._;
-
 	var TiHacks = require('util/TiHacks');
 	
 	if ( _.isUndefined( showPager ) ) showPager = true;
 	
-			
 	var galleryWin = Ti.UI.createWindow({ 
 			backgroundColor: 'black', 
 			navBarHidden: true,
