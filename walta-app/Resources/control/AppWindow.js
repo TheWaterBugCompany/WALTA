@@ -148,6 +148,7 @@ function createAppWindow( keyName, keyPath ) {
 	    });
 	    
 	    privates.subscribe( Topics.VIDEO, function( msg, data ) { 
+	    	var VideoView = require('ui/VideoView');
 	    	var vv = VideoView.createVideoView( data );
 	    	vv.open();
 	    });

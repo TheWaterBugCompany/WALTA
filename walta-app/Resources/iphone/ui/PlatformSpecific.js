@@ -4,7 +4,7 @@ var windowStack = [];
 function transitionWindows( win, effect ) {
 	var tx1, tx2;
 	
-	windowStack.push( win2 ); // remember new window
+	windowStack.push( win ); // remember new window
 	
 	var win1;
 	var win2 = win;
@@ -38,8 +38,8 @@ function transitionWindows( win, effect ) {
 			win2.animate( a2 ); 
 			win1.close( a1 );
 		} else {
-			win2.open();
-			win1.close();
+			win2.open( {animate: false} );
+			win1.close( {animate: false} );
 		}
 	} else {
 		win2.open();

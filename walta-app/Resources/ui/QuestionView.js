@@ -44,7 +44,7 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	if ( qn.photoUrls.length > 0 ) {
 		vws.photoView = PhotoView.createPhotoView( qn.photoUrls );
-		qnView.add( _(vws.photoView.view ).extend( { height: '90%', width: Layout.THUMBNAIL_WIDTH, right: '30dip' }));
+		qnView.add( _(vws.photoView.view ).extend( { width: '170dip', right: '30dip', backgroundColor: 'red' }));
 		rightMargin = '232dip';
 	}
 

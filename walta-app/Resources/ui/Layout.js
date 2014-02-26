@@ -9,6 +9,8 @@
 exports.TOOLBAR_HEIGHT = '42dip';
 exports.TOOLBAR_BUTTON_SIZE =  '32dip';
 
+exports.THUMBNAIL_IMAGE_WIDTH = '100%';
+
 exports.BUTTON_MARGIN = '8dip';
 exports.BUTTON_FONT_SIZE = '8dip';
 exports.BUTTON_SIZE = '48dip';

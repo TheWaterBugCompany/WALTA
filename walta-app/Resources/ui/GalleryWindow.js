@@ -60,9 +60,9 @@ function createGalleryWindow(photoUrls) {
 					
 			   	} else {
 			   		view = Ti.UI.createScrollView({
-						minZoomScale: 1.0,
-						maxZoomScale: 15.0,
-						zoomScale: 15.0
+						minZoomScale: 0.5,
+						maxZoomScale: 4.0,
+						zoomScale: 0.5
 					});
 					view.add( Ti.UI.createImageView( { image: url } ) );
 			   	}

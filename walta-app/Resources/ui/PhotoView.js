@@ -9,6 +9,7 @@
 // Create photo View
 function createPhotoView( photoUrls ) {
 	var GalleryWindow = require('ui/GalleryWindow');
+	var Layout = require('ui/Layout');
 
 	var photoViewObj = {}; 
 
@@ -20,11 +21,13 @@ function createPhotoView( photoUrls ) {
 	// Embedded view
 	photoViewObj.view = Ti.UI.createView({
 		width: Ti.UI.SIZE,
-		height: Ti.UI.SIZE
+		height: Ti.UI.SIZE,
+		layout: 'composite'
 	});
 	
 	var photo = Ti.UI.createImageView( { 
 		image: photoUrls[0],
+		width: Layout.THUMBNAIL_IMAGE_WIDTH,
 		top: 0,
 		right: 0
 	});
