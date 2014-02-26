@@ -10,12 +10,15 @@
 function createKeyView( keyNode ) {
 	var _ = require('lib/underscore')._;
 	var PubSub = require('lib/pubsub');
-	var meld = require('lib/meld');
+	
 	var AnchorBar = require('ui/AnchorBar');
 	var Layout = require('ui/Layout');
-	var QuestionView = require('ui/QuestionView');
+	
 	var GoBackButton = require('ui/GoBackButton');
 	var Topics = require('ui/Topics');
+	
+	var meld = require('lib/meld');
+	var QuestionView = require('ui/QuestionView');
 	
 	var obj = {
 		view: null,		 // The Ti.UI.View for the user interface
@@ -52,6 +55,19 @@ function createKeyView( keyNode ) {
 			} );
 		}
 	);
+	
+	obj.view.addEventListener('swipe', function(e){
+		if ( e.direction === 'left' ) {
+			e.cancelBubble = true;
+			PubSub.publish( Topics.BACK );
+		} else if ( e.direction === 'up' ) {
+			e.cancelBubble = true;
+			PubSub.publish( Topics.SPEEDBUG );
+		} else if ( e.direction === 'down' ) {
+			e.cancelBubble = true;
+			PubSub.publish( Topics.BROWSE );
+		}
+	});
 	
 	_(obj).extend({
 		openingFromMenu: function( args ) {

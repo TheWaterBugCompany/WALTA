@@ -19,7 +19,6 @@ function createKeyNode( args ) {
 }
 
 function createKey( args ) {
-	var MediaUtil = require('logic/MediaUtil');
 	
 	// Set up properties
 	var obj = _(args).defaults({
@@ -108,19 +107,10 @@ function createKey( args ) {
 		},
 		
 		// Retrieves all the media
-		findAllMedia: function( type ) {
+		findAllMedia: function( prp ) {
 			var media = [];
-			_( this.findAllTaxons() ).forEach( function(txn ) {
-				media.concat( _.filter( txn.mediaUrls, function(url) {
-						if ( type == 'photo' ) {
-							return MediaUtil.isPhotoUrl( url );
-						} else if ( type == 'video' ) {
-							return MediaUtil.isVideoUrl( url );
-						} else {
-							return true;
-						}
-					}));
-				});
+			if ( ! prp ) prp = 'mediaUrls';
+			_.each( allTaxons, function( t ) { media = media.concat( t[prp] ); });
 			return media;
 		},
 		

@@ -41,11 +41,13 @@ function createPhotoView( photoUrls ) {
 	});
 	photoViewObj.view.add( photo );
 	photoViewObj.view.add( zoomIcon );
-	zoomIcon.addEventListener( 'click',
-		function(e) {
-			photoViewObj.open();	
-			e.cancelBubble = true;
-		});
+	
+	var openGallery = function(e) {
+		e.cancelBubble = true;
+		photoViewObj.open();		
+	};
+	photo.addEventListener( 'click', openGallery );
+	zoomIcon.addEventListener( 'click', openGallery );
 	
 	photoViewObj._views = { photo: photo, zoomIcon: zoomIcon };
 	

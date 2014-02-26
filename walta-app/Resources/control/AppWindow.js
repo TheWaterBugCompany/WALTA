@@ -64,7 +64,10 @@ function createAppWindow( keyName, keyPath ) {
 			
 			galleryWindow: function() {
 				var GalleryWindow = require('ui/GalleryWindow');
-				TopLevelWindow.transitionWindows( GalleryWindow.createGalleryWindow( privates.key.findAllMedia('photo') ), 'left' );
+				var win = GalleryWindow.createGalleryWindow( 
+					_.first( _.shuffle( privates.key.findAllMedia('photoUrls') ), 20 ),
+					 false );
+				win.open();
 				this.isMenuWindow = false;
 			},
 			

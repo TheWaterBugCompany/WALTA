@@ -27,10 +27,12 @@ function updateCurrentPage( dots, selPage ) {
 	}	
 }
 
-function createGalleryWindow(photoUrls) {
+function createGalleryWindow(photoUrls, showPager ) {
 	var _ = require('lib/underscore')._;
 
 	var TiHacks = require('util/TiHacks');
+	
+	if ( _.isUndefined( showPager ) ) showPager = true;
 	
 			
 	var galleryWin = Ti.UI.createWindow({ 
@@ -55,7 +57,7 @@ function createGalleryWindow(photoUrls) {
 						backgroundColor: 'transparent',
 						width : Ti.UI.FILL,
 						height : Ti.UI.FILL,
-						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body,img {margin:0;padding:0;width:100%;height:100%;}</style></head><body><img src="' + TiHacks.convertTiUrlToWebViewUrl(url) + '"></body></html>'
+						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body,img {margin:0;padding:0;width:100%;}</style></head><body><img src="' + TiHacks.convertTiUrlToWebViewUrl(url) + '"></body></html>'
 					});
 					
 			   	} else {
@@ -69,36 +71,38 @@ function createGalleryWindow(photoUrls) {
 				return view; 
 			}),
 		showPagingControl: false,
-		bottom: Layout.PAGER_HEIGHT
+		bottom: ( showPager ? Layout.PAGER_HEIGHT : 0 )
 	}); 
 	galleryWin.add(scrollView);
 
-	var pager = Ti.UI.createView({
-		width: Ti.UI.SIZE,
-		height: Layout.PAGER_HEIGHT,
-		backgroundColor: 'black',
-		bottom: 0,
-		layout: 'horizontal',
-		horizontalWrap: 'false'
-	});
-
-	var dots = [];
-	_(photoUrls).each( function() {
-		var dot = createDot();
-		dots.push( dot );
-		pager.add( dot );
-	});
-	galleryWin.add( pager );
+	if ( showPager ) {
+		var pager = Ti.UI.createView({
+			width: Ti.UI.SIZE,
+			height: Layout.PAGER_HEIGHT,
+			backgroundColor: 'black',
+			bottom: 0,
+			layout: 'horizontal',
+			horizontalWrap: 'false'
+		});
 	
-	var lastPage = scrollView.getCurrentPage();
-	updateCurrentPage( dots, lastPage );
-	
-	scrollView.addEventListener( 'scroll', function(e) {
-		if ( e.currentPage !== lastPage ) {
-			updateCurrentPage( dots, e.currentPage );
-			lastPage = e.currentPage;
-		}
-	});
+		var dots = [];
+		_(photoUrls).each( function() {
+			var dot = createDot();
+			dots.push( dot );
+			pager.add( dot );
+		});
+		galleryWin.add( pager );
+		
+		var lastPage = scrollView.getCurrentPage();
+		updateCurrentPage( dots, lastPage );
+		
+		scrollView.addEventListener( 'scroll', function(e) {
+			if ( e.currentPage !== lastPage ) {
+				updateCurrentPage( dots, e.currentPage );
+				lastPage = e.currentPage;
+			}
+		});
+	}
 	
 	var close = Ti.UI.createView({
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,

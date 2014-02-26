@@ -215,6 +215,21 @@ function createTaxonView(/* Taxon */txn) {
 	}));
 
 	txnView.add(vws.subView);
+	
+	txnView.addEventListener('swipe', function(e){
+		var PubSub = require('ui/PubSub');
+		var Topics = require('ui/Topics');
+		if ( e.direction === 'left' ) {
+			e.cancelBubble = true;
+			PubSub.publish( Topics.BACK );
+		} else if ( e.direction === 'up' ) {
+			e.cancelBubble = true;
+			PubSub.publish( Topics.SPEEDBUG );
+		} else if ( e.direction === 'down' ) {
+			e.cancelBubble = true;
+			PubSub.publish( Topics.BROWSE );
+		}
+	});
 
 	txnViewObj.view = txnView;
 	

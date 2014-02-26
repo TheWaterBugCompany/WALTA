@@ -6,8 +6,6 @@
  *  
  */
 
-
-
 function createQuestionView(  /* Question */ qn ) {
 	var _ = require('lib/underscore')._;
 	var PhotoView = require('ui/PhotoView');
@@ -44,7 +42,7 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	if ( qn.photoUrls.length > 0 ) {
 		vws.photoView = PhotoView.createPhotoView( qn.photoUrls );
-		qnView.add( _(vws.photoView.view ).extend( { width: '170dip', right: '30dip', backgroundColor: 'red' }));
+		qnView.add( _(vws.photoView.view ).extend( { width: '170dip', right: '30dip' }));
 		rightMargin = '232dip';
 	}
 
@@ -62,8 +60,15 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	// Clicking anywhere on the View raises the onSelect() event
 	qnView.addEventListener( 'click', function(e) {
-		qnViewObj.onSelect( e );
 		e.cancelBubble = true;
+		qnViewObj.onSelect( e );
+		
+	});
+	qnView.addEventListener('swipe', function(e){
+		if ( e.direction === 'right' ) {
+			e.cancelBubble = true;
+			qnViewObj.onSelect( e );
+		}
 	});
 
 	qnViewObj.view = qnView;

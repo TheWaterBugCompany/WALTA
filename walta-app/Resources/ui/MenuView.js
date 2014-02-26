@@ -21,6 +21,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 		_(wrap( 'vertical',[
 			Ti.UI.createLabel({
 				left: 0,
+				right: Layout.MENU_GAP,
 				width: Ti.UI.FILL,
 				height: Ti.UI.SIZE,
 				text: label,
@@ -29,6 +30,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 			}),
 			Ti.UI.createLabel({
 				left: 0,
+				right: Layout.MENU_GAP,
 				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: text,
