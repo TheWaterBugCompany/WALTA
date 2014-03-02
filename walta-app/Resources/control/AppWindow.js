@@ -161,8 +161,14 @@ function createAppWindow( keyName, keyPath ) {
 	    });
 	    
 	    privates.subscribe( Topics.JUMPTO, function( msg, id ) { 
-	    	privates.key.setCurrentNode(id);
-		    privates.updateDecisionWindow();
+	    	if ( ! _.isUndefined( id ) ) {
+	    		Ti.API.trace("Topics.JUMPTO " + id + " node.");
+	    		privates.key.setCurrentNode(id);
+		    	privates.updateDecisionWindow();
+		    	
+		    } else {
+		    	Ti.API.error("Topics.JUMPTO undefined node!");
+		    }
 	    });
 	    
 	    privates.subscribe( Topics.SPEEDBUG, function() { 

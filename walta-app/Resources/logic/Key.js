@@ -44,7 +44,13 @@ function createKey( args ) {
 		
 		// Choose the branch number id i from the current decision.
 		choose: function( i ) {
-			this.currentDecision = this.currentDecision.questions[i].outcome;
+			if ( this.isNode( this.currentDecision ) ) {
+				this.currentDecision = this.currentDecision.questions[i].outcome;
+			} else {
+				if ( Ti ) {
+					Ti.API.error("choose() called on non key node!");
+				}
+			}
 		},
 		
 		// Go backs up the key to the parent
@@ -147,11 +153,17 @@ function createKey( args ) {
 		// Adds a "Speed Bug" link, this allows a special index
 		// to be displayed that jumps directly to a node within
 		// a key by touching a silhouette image.
-		addSpeedbugIndex: function( imgUrl, grpId, refId) {
+		
+		addSpeedbugGroup: function( grpId ) {
 			if ( ! _(speedBugIndex).has(grpId) ) {
-				speedBugIndex[grpId] = [];
-			} 
-			speedBugIndex[grpId].push( { imgUrl: imgUrl, refId: refId } );
+				speedBugIndex[grpId] = { refId: grpId, bugs: [] };
+			} else {
+				speedBugIndex[grpId].refId = grpId;
+			}
+		},
+		
+		addSpeedbugIndex: function( imgUrl, grpId, refId) {
+			speedBugIndex[grpId].bugs.push( { imgUrl: imgUrl, refId: refId } );
 		},
 		
 		getSpeedbugIndex: function() {

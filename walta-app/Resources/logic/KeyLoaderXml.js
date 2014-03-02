@@ -165,6 +165,7 @@ function parseSpeedBug( key, nd ) {
 	expectNode( nd, 'speedBugIndex' );
 	XmlUtils.childElements( nd, function( sg ) {
 		if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugGroup' ) ) {
+			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
 				key.addSpeedbugIndex( 
 					key.url + "media/" + XmlUtils.getAttr( sb, "image" ), 
@@ -172,6 +173,7 @@ function parseSpeedBug( key, nd ) {
 					XmlUtils.getAttr( sb, "ref" ) );
 			});
 		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
+			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			key.addSpeedbugIndex( 
 					key.url + "media/" + XmlUtils.getAttr( sg, "image" ), 
 					XmlUtils.getAttr( sg, "ref" ),

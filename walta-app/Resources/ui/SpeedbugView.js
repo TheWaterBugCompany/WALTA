@@ -53,7 +53,7 @@ function createSpeedbugView(  /* Key */ key ) {
 			height: '83%', 
 			width: Ti.UI.SIZE } );
 		
-		_(sg).each( function( sb ) {
+		_(sg.bugs).each( function( sb ) {
 			var cnt = Ti.UI.createView( {
 				backgroundColor:'white',
 				  

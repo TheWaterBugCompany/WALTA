@@ -217,7 +217,7 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.subView);
 	
 	txnView.addEventListener('swipe', function(e){
-		var PubSub = require('lib/PubSub');
+		var PubSub = require('lib/pubsub');
 		var Topics = require('ui/Topics');
 		if ( e.direction === 'left' ) {
 			e.cancelBubble = true;
