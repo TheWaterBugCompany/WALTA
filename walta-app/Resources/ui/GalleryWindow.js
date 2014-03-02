@@ -55,7 +55,7 @@ function createGalleryWindow(photoUrls, showPager ) {
 						backgroundColor: 'transparent',
 						width : Ti.UI.FILL,
 						height : Ti.UI.FILL,
-						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body { width: 100%; background-color: black; } img { display: block; margin-left:auto;margin-right:auto; padding:0; height:100%;}</style></head><body><img src="' + TiHacks.convertTiUrlToWebViewUrl(url) + '"></body></html>'
+						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body { width: 100%; background-color: black; margin: 0; padding: 0; border: 0 } img { display: block; margin-left:auto;margin-right:auto; padding:0; height:100%;}</style></head><body><img src="' + TiHacks.convertTiUrlToWebViewUrl(url) + '"></body></html>'
 					});
 					
 			   	} else {
