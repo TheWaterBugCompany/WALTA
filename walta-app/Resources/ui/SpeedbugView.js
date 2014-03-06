@@ -22,6 +22,49 @@ function createSpeedbugView(  /* Key */ key ) {
 	
 	var vws = sbvObj._views;
 	
+	var buttonMargin = Ti.UI.convertUnits( Layout.BUTTON_MARGIN, "dip" );
+	var tileHeight = Ti.UI.convertUnits( Layout.SPEEDBUG_TILE_HEIGHT, "dip" );
+	var tileWidth = Ti.UI.convertUnits( Layout.SPEEDBUG_TILE_WIDTH, "dip" );
+	var spanTileX = buttonMargin*2 + tileWidth + 2;
+	
+	
+	/*
+	 * Given a x position in dips return the tile index
+	 */
+	function _convertToTileNum( x ) {
+		return Math.floor( x / spanTileX );
+	}
+	
+	
+	var speedbugTileIndex = [];
+	
+	function _pushTile( url, parent ) {
+		speedbugTileIndex.push( { url: url, parent: parent, imageView: null } );
+	}
+	
+	function _releaseTileImageData( n ) {
+		if ( n >= 0 && n <  speedbugTileIndex.length ) {
+			var tile = speedbugTileIndex[n];
+			if ( tile.imageView != null ) {
+				tile.parent.remove( tile.imageView );
+			}
+			tile.imageView = null;
+		}
+	}
+	
+	function _showTileImageData( n ) {
+		if ( n >= 0 && n <  speedbugTileIndex.length ) {
+			var tile = speedbugTileIndex[n];
+			if ( tile.imageView == null ) {
+				tile.imageView = Ti.UI.createImageView({ 
+						  image: tile.url,
+						  width: Ti.UI.FILL
+				});
+				tile.parent.add( tile.imageView );
+			}
+		}
+	}
+	
 	var scrollView = Ti.UI.createScrollView({
 	  contentWidth: 'auto',
 	  contentHeight: 'auto',
@@ -32,9 +75,7 @@ function createSpeedbugView(  /* Key */ key ) {
 	  scrollType: 'horizontal',
 	  layout: 'horizontal',
 	  horizontalWrap: false,
-	  top: Layout.WHITESPACE_GAP,
-	  left: Layout.WHITESPACE_GAP,
-	  right: Layout.WHITESPACE_GAP
+	  top: Layout.WHITESPACE_GAP
 	});
 	
 	// Iterate the speed bug index groups and create a view with a "Not Sure?"
@@ -57,17 +98,16 @@ function createSpeedbugView(  /* Key */ key ) {
 			var cnt = Ti.UI.createView( {
 				backgroundColor:'white',
 				  
-				  height: Ti.UI.FILL,
-				  width: '150dip',
+				  height: tileHeight,
+				  width: tileWidth,
 				  borderColor: 'blue',
 				  borderWidth: '1dip',
+				  left: Layout.BUTTON_MARGIN,
+				  right: Layout.BUTTON_MARGIN
 			});
 			
-			cnt.add(
-				Ti.UI.createImageView({ 
-				  image: sb.imgUrl,
-				  width: Ti.UI.FILL
-			}));
+			// Defer loading images until they are on screen
+			_pushTile( sb.imgUrl, cnt );
 			
 			cnt.addEventListener( 'click', function(e) {
 				PubSub.publish( Topics.JUMPTO, sb.refId );
@@ -82,11 +122,11 @@ function createSpeedbugView(  /* Key */ key ) {
 		if ( bugsCnt.children.length >= 2 ) {
 			var notSureBtn = Ti.UI.createLabel( {
 				height: '10%',
-				width: bugsCnt.children.length*150, // FIXME: Ti.UI.FILL doesn't get correct size on iOS
-				left: Layout.BUTTON_MARGIN,
-				right: Layout.BUTTON_MARGIN,
+				width: bugsCnt.children.length*spanTileX - 2*buttonMargin,
 				top: Layout.WHITESPACE_GAP,
 				bottom: Layout.BUTTON_MARGIN,
+				left: buttonMargin,
+				right: buttonMargin,
 				text: 'Not Sure?',
 				textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 				font: { font: Layout.TEXT_FONT, fontSize:  Layout.QUESTION_TEXT_SIZE },
@@ -102,7 +142,46 @@ function createSpeedbugView(  /* Key */ key ) {
 			grpCnt.add( notSureBtn);
 		}
 		scrollView.add( grpCnt );
+		
+		
 	} );
+	
+	/* Dynamically load and release images as they move onto screen */
+	var lastScroll = null;
+	function _loadAndReleaseTiles() {
+		// getContentOffset can be undefined during postLayout
+		var scrollx = ( scrollView.getContentOffset() ? Ti.UI.convertUnits( scrollView.getContentOffset().x + "px", "dip" ) : 0 );
+		if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > spanTileX) ) {
+			var start_n, end_n;
+			var viewWidth = Ti.UI.convertUnits( scrollView.getSize().width + "px", "dip" );
+			
+			// Release any tiles that are now off the screen
+			if ( lastScroll < scrollx ) {
+				start_n = _convertToTileNum( lastScroll - spanTileX ) - Layout.SPEEDBUG_PRECACHE_TILES;
+				end_n = _convertToTileNum( scrollx - spanTileX ) - Layout.SPEEDBUG_PRECACHE_TILES;
+			} else {
+				start_n = _convertToTileNum( scrollx + viewWidth + 2*spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
+				end_n = _convertToTileNum( lastScroll + viewWidth + 2*spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
+				
+			}
+			Ti.API.trace("Speedbug release tiles start_n = " + start_n + " end_n = " + end_n );
+			for( var i = start_n; i<=end_n; i++ ) {
+				_releaseTileImageData(i);
+			}
+			
+			// Calculate the range of tiles that need to be shown
+			start_n = _convertToTileNum( scrollx ) - Layout.SPEEDBUG_PRECACHE_TILES;
+			end_n = _convertToTileNum( scrollx + viewWidth + spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
+			Ti.API.trace("Speedbug load tiles start_n = " + start_n + " end_n = " + end_n );
+			for( var i = start_n; i<=end_n; i++ ) {
+				_showTileImageData(i);
+			}
+			
+			lastScroll = scrollx;
+		}
+	};
+	scrollView.addEventListener( 'scroll', _loadAndReleaseTiles );
+	scrollView.addEventListener( 'postlayout', _loadAndReleaseTiles );
 	
 	sbvObj.view = scrollView;
 	
