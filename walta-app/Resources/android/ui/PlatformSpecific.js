@@ -24,7 +24,7 @@ function transitionWindows( win, effect ) {
 	
 }
 function convertSystemToDip( n ) {
-	Ti.UI.convertUnits( n + "px", "dip" );
+	return Ti.UI.convertUnits( n + "px", "dip" );
 }
 
 exports.convertSystemToDip = convertSystemToDip;
