@@ -23,5 +23,10 @@ function transitionWindows( win, effect ) {
 	win.open( args );
 	
 }
+function convertSystemToDip( n ) {
+	Ti.UI.convertUnits( n + "px", "dip" );
+}
+
+exports.convertSystemToDip = convertSystemToDip;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Titanium.UI.ActivityIndicatorStyle.BIG;

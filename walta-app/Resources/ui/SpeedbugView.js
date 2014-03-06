@@ -5,14 +5,12 @@
  * key hierarchy.  
  *  
  */
-
-
-
 function createSpeedbugView(  /* Key */ key ) {
 	var _ = require('lib/underscore')._;
 	var PubSub = require('lib/pubsub');
 	var Layout = require('ui/Layout');
 	var Topics = require('ui/Topics');
+	var PlatformSpecific = require('ui/PlatformSpecific');
 	
 	var sbvObj = {
 		view: null,		// The Ti.UI.View for the user interface
@@ -150,10 +148,10 @@ function createSpeedbugView(  /* Key */ key ) {
 	var lastScroll = null;
 	function _loadAndReleaseTiles() {
 		// getContentOffset can be undefined during postLayout
-		var scrollx = ( scrollView.getContentOffset() ? Ti.UI.convertUnits( scrollView.getContentOffset().x + "px", "dip" ) : 0 );
+		var scrollx = ( scrollView.getContentOffset() ? PlatformSpecific.convertSystemToDip( scrollView.getContentOffset().x ) : 0 );
 		if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > spanTileX) ) {
 			var start_n, end_n;
-			var viewWidth = Ti.UI.convertUnits( scrollView.getSize().width + "px", "dip" );
+			var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.getSize().width );
 			
 			// Release any tiles that are now off the screen
 			if ( lastScroll < scrollx ) {
