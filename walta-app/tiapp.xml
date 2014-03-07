@@ -48,7 +48,7 @@
                     android:launchMode="singleTask"
                     android:name="ti.modules.titanium.media.TiVideoActivity"
                     android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
-                <activity android:configChanges="keyboardHidden"
+                <activity android:configChanges="keyboardHidden" android:theme="@android:style/Theme.Translucent"
                     android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="landscape"/>
                 <activity android:configChanges="keyboardHidden"
                     android:name="org.appcelerator.titanium.TiTranslucentActivity"
