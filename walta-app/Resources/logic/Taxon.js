@@ -6,6 +6,7 @@ function createTaxon( args ) {
 	
 	var txn = _.defaults( args, {
 		id: null,			// XML based id
+		ref: "",			// Where a linked Taxon should jump to in the key if not a leaf node
 		name: "",			// User readable species scientific name
 		commonName: "",		// Common name for species
 		size: 0,			// Size in mm

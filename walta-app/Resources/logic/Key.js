@@ -84,6 +84,10 @@ function createKey( args ) {
 			var node = this.findNode( refId );
 			if ( _.isUndefined( node ) ) {
 				node = this.findTaxon( refId );
+				// Redirect to key if we don't have a leaf Taxon
+				if ( node.ref != "") {
+					node = this.findNode( node.ref );
+				}
 			} 
 			if ( _.isUndefined( node ) ) {
 				Ti.API.error( "Unable to find key node '" + refId +"'" );
