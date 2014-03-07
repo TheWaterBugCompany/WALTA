@@ -190,31 +190,8 @@ function createAppWindow( keyName, keyPath ) {
 		// Return public API
 		_(appWin).extend({
 			start: function() {
-					var actWin = Ti.UI.createWindow({
-						backgroundColor: 'transparent',
-						backgroundImage: Ti.Filesystem.resourcesDirectory + 'images/background.png',
-						fullscreen: true,
-						navBarHidden: true
-					});
-					var actInd = Ti.UI.createActivityIndicator({
-						height: Ti.UI.SIZE,
-						width: Ti.UI.SIZE,
-						color: 'white',
-						font: { fontFamily: 'Tahoma', fontSize:'28dip' },
-						bottom: '30dip',
-						right: '120dip',
-						style: PlatformSpecific.getLoadingIndicatorStyle
-					});
-					
-					actWin.add( actInd );
-					actWin.addEventListener( 'open', function() {
-						// Do long work of loading key
-						privates.loadKey( appWin.keyUrl );
-						PubSub.publish( Topics.HOME );
-					});
-					TopLevelWindow.transitionWindows( actWin );
-					actInd.show();
-	
+				privates.loadKey( appWin.keyUrl );
+				PubSub.publish( Topics.HOME );
 			},
 			close: function() {
 				privates.cleanUp();
