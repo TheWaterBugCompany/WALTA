@@ -2,7 +2,7 @@
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <id>net.thewaterbug.waterbug</id>
     <name>Waterbug</name>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <publisher>The Code Sharman</publisher>
     <url>http://www.thewaterbug.net/</url>
     <description>The Waterbug App</description>
@@ -49,7 +49,8 @@
                     android:name="ti.modules.titanium.media.TiVideoActivity"
                     android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
                 <activity android:configChanges="keyboardHidden"
-                    android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="landscape"/>
+                    android:name="org.appcelerator.titanium.TiActivity"
+                    android:screenOrientation="landscape" />
                 <activity android:configChanges="keyboardHidden"
                     android:name="org.appcelerator.titanium.TiTranslucentActivity"
                     android:screenOrientation="landscape" android:theme="@android:style/Theme.Translucent"/>

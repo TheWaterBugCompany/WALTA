@@ -42,6 +42,7 @@ function parseTaxon( key, nd ) {
 		Taxon.createTaxon({
 			id: XmlUtils.getAttr( xTxn, 'id'),
 			name: XmlUtils.getAttr( xTxn, 'name'),
+			ref: XmlUtils.getAttr( xTxn, 'ref'),
 			commonName: XmlUtils.getAttr( xTxn, 'commonName'),
 			size: parseInt( XmlUtils.getAttr( xTxn, 'size') ),
 			signalScore: parseInt( XmlUtils.getAttr( xTxn, 'signalScore') ),

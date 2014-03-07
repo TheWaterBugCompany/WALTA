@@ -16,7 +16,7 @@ function transitionWindows( win, effect ) {
 	}
 	win.addEventListener( 'open', function() { 
 		if ( windowStack.length > 1 ) {
-			windowStack.shift().close( {animate: false });
+			windowStack.shift().close( {animated: false });
 		}
 	});
 	

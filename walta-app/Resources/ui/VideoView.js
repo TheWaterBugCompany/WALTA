@@ -17,13 +17,19 @@ function createVideoView( file ) {
 		height: Layout.VIDEO_OVERLAY_BUTTON_SIZE, 
 		backgroundImage: '/images/play.png'
 	});
-	vv._views.closeButton = Ti.UI.createButton({
+	vv._views.closeButton = Ti.UI.createView({
+		width: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,
+		height: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,
+		top: 0,
+		right: 0
+	});
+	vv._views.closeButton.add( Ti.UI.createImageView({
+		image: '/images/close.png',
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
-		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE, 
-		backgroundImage: '/images/close.png',
+		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		top: Layout.WHITESPACE_GAP,
 		right: Layout.WHITESPACE_GAP
-	});
+	}));
 	vv.onComplete = function() {}; // Callback so the callers knows when the video is finished playing
 	vv.close = function() {
 		if ( Ti.Platform.osname === 'android') {
