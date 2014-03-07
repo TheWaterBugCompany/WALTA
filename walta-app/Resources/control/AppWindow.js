@@ -191,6 +191,7 @@ function createAppWindow( keyName, keyPath ) {
 		_(appWin).extend({
 			start: function() {
 					var actWin = Ti.UI.createWindow({
+						backgroundColor: 'transparent',
 						backgroundImage: Ti.Filesystem.resourcesDirectory + 'images/background.png',
 						fullscreen: true,
 						navBarHidden: true

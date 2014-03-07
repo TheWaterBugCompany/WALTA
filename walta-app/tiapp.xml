@@ -50,7 +50,7 @@
                     android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
                 <activity android:configChanges="keyboardHidden"
                     android:name="org.appcelerator.titanium.TiActivity"
-                    android:screenOrientation="landscape" android:theme="@android:style/Theme.Translucent"/>
+                    android:screenOrientation="landscape" android:theme="@style/Theme.Waterbug" />
                 <activity android:configChanges="keyboardHidden"
                     android:name="org.appcelerator.titanium.TiTranslucentActivity"
                     android:screenOrientation="landscape" android:theme="@android:style/Theme.Translucent"/>
