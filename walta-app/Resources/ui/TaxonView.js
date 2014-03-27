@@ -222,13 +222,13 @@ function createTaxonView(/* Taxon */txn) {
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
 			PubSub.publish( Topics.BACK );
-		} else if ( e.direction === 'up' ) {
+		} /*else if ( e.direction === 'up' ) {
 			e.cancelBubble = true;
 			PubSub.publish( Topics.SPEEDBUG );
 		} else if ( e.direction === 'down' ) {
 			e.cancelBubble = true;
 			PubSub.publish( Topics.BROWSE );
-		}
+		}*/
 	});
 
 	txnViewObj.view = txnView;
