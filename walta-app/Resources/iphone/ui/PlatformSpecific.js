@@ -47,5 +47,11 @@ function transitionWindows( win, effect ) {
 
 
 }
+
+function convertSystemToDip( n ) {
+	return n;
+}
+
+exports.convertSystemToDip = convertSystemToDip;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Titanium.UI.iPhone.ActivityIndicatorStyle.BIG;

@@ -1,5 +1,9 @@
 var PlatformSpecific = require('ui/PlatformSpecific');
 
+var _currentWindow;
+
+function getCurrentWindow() { return _currentWindow; }
+
 /* 
  * All UI objects by convention return a Ti.UI.View 
  * as the parameter view. This function wraps the view
@@ -39,12 +43,7 @@ function makeTopLevelWindow( args ) {
 		var anchorBar = AnchorBar.createAnchorBar( args.title );
 		win.add( anchorBar.view );	
 		
-		panelHeight = Ti.Platform.displayCaps.getPlatformHeight();
-		
-		if ( Ti.Platform.osname === 'android') {
-			panelHeight = Ti.UI.convertUnits( panelHeight + "px", "dip" );
-		}
-		
+		panelHeight = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() );
 		panelHeight = panelHeight - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
 		
 	}
@@ -69,8 +68,10 @@ function makeTopLevelWindow( args ) {
 	
 	PlatformSpecific.transitionWindows( win, args.slide );
 
+	_currentWindow = args;
 	return win;
 }
 
 exports.transitionWindows = PlatformSpecific.transitionWindows;
 exports.makeTopLevelWindow = makeTopLevelWindow;
+exports.getCurrentWindow = getCurrentWindow;

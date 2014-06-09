@@ -60,6 +60,10 @@ exports.BORDER_RADIUS_MENU_BIG = 15;
 exports.BORDER_RADIUS_MENU_SMALL = 4;
 exports.BORDER_RADIUS_BUTTON = 2;
 
+exports.SPEEDBUG_TILE_WIDTH  = '150dip';
+exports.SPEEDBUG_TILE_HEIGHT = '225dip';
+exports.SPEEDBUG_PRECACHE_TILES = 2;
+
 // Make screen size or platform specific tweaks here
 if ( Ti.Platform.osname === 'android' ) {
 	exports.BORDER_RADIUS = 45;

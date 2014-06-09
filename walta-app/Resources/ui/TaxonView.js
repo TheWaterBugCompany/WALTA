@@ -174,7 +174,7 @@ function createTaxonView(/* Taxon */txn) {
 		height : Ti.UI.SIZE,
 		top : Layout.WHITESPACE_GAP,
 		left : Layout.WHITESPACE_GAP,
-		text : txn.getScientificName() + ' (' + txn.commonName + ')',
+		text : txn.commonName,
 		font : {
 			font : Layout.HEADING_FONT,
 			fontSize : Layout.HEADING_SIZE
@@ -217,18 +217,18 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.subView);
 	
 	txnView.addEventListener('swipe', function(e){
-		var PubSub = require('lib/PubSub');
+		var PubSub = require('lib/pubsub');
 		var Topics = require('ui/Topics');
-		if ( e.direction === 'left' ) {
+		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
 			PubSub.publish( Topics.BACK );
-		} else if ( e.direction === 'up' ) {
+		} /*else if ( e.direction === 'up' ) {
 			e.cancelBubble = true;
 			PubSub.publish( Topics.SPEEDBUG );
 		} else if ( e.direction === 'down' ) {
 			e.cancelBubble = true;
 			PubSub.publish( Topics.BROWSE );
-		}
+		}*/
 	});
 
 	txnViewObj.view = txnView;

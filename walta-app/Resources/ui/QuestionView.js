@@ -65,7 +65,7 @@ function createQuestionView(  /* Question */ qn ) {
 		
 	});
 	qnView.addEventListener('swipe', function(e){
-		if ( e.direction === 'right' ) {
+		if ( e.direction === 'left' ) {
 			e.cancelBubble = true;
 			qnViewObj.onSelect( e );
 		}

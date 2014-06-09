@@ -16,12 +16,17 @@ function transitionWindows( win, effect ) {
 	}
 	win.addEventListener( 'open', function() { 
 		if ( windowStack.length > 1 ) {
-			windowStack.shift().close( {animate: false });
+			windowStack.shift().close( {animated: false });
 		}
 	});
 	
 	win.open( args );
 	
 }
+function convertSystemToDip( n ) {
+	return Ti.UI.convertUnits( n + "px", "dip" );
+}
+
+exports.convertSystemToDip = convertSystemToDip;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Titanium.UI.ActivityIndicatorStyle.BIG;

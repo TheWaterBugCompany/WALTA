@@ -57,7 +57,7 @@ function createKeyView( keyNode ) {
 	);
 	
 	obj.view.addEventListener('swipe', function(e){
-		if ( e.direction === 'left' ) {
+		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
 			PubSub.publish( Topics.BACK );
 		} else if ( e.direction === 'up' ) {

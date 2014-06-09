@@ -31,13 +31,13 @@ function createAppWindow( keyName, keyPath ) {
 				}
 			},
 			
-			menuWindow: function(args) {
+			menuWindow: function() {
 				var MenuView = require('ui/MenuView');
-				TopLevelWindow.makeTopLevelWindow(_({
+				TopLevelWindow.makeTopLevelWindow({
 					name: 'home',
 					uiObj: MenuView.createMenuView(),
 					portrait: false
-				}).extend(args));
+				});
 				this.isMenuWindow = true;
 			},
 			
@@ -76,7 +76,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'help',
 					title: 'Help',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'help/WBAhelp.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
 				});	
 				this.isMenuWindow = false;
 			},
@@ -86,7 +86,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
 				});	
 				this.isMenuWindow = false;
 			},
@@ -161,8 +161,14 @@ function createAppWindow( keyName, keyPath ) {
 	    });
 	    
 	    privates.subscribe( Topics.JUMPTO, function( msg, id ) { 
-	    	privates.key.setCurrentNode(id);
-		    privates.updateDecisionWindow();
+	    	if ( ! _.isUndefined( id ) ) {
+	    		Ti.API.trace("Topics.JUMPTO " + id + " node.");
+	    		privates.key.setCurrentNode(id);
+		    	privates.updateDecisionWindow();
+		    	
+		    } else {
+		    	Ti.API.error("Topics.JUMPTO undefined node!");
+		    }
 	    });
 	    
 	    privates.subscribe( Topics.SPEEDBUG, function() { 
@@ -184,34 +190,13 @@ function createAppWindow( keyName, keyPath ) {
 		// Return public API
 		_(appWin).extend({
 			start: function() {
-					var actWin = Ti.UI.createWindow({
-						backgroundImage: Ti.Filesystem.resourcesDirectory + 'images/background.png',
-						fullscreen: true,
-						navBarHidden: true
-					});
-					var actInd = Ti.UI.createActivityIndicator({
-						height: Ti.UI.SIZE,
-						width: Ti.UI.SIZE,
-						color: 'white',
-						font: { fontFamily: 'Tahoma', fontSize:'28dip' },
-						bottom: '30dip',
-						right: '120dip',
-						style: PlatformSpecific.getLoadingIndicatorStyle
-					});
-					
-					actWin.add( actInd );
-					actWin.addEventListener( 'open', function() {
-						// Do long work of loading key
-						privates.loadKey( appWin.keyUrl );
-						PubSub.publish( Topics.HOME );
-					});
-					TopLevelWindow.transitionWindows( actWin );
-					actInd.show();
-	
+				privates.loadKey( appWin.keyUrl );
+				PubSub.publish( Topics.HOME );
 			},
 			close: function() {
 				privates.cleanUp();
-			}
+			},
+			getCurrentWindow: TopLevelWindow.getCurrentWindow
 		});
 	
 		return appWin;
