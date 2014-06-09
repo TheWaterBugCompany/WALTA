@@ -1452,10 +1452,11 @@
 
           <taxon id="leptocerids" name="Leptocerids" taxonomicLevel="alt" commonName="Leptocerids" signalScore="6">
 
-            <description>Unidentified, various genera. No further info.</description>
-            <habitat />
-            <movement />
-            <confusedWith />
+            <habitat>Wetlands, lakes, slow flowing sections in rivers. Common and often abundant.</habitat>
+            <movement>Ungainly crawl.</movement>
+            <confusedWith>Double check you haven't got Triplectides or one of the other distinctive caddises from this group.</confusedWith>
+
+            <mediaRef url="leptocerids_01.jpg" />
 
 
           </taxon>
@@ -1908,21 +1909,21 @@
                                       <!-- Node 12 -->
                                       <keyNode>
                                         <question num="1">
-                                          <text>something to distinguish coleoptera from megaloptera</text>
-                                          <mediaRef url="beetlelarvae.gif" />
-                                        </question>
-
-                                        <question num="2">
-                                          <text>not as above</text>
+                                          <text>robust animal, distinctive, abdominal projections robust (see image), found in cobbly rivers</text>
                                           <mediaRef url="toebiter.gif" />
                                         </question>
 
+                                        <question num="2">
+                                          <text>slender animal, or with slender abdominal projections (dangly bits), found in pools and wetlands</text>
+                                          <mediaRef url="beetlelarvae.gif" />
+                                        </question>
+
                                         <outcome for="1">
-                                          <keyNodeLink ref="k_coleoptera_larvae" />
+                                          <keyNodeLink ref="corydalidae" />
                                         </outcome>
 
                                         <outcome for="2">
-                                          <taxonLink ref="corydalidae" />
+                                          <taxonLink ref="k_coleoptera_larvae" />
                                         </outcome>
 
                                       </keyNode>
@@ -1956,12 +1957,12 @@
                               <keyNode>
 
                                 <question num="1">
-                                  <text>distinguish stonefly nymphs from beetle larvae with 2 tails</text>
+                                  <text>with compound eyes (like a mirror ball upclose) and wing buds (except on very young animals)</text>
                                   <mediaRef url="stoneflynymph.gif" />
                                 </question>
 
                                 <question num="2">
-                                  <text>not as above</text>
+                                  <text>simple eyes (several dots), never with wing pads</text>
                                   <mediaRef url="swimming_water_tiger_larvae_01.jpg" />
                                 </question>
 
