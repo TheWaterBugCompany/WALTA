@@ -174,7 +174,7 @@ function createTaxonView(/* Taxon */txn) {
 		height : Ti.UI.SIZE,
 		top : Layout.WHITESPACE_GAP,
 		left : Layout.WHITESPACE_GAP,
-		text : txn.getScientificName() + ' (' + txn.commonName + ')',
+		text : txn.commonName,
 		font : {
 			font : Layout.HEADING_FONT,
 			fontSize : Layout.HEADING_SIZE

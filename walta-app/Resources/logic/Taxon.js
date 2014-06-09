@@ -40,7 +40,7 @@ function createTaxon( args ) {
 			var names = this.getScientificName();
 			names.shift(); // discard first name
 			return String.format(
-				"<h2>%s</h2>"
+				"<b>%s</b>"
 			+	"<p><b>Size:</b> Up to %dmm</p>"
 			+   "<p><b>Habitat:</b> %s</p>"
 			+   "<p><b>Movement:</b> %s</p>"

@@ -31,13 +31,13 @@ function createAppWindow( keyName, keyPath ) {
 				}
 			},
 			
-			menuWindow: function(args) {
+			menuWindow: function() {
 				var MenuView = require('ui/MenuView');
-				TopLevelWindow.makeTopLevelWindow(_({
+				TopLevelWindow.makeTopLevelWindow({
 					name: 'home',
 					uiObj: MenuView.createMenuView(),
 					portrait: false
-				}).extend(args));
+				});
 				this.isMenuWindow = true;
 			},
 			

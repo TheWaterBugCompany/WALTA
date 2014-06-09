@@ -39,7 +39,7 @@ describe('Taxon tests', function() {
 		expect(txn.videoUrl).toEqual( "resources/simpleKey1/media/attack_caddis_01_x264.mp4" );
 	});
 	it('should return the detail as HTML properly', function(){
-		expect(txn.asDetailHtml()).toEqual("<h2>Family Palaemonidae, Genus Macrobrachium</h2><p><b>Size:</b> Up to 300mm</p>"
+		expect(txn.asDetailHtml()).toEqual("<b>Family Palaemonidae, Genus Macrobrachium</b><p><b>Size:</b> Up to 300mm</p>"
 			+   "<p><b>Habitat:</b> Crayfish in rivers (upper photo) yabbies in wetlands/pools (lower photo).</p>"
 			+   "<p><b>Movement:</b> walking, with sudden flips when disturbed.</p>"
 			+	"<p><b>Confused with:</b> Nothing, very distinctive, We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to spearate when young.</p>"

@@ -2,7 +2,7 @@
  * Bootstrap the application 
  */
 
-var tests = true; // Set to true to run the test harness
+var tests = false; // Set to true to run the test harness
 if ( ! tests ) {
 	var AppWindow = require('control/AppWindow');
     AppWindow.createAppWindow( 'walta' ).start();
