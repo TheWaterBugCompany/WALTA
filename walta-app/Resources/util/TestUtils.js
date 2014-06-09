@@ -58,6 +58,7 @@ function wrapViewInWindow( view ) {
 }
 		
 function windowOpenTest( win, timeout ) {
+	if ( ! timeout ) timeout = 3000;
 	waitForDomEvent( win, 'open', function(){ win.open(); }, timeout ); 
 }
 		

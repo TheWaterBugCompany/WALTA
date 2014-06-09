@@ -76,7 +76,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'help',
 					title: 'Help',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'help/WBAhelp.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
 				});	
 				this.isMenuWindow = false;
 			},
@@ -86,7 +86,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
 				});	
 				this.isMenuWindow = false;
 			},
@@ -195,7 +195,8 @@ function createAppWindow( keyName, keyPath ) {
 			},
 			close: function() {
 				privates.cleanUp();
-			}
+			},
+			getCurrentWindow: TopLevelWindow.getCurrentWindow
 		});
 	
 		return appWin;

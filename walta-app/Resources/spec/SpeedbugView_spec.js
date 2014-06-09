@@ -8,7 +8,7 @@ var SpeedbugView = require('ui/SpeedbugView');
 
 describe('SpeedbugView', function() {
 	var bv, win, key;
-	key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory, 'spec/resources/simpleKey1' );
+	key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/' );
 	sb = SpeedbugView.createSpeedbugView( key );
 	win = TestUtils.wrapViewInWindow( sb.view );
 

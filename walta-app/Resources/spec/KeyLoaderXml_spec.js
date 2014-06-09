@@ -9,7 +9,7 @@ var KeyLoaderXml = require('logic/KeyLoaderXml');
 describe('KeyLoaderXml', function() {
 	var key;
 	it('should load a key from XML', function(){
-		key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory, 'spec/resources/simpleKey1' );
+		key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/' );
 		expect( key ).toBeDefined();
 	});
 	it('should have the correct toplevel node', function(){	
@@ -75,11 +75,11 @@ describe('KeyLoaderXml', function() {
 	it('should list the speed bug index with getSpeedbugIndex()', function() {
 		sbug = key.getSpeedbugIndex();
 		expect( sbug ).toBeDefined();
-		expect( sbug['maggots'] ).toBeDefined();
-		expect( sbug['maggots'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/athericidae.svg', refId: "athericidae" } );
-		expect( sbug['maggots'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/blepheraceridae.svg', refId: "blepheraceridae" }  );
-		expect( sbug['ranatra'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/ranatra.svg', refId: "ranatra" } );
-		expect( sbug['larval'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/hydrobiosidae.svg', refId: "hydrobiosidae" } );
-		expect( sbug['larval'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/megaloptera.svg', refId: "corydalidae" } );
+		expect( sbug['maggots'].bugs ).toBeDefined();
+		expect( sbug['maggots'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/athericidae.svg', refId: "athericidae" } );
+		expect( sbug['maggots'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/blepheraceridae.svg', refId: "blepheraceridae" }  );
+		expect( sbug['ranatra'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/ranatra.svg', refId: "ranatra" } );
+		expect( sbug['larval'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/hydrobiosidae.svg', refId: "hydrobiosidae" } );
+		expect( sbug['larval'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/megaloptera.svg', refId: "corydalidae" } );
 	});
 });

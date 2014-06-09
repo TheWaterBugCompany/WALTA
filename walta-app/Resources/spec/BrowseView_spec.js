@@ -8,7 +8,7 @@ var BrowseView = require('ui/BrowseView');
 
 describe('BrowseView', function() {
 	var bv, win, key;
-	key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory, '/spec/resources/simpleKey1' );
+	key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/' );
 	bv = BrowseView.createBrowseView( key );
 	win = TestUtils.wrapViewInWindow( bv.view );
 

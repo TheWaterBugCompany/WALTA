@@ -1,5 +1,9 @@
 var PlatformSpecific = require('ui/PlatformSpecific');
 
+var _currentWindow;
+
+function getCurrentWindow() { return _currentWindow; }
+
 /* 
  * All UI objects by convention return a Ti.UI.View 
  * as the parameter view. This function wraps the view
@@ -64,8 +68,10 @@ function makeTopLevelWindow( args ) {
 	
 	PlatformSpecific.transitionWindows( win, args.slide );
 
+	_currentWindow = args;
 	return win;
 }
 
 exports.transitionWindows = PlatformSpecific.transitionWindows;
 exports.makeTopLevelWindow = makeTopLevelWindow;
+exports.getCurrentWindow = getCurrentWindow;

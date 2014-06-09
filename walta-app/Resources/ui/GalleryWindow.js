@@ -72,7 +72,7 @@ function createGalleryWindow(photoUrls, showPager ) {
 		bottom: ( showPager ? Layout.PAGER_HEIGHT : 0 )
 	}); 
 	galleryWin.add(scrollView);
-
+	galleryWin._views = [];
 	if ( showPager ) {
 		var pager = Ti.UI.createView({
 			width: Ti.UI.SIZE,
@@ -82,7 +82,7 @@ function createGalleryWindow(photoUrls, showPager ) {
 			layout: 'horizontal',
 			horizontalWrap: 'false'
 		});
-	
+		
 		var dots = [];
 		_(photoUrls).each( function() {
 			var dot = createDot();
@@ -125,6 +125,8 @@ function createGalleryWindow(photoUrls, showPager ) {
 	
 	galleryWin.add( close );
 
+	// testing hooks
+	galleryWin._views = { close: close };
 	
 	return galleryWin;
 }

@@ -12,10 +12,21 @@ function createPhotoView( photoUrls ) {
 	var Layout = require('ui/Layout');
 
 	var photoViewObj = {}; 
+	
+	// Hooks for auto tests
+	photoViewObj.onGalleryWinOpened = function( win ) {};
+	photoViewObj.onGalleryWinClosed = function( win ) {};
 
 	photoViewObj.open = function() { 
 		var galleryWin = GalleryWindow.createGalleryWindow(photoUrls);
+		galleryWin.addEventListener( 'open', function() { 
+				photoViewObj.onGalleryWinOpened(galleryWin); // call hook	
+		} );
+		galleryWin.addEventListener( 'close', function() { 
+				photoViewObj.onGalleryWinClosed(galleryWin); // call hook	
+		} );
 		galleryWin.open(); 
+		
 	};
 
 	// Embedded view
