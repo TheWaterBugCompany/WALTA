@@ -120,7 +120,11 @@ function parseQuestion( key, nd, parentLink ) {
 		
 	// Store a future reference to resolve this node later
 	if ( !_.isUndefined( ref ) && _.isUndefined( outcome ) ) {
-		forwardLinks[ref] = { qNode: qn, pLink: parentLink };
+		// There needs to be a list of nodes to allow multiple incoming edges to fix #146 and
+		// related bugs...
+		if ( _.isUndefined( forwardLinks[ref] ))
+			forwardLinks[ref] = [];
+		forwardLinks[ref].push({ qNode: qn, pLink: parentLink });
 	}
 	
 	return qn;
@@ -149,13 +153,15 @@ function parseKeyNode( key, nd ) {
 	
 	key.attachNode( kn );
 
-	
 	// Process any forward links that this node resolves
 	if ( !_.isUndefined( kn.id ) ) {
 		if ( kn.id in forwardLinks ) {
-			var link = forwardLinks[kn.id];
-			link.qNode.outcome = kn;
-			kn.parentLink = link.pLink;
+			// correct each link
+			_.each(forwardLinks[kn.id],
+				function(link) {
+				link.qNode.outcome = kn;
+				kn.parentLink = link.pLink; // will clobber previous .. not sure what to do about this
+				} );
 			delete forwardLinks[kn.id];
 		}
 	}

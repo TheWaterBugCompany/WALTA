@@ -1919,11 +1919,11 @@
                                         </question>
 
                                         <outcome for="1">
-                                          <keyNodeLink ref="corydalidae" />
+                                          <taxonLink ref="corydalidae" />
                                         </outcome>
 
                                         <outcome for="2">
-                                          <taxonLink ref="k_coleoptera_larvae" />
+                                          <keyNodeLink ref="k_coleoptera_larvae" />
                                         </outcome>
 
                                       </keyNode>

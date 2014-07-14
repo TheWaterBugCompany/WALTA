@@ -124,4 +124,5 @@ describe('Key', function() {
 		expect( txns ).toContain( taxons[1] );
 		expect( txns ).toContain( taxons[2] );
 	});
+
 });

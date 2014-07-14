@@ -45,7 +45,11 @@ function createKey( args ) {
 		// Choose the branch number id i from the current decision.
 		choose: function( i ) {
 			if ( this.isNode( this.currentDecision ) ) {
-				this.currentDecision = this.currentDecision.questions[i].outcome;
+				var nd = this.currentDecision.questions[i].outcome;
+				if ( _.isUndefined(nd) || _.isNull( nd ) )
+					Ti.API.error( "Outcome for " + i + " is not defined!" );
+				
+				this.currentDecision = nd;
 			} else {
 				if ( Ti ) {
 					Ti.API.error("choose() called on non key node!");
