@@ -64,7 +64,7 @@ function createPhotoView( photoUrls ) {
 	var zoomIcon = Ti.UI.createView( {
 		bottom: 0,
 		right: 0,
-		backgroundImage: '/images/zoom.png',
+		backgroundImage: '/images/icon-magnify.gif',
 		width: '30dip',
 		height: '30dip'
 	});

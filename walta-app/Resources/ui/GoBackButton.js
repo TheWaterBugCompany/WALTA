@@ -36,9 +36,9 @@ function createGoBackButton() {
 		horizontalWrap: false
 	});
 	goBack.add( Ti.UI.createImageView( { 
-		width: '55dip', 
-		height: '55dip', 
-		image: '/images/back.png'
+		width: '25dip', 
+		height: '25dip', 
+		image: '/images/icon-go-back.gif'
 	} ) );
 	goBack.add( Ti.UI.createLabel( { 
 		width: Layout.GOBACK_BUTTON_TEXT_WIDTH, 

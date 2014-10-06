@@ -168,7 +168,13 @@ function createMenuView() {
 				text: 'The Waterbug App',
 				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
 				color: 'black'
-			})
+			}),
+			_(icon({
+					top: Layout.MENU_LOGO_TOP,
+					width: '100dip',
+					image: '/images/icon-australia.gif'
+				})).extend( { width: Layout.MENU_LOGO_LEFT,
+				height: Ti.UI.FILL } )
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
@@ -176,42 +182,42 @@ function createMenuView() {
 		});
 		
 	vws.speedbug = createLargeMenuButton( 
-		'/images/speedbug.png', 
+		'/images/icon-speedbug.gif', 
 		Topics.SPEEDBUG, 
 		'Speedbug', 
 		'Look at silhouettes of bugs to choose the best match.' 
 	);
 	
 	vws.keysearch = createLargeMenuButton( 
-		'/images/altkey.png', 
+		'/images/icon-alt-key.gif', 
 		Topics.KEYSEARCH, 
 		'ALT key', 
 		'Questions to help identify your waterbug.' 
 	);
 	
 	vws.browse = createLargeMenuButton( 
-		'/images/browse.png', 
+		'/images/icon-browse.gif', 
 		Topics.BROWSE, 
 		'Browse list', 
 		'If you know the name of your bug.' 
 	);
 	
 	vws.help = createLargeMenuButton( 
-		'/images/help.png',
+		'/images/icon-help.gif',
 		Topics.HELP, 
 		'Help', 
 		'Info to get you started.' 
 	);
 	
 	vws.gallery = createLargeMenuButton( 
-		'/images/gallery.png',
+		'/images/icon-gallery.gif',
 		Topics.GALLERY, 
 		'Gallery', 
 		'Browse photos & videos.' 
 	);
 	
 	vws.about = createLargeMenuButton( 
-		'/images/about.png',
+		'/images/icon-about.gif',
 		Topics.ABOUT, 
 		'About', 
 		'About the app.' 

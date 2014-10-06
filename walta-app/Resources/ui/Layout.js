@@ -58,8 +58,8 @@ exports.MENU_ITEM_WIDTH_2 = '48%';
 exports.MENU_GAP = '1.2%';
 exports.MENU_LOGO_WIDTH = '58dip';
 exports.MENU_LOGO_HEIGHT = '48dip';
-exports.MENU_LOGO_LEFT = '30%';
-exports.MENU_LOGO_TOP = '8%';
+exports.MENU_LOGO_LEFT = '22%';
+exports.MENU_LOGO_TOP = '10%';
 exports.MENU_ICON_WIDTH = '72dip';
 exports.MENU_ICON_HEIGHT = '72dip';
 exports.MENU_LARGE_BUTTON_HEADING_FONT_SIZE = '23dip';
@@ -67,8 +67,8 @@ exports.MENU_LARGE_BUTTON_TEXT_FONT_SIZE = '11dip';
 
 
 
-exports.MENU_TITLE_FONT_SIZE = '36dip';
-exports.MENU_LOGO_FONT_SIZE = '8dip';
+exports.MENU_TITLE_FONT_SIZE = '30dip';
+exports.MENU_LOGO_FONT_SIZE = '9dip';
 
 exports.GOBACK_BUTTON_TEXT_WIDTH = '80dip';
 exports.TOOLBAR_BUTTON_TEXT = '14dip';

@@ -157,7 +157,7 @@ function createActionsView(txnViewObj) {
 			top : Layout.WHITESPACE_GAP
 		}));
 
-		vws.openGallery = createActionButton("/images/gallery.png", "Photo gallery", function(e) {
+		vws.openGallery = createActionButton("/images/icon-gallery.gif", "Photo gallery", function(e) {
 			vws.photoView.open();
 			e.cancelBubble = true;
 		});
@@ -166,7 +166,7 @@ function createActionsView(txnViewObj) {
 
 	// If there is a video add the video button
 	if (txnViewObj.taxon.videoUrl) {
-		vws.watchVideo = createActionButton("/images/video.png", "Watch video", function(e) {
+		vws.watchVideo = createActionButton("/images/icon-video.gif", "Watch video", function(e) {
 			// open video player
 			PubSub.publish( Topics.VIDEO, txnViewObj.taxon.videoUrl );
 			e.cancelBubble = true;
