@@ -1,4 +1,22 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * Module: MenuView
  * 
  * Provides the main menu screen.
@@ -21,6 +39,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 		_(wrap( 'vertical',[
 			Ti.UI.createLabel({
 				left: 0,
+				right: Layout.MENU_GAP,
 				width: Ti.UI.FILL,
 				height: Ti.UI.SIZE,
 				text: label,
@@ -29,6 +48,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 			}),
 			Ti.UI.createLabel({
 				left: 0,
+				right: Layout.MENU_GAP,
 				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: text,
@@ -148,7 +168,13 @@ function createMenuView() {
 				text: 'The Waterbug App',
 				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
 				color: 'black'
-			})
+			}),
+			_(icon({
+					top: Layout.MENU_LOGO_TOP,
+					width: '100dip',
+					image: '/images/icon-australia.gif'
+				})).extend( { width: Layout.MENU_LOGO_LEFT,
+				height: Ti.UI.FILL } )
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
@@ -156,42 +182,42 @@ function createMenuView() {
 		});
 		
 	vws.speedbug = createLargeMenuButton( 
-		'/images/speedbug.png', 
+		'/images/icon-speedbug.gif', 
 		Topics.SPEEDBUG, 
 		'Speedbug', 
 		'Look at silhouettes of bugs to choose the best match.' 
 	);
 	
 	vws.keysearch = createLargeMenuButton( 
-		'/images/altkey.png', 
+		'/images/icon-alt-key.gif', 
 		Topics.KEYSEARCH, 
 		'ALT key', 
 		'Questions to help identify your waterbug.' 
 	);
 	
 	vws.browse = createLargeMenuButton( 
-		'/images/browse.png', 
+		'/images/icon-browse.gif', 
 		Topics.BROWSE, 
 		'Browse list', 
 		'If you know the name of your bug.' 
 	);
 	
 	vws.help = createLargeMenuButton( 
-		'/images/help.png',
+		'/images/icon-help.gif',
 		Topics.HELP, 
 		'Help', 
 		'Info to get you started.' 
 	);
 	
 	vws.gallery = createLargeMenuButton( 
-		'/images/gallery.png',
+		'/images/icon-gallery.gif',
 		Topics.GALLERY, 
 		'Gallery', 
 		'Browse photos & videos.' 
 	);
 	
 	vws.about = createLargeMenuButton( 
-		'/images/about.png',
+		'/images/icon-about.gif',
 		Topics.ABOUT, 
 		'About', 
 		'About the app.' 

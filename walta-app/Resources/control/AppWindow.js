@@ -1,8 +1,23 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * Module: AppWindow
- * 
- * This is really the controller in a "MVC"-ish pattern.
- * TODO: Worthwhile converting app to alloy ??
  * 
  */
 function createAppWindow( keyName, keyPath ) {
@@ -12,6 +27,7 @@ function createAppWindow( keyName, keyPath ) {
 		var Topics = require('ui/Topics');
 		var KeyLoader = require('logic/KeyLoaderXml');
 		var TopLevelWindow = require('ui/TopLevelWindow');
+		var PlatformSpecific = require('ui/PlatformSpecific');
 		
 		if ( ! keyPath ) {
 			keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
@@ -33,13 +49,13 @@ function createAppWindow( keyName, keyPath ) {
 				}
 			},
 			
-			menuWindow: function(args) {
+			menuWindow: function() {
 				var MenuView = require('ui/MenuView');
-				TopLevelWindow.makeTopLevelWindow(_({
+				TopLevelWindow.makeTopLevelWindow({
 					name: 'home',
 					uiObj: MenuView.createMenuView(),
 					portrait: false
-				}).extend(args));
+				});
 				this.isMenuWindow = true;
 			},
 			
@@ -66,7 +82,10 @@ function createAppWindow( keyName, keyPath ) {
 			
 			galleryWindow: function() {
 				var GalleryWindow = require('ui/GalleryWindow');
-				TopLevelWindow.transitionWindows( GalleryWindow.createGalleryWindow( privates.key.findAllMedia('photo') ), 'left' );
+				var win = GalleryWindow.createGalleryWindow( 
+					_.first( _.shuffle( privates.key.findAllMedia('photoUrls') ), 20 ),
+					 false );
+				win.open();
 				this.isMenuWindow = false;
 			},
 			
@@ -75,7 +94,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'help',
 					title: 'Help',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'help/WBAhelp.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
 				});	
 				this.isMenuWindow = false;
 			},
@@ -85,7 +104,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.xhtml' )
+					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
 				});	
 				this.isMenuWindow = false;
 			},
@@ -150,6 +169,7 @@ function createAppWindow( keyName, keyPath ) {
 	    });
 	    
 	    privates.subscribe( Topics.VIDEO, function( msg, data ) { 
+	    	var VideoView = require('ui/VideoView');
 	    	var vv = VideoView.createVideoView( data );
 	    	vv.open();
 	    });
@@ -159,8 +179,14 @@ function createAppWindow( keyName, keyPath ) {
 	    });
 	    
 	    privates.subscribe( Topics.JUMPTO, function( msg, id ) { 
-	    	privates.key.setCurrentNode(id);
-		    privates.updateDecisionWindow();
+	    	if ( ! _.isUndefined( id ) ) {
+	    		Ti.API.trace("Topics.JUMPTO " + id + " node.");
+	    		privates.key.setCurrentNode(id);
+		    	privates.updateDecisionWindow();
+		    	
+		    } else {
+		    	Ti.API.error("Topics.JUMPTO undefined node!");
+		    }
 	    });
 	    
 	    privates.subscribe( Topics.SPEEDBUG, function() { 
@@ -182,34 +208,13 @@ function createAppWindow( keyName, keyPath ) {
 		// Return public API
 		_(appWin).extend({
 			start: function() {
-					var actWin = Ti.UI.createWindow({
-						backgroundImage: Ti.Filesystem.resourcesDirectory + 'images/background.png',
-						fullscreen: true,
-						navBarHidden: true
-					});
-					var actInd = Ti.UI.createActivityIndicator({
-						height: Ti.UI.SIZE,
-						width: Ti.UI.SIZE,
-						color: 'white',
-						font: { fontFamily: 'Tahoma', fontSize:'28dip' },
-						bottom: '30dip',
-						right: '120dip',
-						style: ( Ti.Platform.osname === 'iphone' ? Titanium.UI.iPhone.ActivityIndicatorStyle.BIG : Titanium.UI.ActivityIndicatorStyle.BIG )
-					});
-					
-					actWin.add( actInd );
-					actWin.addEventListener( 'open', function() {
-						// Do long work of loading key
-						privates.loadKey( appWin.keyUrl );
-						PubSub.publish( Topics.HOME );
-					});
-					TopLevelWindow.transitionWindows( actWin );
-					actInd.show();
-	
+				privates.loadKey( appWin.keyUrl );
+				PubSub.publish( Topics.HOME );
 			},
 			close: function() {
 				privates.cleanUp();
-			}
+			},
+			getCurrentWindow: TopLevelWindow.getCurrentWindow
 		});
 	
 		return appWin;

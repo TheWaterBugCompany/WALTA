@@ -1,4 +1,22 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  *  walta/Key
  *   
  *  Keeps track of the relationship between KeyNodes, Questions and Taxons and initialises the model 
@@ -19,7 +37,6 @@ function createKeyNode( args ) {
 }
 
 function createKey( args ) {
-	var MediaUtil = require('logic/MediaUtil');
 	
 	// Set up properties
 	var obj = _(args).defaults({
@@ -45,7 +62,17 @@ function createKey( args ) {
 		
 		// Choose the branch number id i from the current decision.
 		choose: function( i ) {
-			this.currentDecision = this.currentDecision.questions[i].outcome;
+			if ( this.isNode( this.currentDecision ) ) {
+				var nd = this.currentDecision.questions[i].outcome;
+				if ( _.isUndefined(nd) || _.isNull( nd ) )
+					Ti.API.error( "Outcome for " + i + " is not defined!" );
+				
+				this.currentDecision = nd;
+			} else {
+				if ( Ti ) {
+					Ti.API.error("choose() called on non key node!");
+				}
+			}
 		},
 		
 		// Go backs up the key to the parent
@@ -79,6 +106,10 @@ function createKey( args ) {
 			var node = this.findNode( refId );
 			if ( _.isUndefined( node ) ) {
 				node = this.findTaxon( refId );
+				// Redirect to key if we don't have a leaf Taxon
+				if ( node.ref != "") {
+					node = this.findNode( node.ref );
+				}
 			} 
 			if ( _.isUndefined( node ) ) {
 				Ti.API.error( "Unable to find key node '" + refId +"'" );
@@ -108,19 +139,10 @@ function createKey( args ) {
 		},
 		
 		// Retrieves all the media
-		findAllMedia: function( type ) {
+		findAllMedia: function( prp ) {
 			var media = [];
-			_( this.findAllTaxons() ).forEach( function(txn ) {
-				media.concat( _.filter( txn.mediaUrls, function(url) {
-						if ( type == 'photo' ) {
-							return MediaUtil.isPhotoUrl( url );
-						} else if ( type == 'video' ) {
-							return MediaUtil.isVideoUrl( url );
-						} else {
-							return true;
-						}
-					}));
-				});
+			if ( ! prp ) prp = 'mediaUrls';
+			_.each( allTaxons, function( t ) { media = media.concat( t[prp] ); });
 			return media;
 		},
 		
@@ -157,11 +179,17 @@ function createKey( args ) {
 		// Adds a "Speed Bug" link, this allows a special index
 		// to be displayed that jumps directly to a node within
 		// a key by touching a silhouette image.
-		addSpeedbugIndex: function( imgUrl, grpId, refId) {
+		
+		addSpeedbugGroup: function( grpId ) {
 			if ( ! _(speedBugIndex).has(grpId) ) {
-				speedBugIndex[grpId] = [];
-			} 
-			speedBugIndex[grpId].push( { imgUrl: imgUrl, refId: refId } );
+				speedBugIndex[grpId] = { refId: grpId, bugs: [] };
+			} else {
+				speedBugIndex[grpId].refId = grpId;
+			}
+		},
+		
+		addSpeedbugIndex: function( imgUrl, grpId, refId) {
+			speedBugIndex[grpId].bugs.push( { imgUrl: imgUrl, refId: refId } );
 		},
 		
 		getSpeedbugIndex: function() {

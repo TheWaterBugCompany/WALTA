@@ -1,12 +1,28 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * walta/QuestionView
  *
  * Creates the corresponding view for the question
  * datastructure.
  *  
  */
-
-
 
 function createQuestionView(  /* Question */ qn ) {
 	var _ = require('lib/underscore')._;
@@ -44,7 +60,7 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	if ( qn.photoUrls.length > 0 ) {
 		vws.photoView = PhotoView.createPhotoView( qn.photoUrls );
-		qnView.add( _(vws.photoView.view ).extend( { height: '90%', width: Layout.THUMBNAIL_WIDTH, right: '30dip' }));
+		qnView.add( _(vws.photoView.view ).extend( { width: '170dip', right: '30dip' }));
 		rightMargin = '232dip';
 	}
 
@@ -62,8 +78,15 @@ function createQuestionView(  /* Question */ qn ) {
 	
 	// Clicking anywhere on the View raises the onSelect() event
 	qnView.addEventListener( 'click', function(e) {
-		qnViewObj.onSelect( e );
 		e.cancelBubble = true;
+		qnViewObj.onSelect( e );
+		
+	});
+	qnView.addEventListener('swipe', function(e){
+		if ( e.direction === 'left' ) {
+			e.cancelBubble = true;
+			qnViewObj.onSelect( e );
+		}
 	});
 
 	qnViewObj.view = qnView;

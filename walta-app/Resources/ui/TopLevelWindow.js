@@ -1,91 +1,25 @@
-var _ = require('lib/underscore')._;
+/*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
 
-var PubSub = require('lib/pubsub');
-var Layout = require('ui/Layout');
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
 
-var Topics = require('ui/Topics');
-var AnchorBar = require('ui/AnchorBar');
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
-// Keep track of windows we've opened but not closed
-var windowStack = [];
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+var PlatformSpecific = require('ui/PlatformSpecific');
 
-function _transitionWindows_iPhone( win, effect ) {
-	var tx1, tx2;
-	
-	windowStack.push( win2 ); // remember new window
-	
-	var win1;
-	var win2 = win;
-	
-	// We can only transition if we have a reference to the
-	// previous window
-	if ( windowStack.length > 1 ) {
-		win1 = windowStack.shift();  // get previous window
-		
-		if (effect === 'left' || effect === 'right' ) {
-			if ( effect === 'right' ) {
-				tx1 = win1.size.width;
-				tx2 = -tx1; 
-			} else {
-				tx2 = win1.size.width;
-				tx1 = -tx2;	
-			}
-			
-			win2.setTransform( Ti.UI.create2DMatrix().translate( tx1, 0 ) );
-			win2.open(); // Open window first: opening a window is a heavy operation
-			             // so we open it early to make sure it is ready to be
-			             // animated instantly in the following code.
-			var a1 = Ti.UI.createAnimation({ 
-				transform: Ti.UI.create2DMatrix().translate( tx2, 0 ),
-				duration: 400
-			});
-			var a2 = Ti.UI.createAnimation({
-				transform: Ti.UI.create2DMatrix(),
-				duration: 400
-			});
-			win2.animate( a2 ); 
-			win1.close( a1 );
-		} else {
-			win2.open();
-			win1.close();
-		}
-	} else {
-		win2.open();
-	}
+var _currentWindow;
 
-
-}
-
-function _transitionWindows_Android( win, effect ) {
-	var args;
-	
-	windowStack.push( win );
-	if ( effect === 'right' ) {
-		args = { activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
-				activityExitAnimation: Ti.App.Android.R.anim.key_exit_left };
-	} else if ( effect === 'left' ) {
-		args = { activityEnterAnimation: Ti.App.Android.R.anim.key_enter_left,
-				activityExitAnimation: Ti.App.Android.R.anim.key_exit_right };
-	} else {
-		args = { animate: false };
-	}
-	win.addEventListener( 'open', function() { 
-		if ( windowStack.length > 1 ) {
-			windowStack.shift().close();
-		}
-	});
-	
-	win.open( args );
-	
-}
-
-function transitionWindows( win, effect ) {
-	if ( Ti.Platform.osname === 'android') {
-		_transitionWindows_Android( win, effect );
-	} else if ( Ti.Platform.osname === 'iphone' ){
-		_transitionWindows_iPhone( win, effect );
-	}
-}
+function getCurrentWindow() { return _currentWindow; }
 
 /* 
  * All UI objects by convention return a Ti.UI.View 
@@ -93,6 +27,15 @@ function transitionWindows( win, effect ) {
  * in a window and adds an AnchorBar to the top. 
  */
 function makeTopLevelWindow( args ) {
+	
+	var _ = require('lib/underscore')._;
+	
+	var PubSub = require('lib/pubsub');
+	var Layout = require('ui/Layout');
+	
+	var Topics = require('ui/Topics');
+	var AnchorBar = require('ui/AnchorBar');
+		
 	var oModes;
 	if ( args.portrait ) {
 		oModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
@@ -117,12 +60,7 @@ function makeTopLevelWindow( args ) {
 		var anchorBar = AnchorBar.createAnchorBar( args.title );
 		win.add( anchorBar.view );	
 		
-		panelHeight = Ti.Platform.displayCaps.getPlatformHeight();
-		
-		if ( Ti.Platform.osname === 'android') {
-			panelHeight = Ti.UI.convertUnits( panelHeight + "px", "dip" );
-		}
-		
+		panelHeight = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() );
 		panelHeight = panelHeight - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
 		
 	}
@@ -144,10 +82,13 @@ function makeTopLevelWindow( args ) {
 	
 	if ( args.onOpen )
 		win.addEventListener('open', args.onOpen );
-	transitionWindows( win, args.slide );
+	
+	PlatformSpecific.transitionWindows( win, args.slide );
 
+	_currentWindow = args;
 	return win;
 }
 
-exports.transitionWindows = transitionWindows;
+exports.transitionWindows = PlatformSpecific.transitionWindows;
 exports.makeTopLevelWindow = makeTopLevelWindow;
+exports.getCurrentWindow = getCurrentWindow;

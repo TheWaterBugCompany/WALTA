@@ -1,4 +1,20 @@
+/*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 function createTaxon( args ) {
 	var _ = require('lib/underscore')._;
@@ -6,6 +22,7 @@ function createTaxon( args ) {
 	
 	var txn = _.defaults( args, {
 		id: null,			// XML based id
+		ref: "",			// Where a linked Taxon should jump to in the key if not a leaf node
 		name: "",			// User readable species scientific name
 		commonName: "",		// Common name for species
 		size: 0,			// Size in mm
@@ -17,28 +34,44 @@ function createTaxon( args ) {
 		
 		taxonomicLevel: "", // The taxonomic level
 		
+		description: "",    // Textual notes
+		
 		mediaUrls: [],		// List of media URLs
 		
 		parentLink: null,		// A link to the parent taxon
 		
 		// Returns the full scientific name
 		getScientificName: function() {
-			return this.name;
+			var names = [];
+			var n = this;
+			while( n != null ) {
+				names.push( n.name );
+				n = n.parentLink;
+			}
+			return names;
 		},
 		
 		// Returns the details formatted as HTML
 		asDetailHtml: function() {
+			var names = this.getScientificName();
+			names.shift(); // discard first name
 			return String.format(
-				"<p><b>Size:</b> Up to %dmm</p>"
+				"<b>%s</b>"
+			+	"<p><b>Size:</b> Up to %dmm</p>"
 			+   "<p><b>Habitat:</b> %s</p>"
 			+   "<p><b>Movement:</b> %s</p>"
 			+	"<p><b>Confused with:</b> %s</p>"
-			+	"<p><b>SIGNAL score: %d</b></p>",
+			+	"<p><b>SIGNAL score: %d</b></p>"
+			+   "<p>%s</p>"
+			+   "<p>%s</p>",
+				this.name,
 				this.size,
 				this.habitat,
 				this.movement,
 				this.confusedWith,
-				this.signalScore
+				this.signalScore,
+				names.join("<br>"),
+				this.description
 			);
 		}
 	} );

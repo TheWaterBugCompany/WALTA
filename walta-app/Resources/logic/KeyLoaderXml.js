@@ -1,3 +1,20 @@
+/*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 var _ = require('lib/underscore')._;
 var XmlUtils = require('util/XmlUtils');
 var WALTA_KEY_NS = 'http://thewaterbug.net/taxonomy';
@@ -20,7 +37,7 @@ function getText( node, ns, tagName ) {
 	if ( nds.length > 0 ) {
 		return nds[0].getTextContent();
 	} else {
-		return undefined;
+		return "";
 	}
 }
 
@@ -42,6 +59,7 @@ function parseTaxon( key, nd ) {
 		Taxon.createTaxon({
 			id: XmlUtils.getAttr( xTxn, 'id'),
 			name: XmlUtils.getAttr( xTxn, 'name'),
+			ref: XmlUtils.getAttr( xTxn, 'ref'),
 			commonName: XmlUtils.getAttr( xTxn, 'commonName'),
 			size: parseInt( XmlUtils.getAttr( xTxn, 'size') ),
 			signalScore: parseInt( XmlUtils.getAttr( xTxn, 'signalScore') ),
@@ -49,7 +67,8 @@ function parseTaxon( key, nd ) {
 			movement: getText( xTxn, WALTA_KEY_NS, 'movement'),
 			confusedWith: getText( xTxn, WALTA_KEY_NS, 'confusedWith'),
 			mediaUrls: parseMediaUrls( key, xTxn ),
-			taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel')
+			taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel'),
+			description: getText( xTxn, WALTA_KEY_NS, 'description')
 		})
 	);
 	
@@ -118,7 +137,11 @@ function parseQuestion( key, nd, parentLink ) {
 		
 	// Store a future reference to resolve this node later
 	if ( !_.isUndefined( ref ) && _.isUndefined( outcome ) ) {
-		forwardLinks[ref] = { qNode: qn, pLink: parentLink };
+		// There needs to be a list of nodes to allow multiple incoming edges to fix #146 and
+		// related bugs...
+		if ( _.isUndefined( forwardLinks[ref] ))
+			forwardLinks[ref] = [];
+		forwardLinks[ref].push({ qNode: qn, pLink: parentLink });
 	}
 	
 	return qn;
@@ -147,13 +170,15 @@ function parseKeyNode( key, nd ) {
 	
 	key.attachNode( kn );
 
-	
 	// Process any forward links that this node resolves
 	if ( !_.isUndefined( kn.id ) ) {
 		if ( kn.id in forwardLinks ) {
-			var link = forwardLinks[kn.id];
-			link.qNode.outcome = kn;
-			kn.parentLink = link.pLink;
+			// correct each link
+			_.each(forwardLinks[kn.id],
+				function(link) {
+				link.qNode.outcome = kn;
+				kn.parentLink = link.pLink; // will clobber previous .. not sure what to do about this
+				} );
 			delete forwardLinks[kn.id];
 		}
 	}
@@ -164,6 +189,7 @@ function parseSpeedBug( key, nd ) {
 	expectNode( nd, 'speedBugIndex' );
 	XmlUtils.childElements( nd, function( sg ) {
 		if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugGroup' ) ) {
+			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
 				key.addSpeedbugIndex( 
 					key.url + "media/" + XmlUtils.getAttr( sb, "image" ), 
@@ -171,6 +197,7 @@ function parseSpeedBug( key, nd ) {
 					XmlUtils.getAttr( sb, "ref" ) );
 			});
 		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
+			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			key.addSpeedbugIndex( 
 					key.url + "media/" + XmlUtils.getAttr( sg, "image" ), 
 					XmlUtils.getAttr( sg, "ref" ),

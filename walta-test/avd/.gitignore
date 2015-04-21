@@ -1,1 +1,3 @@
+**/emulator-user.ini
+**/hardware-qemu.ini
 **/*.img

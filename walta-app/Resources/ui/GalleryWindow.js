@@ -1,4 +1,22 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * Module: GalleryWindow
  * 
  * Shows a thumbnail of a list of photos, then if the zoom icon is pressed
@@ -27,12 +45,12 @@ function updateCurrentPage( dots, selPage ) {
 	}	
 }
 
-function createGalleryWindow(photoUrls) {
+function createGalleryWindow(photoUrls, showPager ) {
 	var _ = require('lib/underscore')._;
-
 	var TiHacks = require('util/TiHacks');
 	
-			
+	if ( _.isUndefined( showPager ) ) showPager = true;
+	
 	var galleryWin = Ti.UI.createWindow({ 
 			backgroundColor: 'black', 
 			navBarHidden: true,
@@ -55,50 +73,52 @@ function createGalleryWindow(photoUrls) {
 						backgroundColor: 'transparent',
 						width : Ti.UI.FILL,
 						height : Ti.UI.FILL,
-						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body,img {margin:0;padding:0;width:100%;height:100%;}</style></head><body><img src="' + TiHacks.convertTiUrlToWebViewUrl(url) + '"></body></html>'
+						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body { width: 100%; background-color: black; margin: 0; padding: 0; border: 0 } img { display: block; margin-left:auto;margin-right:auto; padding:0; height:100%;}</style></head><body><img src="' + TiHacks.convertTiUrlToWebViewUrl(url) + '"></body></html>'
 					});
 					
 			   	} else {
 			   		view = Ti.UI.createScrollView({
-						minZoomScale: 1.0,
-						maxZoomScale: 15.0,
-						zoomScale: 15.0
+						minZoomScale: 0.5,
+						maxZoomScale: 4.0,
+						zoomScale: 0.5
 					});
 					view.add( Ti.UI.createImageView( { image: url } ) );
 			   	}
 				return view; 
 			}),
 		showPagingControl: false,
-		bottom: Layout.PAGER_HEIGHT
+		bottom: ( showPager ? Layout.PAGER_HEIGHT : 0 )
 	}); 
 	galleryWin.add(scrollView);
-
-	var pager = Ti.UI.createView({
-		width: Ti.UI.SIZE,
-		height: Layout.PAGER_HEIGHT,
-		backgroundColor: 'black',
-		bottom: 0,
-		layout: 'horizontal',
-		horizontalWrap: 'false'
-	});
-
-	var dots = [];
-	_(photoUrls).each( function() {
-		var dot = createDot();
-		dots.push( dot );
-		pager.add( dot );
-	});
-	galleryWin.add( pager );
-	
-	var lastPage = scrollView.getCurrentPage();
-	updateCurrentPage( dots, lastPage );
-	
-	scrollView.addEventListener( 'scroll', function(e) {
-		if ( e.currentPage !== lastPage ) {
-			updateCurrentPage( dots, e.currentPage );
-			lastPage = e.currentPage;
-		}
-	});
+	galleryWin._views = [];
+	if ( showPager ) {
+		var pager = Ti.UI.createView({
+			width: Ti.UI.SIZE,
+			height: Layout.PAGER_HEIGHT,
+			backgroundColor: 'black',
+			bottom: 0,
+			layout: 'horizontal',
+			horizontalWrap: 'false'
+		});
+		
+		var dots = [];
+		_(photoUrls).each( function() {
+			var dot = createDot();
+			dots.push( dot );
+			pager.add( dot );
+		});
+		galleryWin.add( pager );
+		
+		var lastPage = scrollView.getCurrentPage();
+		updateCurrentPage( dots, lastPage );
+		
+		scrollView.addEventListener( 'scroll', function(e) {
+			if ( e.currentPage !== lastPage ) {
+				updateCurrentPage( dots, e.currentPage );
+				lastPage = e.currentPage;
+			}
+		});
+	}
 	
 	var close = Ti.UI.createView({
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,
@@ -123,6 +143,8 @@ function createGalleryWindow(photoUrls) {
 	
 	galleryWin.add( close );
 
+	// testing hooks
+	galleryWin._views = { close: close };
 	
 	return galleryWin;
 }
