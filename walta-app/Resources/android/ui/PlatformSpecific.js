@@ -20,29 +20,31 @@
 var windowStack = [];
 
 function transitionWindows( win, effect ) {
-	var args;
+	var args = {
+		//navBarHidden: true,
+		//fullscreen: true,
+		//modal: true
+	};
 	
-	windowStack.push( win );
-	if ( effect === 'right' ) {
-		args = { activityEnterAnimation: Ti.App.Android.R.anim.key_enter_right,
-				activityExitAnimation: Ti.App.Android.R.anim.key_exit_left };
+	//windowStack.push( win );
+	/*if ( effect === 'right' ) {
+		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_right,
+		args.activityExitAnimation = Ti.App.Android.R.anim.key_exit_left;
 	} else if ( effect === 'left' ) {
-		args = { activityEnterAnimation: Ti.App.Android.R.anim.key_enter_left,
-				activityExitAnimation: Ti.App.Android.R.anim.key_exit_right };
-	} else {
-		args = { animate: false };
-	}
-	win.addEventListener( 'open', function() { 
+		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_left,
+		args.activityExitAnimation = Ti.App.Android.R.anim.key_exit_right;
+	} */
+	/*win.addEventListener( 'focus', function() { 
 		if ( windowStack.length > 1 ) {
 			windowStack.shift().close( {animated: false });
 		}
-	});
+	});*/
 	
 	win.open( args );
 	
 }
 function convertSystemToDip( n ) {
-	return Ti.UI.convertUnits( n + "px", "dip" );
+	return Ti.UI.convertUnits( n + "px", Ti.UI.UNIT_DIP );
 }
 
 exports.convertSystemToDip = convertSystemToDip;

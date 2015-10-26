@@ -25,7 +25,7 @@ function createAppWindow( keyName, keyPath ) {
 		var _ = require('lib/underscore')._;
 		var PubSub = require('lib/pubsub');
 		var Topics = require('ui/Topics');
-		var KeyLoader = require('logic/KeyLoaderXml');
+		var KeyLoader = require('logic/KeyLoaderJson');
 		var TopLevelWindow = require('ui/TopLevelWindow');
 		var PlatformSpecific = require('ui/PlatformSpecific');
 		
@@ -140,6 +140,13 @@ function createAppWindow( keyName, keyPath ) {
 					PubSub.unsubscribe( cb );
 				});
 				this.key = null;
+			},
+			
+			closeApp: function() {
+				if ( 'android' === Ti.Platform.osname) {
+					var activity = Titanium.Android.currentActivity;
+     				activity.finish();
+     			}
 			}
 		};
 		
@@ -156,11 +163,15 @@ function createAppWindow( keyName, keyPath ) {
 	    	if ( privates.key.isRoot() ) {
 	    		if ( ! privates.isMenuWindow ) {
 	    			privates.menuWindow({ slide: 'left' });
-	    		} 
+	    		} else {
+	    			privates.closeApp();
+	    		}
 	    	} else {
 	    		privates.key.back();
 		    	privates.updateDecisionWindow({ slide: 'left' } );
+
 		    }
+		    
 	    });
 	    
 	    privates.subscribe( Topics.FORWARD, function( msg, data ) { 

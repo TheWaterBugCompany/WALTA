@@ -18,6 +18,9 @@
 var PlatformSpecific = require('ui/PlatformSpecific');
 
 var _currentWindow;
+var _currentWindowObj;
+
+function closeCurrentWindow() { _currentWindowObj.close(); }
 
 function getCurrentWindow() { return _currentWindow; }
 
@@ -36,23 +39,26 @@ function makeTopLevelWindow( args ) {
 	var Topics = require('ui/Topics');
 	var AnchorBar = require('ui/AnchorBar');
 		
-	var oModes;
-	if ( args.portrait ) {
-		oModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
-	} else if ( args.swivel ) {
-		oModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
-	} else {
-		oModes = [ Ti.UI.LANDSCAPE_LEFT ];
-	}
-	var win = Ti.UI.createWindow( { 
-		navBarHidden: true, // necessary for Android to support orientationModes by forcing heavy weight windows
+	
+	
+	var winArgs = { 
+		navBarHidden: true,
 		fullscreen: true,
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		backgroundColor: 'white',
 		layout: 'composite',
-		orientationModes:  oModes
-	});
+	};
+	
+	if ( args.portrait ) {
+		winArgs.orientationModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
+	} else if ( args.swivel ) {
+		winArgs.orientationModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
+	} else {
+		winArgs.orientationModes = [ Ti.UI.LANDSCAPE_LEFT ];
+	}
+	
+	var win = Ti.UI.createWindow( winArgs );
 	
 	var panelHeight = Ti.UI.FILL;
 	
@@ -77,18 +83,18 @@ function makeTopLevelWindow( args ) {
 
 	win.addEventListener( 'android:back', function(e) {
 		e.cancelBubble = true;
-		PubSub.publish( Topics.BACK, null );
+		PubSub.publish( Topics.BACK, e );
 	});
 	
 	if ( args.onOpen )
 		win.addEventListener('open', args.onOpen );
 	
 	PlatformSpecific.transitionWindows( win, args.slide );
-
+	_currentWindowObj = win;
 	_currentWindow = args;
-	return win;
 }
 
 exports.transitionWindows = PlatformSpecific.transitionWindows;
 exports.makeTopLevelWindow = makeTopLevelWindow;
+exports.closeCurrentWindow = closeCurrentWindow;
 exports.getCurrentWindow = getCurrentWindow;
