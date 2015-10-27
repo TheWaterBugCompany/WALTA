@@ -26,20 +26,19 @@ function transitionWindows( win, effect ) {
 		//modal: true
 	};
 	
-	//windowStack.push( win );
-	/*if ( effect === 'right' ) {
-		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_right,
+	windowStack.push( win );
+	if ( effect === 'right' ) {
+		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_right;
 		args.activityExitAnimation = Ti.App.Android.R.anim.key_exit_left;
 	} else if ( effect === 'left' ) {
-		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_left,
+		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_left;
 		args.activityExitAnimation = Ti.App.Android.R.anim.key_exit_right;
-	} */
-	/*win.addEventListener( 'focus', function() { 
-		if ( windowStack.length > 1 ) {
+	}
+	win.addEventListener( 'focus', function() { 
+		if ( windowStack.length > 2 ) {
 			windowStack.shift().close( {animated: false });
 		}
-	});*/
-	
+	});	
 	win.open( args );
 	
 }

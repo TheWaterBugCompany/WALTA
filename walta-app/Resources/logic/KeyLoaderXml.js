@@ -36,7 +36,7 @@ function getText( node, ns, tagName ) {
 	var nds = [];
 	XmlUtils.childElementsByTag( node, ns, tagName, function( nd ) { nds.push(nd); } );
 	if ( nds.length > 0 ) {
-		return nds[0].nodeValue;
+		return nds[0].textContent ;
 	} else {
 		return "";
 	}
@@ -46,7 +46,7 @@ function parseMediaUrls( key, nd ) {
 	var urls = [];
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'mediaRef',
 		function( mr ) {
-			urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
+			urls.push( "/" + key.url + "media/" + mr.getAttribute( 'url' ) );
 			
 		});
 	return urls;
