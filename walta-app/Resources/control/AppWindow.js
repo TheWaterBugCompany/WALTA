@@ -44,9 +44,6 @@ function createAppWindow( keyName, keyPath ) {
 		// Private variables that are not to be exposed as API
 		var privates = {
 			key: null,
-			isMenuWindow: false,
-
-			callbacks: [],
 			
 			loadKey: function( keyUrl ) {
 				this.key = KeyLoader.loadKey(keyUrl);
@@ -55,14 +52,14 @@ function createAppWindow( keyName, keyPath ) {
 				}
 			},
 			
-			menuWindow: function() {
-
-				TopLevelWindow.makeTopLevelWindow({
+			menuWindow: function(args) {
+				if ( ! args ) args = {};
+				_(args).extend({
 					name: 'home',
 					uiObj: MenuView.createMenuView(),
 					portrait: false
 				});
-				this.isMenuWindow = true;
+				TopLevelWindow.makeTopLevelWindow(args);
 			},
 			
 			browseWindow: function() {
@@ -73,7 +70,6 @@ function createAppWindow( keyName, keyPath ) {
 					uiObj: BrowseView.createBrowseView(privates.key),
 					swivel: false
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			speedBugWindow: function() {
@@ -83,35 +79,27 @@ function createAppWindow( keyName, keyPath ) {
 					title: 'Speedbug',
 					uiObj: SpeedbugView.createSpeedbugView(privates.key)
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			galleryWindow: function() {
 				var win = GalleryWindow.createGalleryWindow( _.first( _.shuffle( privates.key.findAllMedia('photoUrls') ), 20 ), false );
 				win.open();
-				this.isMenuWindow = false;
 			},
-			
-	
-			
-			helpWindow: function() {
 
+			helpWindow: function() {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'help',
 					title: 'Help',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			aboutWindow: function() {
-
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			updateDecisionWindow: function( args ) {
@@ -132,8 +120,6 @@ function createAppWindow( keyName, keyPath ) {
 				}
 				
 				TopLevelWindow.makeTopLevelWindow(args);
-				
-				this.isMenuWindow = false;
 			},
 			
 			subscribe: function( topic, cb ) {
@@ -162,16 +148,18 @@ function createAppWindow( keyName, keyPath ) {
 	    });
 	    
 	    privates.subscribe( Topics.BACK, function() { 
-	    	if ( privates.key.isRoot() ) {
-	    		if ( ! privates.isMenuWindow ) {
+	    	var name = TopLevelWindow.getCurrentWindow().name;
+	    	if ( name === "home" ) {
+	    		privates.closeApp();
+	    	} else if ( name === 'decision' ) {
+	    		if ( privates.key.isRoot() ) {
 	    			privates.menuWindow({ slide: 'left' });
-	    		} else {
-	    			privates.closeApp();
-	    		}
-	    	} else {
-	    		privates.key.back();
-		    	privates.updateDecisionWindow({ slide: 'left' } );
-
+				} else {
+	    			privates.key.back();
+		    		privates.updateDecisionWindow({ slide: 'left' } );
+		    	}
+		    } else {
+		    	privates.menuWindow();
 		    }
 		    
 	    });
