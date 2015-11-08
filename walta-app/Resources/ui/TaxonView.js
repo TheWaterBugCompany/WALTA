@@ -26,8 +26,7 @@
 
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
-
-
+var Topics = require('ui/Topics');
 
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
@@ -235,7 +234,6 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.subView);
 	
 	txnView.addEventListener('swipe', function(e){
-		var Topics = require('ui/Topics');
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
 			Topics.fireTopicEvent( Topics.BACK );

@@ -47,11 +47,11 @@ function transitionWindows( win, effect ) {
 			             // animated instantly in the following code.
 			var a1 = Ti.UI.createAnimation({ 
 				transform: Ti.UI.create2DMatrix().translate( tx2, 0 ),
-				duration: 400
+				duration: 200
 			});
 			var a2 = Ti.UI.createAnimation({
 				transform: Ti.UI.create2DMatrix(),
-				duration: 400
+				duration: 200
 			});
 			win2.animate( a2 ); 
 			win1.close( a1 );

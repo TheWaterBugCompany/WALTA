@@ -132,9 +132,10 @@ function createAppWindow( keyName, keyPath ) {
 			
 			closeApp: function() {
 				if ( 'android' === Ti.Platform.osname) {
-					var activity = Titanium.Android.currentActivity;
-     				activity.finish();
-     			}
+					var win = TopLevelWindow.getCurrentWindow().win;
+					win.exitOnClose = true;
+					win.close();
+				}
 			}
 		};
 		

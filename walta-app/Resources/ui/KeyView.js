@@ -77,13 +77,7 @@ function createKeyView( keyNode ) {
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
 			Topics.fireTopicEvent( Topics.BACK );
-		} else if ( e.direction === 'up' ) {
-			e.cancelBubble = true;
-			Topics.fireTopicEvent( Topics.SPEEDBUG );
-		} else if ( e.direction === 'down' ) {
-			e.cancelBubble = true;
-			Topics.fireTopicEvent( Topics.BROWSE );
-		}
+		} 
 	});
 	
 	_(obj).extend({

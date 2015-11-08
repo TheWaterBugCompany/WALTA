@@ -23,9 +23,8 @@ var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 var AnchorBar = require('ui/AnchorBar');
 var _currentWindow;
-var _currentWindowObj;
 
-function closeCurrentWindow() { _currentWindowObj.close(); }
+function closeCurrentWindow() { _currentWindow.win.close(); }
 
 function getCurrentWindow() { return _currentWindow; }
 
@@ -72,12 +71,13 @@ function makeTopLevelWindow( args ) {
 	}
 
 	win.add( _(args.uiObj.view).extend({
+		exitOnClose: false,
 		top: 0,
 		width: Ti.UI.FILL,
 		height: panelHeight
 	}) );
 
-	win.addEventListener( 'android:back', function(e) {
+	win.addEventListener( 'androidback', function(e) {
 		e.cancelBubble = true;
 		Topics.fireTopicEvent( Topics.BACK, e );
 	});
@@ -86,8 +86,8 @@ function makeTopLevelWindow( args ) {
 		win.addEventListener('open', args.onOpen );
 	
 	PlatformSpecific.transitionWindows( win, args.slide );
-	_currentWindowObj = win; // should drop the memory associated with win unless we have references elsewhere ??
 	_currentWindow = args;
+	_currentWindow.win = win; 
 }
 
 exports.transitionWindows = PlatformSpecific.transitionWindows;
