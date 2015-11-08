@@ -36,7 +36,7 @@ function createDetailsView(txnViewObj) {
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		borderRadius : Layout.BORDER_RADIUS,
-		backgroundColor : '#552F61CC',
+		backgroundColor : Layout.COLOR_LIGHT_BLUE,
 		layout : 'vertical'
 	});
 
@@ -45,7 +45,7 @@ function createDetailsView(txnViewObj) {
 		setScalesPageToFit: true,
 		disableBounce: true,
 		enableZoomControls: false,
-		backgroundColor: 'transparent',
+		backgroundColor: Layout.COLOR_LIGHT_BLUE,
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		left: Layout.WHITESPACE_GAP,
@@ -130,7 +130,7 @@ function createActionButton(imageUrl, label, onClick) {
 function createActionsView(txnViewObj) {
 
 	var PhotoView = require('ui/PhotoView');
-	var PubSub = require('lib/pubsub');
+
 	var Topics = require('ui/Topics');
 	
 
@@ -168,7 +168,7 @@ function createActionsView(txnViewObj) {
 	if (txnViewObj.taxon.videoUrl) {
 		vws.watchVideo = createActionButton("/images/icon-video.gif", "Watch video", function(e) {
 			// open video player
-			PubSub.publish( Topics.VIDEO, txnViewObj.taxon.videoUrl );
+			Topics.fireTopicEvent( Topics.VIDEO, { url: txnViewObj.taxon.videoUrl } );
 			e.cancelBubble = true;
 		});
 		vws.actionBtns.add(vws.watchVideo.view);
@@ -235,18 +235,11 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.subView);
 	
 	txnView.addEventListener('swipe', function(e){
-		var PubSub = require('lib/pubsub');
 		var Topics = require('ui/Topics');
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
-			PubSub.publish( Topics.BACK );
-		} /*else if ( e.direction === 'up' ) {
-			e.cancelBubble = true;
-			PubSub.publish( Topics.SPEEDBUG );
-		} else if ( e.direction === 'down' ) {
-			e.cancelBubble = true;
-			PubSub.publish( Topics.BROWSE );
-		}*/
+			Topics.fireTopicEvent( Topics.BACK );
+		}
 	});
 
 	txnViewObj.view = txnView;

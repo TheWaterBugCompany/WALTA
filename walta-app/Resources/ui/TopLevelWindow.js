@@ -16,7 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 var PlatformSpecific = require('ui/PlatformSpecific');
+var _ = require('lib/underscore')._;
 
+var Layout = require('ui/Layout');
+
+var Topics = require('ui/Topics');
+var AnchorBar = require('ui/AnchorBar');
 var _currentWindow;
 var _currentWindowObj;
 
@@ -30,17 +35,7 @@ function getCurrentWindow() { return _currentWindow; }
  * in a window and adds an AnchorBar to the top. 
  */
 function makeTopLevelWindow( args ) {
-	
-	var _ = require('lib/underscore')._;
-	
-	var PubSub = require('lib/pubsub');
-	var Layout = require('ui/Layout');
-	
-	var Topics = require('ui/Topics');
-	var AnchorBar = require('ui/AnchorBar');
-		
-	
-	
+
 	var winArgs = { 
 		navBarHidden: true,
 		fullscreen: true,
@@ -48,6 +43,7 @@ function makeTopLevelWindow( args ) {
 		height: Ti.UI.FILL,
 		backgroundColor: 'white',
 		layout: 'composite',
+		title: args.title
 	};
 	
 	if ( args.portrait ) {
@@ -83,14 +79,14 @@ function makeTopLevelWindow( args ) {
 
 	win.addEventListener( 'android:back', function(e) {
 		e.cancelBubble = true;
-		PubSub.publish( Topics.BACK, e );
+		Topics.fireTopicEvent( Topics.BACK, e );
 	});
 	
 	if ( args.onOpen )
 		win.addEventListener('open', args.onOpen );
 	
 	PlatformSpecific.transitionWindows( win, args.slide );
-	_currentWindowObj = win;
+	_currentWindowObj = win; // should drop the memory associated with win unless we have references elsewhere ??
 	_currentWindow = args;
 }
 

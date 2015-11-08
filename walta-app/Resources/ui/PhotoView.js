@@ -23,11 +23,12 @@
  * opens a modal view displaying a gallery of all the images.
  * 
  */
-
+var GalleryWindow = require('ui/GalleryWindow');
+var Layout = require('ui/Layout');
+	
 // Create photo View
 function createPhotoView( photoUrls ) {
-	var GalleryWindow = require('ui/GalleryWindow');
-	var Layout = require('ui/Layout');
+
 
 	var photoViewObj = {}; 
 	
@@ -55,7 +56,7 @@ function createPhotoView( photoUrls ) {
 	});
 	
 	var photo = Ti.UI.createImageView( { 
-		image: photoUrls[0],
+		image: '/' + photoUrls[0],
 		width: Layout.THUMBNAIL_IMAGE_WIDTH,
 		top: 0,
 		right: 0

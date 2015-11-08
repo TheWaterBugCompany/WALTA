@@ -23,7 +23,7 @@
  */
 
 var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
+
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
@@ -58,7 +58,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 		)).extend( { width: Ti.UI.FILL, height: Ti.UI.FILL })
 	]);
 	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topic, null );
+		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
@@ -67,8 +67,9 @@ function createLargeMenuButton( image, topic, label, text ) {
 			width: Layout.MENU_ITEM_WIDTH_2,
 			height: Layout.MENU_ITEM_HEIGHT,
 			borderRadius: Layout.BORDER_RADIUS_MENU_BIG,
-			backgroundColor: '#552F61CC'
+			backgroundColor: Layout.COLOR_LIGHT_BLUE
 		} );
+	
 }
 
 function createSmallMenuButton( topic, label, text ) {
@@ -92,7 +93,7 @@ function createSmallMenuButton( topic, label, text ) {
 				}) 
 		]);
 	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topic, null );
+		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
@@ -128,8 +129,6 @@ function icon( args ) {
 }
 
 function createMenuView() {
-	
-	var Layout = require('ui/Layout');
 	
 	var menu = {};
 	menu._views = {};
@@ -224,7 +223,7 @@ function createMenuView() {
 	);
 	menu.view.add( wrap( 'horizontal', [  
 		vws.logo, vws.speedbug, vws.keysearch, vws.browse, 
-		vws.gallery, vws.help,  vws.about
+		vws.gallery, vws.help, vws.about
 	]));
 	
 	return menu;

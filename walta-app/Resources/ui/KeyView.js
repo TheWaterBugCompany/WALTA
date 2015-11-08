@@ -27,7 +27,6 @@
 
 function createKeyView( keyNode ) {
 	var _ = require('lib/underscore')._;
-	var PubSub = require('lib/pubsub');
 	
 	var AnchorBar = require('ui/AnchorBar');
 	var Layout = require('ui/Layout');
@@ -69,7 +68,7 @@ function createKeyView( keyNode ) {
 			obj._views.questions.push( qv );
 			
 			meld.on( qv, 'onSelect', function() { 
-				PubSub.publish( Topics.FORWARD, index );
+				Topics.fireTopicEvent( Topics.FORWARD, { index: index } );
 			} );
 		}
 	);
@@ -77,13 +76,13 @@ function createKeyView( keyNode ) {
 	obj.view.addEventListener('swipe', function(e){
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
-			PubSub.publish( Topics.BACK );
+			Topics.fireTopicEvent( Topics.BACK );
 		} else if ( e.direction === 'up' ) {
 			e.cancelBubble = true;
-			PubSub.publish( Topics.SPEEDBUG );
+			Topics.fireTopicEvent( Topics.SPEEDBUG );
 		} else if ( e.direction === 'down' ) {
 			e.cancelBubble = true;
-			PubSub.publish( Topics.BROWSE );
+			Topics.fireTopicEvent( Topics.BROWSE );
 		}
 	});
 	

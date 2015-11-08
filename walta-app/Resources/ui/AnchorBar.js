@@ -28,7 +28,7 @@
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
-var PubSub = require('lib/pubsub');
+
 
 
 // Create a tool bar button
@@ -42,7 +42,7 @@ function createToolBarButton( image, topic ) {
 	
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {
-			PubSub.publish( topic, null );
+			Topics.fireTopicEvent( topic, null );
 			e.cancelBubble = true;
 		});
 	}

@@ -21,7 +21,7 @@
  */
 function convertTiUrlToWebViewUrl( url ) {
 	if ( Ti.Platform.osname === 'android' ) {
-		return 'file:///android_asset/Resources' + url; //url.replace(Ti.Filesystem.resourcesDirectory,'file:///android_asset/Resources/');
+		return url.replace(Ti.Filesystem.resourcesDirectory,'file:///android_asset/Resources/');
 	} else {
 		return url;
 	}

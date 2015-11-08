@@ -20,8 +20,10 @@
  * Some utility functions to help running tests.
  * 
  */
-var PubSub = require('lib/pubsub');
+
 var meld = require('lib/meld');
+
+var Topics = require('ui/Topics');
 
 var manualTests = false;
 
@@ -60,9 +62,8 @@ function waitForMeldEvent( obj, evtName, fireEvent, timeout ) {
 		
 function waitForTopic( topicName, fireEvent, timeout, result ) {
 	waitForAsyncCallback( function(ctx) { 
-		PubSub.subscribe( topicName, function( msg, data ) { 
+		Topics.subscribe( topicName, function( data ) { 
 			ctx.fired = true; 
-			result.msg = msg;
 			result.data = data;
 		} );
 		fireEvent(); 

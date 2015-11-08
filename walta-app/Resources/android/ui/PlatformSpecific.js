@@ -15,30 +15,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-// Keep track of windows we've opened but not closed
-var windowStack = [];
-
+var currentWin;
 function transitionWindows( win, effect ) {
-	var args = {
-		//navBarHidden: true,
-		//fullscreen: true,
-		//modal: true
-	};
+	var args = { fullscreen: true };
 	
-	windowStack.push( win );
+	// 
+	// Since there is no way to tell when a transition as has finished	
+	// we clean up memory leaks by closing the window as the activity 
+	// is preparing to pause. This seems to work.
+	// 
+	if ( currentWin !== undefined ) {
+		currentWin.activity.onPause = function(win) { 
+			  return function() { win.close({animate:false}); 
+			}; } (currentWin); // IIFE to ensure we don't pass a reference to currentWin as a closure !!
+	}
+	currentWin = win;
 	if ( effect === 'right' ) {
 		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_right;
 		args.activityExitAnimation = Ti.App.Android.R.anim.key_exit_left;
 	} else if ( effect === 'left' ) {
 		args.activityEnterAnimation = Ti.App.Android.R.anim.key_enter_left;
 		args.activityExitAnimation = Ti.App.Android.R.anim.key_exit_right;
+	} else {
+		args.activityEnterAnimation = Ti.Android.R.anim.fade_in;
+		args.activityExitAnimation = Ti.Android.R.anim.fade_out;
 	}
-	win.addEventListener( 'focus', function() { 
-		if ( windowStack.length > 2 ) {
-			windowStack.shift().close( {animated: false });
-		}
-	});	
 	win.open( args );
 	
 }

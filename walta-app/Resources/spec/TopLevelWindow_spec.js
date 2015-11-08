@@ -17,7 +17,7 @@
 */
 require("spec/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
-var PubSub = require('lib/pubsub');
+
 var TopLevelWindow = require('ui/TopLevelWindow');
 
 var Topics = require('ui/Topics');
@@ -40,11 +40,7 @@ describe('TopLevelWindow', function() {
 			title: 'TestView',
 			uiObj: { view: testView }
 		});
-		
-		// var subs = PubSub.subscribe( Topics.BACK, function() {
-			// win.close();
-			// PubSub.unsubscribe(subs);
-		// } );
+	
 		
 	});
 	

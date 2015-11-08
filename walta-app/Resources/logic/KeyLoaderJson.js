@@ -15,13 +15,42 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+var _ = require('lib/underscore')._;
 var CircularJSON = require('lib/circular-json');
 var Key = require('logic/Key');
+var Question = require('logic/Question');
+var Taxon = require('logic/Taxon');
 
-// takes a variable list of path elements like the getFile() API call does
+
+// attach proper classes to key from plain json object hierarchy
+function rehydrateKey( key, node ) {
+	// first create the top level
+	if (node === undefined ) {
+	 	rehydrateKey( Key.createKey( key ), key.root );
+	 	return key;
+	} 
+	// are we a decision node?
+	else if ( key.isNode( node ) ) {
+		_.each( node.questions, function(qn) {
+			Question.createQuestion( qn );
+			rehydrateKey( key, qn.outcome );
+		} );
+		key.attachNode( Key.createKeyNode( node ) );
+		return node;
+	} 
+	// nope must be a taxon node
+	else {
+		key.attachTaxon( Taxon.createTaxon( node ) );
+		return node;
+	}
+}
+
+// loads a key from a circular-json persisted object
 function loadKey( root ) {
 	var file = Ti.Filesystem.getFile( root + "key.json" );
-	return Key.createKey( CircularJSON.parse( file.read().text ) );
+	var key = CircularJSON.parse( file.read().text );
+	key.url = root;
+	return rehydrateKey( key );
 }
 
 exports.loadKey = loadKey;

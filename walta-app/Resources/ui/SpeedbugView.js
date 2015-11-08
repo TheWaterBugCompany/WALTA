@@ -25,7 +25,7 @@
  */
 function createSpeedbugView(  /* Key */ key ) {
 	var _ = require('lib/underscore')._;
-	var PubSub = require('lib/pubsub');
+
 	var Layout = require('ui/Layout');
 	var Topics = require('ui/Topics');
 	var PlatformSpecific = require('ui/PlatformSpecific');
@@ -123,10 +123,10 @@ function createSpeedbugView(  /* Key */ key ) {
 			});
 			
 			// Defer loading images until they are on screen
-			_pushTile( sb.imgUrl, cnt );
+			_pushTile( '/' + sb.imgUrl, cnt );
 			
 			cnt.addEventListener( 'click', function(e) {
-				PubSub.publish( Topics.JUMPTO, sb.refId );
+				Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId } );
 				e.cancelBubble = true;
 			});
 			
@@ -151,7 +151,7 @@ function createSpeedbugView(  /* Key */ key ) {
 			});
 			
 			notSureBtn.addEventListener( 'click', function(e) {
-				PubSub.publish( Topics.JUMPTO, sg.refId );
+				Topics.fireTopicEvent( Topics.JUMPTO, sg.refId );
 				e.cancelBubble = true;
 			});
 			

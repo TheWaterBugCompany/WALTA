@@ -22,12 +22,13 @@
  * Enables the taxonomy endpoints to be browsed.
  *  
  */
+
+var Layout = require('ui/Layout');
+var Topics = require('ui/Topics');
 function createBrowseView(  /* Key */ key ) {
 	
 	var _ = require('lib/underscore')._;
-	var PubSub = require('lib/pubsub');
-	var Layout = require('ui/Layout');
-	var Topics = require('ui/Topics');
+
 	
 	var bvObj = {
 		view: null,			 	// The Ti.UI.View for the user interface
@@ -83,7 +84,7 @@ function createBrowseView(  /* Key */ key ) {
 			            }
 			        } ],
 			     events: {click: function(e) {
-			     	PubSub.publish( Topics.JUMPTO, e.itemId );
+			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId } );
 			     } }
 			   },
 			'genusOrSpecies': {
@@ -98,7 +99,7 @@ function createBrowseView(  /* Key */ key ) {
 			            }
 			        } ],
 			     events: {click: function(e) {
-			     	PubSub.publish( Topics.JUMPTO, e.itemId );
+			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId } );
 			     }}
 			   } 
 			},

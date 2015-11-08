@@ -50,7 +50,18 @@ var topics = {
 	
 	GALLERY: 'gallery',
 	
-	ABOUT: 'about'
+	ABOUT: 'about',
+	subscribe: function( topic, callback ) {
+		Ti.App.addEventListener( 'waterbug:' + topic, callback );
+	},
+
+	fireTopicEvent: function( topic, data ) {
+		Ti.App.fireEvent( 'waterbug:' + topic, data );
+	}
+	
 };
+
+
+
 // Non-standard CommonJS but useful here
 module.exports = topics;

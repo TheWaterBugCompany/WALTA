@@ -46,7 +46,7 @@ function parseMediaUrls( key, nd ) {
 	var urls = [];
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'mediaRef',
 		function( mr ) {
-			urls.push( "/" + key.url + "media/" + mr.getAttribute( 'url' ) );
+			urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
 			
 		});
 	return urls;
