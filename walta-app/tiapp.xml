@@ -42,7 +42,12 @@
 <property name="ti.android.root.reappears.restart" type="bool">true</property>
 <android xmlns:android="http://schemas.android.com/apk/res/android">
 	<manifest>
-		<supports-screens android:smallScreens="true" android:normalScreens="true" android:largeScreens="true" android:xlargeScreens="true" />
+		<supports-screens 
+            android:smallScreens="true"
+            android:normalScreens="true"
+            android:largeScreens="true"
+            android:xlargeScreens="true"
+        />
         <application android:debuggable="true" android:screenOrientation="landscape" android:theme="@style/Theme.AppCompat.NoTitleBar.Fullscreen"/>
     </manifest>
   </android>

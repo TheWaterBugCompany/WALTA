@@ -43,6 +43,7 @@ function createAppWindow( keyName, keyPath ) {
 		
 		// Private variables that are not to be exposed as API
 		var privates = {
+			platformWidth: null,
 			key: null,
 			
 			loadKey: function( keyUrl ) {
@@ -56,7 +57,7 @@ function createAppWindow( keyName, keyPath ) {
 				if ( ! args ) args = {};
 				_(args).extend({
 					name: 'home',
-					uiObj: MenuView.createMenuView(),
+					uiObj: MenuView.createMenuView( privates.platformWidth ),
 					portrait: false
 				});
 				TopLevelWindow.makeTopLevelWindow(args);
@@ -211,7 +212,19 @@ function createAppWindow( keyName, keyPath ) {
 		_(appWin).extend({
 			start: function() {
 				privates.loadKey( appWin.keyUrl );
-				Topics.fireTopicEvent( Topics.HOME );
+				var ready = false;
+				var waitForWidth = function() {
+					var pWidth = Titanium.Platform.displayCaps.platformWidth;
+					var pHeight = Titanium.Platform.displayCaps.platformHeight;
+					if ( typeof(pWidth) === 'undefined' ) {
+						setTimeout(waitForWidth, 10);
+					} else {
+						privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
+						Ti.API.log("INFO", "platformWidth = " + privates.platformWidth );
+						Topics.fireTopicEvent( Topics.HOME );
+					}				    	
+				};
+				setTimeout(waitForWidth, 10);
 			},
 			close: function() {
 				privates.cleanUp();

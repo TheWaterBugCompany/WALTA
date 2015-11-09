@@ -129,7 +129,7 @@ function icon( args ) {
 	return cnt;
 }
 
-function createMenuView() {
+function createMenuView( screenWidthDip ) {
 	
 	var menu = {};
 	menu._views = {};
@@ -141,10 +141,8 @@ function createMenuView() {
    		background: 'white',
    		layout: 'vertical'
 	});
-	var screenWidthDip = PlatformSpecific.convertSystemToDip(Ti.Platform.displayCaps.platformWidth);
 	var logoLeftSizeDip = 150;
 	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70; 
-	Ti.API.log("INFO", "title width = " + titleWidthDip );
 	vws.logo = _(wrap( 'horizontal',[
 			
 			_(icon({
