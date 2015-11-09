@@ -1,81 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ti:app xmlns:ti="http://ti.appcelerator.org">
-    <id>net.thewaterbug.waterbug</id>
-    <name>Waterbug</name>
-    <version>1.0.3</version>
-    <publisher>The Code Sharman</publisher>
-    <url>http://www.thewaterbug.net/</url>
-    <description>The Waterbug App</description>
-    <copyright>(c) 2013 The Waterbug Company</copyright>
-    <icon>appicon.png</icon>
-    <persistent-wifi>false</persistent-wifi>
-    <prerendered-icon>false</prerendered-icon>
-    <statusbar-style>default</statusbar-style>
-    <statusbar-hidden>true</statusbar-hidden>
-    <fullscreen>true</fullscreen>
-    <navbar-hidden>true</navbar-hidden>
-    <analytics>false</analytics>
-    <guid>0e4d6897-097c-4adc-8ccb-1e12ba3dfdc9</guid>
-    <property name="ti.ui.defaultunit" type="string">dip</property>
-    <modules/>
-    <deployment-targets>
-        <target device="iphone">true</target>
-        <target device="ipad">false</target>
-        <target device="android">true</target>
-        <target device="blackberry">false</target>
-        <target device="mobileweb">false</target>
-        <target device="tizen">false</target>
-    </deployment-targets>
-    <sdk-version>3.2.1.GA</sdk-version>
-    <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest>
-            <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="15"/>
-            <application android:debuggable="false"
-                android:hardwareAccelerated="true"
-                android:icon="@drawable/appicon"
-                android:label="Waterbug" android:largeHeap="true" android:name="WaterbugApplication">
-                <!-- TI_APPLICATION -->
-                <activity android:configChanges="keyboardHidden"
-                    android:label="Waterbug"
-                    android:name=".WaterbugActivity"
-                    android:screenOrientation="landscape" android:theme="@style/Theme.Titanium">
-                    <intent-filter>
-                        <action android:name="android.intent.action.MAIN"/>
-                        <category android:name="android.intent.category.LAUNCHER"/>
-                    </intent-filter>
-                </activity>
-                <activity android:configChanges="keyboardHidden"
-                    android:launchMode="singleTask"
-                    android:name="ti.modules.titanium.media.TiVideoActivity"
-                    android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
-                <activity android:configChanges="keyboardHidden"
-                    android:name="org.appcelerator.titanium.TiActivity"
-                    android:screenOrientation="landscape" />
-                <activity android:configChanges="keyboardHidden"
-                    android:name="org.appcelerator.titanium.TiTranslucentActivity"
-                    android:screenOrientation="landscape" android:theme="@android:style/Theme.Translucent"/>
-                <activity
-                    android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="landscape"/>
-                <service android:exported="false" android:name="org.appcelerator.titanium.analytics.TiAnalyticsService"/>
-            </application>
-            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-            <uses-permission android:name="android.permission.INTERNET"/>
-        </manifest>
-    </android>
-    <ios>
+<ti:app 
+  xmlns:ti="http://ti.appcelerator.org">
+  <id>net.thewaterbug.waterbug</id>
+  <name>Waterbug</name>
+  <version>1.1.0</version>
+  <publisher>The Code Sharman</publisher>
+  <url>http://www.thewaterbug.net/</url>
+  <description>The Waterbug App</description>
+  <copyright>(c) 2013 The Waterbug Company</copyright>
+  <icon>appicon.png</icon>
+  <fullscreen>true</fullscreen>
+  <navbar-hidden>true</navbar-hidden>
+  <guid>c3df0813-9e9a-49da-9eee-5c0302217fe4</guid>
+  <property name="appc-sourcecode-encryption-policy">embed</property>
+  <property name="ti.ui.defaultunit" type="string">dip</property>
+     <ios>
         <plist>
             <dict>
                 <key>UISupportedInterfaceOrientations~iphone</key>
                 <array>
-                    <string>UIInterfaceOrientationLandscapeLeft</string>
+                    <string>UIInterfaceOrientationPortrait</string>
                 </array>
                 <key>UISupportedInterfaceOrientations~ipad</key>
                 <array>
+                    <string>UIInterfaceOrientationPortrait</string>
+                    <string>UIInterfaceOrientationPortraitUpsideDown</string>
                     <string>UIInterfaceOrientationLandscapeLeft</string>
+                    <string>UIInterfaceOrientationLandscapeRight</string>
                 </array>
+                <key>UIRequiresPersistentWiFi</key>
+                <false/>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+                <key>UIStatusBarHidden</key>
+                <false/>
+                <key>UIStatusBarStyle</key>
+                <string>UIStatusBarStyleDefault</string>
             </dict>
         </plist>
     </ios>
+<property name="ti.android.root.reappears.restart" type="bool">true</property>
+<android xmlns:android="http://schemas.android.com/apk/res/android">
+	<manifest>
+		<supports-screens 
+            android:smallScreens="true"
+            android:normalScreens="true"
+            android:largeScreens="true"
+            android:xlargeScreens="true"
+        />
+        <application android:debuggable="true" android:screenOrientation="landscape" android:theme="@style/Theme.AppCompat.NoTitleBar.Fullscreen"/>
+    </manifest>
+  </android>
+  <deployment-targets>
+    <target device="iphone">true</target>
+    <target device="ipad">false</target>
+    <target device="android">true</target>
+    <target device="mobileweb">false</target>
+  </deployment-targets>
+   <sdk-version>5.0.2.GA</sdk-version>
+  <property name="appc-app-id" type="string">55a8bbc1f3a6a0d40f9926f8</property>
 </ti:app>

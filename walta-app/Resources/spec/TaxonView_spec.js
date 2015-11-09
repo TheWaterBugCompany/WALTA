@@ -1,3 +1,20 @@
+/*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 require("spec/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 
@@ -33,10 +50,6 @@ describe('TaxonView', function() {
 		TestUtils.windowOpenTest( win ); 
 	});
 	
-	it('should fire the onBack event when the back button is clicked', function() {
-		TestUtils.actionFiresEventTest( tv._views.goBack._views.btn, 'click', tv, 'onBack' );
-	});
-	
 	it('the description text should be visible', function() {
 		
 		runs(function() {
@@ -53,22 +66,24 @@ describe('TaxonView', function() {
 			
 			oldHeight = tv._views.details.evalJS("document.body.children[0].offsetHeight");
 			
-			
+			var photoView = tv._views.photoView;
 			// Open and close the gallery to make resize bug occur
-			tv._views.photoView._views.galleryWin.addEventListener( 'open', function() { 
-					tv._views.photoView._views.close.fireEvent('click');
-				} );
-				
-			tv._views.photoView._views.galleryWin.addEventListener( 'close', function() {
+			var closeHandler = meld.before( photoView, 'onGalleryWinClosed', function( win ) {
 				flag = true; 
 			});
+			
+			var openHandler = meld.before( photoView, 'onGalleryWinOpened', function( win ) { 
+					win._views.close.fireEvent('click');
+				} );
+				
+			
 			
 			tv._views.photoView._views.zoomIcon.fireEvent('click');
 		});
 		
 		waitsFor(function() {
 			return flag && flag2;
-		}, "gallery window opened to be called", 750 );
+		}, "gallery window opened to be called", 3000 );
 		
 		runs(function() {
 		expect( tv._views.details.evalJS("document.body.children[0].offsetHeight") ).toEqual( oldHeight );

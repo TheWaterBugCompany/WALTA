@@ -1,4 +1,22 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * ui/SpeedbugView
  *
  * Display a list of silhouettes that jump into a branch of the
@@ -7,7 +25,7 @@
  */
 function createSpeedbugView(  /* Key */ key ) {
 	var _ = require('lib/underscore')._;
-	var PubSub = require('lib/pubsub');
+
 	var Layout = require('ui/Layout');
 	var Topics = require('ui/Topics');
 	var PlatformSpecific = require('ui/PlatformSpecific');
@@ -105,10 +123,10 @@ function createSpeedbugView(  /* Key */ key ) {
 			});
 			
 			// Defer loading images until they are on screen
-			_pushTile( sb.imgUrl, cnt );
+			_pushTile( '/' + sb.imgUrl, cnt );
 			
 			cnt.addEventListener( 'click', function(e) {
-				PubSub.publish( Topics.JUMPTO, sb.refId );
+				Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId } );
 				e.cancelBubble = true;
 			});
 			
@@ -133,7 +151,7 @@ function createSpeedbugView(  /* Key */ key ) {
 			});
 			
 			notSureBtn.addEventListener( 'click', function(e) {
-				PubSub.publish( Topics.JUMPTO, sg.refId );
+				Topics.fireTopicEvent( Topics.JUMPTO, sg.refId );
 				e.cancelBubble = true;
 			});
 			

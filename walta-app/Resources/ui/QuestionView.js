@@ -1,15 +1,34 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * walta/QuestionView
  *
  * Creates the corresponding view for the question
  * datastructure.
  *  
  */
-
+var _ = require('lib/underscore')._;
+var PhotoView = require('ui/PhotoView');
+var Layout = require('ui/Layout');	
+	
 function createQuestionView(  /* Question */ qn ) {
-	var _ = require('lib/underscore')._;
-	var PhotoView = require('ui/PhotoView');
-	var Layout = require('ui/Layout');	
+
 	
 	var qnViewObj = {
 		_views: {},
@@ -24,7 +43,7 @@ function createQuestionView(  /* Question */ qn ) {
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		borderRadius: Layout.BORDER_RADIUS,
-		backgroundColor: '#552F61CC',
+		backgroundColor: Layout.COLOR_LIGHT_BLUE,
 		layout: 'composite',
 		horizontalWrap: false
 	});

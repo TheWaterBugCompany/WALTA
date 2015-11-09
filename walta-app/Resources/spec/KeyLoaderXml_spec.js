@@ -1,3 +1,20 @@
+/*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 require("spec/lib/tijasmine").infect(this);
 var _ = require('lib/underscore')._;
 
@@ -9,7 +26,7 @@ var KeyLoaderXml = require('logic/KeyLoaderXml');
 describe('KeyLoaderXml', function() {
 	var key;
 	it('should load a key from XML', function(){
-		key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory, 'spec/resources/simpleKey1' );
+		key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/' );
 		expect( key ).toBeDefined();
 	});
 	it('should have the correct toplevel node', function(){	
@@ -37,8 +54,8 @@ describe('KeyLoaderXml', function() {
 			"Animal rests on its side, swims in swift bursts (below left)." );
 		
 	});
-	it('should have the correct outcome for question root[1]', function(){
-		var nd = key.root.questions[1].outcome;
+	it('should have the correct outcome for question root[1][1]', function(){
+		var nd = key.root.questions[1].outcome.questions[1].outcome;
 		expect( nd.id ).toEqual( "parastacidae" );
 		expect( nd.name ).toEqual( "Parastacidae" );
 		expect( nd.commonName ).toEqual( "freshwater crayfish or yabbies" );
@@ -68,18 +85,25 @@ describe('KeyLoaderXml', function() {
 		expect( nd.questions[1].outcome.parentLink ).toBe( nd );
 	});
 	it('should correctly link parents using a keyNodeLink reference', function(){		
-		var nd = key.root.questions[0].outcome;
-		expect( nd.questions[1].outcome.parentLink ).toBe( nd );
+		var p1 = key.root.questions[0].outcome;
+		var p2 = key.root.questions[1].outcome;
+		var parent = key.root.questions[1].outcome.questions[0].outcome.parentLink;
+		expect( parent === p1 || parent === p2 ).toEqual( true ); // Could be either parent not defined which one
+	});
+	
+	it('should correctly link from 2nd parent using a keyNodeLink reference (can be a graph)', function(){		
+		var nd = key.root.questions[1].outcome.questions[0].outcome;
+		expect( nd.id ).toEqual( "linkTest" );
 	});
 		
 	it('should list the speed bug index with getSpeedbugIndex()', function() {
 		sbug = key.getSpeedbugIndex();
 		expect( sbug ).toBeDefined();
-		expect( sbug['maggots'] ).toBeDefined();
-		expect( sbug['maggots'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/athericidae.svg', refId: "athericidae" } );
-		expect( sbug['maggots'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/blepheraceridae.svg', refId: "blepheraceridae" }  );
-		expect( sbug['ranatra'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/ranatra.svg', refId: "ranatra" } );
-		expect( sbug['larval'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/hydrobiosidae.svg', refId: "hydrobiosidae" } );
-		expect( sbug['larval'] ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/megaloptera.svg', refId: "corydalidae" } );
+		expect( sbug['maggots'].bugs ).toBeDefined();
+		expect( sbug['maggots'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/athericidae.svg', refId: "athericidae" } );
+		expect( sbug['maggots'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/blepheraceridae.svg', refId: "blepheraceridae" }  );
+		expect( sbug['ranatra'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/ranatra.svg', refId: "ranatra" } );
+		expect( sbug['larval'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/hydrobiosidae.svg', refId: "hydrobiosidae" } );
+		expect( sbug['larval'].bugs ).toContain( { imgUrl: Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/media/speedbug/megaloptera.svg', refId: "corydalidae" } );
 	});
 });

@@ -1,13 +1,32 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * Module: MenuView
  * 
  * Provides the main menu screen.
  */
 
 var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
+
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var PlatformSpecific = require('ui/PlatformSpecific');
 
 // Create a menu button
 function createLargeMenuButton( image, topic, label, text ) {
@@ -40,7 +59,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 		)).extend( { width: Ti.UI.FILL, height: Ti.UI.FILL })
 	]);
 	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topic, null );
+		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
@@ -49,8 +68,9 @@ function createLargeMenuButton( image, topic, label, text ) {
 			width: Layout.MENU_ITEM_WIDTH_2,
 			height: Layout.MENU_ITEM_HEIGHT,
 			borderRadius: Layout.BORDER_RADIUS_MENU_BIG,
-			backgroundColor: '#552F61CC'
+			backgroundColor: Layout.COLOR_LIGHT_BLUE
 		} );
+	
 }
 
 function createSmallMenuButton( topic, label, text ) {
@@ -74,7 +94,7 @@ function createSmallMenuButton( topic, label, text ) {
 				}) 
 		]);
 	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topic, null );
+		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
@@ -109,9 +129,7 @@ function icon( args ) {
 	return cnt;
 }
 
-function createMenuView() {
-	
-	var Layout = require('ui/Layout');
+function createMenuView( screenWidthDip ) {
 	
 	var menu = {};
 	menu._views = {};
@@ -123,34 +141,48 @@ function createMenuView() {
    		background: 'white',
    		layout: 'vertical'
 	});
-	
+	var logoLeftSizeDip = 150;
+	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70; 
 	vws.logo = _(wrap( 'horizontal',[
+			
+			_(icon({
+					top: Layout.MENU_LOGO_TOP,
+					width: '120dip',
+					image: '/images/anm-logo-small.png'
+				})).extend( { width: logoLeftSizeDip + 'dip',
+				height: Ti.UI.FILL } ),
+				
+			Ti.UI.createLabel({
+				width: titleWidthDip +'dip' ,
+				height: Ti.UI.SIZE,
+				text: 'The Waterbug App',
+				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
+				color: 'black'
+			}),
 			_(wrap( 'vertical',[
 				_(icon({
 					top: Layout.MENU_LOGO_TOP,
-					width: Layout.MENU_LOGO_WIDTH,
+					width: '60dip',
 					height: Layout.MENU_LOGO_HEIGHT,
 					image: '/images/logo.png'
 				})).extend( { height: Ti.UI.SIZE } ),
-				Ti.UI.createLabel({
+				/*Ti.UI.createLabel({
 					top: '1dip',
 					width: Ti.UI.SIZE,
 					height: Ti.UI.SIZE,
 					text: 'The Waterbug Company',
 					font: { fontFamily: 'Tahoma', fontSize: Layout.MENU_LOGO_FONT_SIZE },
 					color: '#882F61CC'
-				})
+				})*/
 			])).extend( { 
-				width: Layout.MENU_LOGO_LEFT,
+				width: '80dip',
 				height: Ti.UI.FILL
 			}),
-			Ti.UI.createLabel({
-				width: Ti.UI.SIZE,
-				height: Ti.UI.SIZE,
-				text: 'The Waterbug App',
-				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
-				color: 'black'
-			})
+			icon({
+					top: '18dip',
+					width: '80dip',
+					image: '/images/icon-australia.gif'
+				})
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
@@ -158,49 +190,49 @@ function createMenuView() {
 		});
 		
 	vws.speedbug = createLargeMenuButton( 
-		'/images/speedbug.png', 
+		'/images/icon-speedbug.gif', 
 		Topics.SPEEDBUG, 
 		'Speedbug', 
 		'Look at silhouettes of bugs to choose the best match.' 
 	);
 	
 	vws.keysearch = createLargeMenuButton( 
-		'/images/altkey.png', 
+		'/images/icon-alt-key.gif', 
 		Topics.KEYSEARCH, 
 		'ALT key', 
 		'Questions to help identify your waterbug.' 
 	);
 	
 	vws.browse = createLargeMenuButton( 
-		'/images/browse.png', 
+		'/images/icon-browse.gif', 
 		Topics.BROWSE, 
 		'Browse list', 
 		'If you know the name of your bug.' 
 	);
 	
 	vws.help = createLargeMenuButton( 
-		'/images/help.png',
+		'/images/icon-help.gif',
 		Topics.HELP, 
 		'Help', 
 		'Info to get you started.' 
 	);
 	
 	vws.gallery = createLargeMenuButton( 
-		'/images/gallery.png',
+		'/images/icon-gallery.gif',
 		Topics.GALLERY, 
 		'Gallery', 
 		'Browse photos & videos.' 
 	);
 	
 	vws.about = createLargeMenuButton( 
-		'/images/about.png',
+		'/images/icon-about.gif',
 		Topics.ABOUT, 
 		'About', 
 		'About the app.' 
 	);
 	menu.view.add( wrap( 'horizontal', [  
 		vws.logo, vws.speedbug, vws.keysearch, vws.browse, 
-		vws.gallery, vws.help,  vws.about
+		vws.gallery, vws.help, vws.about
 	]));
 	
 	return menu;

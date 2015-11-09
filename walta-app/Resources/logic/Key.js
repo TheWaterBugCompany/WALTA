@@ -1,4 +1,22 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  *  walta/Key
  *   
  *  Keeps track of the relationship between KeyNodes, Questions and Taxons and initialises the model 
@@ -25,13 +43,14 @@ function createKey( args ) {
 		url: null,
 		name: null,
 		root: null,
-		currentDecision: null
+		currentDecision: null,
+		speedBugIndex: {}
 	});
 	
 	// Private variables here
 	var taxIdToNode = {};
 	var keyIdToNode = {};
-	var speedBugIndex = {};
+	var speedBugIndex = obj.speedBugIndex;
 	
 	var allTaxons = [];
 	var allNodes = [];
@@ -45,7 +64,11 @@ function createKey( args ) {
 		// Choose the branch number id i from the current decision.
 		choose: function( i ) {
 			if ( this.isNode( this.currentDecision ) ) {
-				this.currentDecision = this.currentDecision.questions[i].outcome;
+				var nd = this.currentDecision.questions[i].outcome;
+				if ( _.isUndefined(nd) || _.isNull( nd ) )
+					Ti.API.error( "Outcome for " + i + " is not defined!" );
+				
+				this.currentDecision = nd;
 			} else {
 				if ( Ti ) {
 					Ti.API.error("choose() called on non key node!");

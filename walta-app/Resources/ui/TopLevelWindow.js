@@ -1,4 +1,32 @@
+/*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 var PlatformSpecific = require('ui/PlatformSpecific');
+var _ = require('lib/underscore')._;
+
+var Layout = require('ui/Layout');
+
+var Topics = require('ui/Topics');
+var AnchorBar = require('ui/AnchorBar');
+var _currentWindow;
+
+function closeCurrentWindow() { _currentWindow.win.close(); }
+
+function getCurrentWindow() { return _currentWindow; }
 
 /* 
  * All UI objects by convention return a Ti.UI.View 
@@ -6,32 +34,26 @@ var PlatformSpecific = require('ui/PlatformSpecific');
  * in a window and adds an AnchorBar to the top. 
  */
 function makeTopLevelWindow( args ) {
-	
-	var _ = require('lib/underscore')._;
-	
-	var PubSub = require('lib/pubsub');
-	var Layout = require('ui/Layout');
-	
-	var Topics = require('ui/Topics');
-	var AnchorBar = require('ui/AnchorBar');
-		
-	var oModes;
-	if ( args.portrait ) {
-		oModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
-	} else if ( args.swivel ) {
-		oModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
-	} else {
-		oModes = [ Ti.UI.LANDSCAPE_LEFT ];
-	}
-	var win = Ti.UI.createWindow( { 
-		navBarHidden: true, // necessary for Android to support orientationModes by forcing heavy weight windows
+
+	var winArgs = { 
+		navBarHidden: true,
 		fullscreen: true,
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		backgroundColor: 'white',
 		layout: 'composite',
-		orientationModes:  oModes
-	});
+		title: args.title
+	};
+	
+	if ( args.portrait ) {
+		winArgs.orientationModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
+	} else if ( args.swivel ) {
+		winArgs.orientationModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
+	} else {
+		winArgs.orientationModes = [ Ti.UI.LANDSCAPE_LEFT ];
+	}
+	
+	var win = Ti.UI.createWindow( winArgs );
 	
 	var panelHeight = Ti.UI.FILL;
 	
@@ -49,23 +71,26 @@ function makeTopLevelWindow( args ) {
 	}
 
 	win.add( _(args.uiObj.view).extend({
+		exitOnClose: false,
 		top: 0,
 		width: Ti.UI.FILL,
 		height: panelHeight
 	}) );
 
-	win.addEventListener( 'android:back', function(e) {
+	win.addEventListener( 'androidback', function(e) {
 		e.cancelBubble = true;
-		PubSub.publish( Topics.BACK, null );
+		Topics.fireTopicEvent( Topics.BACK, e );
 	});
 	
 	if ( args.onOpen )
 		win.addEventListener('open', args.onOpen );
 	
 	PlatformSpecific.transitionWindows( win, args.slide );
-
-	return win;
+	_currentWindow = args;
+	_currentWindow.win = win; 
 }
 
 exports.transitionWindows = PlatformSpecific.transitionWindows;
 exports.makeTopLevelWindow = makeTopLevelWindow;
+exports.closeCurrentWindow = closeCurrentWindow;
+exports.getCurrentWindow = getCurrentWindow;

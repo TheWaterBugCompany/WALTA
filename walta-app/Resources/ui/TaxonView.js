@@ -1,4 +1,22 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * walta/TaxonView
  *
  * Creates the corresponding view for the Taxon
@@ -8,8 +26,7 @@
 
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
-
-
+var Topics = require('ui/Topics');
 
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
@@ -18,7 +35,7 @@ function createDetailsView(txnViewObj) {
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		borderRadius : Layout.BORDER_RADIUS,
-		backgroundColor : '#552F61CC',
+		backgroundColor : Layout.COLOR_LIGHT_BLUE,
 		layout : 'vertical'
 	});
 
@@ -27,7 +44,7 @@ function createDetailsView(txnViewObj) {
 		setScalesPageToFit: true,
 		disableBounce: true,
 		enableZoomControls: false,
-		backgroundColor: 'transparent',
+		backgroundColor: Layout.COLOR_LIGHT_BLUE,
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		left: Layout.WHITESPACE_GAP,
@@ -112,7 +129,7 @@ function createActionButton(imageUrl, label, onClick) {
 function createActionsView(txnViewObj) {
 
 	var PhotoView = require('ui/PhotoView');
-	var PubSub = require('lib/pubsub');
+
 	var Topics = require('ui/Topics');
 	
 
@@ -139,7 +156,7 @@ function createActionsView(txnViewObj) {
 			top : Layout.WHITESPACE_GAP
 		}));
 
-		vws.openGallery = createActionButton("/images/gallery.png", "Photo gallery", function(e) {
+		vws.openGallery = createActionButton("/images/icon-gallery.gif", "Photo gallery", function(e) {
 			vws.photoView.open();
 			e.cancelBubble = true;
 		});
@@ -148,9 +165,9 @@ function createActionsView(txnViewObj) {
 
 	// If there is a video add the video button
 	if (txnViewObj.taxon.videoUrl) {
-		vws.watchVideo = createActionButton("/images/video.png", "Watch video", function(e) {
+		vws.watchVideo = createActionButton("/images/icon-video.gif", "Watch video", function(e) {
 			// open video player
-			PubSub.publish( Topics.VIDEO, txnViewObj.taxon.videoUrl );
+			Topics.fireTopicEvent( Topics.VIDEO, { url: txnViewObj.taxon.videoUrl } );
 			e.cancelBubble = true;
 		});
 		vws.actionBtns.add(vws.watchVideo.view);
@@ -174,7 +191,7 @@ function createTaxonView(/* Taxon */txn) {
 		height : Ti.UI.SIZE,
 		top : Layout.WHITESPACE_GAP,
 		left : Layout.WHITESPACE_GAP,
-		text : txn.getScientificName() + ' (' + txn.commonName + ')',
+		text : txn.commonName,
 		font : {
 			font : Layout.HEADING_FONT,
 			fontSize : Layout.HEADING_SIZE
@@ -217,18 +234,10 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.subView);
 	
 	txnView.addEventListener('swipe', function(e){
-		var PubSub = require('lib/pubsub');
-		var Topics = require('ui/Topics');
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
-			PubSub.publish( Topics.BACK );
-		} /*else if ( e.direction === 'up' ) {
-			e.cancelBubble = true;
-			PubSub.publish( Topics.SPEEDBUG );
-		} else if ( e.direction === 'down' ) {
-			e.cancelBubble = true;
-			PubSub.publish( Topics.BROWSE );
-		}*/
+			Topics.fireTopicEvent( Topics.BACK );
+		}
 	});
 
 	txnViewObj.view = txnView;

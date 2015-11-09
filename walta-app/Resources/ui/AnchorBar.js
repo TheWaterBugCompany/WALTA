@@ -1,4 +1,22 @@
 /*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
  * Module: AnchorBar
  * 
  * Creates the anchor bar header section of the user interface. When the buttons are pressed
@@ -10,7 +28,7 @@
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
-var PubSub = require('lib/pubsub');
+
 
 
 // Create a tool bar button
@@ -24,7 +42,7 @@ function createToolBarButton( image, topic ) {
 	
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {
-			PubSub.publish( topic, null );
+			Topics.fireTopicEvent( topic, null );
 			e.cancelBubble = true;
 		});
 	}
@@ -83,9 +101,8 @@ function createAnchorBar( title ) {
 	});
 	
 	// Create tool bar buttons
-	anchorBar._views.home = createToolBarButton( '/images/home.png', Topics.HOME );
-	//anchorBar._views.settings = createToolBarButton( '/images/settings.png', Topics.SETTINGS );
-	anchorBar._views.info = createToolBarButton( '/images/info.png', Topics.HELP );
+	anchorBar._views.home = createToolBarButton( '/images/icon-home-white.gif', Topics.HOME );
+	anchorBar._views.info = createToolBarButton( '/images/icon-about-white.gif', Topics.HELP );
 	
 	anchorBar._views.leftTools.add( anchorBar._views.home );
 	anchorBar._views.leftTools.add( anchorBar._views.info );
@@ -100,8 +117,8 @@ function createAnchorBar( title ) {
 		}
 	});
 	
-	anchorBar.addTool( createToolBarButton( '/images/littlespeedbug.png', Topics.SPEEDBUG ) );
-	anchorBar.addTool( createToolBarButton( '/images/littlebrowse.png', Topics.BROWSE ) );
+	anchorBar.addTool( createToolBarButton( '/images/icon-speedbug-white.gif', Topics.SPEEDBUG ) );
+	anchorBar.addTool( createToolBarButton( '/images/icon-browse-white.gif', Topics.BROWSE ) );
 	
 	return anchorBar;
 };
