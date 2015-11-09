@@ -26,6 +26,7 @@ var _ = require('lib/underscore')._;
 
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var PlatformSpecific = require('ui/PlatformSpecific');
 
 // Create a menu button
 function createLargeMenuButton( image, topic, label, text ) {
@@ -140,40 +141,50 @@ function createMenuView() {
    		background: 'white',
    		layout: 'vertical'
 	});
-	
+	var screenWidthDip = PlatformSpecific.convertSystemToDip(Ti.Platform.displayCaps.platformWidth);
+	var logoLeftSizeDip = 150;
+	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70; 
+	Ti.API.log("INFO", "title width = " + titleWidthDip );
 	vws.logo = _(wrap( 'horizontal',[
+			
+			_(icon({
+					top: Layout.MENU_LOGO_TOP,
+					width: '120dip',
+					image: '/images/anm-logo-small.png'
+				})).extend( { width: logoLeftSizeDip + 'dip',
+				height: Ti.UI.FILL } ),
+				
+			Ti.UI.createLabel({
+				width: titleWidthDip +'dip' ,
+				height: Ti.UI.SIZE,
+				text: 'The Waterbug App',
+				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
+				color: 'black'
+			}),
 			_(wrap( 'vertical',[
 				_(icon({
 					top: Layout.MENU_LOGO_TOP,
-					width: Layout.MENU_LOGO_WIDTH,
+					width: '60dip',
 					height: Layout.MENU_LOGO_HEIGHT,
 					image: '/images/logo.png'
 				})).extend( { height: Ti.UI.SIZE } ),
-				Ti.UI.createLabel({
+				/*Ti.UI.createLabel({
 					top: '1dip',
 					width: Ti.UI.SIZE,
 					height: Ti.UI.SIZE,
 					text: 'The Waterbug Company',
 					font: { fontFamily: 'Tahoma', fontSize: Layout.MENU_LOGO_FONT_SIZE },
 					color: '#882F61CC'
-				})
+				})*/
 			])).extend( { 
-				width: Layout.MENU_LOGO_LEFT,
+				width: '80dip',
 				height: Ti.UI.FILL
 			}),
-			Ti.UI.createLabel({
-				width: Ti.UI.SIZE,
-				height: Ti.UI.SIZE,
-				text: 'The Waterbug App',
-				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
-				color: 'black'
-			}),
-			_(icon({
-					top: Layout.MENU_LOGO_TOP,
-					width: '100dip',
+			icon({
+					top: '18dip',
+					width: '80dip',
 					image: '/images/icon-australia.gif'
-				})).extend( { width: Layout.MENU_LOGO_LEFT,
-				height: Ti.UI.FILL } )
+				})
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
