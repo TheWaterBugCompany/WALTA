@@ -220,7 +220,6 @@ function createAppWindow( keyName, keyPath ) {
 						setTimeout(waitForWidth, 10);
 					} else {
 						privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
-						Ti.API.log("INFO", "platformWidth = " + privates.platformWidth );
 						Topics.fireTopicEvent( Topics.HOME );
 					}				    	
 				};

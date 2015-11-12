@@ -143,6 +143,7 @@ function createMenuView( screenWidthDip ) {
 	});
 	var logoLeftSizeDip = 150;
 	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70; 
+	if ( titleWidthDip < 300 ) titleWidthDip = 300;
 	vws.logo = _(wrap( 'horizontal',[
 			
 			_(icon({
