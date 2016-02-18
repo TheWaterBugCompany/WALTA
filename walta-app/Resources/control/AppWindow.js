@@ -43,7 +43,7 @@ function createAppWindow( keyName, keyPath ) {
 		
 		// Private variables that are not to be exposed as API
 		var privates = {
-			platformWidth: null,
+			platformWidth: 0,
 			key: null,
 			
 			loadKey: function( keyUrl ) {
@@ -57,7 +57,7 @@ function createAppWindow( keyName, keyPath ) {
 				if ( ! args ) args = {};
 				_(args).extend({
 					name: 'home',
-					uiObj: MenuView.createMenuView( privates.platformWidth ),
+					uiObj: MenuView.createMenuView(privates.platformWidth),
 					portrait: false
 				});
 				TopLevelWindow.makeTopLevelWindow(args);
@@ -183,10 +183,8 @@ function createAppWindow( keyName, keyPath ) {
 	    
 	    privates.subscribe( Topics.JUMPTO, function( data ) { 
 	    	if ( ! _.isUndefined( data.id ) ) {
-	    		Ti.API.trace("Topics.JUMPTO " + data.id + " node.");
 	    		privates.key.setCurrentNode(data.id);
-		    	privates.updateDecisionWindow();
-		    	
+		    	privates.updateDecisionWindow();   	
 		    } else {
 		    	Ti.API.error("Topics.JUMPTO undefined node!");
 		    }
@@ -213,17 +211,10 @@ function createAppWindow( keyName, keyPath ) {
 			start: function() {
 				privates.loadKey( appWin.keyUrl );
 				var ready = false;
-				var waitForWidth = function() {
-					var pWidth = Titanium.Platform.displayCaps.platformWidth;
-					var pHeight = Titanium.Platform.displayCaps.platformHeight;
-					if ( typeof(pWidth) === 'undefined' ) {
-						setTimeout(waitForWidth, 10);
-					} else {
-						privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
-						Topics.fireTopicEvent( Topics.HOME );
-					}				    	
-				};
-				setTimeout(waitForWidth, 10);
+				var pWidth = Titanium.Platform.displayCaps.platformWidth;
+				var pHeight = Titanium.Platform.displayCaps.platformHeight;
+				privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
+				Topics.fireTopicEvent( Topics.HOME );
 			},
 			close: function() {
 				privates.cleanUp();

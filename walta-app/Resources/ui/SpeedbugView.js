@@ -151,7 +151,7 @@ function createSpeedbugView(  /* Key */ key ) {
 			});
 			
 			notSureBtn.addEventListener( 'click', function(e) {
-				Topics.fireTopicEvent( Topics.JUMPTO, sg.refId );
+				Topics.fireTopicEvent( Topics.JUMPTO, { id: sg.refId } );
 				e.cancelBubble = true;
 			});
 			
