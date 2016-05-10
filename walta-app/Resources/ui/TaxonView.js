@@ -41,7 +41,7 @@ function createDetailsView(txnViewObj) {
 
 	
 	vws.details = Ti.UI.createWebView({
-		setScalesPageToFit: true,
+		scalesPageToFit: false,
 		disableBounce: true,
 		enableZoomControls: false,
 		backgroundColor: Layout.COLOR_LIGHT_BLUE,
@@ -51,6 +51,7 @@ function createDetailsView(txnViewObj) {
 		top: Layout.WHITESPACE_GAP,
 		bottom: Layout.WHITESPACE_GAP,
 		right: Layout.WHITESPACE_GAP,
+		willHandleTouches: false,
 		html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no"></meta>'
 			+ '<style>html,body {margin:0;padding:0;color:black;font-family:' + Layout.TEXT_FONT +';font-size:' + Layout.DETAILS_TEXT_SIZE + ';}</style>'
 			+ '</head><body id="details">' + txnViewObj.taxon.asDetailHtml() + '</body></html>'
