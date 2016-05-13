@@ -84,7 +84,9 @@ function parseQuestion( key, nd, parentLink ) {
 	var Question = require('logic/Question');
 	// Parse the attributes
 	var num = XmlUtils.getAttr( nd, 'num' );
+	var name = XmlUtils.getAttr( nd, 'name' );
 	var text = getText( nd, WALTA_KEY_NS, 'text' );
+	var taxonomicLevel = XmlUtils.getAttr( nd, 'taxonomicLevel' );
 	var media = parseMediaUrls( key, nd );
 	
 	if ( _.isUndefined( num ) ) {
@@ -131,6 +133,8 @@ function parseQuestion( key, nd, parentLink ) {
 		Ti.API.info("Unable to find outcome for question.text = '" + text + "'");
 	}
 	var qn = Question.createQuestion({
+		name: name,
+		taxonomicLevel: taxonomicLevel,
 		text: text,
 		mediaUrls: media,
 		outcome: outcome

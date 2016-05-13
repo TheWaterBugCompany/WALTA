@@ -177,7 +177,7 @@ function createActionsView(txnViewObj) {
 	vws.actions.add(vws.actionBtns);
 };
 
-function createTaxonView(/* Taxon */txn) {
+function createTaxonView(/* Taxon */txn, platformHeight) {
 	var GoBackButton = require('ui/GoBackButton');
 	var txnViewObj = {
 		_views : {},
