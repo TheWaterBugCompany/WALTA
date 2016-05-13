@@ -50,9 +50,9 @@
     <deployment-targets>
         <target device="iphone">true</target>
         <target device="ipad">false</target>
-        <target device="android">false</target>
+        <target device="android">true</target>
         <target device="mobileweb">false</target>
     </deployment-targets>
-    <sdk-version>5.2.2.GA</sdk-version>
+    <sdk-version>5.1.2.GA</sdk-version>
     <property name="appc-app-id" type="string">55a8bbc1f3a6a0d40f9926f8</property>
 </ti:app>

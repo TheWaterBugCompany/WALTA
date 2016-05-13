@@ -52,14 +52,21 @@ function parseMediaUrls( key, nd ) {
 	return urls;
 }
 
-function parseTaxon( key, nd ) {
+function parseTaxon( key, nd, scientificName ) {
 	var Taxon = require('logic/Taxon');
+	
 	// Parse this Taxon node
 	var xTxn = expectNode( nd, 'taxon' );
+	
+	if ( scientificName == null )
+	  scientificName = [];
+	scientificName.push( { taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel'), name: XmlUtils.getAttr( xTxn, 'name')});
+	
 	key.attachTaxon(
 		Taxon.createTaxon({
 			id: XmlUtils.getAttr( xTxn, 'id'),
-			name: XmlUtd = XmlUtils.getAttr( xTxn, 'name'),
+			name: XmlUtils.getAttr( xTxn, 'name'),
+			scientificName: _(scientificName).clone(),
 			ref: XmlUtils.getAttr( xTxn, 'ref'),
 			commonName: XmlUtils.getAttr( xTxn, 'commonName'),
 			size: parseInt( XmlUtils.getAttr( xTxn, 'size') ),
@@ -76,17 +83,17 @@ function parseTaxon( key, nd ) {
 	// Parse any sub Taxon nodes
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'taxon', 
 		function(nd){
-			parseTaxon( key, nd );
+			parseTaxon( key, nd, _(scientificName).clone() );
 		});
 }
 
 function parseQuestion( key, nd, parentLink ) {
 	var Question = require('logic/Question');
+	
+	
 	// Parse the attributes
 	var num = XmlUtils.getAttr( nd, 'num' );
-	var name = XmlUtils.getAttr( nd, 'name' );
 	var text = getText( nd, WALTA_KEY_NS, 'text' );
-	var taxonomicLevel = XmlUtils.getAttr( nd, 'taxonomicLevel' );
 	var media = parseMediaUrls( key, nd );
 	
 	if ( _.isUndefined( num ) ) {
@@ -133,8 +140,6 @@ function parseQuestion( key, nd, parentLink ) {
 		Ti.API.info("Unable to find outcome for question.text = '" + text + "'");
 	}
 	var qn = Question.createQuestion({
-		name: name,
-		taxonomicLevel: taxonomicLevel,
 		text: text,
 		mediaUrls: media,
 		outcome: outcome
@@ -224,11 +229,17 @@ function parseKey( node, path ) {
 
 // takes a variable list of path elements like the getFile() API call does
 function loadKey( root ) {
+	console.info('Loading key ' + root + "...");
 	var xml = XmlUtils.loadXml( root + "key.xml"  );
 	var key = parseKey( xml.documentElement, root );
+	
+	console.info('Loading taxon nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
+	console.info('Loading keyNode nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'keyNode', _.partial( parseKeyNode, key ) );
+	console.info('Loading speedBugIndex nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'speedBugIndex', _.partial( parseSpeedBug, key ) );
+	console.info('done.');
 	return key;
 }
 

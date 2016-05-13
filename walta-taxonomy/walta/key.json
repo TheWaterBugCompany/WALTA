@@ -28,6 +28,18 @@
 													"outcome": {
 														"id": "flat_snails",
 														"name": "Planorbidae",
+														"scientificName": [
+															{
+																"taxonomicLevel": "class",
+																"name": "Gastropoda"
+															}, {
+																"taxonomicLevel": "family",
+																"name": "Planorbidae"
+															}, {
+																"taxonomicLevel": "alt",
+																"name": "Planorbidae"
+															}
+														],
 														"ref": "",
 														"commonName": "flat snails",
 														"size": 6,
@@ -49,11 +61,19 @@
 														"id": "",
 														"questions": [
 															{
-																"text": "Snails are coiled small (less than 10 mm), often jet black with dextrally (see illustration) coiled shell and a black disk (operculum) on the foot used for shutting the shell. This can be hard to see without magnification.",
+																"text": "Snails are coiled, small (less than 10mm), often black or dark brown and can occur in large numbers.",
 																"mediaUrls": ["taxonomy/walta/media/potamopyrgus_02.gif"],
 																"outcome": {
 																	"id": "potamopyrgus_antipodarum",
 																	"name": "Potamopyrgus antipodarum",
+																	"scientificName": ["~root~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~0", {
+																			"taxonomicLevel": "family",
+																			"name": "Hydrobiidae"
+																		}, {
+																			"taxonomicLevel": "species",
+																			"name": "Potamopyrgus antipodarum"
+																		}
+																	],
 																	"ref": "",
 																	"commonName": "New Zealand mud snail",
 																	"size": 4,
@@ -86,6 +106,14 @@
 																						"outcome": {
 																							"id": "physa_acuta",
 																							"name": "Physa acuta",
+																							"scientificName": ["~root~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~0", {
+																									"taxonomicLevel": "family",
+																									"name": "Physidae"
+																								}, {
+																									"taxonomicLevel": "species",
+																									"name": "Physa acuta"
+																								}
+																							],
 																							"ref": "",
 																							"commonName": "Physa acuta",
 																							"size": 10,
@@ -106,6 +134,11 @@
 																						"outcome": {
 																							"id": "planorbids",
 																							"name": "Planorbids",
+																							"scientificName": ["~root~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~0", "~root~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", {
+																									"taxonomicLevel": "alt",
+																									"name": "Planorbids"
+																								}
+																							],
 																							"ref": "",
 																							"commonName": "Planorbids",
 																							"size": 15,
@@ -131,6 +164,11 @@
 																			"outcome": {
 																				"id": "lymnaeidae",
 																				"name": "Lymnaeidae",
+																				"scientificName": ["~root~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~0", {
+																						"taxonomicLevel": "family",
+																						"name": "Lymnaeidae"
+																					}
+																				],
 																				"ref": "",
 																				"commonName": "Lim nay ids",
 																				"size": 40,
@@ -166,6 +204,11 @@
 										"outcome": {
 											"id": "ancylidae",
 											"name": "Ancylidae",
+											"scientificName": ["~root~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~0", {
+													"taxonomicLevel": "family",
+													"name": "Ancylidae"
+												}
+											],
 											"ref": "",
 											"commonName": "Freshwater limpets",
 											"size": 4,
@@ -197,6 +240,21 @@
 										"outcome": {
 											"id": "hyriidae",
 											"name": "Hyriidae",
+											"scientificName": [
+												{
+													"taxonomicLevel": "phylum",
+													"name": "Arthropoda"
+												}, {
+													"taxonomicLevel": "phylum",
+													"name": "Mollusca"
+												}, {
+													"taxonomicLevel": "class",
+													"name": "Bivalvia"
+												}, {
+													"taxonomicLevel": "family",
+													"name": "Hyriidae"
+												}
+											],
 											"ref": "",
 											"commonName": "Freshwater mussels",
 											"size": 120,
@@ -217,6 +275,11 @@
 										"outcome": {
 											"id": "sphaeriidae_and_corbiculidae",
 											"name": "Sphaeriidae and Corbiculidae",
+											"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~1", {
+													"taxonomicLevel": "family",
+													"name": "Sphaeriidae and Corbiculidae"
+												}
+											],
 											"ref": "",
 											"commonName": "Basket and pea shells",
 											"size": 25,
@@ -265,6 +328,17 @@
 													"outcome": {
 														"id": "parastacidae",
 														"name": "Parastacidae",
+														"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", {
+																"taxonomicLevel": "subphylum",
+																"name": "Crustacea"
+															}, {
+																"taxonomicLevel": "class",
+																"name": "Decapoda"
+															}, {
+																"taxonomicLevel": "family",
+																"name": "Parastacidae"
+															}
+														],
 														"ref": "",
 														"commonName": "freshwater crayfish or yabbies",
 														"size": 300,
@@ -297,6 +371,14 @@
 																			"outcome": {
 																				"id": "macrobrachium",
 																				"name": "Macrobrachium",
+																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																						"taxonomicLevel": "family",
+																						"name": "Palaemonidae"
+																					}, {
+																						"taxonomicLevel": "genus",
+																						"name": "Macrobrachium"
+																					}
+																				],
 																				"ref": "",
 																				"commonName": "freshwater prawn",
 																				"size": 50,
@@ -317,6 +399,11 @@
 																			"outcome": {
 																				"id": "atyidae",
 																				"name": "Atyidae",
+																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																						"taxonomicLevel": "family",
+																						"name": "Atyidae"
+																					}
+																				],
 																				"ref": "",
 																				"commonName": "glass shrimp",
 																				"size": 35,
@@ -348,6 +435,11 @@
 																			"outcome": {
 																				"id": "hymenosomatidae",
 																				"name": "Hymenosomatidae",
+																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																						"taxonomicLevel": "family",
+																						"name": "Hymenosomatidae"
+																					}
+																				],
 																				"ref": "",
 																				"commonName": "five cent crab, false spider crab",
 																				"size": 15,
@@ -380,6 +472,11 @@
 																									"outcome": {
 																										"id": "amphipoda",
 																										"name": "Amphipoda",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", {
+																												"taxonomicLevel": "class",
+																												"name": "Amphipoda"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "scuds, sideswimmers",
 																										"size": 15,
@@ -400,6 +497,14 @@
 																									"outcome": {
 																										"id": "phreatoicidae",
 																										"name": "Phreatoicidae",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", {
+																												"taxonomicLevel": "class",
+																												"name": "Isopoda"
+																											}, {
+																												"taxonomicLevel": "family",
+																												"name": "Phreatoicidae"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "phreatoicids, cow shrimp",
 																										"size": 25,
@@ -431,6 +536,11 @@
 																									"outcome": {
 																										"id": "janiridae",
 																										"name": "Janiridae",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~scientificName~2", {
+																												"taxonomicLevel": "family",
+																												"name": "Janiridae"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "water slaters",
 																										"size": 7,
@@ -457,6 +567,11 @@
 																												"outcome": {
 																													"id": "anostraca",
 																													"name": "Anostraca",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", {
+																															"taxonomicLevel": "order",
+																															"name": "Anostraca"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "fairy shrimp",
 																													"size": 25,
@@ -484,6 +599,11 @@
 																															"outcome": {
 																																"id": "notostraca",
 																																"name": "Notostraca",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", {
+																																		"taxonomicLevel": "order",
+																																		"name": "Notostraca"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "shield shrimp, tadpole shrimp",
 																																"size": 40,
@@ -505,6 +625,11 @@
 																															"outcome": {
 																																"id": "conchostraca",
 																																"name": "Conchostraca",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", {
+																																		"taxonomicLevel": "order",
+																																		"name": "Conchostraca"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "clam shrimp",
 																																"size": 8,
@@ -572,6 +697,14 @@
 																"outcome": {
 																	"id": "acarina",
 																	"name": "Acarina",
+																	"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", {
+																			"taxonomicLevel": "subphylum",
+																			"name": "Chelicerata"
+																		}, {
+																			"taxonomicLevel": "order",
+																			"name": "Acarina"
+																		}
+																	],
 																	"ref": "",
 																	"commonName": "water mites",
 																	"size": 5,
@@ -592,6 +725,14 @@
 																"outcome": {
 																	"id": "pisauridae_and_lycosidae",
 																	"name": "Pisauridae and Lycosidae",
+																	"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", {
+																			"taxonomicLevel": "order",
+																			"name": "Araneae"
+																		}, {
+																			"taxonomicLevel": "family",
+																			"name": "Pisauridae and Lycosidae"
+																		}
+																	],
 																	"ref": "",
 																	"commonName": "fishing and wolf spiders",
 																	"size": 120,
@@ -641,6 +782,23 @@
 																									"outcome": {
 																										"id": "gyrinidae_adult",
 																										"name": "Gyrinidae adult",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", {
+																												"taxonomicLevel": "subphylum",
+																												"name": "Hexapoda"
+																											}, {
+																												"taxonomicLevel": "class",
+																												"name": "Insecta"
+																											}, {
+																												"taxonomicLevel": "order",
+																												"name": "Coleoptera"
+																											}, {
+																												"taxonomicLevel": "family",
+																												"name": "Gyrinidae"
+																											}, {
+																												"taxonomicLevel": "family",
+																												"name": "Gyrinidae adult"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "Whirligig beetle",
 																										"size": 12,
@@ -674,6 +832,14 @@
 																															"outcome": {
 																																"id": "hygrobia_adult",
 																																"name": "Hygrobia adult",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																		"taxonomicLevel": "family",
+																																		"name": "Hygrobiidae"
+																																	}, {
+																																		"taxonomicLevel": "genus",
+																																		"name": "Hygrobia adult"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Screetch beetle adult",
 																																"size": 10,
@@ -694,6 +860,14 @@
 																															"outcome": {
 																																"id": "hydrophilidae_adult",
 																																"name": "Water scavenger beetle adult",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																		"taxonomicLevel": "family",
+																																		"name": "Hydrophilidae"
+																																	}, {
+																																		"taxonomicLevel": "alt",
+																																		"name": "Water scavenger beetle adult"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Water scavenger beetle adult",
 																																"size": 35,
@@ -739,6 +913,14 @@
 																																					"outcome": {
 																																						"id": "carabhydrus",
 																																						"name": "Carabhydrus",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																								"taxonomicLevel": "family",
+																																								"name": "Dytiscidae"
+																																							}, {
+																																								"taxonomicLevel": "genus",
+																																								"name": "Carabhydrus"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "waisted diving beetle",
 																																						"size": 3,
@@ -765,6 +947,11 @@
 																																								"outcome": {
 																																									"id": "australphilus",
 																																									"name": "Australphilus",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Australphilus"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Australphilus",
 																																									"size": 3,
@@ -785,6 +972,11 @@
 																																								"outcome": {
 																																									"id": "little_diving_beetles",
 																																									"name": "little diving beetles",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "alt",
+																																											"name": "little diving beetles"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "little diving beetles",
 																																									"size": 4,
@@ -821,6 +1013,11 @@
 																																					"outcome": {
 																																						"id": "mixed_diving_beetles",
 																																						"name": "mixed diving beetles",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "alt",
+																																								"name": "mixed diving beetles"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "mixed diving beetles",
 																																						"size": 8,
@@ -841,6 +1038,11 @@
 																																					"outcome": {
 																																						"id": "stealth_diving_beetles",
 																																						"name": "stealth diving beetles",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "alt",
+																																								"name": "stealth diving beetles"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "stealth diving beetles",
 																																						"size": 10,
@@ -883,6 +1085,11 @@
 																																					"outcome": {
 																																						"id": "lancetes",
 																																						"name": "Lancetes",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "genus",
+																																								"name": "Lancetes"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Lancetes",
 																																						"size": 10,
@@ -910,6 +1117,11 @@
 																																								"outcome": {
 																																									"id": "eretes",
 																																									"name": "Eretes",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Eretes"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Eretes",
 																																									"size": 16,
@@ -930,6 +1142,11 @@
 																																								"outcome": {
 																																									"id": "rhantus",
 																																									"name": "Rhantus",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Rhantus"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Rhantus",
 																																									"size": 14,
@@ -966,6 +1183,11 @@
 																																					"outcome": {
 																																						"id": "hyderodes",
 																																						"name": "Hyderodes",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "genus",
+																																								"name": "Hyderodes"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Hyderodes",
 																																						"size": 20,
@@ -992,6 +1214,11 @@
 																																								"outcome": {
 																																									"id": "spencerhydrus",
 																																									"name": "Spencerhydrus",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Spencerhydrus"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Spencerhydrus",
 																																									"size": 18,
@@ -1012,6 +1239,11 @@
 																																								"outcome": {
 																																									"id": "onychohydrus",
 																																									"name": "Onychohydrus",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Onychohydrus"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Onychohydrus",
 																																									"size": 28,
@@ -1069,6 +1301,11 @@
 																									"outcome": {
 																										"id": "curculionidae",
 																										"name": "Curculionidae",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																												"taxonomicLevel": "family",
+																												"name": "Curculionidae"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "weevils",
 																										"size": 9,
@@ -1095,6 +1332,14 @@
 																												"outcome": {
 																													"id": "elmidae_adult",
 																													"name": "Elmidae adult",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Elmidae"
+																														}, {
+																															"taxonomicLevel": "family",
+																															"name": "Elmidae adult"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Riffle beetle",
 																													"size": 6,
@@ -1122,6 +1367,11 @@
 																															"outcome": {
 																																"id": "hydraenidae_and_hydrochidae",
 																																"name": "Hydraenidae and Hydrochidae",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																		"taxonomicLevel": "family",
+																																		"name": "Hydraenidae and Hydrochidae"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Crawling water beetle",
 																																"size": 4,
@@ -1142,6 +1392,11 @@
 																															"outcome": {
 																																"id": "helochares",
 																																"name": "Helochares",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~scientificName~4", {
+																																		"taxonomicLevel": "genus",
+																																		"name": "Helochares"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Helochares",
 																																"size": 8,
@@ -1201,6 +1456,14 @@
 																												"outcome": {
 																													"id": "gerridae",
 																													"name": "Gerridae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																															"taxonomicLevel": "order",
+																															"name": "Hemiptera"
+																														}, {
+																															"taxonomicLevel": "family",
+																															"name": "Gerridae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Water striders",
 																													"size": 70,
@@ -1221,6 +1484,11 @@
 																												"outcome": {
 																													"id": "veliidae_mesoveliidae_and_hebridae",
 																													"name": "Veliidae, Mesoveliidae and Hebridae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Veliidae, Mesoveliidae and Hebridae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Water treader",
 																													"size": 5,
@@ -1247,6 +1515,11 @@
 																									"outcome": {
 																										"id": "hydrometridae",
 																										"name": "Hydrometridae",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																												"taxonomicLevel": "family",
+																												"name": "Hydrometridae"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "Water measurers",
 																										"size": 15,
@@ -1284,6 +1557,11 @@
 																												"outcome": {
 																													"id": "gelastocoridae",
 																													"name": "Gelastocoridae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Gelastocoridae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Toad bug",
 																													"size": 10,
@@ -1310,6 +1588,14 @@
 																															"outcome": {
 																																"id": "ranatra",
 																																"name": "Ranatra",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																		"taxonomicLevel": "family",
+																																		"name": "Nepidae"
+																																	}, {
+																																		"taxonomicLevel": "genus",
+																																		"name": "Ranatra"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Slender water scorpions/stick bug",
 																																"size": 90,
@@ -1331,6 +1617,11 @@
 																															"outcome": {
 																																"id": "laccotrephes",
 																																"name": "Laccotrephes",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																		"taxonomicLevel": "genus",
+																																		"name": "Laccotrephes"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Leafy water scorpion",
 																																"size": 90,
@@ -1373,6 +1664,11 @@
 																															"outcome": {
 																																"id": "pleidae",
 																																"name": "Pleidae",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																		"taxonomicLevel": "family",
+																																		"name": "Pleidae"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Pygmy backswimmer",
 																																"size": 3,
@@ -1399,6 +1695,14 @@
 																																		"outcome": {
 																																			"id": "enithares",
 																																			"name": "Enithares",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Notonectidae"
+																																				}, {
+																																					"taxonomicLevel": "genus",
+																																					"name": "Enithares"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Robust backswimmer",
 																																			"size": 12,
@@ -1420,6 +1724,11 @@
 																																		"outcome": {
 																																			"id": "anisops",
 																																			"name": "Anisops",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																					"taxonomicLevel": "genus",
+																																					"name": "Anisops"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Slender backswimmer",
 																																			"size": 9,
@@ -1463,6 +1772,14 @@
 																																		"outcome": {
 																																			"id": "naucoris",
 																																			"name": "Naucoris",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Naucoridae"
+																																				}, {
+																																					"taxonomicLevel": "genus",
+																																					"name": "Naucoris"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Creeping water bugs",
 																																			"size": 12,
@@ -1483,6 +1800,14 @@
 																																		"outcome": {
 																																			"id": "diplonychus",
 																																			"name": "Diplonychus",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Belostomatidae"
+																																				}, {
+																																					"taxonomicLevel": "genus",
+																																					"name": "Diplonychus"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Giant water bug",
 																																			"size": 30,
@@ -1514,6 +1839,14 @@
 																																		"outcome": {
 																																			"id": "diaprepocoris_barycephala",
 																																			"name": "Diaprepocoris barycephala",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Corixidae"
+																																				}, {
+																																					"taxonomicLevel": "species",
+																																					"name": "Diaprepocoris barycephala"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Barry four-eyes",
 																																			"size": 8,
@@ -1540,6 +1873,11 @@
 																																					"outcome": {
 																																						"id": "sigara",
 																																						"name": "Sigara",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "genus",
+																																								"name": "Sigara"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Striped boatman",
 																																						"size": 8,
@@ -1566,6 +1904,11 @@
 																																								"outcome": {
 																																									"id": "micronecta",
 																																									"name": "Micronecta",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Micronecta"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Little brindle boatman",
 																																									"size": 4,
@@ -1586,6 +1929,11 @@
 																																								"outcome": {
 																																									"id": "agraptocorixa",
 																																									"name": "Agraptocorixa",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Agraptocorixa"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Static boatmen",
 																																									"size": 10,
@@ -1677,6 +2025,14 @@
 																															"outcome": {
 																																"id": "hydroptilidae",
 																																"name": "Hydroptilidae",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																																		"taxonomicLevel": "order",
+																																		"name": "Trichoptera"
+																																	}, {
+																																		"taxonomicLevel": "family",
+																																		"name": "Hydroptilidae"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Micro caddis",
 																																"size": 5,
@@ -1703,6 +2059,14 @@
 																																		"outcome": {
 																																			"id": "atriplectides",
 																																			"name": "Atriplectides",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Atriplectididae"
+																																				}, {
+																																					"taxonomicLevel": "genus",
+																																					"name": "Atriplectides"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Vulture caddis",
 																																			"size": 15,
@@ -1735,6 +2099,14 @@
 																																								"outcome": {
 																																									"id": "agapetus",
 																																									"name": "Agapetus",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																											"taxonomicLevel": "family",
+																																											"name": "Glossosomatidae"
+																																										}, {
+																																											"taxonomicLevel": "genus",
+																																											"name": "Agapetus"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Igloo caddis",
 																																									"size": 6,
@@ -1762,6 +2134,14 @@
 																																											"outcome": {
 																																												"id": "helicopsyche",
 																																												"name": "Helicopsyche",
+																																												"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																														"taxonomicLevel": "family",
+																																														"name": "Helicopsychidae"
+																																													}, {
+																																														"taxonomicLevel": "genus",
+																																														"name": "Helicopsyche"
+																																													}
+																																												],
 																																												"ref": "",
 																																												"commonName": "Snail caddis",
 																																												"size": 5,
@@ -1788,6 +2168,11 @@
 																																														"outcome": {
 																																															"id": "tasimiidae",
 																																															"name": "Tasimiidae",
+																																															"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																																	"taxonomicLevel": "family",
+																																																	"name": "Tasimiidae"
+																																																}
+																																															],
 																																															"ref": "",
 																																															"commonName": "Tasimiids",
 																																															"size": 10,
@@ -1814,6 +2199,11 @@
 																																																	"outcome": {
 																																																		"id": "philorheithridae",
 																																																		"name": "Philorheithridae",
+																																																		"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																																				"taxonomicLevel": "family",
+																																																				"name": "Philorheithridae"
+																																																			}
+																																																		],
 																																																		"ref": "",
 																																																		"commonName": "Attack caddis - Highlander",
 																																																		"size": 25,
@@ -1834,7 +2224,17 @@
 																																																	"mediaUrls": [],
 																																																	"outcome": {
 																																																		"id": "attack_caddis_lowlander",
-																																																		"name": "Attack caddis - lowlander",
+																																																		"name": "Some Oecetis sp. (Leptoceridae) and Odontoceridae",
+																																																		"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																																				"taxonomicLevel": "family",
+																																																				"name": "Leptoceridae"
+																																																			}, {
+																																																				"taxonomicLevel": "genus",
+																																																				"name": "Oecetis"
+																																																			}, {
+																																																				"name": "Some Oecetis sp. (Leptoceridae) and Odontoceridae"
+																																																			}
+																																																		],
 																																																		"ref": "",
 																																																		"commonName": "Attack caddis - lowlander",
 																																																		"size": 25,
@@ -1887,6 +2287,14 @@
 																																											"outcome": {
 																																												"id": "anisocentropus",
 																																												"name": "Anisocentropus",
+																																												"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																														"taxonomicLevel": "family",
+																																														"name": "Calamoceratidae"
+																																													}, {
+																																														"taxonomicLevel": "genus",
+																																														"name": "Anisocentropus"
+																																													}
+																																												],
 																																												"ref": "",
 																																												"commonName": "Sleeping bag caddis",
 																																												"size": 20,
@@ -1913,6 +2321,13 @@
 																																														"outcome": {
 																																															"id": "caenota_plicata",
 																																															"name": "Caenota plicata",
+																																															"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																																	"taxonomicLevel": "family",
+																																																	"name": "Calocidae"
+																																																}, {
+																																																	"name": "Caenota plicata"
+																																																}
+																																															],
 																																															"ref": "",
 																																															"commonName": "Shingle caddis",
 																																															"size": 20,
@@ -1933,6 +2348,11 @@
 																																														"outcome": {
 																																															"id": "lectrides_varians",
 																																															"name": "Lectrides varians",
+																																															"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~scientificName~4", {
+																																																	"taxonomicLevel": "species",
+																																																	"name": "Lectrides varians"
+																																																}
+																																															],
 																																															"ref": "",
 																																															"commonName": "Flat shack caddis",
 																																															"size": 25,
@@ -1969,6 +2389,11 @@
 																																											"outcome": {
 																																												"id": "conoesucidae_calocidae_and_helicophidae",
 																																												"name": "Conoesucidae, Calocidae and Helicophidae",
+																																												"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																														"taxonomicLevel": "family",
+																																														"name": "Conoesucidae, Calocidae and Helicophidae"
+																																													}
+																																												],
 																																												"ref": "",
 																																												"commonName": "Bullet caddis",
 																																												"size": 13,
@@ -1995,6 +2420,11 @@
 																																														"outcome": {
 																																															"id": "triplectides",
 																																															"name": "Triplectides",
+																																															"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~scientificName~4", {
+																																																	"taxonomicLevel": "genus",
+																																																	"name": "Triplectides"
+																																																}
+																																															],
 																																															"ref": "",
 																																															"commonName": "Stick caddis",
 																																															"size": 30,
@@ -2021,7 +2451,12 @@
 																																																	"mediaUrls": ["taxonomy/walta/media/log_cabin_caddis_01.jpg"],
 																																																	"outcome": {
 																																																		"id": "log_cabin_caddis",
-																																																		"name": "Log cabin caddis",
+																																																		"name": "Oecetis",
+																																																		"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~scientificName~4", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~scientificName~5", {
+																																																				"taxonomicLevel": "genus",
+																																																				"name": "Oecetis"
+																																																			}
+																																																		],
 																																																		"ref": "",
 																																																		"commonName": "Log cabin caddis",
 																																																		"size": 20,
@@ -2048,6 +2483,11 @@
 																																																				"outcome": {
 																																																					"id": "symphitoneuria",
 																																																					"name": "Symphitoneuria",
+																																																					"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~scientificName~4", {
+																																																							"taxonomicLevel": "genus",
+																																																							"name": "Symphitoneuria"
+																																																						}
+																																																					],
 																																																					"ref": "",
 																																																					"commonName": "Dart caddis",
 																																																					"size": 15,
@@ -2074,6 +2514,11 @@
 																																																							"outcome": {
 																																																								"id": "notalina",
 																																																								"name": "Notalina",
+																																																								"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~scientificName~4", {
+																																																										"taxonomicLevel": "genus",
+																																																										"name": "Notalina"
+																																																									}
+																																																								],
 																																																								"ref": "",
 																																																								"commonName": "Headbanger caddis",
 																																																								"size": 21,
@@ -2095,6 +2540,11 @@
 																																																							"outcome": {
 																																																								"id": "leptocerids",
 																																																								"name": "Leptocerids",
+																																																								"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~scientificName~4", {
+																																																										"taxonomicLevel": "alt",
+																																																										"name": "Leptocerids"
+																																																									}
+																																																								],
 																																																								"ref": "",
 																																																								"commonName": "Leptocerids",
 																																																								"size": null,
@@ -2172,6 +2622,11 @@
 																																		"outcome": {
 																																			"id": "hydropsychidae",
 																																			"name": "Hydropsychidae",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Hydropsychidae"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Net spinning caddis",
 																																			"size": 12,
@@ -2192,6 +2647,14 @@
 																																		"outcome": {
 																																			"id": "ecnomus",
 																																			"name": "Ecnomus",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Ecnomidae"
+																																				}, {
+																																					"taxonomicLevel": "genus",
+																																					"name": "Ecnomus"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Bandit caddis",
 																																			"size": 15,
@@ -2223,6 +2686,11 @@
 																																		"outcome": {
 																																			"id": "hydrobiosidae",
 																																			"name": "Hydrobiosidae",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Hydrobiosidae"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Hunter caddis",
 																																			"size": 20,
@@ -2244,6 +2712,11 @@
 																																		"outcome": {
 																																			"id": "philopotamidae_polycentropodidae_and_ecnomidae",
 																																			"name": "Philopotamidae, Polycentropodidae and Ecnomidae",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "genus",
+																																					"name": "Philopotamidae, Polycentropodidae and Ecnomidae"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Ginger nuts",
 																																			"size": 18,
@@ -2280,6 +2753,11 @@
 																									"outcome": {
 																										"id": "lepidoptera",
 																										"name": "Lepidoptera",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																												"taxonomicLevel": "order",
+																												"name": "Lepidoptera"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "caterpillars",
 																										"size": 20,
@@ -2323,6 +2801,17 @@
 																															"outcome": {
 																																"id": "megapodagrionidae",
 																																"name": "Megapodagrionidae",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																																		"taxonomicLevel": "order",
+																																		"name": "Odonata"
+																																	}, {
+																																		"taxonomicLevel": "suborder",
+																																		"name": "Zygoptera"
+																																	}, {
+																																		"taxonomicLevel": "family",
+																																		"name": "Megapodagrionidae"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Megapodagrionidae",
 																																"size": 26,
@@ -2349,6 +2838,11 @@
 																																		"outcome": {
 																																			"id": "synlestidae",
 																																			"name": "Synlestidae",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Synlestidae"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Synlestidae",
 																																			"size": 20,
@@ -2375,6 +2869,11 @@
 																																					"outcome": {
 																																						"id": "isostictidae",
 																																						"name": "Isostictidae",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "family",
+																																								"name": "Isostictidae"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Isostictidae",
 																																						"size": 20,
@@ -2401,6 +2900,11 @@
 																																								"outcome": {
 																																									"id": "diphlebiidae",
 																																									"name": "Diphlebiidae",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "family",
+																																											"name": "Diphlebiidae"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Diphlebiidae",
 																																									"size": 30,
@@ -2421,6 +2925,11 @@
 																																								"outcome": {
 																																									"id": "lestidae_and_coenagrionidae",
 																																									"name": "Lestidae and Coenagrionidae",
+																																									"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																											"taxonomicLevel": "family",
+																																											"name": "Lestidae and Coenagrionidae"
+																																										}
+																																									],
 																																									"ref": "",
 																																									"commonName": "Lestidae and Coenagrionidae",
 																																									"size": 30,
@@ -2468,6 +2977,14 @@
 																															"outcome": {
 																																"id": "spider_mud_eye",
 																																"name": "spider mud eye",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																		"taxonomicLevel": "suborder",
+																																		"name": "Epiproctophora"
+																																	}, {
+																																		"taxonomicLevel": "alt",
+																																		"name": "spider mud eye"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Spider mud eye",
 																																"size": 30,
@@ -2495,6 +3012,11 @@
 																																		"outcome": {
 																																			"id": "gomphidae",
 																																			"name": "Gomphidae",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Gomphidae"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Gomphids",
 																																			"size": 30,
@@ -2521,6 +3043,11 @@
 																																					"outcome": {
 																																						"id": "telephlebiidae",
 																																						"name": "Telephlebiidae",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "family",
+																																								"name": "Telephlebiidae"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Telephlebs",
 																																						"size": 30,
@@ -2541,6 +3068,11 @@
 																																					"outcome": {
 																																						"id": "aeshnidae",
 																																						"name": "Aeshnidae",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "family",
+																																								"name": "Aeshnidae"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Couta mud eye",
 																																						"size": 40,
@@ -2599,6 +3131,17 @@
 																																			"outcome": {
 																																				"id": "coloburiscoides",
 																																				"name": "Coloburiscoides",
+																																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																																						"taxonomicLevel": "order",
+																																						"name": "Ephemeroptera"
+																																					}, {
+																																						"taxonomicLevel": "family",
+																																						"name": "Coloburiscidae"
+																																					}, {
+																																						"taxonomicLevel": "genus",
+																																						"name": "Coloburiscoides"
+																																					}
+																																				],
 																																				"ref": "",
 																																				"commonName": "stream horses",
 																																				"size": 20,
@@ -2626,6 +3169,14 @@
 																																						"outcome": {
 																																							"id": "mirawara",
 																																							"name": "Mirawara",
+																																							"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																									"taxonomicLevel": "family",
+																																									"name": "Ameletopsidae"
+																																								}, {
+																																									"taxonomicLevel": "genus",
+																																									"name": "Mirawara"
+																																								}
+																																							],
 																																							"ref": "",
 																																							"commonName": "killer mayflies/purple perils",
 																																							"size": 20,
@@ -2658,6 +3209,14 @@
 																																												"outcome": {
 																																													"id": "jappa",
 																																													"name": "Jappa",
+																																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																															"taxonomicLevel": "family",
+																																															"name": "Leptophlebiidae"
+																																														}, {
+																																															"taxonomicLevel": "genus",
+																																															"name": "Jappa"
+																																														}
+																																													],
 																																													"ref": "",
 																																													"commonName": "Jappa",
 																																													"size": 20,
@@ -2684,6 +3243,11 @@
 																																															"outcome": {
 																																																"id": "atalophlebia",
 																																																"name": "Atalophlebia",
+																																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																																		"taxonomicLevel": "genus",
+																																																		"name": "Atalophlebia"
+																																																	}
+																																																],
 																																																"ref": "",
 																																																"commonName": "Atalophlebia",
 																																																"size": 22,
@@ -2705,6 +3269,11 @@
 																																															"outcome": {
 																																																"id": "leptophlebs",
 																																																"name": "Leptophlebs",
+																																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																																		"taxonomicLevel": "alt",
+																																																		"name": "Leptophlebs"
+																																																	}
+																																																],
 																																																"ref": "",
 																																																"commonName": "Leptophlebs",
 																																																"size": 20,
@@ -2742,6 +3311,11 @@
 																																												"outcome": {
 																																													"id": "siphlonuridae",
 																																													"name": "Siphlonuridae",
+																																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																															"taxonomicLevel": "family",
+																																															"name": "Siphlonuridae"
+																																														}
+																																													],
 																																													"ref": "",
 																																													"commonName": "siphlonurids",
 																																													"size": 17,
@@ -2762,6 +3336,11 @@
 																																												"outcome": {
 																																													"id": "baetidae",
 																																													"name": "Baetidae",
+																																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																															"taxonomicLevel": "family",
+																																															"name": "Baetidae"
+																																														}
+																																													],
 																																													"ref": "",
 																																													"commonName": "Baetids",
 																																													"size": 10,
@@ -2809,6 +3388,11 @@
 																																			"outcome": {
 																																				"id": "caenidae",
 																																				"name": "Caenidae",
+																																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																						"taxonomicLevel": "family",
+																																						"name": "Caenidae"
+																																					}
+																																				],
 																																				"ref": "",
 																																				"commonName": "Caenids",
 																																				"size": 8,
@@ -2830,6 +3414,14 @@
 																																			"outcome": {
 																																				"id": "tasmanophlebia",
 																																				"name": "Tasmanophlebia",
+																																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~questions~1~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																						"taxonomicLevel": "family",
+																																						"name": "Oniscigastridae"
+																																					}, {
+																																						"taxonomicLevel": "genus",
+																																						"name": "Tasmanophlebia"
+																																					}
+																																				],
 																																				"ref": "",
 																																				"commonName": "oniscigastrids",
 																																				"size": 15,
@@ -2877,6 +3469,14 @@
 																																				"outcome": {
 																																					"id": "eustheniidae",
 																																					"name": "Eustheniidae",
+																																					"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																																							"taxonomicLevel": "order",
+																																							"name": "Plecoptera"
+																																						}, {
+																																							"taxonomicLevel": "family",
+																																							"name": "Eustheniidae"
+																																						}
+																																					],
 																																					"ref": "",
 																																					"commonName": "U sthenids",
 																																					"size": 40,
@@ -2915,6 +3515,14 @@
 																																													"outcome": {
 																																														"id": "riekoperla",
 																																														"name": "Riekoperla",
+																																														"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																																"taxonomicLevel": "family",
+																																																"name": "Gripopterygidae"
+																																															}, {
+																																																"taxonomicLevel": "genus",
+																																																"name": "Riekoperla"
+																																															}
+																																														],
 																																														"ref": "",
 																																														"commonName": "Spiky reek o perla",
 																																														"size": 10,
@@ -2941,6 +3549,11 @@
 																																																"outcome": {
 																																																	"id": "hairy_sprawler",
 																																																	"name": "Hairy sprawler",
+																																																	"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																																			"taxonomicLevel": "alt",
+																																																			"name": "Hairy sprawler"
+																																																		}
+																																																	],
 																																																	"ref": "",
 																																																	"commonName": "Hairy sprawler",
 																																																	"size": 18,
@@ -2967,6 +3580,11 @@
 																																																			"outcome": {
 																																																				"id": "illiesoperla",
 																																																				"name": "Illiesoperla",
+																																																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																																						"taxonomicLevel": "genus",
+																																																						"name": "Illiesoperla"
+																																																					}
+																																																				],
 																																																				"ref": "",
 																																																				"commonName": "Blond sprawler",
 																																																				"size": 18,
@@ -2987,6 +3605,11 @@
 																																																			"outcome": {
 																																																				"id": "gripops_or_fluffy_bums",
 																																																				"name": "Gripops or Fluffy bums",
+																																																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																																						"taxonomicLevel": "alt",
+																																																						"name": "Gripops or Fluffy bums"
+																																																					}
+																																																				],
 																																																				"ref": "",
 																																																				"commonName": "Gripops or Fluffy bums",
 																																																				"size": 10,
@@ -3023,6 +3646,11 @@
 																																										"outcome": {
 																																											"id": "notonemouridae",
 																																											"name": "Notonemouridae",
+																																											"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																													"taxonomicLevel": "family",
+																																													"name": "Notonemouridae"
+																																												}
+																																											],
 																																											"ref": "",
 																																											"commonName": "Noto nemoor ids",
 																																											"size": 12,
@@ -3054,6 +3682,14 @@
 																																										"outcome": {
 																																											"id": "acruroperla_atra",
 																																											"name": "Acruroperla atra",
+																																											"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																													"taxonomicLevel": "family",
+																																													"name": "Austroperlidae"
+																																												}, {
+																																													"taxonomicLevel": "species",
+																																													"name": "Acruroperla atra"
+																																												}
+																																											],
 																																											"ref": "",
 																																											"commonName": "Acruroperla atra",
 																																											"size": 18,
@@ -3074,6 +3710,11 @@
 																																										"outcome": {
 																																											"id": "austroperlids",
 																																											"name": "Austroperlids",
+																																											"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																													"taxonomicLevel": "alt",
+																																													"name": "Austroperlids"
+																																												}
+																																											],
 																																											"ref": "",
 																																											"commonName": "Austroperlids",
 																																											"size": 30,
@@ -3127,6 +3768,14 @@
 																																										"outcome": {
 																																											"id": "taper-tailed_tiger_larvae",
 																																											"name": "taper-tailed tiger larvae",
+																																											"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																													"taxonomicLevel": "family",
+																																													"name": "Dytiscidae"
+																																												}, {
+																																													"taxonomicLevel": "alt",
+																																													"name": "taper-tailed tiger larvae"
+																																												}
+																																											],
 																																											"ref": "",
 																																											"commonName": "taper-tailed tigers larvae",
 																																											"size": 50,
@@ -3147,6 +3796,11 @@
 																																										"outcome": {
 																																											"id": "two-tailed_tiger_larvae",
 																																											"name": "two-tailed tiger larvae",
+																																											"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~5", {
+																																													"taxonomicLevel": "alt",
+																																													"name": "two-tailed tiger larvae"
+																																												}
+																																											],
 																																											"ref": "",
 																																											"commonName": "two-tailed tigers larvae",
 																																											"size": 35,
@@ -3179,6 +3833,11 @@
 																																										"outcome": {
 																																											"id": "nosey_tiger_larvae",
 																																											"name": "nosey tiger larvae",
+																																											"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~5", {
+																																													"taxonomicLevel": "alt",
+																																													"name": "nosey tiger larvae"
+																																												}
+																																											],
 																																											"ref": "",
 																																											"commonName": "nosey tigers larvae",
 																																											"size": 12,
@@ -3205,6 +3864,11 @@
 																																													"outcome": {
 																																														"id": "swimming_water_tiger_larvae",
 																																														"name": "swimming water tiger larvae",
+																																														"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~5", {
+																																																"taxonomicLevel": "alt",
+																																																"name": "swimming water tiger larvae"
+																																															}
+																																														],
 																																														"ref": "",
 																																														"commonName": "swimming water tiger larvae",
 																																														"size": 12,
@@ -3225,6 +3889,11 @@
 																																													"outcome": {
 																																														"id": "crawling_water_tiger_larvae",
 																																														"name": "crawling water tiger larvae",
+																																														"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~parentLink~parentLink~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~5", {
+																																																"taxonomicLevel": "alt",
+																																																"name": "crawling water tiger larvae"
+																																															}
+																																														],
 																																														"ref": "",
 																																														"commonName": "crawling water tiger larvae",
 																																														"size": 12,
@@ -3267,6 +3936,14 @@
 																																							"outcome": {
 																																								"id": "sclerocyphon",
 																																								"name": "Sclerocyphon",
+																																								"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																										"taxonomicLevel": "family",
+																																										"name": "Psephenidae"
+																																									}, {
+																																										"taxonomicLevel": "genus",
+																																										"name": "Sclerocyphon"
+																																									}
+																																								],
 																																								"ref": "",
 																																								"commonName": "Water penny",
 																																								"size": 10,
@@ -3299,6 +3976,11 @@
 																																													"outcome": {
 																																														"id": "scirtidae",
 																																														"name": "Scirtidae",
+																																														"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																																"taxonomicLevel": "family",
+																																																"name": "Scirtidae"
+																																															}
+																																														],
 																																														"ref": "",
 																																														"commonName": "Marsh beetle larvae",
 																																														"size": 10,
@@ -3325,6 +4007,11 @@
 																																																"outcome": {
 																																																	"id": "elmidae_larvae",
 																																																	"name": "Elmidae larvae",
+																																																	"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																																			"taxonomicLevel": "family",
+																																																			"name": "Elmidae larvae"
+																																																		}
+																																																	],
 																																																	"ref": "",
 																																																	"commonName": "Riffle beetle larvae",
 																																																	"size": 6,
@@ -3345,6 +4032,14 @@
 																																																"outcome": {
 																																																	"id": "byrrocryptus",
 																																																	"name": "Byrrocryptus",
+																																																	"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																																			"taxonomicLevel": "family",
+																																																			"name": "Ptilodactylidae"
+																																																		}, {
+																																																			"taxonomicLevel": "genus",
+																																																			"name": "Byrrocryptus"
+																																																		}
+																																																	],
 																																																	"ref": "",
 																																																	"commonName": "Byrrocryptus",
 																																																	"size": 20,
@@ -3381,6 +4076,11 @@
 																																													"outcome": {
 																																														"id": "gyrinidae_larvae",
 																																														"name": "Gyrinidae larvae",
+																																														"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~4", {
+																																																"taxonomicLevel": "family",
+																																																"name": "Gyrinidae larvae"
+																																															}
+																																														],
 																																														"ref": "",
 																																														"commonName": "Whirligig beetle larvae",
 																																														"size": 15,
@@ -3407,6 +4107,11 @@
 																																																"outcome": {
 																																																	"id": "berosus",
 																																																	"name": "Berosus",
+																																																	"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~scientificName~4", {
+																																																			"taxonomicLevel": "genus",
+																																																			"name": "Berosus"
+																																																		}
+																																																	],
 																																																	"ref": "",
 																																																	"commonName": "Tasselled scavenger",
 																																																	"size": 8,
@@ -3433,6 +4138,11 @@
 																																																			"outcome": {
 																																																				"id": "hydrophilus",
 																																																				"name": "Hydrophilus",
+																																																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~scientificName~4", {
+																																																						"taxonomicLevel": "genus",
+																																																						"name": "Hydrophilus"
+																																																					}
+																																																				],
 																																																				"ref": "",
 																																																				"commonName": "Ugly Bob",
 																																																				"size": 50,
@@ -3453,6 +4163,11 @@
 																																																			"outcome": {
 																																																				"id": "water_scavenger_beetle_larvae",
 																																																				"name": "Water scavenger beetle larvae",
+																																																				"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~scientificName~4", {
+																																																						"taxonomicLevel": "alt",
+																																																						"name": "Water scavenger beetle larvae"
+																																																					}
+																																																				],
 																																																				"ref": "",
 																																																				"commonName": "Water scavenger beetle larvae",
 																																																				"size": 10,
@@ -3526,6 +4241,11 @@
 																												"outcome": {
 																													"id": "neuroptera",
 																													"name": "Neuroptera",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																															"taxonomicLevel": "order",
+																															"name": "Neuroptera"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "lacewing larvae",
 																													"size": 20,
@@ -3552,6 +4272,14 @@
 																															"outcome": {
 																																"id": "corydalidae",
 																																"name": "Corydalidae",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																																		"taxonomicLevel": "order",
+																																		"name": "Megaloptera"
+																																	}, {
+																																		"taxonomicLevel": "family",
+																																		"name": "Corydalidae"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "toebiters",
 																																"size": 35,
@@ -3658,6 +4386,14 @@
 																									"outcome": {
 																										"id": "stratiomyidae",
 																										"name": "Stratiomyidae",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", {
+																												"taxonomicLevel": "order",
+																												"name": "Diptera"
+																											}, {
+																												"taxonomicLevel": "family",
+																												"name": "Stratiomyidae"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "Soldier fly larvae",
 																										"size": 20,
@@ -3678,6 +4414,11 @@
 																									"outcome": {
 																										"id": "psychodidae",
 																										"name": "Psychodidae",
+																										"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																												"taxonomicLevel": "family",
+																												"name": "Psychodidae"
+																											}
+																										],
 																										"ref": "",
 																										"commonName": "Moth fly larvae",
 																										"size": 4,
@@ -3715,6 +4456,11 @@
 																												"outcome": {
 																													"id": "dixidae",
 																													"name": "Dixidae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Dixidae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "'U' bent midges",
 																													"size": 6,
@@ -3735,6 +4481,11 @@
 																												"outcome": {
 																													"id": "culicidae",
 																													"name": "Culicidae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Culicidae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Mosquito larvae, wrigglers",
 																													"size": 9,
@@ -3767,6 +4518,11 @@
 																												"outcome": {
 																													"id": "syrphidae",
 																													"name": "Syrphidae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Syrphidae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Rat tailed maggot",
 																													"size": 20,
@@ -3787,6 +4543,11 @@
 																												"outcome": {
 																													"id": "ephydridae_and_sciomyzidae",
 																													"name": "Ephydridae and Sciomyzidae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Ephydridae and Sciomyzidae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Wetland maggots",
 																													"size": 15,
@@ -3828,6 +4589,11 @@
 																						"outcome": {
 																							"id": "blephariceridae",
 																							"name": "Blephariceridae",
+																							"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																									"taxonomicLevel": "family",
+																									"name": "Blephariceridae"
+																								}
+																							],
 																							"ref": "",
 																							"commonName": "Bleff",
 																							"size": 13,
@@ -3860,6 +4626,11 @@
 																												"outcome": {
 																													"id": "simuliidae",
 																													"name": "Simuliidae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Simuliidae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Black fly larvae",
 																													"size": 5,
@@ -3885,8 +4656,16 @@
 																															"text": "Animals obviously red.",
 																															"mediaUrls": [],
 																															"outcome": {
-																																"id": "blood_worm",
-																																"name": "Blood worm",
+																																"id": "Chironomus",
+																																"name": "Chironomus",
+																																"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																		"taxonomicLevel": "family",
+																																		"name": "Chironomidae"
+																																	}, {
+																																		"taxonomicLevel": "genus",
+																																		"name": "Chironomus"
+																																	}
+																																],
 																																"ref": "",
 																																"commonName": "Blood worm",
 																																"size": 14,
@@ -3894,12 +4673,12 @@
 																																"habitat": "Wetlands, still water. Common.",
 																																"movement": ": Coil and uncoil quickly in a figure of eight, sometimes thrashing or using prolegs to drag themselves along the ground.",
 																																"confusedWith": "Nothing, very distinctive.",
-																																"mediaUrls": ["taxonomy/walta/media/blood_worm_01.jpg", "taxonomy/walta/media/blood_worm_m1.mp4"],
-																																"taxonomicLevel": "alt",
+																																"mediaUrls": ["taxonomy/walta/media/Chironomus_01.jpg", "taxonomy/walta/media/Chironomus_m1.mp4"],
+																																"taxonomicLevel": "genus",
 																																"description": "",
 																																"parentLink": "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome",
-																																"photoUrls": ["taxonomy/walta/media/blood_worm_01.jpg"],
-																																"videoUrl": "taxonomy/walta/media/blood_worm_m1.mp4"
+																																"photoUrls": ["taxonomy/walta/media/Chironomus_01.jpg"],
+																																"videoUrl": "taxonomy/walta/media/Chironomus_m1.mp4"
 																															},
 																															"photoUrls": []
 																														}, {
@@ -3914,6 +4693,11 @@
 																																		"outcome": {
 																																			"id": "ceratopogonidae",
 																																			"name": "Ceratopogonidae",
+																																			"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																					"taxonomicLevel": "family",
+																																					"name": "Ceratopogonidae"
+																																				}
+																																			],
 																																			"ref": "",
 																																			"commonName": "Pog",
 																																			"size": 10,
@@ -3941,6 +4725,11 @@
 																																					"outcome": {
 																																						"id": "chironomid",
 																																						"name": "Chironomid",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~4", {
+																																								"taxonomicLevel": "alt",
+																																								"name": "Chironomid"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Chironomid",
 																																						"size": 13,
@@ -3961,6 +4750,11 @@
 																																					"outcome": {
 																																						"id": "tipulidae",
 																																						"name": "Tipulidae",
+																																						"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																																								"taxonomicLevel": "family",
+																																								"name": "Tipulidae"
+																																							}
+																																						],
 																																						"ref": "",
 																																						"commonName": "Crane fly larvae",
 																																						"size": 36,
@@ -4007,6 +4801,11 @@
 																												"outcome": {
 																													"id": "athericidae",
 																													"name": "Athericidae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Athericidae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "Tasselled maggot",
 																													"size": 10,
@@ -4027,6 +4826,11 @@
 																												"outcome": {
 																													"id": "tabanidae_dolichopodidae_empididae_some_tipulidae",
 																													"name": "Tabanidae, Dolichopodidae, Empididae & some Tipulidae",
+																													"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~1", "~root~questions~1~outcome~questions~0~outcome~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~2", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~scientificName~3", {
+																															"taxonomicLevel": "family",
+																															"name": "Tabanidae, Dolichopodidae, Empididae & some Tipulidae"
+																														}
+																													],
 																													"ref": "",
 																													"commonName": "River maggots",
 																													"size": 30,
@@ -4067,6 +4871,14 @@
 																				"outcome": {
 																					"id": "hirudinea",
 																					"name": "Hirudinea",
+																					"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", {
+																							"taxonomicLevel": "phylum",
+																							"name": "Annelida"
+																						}, {
+																							"taxonomicLevel": "class",
+																							"name": "Hirudinea"
+																						}
+																					],
 																					"ref": "",
 																					"commonName": "Leeches",
 																					"size": 10,
@@ -4098,6 +4910,11 @@
 																"outcome": {
 																	"id": "oligochaeta",
 																	"name": "Oligochaeta",
+																	"scientificName": ["~root~questions~0~outcome~questions~1~outcome~questions~0~outcome~scientificName~0", "~root~questions~1~outcome~questions~1~outcome~questions~0~outcome~questions~0~outcome~questions~0~outcome~parentLink~questions~0~outcome~scientificName~1", {
+																			"taxonomicLevel": "class",
+																			"name": "Oligochaeta"
+																		}
+																	],
 																	"ref": "",
 																	"commonName": "Worms",
 																	"size": 10,
@@ -4139,6 +4956,12 @@
 													"outcome": {
 														"id": "turbellaria",
 														"name": "Turbellaria",
+														"scientificName": [
+															{
+																"taxonomicLevel": "phylum",
+																"name": "Turbellaria"
+															}
+														],
 														"ref": "",
 														"commonName": "flatworms",
 														"size": 20,
@@ -4165,6 +4988,12 @@
 																"outcome": {
 																	"id": "nematoda",
 																	"name": "Nematoda",
+																	"scientificName": [
+																		{
+																			"taxonomicLevel": "phylum",
+																			"name": "Nematoda"
+																		}
+																	],
 																	"ref": "",
 																	"commonName": "Roundworms",
 																	"size": 5,
@@ -4185,6 +5014,12 @@
 																"outcome": {
 																	"id": "nematomorpha",
 																	"name": "Nematomorpha",
+																	"scientificName": [
+																		{
+																			"taxonomicLevel": "phylum",
+																			"name": "Nematomorpha"
+																		}
+																	],
 																	"ref": "",
 																	"commonName": "Gordian worms",
 																	"size": 50,

@@ -41,39 +41,31 @@ function createTaxon( args ) {
 		parentLink: null,		// A link to the parent taxon
 		
 		// Returns the full scientific name
-		getScientificName: function() {
-			var names = [];
-			var n = this;
-			while( n != null ) {
-				Ti.API.log( n );
-				if ( n.name )
-				 names.push( n.name );
-				n = n.parentLink;
-			}
-			return names;
+		getScientificNameHtml: function() {
+			var htmlNames = "";
+			
+			_.each( this.scientificName, function( n ) {
+				  htmlNames += n.taxonomicLevel + ": <i>" + n.name + "</i><br>";
+			}); 
+			return htmlNames;
 		},
 		
 		// Returns the details formatted as HTML
 		asDetailHtml: function() {
-			var names = this.getScientificName();
-			Ti.API.log( names );
-			//names.shift(); // discard first name
 			return String.format(
-				"<b>%s</b>"
+				"<p><b>Scientific Classification:</b><br>%s</p>"
 			+	"<p><b>Size:</b> Up to %dmm</p>"
 			+   "<p><b>Habitat:</b> %s</p>"
 			+   "<p><b>Movement:</b> %s</p>"
 			+	"<p><b>Confused with:</b> %s</p>"
 			+	"<p><b>SIGNAL score: %d</b></p>"
-			+   "<p>%s</p>"
 			+   "<p>%s</p>",
-				names.join("<br>"),
+				this.getScientificNameHtml(),
 				this.size,
 				this.habitat,
 				this.movement,
 				this.confusedWith,
 				this.signalScore,
-				names.join("<br>"),
 				this.description
 			);
 		}
