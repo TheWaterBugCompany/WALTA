@@ -44,6 +44,7 @@ function transitionWindows( win, effect ) {
 	
 }
 function convertSystemToDip( n ) {
+	//Titanium.API.info( "Ti.UI.convertUnits( " + n + "px, Ti.UI.UNIT_DIP)");
 	return Ti.UI.convertUnits( n + "px", Ti.UI.UNIT_DIP );
 }
 
