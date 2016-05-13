@@ -44,6 +44,7 @@ function createAppWindow( keyName, keyPath ) {
 		// Private variables that are not to be exposed as API
 		var privates = {
 			platformWidth: 0,
+			platformHeight: 0,
 			key: null,
 			
 			loadKey: function( keyUrl ) {
@@ -78,7 +79,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'speedbug',
 					title: 'Speedbug',
-					uiObj: SpeedbugView.createSpeedbugView(privates.key)
+					uiObj: SpeedbugView.createSpeedbugView(privates.key, privates.platformHeight )
 				});	
 			},
 			
@@ -114,10 +115,10 @@ function createAppWindow( keyName, keyPath ) {
 				// but TaxonView when on a leaf node
 				if ( this.key.isNode( node ) ) {
 					var KeyView = require('ui/KeyView');
-					args.uiObj = KeyView.createKeyView( node );
+					args.uiObj = KeyView.createKeyView( node, privates.platformHeight  );
 				} else {
 					var TaxonView = require('ui/TaxonView');
-				 	args.uiObj = TaxonView.createTaxonView( node );
+				 	args.uiObj = TaxonView.createTaxonView( node, privates.platformHeight  );
 				}
 				
 				TopLevelWindow.makeTopLevelWindow(args);
@@ -214,6 +215,7 @@ function createAppWindow( keyName, keyPath ) {
 				var pWidth = Titanium.Platform.displayCaps.platformWidth;
 				var pHeight = Titanium.Platform.displayCaps.platformHeight;
 				privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
+				privates.platformHeight = PlatformSpecific.convertSystemToDip( pWidth >= pHeight ? pHeight : pWidth );
 				Topics.fireTopicEvent( Topics.HOME );
 			},
 			close: function() {

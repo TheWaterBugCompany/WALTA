@@ -45,7 +45,9 @@ function createTaxon( args ) {
 			var names = [];
 			var n = this;
 			while( n != null ) {
-				names.push( n.name );
+				Ti.API.log( n );
+				if ( n.name )
+				 names.push( n.name );
 				n = n.parentLink;
 			}
 			return names;
@@ -54,7 +56,8 @@ function createTaxon( args ) {
 		// Returns the details formatted as HTML
 		asDetailHtml: function() {
 			var names = this.getScientificName();
-			names.shift(); // discard first name
+			Ti.API.log( names );
+			//names.shift(); // discard first name
 			return String.format(
 				"<b>%s</b>"
 			+	"<p><b>Size:</b> Up to %dmm</p>"
@@ -64,7 +67,7 @@ function createTaxon( args ) {
 			+	"<p><b>SIGNAL score: %d</b></p>"
 			+   "<p>%s</p>"
 			+   "<p>%s</p>",
-				this.name,
+				names.join("<br>"),
 				this.size,
 				this.habitat,
 				this.movement,

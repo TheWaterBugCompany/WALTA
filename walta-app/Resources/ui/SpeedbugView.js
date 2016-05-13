@@ -23,7 +23,7 @@
  * key hierarchy.  
  *  
  */
-function createSpeedbugView(  /* Key */ key ) {
+function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 	var _ = require('lib/underscore')._;
 
 	var Layout = require('ui/Layout');
@@ -92,7 +92,8 @@ function createSpeedbugView(  /* Key */ key ) {
 	  scrollType: 'horizontal',
 	  layout: 'horizontal',
 	  horizontalWrap: false,
-	  top: Layout.WHITESPACE_GAP
+	  top: Layout.WHITESPACE_GAP,
+	  disableBounce: true
 	});
 	
 	// Iterate the speed bug index groups and create a view with a "Not Sure?"
@@ -108,13 +109,12 @@ function createSpeedbugView(  /* Key */ key ) {
 		var bugsCnt = Ti.UI.createView( { 
 			layout: 'horizontal', 
 			horizontalWrap: false, 
-			height: '83%', 
+			height: Ti.UI.FILL, //(screenHeightDip - 86) + "dip", 
 			width: Ti.UI.SIZE } );
 		
 		_(sg.bugs).each( function( sb ) {
 			var cnt = Ti.UI.createView( {
 				backgroundColor:'white',
-				  
 				  height: tileHeight,
 				  width: tileWidth,
 				  borderColor: 'blue',
@@ -138,7 +138,7 @@ function createSpeedbugView(  /* Key */ key ) {
 		
 		if ( bugsCnt.children.length >= 2 ) {
 			var notSureBtn = Ti.UI.createLabel( {
-				height: '10%',
+				height: '30dip',
 				width: bugsCnt.children.length*spanTileX - 2*buttonMargin,
 				top: Layout.WHITESPACE_GAP,
 				bottom: Layout.BUTTON_MARGIN,
@@ -182,7 +182,7 @@ function createSpeedbugView(  /* Key */ key ) {
 				end_n = _convertToTileNum( lastScroll + viewWidth + 2*spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
 				
 			}
-			Ti.API.trace("Speedbug release tiles start_n = " + start_n + " end_n = " + end_n );
+			//Ti.API.log("Speedbug release tiles start_n = " + start_n + " end_n = " + end_n );
 			for( var i = start_n; i<=end_n; i++ ) {
 				_releaseTileImageData(i);
 			}
@@ -190,7 +190,7 @@ function createSpeedbugView(  /* Key */ key ) {
 			// Calculate the range of tiles that need to be shown
 			start_n = _convertToTileNum( scrollx ) - Layout.SPEEDBUG_PRECACHE_TILES;
 			end_n = _convertToTileNum( scrollx + viewWidth + spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
-			Ti.API.trace("Speedbug load tiles start_n = " + start_n + " end_n = " + end_n );
+			//Ti.API.log("Speedbug load tiles start_n = " + start_n + " end_n = " + end_n );
 			for( var i = start_n; i<=end_n; i++ ) {
 				_showTileImageData(i);
 			}
