@@ -65,26 +65,15 @@ function createGalleryWindow(photoUrls, showPager ) {
 			
 				// NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
 				// we cheat by using a WebView.
-				/*if ( Ti.Platform.osname === 'android' ) {*/
-					
-					view =  Ti.UI.createWebView({
-						setScalesPageToFit: false,
-						disableBounce: true,
-						enableZoomControls: true,
-						backgroundColor: 'transparent',
-						width : Ti.UI.FILL,
-						height : Ti.UI.FILL,
-						html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body { width: 100%; background-color: black; margin: 0; padding: 0; border: 0 } img { display: block; margin-left:auto;margin-right:auto; padding:0; height:100%;}</style></head><body><img src="' + url + '"></body></html>'
-					});
-					
-			   /*	} else {
-			   		view = Ti.UI.createScrollView({
-						minZoomScale: 0.5,
-						maxZoomScale: 4.0,
-						zoomScale: 0.5
-					});
-					view.add( Ti.UI.createImageView( { image: url } ) );
-			   	}*/
+				view =  Ti.UI.createWebView({
+					setScalesPageToFit: false,
+					disableBounce: true,
+					enableZoomControls: true,
+					backgroundColor: 'transparent',
+					width : Ti.UI.FILL,
+					height : Ti.UI.FILL,
+					html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes"></meta><style>html,body { width: 100%; background-color: black; margin: 0; padding: 0; border: 0 } img { display: block; margin-left:auto;margin-right:auto; padding:0; height:100%;}</style></head><body><img src="' + url + '"></body></html>'
+				});
 				return view; 
 			}),
 		showPagingControl: false,
