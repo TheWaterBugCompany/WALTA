@@ -84,7 +84,7 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 	
 	var scrollView = Ti.UI.createScrollView({
 	  contentWidth: 'auto',
-	  contentHeight: 'auto',
+	  contentHeight: (screenHeightDip - 86) + "dip",
 	  showVerticalScrollIndicator: false,
 	  showHorizontalScrollIndicator: false,
 	  height: Ti.UI.FILL,
@@ -109,7 +109,7 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 		var bugsCnt = Ti.UI.createView( { 
 			layout: 'horizontal', 
 			horizontalWrap: false, 
-			height: Ti.UI.FILL, //(screenHeightDip - 86) + "dip", 
+			height: (screenHeightDip - 86) + "dip", 
 			width: Ti.UI.SIZE } );
 		
 		_(sg.bugs).each( function( sb ) {
