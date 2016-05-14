@@ -45,8 +45,8 @@ function createVideoView( file ) {
 		image: '/images/close.png',
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
-		top: Layout.WHITESPACE_GAP,
-		right: Layout.WHITESPACE_GAP
+		top: '24dip',
+		right: '24dip'
 	}));
 	vv.onComplete = function() {}; // Callback so the callers knows when the video is finished playing
 	vv.close = function() {
