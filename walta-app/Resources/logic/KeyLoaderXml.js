@@ -46,8 +46,15 @@ function parseMediaUrls( key, nd ) {
 	var urls = [];
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'mediaRef',
 		function( mr ) {
-			urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
-			
+			var fs = require('fs');
+			var mediaRef = key.url + "media/" + mr.getAttribute( 'url' );
+			fs.access(mediaRef, fs.F_OK, function(err) {
+			    if (!err) {
+			        urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
+			    } else {
+			        console.warn( "Unable to find media reference: '" + mediaRef + "' so not adding media URL" );
+			    }
+			});
 		});
 	return urls;
 }
