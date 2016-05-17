@@ -39,7 +39,7 @@
     </ios>
     <property name="ti.android.root.reappears.restart" type="bool">true</property>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:versionCode="5">
+        <manifest android:versionCode="6">
             <supports-screens android:largeScreens="true"
                 android:normalScreens="true" android:smallScreens="true" android:xlargeScreens="false"/>
             <application android:debuggable="false"
