@@ -39,10 +39,10 @@
     </ios>
     <property name="ti.android.root.reappears.restart" type="bool">true</property>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:versionCode="3">
+        <manifest android:versionCode="5">
             <supports-screens android:largeScreens="true"
                 android:normalScreens="true" android:smallScreens="true" android:xlargeScreens="false"/>
-            <application android:debuggable="true"
+            <application android:debuggable="false"
                 android:screenOrientation="landscape" android:theme="@style/Theme.AppCompat.NoTitleBar.Fullscreen">
                 <activity
                     android:configChanges="keyboardHidden|orientation|screenSize"
@@ -76,6 +76,6 @@
         <target device="android">true</target>
         <target device="mobileweb">false</target>
     </deployment-targets>
-    <sdk-version>5.1.2.GA</sdk-version>
+    <sdk-version>5.2.2.GA</sdk-version>
     <property name="appc-app-id" type="string">55a8bbc1f3a6a0d40f9926f8</property>
 </ti:app>

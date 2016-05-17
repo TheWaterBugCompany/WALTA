@@ -45,7 +45,10 @@ function createTaxon( args ) {
 			var htmlNames = "";
 			
 			_.each( this.scientificName, function( n ) {
-				  htmlNames += n.taxonomicLevel + ": <i>" + n.name + "</i><br>";
+				  var styledName = n.name;
+				  if ( n.taxonomicLevel == 'genus' || n.taxonomicLevel == 'species' )
+				     styledName = "<i>" + styledName + "</i>";
+				  htmlNames += n.taxonomicLevel + ": " + styledName + "<br>";
 			}); 
 			return htmlNames;
 		},

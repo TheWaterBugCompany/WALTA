@@ -48,13 +48,12 @@ function parseMediaUrls( key, nd ) {
 		function( mr ) {
 			var fs = require('fs');
 			var mediaRef = key.url + "media/" + mr.getAttribute( 'url' );
-			fs.access(mediaRef, fs.F_OK, function(err) {
-			    if (!err) {
-			        urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
-			    } else {
-			        console.warn( "Unable to find media reference: '" + mediaRef + "' so not adding media URL" );
-			    }
-			});
+			try {
+				fs.accessSync(mediaRef, fs.F_OK );
+			    urls.push( mediaRef );
+			} catch(e) {
+			   console.warn( "Unable to find media reference: '" + mediaRef + "' so not adding media URL" );
+			};
 		});
 	return urls;
 }
