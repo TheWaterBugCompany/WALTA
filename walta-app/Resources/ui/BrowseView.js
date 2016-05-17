@@ -43,17 +43,22 @@ function createBrowseView(  /* Key */ key ) {
 	var dataSet = [];
 	var taxonList = bvObj.key.findAllTaxons();
 	
+	
 	_.each( taxonList, function( txn ) {
-		dataSet.push( {
-			title: { text: txn.name },
-			template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpecies': 'default' ),
-			properties: { itemId: txn.id }
-		});
-		if ( txn.commonName != '') {
+		if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.name; } ) == -1 ) {
 			dataSet.push( {
-				title: { text: txn.commonName },
+				title: { text: txn.name },
+				template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpecies': 'default' ),
 				properties: { itemId: txn.id }
 			});
+		}
+		if ( txn.commonName != '') {
+			if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.commonName; } ) == -1 ) {
+				dataSet.push( {
+					title: { text: txn.commonName },
+					properties: { itemId: txn.id }
+				});
+			}
 		}
 	});
 		

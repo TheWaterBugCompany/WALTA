@@ -2,3 +2,5 @@
 *.apk
 *.ipa
 **/*.lock
+.DS_Store
+**/node_modules

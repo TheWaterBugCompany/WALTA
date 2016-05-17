@@ -135,53 +135,57 @@ function createMenuView( screenWidthDip ) {
 	menu._views = {};
 	var vws = menu._views;
 	
-	menu.view = Ti.UI.createView({
+	menu.view = Ti.UI.createView({ 
    		width: Ti.UI.FILL,
-   		height: Ti.UI.FILL,
+   		height: Ti.UI.FILL, 
    		background: 'white',
    		layout: 'vertical'
 	});
-	var logoLeftSizeDip = 150;
+	
+	//Ti.API.log("screen width: " + screenWidthDip);
+	var smallScreen = ( screenWidthDip <= 480 ) ;
+	var logoLeftSizeDip = ( smallScreen ? 100 : 150 );
 	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70; 
 	if ( titleWidthDip < 300 ) titleWidthDip = 300;
 	vws.logo = _(wrap( 'horizontal',[
 			
 			_(icon({
 					top: Layout.MENU_LOGO_TOP,
-					width: '120dip',
+					width: (smallScreen ? '90dip' : '120dip' ),
 					image: '/images/anm-logo-small.png'
 				})).extend( { width: logoLeftSizeDip + 'dip',
 				height: Ti.UI.FILL } ),
 				
 			Ti.UI.createLabel({
-				width: titleWidthDip +'dip' ,
+				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
 				text: 'The Waterbug App',
-				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
+				font: { fontFamily: 'Boulder', fontSize: ( smallScreen ? Layout.MENU_TITLE_FONT_SIZE_SMALL : Layout.MENU_TITLE_FONT_SIZE ) },
 				color: 'black'
 			}),
 			_(wrap( 'vertical',[
 				_(icon({
 					top: Layout.MENU_LOGO_TOP,
-					width: '60dip',
-					height: Layout.MENU_LOGO_HEIGHT,
+					width: ( smallScreen ? '42dip' : '60dip' ),
+					height: Ti.UI.SIZE,
 					image: '/images/logo.png'
 				})).extend( { height: Ti.UI.SIZE } ),
-				/*Ti.UI.createLabel({
+				Ti.UI.createLabel({
 					top: '1dip',
 					width: Ti.UI.SIZE,
 					height: Ti.UI.SIZE,
 					text: 'The Waterbug Company',
-					font: { fontFamily: 'Tahoma', fontSize: Layout.MENU_LOGO_FONT_SIZE },
+					textAlign: Titanium.UI.TEXT_ALIGNMENT_CENTER,
+					font: { fontFamily: 'Tahoma', fontSize: ( smallScreen ? Layout.MENU_LOGO_FONT_SIZE_SMALL : Layout.MENU_LOGO_FONT_SIZE ) },
 					color: '#882F61CC'
-				})*/
+				})
 			])).extend( { 
-				width: '80dip',
+				width: ( smallScreen ? '60dip' : '80dip' ),
 				height: Ti.UI.FILL
 			}),
 			icon({
 					top: '18dip',
-					width: '80dip',
+					width: ( smallScreen ? '60dip' : '80dip' ),
 					image: '/images/icon-australia.gif'
 				})
 	])).extend( {

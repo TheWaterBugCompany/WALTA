@@ -23,7 +23,7 @@
  * key hierarchy.  
  *  
  */
-function createSpeedbugView(  /* Key */ key ) {
+function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 	var _ = require('lib/underscore')._;
 
 	var Layout = require('ui/Layout');
@@ -38,9 +38,10 @@ function createSpeedbugView(  /* Key */ key ) {
 	
 	var vws = sbvObj._views;
 	
-	var buttonMargin = Ti.UI.convertUnits( Layout.BUTTON_MARGIN, "dip" );
-	var tileHeight = Ti.UI.convertUnits( Layout.SPEEDBUG_TILE_HEIGHT, "dip" );
-	var tileWidth = Ti.UI.convertUnits( Layout.SPEEDBUG_TILE_WIDTH, "dip" );
+	var buttonMargin = parseInt( Layout.BUTTON_MARGIN );
+	var tileHeight = parseInt( Layout.SPEEDBUG_TILE_HEIGHT );
+	var tileWidth = parseInt( Layout.SPEEDBUG_TILE_WIDTH );
+	
 	var spanTileX = buttonMargin*2 + tileWidth + 2;
 	
 	
@@ -83,7 +84,7 @@ function createSpeedbugView(  /* Key */ key ) {
 	
 	var scrollView = Ti.UI.createScrollView({
 	  contentWidth: 'auto',
-	  contentHeight: 'auto',
+	  contentHeight: (screenHeightDip - 86) + "dip",
 	  showVerticalScrollIndicator: false,
 	  showHorizontalScrollIndicator: false,
 	  height: Ti.UI.FILL,
@@ -91,7 +92,8 @@ function createSpeedbugView(  /* Key */ key ) {
 	  scrollType: 'horizontal',
 	  layout: 'horizontal',
 	  horizontalWrap: false,
-	  top: Layout.WHITESPACE_GAP
+	  top: Layout.WHITESPACE_GAP,
+	  disableBounce: true
 	});
 	
 	// Iterate the speed bug index groups and create a view with a "Not Sure?"
@@ -107,13 +109,12 @@ function createSpeedbugView(  /* Key */ key ) {
 		var bugsCnt = Ti.UI.createView( { 
 			layout: 'horizontal', 
 			horizontalWrap: false, 
-			height: '83%', 
+			height: (screenHeightDip - 86) + "dip", 
 			width: Ti.UI.SIZE } );
 		
 		_(sg.bugs).each( function( sb ) {
 			var cnt = Ti.UI.createView( {
 				backgroundColor:'white',
-				  
 				  height: tileHeight,
 				  width: tileWidth,
 				  borderColor: 'blue',
@@ -137,7 +138,7 @@ function createSpeedbugView(  /* Key */ key ) {
 		
 		if ( bugsCnt.children.length >= 2 ) {
 			var notSureBtn = Ti.UI.createLabel( {
-				height: '10%',
+				height: '30dip',
 				width: bugsCnt.children.length*spanTileX - 2*buttonMargin,
 				top: Layout.WHITESPACE_GAP,
 				bottom: Layout.BUTTON_MARGIN,
@@ -151,7 +152,7 @@ function createSpeedbugView(  /* Key */ key ) {
 			});
 			
 			notSureBtn.addEventListener( 'click', function(e) {
-				Topics.fireTopicEvent( Topics.JUMPTO, sg.refId );
+				Topics.fireTopicEvent( Topics.JUMPTO, { id: sg.refId } );
 				e.cancelBubble = true;
 			});
 			
@@ -166,10 +167,11 @@ function createSpeedbugView(  /* Key */ key ) {
 	var lastScroll = null;
 	function _loadAndReleaseTiles() {
 		// getContentOffset can be undefined during postLayout
+		// scrollView.getSize can be undefined during postLayout also ?
 		var scrollx = ( scrollView.getContentOffset() ? PlatformSpecific.convertSystemToDip( scrollView.getContentOffset().x ) : 0 );
 		if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > spanTileX) ) {
 			var start_n, end_n;
-			var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.getSize().width );
+			var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.getSize() ? scrollView.getSize().width : 0 );
 			
 			// Release any tiles that are now off the screen
 			if ( lastScroll < scrollx ) {
@@ -180,7 +182,7 @@ function createSpeedbugView(  /* Key */ key ) {
 				end_n = _convertToTileNum( lastScroll + viewWidth + 2*spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
 				
 			}
-			Ti.API.trace("Speedbug release tiles start_n = " + start_n + " end_n = " + end_n );
+			//Ti.API.log("Speedbug release tiles start_n = " + start_n + " end_n = " + end_n );
 			for( var i = start_n; i<=end_n; i++ ) {
 				_releaseTileImageData(i);
 			}
@@ -188,7 +190,7 @@ function createSpeedbugView(  /* Key */ key ) {
 			// Calculate the range of tiles that need to be shown
 			start_n = _convertToTileNum( scrollx ) - Layout.SPEEDBUG_PRECACHE_TILES;
 			end_n = _convertToTileNum( scrollx + viewWidth + spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
-			Ti.API.trace("Speedbug load tiles start_n = " + start_n + " end_n = " + end_n );
+			//Ti.API.log("Speedbug load tiles start_n = " + start_n + " end_n = " + end_n );
 			for( var i = start_n; i<=end_n; i++ ) {
 				_showTileImageData(i);
 			}

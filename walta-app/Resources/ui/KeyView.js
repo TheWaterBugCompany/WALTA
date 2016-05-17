@@ -25,7 +25,7 @@
  */
 
 
-function createKeyView( keyNode ) {
+function createKeyView( keyNode, platformHeight ) {
 	var _ = require('lib/underscore')._;
 	
 	var AnchorBar = require('ui/AnchorBar');
