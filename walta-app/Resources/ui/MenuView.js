@@ -180,7 +180,7 @@ function createMenuView( screenWidthDip ) {
 					color: '#882F61CC'
 				})
 			])).extend( { 
-				width: ( smallScreen ? '60dip' : '80dip' ),
+				width: ( smallScreen ? '60dip' : '70dip' ),
 				height: Ti.UI.FILL
 			}),
 			icon({

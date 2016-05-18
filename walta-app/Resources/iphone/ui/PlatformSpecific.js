@@ -16,6 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+function preCreateTopLevelWindow( winArgs, args ) {
+	
+};
+
+function makeAnchorBarStationary( win, anchorBar ) {
+
+};
+
 // Keep track of windows we've opened but not closed
 var windowStack = [];
 
@@ -71,5 +79,7 @@ function convertSystemToDip( n ) {
 }
 
 exports.convertSystemToDip = convertSystemToDip;
+exports.makeAnchorBarStationary = makeAnchorBarStationary;
+exports.preCreateTopLevelWindow = preCreateTopLevelWindow;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Titanium.UI.iPhone.ActivityIndicatorStyle.BIG;

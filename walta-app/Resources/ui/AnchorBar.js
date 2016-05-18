@@ -60,6 +60,7 @@ function createAnchorBar( title ) {
 	anchorBar._views = {};
 	
 	anchorBar.view = Ti.UI.createView({
+		transitionName: 'anchorBar',
    		backgroundGradient: {
    			type: 'linear',
    			startPoint: { x: '0%', y: '0%' },

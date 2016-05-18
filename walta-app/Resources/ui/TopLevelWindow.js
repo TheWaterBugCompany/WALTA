@@ -33,6 +33,7 @@ function getCurrentWindow() { return _currentWindow; }
  * as the parameter view. This function wraps the view
  * in a window and adds an AnchorBar to the top. 
  */
+
 function makeTopLevelWindow( args ) {
 
 	var winArgs = { 
@@ -42,28 +43,26 @@ function makeTopLevelWindow( args ) {
 		height: Ti.UI.FILL,
 		backgroundColor: 'white',
 		layout: 'composite',
-		title: args.title
+		title: args.title	
 	};
 	
-	if ( args.portrait ) {
-		winArgs.orientationModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
-	} else if ( args.swivel ) {
-		winArgs.orientationModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
-	} else {
-		winArgs.orientationModes = [ Ti.UI.LANDSCAPE_LEFT ];
-	}
+	PlatformSpecific.preCreateTopLevelWindow( winArgs, args );
+	
 	
 	var win = Ti.UI.createWindow( winArgs );
 	
 	var panelHeight = Ti.UI.FILL;
-	
+
 	if ( args.title ) {
+		
 		var anchorBar = AnchorBar.createAnchorBar( args.title );
 		win.add( anchorBar.view );	
-		
+		PlatformSpecific.makeAnchorBarStationary( win, anchorBar );
 		panelHeight = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() );
 		panelHeight = panelHeight - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
 		
+	} else {
+		anchorBar == null;
 	}
 	
 	if ( args.uiObj.openingFromMenu ) {
