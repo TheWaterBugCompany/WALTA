@@ -2,7 +2,7 @@
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <id>net.thewaterbug.waterbug</id>
     <name>Waterbug</name>
-    <version>1.2.2.6</version>
+    <version>1.2.2.7</version>
     <publisher>The Code Sharman</publisher>
     <url>http://www.thewaterbug.net/</url>
     <description>The Waterbug App</description>
@@ -11,7 +11,6 @@
     <fullscreen>true</fullscreen>
     <navbar-hidden>true</navbar-hidden>
     <guid>c3df0813-9e9a-49da-9eee-5c0302217fe4</guid>
-   
     <property name="ti.ui.defaultunit" type="string">dip</property>
     <ios>
         <plist>
@@ -37,36 +36,36 @@
             </dict>
         </plist>
     </ios>
-    
     <property name="ti.android.root.reappears.restart" type="bool">true</property>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:versionCode="6">
-            <supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:xlargeScreens="true"/>
-                
-            <application android:debuggable="true" android:theme="@style/Theme.NoActionBar">
-            	
-                <activity android:configChanges="keyboardHidden|orientation|screenSize" android:label="@string/app_name" 
-                	      android:name=".WaterbugActivity" android:theme="@style/Theme.Titanium" 
-                	      android:screenOrientation="sensorLandscape">
+        <manifest android:versionCode="7">
+            <supports-screens android:largeScreens="true"
+                android:normalScreens="true" android:smallScreens="true" android:xlargeScreens="true"/>
+            <application android:debuggable="false" android:theme="@style/Theme.NoActionBar">
+                <activity
+                    android:configChanges="keyboardHidden|orientation|screenSize"
+                    android:label="@string/app_name"
+                    android:name=".WaterbugActivity"
+                    android:screenOrientation="sensorLandscape" android:theme="@style/Theme.Titanium">
                     <intent-filter>
                         <action android:name="android.intent.action.MAIN"/>
                         <category android:name="android.intent.category.LAUNCHER"/>
                     </intent-filter>
                 </activity>
-                
-                <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiActivity" 
-                	android:screenOrientation="sensorLandscape"/>
-                	
-                <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiTranslucentActivity"
-                     android:theme="@style/Theme.AppCompat.Translucent" 
-                     android:screenOrientation="sensorLandscape"/>
-                
-                <activity android:configChanges="screenSize" android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" 
-                	android:screenOrientation="sensorLandscape"/>
-                	
-                <activity android:configChanges="keyboardHidden|orientation|screenSize" android:launchMode="singleTask"
-                    android:name="ti.modules.titanium.media.TiVideoActivity"  android:theme="@style/Theme.AppCompat.Fullscreen"
-                    android:screenOrientation="sensorLandscape"/>
+                <activity
+                    android:configChanges="keyboardHidden|orientation|screenSize"
+                    android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape"/>
+                <activity
+                    android:configChanges="keyboardHidden|orientation|screenSize"
+                    android:name="org.appcelerator.titanium.TiTranslucentActivity"
+                    android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Translucent"/>
+                <activity android:configChanges="screenSize"
+                    android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"/>
+                <activity
+                    android:configChanges="keyboardHidden|orientation|screenSize"
+                    android:launchMode="singleTask"
+                    android:name="ti.modules.titanium.media.TiVideoActivity"
+                    android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
             </application>
         </manifest>
     </android>
