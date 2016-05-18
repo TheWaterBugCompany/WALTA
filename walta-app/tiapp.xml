@@ -2,7 +2,7 @@
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <id>net.thewaterbug.waterbug</id>
     <name>Waterbug</name>
-    <version>1.2.2.5</version>
+    <version>1.2.2.6</version>
     <publisher>The Code Sharman</publisher>
     <url>http://www.thewaterbug.net/</url>
     <description>The Waterbug App</description>
@@ -11,7 +11,7 @@
     <fullscreen>true</fullscreen>
     <navbar-hidden>true</navbar-hidden>
     <guid>c3df0813-9e9a-49da-9eee-5c0302217fe4</guid>
-    <property name="appc-sourcecode-encryption-policy">embed</property>
+   
     <property name="ti.ui.defaultunit" type="string">dip</property>
     <ios>
         <plist>
@@ -37,7 +37,7 @@
             </dict>
         </plist>
     </ios>
-    <property name="appc-security-debugger-detect">false</property>
+    
     <property name="ti.android.root.reappears.restart" type="bool">true</property>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
         <manifest android:versionCode="6">
