@@ -27,7 +27,7 @@
 exports.COLOR_LIGHT_BLUE = '#cfdbf3';
 
 exports.TOOLBAR_HEIGHT = '42dip';
-exports.TOOLBAR_BUTTON_SIZE =  '32dip';
+exports.TOOLBAR_BUTTON_SIZE =  '40dip';
 
 exports.THUMBNAIL_IMAGE_WIDTH = '100%';
 

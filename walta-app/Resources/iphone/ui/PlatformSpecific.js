@@ -16,13 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+function appStartUp( privates ) {
+	
+}
+
+function appShutdown( privates ) {
+
+}
+
 function preCreateTopLevelWindow( winArgs, args ) {
 	
-};
+}
 
 function makeAnchorBarStationary( win, anchorBar ) {
 
-};
+}
 
 // Keep track of windows we've opened but not closed
 var windowStack = [];
@@ -78,6 +86,8 @@ function convertSystemToDip( n ) {
 	return n;
 }
 
+exports.appStartUp = appStartUp;
+exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;
 exports.makeAnchorBarStationary = makeAnchorBarStationary;
 exports.preCreateTopLevelWindow = preCreateTopLevelWindow;

@@ -43,8 +43,8 @@ function createAppWindow( keyName, keyPath ) {
 		
 		// Private variables that are not to be exposed as API
 		var privates = {
-			platformWidth: 0,
-			platformHeight: 0,
+			/*platformWidth: 0,
+			platformHeight: 0,*/
 			key: null,
 			
 			loadKey: function( keyUrl ) {
@@ -58,7 +58,7 @@ function createAppWindow( keyName, keyPath ) {
 				if ( ! args ) args = {};
 				_(args).extend({
 					name: 'home',
-					uiObj: MenuView.createMenuView(privates.platformWidth),
+					uiObj: MenuView.createMenuView(),
 					portrait: false
 				});
 				TopLevelWindow.makeTopLevelWindow(args);
@@ -79,7 +79,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'speedbug',
 					title: 'Speedbug',
-					uiObj: SpeedbugView.createSpeedbugView(privates.key, privates.platformHeight )
+					uiObj: SpeedbugView.createSpeedbugView(privates.key )
 				});	
 			},
 			
@@ -115,10 +115,10 @@ function createAppWindow( keyName, keyPath ) {
 				// but TaxonView when on a leaf node
 				if ( this.key.isNode( node ) ) {
 					var KeyView = require('ui/KeyView');
-					args.uiObj = KeyView.createKeyView( node, privates.platformHeight  );
+					args.uiObj = KeyView.createKeyView( node );
 				} else {
 					var TaxonView = require('ui/TaxonView');
-				 	args.uiObj = TaxonView.createTaxonView( node, privates.platformHeight  );
+				 	args.uiObj = TaxonView.createTaxonView( node );
 				}
 				
 				TopLevelWindow.makeTopLevelWindow(args);
@@ -133,11 +133,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 			
 			closeApp: function() {
-				if ( 'android' === Ti.Platform.osname) {
-					var win = TopLevelWindow.getCurrentWindow().win;
-					win.exitOnClose = true;
-					win.close();
-				}
+				PlatformSpecific.appShutdown( privates );
 			}
 		};
 		
@@ -211,11 +207,13 @@ function createAppWindow( keyName, keyPath ) {
 		_(appWin).extend({
 			start: function() {
 				privates.loadKey( appWin.keyUrl );
-				var ready = false;
-				var pWidth = Titanium.Platform.displayCaps.platformWidth;
+				/*var pWidth = Titanium.Platform.displayCaps.platformWidth;
 				var pHeight = Titanium.Platform.displayCaps.platformHeight;
 				privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
-				privates.platformHeight = PlatformSpecific.convertSystemToDip( pWidth >= pHeight ? pHeight : pWidth );
+				privates.platformHeight = PlatformSpecific.convertSystemToDip( pWidth >= pHeight ? pHeight : pWidth );*/
+				
+				PlatformSpecific.appStartUp( privates );
+				
 				Topics.fireTopicEvent( Topics.HOME );
 			},
 			close: function() {

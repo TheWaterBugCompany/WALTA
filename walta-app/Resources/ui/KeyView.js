@@ -25,7 +25,7 @@
  */
 
 
-function createKeyView( keyNode, platformHeight ) {
+function createKeyView( keyNode ) {
 	var _ = require('lib/underscore')._;
 	
 	var AnchorBar = require('ui/AnchorBar');
@@ -36,6 +36,10 @@ function createKeyView( keyNode, platformHeight ) {
 	
 	var meld = require('lib/meld');
 	var QuestionView = require('ui/QuestionView');
+	
+	var PlatformSpecific = require('ui/PlatformSpecific');
+	
+	var platformHeight = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformHeight );
 	
 	var obj = {
 		view: null,		 // The Ti.UI.View for the user interface

@@ -18,6 +18,21 @@
 
 var oldWin = null;
 var oldAnchorBar = null;
+
+function appStartUp( privates ) {
+	// we create root window so that Android doesn't crash when the menu window is closed
+	// during transitions.
+	privates.rootWindow = Ti.UI.createWindow({ 
+			navBarHidden: true,
+			fullscreen: true
+	});
+	privates.rootWindow.open();
+}
+
+function appShutdown( privates ) {
+	Titanium.Android.currentActivity.finish();
+}
+
 function makeAnchorBarStationary( win, anchorBar ) {
 	/* if ( Ti.Platform.Android.API_LEVEL >= 21 ) {
 		if ( oldAnchorBar != null ) {
@@ -59,8 +74,8 @@ function transitionWindows( win, effect ) {
 	//}
 	 
 	// close old window when this new window is pausing to avoid memory leak...
-	if ( oldWin != null )
-		win.activity.onPause = function(win2) { return function() { win2.close(); }; } (oldWin);  
+	if ( oldWin != null)
+		win.activity.onStop = function(win2) { return function() { win2.close(); }; } (oldWin);  
 	
 	win.open( args );
 	oldWin = win;
@@ -70,6 +85,8 @@ function convertSystemToDip( n ) {
 	return Ti.UI.convertUnits( n + "px", Ti.UI.UNIT_DIP );
 }
 
+exports.appStartUp = appStartUp;
+exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;
 exports.makeAnchorBarStationary = makeAnchorBarStationary;
 exports.preCreateTopLevelWindow = preCreateTopLevelWindow;

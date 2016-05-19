@@ -27,6 +27,7 @@
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var PlatformSpecific = require('ui/PlatformSpecific');
 
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
@@ -177,7 +178,8 @@ function createActionsView(txnViewObj) {
 	vws.actions.add(vws.actionBtns);
 };
 
-function createTaxonView(/* Taxon */txn, platformHeight) {
+function createTaxonView(/* Taxon */txn ) {
+	var platformHeight = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformHeight );
 	var GoBackButton = require('ui/GoBackButton');
 	var txnViewObj = {
 		_views : {},

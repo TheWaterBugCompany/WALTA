@@ -129,8 +129,8 @@ function icon( args ) {
 	return cnt;
 }
 
-function createMenuView( screenWidthDip ) {
-	
+function createMenuView( ) {
+	var screenWidthDip = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformWidth );
 	var menu = {};
 	menu._views = {};
 	var vws = menu._views;

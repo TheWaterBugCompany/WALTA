@@ -25,11 +25,11 @@
  */
 function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 	var _ = require('lib/underscore')._;
-
+   
 	var Layout = require('ui/Layout');
 	var Topics = require('ui/Topics');
 	var PlatformSpecific = require('ui/PlatformSpecific');
-	
+	var screenHeightDip = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformHeight );
 	var sbvObj = {
 		view: null,		// The Ti.UI.View for the user interface
 		_views: {},		// sub views
