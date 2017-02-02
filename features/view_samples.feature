@@ -8,10 +8,11 @@ Scenario: Review history without server login
    When I enter the sample history and select a sample
    Then the signal score, fields and metadata are displayed
     And the user can see the sample tray as it was for the selected sample
+    ANd the user can view a graphical visualisation of signal score
 
 Scenario: Review history with a login
   Given I have a user account on the server
     And I have submitted samples to the server
    When the server is reachable
-   Then the history of sampled sites is downloaded from the server
+   Then the history of sampled sites at the current location is downloaded from the server
     And I can review the history as per usual
