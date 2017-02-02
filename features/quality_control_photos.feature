@@ -1,4 +1,4 @@
-Feature: Quality Control with Photos
+Feature: Attach Multimedia
 
 I want to be able to record a photo or a video and attach it
 to my site samples to help experts validate my identification.
