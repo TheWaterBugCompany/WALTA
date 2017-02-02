@@ -12,13 +12,11 @@ Scenario: I want to identify a taxa but I can't complete key
 
 Scenario: I want to restrict my users to Order only identification
   Given the app is configured to "Order only" identification
-    And the ALT question key is open
-    And it is at the order level
+    And the ALT key is at the order level
    Then drilling deeper is disabled
 
 Scenario: Speedbug with order only identification
      Given the app is configured to "Order only" identification
-       And a silhouette or "note sure" is selected from Speedbug
-       And it is at deep than the order level
+       And node is selected from Speedbug that is deeper than order
       Then the nearest parent node at the order level is displayed
        And drilling deeper is disabled
