@@ -1,7 +1,7 @@
 Feature: Quality Control with Photos
 
-When I identify a taxa I want to be able to record a photo or a video
-to help experts check the quality of my identification.
+I want to be able to record a photo or a video and attach it
+to my site samples to help experts validate my identification.
 
 Scenario: Identification of a taxa with photo or video
    Given I have identified a taxa
