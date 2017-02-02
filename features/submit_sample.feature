@@ -1,4 +1,4 @@
-Feature: Submit Sample
+Feature: Upload Samples
 
 I want to calculate the signal score of my sample, enter data about a
 site and submit this sample to the database when internet is available.
