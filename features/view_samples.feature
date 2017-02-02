@@ -1,4 +1,4 @@
-Feature: View existing samples
+Feature: View samples
 
 I want to review the history of the samples I have already collected.
 
