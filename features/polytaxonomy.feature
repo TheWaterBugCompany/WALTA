@@ -1,4 +1,4 @@
-Feature: Polytaxonomic Identification
+Feature: Allow partial identification
 
 I want to be able to stop at any point in the binary key.
 For example, where usually the user needs to select a branch to
