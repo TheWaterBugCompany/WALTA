@@ -43,13 +43,14 @@ function createKey( args ) {
 		url: null,
 		name: null,
 		root: null,
-		currentDecision: null
+		currentDecision: null,
+		speedBugIndex: {}
 	});
 	
 	// Private variables here
 	var taxIdToNode = {};
 	var keyIdToNode = {};
-	var speedBugIndex = {};
+	var speedBugIndex = obj.speedBugIndex;
 	
 	var allTaxons = [];
 	var allNodes = [];

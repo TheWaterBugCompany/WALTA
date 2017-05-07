@@ -24,7 +24,6 @@
 
 function createGoBackButton() {
 	var Layout = require('ui/Layout');
-	var PubSub = require('lib/pubsub');
 	var Topics = require('ui/Topics');
 	
 	var goBack = Ti.UI.createView({
@@ -49,7 +48,7 @@ function createGoBackButton() {
 		color: 'white' 
 	} ) );
 	goBack.addEventListener( 'click', function(e) {
-		PubSub.publish( Topics.BACK, null );
+		Topics.fireTopicEvent( Topics.BACK, null );
 		e.cancelBubble = true;
 	} );
 	return goBack;

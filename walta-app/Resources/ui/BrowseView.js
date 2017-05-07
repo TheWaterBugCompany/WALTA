@@ -22,12 +22,13 @@
  * Enables the taxonomy endpoints to be browsed.
  *  
  */
+
+var Layout = require('ui/Layout');
+var Topics = require('ui/Topics');
 function createBrowseView(  /* Key */ key ) {
 	
 	var _ = require('lib/underscore')._;
-	var PubSub = require('lib/pubsub');
-	var Layout = require('ui/Layout');
-	var Topics = require('ui/Topics');
+
 	
 	var bvObj = {
 		view: null,			 	// The Ti.UI.View for the user interface
@@ -42,17 +43,22 @@ function createBrowseView(  /* Key */ key ) {
 	var dataSet = [];
 	var taxonList = bvObj.key.findAllTaxons();
 	
+	
 	_.each( taxonList, function( txn ) {
-		dataSet.push( {
-			title: { text: txn.name },
-			template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpecies': 'default' ),
-			properties: { itemId: txn.id }
-		});
-		if ( txn.commonName != '') {
+		if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.name; } ) == -1 ) {
 			dataSet.push( {
-				title: { text: txn.commonName },
+				title: { text: txn.name },
+				template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpecies': 'default' ),
 				properties: { itemId: txn.id }
 			});
+		}
+		if ( txn.commonName != '') {
+			if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.commonName; } ) == -1 ) {
+				dataSet.push( {
+					title: { text: txn.commonName },
+					properties: { itemId: txn.id }
+				});
+			}
 		}
 	});
 		
@@ -83,7 +89,7 @@ function createBrowseView(  /* Key */ key ) {
 			            }
 			        } ],
 			     events: {click: function(e) {
-			     	PubSub.publish( Topics.JUMPTO, e.itemId );
+			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId } );
 			     } }
 			   },
 			'genusOrSpecies': {
@@ -98,7 +104,7 @@ function createBrowseView(  /* Key */ key ) {
 			            }
 			        } ],
 			     events: {click: function(e) {
-			     	PubSub.publish( Topics.JUMPTO, e.itemId );
+			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId } );
 			     }}
 			   } 
 			},

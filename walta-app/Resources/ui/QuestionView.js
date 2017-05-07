@@ -23,11 +23,12 @@
  * datastructure.
  *  
  */
-
+var _ = require('lib/underscore')._;
+var PhotoView = require('ui/PhotoView');
+var Layout = require('ui/Layout');	
+	
 function createQuestionView(  /* Question */ qn ) {
-	var _ = require('lib/underscore')._;
-	var PhotoView = require('ui/PhotoView');
-	var Layout = require('ui/Layout');	
+
 	
 	var qnViewObj = {
 		_views: {},
@@ -42,7 +43,7 @@ function createQuestionView(  /* Question */ qn ) {
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		borderRadius: Layout.BORDER_RADIUS,
-		backgroundColor: '#552F61CC',
+		backgroundColor: Layout.COLOR_LIGHT_BLUE,
 		layout: 'composite',
 		horizontalWrap: false
 	});

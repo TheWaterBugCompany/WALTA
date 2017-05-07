@@ -16,6 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+function appStartUp( privates ) {
+	
+}
+
+function appShutdown( privates ) {
+
+}
+
+function preCreateTopLevelWindow( winArgs, args ) {
+	
+}
+
+function makeAnchorBarStationary( win, anchorBar ) {
+
+}
+
 // Keep track of windows we've opened but not closed
 var windowStack = [];
 
@@ -47,11 +63,11 @@ function transitionWindows( win, effect ) {
 			             // animated instantly in the following code.
 			var a1 = Ti.UI.createAnimation({ 
 				transform: Ti.UI.create2DMatrix().translate( tx2, 0 ),
-				duration: 400
+				duration: 200
 			});
 			var a2 = Ti.UI.createAnimation({
 				transform: Ti.UI.create2DMatrix(),
-				duration: 400
+				duration: 200
 			});
 			win2.animate( a2 ); 
 			win1.close( a1 );
@@ -70,6 +86,10 @@ function convertSystemToDip( n ) {
 	return n;
 }
 
+exports.appStartUp = appStartUp;
+exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;
+exports.makeAnchorBarStationary = makeAnchorBarStationary;
+exports.preCreateTopLevelWindow = preCreateTopLevelWindow;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Titanium.UI.iPhone.ActivityIndicatorStyle.BIG;

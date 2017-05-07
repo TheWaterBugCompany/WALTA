@@ -19,14 +19,13 @@
 /*
  * Bootstrap the application 
  */
-
+var TestUtils = require('util/TestUtils');
 var tests = false; // Set to true to run the test harness
 if ( ! tests ) {
 	var AppWindow = require('control/AppWindow');
     AppWindow.createAppWindow( 'walta' ).start();
 } else {
-	
-	var TestUtils = require('util/TestUtils');
+
 	TestUtils.setManualTests(true);
 	
 	var tests = [  
@@ -34,20 +33,20 @@ if ( ! tests ) {
 		 //"spec/TopLevelWindow_spec",
 		 //"spec/AnchorBar_spec", 
 		 //"spec/AppWindow_spec", 
-		 //"spec/BrowseView_spec", 
-		 "spec/Key_spec", 
-		 "spec/KeyLoaderXml_spec", 
+		 //"spec/BrowseView_spec", relies on XML 
+		 //"spec/Key_spec", 
+		 //"spec/KeyLoaderXml_spec", only runs in nodejs environment now
 		 //"spec/KeyNode_spec", 
-		 //"spec/KeyView_spec", 
+		 "spec/KeyView_spec", 
 		 //"spec/MediaUtil_spec", 
 		 //"spec/MenuView_spec", 
 		 //"spec/PhotoView_spec", 
 		 //"spec/Question_spec", 
 		 //"spec/QuestionView_spec", 
-		 //"spec/SpeedbugView_spec", 
+		 //"spec/SpeedbugView_spec", relies on XML 
 		 //"spec/Taxon_spec",
 		 //"spec/VideoView_spec",
-		 "spec/XmlUtil_spec" 
+		 //"spec/XmlUtil_spec" relies on XML
 		];
 		
 	var tijasmine = require("spec/lib/tijasmine");

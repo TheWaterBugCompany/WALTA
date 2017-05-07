@@ -24,8 +24,10 @@
  */
 
 // Defaults should be visible on even the smallest devices
+exports.COLOR_LIGHT_BLUE = '#cfdbf3';
+
 exports.TOOLBAR_HEIGHT = '42dip';
-exports.TOOLBAR_BUTTON_SIZE =  '32dip';
+exports.TOOLBAR_BUTTON_SIZE =  '40dip';
 
 exports.THUMBNAIL_IMAGE_WIDTH = '100%';
 
@@ -56,19 +58,20 @@ exports.MENU_ITEM_HEIGHT = '23.5%';
 exports.MENU_ITEM_WIDTH = '96%';
 exports.MENU_ITEM_WIDTH_2 = '48%';
 exports.MENU_GAP = '1.2%';
-exports.MENU_LOGO_WIDTH = '58dip';
+exports.MENU_LOGO_WIDTH = '100dip';
 exports.MENU_LOGO_HEIGHT = '48dip';
 exports.MENU_LOGO_LEFT = '22%';
-exports.MENU_LOGO_TOP = '10%';
+exports.MENU_LOGO_TOP = '18dip';
 exports.MENU_ICON_WIDTH = '72dip';
 exports.MENU_ICON_HEIGHT = '72dip';
 exports.MENU_LARGE_BUTTON_HEADING_FONT_SIZE = '23dip';
 exports.MENU_LARGE_BUTTON_TEXT_FONT_SIZE = '11dip';
 
 
-
-exports.MENU_TITLE_FONT_SIZE = '30dip';
+exports.MENU_TITLE_FONT_SIZE_SMALL = '26dip';
+exports.MENU_TITLE_FONT_SIZE = '31dip';
 exports.MENU_LOGO_FONT_SIZE = '9dip';
+exports.MENU_LOGO_FONT_SIZE_SMALL = '8dip';
 
 exports.GOBACK_BUTTON_TEXT_WIDTH = '80dip';
 exports.TOOLBAR_BUTTON_TEXT = '14dip';
@@ -81,12 +84,4 @@ exports.BORDER_RADIUS_BUTTON = 2;
 exports.SPEEDBUG_TILE_WIDTH  = '150dip';
 exports.SPEEDBUG_TILE_HEIGHT = '225dip';
 exports.SPEEDBUG_PRECACHE_TILES = 2;
-
-// Make screen size or platform specific tweaks here
-if ( Ti.Platform.osname === 'android' ) {
-	exports.BORDER_RADIUS = 45;
-	exports.BORDER_RADIUS_MENU_BIG = 25;
-	exports.BORDER_RADIUS_MENU_SMALL = 15;
-	exports.BORDER_RADIUS_BUTTON = 7;
-} 
 

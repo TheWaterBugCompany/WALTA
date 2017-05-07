@@ -628,14 +628,14 @@
 
           </taxon>
 
-          <taxon id="blood_worm" name="Blood worm" taxonomicLevel="alt" commonName="Blood worm" size="14" signalScore="1">
+          <taxon id="Chironomus" name="Chironomus" taxonomicLevel="genus" commonName="Blood worm" size="14" signalScore="1">
 
             <habitat>Wetlands, still water. Common.</habitat>
             <movement>: Coil and uncoil quickly in a figure of eight, sometimes thrashing or using prolegs to drag themselves along the ground.</movement>
             <confusedWith>Nothing, very distinctive.</confusedWith>
 
-            <mediaRef url="blood_worm_01.jpg" />
-            <mediaRef url="blood_worm_m1.mp4" />
+            <mediaRef url="Chironomus_01.jpg" />
+            <mediaRef url="Chironomus_m1.mp4" />
 
           </taxon>
 
@@ -1407,7 +1407,7 @@
 
           <taxon id="oecetis" name="Oecetis" taxonomicLevel="genus">
 
-            <taxon id="attack_caddis_lowlander" name="Attack caddis - lowlander" commonName="Attack caddis - lowlander" size="25" signalScore="8">
+            <taxon id="attack_caddis_lowlander" name="Some Oecetis sp. (Leptoceridae) and Odontoceridae" commonName="Attack caddis - lowlander" size="25" signalScore="8">
 
               <habitat>Cold flowing water, edges, riffles. Common but sparse (as are most predators). </habitat>
               <movement>Fast moving.</movement>
@@ -1417,7 +1417,7 @@
 
             </taxon>
 
-            <taxon id="log_cabin_caddis" name="Log cabin caddis" taxonomicLevel="genus" commonName="Log cabin caddis" size="20" signalScore="5">
+            <taxon id="log_cabin_caddis" name="Oecetis" taxonomicLevel="genus" commonName="Log cabin caddis" size="20" signalScore="5">
 
               <habitat>Wetlands, lakes pools in rivers.</habitat>
               <movement>Hovers with flailing arms, like a helicopter.</movement>
@@ -1606,7 +1606,7 @@
               <confusedWith>Planorbids can look very similar, but Physa acuta has a mottled mantle that is usually visible through the shell.</confusedWith>
 
               <mediaRef url="physa_acuta_01.jpg" />
-              <mediaRef url="physa_acuta_closeup.jpg" />
+              <mediaRef url="Physa_acuta_closeup.jpg" />
 
             </taxon>
 
@@ -2181,7 +2181,7 @@
               <keyNode>
 
                 <question num="1">
-                  <text>Snails are coiled small (less than 10 mm), often jet black with dextrally (see illustration) coiled shell and a black disk (operculum) on the foot used for shutting the shell. This can be hard to see without magnification.</text>
+                  <text>Snails are coiled, small (less than 10mm), often black or dark brown and can occur in large numbers.</text>
                   <mediaRef url="potamopyrgus_02.gif" />
                 </question>
 
@@ -4187,7 +4187,7 @@
                     </question>
 
                     <outcome for="1">
-                      <taxonLink ref="blood_worm" />
+                      <taxonLink ref="Chironomus" />
                     </outcome>
 
                     <outcome for="2">

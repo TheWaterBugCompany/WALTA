@@ -23,9 +23,10 @@
  */
 
 var _ = require('lib/underscore')._;
-var PubSub = require('lib/pubsub');
+
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var PlatformSpecific = require('ui/PlatformSpecific');
 
 // Create a menu button
 function createLargeMenuButton( image, topic, label, text ) {
@@ -58,7 +59,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 		)).extend( { width: Ti.UI.FILL, height: Ti.UI.FILL })
 	]);
 	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topic, null );
+		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
@@ -67,8 +68,9 @@ function createLargeMenuButton( image, topic, label, text ) {
 			width: Layout.MENU_ITEM_WIDTH_2,
 			height: Layout.MENU_ITEM_HEIGHT,
 			borderRadius: Layout.BORDER_RADIUS_MENU_BIG,
-			backgroundColor: '#552F61CC'
+			backgroundColor: Layout.COLOR_LIGHT_BLUE
 		} );
+	
 }
 
 function createSmallMenuButton( topic, label, text ) {
@@ -92,7 +94,7 @@ function createSmallMenuButton( topic, label, text ) {
 				}) 
 		]);
 	btn.addEventListener( 'click', function(e) {
-		PubSub.publish( topic, null );
+		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
 	return _(btn).extend( { 
@@ -127,27 +129,45 @@ function icon( args ) {
 	return cnt;
 }
 
-function createMenuView() {
-	
-	var Layout = require('ui/Layout');
-	
+function createMenuView( ) {
+	var screenWidthDip = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformWidth );
 	var menu = {};
 	menu._views = {};
 	var vws = menu._views;
 	
-	menu.view = Ti.UI.createView({
+	menu.view = Ti.UI.createView({ 
    		width: Ti.UI.FILL,
-   		height: Ti.UI.FILL,
+   		height: Ti.UI.FILL, 
    		background: 'white',
    		layout: 'vertical'
 	});
 	
+	//Ti.API.log("screen width: " + screenWidthDip);
+	var smallScreen = ( screenWidthDip <= 480 ) ;
+	var logoLeftSizeDip = ( smallScreen ? 100 : 150 );
+	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70; 
+	if ( titleWidthDip < 300 ) titleWidthDip = 300;
 	vws.logo = _(wrap( 'horizontal',[
+			
+			_(icon({
+					top: Layout.MENU_LOGO_TOP,
+					width: (smallScreen ? '90dip' : '120dip' ),
+					image: '/images/anm-logo-small.png'
+				})).extend( { width: logoLeftSizeDip + 'dip',
+				height: Ti.UI.FILL } ),
+				
+			Ti.UI.createLabel({
+				width: Ti.UI.SIZE,
+				height: Ti.UI.SIZE,
+				text: 'The Waterbug App',
+				font: { fontFamily: 'Boulder', fontSize: ( smallScreen ? Layout.MENU_TITLE_FONT_SIZE_SMALL : Layout.MENU_TITLE_FONT_SIZE ) },
+				color: 'black'
+			}),
 			_(wrap( 'vertical',[
 				_(icon({
 					top: Layout.MENU_LOGO_TOP,
-					width: Layout.MENU_LOGO_WIDTH,
-					height: Layout.MENU_LOGO_HEIGHT,
+					width: ( smallScreen ? '42dip' : '60dip' ),
+					height: Ti.UI.SIZE,
 					image: '/images/logo.png'
 				})).extend( { height: Ti.UI.SIZE } ),
 				Ti.UI.createLabel({
@@ -155,26 +175,19 @@ function createMenuView() {
 					width: Ti.UI.SIZE,
 					height: Ti.UI.SIZE,
 					text: 'The Waterbug Company',
-					font: { fontFamily: 'Tahoma', fontSize: Layout.MENU_LOGO_FONT_SIZE },
+					textAlign: Titanium.UI.TEXT_ALIGNMENT_CENTER,
+					font: { fontFamily: 'Tahoma', fontSize: ( smallScreen ? Layout.MENU_LOGO_FONT_SIZE_SMALL : Layout.MENU_LOGO_FONT_SIZE ) },
 					color: '#882F61CC'
 				})
 			])).extend( { 
-				width: Layout.MENU_LOGO_LEFT,
+				width: ( smallScreen ? '60dip' : '70dip' ),
 				height: Ti.UI.FILL
 			}),
-			Ti.UI.createLabel({
-				width: Ti.UI.SIZE,
-				height: Ti.UI.SIZE,
-				text: 'The Waterbug App',
-				font: { fontFamily: 'Boulder', fontSize: Layout.MENU_TITLE_FONT_SIZE },
-				color: 'black'
-			}),
-			_(icon({
-					top: Layout.MENU_LOGO_TOP,
-					width: '100dip',
+			icon({
+					top: '18dip',
+					width: ( smallScreen ? '60dip' : '80dip' ),
 					image: '/images/icon-australia.gif'
-				})).extend( { width: Layout.MENU_LOGO_LEFT,
-				height: Ti.UI.FILL } )
+				})
 	])).extend( {
 			left: Layout.MENU_GAP,
 			height: Layout.MENU_ITEM_HEIGHT,
@@ -224,7 +237,7 @@ function createMenuView() {
 	);
 	menu.view.add( wrap( 'horizontal', [  
 		vws.logo, vws.speedbug, vws.keysearch, vws.browse, 
-		vws.gallery, vws.help,  vws.about
+		vws.gallery, vws.help, vws.about
 	]));
 	
 	return menu;

@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 var _ = require('lib/underscore')._;
 var XmlUtils = require('util/XmlUtils');
 var WALTA_KEY_NS = 'http://thewaterbug.net/taxonomy';
@@ -35,7 +36,7 @@ function getText( node, ns, tagName ) {
 	var nds = [];
 	XmlUtils.childElementsByTag( node, ns, tagName, function( nd ) { nds.push(nd); } );
 	if ( nds.length > 0 ) {
-		return nds[0].getTextContent();
+		return nds[0].textContent ;
 	} else {
 		return "";
 	}
@@ -45,20 +46,33 @@ function parseMediaUrls( key, nd ) {
 	var urls = [];
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'mediaRef',
 		function( mr ) {
-			urls.push( key.url + "media/" + mr.getAttribute( 'url' ) );
-			
+			var fs = require('fs');
+			var mediaRef = key.url + "media/" + mr.getAttribute( 'url' );
+			try {
+				fs.accessSync(mediaRef, fs.F_OK );
+			    urls.push( mediaRef );
+			} catch(e) {
+			   console.warn( "Unable to find media reference: '" + mediaRef + "' so not adding media URL" );
+			};
 		});
 	return urls;
 }
 
-function parseTaxon( key, nd ) {
+function parseTaxon( key, nd, scientificName ) {
 	var Taxon = require('logic/Taxon');
+	
 	// Parse this Taxon node
 	var xTxn = expectNode( nd, 'taxon' );
+	
+	if ( scientificName == null )
+	  scientificName = [];
+	scientificName.push( { taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel'), name: XmlUtils.getAttr( xTxn, 'name')});
+	
 	key.attachTaxon(
 		Taxon.createTaxon({
 			id: XmlUtils.getAttr( xTxn, 'id'),
 			name: XmlUtils.getAttr( xTxn, 'name'),
+			scientificName: _(scientificName).clone(),
 			ref: XmlUtils.getAttr( xTxn, 'ref'),
 			commonName: XmlUtils.getAttr( xTxn, 'commonName'),
 			size: parseInt( XmlUtils.getAttr( xTxn, 'size') ),
@@ -75,12 +89,14 @@ function parseTaxon( key, nd ) {
 	// Parse any sub Taxon nodes
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'taxon', 
 		function(nd){
-			parseTaxon( key, nd );
+			parseTaxon( key, nd, _(scientificName).clone() );
 		});
 }
 
 function parseQuestion( key, nd, parentLink ) {
 	var Question = require('logic/Question');
+	
+	
 	// Parse the attributes
 	var num = XmlUtils.getAttr( nd, 'num' );
 	var text = getText( nd, WALTA_KEY_NS, 'text' );
@@ -95,7 +111,7 @@ function parseQuestion( key, nd, parentLink ) {
 	var foundOutcome = false;
 	
 	// Search for outcome for this question num
-	XmlUtils.childElementsByTag( nd.getParentNode(), WALTA_KEY_NS, 'outcome', 
+	XmlUtils.childElementsByTag( nd.parentNode, WALTA_KEY_NS, 'outcome', 
 		function( nd ) {
 			if ( XmlUtils.getAttr( nd, 'for' ) == num ) {
 				
@@ -124,7 +140,7 @@ function parseQuestion( key, nd, parentLink ) {
 				}
 			}	
 		});
-
+    
 	// Create the question node
 	if ( !foundOutcome ) {
 		Ti.API.info("Unable to find outcome for question.text = '" + text + "'");
@@ -167,6 +183,7 @@ function parseKeyNode( key, nd ) {
 		function( nd ) {
 			kn.questions.push( parseQuestion( key, nd, kn ) );
 		});
+	nd = null; // discard native proxies
 	
 	key.attachNode( kn );
 
@@ -209,19 +226,26 @@ function parseSpeedBug( key, nd ) {
 function parseKey( node, path ) {
 	var Key = require('logic/Key');
 	var xKey = expectNode( node, 'key' );
-	return Key.createKey( {
+	var res = Key.createKey( {
 		url: path,
 		name: xKey.getAttribute( 'name' )
 	});
+	return res;
 }
 
 // takes a variable list of path elements like the getFile() API call does
 function loadKey( root ) {
+	console.info('Loading key ' + root + "...");
 	var xml = XmlUtils.loadXml( root + "key.xml"  );
 	var key = parseKey( xml.documentElement, root );
+	
+	console.info('Loading taxon nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
+	console.info('Loading keyNode nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'keyNode', _.partial( parseKeyNode, key ) );
+	console.info('Loading speedBugIndex nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'speedBugIndex', _.partial( parseSpeedBug, key ) );
+	console.info('done.');
 	return key;
 }
 

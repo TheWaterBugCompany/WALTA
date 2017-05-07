@@ -24,13 +24,16 @@
  */
 
 
-
+var TiHacks = require('util/TiHacks');
 function createHtmlView( url ) {
-	var TiHacks = require('util/TiHacks');
+    Ti.API.log("INFO", "opening ''" + url + "' in a WebView");
 	var webObj = {
 		view: null,			 	// The Ti.UI.View for the user interface
 	};
-	webObj.view = Ti.UI.createWebView({ url: TiHacks.convertTiUrlToWebViewUrl( url ) });
+	webObj.view = Ti.UI.createWebView({ url: TiHacks.convertTiUrlToWebViewUrl( url ), enableZoomControls: true  });
+	webObj.view.onCreateWindow = function(e) {
+				return null;
+            };
 	return webObj;
 };
 exports.createHtmlView = createHtmlView;

@@ -26,8 +26,8 @@
 
 var _ = require('lib/underscore')._;
 var Layout = require('ui/Layout');
-
-
+var Topics = require('ui/Topics');
+var PlatformSpecific = require('ui/PlatformSpecific');
 
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
@@ -36,22 +36,23 @@ function createDetailsView(txnViewObj) {
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		borderRadius : Layout.BORDER_RADIUS,
-		backgroundColor : '#552F61CC',
+		backgroundColor : Layout.COLOR_LIGHT_BLUE,
 		layout : 'vertical'
 	});
 
 	
 	vws.details = Ti.UI.createWebView({
-		setScalesPageToFit: true,
+		scalesPageToFit: false,
 		disableBounce: true,
 		enableZoomControls: false,
-		backgroundColor: 'transparent',
+		backgroundColor: Layout.COLOR_LIGHT_BLUE,
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
 		left: Layout.WHITESPACE_GAP,
 		top: Layout.WHITESPACE_GAP,
 		bottom: Layout.WHITESPACE_GAP,
 		right: Layout.WHITESPACE_GAP,
+		willHandleTouches: false,
 		html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no"></meta>'
 			+ '<style>html,body {margin:0;padding:0;color:black;font-family:' + Layout.TEXT_FONT +';font-size:' + Layout.DETAILS_TEXT_SIZE + ';}</style>'
 			+ '</head><body id="details">' + txnViewObj.taxon.asDetailHtml() + '</body></html>'
@@ -130,7 +131,7 @@ function createActionButton(imageUrl, label, onClick) {
 function createActionsView(txnViewObj) {
 
 	var PhotoView = require('ui/PhotoView');
-	var PubSub = require('lib/pubsub');
+
 	var Topics = require('ui/Topics');
 	
 
@@ -168,7 +169,7 @@ function createActionsView(txnViewObj) {
 	if (txnViewObj.taxon.videoUrl) {
 		vws.watchVideo = createActionButton("/images/icon-video.gif", "Watch video", function(e) {
 			// open video player
-			PubSub.publish( Topics.VIDEO, txnViewObj.taxon.videoUrl );
+			Topics.fireTopicEvent( Topics.VIDEO, { url: txnViewObj.taxon.videoUrl } );
 			e.cancelBubble = true;
 		});
 		vws.actionBtns.add(vws.watchVideo.view);
@@ -177,7 +178,8 @@ function createActionsView(txnViewObj) {
 	vws.actions.add(vws.actionBtns);
 };
 
-function createTaxonView(/* Taxon */txn) {
+function createTaxonView(/* Taxon */txn ) {
+	var platformHeight = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformHeight );
 	var GoBackButton = require('ui/GoBackButton');
 	var txnViewObj = {
 		_views : {},
@@ -235,18 +237,10 @@ function createTaxonView(/* Taxon */txn) {
 	txnView.add(vws.subView);
 	
 	txnView.addEventListener('swipe', function(e){
-		var PubSub = require('lib/pubsub');
-		var Topics = require('ui/Topics');
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
-			PubSub.publish( Topics.BACK );
-		} /*else if ( e.direction === 'up' ) {
-			e.cancelBubble = true;
-			PubSub.publish( Topics.SPEEDBUG );
-		} else if ( e.direction === 'down' ) {
-			e.cancelBubble = true;
-			PubSub.publish( Topics.BROWSE );
-		}*/
+			Topics.fireTopicEvent( Topics.BACK );
+		}
 	});
 
 	txnViewObj.view = txnView;

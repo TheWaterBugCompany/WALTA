@@ -16,8 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 var PlatformSpecific = require('ui/PlatformSpecific');
+var _ = require('lib/underscore')._;
 
+var Layout = require('ui/Layout');
+
+var Topics = require('ui/Topics');
+var AnchorBar = require('ui/AnchorBar');
 var _currentWindow;
+
+function closeCurrentWindow() { _currentWindow.win.close(); }
 
 function getCurrentWindow() { return _currentWindow; }
 
@@ -26,43 +33,36 @@ function getCurrentWindow() { return _currentWindow; }
  * as the parameter view. This function wraps the view
  * in a window and adds an AnchorBar to the top. 
  */
+
 function makeTopLevelWindow( args ) {
-	
-	var _ = require('lib/underscore')._;
-	
-	var PubSub = require('lib/pubsub');
-	var Layout = require('ui/Layout');
-	
-	var Topics = require('ui/Topics');
-	var AnchorBar = require('ui/AnchorBar');
-		
-	var oModes;
-	if ( args.portrait ) {
-		oModes = [ Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ]; 
-	} else if ( args.swivel ) {
-		oModes = [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT, Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT ];
-	} else {
-		oModes = [ Ti.UI.LANDSCAPE_LEFT ];
-	}
-	var win = Ti.UI.createWindow( { 
-		navBarHidden: true, // necessary for Android to support orientationModes by forcing heavy weight windows
+
+	var winArgs = { 
+		navBarHidden: true,
 		fullscreen: true,
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		backgroundColor: 'white',
 		layout: 'composite',
-		orientationModes:  oModes
-	});
+		title: args.title	
+	};
+	
+	PlatformSpecific.preCreateTopLevelWindow( winArgs, args );
+	
+	
+	var win = Ti.UI.createWindow( winArgs );
 	
 	var panelHeight = Ti.UI.FILL;
-	
+
 	if ( args.title ) {
+		
 		var anchorBar = AnchorBar.createAnchorBar( args.title );
 		win.add( anchorBar.view );	
-		
+		PlatformSpecific.makeAnchorBarStationary( win, anchorBar );
 		panelHeight = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() );
 		panelHeight = panelHeight - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
 		
+	} else {
+		anchorBar == null;
 	}
 	
 	if ( args.uiObj.openingFromMenu ) {
@@ -70,25 +70,26 @@ function makeTopLevelWindow( args ) {
 	}
 
 	win.add( _(args.uiObj.view).extend({
+		exitOnClose: false,
 		top: 0,
 		width: Ti.UI.FILL,
 		height: panelHeight
 	}) );
 
-	win.addEventListener( 'android:back', function(e) {
+	win.addEventListener( 'androidback', function(e) {
 		e.cancelBubble = true;
-		PubSub.publish( Topics.BACK, null );
+		Topics.fireTopicEvent( Topics.BACK, e );
 	});
 	
 	if ( args.onOpen )
 		win.addEventListener('open', args.onOpen );
 	
 	PlatformSpecific.transitionWindows( win, args.slide );
-
 	_currentWindow = args;
-	return win;
+	_currentWindow.win = win; 
 }
 
 exports.transitionWindows = PlatformSpecific.transitionWindows;
 exports.makeTopLevelWindow = makeTopLevelWindow;
+exports.closeCurrentWindow = closeCurrentWindow;
 exports.getCurrentWindow = getCurrentWindow;

@@ -15,32 +15,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+var _ = require('lib/underscore')._;
 
+var Topics = require('ui/Topics');
+var KeyLoader = require('logic/KeyLoaderJson');
+var TopLevelWindow = require('ui/TopLevelWindow');
+var PlatformSpecific = require('ui/PlatformSpecific');
+var HtmlView = require('ui/HtmlView');
+var BrowseView = require('ui/BrowseView');
+var MenuView = require('ui/MenuView');
+var SpeedbugView = require('ui/SpeedbugView');
+var GalleryWindow = require('ui/GalleryWindow');
+var VideoView = require('ui/VideoView');
+
+				
 /*
  * Module: AppWindow
  * 
  */
 function createAppWindow( keyName, keyPath ) {
 	
-		var _ = require('lib/underscore')._;
-		var PubSub = require('lib/pubsub');
-		var Topics = require('ui/Topics');
-		var KeyLoader = require('logic/KeyLoaderXml');
-		var TopLevelWindow = require('ui/TopLevelWindow');
-		var PlatformSpecific = require('ui/PlatformSpecific');
-		
 		if ( ! keyPath ) {
 			keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
 		}
 		var keyUrl = keyPath + keyName + '/';
-		
+
 		
 		// Private variables that are not to be exposed as API
 		var privates = {
+			/*platformWidth: 0,
+			platformHeight: 0,*/
 			key: null,
-			isMenuWindow: false,
-
-			callbacks: [],
 			
 			loadKey: function( keyUrl ) {
 				this.key = KeyLoader.loadKey(keyUrl);
@@ -49,64 +54,54 @@ function createAppWindow( keyName, keyPath ) {
 				}
 			},
 			
-			menuWindow: function() {
-				var MenuView = require('ui/MenuView');
-				TopLevelWindow.makeTopLevelWindow({
+			menuWindow: function(args) {
+				if ( ! args ) args = {};
+				_(args).extend({
 					name: 'home',
 					uiObj: MenuView.createMenuView(),
 					portrait: false
 				});
-				this.isMenuWindow = true;
+				TopLevelWindow.makeTopLevelWindow(args);
 			},
 			
 			browseWindow: function() {
-				var BrowseView = require('ui/BrowseView');
+
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'browse',
 					title: 'Browse',
 					uiObj: BrowseView.createBrowseView(privates.key),
 					swivel: false
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			speedBugWindow: function() {
-				var SpeedbugView = require('ui/SpeedbugView');
+
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'speedbug',
 					title: 'Speedbug',
-					uiObj: SpeedbugView.createSpeedbugView(privates.key)
+					uiObj: SpeedbugView.createSpeedbugView(privates.key )
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			galleryWindow: function() {
-				var GalleryWindow = require('ui/GalleryWindow');
-				var win = GalleryWindow.createGalleryWindow( 
-					_.first( _.shuffle( privates.key.findAllMedia('photoUrls') ), 20 ),
-					 false );
+				var win = GalleryWindow.createGalleryWindow( _.first( _.shuffle( privates.key.findAllMedia('photoUrls') ), 20 ), false );
 				win.open();
-				this.isMenuWindow = false;
 			},
-			
+
 			helpWindow: function() {
-				var HtmlView = require('ui/HtmlView');
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'help',
 					title: 'Help',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			aboutWindow: function() {
-				var HtmlView = require('ui/HtmlView');
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
 				});	
-				this.isMenuWindow = false;
 			},
 			
 			updateDecisionWindow: function( args ) {
@@ -127,19 +122,18 @@ function createAppWindow( keyName, keyPath ) {
 				}
 				
 				TopLevelWindow.makeTopLevelWindow(args);
-				
-				this.isMenuWindow = false;
 			},
 			
 			subscribe: function( topic, cb ) {
-				this.callbacks.push( PubSub.subscribe( topic, cb )  );
+				Topics.subscribe( topic, cb );
 			},
 			
 			cleanUp: function() {
-				_(this.callbacks).each(function(cb) {
-					PubSub.unsubscribe( cb );
-				});
 				this.key = null;
+			},
+			
+			closeApp: function() {
+				PlatformSpecific.appShutdown( privates );
 			}
 		};
 		
@@ -153,24 +147,30 @@ function createAppWindow( keyName, keyPath ) {
 	    });
 	    
 	    privates.subscribe( Topics.BACK, function() { 
-	    	if ( privates.key.isRoot() ) {
-	    		if ( ! privates.isMenuWindow ) {
+	    	var name = TopLevelWindow.getCurrentWindow().name;
+	    	if ( name === "home" ) {
+	    		privates.closeApp();
+	    	} else if ( name === 'decision' ) {
+	    		if ( privates.key.isRoot() ) {
 	    			privates.menuWindow({ slide: 'left' });
-	    		} 
-	    	} else {
-	    		privates.key.back();
-		    	privates.updateDecisionWindow({ slide: 'left' } );
+				} else {
+	    			privates.key.back();
+		    		privates.updateDecisionWindow({ slide: 'left' } );
+		    	}
+		    } else {
+		    	privates.menuWindow();
 		    }
+		    
 	    });
 	    
-	    privates.subscribe( Topics.FORWARD, function( msg, data ) { 
-	    	privates.key.choose(data);
+	    privates.subscribe( Topics.FORWARD, function( data ) { 
+	    	privates.key.choose( data.index );
 		    privates.updateDecisionWindow({ slide: 'right' });
 	    });
 	    
-	    privates.subscribe( Topics.VIDEO, function( msg, data ) { 
-	    	var VideoView = require('ui/VideoView');
-	    	var vv = VideoView.createVideoView( data );
+	    privates.subscribe( Topics.VIDEO, function( data ) { 
+
+	    	var vv = VideoView.createVideoView( data.url );
 	    	vv.open();
 	    });
 	    
@@ -178,12 +178,10 @@ function createAppWindow( keyName, keyPath ) {
 	    	privates.browseWindow();
 	    });
 	    
-	    privates.subscribe( Topics.JUMPTO, function( msg, id ) { 
-	    	if ( ! _.isUndefined( id ) ) {
-	    		Ti.API.trace("Topics.JUMPTO " + id + " node.");
-	    		privates.key.setCurrentNode(id);
-		    	privates.updateDecisionWindow();
-		    	
+	    privates.subscribe( Topics.JUMPTO, function( data ) { 
+	    	if ( ! _.isUndefined( data.id ) ) {
+	    		privates.key.setCurrentNode(data.id);
+		    	privates.updateDecisionWindow();   	
 		    } else {
 		    	Ti.API.error("Topics.JUMPTO undefined node!");
 		    }
@@ -209,7 +207,14 @@ function createAppWindow( keyName, keyPath ) {
 		_(appWin).extend({
 			start: function() {
 				privates.loadKey( appWin.keyUrl );
-				PubSub.publish( Topics.HOME );
+				/*var pWidth = Titanium.Platform.displayCaps.platformWidth;
+				var pHeight = Titanium.Platform.displayCaps.platformHeight;
+				privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
+				privates.platformHeight = PlatformSpecific.convertSystemToDip( pWidth >= pHeight ? pHeight : pWidth );*/
+				
+				PlatformSpecific.appStartUp( privates );
+				
+				Topics.fireTopicEvent( Topics.HOME );
 			},
 			close: function() {
 				privates.cleanUp();
