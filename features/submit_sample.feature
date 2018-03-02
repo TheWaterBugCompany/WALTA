@@ -1,11 +1,11 @@
 Feature: Upload Samples
 
 I want to calculate the signal score of my sample, enter data about a
-site and submit this sample to the database when internet is available.
+# site and submit this sample to the database when internet is available.
 
 Scenario: Upload a sample
   Given the user just stored a sample
-    and user is logged in with a server upload account
+    And user is logged in with a server upload account
     And the server instrument data has been downloaded
   Then the user selects the habitat type
    And the user is prompted to enter the data for the following site fields:

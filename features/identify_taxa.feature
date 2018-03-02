@@ -8,10 +8,9 @@ Scenario: Identify taxa via ALT key
    Then the initial binary ALT key question is displayed
 
 Scenario: Binary ALT question
-   Given a binary ALT question is diplsayed
+   Given a binary ALT question is displayed
    When I select either the first or second answer
    Then the next node from the ALT key is displayed
-     # this could be either a new question node or a leaf node
 
 Scenario: Leaf node is selected
   Given A leaf node of the ALT is displayed

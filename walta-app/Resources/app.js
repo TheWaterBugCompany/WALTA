@@ -17,7 +17,7 @@
 */
 
 /*
- * Bootstrap the application 
+ * Bootstrap the application
  */
 var TestUtils = require('util/TestUtils');
 var tests = false; // Set to true to run the test harness
@@ -27,32 +27,32 @@ if ( ! tests ) {
 } else {
 
 	TestUtils.setManualTests(true);
-	
-	var tests = [  
-		 //"spec/TaxonView_spec", 
+
+	var tests = [
+		 //"spec/TaxonView_spec",
 		 //"spec/TopLevelWindow_spec",
-		 //"spec/AnchorBar_spec", 
-		 //"spec/AppWindow_spec", 
-		 //"spec/BrowseView_spec", relies on XML 
-		 //"spec/Key_spec", 
+		 //"spec/AnchorBar_spec",
+		 //"spec/AppWindow_spec",
+		 //"spec/BrowseView_spec", relies on XML
+		 //"spec/Key_spec",
 		 //"spec/KeyLoaderXml_spec", only runs in nodejs environment now
-		 //"spec/KeyNode_spec", 
-		 "spec/KeyView_spec", 
-		 //"spec/MediaUtil_spec", 
-		 //"spec/MenuView_spec", 
-		 //"spec/PhotoView_spec", 
-		 //"spec/Question_spec", 
-		 //"spec/QuestionView_spec", 
-		 //"spec/SpeedbugView_spec", relies on XML 
+		 //"spec/KeyNode_spec",
+		 "spec/KeyView_spec",
+		 //"spec/MediaUtil_spec",
+		 //"spec/MenuView_spec",
+		 //"spec/PhotoView_spec",
+		 //"spec/Question_spec",
+		 //"spec/QuestionView_spec",
+		 //"spec/SpeedbugView_spec", relies on XML
 		 //"spec/Taxon_spec",
 		 //"spec/VideoView_spec",
 		 //"spec/XmlUtil_spec" relies on XML
 		];
-		
+
 	var tijasmine = require("spec/lib/tijasmine");
 	var tijasmineConsole  = require("spec/lib/tijasmine-console");
 	var reporter = new tijasmineConsole.ConsoleReporter();
-	
+
 	tijasmine.addReporter( reporter );
 
 	var runTests = function(e) {
@@ -60,7 +60,7 @@ if ( ! tests ) {
 		tijasmine.addSpecModules( tests );
 		tijasmine.execute();
 	};
-	
+
 	var win = Ti.UI.createWindow({
 		title: 'WALTA Test Harness',
 		exitOnClose: true,
@@ -73,5 +73,5 @@ if ( ! tests ) {
 	btn.addEventListener('click',runTests);
 	win.add(btn);
 	win.open();
-	
+
 }

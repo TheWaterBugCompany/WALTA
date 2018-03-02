@@ -18,9 +18,9 @@
 
 /*
  * Module: Layout
- * 
+ *
  * Holds common constants for laying out user interface.
- * 
+ *
  */
 
 // Defaults should be visible on even the smallest devices
@@ -84,4 +84,3 @@ exports.BORDER_RADIUS_BUTTON = 2;
 exports.SPEEDBUG_TILE_WIDTH  = '150dip';
 exports.SPEEDBUG_TILE_HEIGHT = '225dip';
 exports.SPEEDBUG_PRECACHE_TILES = 2;
-

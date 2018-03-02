@@ -18,7 +18,7 @@
 
 /*
  * Module: MenuView
- * 
+ *
  * Provides the main menu screen.
  */
 
@@ -62,7 +62,7 @@ function createLargeMenuButton( image, topic, label, text ) {
 		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
-	return _(btn).extend( { 
+	return _(btn).extend( {
 			top: Layout.MENU_GAP,
 			left: Layout.MENU_GAP,
 			width: Layout.MENU_ITEM_WIDTH_2,
@@ -70,11 +70,11 @@ function createLargeMenuButton( image, topic, label, text ) {
 			borderRadius: Layout.BORDER_RADIUS_MENU_BIG,
 			backgroundColor: Layout.COLOR_LIGHT_BLUE
 		} );
-	
+
 }
 
 function createSmallMenuButton( topic, label, text ) {
-	var btn = 
+	var btn =
 			wrap( 'vertical',[
 				Ti.UI.createLabel({
 					left: Layout.WHITESPACE_GAP,
@@ -91,13 +91,13 @@ function createSmallMenuButton( topic, label, text ) {
 					text: text,
 					font: { fontFamily: 'Tahoma', fontSize: '14dip' },
 					color: 'black'
-				}) 
+				})
 		]);
 	btn.addEventListener( 'click', function(e) {
 		Topics.fireTopicEvent( topic, null );
 		e.cancelBubble = true;
 	});
-	return _(btn).extend( { 
+	return _(btn).extend( {
 			top: Layout.MENU_GAP,
 			left: Layout.MENU_GAP,
 			width: Layout.MENU_ITEM_WIDTH_2,
@@ -119,7 +119,7 @@ function wrap( dir, views ) {
 
 function icon( args ) {
 	var ic = Ti.UI.createImageView(
-		args	
+		args
 	);
 	var cnt = Ti.UI.createView({
 		width: Ti.UI.SIZE,
@@ -134,28 +134,28 @@ function createMenuView( ) {
 	var menu = {};
 	menu._views = {};
 	var vws = menu._views;
-	
-	menu.view = Ti.UI.createView({ 
+
+	menu.view = Ti.UI.createView({
    		width: Ti.UI.FILL,
-   		height: Ti.UI.FILL, 
+   		height: Ti.UI.FILL,
    		background: 'white',
    		layout: 'vertical'
 	});
-	
+
 	//Ti.API.log("screen width: " + screenWidthDip);
 	var smallScreen = ( screenWidthDip <= 480 ) ;
 	var logoLeftSizeDip = ( smallScreen ? 100 : 150 );
-	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70; 
+	var titleWidthDip = screenWidthDip - logoLeftSizeDip - 80 - 60 -70;
 	if ( titleWidthDip < 300 ) titleWidthDip = 300;
 	vws.logo = _(wrap( 'horizontal',[
-			
+
 			_(icon({
 					top: Layout.MENU_LOGO_TOP,
 					width: (smallScreen ? '90dip' : '120dip' ),
 					image: '/images/anm-logo-small.png'
 				})).extend( { width: logoLeftSizeDip + 'dip',
 				height: Ti.UI.FILL } ),
-				
+
 			Ti.UI.createLabel({
 				width: Ti.UI.SIZE,
 				height: Ti.UI.SIZE,
@@ -171,7 +171,6 @@ function createMenuView( ) {
 					image: '/images/logo.png'
 				})).extend( { height: Ti.UI.SIZE } ),
 				Ti.UI.createLabel({
-					top: '1dip',
 					width: Ti.UI.SIZE,
 					height: Ti.UI.SIZE,
 					text: 'The Waterbug Company',
@@ -179,7 +178,7 @@ function createMenuView( ) {
 					font: { fontFamily: 'Tahoma', fontSize: ( smallScreen ? Layout.MENU_LOGO_FONT_SIZE_SMALL : Layout.MENU_LOGO_FONT_SIZE ) },
 					color: '#882F61CC'
 				})
-			])).extend( { 
+			])).extend( {
 				width: ( smallScreen ? '60dip' : '70dip' ),
 				height: Ti.UI.FILL
 			}),
@@ -193,53 +192,53 @@ function createMenuView( ) {
 			height: Layout.MENU_ITEM_HEIGHT,
 			width: Ti.UI.FILL
 		});
-		
-	vws.speedbug = createLargeMenuButton( 
-		'/images/icon-speedbug.gif', 
-		Topics.SPEEDBUG, 
-		'Speedbug', 
-		'Look at silhouettes of bugs to choose the best match.' 
+
+	vws.speedbug = createLargeMenuButton(
+		'/images/icon-speedbug.gif',
+		Topics.SPEEDBUG,
+		'Speedbug',
+		'Look at silhouettes of bugs to choose the best match.'
 	);
-	
-	vws.keysearch = createLargeMenuButton( 
-		'/images/icon-alt-key.gif', 
-		Topics.KEYSEARCH, 
-		'ALT key', 
-		'Questions to help identify your waterbug.' 
+
+	vws.keysearch = createLargeMenuButton(
+		'/images/icon-alt-key.gif',
+		Topics.KEYSEARCH,
+		'ALT key',
+		'Questions to help identify your waterbug.'
 	);
-	
-	vws.browse = createLargeMenuButton( 
-		'/images/icon-browse.gif', 
-		Topics.BROWSE, 
-		'Browse list', 
-		'If you know the name of your bug.' 
+
+	vws.browse = createLargeMenuButton(
+		'/images/icon-browse.gif',
+		Topics.BROWSE,
+		'Browse list',
+		'If you know the name of your bug.'
 	);
-	
-	vws.help = createLargeMenuButton( 
+
+	vws.help = createLargeMenuButton(
 		'/images/icon-help.gif',
-		Topics.HELP, 
-		'Help', 
-		'Info to get you started.' 
+		Topics.HELP,
+		'Help',
+		'Info to get you started.'
 	);
-	
-	vws.gallery = createLargeMenuButton( 
+
+	vws.gallery = createLargeMenuButton(
 		'/images/icon-gallery.gif',
-		Topics.GALLERY, 
-		'Gallery', 
-		'Browse photos & videos.' 
+		Topics.GALLERY,
+		'Gallery',
+		'Browse photos & videos.'
 	);
-	
-	vws.about = createLargeMenuButton( 
+
+	vws.about = createLargeMenuButton(
 		'/images/icon-about.gif',
-		Topics.ABOUT, 
-		'About', 
-		'About the app.' 
+		Topics.ABOUT,
+		'About',
+		'About the app.'
 	);
-	menu.view.add( wrap( 'horizontal', [  
-		vws.logo, vws.speedbug, vws.keysearch, vws.browse, 
+	menu.view.add( wrap( 'horizontal', [
+		vws.logo, vws.speedbug, vws.keysearch, vws.browse,
 		vws.gallery, vws.help, vws.about
 	]));
-	
+
 	return menu;
 };
 
