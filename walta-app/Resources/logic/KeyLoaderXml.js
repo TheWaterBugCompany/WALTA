@@ -25,7 +25,7 @@ var forwardLinks = {};
 
 function expectNode( node, tagName ) {
 	if ( ! XmlUtils.isXmlNode( node, WALTA_KEY_NS, tagName) ) {
-		throw "Expecting a {" + WALTA_KEY_NS + "}" + tagName 
+		throw "Expecting a {" + WALTA_KEY_NS + "}" + tagName
 				+ " but got {" + node.namespaceURI + "}" + node.tagName + " instead?";
 	} else {
 		return node;
@@ -58,63 +58,62 @@ function parseMediaUrls( key, nd ) {
 	return urls;
 }
 
-function parseTaxon( key, nd, scientificName ) {
+function parseTaxon( key, nd, scientificName,parentTaxon ) {
 	var Taxon = require('logic/Taxon');
-	
+
 	// Parse this Taxon node
 	var xTxn = expectNode( nd, 'taxon' );
-	
+
 	if ( scientificName == null )
 	  scientificName = [];
 	scientificName.push( { taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel'), name: XmlUtils.getAttr( xTxn, 'name')});
-	
-	key.attachTaxon(
-		Taxon.createTaxon({
-			id: XmlUtils.getAttr( xTxn, 'id'),
-			name: XmlUtils.getAttr( xTxn, 'name'),
-			scientificName: _(scientificName).clone(),
-			ref: XmlUtils.getAttr( xTxn, 'ref'),
-			commonName: XmlUtils.getAttr( xTxn, 'commonName'),
-			size: parseInt( XmlUtils.getAttr( xTxn, 'size') ),
-			signalScore: parseInt( XmlUtils.getAttr( xTxn, 'signalScore') ),
-			habitat: getText( xTxn, WALTA_KEY_NS, 'habitat'),
-			movement: getText( xTxn, WALTA_KEY_NS, 'movement'),
-			confusedWith: getText( xTxn, WALTA_KEY_NS, 'confusedWith'),
-			mediaUrls: parseMediaUrls( key, xTxn ),
-			taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel'),
-			description: getText( xTxn, WALTA_KEY_NS, 'description')
-		})
-	);
-	
+  var newTaxon = Taxon.createTaxon({
+		id: XmlUtils.getAttr( xTxn, 'id'),
+		name: XmlUtils.getAttr( xTxn, 'name'),
+		scientificName: _(scientificName).clone(),
+		ref: XmlUtils.getAttr( xTxn, 'ref'),
+		commonName: XmlUtils.getAttr( xTxn, 'commonName'),
+		size: parseInt( XmlUtils.getAttr( xTxn, 'size') ),
+		signalScore: parseInt( XmlUtils.getAttr( xTxn, 'signalScore') ),
+		habitat: getText( xTxn, WALTA_KEY_NS, 'habitat'),
+		movement: getText( xTxn, WALTA_KEY_NS, 'movement'),
+		confusedWith: getText( xTxn, WALTA_KEY_NS, 'confusedWith'),
+		mediaUrls: parseMediaUrls( key, xTxn ),
+		taxonomicLevel: XmlUtils.getAttr( xTxn, 'taxonomicLevel'),
+		description: getText( xTxn, WALTA_KEY_NS, 'description'),
+		taxonParent: parentTaxon
+	});
+	key.attachTaxon(newTaxon);
+
 	// Parse any sub Taxon nodes
-	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'taxon', 
+	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'taxon',
 		function(nd){
-			parseTaxon( key, nd, _(scientificName).clone() );
+			parseTaxon( key, nd, _(scientificName).clone(), newTaxon );
 		});
 }
 
 function parseQuestion( key, nd, parentLink ) {
 	var Question = require('logic/Question');
-	
-	
+
+
 	// Parse the attributes
 	var num = XmlUtils.getAttr( nd, 'num' );
 	var text = getText( nd, WALTA_KEY_NS, 'text' );
 	var media = parseMediaUrls( key, nd );
-	
+
 	if ( _.isUndefined( num ) ) {
 		throw "Missing num attribute on question node: " + text;
 	}
-	
+
 	var outcome = undefined;
 	var ref = undefined;
 	var foundOutcome = false;
-	
+
 	// Search for outcome for this question num
-	XmlUtils.childElementsByTag( nd.parentNode, WALTA_KEY_NS, 'outcome', 
+	XmlUtils.childElementsByTag( nd.parentNode, WALTA_KEY_NS, 'outcome',
 		function( nd ) {
 			if ( XmlUtils.getAttr( nd, 'for' ) == num ) {
-				
+
 				var nd2 = XmlUtils.getFirstChildElement( nd );
 				if ( ! _.isNull( nd2 ) ) {
 					// If it is a nested keyNode then recursive descent
@@ -122,7 +121,7 @@ function parseQuestion( key, nd, parentLink ) {
 						foundOutcome = true;
 						outcome = parseKeyNode( key, nd2 );
 						outcome.parentLink = parentLink;
-					} 
+					}
 					// If it is a link then deference if possible, otherwise add to futureLinks
 					// to resolve if the node is found in the future.
 					else if ( nd2.tagName === 'taxonLink' || nd2.tagName === 'keyNodeLink' ) {
@@ -131,16 +130,16 @@ function parseQuestion( key, nd, parentLink ) {
 							throw "Missing ref attribute on outcome for question node: " + text;
 						} else {
 							foundOutcome = true;
-							outcome = ( nd2.tagName === 'taxonLink' ? key.findTaxon( ref ) : key.findNode( ref ) );	
+							outcome = ( nd2.tagName === 'taxonLink' ? key.findTaxon( ref ) : key.findNode( ref ) );
 							if ( ! _.isUndefined(outcome) ) {
 								outcome.parentLink = parentLink;
 							}
-						}			 
-					} 
+						}
+					}
 				}
-			}	
+			}
 		});
-    
+
 	// Create the question node
 	if ( !foundOutcome ) {
 		Ti.API.info("Unable to find outcome for question.text = '" + text + "'");
@@ -149,8 +148,8 @@ function parseQuestion( key, nd, parentLink ) {
 		text: text,
 		mediaUrls: media,
 		outcome: outcome
-	});	
-		
+	});
+
 	// Store a future reference to resolve this node later
 	if ( !_.isUndefined( ref ) && _.isUndefined( outcome ) ) {
 		// There needs to be a list of nodes to allow multiple incoming edges to fix #146 and
@@ -159,7 +158,7 @@ function parseQuestion( key, nd, parentLink ) {
 			forwardLinks[ref] = [];
 		forwardLinks[ref].push({ qNode: qn, pLink: parentLink });
 	}
-	
+
 	return qn;
 }
 
@@ -167,24 +166,24 @@ function parseKeyNode( key, nd ) {
 	var kn;
 
 	var Key = require('logic/Key');
-	
+
 	expectNode( nd, 'keyNode' );
-	
+
 	kn = Key.createKeyNode({
 			id: XmlUtils.getAttr( nd, 'id'),
 			questions: []
 	});
-		
+
 	if ( _.isNull(key.root) ) {
 		key.setRootNode( kn );
 	}
-	
+
 	XmlUtils.childElementsByTag( nd, WALTA_KEY_NS, 'question',
 		function( nd ) {
 			kn.questions.push( parseQuestion( key, nd, kn ) );
 		});
 	nd = null; // discard native proxies
-	
+
 	key.attachNode( kn );
 
 	// Process any forward links that this node resolves
@@ -208,15 +207,15 @@ function parseSpeedBug( key, nd ) {
 		if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugGroup' ) ) {
 			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
-				key.addSpeedbugIndex( 
-					key.url + "media/" + XmlUtils.getAttr( sb, "image" ), 
+				key.addSpeedbugIndex(
+					key.url + "media/" + XmlUtils.getAttr( sb, "image" ),
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sb, "ref" ) );
 			});
 		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
 			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
-			key.addSpeedbugIndex( 
-					key.url + "media/" + XmlUtils.getAttr( sg, "image" ), 
+			key.addSpeedbugIndex(
+					key.url + "media/" + XmlUtils.getAttr( sg, "image" ),
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sg, "ref" ) );
 		}
@@ -238,7 +237,7 @@ function loadKey( root ) {
 	console.info('Loading key ' + root + "...");
 	var xml = XmlUtils.loadXml( root + "key.xml"  );
 	var key = parseKey( xml.documentElement, root );
-	
+
 	console.info('Loading taxon nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
 	console.info('Loading keyNode nodes...');

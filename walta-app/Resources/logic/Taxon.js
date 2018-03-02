@@ -16,43 +16,47 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+var LAST_TAXON_ID_NUM = 0;
+
 function createTaxon( args ) {
 	var _ = require('lib/underscore')._;
 	var MediaUtil = require('logic/MediaUtil');
-	
+
 	var txn = _.defaults( args, {
+		numericId: 'WB'+LAST_TAXON_ID_NUM++,
 		id: null,			// XML based id
 		ref: "",			// Where a linked Taxon should jump to in the key if not a leaf node
 		name: "",			// User readable species scientific name
 		commonName: "",		// Common name for species
 		size: 0,			// Size in mm
 		signalScore: 0,		// The signal score scalar
-		
+
 		habitat: "",		// Description of habitat
 		movement: "",		// Description of how species moves
 		confusedWith: "",   // This species is often confused with
-		
+
 		taxonomicLevel: "", // The taxonomic level
-		
+
 		description: "",    // Textual notes
-		
+
 		mediaUrls: [],		// List of media URLs
-		
-		parentLink: null,		// A link to the parent taxon
-		
+
+		parentLink: null,		// A link to the parent key question
+		taxonParent: null, // a link to parent taxon
+
 		// Returns the full scientific name
 		getScientificNameHtml: function() {
 			var htmlNames = "";
-			
+
 			_.each( this.scientificName, function( n ) {
 				  var styledName = n.name;
 				  if ( n.taxonomicLevel == 'genus' || n.taxonomicLevel == 'species' )
 				     styledName = "<i>" + styledName + "</i>";
 				  htmlNames += n.taxonomicLevel + ": " + styledName + "<br>";
-			}); 
+			});
 			return htmlNames;
 		},
-		
+
 		// Returns the details formatted as HTML
 		asDetailHtml: function() {
 			return String.format(
@@ -73,7 +77,7 @@ function createTaxon( args ) {
 			);
 		}
 	} );
-	
+
 	return _(txn).extend( MediaUtil.resolveMediaUrls( txn.mediaUrls ) );
 
 };
