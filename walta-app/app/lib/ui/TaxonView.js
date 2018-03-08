@@ -31,7 +31,7 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 
 function createDetailsView(txnViewObj) {
 	var vws = txnViewObj._views;
-	
+
 	vws.detailsBox = Ti.UI.createView({
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
@@ -40,7 +40,7 @@ function createDetailsView(txnViewObj) {
 		layout : 'vertical'
 	});
 
-	
+
 	vws.details = Ti.UI.createWebView({
 		scalesPageToFit: false,
 		disableBounce: true,
@@ -60,23 +60,23 @@ function createDetailsView(txnViewObj) {
 
 	vws.detailsBox.add( vws.details );
 
-	/* 
+	/*
 	 * =============== HACK: Workaround for odd WebView resizing bug under iOS ===============
 	 * See Trac issue #72
 	 * Under iOS the WebView seems to mysteriously change zoom level after the initial layout.
-	 * 
-	 * To fix this we set the explicit width of the view on the postlayout event to make sure 
+	 *
+	 * To fix this we set the explicit width of the view on the postlayout event to make sure
 	 * it won't change from the value first calculated.
 	 */
-	
-	if ( Ti.Platform.osname === 'iphone' ) {			
+
+	if ( Ti.Platform.osname === 'iphone' ) {
 		var hackListener = function() {
 			vws.details.width = vws.details.size.width;
 			vws.details.removeEventListener( 'postlayout', hackListener );
 		};
 		vws.details.addEventListener( 'postlayout', hackListener );
 	}
-	
+
 	/*
 	 * ============================== END HACK ================================================
 	 */
@@ -89,10 +89,10 @@ function createActionButton(imageUrl, label, onClick) {
 		_views: {},
 		view: null
 	};
-	
-	
+
+
 	var vws = obj._views;
-	
+
 	vws.btn = Ti.UI.createButton({
 		width : Layout.BUTTON_SIZE,
 		height : Layout.BUTTON_SIZE,
@@ -133,7 +133,7 @@ function createActionsView(txnViewObj) {
 	var PhotoView = require('ui/PhotoView');
 
 	var Topics = require('ui/Topics');
-	
+
 
 	var vws = txnViewObj._views;
 
@@ -158,7 +158,7 @@ function createActionsView(txnViewObj) {
 			top : Layout.WHITESPACE_GAP
 		}));
 
-		vws.openGallery = createActionButton("/images/icon-gallery.gif", "Photo gallery", function(e) {
+		vws.openGallery = createActionButton("/images/icon-gallery.png", "Photo gallery", function(e) {
 			vws.photoView.open();
 			e.cancelBubble = true;
 		});
@@ -167,7 +167,7 @@ function createActionsView(txnViewObj) {
 
 	// If there is a video add the video button
 	if (txnViewObj.taxon.videoUrl) {
-		vws.watchVideo = createActionButton("/images/icon-video.gif", "Watch video", function(e) {
+		vws.watchVideo = createActionButton("/images/icon-video.png", "Watch video", function(e) {
 			// open video player
 			Topics.fireTopicEvent( Topics.VIDEO, { url: txnViewObj.taxon.videoUrl } );
 			e.cancelBubble = true;
@@ -235,7 +235,7 @@ function createTaxonView(/* Taxon */txn ) {
 	}));
 
 	txnView.add(vws.subView);
-	
+
 	txnView.addEventListener('swipe', function(e){
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
@@ -244,7 +244,7 @@ function createTaxonView(/* Taxon */txn ) {
 	});
 
 	txnViewObj.view = txnView;
-	
+
 	_(txnViewObj).extend({
 		openingFromMenu: function( args ) {
 			if ( args.anchorBar ) {

@@ -185,7 +185,7 @@ function createMenuView( ) {
 			icon({
 					top: '18dip',
 					width: ( smallScreen ? '60dip' : '80dip' ),
-					image: '/images/icon-australia.gif'
+					image: '/images/icon-australia.png'
 				})
 	])).extend( {
 			left: Layout.MENU_GAP,
@@ -194,42 +194,42 @@ function createMenuView( ) {
 		});
 
 	vws.speedbug = createLargeMenuButton(
-		'/images/icon-speedbug.gif',
+		'/images/icon-speedbug.png',
 		Topics.SPEEDBUG,
 		'Speedbug',
 		'Look at silhouettes of bugs to choose the best match.'
 	);
 
 	vws.keysearch = createLargeMenuButton(
-		'/images/icon-alt-key.gif',
+		'/images/icon-alt-key.png',
 		Topics.KEYSEARCH,
 		'ALT key',
 		'Questions to help identify your waterbug.'
 	);
 
 	vws.browse = createLargeMenuButton(
-		'/images/icon-browse.gif',
+		'/images/icon-browse.png',
 		Topics.BROWSE,
 		'Browse list',
 		'If you know the name of your bug.'
 	);
 
 	vws.help = createLargeMenuButton(
-		'/images/icon-help.gif',
+		'/images/icon-help.png',
 		Topics.HELP,
 		'Help',
 		'Info to get you started.'
 	);
 
 	vws.gallery = createLargeMenuButton(
-		'/images/icon-gallery.gif',
+		'/images/icon-gallery.png',
 		Topics.GALLERY,
 		'Gallery',
 		'Browse photos & videos.'
 	);
 
 	vws.about = createLargeMenuButton(
-		'/images/icon-about.gif',
+		'/images/icon-about.png',
 		Topics.ABOUT,
 		'About',
 		'About the app.'

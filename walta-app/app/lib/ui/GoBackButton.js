@@ -18,14 +18,14 @@
 
 /*
  * Module: GoBackButton
- * 
+ *
  */
 
 
 function createGoBackButton() {
 	var Layout = require('ui/Layout');
 	var Topics = require('ui/Topics');
-	
+
 	var goBack = Ti.UI.createView({
 		width: Ti.UI.SIZE,
 		height: Ti.UI.SIZE,
@@ -34,18 +34,18 @@ function createGoBackButton() {
 		layout: 'horizontal',
 		horizontalWrap: false
 	});
-	goBack.add( Ti.UI.createImageView( { 
-		width: '25dip', 
-		height: '25dip', 
-		image: '/images/icon-go-back.gif'
+	goBack.add( Ti.UI.createImageView( {
+		width: '25dip',
+		height: '25dip',
+		image: '/images/icon-go-back.png'
 	} ) );
-	goBack.add( Ti.UI.createLabel( { 
-		width: Layout.GOBACK_BUTTON_TEXT_WIDTH, 
-		height: Ti.UI.SIZE, 
+	goBack.add( Ti.UI.createLabel( {
+		width: Layout.GOBACK_BUTTON_TEXT_WIDTH,
+		height: Ti.UI.SIZE,
 		right: '4dip',
-		text: 'No match? Go back', 
+		text: 'No match? Go back',
 		font: { fontFamily: 'Tahoma', fontSize: Layout.TOOLBAR_BUTTON_TEXT },
-		color: 'white' 
+		color: 'white'
 	} ) );
 	goBack.addEventListener( 'click', function(e) {
 		Topics.fireTopicEvent( Topics.BACK, null );

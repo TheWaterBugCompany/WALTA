@@ -15,24 +15,23 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("spec/lib/tijasmine").infect(this);
+require("specs/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 
-var meld = require('lib/meld');
-var VideoView = require('ui/VideoView');
+var _ = require('lib/underscore')._;
 
-describe('VideoView', function() {
-	var vv;
+var KeyLoaderXml = require('logic/KeyLoaderXml');
+var BrowseView = require('ui/BrowseView');
 
-	beforeEach(function() {
-		vv = VideoView.createVideoView( Ti.Filesystem.resourcesDirectory + 'specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4' );
+describe('BrowseView', function() {
+	var bv, win, key;
+	key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
+	bv = BrowseView.createBrowseView( key );
+	win = TestUtils.wrapViewInWindow( bv.view );
+
+	it('should display the browse view window', function() {
+		TestUtils.windowOpenTest( win );
 	});
 
-	afterEach( function() {
-		vv.close();
-	});
-
-	it('should fire the onComplete event when the video has finished playing', function() {
-		TestUtils.waitForMeldEvent( vv, 'onComplete', function() { vv.open(); }, 75000 );
-	});
+	TestUtils.closeWindow( win );
 });
