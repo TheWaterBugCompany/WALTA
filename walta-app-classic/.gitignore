@@ -1,0 +1,9 @@
+build
+build.log
+tmp
+._*
+.DS_Store
+Resources/taxonomy
+manifest
+.fastdev.lock
+.settings
