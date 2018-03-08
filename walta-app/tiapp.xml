@@ -54,13 +54,13 @@
       <!--  <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape"/>
         <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity android:configChanges="screenSize" android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"/>
-        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:launchMode="singleTask" android:name="ti.modules.titanium.media.TiVideoActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
+
       -->
         <activity android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density"/>
         <activity android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:theme="@style/Theme.Titanium.Translucent"/>
         <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"  android:configChanges="screenSize|density"/>
         <provider android:name="org.appcelerator.titanium.io.TiFileProvider" android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true"/>
-
+        <activity android:name="ti.modules.titanium.media.TiVideoActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:launchMode="singleTask"  android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
       </application>
     </manifest>
   </android>

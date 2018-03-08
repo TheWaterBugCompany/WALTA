@@ -15,24 +15,34 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("spec/lib/tijasmine").infect(this);
+require("specs/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 
-var meld = require('lib/meld');
-var VideoView = require('ui/VideoView');
+var TopLevelWindow = require('ui/TopLevelWindow');
 
-describe('VideoView', function() {
-	var vv;
+var Topics = require('ui/Topics');
 
-	beforeEach(function() {
-		vv = VideoView.createVideoView( Ti.Filesystem.resourcesDirectory + 'specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4' );
+describe('TopLevelWindow', function() {
+
+	it('should compose AnchorBar to a view', function() {
+
+
+
+		var testView = Ti.UI.createView(
+			{
+				width: Ti.UI.FILL,
+				height: Ti.UI.FILL,
+				backgroundColor:'red'
+			}
+		);
+
+		var win = TopLevelWindow.makeTopLevelWindow({
+			title: 'TestView',
+			uiObj: { view: testView }
+		});
+
+
 	});
 
-	afterEach( function() {
-		vv.close();
-	});
 
-	it('should fire the onComplete event when the video has finished playing', function() {
-		TestUtils.waitForMeldEvent( vv, 'onComplete', function() { vv.open(); }, 75000 );
-	});
 });

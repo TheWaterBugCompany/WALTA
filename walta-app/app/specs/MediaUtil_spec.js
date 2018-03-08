@@ -15,24 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("spec/lib/tijasmine").infect(this);
-var TestUtils = require('util/TestUtils');
-
-var meld = require('lib/meld');
-var VideoView = require('ui/VideoView');
-
-describe('VideoView', function() {
-	var vv;
-
-	beforeEach(function() {
-		vv = VideoView.createVideoView( Ti.Filesystem.resourcesDirectory + 'specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4' );
-	});
-
-	afterEach( function() {
-		vv.close();
-	});
-
-	it('should fire the onComplete event when the video has finished playing', function() {
-		TestUtils.waitForMeldEvent( vv, 'onComplete', function() { vv.open(); }, 75000 );
+require("specs/lib/tijasmine").infect(this);
+var MediaUtil = require('logic/MediaUtil');
+describe('MediaUtil tests', function() {
+	mediaUrls = [ "resources/simpleKey1/media/amphipoda_01.jpg", "resources/simpleKey1/media/amphipoda_02.jpg", "resources/simpleKey1/media/attack_caddis_01_x264.mp4" ];
+	it('should determine the media type from the extension names', function(){
+		var res = MediaUtil.resolveMediaUrls( mediaUrls );
+		expect(res.photoUrls).toEqual([ "resources/simpleKey1/media/amphipoda_01.jpg", "resources/simpleKey1/media/amphipoda_02.jpg" ] );
+		expect(res.videoUrl).toEqual( "resources/simpleKey1/media/attack_caddis_01_x264.mp4" );
 	});
 });

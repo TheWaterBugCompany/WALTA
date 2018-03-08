@@ -18,11 +18,11 @@
 
 /*
  * Module: AnchorBar
- * 
+ *
  * Creates the anchor bar header section of the user interface. When the buttons are pressed
  * global topics are published to cause the application controller to transition to the correct
  * view.
- * 
+ *
  */
 
 var _ = require('lib/underscore')._;
@@ -39,7 +39,7 @@ function createToolBarButton( image, topic ) {
 		height: Layout.TOOLBAR_BUTTON_SIZE,
 		backgroundImage: image
 	});
-	
+
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {
 			Topics.fireTopicEvent( topic, null );
@@ -51,27 +51,27 @@ function createToolBarButton( image, topic ) {
 
 // Create an anchor bar View
 function createAnchorBar( title ) {
-	
+
 
 	var anchorBar = {
 		title: title
 	};
-	
+
 	anchorBar._views = {};
-	
+
 	anchorBar.view = Ti.UI.createView({
 		transitionName: 'anchorBar',
    		backgroundGradient: {
    			type: 'linear',
    			startPoint: { x: '0%', y: '0%' },
    			endPoint: { x: '0%', y: '100%' },
-   			colors: [ {color: '#2f61cc', offset: 0.0 }, {color: '#7797de', offset: 1.0 } ] 
+   			colors: [ {color: '#2f61cc', offset: 0.0 }, {color: '#7797de', offset: 1.0 } ]
    		},
    		bottom:0,
    		height: Layout.TOOLBAR_HEIGHT,
    		layout: 'composite'
 	});
-	
+
 	anchorBar._views.leftTools = Ti.UI.createView({
 		top: 0,
 		left: 0,
@@ -80,7 +80,7 @@ function createAnchorBar( title ) {
 		layout: 'horizontal',
 		horizontalWrap: false
 	});
-	
+
 	anchorBar._views.title = Ti.UI.createLabel({
 		text: anchorBar.title,
 		font: { font: Layout.HEADING_FONT, fontSize: Layout.HEADING_SIZE },
@@ -90,7 +90,7 @@ function createAnchorBar( title ) {
 		height: Ti.UI.FILL,
 		right: '50%'
 	});
-	
+
 	anchorBar._views.rightTools = Ti.UI.createView({
 		top: '2dip',
 		bottom: '2dip',
@@ -100,27 +100,27 @@ function createAnchorBar( title ) {
 		layout: 'horizontal',
 		horizontalWrap: false
 	});
-	
+
 	// Create tool bar buttons
-	anchorBar._views.home = createToolBarButton( '/images/icon-home-white.gif', Topics.HOME );
-	anchorBar._views.info = createToolBarButton( '/images/icon-about-white.gif', Topics.HELP );
-	
+	anchorBar._views.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME );
+	anchorBar._views.info = createToolBarButton( '/images/icon-about-white.png', Topics.HELP );
+
 	anchorBar._views.leftTools.add( anchorBar._views.home );
 	anchorBar._views.leftTools.add( anchorBar._views.info );
-	
+
 	anchorBar.view.add( anchorBar._views.leftTools );
 	anchorBar.view.add( anchorBar._views.title );
 	anchorBar.view.add( anchorBar._views.rightTools );
-	
+
 	_(anchorBar).extend({
 		addTool: function( view ) {
 			anchorBar._views.rightTools.add( view );
 		}
 	});
-	
-	anchorBar.addTool( createToolBarButton( '/images/icon-speedbug-white.gif', Topics.SPEEDBUG ) );
-	anchorBar.addTool( createToolBarButton( '/images/icon-browse-white.gif', Topics.BROWSE ) );
-	
+
+	anchorBar.addTool( createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ) );
+	anchorBar.addTool( createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ) );
+
 	return anchorBar;
 };
 

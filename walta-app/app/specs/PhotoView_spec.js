@@ -15,24 +15,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("spec/lib/tijasmine").infect(this);
+require("specs/lib/tijasmine").infect(this);
 var TestUtils = require('util/TestUtils');
 
-var meld = require('lib/meld');
-var VideoView = require('ui/VideoView');
+var PhotoView = require('ui/PhotoView');
+var TestUtils = require('util/TestUtils');
 
-describe('VideoView', function() {
-	var vv;
+describe('PhotoView', function() {
+	var win, vw, pv;
 
-	beforeEach(function() {
-		vv = VideoView.createVideoView( Ti.Filesystem.resourcesDirectory + 'specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4' );
+	pv = PhotoView.createPhotoView([
+			'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
+			'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
+			'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
+		]);
+	win = Ti.UI.createWindow( {
+		backgroundColor: 'white',
+		orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] }
+	);
+	vw = Ti.UI.createView( { width: '300dip', height: '250dip' });
+	vw.add( pv.view );
+	win.add( vw );
+
+	it('should display the photo view thumbnail', function() {
+		TestUtils.windowOpenTest( win );
 	});
 
-	afterEach( function() {
-		vv.close();
-	});
-
-	it('should fire the onComplete event when the video has finished playing', function() {
-		TestUtils.waitForMeldEvent( vv, 'onComplete', function() { vv.open(); }, 75000 );
-	});
+	TestUtils.closeWindow( win );
 });
