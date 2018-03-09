@@ -59,4 +59,5 @@ if ( tests ) {
 if (!manualTests) {
 	var AppWindow = require('control/AppWindow');
 	AppWindow.createAppWindow( 'walta' ).start();
+
 }

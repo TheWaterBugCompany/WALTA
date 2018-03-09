@@ -19,3 +19,4 @@
 /*
  * Bootstrap the application
  */
+Alloy.Globals.Layout = require('ui/Layout');

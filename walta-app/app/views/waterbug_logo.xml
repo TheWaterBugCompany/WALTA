@@ -1,0 +1,6 @@
+<Alloy>
+	<View class="container">
+		<ImageView id="logo"/>
+		<Label id="name">The Waterbug Company</Label>
+	</View>
+</Alloy>
