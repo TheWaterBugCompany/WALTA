@@ -24,3 +24,10 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 */
+"Label": {
+	color: '#000',
+	font: {
+		fontFamily: 'sans-serif',
+		fontSize: '10dp'
+	}
+}

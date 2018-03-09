@@ -23,47 +23,49 @@ var TopLevelWindow = require('ui/TopLevelWindow');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var HtmlView = require('ui/HtmlView');
 var BrowseView = require('ui/BrowseView');
-var MenuView = require('ui/MenuView');
+
+
 var SpeedbugView = require('ui/SpeedbugView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
 
-				
+
+
 /*
  * Module: AppWindow
- * 
+ *
  */
 function createAppWindow( keyName, keyPath ) {
-	
+
 		if ( ! keyPath ) {
 			keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
 		}
 		var keyUrl = keyPath + keyName + '/';
 
-		
+
 		// Private variables that are not to be exposed as API
 		var privates = {
 			/*platformWidth: 0,
 			platformHeight: 0,*/
 			key: null,
-			
+
 			loadKey: function( keyUrl ) {
 				this.key = KeyLoader.loadKey(keyUrl);
 				if ( ! this.key ) {
 					throw "Failed to load the key: " + keyUrl;
 				}
 			},
-			
+
 			menuWindow: function(args) {
 				if ( ! args ) args = {};
 				_(args).extend({
 					name: 'home',
-					uiObj: MenuView.createMenuView(),
+					uiObj: { view: Alloy.createController("menu").getView() },
 					portrait: false
 				});
 				TopLevelWindow.makeTopLevelWindow(args);
 			},
-			
+
 			browseWindow: function() {
 
 				TopLevelWindow.makeTopLevelWindow({
@@ -71,18 +73,18 @@ function createAppWindow( keyName, keyPath ) {
 					title: 'Browse',
 					uiObj: BrowseView.createBrowseView(privates.key),
 					swivel: false
-				});	
+				});
 			},
-			
+
 			speedBugWindow: function() {
 
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'speedbug',
 					title: 'Speedbug',
 					uiObj: SpeedbugView.createSpeedbugView(privates.key )
-				});	
+				});
 			},
-			
+
 			galleryWindow: function() {
 				var win = GalleryWindow.createGalleryWindow( _.first( _.shuffle( privates.key.findAllMedia('photoUrls') ), 20 ), false );
 				win.open();
@@ -93,17 +95,17 @@ function createAppWindow( keyName, keyPath ) {
 					name: 'help',
 					title: 'Help',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
-				});	
+				});
 			},
-			
+
 			aboutWindow: function() {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'about',
 					title: 'About',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
-				});	
+				});
 			},
-			
+
 			updateDecisionWindow: function( args ) {
 				var node = this.key.getCurrentNode();
 				if ( ! args ) args = {};
@@ -120,33 +122,33 @@ function createAppWindow( keyName, keyPath ) {
 					var TaxonView = require('ui/TaxonView');
 				 	args.uiObj = TaxonView.createTaxonView( node );
 				}
-				
+
 				TopLevelWindow.makeTopLevelWindow(args);
 			},
-			
+
 			subscribe: function( topic, cb ) {
 				Topics.subscribe( topic, cb );
 			},
-			
+
 			cleanUp: function() {
 				this.key = null;
 			},
-			
+
 			closeApp: function() {
 				PlatformSpecific.appShutdown( privates );
 			}
 		};
-		
+
 		var appWin = { keyUrl: keyUrl };
-		
+
 		privates.subscribe( Topics.HOME, function() { privates.menuWindow();  } );
-		
-	    privates.subscribe( Topics.KEYSEARCH, function() { 
+
+	    privates.subscribe( Topics.KEYSEARCH, function() {
 	    	privates.key.reset();
 	    	privates.updateDecisionWindow({ slide: 'right' });
 	    });
-	    
-	    privates.subscribe( Topics.BACK, function() { 
+
+	    privates.subscribe( Topics.BACK, function() {
 	    	var name = TopLevelWindow.getCurrentWindow().name;
 	    	if ( name === "home" ) {
 	    		privates.closeApp();
@@ -160,49 +162,49 @@ function createAppWindow( keyName, keyPath ) {
 		    } else {
 		    	privates.menuWindow();
 		    }
-		    
+
 	    });
-	    
-	    privates.subscribe( Topics.FORWARD, function( data ) { 
+
+	    privates.subscribe( Topics.FORWARD, function( data ) {
 	    	privates.key.choose( data.index );
 		    privates.updateDecisionWindow({ slide: 'right' });
 	    });
-	    
-	    privates.subscribe( Topics.VIDEO, function( data ) { 
+
+	    privates.subscribe( Topics.VIDEO, function( data ) {
 
 	    	var vv = VideoView.createVideoView( data.url );
 	    	vv.open();
 	    });
-	    
-	    privates.subscribe( Topics.BROWSE, function() { 
+
+	    privates.subscribe( Topics.BROWSE, function() {
 	    	privates.browseWindow();
 	    });
-	    
-	    privates.subscribe( Topics.JUMPTO, function( data ) { 
+
+	    privates.subscribe( Topics.JUMPTO, function( data ) {
 	    	if ( ! _.isUndefined( data.id ) ) {
 	    		privates.key.setCurrentNode(data.id);
-		    	privates.updateDecisionWindow();   	
+		    	privates.updateDecisionWindow();
 		    } else {
 		    	Ti.API.error("Topics.JUMPTO undefined node!");
 		    }
 	    });
-	    
-	    privates.subscribe( Topics.SPEEDBUG, function() { 
+
+	    privates.subscribe( Topics.SPEEDBUG, function() {
 	    	privates.speedBugWindow();
 	    });
-	    
-	    privates.subscribe( Topics.GALLERY, function() { 
+
+	    privates.subscribe( Topics.GALLERY, function() {
 	    	privates.galleryWindow();
 	    });
-	    
-	    privates.subscribe( Topics.HELP, function() { 
+
+	    privates.subscribe( Topics.HELP, function() {
 	    	privates.helpWindow();
 	    });
-	    
-	    privates.subscribe( Topics.ABOUT, function() { 
+
+	    privates.subscribe( Topics.ABOUT, function() {
 	    	privates.aboutWindow();
 	    });
-		
+
 		// Return public API
 		_(appWin).extend({
 			start: function() {
@@ -211,9 +213,9 @@ function createAppWindow( keyName, keyPath ) {
 				var pHeight = Titanium.Platform.displayCaps.platformHeight;
 				privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
 				privates.platformHeight = PlatformSpecific.convertSystemToDip( pWidth >= pHeight ? pHeight : pWidth );*/
-				
+
 				PlatformSpecific.appStartUp( privates );
-				
+
 				Topics.fireTopicEvent( Topics.HOME );
 			},
 			close: function() {
@@ -221,7 +223,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 			getCurrentWindow: TopLevelWindow.getCurrentWindow
 		});
-	
+
 		return appWin;
 }
 
