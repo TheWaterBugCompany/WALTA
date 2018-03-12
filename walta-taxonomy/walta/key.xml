@@ -5,7 +5,7 @@
 
       <taxon id="decapoda" name="Decapoda" ref="k_crustacea" taxonomicLevel="class">
 
-        <taxon id="parastacidae" name="Parastacidae" commonName="freshwater crayfish or yabbies"  taxonomicLevel="family" size="300" signalScore="4">
+        <taxon id="parastacidae" name="Parastacidae" commonName="freshwater crayfish or yabbies"  taxonomicLevel="family" size="300" signalScore="4" nextLink="????">
 
           <habitat>Crayfish in rivers (with spines) yabbies in wetlands/pools (more leathery).</habitat>
           <movement>walking, with sudden flips when disturbed. </movement>
@@ -13,9 +13,11 @@
             Nothing, very distinctive. We have left crayfish and yabbies grouped together
             because they mostly turn up as juveniles in samples and are difficult to separate when young.
           </confusedWith>
-		 
+
           <mediaRef url="parastacide_01.jpg" />
           <mediaRef url="parastacide_02.jpg" />
+
+
 
         </taxon>
 
@@ -30,7 +32,7 @@
         </taxon>
 
         <taxon id="palaemonidae" name="Palaemonidae" ref="macrobrachium" taxonomicLevel="family">
-        
+
           <taxon id="macrobrachium" name="Macrobrachium" taxonomicLevel="genus" size="50" commonName="freshwater prawn" signalScore="4">
             <habitat>Lowland rivers on wood or amongst water weeds.</habitat>
             <movement>Walking, flips in shallow water.</movement>
@@ -82,7 +84,7 @@
         <mediaRef url="amphipoda_01.jpg" />
         <mediaRef url="amphipoda_02.jpg" />
         <mediaRef url="amphipoda_03.jpg" />
-        
+
       </taxon>
 
       <taxon id="anostraca" name="Anostraca" commonName="fairy shrimp" taxonomicLevel="order" size="25" signalScore="1">
@@ -97,8 +99,8 @@
         <mediaRef url="anostraca_02.jpg" />
         <mediaRef url="anostraca_03.jpg" />
         <mediaRef url="anostraca_m1.mp4" />
-        
-        
+
+
 
       </taxon>
 
@@ -120,7 +122,7 @@
 
         <mediaRef url="notostraca_01.jpg" />
  		<mediaRef url="notostraca_m1.mp4" />
- 		
+
       </taxon>
 
     </taxon>
@@ -341,7 +343,7 @@
 
             <mediaRef url="two-tailed_tiger_larvae_01.jpg" />
  			<mediaRef url="dytiscidae_larva_m1.mp4" />
- 			
+
           </taxon>
 
           <taxon id="nosey_tiger_larvae" name="nosey tiger larvae" commonName="nosey tigers larvae" taxonomicLevel="alt" size="12" signalScore="2">
@@ -380,7 +382,7 @@
          </taxon>
         </taxon>
         <taxon id="elmidae" name="Elmidae" ref="elmidae_adult" taxonomicLevel="family">
-        
+
           <taxon id="elmidae_adult" name="Elmidae adult" commonName="Riffle beetle" taxonomicLevel="family" size="6" signalScore="7">
 
             <habitat>Cool flowing waters (riffles), often found on wood, common but hard to see. </habitat>
@@ -413,7 +415,7 @@
             <mediaRef url="gyrinidae_adult_01.jpg" />
             <mediaRef url="gyrinidae_adult_m1.mp4" />
             <mediaRef url="gyrinidae_adult_m2.mp4" />
-            
+
 
           </taxon>
 
@@ -796,7 +798,7 @@
             <confusedWith>Nothing, very distinctive in robustness and movement. Look for spiky V shaped gills for confirmation.</confusedWith>
 
             <mediaRef url="coloburiscoides_01.jpg" />
-        
+
             <mediaRef url="coloburiscoides_m1.mp4" />
 
           </taxon>
@@ -812,7 +814,7 @@
             <confusedWith>Other leptophlebs, but the banded legs and fluffy gills are VERY distinctive.</confusedWith>
 
             <mediaRef url="atalophlebia_01.jpg" />
-            <mediaRef url="atalophlebia_m1.mp4" />            
+            <mediaRef url="atalophlebia_m1.mp4" />
 
           </taxon>
 
@@ -1015,8 +1017,8 @@
 
             <mediaRef url="enithares_01.jpg" />
             <mediaRef url="enithares_m1.mp4" />
-           
-            
+
+
 
           </taxon>
 
@@ -1055,8 +1057,8 @@
 
           <mediaRef url="aeshnidae_01.jpg" />
           <mediaRef url="aeshnidae_m1.mp4" />
-          
-          
+
+
 
         </taxon>
 
@@ -1092,7 +1094,7 @@
 
       </taxon>
         <taxon id="zygoptera" name="Zygoptera" ref="k_zygoptera" taxonomicLevel="suborder">
-      
+
         <taxon id="diphlebiidae" name="Diphlebiidae" taxonomicLevel="family" commonName="Diphlebiidae" size="30" signalScore="2">
 
           <habitat>Wetlands, or slow moving water in rivers.</habitat>
@@ -1122,7 +1124,7 @@
 
           <mediaRef url="lestidae_and_coenagrionidae_01.jpg" />
           <mediaRef url="zygoptera_m1.mp4" />
-          
+
 
         </taxon>
 
@@ -1228,7 +1230,7 @@
 
             <mediaRef url="gripops_or_fluffy_bums_01.jpg" />
 			<mediaRef url="gripopterygidae_m1.mp4" />
-			
+
           </taxon>
 
         </taxon>
@@ -1327,7 +1329,7 @@
 
             <mediaRef url="agapetus_01.jpg" />
 	        <mediaRef url="glossosomatidae_m1.mp4" />
-			
+
 
           </taxon>
 
@@ -1356,7 +1358,7 @@
           <mediaRef url="hydrobiosidae_01.jpg" />
           <mediaRef url="hydrobiosidae_m1.mp4" />
           <mediaRef url="hydrobiosidae_m2.mp4" />
-          
+
 
         </taxon>
 
@@ -1574,7 +1576,7 @@
 
 
 
-      
+
 
         <taxon id="ancylidae" name="Ancylidae" taxonomicLevel="family" commonName="Freshwater limpets" size="4" signalScore="4">
 
@@ -1781,7 +1783,7 @@
                 <outcome for="2">
                   <!-- Node 5 -->
                   <keyNode id="k_hexapoda">
-                  
+
                     <question num="1">
                       <text>with wing covers</text>
                       <mediaRef url="wingcovers.gif" />
@@ -1887,7 +1889,7 @@
                                 </outcome>
 
                                 <outcome for="2">
-                                
+
                                   <!-- Node 11 -->
                                   <keyNode id="k_larval">
 
@@ -2489,13 +2491,13 @@
             <question num="1">
               <text>Beetles move with all 3 or at least 2 pairs of legs. Legs move alternately. </text>
               <mediaRef url="elmidae_m1.mp4"/>
-              
+
             </question>
 
             <question num="2">
               <text>Beetles appear to swim smoothly with only the rear pair of legs, legs move in unison; motion is like breast stroke. Rear swimming legs held upwards when beetle rests.</text>
               <mediaRef url="lancetes_m1.mp4"/>
-              
+
 
             </question>
 
@@ -4261,20 +4263,20 @@
       </keyNode>
     </outcome>
   </keyNode>
-  
+
   <!-- speedbug data  -->
   <speedBugIndex>
         <speedBugGroup ref="k_bivalvia">
-     
+
         <speedBugLink image="speedbug/hyriidae_b.png" ref="hyriidae"/>
         <speedBugLink image="speedbug/sphaeriidae_and_corbiculidae_b.png" ref="sphaeriidae_and_corbiculidae"/>
         </speedBugGroup>
-        
+
         <speedBugGroup ref="k_gastropoda">
 		<speedBugLink image="speedbug/potamopyrgus_antipodarum_b.png" ref="potamopyrgus_antipodarum"/>
         <speedBugLink image="speedbug/snails_b.png" ref="k_gastropoda"/>
 		</speedBugGroup>
-		
+
 		<speedBugLink image="speedbug/turbellaria_b.png" ref="turbellaria"/>
 
     <speedBugGroup ref="k_worm_like">
@@ -4295,8 +4297,8 @@
 <speedBugLink image="speedbug/psephenidae_b.png" ref="sclerocyphon"/>
 
     <speedBugGroup ref="k_crunchy_beetle_larvae">
-<speedBugLink image="speedbug/elmidae_b.png" ref="elmidae_larvae"/> 
-<speedBugLink image="speedbug/ptilodactylidae_b.png" ref="byrrocryptus"/> 
+<speedBugLink image="speedbug/elmidae_b.png" ref="elmidae_larvae"/>
+<speedBugLink image="speedbug/ptilodactylidae_b.png" ref="byrrocryptus"/>
       </speedBugGroup>
 
     <speedBugGroup ref="k_larval">
@@ -4318,7 +4320,7 @@
 <speedBugLink image="speedbug/philorheithridae_b.png" ref="philorheithridae"/>
 <speedBugLink image="speedbug/triplectides_b.png" ref="triplectides"/>
       </speedBugGroup>
-      
+
     <speedBugGroup ref="k_notonectidae">
 <speedBugLink image="speedbug/anisops_b.png" ref="anisops"/>
 <speedBugLink image="speedbug/enithares_b2.png" ref="enithares"/>
@@ -4369,7 +4371,7 @@
 
 <speedBugLink image="speedbug/hydracarina_b.png" ref="acarina"/>
 <speedBugLink image="speedbug/pisauridae_b.png" ref="pisauridae_and_lycosidae"/>
- 
+
     <speedBugGroup ref="k_crustacea">
 <speedBugLink image="speedbug/hymenosomatidae_b.png" ref="hymenosomatidae"/>
 <speedBugLink image="speedbug/atyidae_b.png" ref="k_shrimpandprawns"/>
@@ -4379,7 +4381,7 @@
 <speedBugLink image="speedbug/anostraca_b.png" ref="anostraca"/>
       </speedBugGroup>
 
-      
+
   </speedBugIndex>
-  
+
 </key>

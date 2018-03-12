@@ -1,0 +1,11 @@
+<Alloy>
+	<View class="container" layout="vertical">
+			<View id="header">
+				<ImageView id="logoLeft"/>
+				<Label id="title">The Waterbug App</Label>
+				<Require src="waterbug_logo" type="view"/>
+			</View>
+			<View id="content" layout="horizontal">
+			</View>
+	</View>
+</Alloy>

@@ -1,0 +1,18 @@
+".container": {
+  width: "60dp",
+  right: "8dp"
+}
+"#logo": {
+  top: "8dp",
+  width: "44dp",
+  image: "/images/logo.png"
+}
+
+"#name": {
+  bottom: "0",
+  textAlign: Titanium.UI.TEXT_ALIGNMENT_CENTER,
+  font: {
+    fontFamily: "Tahoma",
+    fontSize: "8dp"
+  }
+}
