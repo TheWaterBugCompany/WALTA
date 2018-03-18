@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ti:app
+<ti:app 
   xmlns:ti="http://ti.appcelerator.org">
   <id>net.thewaterbug.waterbug</id>
   <name>Waterbug</name>
@@ -11,7 +11,7 @@
   <icon>appicon.png</icon>
   <fullscreen>true</fullscreen>
   <navbar-hidden>true</navbar-hidden>
-  <guid>a0614a93-fef3-48d4-9666-5c0302217fe4</guid>
+  <guid>7fbf4ed2-0832-4ba5-9999-5c0302217fe4</guid>
   <property name="run-on-main-thread" type="bool">true</property>
   <property name="ti.ui.defaultunit" type="string">dp</property>
   <ios>
@@ -40,7 +40,7 @@
       </dict>
     </plist>
   </ios>
-  <android
+  <android 
     xmlns:android="http://schemas.android.com/apk/res/android">
     <manifest android:versionCode="1" android:versionName="1.2.2.8">
       <!--<supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:xlargeScreens="true"/>-->
@@ -51,16 +51,14 @@
             <category android:name="android.intent.category.LAUNCHER"/>
           </intent-filter>
         </activity>
-      <!--  <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape"/>
-        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Translucent"/>
-        <activity android:configChanges="screenSize" android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"/>
+        <!--  <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape"/><activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Translucent"/><activity android:configChanges="screenSize" android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"/>
 
       -->
         <activity android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density"/>
         <activity android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:theme="@style/Theme.Titanium.Translucent"/>
-        <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"  android:configChanges="screenSize|density"/>
+        <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape" android:configChanges="screenSize|density"/>
         <provider android:name="org.appcelerator.titanium.io.TiFileProvider" android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true"/>
-        <activity android:name="ti.modules.titanium.media.TiVideoActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:launchMode="singleTask"  android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
+        <activity android:name="ti.modules.titanium.media.TiVideoActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:launchMode="singleTask" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
       </application>
     </manifest>
   </android>
@@ -79,7 +77,7 @@
   <plugins>
     <plugin version="1.0">ti.alloy</plugin>
   </plugins>
-  <property name="appc-app-id" type="string">5a98c96242e2dd6ef551b6ea</property>
+  <property name="appc-app-id" type="string">5aade2bb73c34925dddbc1ab</property>
   <property name="acs-authbase-url-development" type="string">https://secure-identity.cloud.appcelerator.com</property>
   <property name="acs-base-url-development" type="string">https://api.cloud.appcelerator.com</property>
   <property name="acs-oauth-secret-development" type="string">W1lC4wV6L352lgkZu2MWlGrYS1ERPKz0</property>
