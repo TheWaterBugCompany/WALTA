@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/tijasmine").infect(this);
+require("specs/lib/ti-mocha").infect(this);
 var Taxon = require('logic/Taxon');
 describe('Taxon tests', function() {
 	var txn = Taxon.createTaxon({
