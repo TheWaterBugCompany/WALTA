@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/tijasmine").infect(this);
-var TestUtils = require('util/TestUtils');
+require("specs/lib/ti-mocha");
+var TestUtils = require('specs/util/TestUtils');
 
 var AnchorBar = require('ui/AnchorBar');
 var Topics = require('ui/Topics');
