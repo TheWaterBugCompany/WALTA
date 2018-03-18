@@ -3,7 +3,7 @@
 			<View id="header">
 				<ImageView id="logoLeft"/>
 				<Label id="title">The Waterbug App</Label>
-				<Require src="waterbug_logo" type="view"/>
+				<Require src="WaterbugLogo" type="view"/>
 			</View>
 			<View id="content" layout="horizontal">
 			</View>

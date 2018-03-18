@@ -15,43 +15,42 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha").infect(this);
-var TestUtils = require('util/TestUtils');
-var MenuView = require('ui/MenuView');
+require("specs/lib/ti-mocha");
+var TestUtils = require('specs/util/TestUtils');
 var Topics = require('ui/Topics');
-
+var Alloy = require('alloy');
 describe('MenuView', function() {
 	var mnu, win;
 
-	mnu = MenuView.createMenuView();
-	win = TestUtils.wrapViewInWindow( mnu.view );
+	mnu = Alloy.createController("Menu");
+	win = TestUtils.wrapViewInWindow( mnu.getView() );
 
-	it('should display the menu view', function() {
-		TestUtils.windowOpenTest( win );
+	it('should display the menu view', function(done) {
+		TestUtils.windowOpenTest( win, done );
 	});
 
-	it('should fire the KEYSEARCH topic', function() {
-		TestUtils.actionFiresTopicTest( mnu._views.keysearch, 'click', Topics.KEYSEARCH );
+	it('should fire the KEYSEARCH topic', function(done) {
+		TestUtils.actionFiresTopicTest( mnu.keysearch.getView(), 'click', Topics.KEYSEARCH, done );
 	});
 
-	it('should fire the SPEEDBUG topic', function() {
-		TestUtils.actionFiresTopicTest( mnu._views.speedbug, 'click', Topics.SPEEDBUG );
+	it('should fire the SPEEDBUG topic', function(done) {
+		TestUtils.actionFiresTopicTest( mnu.speedbug.getView(), 'click', Topics.SPEEDBUG, done );
 	});
 
-	it('should fire the BROWSE topic', function() {
-		TestUtils.actionFiresTopicTest( mnu._views.browse, 'click', Topics.BROWSE );
+	it('should fire the BROWSE topic', function(done) {
+		TestUtils.actionFiresTopicTest( mnu.browse.getView(), 'click', Topics.BROWSE, done );
 	});
 
-	it('should fire the HELP topic', function() {
-		TestUtils.actionFiresTopicTest( mnu._views.help, 'click', Topics.HELP );
+	it('should fire the HELP topic', function(done) {
+		TestUtils.actionFiresTopicTest( mnu.help.getView(), 'click', Topics.HELP, done );
 	});
 
-	it('should fire the GALLERY topic', function() {
-		TestUtils.actionFiresTopicTest( mnu._views.gallery, 'click', Topics.GALLERY );
+	it('should fire the GALLERY topic', function(done) {
+		TestUtils.actionFiresTopicTest( mnu.gallery.getView(), 'click', Topics.GALLERY, done );
 	});
 
-	it('should fire the ABOUT topic', function() {
-		TestUtils.actionFiresTopicTest( mnu._views.about, 'click', Topics.ABOUT );
+	it('should fire the ABOUT topic', function(done) {
+		TestUtils.actionFiresTopicTest( mnu.about.getView(), 'click', Topics.ABOUT, done );
 	});
 
 	TestUtils.closeWindow( win );

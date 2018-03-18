@@ -18,7 +18,7 @@
 
 /*
  * Some utility functions to help running tests.
- * 
+ *
  */
 
 var meld = require('lib/meld');
@@ -30,79 +30,56 @@ var manualTests = false;
 function setManualTests( b ) { manualTests = b; }
 
 function isManualTests() { return manualTests; }
-		
-function waitForAsyncCallback( regEvent, timeout ) {
-	if ( ! timeout ) timeout = 750;
-	
-	var ctx = { fired: false };	// Since JS is pass by value we need an object to pass the fired by reference
-	runs(function() { regEvent(ctx); });
-	
-	waitsFor(function() {
-		return ctx.fired;
-	}, "waiting for callback", timeout );
-	
-	runs(function() {
-		expect( ctx.fired, true );
-	});
+
+function waitForDomEvent( obj, evtName, fireEvent, done ) {
+		obj.addEventListener( evtName, function() { done() } );
+		fireEvent();
 }
-		
-function waitForDomEvent( obj, evtName, fireEvent, timeout ) {
-	waitForAsyncCallback( function(ctx) { 
-		obj.addEventListener( evtName, function() { ctx.fired = true; } );
-		fireEvent(); 
-	}, timeout ); 
+
+function waitForMeldEvent( obj, evtName, fireEvent, done ) {
+		meld.on( obj, evtName, function() { done() } );
+		fireEvent();
 }
-		
-function waitForMeldEvent( obj, evtName, fireEvent, timeout ) {
-	waitForAsyncCallback( function(ctx) { 
-		meld.on( obj, evtName, function() { ctx.fired = true; } );
-		fireEvent(); 
-	}, timeout ); 
-}
-		
-function waitForTopic( topicName, fireEvent, timeout, result ) {
-	waitForAsyncCallback( function(ctx) { 
-		Topics.subscribe( topicName, function( data ) { 
-			ctx.fired = true; 
+
+function waitForTopic( topicName, fireEvent, done, result ) {
+		Topics.subscribe( topicName, function( data ) {
 			result.data = data;
+			done();
 		} );
-		fireEvent(); 
-	}, timeout ); 
+		fireEvent();
 }
-		
+
 function wrapViewInWindow( view ) {
 	var win = Ti.UI.createWindow( { backgroundColor: 'white' } );
 	win.add( view );
 	return win;
 }
-		
-function windowOpenTest( win, timeout ) {
-	if ( ! timeout ) timeout = 3000;
-	waitForDomEvent( win, 'open', function(){ win.open(); }, timeout ); 
+
+function windowOpenTest( win, done ) {
+	win.addEventListener('open' , function() { done() } );
+	win.open();
 }
-		
-function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, timeout ) {
+
+function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done ) {
 	waitForMeldEvent( evtObj, evtName, function() {
 		actionObj.fireEvent( actionEvtName );
-	}, timeout);
+	}, done);
 }
-		
-function actionFiresTopicTest( actionObj, actionEvtName, topicName, timeout ) {
+
+function actionFiresTopicTest( actionObj, actionEvtName, topicName, done ) {
 	var result = {};
 	waitForTopic( topicName, function() {
 		actionObj.fireEvent( actionEvtName );
-	}, timeout, result);
+	}, done, result);
 	return result;
 }
-		
+
 function ifNotManual( cb ) {
-	runs( function() {
-		if ( ! isManualTests() ) {
-			cb();
-		}
-	});
+	if ( ! isManualTests() ) {
+		cb();
+	}
 }
-		
+
 function closeWindow( win ) {
 	ifNotManual(function() {
 			win.close();
@@ -117,7 +94,5 @@ exports.wrapViewInWindow = wrapViewInWindow;
 exports.waitForTopic = waitForTopic;
 exports.waitForMeldEvent = waitForMeldEvent;
 exports.waitForDomEvent = waitForDomEvent;
-exports.waitForAsyncCallback = waitForAsyncCallback;
 exports.isManualTests = isManualTests;
 exports.setManualTests = setManualTests;
-exports.waitForAsyncCallback = waitForAsyncCallback;
