@@ -1,4 +1,5 @@
 <Alloy>
-	<View class="container">
-	</View>
+	<ScrollView class="container" height='278dp' top=0 layout='horizontal' scrollType="horizontal" contentWidth="auto">
+		<ImageView id="endcap" class="sample_tray_end" left=0 top=0/>
+	</ScrollView>
 </Alloy>
