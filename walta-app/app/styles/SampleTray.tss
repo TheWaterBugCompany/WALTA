@@ -1,4 +1,9 @@
 
 ".container" : {
-  backgroundColor: "#0f0"
+  backgroundColor: "#fff"
+}
+
+".sample_tray_end" : {
+    image: "/images/endcap_320.png",
+    height: Ti.UI.FILL
 }
