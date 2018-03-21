@@ -18,12 +18,12 @@
 
 /*
  * XmlUtils
- * 
+ *
  * Some convenience functions to facilitate XML DOM parsing.
  */
 
 
-var _ = require('lib/underscore')._;
+var _ = require('underscore')._;
 
 function loadXml( path ) {
 	var DOMParser = require('xmldom').DOMParser;

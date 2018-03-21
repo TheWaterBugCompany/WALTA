@@ -1,6 +1,6 @@
 
 ".container" : {
-  backgroundColor: "#fff"
+  backgroundColor: "#aaa"
 }
 
 ".sample_tray_end" : {

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var _ = require('lib/underscore')._;
-var XmlUtils = require('util/XmlUtils');
+var _ = require('underscore');
+var XmlUtils = require('../util/XmlUtils');
 var WALTA_KEY_NS = 'http://thewaterbug.net/taxonomy';
 
 // A list of nodes that haven't been seen yet and need to be linked
@@ -59,7 +59,7 @@ function parseMediaUrls( key, nd ) {
 }
 
 function parseTaxon( key, nd, scientificName,parentTaxon ) {
-	var Taxon = require('logic/Taxon');
+	var Taxon = require('./Taxon');
 
 	// Parse this Taxon node
 	var xTxn = expectNode( nd, 'taxon' );
@@ -93,7 +93,7 @@ function parseTaxon( key, nd, scientificName,parentTaxon ) {
 }
 
 function parseQuestion( key, nd, parentLink ) {
-	var Question = require('logic/Question');
+	var Question = require('./Question');
 
 
 	// Parse the attributes
@@ -165,7 +165,7 @@ function parseQuestion( key, nd, parentLink ) {
 function parseKeyNode( key, nd ) {
 	var kn;
 
-	var Key = require('logic/Key');
+	var Key = require('./Key');
 
 	expectNode( nd, 'keyNode' );
 
@@ -202,19 +202,20 @@ function parseKeyNode( key, nd ) {
 }
 
 function parseSpeedBug( key, nd ) {
+	var speedbug = key.getSpeedbugIndex();
 	expectNode( nd, 'speedBugIndex' );
 	XmlUtils.childElements( nd, function( sg ) {
 		if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugGroup' ) ) {
-			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
+			speedbug.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
-				key.addSpeedbugIndex(
+				speedbug.addSpeedbugIndex(
 					key.url + "media/" + XmlUtils.getAttr( sb, "image" ),
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sb, "ref" ) );
 			});
 		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
-			key.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
-			key.addSpeedbugIndex(
+			speedbug.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
+			speedbug.addSpeedbugIndex(
 					key.url + "media/" + XmlUtils.getAttr( sg, "image" ),
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sg, "ref" ) );
@@ -223,7 +224,7 @@ function parseSpeedBug( key, nd ) {
 }
 
 function parseKey( node, path ) {
-	var Key = require('logic/Key');
+	var Key = require('./Key');
 	var xKey = expectNode( node, 'key' );
 	var res = Key.createKey( {
 		url: path,
@@ -237,7 +238,6 @@ function loadKey( root ) {
 	console.info('Loading key ' + root + "...");
 	var xml = XmlUtils.loadXml( root + "key.xml"  );
 	var key = parseKey( xml.documentElement, root );
-
 	console.info('Loading taxon nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
 	console.info('Loading keyNode nodes...');
@@ -245,6 +245,8 @@ function loadKey( root ) {
 	console.info('Loading speedBugIndex nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'speedBugIndex', _.partial( parseSpeedBug, key ) );
 	console.info('done.');
+
+
 	return key;
 }
 

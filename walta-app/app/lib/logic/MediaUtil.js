@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var _ = require('lib/underscore')._;
+var _ = require('underscore')._;
 
 function isPhotoUrl( url ) {
 	return _hasExtension(url, [ "jpg", "png", "gif", "jpeg" ] );
@@ -32,14 +32,14 @@ function _hasExtension( path, exts ) {
 
 function resolveMediaUrls( mediaUrls ) {
 	return {
-		photoUrls: _(mediaUrls).filter( 
-			function(url) { 
-				return isPhotoUrl(url); 
+		photoUrls: _(mediaUrls).filter(
+			function(url) {
+				return isPhotoUrl(url);
 			}),
-	
-		videoUrl: _.chain(mediaUrls).filter( 
-			function(url) { 
-				return isVideoUrl(url); 
+
+		videoUrl: _.chain(mediaUrls).filter(
+			function(url) {
+				return isVideoUrl(url);
 			}).first().value()
 	};
 }

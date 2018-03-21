@@ -1,3 +1,6 @@
+
+var speedbugIndex = $.args.speedbugIndex;
+
 var PlatformSpecific = require('ui/PlatformSpecific');
 
 var lastScroll = null;
@@ -8,6 +11,10 @@ var tileIndex = [];
 
 function roundToTile( x ) {
   return Math.floor(x / middleWidth);
+}
+
+function mapTileNumToCollection( n ) {
+  return n*4;
 }
 
 function drawIcecubeTray() {
@@ -42,10 +49,43 @@ function drawIcecubeTray() {
 
     //Ti.API.log("SampleTray load tiles start_n = " + start_n + " end_n = " + end_n );
     for( var i = start_n; i<=end_n; i++ ) {
-      var tile = Ti.UI.createImageView({
+
+      var tile = Ti.UI.createView({
+        height: Ti.UI.FILL,
+        width: "209dp"
+      });
+      var trayBackground =  Ti.UI.createImageView({
             image: '/images/tiling_interior_320.png',
             height: Ti.UI.FILL
       });
+      tile.add( trayBackground );
+
+      var taxa = Alloy.Collections["taxa"];
+      var sampleNum = mapTileNumToCollection(i);
+      var sampleContainer = Ti.UI.createView({
+        width: Ti.UI.FILL,
+        height: Ti.UI.FILL,
+        layout: 'horizontal'
+      });
+      for( var j = 0; j<4; j++ ) {
+        var taxon = taxa.at(sampleNum + j);
+        if ( typeof( taxon ) !== "undefined" ) {
+
+          var thumbnail = Ti.UI.createView( {
+            left: '11%',
+            top: '10%',
+            width: '35%',
+            height: '35%'
+          });
+          var speedbugIcon = Alloy.createController( "SampleTaxaIcon", {
+              taxon: taxon,
+              speedbugIndex: speedbugIndex
+            } ).getView();
+          thumbnail.add(speedbugIcon);
+          sampleContainer.add( thumbnail );
+        }
+      }
+      tile.add(sampleContainer);
       tileIndex[i] = tile;
       $.SampleTray.add( tile );
     }
