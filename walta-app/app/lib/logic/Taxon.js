@@ -19,11 +19,11 @@
 var LAST_TAXON_ID_NUM = 0;
 
 function createTaxon( args ) {
-	var _ = require('lib/underscore')._;
-	var MediaUtil = require('logic/MediaUtil');
+	var _ = require('underscore')._;
+	var MediaUtil = require('./MediaUtil');
 
 	var txn = _.defaults( args, {
-		numericId: 'WB'+LAST_TAXON_ID_NUM++,
+		taxonId: 'WB'.concat(LAST_TAXON_ID_NUM++),
 		id: null,			// XML based id
 		ref: "",			// Where a linked Taxon should jump to in the key if not a leaf node
 		name: "",			// User readable species scientific name
@@ -79,7 +79,6 @@ function createTaxon( args ) {
 	} );
 
 	return _(txn).extend( MediaUtil.resolveMediaUrls( txn.mediaUrls ) );
-
 };
 
 exports.createTaxon = createTaxon;

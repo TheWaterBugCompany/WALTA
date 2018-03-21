@@ -20,12 +20,12 @@
  * ui/SpeedbugView
  *
  * Display a list of silhouettes that jump into a branch of the
- * key hierarchy.  
- *  
+ * key hierarchy.
+ *
  */
 function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 	var _ = require('lib/underscore')._;
-   
+
 	var Layout = require('ui/Layout');
 	var Topics = require('ui/Topics');
 	var PlatformSpecific = require('ui/PlatformSpecific');
@@ -35,30 +35,30 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 		_views: {},		// sub views
 		key: key        // The Key data
 	};
-	
+
 	var vws = sbvObj._views;
-	
+
 	var buttonMargin = parseInt( Layout.BUTTON_MARGIN );
 	var tileHeight = parseInt( Layout.SPEEDBUG_TILE_HEIGHT );
 	var tileWidth = parseInt( Layout.SPEEDBUG_TILE_WIDTH );
-	
+
 	var spanTileX = buttonMargin*2 + tileWidth + 2;
-	
-	
+
+
 	/*
 	 * Given a x position in dips return the tile index
 	 */
 	function _convertToTileNum( x ) {
 		return Math.floor( x / spanTileX );
 	}
-	
-	
+
+
 	var speedbugTileIndex = [];
-	
+
 	function _pushTile( url, parent ) {
 		speedbugTileIndex.push( { url: url, parent: parent, imageView: null } );
 	}
-	
+
 	function _releaseTileImageData( n ) {
 		if ( n >= 0 && n <  speedbugTileIndex.length ) {
 			var tile = speedbugTileIndex[n];
@@ -68,12 +68,12 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 			tile.imageView = null;
 		}
 	}
-	
+
 	function _showTileImageData( n ) {
 		if ( n >= 0 && n <  speedbugTileIndex.length ) {
 			var tile = speedbugTileIndex[n];
 			if ( tile.imageView == null ) {
-				tile.imageView = Ti.UI.createImageView({ 
+				tile.imageView = Ti.UI.createImageView({
 						  image: tile.url,
 						  width: Ti.UI.FILL
 				});
@@ -81,7 +81,7 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 			}
 		}
 	}
-	
+
 	var scrollView = Ti.UI.createScrollView({
 	  contentWidth: 'auto',
 	  contentHeight: (screenHeightDip - 86) + "dip",
@@ -95,23 +95,23 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 	  top: Layout.WHITESPACE_GAP,
 	  disableBounce: true
 	});
-	
+
 	// Iterate the speed bug index groups and create a view with a "Not Sure?"
 	// button that spans all the silhouettes in the group.
-	sbug = sbvObj.key.getSpeedbugIndex();
+	sbug = sbvObj.key.getSpeedbugIndex().getSpeedbugIndex();
 	_(sbug).each( function( sg ) {
-		var grpCnt = Ti.UI.createView( { 
-				layout: 'vertical', 
-				width: Ti.UI.SIZE, 
+		var grpCnt = Ti.UI.createView( {
+				layout: 'vertical',
+				width: Ti.UI.SIZE,
 				height: Ti.UI.FILL
 			 } );
-			 
-		var bugsCnt = Ti.UI.createView( { 
-			layout: 'horizontal', 
-			horizontalWrap: false, 
-			height: (screenHeightDip - 86) + "dip", 
+
+		var bugsCnt = Ti.UI.createView( {
+			layout: 'horizontal',
+			horizontalWrap: false,
+			height: (screenHeightDip - 86) + "dip",
 			width: Ti.UI.SIZE } );
-		
+
 		_(sg.bugs).each( function( sb ) {
 			var cnt = Ti.UI.createView( {
 				backgroundColor:'white',
@@ -122,20 +122,20 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 				  left: Layout.BUTTON_MARGIN,
 				  right: Layout.BUTTON_MARGIN
 			});
-			
+
 			// Defer loading images until they are on screen
 			_pushTile( '/' + sb.imgUrl, cnt );
-			
+
 			cnt.addEventListener( 'click', function(e) {
 				Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId } );
 				e.cancelBubble = true;
 			});
-			
+
 			bugsCnt.add( cnt );
 		});
-		
+
 		grpCnt.add(bugsCnt);
-		
+
 		if ( bugsCnt.children.length >= 2 ) {
 			var notSureBtn = Ti.UI.createLabel( {
 				height: '30dip',
@@ -150,19 +150,19 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 				color: 	'blue',
 				backgroundColor: '#552F61CC'
 			});
-			
+
 			notSureBtn.addEventListener( 'click', function(e) {
 				Topics.fireTopicEvent( Topics.JUMPTO, { id: sg.refId } );
 				e.cancelBubble = true;
 			});
-			
+
 			grpCnt.add( notSureBtn);
 		}
 		scrollView.add( grpCnt );
-		
-		
+
+
 	} );
-	
+
 	/* Dynamically load and release images as they move onto screen */
 	var lastScroll = null;
 	function _loadAndReleaseTiles() {
@@ -172,7 +172,7 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 		if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > spanTileX) ) {
 			var start_n, end_n;
 			var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.getSize() ? scrollView.getSize().width : 0 );
-			
+
 			// Release any tiles that are now off the screen
 			if ( lastScroll < scrollx ) {
 				start_n = _convertToTileNum( lastScroll - spanTileX ) - Layout.SPEEDBUG_PRECACHE_TILES;
@@ -180,13 +180,13 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 			} else {
 				start_n = _convertToTileNum( scrollx + viewWidth + 2*spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
 				end_n = _convertToTileNum( lastScroll + viewWidth + 2*spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
-				
+
 			}
 			//Ti.API.log("Speedbug release tiles start_n = " + start_n + " end_n = " + end_n );
 			for( var i = start_n; i<=end_n; i++ ) {
 				_releaseTileImageData(i);
 			}
-			
+
 			// Calculate the range of tiles that need to be shown
 			start_n = _convertToTileNum( scrollx ) - Layout.SPEEDBUG_PRECACHE_TILES;
 			end_n = _convertToTileNum( scrollx + viewWidth + spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
@@ -194,15 +194,15 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 			for( var i = start_n; i<=end_n; i++ ) {
 				_showTileImageData(i);
 			}
-			
+
 			lastScroll = scrollx;
 		}
 	};
 	scrollView.addEventListener( 'scroll', _loadAndReleaseTiles );
 	scrollView.addEventListener( 'postlayout', _loadAndReleaseTiles );
-	
+
 	sbvObj.view = scrollView;
-	
+
 	return sbvObj;
 };
 exports.createSpeedbugView = createSpeedbugView;

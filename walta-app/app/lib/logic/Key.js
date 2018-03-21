@@ -18,14 +18,14 @@
 
 /*
  *  walta/Key
- *   
- *  Keeps track of the relationship between KeyNodes, Questions and Taxons and initialises the model 
- *  from the supplied key URL. 
- *  
+ *
+ *  Keeps track of the relationship between KeyNodes, Questions and Taxons and initialises the model
+ *  from the supplied key URL.
+ *
  *  Key, KeyNode, Question and Taxon constitute the data model describing a key
  */
-var _ = require('lib/underscore')._;
-
+var _ = require('underscore')._;
+var SpeedbugIndex = require('./SpeedbugIndex');
 
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
@@ -37,37 +37,36 @@ function createKeyNode( args ) {
 }
 
 function createKey( args ) {
-	
+
 	// Set up properties
 	var obj = _(args).defaults({
 		url: null,
 		name: null,
 		root: null,
 		currentDecision: null,
-		speedBugIndex: {}
+		speedBugIndex: SpeedbugIndex.createSpeedbugIndex()
 	});
-	
+
 	// Private variables here
 	var taxIdToNode = {};
-	var keyIdToNode = {};
-	var speedBugIndex = obj.speedBugIndex;
-	
-	var allTaxons = [];
+	var taxRefToNode = {};
+	var keyRefToNode = {};
+
 	var allNodes = [];
-	
+
 	if ( _.isNull( obj.currentDecision ) ) {
 		obj.currentDecision = obj.root;
 	}
-	
+
 	return _(obj).extend( {
-		
+
 		// Choose the branch number id i from the current decision.
 		choose: function( i ) {
 			if ( this.isNode( this.currentDecision ) ) {
 				var nd = this.currentDecision.questions[i].outcome;
 				if ( _.isUndefined(nd) || _.isNull( nd ) )
 					Ti.API.error( "Outcome for " + i + " is not defined!" );
-				
+
 				this.currentDecision = nd;
 			} else {
 				if ( Ti ) {
@@ -75,33 +74,33 @@ function createKey( args ) {
 				}
 			}
 		},
-		
+
 		// Go backs up the key to the parent
 		back: function() {
 			if ( ! this.isRoot() ) {
 				this.currentDecision = this.currentDecision.parentLink;
 			}
 		},
-		
+
 		// Reset to the root Node
 		reset: function() {
 			this.currentDecision = this.root;
 		},
-		
+
 		// Returns true is we are currently at the root node
 		isRoot: function() {
 			return _.isNull( this.currentDecision.parentLink );
 		},
-		
+
 		// Functions to determine if the object looks like a Node or a Taxon ?
 		isTaxon: function(node) {
 			return _.isUndefined( node.questions );
 		},
-		
+
 		isNode: function(node) {
 			return ! this.isTaxon( node );
 		},
-		
+
 		// Move the current decision to the referenced node
 		setCurrentNode: function( refId ) {
 			var node = this.findNode( refId );
@@ -111,34 +110,39 @@ function createKey( args ) {
 				if ( node.ref != "") {
 					node = this.findNode( node.ref );
 				}
-			} 
+			}
 			if ( _.isUndefined( node ) ) {
 				Ti.API.error( "Unable to find key node '" + refId +"'" );
 			}
-			
+
 			this.currentDecision = node;
 		},
-		
+
 		// Return the current decision
 		getCurrentNode: function() {
 			return this.currentDecision;
 		},
-		
-		// Find a KeyNode by id
+
+		// Find a KeyNode by ref
 		findNode: function( refId ) {
-			return keyIdToNode[refId];
+			return keyRefToNode[refId];
 		},
-		
-		// Find a Taxon by id
+
+		// Find a Taxon by ref
 		findTaxon: function( refId ) {
-			return taxIdToNode[refId];
+			return taxRefToNode[refId];
 		},
-		
+
+		findTaxonById: function( id ) {
+			return taxIdToNode[id];
+		},
+
+
 		// Return a list of all Taxons
 		findAllTaxons: function() {
-			return allTaxons;
+			return _.values( taxIdToNode );
 		},
-		
+
 		// Retrieves all the media
 		findAllMedia: function( prp ) {
 			var media = [];
@@ -146,57 +150,50 @@ function createKey( args ) {
 			_.each( allTaxons, function( t ) { media = media.concat( t[prp] ); });
 			return media;
 		},
-		
+
 		// Used to attach a node to the tree
 		// intended to be used by the key loader module
 		attachNode: function( node ) {
 			if ( node.id  ) {
-				keyIdToNode[node.id] = node;
+				keyRefToNode[node.id] = node;
 			}
 			allNodes.push( node );
 		},
-		
+
 		attachTaxon: function( taxon ) {
 			if ( taxon.id ) {
-				taxIdToNode[taxon.id] = taxon;
+				if ( typeof( taxIdToNode[taxon.id] ) != 'undefined' )
+					throw new Error("Duplicate id! ".concat( taxon.id) );
+				taxRefToNode[taxon.id] = taxon;
+
 			}
-			allTaxons.push(taxon);
+			if ( taxon.taxonId ) {
+				if ( typeof( taxIdToNode[taxon.taxonId] ) != 'undefined' )
+					throw new Error("Duplicate taxonId! ".concat( taxon.taxonId) );
+				taxIdToNode[taxon.taxonId] =  taxon;
+			}
 		},
-		
+
 		linkNodeToParent: function( parent, qn, node ) {
 			this.attachNode( node );
 			parent.questions[qn].outcome = node;
 			node.parentLink = parent;
 		},
-				
-		
-		
+
+		setSpeedbugIndex: function( sbIndex ) {
+			this.speedBugIndex = sbIndex;
+		},
+
+		getSpeedbugIndex: function() {
+			return this.speedBugIndex;
+		},
+
 		linkTaxonToParent: function( parent, qn, taxon ) {
 			this.attachTaxon( taxon );
 			parent.questions[qn].outcome = taxon;
 			taxon.parentLink = parent;
 		},
-		
-		// Adds a "Speed Bug" link, this allows a special index
-		// to be displayed that jumps directly to a node within
-		// a key by touching a silhouette image.
-		
-		addSpeedbugGroup: function( grpId ) {
-			if ( ! _(speedBugIndex).has(grpId) ) {
-				speedBugIndex[grpId] = { refId: grpId, bugs: [] };
-			} else {
-				speedBugIndex[grpId].refId = grpId;
-			}
-		},
-		
-		addSpeedbugIndex: function( imgUrl, grpId, refId) {
-			speedBugIndex[grpId].bugs.push( { imgUrl: imgUrl, refId: refId } );
-		},
-		
-		getSpeedbugIndex: function() {
-			return speedBugIndex;
-		},
-		
+
 		setRootNode: function( node ) {
 			this.attachNode( node );
 			this.root = node;
@@ -204,7 +201,7 @@ function createKey( args ) {
 				this.currentDecision = node;
 			}
 		},
-		
+
 		getRootNode: function() {
 			return this.root;
 		}
