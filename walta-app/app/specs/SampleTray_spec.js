@@ -77,21 +77,64 @@ mocx.createCollection("taxa", [
   {
     taxonId: "WB5",
     multiplicity: 6
-  },
-
-  {
-    taxonId: "WB4",
-    multiplicity: 2
   }
 ]);
 
 var TestUtils = require('specs/util/TestUtils');
 var Alloy = require('alloy');
+var SampleTray, SampleTrayWin;
+
 describe( 'SampleTray', function() {
-  it('should open', function(done) {
-      var SampleTray = Alloy.createController("SampleTray", { speedbugIndex: speedBugIndexMock });
-      var win = TestUtils.wrapViewInWindow( SampleTray.getView() );
-      win.addEventListener('open' , function() { done() } );
-      win.open();
-  })
+  before(function(done) {
+      SampleTray = Alloy.createController("SampleTray", { speedbugIndex: speedBugIndexMock });
+      SampleTrayWin = TestUtils.wrapViewInWindow( SampleTray.getView() );
+      SampleTrayWin.addEventListener("open" , function open() {
+        SampleTrayWin.removeEventListener("open", open);
+        done();
+      } );
+      SampleTrayWin.open();
+  });
+
+  after(function(done){
+    SampleTray.cleanup();
+    SampleTrayWin.addEventListener('close' , function close() {
+      Ti.API.log("entering close");
+      SampleTrayWin.removeEventListener("close", close);
+
+      SampleTrayWin = null;
+      SampleTray.off();
+      SampleTray.destroy();
+      SampleTray = null;
+      done()
+    } );
+    SampleTrayWin.close();
+  });
+
+  it('should display the correct sample entry for each hole', function(done) {
+
+  });
+
+  it('when scrolled to the right it should update the screen properly', function(done) {
+
+  });
+
+  it('when scrolled to the left it should update the screen properly', function(done) {
+
+  });
+
+  it('it should have a length with 6 blank holes at the end', function(done) {
+
+  });
+
+  it('when a taxon is removed it should update', function(done) {
+
+  });
+
+  it('when a taxon is added it should update', function(done) {
+
+  });
+
+  it('when a taxon multiplicity is changed it should update', function(done) {
+
+  });
 });

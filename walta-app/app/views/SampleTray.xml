@@ -1,5 +1,7 @@
 <Alloy>
-	<ScrollView dataCollection="taxa" class="container" height=Ti.UI.FILL top=0 layout='horizontal' scrollType="horizontal" contentWidth="auto">
-		<ImageView id="endcap" class="sample_tray_end" left=0 top=0/>
+	<ScrollView class="container" height=Ti.UI.FILL top=0 scrollType="horizontal">
+		<View id="endcap">
+			<ImageView id="endcapBackground"/>
+		</View>
 	</ScrollView>
 </Alloy>
