@@ -2,8 +2,11 @@
 ".container" : {
   backgroundColor: "#aaa"
 }
-
-".sample_tray_end" : {
-    image: "/images/endcap_320.png",
-    height: Ti.UI.FILL
+"#endcap": {
+  width: "151dp",
+  left: 0
+}
+"#endcapBackground" : {
+    image: "images/endcap_320.png",
+    width: "151dp"
 }
