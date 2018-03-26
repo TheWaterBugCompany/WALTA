@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha").infect(this);
-var _ = require('lib/underscore')._;
+require("specs/lib/ti-mocha");
+if ( typeof(_) == "undefined") _ = require('underscore')._;
 
 var Key = require('logic/Key');
 var Question = require('logic/Question');

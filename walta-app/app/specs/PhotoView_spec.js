@@ -15,11 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha").infect(this);
-var TestUtils = require('util/TestUtils');
-
+require("specs/lib/ti-mocha");
+var TestUtils = require('specs/util/TestUtils');
 var PhotoView = require('ui/PhotoView');
-var TestUtils = require('util/TestUtils');
 
 describe('PhotoView', function() {
 	var win, vw, pv;

@@ -1,4 +1,4 @@
-var _ = require('underscore')._;
+if ( typeof(_) == "undefined") _ = require('underscore')._;
 
 function createSpeedbugIndex() {
   var speedBugIndex = {};

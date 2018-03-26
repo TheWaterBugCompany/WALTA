@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var _ = require('lib/underscore')._;
+if ( typeof(_) == "undefined") _ = require('underscore')._;
 var CircularJSON = require('lib/circular-json');
 var Key = require('logic/Key');
 var Question = require('logic/Question');
@@ -28,7 +28,7 @@ function rehydrateKey( key, node ) {
 	if (node === undefined ) {
 	 	rehydrateKey( Key.createKey( key ), key.root );
 	 	return key;
-	} 
+	}
 	// are we a decision node?
 	else if ( key.isNode( node ) ) {
 		_.each( node.questions, function(qn) {
@@ -37,7 +37,7 @@ function rehydrateKey( key, node ) {
 		} );
 		key.attachNode( Key.createKeyNode( node ) );
 		return node;
-	} 
+	}
 	// nope must be a taxon node
 	else {
 		key.attachTaxon( Taxon.createTaxon( node ) );

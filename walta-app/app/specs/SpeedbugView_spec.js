@@ -15,23 +15,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha").infect(this);
-var TestUtils = require('util/TestUtils');
+require("specs/lib/ti-mocha");
+var TestUtils = require('specs/util/TestUtils');
 
-var _ = require('lib/underscore')._;
+if ( typeof(_) == "undefined") _ = require('underscore')._;
 
-var KeyLoaderXml = require('logic/KeyLoaderXml');
+var KeyLoaderJson = require('logic/KeyLoaderJson');
 var SpeedbugView = require('ui/SpeedbugView');
 
 describe('SpeedbugView', function() {
 	var bv, win, key;
-	key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
-	sb = SpeedbugView.createSpeedbugView( key );
-	win = TestUtils.wrapViewInWindow( sb.view );
+	before( function() {
+		key = KeyLoaderJson.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
+		sb = SpeedbugView.createSpeedbugView( key );
+		win = TestUtils.wrapViewInWindow( sb.view );
+	});
+
+	after( function() {
+		TestUtils.closeWindow( win );
+	});
 
 	it('should display the speed bug window', function() {
 		TestUtils.windowOpenTest( win );
 	});
 
-	TestUtils.closeWindow( win );
 });
