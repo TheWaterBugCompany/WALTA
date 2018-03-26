@@ -19,5 +19,7 @@ require("specs/VideoView_spec");
 // Create a blank window: for some reason closing the last window hangs
 // the test suite.
 var backgroundWindow = Ti.UI.createWindow( { backgroundColor: "black" } );
-backgroundWindow.addEventListener('open' , function() { mocha.run(); } );
+backgroundWindow.addEventListener('open' , function() {
+  mocha.run();
+} );
 backgroundWindow.open();
