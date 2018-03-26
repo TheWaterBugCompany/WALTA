@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha").infect(this);
+require("specs/lib/ti-mocha");
 var MediaUtil = require('logic/MediaUtil');
 describe('MediaUtil tests', function() {
 	mediaUrls = [ "resources/simpleKey1/media/amphipoda_01.jpg", "resources/simpleKey1/media/amphipoda_02.jpg", "resources/simpleKey1/media/attack_caddis_01_x264.mp4" ];

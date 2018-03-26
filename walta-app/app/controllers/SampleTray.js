@@ -79,7 +79,7 @@ function createSampleTrayTile( tileNum ) {
 }
 
 function releaseTiles( start_n, end_n ) {
-  Ti.API.log("SampleTray release tiles start_n = " + start_n + " end_n = " + end_n );
+  Ti.API.trace("SampleTray release tiles start_n = " + start_n + " end_n = " + end_n );
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 ) {
       var tile = tileIndex[i];
@@ -92,8 +92,7 @@ function releaseTiles( start_n, end_n ) {
 }
 
 function addTiles( start_n, end_n ) {
-  Ti.API.log("SampleTray load tiles start_n = " + start_n + " end_n = " + end_n );
-
+  Ti.API.trace("SampleTray load tiles start_n = " + start_n + " end_n = " + end_n );
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 && ( i <= ((Alloy.Collections["taxa"].length + 2)/4) ) ) {
       var tile = createSampleTrayTile( i );
@@ -101,7 +100,6 @@ function addTiles( start_n, end_n ) {
       $.SampleTray.add( tile );
     }
   }
-  Ti.API.log(tileIndex);
 }
 
 function updateVisibleTiles( lastScroll, scrollx ) {
@@ -132,7 +130,7 @@ function drawIcecubeTray() {
 
   // Add or remove any tiles according to scroll position
   if ( (lastScroll == null) || Math.abs( scrollx - lastScroll ) > middleWidth ) {
-    Ti.API.log(`scrollx = ${scrollx} lastScroll = ${lastScroll}`);
+    Ti.API.trace(`scrollx = ${scrollx} lastScroll = ${lastScroll}`);
     if ( lastScroll !== null ) {
       updateVisibleTiles( lastScroll, scrollx );
     } else {
@@ -149,7 +147,6 @@ $.SampleTray.addEventListener( "scroll", drawIcecubeTray );
 $.SampleTray.addEventListener( "postlayout", drawIcecubeTray );
 
 function cleanup() {
-  Ti.API.log("entering SampleTray cleanup");
   $.SampleTray.removeEventListener("scroll", drawIcecubeTray);
   $.SampleTray.removeEventListener("postlayout", drawIcecubeTray);
 }

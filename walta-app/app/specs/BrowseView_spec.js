@@ -15,23 +15,25 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha").infect(this);
-var TestUtils = require('util/TestUtils');
-
-var _ = require('lib/underscore')._;
-
-var KeyLoaderXml = require('logic/KeyLoaderXml');
+require("specs/lib/ti-mocha");
+var TestUtils = require('specs/util/TestUtils');
+var KeyLoaderJson = require('logic/KeyLoaderJson');
 var BrowseView = require('ui/BrowseView');
 
 describe('BrowseView', function() {
 	var bv, win, key;
-	key = KeyLoaderXml.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
-	bv = BrowseView.createBrowseView( key );
-	win = TestUtils.wrapViewInWindow( bv.view );
+	before( function(){
+		key = KeyLoaderJson.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
+		bv = BrowseView.createBrowseView( key );
+		win = TestUtils.wrapViewInWindow( bv.view );
+	});
+
+	after( function() {
+		TestUtils.closeWindow( win );
+	});
 
 	it('should display the browse view window', function() {
 		TestUtils.windowOpenTest( win );
 	});
 
-	TestUtils.closeWindow( win );
 });

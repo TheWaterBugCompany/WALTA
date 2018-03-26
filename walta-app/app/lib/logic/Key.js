@@ -24,7 +24,7 @@
  *
  *  Key, KeyNode, Question and Taxon constitute the data model describing a key
  */
-var _ = require('underscore')._;
+if ( typeof(_) == "undefined") _ = require('underscore')._;
 var SpeedbugIndex = require('./SpeedbugIndex');
 
 function createKeyNode( args ) {
