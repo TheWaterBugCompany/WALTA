@@ -1,6 +1,6 @@
 <Alloy>
 	<View class="container">
 			<ImageView id="icon" />
-			<Label id="label" />
+			<Label id="multiplicity" />
 	</View>
 </Alloy>

@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 
 var Key = require('logic/Key');
 var Question = require('logic/Question');
 var Taxon = require('logic/Taxon');
 
-describe('Key', function() {
+describe.skip('Key', function() {
 	var taxons;
 	// Create a new key and add some taxons and nodes
 	var testKey = Key.createKey( {

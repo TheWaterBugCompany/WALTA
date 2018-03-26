@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var Taxon = require('logic/Taxon');
-describe('Taxon tests', function() {
+describe.skip('Taxon tests', function() {
 	var txn = Taxon.createTaxon({
 		id: "testTaxon",
 		name: "Family Palaemonidae, Genus Macrobrachium",

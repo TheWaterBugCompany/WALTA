@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var KeyNode = require('logic/Key');
 var Question = require('logic/Question');
 
-describe('KeyNode tests', function() {
+describe.skip('KeyNode tests', function() {
 	var kn = KeyNode.createKeyNode( {
 		questions: [
 			Question.createQuestion({

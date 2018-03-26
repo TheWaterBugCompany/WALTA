@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 
 var meld = require('lib/meld');
 var VideoView = require('ui/VideoView');
 
-describe('VideoView', function() {
+describe.skip('VideoView', function() {
 	var vv;
 
 	beforeEach(function() {

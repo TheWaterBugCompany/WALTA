@@ -16,32 +16,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
+
 var TestUtils = require('specs/util/TestUtils');
+
+var Alloy = require('alloy');
 var AppWindow = require('control/AppWindow');
 
 var Topics = require('ui/Topics');
 
-describe('AppWindow', function() {
+describe.skip('AppWindow', function() {
 	var app;
 
-	beforeEach( function() {
-		runs( function() {
-			app = AppWindow.createAppWindow( 'simpleKey1', Ti.Filesystem.resourcesDirectory + 'specs/resources/' );
-			app.start();
-		});
+	beforeEach( function(done) {
+		Topics.subscribe( Topics.HOME, _.once( function() { done(); } ) );
+		app = AppWindow.createAppWindow( 'simpleKey1', Ti.Filesystem.resourcesDirectory + 'specs/resources/' );
+		app.start();
 
-		waitsFor( function() {
-			return app.getCurrentWindow();
-		}, "waiting for app to start", 750);
+
 	});
 
 
 
 	it('should open the main window after start() is called', function() {
-		runs( function() {
 			expect( app.getCurrentWindow().name ).toEqual('home');
 			TestUtils.closeWindow( app.getCurrentWindow().window );
-		});
 	});
 
 	it('should open the decision window when key search is started', function(){

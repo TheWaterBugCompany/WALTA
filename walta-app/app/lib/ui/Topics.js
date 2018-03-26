@@ -21,44 +21,49 @@
  * PubSub events provide a loosely coupled interface to
  * navigation logic with the app.
  */
-var topics = { 
-	
+var topics = {
+
 	HOME: 'home',
 	SETTINGS: 'settings',
 	INFO: 'info',
-	
+
 	// Open the video player
 	VIDEO: 'video', // the filename is passed as parameter
-	
+
 	// Backwards on the decision tree
 	BACK: 'back',
-	
+
 	// Forwards on the decision tree passing choice as parameter
 	FORWARD: 'forward', // the choice number is passed as parameter
-	
+
 	// Jumps to a position in the key
 	JUMPTO: 'jumpto',
-	
+
 	// Start the decision process from the beginning
 	KEYSEARCH: 'keysearch',
-	
+
 	SPEEDBUG: 'speedbug',
-	
+
 	HELP: 'help',
-	
+
 	BROWSE: 'browse',
-	
+
 	GALLERY: 'gallery',
-	
+
 	ABOUT: 'about',
+
+	unsubscribe: function( topic, callback ) {
+		Alloy.Events.off( 'waterbug:' + topic, callback );
+	},
+
 	subscribe: function( topic, callback ) {
-		Ti.App.addEventListener( 'waterbug:' + topic, callback );
+		Alloy.Events.on( 'waterbug:' + topic, callback );
 	},
 
 	fireTopicEvent: function( topic, data ) {
-		Ti.App.fireEvent( 'waterbug:' + topic, data );
+		Alloy.Events.trigger( 'waterbug:' + topic, data );
 	}
-	
+
 };
 
 

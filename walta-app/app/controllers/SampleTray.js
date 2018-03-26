@@ -45,7 +45,6 @@ function createSampleTrayIcon(taxon, i) {
         speedbugIndex: speedbugIndex
       } );
     thumbnail.add(speedbugIcon.getView());
-    speedbugIcon.label.text = i;
   }
   return thumbnail;
 }
@@ -136,6 +135,7 @@ function drawIcecubeTray() {
     } else {
       addTiles( 0, 3 );
     }
+    $.trigger("trayupdated");
     lastScroll = scrollx;
   }
 

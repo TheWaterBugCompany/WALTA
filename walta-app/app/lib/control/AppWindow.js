@@ -60,7 +60,7 @@ function createAppWindow( keyName, keyPath ) {
 				if ( ! args ) args = {};
 				_(args).extend({
 					name: 'home',
-					uiObj: { view: Alloy.createController("menu").getView() },
+					uiObj: { view: Alloy.createController("Menu").getView() },
 					portrait: false
 				});
 				TopLevelWindow.makeTopLevelWindow(args);
@@ -209,13 +209,7 @@ function createAppWindow( keyName, keyPath ) {
 		_(appWin).extend({
 			start: function() {
 				privates.loadKey( appWin.keyUrl );
-				/*var pWidth = Titanium.Platform.displayCaps.platformWidth;
-				var pHeight = Titanium.Platform.displayCaps.platformHeight;
-				privates.platformWidth = PlatformSpecific.convertSystemToDip( pWidth < pHeight ? pHeight : pWidth );
-				privates.platformHeight = PlatformSpecific.convertSystemToDip( pWidth >= pHeight ? pHeight : pWidth );*/
-
 				PlatformSpecific.appStartUp( privates );
-
 				Topics.fireTopicEvent( Topics.HOME );
 			},
 			close: function() {

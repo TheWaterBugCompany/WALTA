@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 
 if ( typeof(_) == "undefined") _ = require('underscore')._;
@@ -23,7 +24,7 @@ if ( typeof(_) == "undefined") _ = require('underscore')._;
 var KeyLoaderJson = require('logic/KeyLoaderJson');
 var SpeedbugView = require('ui/SpeedbugView');
 
-describe('SpeedbugView', function() {
+describe.skip('SpeedbugView', function() {
 	var bv, win, key;
 	before( function() {
 		key = KeyLoaderJson.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );

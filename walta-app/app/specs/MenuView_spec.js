@@ -16,15 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 var Topics = require('ui/Topics');
 var Alloy = require('alloy');
 describe('MenuView', function() {
 	var mnu, win;
-
-	mnu = Alloy.createController("Menu");
-	win = TestUtils.wrapViewInWindow( mnu.getView() );
-
+	before( function() {
+		mnu = Alloy.createController("Menu");
+		win = TestUtils.wrapViewInWindow( mnu.getView() );
+	});
+	after( function() {
+		TestUtils.closeWindow( win );
+	});
 	it('should display the menu view', function(done) {
 		TestUtils.windowOpenTest( win, done );
 	});
@@ -53,6 +57,5 @@ describe('MenuView', function() {
 		TestUtils.actionFiresTopicTest( mnu.about.getView(), 'click', Topics.ABOUT, done );
 	});
 
-	TestUtils.closeWindow( win );
 
 });

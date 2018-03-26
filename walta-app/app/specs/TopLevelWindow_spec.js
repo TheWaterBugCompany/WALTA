@@ -16,18 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 
 var TopLevelWindow = require('ui/TopLevelWindow');
 
 var Topics = require('ui/Topics');
 
-describe('TopLevelWindow', function() {
+describe.skip('TopLevelWindow', function() {
 
 	it('should compose AnchorBar to a view', function() {
-
-
-
 		var testView = Ti.UI.createView(
 			{
 				width: Ti.UI.FILL,
