@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 
 var Key = require('logic/Key');

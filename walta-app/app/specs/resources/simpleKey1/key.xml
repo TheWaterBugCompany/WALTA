@@ -5,26 +5,26 @@
 		<movement>walking, with sudden flips when disturbed.</movement>
 		<confusedWith>Nothing, very distinctive.  We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to separate when young.</confusedWith>
 		<mediaRef url="parastacide_01.jpg"/>
-		<mediaRef url="parastacide_02.jpg"/>	
+		<mediaRef url="parastacide_02.jpg"/>
 	</taxon>
-  
+
   <taxon id="dummyTaxon1" name="Dummy1" commonName="test dummy 1" >
   </taxon>
-  
+
   <taxon id="dummyTaxon2" name="Dummy2" commonName="test dummy 2" >
   </taxon>
 
 	<keyNode>
 		<question num="1">
 			<text>Animals strongly flattened from the sides (like dogs and cats); often lying on their side or moving with their side flat against the substrate.</text>
-			<mediaRef url="couplet5p1.jpg"/>
+			<mediaRef url="couplet5p1.gif"/>
 		</question>
-		
+
 		<question num="2">
 			<text>Animals not flattened or flattened 'front to back' (like humans or cockroaches).</text>
-			<mediaRef url="couplet5p2.jpg"/>
+			<mediaRef url="couplet5p2.gif"/>
 		</question>
-		
+
 		<outcome for="1">
 			<keyNode id="testNode">
               <question num="1">
@@ -56,23 +56,23 @@
             </keyNode>
 			</outcome>
 	</keyNode>
-  
+
     <keyNode id="linkTest">
         <question num="1">
           <text>Question 1 Link Test</text>
-          <mediaRef url="couplet5p1.jpg"/>
+          <mediaRef url="couplet5p1.gif"/>
         </question>
-        
+
         <question num="2">
           <text>Question 2 Link Test</text>
-          <mediaRef url="couplet5p2.jpg"/>
+          <mediaRef url="couplet5p2.gif"/>
         </question>
-        
+
         <outcome for="1"><taxonLink ref="dummyTaxon1"/></outcome>
-      
+
       <outcome for="2"><taxonLink ref="dummyTaxon2"/></outcome>
     </keyNode>
-	
+
 	<speedBugIndex>
 	    <speedBugGroup ref="maggots">
 	        <speedBugLink image="speedbug/athericidae.svg" ref="athericidae"/>

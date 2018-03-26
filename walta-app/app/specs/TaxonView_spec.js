@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 
 if ( typeof(_) == "undefined") _ = require('underscore')._;
@@ -25,7 +26,7 @@ var TaxonView = require('ui/TaxonView');
 var Taxon = require('logic/Taxon');
 
 
-describe('TaxonView', function() {
+describe.skip('TaxonView', function() {
 
 	var tv, win;
 
@@ -51,43 +52,31 @@ describe('TaxonView', function() {
 	});
 
 	it('the description text should be visible', function() {
-
-		runs(function() {
-			expect( tv._views.details.rect.height ).toBeGreaterThan( 0 );
-		});
-
+		expect( tv._views.details.rect.height ).toBeGreaterThan( 0 );
 	});
 
-	it('the size of the text in the webview should be stable', function() {
+	it('the size of the text in the webview should be stable', function(done) {
 		var oldHeight, flag, flag2;
 
-		runs(function() {
-			tv._views.details.addEventListener( 'postlayout', function() { flag2 = true; } );
+		tv._views.details.addEventListener( 'postlayout', function() {
+			expect( tv._views.details.evalJS("document.body.children[0].offsetHeight") ).toEqual( oldHeight );
+			done();
+		 } );
 
-			oldHeight = tv._views.details.evalJS("document.body.children[0].offsetHeight");
+		oldHeight = tv._views.details.evalJS("document.body.children[0].offsetHeight");
 
-			var photoView = tv._views.photoView;
-			// Open and close the gallery to make resize bug occur
-			var closeHandler = meld.before( photoView, 'onGalleryWinClosed', function( win ) {
-				flag = true;
-			});
-
-			var openHandler = meld.before( photoView, 'onGalleryWinOpened', function( win ) {
-					win._views.close.fireEvent('click');
-				} );
-
-
-
-			tv._views.photoView._views.zoomIcon.fireEvent('click');
+		var photoView = tv._views.photoView;
+		// Open and close the gallery to make resize bug occur
+		var closeHandler = meld.before( photoView, 'onGalleryWinClosed', function( win ) {
+			flag = true;
 		});
 
-		waitsFor(function() {
-			return flag && flag2;
-		}, "gallery window opened to be called", 3000 );
+		var openHandler = meld.before( photoView, 'onGalleryWinOpened', function( win ) {
+				win._views.close.fireEvent('click');
+			} );
 
-		runs(function() {
-		expect( tv._views.details.evalJS("document.body.children[0].offsetHeight") ).toEqual( oldHeight );
-		});
+		tv._views.photoView._views.zoomIcon.fireEvent('click');
+
 
 
 	});

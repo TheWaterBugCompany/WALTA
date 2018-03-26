@@ -56,8 +56,22 @@ function wrapViewInWindow( view ) {
 }
 
 function windowOpenTest( win, done ) {
-	win.addEventListener('open' , function() { done() } );
+	win.addEventListener('open' , function() { done(); } );
 	win.open();
+}
+
+function testOnEvent( obj, eventName, callback, callbackInit ) {
+	return new Promise( (resolve, reject) => {
+		obj.on(eventName, _.once( function(...args) {
+			try {
+				callback.apply(args);
+				resolve();
+			} catch(err) {
+				reject(err);
+			}
+		}));
+		callbackInit();
+	});
 }
 
 function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done ) {
@@ -85,8 +99,11 @@ function closeWindow( win ) {
 			win.close();
 	});
 }
+
+
 exports.closeWindow = closeWindow;
 exports.ifNotManual = ifNotManual;
+exports.testOnEvent = testOnEvent;
 exports.actionFiresTopicTest = actionFiresTopicTest;
 exports.actionFiresEventTest = actionFiresEventTest;
 exports.windowOpenTest = windowOpenTest;

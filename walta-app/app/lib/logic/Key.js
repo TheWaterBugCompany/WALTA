@@ -162,14 +162,9 @@ function createKey( args ) {
 
 		attachTaxon: function( taxon ) {
 			if ( taxon.id ) {
-				if ( typeof( taxIdToNode[taxon.id] ) != 'undefined' )
-					throw new Error("Duplicate id! ".concat( taxon.id) );
 				taxRefToNode[taxon.id] = taxon;
-
 			}
 			if ( taxon.taxonId ) {
-				if ( typeof( taxIdToNode[taxon.taxonId] ) != 'undefined' )
-					throw new Error("Duplicate taxonId! ".concat( taxon.taxonId) );
 				taxIdToNode[taxon.taxonId] =  taxon;
 			}
 		},

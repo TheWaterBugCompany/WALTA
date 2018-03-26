@@ -20,7 +20,7 @@ var LAST_TAXON_ID_NUM = 0;
 
 function createTaxon( args ) {
 	if ( typeof(_) == "undefined") _ = require('underscore')._;
-	var MediaUtil = require('logic/MediaUtil');
+	var MediaUtil = ( typeof( Titanium ) !== "undefined" ) ? require('logic/MediaUtil') : require('./MediaUtil');
 
 	var txn = _.defaults( args, {
 		taxonId: 'WB'.concat(LAST_TAXON_ID_NUM++),

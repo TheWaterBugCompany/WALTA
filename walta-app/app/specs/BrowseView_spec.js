@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 var KeyLoaderJson = require('logic/KeyLoaderJson');
 var BrowseView = require('ui/BrowseView');
@@ -32,8 +33,8 @@ describe('BrowseView', function() {
 		TestUtils.closeWindow( win );
 	});
 
-	it('should display the browse view window', function() {
-		TestUtils.windowOpenTest( win );
+	it('should display the browse view window', function(done) {
+		TestUtils.windowOpenTest( win, done );
 	});
 
 });

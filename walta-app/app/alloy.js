@@ -20,3 +20,4 @@
  * Bootstrap the application
  */
 Alloy.Globals.Layout = require('ui/Layout');
+Alloy.Events = _.clone(Backbone.Events);

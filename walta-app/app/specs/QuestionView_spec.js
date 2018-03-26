@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 
 if ( typeof(_) == "undefined") _ = require('underscore')._;
@@ -24,7 +25,7 @@ var meld = require('lib/meld');
 var QuestionView = require('ui/QuestionView');
 var Question = require('logic/Question');
 
-describe('QuestionView', function() {
+describe.skip('QuestionView', function() {
 	var qv, win;
 
 	qv = QuestionView.createQuestionView(

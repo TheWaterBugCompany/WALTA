@@ -1,4 +1,11 @@
-
-"#label" : {
-    color: '#f00'
+"#multiplicity": {
+  right: "15dp",
+  bottom: "12dp",
+  color: "#fff",
+  backgroundColor: "#f00",
+  borderColor: "#f00",
+  width: "16dp",
+  height: "16dp",
+  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+  borderRadius: "8dp"
 }
