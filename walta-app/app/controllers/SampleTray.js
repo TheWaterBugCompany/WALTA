@@ -11,7 +11,7 @@ var middleWidth = 209;
 var tileIndex = [];
 
 function roundToTile( x ) {
-  return Math.floor(x / middleWidth);
+  return Math.floor((x + endCapWidth) / middleWidth);
 }
 
 function mapTileNumToCollection( n ) {
@@ -95,50 +95,27 @@ function addTiles( start_n, end_n ) {
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 && ( i <= ((Alloy.Collections["taxa"].length + 2)/4) ) ) {
       var tile = createSampleTrayTile( i );
-      tileIndex[i] = tile;
-      $.SampleTray.add( tile );
+      if ( typeof( tileIndex[i] ) === "undefined" ) {
+        tileIndex[i] = tile;
+        $.SampleTray.add( tile );
+      }
     }
   }
 }
 
-function updateVisibleTiles( lastScroll, scrollx ) {
+function updateVisibleTiles( scrollx) {
   var viewWidth = PlatformSpecific.convertSystemToDip( $.SampleTray.getSize().width );
-  if ( lastScroll > scrollx ) {
-    releaseTiles(
-      roundToTile(scrollx + viewWidth + 2*middleWidth - endCapWidth),
-      roundToTile(lastScroll + viewWidth + 2*middleWidth - endCapWidth)
-    );
-    addTiles(
-      roundToTile(scrollx - 2*middleWidth - endCapWidth),
-      roundToTile(lastScroll - 2*middleWidth - endCapWidth),
-    );
-  } else {
-    releaseTiles(
-      roundToTile(lastScroll - 2*middleWidth - endCapWidth ),
-      roundToTile(scrollx - 2*middleWidth - endCapWidth)
-    );
-    addTiles(
-      roundToTile(lastScroll + viewWidth + 2*middleWidth - endCapWidth),
-      roundToTile(scrollx + viewWidth + 2*middleWidth - endCapWidth)
-    );
-  }
+  var rightEdge = roundToTile( scrollx + viewWidth + middleWidth );
+  var leftEdge = roundToTile( scrollx - middleWidth - endCapWidth );
+  addTiles(leftEdge,rightEdge);
+  releaseTiles( 0, leftEdge - 1 );
+  releaseTiles( rightEdge + 1, tileIndex.length );
 }
 
 function drawIcecubeTray() {
   var scrollx = PlatformSpecific.convertSystemToDip( $.SampleTray.getContentOffset().x );
-
-  // Add or remove any tiles according to scroll position
-  if ( (lastScroll == null) || Math.abs( scrollx - lastScroll ) > middleWidth ) {
-    Ti.API.trace(`scrollx = ${scrollx} lastScroll = ${lastScroll}`);
-    if ( lastScroll !== null ) {
-      updateVisibleTiles( lastScroll, scrollx );
-    } else {
-      addTiles( 0, 3 );
-    }
-    $.trigger("trayupdated");
-    lastScroll = scrollx;
-  }
-
+  updateVisibleTiles( scrollx );
+  $.trigger("trayupdated");
 };
 
 addFirstTwoSampleTrayIcons();
