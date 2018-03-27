@@ -30,7 +30,7 @@ describe('MenuView', function() {
 		TestUtils.closeWindow( win );
 	});
 	it('should display the menu view', function(done) {
-		this.timeout(10000);
+		this.timeout(3000);
 		TestUtils.windowOpenTest( win, done );
 	});
 

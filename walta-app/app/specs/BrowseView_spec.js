@@ -23,6 +23,7 @@ var BrowseView = require('ui/BrowseView');
 
 describe('BrowseView', function() {
 	var bv, win, key;
+	this.timeout(3000);
 	before( function(){
 		key = KeyLoaderJson.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
 		bv = BrowseView.createBrowseView( key );

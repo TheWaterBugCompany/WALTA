@@ -60,18 +60,25 @@ function windowOpenTest( win, done ) {
 	win.open();
 }
 
-function testOnEvent( obj, eventName, callback, callbackInit ) {
-	return new Promise( (resolve, reject) => {
-		obj.on(eventName, _.once( function(...args) {
-			try {
-				callback.apply(args);
-				resolve();
-			} catch(err) {
-				reject(err);
-			}
-		}));
-		callbackInit();
-	});
+function waitForEvent( obj, eventName ) {
+	return function(...args) {
+		return new Promise( (resolve, reject) => {
+			obj.on(eventName, function event() {
+				obj.off(eventName,event);
+					resolve(args);
+			});
+		});
+	};
+}
+
+function waitForTick( timeout ) {
+	return function(...args) {
+		return new Promise( (resolve, reject) => {
+			setTimeout( function() {
+					resolve(args);
+			}, timeout);
+		});
+	};
 }
 
 function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done ) {
@@ -100,10 +107,10 @@ function closeWindow( win ) {
 	});
 }
 
-
+exports.waitForTick = waitForTick;
 exports.closeWindow = closeWindow;
 exports.ifNotManual = ifNotManual;
-exports.testOnEvent = testOnEvent;
+exports.waitForEvent = waitForEvent;
 exports.actionFiresTopicTest = actionFiresTopicTest;
 exports.actionFiresEventTest = actionFiresEventTest;
 exports.windowOpenTest = windowOpenTest;
