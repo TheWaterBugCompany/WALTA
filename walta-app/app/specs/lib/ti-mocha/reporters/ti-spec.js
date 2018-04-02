@@ -27,29 +27,15 @@ function TiSpec(runner) {
 	Base.call(this, runner);
 
 	var self = this,
-		//stats = this.stats,
-		indents = 0,
-		n = 0;
-
-	function NL() {
-		log(cursor.reset + ' ' + cursor.reset);
-	}
-
-	function upOne() {
-		return cursor.previousLine + cursor.resetLine;
-	}
+		indents = 0, n = 0;
 
 	function indent() {
 		return new Array(indents).join('  ');
 	}
 
 	function log(msg) {
-		console.log(cursor.resetLine + msg);
+		console.log(msg);
 	}
-
-	runner.on('start', function(){
-		NL();
-	});
 
 	runner.on('suite', function(suite){
 		++indents;
@@ -58,11 +44,6 @@ function TiSpec(runner) {
 
 	runner.on('suite end', function(suite){
 		--indents;
-		if (1 === indents) { NL(); }
-	});
-
-	runner.on('test', function(test){
-		log(color('pass', indent() + '  o ' + test.title + ': '));
 	});
 
 	runner.on('pending', function(test){
@@ -70,16 +51,12 @@ function TiSpec(runner) {
 	});
 
 	runner.on('pass', function(test){
-		if ('fast' === test.speed) {
-			log(upOne() + color('checkmark', indent() + '  +') + color('pass', ' ' + test.title + ' '));
-		} else {
-			log(upOne() + color('checkmark', indent() + '  +') + color('pass', ' ' + test.title + ' ') +
-				color(test.speed, '(' + test.duration + 'ms)'));
-		}
+		log(color('checkmark', indent() + '  +') + color('pass', ' ' + test.title + ' ')
+			+ ('fast' === test.speed ? color(test.speed, '(' + test.duration + 'ms)') : '' ) );
 	});
 
 	runner.on('fail', function(test, err){
-		log(color('fail', upOne() + indent() + '  ' + (++n) + ') ' + test.title));
+		log(color('fail', indent() + '  ' + (++n) + ') ' + test.title));
 	});
 
 	runner.on('end', self.epilogue.bind(self) );

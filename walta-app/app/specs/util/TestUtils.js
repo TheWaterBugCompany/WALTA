@@ -63,25 +63,27 @@ function windowOpenTest( win, done ) {
 	win.open();
 }
 
-function waitForBrowserEvent( obj, eventName ) {
+function waitForBrowserEvent( obj, setupPromise, eventName ) {
 	return function(...args) {
 		return new Promise( (resolve, reject) => {
 			obj.addEventListener(eventName, function event() {
 				obj.removeEventListener(eventName,event);
 				resolve(args);
 			});
+			return setupPromise;
 		});
 	};
 }
 
 
-function waitForEvent( obj, eventName ) {
+function waitForEvent( obj, setupPromise, eventName ) {
 	return function(...args) {
 		return new Promise( (resolve, reject) => {
 			obj.on(eventName, function event() {
 				obj.off(eventName,event);
 					resolve(args);
 			});
+			return setupPromise;
 		});
 	};
 }

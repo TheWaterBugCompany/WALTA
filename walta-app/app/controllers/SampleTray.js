@@ -121,11 +121,13 @@ function drawIcecubeTray() {
 addFirstTwoSampleTrayIcons();
 
 $.SampleTray.addEventListener( "scroll", drawIcecubeTray );
-$.SampleTray.addEventListener( "postlayout", drawIcecubeTray );
+$.SampleTray.addEventListener( "postlayout", function firstRender() {
+    $.SampleTray.removeEventListener("postlayout", firstRender );
+    drawIcecubeTray();
+  });
 
 function cleanup() {
   $.SampleTray.removeEventListener("scroll", drawIcecubeTray);
-  $.SampleTray.removeEventListener("postlayout", drawIcecubeTray);
 }
 
 exports.cleanup = cleanup;
