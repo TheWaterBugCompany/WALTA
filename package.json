@@ -1,15 +1,19 @@
 {
   "name": "walta",
   "version": "1.0.0",
-  "description": "Thw Waterbug App parent project",
+  "description": "The Waterbug App parent project",
   "main": "index.js",
   "dependencies": {
+    "browserify": "^16.1.1",
+    "chai": "^4.1.2",
     "circular-json": "^0.5.1",
+    "mocha": "^5.0.5",
     "npm": "^5.8.0",
     "xmldom": "^0.1.27"
   },
   "devDependencies": {},
   "scripts": {
+    "install": "sh install.sh",
     "test": "rake test"
   },
   "repository": {
