@@ -9,7 +9,7 @@ var mocx = require("specs/lib/mocx");
 setManualTests(false);
 
 describe( 'SampleTray', function() {
-
+  this.timeout(5000);
   var SampleTray, SampleTrayWin;
 
   function setupSampleTray() {
@@ -17,26 +17,48 @@ describe( 'SampleTray', function() {
     SampleTrayWin = wrapViewInWindow( SampleTray.getView() );
   }
 
+  function updateSampleTrayOnce(resolve) {
+    SampleTray.on("trayupdated", function trayUpdate() {
+      SampleTray.off("trayupdated", trayUpdate);
+      setTimeout( resolve, 10 );
+    });
+  }
+
   function openSampleTray() {
-    return Promise.all(
-      [ Promise.resolve().then( () => {
-           SampleTrayWin.addEventListener( "close", function close() {
-             SampleTrayWin.removeEventListener( "close", close );
-             SampleTray.cleanup();
-             SampleTray.off();
-             SampleTray.destroy();
-           });
-           SampleTrayWin.open()
-        }),
-        Promise.resolve().then( waitForEvent( SampleTray, "trayupdated") ) ]);
+    return new Promise( function( resolve ) {
+          SampleTrayWin.addEventListener( "close", function close() {
+            SampleTrayWin.removeEventListener( "close", close );
+            SampleTray.cleanup();
+            SampleTray.off();
+            SampleTray.destroy();
+          });
+
+          SampleTrayWin.addEventListener("open", function openWin() {
+            SampleTrayWin.removeEventListener("open", openWin );
+            updateSampleTrayOnce(resolve);
+          })
+          SampleTrayWin.open();
+        });
+  }
+
+  function scrollSampleTray( x ) {
+    return function() {
+      return new Promise( function( resolve ) {
+          updateSampleTrayOnce(resolve);
+          SampleTray.getView().scrollTo( x, 0 );
+        });
+    }
   }
 
   function cleanupSampleTray() {
     if ( ! isManualTests() ) {
-      return Promise.all(
-        [ Promise.resolve( SampleTrayWin.close ),
-          waitForBrowserEvent( SampleTrayWin.close, "close" ) ]
-      );
+      return new Promise( function( resolve ) {
+        SampleTrayWin.addEventListener( "close", function e() {
+          SampleTrayWin.removeEventListener( "close", e );
+          resolve();
+        } );
+        SampleTrayWin.close();
+      });
     } else {
       return Promise.resolve();
     }
@@ -152,7 +174,7 @@ describe( 'SampleTray', function() {
   });
 
   context('adding the plus button', function() {
-      it('should render an add button with a blank tray', function (){
+      it('should render an add button with a blank tray'/*, function (){
         return Promise.resolve()
           .then( function() {
             mocx.createCollection("taxa", []);
@@ -163,11 +185,10 @@ describe( 'SampleTray', function() {
 
           } )
           .then( cleanupSampleTray )
-      })
+      }*/);
   });
 
-
-  context.only('scrolling a long tray', function() {
+  context('scrolling a long tray', function() {
     beforeEach(function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
@@ -220,12 +241,7 @@ describe( 'SampleTray', function() {
     it('when scrolled to the right it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
-          .then( waitForTick( 10 ) )
-          .then( function() {
-            SampleTray.getView().scrollTo( 209*4, 0 );
-            })
-          .then( waitForEvent( SampleTray, "trayupdated") )
-          .then( waitForTick( 10 ) )
+          .then( scrollSampleTray( 209*4 ) )
           .then( function() {
             var tiles = SampleTray.getView().getChildren();
             expect( tiles ).to.have.lengthOf(6);
@@ -258,17 +274,8 @@ describe( 'SampleTray', function() {
     it('when scrolled to the left it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
-          .then( waitForTick( 10 ) )
-          .then( function() {
-            SampleTray.getView().scrollTo( 209*4, 0 );
-            })
-          .then( waitForEvent( SampleTray, "trayupdated") )
-          .then( waitForTick( 10 ) )
-          .then( function() {
-            SampleTray.getView().scrollTo( 0, 0 );
-          })
-          .then( waitForEvent( SampleTray, "trayupdated") )
-          .then( waitForTick( 10 ) )
+          .then( scrollSampleTray(209*4) )
+          .then( scrollSampleTray(0) )
           .then( function() {
             var tiles = SampleTray.getView().getChildren();
             expect( tiles ).to.have.lengthOf(5);
