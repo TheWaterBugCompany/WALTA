@@ -56,9 +56,24 @@ function wrapViewInWindow( view ) {
 }
 
 function windowOpenTest( win, done ) {
-	win.addEventListener('open' , function() { done(); } );
+	win.addEventListener('open' , function open () {
+    win.removeEventListener('open', open);
+		done();
+	} );
 	win.open();
 }
+
+function waitForBrowserEvent( obj, eventName ) {
+	return function(...args) {
+		return new Promise( (resolve, reject) => {
+			obj.addEventListener(eventName, function event() {
+				obj.removeEventListener(eventName,event);
+				resolve(args);
+			});
+		});
+	};
+}
+
 
 function waitForEvent( obj, eventName ) {
 	return function(...args) {
@@ -107,6 +122,7 @@ function closeWindow( win ) {
 	});
 }
 
+exports.waitForBrowserEvent = waitForBrowserEvent;
 exports.waitForTick = waitForTick;
 exports.closeWindow = closeWindow;
 exports.ifNotManual = ifNotManual;

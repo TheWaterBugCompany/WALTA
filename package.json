@@ -1,0 +1,25 @@
+{
+  "name": "walta",
+  "version": "1.0.0",
+  "description": "Thw Waterbug App parent project",
+  "main": "index.js",
+  "dependencies": {
+    "circular-json": "^0.5.1",
+    "npm": "^5.8.0",
+    "xmldom": "^0.1.27"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "rake test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheWaterBugCompany/WALTA.git"
+  },
+  "author": "Michael Sharman",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TheWaterBugCompany/WALTA/issues"
+  },
+  "homepage": "https://github.com/TheWaterBugCompany/WALTA#readme"
+}

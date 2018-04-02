@@ -2,9 +2,11 @@ require('specs/lib/ti-mocha');
 
 var { expect } = require('specs/lib/chai');
 var Alloy = require('alloy');
-var { wrapViewInWindow, waitForEvent, isManualTests, setManualTests, waitForTick } = require('specs/util/TestUtils');
+var { wrapViewInWindow, waitForEvent, isManualTests, setManualTests, waitForTick, waitForBrowserEvent } = require('specs/util/TestUtils');
 var MockSpeedbug = require('specs/mocks/MockSpeedbug');
 var mocx = require("specs/lib/mocx");
+
+setManualTests(false);
 
 describe( 'SampleTray', function() {
 
@@ -16,25 +18,28 @@ describe( 'SampleTray', function() {
   }
 
   function openSampleTray() {
-    SampleTrayWin.addEventListener("open" , function open() {
-      SampleTrayWin.removeEventListener("open", open);
-    } );
-    SampleTrayWin.open();
+    return Promise.all(
+      [ Promise.resolve().then( () => {
+           SampleTrayWin.addEventListener( "close", function close() {
+             SampleTrayWin.removeEventListener( "close", close );
+             SampleTray.cleanup();
+             SampleTray.off();
+             SampleTray.destroy();
+           });
+           SampleTrayWin.open()
+        }),
+        Promise.resolve().then( waitForEvent( SampleTray, "trayupdated") ) ]);
   }
 
-  function cleanupSampleTray(done) {
-    SampleTray.cleanup();
-    SampleTrayWin.addEventListener('close' , function close() {
-      Ti.API.log("entering close");
-      SampleTrayWin.removeEventListener("close", close);
-
-      SampleTrayWin = null;
-      SampleTray.off();
-      SampleTray.destroy();
-      SampleTray = null;
-      done()
-    } );
-    SampleTrayWin.close();
+  function cleanupSampleTray() {
+    if ( ! isManualTests() ) {
+      return Promise.all(
+        [ Promise.resolve( SampleTrayWin.close ),
+          waitForBrowserEvent( SampleTrayWin.close, "close" ) ]
+      );
+    } else {
+      return Promise.resolve();
+    }
   }
 
   function findLeftMost(arr) {
@@ -69,7 +74,7 @@ describe( 'SampleTray', function() {
     return tile.getChildren()[1].getChildren();
   }
 
-  context( 'Rendering', function() {
+  context( 'rendering', function() {
 
     beforeEach(function() {
       mocx.createCollection("taxa", [
@@ -91,18 +96,11 @@ describe( 'SampleTray', function() {
       setupSampleTray();
     });
 
-    afterEach(function(done){
-      if ( ! isManualTests() ) {
-        cleanupSampleTray(done);
-      } else {
-        done();
-      }
-    });
+    afterEach(cleanupSampleTray);
 
     it('should display the correct sample entry for each tray position displayed', function() {
         return Promise.resolve()
           .then( openSampleTray )
-          .then( waitForEvent( SampleTray, "trayupdated") )
           .then( function() {
               var tiles = SampleTray.getView().getChildren();
               expect( tiles ).to.have.lengthOf(5);
@@ -153,8 +151,23 @@ describe( 'SampleTray', function() {
       });
   });
 
-  context('scrolling a long tray', function() {
+  context('adding the plus button', function() {
+      it('should render an add button with a blank tray', function (){
+        return Promise.resolve()
+          .then( function() {
+            mocx.createCollection("taxa", []);
+            setupSampleTray();
+          })
+          .then( openSampleTray )
+          .then( function() {
 
+          } )
+          .then( cleanupSampleTray )
+      })
+  });
+
+
+  context.only('scrolling a long tray', function() {
     beforeEach(function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
@@ -195,13 +208,7 @@ describe( 'SampleTray', function() {
       setupSampleTray();
     });
 
-    afterEach(function(done){
-      if ( ! isManualTests() ) {
-        cleanupSampleTray(done);
-      } else {
-        done();
-      }
-    });
+    afterEach(cleanupSampleTray);
 
     /* These tests just check that the leftmost and right most tiles contain
        the data we are expecting after a scroll */
@@ -211,10 +218,8 @@ describe( 'SampleTray', function() {
       there coordinates in the view. */
 
     it('when scrolled to the right it should update the screen properly', function() {
-      this.timeout(3000);
       return Promise.resolve()
           .then( openSampleTray )
-          .then( waitForEvent( SampleTray, "trayupdated") )
           .then( waitForTick( 10 ) )
           .then( function() {
             SampleTray.getView().scrollTo( 209*4, 0 );
@@ -251,10 +256,8 @@ describe( 'SampleTray', function() {
     });
 
     it('when scrolled to the left it should update the screen properly', function() {
-      this.timeout(3000);
       return Promise.resolve()
           .then( openSampleTray )
-          .then( waitForEvent( SampleTray, "trayupdated") )
           .then( waitForTick( 10 ) )
           .then( function() {
             SampleTray.getView().scrollTo( 209*4, 0 );
@@ -296,8 +299,9 @@ describe( 'SampleTray', function() {
   });
 
   context('adding and removing taxa', function() {
-    it('when a taxon is removed it should update');
-    it('when a taxon is added it should update');
-    it('when a taxon multiplicity is changed it should update');
+    it('should fire the Topics.IDENTIFY when the plus icon is clicked')
+    it('should update when a taxon is removed');
+    it('should update when a taxon is added');
+    it('should update when a taxon multiplicity is changed');
   });
 });
