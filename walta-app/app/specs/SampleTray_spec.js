@@ -6,8 +6,6 @@ var { wrapViewInWindow, waitForEvent, isManualTests, setManualTests, waitForTick
 var MockSpeedbug = require('specs/mocks/MockSpeedbug');
 var mocx = require("specs/lib/mocx");
 
-setManualTests(false);
-
 describe( 'SampleTray', function() {
   this.timeout(5000);
   var SampleTray, SampleTrayWin;
@@ -52,13 +50,15 @@ describe( 'SampleTray', function() {
 
   function cleanupSampleTray() {
     if ( ! isManualTests() ) {
-      return new Promise( function( resolve ) {
-        SampleTrayWin.addEventListener( "close", function e() {
-          SampleTrayWin.removeEventListener( "close", e );
-          resolve();
-        } );
-        SampleTrayWin.close();
-      });
+      if ( typeof( SampleTrayWin ) !== "undefined" ) {
+        return new Promise( function( resolve ) {
+          SampleTrayWin.addEventListener( "close", function e() {
+            SampleTrayWin.removeEventListener( "close", e );
+            resolve();
+          } );
+          SampleTrayWin.close();
+        });
+      }
     } else {
       return Promise.resolve();
     }
@@ -75,13 +75,17 @@ describe( 'SampleTray', function() {
   function assertSample( taxon, image, multiplicity ) {
     var unwraped = taxon.getChildren()[0];
     var [ icon, label ] = unwraped.getChildren();
-
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
     if ( multiplicity > 1 ) {
       expect( label.text, `Expected the multiplicity label to be ${multiplicity}` ).to.equal( multiplicity );
     } else {
       expect( label ).to.be.an("undefined");
     }
+  }
+
+  function assertPlus( square ) {
+    var unwraped = square.getChildren()[0];
+    expect( unwraped.backgroundImage ).to.include('images/icon-add-taxon.png');
   }
 
   function assertSampleBlank( taxon ) {
@@ -97,31 +101,139 @@ describe( 'SampleTray', function() {
   }
 
   context( 'rendering', function() {
-
-    beforeEach(function() {
-      mocx.createCollection("taxa", [
-        { taxonId: "WB1", multiplicity: 2 },
-        { taxonId: "WB2", multiplicity: 3 },
-
-        { taxonId: "WB3", multiplicity: 2 },
-        { taxonId: "WB4", multiplicity: 1 },
-        { taxonId: "WB5", multiplicity: 1 },
-        { taxonId: "WB1", multiplicity: 3 },
-
-        { taxonId: "WB1", multiplicity: 1 },
-        { taxonId: "WB3", multiplicity: 1 },
-        { taxonId: "WB2", multiplicity: 1 },
-        { taxonId: "WB2", multiplicity: 2 },
-
-        { taxonId: "WB5", multiplicity: 6 }
-      ]);
-      setupSampleTray();
+    afterEach(cleanupSampleTray);
+    it('should render an add button with a blank tray', function (){
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", []);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          assertPlus( sampleTaxa[0] );
+        } );
     });
 
-    afterEach(cleanupSampleTray);
+    it('should render an add button with a single taxa in the tray', function (){
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          assertPlus( sampleTaxa[1] );
+        } );
+    });
+
+    it('should render an add button with two taxa in the tray', function (){
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 2 },
+            { taxonId: "WB3", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[1] );
+          expect( sampleTaxa ).to.have.lengthOf(4);
+          assertPlus( sampleTaxa[0] );
+        } );
+    });
+
+    it('should render an add button with three taxa in the tray', function (){
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 2 },
+            { taxonId: "WB3", multiplicity: 1 },
+            { taxonId: "WB5", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[1] );
+          expect( sampleTaxa ).to.have.lengthOf(4);
+          assertSampleBlank( sampleTaxa[1] );
+          assertPlus( sampleTaxa[2] );
+        } );
+    });
+
+    it('should render an add button with four taxa in the tray', function (){
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 2 },
+            { taxonId: "WB3", multiplicity: 1 },
+            { taxonId: "WB5", multiplicity: 1 },
+            { taxonId: "WB2", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[1] );
+          expect( sampleTaxa ).to.have.lengthOf(4);
+          assertPlus( sampleTaxa[1] );
+        } );
+    });
+
+    it('should render an add button with five taxa in the tray', function (){
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 2 },
+            { taxonId: "WB3", multiplicity: 1 },
+            { taxonId: "WB5", multiplicity: 2 },
+            { taxonId: "WB2", multiplicity: 1 },
+            { taxonId: "WB4", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[1] );
+          expect( sampleTaxa ).to.have.lengthOf(4);
+          assertPlus( sampleTaxa[3] );
+        } );
+    });
 
     it('should display the correct sample entry for each tray position displayed', function() {
         return Promise.resolve()
+          .then( function() {
+            mocx.createCollection("taxa", [
+              { taxonId: "WB1", multiplicity: 2 },
+              { taxonId: "WB2", multiplicity: 3 },
+
+              { taxonId: "WB3", multiplicity: 2 },
+              { taxonId: "WB4", multiplicity: 1 },
+              { taxonId: "WB5", multiplicity: 1 },
+              { taxonId: "WB1", multiplicity: 3 },
+
+              { taxonId: "WB1", multiplicity: 1 },
+              { taxonId: "WB3", multiplicity: 1 },
+              { taxonId: "WB2", multiplicity: 1 },
+              { taxonId: "WB2", multiplicity: 2 },
+
+              { taxonId: "WB5", multiplicity: 6 }
+            ]);
+            setupSampleTray();
+          })
           .then( openSampleTray )
           .then( function() {
               var tiles = SampleTray.getView().getChildren();
@@ -158,7 +270,7 @@ describe( 'SampleTray', function() {
               expect( sampleTaxa ).to.have.lengthOf(4);
               assertSample( sampleTaxa[0], "/atalophlebia_b.png", 6 );
               assertSampleBlank( sampleTaxa[1] );
-              assertSampleBlank( sampleTaxa[2] );
+              assertPlus( sampleTaxa[2] );
               assertSampleBlank( sampleTaxa[3] );
 
               // assert fourth tile
@@ -174,18 +286,8 @@ describe( 'SampleTray', function() {
   });
 
   context('adding the plus button', function() {
-      it('should render an add button with a blank tray'/*, function (){
-        return Promise.resolve()
-          .then( function() {
-            mocx.createCollection("taxa", []);
-            setupSampleTray();
-          })
-          .then( openSampleTray )
-          .then( function() {
+      afterEach(cleanupSampleTray);
 
-          } )
-          .then( cleanupSampleTray )
-      }*/);
   });
 
   context('scrolling a long tray', function() {

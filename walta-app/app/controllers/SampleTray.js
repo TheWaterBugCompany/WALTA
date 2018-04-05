@@ -2,7 +2,7 @@
 var speedbugIndex = $.args.speedbugIndex;
 
 var PlatformSpecific = require('ui/PlatformSpecific');
-
+var Topics = require('ui/Topics');
 
 var lastScroll = null;
 var endCapWidth = 151;
@@ -18,6 +18,24 @@ function mapTileNumToCollection( n ) {
   return n*4+2;
 }
 
+function addTrayIcon( container, index ) {
+  var thumbnail = createIconContainer();
+  if ( index < Alloy.Collections["taxa"].length) {
+    var taxon = Alloy.Collections["taxa"].at(index);
+    if ( typeof( taxon ) !== "undefined" ) {
+      thumbnail.add( createTaxaIcon( taxon ) );
+      container.add( thumbnail );
+    } else {
+      container.add( thumbnail );
+    }
+  } else if ( index === Alloy.Collections["taxa"].length ) {
+    thumbnail.add( createAddIcon() );
+    container.add( thumbnail );
+  } else {
+    container.add( thumbnail );
+  }
+}
+
 function addFirstTwoSampleTrayIcons() {
   var sampleContainer = Ti.UI.createView({
     width: Ti.UI.FILL,
@@ -26,27 +44,41 @@ function addFirstTwoSampleTrayIcons() {
     layout: 'vertical'
   });
   [ 0, 1 ].forEach( function(j) {
-    var taxon = Alloy.Collections["taxa"].at(j);
-    sampleContainer.add( createSampleTrayIcon( taxon, j) );
+      addTrayIcon( sampleContainer, j );
   });
   $.endcap.add(sampleContainer);
 }
 
-function createSampleTrayIcon(taxon, i) {
-  var thumbnail = Ti.UI.createView( {
+function createIconContainer() {
+  return Ti.UI.createView( {
     left: '20dp',
     top: '50dp',
     width: '80dp',
     height: '90dp'
   });
-  if ( typeof( taxon ) !== "undefined" ) {
-    var speedbugIcon = Alloy.createController( "SampleTaxaIcon", {
-        taxon: taxon,
-        speedbugIndex: speedbugIndex
-      } );
-    thumbnail.add(speedbugIcon.getView());
-  }
-  return thumbnail;
+}
+
+function createAddIcon() {
+  var btn = Ti.UI.createButton({
+    left: '14dp',
+    bottom: '14dp',
+    width: '70dp',
+    height: '70dp',
+		backgroundImage: "images/icon-add-taxon.png"
+	});
+	btn.addEventListener( 'click', function(e) {
+		Topics.fireTopicEvent( Topics.KEYSEARCH, null );
+		e.cancelBubble = true;
+	});
+  return btn;
+}
+
+function createTaxaIcon(taxon) {
+  var speedbugIcon = Alloy.createController( "SampleTaxaIcon", {
+      taxon: taxon,
+      speedbugIndex: speedbugIndex
+    } );
+  return speedbugIcon.getView();
 }
 
 function fillSampleTrayTile( sampleNum ) {
@@ -57,8 +89,7 @@ function fillSampleTrayTile( sampleNum ) {
   });
 
   [ 0, 2, 1, 3 ].forEach( function(j) {
-    var taxon = Alloy.Collections["taxa"].at(sampleNum + j);
-    sampleContainer.add( createSampleTrayIcon( taxon, sampleNum + j ) );
+    addTrayIcon( sampleContainer, sampleNum + j );
   });
   return sampleContainer;
 }
