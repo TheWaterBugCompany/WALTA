@@ -42,6 +42,8 @@ var topics = {
 	// Start the decision process from the beginning
 	KEYSEARCH: 'keysearch',
 
+	IDENTIFY: 'identify',
+
 	SPEEDBUG: 'speedbug',
 
 	HELP: 'help',

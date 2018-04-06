@@ -1,13 +1,13 @@
 require('specs/lib/ti-mocha');
 
 var { expect } = require('specs/lib/chai');
-var Alloy = require('alloy');
 var { wrapViewInWindow, waitForEvent, isManualTests, setManualTests, waitForTick, waitForBrowserEvent } = require('specs/util/TestUtils');
 var MockSpeedbug = require('specs/mocks/MockSpeedbug');
 var mocx = require("specs/lib/mocx");
+var Topics = require('ui/Topics');
 
 describe( 'SampleTray', function() {
-  this.timeout(5000);
+  this.timeout(10000);
   var SampleTray, SampleTrayWin;
 
   function setupSampleTray() {
@@ -73,14 +73,15 @@ describe( 'SampleTray', function() {
   }
 
   function assertSample( taxon, image, multiplicity ) {
-    var unwraped = taxon.getChildren()[0];
-    var [ icon, label ] = unwraped.getChildren();
+    var unwrapped = taxon.getChildren()[0];
+    var [ icon, label ] = unwrapped.getChildren();
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
-    if ( multiplicity > 1 ) {
-      expect( label.text, `Expected the multiplicity label to be ${multiplicity}` ).to.equal( multiplicity );
-    } else {
-      expect( label ).to.be.an("undefined");
-    }
+    expect( label.text, `Expected the multiplicity label to be ${multiplicity}` ).to.equal( multiplicity );
+  }
+
+  function clickPlus( square ) {
+    var unwrapped = square.getChildren()[0];
+    unwrapped.fireEvent('click');
   }
 
   function assertPlus( square ) {
@@ -111,6 +112,7 @@ describe( 'SampleTray', function() {
         .then( openSampleTray )
         .then( function() {
           var tiles = SampleTray.getView().getChildren();
+          expect( tiles ).to.have.lengthOf(3); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertPlus( sampleTaxa[0] );
@@ -128,6 +130,7 @@ describe( 'SampleTray', function() {
         .then( openSampleTray )
         .then( function() {
           var tiles = SampleTray.getView().getChildren();
+          expect( tiles ).to.have.lengthOf(3); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertPlus( sampleTaxa[1] );
@@ -285,11 +288,6 @@ describe( 'SampleTray', function() {
       });
   });
 
-  context('adding the plus button', function() {
-      afterEach(cleanupSampleTray);
-
-  });
-
   context('scrolling a long tray', function() {
     beforeEach(function() {
       // a collection that is long enough to need to scroll
@@ -408,9 +406,161 @@ describe( 'SampleTray', function() {
   });
 
   context('adding and removing taxa', function() {
-    it('should fire the Topics.IDENTIFY when the plus icon is clicked')
-    it('should update when a taxon is removed');
-    it('should update when a taxon is added');
-    it('should update when a taxon multiplicity is changed');
+
+    afterEach(cleanupSampleTray);
+    it('should fire the Topics.IDENTIFY when the plus icon is clicked', function() {
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", []);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( resolve => {
+            Topics.subscribe( Topics.IDENTIFY, resolve );
+            clickPlus( sampleTaxa[0] );
+          });
+        });
+    });
+
+    it('should update when a taxon is added in first two holes', function() {
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", []);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( function(resolve) {
+              updateSampleTrayOnce(resolve);
+              Alloy.Collections["taxa"].add( { taxonId: "WB1", multiplicity: 2 } );
+          });
+        })
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", 2 );
+          assertPlus( sampleTaxa[1] );
+        });
+    });
+
+    it('should update when a taxon is added after first two holes', function() {
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 2 },
+            { taxonId: "WB3", multiplicity: 1 },
+            { taxonId: "WB5", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( function(resolve) {
+              updateSampleTrayOnce(resolve);
+              Alloy.Collections["taxa"].add( { taxonId: "WB4", multiplicity: 2 } );
+          });
+        })
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[1] );
+          expect( sampleTaxa ).to.have.lengthOf(4);
+          assertSample( sampleTaxa[2], "/anostraca_b.png", 2 );
+          assertPlus( sampleTaxa[1] );
+        });
+    });
+
+    it('should update when a taxon is removed from the first two holes', function() {
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 2 },
+            { taxonId: "WB5", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( function(resolve) {
+              updateSampleTrayOnce(resolve);
+              Alloy.Collections["taxa"].remove( Alloy.Collections["taxa"].at(1) );
+          });
+        })
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          assertPlus( sampleTaxa[1] );
+        });
+    });
+
+    it('should update when a taxon is removed after first two holes', function() {
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 2 },
+            { taxonId: "WB3", multiplicity: 1 },
+            { taxonId: "WB5", multiplicity: 1 },
+            { taxonId: "WB2", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( function(resolve) {
+              updateSampleTrayOnce(resolve);
+              Alloy.Collections["taxa"].remove( Alloy.Collections["taxa"].at(3) );
+          });
+        })
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[1] );
+          expect( sampleTaxa ).to.have.lengthOf(4);
+          assertPlus( sampleTaxa[2] );
+        });
+    });
+
+    it('should update when a taxon multiplicity is changed', function() {
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", [
+            { taxonId: "WB1", multiplicity: 1 },
+            { taxonId: "WB5", multiplicity: 1 }
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( function(resolve) {
+              updateSampleTrayOnce(resolve);
+              Alloy.Collections["taxa"].at(1).set('multiplicity', 2);
+          });
+        })
+        .then( function() {
+          var tiles = SampleTray.getView().getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          assertSample( sampleTaxa[1], "/atalophlebia_b.png", 2 );
+        });
+    });
   });
 });
