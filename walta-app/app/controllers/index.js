@@ -1,6 +1,6 @@
-if ( false ){
-  var AppWindow = require('control/AppWindow');
-  AppWindow.createAppWindow( 'walta' ).start();
+if ( true ) {
+  var AppWindow = require("control/AppWindow");
+  AppWindow.createAppWindow( "walta" ).start();
 } else {
-  require('specs/index');
+  require("specs/index");
 }

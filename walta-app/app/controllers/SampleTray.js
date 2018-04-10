@@ -1,4 +1,3 @@
-
 var speedbugIndex = $.args.speedbugIndex;
 
 var PlatformSpecific = require('ui/PlatformSpecific');
