@@ -44,6 +44,12 @@ var topics = {
 
 	IDENTIFY: 'identify',
 
+	MAYFLY: 'mayfly',
+
+	ORDER: 'order',
+
+	DETAILED: 'detailed',
+
 	SPEEDBUG: 'speedbug',
 
 	HELP: 'help',

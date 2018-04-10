@@ -29,8 +29,6 @@ var SpeedbugView = require('ui/SpeedbugView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
 
-
-
 /*
  * Module: AppWindow
  *
@@ -76,8 +74,15 @@ function createAppWindow( keyName, keyPath ) {
 				});
 			},
 
-			speedBugWindow: function() {
+			sampleTrayWindow: function() {
+				TopLevelWindow.makeTopLevelWindow({
+					name: 'speedbug',
+					title: 'Sample',
+					uiObj: { view: Alloy.createController("SampleTray").getView() }
+				});
+			},
 
+			speedBugWindow: function() {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'speedbug',
 					title: 'Speedbug',
@@ -188,6 +193,18 @@ function createAppWindow( keyName, keyPath ) {
 		    	Ti.API.error("Topics.JUMPTO undefined node!");
 		    }
 	    });
+
+			privates.subscribe( Topics.MAYFLY, function() {
+				privates.sampleTrayWindow();
+			} );
+
+			privates.subscribe( Topics.ORDER, function() {
+				privates.sampleTrayWindow();
+			} );
+
+			privates.subscribe( Topics.DETAILED, function() {
+				privates.sampleTrayWindow();
+			} );
 
 	    privates.subscribe( Topics.SPEEDBUG, function() {
 	    	privates.speedBugWindow();
