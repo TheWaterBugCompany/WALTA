@@ -4,8 +4,8 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 
 var lastScroll = null;
-var endCapWidth = 151;
-var middleWidth = 209;
+var endCapWidth = 144;
+var middleWidth = 189;
 
 // Keeps track of the tile views we cache
 var tileIndex = [];
@@ -184,7 +184,7 @@ function addTiles( start_n, end_n ) {
   Ti.API.trace(`SampleTray load tiles start_n = ${start_n}  end_n = ${end_n} collection length = ${Alloy.Collections["taxa"].length}`);
   for( var i = start_n; i<=end_n; i++ ) {
     // max() below is to add an extra blank tile with an empty tray...
-    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length + 2)/4,1) ) ) {
+    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length + 2)/4,2) ) ) {
       var tile;
       if ( typeof( tileIndex[i] ) !== "undefined") {
         updateSampleTrayTile( i );
