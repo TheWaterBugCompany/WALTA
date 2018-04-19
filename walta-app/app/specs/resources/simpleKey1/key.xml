@@ -8,7 +8,7 @@
 		<mediaRef url="parastacide_02.jpg"/>
 	</taxon>
 
-  <taxon id="dummyTaxon1" name="Dummy1" commonName="test dummy 1" >
+  <taxon id="dummyTaxon1" ref="dummyTaxon1" name="Dummy1" commonName="test dummy 1" >
   </taxon>
 
   <taxon id="dummyTaxon2" name="Dummy2" commonName="test dummy 2" >
@@ -78,9 +78,9 @@
 	        <speedBugLink image="speedbug/athericidae.svg" ref="athericidae"/>
 			<speedBugLink image="speedbug/blepheraceridae.svg" ref="blepheraceridae"/>
 	    </speedBugGroup>
-	    <speedBugLink image="speedbug/ranatra.svg" ref="ranatra"/>
+			<speedBugLink image="speedbug/ranatra.svg" ref="testNode2"/>
 	    <speedBugGroup ref="larval">
-	        <speedBugLink image="speedbug/hydrobiosidae.svg" ref="hydrobiosidae"/>
+	        <speedBugLink image="speedbug/hydrobiosidae.svg" ref="dummyTaxon1"/>
 			<speedBugLink image="speedbug/megaloptera.svg" ref="corydalidae"/>
 	    </speedBugGroup>
 	</speedBugIndex>

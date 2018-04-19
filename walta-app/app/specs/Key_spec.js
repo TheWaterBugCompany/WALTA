@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha");
+require("specs/lib/mocha");
 var { expect } = require('specs/lib/chai');
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 
@@ -23,7 +23,7 @@ var Key = require('logic/Key');
 var Question = require('logic/Question');
 var Taxon = require('logic/Taxon');
 
-describe.skip('Key', function() {
+describe('Key', function() {
 	var taxons;
 	// Create a new key and add some taxons and nodes
 	var testKey = Key.createKey( {
@@ -63,21 +63,21 @@ describe.skip('Key', function() {
 	});
 
 	it('should lookup up KeyNodes by id', function() {
-			expect( testKey.isNode( testKey.findNode( 'n1' ) ) ).toEqual( true );
-			expect( testKey.findNode( 'n1' ).id ).toEqual( 'n1');
+			expect( testKey.isNode( testKey.findNode( 'n1' ) ) ).to.equal( true );
+			expect( testKey.findNode( 'n1' ).id ).to.equal( 'n1');
 		});
 
 	it('should lookup up Taxons by id', function() {
-		expect( testKey.isTaxon( testKey.findTaxon( 't1' ) ) ).toEqual( true );
-		expect( testKey.findTaxon( 't1' ).id ).toEqual( 't1');
+		expect( testKey.isTaxon( testKey.findTaxon( 't1' ) ) ).to.equal( true );
+		expect( testKey.findTaxon( 't1' ).id ).to.equal( 't1');
 	});
 
 	it('should not lookup up KeyNodes via findTaxon()', function() {
-		expect( testKey.findTaxon( 'n1' ) ).toEqual( undefined );
+		expect( testKey.findTaxon( 'n1' ) ).to.equal( undefined );
 	});
 
 	it('should not lookup up Taxons via findNode()', function() {
-		expect( testKey.findNode( 't1' ) ).toEqual( undefined );
+		expect( testKey.findNode( 't1' ) ).to.equal( undefined );
 	});
 
 	it('should be able to link nodes to their parents', function() {
@@ -90,57 +90,55 @@ describe.skip('Key', function() {
 
 	it('should set the root node to n1', function() {
 		testKey.setRootNode( testKey.findNode( 'n1' ) );
-		expect( testKey.getRootNode().id ).toEqual( 'n1' );
+		expect( testKey.getRootNode().id ).to.equal( 'n1' );
 	});
 
 	it('should set the current node to the new root n1', function() {
-		expect( testKey.getCurrentNode().id ).toEqual( 'n1' );
+		expect( testKey.getCurrentNode().id ).to.equal( 'n1' );
 	});
 
 	// Test the choose()/back()/reset() functions
 	it('should set the current node to the correct outcome on choose()', function() {
 		testKey.choose(0);
-		expect( testKey.getCurrentNode().id ).toEqual( 'n2' );
+		expect( testKey.getCurrentNode().id ).to.equal( 'n2' );
 	});
 
 	it('should return true when at the root with isRoot()', function() {
 		testKey.reset();
-		expect( testKey.isRoot() ).toEqual( true );
+		expect( testKey.isRoot() ).to.equal( true );
 		testKey.choose(0);
-		expect( testKey.isRoot() ).toEqual( false );
+		expect( testKey.isRoot() ).to.equal( false );
 	});
 
 	it('should set the current node to the the parent on back()', function() {
 		testKey.back();
-		expect( testKey.getCurrentNode().id ).toEqual( 'n1' );
+		expect( testKey.getCurrentNode().id ).to.equal( 'n1' );
 	});
 
 	it('should stay on the root node if back() is called from the root', function() {
 		testKey.back();
-		expect( testKey.getCurrentNode().id ).toEqual( 'n1' );
+		expect( testKey.getCurrentNode().id ).to.equal( 'n1' );
 	});
 
 	it('should return a taxon on a leaf node', function() {
 		testKey.choose(0);
 		testKey.choose(0);
-		expect( testKey.getCurrentNode().id ).toEqual( 't2' );
+		expect( testKey.getCurrentNode().id ).to.equal( 't2' );
 	});
 
 	it('should return to the node if back() is called on a taxon)', function() {
 		testKey.back();
-		expect( testKey.getCurrentNode().id ).toEqual( 'n2' );
+		expect( testKey.getCurrentNode().id ).to.equal( 'n2' );
 	});
 
 	it('should return the the root on reset()', function() {
 		testKey.reset();
-		expect( testKey.isRoot() ).toEqual( true );
+		expect( testKey.isRoot() ).to.equal( true );
 	});
 
 	it('should list all the taxons with findAllTaxons()', function() {
 		txns = testKey.findAllTaxons();
-		expect( txns ).toContain( taxons[0] );
-		expect( txns ).toContain( taxons[1] );
-		expect( txns ).toContain( taxons[2] );
+		expect( txns ).to.include.members( [ taxons[0], taxons[1], taxons[2] ] );
 	});
 
 });

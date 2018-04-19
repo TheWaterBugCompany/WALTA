@@ -2,7 +2,7 @@ require('specs/lib/ti-mocha');
 var { expect } = require('specs/lib/chai');
 var SampleDatabase = require('logic/SampleDatabase');
 
-describe.only( 'Sample model', function() {
+describe( 'Sample model', function() {
   context('SampleDatabase', function() {
     beforeEach( function() {
       var dbFile = Ti.Filesystem.getFile(SampleDatabase.DATABASE_FILE_NAME);

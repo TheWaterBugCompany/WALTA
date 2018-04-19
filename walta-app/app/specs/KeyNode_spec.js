@@ -15,12 +15,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-require("specs/lib/ti-mocha");
+require("specs/lib/mocha");
 var { expect } = require('specs/lib/chai');
 var KeyNode = require('logic/Key');
 var Question = require('logic/Question');
 
-describe.skip('KeyNode tests', function() {
+describe('KeyNode tests', function() {
 	var kn = KeyNode.createKeyNode( {
 		questions: [
 			Question.createQuestion({
@@ -38,12 +38,12 @@ describe.skip('KeyNode tests', function() {
 	});
 
 	it('should store both questions', function(){
-		expect( kn.questions.length).toEqual(2);
+		expect( kn.questions.length).to.equal(2);
 
-		expect(kn.questions[0].text).toEqual("Question 1");
-		expect(kn.questions[0].mediaUrls).toEqual([ "specs/resources/simpleKey1/media/amphipoda_01.jpg" ]);
+		expect(kn.questions[0].text).to.equal("Question 1");
+		expect(kn.questions[0].mediaUrls).to.have.members([ "specs/resources/simpleKey1/media/amphipoda_01.jpg" ]);
 
-		expect(kn.questions[1].text).toEqual("Question 2");
-		expect(kn.questions[1].mediaUrls).toEqual([ "specs/resources/simpleKey1/media/amphipoda_02.jpg", "specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ]);
+		expect(kn.questions[1].text).to.equal("Question 2");
+		expect(kn.questions[1].mediaUrls).to.have.members([ "specs/resources/simpleKey1/media/amphipoda_02.jpg", "specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4" ]);
 	});
 });

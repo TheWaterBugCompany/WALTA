@@ -27,6 +27,7 @@ function createTaxon( args ) {
 		id: null,			// XML based id
 		ref: "",			// Where a linked Taxon should jump to in the key if not a leaf node
 		name: "",			// User readable species scientific name
+		scientificName: [], // Array of scientific name elements { taxonomicLevel: ... , name: ... }
 		commonName: "",		// Common name for species
 		size: 0,			// Size in mm
 		signalScore: 0,		// The signal score scalar
@@ -59,22 +60,13 @@ function createTaxon( args ) {
 
 		// Returns the details formatted as HTML
 		asDetailHtml: function() {
-			return String.format(
-				"<p><b>Scientific Classification:</b><br>%s</p>"
-			+	"<p><b>Size:</b> Up to %dmm</p>"
-			+   "<p><b>Habitat:</b> %s</p>"
-			+   "<p><b>Movement:</b> %s</p>"
-			+	"<p><b>Confused with:</b> %s</p>"
-			+	"<p><b>SIGNAL score: %d</b></p>"
-			+   "<p>%s</p>",
-				this.getScientificNameHtml(),
-				this.size,
-				this.habitat,
-				this.movement,
-				this.confusedWith,
-				this.signalScore,
-				this.description
-			);
+			return `<p><b>Scientific Classification:</b><br>${this.getScientificNameHtml()}</p>\
+<p><b>Size:</b> Up to ${this.size}mm</p>\
+<p><b>Habitat:</b> ${this.habitat}</p>\
+<p><b>Movement:</b> ${this.movement}</p>\
+<p><b>Confused with:</b> ${this.confusedWith}</p>\
+<p><b>SIGNAL score: ${this.signalScore}</b></p>\
+<p>${this.description}</p>`;
 		}
 	} );
 

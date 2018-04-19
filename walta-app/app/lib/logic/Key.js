@@ -30,6 +30,7 @@ var SpeedbugIndex = require('./SpeedbugIndex');
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
 		id: '',				// The string id of the this node
+		ref: null,        // If not null used by SpeedBugIndex
 		questions: [],		// An array containing all the Question's relevant to this KeyNode
 		parentLink: null	// A link to the parent KeyNode or null if this is the root
 	});
