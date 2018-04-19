@@ -1,6 +1,6 @@
 #! /usr/bin/node
 var fs = require('fs');
 var CircularJSON = require('circular-json');
-var KeyLoader = require("../walta-app/app/lib/logic/KeyLoaderXml");
-var key = KeyLoader.loadKey( './app/assets/taxonomy/walta/' );
-fs.writeFileSync( './app/assets/taxonomy/walta/key.json', CircularJSON.stringify(key) );
+var KeyLoader = require("logic/KeyLoaderXml");
+var key = KeyLoader.loadKey( '../walta-app/app/assets/taxonomy/walta/' );
+fs.writeFileSync( '../walta-app/app/assets/taxonomy/walta/key.json', CircularJSON.stringify(key) );
