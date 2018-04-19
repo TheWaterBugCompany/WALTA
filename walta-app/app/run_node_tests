@@ -1,0 +1,2 @@
+#!/bin/sh
+NODE_PATH=.:lib mocha specs/Key_spec.js specs/KeyNode_spec.js specs/KeyLoaderXml_spec.js specs/Question_spec.js specs/Taxon_spec.js
