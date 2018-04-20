@@ -30,15 +30,11 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 
 
 function createActionButton(imageUrl, label, onClick) {
-
 	var obj = {
 		_views: {},
 		view: null
 	};
-
-
 	var vws = obj._views;
-
 	vws.btn = Ti.UI.createButton({
 		width : Layout.BUTTON_SIZE,
 		height : Layout.BUTTON_SIZE,
@@ -69,9 +65,7 @@ function createActionButton(imageUrl, label, onClick) {
 	ctn.add(vws.btn);
 	ctn.add(vws.lbl);
 
-	obj.view = ctn;
-
-	return obj;
+	return ctn;
 };
 
 $.taxon = $.args.taxon;
@@ -113,22 +107,32 @@ if ($.args.taxon.photoUrls.length > 0) {
 		top : Layout.WHITESPACE_GAP
 	}));
 
-	$.openGallery = createActionButton("/images/icon-gallery.png", "Photo gallery", function(e) {
-		photoView.open();
-		e.cancelBubble = true;
-	});
-	$.actionBtns.add( $.openGallery.view );
+	$.actionBtns.add(
+		createActionButton("/images/icon-gallery.png", "Photo gallery",
+			function(e) {
+				photoView.open();
+				e.cancelBubble = true;
+			}));
 }
 
 // If there is a video add the video button
 if ($.args.taxon.videoUrl) {
-	var watchVideo = createActionButton("/images/icon-video.png", "Watch video", function(e) {
-		// open video player
-		Topics.fireTopicEvent( Topics.VIDEO, { url: $.args.taxon.videoUrl } );
-		e.cancelBubble = true;
-	});
-	$.actionBtns.add(watchVideo.view);
+	$.actionBtns.add(
+		createActionButton("/images/icon-video.png", "Watch video",
+			function(e) {
+				// open video player
+				Topics.fireTopicEvent( Topics.VIDEO, { url: $.taxon.videoUrl } );
+				e.cancelBubble = true;
+			}) );
 }
+
+// Add the add to sample button
+$.actionBtns.add(
+	createActionButton("/images/icon-add-taxon.png", "Add To Sample",
+		function(e) {
+			Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId } );
+			e.cancelBubble = true;
+		}) );
 
 function swipeListener(e){
 	if ( e.direction === 'right' ) {
