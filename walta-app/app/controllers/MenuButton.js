@@ -8,7 +8,6 @@ if ( $.args.small ) {
   $.button.width = "165dp";
 }
 
-
 $.button.addEventListener( 'click', function(e) {
   if ( $.args.topic ) {
     Topics.fireTopicEvent( $.args.topic, null );
