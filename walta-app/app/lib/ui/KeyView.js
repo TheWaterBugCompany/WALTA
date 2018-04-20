@@ -18,35 +18,34 @@
 
 /*
  * Module: KeyView
- * 
+ *
  * Displays a choice between a binary set of Questions stored in a
  * KeyNode object.
- * 
+ *
  */
 
 
 function createKeyView( keyNode ) {
 	var _ = require('lib/underscore')._;
 	
-	var AnchorBar = require('ui/AnchorBar');
 	var Layout = require('ui/Layout');
-	
+
 	var GoBackButton = require('ui/GoBackButton');
 	var Topics = require('ui/Topics');
-	
+
 	var meld = require('lib/meld');
 	var QuestionView = require('ui/QuestionView');
-	
+
 	var PlatformSpecific = require('ui/PlatformSpecific');
-	
+
 	var platformHeight = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformHeight );
-	
+
 	var obj = {
 		view: null,		 // The Ti.UI.View for the user interface
 		keyNode: keyNode // The Key data object associated with this view
 	};
 	obj._views = {};
-	
+
 	obj.view = Ti.UI.createView({
 		top: '1%',
 		width: Ti.UI.FILL,
@@ -54,14 +53,14 @@ function createKeyView( keyNode ) {
 		backgroundColor: 'white',
 		layout: 'vertical'
 	});
-	
+
 	var heading = Ti.UI.createLabel({
-		text: 'Choose the best match', 
+		text: 'Choose the best match',
 		font: { fontFamily: 'Tahoma', fontSize: '15dip' },
-		color: 'black' 
+		color: 'black'
 	});
 	obj.view.add( heading );
-	
+
 	// Add each question
 	obj._views.questions = [];
 	_(keyNode.questions).each(
@@ -70,20 +69,20 @@ function createKeyView( keyNode ) {
 			obj.view.add( _(qv.view).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
 			var index = obj._views.questions.length;
 			obj._views.questions.push( qv );
-			
-			meld.on( qv, 'onSelect', function() { 
+
+			meld.on( qv, 'onSelect', function() {
 				Topics.fireTopicEvent( Topics.FORWARD, { index: index } );
 			} );
 		}
 	);
-	
+
 	obj.view.addEventListener('swipe', function(e){
 		if ( e.direction === 'right' ) {
 			e.cancelBubble = true;
 			Topics.fireTopicEvent( Topics.BACK );
-		} 
+		}
 	});
-	
+
 	_(obj).extend({
 		openingFromMenu: function( args ) {
 			if ( args.anchorBar ) {

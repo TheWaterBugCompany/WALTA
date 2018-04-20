@@ -1,6 +1,6 @@
 "#multiplicity": {
-  right: "15dp",
-  bottom: "12dp",
+  right: "2dp",
+  bottom: "6dp",
   color: "#fff",
   backgroundColor: "#f00",
   borderColor: "#f00",

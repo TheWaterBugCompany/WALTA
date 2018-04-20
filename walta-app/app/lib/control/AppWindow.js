@@ -23,8 +23,6 @@ var TopLevelWindow = require('ui/TopLevelWindow');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var HtmlView = require('ui/HtmlView');
 var BrowseView = require('ui/BrowseView');
-
-
 var SpeedbugView = require('ui/SpeedbugView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
@@ -75,12 +73,10 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			sampleTrayWindow: function() {
-				TopLevelWindow.makeTopLevelWindow({
-					name: 'speedbug',
-					title: 'Sample',
-					uiObj: { view: Alloy.createController("SampleTray").getView() }
-				});
+				Alloy.createController("SampleTray");
 			},
+
+
 
 			speedBugWindow: function() {
 				TopLevelWindow.makeTopLevelWindow({
