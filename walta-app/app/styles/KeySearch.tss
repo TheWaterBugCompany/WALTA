@@ -1,0 +1,13 @@
+
+".container" : {
+  top: '1%',
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL,
+  backgroundColor: 'white',
+  layout: 'vertical'
+}
+
+"#heading": {
+  font: { fontFamily: 'Tahoma', fontSize: '15dip' },
+  color: 'black'
+}

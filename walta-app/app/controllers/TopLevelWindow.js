@@ -27,7 +27,7 @@ var win = $.TopLevelWindow;
 win.title = $.args.title;
 
 var panelHeight = Ti.UI.FILL;
-
+var anchorBar = null;
 if ( $.args.title ) {
 	var anchorBar = Alloy.createController("AnchorBar", $.args );
 	win.add( anchorBar.getView() );
@@ -37,8 +37,8 @@ if ( $.args.title ) {
 	anchorBar == null;
 }
 
-if ( $.args.uiObj.openingFromMenu ) {
-	$.args.uiObj.openingFromMenu( { anchorBar: anchorBar });
+function getAnchorBar() {
+	return anchorBar;
 }
 
 win.add( _($.args.uiObj.view).extend({
@@ -67,3 +67,4 @@ Alloy.Globals["currentWindow"].win = win;
 exports.transitionWindows = PlatformSpecific.transitionWindows;
 exports.closeCurrentWindow = closeCurrentWindow;
 exports.getCurrentWindow = getCurrentWindow;
+exports.getAnchorBar = getAnchorBar;

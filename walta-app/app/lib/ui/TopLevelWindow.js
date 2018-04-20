@@ -3,3 +3,6 @@ function makeTopLevelWindow(args) {
   Alloy.createController( "TopLevelWindow", args );
 }
 exports.makeTopLevelWindow = makeTopLevelWindow;
+exports.getCurrentWindow = function() {
+  return Alloy.Globals["currentWindow"];
+};

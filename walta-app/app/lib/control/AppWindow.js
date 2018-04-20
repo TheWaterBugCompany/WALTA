@@ -109,22 +109,18 @@ function createAppWindow( keyName, keyPath ) {
 
 			updateDecisionWindow: function( args ) {
 				var node = this.key.getCurrentNode();
-				if ( ! args ) args = {};
-				_(args).extend({
-					name: 'decision',
-					title: 'ALT Key'
-				});
-				// KeyView when on a decision point
-				// but TaxonView when on a leaf node
 				if ( this.key.isNode( node ) ) {
-					var KeyView = require('ui/KeyView');
-					args.uiObj = KeyView.createKeyView( node );
+					args.keyNode = node;
+					Alloy.createController("KeySearch", args );
 				} else {
+					_(args).extend({
+						name: 'decision',
+						title: 'ALT Key'
+					});
 					var TaxonView = require('ui/TaxonView');
 				 	args.uiObj = TaxonView.createTaxonView( node );
+					TopLevelWindow.makeTopLevelWindow(args);
 				}
-
-				TopLevelWindow.makeTopLevelWindow(args);
 			},
 
 			subscribe: function( topic, cb ) {
