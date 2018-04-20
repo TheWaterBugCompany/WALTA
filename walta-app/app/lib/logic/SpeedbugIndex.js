@@ -1,33 +1,45 @@
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 
 function createSpeedbugIndex() {
-  var speedBugIndex = {};
+  var speedbugIndex = {};
   return {
-    speedBugIndex: speedBugIndex,
+    speedbugIndex: speedbugIndex,
+
+    key: null,
+
+    setKey: function( key ) {
+      this.key = key;
+    },
 
     // Adds a "Speed Bug" link, this allows a special index
     // to be displayed that jumps directly to a node within
     // a key by touching a silhouette image.
 
     addSpeedbugGroup: function( grpId ) {
-      if ( ! _(speedBugIndex).has(grpId) ) {
-        speedBugIndex[grpId] = { refId: grpId, bugs: [] };
+      if ( ! _(speedbugIndex).has(grpId) ) {
+        speedbugIndex[grpId] = { refId: grpId, bugs: [] };
       } else {
-        speedBugIndex[grpId].refId = grpId;
+        speedbugIndex[grpId].refId = grpId;
       }
     },
 
     addSpeedbugIndex: function( imgUrl, grpId, refId) {
-      speedBugIndex[grpId].bugs.push( { imgUrl: imgUrl, refId: refId } );
+      speedbugIndex[grpId].bugs.push( { imgUrl: imgUrl, refId: refId } );
     },
 
-    // Searches for the speedbug silhouette for this taxon
+    getSpeedbugFromTaxonId: function( taxonId ) {
+      var taxon = this.key.findTaxonById( taxonId );
+      return this.findSilhouette( taxon );
+    },
+
 		findSilhouette: function( node ) {
       if ( node.id ) {
         var bug = this.reverseLookup( node.id );
-        console.log(`found bug: ${bug}`);
-        if ( bug )
+
+        if ( bug ) {
+          Ti.API.info(`found: ${bug.imgUrl}`);
           return bug.imgUrl;
+        }
       }
 
       if ( node.parentLink )
@@ -35,9 +47,8 @@ function createSpeedbugIndex() {
 		},
 
     reverseLookup: function( refId ) {
-      console.log(refId);
       var foundBug;
-      _(this.speedBugIndex).each(
+      _(this.speedbugIndex).each(
         (grp) => grp.bugs.forEach( (bug) => {
           if ( bug.refId == refId ) {
             foundBug = bug;
@@ -47,8 +58,12 @@ function createSpeedbugIndex() {
       return foundBug;
     },
 
+    setSpeedbugIndex: function( index ) {
+      this.speedbugIndex = index;
+    },
+
     getSpeedbugIndex: function() {
-			return speedBugIndex;
+			return this.speedbugIndex;
 		}
 
   };

@@ -28,8 +28,6 @@ var Layout = require('ui/Layout');
 
 // Create photo View
 function createPhotoView( photoUrls ) {
-
-
 	var photoViewObj = {};
 
 	// Hooks for auto tests
@@ -56,7 +54,7 @@ function createPhotoView( photoUrls ) {
 	});
 
 	var photo = Ti.UI.createImageView( {
-		image:  "/" + photoUrls[0],
+		image: photoUrls[0],
 		width: Layout.THUMBNAIL_IMAGE_WIDTH,
 		top: 0,
 		right: 0

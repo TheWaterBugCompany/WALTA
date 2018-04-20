@@ -10,6 +10,11 @@ var database = {
     return Alloy.Collections.instance("taxa");
   },
 
+  addTaxon: function( taxonId, multiplicity ) {
+    this.currentSample()
+      .add( { taxonId: taxonId, multiplicity: multiplicity } );
+  },
+
   load: function() {
     this.samples().fetch();
     this.currentSample().fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );

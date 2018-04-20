@@ -26,6 +26,7 @@ var BrowseView = require('ui/BrowseView');
 var SpeedbugView = require('ui/SpeedbugView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
+var SampleDatabase = require('logic/SampleDatabase');
 
 /*
  * Module: AppWindow
@@ -37,7 +38,6 @@ function createAppWindow( keyName, keyPath ) {
 			keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
 		}
 		var keyUrl = keyPath + keyName + '/';
-
 
 		// Private variables that are not to be exposed as API
 		var privates = {
@@ -72,8 +72,12 @@ function createAppWindow( keyName, keyPath ) {
 				});
 			},
 
-			sampleTrayWindow: function() {
-				Alloy.createController("SampleTray");
+			sampleTrayWindow: function(args) {
+				if ( ! args )
+					args = {};
+				args.speedbugIndex = this.key.getSpeedbugIndex();
+				
+				Alloy.createController("SampleTray",args);
 			},
 
 
@@ -135,79 +139,84 @@ function createAppWindow( keyName, keyPath ) {
 
 		privates.subscribe( Topics.HOME, function() { privates.menuWindow();  } );
 
-	    privates.subscribe( Topics.KEYSEARCH, function() {
-	    	privates.key.reset();
-	    	privates.updateDecisionWindow({ slide: 'right' });
-	    });
+    privates.subscribe( Topics.KEYSEARCH, function() {
+    	privates.key.reset();
+    	privates.updateDecisionWindow({ slide: 'right' });
+    });
 
-	    privates.subscribe( Topics.BACK, function() {
-	    	var name = TopLevelWindow.getCurrentWindow().name;
-	    	if ( name === "home" ) {
-	    		privates.closeApp();
-	    	} else if ( name === 'decision' ) {
-	    		if ( privates.key.isRoot() ) {
-	    			privates.menuWindow({ slide: 'left' });
-				} else {
-	    			privates.key.back();
-		    		privates.updateDecisionWindow({ slide: 'left' } );
-		    	}
-		    } else {
-		    	privates.menuWindow();
-		    }
+    privates.subscribe( Topics.BACK, function() {
+    	var name = TopLevelWindow.getCurrentWindow().name;
+    	if ( name === "home" ) {
+    		privates.closeApp();
+    	} else if ( name === 'decision' ) {
+    		if ( privates.key.isRoot() ) {
+    			privates.sampleTrayWindow({ slide: 'left' });
+			} else {
+    			privates.key.back();
+	    		privates.updateDecisionWindow({ slide: 'left' } );
+	    	}
+	    } else {
+	    	privates.menuWindow();
+	    }
 
-	    });
+    });
 
-	    privates.subscribe( Topics.FORWARD, function( data ) {
-	    	privates.key.choose( data.index );
-		    privates.updateDecisionWindow({ slide: 'right' });
-	    });
+    privates.subscribe( Topics.FORWARD, function( data ) {
+    	privates.key.choose( data.index );
+	    privates.updateDecisionWindow({ slide: 'right' });
+    });
 
-	    privates.subscribe( Topics.VIDEO, function( data ) {
+    privates.subscribe( Topics.VIDEO, function( data ) {
 
-	    	var vv = VideoView.createVideoView( data.url );
-	    	vv.open();
-	    });
+    	var vv = VideoView.createVideoView( data.url );
+    	vv.open();
+    });
 
-	    privates.subscribe( Topics.BROWSE, function() {
-	    	privates.browseWindow();
-	    });
+    privates.subscribe( Topics.BROWSE, function() {
+    	privates.browseWindow();
+    });
 
-	    privates.subscribe( Topics.JUMPTO, function( data ) {
-	    	if ( ! _.isUndefined( data.id ) ) {
-	    		privates.key.setCurrentNode(data.id);
-		    	privates.updateDecisionWindow();
-		    } else {
-		    	Ti.API.error("Topics.JUMPTO undefined node!");
-		    }
-	    });
+		privates.subscribe( Topics.IDENTIFY, function(data) {
+			SampleDatabase.addTaxon( data.taxonId, 1 );
+			privates.sampleTrayWindow( { slide: 'left' } );
+		});
 
-			privates.subscribe( Topics.MAYFLY, function() {
-				privates.sampleTrayWindow();
-			} );
+    privates.subscribe( Topics.JUMPTO, function( data ) {
+    	if ( ! _.isUndefined( data.id ) ) {
+    		privates.key.setCurrentNode(data.id);
+	    	privates.updateDecisionWindow();
+	    } else {
+	    	Ti.API.error("Topics.JUMPTO undefined node!");
+	    }
+    });
 
-			privates.subscribe( Topics.ORDER, function() {
-				privates.sampleTrayWindow();
-			} );
+		privates.subscribe( Topics.MAYFLY, function() {
+			privates.sampleTrayWindow();
+		} );
 
-			privates.subscribe( Topics.DETAILED, function() {
-				privates.sampleTrayWindow();
-			} );
+		privates.subscribe( Topics.ORDER, function() {
+			privates.sampleTrayWindow();
+		} );
 
-	    privates.subscribe( Topics.SPEEDBUG, function() {
-	    	privates.speedBugWindow();
-	    });
+		privates.subscribe( Topics.DETAILED, function() {
+			privates.sampleTrayWindow();
+		} );
 
-	    privates.subscribe( Topics.GALLERY, function() {
-	    	privates.galleryWindow();
-	    });
+    privates.subscribe( Topics.SPEEDBUG, function() {
+    	privates.speedBugWindow();
+    });
 
-	    privates.subscribe( Topics.HELP, function() {
-	    	privates.helpWindow();
-	    });
+    privates.subscribe( Topics.GALLERY, function() {
+    	privates.galleryWindow();
+    });
 
-	    privates.subscribe( Topics.ABOUT, function() {
-	    	privates.aboutWindow();
-	    });
+    privates.subscribe( Topics.HELP, function() {
+    	privates.helpWindow();
+    });
+
+    privates.subscribe( Topics.ABOUT, function() {
+    	privates.aboutWindow();
+    });
 
 		// Return public API
 		_(appWin).extend({

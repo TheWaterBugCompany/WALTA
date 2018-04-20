@@ -50,7 +50,7 @@ function parseMediaUrls( key, nd ) {
 			var mediaRef = key.url + "media/" + mr.getAttribute( 'url' );
 			try {
 				fs.accessSync(mediaRef, fs.F_OK );
-			    urls.push( mediaRef );
+			    urls.push( `${key.mediaPath}/media/${mr.getAttribute( 'url' )}`);
 			} catch(e) {
 			   console.warn( "Unable to find media reference: '" + mediaRef + "' so not adding media URL" );
 			};
@@ -209,14 +209,14 @@ function parseSpeedBug( key, nd ) {
 			speedbug.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			XmlUtils.childElementsByTag( sg, WALTA_KEY_NS, 'speedBugLink',function( sb ) {
 				speedbug.addSpeedbugIndex(
-					key.url + "media/" + XmlUtils.getAttr( sb, "image" ),
+					key.mediaPath + "/media/" + XmlUtils.getAttr( sb, "image" ),
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sb, "ref" ) );
 			});
 		} else if ( XmlUtils.isXmlNode( sg, WALTA_KEY_NS, 'speedBugLink' ) ) {
 			speedbug.addSpeedbugGroup( XmlUtils.getAttr( sg, "ref" ) );
 			speedbug.addSpeedbugIndex(
-					key.url + "media/" + XmlUtils.getAttr( sg, "image" ),
+					key.mediaPath + "/media/" + XmlUtils.getAttr( sg, "image" ),
 					XmlUtils.getAttr( sg, "ref" ),
 					XmlUtils.getAttr( sg, "ref" ) );
 		}
@@ -234,10 +234,11 @@ function parseKey( node, path ) {
 }
 
 // takes a variable list of path elements like the getFile() API call does
-function loadKey( root ) {
+function loadKey( root, mediaPath ) {
 	console.info('Loading key ' + root + "...");
 	var xml = XmlUtils.loadXml( root + "key.xml"  );
 	var key = parseKey( xml.documentElement, root );
+	key.mediaPath = mediaPath;
 	console.info('Loading taxon nodes...');
 	XmlUtils.childElementsByTag( xml.documentElement, WALTA_KEY_NS, 'taxon', _.partial( parseTaxon, key ) );
 	console.info('Loading keyNode nodes...');

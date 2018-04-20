@@ -44,8 +44,7 @@ function createKey( args ) {
 		url: null,
 		name: null,
 		root: null,
-		currentDecision: null,
-		speedBugIndex: SpeedbugIndex.createSpeedbugIndex()
+		currentDecision: null
 	});
 
 	// Private variables here
@@ -59,7 +58,7 @@ function createKey( args ) {
 		obj.currentDecision = obj.root;
 	}
 
-	return _(obj).extend( {
+	obj =  _(obj).extend( {
 
 		// Choose the branch number id i from the current decision.
 		choose: function( i ) {
@@ -177,11 +176,12 @@ function createKey( args ) {
 		},
 
 		setSpeedbugIndex: function( sbIndex ) {
-			this.speedBugIndex = sbIndex;
+			sbIndex.setKey( this );
+			this.speedbugIndex = sbIndex;
 		},
 
 		getSpeedbugIndex: function() {
-			return this.speedBugIndex;
+			return this.speedbugIndex;
 		},
 
 		linkTaxonToParent: function( parent, qn, taxon ) {
@@ -202,6 +202,13 @@ function createKey( args ) {
 			return this.root;
 		}
 	});
+	var sbIndex = SpeedbugIndex.createSpeedbugIndex();
+	if ( obj.speedbugIndex && obj.speedbugIndex.speedbugIndex ) {
+		// redhydrate
+		sbIndex.setSpeedbugIndex( obj.speedbugIndex.speedbugIndex );
+	}
+	obj.setSpeedbugIndex( sbIndex );
+	return obj;
 }
 
 exports.createKey = createKey;

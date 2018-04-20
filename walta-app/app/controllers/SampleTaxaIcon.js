@@ -4,11 +4,10 @@ var speedbugIndex = $.args.speedbugIndex;
 setImage( taxon.get("taxonId") );
 setMultiplicity( taxon.get("multiplicity") );
 
-
 var lastTaxonId;
 function setImage( taxonId ) {
   var speedBug = speedbugIndex.getSpeedbugFromTaxonId( taxonId  );
-  $.icon.image = "/".concat(speedBug.imgUrl);
+  $.icon.image = speedBug;
   lastTaxonId = taxonId;
 }
 
