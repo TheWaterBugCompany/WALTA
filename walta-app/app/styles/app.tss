@@ -31,3 +31,22 @@ overrode the settings with other TSS, XML, or JS settings:
 		fontSize: '10dp'
 	}
 }
+
+".overlay" : {
+	backgroundColor: "#50000000"
+}
+
+".container": {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE
+}
+
+".window" : {
+	backgroundColor: "#ffffff",
+	borderColor: "black"
+}
+
+".titlebar": {
+	height: Ti.UI.SIZE,
+	width: Ti.UI.SIZE
+}

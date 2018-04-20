@@ -112,7 +112,7 @@ describe( 'SampleTray', function() {
         .then( openSampleTray )
         .then( function() {
           var tiles = SampleTray.getView().getChildren();
-          expect( tiles ).to.have.lengthOf(3); // check that extra blank tiles are added
+          expect( tiles ).to.have.lengthOf(4); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertPlus( sampleTaxa[0] );
@@ -130,7 +130,7 @@ describe( 'SampleTray', function() {
         .then( openSampleTray )
         .then( function() {
           var tiles = SampleTray.getView().getChildren();
-          expect( tiles ).to.have.lengthOf(3); // check that extra blank tiles are added
+          expect( tiles ).to.have.lengthOf(4); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertPlus( sampleTaxa[1] );
@@ -344,7 +344,7 @@ describe( 'SampleTray', function() {
           .then( scrollSampleTray( 209*4 ) )
           .then( function() {
             var tiles = SampleTray.getView().getChildren();
-            expect( tiles ).to.have.lengthOf(6);
+            expect( tiles ).to.have.lengthOf(7);
 
             tiles.shift(); // discard end cap since that is always static
 
@@ -353,10 +353,10 @@ describe( 'SampleTray', function() {
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/amphipoda_b.png", 1 );
-            assertSample( sampleTaxa[1], "/anostraca_b.png", 1 );
-            assertSample( sampleTaxa[2], "/anisops_b.png", 1 );
-            assertSample( sampleTaxa[3], "/atalophlebia_b.png", 2 );
+            assertSample( sampleTaxa[0], "/anisops_b.png", 2 );
+            assertSample( sampleTaxa[1], "/atalophlebia_b.png", 1 );
+            assertSample( sampleTaxa[2], "/anostraca_b.png", 1 );
+            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", 3 );
 
             // assert last tile
             var tile = findRightMost( tiles  );

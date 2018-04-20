@@ -8,7 +8,11 @@ if ( $.args.small ) {
   $.button.width = "165dp";
 }
 
+
 $.button.addEventListener( 'click', function(e) {
-  Topics.fireTopicEvent( $.args.topic, null );
+  if ( $.args.topic ) {
+    Topics.fireTopicEvent( $.args.topic, null );
+  }
+  $.trigger('click');
   e.cancelBubble = true;
 });

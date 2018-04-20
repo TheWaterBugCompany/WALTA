@@ -1,0 +1,27 @@
+".window": {
+  width: "268dp",
+  height: "290dp"
+}
+
+".title": {
+  top: "8dp",
+  left: "24dp",
+  font: {
+    fontFamily: "sans-serif",
+    fontSize: "16dp"
+  }
+}
+
+".close_button": {
+  height: "32dp",
+  width: "24dp",
+  left: "8dp"
+}
+
+".close_button_image": {
+  image: "images/close.png",
+  width: "14dp",
+  height: "12dp",
+  top: "14dp",
+  right: "8dp"
+}

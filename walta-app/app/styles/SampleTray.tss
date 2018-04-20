@@ -3,10 +3,11 @@
   backgroundColor: "#aaa"
 }
 "#endcap": {
-  width: "151dp",
-  left: 0
+  width: "139dp",
+  left: 0,
+  top: "0.5dp"
 }
 "#endcapBackground" : {
     image: "images/endcap_320.png",
-    width: "151dp"
+    height: "279dp",
 }
