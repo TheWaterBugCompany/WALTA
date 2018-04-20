@@ -50,7 +50,10 @@ function loadKey( root ) {
 	var file = Ti.Filesystem.getFile( root + "key.json" );
 	var key = CircularJSON.parse( file.read().text );
 	key.url = root;
-	return rehydrateKey( key );
+
+	var rehydrated = rehydrateKey( key );
+
+	return rehydrated;
 }
 
 exports.loadKey = loadKey;

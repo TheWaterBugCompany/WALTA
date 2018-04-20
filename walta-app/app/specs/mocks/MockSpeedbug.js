@@ -3,19 +3,19 @@ var speedBugIndexMock = {
   getSpeedbugFromTaxonId: function( id ) {
     switch(id) {
       case "WB1":
-        return { imgUrl: speedBugResource + "aeshnidae_telephleb_b.png" };
+        return speedBugResource + "aeshnidae_telephleb_b.png";
 
       case "WB2":
-        return { imgUrl: speedBugResource + "amphipoda_b.png" };
+        return speedBugResource + "amphipoda_b.png";
 
       case "WB3":
-        return { imgUrl: speedBugResource + "anisops_b.png" };
+        return speedBugResource + "anisops_b.png";
 
       case "WB4":
-        return { imgUrl: speedBugResource + "anostraca_b.png" };
+        return  speedBugResource + "anostraca_b.png";
 
       case "WB5":
-        return { imgUrl: speedBugResource + "atalophlebia_b.png" };
+        return speedBugResource + "atalophlebia_b.png";
 
     }
   }
