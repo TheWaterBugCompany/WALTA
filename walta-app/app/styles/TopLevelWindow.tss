@@ -1,0 +1,9 @@
+
+".container" : {
+  navBarHidden: true,
+  fullscreen: true,
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL,
+  backgroundColor: 'white',
+  layout: 'composite'
+}

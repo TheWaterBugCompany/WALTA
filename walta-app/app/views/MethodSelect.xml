@@ -3,7 +3,7 @@
 			<View class="window" layout="vertical">
 				<View class="titlebar" layout="horizontal">
 					<Label class="title">Select identification method:</Label>
-					<View class="close_button">
+					<View id="close_button">
 							<ImageView class="close_button_image"></ImageView>
 					</View>
 				</View>

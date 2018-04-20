@@ -12,7 +12,7 @@
   }
 }
 
-".close_button": {
+"#close_button": {
   height: "32dp",
   width: "24dp",
   left: "8dp"

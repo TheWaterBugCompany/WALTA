@@ -6,6 +6,7 @@ var Topics = require('ui/Topics');
 var lastScroll = null;
 var endCapWidth = 138;
 var middleWidth = 189;
+var sampleTrayWin = null;
 
 // Keeps track of the tile views we cache
 var tileIndex = [];
@@ -93,8 +94,8 @@ function updateFirstTwoSampleTrayIcons() {
 
 function createIconContainer() {
   return Ti.UI.createView( {
-    left: '10dp',
-    top: '50dp',
+    left: '12dp',
+    top: '34dp',
     width: '80dp',
     height: '90dp'
     //,borderColor: "#ff0000"
@@ -103,16 +104,13 @@ function createIconContainer() {
 
 function createAddIcon() {
   var btn = Ti.UI.createButton({
-    left: '14dp',
+    left: '8dp',
     bottom: '14dp',
     width: '70dp',
     height: '70dp',
 		backgroundImage: "images/icon-add-taxon.png"
 	});
-	btn.addEventListener( 'click', function(e) {
-		Topics.fireTopicEvent( Topics.IDENTIFY, null );
-		e.cancelBubble = true;
-	});
+	btn.addEventListener( 'click', startIdentification );
   return btn;
 }
 
@@ -216,6 +214,37 @@ function drawIcecubeTray() {
   $.trigger("trayupdated");
 };
 
+function startIdentification(e) {
+
+  var selectMethod = Alloy.createController("MethodSelect");
+  function closeSelectMethod() {
+    sampleTrayWin.remove(selectMethod.getView());
+  }
+
+  selectMethod.on("close", function() {
+    closeSelectMethod();
+  });
+
+  selectMethod.on("keysearch", function() {
+    closeSelectMethod();
+    Topics.fireTopicEvent( Topics.KEYSEARCH );
+  });
+
+  selectMethod.on("speedbug", function() {
+    closeSelectMethod();
+    Topics.fireTopicEvent( Topics.SPEEDBUG );
+  });
+
+  selectMethod.on("browselist", function() {
+    closeSelectMethod();
+    Topics.fireTopicEvent( Topics.BROWSELIST );
+  });
+
+  sampleTrayWin.add(selectMethod.getView());
+
+  e.cancelBubble = true;
+};
+
 $.SampleTray.addEventListener( "scroll", drawIcecubeTray );
 $.SampleTray.addEventListener( "postlayout", function firstRender() {
     $.SampleTray.removeEventListener("postlayout", firstRender );
@@ -229,4 +258,15 @@ function cleanup() {
   Alloy.Collections["taxa"].off("add change remove", drawIcecubeTray );
 }
 
-exports.cleanup = cleanup;
+sampleTrayWin = Alloy.createController("TopLevelWindow", {
+  name: 'sampletray',
+  title: 'Sample',
+  uiObj: { view: $.getView() },
+  cleanup: cleanup
+}).getView();
+
+function getSampleTrayWin() {
+  return sampleTrayWin;
+}
+
+exports.getSampleTrayWin = getSampleTrayWin;

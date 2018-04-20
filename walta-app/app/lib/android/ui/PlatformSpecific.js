@@ -19,7 +19,7 @@
 function appStartUp( privates ) {
 	// we create root window so that Android doesn't crash when the menu window is closed
 	// during transitions.
-	privates.rootWindow = Ti.UI.createWindow({ 
+	privates.rootWindow = Ti.UI.createWindow({
 			navBarHidden: true,
 			fullscreen: true
 	});
@@ -28,12 +28,6 @@ function appStartUp( privates ) {
 
 function appShutdown( privates ) {
 	Titanium.Android.currentActivity.finish();
-}
-
-function makeAnchorBarStationary( win, anchorBar ) {
-}
-
-function preCreateTopLevelWindow( winArgs, args ) {
 }
 
 function transitionWindows( win, effect ) {
@@ -49,7 +43,7 @@ function transitionWindows( win, effect ) {
 		args.activityExitAnimation = Ti.Android.R.anim.fade_out;
 	}
 	win.open( args );
-	
+
 }
 function convertSystemToDip( n ) {
 	return Ti.UI.convertUnits( n + "px", Ti.UI.UNIT_DIP );
@@ -58,7 +52,5 @@ function convertSystemToDip( n ) {
 exports.appStartUp = appStartUp;
 exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;
-exports.makeAnchorBarStationary = makeAnchorBarStationary;
-exports.preCreateTopLevelWindow = preCreateTopLevelWindow;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Titanium.UI.ActivityIndicatorStyle.BIG;
