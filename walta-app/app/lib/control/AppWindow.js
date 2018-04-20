@@ -113,13 +113,8 @@ function createAppWindow( keyName, keyPath ) {
 					args.keyNode = node;
 					Alloy.createController("KeySearch", args );
 				} else {
-					_(args).extend({
-						name: 'decision',
-						title: 'ALT Key'
-					});
-					var TaxonView = require('ui/TaxonView');
-				 	args.uiObj = TaxonView.createTaxonView( node );
-					TopLevelWindow.makeTopLevelWindow(args);
+					args.taxon = node;
+					Alloy.createController("TaxonDetails", args );
 				}
 			},
 

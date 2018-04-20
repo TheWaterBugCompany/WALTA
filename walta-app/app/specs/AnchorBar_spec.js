@@ -16,28 +16,28 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
-var TestUtils = require('specs/util/TestUtils');
-
-var AnchorBar = require('ui/AnchorBar');
+var { expect } = require('specs/lib/chai');
+var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, actionFiresTopicTest } = require('specs/util/TestUtils');
 var Topics = require('ui/Topics');
 
 describe('AnchorBar', function() {
 	var acb, win;
+
 	before( function() {
-		acb = AnchorBar.createAnchorBar();
-		win = TestUtils.wrapViewInWindow( acb.view );
+		acb = Alloy.createController( "AnchorBar" );
+		win = wrapViewInWindow( acb.getView() );
 	});
 
- 	after( function() {
-		TestUtils.closeWindow( win );
+ 	after( function(done) {
+		closeWindow( win, done );
 	});
 
 	it('should display an anchor bar', function(done) {
-		TestUtils.windowOpenTest( win, done );
+		windowOpenTest( win, done );
 	});
 
 	it('should fire the HOME event when the home button is clicked', function(done) {
-		TestUtils.actionFiresTopicTest( acb._views.home, 'click', Topics.HOME, done );
+		actionFiresTopicTest( acb.home, 'click', Topics.HOME, done );
 	});
 
 });

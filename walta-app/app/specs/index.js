@@ -10,7 +10,7 @@ require("specs/PhotoView_spec");
 require("specs/QuestionView_spec");
 require("specs/SampleTray_spec");
 require("specs/SpeedbugView_spec");
-require("specs/TaxonView_spec");
+require("specs/TaxonDetails_spec");
 require("specs/TopLevelWindow_spec");
 require("specs/VideoView_spec");
 require("specs/Sample_spec");

@@ -1,0 +1,65 @@
+
+".container" : {
+  width : Ti.UI.FILL,
+  height : Ti.UI.FILL,
+  backgroundColor : "white",
+  layout: "horizontal"
+}
+
+"#title" : {
+  width : "100%",
+  height : Ti.UI.SIZE,
+  top : "8dp",
+  left : "8dp",
+  font : {
+    font : 'Tahoma',
+    fontSize : '22dip'
+  },
+  color : '#2F61CC'
+}
+
+"#detailsBox": {
+  width : "55%",
+  height : Ti.UI.FILL,
+  borderRadius : 25,
+  backgroundColor : '#cfdbf3',
+  layout : 'vertical',
+  left: "8dp",
+  top: "8dp",
+  bottom: "8dp"
+}
+
+"#details": {
+  scalesPageToFit: false,
+  disableBounce: true,
+  enableZoomControls: false,
+  backgroundColor: '#cfdbf3',
+  width : Ti.UI.FILL,
+  height : Ti.UI.FILL,
+  left: "8dp",
+  top: "8dp",
+  bottom: "8dp",
+  right: "8dp",
+  willHandleTouches: false
+}
+
+"#actions": {
+  top: "8dp",
+  width : Ti.UI.FILL,
+  height : Ti.UI.FILL,
+  layout : 'vertical',
+  right: "8dp",
+  left: "8dp",
+  bottom: "8dp"
+}
+
+"#photoView": {
+  width: Ti.UI.SIZE,
+  height: Ti.UI.SIZE
+}
+
+"#actionBtns": {
+  width : Ti.UI.FILL,
+  height : Ti.UI.FILL,
+  layout : "horizontal"
+}

@@ -135,6 +135,7 @@ function closeWindow( win, done ) {
 	}, done);
 }
 
+
 exports.waitForBrowserEvent = waitForBrowserEvent;
 exports.waitForTick = waitForTick;
 exports.closeWindow = closeWindow;

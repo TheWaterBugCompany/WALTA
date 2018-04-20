@@ -49,7 +49,8 @@ function addTool( view ) {
 }
 
 $.title.text = $.args.title
-$.leftTools.add( createToolBarButton( '/images/icon-home-white.png', Topics.HOME ) );
+$.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME );
+$.leftTools.add( $.home );
 $.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HELP ) );
 
 addTool( createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ) );

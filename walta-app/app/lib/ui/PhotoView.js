@@ -56,7 +56,7 @@ function createPhotoView( photoUrls ) {
 	});
 
 	var photo = Ti.UI.createImageView( {
-		image: '/' + photoUrls[0],
+		image:  "/" + photoUrls[0],
 		width: Layout.THUMBNAIL_IMAGE_WIDTH,
 		top: 0,
 		right: 0
@@ -65,7 +65,7 @@ function createPhotoView( photoUrls ) {
 	var zoomIcon = Ti.UI.createView( {
 		bottom: 0,
 		right: 0,
-		backgroundImage: '/images/icon-magnify.png',
+		backgroundImage: 'images/icon-magnify.png',
 		width: '30dip',
 		height: '30dip'
 	});

@@ -17,41 +17,41 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var TestUtils = require('specs/util/TestUtils');
+var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, actionFiresEventTest } = require('specs/util/TestUtils');
 
 if ( typeof(_) == "undefined") _ = require('underscore')._;
+
 var meld = require('lib/meld');
 
 var QuestionView = require('ui/QuestionView');
 var Question = require('logic/Question');
 
-describe.skip('QuestionView', function() {
+describe('QuestionView', function() {
 	var qv, win;
 
-	qv = QuestionView.createQuestionView(
-	Question.createQuestion( {
-			text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images",
-			mediaUrls: [
-				'/specs/resources/simpleKey1/media/amphipoda_01.jpg',
-				'/specs/resources/simpleKey1/media/amphipoda_02.jpg',
-				'/specs/resources/simpleKey1/media/amphipoda_03.jpg'
-				]
-			})
-	);
-	win = Ti.UI.createWindow( {
-		backgroundColor: 'white',
-		orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] }
-	);
-	win.add( _(qv.view).extend( { height: '45%', width: '98%' } ) );
-
-	it('should display the question view', function() {
-		TestUtils.windowOpenTest( win );
+	before( function() {
+		qv = QuestionView.createQuestionView(
+		Question.createQuestion( {
+				text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images",
+				mediaUrls: [
+					'/specs/resources/simpleKey1/media/amphipoda_01.jpg',
+					'/specs/resources/simpleKey1/media/amphipoda_02.jpg',
+					'/specs/resources/simpleKey1/media/amphipoda_03.jpg'
+					]
+				})
+		);
+		win = wrapViewInWindow(  _(qv.view).extend( { height: '45%', width: '98%' } ) );
 	});
 
-	it('should fire the onSelect event when a question is clicked', function() {
-		TestUtils.actionFiresEventTest( qv.view, 'click', qv, 'onSelect' );
+	after( function(done) {
+		closeWindow( win, done );
 	});
 
-	TestUtils.closeWindow( win );
+	it('should display the question view', function(done) {
+		windowOpenTest( win, done );
+	});
 
+	it('should fire the onSelect event when a question is clicked', function(done) {
+		actionFiresEventTest( qv.view, 'click', qv, 'onSelect', done );
+	});
 });
