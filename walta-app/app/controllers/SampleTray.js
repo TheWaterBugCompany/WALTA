@@ -4,7 +4,7 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 
 var lastScroll = null;
-var endCapWidth = 144;
+var endCapWidth = 138;
 var middleWidth = 189;
 
 // Keeps track of the tile views we cache
@@ -93,10 +93,11 @@ function updateFirstTwoSampleTrayIcons() {
 
 function createIconContainer() {
   return Ti.UI.createView( {
-    left: '20dp',
+    left: '10dp',
     top: '50dp',
     width: '80dp',
     height: '90dp'
+    //,borderColor: "#ff0000"
   });
 }
 
@@ -150,6 +151,7 @@ function fillSampleTrayIcons( sampleNum ) {
       width: Ti.UI.FILL,
       height: Ti.UI.FILL,
       layout: 'horizontal'
+      //,borderColor: "#ff0000"
     }),
     icons: []
   };

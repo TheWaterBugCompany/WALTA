@@ -112,16 +112,27 @@ function actionFiresTopicTest( actionObj, actionEvtName, topicName, done ) {
 	return result;
 }
 
-function ifNotManual( cb ) {
+function ifNotManual( cbTrue, cbFalse ) {
 	if ( ! isManualTests() ) {
-		cb();
+		if ( cbTrue ) {
+			cbTrue();
+		}
+	} else {
+		if ( cbFalse ) {
+			cbFalse();
+		}
 	}
 }
 
-function closeWindow( win ) {
+function closeWindow( win, done ) {
 	ifNotManual(function() {
-			win.close();
-	});
+		win.addEventListener( "close", function e() {
+			win.removeEventListener( "close", e );
+			if ( done )
+				done();
+		} );
+		win.close();
+	}, done);
 }
 
 exports.waitForBrowserEvent = waitForBrowserEvent;

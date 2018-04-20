@@ -17,49 +17,49 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var TestUtils = require('specs/util/TestUtils');
+var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, actionFiresTopicTest } = require('specs/util/TestUtils');
 var Topics = require('ui/Topics');
 
 describe('MenuView', function() {
 	var mnu, win;
 	before( function() {
 		mnu = Alloy.createController("Menu");
-		win = TestUtils.wrapViewInWindow( mnu.getView() );
+		win = wrapViewInWindow( mnu.getView() );
 	});
 	after( function() {
-		TestUtils.closeWindow( win );
+		closeWindow( win );
 	});
 	it('should display the menu view', function(done) {
 		this.timeout(3000);
-		TestUtils.windowOpenTest( win, done );
+		windowOpenTest( win, done );
 	});
 
 	it('should fire the ORDER topic', function(done) {
-		TestUtils.actionFiresTopicTest( mnu.order.getView(), 'click', Topics.ORDER, done );
+		actionFiresTopicTest( mnu.order.getView(), 'click', Topics.ORDER, done );
 	});
 
 	it('should fire the MAYFLY topic', function(done) {
-		TestUtils.actionFiresTopicTest( mnu.mayfly.getView(), 'click', Topics.MAYFLY, done );
+		actionFiresTopicTest( mnu.mayfly.getView(), 'click', Topics.MAYFLY, done );
 	});
 
 	it('should fire the DETAILED topic', function(done) {
-		TestUtils.actionFiresTopicTest( mnu.detailed.getView(), 'click', Topics.DETAILED, done );
+		actionFiresTopicTest( mnu.detailed.getView(), 'click', Topics.DETAILED, done );
 	});
 
 	it('should fire the BROWSE topic', function(done) {
-		TestUtils.actionFiresTopicTest( mnu.browse.getView(), 'click', Topics.BROWSE, done );
+		actionFiresTopicTest( mnu.browse.getView(), 'click', Topics.BROWSE, done );
 	});
 
 	it('should fire the HELP topic', function(done) {
-		TestUtils.actionFiresTopicTest( mnu.help.getView(), 'click', Topics.HELP, done );
+		actionFiresTopicTest( mnu.help.getView(), 'click', Topics.HELP, done );
 	});
 
 	it('should fire the GALLERY topic', function(done) {
-		TestUtils.actionFiresTopicTest( mnu.gallery.getView(), 'click', Topics.GALLERY, done );
+		actionFiresTopicTest( mnu.gallery.getView(), 'click', Topics.GALLERY, done );
 	});
 
 	it('should fire the ABOUT topic', function(done) {
-		TestUtils.actionFiresTopicTest( mnu.about.getView(), 'click', Topics.ABOUT, done );
+		actionFiresTopicTest( mnu.about.getView(), 'click', Topics.ABOUT, done );
 	});
 
 

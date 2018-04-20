@@ -1,4 +1,4 @@
-if ( true ) {
+if ( false ) {
   var AppWindow = require("control/AppWindow");
   var SampleDatabase = require("logic/SampleDatabase");
   SampleDatabase.load();
