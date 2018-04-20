@@ -209,8 +209,7 @@ describe( 'SampleTray', function() {
         } );
     });
 
-    it.only('should display the correct sample entry for each tray position displayed', function() {
-        setManualTests(true);
+    it('should display the correct sample entry for each tray position displayed', function() {
         return Promise.resolve()
           .then( function() {
             mocx.createCollection("taxa", [

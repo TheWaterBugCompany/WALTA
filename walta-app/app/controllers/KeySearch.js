@@ -17,7 +17,7 @@
 */
 
 /*
- * Module: KeySearch
+ * KeySearch
  *
  * Displays a choice between a binary set of Questions stored in a
  * KeyNode object.
@@ -69,7 +69,7 @@ function cleanup() {
 }
 
 Alloy.createController("TopLevelWindow", {
-  name: 'keysearch',
+  name: 'decision',
   title: 'ALT Key',
   uiObj: {view: $.getView() },
   slide: $.args.slide,

@@ -18,10 +18,10 @@
 
 /*
  * Module: GalleryWindow
- * 
+ *
  * Shows a thumbnail of a list of photos, then if the zoom icon is pressed
  * opens a modal view displaying a gallery of all the images.
- * 
+ *
  */
 var _ = require('lib/underscore')._;
 
@@ -30,39 +30,39 @@ var Topics = require('ui/Topics');
 
 // Create a dot view
 function createDot() {
-	var dot = Ti.UI.createView( { 
-		backgroundImage: '/images/dot.png', 
+	var dot = Ti.UI.createView( {
+		backgroundImage: '/images/dot.png',
 		width: Layout.PAGER_DOT_SIZE,
 		height: Layout.PAGER_DOT_SIZE,
 		left: Layout.WHITESPACE_GAP,
 		bottom: '2dip',
 		opacity: 0.5} );
 	return dot;
-} 
+}
 
 // Update current page
 function updateCurrentPage( dots, selPage ) {
 	for( var i = 0; i < dots.length; i++ ) {
 		dots[i].setOpacity( selPage === i ? 1.0 : 0.5 );
-	}	
+	}
 }
 
 function createGalleryWindow(photoUrls, showPager ) {
 
-	
+
 	if ( _.isUndefined( showPager ) ) showPager = true;
-	
-	var galleryWin = Ti.UI.createWindow({ 
-			backgroundColor: 'black', 
+
+	var galleryWin = Ti.UI.createWindow({
+			backgroundColor: 'black',
 			navBarHidden: true,
 			fullscreen: true
 	});
 
 	var scrollView = Ti.UI.createScrollableView({
-		views: _(photoUrls).map( 
-			function(url) { 
+		views: _(photoUrls).map(
+			function(url) {
 				var view = null;
-			
+
 				// NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
 				// we cheat by using a WebView.
 				view =  Ti.UI.createWebView({
@@ -74,13 +74,13 @@ function createGalleryWindow(photoUrls, showPager ) {
 					height : Ti.UI.FILL,
 					html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=20, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { width: 100%; height: 100%; overflow: scroll; background-color: black; margin: 0; padding: 0; border: 0 } img { display: block; margin-left:auto;margin-right:auto; padding:0; height:100%;}</style></head><body><img src="' + url + '"></body></html>'
 				});
-				return view; 
+				return view;
 			}),
 		showPagingControl: false,
 		bottom: ( showPager ? Layout.PAGER_HEIGHT : 0 )
-	}); 
+	});
 	galleryWin.add(scrollView);
-	
+
 	if ( showPager ) {
 		var pager = Ti.UI.createView({
 			width: Ti.UI.SIZE,
@@ -90,7 +90,7 @@ function createGalleryWindow(photoUrls, showPager ) {
 			layout: 'horizontal',
 			horizontalWrap: 'false'
 		});
-		
+
 		var dots = [];
 		_(photoUrls).each( function() {
 			var dot = createDot();
@@ -98,10 +98,10 @@ function createGalleryWindow(photoUrls, showPager ) {
 			pager.add( dot );
 		});
 		galleryWin.add( pager );
-		
+
 		var lastPage = scrollView.getCurrentPage();
 		updateCurrentPage( dots, lastPage );
-		
+
 		scrollView.addEventListener( 'scroll', function(e) {
 			if ( e.currentPage !== lastPage ) {
 				updateCurrentPage( dots, e.currentPage );
@@ -109,29 +109,29 @@ function createGalleryWindow(photoUrls, showPager ) {
 			}
 		});
 	}
-	
-	var close = Ti.UI.createView({
+	galleryWin._views = {};
+	galleryWin._views.close = Ti.UI.createView({
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,
 		height: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,
 		top: 0,
 		right: 0
 	});
-	
-	close.add( Ti.UI.createImageView({
+
+	galleryWin._views.close.add( Ti.UI.createImageView({
 		image: '/images/close.png',
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		top: Layout.WHITESPACE_GAP,
 		right: Layout.WHITESPACE_GAP
 	}));
-	
-	
-	close.addEventListener( 'click', function(e) {
+
+
+	galleryWin._views.close.addEventListener( 'click', function(e) {
 		galleryWin.close();
 	});
-	
-	galleryWin.add( close );
-	
+
+	galleryWin.add( galleryWin._views.close );
+
 	return galleryWin;
 }
 
