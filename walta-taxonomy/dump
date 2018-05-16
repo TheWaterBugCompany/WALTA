@@ -1,0 +1,24 @@
+end node: { questions: 
+   [ { text: 'Snails with flat shells.  ', mediaUrls: [] },
+     { text: 'Shells are not flat, have normal spire. ' } ] }
+end node: { questions: 
+   [ { text: 'Mottled pattern visible through the shell. You might need good light to see this ',
+       mediaUrls: [Array] },
+     { text: 'Snail without obvious mottling. ' } ] }
+end node: { questions: 
+   [ { text: 'Shell sinistral (left handed - or footed) ',
+       mediaUrls: [Array] },
+     { text: 'Shell dextral (right handed) ' } ] }
+end node: { questions: 
+   [ { text: 'Snails are coiled, small (less than 10mm), often black or dark brown and can occur in large numbers. ',
+       mediaUrls: [Array] },
+     { text: 'Snails not as above. ' } ] }
+end node: { questions: 
+   [ { text: 'Animals look like snails. ', mediaUrls: [] },
+     { text: 'Animals look like limpets.  ' } ] }
+end node: { questions: 
+   [ { text: 'Animals look like snails or limpets. ', mediaUrls: [] },
+     { text: 'Animals look like mussels.' } ] }
+end node: { questions: 
+   [ { text: 'Animal with a shell ', mediaUrls: [Array] },
+     { text: 'Animal without a shell ' } ] }
