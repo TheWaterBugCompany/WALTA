@@ -1,0 +1,30 @@
+"#button" : {
+  borderRadius: "15dp",
+  backgroundColor: "#cfdbf3",
+  width: "255dp",
+  height: "75dp",
+  top: "8dp",
+  left: "8dp"
+}
+
+"#text" : {
+  left: "8dp",
+  top: "8dp",
+  right: "8dp"
+}
+
+"#title" : {
+  font: {
+    fontFamily: "Boulder",
+    fontSize: "20dip"
+  },
+  color: "#882F61CC"
+}
+
+"#description" : {
+  font: {
+    fontFamily: "Tahoma",
+    fontSize: "13dip"
+  },
+  color: "black"
+}

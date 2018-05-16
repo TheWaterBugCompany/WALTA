@@ -1,0 +1,1 @@
+require('./ti-mocha/titanium');

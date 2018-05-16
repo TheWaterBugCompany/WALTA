@@ -1,0 +1,7 @@
+<Alloy>
+	<ScrollView class="container" height=Ti.UI.FILL top=0 scrollType="horizontal">
+		<View id="endcap">
+			<ImageView id="endcapBackground"/>
+		</View>
+	</ScrollView>
+</Alloy>

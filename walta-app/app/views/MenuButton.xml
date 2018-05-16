@@ -1,0 +1,9 @@
+<Alloy>
+	<View class="container" id="button" layout="horizontal">
+			<ImageView id="icon" />
+			<View id="text" layout="vertical">
+				<Label id="title" />
+				<Label id="description" />
+			<View>
+	</View>
+</Alloy>

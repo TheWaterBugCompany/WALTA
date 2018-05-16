@@ -1,0 +1,6 @@
+<Alloy>
+	<View class="container">
+			<ImageView id="icon" />
+			<Label id="multiplicity" />
+	</View>
+</Alloy>

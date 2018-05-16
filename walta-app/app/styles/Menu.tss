@@ -1,0 +1,32 @@
+
+".container" : {
+  backgroundColor: "#fff"
+}
+
+"#header": {
+  height: "60dp"
+}
+
+"#logoLeft": {
+  image: "/images/icon-australia.png",
+  width: "80dp",
+  top: "8dp",
+  left: "8dp",
+  right: "8dp"
+}
+
+"#title": {
+  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+  width: Ti.UI.SIZE,
+  font: {
+    fontFamily: "Boulder",
+    fontSize: "31dp"
+  }
+}
+
+"#content": {
+  top: "0dp",
+  bottom: "0dp",
+  left: "0dp",
+  right: "0dp"
+}

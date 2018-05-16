@@ -1,0 +1,13 @@
+
+".container" : {
+  backgroundColor: "#aaa"
+}
+"#endcap": {
+  width: "139dp",
+  left: 0,
+  top: "0.5dp"
+}
+"#endcapBackground" : {
+    image: "images/endcap_320.png",
+    height: "279dp",
+}
