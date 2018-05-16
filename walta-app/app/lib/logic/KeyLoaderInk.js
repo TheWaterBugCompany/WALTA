@@ -136,32 +136,24 @@ function container( { root, parent, node } ) {
 	return obj;
 }
 
+function processContainer( container, key ) {
+	// Initial state
+	state = {
+		localVars: {},
+		outputStream: [],
+		evalStack: [],
+		strStack: [],
+		rootNode: null,
+		isTaxon: false,
+		lastDivertPath: null,
+		currentNode: null,
+		currentQuestion: null,
+		choicesToFollow: [],
+		choicesStack: [],
+		mode: "out"
+	 };
 
-/*
-function startTaxon( text ) {
-	taxonStack.push( text );
-	console.log( `begin taxon: ${text}` );
-}
-
-function endTaxon() {
-	console.log( `end taxon: ${taxonStack.pop()}` );
-}
-*/
-
-function processContainer( container, state ) {
-
-	if ( _.isUndefined(state) )
-		state = {
-			localVars: {},
-			outputStream: [],
-			evalStack: [],
-			strStack: [],
-			currentNode: null,
-			currentQuestion: null,
-			choicesToFollow: [],
-			mode: "out" };
-
-  // The next three functions allow a non-recursive search of the container graph
+    // The next three functions allow a non-recursive search of the container graph
 	// which does keep a stack - instead it proceeds via parent links.
 	function setNextToExecute( container, index ) {
 		state.nextContainer = container;
@@ -170,10 +162,6 @@ function processContainer( container, state ) {
 	}
 
 	function findExecutionPoint() {
-		//console.log("findExecutionPoint()");
-		//console.log("looking for next execution point");
-		//console.log( "index = ", state.nextEvalIndex );
-		//console.log( "evals = ", state.nextContainer.evals );
 		if ( _.isUndefined( state.nextContainer.evals )
 		  || _.isNull( state.nextContainer.evals )
 			|| _.isUndefined( state.nextEvalIndex )
@@ -182,7 +170,6 @@ function processContainer( container, state ) {
 				if ( ! _.isUndefined( state.nextContainer.parent) ) {
 					// If we're not ok... look for a parent to continue
 					state.nextEvalIndex = state.nextContainer.lookUpIndexInParent();
-				  //console.debug( "currentEvalIndex = ", state.nextEvalIndex );
 					state.nextContainer = state.nextContainer.parent;
 					// if we haven't found a suitable place then recurse until we do
 					// or we have no parents left
@@ -207,7 +194,6 @@ function processContainer( container, state ) {
 	}
 
 	function getNextToExecute() {
-		//console.log(`next executing ${state.nextEvalIndex}`);
 		if ( ! nextStepValid() ) {
 			delete state.currentStep;
 			delete state.currentContainer;
@@ -219,7 +205,6 @@ function processContainer( container, state ) {
 		state.nextEvalIndex ++;
 		findExecutionPoint();
 
-		//console.log( `next step ${_.keys(state.currentStep)}` );
 		return state.currentStep;
 	}
 
@@ -236,11 +221,9 @@ function processContainer( container, state ) {
 	}
 
 	function jumpToPath( path ) {
+		state.lastDivertPath = path;
 		setNextToExecute( lookUpCurrentPath( path ), 0 );
 	}
-
-
-	//console.debug("state = ", state );
 
 	function addToStack( val ) {
 		if ( state.mode === "out" ) {
@@ -258,17 +241,13 @@ function processContainer( container, state ) {
 			var ref = step["->"];
 			var isVar = step["var"];
 			if (isVar) {
-				//console.log(`processing var divert "${ref}"`);
 				jumpToPath( state.localVars[ref] );
 			} else {
-				//console.log(`processing divert "${ref}"`);
 				jumpToPath( ref );
 			}
 		}
 		// Process a ChoicePoint
 		else if ( step["*"] ) {
-			//console.debug("found a ChoicePoint:", step);
-			//console.debug("evalStack:", state.evalStack);
 			state.choicesToFollow.push( { text: state.evalStack.pop(), refObj: lookUpCurrentPath( step["*"] ) } );
 		}
 		// Push target path as divert evaluate
@@ -280,13 +259,10 @@ function processContainer( container, state ) {
 		else if ( step["temp="] ) {
 			var name = step["temp="];
 			var val = state.evalStack.pop();
-			//console.debug(`set ${name} = `, val);
 			state.localVars[name] = val;
 		}
-		// tags
+		// Process tags
 		else if ( step["#"] ) {
-			// TODO: store attributes properly
-			//console.log(`# ${step["#"]}`);
 			var parts = step['#'].split(":");
 			collectAttribute( parts[0], parts.slice(1).join(":") );
 		}
@@ -299,7 +275,6 @@ function processContainer( container, state ) {
 
 	function processPrimitive( step ) {
 		if ( step.startsWith("^") ) {
-			//console.log( `${step.slice(1)}`);
 			addToStack( step.slice(1) );
 		}
 		else if ( step === "\n" )
@@ -330,112 +305,136 @@ function processContainer( container, state ) {
 			}
 			state.mode = "out";
 		} else if ( step === "done" ) {
-			// would end but we want to iterate the entire graph
-			// here is a good place to process a Taxon though
-			//console.log( "<--- done" );
+			// would end but we want to iterate the entire graph so continue out of 
+			// the while loop to allow the next possible choice to be followed.
 		}
 		else {
 			console.log( `unknown step: "${step}"` );
 		}
 	}
 
+	function startNode( ) {
+		state.currentNode = Key.createKeyNode( { 
+			// only give it a name if the last path was an absolute path
+			id: ( state.lastDivertPath && state.lastDivertPath.startsWith(".") ? null : state.lastDivertPath ),
+			parentLink: state.currentNode
+		} );
+		if ( state.currentQuestion ) {
+			state.currentQuestion.outcome = state.currentNode;
+		}
+		state.isTaxon = false;
 
-	function startNode() {
-		state.currentNode = { questions: [] };
-		//console.log( `begin node` );
 	}
 
 	function addQuestion( text ) {
-		//console.log( text );
 		state.currentQuestion = { text: text };
 		state.currentNode.questions.push( state.currentQuestion );
 	}
 
-
 	function collectAttribute( name, value ) {
-		if ( state.currentQuestion ) {
-			try {
-				state.currentQuestion[name] = JSON.parse(value);
-			} catch( e ) {
-				console.log(`failed JSON: ${value}`);
+		try {
+			if ( name === "taxonId" ) {
+				state.isTaxon = true;
+				state.currentNode = {
+					id: state.currentNode.id
+				}
 			}
+			if ( state.isTaxon ) {
+				state.currentNode[name] = JSON.parse(value);
+			} else if ( state.currentQuestion ) {
+				state.currentQuestion[name] = JSON.parse(value);
+			}
+		} catch( e ) {
+			console.log(`failed JSON: ${value}`);
 		}
 	}
 
 	function endNode() {
-		console.debug( "end node:", state.currentNode );
+		if ( state.isTaxon ) {
+			var taxon = Taxon.createTaxon( state.currentNode);
+			state.currentQuestion.outcome = taxon;
+			key.attachTaxon( taxon );
+		} else {
+			key.attachNode( state.currentNode );
+		}
 		state.currentNode = null;
 		state.currentQuestion = null;
+		state.isTaxon = false;
 	}
 
+	function popChoicesStack() {
+		if ( state.choicesStack.length > 0  ) {
+			var { node, question, choices } = state.choicesStack.pop();
+			state.currentNode = node;
+			state.currentQuestion = question;
+			state.choicesToFollow = choices;
+		}
+	}
+
+	function pushChoicesStack() {
+		state.choicesStack.push( {
+			node: state.currentNode,
+			question: state.currentQuestion,
+			choices: state.choicesToFollow
+		} );
+		state.choicesToFollow = [];
+	}
 
 	var step;
-	var loopTrap = 99999;
 	setNextToExecute( container, 0 );
 	startNode();
-	var choicesStack = [];
+	state.rootNode = state.currentNode;
+	key.setRootNode( state.rootNode );
+
+	state.choicesStack = [];
 
 	do {
-
-			do {
-				step = getNextToExecute();
-				//console.debug("execute step:", step);
-				if ( --loopTrap === 0 ) {
-					throw Error("INFINTE LOOP");
-				}
-				if ( _.isArray( step ) ) {
-					setNextToExecute( state.currentContainer.makeChildContainer( step ), 0 );
-				} else if ( _.isObject( step ) ) {
-					processObject( step );
-				}	else {
-					if ( ! _.isUndefined( step ) ) {
-						processPrimitive( step );
-					}
-				}
-			} while( nextStepValid() );
-
-			// If we run out of choices to follow, pop the choicesStack
-			// and continue.
-			if ( state.choicesToFollow.length === 0 ) {
-				if ( choicesStack.length > 0  ) {
-					var { node, question, choices } = choicesStack.pop();
-					state.currentNode = node;
-					state.currentQuestion = question;
-					state.choicesToFollow = choices;
+		do {
+			step = getNextToExecute();
+			if ( _.isArray( step ) ) {
+				setNextToExecute( state.currentContainer.makeChildContainer( step ), 0 );
+			} else if ( _.isObject( step ) ) {
+				processObject( step );
+			}	else {
+				if ( ! _.isUndefined( step ) ) {
+					processPrimitive( step );
 				}
 			}
+		} while( nextStepValid() );
 
-			// Repeat until there are no choices left
-			if ( state.choicesToFollow.length > 0 ) {
-				var choice = state.choicesToFollow.shift();
-				addQuestion( choice.text );
-				//console.log( `following choice ${choice.name}`);
-
-				if ( state.choicesToFollow.length > 0 ) {
-					choicesStack.push( {
-						node: state.currentNode,
-						question: state.currentQuestion,
-						choices: state.choicesToFollow
-					} );
-					state.choicesToFollow = [];
-				} else {
-					endNode();
-				}
-				startNode();
-				jumpToRef( choice.refObj );
-			}
-
-	} while( state.choicesToFollow > 0 || nextStepValid() );
+		// If we run out of choices to follow, pop the choicesStack
+		// and continue.
+		if ( state.choicesToFollow.length === 0 ) {
+			endNode();
+			popChoicesStack();
+		}
+		// Repeat until there are no choices left
+		else if ( state.choicesToFollow.length > 0 ) {
+			var choice = state.choicesToFollow.shift();
+			addQuestion( choice.text );
+			pushChoicesStack();
+			startNode(); 
+			jumpToRef( choice.refObj );
+		}
+	
+	// Repeat whilst there is work to do
+	} while( state.choicesToFollow.length > 0 
+		|| state.choicesStack.length > 0 
+		|| nextStepValid() );
 
 }
 
 function parseInk( inkJson, key ) {
-	processContainer( container( { node: inkJson["root"] } ) );
+	console.log("Running ink script...");
+	processContainer( container( { node: inkJson["root"] } ), key );
+	console.log("Finished.");
+	return key;
 }
 
 function loadKey( root ) {
 	var fileText = fs.readFileSync( root + "key.ink.json", { encoding: "UTF-8" }).slice(1);
 	var inkJson = JSON.parse( fileText );
+	console.log("Creating key...");
 	var key = Key.createKey( { url: root });
 	return parseInk(inkJson, key);
 }
