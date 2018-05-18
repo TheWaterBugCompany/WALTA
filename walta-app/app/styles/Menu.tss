@@ -4,7 +4,7 @@
 }
 
 "#header": {
-  height: "60dp"
+  height: "20%"
 }
 
 "#logoLeft": {
@@ -21,6 +21,24 @@
   font: {
     fontFamily: "Boulder",
     fontSize: "31dp"
+  }
+}
+
+"#title[if=Alloy.Globals.isMedium]" : {
+  font: {
+    fontSize: "40dp"
+  }
+}
+
+"#title[if=Alloy.Globals.isLarge]" : {
+  font: {
+    fontSize: "40dp"
+  }
+}
+
+"#title[if=Alloy.Globals.isXLarge]" : {
+  font: {
+    fontSize: "40dp"
   }
 }
 

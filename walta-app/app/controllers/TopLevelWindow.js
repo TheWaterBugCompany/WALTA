@@ -23,16 +23,14 @@ function closeCurrentWindow() { Alloy.Globals["currentWindow"].win.close(); }
 
 function getCurrentWindow() { return Alloy.Globals["currentWindow"]; }
 
+
 var win = $.TopLevelWindow;
 win.title = $.args.title;
 
-var panelHeight = Ti.UI.FILL;
 var anchorBar = null;
 if ( $.args.title ) {
 	var anchorBar = Alloy.createController("AnchorBar", $.args );
 	win.add( anchorBar.getView() );
-	panelHeight = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() );
-	panelHeight = panelHeight - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
 } else {
 	anchorBar == null;
 }
@@ -45,7 +43,7 @@ win.add( _($.args.uiObj.view).extend({
 	exitOnClose: false,
 	top: 0,
 	width: Ti.UI.FILL,
-	height: panelHeight
+	height: Ti.UI.FILL
 }) );
 
 win.addEventListener( 'androidback', function(e) {
@@ -57,7 +55,31 @@ if ( $.args.onOpen )
 	win.addEventListener('open', $.args.onOpen );
 
 if ( $.args.cleanup )
-	win.addEventListener('close', $.args.cleanup );
+	win.addEventListener('close', function closeEvent() {
+		$.args.cleanup(); 
+		if ( $.args.onOpen ) 
+			win.removeEventListener('open', $.args.onOpen );
+		win.removeEventListener('close', closeEvent );
+	});
+
+win.addEventListener( 'postlayout', function() {
+
+	var width = Ti.Platform.displayCaps.getPlatformWidth() / ( Ti.Platform.displayCaps.getDpi() / 100 );
+	var height = Ti.Platform.displayCaps.getPlatformHeight() / ( Ti.Platform.displayCaps.getDpi() / 100 );
+
+	Ti.API.info("width = " + width );
+	Ti.API.info("height = " + height );
+
+	Alloy.Globals.isSmall = width <  470;
+	Alloy.Globals.isMedium = width >= 470;
+	Alloy.Globals.isLarge = width >= 640;
+	Alloy.Globals.isXLarge = width >= 960;
+
+	if ( anchorBar ) {
+		$.args.uiObj.view.height = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() ) - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
+	}
+
+});
 
 PlatformSpecific.transitionWindows( win, $.args.slide );
 

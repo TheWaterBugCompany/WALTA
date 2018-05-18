@@ -1,24 +1,77 @@
 "#button" : {
   borderRadius: "15dp",
   backgroundColor: "#cfdbf3",
-  width: "255dp",
-  height: "75dp",
-  top: "8dp",
-  left: "8dp"
+  top: "2%",
+  left: "1.5%"
+}
+
+"#button[if=Alloy.Globals.isMedium]" : {
+  borderRadius: "20dp"
+}
+
+"#button[if=Alloy.Globals.isLarge]" : {
+  borderRadius: "20dp"
+}
+
+"#button[if=Alloy.Globals.isXLarge]" : {
+  borderRadius: "20dp"
+}
+
+".large": {
+  width: "47.75%",
+  height: "30.67%"
+}
+
+".fill" : {
+  width: "96%",
+  height: "30.67%"
+}
+
+".small" : {
+  width: "31.34%",
+  height: "30.67%"
+}
+
+"#icon" : {
+  width: "30%"
 }
 
 "#text" : {
-  left: "8dp",
-  top: "8dp",
-  right: "8dp"
+  top: "1%",
+  width: "66%"
+}
+
+"#text[if=Alloy.Globals.isMedium,Alloy.Globals.isLarge,Alloy.Globals.isXLarge]" : {
+  left: "2%",
+  top: "1%",
+  right: "1%"
 }
 
 "#title" : {
+  top: "5%",
   font: {
     fontFamily: "Boulder",
     fontSize: "20dip"
   },
   color: "#882F61CC"
+}
+
+"#title[if=Alloy.Globals.isMedium]" : {
+  font: {
+    fontSize: "24dip"
+  }
+}
+
+"#title[if=Alloy.Globals.isLarge]" : {
+  font: {
+    fontSize: "24dip"
+  }
+}
+
+"#title[if=Alloy.Globals.isXLarge]" : {
+  font: {
+    fontSize: "24dip"
+  }
 }
 
 "#description" : {
@@ -27,4 +80,22 @@
     fontSize: "13dip"
   },
   color: "black"
+}
+
+"#description[if=Alloy.Globals.isMedium]" : {
+  font: {
+    fontSize: "15dip"
+  }
+}
+
+"#description[if=Alloy.Globals.isLarge]" : {
+  font: {
+    fontSize: "15dip"
+  }
+}
+
+"#description[if=Alloy.Globals.isXLarge]" : {
+  font: {
+    fontSize: "15dip"
+  }
 }

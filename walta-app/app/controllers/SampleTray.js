@@ -1,11 +1,14 @@
 var speedbugIndex = $.args.speedbugIndex;
 
 var PlatformSpecific = require('ui/PlatformSpecific');
+var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
 var lastScroll = null;
-var endCapWidth = 138;
-var middleWidth = 189;
+
+var endcapHeight = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() ) - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
+var endcapWidth = 0;
+var middleWidth = 0;
 var sampleTrayWin = null;
 
 // Keeps track of the tile views we cache
@@ -13,7 +16,7 @@ var tileIndex = [];
 var firstTwoTiles;
 
 function roundToTile( x ) {
-  return Math.floor((x + endCapWidth) / middleWidth);
+  return Math.floor((x + endcapWidth) / middleWidth);
 }
 
 function mapTileNumToCollection( n ) {
@@ -75,7 +78,7 @@ function updateFirstTwoSampleTrayIcons() {
       container: Ti.UI.createView({
               width: Ti.UI.FILL,
               height: Ti.UI.FILL,
-              left: '30dp',
+              left: `${endcapWidth*0.3}dp`,
               layout: 'vertical'
             }),
       icons: []
@@ -94,21 +97,20 @@ function updateFirstTwoSampleTrayIcons() {
 
 function createIconContainer() {
   return Ti.UI.createView( {
-    left: '12dp',
-    top: '34dp',
-    width: '80dp',
-    height: '90dp'
-    //,borderColor: "#ff0000"
+    top: `${endcapHeight*0.1}dp`,
+    left: `${endcapWidth*0.1}dp`,
+    width: `${endcapWidth*0.5}dp`,
+    height: `${endcapHeight*0.35}dp`,
   });
 }
 
 function createAddIcon() {
   var btn = Ti.UI.createButton({
-    left: '8dp',
-    bottom: '14dp',
-    width: '70dp',
-    height: '70dp',
-		backgroundImage: "images/icon-add-taxon.png"
+    top: `${endcapHeight*0.01}dp`,
+    left: 0,
+    width: `${endcapWidth*0.6}dp`,
+    height: `${endcapHeight*0.30}dp`,
+		backgroundImage: "/images/icon-add-taxon.png"
 	});
 	btn.addEventListener( 'click', startIdentification );
   return btn;
@@ -130,12 +132,14 @@ function createTaxaIcon(taxon) {
 */
 function createSampleTrayTile( tileNum ) {
   var tile = Ti.UI.createView({
+    height: `${endcapHeight}dp`,
     width: `${middleWidth}dp`,
-    left: `${tileNum*middleWidth+endCapWidth}dp`
+    left: `${tileNum*middleWidth+endcapWidth}dp`
   });
   var trayBackground =  Ti.UI.createImageView({
-        image: 'images/tiling_interior_320.png',
-        height: Ti.UI.FILL
+        image: '/images/tiling_interior_320.png',
+        height: `${endcapHeight}dp`,
+        width: `${middleWidth}dp`
   });
   tile.add( trayBackground );
   var icons = fillSampleTrayIcons( mapTileNumToCollection(tileNum) );
@@ -201,7 +205,7 @@ function addTiles( start_n, end_n ) {
 function updateVisibleTiles( scrollx) {
   var viewWidth = PlatformSpecific.convertSystemToDip( $.SampleTray.getSize().width );
   var rightEdge = roundToTile( scrollx + viewWidth + middleWidth );
-  var leftEdge = roundToTile( scrollx - middleWidth - endCapWidth );
+  var leftEdge = roundToTile( scrollx - middleWidth - endcapWidth );
   addTiles(leftEdge,rightEdge);
   releaseTiles( 0, leftEdge - 1 );
   releaseTiles( rightEdge + 1, tileIndex.length );
@@ -247,8 +251,13 @@ function startIdentification(e) {
 
 $.SampleTray.addEventListener( "scroll", drawIcecubeTray );
 $.SampleTray.addEventListener( "postlayout", function firstRender() {
-    $.SampleTray.removeEventListener("postlayout", firstRender );
-    drawIcecubeTray();
+      $.SampleTray.removeEventListener("postlayout", firstRender );
+      endcapWidth = $.endcapBackground.size.width;
+      middleWidth = endcapWidth*1.384;
+      Ti.API.info( `endcapWidth = ${endcapWidth}` );
+      Ti.API.info( `middleWidth = ${middleWidth}` );
+      drawIcecubeTray();
+
   });
 
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );

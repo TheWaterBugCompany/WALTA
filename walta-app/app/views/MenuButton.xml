@@ -1,9 +1,13 @@
 <Alloy>
-	<View class="container" id="button" layout="horizontal">
+	<View id="button" class="large">
+		<View layout="horizontal" > <!-- inserting another View seems to workaround layout bugs -->
 			<ImageView id="icon" />
-			<View id="text" layout="vertical">
-				<Label id="title" />
-				<Label id="description" />
-			<View>
+			<View id="text">
+				<View  layout="vertical"> <!-- inserting another View seems to workaround layout bugs -->
+					<Label id="title" />
+					<Label id="description" />
+				</View>
+			</View>
+		</View>
 	</View>
 </Alloy>

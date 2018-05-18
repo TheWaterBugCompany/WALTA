@@ -47,3 +47,7 @@ end
 task :preview => [ :start_emulator, :uninstall_app ] do
   sh("appc ti build --project-dir walta-app --platform android --target emulator --liveview")
 end
+
+task :device_preview => [ ] do
+  sh("appc ti build --project-dir walta-app --platform android --target device --liveview")
+end

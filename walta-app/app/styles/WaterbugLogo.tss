@@ -1,10 +1,13 @@
 ".container": {
-  width: "60dp",
-  right: "8dp"
+  width: Ti.UI.SIZE,
+  height: Ti.UI.FILL,
+  right: "3%"
 }
 "#logo": {
-  top: "8dp",
-  width: "44dp",
+  top: "5%",
+  bottom: "5%",
+  width: "9%",
+  height: "75%",
   image: "/images/logo.png"
 }
 
