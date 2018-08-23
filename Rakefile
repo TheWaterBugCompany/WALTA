@@ -33,7 +33,7 @@ task :uninstall_app do
 end
 
 task :test => [ :start_emulator, 'walta-app/dist/Waterbug.apk', :uninstall_app ] do
-  sh("calabash-android run walta-app/dist/Waterbug.apk features/identify_taxa.feature")
+  sh("calabash-android run walta-app/dist/Waterbug.apk features/registration.feature")
 end
 
 task :test_console => [ :start_emulator, 'walta-app/dist/Waterbug.apk', :uninstall_app ] do

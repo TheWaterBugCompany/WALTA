@@ -1,50 +1,102 @@
 
 ".container" : {
-  backgroundColor: "#fff"
-}
-
-"#header": {
-  height: "20%"
-}
-
-"#logoLeft": {
-  image: "/images/icon-australia.png",
-  width: "80dp",
-  top: "8dp",
-  left: "8dp",
-  right: "8dp"
-}
-
-"#title": {
-  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  width: Ti.UI.SIZE,
-  font: {
-    fontFamily: "Boulder",
-    fontSize: "31dp"
-  }
-}
-
-"#title[if=Alloy.Globals.isMedium]" : {
-  font: {
-    fontSize: "40dp"
-  }
-}
-
-"#title[if=Alloy.Globals.isLarge]" : {
-  font: {
-    fontSize: "40dp"
-  }
-}
-
-"#title[if=Alloy.Globals.isXLarge]" : {
-  font: {
-    fontSize: "40dp"
-  }
+  backgroundColor: "#fff",
+  backgroundImage: "/images/menu-background.png"
 }
 
 "#content": {
-  top: "0dp",
-  bottom: "0dp",
-  left: "0dp",
-  right: "0dp"
+  height: Ti.UI.SIZE,
+  bottom: "10dp",
+  left: "20dp",
+  right: "20dp"
+}
+
+".bigText": {
+   font: {
+    fontFamily: "Boulder",
+    fontSize: "25dp"
+  },
+  color: "#26849c"
+}
+
+".smallText": {
+   font: {
+    fontFamily: "Boulder",
+    fontSize: "14dp"
+  },
+  color: "#26849c"
+}
+
+".bigButton": {
+  height: Ti.UI.SIZE,
+  width: Ti.UI.SIZE
+}
+
+"#mayfly": {
+  top: "38dp",
+  left: "25dp"
+}
+
+"#mayflyIcon": {
+  backgroundColor: "transparent",
+  image: "/images/mayfly-muster-icon.png",
+  height: "165dp",
+  left: 0
+}
+
+"#mayflyLabel": {
+  top: "62dp",
+  left: "139dp"
+}
+
+"#detailed": {
+  top: "28dp",
+  left: "295dp"
+}
+
+"#detailedIcon": {
+  backgroundColor: "transparent",
+  image: "/images/waterbug-survey-icon.png",
+  height: "175dp",
+  width: "220dp",
+  left: "0dp"
+}
+
+"#detailedLabel": {
+  top: "112dp",
+  left: "10dp"
+}
+
+".smallButton": {
+  height: Ti.UI.SIZE,
+  width: Ti.UI.SIZE,
+  layout: "vertical",
+  horizontalWrap: false,
+  left: "14dp",
+  right: "14dp"
+}
+
+".smallButtonIcon" : {
+  width: "70dp",
+  height: "70dp"
+}
+
+"#helpIcon" : {
+  backgroundColor: "transparent",
+  image: "/images/help-icon.png",
+}
+
+"#browseIcon" : {
+  backgroundColor: "transparent",
+  image: "/images/browse-icon.png",
+}
+
+"#galleryIcon" : {
+  backgroundColor: "transparent",
+  image: "/images/gallery-icon.png",
+}
+
+"#aboutIcon" : {
+  backgroundColor: "transparent",
+  image: "/images/about-icon.png",
 }

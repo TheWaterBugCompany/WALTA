@@ -1,23 +1,24 @@
 var Topics = require('ui/Topics');
-var { menuEntry } = require('ui/MenuBuilder');
+function mayflyClick() {
+  Topics.fireTopicEvent( Topics.MAYFLY, null );
+}
 
-$.mayfly = menuEntry( $.content, "", "May Flies", Topics.MAYFLY,
-  "Look at silhouettes of bugs to choose the best match.", true );
+function detailedClick() {
+  Topics.fireTopicEvent( Topics.DETAILED, null );
+}
 
-$.order = menuEntry( $.content, "", "Order Level", Topics.ORDER,
-  "Questions to help identify your waterbug.", true );
+function browseClick() {
+  Topics.fireTopicEvent( Topics.BROWSE, null );
+}
 
-$.detailed = menuEntry( $.content, "", "Detailed", Topics.DETAILED,
-  "Questions to help identify your waterbug.", true );
+function galleryClick() {
+  Topics.fireTopicEvent( Topics.GALLERY, null );
+}
 
-$.browse = menuEntry( $.content, "/images/icon-browse.png", "Browse list", Topics.BROWSE,
-  "If you know the name of your bug." );
+function aboutClick() {
+  Topics.fireTopicEvent( Topics.ABOUT, null );
+}
 
-$.gallery = menuEntry( $.content, "/images/icon-gallery.png", "Gallery", Topics.GALLERY,
-  "Browse photos & videos." );
-
-$.about = menuEntry( $.content, "/images/icon-about.png", "About", Topics.ABOUT,
-  "About the app." );
-
-$.help = menuEntry( $.content, "/images/icon-help.png", "Help", Topics.HELP,
-  "Info to get you started." );
+function helpClick() {
+  Topics.fireTopicEvent( Topics.HELP, null );
+}
