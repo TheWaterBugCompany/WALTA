@@ -4,11 +4,11 @@
   backgroundGradient: {
     type: 'linear',
     startPoint: { x: '0%', y: '0%' },
-    endPoint: { x: '0%', y: '100%' },
-    colors: [ {color: '#2f61cc', offset: 0.0 }, {color: '#7797de', offset: 1.0 } ]
+    endPoint: { x: '0%', y: '120%' },
+    colors: [ {color: '#26849c', offset: 0.0 }, {color: '#b4d2d9', offset: 1.0 } ]
   },
-  bottom:0,
-  height: "42dp",
+  bottom: 0,
+  height: "30dp",
   layout: "composite",
   width: Ti.UI.FILL
 }
@@ -33,13 +33,15 @@
 }
 
 "#title": {
-  font: {
-    font: 'Tahoma',
-    fontSize: '22dip'
-  },
   color: 'white',
-  textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   width: Ti.UI.SIZE,
   height: Ti.UI.FILL,
   right: '50%'
+}
+
+".anchorBarButton": {
+  left: "8dp",
+  height: "28dp",
+  width: "28dp"
 }

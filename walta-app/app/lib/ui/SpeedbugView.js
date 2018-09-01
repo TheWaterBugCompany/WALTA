@@ -124,7 +124,8 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 			});
 
 			// Defer loading images until they are on screen
-			_pushTile( '/' + sb.imgUrl, cnt );
+			Ti.API.info('speedbug ' + sb.imgUrl );
+			_pushTile( sb.imgUrl, cnt );
 
 			cnt.addEventListener( 'click', function(e) {
 				Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId } );

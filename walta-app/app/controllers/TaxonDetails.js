@@ -108,7 +108,7 @@ if ($.args.taxon.photoUrls.length > 0) {
 	}));
 
 	$.actionBtns.add(
-		createActionButton("/images/icon-gallery.png", "Photo gallery",
+		createActionButton("/images/gallery-icon.png", "Photo gallery",
 			function(e) {
 				photoView.open();
 				e.cancelBubble = true;
@@ -128,7 +128,7 @@ if ($.args.taxon.videoUrl) {
 
 // Add the add to sample button
 $.actionBtns.add(
-	createActionButton("/images/icon-add-taxon.png", "Add To Sample",
+	createActionButton("/images/plus-icon.png", "Add To Sample",
 		function(e) {
 			Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId } );
 			e.cancelBubble = true;

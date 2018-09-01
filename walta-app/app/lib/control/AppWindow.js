@@ -41,8 +41,7 @@ function createAppWindow( keyName, keyPath ) {
 
 		// Private variables that are not to be exposed as API
 		var privates = {
-			/*platformWidth: 0,
-			platformHeight: 0,*/
+
 			key: null,
 
 			loadKey: function( keyUrl ) {
@@ -53,13 +52,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			menuWindow: function(args) {
-				if ( ! args ) args = {};
-				_(args).extend({
-					name: 'home',
-					uiObj: { view: Alloy.createController("Menu").getView() },
-					portrait: false
-				});
-				TopLevelWindow.makeTopLevelWindow(args);
+				Alloy.createController("Menu");
 			},
 
 			browseWindow: function() {
@@ -78,6 +71,10 @@ function createAppWindow( keyName, keyPath ) {
 				args.speedbugIndex = this.key.getSpeedbugIndex();
 				
 				Alloy.createController("SampleTray",args);
+			},
+
+			logInWindow: function(args) {
+				Alloy.createController("LogIn");
 			},
 
 
@@ -113,6 +110,8 @@ function createAppWindow( keyName, keyPath ) {
 
 			updateDecisionWindow: function( args ) {
 				var node = this.key.getCurrentNode();
+				if ( ! args )
+					args = {};
 				if ( this.key.isNode( node ) ) {
 					args.keyNode = node;
 					Alloy.createController("KeySearch", args );
@@ -138,6 +137,10 @@ function createAppWindow( keyName, keyPath ) {
 		var appWin = { keyUrl: keyUrl };
 
 		privates.subscribe( Topics.HOME, function() { privates.menuWindow();  } );
+
+	privates.subscribe( Topics.LOGIN, function() {
+		privates.logInWindow();
+	});
 
     privates.subscribe( Topics.KEYSEARCH, function() {
     	privates.key.reset();
@@ -190,17 +193,17 @@ function createAppWindow( keyName, keyPath ) {
 	    }
     });
 
-		privates.subscribe( Topics.MAYFLY, function() {
-			privates.sampleTrayWindow();
-		} );
+	privates.subscribe( Topics.MAYFLY, function() {
+		privates.sampleTrayWindow();
+	} );
 
-		privates.subscribe( Topics.ORDER, function() {
-			privates.sampleTrayWindow();
-		} );
+	privates.subscribe( Topics.ORDER, function() {
+		privates.sampleTrayWindow();
+	} );
 
-		privates.subscribe( Topics.DETAILED, function() {
-			privates.sampleTrayWindow();
-		} );
+	privates.subscribe( Topics.DETAILED, function() {
+		privates.sampleTrayWindow();
+	} );
 
     privates.subscribe( Topics.SPEEDBUG, function() {
     	privates.speedBugWindow();
@@ -218,20 +221,20 @@ function createAppWindow( keyName, keyPath ) {
     	privates.aboutWindow();
     });
 
-		// Return public API
-		_(appWin).extend({
-			start: function() {
-				privates.loadKey( appWin.keyUrl );
-				PlatformSpecific.appStartUp( privates );
-				Topics.fireTopicEvent( Topics.HOME );
-			},
-			close: function() {
-				privates.cleanUp();
-			},
-			getCurrentWindow: TopLevelWindow.getCurrentWindow
-		});
+	// Return public API
+	_(appWin).extend({
+		start: function() {
+			privates.loadKey( appWin.keyUrl );
+			PlatformSpecific.appStartUp( privates );
+			Topics.fireTopicEvent( Topics.HOME );
+		},
+		close: function() {
+			privates.cleanUp();
+		},
+		getCurrentWindow: TopLevelWindow.getCurrentWindow
+	});
 
-		return appWin;
+	return appWin;
 }
 
 exports.createAppWindow = createAppWindow;

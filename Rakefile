@@ -3,6 +3,7 @@
 # ENV['KEYSTORE_PASSWORD'] = '*********'
 # ENV['KEYSTORE_SUBKEY'] = 'thecodesharman'
 # ENV['AVD_NAME'] = 'Nexus7'
+# run calabash-android setup to set keystore also
 ENV['APP_ID'] = 'net.thewaterbug.waterbug'
 
 titanium_source_files = Rake::FileList.new("walta-app/**") do |fl|
@@ -40,14 +41,22 @@ task :test_console => [ :start_emulator, 'walta-app/dist/Waterbug.apk', :uninsta
   sh("calabash-android console walta-app/dist/Waterbug.apk features/identify_taxa.feature")
 end
 
+task :unit_test do
+  sh("NODE_PATH=\"./walta-app/app:./walta-app/app/lib\" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js")
+end
+
 task :clean do
-  sh("rm -rf walta-app/build/* && rm -rf walta-app/dist/*")
+  sh("rm -rf walta-app/build/* && rm -rf walta-app/dist/* && rm -rf walta-app/Resources/*")
 end
 
 task :preview => [ :start_emulator, :uninstall_app ] do
-  sh("appc ti build --project-dir walta-app --platform android --target emulator --liveview")
+  sh("appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME} --liveview")
 end
 
-task :device_preview => [ ] do
+task :device_preview => [] do
   sh("appc ti build --project-dir walta-app --platform android --target device --liveview")
+end
+
+task :release_android => [ 'clean' ] do
+  sh("appc ti build --project-dir walta-app --build-only --platform android  --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release");
 end

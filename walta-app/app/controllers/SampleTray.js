@@ -6,7 +6,7 @@ var Topics = require('ui/Topics');
 
 var lastScroll = null;
 
-var endcapHeight = PlatformSpecific.convertSystemToDip( Ti.Platform.displayCaps.getPlatformHeight() ) - Ti.UI.convertUnits( Layout.TOOLBAR_HEIGHT, "dip" );
+var endcapHeight = 0;
 var endcapWidth = 0;
 var middleWidth = 0;
 var sampleTrayWin = null;
@@ -106,11 +106,11 @@ function createIconContainer() {
 
 function createAddIcon() {
   var btn = Ti.UI.createButton({
-    top: `${endcapHeight*0.01}dp`,
+    top: `${endcapHeight*0.05}dp`,
     left: 0,
-    width: `${endcapWidth*0.6}dp`,
-    height: `${endcapHeight*0.30}dp`,
-		backgroundImage: "/images/icon-add-taxon.png"
+    width: `${endcapWidth*0.5}dp`,
+    height: `${endcapHeight*0.25}dp`,
+		backgroundImage: "/images/plus-icon.png"
 	});
 	btn.addEventListener( 'click', startIdentification );
   return btn;
@@ -153,7 +153,6 @@ function fillSampleTrayIcons( sampleNum ) {
       width: Ti.UI.FILL,
       height: Ti.UI.FILL,
       layout: 'horizontal'
-      //,borderColor: "#ff0000"
     }),
     icons: []
   };
@@ -172,7 +171,6 @@ function updateSampleTrayTile( tileNum ) {
 }
 
 function releaseTiles( start_n, end_n ) {
-  Ti.API.trace("SampleTray release tiles start_n = " + start_n + " end_n = " + end_n );
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 ) {
       var tile = tileIndex[i];
@@ -185,7 +183,6 @@ function releaseTiles( start_n, end_n ) {
 }
 
 function addTiles( start_n, end_n ) {
-  Ti.API.trace(`SampleTray load tiles start_n = ${start_n}  end_n = ${end_n} collection length = ${Alloy.Collections["taxa"].length}`);
   for( var i = start_n; i<=end_n; i++ ) {
     // max() below is to add an extra blank tile with an empty tray...
     if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length + 2)/4,2) ) ) {
@@ -219,7 +216,7 @@ function drawIcecubeTray() {
 };
 
 function startIdentification(e) {
-
+  Ti.API.info("entering startIdentification");
   var selectMethod = Alloy.createController("MethodSelect");
   function closeSelectMethod() {
     sampleTrayWin.remove(selectMethod.getView());
@@ -252,10 +249,9 @@ function startIdentification(e) {
 $.SampleTray.addEventListener( "scroll", drawIcecubeTray );
 $.SampleTray.addEventListener( "postlayout", function firstRender() {
       $.SampleTray.removeEventListener("postlayout", firstRender );
+      endcapHeight = $.endcap.size.height;
       endcapWidth = $.endcapBackground.size.width;
       middleWidth = endcapWidth*1.384;
-      Ti.API.info( `endcapWidth = ${endcapWidth}` );
-      Ti.API.info( `middleWidth = ${middleWidth}` );
       drawIcecubeTray();
 
   });

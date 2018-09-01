@@ -1,0 +1,46 @@
+
+".container" : {
+    layout: "horizontal"
+}
+
+".panel" : {
+    top: "10%",
+    width: "50%",
+    height: "90%"
+}
+
+"#leftPanel" : {
+    width: "56%"
+}
+
+"#rightPanel" : {
+    width: "44%",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
+}
+
+"#emailLabel": {
+    top: "10%",
+    width: "250dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+"#passwordLabel": {
+    width: "250dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+".socialMediaImage": {
+    top: "17%",
+    left: "2%",
+    width: "30%",
+    height: "28%"
+}
+
+"#socialMedia": {
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE
+}
+
+"#registerHeading": {
+    top: "3%"
+}

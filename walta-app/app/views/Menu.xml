@@ -1,31 +1,34 @@
 <Alloy>
 	<View class="container">
 			<View height=Ti.UI.FILL width=Ti.UI.FILL>
+				<View id="logInOrRegister" onClick="logInClick">
+					<Label id="logInLabel" class="smallMenuText" text="Log In" />
+				</View>
 				<View  id="mayfly" class="bigButton" onClick="mayflyClick">
 					<ImageView id="mayflyIcon" />
-					<Label id="mayflyLabel" class="bigText" text="Mayfly\nMuster" />
+					<Label id="mayflyLabel" class="bigMenuText" text="Mayfly\nMuster" />
 				</View>
 				<View id="detailed" class="bigButton" onClick="detailedClick">
 					<ImageView id="detailedIcon" />
-					<Label id="detailedLabel" class="bigText" text="Waterbug\nSurvey" />
+					<Label id="detailedLabel" class="bigMenuText" text="Waterbug\nSurvey" />
 				</View>
 			</View>
 			<View id="content" layout="horizontal">
 				<View id="help" class="smallButton" onClick="helpClick">
 					<ImageView id="helpIcon" class="smallButtonIcon" />
-					<Label id="helpLabel" class="smallText" text="Help and Info" />	
+					<Label id="helpLabel" class="smallMenuText" text="Help and Info" />	
 				</View>
 				<View id="browse" class="smallButton" onClick="browseClick">
 					<ImageView id="browseIcon" class="smallButtonIcon"  />
-					<Label id="browseLabel" class="smallText" text="Browse list" />
+					<Label id="browseLabel" class="smallMenuText" text="Browse list" />
 				</View>
 				<View id="gallery" class="smallButton" onClick="galleryClick">
 					<ImageView id="galleryIcon" class="smallButtonIcon"  />
-					<Label id="galleryLabel" class="smallText" text="Photos &amp; Videos" />
+					<Label id="galleryLabel" class="smallMenuText" text="Photos &amp; Videos" />
 				</View>
 				<View id="about" class="smallButton" onClick="aboutClick">
 					<ImageView id="aboutIcon" class="smallButtonIcon"  />
-					<Label id="aboutLabel" class="smallText" text="About the App" />
+					<Label id="aboutLabel" class="smallMenuText" text="About the App" />
 				</View>
 			</View>
 	</View>

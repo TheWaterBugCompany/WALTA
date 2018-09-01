@@ -60,6 +60,8 @@ var topics = {
 
 	ABOUT: 'about',
 
+	LOGIN: 'login',
+
 	unsubscribe: function( topic, callback ) {
 		Alloy.Events.off( 'waterbug:' + topic, callback );
 	},

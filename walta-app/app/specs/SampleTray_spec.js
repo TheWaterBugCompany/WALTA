@@ -79,7 +79,7 @@ describe( 'SampleTray', function() {
 
   function assertPlus( square ) {
     var unwraped = square.getChildren()[0];
-    expect( unwraped.backgroundImage ).to.include('images/icon-add-taxon.png');
+    expect( unwraped.backgroundImage ).to.include('images/plus-icon.png');
   }
 
   function assertSampleBlank( taxon ) {

@@ -34,32 +34,29 @@ describe('MenuView', function() {
 		windowOpenTest( win, done );
 	});
 
-	it('should fire the ORDER topic', function(done) {
-		actionFiresTopicTest( mnu.order.getView(), 'click', Topics.ORDER, done );
-	});
 
 	it('should fire the MAYFLY topic', function(done) {
-		actionFiresTopicTest( mnu.mayfly.getView(), 'click', Topics.MAYFLY, done );
+		actionFiresTopicTest( mnu.mayfly, 'click', Topics.MAYFLY, done );
 	});
 
 	it('should fire the DETAILED topic', function(done) {
-		actionFiresTopicTest( mnu.detailed.getView(), 'click', Topics.DETAILED, done );
+		actionFiresTopicTest( mnu.detailed, 'click', Topics.DETAILED, done );
 	});
 
 	it('should fire the BROWSE topic', function(done) {
-		actionFiresTopicTest( mnu.browse.getView(), 'click', Topics.BROWSE, done );
+		actionFiresTopicTest( mnu.browse, 'click', Topics.BROWSE, done );
 	});
 
 	it('should fire the HELP topic', function(done) {
-		actionFiresTopicTest( mnu.help.getView(), 'click', Topics.HELP, done );
+		actionFiresTopicTest( mnu.help, 'click', Topics.HELP, done );
 	});
 
 	it('should fire the GALLERY topic', function(done) {
-		actionFiresTopicTest( mnu.gallery.getView(), 'click', Topics.GALLERY, done );
+		actionFiresTopicTest( mnu.gallery, 'click', Topics.GALLERY, done );
 	});
 
 	it('should fire the ABOUT topic', function(done) {
-		actionFiresTopicTest( mnu.about.getView(), 'click', Topics.ABOUT, done );
+		actionFiresTopicTest( mnu.about, 'click', Topics.ABOUT, done );
 	});
 
 

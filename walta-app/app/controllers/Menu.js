@@ -1,4 +1,9 @@
 var Topics = require('ui/Topics');
+
+function logInClick() {
+  Topics.fireTopicEvent( Topics.LOGIN, null );
+}
+
 function mayflyClick() {
   Topics.fireTopicEvent( Topics.MAYFLY, null );
 }
@@ -22,3 +27,8 @@ function aboutClick() {
 function helpClick() {
   Topics.fireTopicEvent( Topics.HELP, null );
 }
+
+Alloy.createController("TopLevelWindow", {
+  name: 'home',
+  uiObj: { view: $.getView() }
+});

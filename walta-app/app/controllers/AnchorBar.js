@@ -29,9 +29,6 @@ var Topics = require('ui/Topics');
 
 function createToolBarButton( image, topic ) {
 	var btn = Ti.UI.createButton({
-		left: Layout.BUTTON_MARGIN,
-		width: Layout.TOOLBAR_BUTTON_SIZE,
-		height: Layout.TOOLBAR_BUTTON_SIZE,
 		backgroundImage: image
 	});
 
@@ -41,6 +38,7 @@ function createToolBarButton( image, topic ) {
 			e.cancelBubble = true;
 		});
 	}
+	$.addClass( btn, "anchorBarButton" );
 	return btn;
 }
 
@@ -53,8 +51,9 @@ $.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME );
 $.leftTools.add( $.home );
 $.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HELP ) );
 
+/*
 addTool( createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ) );
 addTool( createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ) );
-
+*/
 exports.createToolBarButton = createToolBarButton;
 exports.addTool = addTool;

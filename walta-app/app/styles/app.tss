@@ -50,3 +50,74 @@ overrode the settings with other TSS, XML, or JS settings:
 	height: Ti.UI.SIZE,
 	width: Ti.UI.SIZE
 }
+
+".titleText": {
+   font: {
+    fontFamily: "Tahoma",
+	fontWeight: "bold",
+    fontSize: "15dp"
+  }
+}
+
+".headingText": {
+   font: {
+    fontFamily: "Tahoma",
+	fontWeight: "bold",
+    fontSize: "16dp"
+  },
+  color: "#26849c"
+}
+
+".labelText": {
+   font: {
+    fontFamily: "Tahoma",
+	fontWeight: "bold",
+    fontSize: "14dp"
+  },
+  color: "#26849c",
+  wordWrap: true
+}
+
+".labelText[if=Alloy.Globals.isLdpi]": {
+    font: {
+      fontSize: "16dp"
+    }
+}
+
+".actionButton": {
+  font: {
+    fontFamily: "Tahoma",
+	fontWeight: "bold",
+    fontSize: "15dp"
+  },
+  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+  color: "#26849c",
+  backgroundColor: "#b4d2d9",
+  borderRadius: "4dp",
+  top: "5%",
+  width: "100dp",
+  height: "35dp"
+}
+
+".textField": {
+    top: "2%",
+    bottom: "2%",
+    borderColor: "#b4d2d9",
+    borderWidth: "1dp",
+    borderRadius: "10dp",
+    width: "250dp",
+    height: "40dp",
+	  color: "#26849c"
+}
+
+".textField[if=Alloy.Globals.isLdpi]": {
+    borderWidth: "2dp",
+}
+
+".password": {
+	passwordMask: true
+}
+
+".checkbox": {
+	style: Ti.UI.Android.SWITCH_STYLE_CHECKBOX
+}

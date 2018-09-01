@@ -4,6 +4,24 @@
   backgroundImage: "/images/menu-background.png"
 }
 
+"#logInOrRegister" : {
+  height: Ti.UI.SIZE,
+  width: Ti.UI.SIZE,
+  top: "10dp",
+  right: "10dp",
+  layout: "horizontal",
+  zIndex: "1"
+}
+
+"#logInLabel": {
+  height: Ti.UI.SIZE,
+  width: Ti.UI.SIZE,
+  left: "20dp",
+  right: "20dp",
+  top: "20dp",
+  bottom: "20dp"
+}
+
 "#content": {
   height: Ti.UI.SIZE,
   bottom: "10dp",
@@ -11,7 +29,13 @@
   right: "20dp"
 }
 
-".bigText": {
+".bigButton": {
+  height: Ti.UI.SIZE,
+  width: Ti.UI.SIZE
+}
+
+
+".bigMenuText": {
    font: {
     fontFamily: "Boulder",
     fontSize: "25dp"
@@ -19,7 +43,59 @@
   color: "#26849c"
 }
 
-".smallText": {
+".bigMenuText[if=Alloy.Globals.isLdpi]": {
+   font: {
+    fontSize: "27dp"
+  }
+}
+
+"#mayfly": {
+  top: "10%",
+  left: "2%"
+}
+
+"#mayflyIcon": {
+  backgroundColor: "transparent",
+  image: "/images/mayfly-muster-icon.png",
+  height: "65%",
+  left: 0
+}
+
+"#mayflyLabel": {
+  bottom: "30%",
+  left: "48%"
+}
+
+"#detailed": {
+  top: "8%",
+  left: "56%"
+}
+
+"#detailedIcon": {
+  backgroundColor: "transparent",
+  image: "/images/waterbug-survey-icon.png",
+  height: "60%",
+  width: "78%",
+  left: "0dp"
+}
+
+"#detailedLabel": {
+  bottom: "0dp",
+  left: "1%"
+}
+
+".smallButton": {
+  height: "22%",
+  width: "25%",
+  layout: "vertical",
+  horizontalWrap: false
+}
+
+".smallButtonIcon" : {
+  height: "75%"
+}
+
+".smallMenuText": {
    font: {
     fontFamily: "Boulder",
     fontSize: "14dp"
@@ -27,58 +103,10 @@
   color: "#26849c"
 }
 
-".bigButton": {
-  height: Ti.UI.SIZE,
-  width: Ti.UI.SIZE
-}
-
-"#mayfly": {
-  top: "38dp",
-  left: "25dp"
-}
-
-"#mayflyIcon": {
-  backgroundColor: "transparent",
-  image: "/images/mayfly-muster-icon.png",
-  height: "165dp",
-  left: 0
-}
-
-"#mayflyLabel": {
-  top: "62dp",
-  left: "139dp"
-}
-
-"#detailed": {
-  top: "28dp",
-  left: "295dp"
-}
-
-"#detailedIcon": {
-  backgroundColor: "transparent",
-  image: "/images/waterbug-survey-icon.png",
-  height: "175dp",
-  width: "220dp",
-  left: "0dp"
-}
-
-"#detailedLabel": {
-  top: "112dp",
-  left: "10dp"
-}
-
-".smallButton": {
-  height: Ti.UI.SIZE,
-  width: Ti.UI.SIZE,
-  layout: "vertical",
-  horizontalWrap: false,
-  left: "14dp",
-  right: "14dp"
-}
-
-".smallButtonIcon" : {
-  width: "70dp",
-  height: "70dp"
+".smallMenuText[if=Alloy.Globals.isLdpi]": {
+   font: {
+    fontSize: "16dp"
+  }
 }
 
 "#helpIcon" : {

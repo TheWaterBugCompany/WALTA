@@ -6,6 +6,7 @@ require("specs/KeyNode_spec");
 require("specs/MediaUtil_spec");
 require("specs/MethodSelect_spec");
 require("specs/MenuView_spec");
+require("specs/RegisterView_spec");
 require("specs/PhotoView_spec");
 require("specs/QuestionView_spec");
 require("specs/SampleTray_spec");

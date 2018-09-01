@@ -1,0 +1,22 @@
+<Alloy>
+	<View class="container" layout="horizontal">
+		<View id="leftPanel" class="panel" layout="vertical">
+			<Label class="headingText" text="Log in with your existing account:"/>
+			<Label id="emailLabel" class="labelText" text="Email:"/>
+			<TextField id="emailTextField" class="textField" />
+			<Label id="passwordLabel" class="labelText" text="Password:"/>
+			<TextField id="passwordTextField" class="textField password" />
+			<Label id="logInButton" class="actionButton" passwordMask=true text="Log In"/>
+		</View>
+		<View id="rightPanel" class="panel" layout="vertical">
+			<Label class="headingText" text="via social media:"/>
+			<View id="socialMedia" layout="horizontal">
+				<ImageView class="socialMediaImage" image="/images/twitter-icon.png"/>
+				<ImageView class="socialMediaImage" image="/images/google-plus-icon.png"/>
+				<ImageView class="socialMediaImage" image="/images/facebook-icon.png"/>
+			</View>
+			<Label id="registerHeading" class="headingText" textAlign=Ti.UI.TEXT_ALIGNMENT_CENTER text="or register with an email\n and password:"/>
+			<Label id="registerButton" class="actionButton" text="Register" onClick="registerClick"/>
+		</View>
+	</View>
+</Alloy>

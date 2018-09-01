@@ -4,17 +4,24 @@
   "description": "The Waterbug App parent project",
   "main": "index.js",
   "dependencies": {
+    "babel-preset-env": "^1.7.0",
     "browserify": "^16.1.1",
     "chai": "^4.1.2",
     "circular-json": "^0.5.1",
     "grunt": "^1.0.2",
     "mocha": "^5.0.5",
-    "npm": "^5.8.0",
+    "npm": "^5.10.0",
+    "request": "^2.87.0",
     "ti-mocha": "^0.2.0",
     "underscore": "^1.9.0",
     "xmldom": "^0.1.27"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-register": "^6.26.0",
+    "nock": "^9.4.0",
+    "sinon": "^6.0.1",
+    "xmlhttprequest": "^1.8.0"
+  },
   "scripts": {
     "install": "sh install.sh",
     "test": "rake test"

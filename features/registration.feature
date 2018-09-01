@@ -14,3 +14,5 @@ Scenario: Register
   Then I am registered on the server
    And The "Menu" screen is displayed
    And I am logged in
+
+Scenario: Remeber log in over app restart

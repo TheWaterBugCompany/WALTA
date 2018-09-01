@@ -1,0 +1,17 @@
+{
+	"autoStyle": true,
+	"global": { 
+		"unitTestMode": false,
+		"cerdiServerUrl": "https://api-wbb.till.cerdi.edu.au/v1",
+		"cerdiApiSecret": "<<INSERT SECRET HERE>>"
+	},
+	"env:development": {
+		"unitTestMode": false
+	},
+	"env:test": {},
+	"env:production": {},
+	"os:android": {},
+	"os:ios": {},
+	"os:windows": {},
+	"dependencies": {}
+}

@@ -1,8 +1,8 @@
-<Alloy>
+<Alloy autoStyle="true">
 	<View class="container">
 			<View id="leftTools">
 			</View>
-			<Label id="title">
+			<Label id="title" class="titleText">
 			</Label>
 			<View id="rightTools">
 			</View>

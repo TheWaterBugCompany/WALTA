@@ -1,0 +1,53 @@
+".container" : {
+    layout: "horizontal"
+}
+
+".panel" : {
+    top: "2%",
+    width: "50%",
+    height: "98%"
+}
+
+"#leftPanel" : {
+    width: "56%"
+}
+
+"#rightPanel" : {
+    width: "44%",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
+}
+
+"#emailLabel": {
+    width: "250dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+"#nameLabel": {
+    width: "250dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+"#passwordLabel": {
+    width: "250dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+"#passwordConfirmLabel": {
+    width: "250dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+".optionLine": {
+    horizontalWrap: false,
+    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE,
+    top: "8%"
+}
+
+".checkbox": {
+    tintColor: "#b4d2d9"
+}
+
+"#submitButton" : {
+    top: "10%"
+}
