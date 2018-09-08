@@ -2,25 +2,25 @@
 	<View class="container" layout="horizontal">
 		<View id="leftPanel" class="panel" layout="vertical">
 			<Label id="emailLabel" class="labelText" text="Email:"/>
-			<TextField id="emailTextField" class="textField" onChange="emailChanged" />
+			<TextField id="emailTextField" accessibilityLabel="Email" class="textField" onChange="emailChanged" />
 			<Label id="nameLabel" class="labelText" text="Name:"/>
-			<TextField id="nameTextField" class="textField" onChange="nameChanged" />
+			<TextField id="nameTextField" accessibilityLabel="Name"  class="textField" onChange="nameChanged" />
 			<Label id="passwordLabel" class="labelText" text="Password:"/>
-			<TextField id="passwordTextField" class="textField password" onChange="passwordChanged"/>
+			<TextField id="passwordTextField" accessibilityLabel="Password" class="textField password" onChange="passwordChanged"/>
 			<Label id="passwordConfirmLabel" class="labelText" text="Confirm Password:"/>
-			<TextField id="passwordConfirmTextField" class="textField password" onChange="passwordConfirmChanged"/>
+			<TextField id="passwordConfirmTextField" accessibilityLabel="Password Confirmation" class="textField password" onChange="passwordConfirmChanged"/>
 		</View>
 		<View id="rightPanel" class="panel" layout="vertical">
 			<View id="registerAsGroup" class="optionLine" layout="horizontal">
-				<Switch id="groupToggle" class="checkbox"/>
+				<Switch id="groupToggle" class="checkbox" accessibilityLabel="Group Registration"/>
 				<Label class="labelText" text="I am registering on behalf of\na group"/>
 			</View>
 			<View id="surveyConsent" class="optionLine"  layout="horizontal">
-				<Switch id="surveyToggle" class="checkbox"/>
+				<Switch id="surveyToggle" class="checkbox" accessibilityLabel="Survey Permission"/>
 				<Label class="labelText" text="I consent to participating in a\nuser survey for research\npurposes"/>
 			</View>
 			<View id="dataConsent" class="optionLine" layout="horizontal">
-				<Switch id="dataToggle" class="checkbox"/>
+				<Switch id="dataToggle" class="checkbox" accessibilityLabel="Data Share Permission"/>
 				<Label class="labelText" text="I consent to my data being\nshared"/>
 			</View>
 			<Button id="submitButton" class="actionButton" title="Submit" onClick="submitClick"/>

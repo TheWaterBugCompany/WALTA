@@ -77,15 +77,18 @@ function validateSubmit() {
 }
 
 function submitClick() {
-    Alloy.Globals.CerdiApi.register( {
-        email: $.emailTextField.value,
-        group: $.groupToggle.value,
-        survey_consent: $.surveyToggle.value,
-        share_name_consent: $.dataToogle.value,
-        name: $.nameTextField.value,
-        password: $.passwordTextField.value
-    }).then( (response ) => {
-      
+  Alloy.Globals.CerdiApi.registerUser( {
+      email: $.emailTextField.value,
+      group: $.groupToggle.value,
+      survey_consent: $.surveyToggle.value,
+      share_name_consent: $.dataToggle.value,
+      name: $.nameTextField.value,
+      password: $.passwordTextField.value
+  }).then( (response ) => {
+    Alloy.Globals.CerdiApi.storeUserToken( response );
+  })
+  .catch( (err) => {
+    Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
   });
 }
 

@@ -17,12 +17,18 @@
 */
 require("specs/lib/mocha");
 const sinon = require("sinon");
-const { expect } = require('specs/lib/chai');
+const { use, expect } = require('specs/lib/chai');
+const chaiAsPromised = require("chai-as-promised");
+
 const nock = require('nock');
 const request = require('request');
+const fs = require('fs');
+
+const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
+
+use(chaiAsPromised);
 
 // Mock for network testing that proxies to request library
-
 function ProxyCreateHTTPClient( params ) {
     return {
         onload: params.onload,
@@ -66,8 +72,25 @@ function mockTi( mockCreateHTTPClient  ) {
             },
             Network: {
                 createHTTPClient: mockCreateHTTPClient      
+            },
+            App: {
+                Properties: {
+                    globalProperties: {},
+                    clear() {
+                        this.globalProperties = {};
+                    },
+                    setObject(name, value) { 
+                        this.globalProperties[name] = value; 
+                    },
+                    getObject(name) { 
+                        return this.globalProperties[name]; 
+                    },
+                    hasProperty() { return false }
+                }
             }
         };
+    } else {
+        Ti.App.Properties.clear();
     }
 }
 
@@ -79,9 +102,30 @@ function mockTiWithProxy() {
 import CerdiApi from 'logic/CerdiApi';
 
 var SERVER_URL = 'https://api-wbb.till.cerdi.edu.au/v1';
-var CLIENT_SECRET = '<<TODO READ SECRET FROM config FILE somehow';
+var CLIENT_SECRET = null;
+fs.readFile('./walta-app/app/config.json', 'utf8', function(err,contents) {
+    if ( err ) {
+        throw err;
+    }
+    CLIENT_SECRET = JSON.parse( contents ).global.cerdiApiSecret;
+});
 describe('CerdiApi', function() {
     let cerdi;
+    before( function() {
+        // make sure our test user is registered for tests that
+        // require it.
+        mockTiWithProxy();
+        return new CerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
+            email: `testlogin@example.com`,
+            group: false,
+            survey_consent: false,
+            share_name_consent: false,
+            name: 'Test Example',
+            password: 'tstPassw0rd!'
+        }).catch( (err)=> {
+            // Ignore failures
+        });
+    });
 
     beforeEach( function() {
         mockTiWithProxy();
@@ -91,11 +135,11 @@ describe('CerdiApi', function() {
     describe('#obtainAccessToken', function() {
         
         it( 'should obtain access token', function() {
-            expect( cerdi.cachedAppAccessToken ).to.be.null;
-            return cerdi.obtainAccessToken()
+            expect( Ti.App.Properties.getObject('appAccessToken') ).to.be.undefined;
+            return cerdi.obtainServerAccessToken()
                 .then( (result ) => {
                     expect( result ).to.be.a('string');
-                    expect( cerdi.cachedAppAccessToken.access_token ).to.be.a('string');
+                    expect( Ti.App.Properties.getObject('appAccessToken').access_token ).to.be.a('string');
                 });
         });
 
@@ -122,20 +166,16 @@ describe('CerdiApi', function() {
             });
 
             it( 'should cache the previous value', function() {
-                return cerdi.obtainAccessToken()
-                    .then( (token) => expect( token ).to.equal( "testtoken 1") )
-                    .then( () => cerdi.obtainAccessToken() )
-                    .then( (token) => expect( token ).to.equal( "testtoken 1") );
+                return expect( cerdi.obtainServerAccessToken() ).to.eventually.equal( "testtoken 1")
+                    .then( () => expect( cerdi.obtainServerAccessToken() ).to.eventually.equal( "testtoken 1") );
             });
 
             it( 'should renew the value after it has expired', function() {
-                return cerdi.obtainAccessToken()
-                    .then( (token) => expect( token ).to.equal( "testtoken 1") )
+                return expect( cerdi.obtainServerAccessToken() ).to.eventually.equal( "testtoken 1")
                     .then( () => {
                         clock.tick(1000);
-                        return cerdi.obtainAccessToken();
-                     } )
-                    .then( (token) => expect( token ).to.equal( "testtoken 2") );
+                        return expect( cerdi.obtainServerAccessToken() ).to.eventually.equal( "testtoken 2");
+                     } );
             });
         });
 
@@ -144,20 +184,70 @@ describe('CerdiApi', function() {
 
     describe('#registerUser', function() {
         it( 'should succesfully register a local user', function() {
-            return cerdi.registerUser( {
+            return expect( cerdi.registerUser( {
                 email: `test-${Date.now()}@example.com`,
                 group: false,
                 survey_consent: false,
                 share_name_consent: false,
                 name: 'Test Example',
                 password: 'tstPassw0rd!'
-            })
-            .then( (response) => {
-                expect( response.accessToken ).to.be.a('string');
-                expect( response.id ).to.be.a('number');
-            });
+            })).to.eventually.have.property("accessToken").to.be.a('string');
         });
         it( 'should succesfully register a social user' );
 
+    });
+
+    describe( '#loginUser', function() {
+        
+        it("should fail if a user doesn't exist",function() {
+            return expect( cerdi.loginUser( 'nonexistentuser@example.com', 'badpassword' ) )
+                .to.be.rejected;
+        });
+        it("should fail if the password doesn't match",function() {
+            return expect( cerdi.loginUser( 'testlogin@example.com', 'badpassword' ) )
+                .to.be.rejected;
+        });
+        it("should log in an existing user",function() {
+            return expect( cerdi.loginUser( 'testlogin@example.com', 'tstPassw0rd!' ) )
+                .to.eventually.have.property("accessToken").and.to.be.a('string')
+                .then( () => expect(cerdi.retrieveUserToken()).have.property("accessToken").and.to.be.a('string') );
+        });
+    });
+
+    describe( '#submitSample', function() {
+        it("should submit a sample", function() {
+            return expect( 
+                cerdi
+                    .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
+                    .then( ()=> cerdi.submitSample( {
+                                "sample_date": "2018-12-24T23:59:59+00:00",
+                                "lat": "-37.5622",
+                                "lng": "143.87503",
+                                "scoring_method": "alt",
+                                "survey_type": "detailed",
+                                "waterbody_type": "river",
+                                "waterbody_name": "string",
+                                "nearby_feature": "string",
+                                "notes": "test sample",
+                                "habitat": {
+                                "boulder": 5,
+                                "gravel": 5,
+                                "sand_or_silt": 5,
+                                "leaf_packs": 5,
+                                "wood": 5,
+                                "aquatic_plants": 5,
+                                "open_water": 5,
+                                "edge_plants": 5
+                                },
+                                "creatures": [
+                                    {
+                                    "creature_id": 1,
+                                    "count": 2,
+                                    "photos_count": 0
+                                    }
+                                ],
+                            }))
+            ).to.eventually.have.property("id");
+        });
     });
 });

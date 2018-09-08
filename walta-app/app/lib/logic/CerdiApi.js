@@ -22,11 +22,6 @@ function makeJsonRequest( serverUrl, data, accessToken = null ) {
             onload: function() {
                 let jsonResponse = JSON.parse(this.responseText);
                 if ( jsonResponse.error || jsonResponse.errors ) { 
-                    if ( jsonResponse.error ) {
-                        jsonResponse.errors = [ jsonResponse.error ];
-                        delete jsonResponse.error;
-                    }
-                    Ti.API.warn( jsonResponse );
                     reject( jsonResponse );
                 }
                 resolve( jsonResponse );
@@ -48,15 +43,22 @@ function makeJsonRequest( serverUrl, data, accessToken = null ) {
 
 
 export default class CerdiApi {
-    constructor( serverUrl, client_secret, accessToken = null ) {
+    constructor( serverUrl, client_secret  ) {
         this.client_secret = client_secret;
         this.scope = 'create-users';
         this.serverUrl = serverUrl;
-        this.cachedAppAccessToken = accessToken;
     }
 
-    obtainAccessToken() {
-        return Promise.resolve(this.cachedAppAccessToken)
+    retrieveUserToken() {
+        return Ti.App.Properties.getObject('userAccessToken');
+    }
+
+    storeUserToken( accessToken ) {
+        Ti.App.Properties.setObject('userAccessToken', accessToken );
+    }
+
+    obtainServerAccessToken() {
+        return Promise.resolve(Ti.App.Properties.getObject('appAccessToken'))
             .then( (cachedAppAccessToken) => {
                 if ( cachedAppAccessToken ) {
                     let tokenAge = Date.now() - cachedAppAccessToken.retrieved_at;
@@ -70,15 +72,15 @@ export default class CerdiApi {
                     });
             })
             .then( (appAccessToken) => {
-                this.cachedAppAccessToken = appAccessToken;
-                this.cachedAppAccessToken.retrieved_at = Date.now();
-                return this.cachedAppAccessToken.access_token;
+                appAccessToken.retrieved_at = Date.now();
+                Ti.App.Properties.setObject('appAccessToken', appAccessToken);
+                return appAccessToken.access_token;
             } );
     }
 
     registerUser( userInfo ) {
         if ( typeof( userInfo.password ) !== 'undefined' ) {
-            return this.obtainAccessToken()
+            return this.obtainServerAccessToken()
                 .then( (accessToken) => 
                     makeJsonRequest( this.serverUrl + '/user/create', 
                         userInfo, accessToken))
@@ -86,6 +88,27 @@ export default class CerdiApi {
                     return { id: resp.id, accessToken: resp.accessToken } ;
                 });
         }
+    }
+
+    loginUser( email, password ) {
+        return this.obtainServerAccessToken()
+            .then( (accessToken) =>
+                 makeJsonRequest( this.serverUrl + '/token/create', {
+                    "password": password,
+                    "email": email
+                }, accessToken ) )
+            .then( (resp) => {
+                resp.retrieved_at = Date.now();
+                this.storeUserToken( resp );
+                return resp;
+            })
+    }
+
+    submitSample( sample ) {
+        let accessToken = this.retrieveUserToken().accessToken;
+        if ( accessToken == undefined )
+            throw new Error("Not logged in - cannot submit sample");
+        return makeJsonRequest( this.serverUrl + '/samples', sample, accessToken );
     }
 
 

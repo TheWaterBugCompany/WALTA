@@ -11,7 +11,7 @@ Then(/^The "([^"]*)" screen is displayed$/) do |screenName|
 end
 
 When(/^I complete the registration form$/) do
-    pending # Write code here that turns the phrase above into concrete actions
+    @current_page.register_via_email
 end
 
 When(/^I select "([^"]*)"$/) do |optionName|
@@ -19,7 +19,7 @@ When(/^I select "([^"]*)"$/) do |optionName|
 end
 
 Then(/^I am registered on the server$/) do
-    pending # Write code here that turns the phrase above into concrete actions
+    pause
 end
 
 Then(/^I am logged in$/) do

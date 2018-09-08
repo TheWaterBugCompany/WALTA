@@ -1,8 +1,18 @@
 require 'calabash-android/cucumber'
 require 'rspec/expectations'
 
+# Pauses for debugging, will continue when enter is pressed
+def pause
+  print 'p'
+  last_input = STDIN.gets
+  while last_input == 'p'
+    sleep 1
+  end
+end
+
+# turn into a Ruby class (strips spaces and camel cases)
 def constantize(camel_cased_word)
-    names = camel_cased_word.split("::".freeze)
+    names = camel_cased_word.tr(" ","").split("::".freeze)
   
     # Trigger a built-in NameError exception including the ill-formed constant in the message.
     Object.const_get(camel_cased_word) if names.empty?
