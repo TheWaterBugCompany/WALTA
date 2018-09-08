@@ -1,5 +1,6 @@
 require 'calabash-android/cucumber'
 require 'rspec/expectations'
+require 'json'
 
 # Pauses for debugging, will continue when enter is pressed
 def pause

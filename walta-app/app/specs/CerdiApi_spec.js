@@ -23,6 +23,7 @@ const chaiAsPromised = require("chai-as-promised");
 const nock = require('nock');
 const request = require('request');
 const fs = require('fs');
+const moment = require('moment');
 
 const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
 
@@ -30,6 +31,13 @@ use(chaiAsPromised);
 
 // Mock for network testing that proxies to request library
 function ProxyCreateHTTPClient( params ) {
+    function isHttpError( code ) {
+        let lmd = Math.trunc( code / 100 );
+        return (lmd === 4) || (lmd === 5);
+    }
+    function prettyJson( obj ) {
+        return JSON.stringify( JSON.parse( obj ), null, 4 );
+    }
     return {
         onload: params.onload,
         onerror: params.onerror,
@@ -43,18 +51,20 @@ function ProxyCreateHTTPClient( params ) {
             this.method = method;
         },
         send( data ) {
+            console.log(`REQUEST: ${prettyJson(data)}`);
             request({ 
                 method: this.method, 
                 url: this.url, 
                 headers: this.headers, 
                 json: false,
-                body: JSON.stringify(data)
+                body: data
             }, 
             (err,res,body) => {
-                if ( err ) {
+                console.log(`RESPONSE ${res.statusCode}: ${prettyJson(res.body)}`);
+                this.responseText = body;
+                if ( err || isHttpError( res.statusCode ) ) {
                     params.onerror.call( this, err );
                 } else {
-                    this.responseText = body;
                     params.onload.call( this, res );
                 }
             });
@@ -67,6 +77,7 @@ function mockTi( mockCreateHTTPClient  ) {
 
         global.Ti = { 
             API: {
+                error: console.error,
                 info: console.info,
                 warn: console.warn
             },
@@ -220,7 +231,7 @@ describe('CerdiApi', function() {
                 cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
                     .then( ()=> cerdi.submitSample( {
-                                "sample_date": "2018-12-24T23:59:59+00:00",
+                                "sample_date": `${moment().format()}`,
                                 "lat": "-37.5622",
                                 "lng": "143.87503",
                                 "scoring_method": "alt",

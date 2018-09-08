@@ -57,6 +57,10 @@ task :clean do
   sh("rm -rf walta-app/build/* && rm -rf walta-app/dist/* && rm -rf walta-app/Resources/*")
 end
 
+task :debug => [ :start_emulator, :uninstall_app ] do
+  sh("appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331")
+end
+
 task :preview => [ :start_emulator, :uninstall_app ] do
   sh("appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME}")
 end

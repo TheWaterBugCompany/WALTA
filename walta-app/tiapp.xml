@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ti:app
+<ti:app 
   xmlns:ti="http://ti.appcelerator.org">
   <id>net.thewaterbug.waterbug</id>
   <name>Waterbug</name>
@@ -11,7 +11,7 @@
   <icon>appicon.png</icon>
   <fullscreen>true</fullscreen>
   <navbar-hidden>true</navbar-hidden>
-  <guid>7fbf4ed2-0832-4ba5-9999-5c0302217fe4</guid>
+  <guid>d6c83176-ee0b-4dd1-9888-5c0302217fe4</guid>
   <property name="run-on-main-thread" type="bool">true</property>
   <property name="ti.ui.defaultunit" type="string">dp</property>
   <ios>
@@ -40,31 +40,30 @@
       </dict>
     </plist>
   </ios>
-  <android xmlns:android="http://schemas.android.com/apk/res/android">
+  <android 
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <manifest android:versionCode="1009009003" android:versionName="1.9.9.3">
       <!--<supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:xlargeScreens="true"/>-->
-      <application android:debuggable="false" android:theme="@style/Theme.WaterbugApp">
-        
-        <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density">
+      <application android:debuggable="true" android:theme="@style/Theme.WaterbugApp">
+        <activity android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:label="@string/app_name" android:name=".WaterbugActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.WaterbugApp">
           <intent-filter>
             <action android:name="android.intent.action.MAIN"/>
             <category android:name="android.intent.category.LAUNCHER"/>
           </intent-filter>
         </activity>
-        <activity android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density"/>
-        <activity android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:theme="@style/Theme.Titanium.Translucent"/>
-        <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape" android:configChanges="screenSize|density"/>
-        <activity android:name="ti.modules.titanium.media.TiVideoActivity" android:screenOrientation="sensorLandscape"  android:configChanges="keyboardHidden|orientation|screenSize|density" android:theme="@style/Theme.AppCompat.Fullscreen" android:launchMode="singleTask"/>
-        <provider android:name="org.appcelerator.titanium.io.TiFileProvider" android:screenOrientation="sensorLandscape" android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true"/>
-          
+        <activity android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape"/>
+        <activity android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.Titanium.Translucent"/>
+        <activity android:configChanges="screenSize|density" android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"/>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize|density" android:launchMode="singleTask" android:name="ti.modules.titanium.media.TiVideoActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
+        <provider android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true" android:name="org.appcelerator.titanium.io.TiFileProvider" android:screenOrientation="sensorLandscape"/>
       </application>
       <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
+      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+      <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
     </manifest>
   </android>
   <modules>
@@ -73,6 +72,7 @@
     <module platform="commonjs">ti.cloud</module>
   </modules>
   <deployment-targets>
+    <target device="mobileweb">false</target>
     <target device="iphone">true</target>
     <target device="ipad">false</target>
     <target device="android">true</target>
@@ -83,7 +83,7 @@
   <plugins>
     <plugin version="1.0">ti.alloy</plugin>
   </plugins>
-  <property name="appc-app-id" type="string">5aade2bb73c34925dddbc1ab</property>
+  <property name="appc-app-id" type="string">5b93af88874a56256e37ca9d</property>
   <property name="acs-authbase-url-development" type="string">https://secure-identity.cloud.appcelerator.com</property>
   <property name="acs-base-url-development" type="string">https://api.cloud.appcelerator.com</property>
   <property name="acs-oauth-secret-development" type="string">W1lC4wV6L352lgkZu2MWlGrYS1ERPKz0</property>

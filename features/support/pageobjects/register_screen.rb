@@ -5,16 +5,17 @@ class RegisterScreen < BasePageObject
       "* marked:'Register'"
     end
 
-    def register_via_email
-      enter_text(email_field, "test@example.com.au")
+    def register_via_email( emailAddress, name, password )
+      enter_text(email_field, emailAddress)
       hide_soft_keyboard
-      enter_text(name_field, "Test User")
+      enter_text(name_field, name)
       hide_soft_keyboard
-      enter_text(password_field, "t3stPassw0rd")
+      enter_text(password_field, password)
       hide_soft_keyboard
-      enter_text(passwordConfirm_field, "t3stPassw0rd")
+      enter_text(passwordConfirm_field, password)
       hide_soft_keyboard
-      select('Register')
+      select('Submit')
+      return page(MenuScreen).await
     end
 
     def email_field

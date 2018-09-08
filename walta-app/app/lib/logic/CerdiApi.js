@@ -20,14 +20,13 @@ function makeJsonRequest( serverUrl, data, accessToken = null ) {
     return new Promise( (resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
             onload: function() {
-                let jsonResponse = JSON.parse(this.responseText);
-                if ( jsonResponse.error || jsonResponse.errors ) { 
-                    reject( jsonResponse );
-                }
-                resolve( jsonResponse );
+                resolve( JSON.parse(this.responseText) );
             },
             onerror: function(err) {
-                reject(err);
+                if ( this.responseText )
+                    reject( JSON.parse(this.responseText) );
+                else
+                    reject(err);
             },
             timeout: 30000 
         });
@@ -37,7 +36,7 @@ function makeJsonRequest( serverUrl, data, accessToken = null ) {
         if ( accessToken ) {
             client.setRequestHeader('Authorization', `Bearer ${accessToken}`);
         }
-        client.send(data);
+        client.send( JSON.stringify( data ) );
     });
 }
 
@@ -79,15 +78,13 @@ export default class CerdiApi {
     }
 
     registerUser( userInfo ) {
-        if ( typeof( userInfo.password ) !== 'undefined' ) {
-            return this.obtainServerAccessToken()
-                .then( (accessToken) => 
-                    makeJsonRequest( this.serverUrl + '/user/create', 
-                        userInfo, accessToken))
-                .then( (resp) => {
-                    return { id: resp.id, accessToken: resp.accessToken } ;
-                });
-        }
+        return this.obtainServerAccessToken()
+            .then( (accessToken) => 
+                makeJsonRequest( this.serverUrl + '/user/create', 
+                    userInfo, accessToken))
+            .then( (resp) => {
+                return { id: resp.id, accessToken: resp.accessToken } ;
+            });
     }
 
     loginUser( email, password ) {

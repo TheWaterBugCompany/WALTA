@@ -1,3 +1,4 @@
+var Topics = require('ui/Topics');
 
 var emailValidity = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -85,7 +86,9 @@ function submitClick() {
       name: $.nameTextField.value,
       password: $.passwordTextField.value
   }).then( (response ) => {
+    Ti.API.info(`Registered user ${$.emailTextField.value}`);
     Alloy.Globals.CerdiApi.storeUserToken( response );
+    Topics.fireTopicEvent( Topics.HOME, null );
   })
   .catch( (err) => {
     Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
