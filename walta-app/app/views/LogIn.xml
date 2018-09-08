@@ -3,10 +3,10 @@
 		<View id="leftPanel" class="panel" layout="vertical">
 			<Label class="headingText" text="Log in with your existing account:"/>
 			<Label id="emailLabel" class="labelText" text="Email:"/>
-			<TextField id="emailTextField" class="textField" />
+			<TextField id="emailTextField" class="textField" accessibilityLabel="Email" />
 			<Label id="passwordLabel" class="labelText" text="Password:"/>
-			<TextField id="passwordTextField" class="textField password" />
-			<Label id="logInButton" class="actionButton" passwordMask=true text="Log In"/>
+			<TextField id="passwordTextField" class="textField password" accessibilityLabel="Password" />
+			<Label id="logInButton" class="actionButton" passwordMask=true text="Log In" onClick="loginClick" />
 		</View>
 		<View id="rightPanel" class="panel" layout="vertical">
 			<Label class="headingText" text="via social media:"/>

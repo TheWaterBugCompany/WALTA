@@ -1,7 +1,12 @@
 var Topics = require('ui/Topics');
 
 function logInClick() {
-  Topics.fireTopicEvent( Topics.LOGIN, null );
+  if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
+    Alloy.Globals.CerdiApi.storeUserToken(null);
+    $.logInLabel.text = "Log In";
+  } else {
+    Topics.fireTopicEvent( Topics.LOGIN, null );
+  }
 }
 
 function mayflyClick() {

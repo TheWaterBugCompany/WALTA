@@ -8,4 +8,15 @@ class MenuScreen < BasePageObject
     def loggedIn?
       query( "* marked:'You are Logged in'").any?
     end
+
+    def log_in( email, password )
+      select("Log In")
+      page = page(LoginScreen).await
+      page.log_in(email,password)
+    end
+
+    def log_out
+      select("You are Logged in")
+      wait_for_text("Log In")
+    end
 end
