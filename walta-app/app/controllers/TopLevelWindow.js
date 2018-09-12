@@ -27,14 +27,17 @@ function openWindow() {
 		function adjustContentSize() {
 			$.content.top = 0;
 			$.content.height = $.TopLevelWindow.size.height - anchorBar.getView().size.height;
+			$.TopLevelWindow.add( $.content );
 		}
 		$.TopLevelWindow.addEventListener("postlayout", adjustContentSize );
 		$.TopLevelWindow.addEventListener("close", function cleanUp() {
 			$.TopLevelWindow.removeEventListener('postlayout', adjustContentSize );
 			$.TopLevelWindow.removeEventListener('close', cleanUp );
 		});
-	} 
-	$.TopLevelWindow.add( $.content );
+	} else {
+		$.TopLevelWindow.add( $.content );
+	}
+	
 	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
 }
 
