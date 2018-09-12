@@ -30,7 +30,7 @@ function createGoBackButton() {
 		width: Ti.UI.SIZE,
 		height: Ti.UI.SIZE,
 		borderRadius: Layout.BORDER_RADIUS_BUTTON,
-		backgroundColor: '#BB2F61CC',
+		backgroundColor: '#26849c',
 		layout: 'horizontal',
 		horizontalWrap: false
 	});
@@ -42,13 +42,14 @@ function createGoBackButton() {
 	goBack.add( Ti.UI.createLabel( {
 		width: Layout.GOBACK_BUTTON_TEXT_WIDTH,
 		height: Ti.UI.SIZE,
+		left: '4dip',
 		right: '4dip',
 		text: 'No match? Go back',
 		font: { fontFamily: 'Tahoma', fontSize: Layout.TOOLBAR_BUTTON_TEXT },
 		color: 'white'
 	} ) );
 	goBack.addEventListener( 'click', function(e) {
-		Topics.fireTopicEvent( Topics.BACK, null );
+		Topics.fireTopicEvent( Topics.BACK, "decision" );
 		e.cancelBubble = true;
 	} );
 	return goBack;

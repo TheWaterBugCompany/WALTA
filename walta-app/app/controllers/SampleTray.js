@@ -256,7 +256,7 @@ function startIdentification(e) {
 
   $.selectMethod.on("browselist", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.BROWSELIST );
+    Topics.fireTopicEvent( Topics.BROWSE );
   });
 
   $.TopLevelWindow.add($.selectMethod.getView());

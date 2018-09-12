@@ -409,6 +409,50 @@ describe( 'SampleTray controller', function() {
         });
     });
 
+    it('should fire the Topics.BROWSE when the plus icon is clicked and Browse is selected', function() {
+      // now opens MethodSelect open
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", []);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.content.getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( resolve => {
+            Topics.subscribe( Topics.BROWSE, resolve );
+            clickPlus( sampleTaxa[0] );
+            setTimeout( function() {
+              SampleTray.selectMethod.browselist.getView().fireEvent('click');
+            }, 100);
+          });
+        });
+    });
+
+    it('should fire the Topics.SPEEDBUG when the plus icon is clicked and Speedbug is selected', function() {
+      // now opens MethodSelect open
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", []);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.content.getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( resolve => {
+            Topics.subscribe( Topics.SPEEDBUG, resolve );
+            clickPlus( sampleTaxa[0] );
+            setTimeout( function() {
+              SampleTray.selectMethod.speedbug.getView().fireEvent('click');
+            }, 100);
+          });
+        });
+    });
+
     it('should update when a taxon is added in first two holes', function() {
       return Promise.resolve()
         .then( function() {

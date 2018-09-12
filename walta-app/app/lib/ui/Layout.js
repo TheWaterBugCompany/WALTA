@@ -73,7 +73,7 @@ exports.MENU_TITLE_FONT_SIZE = '31dip';
 exports.MENU_LOGO_FONT_SIZE = '9dip';
 exports.MENU_LOGO_FONT_SIZE_SMALL = '8dip';
 
-exports.GOBACK_BUTTON_TEXT_WIDTH = '80dip';
+exports.GOBACK_BUTTON_TEXT_WIDTH = '125dip';
 exports.TOOLBAR_BUTTON_TEXT = '14dip';
 
 exports.BORDER_RADIUS = 25;

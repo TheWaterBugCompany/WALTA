@@ -149,7 +149,7 @@ function createAppWindow( keyName, keyPath ) {
 
     privates.subscribe( Topics.BACK, function(name) {
     	if ( name === "home" ) {
-    		privates.closeApp();
+    		//privates.closeApp();
     	} else if ( name === "decision" ) {
     		if ( privates.key.isRoot() ) {
     			privates.sampleTrayWindow({ slide: 'left' });
