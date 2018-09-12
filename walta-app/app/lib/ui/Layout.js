@@ -52,13 +52,14 @@ exports.FULLSCREEN_CLOSE_BUTTON_BUFFER = '48dip';
 exports.PAGER_HEIGHT = '16dip';
 exports.PAGER_DOT_SIZE = '12dip';
 
-exports.THUMBNAIL_WIDTH = '200dip';
+exports.THUMBNAIL_WIDTH = '180dp';
+exports.THUMBNAIL_IMAGE_HEIGHT = '135dp';
 
 exports.MENU_ITEM_HEIGHT = '23.5%';
 exports.MENU_ITEM_WIDTH = '96%';
 exports.MENU_ITEM_WIDTH_2 = '48%';
 exports.MENU_GAP = '1.2%';
-exports.MENU_LOGO_WIDTH = '100dip';
+exports.MENU_LOGO_WIDTH = '100dip'; 
 exports.MENU_LOGO_HEIGHT = '48dip';
 exports.MENU_LOGO_LEFT = '22%';
 exports.MENU_LOGO_TOP = '18dip';

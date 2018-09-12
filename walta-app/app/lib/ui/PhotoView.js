@@ -49,14 +49,14 @@ function createPhotoView( photoUrls ) {
 	// Embedded view
 	photoViewObj.view = Ti.UI.createView({
 		width: Ti.UI.SIZE,
-		height: Ti.UI.SIZE,
+		height: Layout.THUMBNAIL_IMAGE_HEIGHT,
+		right: 0,
 		layout: 'composite'
 	});
 
 	photoViewObj.photo = Ti.UI.createImageView( {
 		image: photoUrls[0],
 		width: Layout.THUMBNAIL_IMAGE_WIDTH,
-		top: 0,
 		right: 0
 	});
 
