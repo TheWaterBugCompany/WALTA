@@ -19,74 +19,38 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
-function closeCurrentWindow() { Alloy.Globals["currentWindow"].win.close(); }
-
-function getCurrentWindow() { return Alloy.Globals["currentWindow"]; }
-
-
-var win = $.TopLevelWindow;
-var content = _($.args.uiObj.view).extend({
-	exitOnClose: false,
-	top: 0,
-	width: Ti.UI.FILL,
-	height: "90%"
-});
-
-win.add( content );
-
-var anchorBar = null;
-if ( $.args.title ) {
-	win.title = $.args.title;
-	var anchorBar = Alloy.createController("AnchorBar", $.args );
-	win.add( anchorBar.getView() );
-} else {
-	anchorBar == null;
+var anchorBar = Alloy.createController("AnchorBar" );
+function openWindow() {
+	if ( $.TopLevelWindow.title ) {
+		anchorBar.setTitle( $.TopLevelWindow.title );
+		$.TopLevelWindow.add( anchorBar.getView() );
+		function adjustContentSize() {
+			$.content.top = 0;
+			$.content.height = $.TopLevelWindow.size.height - anchorBar.getView().size.height;
+		}
+		$.TopLevelWindow.addEventListener("postlayout", adjustContentSize );
+		$.TopLevelWindow.addEventListener("close", function cleanUp() {
+			$.TopLevelWindow.removeEventListener('postlayout', adjustContentSize );
+			$.TopLevelWindow.removeEventListener('close', cleanUp );
+		});
+	} 
+	$.TopLevelWindow.add( $.content );
+	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
 }
 
+function backEvent(e) {
+	e.cancelBubble = true;
+	Topics.fireTopicEvent( Topics.BACK, $.name );
+}
 
-
+$.TopLevelWindow.addEventListener( 'androidback', backEvent);
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+	$.TopLevelWindow.removeEventListener('close', backEvent );
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
 
 function getAnchorBar() {
 	return anchorBar;
 }
-
-win.addEventListener( 'androidback', function(e) {
-	e.cancelBubble = true;
-	Topics.fireTopicEvent( Topics.BACK, e );
-});
-
-if ( $.args.onOpen )
-	win.addEventListener('open', $.args.onOpen );
-
-if ( $.args.cleanup )
-	win.addEventListener('close', function closeEvent() {
-		$.args.cleanup(); 
-		if ( $.args.onOpen ) 
-			win.removeEventListener('open', $.args.onOpen );
-		win.removeEventListener('close', closeEvent );
-	});
-
-win.addEventListener( 'postlayout', function() {
-
-	var width = win.size.width;
-	var height = win.size.height;
-
-	Alloy.Globals.width = width;
-	Alloy.Globals.height = height;
-
-	content.height = Ti.UI.FILL;
-	if ( anchorBar ) {
-		$.args.uiObj.view.height = height - anchorBar.getView().size.height;
-	}
-
-});
-
-PlatformSpecific.transitionWindows( win, $.args.slide );
-
-Alloy.Globals["currentWindow"] = $.args;
-Alloy.Globals["currentWindow"].win = win;
-
-exports.transitionWindows = PlatformSpecific.transitionWindows;
-exports.closeCurrentWindow = closeCurrentWindow;
-exports.getCurrentWindow = getCurrentWindow;
+exports.open = openWindow;
 exports.getAnchorBar = getAnchorBar;

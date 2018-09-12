@@ -16,22 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
-var { expect } = require('specs/lib/chai');
-var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, actionFiresTopicTest } = require('specs/util/TestUtils');
-var Topics = require('ui/Topics');
-
-describe('MenuView', function() {
-	var mnu, win;
+var { expect } = require("specs/lib/chai");
+var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("specs/util/TestUtils");
+var Topics = require("ui/Topics");
+var CerdiApi = require("specs/mocks/MockCerdiApi");
+Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
+describe('Menu controller', function() {
+	var mnu;
 	before( function() {
 		mnu = Alloy.createController("Menu");
-		win = wrapViewInWindow( mnu.getView() );
 	});
-	after( function() {
-		closeWindow( win );
+	after( function(done) {
+		closeWindow( mnu.getView(), done );
 	});
 	it('should display the menu view', function(done) {
 		this.timeout(3000);
-		windowOpenTest( win, done );
+		controllerOpenTest( mnu, done );
 	});
 
 

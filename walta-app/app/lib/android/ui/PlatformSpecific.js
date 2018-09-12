@@ -49,6 +49,12 @@ function convertSystemToDip( n ) {
 	return Ti.UI.convertUnits( n + "px", Ti.UI.UNIT_DIP );
 }
 
+function urlToLocalAsset( path ) {
+	if ( path[0] != '/' ) path = '/' + path;
+	return `file:///android_asset/Resources${path}`;
+}
+
+exports.urlToLocalAsset = urlToLocalAsset;
 exports.appStartUp = appStartUp;
 exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;

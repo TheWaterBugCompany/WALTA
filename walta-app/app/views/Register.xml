@@ -1,5 +1,5 @@
 <Alloy>
-	<View class="container" layout="horizontal">
+	<View id="content" class="container" layout="horizontal">
 		<View id="leftPanel" class="panel" layout="vertical">
 			<Label id="emailLabel" class="labelText" text="Email:"/>
 			<TextField id="emailTextField" accessibilityLabel="Email" class="textField" onChange="emailChanged" />

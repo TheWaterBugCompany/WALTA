@@ -52,7 +52,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			menuWindow: function(args) {
-				Alloy.createController("Menu");
+				Alloy.createController("Menu").open();
 			},
 
 			browseWindow: function() {
@@ -70,11 +70,11 @@ function createAppWindow( keyName, keyPath ) {
 					args = {};
 				args.speedbugIndex = this.key.getSpeedbugIndex();
 				
-				Alloy.createController("SampleTray",args);
+				Alloy.createController("SampleTray",args).open();
 			},
 
 			logInWindow: function(args) {
-				Alloy.createController("LogIn");
+				Alloy.createController("LogIn").open();
 			},
 
 
@@ -114,10 +114,10 @@ function createAppWindow( keyName, keyPath ) {
 					args = {};
 				if ( this.key.isNode( node ) ) {
 					args.keyNode = node;
-					Alloy.createController("KeySearch", args );
+					Alloy.createController("KeySearch", args ).open();
 				} else {
 					args.taxon = node;
-					Alloy.createController("TaxonDetails", args );
+					Alloy.createController("TaxonDetails", args ).open();
 				}
 			},
 
@@ -147,11 +147,10 @@ function createAppWindow( keyName, keyPath ) {
     	privates.updateDecisionWindow({ slide: 'right' });
     });
 
-    privates.subscribe( Topics.BACK, function() {
-    	var name = TopLevelWindow.getCurrentWindow().name;
+    privates.subscribe( Topics.BACK, function(name) {
     	if ( name === "home" ) {
     		privates.closeApp();
-    	} else if ( name === 'decision' ) {
+    	} else if ( name === "decision" ) {
     		if ( privates.key.isRoot() ) {
     			privates.sampleTrayWindow({ slide: 'left' });
 			} else {

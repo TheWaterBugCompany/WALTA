@@ -1,19 +1,33 @@
 var speedbugIndex = $.args.speedbugIndex;
 
 var PlatformSpecific = require('ui/PlatformSpecific');
-var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
-var lastScroll = null;
+exports.baseController  = "TopLevelWindow";
+$.TopLevelWindow.title = "Sample";
 
 var endcapHeight = 0;
 var endcapWidth = 0;
 var middleWidth = 0;
-var sampleTrayWin = null;
 
 // Keeps track of the tile views we cache
 var tileIndex = [];
-var firstTwoTiles;
+var firstTwoTiles = null;
+
+function clearTileCache() {
+  for( var i = 0; i<=tileIndex.length; i++ ) {
+    var tile = tileIndex[i];
+    if ( typeof( tile ) !== "undefined" ) {
+      $.content.remove( tile.container );
+      delete tileIndex[i];
+    }
+  }
+  tileIndex = [];
+  if ( firstTwoTiles ) {
+    $.endcap.remove(firstTwoTiles.container);
+    firstTwoTiles = null;
+  }
+}
 
 function roundToTile( x ) {
   return Math.floor((x + endcapWidth) / middleWidth);
@@ -60,10 +74,12 @@ function updateTrayIcon( icon, index ) {
       }
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
-    if ( typeof(unwrapped) !== "object" ) {
+    if ( ! icon.plusIcon ) {
       icon.view.removeAllChildren();
       icon.view.add(createAddIcon());
-      delete icon.controller;
+      icon.plusIcon = true;
+      if ( icon.controller )
+        delete icon.controller;
     }
   } else {
     icon.view.removeAllChildren();
@@ -72,7 +88,7 @@ function updateTrayIcon( icon, index ) {
 }
 
 function updateFirstTwoSampleTrayIcons() {
-  if ( typeof(firstTwoTiles) === "undefined" ) {
+  if ( !firstTwoTiles ) {
     // Create new tiles
     firstTwoTiles = {
       container: Ti.UI.createView({
@@ -103,17 +119,19 @@ function createIconContainer() {
     height: `${endcapHeight*0.35}dp`,
   });
 }
-
+var addIconCache = null;
 function createAddIcon() {
-  var btn = Ti.UI.createButton({
-    top: `${endcapHeight*0.05}dp`,
-    left: 0,
-    width: `${endcapWidth*0.5}dp`,
-    height: `${endcapHeight*0.25}dp`,
-		backgroundImage: "/images/plus-icon.png"
-	});
-	btn.addEventListener( 'click', startIdentification );
-  return btn;
+  if ( !addIconCache ) {
+    addIconCache = Ti.UI.createButton({
+      top: `${endcapHeight*0.05}dp`,
+      left: 0,
+      width: `${endcapWidth*0.5}dp`,
+      height: `${endcapHeight*0.25}dp`,
+      backgroundImage: "/images/plus-icon.png"
+    });
+    addIconCache.addEventListener( 'click', startIdentification );
+  }
+  return addIconCache;
 }
 
 function createTaxaIcon(taxon) {
@@ -175,7 +193,7 @@ function releaseTiles( start_n, end_n ) {
     if ( i >=  0 ) {
       var tile = tileIndex[i];
       if ( typeof( tile ) !== "undefined" ) {
-        $.SampleTray.remove( tile.container );
+        $.content.remove( tile.container );
         delete tileIndex[i];
       }
     }
@@ -192,7 +210,7 @@ function addTiles( start_n, end_n ) {
       } else {
         tile = createSampleTrayTile( i );
         tileIndex[i] = tile;
-        $.SampleTray.add( tile.container );
+        $.content.add( tile.container );
       }
 
     }
@@ -200,7 +218,7 @@ function addTiles( start_n, end_n ) {
 }
 
 function updateVisibleTiles( scrollx) {
-  var viewWidth = PlatformSpecific.convertSystemToDip( $.SampleTray.getSize().width );
+  var viewWidth = PlatformSpecific.convertSystemToDip( $.content.getSize().width );
   var rightEdge = roundToTile( scrollx + viewWidth + middleWidth );
   var leftEdge = roundToTile( scrollx - middleWidth - endcapWidth );
   addTiles(leftEdge,rightEdge);
@@ -209,7 +227,7 @@ function updateVisibleTiles( scrollx) {
 }
 
 function drawIcecubeTray() {
-  var scrollx = PlatformSpecific.convertSystemToDip( $.SampleTray.getContentOffset().x );
+  var scrollx = PlatformSpecific.convertSystemToDip( $.content.getContentOffset().x );
   updateFirstTwoSampleTrayIcons();
   updateVisibleTiles( scrollx );
   $.trigger("trayupdated");
@@ -217,61 +235,53 @@ function drawIcecubeTray() {
 
 function startIdentification(e) {
   Ti.API.info("entering startIdentification");
-  var selectMethod = Alloy.createController("MethodSelect");
+  $.selectMethod = Alloy.createController("MethodSelect");
   function closeSelectMethod() {
-    sampleTrayWin.remove(selectMethod.getView());
+    $.TopLevelWindow.remove($.selectMethod.getView());
   }
 
-  selectMethod.on("close", function() {
+  $.selectMethod.on("close", function() {
     closeSelectMethod();
   });
 
-  selectMethod.on("keysearch", function() {
+  $.selectMethod.on("keysearch", function() {
     closeSelectMethod();
     Topics.fireTopicEvent( Topics.KEYSEARCH );
   });
 
-  selectMethod.on("speedbug", function() {
+  $.selectMethod.on("speedbug", function() {
     closeSelectMethod();
     Topics.fireTopicEvent( Topics.SPEEDBUG );
   });
 
-  selectMethod.on("browselist", function() {
+  $.selectMethod.on("browselist", function() {
     closeSelectMethod();
     Topics.fireTopicEvent( Topics.BROWSELIST );
   });
 
-  sampleTrayWin.add(selectMethod.getView());
+  $.TopLevelWindow.add($.selectMethod.getView());
 
   e.cancelBubble = true;
 };
 
-$.SampleTray.addEventListener( "scroll", drawIcecubeTray );
-$.SampleTray.addEventListener( "postlayout", function firstRender() {
-      $.SampleTray.removeEventListener("postlayout", firstRender );
-      endcapHeight = $.endcap.size.height;
-      endcapWidth = $.endcapBackground.size.width;
-      middleWidth = endcapWidth*1.384;
-      drawIcecubeTray();
+function adjustTraySize() {
+  if ( $.content.height !== endcapHeight ) {
+    endcapHeight = $.TopLevelWindow.size.height - $.getAnchorBar().getView().size.height;
+    endcapWidth = $.endcapBackground.size.width;
+    middleWidth = endcapWidth*1.384;
+    clearTileCache();
+    drawIcecubeTray();
+  }
+}
 
-  });
+$.content.addEventListener( "scroll", drawIcecubeTray );
+$.content.addEventListener( "postlayout", adjustTraySize );
 
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
 
-function cleanup() {
-  $.SampleTray.removeEventListener("scroll", drawIcecubeTray);
+$.getView().addEventListener( "close", function cleanup() {
+  $.content.removeEventListener("postlayout", adjustTraySize );
+  $.content.removeEventListener("scroll", drawIcecubeTray);
   Alloy.Collections["taxa"].off("add change remove", drawIcecubeTray );
-}
-
-sampleTrayWin = Alloy.createController("TopLevelWindow", {
-  name: 'sampletray',
-  title: 'Sample',
-  uiObj: { view: $.getView() },
-  cleanup: cleanup
-}).getView();
-
-function getSampleTrayWin() {
-  return sampleTrayWin;
-}
-
-exports.getSampleTrayWin = getSampleTrayWin;
+  $.getView().removeEventListener("close", cleanup);
+});

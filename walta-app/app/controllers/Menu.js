@@ -1,4 +1,6 @@
 var Topics = require('ui/Topics');
+exports.baseController  = "TopLevelWindow";
+$.name = "home";
 
 function logInClick() {
   if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
@@ -37,8 +39,3 @@ if ( Alloy.Globals.CerdiApi.retrieveUserToken() )
     $.logInLabel.text = "You are Logged in";
 else
     $.logInLabel.text = "Log In";
-
-Alloy.createController("TopLevelWindow", {
-  name: 'home',
-  uiObj: { view: $.getView() }
-});

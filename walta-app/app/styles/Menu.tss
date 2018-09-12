@@ -22,7 +22,7 @@
   bottom: "20dp"
 }
 
-"#content": {
+"#smallOptions": {
   height: Ti.UI.SIZE,
   bottom: "10dp",
   left: "20dp",

@@ -23,13 +23,11 @@
  * 
  */
 
+var _ = require('lib/underscore')._;
+var Layout = require('ui/Layout');
 
 function createVideoView( file ) {
-	var _ = require('lib/underscore')._;
-	var Layout = require('ui/Layout');
-
 	var vv = { _views: {}, win: null, vp: null };
-	
 	vv._views.playButton = Ti.UI.createButton({
 		width: Layout.VIDEO_OVERLAY_BUTTON_SIZE,
 		height: Layout.VIDEO_OVERLAY_BUTTON_SIZE, 

@@ -41,72 +41,73 @@ function makeJsonRequest( serverUrl, data, accessToken = null ) {
 }
 
 
-export default class CerdiApi {
-    constructor( serverUrl, client_secret  ) {
-        this.client_secret = client_secret;
-        this.scope = 'create-users';
-        this.serverUrl = serverUrl;
-    }
-
-    retrieveUserToken() {
-        return Ti.App.Properties.getObject('userAccessToken');
-    }
-
-    storeUserToken( accessToken ) {
-        Ti.App.Properties.setObject('userAccessToken', accessToken );
-    }
-
-    obtainServerAccessToken() {
-        return Promise.resolve(Ti.App.Properties.getObject('appAccessToken'))
-            .then( (cachedAppAccessToken) => {
-                if ( cachedAppAccessToken ) {
-                    let tokenAge = Date.now() - cachedAppAccessToken.retrieved_at;
-                    if ( tokenAge < cachedAppAccessToken.expires_in*1000 )
-                        return cachedAppAccessToken;
-                }
-                return makeJsonRequest( this.serverUrl + '/token/create/server',
-                    {
-                        "client_secret": this.client_secret,
-                        "scope": this.scope
+function createCerdiApi( serverUrl, client_secret  ) {
+        var cerdiApi = {
+            retrieveUserToken() {
+                return Ti.App.Properties.getObject('userAccessToken');
+            },
+        
+            storeUserToken( accessToken ) {
+                Ti.App.Properties.setObject('userAccessToken', accessToken );
+            },
+        
+            obtainServerAccessToken() {
+                return Promise.resolve(Ti.App.Properties.getObject('appAccessToken'))
+                    .then( (cachedAppAccessToken) => {
+                        if ( cachedAppAccessToken ) {
+                            let tokenAge = Date.now() - cachedAppAccessToken.retrieved_at;
+                            if ( tokenAge < cachedAppAccessToken.expires_in*1000 )
+                                return cachedAppAccessToken;
+                        }
+                        return makeJsonRequest( this.serverUrl + '/token/create/server',
+                            {
+                                "client_secret": this.client_secret,
+                                "scope": this.scope
+                            });
+                    })
+                    .then( (appAccessToken) => {
+                        appAccessToken.retrieved_at = Date.now();
+                        Ti.App.Properties.setObject('appAccessToken', appAccessToken);
+                        return appAccessToken.access_token;
+                    } );
+            },
+        
+            registerUser( userInfo ) {
+                return this.obtainServerAccessToken()
+                    .then( (accessToken) => 
+                        makeJsonRequest( this.serverUrl + '/user/create', 
+                            userInfo, accessToken))
+                    .then( (resp) => {
+                        return { id: resp.id, accessToken: resp.accessToken } ;
                     });
-            })
-            .then( (appAccessToken) => {
-                appAccessToken.retrieved_at = Date.now();
-                Ti.App.Properties.setObject('appAccessToken', appAccessToken);
-                return appAccessToken.access_token;
-            } );
+            },
+        
+            loginUser( email, password ) {
+                return this.obtainServerAccessToken()
+                    .then( (accessToken) =>
+                         makeJsonRequest( this.serverUrl + '/token/create', {
+                            "password": password,
+                            "email": email
+                        }, accessToken ) )
+                    .then( (resp) => {
+                        resp.retrieved_at = Date.now();
+                        this.storeUserToken( resp );
+                        return resp;
+                    })
+            },
+        
+            submitSample( sample ) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeJsonRequest( this.serverUrl + '/samples', sample, accessToken );
+            }
+        
+        }
+        cerdiApi.client_secret = client_secret;
+        cerdiApi.scope = 'create-users';
+        cerdiApi.serverUrl = serverUrl;
+        return cerdiApi;
     }
 
-    registerUser( userInfo ) {
-        return this.obtainServerAccessToken()
-            .then( (accessToken) => 
-                makeJsonRequest( this.serverUrl + '/user/create', 
-                    userInfo, accessToken))
-            .then( (resp) => {
-                return { id: resp.id, accessToken: resp.accessToken } ;
-            });
-    }
-
-    loginUser( email, password ) {
-        return this.obtainServerAccessToken()
-            .then( (accessToken) =>
-                 makeJsonRequest( this.serverUrl + '/token/create', {
-                    "password": password,
-                    "email": email
-                }, accessToken ) )
-            .then( (resp) => {
-                resp.retrieved_at = Date.now();
-                this.storeUserToken( resp );
-                return resp;
-            })
-    }
-
-    submitSample( sample ) {
-        let accessToken = this.retrieveUserToken().accessToken;
-        if ( accessToken == undefined )
-            throw new Error("Not logged in - cannot submit sample");
-        return makeJsonRequest( this.serverUrl + '/samples', sample, accessToken );
-    }
-
-
-}
+exports.createCerdiApi = createCerdiApi;

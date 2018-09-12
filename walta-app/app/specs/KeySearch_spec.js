@@ -17,22 +17,17 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var TestUtils = require('util/TestUtils');
+var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require('specs/util/TestUtils');
 
 var Question = require('logic/Question');
 var Key = require('logic/Key');
-var KeyView = require('ui/KeyView');
-var TopLevelWindow = require('ui/TopLevelWindow');
-
 var Topics = require('ui/Topics');
 
-describe.skip('KeyView', function() {
+describe('KeySearch controller', function() {
 	var knv;
-	var win;
-	var key;
-	before( function() {
+	before( function(done) {
 		// Create a test key to display
-	 key = Key.createKey( {
+	 var key = Key.createKey( {
 					url: 'https://example.com/',
 					name: 'TestTaxonomy',
 					root: Key.createKeyNode({
@@ -53,23 +48,15 @@ describe.skip('KeyView', function() {
 							]
 					})
 				});
-		knv = KeyView.createKeyView( key.getCurrentNode() );
+			knv = Alloy.createController("KeySearch", { keyNode: key.getCurrentNode() });
+			controllerOpenTest( knv, done );
 	});
-	after( function() {
-
-			TestUtils.closeWindow( win );
+	after( function(done) {
+			closeWindow( knv.getView(), done );
 	})
 
-	it('should display the key view', function() {
-
-		win = TopLevelWindow.makeTopLevelWindow({
-				title: 'ALT Key',
-				uiObj: knv
-			});
-	});
-
 	it('should fire the FORWARD topic', function(done) {
-		TestUtils.actionFiresTopicTest( knv._views.questions[1].view, 'click', Topics.FORWARD, done );
+		actionFiresTopicTest( knv.getQuestions()[1].view, 'click', Topics.FORWARD, done );
 	});
 
 });

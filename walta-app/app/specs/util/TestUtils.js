@@ -25,11 +25,9 @@ var meld = require('lib/meld');
 
 var Topics = require('ui/Topics');
 
-var manualTests = false;
+function setManualTests( b ) { Alloy.CFG.stopAfterEachTest = b; }
 
-function setManualTests( b ) { manualTests = b; }
-
-function isManualTests() { return manualTests; }
+function isManualTests() { return Alloy.CFG.stopAfterEachTest; }
 
 function waitForDomEvent( obj, evtName, fireEvent, done ) {
 		obj.addEventListener( evtName, function() { done() } );
@@ -56,10 +54,12 @@ function wrapViewInWindow( view ) {
 }
 
 function windowOpenTest( win, done ) {
-	win.addEventListener('open' , function open () {
-    win.removeEventListener('open', open);
-		done();
-	} );
+	if ( done ) {
+		win.addEventListener('open' , function open() {
+			win.removeEventListener('open', open);
+			done();
+		} );
+	}
 	win.open();
 }
 
@@ -135,7 +135,27 @@ function closeWindow( win, done ) {
 	}, done);
 }
 
+function checkTestResult( done, f ) {
+	try {
+	  f();
+	  done();
+	} catch( e ) {
+	  done( e );
+	}
+  }
 
+function controllerOpenTest( ctl, done ) {
+	if ( done ) {
+		ctl.getView().addEventListener('open' , function open() {
+			ctl.getView().removeEventListener('open', open);
+			done();
+		} );
+	}
+	ctl.open();
+}
+
+exports.controllerOpenTest = controllerOpenTest;
+exports.checkTestResult = checkTestResult;
 exports.waitForBrowserEvent = waitForBrowserEvent;
 exports.waitForTick = waitForTick;
 exports.closeWindow = closeWindow;

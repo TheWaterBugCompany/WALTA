@@ -17,3 +17,20 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
+var { closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
+
+describe('LogIn controller', function() {
+	var login;
+	beforeEach( function() {
+		login = Alloy.createController( "LogIn" );
+	});
+
+	afterEach( function(done) {
+		closeWindow( login.getView(), done );
+	});
+
+	/* Yuck couldn't figure out a way to do this without setTimeout() hopefuly 1s is enough */
+	it('it should render', function(done) {
+		controllerOpenTest( login, done );
+	});
+});

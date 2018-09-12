@@ -20,25 +20,27 @@ var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 var PhotoView = require('ui/PhotoView');
 
-describe.skip('PhotoView', function() {
+describe('PhotoView', function() {
 	var win, vw, pv;
-
-	pv = PhotoView.createPhotoView([
-			'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
-			'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
-			'/spec/resources/simpleKey1/media/amphipoda_03.jpg'
-		]);
-	win = Ti.UI.createWindow( {
-		backgroundColor: 'white',
-		orientationModes: [ Ti.UI.LANDSCAPE_LEFT ] }
-	);
-	vw = Ti.UI.createView( { width: '300dip', height: '250dip' });
-	vw.add( pv.view );
-	win.add( vw );
-
-	it('should display the photo view thumbnail', function() {
-		TestUtils.windowOpenTest( win );
+	before( function() {
+		pv = PhotoView.createPhotoView([
+				'/specs/resources/simpleKey1/media/amphipoda_01.jpg',
+				'/specs/resources/simpleKey1/media/amphipoda_02.jpg',
+				'/specs/resources/simpleKey1/media/amphipoda_03.jpg'
+			]);
+		win = Ti.UI.createWindow( {backgroundColor: 'white' } );
+		vw = Ti.UI.createView( { width: '300dip', height: '250dip' });
+		vw.add( pv.view );
+		win.add( vw );
 	});
 
-	TestUtils.closeWindow( win );
+	after( function(done) {
+		TestUtils.closeWindow( win, done );
+	});
+
+	it('should display the photo view thumbnail', function( done ) {
+		TestUtils.windowOpenTest( win, done );
+	});
+
+	
 });

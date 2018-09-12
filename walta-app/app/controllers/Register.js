@@ -6,6 +6,9 @@ var emailValid = false;
 var nameValid = false;
 var passwordValid = false;
 
+$.TopLevelWindow.title = "Register";
+exports.baseController = "TopLevelWindow";
+
 function disable() {
   $.submitButton.enabled = false;
   $.submitButton.touchEnabled = false;
@@ -98,9 +101,3 @@ function submitClick() {
 emailChanged();
 nameChanged();
 passwordChanged();
-
-Alloy.createController("TopLevelWindow", {
-    name: 'register',
-    title: 'Register',
-    uiObj: { view: $.getView() }
-  });

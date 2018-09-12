@@ -26,7 +26,6 @@
 
 var TiHacks = require('util/TiHacks');
 function createHtmlView( url ) {
-    Ti.API.log("INFO", "opening ''" + url + "' in a WebView");
 	var webObj = {
 		view: null,			 	// The Ti.UI.View for the user interface
 	};

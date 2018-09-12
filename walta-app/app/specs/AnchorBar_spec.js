@@ -17,7 +17,7 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, actionFiresTopicTest } = require('specs/util/TestUtils');
+var { wrapViewInWindow, closeWindow, windowOpenTest, actionFiresTopicTest } = require('specs/util/TestUtils');
 var Topics = require('ui/Topics');
 
 describe('AnchorBar', function() {

@@ -110,7 +110,7 @@ function mockTiWithProxy() {
 }
 
 
-import CerdiApi from 'logic/CerdiApi';
+var CerdiApi = require("logic/CerdiApi");
 
 var SERVER_URL = 'https://api-wbb.till.cerdi.edu.au/v1';
 var CLIENT_SECRET = null;
@@ -126,7 +126,7 @@ describe('CerdiApi', function() {
         // make sure our test user is registered for tests that
         // require it.
         mockTiWithProxy();
-        return new CerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
+        return CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
             email: `testlogin@example.com`,
             group: false,
             survey_consent: false,
@@ -140,7 +140,7 @@ describe('CerdiApi', function() {
 
     beforeEach( function() {
         mockTiWithProxy();
-        cerdi = new CerdiApi( SERVER_URL, CLIENT_SECRET );
+        cerdi = CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET );
     });
 
     describe('#obtainAccessToken', function() {

@@ -4,6 +4,5 @@
   fullscreen: true,
   width: Ti.UI.FILL,
   height: Ti.UI.FILL,
-  backgroundColor: 'white',
-  layout: 'composite'
+  backgroundColor: "white"
 }

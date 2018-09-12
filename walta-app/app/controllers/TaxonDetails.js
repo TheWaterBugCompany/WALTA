@@ -28,6 +28,9 @@ var Topics = require('ui/Topics');
 var PhotoView = require('ui/PhotoView');
 var PlatformSpecific = require('ui/PlatformSpecific');
 
+exports.baseController  = "TopLevelWindow";
+$.TopLevelWindow.title = "ALT Key";
+$.name = "decision";
 
 function createActionButton(imageUrl, label, onClick) {
 	var obj = {
@@ -100,8 +103,8 @@ if ( Ti.Platform.osname === 'iphone' ) {
 
 // If tere are photos add the photo view and button
 if ($.args.taxon.photoUrls.length > 0) {
-	var photoView = PhotoView.createPhotoView($.taxon.photoUrls);
-	$.photoView.add(_(photoView.view).extend({
+	$.photoView = PhotoView.createPhotoView($.taxon.photoUrls);
+	$.photoViewCtn.add(_($.photoView.view).extend({
 		left : 0,
 		width : Layout.THUMBNAIL_WIDTH,
 		top : Layout.WHITESPACE_GAP
@@ -110,7 +113,7 @@ if ($.args.taxon.photoUrls.length > 0) {
 	$.actionBtns.add(
 		createActionButton("/images/gallery-icon.png", "Photo gallery",
 			function(e) {
-				photoView.open();
+				$.photoView.open();
 				e.cancelBubble = true;
 			}));
 }
@@ -141,24 +144,13 @@ function swipeListener(e){
 	}
 }
 
-$.TaxonDetails.addEventListener('swipe', swipeListener);
+$.content.addEventListener('swipe', swipeListener);
 
 
-function cleanup() {
-  $.TaxonDetails.removeEventListener('swipe', swipeListener);
-}
+$.getView().addEventListener( "close", function cleanup() {
+  $.content.removeEventListener('swipe', swipeListener);
+  $.content.removeEventListener('swipe', cleanup);
+});
 
-var windowController = Alloy.createController("TopLevelWindow", {
-  name: 'decision',
-  title: 'ALT Key',
-  uiObj: {view: $.getView() },
-  slide: $.args.slide,
-	onOpen: $.args.onOpen,
-  cleanup: cleanup
-} );
-
-windowController
-	 .getAnchorBar()
-   .addTool( GoBackButton.createGoBackButton() );
-
-exports.getWindow = windowController.getView;
+$.getAnchorBar()
+ .addTool( GoBackButton.createGoBackButton() );

@@ -150,7 +150,7 @@ function createKey( args ) {
 		findAllMedia: function( prp ) {
 			var media = [];
 			if ( ! prp ) prp = 'mediaUrls';
-			_.each( allTaxons, function( t ) { media = media.concat( t[prp] ); });
+			_.each( this.findAllTaxons(), function( t ) { media = media.concat( t[prp] ); });
 			return media;
 		},
 

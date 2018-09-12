@@ -1,7 +1,6 @@
 
 ".container" : {
   width : Ti.UI.FILL,
-  height : Ti.UI.FILL,
   backgroundColor : "white",
   layout: "horizontal"
 }
@@ -53,7 +52,7 @@
   bottom: "8dp"
 }
 
-"#photoView": {
+"#photoViewCtn": {
   width: Ti.UI.SIZE,
   height: Ti.UI.SIZE
 }

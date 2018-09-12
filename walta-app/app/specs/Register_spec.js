@@ -17,9 +17,7 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, waitForTick } = require('specs/util/TestUtils');
-var Topics = require('ui/Topics');
-setManualTests(true);
+var { closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
 
 function setTextField( field, value ) {
     return () => { 
@@ -31,8 +29,7 @@ function setTextField( field, value ) {
     };
 }
 
-
-describe.only('RegisterView', function() {
+describe('Register controller', function() {
     var vw, ct, win;
     this.timeout(3000);
 
@@ -46,21 +43,15 @@ describe.only('RegisterView', function() {
     }
 	before( function(done) {
         ct = Alloy.createController("Register");
-        vw = ct.getView();
-        win = wrapViewInWindow(vw);
-        windowOpenTest( win, done );
+        controllerOpenTest( ct, done );
         ct.groupToggle.value = true;
         ct.surveyToggle.value = true;
         ct.dataToggle.value = true;
         
 	});
 	after( function() {
-		closeWindow( win );
+		closeWindow( ct.getView() );
 	});
-	it('should display the register view', function(done) {
-		
-		done();
-    });
     
     it('should disable submit if email is invalid', function() {
         return fillOutValidForm()

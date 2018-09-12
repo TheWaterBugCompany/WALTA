@@ -5,6 +5,7 @@
 "#endcap": {
   width: "139dp",
   left: 0,
+  bottom: 0,
   top: "0.5dp"
 }
 "#endcapBackground" : {

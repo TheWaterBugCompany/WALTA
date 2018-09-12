@@ -30,8 +30,3 @@ Alloy.Globals.isHdpi = (Ti.Platform.displayCaps.density == "high");
 //Alloy.Globals.isXdpi = (Ti.Platform.displayCaps.density == "xhdpi");
 //Alloy.Globals.isXXdpi = (Ti.Platform.displayCaps.density == "xxhdpi");
 //Alloy.Globals.isXXXdpi = (Ti.Platform.displayCaps.density == "xxxhdpi");
-
-Alloy.Globals.AppWindow = require("control/AppWindow");
-Alloy.Globals.SampleDatabase = require("logic/SampleDatabase");
-import CerdiApi from "logic/CerdiApi";
-Alloy.Globals.CerdiApi = new CerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );

@@ -1,5 +1,5 @@
 <Alloy>
-	<View class="container">
+	<View id="content" class="container">
 			<View height=Ti.UI.FILL width=Ti.UI.FILL>
 				<View id="logInOrRegister" onClick="logInClick">
 					<Label id="logInLabel" class="smallMenuText" text="Log In" />
@@ -13,7 +13,7 @@
 					<Label id="detailedLabel" class="bigMenuText" text="Waterbug\nSurvey" />
 				</View>
 			</View>
-			<View id="content" layout="horizontal">
+			<View id="smallOptions" layout="horizontal">
 				<View id="help" class="smallButton" onClick="helpClick">
 					<ImageView id="helpIcon" class="smallButtonIcon" />
 					<Label id="helpLabel" class="smallMenuText" text="Help and Info" />	

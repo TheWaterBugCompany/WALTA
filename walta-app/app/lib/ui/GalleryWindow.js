@@ -27,6 +27,7 @@ var _ = require('lib/underscore')._;
 
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var { urlToLocalAsset } = require("ui/PlatformSpecific");
 
 // Create a dot view
 function createDot() {
@@ -48,8 +49,6 @@ function updateCurrentPage( dots, selPage ) {
 }
 
 function createGalleryWindow(photoUrls, showPager ) {
-
-
 	if ( _.isUndefined( showPager ) ) showPager = true;
 
 	var galleryWin = Ti.UI.createWindow({
@@ -72,7 +71,7 @@ function createGalleryWindow(photoUrls, showPager ) {
 					backgroundColor: 'transparent',
 					width : Ti.UI.FILL,
 					height : Ti.UI.FILL,
-					html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=20, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { width: 100%; height: 100%; overflow: scroll; background-color: black; margin: 0; padding: 0; border: 0 } img { display: block; margin-left:auto;margin-right:auto; padding:0; height:100%;}</style></head><body><img src="' + url + '"></body></html>'
+					html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=6.0, minimum-scale=1.0, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { postion: absolute; top:0; bottom: 0; background-color: black; margin-left: auto; margin-right: auto; margin: 0; padding: 0; border: 0 } ::-webkit-scrollbar { display: none;} img { display: block; margin-left:auto;margin-right:auto; padding:0; width:100%; }</style></head><body><img src="' + urlToLocalAsset(url) + '"></body></html>'
 				});
 				return view;
 			}),
@@ -80,6 +79,13 @@ function createGalleryWindow(photoUrls, showPager ) {
 		bottom: ( showPager ? Layout.PAGER_HEIGHT : 0 )
 	});
 	galleryWin.add(scrollView);
+
+	function scrollEvent(e) {
+		if ( e.currentPage !== lastPage ) {
+			updateCurrentPage( dots, e.currentPage );
+			lastPage = e.currentPage;
+		}
+	}
 
 	if ( showPager ) {
 		var pager = Ti.UI.createView({
@@ -102,36 +108,35 @@ function createGalleryWindow(photoUrls, showPager ) {
 		var lastPage = scrollView.getCurrentPage();
 		updateCurrentPage( dots, lastPage );
 
-		scrollView.addEventListener( 'scroll', function(e) {
-			if ( e.currentPage !== lastPage ) {
-				updateCurrentPage( dots, e.currentPage );
-				lastPage = e.currentPage;
-			}
-		});
+		scrollView.addEventListener( 'scroll',scrollEvent);
 	}
-	galleryWin._views = {};
-	galleryWin._views.close = Ti.UI.createView({
+	galleryWin.closeButton = Ti.UI.createView({
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,
 		height: Layout.FULLSCREEN_CLOSE_BUTTON_BUFFER,
 		top: 0,
 		right: 0
 	});
 
-	galleryWin._views.close.add( Ti.UI.createImageView({
-		image: '/images/close.png',
+	galleryWin.closeButton.add( Ti.UI.createImageView({
+		image: '/images/delete-icon-blue.png',
 		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
 		top: Layout.WHITESPACE_GAP,
 		right: Layout.WHITESPACE_GAP
 	}));
 
-
-	galleryWin._views.close.addEventListener( 'click', function(e) {
+	function closeEvent(e) {
 		galleryWin.close();
+	}
+	galleryWin.closeButton.addEventListener( 'click', closeEvent);
+
+	galleryWin.add( galleryWin.closeButton );
+
+	galleryWin.addEventListener( 'close', function cleanUp(e) {
+		galleryWin.closeButton.removeEventListener( 'click', closeEvent);
+		scrollView.removeEventListener( 'scroll', scrollEvent);
+		galleryWin.removeEventListener( 'close', cleanUp);
 	});
-
-	galleryWin.add( galleryWin._views.close );
-
 	return galleryWin;
 }
 

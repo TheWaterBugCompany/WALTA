@@ -78,6 +78,11 @@ function convertSystemToDip( n ) {
 	return n;
 }
 
+function urlToLocalAsset( path ) {
+	return path;
+}
+
+exports.urlToLocalAsset = urlToLocalAsset;
 exports.appStartUp = appStartUp;
 exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;

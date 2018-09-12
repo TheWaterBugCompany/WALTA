@@ -46,7 +46,7 @@ exports.DETAILS_TEXT_SIZE = '10dip';
 exports.QUESTION_TEXT_SIZE = '16dip';
 exports.VIDEO_OVERLAY_BUTTON_SIZE = '64dip';
 
-exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '12dip';
+exports.FULLSCREEN_CLOSE_BUTTON_SIZE = '22dip';
 exports.FULLSCREEN_CLOSE_BUTTON_BUFFER = '48dip';
 
 exports.PAGER_HEIGHT = '16dip';

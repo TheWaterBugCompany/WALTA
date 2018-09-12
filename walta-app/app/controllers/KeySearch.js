@@ -28,27 +28,25 @@ var Layout = require('ui/Layout');
 var GoBackButton = require('ui/GoBackButton');
 var Topics = require('ui/Topics');
 var QuestionView = require('ui/QuestionView');
-var PlatformSpecific = require('ui/PlatformSpecific');
-var meld = require('lib/meld');
+var meld = require("lib/meld");
 
-var platformHeight = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformHeight );
-
-var obj = {
-	view: null,		 // The Ti.UI.View for the user interface
-	keyNode: keyNode // The Key data object associated with this view
-};
+exports.baseController  = "TopLevelWindow";
+$.TopLevelWindow.title = "ALT Key";
+$.name = "decision";
+$.getAnchorBar()
+  .addTool( GoBackButton.createGoBackButton() );
 
 var keyNode = $.args.keyNode;
 var questions = [];
-
-obj.view = $.KeySearch;
-
+function getQuestions() {
+  return questions;
+}
 // Add each question
 _(keyNode.questions).each(
 	function( q, index ) {
 		var qv = QuestionView.createQuestionView( q );
     questions.push( qv );
-		$.KeySearch.add( _(qv.view).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
+		$.content.add( _(qv.view).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
 		meld.on( qv, 'onSelect', function() {
 			Topics.fireTopicEvent( Topics.FORWARD, { index: index } );
 		} );
@@ -60,19 +58,13 @@ function swipeListener(e){
 		e.cancelBubble = true;
 		Topics.fireTopicEvent( Topics.BACK );
 	}
-};
-obj.view.addEventListener('swipe', swipeListener);
-
-function cleanup() {
-  obj.view.removeEventListener( 'swipe', swipeListener );
-  //questions.forEach( (qv) => meld.off( qv, 'onSelect') );
 }
 
-Alloy.createController("TopLevelWindow", {
-  name: 'decision',
-  title: 'ALT Key',
-  uiObj: {view: $.getView() },
-  slide: $.args.slide,
-  cleanup: cleanup
-}).getAnchorBar()
-  .addTool( GoBackButton.createGoBackButton() );
+$.content.addEventListener('swipe', swipeListener);
+
+$.content.addEventListener( "close", function cleanup() {
+  $.content.removeEventListener( 'swipe', swipeListener );
+  $.content.removeEventListener( 'swipe', cleanup );
+});
+
+exports.getQuestions = getQuestions;

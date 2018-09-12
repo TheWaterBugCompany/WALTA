@@ -19,7 +19,7 @@ task default: 'test'
 
 file 'walta-app/dist/Waterbug.apk' => titanium_source_files do
   sh("appc ti build --project-dir walta-app --build-only --platform android "\
-  " --deploy-type test --target dist-playstore --keystore ${KEYSTORE} "\
+  " --deploy-type production --target dist-playstore --keystore ${KEYSTORE} "\
     "--store-password ${KEYSTORE_PASSWORD} "\
     "--alias ${KEYSTORE_SUBKEY} "\
     "--output-dir walta-app/dist")
@@ -27,7 +27,7 @@ end
 
 file 'walta-app/build/android/bin/Waterbug.apk' => titanium_source_files do
   sh("appc ti build --project-dir walta-app --build-only --platform android "\
-    " --deploy-type test --keystore ${KEYSTORE} "\
+    " --deploy-type production --keystore ${KEYSTORE} "\
     "--store-password ${KEYSTORE_PASSWORD} "\
     "--alias ${KEYSTORE_SUBKEY} ")
 end
@@ -49,6 +49,13 @@ task :test_console => [:start_emulator, 'walta-app/build/android/bin/Waterbug.ap
   sh("calabash-android console walta-app/build/android/bin/Waterbug.apk features/registration.feature")
 end
 
+task :unit_test do
+  sh("appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android "\
+    "--deploy-type test --keystore ${KEYSTORE} "\
+    "--store-password ${KEYSTORE_PASSWORD} "\
+    "--alias ${KEYSTORE_SUBKEY} ")
+end
+
 task :unit_test_node do
   sh("NODE_PATH=\"./walta-app/app:./walta-app/app/lib\" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js")
 end
@@ -62,7 +69,7 @@ task :debug => [ :start_emulator, :uninstall_app ] do
 end
 
 task :preview => [ :start_emulator, :uninstall_app ] do
-  sh("appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME}")
+  sh("appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME} --liveview")
 end
 
 task :device_preview => [] do

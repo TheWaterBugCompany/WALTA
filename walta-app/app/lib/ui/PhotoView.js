@@ -53,31 +53,28 @@ function createPhotoView( photoUrls ) {
 		layout: 'composite'
 	});
 
-	var photo = Ti.UI.createImageView( {
+	photoViewObj.photo = Ti.UI.createImageView( {
 		image: photoUrls[0],
 		width: Layout.THUMBNAIL_IMAGE_WIDTH,
 		top: 0,
 		right: 0
 	});
 
-	var zoomIcon = Ti.UI.createView( {
+	photoViewObj.zoomIcon = Ti.UI.createView( {
 		bottom: 0,
 		right: 0,
 		backgroundImage: 'images/icon-magnify.png',
 		width: '30dip',
 		height: '30dip'
 	});
-	photoViewObj.view.add( photo );
-	photoViewObj.view.add( zoomIcon );
+	photoViewObj.view.add( photoViewObj.photo );
+	photoViewObj.view.add( photoViewObj.zoomIcon );
 
 	var openGallery = function(e) {
 		e.cancelBubble = true;
 		photoViewObj.open();
 	};
-	photo.addEventListener( 'click', openGallery );
-	zoomIcon.addEventListener( 'click', openGallery );
-
-	photoViewObj._views = { photo: photo, zoomIcon: zoomIcon };
+	photoViewObj.zoomIcon.addEventListener( 'click', openGallery );
 
 	return photoViewObj;
 };

@@ -1,12 +1,12 @@
 <Alloy>
-	<View class="container">
+	<View id="content" class="container">
 			<Label id="title"></Label>
 			<View id="detailsBox">
 				<WebView id="details">
 				</WebView>
 			</View>
 			<View id="actions">
-				<View id="photoView"></View>
+				<View id="photoViewCtn"></View>
 				<View id="actionBtns"></View>
 			</View>
 	</View>

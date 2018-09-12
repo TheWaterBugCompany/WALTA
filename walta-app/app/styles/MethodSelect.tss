@@ -19,9 +19,9 @@
 }
 
 ".close_button_image": {
-  image: "images/close.png",
-  width: "14dp",
-  height: "12dp",
-  top: "14dp",
-  right: "8dp"
+  image: "images/delete-icon-blue.png",
+  width: "20dp",
+  height: "20dp",
+  top: "4dp",
+  right: 0
 }

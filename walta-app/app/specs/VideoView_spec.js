@@ -30,10 +30,11 @@ describe('VideoView', function() {
 	});
 
 	afterEach( function() {
-		vv.close();
+	    vv.close();
 	});
 
-	it('should fire the onComplete event when the video has finished playing', function() {
-		TestUtils.waitForMeldEvent( vv, 'onComplete', function() { vv.open(); }, 75000 );
+	it('should fire the onComplete event when the video has finished playing', function(done) {
+        this.timeout(75000);
+		TestUtils.waitForMeldEvent( vv, 'onComplete', () => vv.open(), done );
 	});
 });
