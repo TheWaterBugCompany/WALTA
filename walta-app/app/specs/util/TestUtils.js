@@ -135,6 +135,15 @@ function closeWindow( win, done ) {
 	}, done);
 }
 
+function forceCloseWindow( win, done ) {
+	win.addEventListener( "close", function e() {
+		win.removeEventListener( "close", e );
+		if ( done )
+			done();
+	} );
+	win.close();
+}
+
 function checkTestResult( done, f ) {
 	try {
 	  f();
@@ -154,6 +163,7 @@ function controllerOpenTest( ctl, done ) {
 	ctl.open();
 }
 
+exports.forceCloseWindow = forceCloseWindow;
 exports.controllerOpenTest = controllerOpenTest;
 exports.checkTestResult = checkTestResult;
 exports.waitForBrowserEvent = waitForBrowserEvent;

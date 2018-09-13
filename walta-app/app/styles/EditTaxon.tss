@@ -1,0 +1,41 @@
+"#taxonName": {
+    top: "4dp",
+    bottom: "4dp",
+    height: Ti.UI.SIZE
+}
+"#header": {
+    width: Ti.UI.FILL
+}
+"#howManyLabel": {
+    top: "4dp",
+    bottom: "4dp",
+    height: Ti.UI.SIZE
+}
+
+"#abundanceValue": {
+    width: "87%"
+}
+
+"#photoSelect": {
+    width: "230dp",
+    height: "160dp"
+}
+
+"#closeButton": {
+  height: "32dp",
+  width: "24dp",
+  right: "4dp"
+}
+
+"#window": {
+  width: "300dp",
+  height: "295dp"
+}
+
+"#deleteButton": {
+    backgroundColor: "#ef8b8b"
+}
+
+"#saveButton": {
+  left: "8dp"
+}

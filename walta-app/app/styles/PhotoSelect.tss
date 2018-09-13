@@ -1,0 +1,11 @@
+
+"#photoSelect" : {
+    borderColor: "#26849c",
+    backgroundColor: "#cee8ef"
+}
+"#camera": {
+    width: "48dp",
+    height: "48dp",
+    bottom: "0",
+    right: "0"
+}

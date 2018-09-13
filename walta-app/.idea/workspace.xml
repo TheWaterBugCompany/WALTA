@@ -5,159 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="933ceca4-28e4-4180-8dcf-7fe56cf14d18" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../Rakefile" afterPath="$PROJECT_DIR$/../Rakefile" />
-      <change beforePath="$PROJECT_DIR$/../install.sh" afterPath="$PROJECT_DIR$/../install.sh" />
-      <change beforePath="$PROJECT_DIR$/../package-lock.json" afterPath="$PROJECT_DIR$/../package-lock.json" />
-      <change beforePath="$PROJECT_DIR$/../package.json" afterPath="$PROJECT_DIR$/../package.json" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/alloy.js" afterPath="$PROJECT_DIR$/app/alloy.js" />
-      <change beforePath="$PROJECT_DIR$/app/assets/images/close.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/assets/images/icon-australia.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/assets/images/icon-magnify.png" afterPath="$PROJECT_DIR$/app/assets/images/icon-magnify.png" />
-      <change beforePath="$PROJECT_DIR$/app/assets/images/icon-speedbug.png" afterPath="$PROJECT_DIR$/app/assets/images/icon-speedbug.png" />
-      <change beforePath="$PROJECT_DIR$/app/assets/images/icon-video.png" afterPath="$PROJECT_DIR$/app/assets/images/icon-video.png" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/AnchorBar.js" afterPath="$PROJECT_DIR$/app/controllers/AnchorBar.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/KeySearch.js" afterPath="$PROJECT_DIR$/app/controllers/KeySearch.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/LogIn.js" afterPath="$PROJECT_DIR$/app/controllers/LogIn.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/Menu.js" afterPath="$PROJECT_DIR$/app/controllers/Menu.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/Register.js" afterPath="$PROJECT_DIR$/app/controllers/Register.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/SampleTray.js" afterPath="$PROJECT_DIR$/app/controllers/SampleTray.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/TaxonDetails.js" afterPath="$PROJECT_DIR$/app/controllers/TaxonDetails.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" afterPath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/index.js" afterPath="$PROJECT_DIR$/app/controllers/index.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/android/ui/PlatformSpecific.js" afterPath="$PROJECT_DIR$/app/lib/android/ui/PlatformSpecific.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/iphone/ui/PlatformSpecific.js" afterPath="$PROJECT_DIR$/app/lib/iphone/ui/PlatformSpecific.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/logic/CerdiApi.js" afterPath="$PROJECT_DIR$/app/lib/logic/CerdiApi.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/ui/GalleryWindow.js" afterPath="$PROJECT_DIR$/app/lib/ui/GalleryWindow.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/ui/Layout.js" afterPath="$PROJECT_DIR$/app/lib/ui/Layout.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/ui/PhotoView.js" afterPath="$PROJECT_DIR$/app/lib/ui/PhotoView.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/ui/VideoView.js" afterPath="$PROJECT_DIR$/app/lib/ui/VideoView.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/AppWindow_spec.js" afterPath="$PROJECT_DIR$/app/specs/AppWindow_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/CerdiApi_spec.js" afterPath="$PROJECT_DIR$/app/specs/CerdiApi_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/KeyView_spec.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/specs/MenuView_spec.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/specs/PhotoView_spec.js" afterPath="$PROJECT_DIR$/app/specs/PhotoView_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/RegisterView_spec.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/specs/SampleTray_spec.js" afterPath="$PROJECT_DIR$/app/specs/SampleTray_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/TaxonDetails_spec.js" afterPath="$PROJECT_DIR$/app/specs/TaxonDetails_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/VideoView_spec.js" afterPath="$PROJECT_DIR$/app/specs/VideoView_spec.js" />
+      <change beforePath="$PROJECT_DIR$/app/config.json.sample" afterPath="$PROJECT_DIR$/app/config.json.sample" />
       <change beforePath="$PROJECT_DIR$/app/specs/index.js" afterPath="$PROJECT_DIR$/app/specs/index.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/util/TestUtils.js" afterPath="$PROJECT_DIR$/app/specs/util/TestUtils.js" />
-      <change beforePath="$PROJECT_DIR$/app/styles/Menu.tss" afterPath="$PROJECT_DIR$/app/styles/Menu.tss" />
-      <change beforePath="$PROJECT_DIR$/app/styles/MethodSelect.tss" afterPath="$PROJECT_DIR$/app/styles/MethodSelect.tss" />
-      <change beforePath="$PROJECT_DIR$/app/styles/SampleTray.tss" afterPath="$PROJECT_DIR$/app/styles/SampleTray.tss" />
-      <change beforePath="$PROJECT_DIR$/app/styles/TaxonDetails.tss" afterPath="$PROJECT_DIR$/app/styles/TaxonDetails.tss" />
-      <change beforePath="$PROJECT_DIR$/app/styles/TopLevelWindow.tss" afterPath="$PROJECT_DIR$/app/styles/TopLevelWindow.tss" />
-      <change beforePath="$PROJECT_DIR$/app/views/KeySearch.xml" afterPath="$PROJECT_DIR$/app/views/KeySearch.xml" />
-      <change beforePath="$PROJECT_DIR$/app/views/Menu.xml" afterPath="$PROJECT_DIR$/app/views/Menu.xml" />
-      <change beforePath="$PROJECT_DIR$/app/views/Register.xml" afterPath="$PROJECT_DIR$/app/views/Register.xml" />
-      <change beforePath="$PROJECT_DIR$/app/views/SampleTray.xml" afterPath="$PROJECT_DIR$/app/views/SampleTray.xml" />
-      <change beforePath="$PROJECT_DIR$/app/views/TaxonDetails.xml" afterPath="$PROJECT_DIR$/app/views/TaxonDetails.xml" />
-      <change beforePath="$PROJECT_DIR$/app/views/TopLevelWindow.xml" afterPath="$PROJECT_DIR$/app/views/TopLevelWindow.xml" />
-      <change beforePath="$PROJECT_DIR$/tiapp.xml" afterPath="$PROJECT_DIR$/tiapp.xml" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Black-Fly-Larva.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/CaddisflyLarv(caseless)A.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/CaddisflyLarvaeA(cased).gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/CaddisflyLarvaeB(cased).gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Damselfly-Nymph-A.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Damselfly-Nymph-B.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Diving-Beetle-(adult).gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Diving-Beetle-(larva)A.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Dragonfly-Nymph-A.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Dragonfly-Nymph-B.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Flatworm.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Freshwater-Mussel.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Leech.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Mosquito-Larva.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Needle-Bug.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/aeshnidae_telephleb_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/amphipoda_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/anisops_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/anostraca_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/atalophlebia_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/athericidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/atriplectides_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/atyidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/baetidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/berosus_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/blephariceridae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/bloodworm_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/coloburiscidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/conoesucidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/corixidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/damselfly_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/divingbeetles_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/divingbeetletop_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/dytiscidae_L_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/elmidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/enithares_b2.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/eusthenia_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/gerridae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/gordian_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/gyrinidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/gyrinidae_larva_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hirudinea_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hydracarina_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hydrobiosidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hydrometridae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hydrophilus_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hydropsychidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hymenosomatidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/hyriidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/illiesoperla_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/laccotrephes_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/lepidoptera_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/leptophlebiidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/megaloptera_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/megapodagrionidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/mosquitolarva_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/naucoridae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/nematoda_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/neuroptera_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/notostraca_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/oligochaeta_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/parastacidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/philorheithridae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/pisauridae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/potamopyrgus_antipodarum_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/psephenidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/ptilodactylidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/ranatra_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/simuliidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/snails_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/sphaeriidae_and_corbiculidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/spidermudeye_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/tipulidae_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/triplectides_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/turbellaria_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/twotailedtiger_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Originals/veliids_b.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/QL0101.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Snail-[1].gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Water-Scorpion-[3].gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Water-Strider.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/Water-Treader.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/WhirligigBeetle(larva).gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/little_diving_beetles_01.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/nematoda_01.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/sclerocyphon_01.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/snailslittle.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/sphaeriidae_and_corbiculidae_01.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Bugs/tipulidae_02.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/Camera icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/about-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/browse-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/gallery-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/help-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/key-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/mayfly-muster-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/plus-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-graphics/Assets-20180823T094534Z-001/Assets/waterbug-survey-icon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../walta-taxonomy/walta/key.ink" afterPath="$PROJECT_DIR$/../walta-taxonomy/walta/key.ink" />
-      <change beforePath="$PROJECT_DIR$/../walta-taxonomy/walta/key.ink.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/../workspace.code-workspace" afterPath="$PROJECT_DIR$/../workspace.code-workspace" />
     </list>
     <ignored path="walta-app.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -175,7 +26,108 @@
     <favorites_list name="walta-app" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="sql.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-7805">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="localStorage.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1257">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AppWindow.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_template_spec.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MockCerdiApi.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MockSpeedbug.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main-dex-classes.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/main-dex-classes.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-12621">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mainDexProGuard.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/mainDexProGuard.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-363">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="app.js.map" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/build/map/Resources/android/app.js.map">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AnchorBar_spec.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -185,7 +137,7 @@
       <projects_view />
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds">
     <option name="y" value="27" />
     <option name="width" value="1920" />
     <option name="height" value="1053" />
@@ -226,6 +178,55 @@
             <path>
               <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
               <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="android" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="map" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="map" type="462c0819:PsiDirectoryNode" />
+              <item name="Resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="map" type="462c0819:PsiDirectoryNode" />
+              <item name="Resources" type="462c0819:PsiDirectoryNode" />
+              <item name="android" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="Resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="Resources" type="462c0819:PsiDirectoryNode" />
+              <item name="alloy" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="walta-app" type="462c0819:PsiDirectoryNode" />
+              <item name="Resources" type="462c0819:PsiDirectoryNode" />
+              <item name="android" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -352,7 +353,8 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="1920" height="1053" extended-state="1" />
+    <frame x="0" y="27" width="1920" height="1053" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -360,11 +362,11 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.86733556" sideWeight="0.2796158" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17056856" sideWeight="0.2796158" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.86733556" sideWeight="0.7203842" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17056856" sideWeight="0.7203842" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -404,5 +406,236 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.navigation/walta-app/raw/main.nvg.xml" />
+    <entry file="file://$PROJECT_DIR$/DefaultIcon.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DefaultIcon-ios.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iTunesConnect.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MarketplaceArtwork.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Resources/android/appicon.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/res/layout/titanium_ui_checkbox.xml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Resources/android/images/camera-icon.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/gen/android/support/coreui/R.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-40662">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#666673#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/gen/android/support/graphics/drawable/R.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-9288">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#666684#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/gen/ti/modules/titanium/ui/R.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-14424">
+          <caret line="10606" column="85" lean-forward="false" selection-start-line="10606" selection-start-column="85" selection-end-line="10606" selection-end-column="85" />
+          <folding>
+            <element signature="e#0#666673#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/bin/assets/index.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/bin/assets/app.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-13259">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7409">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/styles/AnchorBar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/models/Sample.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/controllers/EditTaxon.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-227">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/controllers/BaseController.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5724">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/properties.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-695">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7805">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1257">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/main-dex-classes.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-12621">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/mainDexProGuard.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-363">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/map/Resources/android/app.js.map">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>

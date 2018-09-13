@@ -18,10 +18,4 @@
   left: "8dp"
 }
 
-".close_button_image": {
-  image: "images/delete-icon-blue.png",
-  width: "20dp",
-  height: "20dp",
-  top: "4dp",
-  right: 0
-}
+

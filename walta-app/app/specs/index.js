@@ -2,6 +2,7 @@ require("specs/lib/ti-mocha");
 
 require("specs/AnchorBar_spec");
 require("specs/BrowseView_spec");
+require("specs/EditTaxon_spec");
 require("specs/KeyNode_spec");
 require("specs/KeySearch_spec");
 require("specs/LogIn_spec")

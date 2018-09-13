@@ -36,6 +36,19 @@ overrode the settings with other TSS, XML, or JS settings:
 	backgroundColor: "#50000000"
 }
 
+".shrinkWrap": {
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE
+}
+
+".close_button_image": {
+  image: "images/delete-icon-blue.png",
+  width: "20dp",
+  height: "20dp",
+  top: "4dp",
+  right: 0
+}
+
 ".container": {
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE
@@ -43,7 +56,7 @@ overrode the settings with other TSS, XML, or JS settings:
 
 ".window" : {
 	backgroundColor: "#ffffff",
-	borderColor: "black"
+	borderColor: "#26849c"
 }
 
 ".titlebar": {

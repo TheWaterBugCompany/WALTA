@@ -2,6 +2,7 @@
 	"autoStyle": true,
 	"global": { 
 		"unitTestMode": false,
+		"stopAfterEachTest": false,
 		"cerdiServerUrl": "https://api-wbb.till.cerdi.edu.au/v1",
 		"cerdiApiSecret": "<<INSERT SECRET HERE>>"
 	},
