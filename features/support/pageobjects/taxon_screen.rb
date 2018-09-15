@@ -2,8 +2,10 @@ require_relative '../android/base_page_object'
 
 class TaxonScreen < BasePageObject
     def trait
-      "ti.modules.titanium.ui.widget.webview.TiUIWebView$NonHTCWebView'"
+      "ALT Key"
     end
-# query("ti.modules.titanium.ui.widget.webview.TiUIWebView$NonHTCWebView xpath:'//*[contains(text(),\"Scientific Classification:\")]/../text()'", :textContent)
-  
+    def add_to_sample
+      select("Add To Sample")
+      return page(EditTaxon).await
+    end  
 end

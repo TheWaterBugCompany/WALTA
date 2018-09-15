@@ -39,6 +39,9 @@ function createSpeedbugIndex() {
         if ( bug ) {
           Ti.API.info(`found: ${bug.imgUrl}`);
           return bug.imgUrl;
+        } else {
+          Ti.API.info(`can't find silhouette for: ${node.id}`);
+          return;
         }
       }
 

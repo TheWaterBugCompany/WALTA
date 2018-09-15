@@ -1,6 +1,6 @@
 var taxon = $.args.taxon;
-var speedbugIndex = $.args.speedbugIndex;
 var key = $.args.key;
+var speedbugIndex = $.args.key.getSpeedbugIndex();
 
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).name;
 
@@ -34,6 +34,17 @@ function updateAbundance() {
     }
     $.abundanceLabel.text = binValue; 
 }
-$.saveButton.on("click", () => $.trigger("save") );
-$.deleteButton.on("click", () => $.trigger("delete") );
+$.saveButton.on("click", () => {
+    taxon.set('multiplicity', $.abundanceLabel.text );
+    Alloy.Collections["taxa"].add( taxon );
+    taxon.save();
+    $.trigger("save", taxon );
+});
+
+$.deleteButton.on("click", () => {
+    Alloy.Collections["taxa"].remove( taxon );
+    taxon.destroy();
+    $.trigger("delete", taxon );
+});
+
 $.closeButton.on("click", () => $.trigger("close") );

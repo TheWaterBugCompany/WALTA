@@ -9,10 +9,15 @@ class MenuScreen < BasePageObject
       query( "* marked:'You are Logged in'").any?
     end
 
+    def select_survey
+      select("Waterbug\nSurvey")
+      page(SampleTrayScreen).await
+    end
+
     def log_in( email, password )
       select("Log In")
       page = page(LoginScreen).await
-      page.log_in(email,password)
+      return page.log_in(email,password)
     end
 
     def log_out

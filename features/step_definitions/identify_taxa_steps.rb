@@ -36,9 +36,30 @@ Given(/^A leaf node of the ALT is displayed$/) do
   @current_page.select_question('Animals look like snails or limpets.')
   @current_page.select_question('Animals look like limpets.')
   @current_page = page(TaxonScreen).await
-  
-
 end
+
+Given(/^I identify and store a Taxon$/) do
+  # use browse method to make this short
+  @current_page = page(MenuScreen).await
+  @current_page = @current_page.select_survey()
+  @current_page = @current_page.start_identification()
+  @current_page = @current_page.browse()
+  @current_page = @current_page.choose_taxon('')
+  @current_page = @current_page.add_to_sample()
+end
+
+Then(/^the EditTaxon screen is opened$/) do
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+When(/^I set the abundance to "([^"]*)"$/) do |arg1|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Then(/^the taxon displays "([^"]*)" for the abundance$/) do |arg1|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
 
 When(/^I select the store operation$/) do
   pending # Write code here that turns the phrase above into concrete actions

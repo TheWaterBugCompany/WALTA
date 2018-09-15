@@ -26,7 +26,6 @@ var BrowseView = require('ui/BrowseView');
 var SpeedbugView = require('ui/SpeedbugView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
-var SampleDatabase = require('logic/SampleDatabase');
 
 /*
  * Module: AppWindow
@@ -68,8 +67,7 @@ function createAppWindow( keyName, keyPath ) {
 			sampleTrayWindow: function(args) {
 				if ( ! args )
 					args = {};
-				args.speedbugIndex = this.key.getSpeedbugIndex();
-				
+				args.key = this.key;
 				Alloy.createController("SampleTray",args).open();
 			},
 
@@ -179,8 +177,8 @@ function createAppWindow( keyName, keyPath ) {
     });
 
 		privates.subscribe( Topics.IDENTIFY, function(data) {
-			SampleDatabase.addTaxon( data.taxonId, 1 );
-			privates.sampleTrayWindow( { slide: 'left' } );
+			
+			privates.sampleTrayWindow( { taxonId: data.taxonId } );
 		});
 
     privates.subscribe( Topics.JUMPTO, function( data ) {

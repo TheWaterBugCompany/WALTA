@@ -35,6 +35,9 @@ function createKeyNode( args ) {
 		parentLink: null,	// A link to the parent KeyNode or null if this is the root
 		addQuestion( q ) {
 			this.questions.push( q );
+		},
+		findQuestion( text ) {
+			return _(this.questions).find( (q) => q.text.trim() == text );
 		}
 	});
 	return obj;
@@ -163,6 +166,13 @@ function createKey( args ) {
 			allNodes.push( node );
 		},
 
+		dettachNode: function( node ) {
+			if ( node.id  ) {
+				delete keyRefToNode[node.id];
+			}
+			allNodes.splice( allNodes.indexOf( node ), 1 );
+		},
+
 		attachTaxon: function( taxon ) {
 			if ( taxon.id ) {
 				taxRefToNode[taxon.id] = taxon;
@@ -196,9 +206,7 @@ function createKey( args ) {
 		setRootNode: function( node ) {
 			this.attachNode( node );
 			this.root = node;
-			if ( _.isNull(this.currentDecision) ) {
-				this.currentDecision = node;
-			}
+			this.currentDecision = node;
 		},
 
 		getRootNode: function() {

@@ -2,6 +2,13 @@ Feature: Identify Taxa
 
 Having found a species I would like to identify its taxa.
 
+Scenario: Add a taxon to the sample
+  Given I identify and store a Taxon
+   Then the EditTaxon screen is opened
+   When I set the abundance to "3-5"
+    And I press "Save"
+   Then the taxon displays "3-5" for the abundance
+
 Scenario: Identify taxa via ALT key
   Given I have found a species to identify
    When I select the ALT key function
@@ -12,7 +19,7 @@ Scenario: Binary ALT question
    When I select either the first or second answer
    Then the next node from the ALT key is displayed
 
-Scenario: Leaf node is selected
+Scenario: Taxon node is selected
   Given A leaf node of the ALT is displayed
   When I select the store operation
   Then selected identification is stored into the current sample tray
@@ -23,11 +30,6 @@ Scenario: Backwards navigation up the tree
    When I select the back button
    Then the parent node of this ALT node is displayed
 
-Scenario: I've finished with the ALT key
-  Given inside the ALT key identification process
-    And I'm done with the key
-   When I press the Home button
-   Then the ALT key process is exited
 
 Scenario: View species photo gallery
   Given a node from the ALT key is displayed

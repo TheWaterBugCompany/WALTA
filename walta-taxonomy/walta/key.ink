@@ -10,107 +10,119 @@ INCLUDE taxa.ink
 /* Speed bug */
 === speedbug ===
 
-* Not sure node -> k_bivalvia 
-** node -> hyriidae # mediaUrls: "speedbug/hyriidae_b.png"
-** node -> sphaeriidae_and_corbiculidae # mediaUrls: "speedbug/sphaeriidae_and_corbiculidae_b.png" 
+* Group 1
+** Not sure -> k_bivalvia 
+** Hyriidae -> hyriidae # mediaUrls: "/taxonomy/walta/media/speedbug/hyriidae_b.png"
+** Sphaeriidae and corbiculidae -> sphaeriidae_and_corbiculidae # mediaUrls: "/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png" 
 
-* Not sure node-> k_gastropoda	
-** node -> potamopyrgus_antipodarum # mediaUrls: "speedbug/potamopyrgus_antipodarum_b.png"
-** node -> flat_snails # mediaUrls: "TODO"
-** node -> k_gastropoda # mediaUrls: "speedbug/snails_b.png"
+* Group 2
+** Not sure -> k_gastropoda	
+** Potamopyrgus Antipodarum -> potamopyrgus_antipodarum # mediaUrls: "/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"
+** Flat snails -> flat_snails # mediaUrls: "TODO"
+** Gastropoda -> k_gastropoda # mediaUrls: "/taxonomy/walta/media/speedbug/snails_b.png"
 
-*->	
-** node -> turbellaria # mediaUrls: "speedbug/turbellaria_b.png"
+* node -> turbellaria # mediaUrls: "/taxonomy/walta/media/speedbug/turbellaria_b.png"
 	
-* Not sure node -> k_worm_like	
-** node -> oligochaeta # mediaUrls: "speedbug/oligochaeta_b.png"
-** node -> hirudinea # mediaUrls: "speedbug/hirudinea_b.png"
-** node -> nematoda # mediaUrls: "speedbug/nematoda_b.png"
-** node -> nematomorpha # mediaUrls: "speedbug/gordian_b.png"
-** node -> k_chironomid # mediaUrls: "speedbug/bloodworm_b.png"
-** node -> tabanidae_dolichopodidae_empididae_some_tipulidae # mediaUrls: "speedbug/tipulidae_b.png"
+* Group 3
+** Not sure -> k_worm_like	
+** node -> oligochaeta # mediaUrls: "/taxonomy/walta/media/speedbug/oligochaeta_b.png"
+** node -> hirudinea # mediaUrls: "/taxonomy/walta/media/speedbug/hirudinea_b.png"
+** node -> nematoda # mediaUrls: "/taxonomy/walta/media/speedbug/nematoda_b.png"
+** node -> nematomorpha # mediaUrls: "/taxonomy/walta/media/speedbug/gordian_b.png"
+** node -> k_chironomid # mediaUrls: "/taxonomy/walta/media/speedbug/bloodworm_b.png"
+** node -> tabanidae_dolichopodidae_empididae_some_tipulidae # mediaUrls: "/taxonomy/walta/media/speedbug/tipulidae_b.png"
 	
-* Not sure node -> k_maggots	
-** node -> athericidae # mediaUrls: "speedbug/athericidae_b.png"
-** node -> blephariceridae # mediaUrls: "speedbug/blephariceridae_b.png"
-** node -> simuliidae # mediaUrls: "speedbug/simuliidae_b.png"
-** node -> culicidae # mediaUrls: "speedbug/mosquitolarva_b.png"
+* Group 4
+** Not sure -> k_maggots	
+** node -> athericidae # mediaUrls: "/taxonomy/walta/media/speedbug/athericidae_b.png"
+** node -> blephariceridae # mediaUrls: "/taxonomy/walta/media/speedbug/blephariceridae_b.png"
+** node -> simuliidae # mediaUrls: "/taxonomy/walta/media/speedbug/simuliidae_b.png"
+** node -> culicidae # mediaUrls: "/taxonomy/walta/media/speedbug/mosquitolarva_b.png"
 	
-* Not sure node -> k_crunchy_beetle_larvae	
-** node -> sclerocyphon # mediaUrls: "speedbug/psephenidae_b.png"
-** node -> elmidae_larvae # mediaUrls: "speedbug/elmidae_b.png"
-** node -> byrrocryptus # mediaUrls: "speedbug/ptilodactylidae_b.png"
+* Group 5
+** Not sure -> k_crunchy_beetle_larvae	
+** node -> sclerocyphon # mediaUrls: "/taxonomy/walta/media/speedbug/psephenidae_b.png"
+** node -> elmidae_larvae # mediaUrls: "/taxonomy/walta/media/speedbug/elmidae_b.png"
+** node -> byrrocryptus # mediaUrls: "/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"
 	
-* Not sure node -> k_larval	
-** node -> hydrobiosidae # mediaUrls: "speedbug/hydrobiosidae_b.png"
-** node -> hydropsychidae # mediaUrls: "speedbug/hydropsychidae_b.png"
-** node -> k_dytiscidae_L # mediaUrls: "speedbug/dytiscidae_L_b.png"
-** node -> k_dytiscidae_L # mediaUrls: "speedbug/twotailedtiger_b.png"
-** node -> neuroptera # mediaUrls: "speedbug/neuroptera_b.png"
-** node -> corydalidae # mediaUrls: "speedbug/megaloptera_b.png"
-** node -> berosus # mediaUrls: "speedbug/berosus_b.png"
-** node -> gyrinidae_larvae # mediaUrls: "speedbug/gyrinidae_larva_b.png"
+* Group 6
+** Not sure -> k_larval	
+** node -> hydrobiosidae # mediaUrls: "/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"
+** node -> hydropsychidae # mediaUrls: "/taxonomy/walta/media/speedbug/hydropsychidae_b.png"
+** node -> k_dytiscidae_L # mediaUrls: "/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"
+** node -> k_dytiscidae_L # mediaUrls: "/taxonomy/walta/media/speedbug/twotailedtiger_b.png"
+** node -> neuroptera # mediaUrls: "/taxonomy/walta/media/speedbug/neuroptera_b.png"
+** node -> corydalidae # mediaUrls: "/taxonomy/walta/media/speedbug/megaloptera_b.png"
+** node -> berosus # mediaUrls: "/taxonomy/walta/media/speedbug/berosus_b.png"
+** node -> gyrinidae_larvae # mediaUrls: "/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"
 	
-* Not sure node -> k_cased	
-** node -> lepidoptera # mediaUrls: "speedbug/lepidoptera_b.png"
-** node -> atriplectides # mediaUrls: "speedbug/atriplectides_b.png"
-** node -> k_cased # mediaUrls: "speedbug/conoesucidae_b.png"
-** node -> philorheithridae # mediaUrls: "speedbug/philorheithridae_b.png"
-** node -> triplectides # mediaUrls: "speedbug/triplectides_b.png"
+* Group 7
+** Not sure -> k_cased	
+** node -> lepidoptera # mediaUrls: "/taxonomy/walta/media/speedbug/lepidoptera_b.png"
+** node -> atriplectides # mediaUrls: "/taxonomy/walta/media/speedbug/atriplectides_b.png"
+** node -> k_cased # mediaUrls: "/taxonomy/walta/media/speedbug/conoesucidae_b.png"
+** node -> philorheithridae # mediaUrls: "/taxonomy/walta/media/speedbug/philorheithridae_b.png"
+** node -> triplectides # mediaUrls: "/taxonomy/walta/media/speedbug/triplectides_b.png"
 	
-* Not sure node -> k_notonectidae	
-** node -> anisops # mediaUrls: "speedbug/anisops_b.png"
-** node -> enithares # mediaUrls: "speedbug/enithares_b2.png"
+* Group 8 
+** Not sure -> k_notonectidae	
+** node -> anisops # mediaUrls: "/taxonomy/walta/media/speedbug/anisops_b.png"
+** node -> enithares # mediaUrls: "/taxonomy/walta/media/speedbug/enithares_b2.png"
 	
-* Not sure node -> k_bugs	
-** node -> veliidae_mesoveliidae_and_hebridae # mediaUrls: "speedbug/veliids_b.png"
-** node -> k_corixidae # mediaUrls: "speedbug/corixidae_b.png"
-** node -> naucoris # mediaUrls: "speedbug/naucoridae_b.png"
+* Group 9 
+** Not sure -> k_bugs	
+** node -> veliidae_mesoveliidae_and_hebridae # mediaUrls: "/taxonomy/walta/media/speedbug/veliids_b.png"
+** node -> k_corixidae # mediaUrls: "/taxonomy/walta/media/speedbug/corixidae_b.png"
+** node -> naucoris # mediaUrls: "/taxonomy/walta/media/speedbug/naucoridae_b.png"
 	
-* Not sure node -> k_coleoptera	
-** node -> k_dytiscidae # mediaUrls: "speedbug/divingbeetles_b.png"
-** node -> k_dytiscidae # mediaUrls: "speedbug/divingbeetletop_b.png"
-** node -> hydrophilidae_adult # mediaUrls: "speedbug/hydrophilus_b.png"
-** node -> gyrinidae_adult # mediaUrls: "speedbug/gyrinidae_b.png"
+* Group 10
+** Not sure -> k_coleoptera	
+** node -> k_dytiscidae # mediaUrls: "/taxonomy/walta/media/speedbug/divingbeetles_b.png"
+** node -> k_dytiscidae # mediaUrls: "/taxonomy/walta/media/speedbug/divingbeetletop_b.png"
+** node -> hydrophilidae_adult # mediaUrls: "/taxonomy/walta/media/speedbug/hydrophilus_b.png"
+** node -> gyrinidae_adult # mediaUrls: "/taxonomy/walta/media/speedbug/gyrinidae_b.png"
 	
-* Not sure node -> k_nepidae	
-** node -> ranatra # mediaUrls: "speedbug/ranatra_b.png"
-** node -> laccotrephes # mediaUrls: "speedbug/laccotrephes_b.png"
+* Group 11
+** Not sure -> k_nepidae	
+** node -> ranatra # mediaUrls: "/taxonomy/walta/media/speedbug/ranatra_b.png"
+** node -> laccotrephes # mediaUrls: "/taxonomy/walta/media/speedbug/laccotrephes_b.png"
+** node -> hydrometridae # mediaUrls: "/taxonomy/walta/media/speedbug/hydrometridae_b.png"
+** node -> gerridae # mediaUrls: "/taxonomy/walta/media/speedbug/gerridae_b.png"
 	
-** node -> hydrometridae # mediaUrls: "speedbug/hydrometridae_b.png"
-** node -> gerridae # mediaUrls: "speedbug/gerridae_b.png"
+* Group 12
+** Not sure -> k_epiproctophora	
+** node -> k_epiproctophora # mediaUrls: "/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"
+** node -> spider_mud_eye # mediaUrls: "/taxonomy/walta/media/speedbug/spidermudeye_b.png"
 	
-* Not sure node -> k_epiproctophora	
-** node -> k_epiproctophora # mediaUrls: "speedbug/aeshnidae_telephleb_b.png"
-** node -> spider_mud_eye # mediaUrls: "speedbug/spidermudeye_b.png"
+* Group 13
+** Not sure -> k_zygoptera	
+** node -> megapodagrionidae # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
+** node -> k_zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
 	
-* Not sure node -> k_zygoptera	
-** node -> megapodagrionidae # mediaUrls: "speedbug/megapodagrionidae_b.png"
-** node -> k_zygoptera # mediaUrls: "speedbug/damselfly_b.png"
+* Group 14
+** Not sure -> k_plecoptera	
+** node -> illiesoperla # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
+** node -> eustheniidae # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"
 	
-* Not sure node -> k_plecoptera	
-** node -> illiesoperla # mediaUrls: "speedbug/illiesoperla_b.png"
-** node -> eustheniidae # mediaUrls: "speedbug/eusthenia_b.png"
-	
-* Not sure node -> k_ephemeroptera	
-** node -> baetidae # mediaUrls: "speedbug/baetidae_b.png"
-** node -> k_leptophlebiidae # mediaUrls: "speedbug/leptophlebiidae_b.png"
-** node -> atalophlebia # mediaUrls: "speedbug/atalophlebia_b.png"
-** node -> coloburiscoides # mediaUrls: "speedbug/coloburiscidae_b.png"
+* Group 15
+** Not sure -> k_ephemeroptera	
+** node -> baetidae # mediaUrls: "/taxonomy/walta/media/speedbug/baetidae_b.png"
+** node -> k_leptophlebiidae # mediaUrls: "/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"
+** node -> atalophlebia # mediaUrls: "/taxonomy/walta/media/speedbug/atalophlebia_b.png"
+** node -> coloburiscoides # mediaUrls: "/taxonomy/walta/media/speedbug/coloburiscidae_b.png"
 
-*->	
-** node -> acarina # mediaUrls: "speedbug/hydracarina_b.png"
+* node -> acarina # mediaUrls: "/taxonomy/walta/media/speedbug/hydracarina_b.png"
 
-*->
-** node -> pisauridae_and_lycosidae # mediaUrls: "speedbug/pisauridae_b.png"
+* node -> pisauridae_and_lycosidae # mediaUrls: "/taxonomy/walta/media/speedbug/pisauridae_b.png"
 	
-* Not sure node -> k_crustacea	
-** node -> hymenosomatidae # mediaUrls: "speedbug/hymenosomatidae_b.png"
-** node -> k_shrimpandprawns # mediaUrls: "speedbug/atyidae_b.png"
-** node -> parastacidae # mediaUrls: "speedbug/parastacidae_b.png"
-** node -> amphipoda # mediaUrls: "speedbug/amphipoda_b.png"
-** node -> notostraca # mediaUrls: "speedbug/notostraca_b.png"
-** node -> anostraca # mediaUrls: "speedbug/anostraca_b.png" 
+* Group 16
+** Not sure -> k_crustacea	
+** node -> hymenosomatidae # mediaUrls: "/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"
+** node -> k_shrimpandprawns # mediaUrls: "/taxonomy/walta/media/speedbug/atyidae_b.png"
+** node -> parastacidae # mediaUrls: "/taxonomy/walta/media/speedbug/parastacidae_b.png"
+** node -> amphipoda # mediaUrls: "/taxonomy/walta/media/speedbug/amphipoda_b.png"
+** node -> notostraca # mediaUrls: "/taxonomy/walta/media/speedbug/notostraca_b.png"
+** node -> anostraca # mediaUrls: "/taxonomy/walta/media/speedbug/anostraca_b.png" 
 
 
 /* Question Nodes */

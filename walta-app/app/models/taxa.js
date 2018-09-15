@@ -1,10 +1,9 @@
 exports.definition = {
 	config: {
 		columns: {
-		    "taxonCode": "VARCHAR(6)",
-		    "multiplicity": "INTEGER",
+		    "multiplicity": "VARCHAR(6)",
 				"sampleId": "INTEGER", // Foreign key to sample database
-				"taxonId": "INTEGER PRIMARY KEY AUTOINCREMENT"
+				"taxonId": "INTEGER PRIMARY KEY"
 		},
 		adapter: {
 			type: "sql",
@@ -22,17 +21,7 @@ exports.definition = {
 	},
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, {
-			// extended functions and properties go here
-
-			// For Backbone v1.1.2, uncomment the following to override the
-			// fetch method to account for a breaking change in Backbone.
-			/*
-			fetch: function(options) {
-				options = options ? _.clone(options) : {};
-				options.reset = true;
-				return Backbone.Collection.prototype.fetch.call(this, options);
-			}
-			*/
+			
 		});
 
 		return Collection;

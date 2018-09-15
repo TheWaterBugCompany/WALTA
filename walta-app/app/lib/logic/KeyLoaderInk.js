@@ -21,6 +21,7 @@ var fs = require('fs');
 var Key = require('./Key');
 var Taxon = require('./Taxon');
 var Question = require('./Question');
+var SpeedbugIndex = require('./SpeedbugIndex');
 
 /*
 	Since XML keys can be a pain to develop - this is an experimental key loader that reads
@@ -102,9 +103,6 @@ function container( { root, parent, node } ) {
 		},
 
 		lookUpIndexInParent() {
-			/*var index = this.parent.namedNodeToIndex[this.name];
-			console.log(`looking up "${this.name}" parent index = ${index}`);
-			return index;*/
 			if ( _.isUndefined( this.parent ) ) {
 				return;
 			}
@@ -137,6 +135,7 @@ function container( { root, parent, node } ) {
 }
 
 function processContainer( container, key ) {
+	console.log(`container: ${container}`);
 	// Initial state
 	state = {
 		localVars: {},
@@ -217,11 +216,14 @@ function processContainer( container, key ) {
 	}
 
 	function jumpToRef( refObj ) {
+		console.log(`jumpToRef: ${refObj}`);
 		setNextToExecute( refObj, 0 );
 	}
 
 	function jumpToPath( path ) {
-		state.lastDivertPath = path;
+		console.log(`jumpToPath: ${path}`);
+		if ( !path.includes(".") )
+			state.currentNode.id = path;
 		setNextToExecute( lookUpCurrentPath( path ), 0 );
 	}
 
@@ -316,17 +318,19 @@ function processContainer( container, key ) {
 	function startNode( ) {
 		state.currentNode = Key.createKeyNode( { 
 			// only give it a name if the last path was an absolute path
-			id: ( state.lastDivertPath && state.lastDivertPath.startsWith(".") ? null : state.lastDivertPath ),
+			//id: ( state.lastDivertPath && state.lastDivertPath.includes(".") ? null : state.lastDivertPath ),
 			parentLink: state.currentNode
 		} );
 		if ( state.currentQuestion ) {
 			state.currentQuestion.outcome = state.currentNode;
 		}
 		state.isTaxon = false;
+		console.log(`starting node: ${state.currentNode.id}`);
 
 	}
 
 	function addQuestion( text ) {
+		console.log(`adding question ${text}`);
 		state.currentQuestion = { text: text };
 		state.currentNode.questions.push( state.currentQuestion );
 	}
@@ -334,14 +338,18 @@ function processContainer( container, key ) {
 	function collectAttribute( name, value ) {
 		try {
 			if ( name === "taxonId" ) {
+				console.log(`starting taxon ${value}`);
 				state.isTaxon = true;
 				state.currentNode = {
-					id: state.currentNode.id
+					id: state.currentNode.id,
+					parentLink: state.currentNode.parentLink
 				}
 			}
 			if ( state.isTaxon ) {
+				console.log(`adding attribute to taxon [${name}] = ${value}`);
 				state.currentNode[name] = JSON.parse(value);
 			} else if ( state.currentQuestion ) {
+				console.log(`adding attribute to question [${name}] = ${value}`);
 				state.currentQuestion[name] = JSON.parse(value);
 			}
 		} catch( e ) {
@@ -351,10 +359,16 @@ function processContainer( container, key ) {
 
 	function endNode() {
 		if ( state.isTaxon ) {
-			var taxon = Taxon.createTaxon( state.currentNode);
-			state.currentQuestion.outcome = taxon;
-			key.attachTaxon( taxon );
+			
+			if ( ! key.findTaxonById( state.currentNode.id ) ) {
+				console.log(`creating new taxon`);
+				var taxon = Taxon.createTaxon( state.currentNode);
+				state.currentQuestion.outcome = taxon;
+				key.attachTaxon( taxon );
+			}
+			console.log(`ending taxon`);
 		} else {
+			console.log(`ending key node`);
 			key.attachNode( state.currentNode );
 		}
 		state.currentNode = null;
@@ -427,6 +441,41 @@ function processContainer( container, key ) {
 function parseInk( inkJson, key ) {
 	console.log("Running ink script...");
 	processContainer( container( { node: inkJson["root"] } ), key );
+
+	/* The entire key has two options in the root node, the first
+	   is the "ALT Key" index. The second is the "Speedbug Index".
+	   We need to separate these nodes to cosntruct the speedbug index. */
+	console.log("Processing speed bug...");
+	var root = key.getRootNode(); // original root node
+	var altKey = root.findQuestion( "ALT Key" ).outcome;
+	var speedBug = root.findQuestion( "Speedbug" ).outcome;
+	key.dettachNode( root );
+	key.dettachNode( altKey );
+	key.dettachNode( speedBug );
+	altKey.parentLink = null;
+	key.setRootNode( altKey );
+	var speedbugIndex = key.getSpeedbugIndex();
+	console.log(`number of speed bug links = ${speedBug.questions.length}`);
+	speedBug.questions.forEach( (q) =>{ 
+		if ( q.text && q.outcome.questions ) {
+			var notSure = q.outcome.questions.shift();
+			console.log( `not sure = ${notSure.text}` );
+			if ( notSure.text.trim().toLowerCase() !== "not sure" ) 
+				throw new Error("The first link needs to be the Not Sure link");
+			var groupId = notSure.outcome.id;
+			speedbugIndex.addSpeedbugGroup( groupId );
+			console.log( `${q.text} -> ${groupId}`);
+			q.outcome.questions.forEach( (q2) => {
+				console.log(`\t${q2.text} -> ${q2.outcome.id}` );
+				speedbugIndex.addSpeedbugIndex( q2.mediaUrls, groupId, q2.outcome.id );
+			});
+
+		} else {
+			console.log(`${q.text} -> ${q.outcome.id}` );
+			speedbugIndex.addSpeedbugGroup( q.outcome.id );
+			speedbugIndex.addSpeedbugIndex( q.mediaUrls, q.outcome.id, q.outcome.id );
+		}
+	});
 	console.log("Finished.");
 	return key;
 }

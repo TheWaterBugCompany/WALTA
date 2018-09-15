@@ -33,6 +33,12 @@ exports.definition = {
 			*/
 			createNewSample: function() {
 
+			},
+
+			load: function() {
+				this.fetch();
+				Alloy.Collections.instance("taxa")
+					.fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );
 			}
 		});
 

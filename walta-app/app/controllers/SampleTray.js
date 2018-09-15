@@ -1,4 +1,5 @@
-var speedbugIndex = $.args.speedbugIndex;
+var key = $.args.key;
+var speedbugIndex = $.args.key.getSpeedbugIndex();
 
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
@@ -127,6 +128,7 @@ function createAddIcon() {
       left: 0,
       width: `${endcapWidth*0.5}dp`,
       height: `${endcapHeight*0.25}dp`,
+      accessibilityLabel: "Add",
       backgroundImage: "/images/plus-icon.png"
     });
     addIconCache.addEventListener( 'click', startIdentification );
@@ -285,3 +287,35 @@ $.getView().addEventListener( "close", function cleanup() {
   Alloy.Collections["taxa"].off("add change remove", drawIcecubeTray );
   $.getView().removeEventListener("close", cleanup);
 });
+
+function closeEditScreen() {
+  $.getView().remove( $.editTaxon.getView() );
+}
+
+function editTaxon( taxon_id ) {
+  var taxon = Alloy.Collections["taxa"].get( taxon_id );
+  if ( !taxon ) {
+    taxon = Alloy.createModel( 'taxa', {taxonId: taxon_id, multiplicity: "1-2"} );
+    console.log(`new taxon = ${JSON.stringify(taxon)} isNew = ${taxon.isNew()}`);
+  }
+  $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
+  $.getView().add( $.editTaxon.getView() );
+  
+  $.editTaxon.on("close", function() {
+    closeEditScreen();
+  });
+
+  $.editTaxon.on("delete", function(taxon) {
+    closeEditScreen();
+  });
+
+  $.editTaxon.on("save", function(taxon) {
+
+    closeEditScreen();
+  });
+}
+
+if ( $.args.taxonId ) {
+  $.getView().on("open", () => editTaxon( $.args.taxonId ) );
+}
+exports.editTaxon = editTaxon;

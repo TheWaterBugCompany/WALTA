@@ -2,16 +2,16 @@
 	<View class="overlay">
 		<View id="window" class="window" layout="vertical">
 			<View id="header" class="shrinkWrap">
-				<Label id="taxonName" class="headingText" text="Taxonomic Identification"/>
+				<Label id="taxonName" class="headingText" accessibilityLabel="Taxon Name" text="Taxonomic Identification"/>
 				<View id="closeButton">
-					<ImageView class="close_button_image"></ImageView>
+					<ImageView class="close_button_image" accessibilityLabel="Close"></ImageView>
 				</View>
 			</View>
 			<Require type="view" src="PhotoSelect" id="photoSelect" />
 			<View id="right" layout="vertical">
 				<Label id="howManyLabel" class="labelText" text="How many did you see?"/>
 				<View id="abundance" class="shrinkWrap" layout="horizontal">
-					<Slider id="abundanceValue" min="1" max="21" value="1" onChange="updateAbundance"/>
+					<Slider id="abundanceValue" accessibilityLabel="Abundance Slider" min="1" max="21" value="1" onChange="updateAbundance"/>
 					<Label id="abundanceLabel" text="1-2" class="labelText"/>
 				</View>
 				<View class="shrinkWrap" layout="horizontal">

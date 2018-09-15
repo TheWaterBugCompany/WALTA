@@ -27,7 +27,7 @@ end
 
 file 'walta-app/build/android/bin/Waterbug.apk' => titanium_source_files do
   sh("appc ti build --project-dir walta-app --build-only --platform android "\
-    " --deploy-type production --keystore ${KEYSTORE} "\
+    " --deploy-type development --keystore ${KEYSTORE} "\
     "--store-password ${KEYSTORE_PASSWORD} "\
     "--alias ${KEYSTORE_SUBKEY} ")
 end
@@ -42,11 +42,11 @@ end
 
 task :test => [ :start_emulator, 'walta-app/build/android/bin/Waterbug.apk', :uninstall_app ] do
   
-  sh("calabash-android run walta-app/build/android/bin/Waterbug.apk features/registration.feature")
+  sh("calabash-android run walta-app/build/android/bin/Waterbug.apk features/identify_taxa.feature")
 end
 
 task :test_console => [:start_emulator, 'walta-app/build/android/bin/Waterbug.apk', :uninstall_app  ] do
-  sh("calabash-android console walta-app/build/android/bin/Waterbug.apk features/registration.feature")
+  sh("calabash-android console walta-app/build/android/bin/Waterbug.apk features/identify_taxa.feature")
 end
 
 task :unit_test do

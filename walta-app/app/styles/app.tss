@@ -33,7 +33,8 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 ".overlay" : {
-	backgroundColor: "#50000000"
+	backgroundColor: "#50000000",
+    zIndex: "100"
 }
 
 ".shrinkWrap": {

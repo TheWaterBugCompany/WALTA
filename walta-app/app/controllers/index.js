@@ -6,8 +6,7 @@ if ( Alloy.CFG.unitTestMode ) {
 } else {
   var CerdiApi = require("logic/CerdiApi");
   Alloy.Globals.AppWindow = require("control/AppWindow");
-  Alloy.Globals.SampleDatabase = require("logic/SampleDatabase");
   Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
-  Alloy.Globals.SampleDatabase.load();
+  Alloy.Collections.instance("sample").load();
   Alloy.Globals.AppWindow.createAppWindow( "walta" ).start();
 }
