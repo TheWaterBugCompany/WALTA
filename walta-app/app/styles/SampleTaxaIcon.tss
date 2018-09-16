@@ -1,10 +1,10 @@
-"#multiplicity": {
+"#abundance": {
   right: "2dp",
   bottom: "6dp",
   color: "#fff",
   backgroundColor: "#f00",
   borderColor: "#f00",
-  width: "16dp",
+  width: "24dp",
   height: "16dp",
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   borderRadius: "8dp"

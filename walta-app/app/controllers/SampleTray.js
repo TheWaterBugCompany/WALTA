@@ -124,14 +124,14 @@ var addIconCache = null;
 function createAddIcon() {
   if ( !addIconCache ) {
     addIconCache = Ti.UI.createButton({
-      top: `${endcapHeight*0.05}dp`,
-      left: 0,
-      width: `${endcapWidth*0.5}dp`,
-      height: `${endcapHeight*0.25}dp`,
+      top: `${endcapHeight*0.10}dp`,
+      left: `${endcapWidth*0.15}dp`,
+      width: `${endcapWidth*0.25}dp`,
+      height: `${endcapHeight*0.13}dp`,
       accessibilityLabel: "Add",
       backgroundImage: "/images/plus-icon.png"
     });
-    addIconCache.addEventListener( 'click', startIdentification );
+    
   }
   return addIconCache;
 }
@@ -162,6 +162,7 @@ function createSampleTrayTile( tileNum ) {
         width: `${middleWidth}dp`
   });
   tile.add( trayBackground );
+  
   var icons = fillSampleTrayIcons( mapTileNumToCollection(tileNum) );
   tile.add( icons.container );
   return { container: tile, icons: icons.icons };
@@ -276,6 +277,7 @@ function adjustTraySize() {
   }
 }
 
+$.content.addEventListener( "click", startIdentification );
 $.content.addEventListener( "scroll", drawIcecubeTray );
 $.content.addEventListener( "postlayout", adjustTraySize );
 
@@ -295,7 +297,7 @@ function closeEditScreen() {
 function editTaxon( taxon_id ) {
   var taxon = Alloy.Collections["taxa"].get( taxon_id );
   if ( !taxon ) {
-    taxon = Alloy.createModel( 'taxa', {taxonId: taxon_id, multiplicity: "1-2"} );
+    taxon = Alloy.createModel( 'taxa', {taxonId: taxon_id, abundance: "1-2"} );
     console.log(`new taxon = ${JSON.stringify(taxon)} isNew = ${taxon.isNew()}`);
   }
   $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );

@@ -2,11 +2,12 @@ Feature: Identify Taxa
 
 Having found a species I would like to identify its taxa.
 
+@only
 Scenario: Add a taxon to the sample
   Given I identify and store a Taxon
    Then the EditTaxon screen is opened
    When I set the abundance to "3-5"
-    And I press "Save"
+    And I save the taxon
    Then the taxon displays "3-5" for the abundance
 
 Scenario: Identify taxa via ALT key

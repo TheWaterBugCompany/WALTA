@@ -32,6 +32,6 @@ describe( 'Sample model', function() {
   });
   context('Sample model', function() {
     it('should store a taxonId');
-    it('should store a multiplicity');
+    it('should store a abundance');
   });
 });

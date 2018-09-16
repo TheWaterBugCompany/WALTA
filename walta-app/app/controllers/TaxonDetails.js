@@ -41,7 +41,8 @@ function createActionButton(imageUrl, label, onClick) {
 	vws.btn = Ti.UI.createButton({
 		width : Layout.BUTTON_SIZE,
 		height : Layout.BUTTON_SIZE,
-		backgroundImage : imageUrl
+		backgroundImage : imageUrl,
+		accessibilityLabel: `${label} Button`
 	});
 	vws.btn.addEventListener('click', onClick);
 

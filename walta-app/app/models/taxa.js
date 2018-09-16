@@ -1,7 +1,7 @@
 exports.definition = {
 	config: {
 		columns: {
-		    "multiplicity": "VARCHAR(6)",
+		    "abundance": "VARCHAR(6)",
 				"sampleId": "INTEGER", // Foreign key to sample database
 				"taxonId": "INTEGER PRIMARY KEY"
 		},

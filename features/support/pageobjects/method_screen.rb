@@ -2,7 +2,7 @@ require_relative '../android/base_page_object'
 
 class MethodScreen < BasePageObject
     def trait
-      ""* marked:'Select identification method:'""
+      "* marked:'Select identification method:'"
     end
 
     def browse

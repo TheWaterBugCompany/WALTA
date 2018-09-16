@@ -1,8 +1,8 @@
-// Arguments passed into this controller can be accessed via the `$.args` object directly or:
+var Topics = require('ui/Topics');
 var taxon = $.args.taxon;
 var speedbugIndex = $.args.speedbugIndex;
 setImage( taxon.get("taxonId") );
-setMultiplicity( taxon.get("multiplicity") );
+setAbundance( taxon.get("abundance") );
 
 var lastTaxonId;
 function setImage( taxonId ) {
@@ -11,24 +11,29 @@ function setImage( taxonId ) {
   lastTaxonId = taxonId;
 }
 
-var lastMultiplicity;
-function setMultiplicity( multiplicity ) {
-  $.multiplicity.text = multiplicity;
-  if ( multiplicity !== 1 ) {
-    $.multiplicity.show();
+var lastAbundance;
+function setAbundance( abundance ) {
+  $.abundance.text = abundance;
+  if ( abundance !== 1 ) {
+    $.abundance.show();
   } else {
-    $.multiplicity.hide();
+    $.abundance.hide();
   }
-  lastMultiplicity = multiplicity;
+  lastAbundance = abundance;
 }
 
 function update( newTaxon ) {
   if ( lastTaxonId != newTaxon.get("taxonId") ) {
     setImage( newTaxon.get("taxonId") );
   }
-  if ( lastMultiplicity != newTaxon.get("multiplicity") ) {
-    setMultiplicity( newTaxon.get("multiplicity") );
+  if ( lastAbundance != newTaxon.get("abundance") ) {
+    setAbundance( newTaxon.get("abundance") );
   }
 }
+$.getView().on("click",
+  function(e) {
+    Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: taxon.get("taxonId") } );
+    e.cancelBubble = true;
+  } );
 
 exports.update = update;

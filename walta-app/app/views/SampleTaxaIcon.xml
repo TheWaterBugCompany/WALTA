@@ -1,6 +1,6 @@
 <Alloy>
 	<View class="container">
-			<ImageView id="icon" />
-			<Label id="multiplicity" />
+			<ImageView id="icon" accessibilityLabel="Icon"/>
+			<Label id="abundance" accessibilityLabel="Abundance"/>
 	</View>
 </Alloy>

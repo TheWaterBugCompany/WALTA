@@ -1,8 +1,8 @@
 require_relative '../android/base_page_object'
 
-class SampleTrayScreen < BasePageObject
+class BrowseScreen < BasePageObject
     def trait
-      ""* marked:'Browse'""
+      "* marked:'Browse'"
     end
 
     def choose_taxon( taxon )

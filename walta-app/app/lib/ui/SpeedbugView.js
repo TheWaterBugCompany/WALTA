@@ -102,6 +102,8 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 	_(sbug).each( function( sg ) {
 		var grpCnt = Ti.UI.createView( {
 				layout: 'vertical',
+				borderColor: '#b4d2d9',
+				borderWidth: '1dip',
 				width: Ti.UI.SIZE,
 				height: Ti.UI.FILL
 			 } );
@@ -109,7 +111,7 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 		var bugsCnt = Ti.UI.createView( {
 			layout: 'horizontal',
 			horizontalWrap: false,
-			height: (screenHeightDip - 86) + "dip",
+			height: "83%",
 			width: Ti.UI.SIZE } );
 
 		_(sg.bugs).each( function( sb ) {
@@ -117,14 +119,14 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 				backgroundColor:'white',
 				  height: tileHeight,
 				  width: tileWidth,
-				  borderColor: 'blue',
-				  borderWidth: '1dip',
+				 /* borderColor: '#26849c',
+				  borderWidth: '1dip',*/
 				  left: Layout.BUTTON_MARGIN,
 				  right: Layout.BUTTON_MARGIN
 			});
 
 			// Defer loading images until they are on screen
-			Ti.API.info('speedbug ' + sb.imgUrl );
+			//Ti.API.info('speedbug ' + sb.imgUrl );
 			_pushTile( sb.imgUrl, cnt );
 
 			cnt.addEventListener( 'click', function(e) {
@@ -148,8 +150,8 @@ function createSpeedbugView(  /* Key */ key, screenHeightDip ) {
 				text: 'Not Sure?',
 				textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 				font: { font: Layout.TEXT_FONT, fontSize:  Layout.QUESTION_TEXT_SIZE },
-				color: 	'blue',
-				backgroundColor: '#552F61CC'
+				color: 	'#26849c',
+				backgroundColor: '#b4d2d9'
 			});
 
 			notSureBtn.addEventListener( 'click', function(e) {

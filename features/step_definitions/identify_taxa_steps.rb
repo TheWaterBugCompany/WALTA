@@ -44,20 +44,25 @@ Given(/^I identify and store a Taxon$/) do
   @current_page = @current_page.select_survey()
   @current_page = @current_page.start_identification()
   @current_page = @current_page.browse()
-  @current_page = @current_page.choose_taxon('')
+  @current_page = @current_page.choose_taxon('Acarina')
   @current_page = @current_page.add_to_sample()
 end
 
 Then(/^the EditTaxon screen is opened$/) do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect( @current_page ).to be_a(EditTaxonScreen)
 end
 
-When(/^I set the abundance to "([^"]*)"$/) do |arg1|
-  pending # Write code here that turns the phrase above into concrete actions
+When(/^I set the abundance to "([^"]*)"$/) do |abundance|
+  @current_page.set_abundance abundance
 end
 
-Then(/^the taxon displays "([^"]*)" for the abundance$/) do |arg1|
-  pending # Write code here that turns the phrase above into concrete actions
+When(/^I save the taxon$/) do 
+  @current_page = @current_page.save
+end
+
+Then(/^the taxon displays "([^"]*)" for the abundance$/) do |abundance|
+  expect( @current_page ).to be_a(SampleTrayScreen)
+  expect( @current_page.abundance ).to eq(abundance)
 end
 
 

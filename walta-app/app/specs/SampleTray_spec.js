@@ -61,11 +61,11 @@ describe( 'SampleTray controller', function() {
     return _.max( arr, function(c) { return c.getRect().x } );
   }
 
-  function assertSample( taxon, image, multiplicity ) {
+  function assertSample( taxon, image, abundance ) {
     var unwrapped = taxon.getChildren()[0];
     var [ icon, label ] = unwrapped.getChildren();
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
-    expect( label.text, `Expected the multiplicity label to be ${multiplicity}` ).to.equal( multiplicity );
+    expect( label.text, `Expected the abundance label to be ${abundance}` ).to.equal( abundance );
   }
 
   function clickPlus( square ) {
@@ -112,7 +112,7 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -130,8 +130,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 2 },
-            { taxonId: "WB3", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "3-5" },
+            { taxonId: "WB3", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -148,9 +148,9 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 2 },
-            { taxonId: "WB3", multiplicity: 1 },
-            { taxonId: "WB5", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "3-5" },
+            { taxonId: "WB3", abundance: "1-2" },
+            { taxonId: "WB5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -168,10 +168,10 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 2 },
-            { taxonId: "WB3", multiplicity: 1 },
-            { taxonId: "WB5", multiplicity: 1 },
-            { taxonId: "WB2", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "3-5" },
+            { taxonId: "WB3", abundance: "1-2" },
+            { taxonId: "WB5", abundance: "1-2" },
+            { taxonId: "WB2", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -188,11 +188,11 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 2 },
-            { taxonId: "WB3", multiplicity: 1 },
-            { taxonId: "WB5", multiplicity: 2 },
-            { taxonId: "WB2", multiplicity: 1 },
-            { taxonId: "WB4", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "3-5" },
+            { taxonId: "WB3", abundance: "1-2" },
+            { taxonId: "WB5", abundance: "3-5" },
+            { taxonId: "WB2", abundance: "1-2" },
+            { taxonId: "WB4", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -209,20 +209,20 @@ describe( 'SampleTray controller', function() {
         return Promise.resolve()
           .then( function() {
             mocx.createCollection("taxa", [
-              { taxonId: "WB1", multiplicity: 2 },
-              { taxonId: "WB2", multiplicity: 3 },
+              { taxonId: "WB1", abundance: "3-5" },
+              { taxonId: "WB2", abundance: "6-10" },
 
-              { taxonId: "WB3", multiplicity: 2 },
-              { taxonId: "WB4", multiplicity: 1 },
-              { taxonId: "WB5", multiplicity: 1 },
-              { taxonId: "WB1", multiplicity: 3 },
+              { taxonId: "WB3", abundance: "3-5" },
+              { taxonId: "WB4", abundance: "1-2" },
+              { taxonId: "WB5", abundance: "1-2" },
+              { taxonId: "WB1", abundance: "6-10" },
 
-              { taxonId: "WB1", multiplicity: 1 },
-              { taxonId: "WB3", multiplicity: 1 },
-              { taxonId: "WB2", multiplicity: 1 },
-              { taxonId: "WB2", multiplicity: 2 },
+              { taxonId: "WB1", abundance: "1-2" },
+              { taxonId: "WB3", abundance: "1-2" },
+              { taxonId: "WB2", abundance: "1-2" },
+              { taxonId: "WB2", abundance: "3-5" },
 
-              { taxonId: "WB5", multiplicity: 6 }
+              { taxonId: "WB5", abundance: "11-20" }
             ]);
             setupSampleTray();
           })
@@ -272,38 +272,38 @@ describe( 'SampleTray controller', function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
       mocx.createCollection("taxa", [
-        { taxonId: "WB1", multiplicity: 2 }, // 0
-        { taxonId: "WB2", multiplicity: 3 },
+        { taxonId: "WB1", abundance: "3-5" }, // 0
+        { taxonId: "WB2", abundance: "6-10" },
 
-        { taxonId: "WB3", multiplicity: 2 }, // 1
-        { taxonId: "WB4", multiplicity: 1 },
-        { taxonId: "WB5", multiplicity: 1 },
-        { taxonId: "WB1", multiplicity: 3 },
+        { taxonId: "WB3", abundance: "3-5" }, // 1
+        { taxonId: "WB4", abundance: "1-2" },
+        { taxonId: "WB5", abundance: "1-2" },
+        { taxonId: "WB1", abundance: "6-10" },
 
-        { taxonId: "WB2", multiplicity: 1 }, // 2
-        { taxonId: "WB3", multiplicity: 1 },
-        { taxonId: "WB4", multiplicity: 1 },
-        { taxonId: "WB5", multiplicity: 2 },
+        { taxonId: "WB2", abundance: "1-2" }, // 2
+        { taxonId: "WB3", abundance: "1-2" },
+        { taxonId: "WB4", abundance: "1-2" },
+        { taxonId: "WB5", abundance: "3-5" },
 
-        { taxonId: "WB1", multiplicity: 2 }, // 3
-        { taxonId: "WB2", multiplicity: 1 },
-        { taxonId: "WB3", multiplicity: 2 },
-        { taxonId: "WB4", multiplicity: 3 },
+        { taxonId: "WB1", abundance: "3-5" }, // 3
+        { taxonId: "WB2", abundance: "1-2" },
+        { taxonId: "WB3", abundance: "3-5" },
+        { taxonId: "WB4", abundance: "6-10" },
 
-        { taxonId: "WB5", multiplicity: 2 }, // 4
-        { taxonId: "WB4", multiplicity: 1 },
-        { taxonId: "WB3", multiplicity: 2 },
-        { taxonId: "WB2", multiplicity: 1 },
+        { taxonId: "WB5", abundance: "3-5" }, // 4
+        { taxonId: "WB4", abundance: "1-2" },
+        { taxonId: "WB3", abundance: "3-5" },
+        { taxonId: "WB2", abundance: "1-2" },
 
-        { taxonId: "WB1", multiplicity: 2 },
-        { taxonId: "WB2", multiplicity: 1 },
-        { taxonId: "WB3", multiplicity: 2 },
-        { taxonId: "WB4", multiplicity: 1 },
+        { taxonId: "WB1", abundance: "3-5" },
+        { taxonId: "WB2", abundance: "1-2" },
+        { taxonId: "WB3", abundance: "3-5" },
+        { taxonId: "WB4", abundance: "1-2" },
 
-        { taxonId: "WB1", multiplicity: 2 },
-        { taxonId: "WB2", multiplicity: 1 },
-        { taxonId: "WB3", multiplicity: 2 },
-        { taxonId: "WB4", multiplicity: 1 }
+        { taxonId: "WB1", abundance: "3-5" },
+        { taxonId: "WB2", abundance: "1-2" },
+        { taxonId: "WB3", abundance: "3-5" },
+        { taxonId: "WB4", abundance: "1-2" }
       ]);
       setupSampleTray();
     });
@@ -466,7 +466,7 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].add( { taxonId: "WB1", multiplicity: 2 } );
+              Alloy.Collections["taxa"].add( { taxonId: "WB1", abundance: "3-5" } );
           });
         })
         .then( function() {
@@ -482,9 +482,9 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 2 },
-            { taxonId: "WB3", multiplicity: 1 },
-            { taxonId: "WB5", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "3-5" },
+            { taxonId: "WB3", abundance: "1-2" },
+            { taxonId: "WB5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -495,7 +495,7 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].add( { taxonId: "WB4", multiplicity: 2 } );
+              Alloy.Collections["taxa"].add( { taxonId: "WB4", abundance: "3-5" } );
           });
         })
         .then( function() {
@@ -511,8 +511,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 2 },
-            { taxonId: "WB5", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "3-5" },
+            { taxonId: "WB5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -538,10 +538,10 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 2 },
-            { taxonId: "WB3", multiplicity: 1 },
-            { taxonId: "WB5", multiplicity: 1 },
-            { taxonId: "WB2", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "3-5" },
+            { taxonId: "WB3", abundance: "1-2" },
+            { taxonId: "WB5", abundance: "1-2" },
+            { taxonId: "WB2", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -563,12 +563,12 @@ describe( 'SampleTray controller', function() {
         });
     });
 
-    it('should update when a taxon multiplicity is changed', function() {
+    it('should update when a taxon abundance is changed', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", multiplicity: 1 },
-            { taxonId: "WB5", multiplicity: 1 }
+            { taxonId: "WB1", abundance: "1-2" },
+            { taxonId: "WB5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -579,7 +579,7 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].at(1).set('multiplicity', 2);
+              Alloy.Collections["taxa"].at(1).set("abundance", "1-2");
           });
         })
         .then( function() {

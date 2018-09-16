@@ -2,17 +2,17 @@ var taxon = $.args.taxon;
 var key = $.args.key;
 var speedbugIndex = $.args.key.getSpeedbugIndex();
 
-$.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).name;
+$.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
 setImage( taxon.get("taxonId") );
-setMultiplicity( taxon.get("multiplicity") );
+setAbundance( taxon.get("abundance") );
 
 function setImage( taxonId ) {
   $.photoSelect.setImage( speedbugIndex.getSpeedbugFromTaxonId( taxonId  ) );
 }
 
-function setMultiplicity( binValue  ) {
-    taxon.set("multiplicity", binValue) 
+function setAbundance( binValue  ) {
+    taxon.set("abundance", binValue) 
     var nums = binValue.split("-");
     $.abundanceValue.value = ( parseInt(nums[1]) + parseInt(nums[0]) ) / 2;
     
@@ -35,7 +35,7 @@ function updateAbundance() {
     $.abundanceLabel.text = binValue; 
 }
 $.saveButton.on("click", () => {
-    taxon.set('multiplicity', $.abundanceLabel.text );
+    taxon.set("abundance", $.abundanceLabel.text );
     Alloy.Collections["taxa"].add( taxon );
     taxon.save();
     $.trigger("save", taxon );

@@ -2,10 +2,16 @@ require_relative '../android/base_page_object'
 
 class TaxonScreen < BasePageObject
     def trait
-      "ALT Key"
+      "* marked:'ALT Key'"
     end
+    
+    def add_to_sample_button
+      field("Add To Sample Button.")
+    end
+
     def add_to_sample
-      select("Add To Sample")
-      return page(EditTaxon).await
+      wait_for_elements_exist( [add_to_sample_button] )
+      touch(add_to_sample_button)
+      return page(EditTaxonScreen).await
     end  
 end

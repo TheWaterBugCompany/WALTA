@@ -33,7 +33,7 @@ describe.only("EditTaxon controller", function() {
     }
     
 	it('should display the taxon edit view', function(done) {
-        makeEditTaxon( { taxonId:"WB1", multiplicity:"3-5" } );
+        makeEditTaxon( { taxonId:"WB1", abundance:"3-5" } );
         windowOpenTest( win, function() {
             expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
             expect( ctl.photoSelect.photo.image ).to.include("aeshnidae_telephleb_b.png");
@@ -53,7 +53,7 @@ describe.only("EditTaxon controller", function() {
 
         function checkAbundance( bin, val ) {
             return new Promise( (resolve) => {
-                makeEditTaxon( { taxonId:"WB1", multiplicity:bin} );
+                makeEditTaxon( { taxonId:"WB1", abundance:bin} );
                 windowOpenTest( win, function() {
                     expect( ctl.abundanceValue.value ).to.equal(val);
                     expect( ctl.abundanceLabel.text ).to.equal(bin);
