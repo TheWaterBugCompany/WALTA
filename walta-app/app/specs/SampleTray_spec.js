@@ -2,16 +2,20 @@ require('specs/lib/ti-mocha');
 
 var { expect } = require('specs/lib/chai');
 var { closeWindow, checkTestResult } = require('specs/util/TestUtils');
-var MockSpeedbug = require('specs/mocks/MockSpeedbug');
 var mocx = require("specs/lib/mocx");
 var Topics = require('ui/Topics');
+
+var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
+var { keyMock } = require('specs/mocks/MockKey');
+keyMock.setSpeedbugIndex( speedBugIndexMock );
+
 
 describe( 'SampleTray controller', function() {
   this.timeout(10000);
   var SampleTray, SampleTrayWin;
 
   function setupSampleTray() {
-    SampleTray = Alloy.createController("SampleTray", { speedbugIndex: MockSpeedbug.speedBugIndexMock });
+    SampleTray = Alloy.createController("SampleTray", { key: keyMock });
     SampleTrayWin = SampleTray.getView();
   }
 
@@ -112,7 +116,7 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "1-2" }
+            { taxonId: "1", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -130,8 +134,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "3-5" },
-            { taxonId: "WB3", abundance: "1-2" }
+            { taxonId: "1", abundance: "3-5" },
+            { taxonId: "3", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -148,9 +152,9 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "3-5" },
-            { taxonId: "WB3", abundance: "1-2" },
-            { taxonId: "WB5", abundance: "1-2" }
+            { taxonId: "1", abundance: "3-5" },
+            { taxonId: "3", abundance: "1-2" },
+            { taxonId: "5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -168,10 +172,10 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "3-5" },
-            { taxonId: "WB3", abundance: "1-2" },
-            { taxonId: "WB5", abundance: "1-2" },
-            { taxonId: "WB2", abundance: "1-2" }
+            { taxonId: "1", abundance: "3-5" },
+            { taxonId: "3", abundance: "1-2" },
+            { taxonId: "5", abundance: "1-2" },
+            { taxonId: "2", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -188,11 +192,11 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "3-5" },
-            { taxonId: "WB3", abundance: "1-2" },
-            { taxonId: "WB5", abundance: "3-5" },
-            { taxonId: "WB2", abundance: "1-2" },
-            { taxonId: "WB4", abundance: "1-2" }
+            { taxonId: "1", abundance: "3-5" },
+            { taxonId: "3", abundance: "1-2" },
+            { taxonId: "5", abundance: "3-5" },
+            { taxonId: "2", abundance: "1-2" },
+            { taxonId: "4", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -209,20 +213,20 @@ describe( 'SampleTray controller', function() {
         return Promise.resolve()
           .then( function() {
             mocx.createCollection("taxa", [
-              { taxonId: "WB1", abundance: "3-5" },
-              { taxonId: "WB2", abundance: "6-10" },
+              { taxonId: "1", abundance: "3-5" },
+              { taxonId: "2", abundance: "6-10" },
 
-              { taxonId: "WB3", abundance: "3-5" },
-              { taxonId: "WB4", abundance: "1-2" },
-              { taxonId: "WB5", abundance: "1-2" },
-              { taxonId: "WB1", abundance: "6-10" },
+              { taxonId: "3", abundance: "3-5" },
+              { taxonId: "4", abundance: "1-2" },
+              { taxonId: "5", abundance: "1-2" },
+              { taxonId: "1", abundance: "6-10" },
 
-              { taxonId: "WB1", abundance: "1-2" },
-              { taxonId: "WB3", abundance: "1-2" },
-              { taxonId: "WB2", abundance: "1-2" },
-              { taxonId: "WB2", abundance: "3-5" },
+              { taxonId: "1", abundance: "1-2" },
+              { taxonId: "3", abundance: "1-2" },
+              { taxonId: "2", abundance: "1-2" },
+              { taxonId: "2", abundance: "3-5" },
 
-              { taxonId: "WB5", abundance: "11-20" }
+              { taxonId: "5", abundance: "11-20" }
             ]);
             setupSampleTray();
           })
@@ -234,32 +238,32 @@ describe( 'SampleTray controller', function() {
               assertTaxaBackground( tiles[0], "images/endcap_320.png" );
               var sampleTaxa = getTaxaIcons( tiles[0] );
               expect( sampleTaxa ).to.have.lengthOf(2);
-              assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", 2 );
-              assertSample( sampleTaxa[1], "/amphipoda_b.png", 3 );
+              assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", "3-5" );
+              assertSample( sampleTaxa[1], "/amphipoda_b.png", "6-10" );
 
               // assert first tile
               assertTaxaBackground( tiles[1], "images/tiling_interior_320.png" );
               sampleTaxa = getTaxaIcons( tiles[1] );
               expect( sampleTaxa ).to.have.lengthOf(4);
-              assertSample( sampleTaxa[0], "/anisops_b.png", 2 );
-              assertSample( sampleTaxa[1], "/atalophlebia_b.png", 1 );
-              assertSample( sampleTaxa[2], "/anostraca_b.png", 1 );
-              assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", 3 );
+              assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
+              assertSample( sampleTaxa[1], "/atalophlebia_b.png", "1-2" );
+              assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
+              assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "6-10" );
 
               // assert second tile
               assertTaxaBackground( tiles[2], "images/tiling_interior_320.png" );
               sampleTaxa = getTaxaIcons( tiles[2] );
               expect( sampleTaxa ).to.have.lengthOf(4);
-              assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", 1 );
-              assertSample( sampleTaxa[1], "/amphipoda_b.png", 1 );
-              assertSample( sampleTaxa[2], "/anisops_b.png", 1 );
-              assertSample( sampleTaxa[3], "/amphipoda_b.png", 2 );
+              assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", "1-2" );
+              assertSample( sampleTaxa[1], "/amphipoda_b.png", "1-2" );
+              assertSample( sampleTaxa[2], "/anisops_b.png", "1-2" );
+              assertSample( sampleTaxa[3], "/amphipoda_b.png", "3-5" );
 
               // assert third tile
               assertTaxaBackground( tiles[3], "images/tiling_interior_320.png" );
               sampleTaxa = getTaxaIcons( tiles[3] );
               expect( sampleTaxa ).to.have.lengthOf(4);
-              assertSample( sampleTaxa[0], "/atalophlebia_b.png", 6 );
+              assertSample( sampleTaxa[0], "/atalophlebia_b.png", "11-20" );
               assertSampleBlank( sampleTaxa[1] );
               assertPlus( sampleTaxa[2] );
               assertSampleBlank( sampleTaxa[3] );
@@ -272,38 +276,38 @@ describe( 'SampleTray controller', function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
       mocx.createCollection("taxa", [
-        { taxonId: "WB1", abundance: "3-5" }, // 0
-        { taxonId: "WB2", abundance: "6-10" },
+        { taxonId: "1", abundance: "3-5" }, // 0
+        { taxonId: "2", abundance: "6-10" },
 
-        { taxonId: "WB3", abundance: "3-5" }, // 1
-        { taxonId: "WB4", abundance: "1-2" },
-        { taxonId: "WB5", abundance: "1-2" },
-        { taxonId: "WB1", abundance: "6-10" },
+        { taxonId: "3", abundance: "3-5" }, // 1
+        { taxonId: "4", abundance: "1-2" },
+        { taxonId: "5", abundance: "1-2" },
+        { taxonId: "1", abundance: "6-10" },
 
-        { taxonId: "WB2", abundance: "1-2" }, // 2
-        { taxonId: "WB3", abundance: "1-2" },
-        { taxonId: "WB4", abundance: "1-2" },
-        { taxonId: "WB5", abundance: "3-5" },
+        { taxonId: "2", abundance: "1-2" }, // 2
+        { taxonId: "3", abundance: "1-2" },
+        { taxonId: "4", abundance: "1-2" },
+        { taxonId: "5", abundance: "3-5" },
 
-        { taxonId: "WB1", abundance: "3-5" }, // 3
-        { taxonId: "WB2", abundance: "1-2" },
-        { taxonId: "WB3", abundance: "3-5" },
-        { taxonId: "WB4", abundance: "6-10" },
+        { taxonId: "1", abundance: "3-5" }, // 3
+        { taxonId: "2", abundance: "1-2" },
+        { taxonId: "3", abundance: "3-5" },
+        { taxonId: "4", abundance: "6-10" },
 
-        { taxonId: "WB5", abundance: "3-5" }, // 4
-        { taxonId: "WB4", abundance: "1-2" },
-        { taxonId: "WB3", abundance: "3-5" },
-        { taxonId: "WB2", abundance: "1-2" },
+        { taxonId: "5", abundance: "3-5" }, // 4
+        { taxonId: "4", abundance: "1-2" },
+        { taxonId: "3", abundance: "3-5" },
+        { taxonId: "2", abundance: "1-2" },
 
-        { taxonId: "WB1", abundance: "3-5" },
-        { taxonId: "WB2", abundance: "1-2" },
-        { taxonId: "WB3", abundance: "3-5" },
-        { taxonId: "WB4", abundance: "1-2" },
+        { taxonId: "1", abundance: "3-5" },
+        { taxonId: "2", abundance: "1-2" },
+        { taxonId: "3", abundance: "3-5" },
+        { taxonId: "4", abundance: "1-2" },
 
-        { taxonId: "WB1", abundance: "3-5" },
-        { taxonId: "WB2", abundance: "1-2" },
-        { taxonId: "WB3", abundance: "3-5" },
-        { taxonId: "WB4", abundance: "1-2" }
+        { taxonId: "1", abundance: "3-5" },
+        { taxonId: "2", abundance: "1-2" },
+        { taxonId: "3", abundance: "3-5" },
+        { taxonId: "4", abundance: "1-2" }
       ]);
       setupSampleTray();
     });
@@ -332,20 +336,20 @@ describe( 'SampleTray controller', function() {
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/anisops_b.png", 2 );
-            assertSample( sampleTaxa[1], "/atalophlebia_b.png", 1 );
-            assertSample( sampleTaxa[2], "/anostraca_b.png", 1 );
-            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", 3 );
+            assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
+            assertSample( sampleTaxa[1], "/atalophlebia_b.png", "1-2" );
+            assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
+            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "6-10" );
 
             // assert last tile
             var tile = findRightMost( tiles  );
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", 2 );
-            assertSample( sampleTaxa[1], "/anisops_b.png", 2 );
-            assertSample( sampleTaxa[2], "/amphipoda_b.png", 1 );
-            assertSample( sampleTaxa[3], "/anostraca_b.png", 1 );
+            assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", "3-5" );
+            assertSample( sampleTaxa[1], "/anisops_b.png", "3-5" );
+            assertSample( sampleTaxa[2], "/amphipoda_b.png", "1-2" );
+            assertSample( sampleTaxa[3], "/anostraca_b.png", "1-2" );
           });
 
     });
@@ -366,20 +370,20 @@ describe( 'SampleTray controller', function() {
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/anisops_b.png", 2 );
-            assertSample( sampleTaxa[1], "/atalophlebia_b.png", 1 );
-            assertSample( sampleTaxa[2], "/anostraca_b.png", 1 );
-            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", 3 );
+            assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
+            assertSample( sampleTaxa[1], "/atalophlebia_b.png", "1-2" );
+            assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
+            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "6-10" );
 
             // assert rightmost tile
             var tile = findRightMost( tiles );
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/atalophlebia_b.png", 2 );
-            assertSample( sampleTaxa[1], "/anisops_b.png", 2 );
-            assertSample( sampleTaxa[2], "/anostraca_b.png", 1 );
-            assertSample( sampleTaxa[3], "/amphipoda_b.png", 1 );
+            assertSample( sampleTaxa[0], "/atalophlebia_b.png", "3-5" );
+            assertSample( sampleTaxa[1], "/anisops_b.png", "3-5" );
+            assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
+            assertSample( sampleTaxa[3], "/amphipoda_b.png", "1-2" );
           });
     });
   });
@@ -466,14 +470,14 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].add( { taxonId: "WB1", abundance: "3-5" } );
+              Alloy.Collections["taxa"].add( { taxonId: "1", abundance: "3-5" } );
           });
         })
         .then( function() {
           var tiles = SampleTray.content.getChildren();
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
-          assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", 2 );
+          assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", "3-5" );
           assertPlus( sampleTaxa[1] );
         });
     });
@@ -482,9 +486,9 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "3-5" },
-            { taxonId: "WB3", abundance: "1-2" },
-            { taxonId: "WB5", abundance: "1-2" }
+            { taxonId: "1", abundance: "3-5" },
+            { taxonId: "3", abundance: "1-2" },
+            { taxonId: "5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -495,14 +499,14 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].add( { taxonId: "WB4", abundance: "3-5" } );
+              Alloy.Collections["taxa"].add( { taxonId: "4", abundance: "3-5" } );
           });
         })
         .then( function() {
           var tiles = SampleTray.content.getChildren();
           var sampleTaxa = getTaxaIcons( tiles[1] );
           expect( sampleTaxa ).to.have.lengthOf(4);
-          assertSample( sampleTaxa[2], "/anostraca_b.png", 2 );
+          assertSample( sampleTaxa[2], "/anostraca_b.png", "3-5" );
           assertPlus( sampleTaxa[1] );
         });
     });
@@ -511,8 +515,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "3-5" },
-            { taxonId: "WB5", abundance: "1-2" }
+            { taxonId: "1", abundance: "3-5" },
+            { taxonId: "5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -538,10 +542,10 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "3-5" },
-            { taxonId: "WB3", abundance: "1-2" },
-            { taxonId: "WB5", abundance: "1-2" },
-            { taxonId: "WB2", abundance: "1-2" }
+            { taxonId: "1", abundance: "3-5" },
+            { taxonId: "3", abundance: "1-2" },
+            { taxonId: "5", abundance: "1-2" },
+            { taxonId: "2", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -567,8 +571,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "WB1", abundance: "1-2" },
-            { taxonId: "WB5", abundance: "1-2" }
+            { taxonId: "1", abundance: "1-2" },
+            { taxonId: "5", abundance: "1-2" }
           ]);
           setupSampleTray();
         })
@@ -579,14 +583,14 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].at(1).set("abundance", "1-2");
+              Alloy.Collections["taxa"].at(1).set("abundance", "3-5");
           });
         })
         .then( function() {
           var tiles = SampleTray.content.getChildren();
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
-          assertSample( sampleTaxa[1], "/atalophlebia_b.png", 2 );
+          assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
         });
     });
   });

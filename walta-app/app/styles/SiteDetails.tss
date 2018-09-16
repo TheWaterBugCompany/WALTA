@@ -1,0 +1,66 @@
+
+".panel": {
+    width: Ti.UI.SIZE,
+    height: "58%"
+}
+
+"#topLeft" : {
+    width: Ti.UI.SIZE,
+    top: "8dp",
+    left: "8dp",
+    right: "8dp"
+}
+
+"#bottomLeft" : {
+    width: Ti.UI.SIZE,
+    top: "8dp",
+    left: "8dp",
+    right: "8dp"
+}
+
+"#photoSelect" : {
+    top: "8dp",
+    right: "8dp"
+}
+
+"#nextButton": {
+    bottom: "8dp",
+    right: "8dp"
+}
+
+"#waterbodyNameLabel": {
+    top: "10dp"
+}
+
+".textField": {
+    width: "78%"
+}
+".labelText": {
+    left: "8dp",
+    bottom: "4dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+".tabs" : {
+    width: "300dp",
+    height: "40dp",
+    bottom: "4dp",
+    borderRadius: 6,
+	borderColor: "#b4d2d9",
+	selectedButtonColor: "#26849c",
+	unselectedButtonColor: "#fff", 
+	selectedButtonTextColor: "#fff",
+	unselectedButtonTextColor: "#26849c",
+	withDividers: true,
+	font: {
+        fontFamily: "Tahoma",
+        fontWeight: "bold",
+        fontSize: "14dp"
+    }
+}
+
+"#surveyLevelSelect": {
+    index: 2,
+}
+
+"#waterbodyTypeSelect": {
+}

@@ -1,0 +1,13 @@
+
+"#content" : {
+  left: "12dp"
+}
+
+"#congrats": {
+    top: "20dp"
+}
+
+"#doneButton": {
+    bottom: "12dp",
+    right: "12dp"
+}

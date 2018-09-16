@@ -1,0 +1,25 @@
+<Alloy>
+	<View id="content" class="container" layout="vertical">
+		<View id="top" class="panel" layout="horizontal">
+			<View id="topLeft" layout="vertical">
+				<Label id="surveyLevelLabel" class="labelText" text="Survey level:"/>
+				<Widget id="surveyLevelSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Survey level" />
+				<Label id="waterbodyTypeLabel" class="labelText" text="Waterbody type:"/>
+				<Widget id="waterbodyTypeSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Waterbody type" />
+				<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
+			</View>
+			<Require id="photoSelect" type="view" src="PhotoSelect"/>
+		</View>
+		<View id="bottom" class="panel" layout="horizontal">
+			<View id="bottomLeft" layout="vertical">
+				
+				<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" />
+				<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
+				<TextField id="nearByFeatureField" class="textField" accessibilityLabel="Near by feature" />
+			</View>
+			<View id="bottomRight" height="Ti.UI.FILL" width="Ti.UI.FILL">
+				<Label id="nextButton" class="actionButton" text="Next" />
+			</View>
+		</View>
+	</View>
+</Alloy>

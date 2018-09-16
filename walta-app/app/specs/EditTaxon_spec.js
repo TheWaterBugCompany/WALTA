@@ -17,28 +17,34 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
-var { closeWindow, forceCloseWindow, wrapViewInWindow, windowOpenTest } = require("specs/util/TestUtils");
+var { closeWindow, forceCloseWindow, wrapViewInWindow, windowOpenTest, checkTestResult } = require("specs/util/TestUtils");
+var { createModel } = require("specs/lib/mocx");
+
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
-var { createModel } = require("specs/lib/mocx");
-describe.only("EditTaxon controller", function() {
+keyMock.setSpeedbugIndex( speedBugIndexMock );
+
+describe("EditTaxon controller", function() {
     var ctl,win;
     
     function makeEditTaxon( taxon ) {
         ctl = Alloy.createController("EditTaxon", { 
             key: keyMock,
-            taxon: createModel( "Taxon", taxon ), 
-            speedbugIndex: speedBugIndexMock });
+            taxon: createModel( "Taxon", taxon )
+         });
         win = wrapViewInWindow( ctl.getView() );
     }
     
 	it('should display the taxon edit view', function(done) {
-        makeEditTaxon( { taxonId:"WB1", abundance:"3-5" } );
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
-            expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
-            expect( ctl.photoSelect.photo.image ).to.include("aeshnidae_telephleb_b.png");
-            expect( ctl.abundanceLabel.text ).to.equal("3-5");
-            closeWindow( win, done );
+            checkTestResult( (e) => closeWindow( win, () => done( e ) ), 
+                function() {
+                    expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
+                    expect( ctl.photoSelect.photo.image ).to.include("aeshnidae_telephleb_b.png");
+                    expect( ctl.abundanceLabel.text ).to.equal("3-5");
+                });
+            
         } );
         
     });
@@ -53,7 +59,7 @@ describe.only("EditTaxon controller", function() {
 
         function checkAbundance( bin, val ) {
             return new Promise( (resolve) => {
-                makeEditTaxon( { taxonId:"WB1", abundance:bin} );
+                makeEditTaxon( { taxonId:"1", abundance:bin} );
                 windowOpenTest( win, function() {
                     expect( ctl.abundanceValue.value ).to.equal(val);
                     expect( ctl.abundanceLabel.text ).to.equal(bin);

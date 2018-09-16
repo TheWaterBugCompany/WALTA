@@ -131,7 +131,7 @@ function createAddIcon() {
       accessibilityLabel: "Add",
       backgroundImage: "/images/plus-icon.png"
     });
-    
+    addIconCache.addEventListener( "click", startIdentification );
   }
   return addIconCache;
 }
@@ -237,7 +237,6 @@ function drawIcecubeTray() {
 };
 
 function startIdentification(e) {
-  Ti.API.info("entering startIdentification");
   $.selectMethod = Alloy.createController("MethodSelect");
   function closeSelectMethod() {
     $.TopLevelWindow.remove($.selectMethod.getView());

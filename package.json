@@ -19,6 +19,7 @@
   "devDependencies": {
     "babel-register": "^6.26.0",
     "chai-as-promised": "^7.1.1",
+    "gittio": "^0.6.4",
     "liveview": "^1.2.2",
     "moment": "^2.22.2",
     "nock": "^9.4.0",

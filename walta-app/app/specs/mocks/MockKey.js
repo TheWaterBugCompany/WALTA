@@ -8,11 +8,11 @@ var keyMock = Key.createKey( {
 });
 
 var taxons = [
-    Taxon.createTaxon({ taxonId: "WB1", name: "Aeshnidae Telephleb" }),
-    Taxon.createTaxon({ taxonId: "WB2", name: "Amphipoda" }),
-    Taxon.createTaxon({ taxonId: "WB3", name: "Anisops" }),
-    Taxon.createTaxon({ taxonId: "WB4", name: "Anostraca" }),
-    Taxon.createTaxon({ taxonId: "WB5", name: "Atalophlebia" })
+    Taxon.createTaxon({ taxonId: 1, name: "Aeshnidae Telephleb", commonName: "Aeshnidae Telephleb" }),
+    Taxon.createTaxon({ taxonId: 2, name: "Amphipoda", commonName: "Amphipoda" }),
+    Taxon.createTaxon({ taxonId: 3, name: "Anisops", commonName: "Anisops" }),
+    Taxon.createTaxon({ taxonId: 4, name: "Anostraca", commonName: "Anostraca" }),
+    Taxon.createTaxon({ taxonId: 5, name: "Atalophlebia", commonName: "Atalophlebia" })
    ];
 
 _(taxons).each( function(t) { keyMock.attachTaxon( t ); } );

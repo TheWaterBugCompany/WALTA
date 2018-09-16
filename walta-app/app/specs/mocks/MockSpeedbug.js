@@ -1,20 +1,23 @@
 var speedBugResource = "specs/resources/simpleKey1/media/speedbug/";
 var speedBugIndexMock = {
+  setKey: function() {
+
+  },
   getSpeedbugFromTaxonId: function( id ) {
     switch(id) {
-      case "WB1":
+      case "1":
         return speedBugResource + "aeshnidae_telephleb_b.png";
 
-      case "WB2":
+      case "2":
         return speedBugResource + "amphipoda_b.png";
 
-      case "WB3":
+      case "3":
         return speedBugResource + "anisops_b.png";
 
-      case "WB4":
+      case "4":
         return  speedBugResource + "anostraca_b.png";
 
-      case "WB5":
+      case "5":
         return speedBugResource + "atalophlebia_b.png";
 
     }

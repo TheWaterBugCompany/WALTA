@@ -108,7 +108,6 @@ overrode the settings with other TSS, XML, or JS settings:
   color: "#26849c",
   backgroundColor: "#b4d2d9",
   borderRadius: "4dp",
-  top: "5%",
   width: "100dp",
   height: "35dp"
 }
@@ -121,7 +120,8 @@ overrode the settings with other TSS, XML, or JS settings:
     borderRadius: "10dp",
     width: "250dp",
     height: "40dp",
-	  color: "#26849c"
+	color: "#26849c",
+    fullscreen: false
 }
 
 ".textField[if=Alloy.Globals.isLdpi]": {

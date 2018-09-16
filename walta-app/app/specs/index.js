@@ -3,6 +3,7 @@ require("specs/lib/ti-mocha");
 require("specs/AnchorBar_spec");
 require("specs/BrowseView_spec");
 require("specs/EditTaxon_spec");
+require("specs/Habitat_spec");
 require("specs/KeyNode_spec");
 require("specs/KeySearch_spec");
 require("specs/LogIn_spec")
@@ -15,8 +16,10 @@ require("specs/QuestionView_spec");
 require("specs/SampleTray_spec");
 require("specs/SpeedbugView_spec");
 require("specs/TaxonDetails_spec");
+require("specs/SiteDetails_spec");
 require("specs/VideoView_spec");
 require("specs/Sample_spec");
+require("specs/Summary_spec");
 
 // Create a blank window: for some reason closing the last window hangs
 // the test suite.

@@ -1,0 +1,43 @@
+
+"#content": {
+    top: "12dp",
+    left: "12dp"
+}
+
+".textField" : {
+    left: "8dp",
+    width: "100dp",
+    height: "40dp",
+    keyboardType: Ti.UI.KEYBOARD_TYPE_NUMBER_PAD,
+    fullscreen: false
+}
+
+".labelText": {
+    top: "8dp",
+    left: "8dp"
+}
+
+".inputLabel": {
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    top: "10dp",
+    width: "100dp"
+}
+
+".inputBox": {
+    top: "12dp",
+    left: "12dp",
+    height: "50dp"
+}
+
+"#grid": {
+    width: Ti.UI.FILL
+}
+
+".gridColumn": {
+    width: "50%",
+    height: "65%"
+}
+
+"#nextButton": {
+    right: "32dp"
+}
