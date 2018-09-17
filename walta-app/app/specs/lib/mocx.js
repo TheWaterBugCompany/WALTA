@@ -11,8 +11,10 @@ Backbone.sync = function(method, model, options) {
 };
 
 exports.createModel = function(name, attributes) {
-    var model = new Backbone.Model(attributes);
-    return model;
+    if (!Alloy.Models[name]) {
+        Alloy.Models[name] = new Backbone.Model(attributes);
+    }
+    return Alloy.Models[name];
 };
 
 exports.createCollection = function(name, content) {

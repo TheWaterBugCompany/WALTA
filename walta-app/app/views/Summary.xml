@@ -1,4 +1,5 @@
 <Alloy>
+	<Model src="sample" />
 	<View id="content" class="container" layout="vertical">
 		<Label id="congrats" class="labelText" text="Congratulations you've completed your survey!\n\nThe survey has been queued for upload and will be sent to the Waterbug Blitz servers when internet access becomes available."/>
 	

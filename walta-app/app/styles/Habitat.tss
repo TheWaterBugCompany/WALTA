@@ -6,8 +6,8 @@
 
 ".textField" : {
     left: "8dp",
-    width: "100dp",
-    height: "40dp",
+    width: "90dp",
+    height: "35dp",
     keyboardType: Ti.UI.KEYBOARD_TYPE_NUMBER_PAD,
     fullscreen: false
 }
@@ -20,13 +20,13 @@
 ".inputLabel": {
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
     top: "10dp",
-    width: "100dp"
+    width: "90dp"
 }
 
 ".inputBox": {
-    top: "12dp",
+    top: "8dp",
     left: "12dp",
-    height: "50dp"
+    height: Ti.UI.SIZE
 }
 
 "#grid": {
@@ -35,7 +35,7 @@
 
 ".gridColumn": {
     width: "50%",
-    height: "65%"
+    height: "70%"
 }
 
 "#nextButton": {

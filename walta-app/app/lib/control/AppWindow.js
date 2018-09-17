@@ -26,6 +26,7 @@ var BrowseView = require('ui/BrowseView');
 var SpeedbugView = require('ui/SpeedbugView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
+var Sample = require('logic/Sample');
 
 /*
  * Module: AppWindow
@@ -75,7 +76,17 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("LogIn").open();
 			},
 
+			siteDetailsWindow: function(args) {
+				Alloy.createController("SiteDetails").open();
+			},
 
+			habitatWindow: function(args) {
+				Alloy.createController("Habitat").open();
+			},
+
+			summaryWindow: function(args) {
+				Alloy.createController("Sumary").open();
+			},
 
 			speedBugWindow: function() {
 				TopLevelWindow.makeTopLevelWindow({
@@ -174,12 +185,32 @@ function createAppWindow( keyName, keyPath ) {
 
     privates.subscribe( Topics.BROWSE, function() {
     	privates.browseWindow();
-    });
+	});
+	
+	privates.subscribe( Topics.SAMPLETRAY, function(data) {
+		
+		privates.sampleTrayWindow();
+	});
 
-		privates.subscribe( Topics.IDENTIFY, function(data) {
-			
-			privates.sampleTrayWindow( { taxonId: data.taxonId } );
-		});
+	privates.subscribe( Topics.IDENTIFY, function(data) {
+		
+		privates.sampleTrayWindow( { taxonId: data.taxonId } );
+	});
+
+	privates.subscribe( Topics.SITEDETAILS, function(data) {
+		
+		privates.siteDetailsWindow();
+	});
+	
+	privates.subscribe( Topics.HABITAT, function(data) {
+		
+		privates.habitatWindow();
+	});
+
+	privates.subscribe( Topics.SUMMARY, function(data) {
+		
+		privates.summaryWindow();
+	});
 
     privates.subscribe( Topics.JUMPTO, function( data ) {
     	if ( ! _.isUndefined( data.id ) ) {
@@ -191,15 +222,21 @@ function createAppWindow( keyName, keyPath ) {
     });
 
 	privates.subscribe( Topics.MAYFLY, function() {
-		privates.sampleTrayWindow();
+		//Alloy.Models.sample.clearSample();
+		Alloy.Models.sample.set({"surveyType": Sample.MAYFLY} );
+		privates.siteDetailsWindow();
 	} );
 
 	privates.subscribe( Topics.ORDER, function() {
-		privates.sampleTrayWindow();
+		//Alloy.Models.sample.clearSample();
+		Alloy.Models.sample.set({"surveyType": Sample.ORDER} );
+		privates.siteDetailsWindow();
 	} );
 
 	privates.subscribe( Topics.DETAILED, function() {
-		privates.sampleTrayWindow();
+		Alloy.Models.sample.clearSample();
+		Alloy.Models.sample.set({"surveyType": Sample.DETAILED} );
+		privates.siteDetailsWindow();
 	} );
 
     privates.subscribe( Topics.SPEEDBUG, function() {

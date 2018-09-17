@@ -11,14 +11,13 @@
 			<Require id="photoSelect" type="view" src="PhotoSelect"/>
 		</View>
 		<View id="bottom" class="panel" layout="horizontal">
-			<View id="bottomLeft" layout="vertical">
-				
-				<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" />
+			<View id="bottomLeft" layout="vertical">	
+				<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" onChange="saveAttributes" />
 				<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
-				<TextField id="nearByFeatureField" class="textField" accessibilityLabel="Near by feature" />
+				<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near by feature" onChange="saveAttributes"/>
 			</View>
 			<View id="bottomRight" height="Ti.UI.FILL" width="Ti.UI.FILL">
-				<Label id="nextButton" class="actionButton" text="Next" />
+				<Label id="nextButton" class="actionButton" text="Next" onClick="nextClick"/>
 			</View>
 		</View>
 	</View>

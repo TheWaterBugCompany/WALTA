@@ -50,7 +50,17 @@ var topics = {
 
 	DETAILED: 'detailed',
 
+	SAMPLETRAY: 'sampletray',
+
 	SPEEDBUG: 'speedbug',
+
+	SITEDETAILS: 'sitedetails',
+
+	HABITAT: 'habitat',
+
+	SUMMARY: 'summary',
+
+	STORE: 'store',
 
 	HELP: 'help',
 
