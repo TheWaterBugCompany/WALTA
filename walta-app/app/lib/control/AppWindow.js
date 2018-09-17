@@ -234,7 +234,7 @@ function createAppWindow( keyName, keyPath ) {
 	} );
 
 	privates.subscribe( Topics.DETAILED, function() {
-		Alloy.Models.sample.clearSample();
+		//Alloy.Models.sample.clearSample();
 		Alloy.Models.sample.set({"surveyType": Sample.DETAILED} );
 		privates.siteDetailsWindow();
 	} );
