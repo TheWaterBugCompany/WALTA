@@ -1,10 +1,10 @@
 require('specs/lib/ti-mocha');
 
 var { expect } = require('specs/lib/chai');
-var { closeWindow, checkTestResult } = require('specs/util/TestUtils');
-var mocx = require("specs/lib/mocx");
-var Topics = require('ui/Topics');
+var { closeWindow, checkTestResult, actionFiresTopicTest } = require('specs/util/TestUtils');
 
+var Topics = require('ui/Topics');
+var mocx = require("specs/lib/mocx");
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
 keyMock.setSpeedbugIndex( speedBugIndexMock );
@@ -93,6 +93,24 @@ describe( 'SampleTray controller', function() {
   function getTaxaIcons( tile ) {
     return tile.getChildren()[1].getChildren();
   }
+
+  context( 'event handling', function(){
+
+    beforeEach( function() {
+      return Promise.resolve()
+        .then( function() {
+          mocx.createCollection("taxa", []);
+          setupSampleTray();
+        })
+        .then( openSampleTray );
+    });
+
+    afterEach(cleanupSampleTray);
+
+    it('should fire the SUMMARY topic', function(done) {
+      actionFiresTopicTest( SampleTray.getAnchorBar().submit, 'click', Topics.SUMMARY, done );
+    });
+  });
 
   context( 'rendering', function() {
     afterEach(cleanupSampleTray);

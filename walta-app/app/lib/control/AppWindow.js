@@ -85,7 +85,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			summaryWindow: function(args) {
-				Alloy.createController("Sumary").open();
+				Alloy.createController("Summary").open();
 			},
 
 			speedBugWindow: function() {
@@ -158,7 +158,7 @@ function createAppWindow( keyName, keyPath ) {
 
     privates.subscribe( Topics.BACK, function(name) {
     	if ( name === "home" ) {
-    		//privates.closeApp();
+    		privates.closeApp();
     	} else if ( name === "decision" ) {
     		if ( privates.key.isRoot() ) {
     			privates.sampleTrayWindow({ slide: 'left' });
@@ -207,7 +207,7 @@ function createAppWindow( keyName, keyPath ) {
 		privates.habitatWindow();
 	});
 
-	privates.subscribe( Topics.SUMMARY, function(data) {
+	privates.subscribe( Topics.COMPLETE, function(data) {
 		
 		privates.summaryWindow();
 	});
@@ -222,19 +222,16 @@ function createAppWindow( keyName, keyPath ) {
     });
 
 	privates.subscribe( Topics.MAYFLY, function() {
-		//Alloy.Models.sample.clearSample();
 		Alloy.Models.sample.set({"surveyType": Sample.MAYFLY} );
 		privates.siteDetailsWindow();
 	} );
 
 	privates.subscribe( Topics.ORDER, function() {
-		//Alloy.Models.sample.clearSample();
 		Alloy.Models.sample.set({"surveyType": Sample.ORDER} );
 		privates.siteDetailsWindow();
 	} );
 
 	privates.subscribe( Topics.DETAILED, function() {
-		//Alloy.Models.sample.clearSample();
 		Alloy.Models.sample.set({"surveyType": Sample.DETAILED} );
 		privates.siteDetailsWindow();
 	} );

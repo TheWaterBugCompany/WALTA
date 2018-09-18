@@ -33,8 +33,11 @@ var meld = require("lib/meld");
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
-$.getAnchorBar()
-  .addTool( GoBackButton.createGoBackButton() );
+var acb = $.getAnchorBar();
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ) );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ) );
+acb.addTool( GoBackButton.createGoBackButton() );
+
 
 var keyNode = $.args.keyNode;
 var questions = [];

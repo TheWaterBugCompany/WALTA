@@ -27,18 +27,29 @@
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
-function createToolBarButton( image, topic ) {
-	var btn = Ti.UI.createButton({
-		backgroundImage: image
-	});
-
+function createToolBarButton( image, topic, title ) {
+	var attrs = {};
+	if ( image ) {
+		attrs.backgroundImage = image;
+	}
+	
+	var btn = Ti.UI.createButton(attrs);
+	$.addClass( btn, "anchorBarButton" );
+	if ( title ) {
+		btn.title = title;
+		btn.width = Ti.UI.SIZE;
+		btn.backgroundColor = "#26849c";
+		btn.borderRadius = 6;
+		btn.borderWidth = 2;
+	}
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {
 			Topics.fireTopicEvent( topic, null );
 			e.cancelBubble = true;
 		});
 	}
-	$.addClass( btn, "anchorBarButton" );
+	
+	$[topic] = btn;
 	return btn;
 }
 
@@ -55,10 +66,6 @@ $.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME );
 $.leftTools.add( $.home );
 $.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HELP ) );
 
-/*
-addTool( createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ) );
-addTool( createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ) );
-*/
 exports.createToolBarButton = createToolBarButton;
 exports.setTitle = setTitle;
 exports.addTool = addTool;

@@ -19,25 +19,24 @@ require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 
-if ( typeof(_) == "undefined") _ = require('underscore')._;
+var mocx = require("specs/lib/mocx");
+var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
+var { keyMock } = require('specs/mocks/MockKey');
+keyMock.setSpeedbugIndex( speedBugIndexMock );
 
-var KeyLoaderJson = require('logic/KeyLoaderJson');
-var SpeedbugView = require('ui/SpeedbugView');
-
-describe.skip('SpeedbugView', function() {
-	var bv, win, key;
-	before( function() {
-		key = KeyLoaderJson.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
-		sb = SpeedbugView.createSpeedbugView( key );
-		win = TestUtils.wrapViewInWindow( sb.view );
+describe.only('Speedbug controller', function() {
+	var SpeedBug, SpeedBugWin, key;
+	beforeEach( function() {
+		SpeedBug = Alloy.createController("Speedbug", { key: keyMock });
+    	SpeedBugWin = SpeedBug.getView();
 	});
 
-	after( function() {
-		TestUtils.closeWindow( win );
+	afterEach( function() {
+		TestUtils.closeWindow( SpeedBugWin );
 	});
 
 	it('should display the speed bug window', function() {
-		TestUtils.windowOpenTest( win );
+		TestUtils.windowOpenTest( SpeedBug );
 	});
 
 });

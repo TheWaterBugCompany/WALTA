@@ -58,9 +58,7 @@ var topics = {
 
 	HABITAT: 'habitat',
 
-	SUMMARY: 'summary',
-
-	STORE: 'store',
+	COMPLETE: 'complete',
 
 	HELP: 'help',
 

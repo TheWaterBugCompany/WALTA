@@ -40,7 +40,7 @@ task :uninstall_app do
   sh("adb uninstall ${APP_ID}")
 end
 
-task :test => [ :start_emulator, 'walta-app/build/android/bin/Waterbug.apk', :uninstall_app ] do
+task :test => [ :start_emulator, :clean, 'walta-app/build/android/bin/Waterbug.apk', :uninstall_app ] do
   
   sh("calabash-android run walta-app/build/android/bin/Waterbug.apk features/identify_taxa.feature --tags @only")
 end
@@ -49,7 +49,7 @@ task :test_console => [:start_emulator, 'walta-app/build/android/bin/Waterbug.ap
   sh("calabash-android console walta-app/build/android/bin/Waterbug.apk features/identify_taxa.feature")
 end
 
-task :unit_test do
+task :unit_test  => [:start_emulator, :uninstall_app  ] do
   sh("appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android "\
     "--deploy-type test --keystore ${KEYSTORE} "\
     "--store-password ${KEYSTORE_PASSWORD} "\

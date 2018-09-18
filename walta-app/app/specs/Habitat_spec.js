@@ -19,7 +19,7 @@ require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var mocx = require("specs/lib/mocx");
 var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
-describe.only("Habitat controller", function() {
+describe("Habitat controller", function() {
 	var ctl;
 	before( function() {
         mocx.createModel("sample");

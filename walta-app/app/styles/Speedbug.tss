@@ -1,0 +1,14 @@
+
+"#content" : {
+    contentWidth: "auto",
+    contentHeight: "auto",
+    showVerticalScrollIndicator: false,
+    showHorizontalScrollIndicator: false,
+    height: Ti.UI.FILL,
+    width: Ti.UI.FILL,
+    scrollType: "horizontal",
+    layout: "horizontal",
+    horizontalWrap: false,
+    top: "8dp",
+    disableBounce: true
+}

@@ -6,6 +6,8 @@ var Topics = require('ui/Topics');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
+var anchorBar = $.getAnchorBar();
+anchorBar.addTool( anchorBar.createToolBarButton( null, Topics.COMPLETE, "Submit") );
 
 var endcapHeight = 0;
 var endcapWidth = 0;
@@ -297,7 +299,6 @@ function editTaxon( taxon_id ) {
   var taxon = Alloy.Collections["taxa"].get( taxon_id );
   if ( !taxon ) {
     taxon = Alloy.createModel( 'taxa', {taxonId: taxon_id, abundance: "1-2"} );
-    console.log(`new taxon = ${JSON.stringify(taxon)} isNew = ${taxon.isNew()}`);
   }
   $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
   $.getView().add( $.editTaxon.getView() );
@@ -307,11 +308,12 @@ function editTaxon( taxon_id ) {
   });
 
   $.editTaxon.on("delete", function(taxon) {
+    taxon.destroy();
     closeEditScreen();
   });
 
   $.editTaxon.on("save", function(taxon) {
-
+    taxon.save();
     closeEditScreen();
   });
 }

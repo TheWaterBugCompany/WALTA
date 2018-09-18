@@ -14,12 +14,13 @@ require("specs/Register_spec");
 require("specs/PhotoView_spec");
 require("specs/QuestionView_spec");
 require("specs/SampleTray_spec");
-require("specs/SpeedbugView_spec");
+require("specs/Sample_spec");
+require("specs/Speedbug_spec");
+require("specs/Summary_spec");
 require("specs/TaxonDetails_spec");
 require("specs/SiteDetails_spec");
 require("specs/VideoView_spec");
-require("specs/Sample_spec");
-require("specs/Summary_spec");
+
 
 // Create a blank window: for some reason closing the last window hangs
 // the test suite.

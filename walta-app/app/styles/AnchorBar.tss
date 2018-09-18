@@ -42,6 +42,7 @@
 
 ".anchorBarButton": {
   left: "8dp",
-  height: "28dp",
-  width: "28dp"
+  top: "1dp",
+  height: "26dp",
+  width: "26dp"
 }
