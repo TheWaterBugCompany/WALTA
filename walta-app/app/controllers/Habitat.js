@@ -65,3 +65,4 @@ function nextClick() {
 
 loadAttributes();
 validateSum();
+

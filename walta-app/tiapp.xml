@@ -12,7 +12,7 @@
   <fullscreen>true</fullscreen>
   <navbar-hidden>true</navbar-hidden>
   <guid>88036c17-aac4-4628-9555-5c0302217fe4</guid>
-  <property name="run-on-main-thread" type="bool">false</property>
+  <property name="run-on-main-thread" type="bool">true</property>
   <property name="ti.ui.defaultunit" type="string">dp</property>
   <ios>
     <enable-launch-screen-storyboard>true</enable-launch-screen-storyboard>
@@ -37,6 +37,10 @@
         <true/>
         <key>UIStatusBarStyle</key>
         <string>UIStatusBarStyleDefault</string>
+        <key>NSLocationAlwaysUsageDescription</key>
+        <string>
+            We need to record the location of the river survey.
+        </string>
       </dict>
     </plist>
   </ios>
@@ -56,6 +60,7 @@
         <activity android:configChanges="keyboardHidden|orientation|screenSize|density" android:name="ti.modules.titanium.media.TiVideoActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
         <provider android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true" android:name="org.appcelerator.titanium.io.TiFileProvider" android:screenOrientation="sensorLandscape"/>
       </application>
+      <supports-screens android:anyDensity="true" android:smallScreens="true" android:normalScreens="true" android:largeScreens="true" android:xlargeScreens="true" />
       <uses-permission android:name="android.permission.INTERNET"/>
       <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -65,7 +70,9 @@
       <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
     </manifest>
   </android>
-  <modules></modules>
+  <modules>
+    <module platform="android">ti.playservices</module>
+  </modules>
   <deployment-targets>
     <target device="mobileweb">false</target>
     <target device="iphone">true</target>

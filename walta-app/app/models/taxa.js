@@ -14,14 +14,22 @@ exports.definition = {
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
-			// extended functions and properties go here
+			toCerdiApiJson() {
+				return {
+					"count": this.get("abundance").split("-")[0],
+					"creature_id": this.get("taxonId"),
+					"photos_count": 0
+				};
+			}
 		});
 
 		return Model;
 	},
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, {
-			
+			toCerdiApiJson() {
+				return this.map( (taxon) => taxon.toCerdiApiJson() );
+			}
 		});
 
 		return Collection;

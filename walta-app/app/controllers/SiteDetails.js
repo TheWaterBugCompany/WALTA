@@ -1,5 +1,6 @@
 exports.baseController  = "TopLevelWindow";
 var Topics = require("ui/Topics");
+
 var sample = Alloy.Models.sample;
 
 function loadAttributes() {
@@ -28,6 +29,7 @@ function saveAttributes() {
 function nextClick() {
     Topics.fireTopicEvent( Topics.HABITAT );
 }
+
 $.TopLevelWindow.title = "Site Details";
 $.surveyLevelSelect.init(["Mayfly","Quick","Detailed"], saveAttributes);
 $.waterbodyTypeSelect.init(["River","Wetland","Lake/Dam"], saveAttributes);

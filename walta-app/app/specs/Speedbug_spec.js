@@ -24,7 +24,7 @@ var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
 keyMock.setSpeedbugIndex( speedBugIndexMock );
 
-describe.only('Speedbug controller', function() {
+describe('Speedbug controller', function() {
 	var SpeedBug, SpeedBugWin, key;
 	beforeEach( function() {
 		SpeedBug = Alloy.createController("Speedbug", { key: keyMock });

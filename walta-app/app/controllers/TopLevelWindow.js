@@ -16,9 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 var PlatformSpecific = require('ui/PlatformSpecific');
-var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
-
+var GeoLocationService = require('logic/GeoLocationService');
 var anchorBar = Alloy.createController("AnchorBar" );
 function openWindow() {
 	if ( $.TopLevelWindow.title ) {
@@ -46,8 +45,15 @@ function backEvent(e) {
 	Topics.fireTopicEvent( Topics.BACK, $.name );
 }
 
+function startGps() {
+    GeoLocationService.start();
+}
+
+$.TopLevelWindow.addEventListener( 'open', startGps);
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+	GeoLocationService.stop();
+	$.TopLevelWindow.removeEventListener('open', startGps );
 	$.TopLevelWindow.removeEventListener('close', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });

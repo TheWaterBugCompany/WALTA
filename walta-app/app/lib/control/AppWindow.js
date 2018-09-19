@@ -15,18 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var _ = require('lib/underscore')._;
-
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
 var TopLevelWindow = require('ui/TopLevelWindow');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var HtmlView = require('ui/HtmlView');
 var BrowseView = require('ui/BrowseView');
-var SpeedbugView = require('ui/SpeedbugView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
 var Sample = require('logic/Sample');
+var GeoLocationService = require('logic/GeoLocationService');
 
 /*
  * Module: AppWindow
@@ -89,11 +87,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			speedBugWindow: function() {
-				TopLevelWindow.makeTopLevelWindow({
-					name: 'speedbug',
-					title: 'Speedbug',
-					uiObj: SpeedbugView.createSpeedbugView(privates.key )
-				});
+				Alloy.createController("Speedbug", { key: privates.key }).open();
 			},
 
 			galleryWindow: function() {
@@ -198,17 +192,17 @@ function createAppWindow( keyName, keyPath ) {
 	});
 
 	privates.subscribe( Topics.SITEDETAILS, function(data) {
-		
 		privates.siteDetailsWindow();
 	});
 	
 	privates.subscribe( Topics.HABITAT, function(data) {
-		
 		privates.habitatWindow();
 	});
 
 	privates.subscribe( Topics.COMPLETE, function(data) {
 		
+		Alloy.Models.sample.saveCurrentSample();
+		Alloy.Models.sample.createNewSample();
 		privates.summaryWindow();
 	});
 
@@ -223,17 +217,17 @@ function createAppWindow( keyName, keyPath ) {
 
 	privates.subscribe( Topics.MAYFLY, function() {
 		Alloy.Models.sample.set({"surveyType": Sample.MAYFLY} );
-		privates.siteDetailsWindow();
+		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.ORDER, function() {
 		Alloy.Models.sample.set({"surveyType": Sample.ORDER} );
-		privates.siteDetailsWindow();
+		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.DETAILED, function() {
 		Alloy.Models.sample.set({"surveyType": Sample.DETAILED} );
-		privates.siteDetailsWindow();
+		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
     privates.subscribe( Topics.SPEEDBUG, function() {
@@ -257,12 +251,12 @@ function createAppWindow( keyName, keyPath ) {
 		start: function() {
 			privates.loadKey( appWin.keyUrl );
 			PlatformSpecific.appStartUp( privates );
+			GeoLocationService.init();
 			Topics.fireTopicEvent( Topics.HOME );
 		},
 		close: function() {
 			privates.cleanUp();
-		},
-		getCurrentWindow: TopLevelWindow.getCurrentWindow
+		}
 	});
 
 	return appWin;

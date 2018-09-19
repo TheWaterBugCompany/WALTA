@@ -40,9 +40,9 @@ function createVideoView( file ) {
 		right: 0
 	});
 	vv._views.closeButton.add( Ti.UI.createImageView({
-		image: '/images/close.png',
-		width: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
-		height: Layout.FULLSCREEN_CLOSE_BUTTON_SIZE,
+		image: '/images/delete-icon-blue.png',
+		width: '24dp',
+		height: '24dp',
 		top: '24dip',
 		right: '24dip'
 	}));
@@ -62,7 +62,7 @@ function createVideoView( file ) {
 			vv.vp = Ti.Media.createVideoPlayer({
 				width: Ti.UI.FILL,
 				height: Ti.UI.FILL,
-				url: '/' + file,
+				url: `/${file}`,
 				autoplay: true,
 				backgroundColor: 'black',
 				fullscreen: true,
