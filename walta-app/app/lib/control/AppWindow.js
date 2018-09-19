@@ -59,7 +59,8 @@ function createAppWindow( keyName, keyPath ) {
 					name: 'browse',
 					title: 'Browse',
 					uiObj: BrowseView.createBrowseView(privates.key),
-					swivel: false
+					swivel: false,
+					gps: true
 				});
 			},
 
@@ -67,6 +68,7 @@ function createAppWindow( keyName, keyPath ) {
 				if ( ! args )
 					args = {};
 				args.key = this.key;
+				args.gps = true;
 				Alloy.createController("SampleTray",args).open();
 			},
 
@@ -75,11 +77,11 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			siteDetailsWindow: function(args) {
-				Alloy.createController("SiteDetails").open();
+				Alloy.createController("SiteDetails", { gps: true }).open();
 			},
 
 			habitatWindow: function(args) {
-				Alloy.createController("Habitat").open();
+				Alloy.createController("Habitat", { gps: true }).open();
 			},
 
 			summaryWindow: function(args) {
@@ -87,7 +89,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			speedBugWindow: function() {
-				Alloy.createController("Speedbug", { key: privates.key }).open();
+				Alloy.createController("Speedbug", { key: privates.key, gps: true }).open();
 			},
 
 			galleryWindow: function() {
@@ -115,6 +117,7 @@ function createAppWindow( keyName, keyPath ) {
 				var node = this.key.getCurrentNode();
 				if ( ! args )
 					args = {};
+				args.gps = true;
 				if ( this.key.isNode( node ) ) {
 					args.keyNode = node;
 					Alloy.createController("KeySearch", args ).open();
@@ -200,9 +203,6 @@ function createAppWindow( keyName, keyPath ) {
 	});
 
 	privates.subscribe( Topics.COMPLETE, function(data) {
-		
-		Alloy.Models.sample.saveCurrentSample();
-		Alloy.Models.sample.createNewSample();
 		privates.summaryWindow();
 	});
 
@@ -216,17 +216,17 @@ function createAppWindow( keyName, keyPath ) {
     });
 
 	privates.subscribe( Topics.MAYFLY, function() {
-		Alloy.Models.sample.set({"surveyType": Sample.MAYFLY} );
+		Alloy.Models.sample.startNewSurveyIfComplete(Sample.MAYFLY);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.ORDER, function() {
-		Alloy.Models.sample.set({"surveyType": Sample.ORDER} );
+		Alloy.Models.sample.startNewSurveyIfComplete(Sample.ORDER);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.DETAILED, function() {
-		Alloy.Models.sample.set({"surveyType": Sample.DETAILED} );
+		Alloy.Models.sample.startNewSurveyIfComplete(Sample.DETAILED);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 

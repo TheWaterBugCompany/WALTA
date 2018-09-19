@@ -2,9 +2,16 @@
 	<Model src="sample" />
 	<View id="content" class="container" layout="vertical">
 		<Label id="message" class="labelText" text="Congratulations you've completed your survey!\n\nThe survey has been queued for upload and will be sent as a background task to the Waterbug Blitz servers when internet access becomes available."/>
-	
+		<View id="gpsObtained" visible="false" layout="horizontal">
+			<Label class="labelText" text="GPS lock obtained"/>
+			<Label class="labelText leftSpace" text="(lattitude="/>
+			<Label id="latLabel" class="labelText" text="{sample.lat}"/>
+			<Label class="labelText" text=", longitude="/>
+			<Label id="longLabel" class="labelText" text="{sample.lng}"/>
+			<Label class="labelText" text=")"/>
+		</View>
 		<View>
-			<Label id="doneButton" class="actionButton" text="Done" onClick="doneClick" />
+			<Button id="doneButton" class="actionButton" title="Done" onClick="doneClick" />
 		</View>
 	</View>
 </Alloy>

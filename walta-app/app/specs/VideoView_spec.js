@@ -22,7 +22,7 @@ var TestUtils = require('specs/util/TestUtils');
 var meld = require('lib/meld');
 var VideoView = require('ui/VideoView');
 
-describe.only('VideoView', function() {
+describe('VideoView', function() {
 	var vv;
 
 	beforeEach(function() {

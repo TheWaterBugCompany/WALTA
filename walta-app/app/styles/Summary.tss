@@ -4,9 +4,18 @@
 }
 
 "#congrats": {
-    top: "20dp"
+    top: "20dp",
+  height: Ti.UI.SIZE
 }
 
+"#gpsObtained": {
+    top: "30%",
+    left: "20%",
+    height: Ti.UI.SIZE
+}
+".leftSpace": {
+    left: "8dp"
+}
 "#doneButton": {
     bottom: "12dp",
     right: "12dp"

@@ -48,13 +48,18 @@ function backEvent(e) {
 function startGps() {
     GeoLocationService.start();
 }
+if ( $.args.gps ) {
+	$.TopLevelWindow.addEventListener( 'open', startGps);
+}
 
-$.TopLevelWindow.addEventListener( 'open', startGps);
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-	GeoLocationService.stop();
+	if ( $.args.gps ) {
+		GeoLocationService.stop();
+		GeoLocationService.cleanup();
+	}
 	$.TopLevelWindow.removeEventListener('open', startGps );
-	$.TopLevelWindow.removeEventListener('close', backEvent );
+	$.TopLevelWindow.removeEventListener('androidback', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 

@@ -18,6 +18,7 @@
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
+
 describe("SiteDetails controller", function() {
 	var ctl;
 	before( function() {

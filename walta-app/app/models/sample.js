@@ -40,6 +40,15 @@ exports.definition = {
 				this.save();
 			},
 
+			saveCurrentSample: function() {
+				var sample = Alloy.Models.sample;
+				var taxa = Alloy.Collections.taxa;
+				taxa.save();
+				sample.set("dateCompleted", moment().format() );
+				sample.save();
+				this.save();
+			},
+
 			toCerdiApiJson: function() {
 				var taxa = Alloy.Collections.taxa;
 				var attrs = {
@@ -83,15 +92,12 @@ exports.definition = {
 				taxa.save();
 			},
 
-			saveCurrentSample: function() {
-				var sample = Alloy.Models.instance("sample");
-				var taxa = Alloy.Collections.instance("taxa");
-				taxa.save();
-				sample.set("dateCompleted", moment().format() );
-				sample.save();
-				this.save();
+			startNewSurveyIfComplete: function(type) {
+				Alloy.Models.sample.set({"surveyType": type} );
+				if ( Alloy.Models.sample.get("dateCompleted") ) {
+					 this.createNewSample();
+				}
 			},
-
 			load: function() {
 				this.fetch();
 				Alloy.Models.instance("sample")
