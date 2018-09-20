@@ -29,28 +29,25 @@ exports.definition = {
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
-			clearSample: function() {
-				var sampleId = this.get("sampleId");
+
+			saveCurrentSample: function() {
 				var taxa = Alloy.Collections.taxa;
-				taxa.reset();
-				taxa.set("sampleId", sample.get("sampleId"));
-				taxa.save();
-				this.clear();
-				this.set({ "sampleId": sampleId});
+				taxa.forEach( (t) => {
+					t.set("sampleId", this.get("sampleId"));
+					t.save();
+				});
+				this.set("dateCompleted", moment().format() );
 				this.save();
 			},
 
-			saveCurrentSample: function() {
-				var sample = Alloy.Models.sample;
-				var taxa = Alloy.Collections.taxa;
-				taxa.save();
-				sample.set("dateCompleted", moment().format() );
-				sample.save();
-				this.save();
+			loadCurrent() {
+				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
 			},
 
 			toCerdiApiJson: function() {
-				var taxa = Alloy.Collections.taxa;
+				var taxa = Alloy.createCollection("taxa");
+				taxa.load( this.get("sampleId") );
+				Ti.API.info(`surveyType = ${this.get("surveyType")}, waterbodyType = ${this.get("waterbodyType")} `)
 				var attrs = {
 					"sample_date": this.get("dateCompleted"),
 					"lat": this.get("lat"),
@@ -75,6 +72,7 @@ exports.definition = {
 				if (this.get("serverSampleId") ) {
 					attrs["sampleId"] = this.get("serverSampleId");
 				}
+				return attrs;
 			},
 		});
 
@@ -83,27 +81,29 @@ exports.definition = {
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, {
 			createNewSample: function() {
-				var sample = Alloy.Models.sample;
+				var sample = Alloy.createModel("sample");
 				var taxa = Alloy.Collections.taxa;
-				sample.clear();
+				this.add(sample);
 				sample.save();
 				taxa.reset();
-				taxa.set("sampleId", sample.get("sampleId"));
-				taxa.save();
 			},
 
 			startNewSurveyIfComplete: function(type) {
-				Alloy.Models.sample.set({"surveyType": type} );
-				if ( Alloy.Models.sample.get("dateCompleted") ) {
+				if ( Alloy.Models.sample.get("dateCompleted") ||
+					Alloy.Collections.sample.length == 0 ) {
 					 this.createNewSample();
+					 Alloy.Models.sample.set({"surveyType": type} );
 				}
 			},
+
 			load: function() {
 				this.fetch();
-				Alloy.Models.instance("sample")
-					.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
-				Alloy.Collections.instance("taxa")
-					.fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );
+				Alloy.Models.instance("sample").loadCurrent();
+				Alloy.Collections.instance("taxa").loadCurrent();
+			},
+
+			loadUploadQueue: function() {
+				this.fetch( { query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL AND serverSampleId IS NULL"});
 			}
 		});
 

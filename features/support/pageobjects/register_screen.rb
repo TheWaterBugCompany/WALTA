@@ -10,16 +10,16 @@ class RegisterScreen < BasePageObject
       
       enter_text(email_field, emailAddress)
 
-      hide_soft_keyboard
+      hide_keyboard_and_wait
       enter_text(name_field, name)
      
-      hide_soft_keyboard
+      hide_keyboard_and_wait
       enter_text(password_field, password)
      
-      hide_soft_keyboard
+      hide_keyboard_and_wait
       enter_text(passwordConfirm_field, password)
      
-      hide_soft_keyboard
+      hide_keyboard_and_wait
       select('Submit')
       return page(MenuScreen).await
     end

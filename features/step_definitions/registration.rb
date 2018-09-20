@@ -6,25 +6,14 @@ Given(/^I am not logged in$/) do
     expect( @current_page.loggedIn? ).to eq(false)
 end
 
+Given(/^I am logged in as "([^"]*)"$/) do |emailAddress|
+    MockServer.create_account()
+    @current_page = RegistrationDriver.login( emailAddress, "password" )
+    expect( @current_page.loggedIn? ).to eq(true)
+end
+
 Given(/^the user "([^"]*)" does not exist$/) do |emailAddress|
-    Mirage::Client.new.put( 'user/create', <<-eos
-        {
-            "name": "Test Example",
-            "email": "test-1536403292821@example.com",
-            "group": 0,
-            "survey_consent": 0,
-            "share_name_consent": 0,
-            "oauth_network": null,
-            "updated_at": "2018-09-08 10:41:33",
-            "created_at": "2018-09-08 10:41:33",
-            "id": 102,
-            "accessToken": "testuseraccesstoken"
-        }     
-eos
-         ) do
-        http_method :post
-        status 200
-    end
+    MockServer.create_user_does_not_exist()
 end
 
 Then(/^I am registered on the server$/) do
@@ -55,33 +44,11 @@ end
 Given(/^The "([^"]*)" account exists with password "([^"]*)"$/) do |emailAddress, password|
     @emailAddress = emailAddress
     @password = password
-    Mirage::Client.new.put( 'token/create', <<-eos
-        {
-            "id": 38,
-            "name": "Test Example",
-            "email": "testlogin@example.com",
-            "created_at": "2018-09-07 08:55:30",
-            "updated_at": "2018-09-07 08:55:30",
-            "group": 0,
-            "survey_consent": 0,
-            "share_name_consent": 0,
-            "oauth_network": null,
-            "accessToken": "testusertoken"
-        }     
-eos
-         ) do
-        http_method :post
-        status 200
-    end
+    MockServer.create_account()
 end
   
 When(/^I log in via username and password$/) do
-    @current_page = page(MenuScreen).await
-    @current_page = @current_page.log_in( @emailAddress, @password )
-    serverReq = JSON.parse( Mirage::Client.new.requests(2).body )
-    puts serverReq.inspect
-    expect( serverReq["email"] ).to eq(@emailAddress)
-    expect( serverReq["password"] ).to eq(@password)
+   @current_page = RegistrationDriver.login( @emailAddress, @password )
 end
 
 When(/^I restart the application$/) do

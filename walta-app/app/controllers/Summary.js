@@ -1,4 +1,6 @@
 var Topics = require('ui/Topics');
+var SampleSync = require('logic/SampleSync');
+
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
 
@@ -15,7 +17,7 @@ function disable() {
   }
 
 function doneClick() {
-    if ( !Alloy.Globals.CerdiApi.retrieveUserToken() )
+    if ( Alloy.Globals.CerdiApi.retrieveUserToken() )
         Topics.fireTopicEvent( Topics.HOME, null );
     else
         Topics.fireTopicEvent( Topics.LOGIN, null );
@@ -31,16 +33,22 @@ var INCOMPLETE_NO_LOCK = "The survey is complete!\n\n"
 + "However, I haven't been able to obtain a GPS lock yet, please ensure you have location enabled and"
 + " move to out into the open to allow the coordinates to be collected.";
 
+// We only want to do this once each time this screen is displayed...
+var saveSampleAndUpload = _.once(function() {
+    Alloy.Models.sample.saveCurrentSample();
+    SampleSync.forceUpload(); // avoid the 30 minute wait if internet is available
+    setMessageText();
+    $.gpsObtained.visible = true;
+    enable();
+})
+
 function checkGpsLock() {
     if ( !(Alloy.Models.sample.get("lat") && Alloy.Models.sample.get("lng") ) ) {
         disable();
         $.message.text = INCOMPLETE_NO_LOCK;
         $.gpsObtained.visible = false;
     } else {
-        Alloy.Models.sample.saveCurrentSample();
-        setMessageText();
-        $.gpsObtained.visible = true;
-        enable();
+        saveSampleAndUpload();
     }
 }
 

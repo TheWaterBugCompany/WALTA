@@ -10,6 +10,11 @@ class SampleTrayScreen < BasePageObject
         return page(MethodScreen).await
     end
 
+    def submit_sample
+        select("Submit")
+        return page(SummaryScreen).await
+    end
+
     def abundance
         query(abundance_label,:text).first
     end

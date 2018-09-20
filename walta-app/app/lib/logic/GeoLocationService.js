@@ -28,6 +28,7 @@ function init() {
 }
 
 function cleanup() {
+    Ti.API.info("Stopping geolocation service...");
     activityDestroyed();
     if (Titanium.Platform.name == 'android')
     {
@@ -39,7 +40,6 @@ function cleanup() {
 
 function gotLocation(e) {
     if ( e.success ) {
-        Ti.API.info(`Got location event: ${JSON.stringify(e.coords, null, 2)}`);
         Alloy.Models.sample.set('lat', e.coords.latitude);
         Alloy.Models.sample.set('lng', e.coords.longitude);
     } else {
@@ -48,13 +48,11 @@ function gotLocation(e) {
 }
 
 function startListening() {
-    Ti.API.info("adding listener");
     Ti.Geolocation.addEventListener('location', gotLocation );
     Alloy.Globals.GeoLocationState = "listening";
 }
 
 function stopListening( state = "stopped" ) {
-    Ti.API.info("removing listener");
     Ti.Geolocation.removeEventListener('location', gotLocation);
     Alloy.Globals.GeoLocationState = state;
 }
@@ -64,6 +62,7 @@ function start() {
     Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_HIGH;
     Ti.Geolocation.distanceFilter = 10;
     if (Ti.Geolocation.hasLocationPermissions()) {
+        Ti.API.info("Got permissions");
         startListening();
     } else {
         Ti.Geolocation.requestLocationPermissions(Ti.Geolocation.AUTHORIZATION_ALWAYS, (e) => {

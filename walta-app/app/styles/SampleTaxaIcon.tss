@@ -4,7 +4,7 @@
   color: "#fff",
   backgroundColor: "#f00",
   borderColor: "#f00",
-  width: "24dp",
+  width: "28dp",
   height: "16dp",
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   borderRadius: "8dp"

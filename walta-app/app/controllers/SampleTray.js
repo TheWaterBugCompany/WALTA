@@ -122,19 +122,17 @@ function createIconContainer() {
     height: `${endcapHeight*0.35}dp`,
   });
 }
-var addIconCache = null;
+
 function createAddIcon() {
-  if ( !addIconCache ) {
-    addIconCache = Ti.UI.createButton({
-      top: `${endcapHeight*0.10}dp`,
-      left: `${endcapWidth*0.15}dp`,
-      width: `${endcapWidth*0.25}dp`,
-      height: `${endcapHeight*0.13}dp`,
-      accessibilityLabel: "Add",
-      backgroundImage: "/images/plus-icon.png"
-    });
-    addIconCache.addEventListener( "click", startIdentification );
-  }
+  var addIconCache = Ti.UI.createButton({
+    top: `${endcapHeight*0.10}dp`,
+    left: `${endcapWidth*0.15}dp`,
+    width: `${endcapWidth*0.25}dp`,
+    height: `${endcapHeight*0.13}dp`,
+    accessibilityLabel: "Add",
+    backgroundImage: "/images/plus-icon.png"
+  });
+  addIconCache.addEventListener( "click", startIdentification );
   return addIconCache;
 }
 
@@ -208,7 +206,7 @@ function releaseTiles( start_n, end_n ) {
 function addTiles( start_n, end_n ) {
   for( var i = start_n; i<=end_n; i++ ) {
     // max() below is to add an extra blank tile with an empty tray...
-    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length + 2)/4,2) ) ) {
+    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length - 2)/4,2) ) ) {
       var tile;
       if ( typeof( tileIndex[i] ) !== "undefined") {
         updateSampleTrayTile( i );
@@ -268,11 +266,13 @@ function startIdentification(e) {
   e.cancelBubble = true;
 };
 
+var lastWidth;
 function adjustTraySize() {
-  if ( $.content.height !== endcapHeight ) {
+  if ( ! ($.content.height == endcapHeight && $.content.getSize().width == lastWidth) ) {
     endcapHeight = $.TopLevelWindow.size.height - $.getAnchorBar().getView().size.height;
     endcapWidth = $.endcapBackground.size.width;
     middleWidth = endcapWidth*1.384;
+    lastWidth = $.content.getSize().width;
     clearTileCache();
     drawIcecubeTray();
   }
@@ -297,8 +297,9 @@ function closeEditScreen() {
 
 function editTaxon( taxon_id ) {
   var taxon = Alloy.Collections["taxa"].get( taxon_id );
+  var sample = Alloy.Models.sample;
   if ( !taxon ) {
-    taxon = Alloy.createModel( 'taxa', {taxonId: taxon_id, abundance: "1-2"} );
+    taxon = Alloy.createModel( 'taxa', { sampleId: sample.get('sampleId'), taxonId: taxon_id, abundance: "1-2" } );
   }
   $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
   $.getView().add( $.editTaxon.getView() );
@@ -321,4 +322,8 @@ function editTaxon( taxon_id ) {
 if ( $.args.taxonId ) {
   $.getView().on("open", () => editTaxon( $.args.taxonId ) );
 }
+Alloy.Collections["taxa"].trigger("change");
+
+$.content.setContentOffset( { x: (Alloy.Collections["taxa"].length - 2) * middleWidth, y: 0 } );
+
 exports.editTaxon = editTaxon;

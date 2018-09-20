@@ -45,16 +45,25 @@ function validateSum() {
     }
 }
 
+
+
 function saveAttributes() {
+    function zeroOrInt(v ) {
+        var i = parseInt(v);
+        if ( isNaN(i) )
+            return "0";
+        else
+            return i.toString();
+    }
     sample.set( {
-        "leafPacks": $.leaves.value,
-        "aquaticPlants": $.plants.value,
-        "wood": $.wood.value,
-        "edgePlants": $.edgeplants.value,
-        "boulder": $.rocks.value,
-        "gravel": $.gravel.value,
-        "sandOrSilt": $.sandOrSilt.value,
-        "openWater": $.openwater.value
+        "leafPacks": zeroOrInt($.leaves.value),
+        "aquaticPlants": zeroOrInt($.plants.value),
+        "wood": zeroOrInt($.wood.value),
+        "edgePlants": zeroOrInt($.edgeplants.value),
+        "boulder": zeroOrInt($.rocks.value),
+        "gravel": zeroOrInt($.gravel.value),
+        "sandOrSilt": zeroOrInt($.sandOrSilt.value),
+        "openWater": zeroOrInt($.openwater.value)
     });
     sample.save();
 }

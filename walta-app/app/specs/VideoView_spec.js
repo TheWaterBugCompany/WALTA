@@ -26,7 +26,7 @@ describe('VideoView', function() {
 	var vv;
 
 	beforeEach(function() {
-		vv = VideoView.createVideoView( 'specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4' );
+		vv = VideoView.createVideoView( '/specs/resources/simpleKey1/media/attack_caddis_01_x264.mp4' );
 	});
 
 	afterEach( function() {

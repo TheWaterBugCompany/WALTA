@@ -619,7 +619,7 @@ INCLUDE taxa.ink
 * Nymphs with a double row of spines along their backs. -> acruroperla_atra # mediaUrls: []
 * Nymphs without a double row of spines. -> austroperlids # mediaUrls: []
 
-=== node_76 ===
+=== mayfly_start_point ===
 * tails flattened or broad, jaw large and folded away under head -> k_odonata # mediaUrls: ["/taxonomy/walta/media/damselfly.gif"]
 * tails thin, round in cross section -> order_ephemeroptera # mediaUrls: ["/taxonomy/walta/media/mayfly.gif"]
 

@@ -39,13 +39,9 @@ Given(/^A leaf node of the ALT is displayed$/) do
 end
 
 Given(/^I identify and store a Taxon$/) do
-  # use browse method to make this short
-  @current_page = page(MenuScreen).await
-  @current_page = @current_page.select_survey()
-  @current_page = @current_page.start_identification()
-  @current_page = @current_page.browse()
-  @current_page = @current_page.choose_taxon('Acarina')
-  @current_page = @current_page.add_to_sample()
+  @current_page = SampleDriver
+    .start_survey()
+    .add_taxon_via_browse('Acarina')
 end
 
 Then(/^the EditTaxon screen is opened$/) do

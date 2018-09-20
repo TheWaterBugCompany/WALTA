@@ -18,10 +18,13 @@
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
+var mocx = require("specs/lib/mocx");
 
-describe("SiteDetails controller", function() {
+describe.only("SiteDetails controller", function() {
 	var ctl;
 	before( function() {
+        mocx.createModel("sample");
+        Alloy.Models.sample.set("surveyType", 2);
 		ctl = Alloy.createController("SiteDetails");
 	});
 	after( function(done) {

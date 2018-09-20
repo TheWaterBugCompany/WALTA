@@ -1,14 +1,12 @@
+require 'rubygems'
 require 'calabash-android/cucumber'
 require 'rspec/expectations'
+require 'rspec_deep_ignore_order_matcher'
 require 'json'
 
 # Pauses for debugging, will continue when enter is pressed
 def pause
-  print 'p'
-  last_input = STDIN.gets
-  while last_input == 'p'
-    sleep 1
-  end
+  sleep
 end
 
 # turn into a Ruby class (strips spaces and camel cases)

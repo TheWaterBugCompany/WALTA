@@ -20,6 +20,7 @@ var Topics = require('ui/Topics');
 var GeoLocationService = require('logic/GeoLocationService');
 var anchorBar = Alloy.createController("AnchorBar" );
 function openWindow() {
+	Ti.API.info(`opening window ${$.title}`);
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.TopLevelWindow.add( anchorBar.getView() );
@@ -30,6 +31,7 @@ function openWindow() {
 		}
 		$.TopLevelWindow.addEventListener("postlayout", adjustContentSize );
 		$.TopLevelWindow.addEventListener("close", function cleanUp() {
+			Ti.API.info(`closing window ${$.title}`);
 			$.TopLevelWindow.removeEventListener('postlayout', adjustContentSize );
 			$.TopLevelWindow.removeEventListener('close', cleanUp );
 		});

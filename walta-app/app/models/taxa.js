@@ -16,7 +16,7 @@ exports.definition = {
 		_.extend(Model.prototype, {
 			toCerdiApiJson() {
 				return {
-					"count": this.get("abundance").split("-")[0],
+					"count": parseInt(this.get("abundance").split("-")[0]),
 					"creature_id": this.get("taxonId"),
 					"photos_count": 0
 				};
@@ -29,6 +29,12 @@ exports.definition = {
 		_.extend(Collection.prototype, {
 			toCerdiApiJson() {
 				return this.map( (taxon) => taxon.toCerdiApiJson() );
+			},
+			loadCurrent() {
+				this.fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );
+			},
+			load( sampleId ) {
+				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId = ${sampleId}`} );
 			}
 		});
 

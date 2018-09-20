@@ -5,22 +5,22 @@
 			<View id="gridLeft" layout="vertical" class="gridColumn">
 				<View class="inputBox" layout="horizontal">
 					<Label text="Leaf Packs:" class="labelText inputLabel" />
-					<TextField  id="leaves" class="textField" accessiblityLabel="Leaf Packs" onChange="validateSum" />
+					<TextField  id="leaves" class="textField" accessibilityLabel="Leaf Packs" onChange="validateSum" />
 					<Label text="%" class="labelText" />
 				</View>
 				<View class="inputBox" layout="horizontal">
 					<Label text="Aquatic Plants:" class="labelText inputLabel" />
-					<TextField  id="plants" class="textField" accessiblityLabel="Aquatic Plants" onChange="validateSum" />
+					<TextField  id="plants" class="textField" accessibilityLabel="Aquatic Plants" onChange="validateSum" />
 					<Label text="%" class="labelText" />
 				</View>
 				<View class="inputBox" layout="horizontal">
 					<Label text="Wood:" class="labelText inputLabel" />
-					<TextField  id="wood" class="textField"  accessiblityLabel="Wood" onChange="validateSum" />
+					<TextField  id="wood" class="textField"  accessibilityLabel="Wood" onChange="validateSum" />
 					<Label text="%" class="labelText" />
 				</View>
 				<View class="inputBox" layout="horizontal">
 					<Label text="Edge Plants:" class="labelText inputLabel" />
-					<TextField  id="edgeplants" class="textField" accessiblityLabel="Edge Plants" onChange="validateSum" />
+					<TextField  id="edgeplants" class="textField" accessibilityLabel="Edge Plants" onChange="validateSum" />
 					<Label text="%" class="labelText" />
 				</View>
 
@@ -28,22 +28,22 @@
 			<View id="gridRight" layout="vertical" class="gridColumn">
 				<View class="inputBox" layout="horizontal">
 					<Label text="Boulders:" class="labelText inputLabel" />
-					<TextField id="rocks" class="textField" accessiblityLabel="Boulders" onChange="validateSum" />
+					<TextField id="rocks" class="textField" accessibilityLabel="Boulders" onChange="validateSum" />
 					<Label text="%" class="labelText" />
 				</View>
 				<View class="inputBox" layout="horizontal">
 					<Label text="Gravel:" class="labelText inputLabel" />
-					<TextField id="gravel" class="textField" accessiblityLabel="Gravel" onChange="validateSum" />
+					<TextField id="gravel" class="textField" accessibilityLabel="Gravel" onChange="validateSum" />
 					<Label text="%" class="labelText" />
 				</View>
 				<View class="inputBox" layout="horizontal">
 					<Label text="Sand/Silt:" class="labelText inputLabel" />
-					<TextField id="sandOrSilt" class="textField" accessiblityLabel="Sand Or Silt" onChange="validateSum"/>
+					<TextField id="sandOrSilt" class="textField" accessibilityLabel="Sand Or Silt" onChange="validateSum"/>
 					<Label text="%" class="labelText" />
 				</View>
 				<View class="inputBox" layout="horizontal">
 					<Label text="Open Water:" class="labelText inputLabel" />
-					<TextField  id="openwater" class="textField" accessiblityLabel="Open Water" onChange="validateSum" />
+					<TextField  id="openwater" class="textField" accessibilityLabel="Open Water" onChange="validateSum" />
 					<Label text="%" class="labelText" />
 				</View>
 			</View>

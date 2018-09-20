@@ -1,7 +1,7 @@
 var Topics = require('ui/Topics');
 
 exports.baseController  = "TopLevelWindow";
-$.TopLevelWindow.title = "Log In";
+$.TopLevelWindow.title = "Sign Up";
 
 function loginClick() {
     Alloy.Globals.CerdiApi.loginUser( $.emailTextField.value, $.passwordTextField.value )

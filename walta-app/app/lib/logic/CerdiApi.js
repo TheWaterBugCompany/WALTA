@@ -23,10 +23,15 @@ function makeJsonRequest( serverUrl, data, accessToken = null ) {
                 resolve( JSON.parse(this.responseText) );
             },
             onerror: function(err) {
-                if ( this.responseText )
-                    reject( JSON.parse(this.responseText) );
-                else
+                if ( this.responseText ) {
+                    try {
+                        reject( JSON.parse(this.responseText) );
+                    } catch(err) {
+                        reject( this.responseText)
+                    }
+                } else {
                     reject(err);
+                }
             },
             timeout: 30000 
         });

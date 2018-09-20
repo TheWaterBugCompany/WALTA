@@ -20,7 +20,7 @@ var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("specs/util/TestUtils");
 var mocx = require("specs/lib/mocx");
 
-describe.only("Summary controller", function() {
+describe("Summary controller", function() {
 	var ctl;
 	beforeEach( function() {
         

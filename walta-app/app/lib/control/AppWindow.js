@@ -85,7 +85,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			summaryWindow: function(args) {
-				Alloy.createController("Summary").open();
+				Alloy.createController("Summary", { gps: true }).open();
 			},
 
 			speedBugWindow: function() {
@@ -154,6 +154,7 @@ function createAppWindow( keyName, keyPath ) {
     });
 
     privates.subscribe( Topics.BACK, function(name) {
+		Ti.API.info(`back: ${name}`);
     	if ( name === "home" ) {
     		privates.closeApp();
     	} else if ( name === "decision" ) {
@@ -216,17 +217,17 @@ function createAppWindow( keyName, keyPath ) {
     });
 
 	privates.subscribe( Topics.MAYFLY, function() {
-		Alloy.Models.sample.startNewSurveyIfComplete(Sample.MAYFLY);
+		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.MAYFLY);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.ORDER, function() {
-		Alloy.Models.sample.startNewSurveyIfComplete(Sample.ORDER);
+		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.ORDER);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.DETAILED, function() {
-		Alloy.Models.sample.startNewSurveyIfComplete(Sample.DETAILED);
+		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.DETAILED);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 

@@ -11,7 +11,7 @@ class MenuScreen < BasePageObject
 
     def select_survey
       select("Waterbug\nSurvey")
-      page(SampleTrayScreen).await
+      page(SiteDetailsScreen).await
     end
 
     def log_in( email, password )

@@ -59,7 +59,6 @@
 }
 
 "#surveyLevelSelect": {
-    index: 2,
 }
 
 "#waterbodyTypeSelect": {

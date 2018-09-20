@@ -7,7 +7,6 @@ Before('@mockserver') do
     Mirage::Client.new.put( 'token/create/server', "{ \"accessToken\": \"testapitoken\" }") do
         http_method :post
         status 200
-        required_body_content << /testserversecretstring/
     end
     
 end

@@ -43,8 +43,17 @@ function transitionWindows( win, effect ) {
 		args.activityExitAnimation = Ti.Android.R.anim.fade_out;
 	}
 	win.open( args );
-
+	if ( Alloy.Globals.lastWindow )
+		Ti.API.info(`window stack: ${Alloy.Globals.lastWindow.map((w)=>w.title)}`);
+	if ( Alloy.Globals.lastWindow && Alloy.Globals.lastWindow.length > 1 ) {
+		Alloy.Globals.lastWindow.shift().close();
+		
+	} else {
+		Alloy.Globals.lastWindow = [];
+	}
+	Alloy.Globals.lastWindow.push( win );
 }
+
 function convertSystemToDip( n ) {
 	return Ti.UI.convertUnits( n + "px", Ti.UI.UNIT_DIP );
 }

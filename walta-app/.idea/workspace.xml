@@ -1,13 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="933ceca4-28e4-4180-8dcf-7fe56cf14d18" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../Rakefile" afterPath="$PROJECT_DIR$/../Rakefile" />
+      <change beforePath="$PROJECT_DIR$/../features/step_definitions/identify_taxa_steps.rb" afterPath="$PROJECT_DIR$/../features/step_definitions/identify_taxa_steps.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/step_definitions/registration.rb" afterPath="$PROJECT_DIR$/../features/step_definitions/registration.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/submit_sample.feature" afterPath="$PROJECT_DIR$/../features/submit_sample.feature" />
+      <change beforePath="$PROJECT_DIR$/../features/support/android/base_page_object.rb" afterPath="$PROJECT_DIR$/../features/support/android/base_page_object.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/env.rb" afterPath="$PROJECT_DIR$/../features/support/env.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/habitat_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/habitat_screen.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/login_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/login_screen.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/menu_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/menu_screen.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/register_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/register_screen.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/sampletray_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/sampletray_screen.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/sitedetails_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/sitedetails_screen.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/summary_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/summary_screen.rb" />
+      <change beforePath="$PROJECT_DIR$/../mirage.log" afterPath="$PROJECT_DIR$/../mirage.log" />
+      <change beforePath="$PROJECT_DIR$/../screenshot_0.png" afterPath="$PROJECT_DIR$/../screenshot_0.png" />
+      <change beforePath="$PROJECT_DIR$/../screenshot_1.png" afterPath="$PROJECT_DIR$/../screenshot_1.png" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/specs/SiteDetails_spec.js" afterPath="$PROJECT_DIR$/app/specs/SiteDetails_spec.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/SampleTray.js" afterPath="$PROJECT_DIR$/app/controllers/SampleTray.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/Summary.js" afterPath="$PROJECT_DIR$/app/controllers/Summary.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/TaxonDetails.js" afterPath="$PROJECT_DIR$/app/controllers/TaxonDetails.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" afterPath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/index.js" afterPath="$PROJECT_DIR$/app/controllers/index.js" />
+      <change beforePath="$PROJECT_DIR$/app/lib/android/ui/PlatformSpecific.js" afterPath="$PROJECT_DIR$/app/lib/android/ui/PlatformSpecific.js" />
+      <change beforePath="$PROJECT_DIR$/app/lib/control/AppWindow.js" afterPath="$PROJECT_DIR$/app/lib/control/AppWindow.js" />
+      <change beforePath="$PROJECT_DIR$/app/lib/logic/SampleSync.js" afterPath="$PROJECT_DIR$/app/lib/logic/SampleSync.js" />
+      <change beforePath="$PROJECT_DIR$/app/lib/ui/VideoView.js" afterPath="$PROJECT_DIR$/app/lib/ui/VideoView.js" />
+      <change beforePath="$PROJECT_DIR$/app/models/sample.js" afterPath="$PROJECT_DIR$/app/models/sample.js" />
+      <change beforePath="$PROJECT_DIR$/app/models/taxa.js" afterPath="$PROJECT_DIR$/app/models/taxa.js" />
+      <change beforePath="$PROJECT_DIR$/app/specs/Summary_spec.js" afterPath="$PROJECT_DIR$/app/specs/Summary_spec.js" />
       <change beforePath="$PROJECT_DIR$/app/specs/VideoView_spec.js" afterPath="$PROJECT_DIR$/app/specs/VideoView_spec.js" />
+      <change beforePath="$PROJECT_DIR$/app/styles/SampleTaxaIcon.tss" afterPath="$PROJECT_DIR$/app/styles/SampleTaxaIcon.tss" />
+      <change beforePath="$PROJECT_DIR$/app/views/Habitat.xml" afterPath="$PROJECT_DIR$/app/views/Habitat.xml" />
     </list>
     <ignored path="walta-app.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,7 +54,7 @@
     <favorites_list name="walta-app" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -56,7 +85,20 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
+      <pane id="Scope" />
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="walta-app" type="1abcf292:AndroidViewProjectNode" />
+              <item name="walta-app" type="e9137016:NonAndroidModuleNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -105,19 +147,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="walta-app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="walta-app" type="e9137016:NonAndroidModuleNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -247,11 +276,11 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5117057" sideWeight="0.5928495" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5139353" sideWeight="0.19850586" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5117057" sideWeight="0.40715048" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5139353" sideWeight="0.8014941" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -290,59 +319,16 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js" />
     <entry file="file://$PROJECT_DIR$/build/android/main-dex-classes.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -350,79 +336,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js" />
     <entry file="file://$PROJECT_DIR$/build/map/Resources/android/app.js.map">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js" />
     <entry file="file://$PROJECT_DIR$/build/android/main-dex-classes.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -430,23 +364,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js" />
     <entry file="file://$PROJECT_DIR$/build/map/Resources/android/app.js.map">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -484,13 +409,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/build/android/res/layout/titanium_ui_checkbox.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
-      </provider>
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Resources/android/images/camera-icon.png">
@@ -533,116 +458,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-13259">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7409">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/styles/AnchorBar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/models/Sample.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/controllers/EditTaxon.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-227">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/controllers/BaseController.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5724">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/properties.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-695">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/build/android/assets/app.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/styles/AnchorBar.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/models/Sample.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/controllers/EditTaxon.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/controllers/BaseController.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/properties.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/sql.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/alloy/sync/localStorage.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/control/AppWindow.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/AnchorBar_spec.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/_template_spec.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockCerdiApi.js" />
+    <entry file="file://$PROJECT_DIR$/build/android/assets/specs/mocks/MockSpeedbug.js" />
     <entry file="file://$PROJECT_DIR$/build/android/main-dex-classes.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -650,7 +483,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -658,7 +490,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>

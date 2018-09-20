@@ -9,9 +9,9 @@ class LoginScreen < BasePageObject
       wait_for_elements_exist( [email_field,password_field] )
      
       enter_text(email_field, email)
-      hide_soft_keyboard
+      hide_keyboard_and_wait
       enter_text(password_field, password)
-      hide_soft_keyboard
+      hide_keyboard_and_wait
       select('Log In')
       return page(MenuScreen).await
     end
