@@ -88,6 +88,10 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("Summary", { gps: true }).open();
 			},
 
+			historyWindow: function() {
+				Alloy.createController("SampleHistory").open();
+			},
+
 			speedBugWindow: function() {
 				Alloy.createController("Speedbug", { key: privates.key, gps: true }).open();
 			},
@@ -209,6 +213,10 @@ function createAppWindow( keyName, keyPath ) {
 		privates.summaryWindow();
 	});
 
+	privates.subscribe( Topics.HISTORY, function(data) {
+		privates.historyWindow();
+	});
+	
     privates.subscribe( Topics.JUMPTO, function( data ) {
     	if ( ! _.isUndefined( data.id ) ) {
     		privates.key.setCurrentNode(data.id);

@@ -17,17 +17,13 @@
 */
 
 function appStartUp( privates ) {
-	// we create root window so that Android doesn't crash when the menu window is closed
-	// during transitions.
-	privates.rootWindow = Ti.UI.createWindow({
-			navBarHidden: true,
-			fullscreen: true
-	});
-	privates.rootWindow.open();
+	// Not needed any more
 }
 
 function appShutdown( privates ) {
-	Titanium.Android.currentActivity.finish();
+	Ti.API.info("Application shutdown");
+	Alloy.Globals.lastWindow.forEach( (w) => w.close() );
+	Ti.Android.currentActivity.finish();
 }
 
 function transitionWindows( win, effect ) {
@@ -44,13 +40,13 @@ function transitionWindows( win, effect ) {
 	}
 	win.open( args );
 	if ( Alloy.Globals.lastWindow )
-		Ti.API.info(`window stack: ${Alloy.Globals.lastWindow.map((w)=>w.title)}`);
-	if ( Alloy.Globals.lastWindow && Alloy.Globals.lastWindow.length > 1 ) {
-		Alloy.Globals.lastWindow.shift().close();
-		
-	} else {
+		Ti.API.info(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>(w.title?w.title:w.name))}`);
+	if ( ! Alloy.Globals.lastWindow ) {
 		Alloy.Globals.lastWindow = [];
 	}
+	if ( Alloy.Globals.lastWindow.length > 1 ) {
+		Alloy.Globals.lastWindow.shift().close();
+	} 
 	Alloy.Globals.lastWindow.push( win );
 }
 

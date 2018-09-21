@@ -298,8 +298,10 @@ function closeEditScreen() {
 function editTaxon( taxon_id ) {
   var taxon = Alloy.Collections["taxa"].get( taxon_id );
   var sample = Alloy.Models.sample;
+  var isNewTaxon = false;
   if ( !taxon ) {
     taxon = Alloy.createModel( 'taxa', { sampleId: sample.get('sampleId'), taxonId: taxon_id, abundance: "1-2" } );
+    isNewTaxon = true;
   }
   $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
   $.getView().add( $.editTaxon.getView() );
@@ -315,6 +317,8 @@ function editTaxon( taxon_id ) {
 
   $.editTaxon.on("save", function(taxon) {
     taxon.save();
+    if ( isNewTaxon )
+      Alloy.Collections["taxa"].add(taxon);
     closeEditScreen();
   });
 }

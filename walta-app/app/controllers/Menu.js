@@ -19,8 +19,8 @@ function detailedClick() {
   Topics.fireTopicEvent( Topics.DETAILED, null );
 }
 
-function browseClick() {
-  Topics.fireTopicEvent( Topics.BROWSE, null );
+function historyClick() {
+  Topics.fireTopicEvent( Topics.HISTORY, null );
 }
 
 function galleryClick() {

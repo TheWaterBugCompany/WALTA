@@ -36,6 +36,7 @@ function createToolBarButton( image, topic, title ) {
 	var btn = Ti.UI.createButton(attrs);
 	$.addClass( btn, "anchorBarButton" );
 	if ( title ) {
+		btn.top = "1%";
 		btn.title = title;
 		btn.width = Ti.UI.SIZE;
 		btn.backgroundColor = "#26849c";

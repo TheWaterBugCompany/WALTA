@@ -18,9 +18,9 @@
 					<ImageView id="helpIcon" class="smallButtonIcon" />
 					<Label id="helpLabel" class="smallMenuText" text="Help and Info" />	
 				</View>
-				<View id="browse" class="smallButton" onClick="browseClick">
-					<ImageView id="browseIcon" class="smallButtonIcon"  />
-					<Label id="browseLabel" class="smallMenuText" text="Browse list" />
+				<View id="history" class="smallButton" onClick="historyClick">
+					<ImageView id="historyIcon" class="smallButtonIcon"  />
+					<Label id="historyLabel" class="smallMenuText" text="Surveys" />
 				</View>
 				<View id="gallery" class="smallButton" onClick="galleryClick">
 					<ImageView id="galleryIcon" class="smallButtonIcon"  />

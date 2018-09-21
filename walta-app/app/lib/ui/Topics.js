@@ -60,6 +60,8 @@ var topics = {
 
 	COMPLETE: 'complete',
 
+	HISTORY: 'history', 
+
 	HELP: 'help',
 
 	BROWSE: 'browse',

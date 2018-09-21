@@ -3,6 +3,7 @@ exports.definition = {
 	config: {
 		columns: {
 			"serverSampleId": "INTEGER",
+			"lastError": "VARCHAR(255)",
 		    "sampleId": "INTEGER PRIMARY KEY AUTOINCREMENT",
 			"dateCompleted": "INTEGER",
 			"lat": "DECIMAL(3,5)",
@@ -50,14 +51,14 @@ exports.definition = {
 				Ti.API.info(`surveyType = ${this.get("surveyType")}, waterbodyType = ${this.get("waterbodyType")} `)
 				var attrs = {
 					"sample_date": this.get("dateCompleted"),
-					"lat": this.get("lat"),
-					"lng": this.get("lng"),
+					"lat": parseFloat(this.get("lat")).toFixed(5),
+					"lng": parseFloat(this.get("lng")).toFixed(5),
 					"scoring_method": "alt",
 					"survey_type": [ "mayfly", "quick", "detailed" ][this.get("surveyType")],
 					"waterbody_type": [ "river", "wetland", "lake" ][this.get("waterbodyType")],
 					"waterbody_name": this.get("waterbodyName"),
 					"nearby_feature": this.get("nearbyFeature"),
-					"sampled_creatures": taxa.toCerdiApiJson(),
+					"creatures": taxa.toCerdiApiJson(),
 					"habitat": {
 						"boulder": this.get("boulder"),
 						"gravel": this.get("gravel"),
@@ -81,11 +82,12 @@ exports.definition = {
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, {
 			createNewSample: function() {
-				var sample = Alloy.createModel("sample");
-				var taxa = Alloy.Collections.taxa;
-				this.add(sample);
-				sample.save();
-				taxa.reset();
+				Ti.API.info("Creating new sample..");
+				Alloy.Models.sample = Alloy.createModel("sample");
+				Alloy.Collections.taxa = Alloy.createCollection("taxa");
+				this.add(Alloy.Models.sample);
+				Alloy.Models.sample.save();
+				Ti.API.info(`sampleId = ${Alloy.Models.sample.get("sampleId")}`);
 			},
 
 			startNewSurveyIfComplete: function(type) {
@@ -104,7 +106,7 @@ exports.definition = {
 			},
 
 			loadUploadQueue: function() {
-				this.fetch( { query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL AND serverSampleId IS NULL"});
+				this.fetch( { query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL AND serverSampleId IS NULL ORDER BY dateCompleted DESC"});
 			}
 		});
 

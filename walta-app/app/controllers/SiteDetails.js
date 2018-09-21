@@ -4,6 +4,7 @@ var Topics = require("ui/Topics");
 var sample = Alloy.Models.sample;
 
 function loadAttributes() {
+    Ti.API.info(`Survey sampleId = ${sample.get("sampleId")}`);
     var surveyType = sample.get("surveyType"),
         waterbodyType = sample.get("waterbodyType");
     if ( surveyType !== undefined ) {

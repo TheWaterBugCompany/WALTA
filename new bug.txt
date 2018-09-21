@@ -1,0 +1,9 @@
+This held me up for a few hours {#emotions_dlg.smile} 
+
+Technically it works fine but I was confused by the Swagger API, when I looked at the response model for the /samples POST the field for the array of creatures is named "sampled_creatures" whereas the equivalent field in the request is named "creatures".
+
+It would be a good idea to rename "sampled_creatures" to "creatures" for consistency - I'm assuming here that the input and output JSON should have the "same" model (with some id fields optional), I think that is reasonable.
+
+To be more specific, I was expecting the field names to the the same between SampleCreateData and SampleData but SampleCreateData.creatures is called sampled_creatures, the rest are the same.
+
+Certainly not a high priority- I'm not reading the data from the server yet, I just read the wrong name thinking they were the same.

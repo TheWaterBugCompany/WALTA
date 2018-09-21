@@ -22,7 +22,7 @@ Then(/^all the pending samples are uploaded to the server$/) do
     expect( serverReq["survey_type"] ).to eq("detailed")
     expect( serverReq["waterbody_name"] ).to eq("Test waterbody name")
     expect( serverReq["nearby_feature"] ).to eq("Test near by feature")
-    expect( serverReq["sampled_creatures"] ).to be_deep_equal([
+    expect( serverReq["creatures"] ).to be_deep_equal([
         {
             "count" => 1,
             "creature_id" => 12,

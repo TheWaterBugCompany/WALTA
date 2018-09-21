@@ -17,8 +17,7 @@ exports.definition = {
 			toCerdiApiJson() {
 				return {
 					"count": parseInt(this.get("abundance").split("-")[0]),
-					"creature_id": this.get("taxonId"),
-					"photos_count": 0
+					"creature_id": this.get("taxonId")
 				};
 			}
 		});

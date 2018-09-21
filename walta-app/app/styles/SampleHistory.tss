@@ -1,0 +1,32 @@
+
+"#sampleTable": {
+    separatorStyle: Ti.UI.TABLE_VIEW_SEPARATOR_STYLE_SINGLE_LINE,
+    separatorColor: "#26849c"
+}
+".column": {
+    right:"3%",
+    width: "27%",
+    height: "30dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    font: {
+        fontFamily: "Tahoma",
+        fontWeight: "bold",
+        fontSize: "14dp"
+    }
+}
+".headerRow": {
+    backgroundColor: "white",
+    borderColor: "#26849c",
+    borderWidth: "2dp",
+    height: Ti.UI.SIZE,
+    zIndex: 1
+}
+".dateCompletedColumn": {
+    width: "33%"
+}
+".boolColumn": {
+    width: "12.5%"
+}
+".leftAlign": {
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}

@@ -25,12 +25,16 @@ overrode the settings with other TSS, XML, or JS settings:
 
 */
 
+"TableViewRow": {
+    color: "#26849c"
+}
+
 "TextField": {
     hintTextColor: "#c9cacb"
 }
 
 "Label": {
-	color: '#000',
+	color: "#26849c",
 	font: {
 		fontFamily: 'sans-serif',
 		fontSize: '10dp'

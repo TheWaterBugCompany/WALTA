@@ -8,7 +8,7 @@
     colors: [ {color: '#26849c', offset: 0.0 }, {color: '#b4d2d9', offset: 1.0 } ]
   },
   bottom: 0,
-  height: "30dp",
+  height: "10%",
   layout: "composite",
   width: Ti.UI.FILL
 }
@@ -18,8 +18,9 @@
   left: 0,
   width: Ti.UI.SIZE,
   height: Ti.UI.FILL,
-  layout: 'horizontal',
-  horizontalWrap: false
+  layout: "horizontal",
+  horizontalWrap: false,
+  zIndex: 1
 }
 
 "#rightTools": {
@@ -28,16 +29,16 @@
   right: '4dip',
   width: Ti.UI.SIZE,
   height: Ti.UI.FILL,
-  layout: 'horizontal',
-  horizontalWrap: false
+  layout: "horizontal",
+  horizontalWrap: false,
+  zIndex: 1
 }
 
 "#title": {
   color: 'white',
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  width: Ti.UI.SIZE,
-  height: Ti.UI.FILL,
-  right: '50%'
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL
 }
 
 ".anchorBarButton": {

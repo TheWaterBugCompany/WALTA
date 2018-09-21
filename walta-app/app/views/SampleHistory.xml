@@ -1,0 +1,17 @@
+<Alloy>
+	<Collection src="sample" instance="true" id="samples" />
+	<View id="content" layout="vertical">
+		<View  class="headerRow" layout="horizontal">
+			<Label class="dateCompletedColumn column" text="Date Completed"/>
+			<Label class=" column" text="Waterbody Name"/>
+			<Label class="boolColumn column" text="Uploaded?"/>
+		</View>
+		<TableView id="sampleTable" dataCollection="$.samples" dataTransform="formatSample" onClick="openErrorsClick">
+			<TableViewRow class="row" layout="horizontal">
+				<Label class="dateCompletedColumn column" text="{dateCompleted}"/>
+				<Label class="leftAlign column" text="{waterbodyName}"/>
+				<Label class="boolColumn column" text="{uploaded}"/>
+			</TableViewRow>
+		</TableView>
+	</View>
+</Alloy>

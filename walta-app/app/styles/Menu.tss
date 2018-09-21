@@ -114,9 +114,9 @@
   image: "/images/help-icon.png",
 }
 
-"#browseIcon" : {
+"#historyIcon" : {
   backgroundColor: "transparent",
-  image: "/images/browse-icon.png",
+  image: "/images/sample-history-icon.png",
 }
 
 "#galleryIcon" : {
