@@ -80,7 +80,6 @@ function _drawSpeedBug() {
     // Iterate the speed bug index groups and create a view with a "Not Sure?"
     // button that spans all the silhouettes in the group.
     var sbug = key.getSpeedbugIndex().getSpeedbugIndex();
-    Ti.API.info(JSON.stringify(sbug));
     _(sbug).each( function( sg ) {
         var grpCnt = Ti.UI.createView( {
                 layout: 'vertical',
