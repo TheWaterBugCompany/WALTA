@@ -26,8 +26,12 @@ function validateSum() {
                     return a;
             }, 0);
    if ( sum !== 100 ) {
+        [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
+            .forEach( (f) => $.setError(f) );
         $.disable($.nextButton);
     } else {
+        [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
+            .forEach( (f) => $.clearError(f) );
         $.enable($.nextButton);
         saveAttributes();
     }
