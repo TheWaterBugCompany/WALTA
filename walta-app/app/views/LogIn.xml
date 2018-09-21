@@ -2,6 +2,7 @@
 	<View id="content" class="container" layout="horizontal">
 		<View id="leftPanel" class="panel" layout="vertical">
 			<Label class="headingText" text="Log in with your existing account:"/>
+			<Label class="error" text="Error message"/>
 			<Label id="emailLabel" class="labelText" text="Email:"/>
 			<TextField id="emailTextField" class="textField" accessibilityLabel="Email" />
 			<Label id="passwordLabel" class="labelText" text="Password:"/>

@@ -10,6 +10,8 @@ function loginClick() {
       Topics.fireTopicEvent( Topics.HOME, null );
     }).catch( (err) => {
         Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
+        $.setError( $.emailTextField );
+        $.setError( $.passwordTextField );
       });
 }
 

@@ -68,5 +68,32 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 function getAnchorBar() {
 	return anchorBar;
 }
+
+function disable(view) {
+	view.enabled = false;
+	view.touchEnabled = false;
+	view.backgroundColor = "#8a9da1";
+  }
+  
+  function enable(view) {
+	view.enabled = true;
+	view.touchEnabled = true;
+	view.backgroundColor = "#b4d2d9";
+  }
+  
+  function setError(view) {
+	view.color = "red";
+	view.borderColor = "red";
+  }
+  
+  function clearError(view) {
+	view.color = "#26849c";
+	view.borderColor = "#26849c";
+  }
+
+exports.disable = disable;
+exports.enable = enable;
+exports.setError = setError;
+exports.clearError = clearError;
 exports.open = openWindow;
 exports.getAnchorBar = getAnchorBar;

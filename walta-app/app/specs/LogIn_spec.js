@@ -19,7 +19,7 @@ require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
 var { closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
 
-describe('LogIn controller', function() {
+describe.only('LogIn controller', function() {
 	var login;
 	beforeEach( function() {
 		login = Alloy.createController( "LogIn" );

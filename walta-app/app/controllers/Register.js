@@ -9,34 +9,13 @@ var passwordValid = false;
 $.TopLevelWindow.title = "Register";
 exports.baseController = "TopLevelWindow";
 
-function disable() {
-  $.submitButton.enabled = false;
-  $.submitButton.touchEnabled = false;
-  $.submitButton.backgroundColor = "#8a9da1";
-}
-
-function enable() {
-  $.submitButton.enabled = true;
-  $.submitButton.touchEnabled = true;
-  $.submitButton.backgroundColor = "#b4d2d9";
-}
-
-function setError(view) {
-  view.color = "red";
-  view.borderColor = "red";
-}
-
-function clearError(view) {
-  view.color = "#26849c";
-  view.borderColor = "#26849c";
-}
 
 function emailChanged() {
   if ( emailValidity.test($.emailTextField.value) ) {
-    clearError( $.emailTextField );
+    $.clearError( $.emailTextField );
     emailValid = true;
   } else {
-    setError( $.emailTextField );
+    $.setError( $.emailTextField );
     emailValid = false;
   }
   validateSubmit();
@@ -44,10 +23,10 @@ function emailChanged() {
 
 function nameChanged() {
   if ( $.nameTextField.value.length > 2 ) {
-    clearError( $.nameTextField );
+    $.clearError( $.nameTextField );
     nameValid = true;
   } else {
-    setError( $.nameTextField );
+    $.setError( $.nameTextField );
     nameValid = false;
   }
   validateSubmit();
@@ -56,13 +35,13 @@ function nameChanged() {
 function passwordChanged() {
   if ( $.passwordTextField.value == $.passwordConfirmTextField.value 
        && $.passwordTextField.value.length > 5 ) {
-        clearError($.passwordTextField);
-        clearError($.passwordConfirmTextField);
+        $.clearError($.passwordTextField);
+        $.clearError($.passwordConfirmTextField);
         passwordValid = true;
        }
   else {
-    setError($.passwordTextField);
-    setError($.passwordConfirmTextField);
+    $.setError($.passwordTextField);
+    $.setError($.passwordConfirmTextField);
     passwordValid = false;
   }
   validateSubmit();
@@ -74,9 +53,9 @@ function passwordConfirmChanged() {
 
 function validateSubmit() {
   if ( emailValid && nameValid && passwordValid ) {
-    enable();
+    $.enable($.submitButton);
   } else {
-    disable();
+    $.disable($.submitButton);
   }
 }
 
@@ -95,6 +74,10 @@ function submitClick() {
   })
   .catch( (err) => {
     Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
+    $.setError($.passwordTextField);
+    $.setError($.passwordConfirmTextField);
+    $.setError($.emailTextField);
+    $.setError($.nameTextField);
   });
 }
 

@@ -4,18 +4,6 @@ var SampleSync = require('logic/SampleSync');
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
 
-function disable() {
-    $.doneButton.enabled = false;
-    $.doneButton.touchEnabled = false;
-    $.doneButton.backgroundColor = "#8a9da1";
-  }
-  
-  function enable() {
-    $.doneButton.enabled = true;
-    $.doneButton.touchEnabled = true;
-    $.doneButton.backgroundColor = "#b4d2d9";
-  }
-
 function doneClick() {
     if ( Alloy.Globals.CerdiApi.retrieveUserToken() )
         Topics.fireTopicEvent( Topics.HOME, null );
@@ -39,12 +27,12 @@ var saveSampleAndUpload = _.once(function() {
     SampleSync.forceUpload(); // avoid the 30 minute wait if internet is available
     setMessageText();
     $.gpsObtained.visible = true;
-    enable();
+    $.enable($.doneButton);
 })
 
 function checkGpsLock() {
     if ( !(Alloy.Models.sample.get("lat") && Alloy.Models.sample.get("lng") ) ) {
-        disable();
+        $.disable($.doneButton);
         $.message.text = INCOMPLETE_NO_LOCK;
         $.gpsObtained.visible = false;
     } else {

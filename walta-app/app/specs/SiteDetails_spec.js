@@ -20,7 +20,7 @@ var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
 var mocx = require("specs/lib/mocx");
 
-describe.only("SiteDetails controller", function() {
+describe("SiteDetails controller", function() {
 	var ctl;
 	before( function() {
         mocx.createModel("sample");

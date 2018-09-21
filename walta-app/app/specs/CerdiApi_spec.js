@@ -118,7 +118,7 @@ fs.readFile('./walta-app/app/config.json', 'utf8', function(err,contents) {
     if ( err ) {
         throw err;
     }
-    CLIENT_SECRET = JSON.parse( contents ).global.cerdiApiSecret;
+    CLIENT_SECRET = JSON.parse( contents )["env:production"].cerdiApiSecret;
 });
 describe('CerdiApi', function() {
     let cerdi;
@@ -204,17 +204,27 @@ describe('CerdiApi', function() {
                 password: 'tstPassw0rd!'
             })).to.eventually.have.property("accessToken").to.be.a('string');
         });
+        it.only( 'should fail with bad password', function() {
+            return expect( cerdi.registerUser( {
+                email: `test-${Date.now()}@example.com`,
+                group: false,
+                survey_consent: false,
+                share_name_consent: false,
+                name: 'Test Example',
+                password: 'badpassword'
+            })).to.be.rejected;
+        });
         it( 'should succesfully register a social user' );
 
     });
 
     describe( '#loginUser', function() {
         
-        it("should fail if a user doesn't exist",function() {
+        it.only("should fail if a user doesn't exist",function() {
             return expect( cerdi.loginUser( 'nonexistentuser@example.com', 'badpassword' ) )
                 .to.be.rejected;
         });
-        it("should fail if the password doesn't match",function() {
+        it.only("should fail if the password doesn't match",function() {
             return expect( cerdi.loginUser( 'testlogin@example.com', 'badpassword' ) )
                 .to.be.rejected;
         });
