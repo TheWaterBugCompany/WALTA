@@ -14,21 +14,33 @@ function forceUpload() {
     startUpload();
 }
 
+function uploadRemainingSamples(samples) {
+    if ( samples.length > 0 ) {
+        return uploadNextSample(samples)
+            .then( () => uploadRemainingSamples(samples) )
+    } else {
+        return Promise.resolve();
+    }
+}
+
+function uploadNextSample(samples) {
+    var sample = samples.shift();
+    Ti.API.info(JSON.stringify(sample.toCerdiApiJson()));
+    return Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
+        .then( (r) => {
+            sample.set("serverSampleId", r.id );
+            sample.save();
+            timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
+        });
+}
+
 function startUpload() {
     Ti.API.info("Starting sample syncronisation process...");
     var samples = Alloy.createCollection("sample");
     samples.loadUploadQueue();
     if ( samples.length >= 1 ) {
-        var sample = samples.shift();
-        Ti.API.info(JSON.stringify(sample.toCerdiApiJson()));
         if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
-            
-            Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
-                .then( (r) => {
-                    sample.set("serverSampleId", r.id );
-                    sample.save();
-                    timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
-                })
+            uploadRemainingSamples(samples)
                 .catch( (e) => {
                     Ti.API.error(`Error trying to upload: ${JSON.stringify(e)}`);
                     timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
@@ -38,7 +50,7 @@ function startUpload() {
             timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
         }
     } else {
-        Ti.API.info("nothing to do");
+        Ti.API.info("Nothing to do");
         timeoutHandler =setTimeout( startUpload, SYNC_INTERVAL );
     }
 }
