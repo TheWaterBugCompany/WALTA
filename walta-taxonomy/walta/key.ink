@@ -581,7 +581,7 @@ INCLUDE taxa.ink
 
 === node_41 ===
 * with two tails -> node_75 # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]
-* with three tails -> node_76 # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
+* with three tails -> mayfly_start_point  # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
 
 === node_75 ===
 * with compound eyes (like a mirror ball upclose) and wing buds (except on very young animals) -> order_plecoptera # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]

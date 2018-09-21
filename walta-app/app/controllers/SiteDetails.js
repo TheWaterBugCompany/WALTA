@@ -17,16 +17,13 @@ function loadAttributes() {
 }
 
 function saveAttributes() {
-    Ti.API.info(`surveyType = ${$.surveyLevelSelect.getIndex()}, waterbodyType = ${$.waterbodyTypeSelect.getIndex()}`);
     sample.set( {
         "surveyType": `${$.surveyLevelSelect.getIndex()}`,
         "waterbodyType": `${$.waterbodyTypeSelect.getIndex()}`,
         "waterbodyName": $.waterbodyNameField.value,
         "nearbyFeature": $.nearByFeatureField.value
     });
-    sample.save();
-    Ti.API.info(`surveyType = ${sample.get("surveyType")}, waterbodyType = ${sample.get("waterbodyType")} `)
-			
+    sample.save();		
 }
 
 function nextClick() {

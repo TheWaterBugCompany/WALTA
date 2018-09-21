@@ -149,7 +149,9 @@ function createAppWindow( keyName, keyPath ) {
 	});
 
     privates.subscribe( Topics.KEYSEARCH, function() {
-    	privates.key.reset();
+		var node = ( Alloy.Models.sample.get("surveyType") == 0 ? 
+			privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );
+    	privates.key.reset(node);
     	privates.updateDecisionWindow({ slide: 'right' });
     });
 

@@ -89,8 +89,9 @@ function createKey( args ) {
 		},
 
 		// Reset to the root Node
-		reset: function() {
-			this.currentDecision = this.root;
+		reset: function(node) {
+			if ( ! node ) node = this.root;
+			this.currentDecision = node;
 		},
 
 		// Returns true is we are currently at the root node
