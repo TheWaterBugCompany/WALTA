@@ -89,8 +89,9 @@ exports.definition = {
 			},
 
 			startNewSurveyIfComplete: function(type) {
-				if ( Alloy.Models.sample.get("dateCompleted") ||
-					Alloy.Collections.sample.length == 0 ) {
+				if (    Alloy.Models.sample.get("dateCompleted") 
+					 || !Alloy.Models.sample.get("sampleId")
+				     || Alloy.Collections.sample.length == 0  )  {
 					 this.createNewSample();
 					 Alloy.Models.sample.set({"surveyType": type} );
 				}

@@ -43,7 +43,7 @@ function gotLocation(e) {
         Alloy.Models.sample.set('lat', e.coords.latitude);
         Alloy.Models.sample.set('lng', e.coords.longitude);
     } else {
-        Ti.API.info(`Ignoring error from location services: ${e.error}`);
+        //Ti.API.info(`Ignoring error from location services: ${e.error}`);
     }
 }
 

@@ -1,4 +1,4 @@
-var SYNC_INTERVAL = 1000*60*5; // 30 minutes
+var SYNC_INTERVAL = 1000*60*5; // 5 minutes
 var timeoutHandler;
 
 function init() {
