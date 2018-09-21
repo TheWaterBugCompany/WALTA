@@ -24,6 +24,11 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 */
+
+"TextField": {
+    hintTextColor: "#c9cacb"
+}
+
 "Label": {
 	color: '#000',
 	font: {
@@ -129,9 +134,24 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 ".password": {
+    font: {
+        fontSize: "13dp"
+    },
 	passwordMask: true
 }
 
 ".checkbox": {
 	style: Ti.UI.Android.SWITCH_STYLE_CHECKBOX
+}
+
+".error": {
+    top: "2.5%",
+    color: "red",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    font: {
+        fontFamily: "Tahoma",
+        fontWeight: "bold",
+        fontSize: "14dp"
+    },
+    visible: false
 }

@@ -6,9 +6,9 @@
 			<Label id="nameLabel" class="labelText" text="Name:"/>
 			<TextField id="nameTextField" accessibilityLabel="Name"  class="textField" onChange="nameChanged" />
 			<Label id="passwordLabel" class="labelText" text="Password:"/>
-			<TextField id="passwordTextField" accessibilityLabel="Password" class="textField password" onChange="passwordChanged"/>
+			<TextField id="passwordTextField" accessibilityLabel="Password" hintText="Must be at least 8 characters" class="textField password" onChange="passwordChanged"/>
 			<Label id="passwordConfirmLabel" class="labelText" text="Confirm Password:"/>
-			<TextField id="passwordConfirmTextField" accessibilityLabel="Password Confirmation" class="textField password" onChange="passwordConfirmChanged"/>
+			<TextField id="passwordConfirmTextField" accessibilityLabel="Password Confirmation" hintText="Include numbers, symbols and mixed case" class="textField password" onChange="passwordConfirmChanged"/>
 		</View>
 		<View id="rightPanel" class="panel" layout="vertical">
 			<View id="registerAsGroup" class="optionLine" layout="horizontal">
@@ -23,6 +23,8 @@
 				<Switch id="dataToggle" class="checkbox" accessibilityLabel="Data Share Permission"/>
 				<Label class="labelText" text="I consent to my data being\nshared"/>
 			</View>
+			<Label id="errorMessage" class="error" text="Error message"/>
+		
 			<Button id="submitButton" class="actionButton" title="Submit" onClick="submitClick"/>
 		</View>
 	</View>

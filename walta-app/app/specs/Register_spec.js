@@ -29,7 +29,7 @@ function setTextField( field, value ) {
     };
 }
 
-describe('Register controller', function() {
+describe.only('Register controller', function() {
     var vw, ct, win;
     this.timeout(3000);
 
@@ -37,8 +37,8 @@ describe('Register controller', function() {
         return Promise.resolve()
         .then( setTextField( ct.emailTextField, "example@test.com.au" ) )
         .then( setTextField( ct.nameTextField, "Test User") )
-        .then( setTextField( ct.passwordTextField, "validPassword" ) )
-        .then( setTextField( ct.passwordConfirmTextField, "validPassword" ) )
+        .then( setTextField( ct.passwordTextField, "validPassw0rd!" ) )
+        .then( setTextField( ct.passwordConfirmTextField, "validPassw0rd!" ) )
         .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     }
 	before( function(done) {
@@ -63,18 +63,50 @@ describe('Register controller', function() {
             .then( setTextField( ct.nameTextField, "" ) )
             .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
     });
-    it('should disable submit if password doesnt meet complexity requirements', function() {
+    it('should enable submit if password is valid', function() {
         return fillOutValidForm()
-            .then( setTextField( ct.passwordTextField, "small" ) )
-            .then( setTextField( ct.passwordConfirmTextField, "small" ) )
+            .then( setTextField( ct.passwordTextField, "validPassw0rd!" ) )
+            .then( setTextField( ct.passwordConfirmTextField, "validPassw0rd!" ) )
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
+    });
+    it('should disable submit if password is too short', function() {
+        return fillOutValidForm()
+            .then( setTextField( ct.passwordTextField, "sM8!l" ) )
+            .then( setTextField( ct.passwordConfirmTextField, "sM8!l" ) )
             .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
     });
-    it('should disable submit if password doesnt equal confirm password', function() {
+    it('should disable submit if password has no upper case', function() {
         return fillOutValidForm()
-            .then( setTextField( ct.passwordTextField, "password1" ) )
-            .then( setTextField( ct.passwordConfirmTextField, "password2" ) )
+            .then( setTextField( ct.passwordTextField, "freddytext!8" ) )
+            .then( setTextField( ct.passwordConfirmTextField, "freddytext!8" ) )
             .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
     });
-    it('should call the serve API if the submit button is pressed');
+    it('should disable submit if password has no lower case', function() {
+        return fillOutValidForm()
+            .then( setTextField( ct.passwordTextField, "FREDDYTEXT!8" ) )
+            .then( setTextField( ct.passwordConfirmTextField, "FREDDYTEXT!8" ) )
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+    });
+    it('should disable submit if password has no symbol', function() {
+        return fillOutValidForm()
+            .then( setTextField( ct.passwordTextField, "fReddytext8" ) )
+            .then( setTextField( ct.passwordConfirmTextField, "fReddytext8" ) )
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+    });
+    it('should disable submit if password has no number', function() {
+        return fillOutValidForm()
+            .then( setTextField( ct.passwordTextField, "fReddytext!" ) )
+            .then( setTextField( ct.passwordConfirmTextField, "fReddytext!" ) )
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+    });
+    it('should disable submit if password does not equal confirm password', function() {
+        return fillOutValidForm()
+            .then( setTextField( ct.passwordTextField, "p0ssWord1" ) )
+            .then( setTextField( ct.passwordConfirmTextField, "p0ssWord2" ) )
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+    });
+    it('should call the serve API if the submit button is pressed', function() {
+        return fillOutValidForm();
+    });
 
 });

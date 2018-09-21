@@ -16,7 +16,8 @@ Scenario: Remember log in over app restart
     When I log in via username and password
      And I restart the application
     Then I am logged in
-   
+
+ 
 Scenario: Correctly responds to server login errors
   Given the server is returning a 500 error
     And I am not logged in
@@ -34,7 +35,8 @@ Scenario: Register with existing email address
     And the user "testuser@example.com" is already registered
    When I register as "testuser@example.com"
    Then I get an error message
-
+   
+@only
 Scenario: Log in with bad credentials
  Given The "testuser@example.com" account exists with password "t3stPassw0rd"
      And I am not logged in

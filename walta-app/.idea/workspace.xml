@@ -6,37 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="933ceca4-28e4-4180-8dcf-7fe56cf14d18" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/../Rakefile" afterPath="$PROJECT_DIR$/../Rakefile" />
-      <change beforePath="$PROJECT_DIR$/../features/step_definitions/identify_taxa_steps.rb" afterPath="$PROJECT_DIR$/../features/step_definitions/identify_taxa_steps.rb" />
+      <change beforePath="$PROJECT_DIR$/../features/registration.feature" afterPath="$PROJECT_DIR$/../features/registration.feature" />
       <change beforePath="$PROJECT_DIR$/../features/step_definitions/registration.rb" afterPath="$PROJECT_DIR$/../features/step_definitions/registration.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/submit_sample.feature" afterPath="$PROJECT_DIR$/../features/submit_sample.feature" />
-      <change beforePath="$PROJECT_DIR$/../features/support/android/base_page_object.rb" afterPath="$PROJECT_DIR$/../features/support/android/base_page_object.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/env.rb" afterPath="$PROJECT_DIR$/../features/support/env.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/habitat_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/habitat_screen.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/login_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/login_screen.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/menu_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/menu_screen.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/register_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/register_screen.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/sampletray_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/sampletray_screen.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/sitedetails_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/sitedetails_screen.rb" />
-      <change beforePath="$PROJECT_DIR$/../features/support/pageobjects/summary_screen.rb" afterPath="$PROJECT_DIR$/../features/support/pageobjects/summary_screen.rb" />
       <change beforePath="$PROJECT_DIR$/../mirage.log" afterPath="$PROJECT_DIR$/../mirage.log" />
-      <change beforePath="$PROJECT_DIR$/../screenshot_0.png" afterPath="$PROJECT_DIR$/../screenshot_0.png" />
-      <change beforePath="$PROJECT_DIR$/../screenshot_1.png" afterPath="$PROJECT_DIR$/../screenshot_1.png" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/SampleTray.js" afterPath="$PROJECT_DIR$/app/controllers/SampleTray.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/Summary.js" afterPath="$PROJECT_DIR$/app/controllers/Summary.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/TaxonDetails.js" afterPath="$PROJECT_DIR$/app/controllers/TaxonDetails.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/LogIn.js" afterPath="$PROJECT_DIR$/app/controllers/LogIn.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/Register.js" afterPath="$PROJECT_DIR$/app/controllers/Register.js" />
       <change beforePath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" afterPath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/index.js" afterPath="$PROJECT_DIR$/app/controllers/index.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/android/ui/PlatformSpecific.js" afterPath="$PROJECT_DIR$/app/lib/android/ui/PlatformSpecific.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/control/AppWindow.js" afterPath="$PROJECT_DIR$/app/lib/control/AppWindow.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/logic/SampleSync.js" afterPath="$PROJECT_DIR$/app/lib/logic/SampleSync.js" />
-      <change beforePath="$PROJECT_DIR$/app/lib/ui/VideoView.js" afterPath="$PROJECT_DIR$/app/lib/ui/VideoView.js" />
-      <change beforePath="$PROJECT_DIR$/app/models/sample.js" afterPath="$PROJECT_DIR$/app/models/sample.js" />
-      <change beforePath="$PROJECT_DIR$/app/models/taxa.js" afterPath="$PROJECT_DIR$/app/models/taxa.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/Summary_spec.js" afterPath="$PROJECT_DIR$/app/specs/Summary_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/VideoView_spec.js" afterPath="$PROJECT_DIR$/app/specs/VideoView_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/styles/SampleTaxaIcon.tss" afterPath="$PROJECT_DIR$/app/styles/SampleTaxaIcon.tss" />
-      <change beforePath="$PROJECT_DIR$/app/views/Habitat.xml" afterPath="$PROJECT_DIR$/app/views/Habitat.xml" />
+      <change beforePath="$PROJECT_DIR$/app/specs/LogIn_spec.js" afterPath="$PROJECT_DIR$/app/specs/LogIn_spec.js" />
+      <change beforePath="$PROJECT_DIR$/app/specs/Register_spec.js" afterPath="$PROJECT_DIR$/app/specs/Register_spec.js" />
+      <change beforePath="$PROJECT_DIR$/app/specs/mocks/MockCerdiApi.js" afterPath="$PROJECT_DIR$/app/specs/mocks/MockCerdiApi.js" />
+      <change beforePath="$PROJECT_DIR$/app/styles/LogIn.tss" afterPath="$PROJECT_DIR$/app/styles/LogIn.tss" />
+      <change beforePath="$PROJECT_DIR$/app/styles/app.tss" afterPath="$PROJECT_DIR$/app/styles/app.tss" />
+      <change beforePath="$PROJECT_DIR$/app/views/LogIn.xml" afterPath="$PROJECT_DIR$/app/views/LogIn.xml" />
+      <change beforePath="$PROJECT_DIR$/app/views/Register.xml" afterPath="$PROJECT_DIR$/app/views/Register.xml" />
     </list>
     <ignored path="walta-app.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -64,7 +47,7 @@
       <projects_view />
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="1">
     <option name="y" value="27" />
     <option name="width" value="1920" />
     <option name="height" value="1053" />
@@ -86,19 +69,7 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="Scope" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="walta-app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="walta-app" type="e9137016:NonAndroidModuleNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -142,6 +113,18 @@
               <item name="walta-app" type="b2602c69:ProjectViewProjectNode" />
               <item name="walta-app" type="462c0819:PsiDirectoryNode" />
               <item name="Resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="walta-app" type="1abcf292:AndroidViewProjectNode" />
+              <item name="walta-app" type="e9137016:NonAndroidModuleNode" />
             </path>
           </expand>
           <select />
@@ -268,7 +251,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="1920" height="1053" extended-state="0" />
+    <frame x="0" y="27" width="1920" height="1053" extended-state="1" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -276,11 +259,11 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5139353" sideWeight="0.19850586" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5150502" sideWeight="0.20170757" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5139353" sideWeight="0.8014941" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5150502" sideWeight="0.7982924" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />

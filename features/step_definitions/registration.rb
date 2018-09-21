@@ -30,6 +30,10 @@ Then(/^I am logged in$/) do
     expect( @current_page.loggedIn? ).to eq(true)
 end
 
+When(/^I log in with "([^"]*)" and password "([^"]*)"$/) do |emailAddress, password|
+    @current_page = RegistrationDriver.login( emailAddress, password )
+end
+
 When(/^I register as "([^"]*)"$/) do |emailAddress|
     @emailAddress = emailAddress
     @current_page = page(MenuScreen).await
@@ -67,7 +71,5 @@ When(/^I restart the application$/) do
     pending # Write code here that turns the phrase above into concrete actions
   end
   
-  When(/^I log in with "([^"]*)" and password "([^"]*)"$/) do |arg1, arg2|
-    pending # Write code here that turns the phrase above into concrete actions
-  end
+  
   

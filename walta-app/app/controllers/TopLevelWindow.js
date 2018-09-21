@@ -72,28 +72,54 @@ function getAnchorBar() {
 function disable(view) {
 	view.enabled = false;
 	view.touchEnabled = false;
-	view.backgroundColor = "#8a9da1";
-  }
-  
-  function enable(view) {
+	view.backgroundColor = "#c9cacb";
+	view.borderColor = "#c9cacb";
+	view.color = "white"; 
+}
+
+function enable(view) {
 	view.enabled = true;
 	view.touchEnabled = true;
 	view.backgroundColor = "#b4d2d9";
-  }
-  
-  function setError(view) {
+	view.borderColor = "#b4d2d9";
+	view.color = "#26849c";
+}
+
+function setError(view) {
 	view.color = "red";
 	view.borderColor = "red";
-  }
-  
-  function clearError(view) {
+}
+
+function clearError(view) {
 	view.color = "#26849c";
 	view.borderColor = "#26849c";
-  }
+}
+
+function setErrorMessage( err ) {
+	if ( err.errors && _(err.errors).keys().length > 0 ) {
+		// concatenate all the error messages together
+		msg = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
+	} else {
+		msg = "There was a server error: check network connection.";
+	}
+	setErrorMessageString( msg );
+}
+
+function setErrorMessageString( msg ) {
+	$.errorMessage.text = msg;
+	$.errorMessage.visible = true;
+}
+
+function clearErrorMessage() {
+	$.errorMessage.visible = false;
+}
 
 exports.disable = disable;
 exports.enable = enable;
 exports.setError = setError;
 exports.clearError = clearError;
+exports.setErrorMessage = setErrorMessage;
+exports.setErrorMessageString = setErrorMessageString;
+exports.clearErrorMessage = clearErrorMessage;
 exports.open = openWindow;
 exports.getAnchorBar = getAnchorBar;

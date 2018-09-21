@@ -19,7 +19,7 @@
 }
 
 "#emailLabel": {
-    top: "10%",
+    top: "2.5%",
     width: "250dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
@@ -27,6 +27,10 @@
 "#passwordLabel": {
     width: "250dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+"#registerButton": {
+    top: "4%"
 }
 
 ".socialMediaImage": {
@@ -42,5 +46,5 @@
 }
 
 "#registerHeading": {
-    top: "3%"
+    top: "1%"
 }

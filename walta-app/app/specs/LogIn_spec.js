@@ -18,8 +18,10 @@
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
 var { closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
+var CerdiApi = require("specs/mocks/MockCerdiApi");
+Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 
-describe.only('LogIn controller', function() {
+describe('LogIn controller', function() {
 	var login;
 	beforeEach( function() {
 		login = Alloy.createController( "LogIn" );

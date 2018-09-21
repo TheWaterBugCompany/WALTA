@@ -42,7 +42,7 @@ end
 
 task :test => [ :start_emulator, 'walta-app/build/android/bin/Waterbug.apk', :uninstall_app ] do
   
-  sh("calabash-android run walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature --tags @only")
+  sh("calabash-android run walta-app/build/android/bin/Waterbug.apk features/registration.feature --tags @only")
 end
 
 task :test_console => [:start_emulator, 'walta-app/build/android/bin/Waterbug.apk', :uninstall_app  ] do
@@ -69,7 +69,7 @@ task :debug => [ :start_emulator, :uninstall_app ] do
 end
 
 task :preview => [ ] do
-  sh("appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME}")
+  sh("appc ti build --project-dir walta-app --platform android --deploy-type development --target emulator --device-id ${AVD_NAME} --liveview")
 end
 
 task :device_preview => [] do

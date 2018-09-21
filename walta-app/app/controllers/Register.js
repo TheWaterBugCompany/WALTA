@@ -1,6 +1,5 @@
-var Topics = require('ui/Topics');
-
-var emailValidity = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+var Topics = require("ui/Topics");
+var { emailValidity } = require("util/EmailUtils");
 
 var emailValid = false;
 var nameValid = false;
@@ -11,11 +10,13 @@ exports.baseController = "TopLevelWindow";
 
 
 function emailChanged() {
-  if ( emailValidity.test($.emailTextField.value) ) {
+  if ( emailValidity($.emailTextField.value) ) {
     $.clearError( $.emailTextField );
+    $.clearErrorMessage();
     emailValid = true;
   } else {
     $.setError( $.emailTextField );
+    $.setErrorMessageString("Not a valid email address");
     emailValid = false;
   }
   validateSubmit();
@@ -33,17 +34,46 @@ function nameChanged() {
 }
 
 function passwordChanged() {
-  if ( $.passwordTextField.value == $.passwordConfirmTextField.value 
-       && $.passwordTextField.value.length > 5 ) {
-        $.clearError($.passwordTextField);
-        $.clearError($.passwordConfirmTextField);
-        passwordValid = true;
-       }
-  else {
-    $.setError($.passwordTextField);
-    $.setError($.passwordConfirmTextField);
+  if ( $.passwordTextField.value.length >= 8) {
+    if ( /[0-9]+/.test($.passwordTextField.value) ) {
+      if ( /[A-Z]+/.test($.passwordTextField.value) ) {
+        if ( /[a-z]+/.test($.passwordTextField.value) ) {
+          if ( !/^[a-zA-Z0-9]+$/.test($.passwordTextField.value) ) {
+            if ( $.passwordTextField.value == $.passwordConfirmTextField.value ) {
+              $.clearError($.passwordTextField);
+              $.clearError($.passwordConfirmTextField);
+              $.clearErrorMessage();
+              passwordValid = true;
+              validateSubmit();
+              return;
+            } else {
+              passwordValid = false;
+              $.setErrorMessageString("Passwords do not match");
+            }
+          } else {
+            passwordValid = false;
+            $.setErrorMessageString("Password must contain a symbol");
+          }
+        } else {
+          passwordValid = false;
+          $.setErrorMessageString("Password must contain at least one lower case character");
+        }
+      } else {
+        passwordValid = false;
+        $.setErrorMessageString("Password must contain at least one upper case character");
+      }
+    } else {
+      passwordValid = false;
+      $.setErrorMessageString("Password must contain a digit");
+    }
+  } else {
     passwordValid = false;
+    $.setErrorMessageString("Password must have at least 8 characters");
   }
+
+  $.setError($.passwordTextField);
+  $.setError($.passwordConfirmTextField);
+  
   validateSubmit();
 }
 
@@ -78,9 +108,7 @@ function submitClick() {
     $.setError($.passwordConfirmTextField);
     $.setError($.emailTextField);
     $.setError($.nameTextField);
+    $.setErrorMessage(err);
   });
 }
-
-emailChanged();
-nameChanged();
-passwordChanged();
+$.disable($.submitButton);
