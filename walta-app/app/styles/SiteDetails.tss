@@ -40,6 +40,9 @@
     bottom: "4dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
+".errorWrap": {
+    borderRadius: 6
+}
 ".tabs" : {
     width: "300dp",
     height: "40dp",

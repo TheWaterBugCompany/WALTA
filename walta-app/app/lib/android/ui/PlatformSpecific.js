@@ -40,7 +40,7 @@ function transitionWindows( win, effect ) {
 	}
 	win.open( args );
 	if ( Alloy.Globals.lastWindow )
-		Ti.API.info(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>(w.title?w.title:w.name))}`);
+		Ti.API.info(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>w.title)}`);
 	if ( ! Alloy.Globals.lastWindow ) {
 		Alloy.Globals.lastWindow = [];
 	}

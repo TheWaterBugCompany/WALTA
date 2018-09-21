@@ -3,18 +3,23 @@
 		<View id="top" class="panel" layout="horizontal">
 			<View id="topLeft" layout="vertical">
 				<Label id="surveyLevelLabel" class="labelText" text="Survey level:"/>
-				<Widget id="surveyLevelSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Survey level" />
+				<View id="surveyLevelError" class="errorWrap shrinkWrap">
+					<Widget id="surveyLevelSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Survey level" />
+				</View>
+				
 				<Label id="waterbodyTypeLabel" class="labelText" text="Waterbody type:"/>
-				<Widget id="waterbodyTypeSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Waterbody type" />
+				<View id="waterbodyTypeError" class="errorWrap shrinkWrap">
+					<Widget id="waterbodyTypeSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Waterbody type" />
+				</View>
 				<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
 			</View>
 			<Require id="photoSelect" type="view" src="PhotoSelect"/>
 		</View>
 		<View id="bottom" class="panel" layout="horizontal">
 			<View id="bottomLeft" layout="vertical">	
-				<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" onChange="saveAttributes" />
+				<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" onChange="checkValidity" />
 				<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
-				<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near by feature" onChange="saveAttributes"/>
+				<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near by feature" onChange="checkValidity"/>
 			</View>
 			<View id="bottomRight" height="Ti.UI.FILL" width="Ti.UI.FILL">
 				<Label id="nextButton" class="actionButton" text="Next" onClick="nextClick"/>
