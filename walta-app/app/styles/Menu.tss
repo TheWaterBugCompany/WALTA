@@ -22,17 +22,11 @@
   bottom: "20dp"
 }
 
-"#smallOptions": {
-  height: Ti.UI.SIZE,
-  bottom: "10dp",
-  left: "20dp",
-  right: "20dp"
+"#bigOptions": {
+  height: Ti.UI.FILL,
+  width: Ti.UI.FILL
 }
 
-".bigButton": {
-  height: Ti.UI.SIZE,
-  width: Ti.UI.SIZE
-}
 
 
 ".bigMenuText": {
@@ -51,31 +45,50 @@
 
 "#mayfly": {
   top: "10%",
-  left: "2%"
+  left: "1%",
+  width: "50%",
+  height: "60%"
+}
+
+"#mayflyIconWrapper": {
+  left: "5%",
+  top: "1%",
+  height: "95%",
+  width: "65%"
 }
 
 "#mayflyIcon": {
   backgroundColor: "transparent",
   image: "/images/mayfly-muster-icon.png",
-  height: "65%",
+  height: Ti.UI.FILL,
+  width: Ti.UI.FILL,
   left: 0
 }
 
 "#mayflyLabel": {
-  bottom: "30%",
-  left: "48%"
+  bottom: "32%",
+  left: "62%"
 }
 
 "#detailed": {
   top: "8%",
-  left: "56%"
+  left: "56%",
+  width: "35%",
+  height: "50%"
+}
+
+"#detailedIconWrapper": {
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%"
 }
 
 "#detailedIcon": {
   backgroundColor: "transparent",
   image: "/images/waterbug-survey-icon.png",
-  height: "60%",
-  width: "78%",
+  height: Ti.UI.FILL,
+  width: Ti.UI.FILL,
   left: "0dp"
 }
 
@@ -84,15 +97,24 @@
   left: "1%"
 }
 
+"#smallOptions": {
+  height: "30%",
+  width: Ti.UI.FILL,
+  bottom: "2%",
+  left: "1%",
+  right: "1%"
+}
+
 ".smallButton": {
-  height: "22%",
+  height: Ti.UI.FILL,
   width: "25%",
   layout: "vertical",
   horizontalWrap: false
 }
 
 ".smallButtonIcon" : {
-  height: "75%"
+  height: "65%",
+  width: "45%"
 }
 
 ".smallMenuText": {

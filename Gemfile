@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem 'rake'
 gem 'calabash-android'
+gem 'calabash-cucumber'
 gem 'mirage'
 gem 'cucumber'
 gem 'rspec-expectations'

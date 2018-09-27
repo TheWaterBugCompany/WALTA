@@ -1,5 +1,5 @@
 require('../mocha');
-var util = require('./util')
+var util = require('./util');
 require('./reporters/ti-spec');
 
 // stub location that mocha uses
@@ -33,6 +33,7 @@ for (var i = 0; i < types.length; i++) {
 
 
 // set the ti-spec reporter by default
+Ti.API.info("Starting ti-mocha...");
 mocha.setup({
 	ui: 'bdd',
 	reporter: 'ti-spec'

@@ -61,11 +61,11 @@ function start() {
     Ti.API.info("Starting geolocation service...");
     Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_HIGH;
     Ti.Geolocation.distanceFilter = 10;
-    if (Ti.Geolocation.hasLocationPermissions()) {
+    if (Ti.Geolocation.hasLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE)) {
         Ti.API.info("Got permissions");
         startListening();
     } else {
-        Ti.Geolocation.requestLocationPermissions(Ti.Geolocation.AUTHORIZATION_ALWAYS, (e) => {
+        Ti.Geolocation.requestLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE, (e) => {
             if ( e.success ) {
                 Ti.API.info("Got permissions");
                 startListening();

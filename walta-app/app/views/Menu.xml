@@ -1,15 +1,21 @@
 <Alloy>
 	<View id="content" class="container">
-			<View height=Ti.UI.FILL width=Ti.UI.FILL>
+			<View id="bigOptions">
 				<View id="logInOrRegister" onClick="logInClick">
 					<Label id="logInLabel" class="smallMenuText" text="Log In" />
 				</View>
-				<View  id="mayfly" class="bigButton" onClick="mayflyClick">
-					<ImageView id="mayflyIcon" />
-					<Label id="mayflyLabel" class="bigMenuText" text="Mayfly\nMuster" />
+				<View>
+					<View  id="mayfly" onClick="mayflyClick">
+						<View id="mayflyIconWrapper">
+							<ImageView id="mayflyIcon" />
+						</View>
+						<Label id="mayflyLabel" class="bigMenuText" text="Mayfly\nMuster" />
+					</View>
 				</View>
-				<View id="detailed" class="bigButton" onClick="detailedClick">
-					<ImageView id="detailedIcon" />
+				<View id="detailed" onClick="detailedClick">
+					<View id="detailedIconWrapper">
+						<ImageView id="detailedIcon" />
+					</View>
 					<Label id="detailedLabel" class="bigMenuText" text="Waterbug\nSurvey" />
 				</View>
 			</View>

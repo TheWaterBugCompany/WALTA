@@ -144,7 +144,7 @@ overrode the settings with other TSS, XML, or JS settings:
 	passwordMask: true
 }
 
-".checkbox": {
+".checkbox[platform=android]": {
 	style: Ti.UI.Android.SWITCH_STYLE_CHECKBOX
 }
 

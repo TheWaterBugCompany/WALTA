@@ -72,6 +72,10 @@ task :preview => [ ] do
   sh("appc ti build --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}")
 end
 
+task :preview_ios => [] do
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --liveview --target simulator --device-id \"F80EA5DD-CE2A-4DA6-879B-BD0ACA0C87C6\"")
+end
+
 task :device_preview => [] do
   sh("appc ti build --project-dir walta-app --platform android --deploy-type development --target device")
 end

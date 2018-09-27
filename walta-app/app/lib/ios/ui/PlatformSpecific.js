@@ -87,4 +87,4 @@ exports.appStartUp = appStartUp;
 exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;
 exports.transitionWindows = transitionWindows;
-exports.getLoadingIndicatorStyle = Titanium.UI.iPhone.ActivityIndicatorStyle.BIG;
+exports.getLoadingIndicatorStyle = Ti.UI.ActivityIndicatorStyle.BIG;

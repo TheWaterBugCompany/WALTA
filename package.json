@@ -4,6 +4,7 @@
   "description": "The Waterbug App parent project",
   "main": "index.js",
   "dependencies": {
+    "appcelerator": "^4.2.13",
     "babel-preset-env": "^1.7.0",
     "browserify": "^16.1.1",
     "chai": "^4.1.2",

@@ -65,6 +65,7 @@ function TiSpec(runner) {
 /**
  * Inherit from `Base.prototype`.
  */
+Ti.API.info("loading TiSPec reporter...");
 TiSpec.prototype = Object.create(Base.prototype);
 TiSpec.prototype.constructor = TiSpec;
 Mocha.reporters['ti-spec'] = TiSpec;
