@@ -20,7 +20,7 @@ var { expect } = require('specs/lib/chai');
 var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, waitForEvent } = require('specs/util/TestUtils');
 var Topics = require('ui/Topics');
 
-describe('MethodSelect', function() {
+describe('MethodSelect', function() { 
 	var mnu, win;
 	before( function(done) {
 		this.timeout(3000);

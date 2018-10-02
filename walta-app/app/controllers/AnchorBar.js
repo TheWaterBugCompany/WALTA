@@ -32,17 +32,15 @@ function createToolBarButton( image, topic, title ) {
 	if ( image ) {
 		attrs.backgroundImage = image;
 	}
-	
-	var btn = Ti.UI.createButton(attrs);
-	$.addClass( btn, "anchorBarButton" );
 	if ( title ) {
-		btn.top = "1%";
-		btn.title = title;
-		btn.width = Ti.UI.SIZE;
-		btn.backgroundColor = "#26849c";
-		btn.borderRadius = 6;
-		btn.borderWidth = 2;
-	}
+		attrs.title = title.toUpperCase();
+	}	
+	var btn = Ti.UI.createButton(attrs);
+	if ( title ) {
+		$.addClass( btn, "anchorBarTextButton" );
+	} 
+	$.addClass( btn, "anchorBarButton" );
+
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {
 			Topics.fireTopicEvent( topic, null );

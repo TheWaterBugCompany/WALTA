@@ -81,27 +81,6 @@ $.details.html = `<html><head><meta name="viewport" content="initial-scale=1.0, 
 <style>html,body {margin:0;padding:0;color:black;font-family:${Layout.TEXT_FONT};font-size:${Layout.DETAILS_TEXT_SIZE};}</style>
 </head><body id="details">${$.args.taxon.asDetailHtml()}</body></html>`;
 
-/*
- * =============== HACK: Workaround for odd WebView resizing bug under iOS ===============
- * See Trac issue #72
- * Under iOS the WebView seems to mysteriously change zoom level after the initial layout.
- *
- * To fix this we set the explicit width of the view on the postlayout event to make sure
- * it won't change from the value first calculated.
- */
-
-if ( Ti.Platform.osname === 'iphone' ) {
-	var hackListener = function() {
-		$.details.width = vws.details.size.width;
-		$.details.removeEventListener( 'postlayout', hackListener );
-	};
-	$.details.addEventListener( 'postlayout', hackListener );
-}
-
-/*
- * ============================== END HACK ================================================
- */
-
 // If tere are photos add the photo view and button
 if ($.args.taxon.photoUrls.length > 0) {
 	$.photoView = PhotoView.createPhotoView($.taxon.photoUrls);

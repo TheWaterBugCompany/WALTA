@@ -3,7 +3,7 @@
 		<View id="window" class="window" layout="vertical">
 			<View id="header" class="shrinkWrap">
 				<Label id="taxonName" class="headingText" accessibilityLabel="Taxon Name" text="Taxonomic Identification"/>
-				<View id="closeButton">
+				<View id="closeButton" onClick="closeEvent">
 					<ImageView class="close_button_image" accessibilityLabel="Close"></ImageView>
 				</View>
 			</View>
@@ -15,8 +15,8 @@
 					<Label id="abundanceLabel" text="1-2" class="labelText"/>
 				</View>
 				<View class="shrinkWrap" layout="horizontal">
-					<Button id="deleteButton" class="actionButton" title="Delete" />
-					<Button id="saveButton" class="actionButton" title="Save" />
+					<Button id="deleteButton" class="actionButton" title="Delete" onClick="deleteEvent" />
+					<Button id="saveButton" class="actionButton" title="Save" onClick="saveEvent"/>
 				</View>
 			</View>
 		</View>

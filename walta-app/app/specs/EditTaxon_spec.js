@@ -24,7 +24,7 @@ var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
 keyMock.setSpeedbugIndex( speedBugIndexMock );
 
-describe("EditTaxon controller", function() {
+describe("EditTaxon controller", function() { 
     var ctl,win;
     
     function makeEditTaxon( taxon ) {
@@ -43,7 +43,7 @@ describe("EditTaxon controller", function() {
                     expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
                     expect( ctl.photoSelect.photo.image ).to.include("aeshnidae_telephleb_b.png");
                     expect( ctl.abundanceLabel.text ).to.equal("3-5");
-                });
+                }); 
             
         } );
         
@@ -61,10 +61,12 @@ describe("EditTaxon controller", function() {
             return new Promise( (resolve) => {
                 makeEditTaxon( { taxonId:"1", abundance:bin} );
                 windowOpenTest( win, function() {
-                    expect( ctl.abundanceValue.value ).to.equal(val);
-                    expect( ctl.abundanceLabel.text ).to.equal(bin);
-                    forceCloseWindow( win, resolve );
-                } );
+                    checkTestResult( () => forceCloseWindow( win, resolve ), 
+                        function() {
+                            expect( ctl.abundanceValue.value ).to.equal(val);
+                            expect( ctl.abundanceLabel.text ).to.equal(bin);
+                        } );
+                    });
             });
         }
 

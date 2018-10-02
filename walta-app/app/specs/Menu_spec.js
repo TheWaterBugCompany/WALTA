@@ -21,7 +21,7 @@ var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("specs/u
 var Topics = require("ui/Topics");
 var CerdiApi = require("specs/mocks/MockCerdiApi");
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
-describe.only('Menu controller', function() {
+describe('Menu controller', function() {
 	var mnu;
 	before( function() {
 		mnu = Alloy.createController("Menu");

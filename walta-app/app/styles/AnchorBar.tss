@@ -44,6 +44,18 @@
 ".anchorBarButton": {
   left: "8dp",
   top: "1dp",
-  height: "26dp",
-  width: "26dp"
+  height: Ti.UI.FILL
+}
+
+".anchorBarTextButton": {
+  top: "2%",
+  width: "100dp",
+  font: {
+    fontWeight: "semibold"
+  },
+	backgroundColor: "#26849c",
+	borderColor: "#26849c",
+	color: "white",
+	borderRadius: 6,
+	borderWidth: 2
 }

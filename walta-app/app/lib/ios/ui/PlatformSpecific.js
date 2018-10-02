@@ -79,7 +79,8 @@ function convertSystemToDip( n ) {
 }
 
 function urlToLocalAsset( path ) {
-	return path;
+	if ( path[0] != '/' ) path = '/' + path;
+	return `app://${path}`;
 }
 
 exports.urlToLocalAsset = urlToLocalAsset;

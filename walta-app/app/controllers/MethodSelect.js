@@ -15,4 +15,6 @@ $.speedbug.on("click", () => $.trigger("speedbug") );
 
 $.browselist.on("click", () => $.trigger("browselist") );
 
-$.close_button.on("click", () => $.trigger("close") );
+function closeEvent() {
+  $.trigger("close");
+}

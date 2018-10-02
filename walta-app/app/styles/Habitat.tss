@@ -12,6 +12,11 @@
     fullscreen: false
 }
 
+"#bottom": {
+    height: Ti.UI.SIZE,
+    width: Ti.UI.FILL
+}
+
 ".labelText": {
     top: "8dp",
     left: "8dp"
@@ -30,12 +35,13 @@
 }
 
 "#grid": {
-    width: Ti.UI.FILL
+    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE
 }
 
 ".gridColumn": {
     width: "50%",
-    height: "70%"
+    height: Ti.UI.SIZE
 }
 
 "#nextButton": {

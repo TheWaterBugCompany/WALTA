@@ -1,6 +1,6 @@
 ".window": {
-  width: "268dp",
-  height: "290dp"
+  width: "50%",
+  height: "96%"
 }
 
 ".title": {
@@ -12,10 +12,11 @@
   }
 }
 
-"#close_button": {
-  height: "32dp",
-  width: "24dp",
-  left: "8dp"
+"#closeButton": {
+  top: 0,
+  height: Ti.UI.FILL,
+  width: "10%",
+  right: 0
 }
 
 

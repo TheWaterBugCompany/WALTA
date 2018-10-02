@@ -11,11 +11,22 @@
     right: "8dp"
 }
 
+"#bottom": {
+    height: Ti.UI.SIZE,
+    width: Ti.UI.FILL,
+    horizontalWrap: false
+}
 "#bottomLeft" : {
-    width: Ti.UI.SIZE,
+    width: "75%",
+    height: Ti.UI.SIZE,
     top: "8dp",
     left: "8dp",
     right: "8dp"
+}
+
+"#bottomRight": {
+    width: Ti.UI.SIZE,
+    height: Ti.UI.FILL
 }
 
 "#photoSelect" : {
@@ -32,9 +43,6 @@
     top: "10dp"
 }
 
-".textField": {
-    width: "78%"
-}
 ".labelText": {
     left: "8dp",
     bottom: "4dp",

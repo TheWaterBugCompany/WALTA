@@ -1,6 +1,7 @@
 var Topics = require('ui/Topics');
 var taxon = $.args.taxon;
 var speedbugIndex = $.args.speedbugIndex;
+
 setImage( taxon.get("taxonId") );
 setAbundance( taxon.get("abundance") );
 
@@ -30,10 +31,10 @@ function update( newTaxon ) {
     setAbundance( newTaxon.get("abundance") );
   }
 }
-$.getView().on("click",
-  function(e) {
-    Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: taxon.get("taxonId") } );
-    e.cancelBubble = true;
-  } );
+
+function clickEvent(e) {
+  Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: taxon.get("taxonId") } );
+  e.cancelBubble = true;
+}
 
 exports.update = update;

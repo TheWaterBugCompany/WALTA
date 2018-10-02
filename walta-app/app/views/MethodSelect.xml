@@ -1,9 +1,9 @@
 <Alloy>
 	<View class="overlay">
 			<View class="window" layout="vertical">
-				<View class="titlebar" layout="horizontal">
+				<View class="titlebar">
 					<Label class="title">Select identification method:</Label>
-					<View id="close_button">
+					<View id="closeButton" onClick="closeEvent">
 							<ImageView class="close_button_image"></ImageView>
 					</View>
 				</View>

@@ -34,17 +34,20 @@ function updateAbundance() {
     }
     $.abundanceLabel.text = binValue; 
 }
-$.saveButton.on("click", () => {
+
+function saveEvent() {
     taxon.set("abundance", $.abundanceLabel.text );
     Alloy.Collections["taxa"].add( taxon );
     taxon.save();
     $.trigger("save", taxon );
-});
+}
 
-$.deleteButton.on("click", () => {
+function deleteEvent() {
     Alloy.Collections["taxa"].remove( taxon );
     taxon.destroy();
     $.trigger("delete", taxon );
-});
+}
 
-$.closeButton.on("click", () => $.trigger("close") );
+function closeEvent() {
+    $.trigger("close") 
+}

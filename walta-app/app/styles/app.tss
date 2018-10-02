@@ -53,10 +53,8 @@ overrode the settings with other TSS, XML, or JS settings:
 
 ".close_button_image": {
   image: "images/delete-icon-blue.png",
-  width: "20dp",
-  height: "20dp",
-  top: "4dp",
-  right: 0
+  width: Ti.UI.SIZE,
+  height: Ti.UI.SIZE
 }
 
 ".container": {
@@ -70,8 +68,8 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 ".titlebar": {
-	height: Ti.UI.SIZE,
-	width: Ti.UI.SIZE
+	height: "10%",
+	width: Ti.UI.FILL
 }
 
 ".titleText": {
@@ -97,6 +95,8 @@ overrode the settings with other TSS, XML, or JS settings:
 	fontWeight: "bold",
     fontSize: "14dp"
   },
+  left: "2%",
+  textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
   color: "#26849c",
   wordWrap: true
 }
@@ -127,10 +127,18 @@ overrode the settings with other TSS, XML, or JS settings:
     borderColor: "#b4d2d9",
     borderWidth: "1dp",
     borderRadius: "10dp",
-    width: "250dp",
+    width: Ti.UI.FILL,
+    left: "2%",
+    right: "2%",
     height: "40dp",
 	color: "#26849c",
     fullscreen: false
+}
+
+".textField[platform=ios]": {
+    padding: {
+        left: "4dp"
+    }
 }
 
 ".textField[if=Alloy.Globals.isLdpi]": {

@@ -226,7 +226,7 @@ describe( 'SampleTray controller', function() {
           assertPlus( sampleTaxa[3] );
         } );
     });
-
+ 
     it('should display the correct sample entry for each tray position displayed', function() {
         return Promise.resolve()
           .then( function() {

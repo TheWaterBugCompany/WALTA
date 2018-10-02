@@ -269,10 +269,10 @@ function startIdentification(e) {
 var lastWidth;
 function adjustTraySize() {
   if ( ! ($.content.height == endcapHeight && $.content.getSize().width == lastWidth) ) {
-    endcapHeight = $.TopLevelWindow.size.height - $.getAnchorBar().getView().size.height;
-    endcapWidth = $.endcapBackground.size.width;
+    endcapHeight = PlatformSpecific.convertSystemToDip( $.TopLevelWindow.size.height - $.getAnchorBar().getView().size.height );
+    endcapWidth = PlatformSpecific.convertSystemToDip( $.endcapBackground.size.width );
     middleWidth = endcapWidth*1.384;
-    lastWidth = $.content.getSize().width;
+    lastWidth = PlatformSpecific.convertSystemToDip( $.content.getSize().width );
     clearTileCache();
     drawIcecubeTray();
   }
@@ -323,8 +323,16 @@ function editTaxon( taxon_id ) {
   });
 }
 
+function openWindow() {
+  editTaxon( $.args.taxonId );
+}
+
 if ( $.args.taxonId ) {
-  $.getView().on("open", () => editTaxon( $.args.taxonId ) );
+  $.TopLevelWindow.addEventListener("open", openWindow );
+  $.TopLevelWindow.addEventListener("close", function closeWindow() {
+    $.TopLevelWindow.removeEventListener("open", openWindow );
+    $.TopLevelWindow.removeEventListener("close", closeWindow );
+  })
 }
 Alloy.Collections["taxa"].trigger("change");
 

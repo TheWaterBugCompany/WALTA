@@ -12,8 +12,13 @@
     height: Ti.UI.SIZE
 }
 
+"#abundance": {
+    width : Ti.UI.FILL,
+    left: "2%",
+    right: "2%"
+}
 "#abundanceValue": {
-    width: "87%"
+    width: "85%"
 }
 
 "#photoSelect": {
