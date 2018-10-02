@@ -10,5 +10,6 @@
     layout: "horizontal",
     horizontalWrap: false,
     top: "8dp",
-    disableBounce: true
+    disableBounce: true,
+    zoomScale: 1
 }

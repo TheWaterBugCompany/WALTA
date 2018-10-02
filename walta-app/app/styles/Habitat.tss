@@ -29,7 +29,7 @@
 }
 
 ".inputBox": {
-    top: "4dp",
+    top: "2dp",
     left: "12dp",
     height: Ti.UI.SIZE
 }

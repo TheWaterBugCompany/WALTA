@@ -118,7 +118,7 @@ overrode the settings with other TSS, XML, or JS settings:
   backgroundColor: "#b4d2d9",
   borderRadius: "4dp",
   width: "100dp",
-  height: "35dp"
+  height: "32dp"
 }
 
 ".textField": {

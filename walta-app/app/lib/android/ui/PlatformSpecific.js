@@ -25,7 +25,7 @@ function appShutdown( privates ) {
 	Alloy.Globals.lastWindow.forEach( (w) => w.close() );
 	Ti.Android.currentActivity.finish();
 }
-
+ 
 function transitionWindows( win, effect ) {
 	var args = {};
 	if ( effect === 'right' ) {

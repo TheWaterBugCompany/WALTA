@@ -34,7 +34,9 @@ var buttonMargin = parseInt( Layout.BUTTON_MARGIN );
 var tileHeight = parseInt( Layout.SPEEDBUG_TILE_HEIGHT );
 var tileWidth = parseInt( Layout.SPEEDBUG_TILE_WIDTH );
 
-var spanTileX = buttonMargin*2 + tileWidth + 2;
+Ti.API.info(`buttonMargin = ${buttonMargin}, tileHeight = ${tileHeight}, tileWidth = ${tileWidth}`);
+
+var spanTileX = buttonMargin*2 + tileWidth;
 
 
 /*
@@ -52,8 +54,8 @@ function _pushTile( url, parent ) {
 }
 
 function _releaseTileImageData( n ) {
-    if ( n >= 0 && n <  speedbugTileIndex.length ) {
-        var tile = speedbugTileIndex[n];
+    if ( n >= 1 && n <=  speedbugTileIndex.length ) {
+        var tile = speedbugTileIndex[n-1];
         if ( tile.imageView != null ) {
             tile.parent.remove( tile.imageView );
         }
@@ -62,9 +64,10 @@ function _releaseTileImageData( n ) {
 }
 
 function _showTileImageData( n ) {
-    if ( n >= 0 && n <  speedbugTileIndex.length ) {
-        var tile = speedbugTileIndex[n];
+    if ( n >= 1 && n <=  speedbugTileIndex.length ) {
+        var tile = speedbugTileIndex[n-1];
         if ( tile.imageView == null ) {
+            //Ti.API.info(`tile ${n} width = ${tile.parent.rect.width} x = ${tile.parent.rect.x}`);
             tile.imageView = Ti.UI.createImageView({
                         image: tile.url,
                         width: Ti.UI.FILL
@@ -84,7 +87,7 @@ function _drawSpeedBug() {
         var grpCnt = Ti.UI.createView( {
                 layout: 'vertical',
                 borderColor: '#b4d2d9',
-                borderWidth: '1dip',
+                borderWidth: "1dp",
                 width: Ti.UI.SIZE,
                 height: Ti.UI.FILL
                 } );
@@ -98,13 +101,12 @@ function _drawSpeedBug() {
         _(sg.bugs).each( function( sb ) {
             var cnt = Ti.UI.createView( {
                 backgroundColor:'white',
-                    height: tileHeight,
-                    width: tileWidth,
-                    /* borderColor: '#26849c',
-                    borderWidth: '1dip',*/
-                    left: Layout.BUTTON_MARGIN,
-                    right: Layout.BUTTON_MARGIN
+                    height: `${tileHeight}dp`,
+                    width: `${tileWidth}dp`,
+                    left: `${buttonMargin}dp`,
+                    right: `${buttonMargin}dp`
             });
+            //cnt.add( Ti.UI.createLabel({ width: Ti.UI.FILL, zIndex:"99", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, height: Ti.UI.FILL, font: { fontSize: "50dp" }, color: "red", text: (speedbugTileIndex.length + 1) }));
 
             // Defer loading images until they are on screen
             //Ti.API.info('speedbug ' + sb.imgUrl );
@@ -114,20 +116,19 @@ function _drawSpeedBug() {
                 Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId } );
                 e.cancelBubble = true;
             });
-
+ 
             bugsCnt.add( cnt );
+           
         });
 
-        grpCnt.add(bugsCnt);
+        grpCnt.add(bugsCnt); 
 
         if ( bugsCnt.children.length >= 2 ) {
             var notSureBtn = Ti.UI.createLabel( {
-                height: '30dip',
-                width: bugsCnt.children.length*spanTileX - 2*buttonMargin,
+                height: '30dp',
+                width: `${bugsCnt.children.length*spanTileX - 2*buttonMargin}dp`,
                 top: Layout.WHITESPACE_GAP,
                 bottom: Layout.BUTTON_MARGIN,
-                left: buttonMargin,
-                right: buttonMargin,
                 text: 'Not Sure?',
                 textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
                 font: { font: Layout.TEXT_FONT, fontSize:  Layout.QUESTION_TEXT_SIZE },
@@ -143,21 +144,26 @@ function _drawSpeedBug() {
             grpCnt.add( notSureBtn);
         }
         scrollView.add( grpCnt );
-    } );
+       
+    } ); 
 }
 
 /* Dynamically load and release images as they move onto screen */
 var lastScroll = null;
-function _loadAndReleaseTiles() {
+function _loadAndReleaseTiles(e) {
     // set height
     $.content.contentHeight = $.content.height;
+   
+    
     // getContentOffset can be undefined during postLayout
     // scrollView.getSize can be undefined during postLayout also ?
-    var scrollx = ( scrollView.getContentOffset() ? PlatformSpecific.convertSystemToDip( scrollView.getContentOffset().x ) : 0 );
-    if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > spanTileX) ) {
-        var start_n, end_n;
-        var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.getSize() ? scrollView.getSize().width : 0 );
-
+    var scrollx = ( scrollView.contentOffset ? PlatformSpecific.convertSystemToDip( scrollView.contentOffset.x ) : 0 );
+   // Ti.API.info(`contentWidth = ${$.content.contentWidth}, contentWidth - scrollx = ${parseInt($.content.contentWidth)- scrollx}`);
+    if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > 0) ) {
+        var start_n, end_n; 
+        var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.size? scrollView.size.width : 0 );
+       // Ti.API.info(`_convertToTileNum( scrollx ) = ${_convertToTileNum( scrollx )} scrollx = ${scrollx} spanTilex = ${spanTileX} tileWidth = ${tileWidth}`);
+        
         // Release any tiles that are now off the screen
         if ( lastScroll < scrollx ) {
             start_n = _convertToTileNum( lastScroll - spanTileX ) - Layout.SPEEDBUG_PRECACHE_TILES;
@@ -175,7 +181,7 @@ function _loadAndReleaseTiles() {
         // Calculate the range of tiles that need to be shown
         start_n = _convertToTileNum( scrollx ) - Layout.SPEEDBUG_PRECACHE_TILES;
         end_n = _convertToTileNum( scrollx + viewWidth + spanTileX ) + Layout.SPEEDBUG_PRECACHE_TILES;
-        //Ti.API.log("Speedbug load tiles start_n = " + start_n + " end_n = " + end_n );
+       // Ti.API.log("Speedbug load tiles start_n = " + start_n + " end_n = " + end_n );
         for( var i = start_n; i<=end_n; i++ ) {
             _showTileImageData(i);
         }

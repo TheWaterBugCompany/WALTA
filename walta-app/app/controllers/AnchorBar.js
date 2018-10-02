@@ -29,18 +29,23 @@ var Topics = require('ui/Topics');
 
 function createToolBarButton( image, topic, title ) {
 	var attrs = {};
-	if ( image ) {
-		attrs.backgroundImage = image;
-	}
+	var btn;
 	if ( title ) {
 		attrs.title = title.toUpperCase();
+	}
+
+	if ( ! image ) {
+		btn = Ti.UI.createButton(attrs);
+	} else {
+		btn = Ti.UI.createView(attrs);
+		btn.add( Ti.UI.createImageView({ image: image, width: Ti.UI.SIZE, height: Ti.UI.SIZE }))
 	}	
-	var btn = Ti.UI.createButton(attrs);
+	
 	if ( title ) {
 		$.addClass( btn, "anchorBarTextButton" );
 	} 
 	$.addClass( btn, "anchorBarButton" );
-
+	
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {
 			Topics.fireTopicEvent( topic, null );

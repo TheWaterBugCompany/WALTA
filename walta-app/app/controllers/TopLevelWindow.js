@@ -25,8 +25,8 @@ function openWindow() {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.TopLevelWindow.add( anchorBar.getView() );
 		function adjustContentSize() {
-			$.content.top = 0;
-			$.content.height = PlatformSpecific.convertSystemToDip($.TopLevelWindow.size.height - anchorBar.getView().size.height);
+			$.content.top = 0; 
+			$.content.height = $.TopLevelWindow.size.height - anchorBar.getView().size.height;
 			$.TopLevelWindow.add( $.content );
 			
 		}

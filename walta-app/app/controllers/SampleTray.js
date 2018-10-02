@@ -269,10 +269,10 @@ function startIdentification(e) {
 var lastWidth;
 function adjustTraySize() {
   if ( ! ($.content.height == endcapHeight && $.content.getSize().width == lastWidth) ) {
-    endcapHeight = PlatformSpecific.convertSystemToDip( $.TopLevelWindow.size.height - $.getAnchorBar().getView().size.height );
-    endcapWidth = PlatformSpecific.convertSystemToDip( $.endcapBackground.size.width );
+    endcapHeight = $.TopLevelWindow.size.height - $.getAnchorBar().getView().size.height;
+    endcapWidth = $.endcapBackground.size.width;
     middleWidth = endcapWidth*1.384;
-    lastWidth = PlatformSpecific.convertSystemToDip( $.content.getSize().width );
+    lastWidth = $.content.getSize().width;
     clearTileCache();
     drawIcecubeTray();
   }

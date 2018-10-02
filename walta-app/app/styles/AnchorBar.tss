@@ -44,7 +44,8 @@
 ".anchorBarButton": {
   left: "8dp",
   top: "1dp",
-  height: Ti.UI.FILL
+  height: "96%",
+  width: Ti.UI.SIZE
 }
 
 ".anchorBarTextButton": {

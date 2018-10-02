@@ -49,7 +49,7 @@
 			</View>
 		</View>
 		<View id="bottom">
-			<Label id="nextButton" class="actionButton" text="Next" onClick="nextClick" />
+			<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick" />
 		</View>
 	</View>
 </Alloy>
