@@ -38,7 +38,7 @@ function createToolBarButton( image, topic, title ) {
 		btn = Ti.UI.createButton(attrs);
 	} else {
 		btn = Ti.UI.createView(attrs);
-		btn.add( Ti.UI.createImageView({ image: image, width: Ti.UI.SIZE, height: Ti.UI.SIZE }))
+		btn.add( Ti.UI.createImageView({ image: image, width: "30dp", height: "30dp" }))
 	}	
 	
 	if ( title ) {
