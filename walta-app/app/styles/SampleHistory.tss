@@ -14,6 +14,8 @@
         fontSize: "14dp"
     }
 }
+".row": {
+}
 ".headerRow": {
     backgroundColor: "white",
     borderColor: "#26849c",
@@ -22,11 +24,15 @@
     zIndex: 1
 }
 ".dateCompletedColumn": {
-    width: "33%"
+    left: 0,
+    width: "33%",
+    height: Ti.UI.SIZE 
 }
 ".boolColumn": {
+    left: "63%",
     width: "12.5%"
 }
-".leftAlign": {
-    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+".waterbodyName": {
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+    left: "36%" 
 }

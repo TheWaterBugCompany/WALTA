@@ -68,16 +68,24 @@ task :debug => [ :start_emulator, :uninstall_app ] do
   sh("appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331")
 end
 
-task :preview => [ ] do
+task :preview_android => [ ] do
   sh("appc ti build --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}")
 end
 
 task :preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --liveview --target simulator --device-id \"F80EA5DD-CE2A-4DA6-879B-BD0ACA0C87C6\"")
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target simulator --device-id \"F80EA5DD-CE2A-4DA6-879B-BD0ACA0C87C6\"")
 end
 
-task :device_preview => [] do
+task :device_preview_android => [] do
   sh("appc ti build --project-dir walta-app --platform android --deploy-type development --target device")
+end
+
+task :device_preview_ios => [] do
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target device")
+end
+
+task :release_ios => [ 'clean' ] do
+  sh("appc ti build --project-dir walta-app --build-only --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release");
 end
 
 task :release_android => [ 'clean' ] do
