@@ -73,7 +73,7 @@ task :preview_android => [ ] do
 end
 
 task :preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target simulator --device-id \"F80EA5DD-CE2A-4DA6-879B-BD0ACA0C87C6\"")
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --liveview --target simulator --device-id \"F80EA5DD-CE2A-4DA6-879B-BD0ACA0C87C6\"")
 end
 
 task :device_preview_android => [] do
@@ -81,7 +81,7 @@ task :device_preview_android => [] do
 end
 
 task :device_preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target device")
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target device  --liveview")
 end
 
 task :release_ios => [ 'clean' ] do

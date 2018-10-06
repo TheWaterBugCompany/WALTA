@@ -15,6 +15,33 @@ function loadAttributes() {
     $.openwater.value = sample.get("openWater");
 }
 
+function fixScrollContentsSize(){
+    if ( $.content.contentWidth != $.TopLevelWindow.size.width
+        || $.content.contentHeight != $.TopLevelWindow.size.height ) {
+        $.content.contentWidth = $.content.size.width;
+        $.content.contentHeight = $.content.size.height;
+    }
+}
+
+$.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSize);
+
+function hideKeyboard() {
+    if(OS_ANDROID){
+        Ti.UI.Android.hideSoftKeyboard();
+   } else {
+       [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
+            .forEach( (v)=> v.blur() );
+   }
+}
+
+$.TopLevelWindow.addEventListener("touchstart",hideKeyboard);
+
+$.TopLevelWindow.addEventListener("close", function closeEvent() {
+    $.TopLevelWindow.removeEventListener("touchstart", fixScrollContentsSize );
+    $.TopLevelWindow.removeEventListener("touchstart", hideKeyboard );
+    $.TopLevelWindow.removeEventListener("close", closeEvent );
+});
+
 function validateSum() {
     var sum = [ $.leaves, $.plants, $.wood, $.sandOrSilt,
         $.edgeplants, $.rocks, $.gravel, $.openwater ]

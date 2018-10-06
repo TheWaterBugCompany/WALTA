@@ -1,55 +1,58 @@
 <Alloy>
-	<View id="content" class="container" layout="vertical">
-		<Label class="labelText" text="Enter percentage of each habitat type below, note that total must be 100% before continuing."/>
-		<View id="grid" layout="horizontal" class="shrinkWrap">
-			<View id="gridLeft" layout="vertical" class="gridColumn">
-				<View class="inputBox" layout="horizontal">
-					<Label text="Leaf Packs:" class="labelText inputLabel" />
-					<TextField  id="leaves" class="textField" accessibilityLabel="Leaf Packs" onChange="validateSum" />
-					<Label text="%" class="labelText" />
-				</View>
-				<View class="inputBox" layout="horizontal">
-					<Label text="Aquatic Plants:" class="labelText inputLabel" />
-					<TextField  id="plants" class="textField" accessibilityLabel="Aquatic Plants" onChange="validateSum" />
-					<Label text="%" class="labelText" />
-				</View>
-				<View class="inputBox" layout="horizontal">
-					<Label text="Wood:" class="labelText inputLabel" />
-					<TextField  id="wood" class="textField"  accessibilityLabel="Wood" onChange="validateSum" />
-					<Label text="%" class="labelText" />
-				</View>
-				<View class="inputBox" layout="horizontal">
-					<Label text="Edge Plants:" class="labelText inputLabel" />
-					<TextField  id="edgeplants" class="textField" accessibilityLabel="Edge Plants" onChange="validateSum" />
-					<Label text="%" class="labelText" />
-				</View>
+	<ScrollView id="content">
+		<View id="wrapper" layout="vertical">
+			<Label class="labelText" text="Enter percentage of each habitat type below, note that total must be 100% before continuing."/>
+			<View id="grid" layout="horizontal" class="shrinkWrap">
+				<View id="gridLeft" layout="vertical" class="gridColumn">
+					<View class="inputBox" layout="horizontal">
+						<Label text="Leaf Packs:" class="labelText inputLabel" />
+						<TextField  id="leaves" class="textField" accessibilityLabel="Leaf Packs" onChange="validateSum" />
+							
+						<Label text="%" class="labelText" />
+					</View>
+					<View class="inputBox" layout="horizontal">
+						<Label text="Aquatic Plants:" class="labelText inputLabel" />
+						<TextField  id="plants" class="textField" accessibilityLabel="Aquatic Plants" onChange="validateSum" />
+						<Label text="%" class="labelText" />
+					</View>
+					<View class="inputBox" layout="horizontal">
+						<Label text="Wood:" class="labelText inputLabel" />
+						<TextField  id="wood" class="textField"  accessibilityLabel="Wood" onChange="validateSum" />
+						<Label text="%" class="labelText" />
+					</View>
+					<View class="inputBox" layout="horizontal">
+						<Label text="Edge Plants:" class="labelText inputLabel" />
+						<TextField  id="edgeplants" class="textField" accessibilityLabel="Edge Plants" onChange="validateSum" />
+						<Label text="%" class="labelText" />
+					</View>
 
+				</View>
+				<View id="gridRight" layout="vertical" class="gridColumn">
+					<View class="inputBox" layout="horizontal">
+						<Label text="Boulders:" class="labelText inputLabel" />
+						<TextField id="rocks" class="textField" accessibilityLabel="Boulders" onChange="validateSum" />
+						<Label text="%" class="labelText" />
+					</View>
+					<View class="inputBox" layout="horizontal">
+						<Label text="Gravel:" class="labelText inputLabel" />
+						<TextField id="gravel" class="textField" accessibilityLabel="Gravel" onChange="validateSum" />
+						<Label text="%" class="labelText" />
+					</View>
+					<View class="inputBox" layout="horizontal">
+						<Label text="Sand/Silt:" class="labelText inputLabel" />
+						<TextField id="sandOrSilt" class="textField" accessibilityLabel="Sand Or Silt" onChange="validateSum"/>
+						<Label text="%" class="labelText" />
+					</View>
+					<View class="inputBox" layout="horizontal">
+						<Label text="Open Water:" class="labelText inputLabel" />
+						<TextField  id="openwater" class="textField" accessibilityLabel="Open Water" onChange="validateSum" />
+						<Label text="%" class="labelText" />
+					</View>
+				</View>
 			</View>
-			<View id="gridRight" layout="vertical" class="gridColumn">
-				<View class="inputBox" layout="horizontal">
-					<Label text="Boulders:" class="labelText inputLabel" />
-					<TextField id="rocks" class="textField" accessibilityLabel="Boulders" onChange="validateSum" />
-					<Label text="%" class="labelText" />
-				</View>
-				<View class="inputBox" layout="horizontal">
-					<Label text="Gravel:" class="labelText inputLabel" />
-					<TextField id="gravel" class="textField" accessibilityLabel="Gravel" onChange="validateSum" />
-					<Label text="%" class="labelText" />
-				</View>
-				<View class="inputBox" layout="horizontal">
-					<Label text="Sand/Silt:" class="labelText inputLabel" />
-					<TextField id="sandOrSilt" class="textField" accessibilityLabel="Sand Or Silt" onChange="validateSum"/>
-					<Label text="%" class="labelText" />
-				</View>
-				<View class="inputBox" layout="horizontal">
-					<Label text="Open Water:" class="labelText inputLabel" />
-					<TextField  id="openwater" class="textField" accessibilityLabel="Open Water" onChange="validateSum" />
-					<Label text="%" class="labelText" />
-				</View>
+			<View id="bottom">
+				<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick" />
 			</View>
 		</View>
-		<View id="bottom">
-			<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick" />
-		</View>
-	</View>
+	</ScrollView>
 </Alloy>

@@ -1,14 +1,30 @@
 
 "#content": {
+    scrollType: "horizontal"
+}
+
+"#wrapper": {
     top: "12dp",
-    left: "12dp"
+    left: "12dp",
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL
+}
+
+"#content[platform=android]": {
+    keyboardDismissMode: Ti.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUSMODE_INTERACTIVE
+}
+
+"#content[platform=ios]": {
+    horizontalBounce: "false",
+    verticalBounce: "false",
+    keyboardDismissMode: Ti.UI.iOS.KEYBOARD_DISMISS_MODE_INTERACTIVE
 }
 
 ".textField" : {
     left: "8dp",
     width: "90dp",
     height: "40dp",
-    keyboardType: Ti.UI.KEYBOARD_TYPE_NUMBER_PAD,
+    keyboardType: Ti.UI.KEYBOARD_TYPE_DECIMAL_PAD,
     fullscreen: false
 }
 
