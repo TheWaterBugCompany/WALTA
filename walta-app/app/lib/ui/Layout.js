@@ -85,3 +85,37 @@ exports.BORDER_RADIUS_BUTTON = 2;
 exports.SPEEDBUG_TILE_WIDTH  = '150dip';
 exports.SPEEDBUG_TILE_HEIGHT = '225dip';
 exports.SPEEDBUG_PRECACHE_TILES = 2;
+
+function fixScrollContentsSize(ctlr){
+    if ( ctlr.content.contentWidth != ctlr.TopLevelWindow.size.width
+        || ctlr.content.contentHeight != ctlr.TopLevelWindow.size.height ) {
+        ctlr.content.contentWidth = ctlr.content.size.width;
+        ctlr.content.contentHeight = ctlr.content.size.height;
+    }
+}
+
+function hideKeyboard(blurFields) {
+    if(OS_ANDROID){
+        Ti.UI.Android.hideSoftKeyboard();
+   } else {
+    blurFields.forEach( (v)=> v.blur() );
+   }
+}
+function applyKeyboardTweaks( ctlr, blurFields ) { 
+    function hideKeyboardCallback() {
+        hideKeyboard(blurFields);
+    } 
+    function fixScrollContentsSizeCallback() {
+        fixScrollContentsSize(ctlr);
+    }
+    ctlr.TopLevelWindow.addEventListener("touchstart",hideKeyboardCallback );
+    ctlr.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSizeCallback );
+    ctlr.TopLevelWindow.addEventListener("close", function closeEvent() {
+        ctlr.TopLevelWindow.removeEventListener("touchstart", hideKeyboardCallback );
+        ctlr.TopLevelWindow.removeEventListener("postlayout", fixScrollContentsSizeCallback );
+        ctlr.TopLevelWindow.removeEventListener("close", closeEvent );
+    });
+
+}
+
+exports.applyKeyboardTweaks = applyKeyboardTweaks;

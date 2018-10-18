@@ -1,4 +1,5 @@
 var Topics = require('ui/Topics');
+var { applyKeyboardTweaks } = require("ui/Layout");
 var { emailValidity } = require("util/EmailUtils");
 
 exports.baseController  = "TopLevelWindow";
@@ -6,6 +7,8 @@ $.TopLevelWindow.title = "Sign Up";
 
 var emailValid = false;
 var passwordValid = false;
+
+applyKeyboardTweaks( $, [ $.emailTextField, $.passwordTextField ]);
 
 function emailChanged() {
     if ( emailValidity($.emailTextField.value) ) {

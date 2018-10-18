@@ -3,6 +3,9 @@ var Topics = require("ui/Topics");
 
 var sample = Alloy.Models.sample;
 
+var { applyKeyboardTweaks } = require("ui/Layout");
+applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
+
 function loadAttributes() {
     Ti.API.info(`Survey sampleId = ${sample.get("sampleId")}`);
     var surveyType = sample.get("surveyType"),
@@ -95,34 +98,6 @@ function validateSubmit() {
 function nextClick() {
     Topics.fireTopicEvent( Topics.HABITAT );
 }
-
-function fixScrollContentsSize(){
-    if ( $.content.contentWidth != $.TopLevelWindow.size.width
-        || $.content.contentHeight != $.TopLevelWindow.size.height ) {
-        $.content.contentWidth = $.content.size.width;
-        $.content.contentHeight = $.content.size.height;
-    }
-}
-
-$.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSize);
-
-function hideKeyboard() {
-    if(OS_ANDROID){
-        Ti.UI.Android.hideSoftKeyboard();
-   } else {
-       [ $.waterbodyNameField, $.nearByFeatureField ]
-            .forEach( (v)=> v.blur() );
-   }
-}
-
-$.TopLevelWindow.addEventListener("touchstart",hideKeyboard);
-
-$.TopLevelWindow.addEventListener("close", function closeEvent() {
-    $.TopLevelWindow.removeEventListener("touchstart", fixScrollContentsSize );
-    $.TopLevelWindow.removeEventListener("touchstart", hideKeyboard );
-    $.TopLevelWindow.removeEventListener("close", closeEvent );
-});
-
 
 $.TopLevelWindow.title = "Site Details";
 $.surveyLevelSelect.init(["Mayfly","Quick","Detailed"], checkValidity);

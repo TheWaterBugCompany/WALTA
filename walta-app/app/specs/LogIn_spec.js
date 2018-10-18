@@ -21,7 +21,7 @@ var { closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
 var CerdiApi = require("specs/mocks/MockCerdiApi");
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 
-describe('LogIn controller', function() {
+describe.only('LogIn controller', function() {
 	var login;
 	beforeEach( function() {
 		login = Alloy.createController( "LogIn" );
@@ -30,8 +30,7 @@ describe('LogIn controller', function() {
 	afterEach( function(done) {
 		closeWindow( login.getView(), done );
 	});
-
-	/* Yuck couldn't figure out a way to do this without setTimeout() hopefuly 1s is enough */
+	
 	it('it should render', function(done) {
 		controllerOpenTest( login, done );
 	});

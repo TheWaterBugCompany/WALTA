@@ -8,6 +8,9 @@ var passwordValid = false;
 $.TopLevelWindow.title = "Register";
 exports.baseController = "TopLevelWindow";
 
+var { applyKeyboardTweaks } = require("ui/Layout");
+applyKeyboardTweaks( $, [ $.emailTextField, $.nameTextField, $.passwordTextField, $.passwordConfirmTextField ] );
+
 
 function emailChanged() {
   if ( emailValidity($.emailTextField.value) ) {

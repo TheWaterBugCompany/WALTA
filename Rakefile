@@ -33,7 +33,7 @@ file 'walta-app/build/android/bin/Waterbug.apk' => titanium_source_files do
 end
 
 task :start_emulator do
-  sh("emulator -avd ${AVD_NAME} &")
+  sh("emulator -avd ${AVD_NAME} && adb -avd ${AVD_NAME} -e shell rm -rf /mnt/sdcard/* &")
 end
 
 task :uninstall_app do
@@ -49,7 +49,7 @@ task :test_console => [:start_emulator, 'walta-app/build/android/bin/Waterbug.ap
   sh("calabash-android console walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature")
 end
 
-task :unit_test  => [  ] do
+task :unit_test  => [ :start_emulator ] do
   sh("appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android "\
     "--deploy-type test --keystore ${KEYSTORE} "\
     "--store-password ${KEYSTORE_PASSWORD} "\

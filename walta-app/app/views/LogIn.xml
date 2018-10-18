@@ -1,5 +1,5 @@
 <Alloy>
-	<View id="content" class="container" layout="horizontal">
+	<ScrollView id="content" class="container" layout="horizontal">
 		<View id="leftPanel" class="panel" layout="vertical">
 			<Label class="headingText" text="Log in with your existing account:"/>
 			<Label id="errorMessage" class="error" text="Error message"/>
@@ -20,5 +20,5 @@
 			<Label id="registerHeading" class="headingText" textAlign=Ti.UI.TEXT_ALIGNMENT_CENTER text="or register with an email\n and password:"/>
 			<Button id="registerButton" class="actionButton" title="Register" onClick="registerClick"/>
 		</View>
-	</View>
+	</ScrollView>
 </Alloy>

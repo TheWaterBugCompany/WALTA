@@ -6,18 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="933ceca4-28e4-4180-8dcf-7fe56cf14d18" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/../Rakefile" afterPath="$PROJECT_DIR$/../Rakefile" />
-      <change beforePath="$PROJECT_DIR$/../features/registration.feature" afterPath="$PROJECT_DIR$/../features/registration.feature" />
-      <change beforePath="$PROJECT_DIR$/../features/step_definitions/registration.rb" afterPath="$PROJECT_DIR$/../features/step_definitions/registration.rb" />
-      <change beforePath="$PROJECT_DIR$/../mirage.log" afterPath="$PROJECT_DIR$/../mirage.log" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/Habitat.js" afterPath="$PROJECT_DIR$/app/controllers/Habitat.js" />
       <change beforePath="$PROJECT_DIR$/app/controllers/LogIn.js" afterPath="$PROJECT_DIR$/app/controllers/LogIn.js" />
       <change beforePath="$PROJECT_DIR$/app/controllers/Register.js" afterPath="$PROJECT_DIR$/app/controllers/Register.js" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" afterPath="$PROJECT_DIR$/app/controllers/TopLevelWindow.js" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/SiteDetails.js" afterPath="$PROJECT_DIR$/app/controllers/SiteDetails.js" />
+      <change beforePath="$PROJECT_DIR$/app/lib/ui/Layout.js" afterPath="$PROJECT_DIR$/app/lib/ui/Layout.js" />
       <change beforePath="$PROJECT_DIR$/app/specs/LogIn_spec.js" afterPath="$PROJECT_DIR$/app/specs/LogIn_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/Register_spec.js" afterPath="$PROJECT_DIR$/app/specs/Register_spec.js" />
-      <change beforePath="$PROJECT_DIR$/app/specs/mocks/MockCerdiApi.js" afterPath="$PROJECT_DIR$/app/specs/mocks/MockCerdiApi.js" />
-      <change beforePath="$PROJECT_DIR$/app/styles/LogIn.tss" afterPath="$PROJECT_DIR$/app/styles/LogIn.tss" />
-      <change beforePath="$PROJECT_DIR$/app/styles/app.tss" afterPath="$PROJECT_DIR$/app/styles/app.tss" />
+      <change beforePath="$PROJECT_DIR$/app/specs/Summary_spec.js" afterPath="$PROJECT_DIR$/app/specs/Summary_spec.js" />
       <change beforePath="$PROJECT_DIR$/app/views/LogIn.xml" afterPath="$PROJECT_DIR$/app/views/LogIn.xml" />
       <change beforePath="$PROJECT_DIR$/app/views/Register.xml" afterPath="$PROJECT_DIR$/app/views/Register.xml" />
     </list>
@@ -47,8 +43,9 @@
       <projects_view />
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="y" value="27" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="1785" />
+    <option name="y" value="180" />
     <option name="width" value="1920" />
     <option name="height" value="1053" />
   </component>
@@ -68,8 +65,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -118,7 +116,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -251,7 +248,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="1920" height="1053" extended-state="1" />
+    <frame x="1785" y="180" width="1920" height="1053" extended-state="0" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -259,11 +256,11 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5150502" sideWeight="0.20170757" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5172798" sideWeight="0.20811099" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5150502" sideWeight="0.7982924" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5172798" sideWeight="0.791889" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -364,21 +361,9 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DefaultIcon-ios.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/iTunesConnect.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MarketplaceArtwork.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/DefaultIcon-ios.png" />
+    <entry file="file://$PROJECT_DIR$/iTunesConnect.png" />
+    <entry file="file://$PROJECT_DIR$/MarketplaceArtwork.png" />
     <entry file="file://$PROJECT_DIR$/README">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -392,13 +377,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/build/android/res/layout/titanium_ui_checkbox.xml">
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Resources/android/images/camera-icon.png">

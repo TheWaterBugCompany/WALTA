@@ -20,7 +20,7 @@ var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("specs/util/TestUtils");
 var mocx = require("specs/lib/mocx");
 
-describe.only("Summary controller", function() {
+describe("Summary controller", function() {
     var ctl;
     
     function doTest( done, assertitions ) {
@@ -65,7 +65,7 @@ describe.only("Summary controller", function() {
         });
     });
     
-    it.only('should display the Summary view with not registered message', function(done) {
+    it('should display the Summary view with not registered message', function(done) {
         Alloy.Globals.CerdiApi.retrieveUserToken = function() {};
         Alloy.Models.sample.set('lng', -122.841234234234 );
         Alloy.Models.sample.set('lat', 37.4223423342 );

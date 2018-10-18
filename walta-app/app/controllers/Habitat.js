@@ -1,8 +1,12 @@
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Habitat";
 
+
 var Topics = require("ui/Topics");
 var sample = Alloy.Models.sample;
+
+var { applyKeyboardTweaks } = require("ui/Layout");
+applyKeyboardTweaks( $, [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ] );
 
 function loadAttributes() {
     $.leaves.value = sample.get("leafPacks");
@@ -14,33 +18,6 @@ function loadAttributes() {
     $.sandOrSilt.value = sample.get("sandOrSilt");
     $.openwater.value = sample.get("openWater");
 }
-
-function fixScrollContentsSize(){
-    if ( $.content.contentWidth != $.TopLevelWindow.size.width
-        || $.content.contentHeight != $.TopLevelWindow.size.height ) {
-        $.content.contentWidth = $.content.size.width;
-        $.content.contentHeight = $.content.size.height;
-    }
-}
-
-$.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSize);
-
-function hideKeyboard() {
-    if(OS_ANDROID){
-        Ti.UI.Android.hideSoftKeyboard();
-   } else {
-       [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
-            .forEach( (v)=> v.blur() );
-   }
-}
-
-$.TopLevelWindow.addEventListener("touchstart",hideKeyboard);
-
-$.TopLevelWindow.addEventListener("close", function closeEvent() {
-    $.TopLevelWindow.removeEventListener("touchstart", fixScrollContentsSize );
-    $.TopLevelWindow.removeEventListener("touchstart", hideKeyboard );
-    $.TopLevelWindow.removeEventListener("close", closeEvent );
-});
 
 function validateSum() {
     var sum = [ $.leaves, $.plants, $.wood, $.sandOrSilt,
