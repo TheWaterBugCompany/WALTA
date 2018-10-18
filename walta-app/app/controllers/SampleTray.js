@@ -7,7 +7,7 @@ var Topics = require('ui/Topics');
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
 var anchorBar = $.getAnchorBar();
-anchorBar.addTool( anchorBar.createToolBarButton( null, Topics.COMPLETE, "Submit") );
+anchorBar.addTool( anchorBar.createToolBarButton( null, Topics.COMPLETE, "Next") );
 
 var endcapHeight = 0;
 var endcapWidth = 0;

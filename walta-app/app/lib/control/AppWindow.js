@@ -44,6 +44,7 @@ function createAppWindow( keyName, keyPath ) {
 
 			loadKey: function( keyUrl ) {
 				this.key = KeyLoader.loadKey(keyUrl);
+				Alloy.Globals.Key = this.key;
 				if ( ! this.key ) {
 					throw "Failed to load the key: " + keyUrl;
 				}

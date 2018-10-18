@@ -1,22 +1,96 @@
 
 "#content" : {
-  left: "12dp"
 }
 
-"#congrats": {
-    top: "20dp",
-  height: Ti.UI.SIZE
-}
-
-"#gpsObtained": {
-    top: "30%",
-    left: "20%",
+"#message": {
+    top: "6dp",
+    width: Ti.UI.FILL,
     height: Ti.UI.SIZE
 }
-".leftSpace": {
-    left: "8dp"
+"#siteInfoPanel": {
+    top: "2%",
+    height: "40%",
+    width: Ti.UI.FILL
 }
+
+"#heading": {
+    width: Ti.UI.FILL,
+    left: "2%",
+    bottom: "10dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
+"#bottomFrame": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL
+}
+"#signalFrame": {
+    height: Ti.UI.FILL,
+    layout: "vertical",
+    left: "2%",
+    width: "48%"
+}
+".scoreContainer": {
+    top: "4%",
+    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE
+}
+
+"#taxaCount": {
+    color: "black",
+    borderColor: "black",
+    width: "60dp",
+    height: "60dp",
+    borderWidth: 2,
+    borderRadius: 60,
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    font: {
+		fontFamily: 'sans-serif',
+		fontSize: '20dp'
+	}
+}
+
+".scoreWrapper": {
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE,
+    top: "2%",
+    right: 0
+}
+
+".score": {
+    borderRadius: 30,
+    width: "30dp",
+    height: "30dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    right: "20dp",
+    color: "white"
+}
+
+"#rightFrame": {
+  width: "50%",
+  height: Ti.UI.FILL
+}
+
 "#doneButton": {
     bottom: "12dp",
     right: "12dp"
+}
+
+"#quickInterpretation": {
+    font: {
+		fontWeight: "bold"
+	}
+}
+
+"#interpretationFrame": {
+    height: Ti.UI.SIZE,
+    top: "2%",
+    left: "4%"
+}
+
+"#interpretation": {
+    top: "6dp",
+    font: {
+		fontWeight: "normal"
+	}
 }

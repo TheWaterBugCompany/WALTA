@@ -14,10 +14,16 @@ exports.definition = {
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
+			getTaxonId() {
+				return this.get("taxonId");
+			},
+			getAbundance() {
+				return parseInt(this.get("abundance").split("-")[0]);
+			},
 			toCerdiApiJson() {
 				return {
-					"count": parseInt(this.get("abundance").split("-")[0]),
-					"creature_id": this.get("taxonId")
+					"count": this.getAbundance(),
+					"creature_id": this.getTaxonId()
 				};
 			}
 		});

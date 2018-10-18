@@ -5,7 +5,11 @@ INCLUDE taxa.ink
 
 /* Start at the key identification */
 * ALT Key -> root 
+* Mayfly Muster Speedbug -> mmspeedbug
 * Speedbug -> speedbug
+* Order Speedbug -> orderspeedbug
+
+
 
 /* Speed bug */
 === speedbug ===
@@ -16,10 +20,10 @@ INCLUDE taxa.ink
 ** Sphaeriidae and corbiculidae -> sphaeriidae_and_corbiculidae # mediaUrls: "/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png" 
 
 * Group 2
-** Not sure -> k_gastropoda	
+** Not sure -> k_gastropoda
 ** Potamopyrgus Antipodarum -> potamopyrgus_antipodarum # mediaUrls: "/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"
-** Flat snails -> flat_snails # mediaUrls: "TODO"
-** Gastropoda -> k_gastropoda # mediaUrls: "/taxonomy/walta/media/speedbug/snails_b.png"
+** Flat snails -> flat_snails # mediaUrls: "/taxonomy/walta/media/speedbug/flat_snail_b.png" 
+** Gastropoda -> k_gastropoda # mediaUrls: "/taxonomy/walta/media/speedbug/snails_b.png" 
 
 * node -> turbellaria # mediaUrls: "/taxonomy/walta/media/speedbug/turbellaria_b.png"
 	
@@ -44,6 +48,7 @@ INCLUDE taxa.ink
 ** node -> sclerocyphon # mediaUrls: "/taxonomy/walta/media/speedbug/psephenidae_b.png"
 ** node -> elmidae_larvae # mediaUrls: "/taxonomy/walta/media/speedbug/elmidae_b.png"
 ** node -> byrrocryptus # mediaUrls: "/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"
+** node -> scirtidae # mediaUrls: "/taxonomy/walta/media/speedbug/scirtidae_b.png"
 	
 * Group 6
 ** Not sure -> k_larval	
@@ -61,8 +66,8 @@ INCLUDE taxa.ink
 ** node -> lepidoptera # mediaUrls: "/taxonomy/walta/media/speedbug/lepidoptera_b.png"
 ** node -> atriplectides # mediaUrls: "/taxonomy/walta/media/speedbug/atriplectides_b.png"
 ** node -> k_cased # mediaUrls: "/taxonomy/walta/media/speedbug/conoesucidae_b.png"
-** node -> philorheithridae # mediaUrls: "/taxonomy/walta/media/speedbug/philorheithridae_b.png"
-** node -> triplectides # mediaUrls: "/taxonomy/walta/media/speedbug/triplectides_b.png"
+** node -> k_cased # mediaUrls: "/taxonomy/walta/media/speedbug/philorheithridae_b.png"
+** node -> k_cased # mediaUrls: "/taxonomy/walta/media/speedbug/triplectides_b.png"
 	
 * Group 8 
 ** Not sure -> k_notonectidae	
@@ -123,6 +128,131 @@ INCLUDE taxa.ink
 ** node -> amphipoda # mediaUrls: "/taxonomy/walta/media/speedbug/amphipoda_b.png"
 ** node -> notostraca # mediaUrls: "/taxonomy/walta/media/speedbug/notostraca_b.png"
 ** node -> anostraca # mediaUrls: "/taxonomy/walta/media/speedbug/anostraca_b.png" 
+
+/*Order Speed bug */
+=== orderspeedbug ===
+
+* Group 1
+** Not sure -> bivalvia 
+** node -> bivalvia # mediaUrls: "/taxonomy/walta/media/speedbug/hyriidae_b.png"
+** node -> bivalvia # mediaUrls: "/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png" 
+
+* Group 2
+** Not sure -> gastropoda
+** node -> gastropoda # mediaUrls: "/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"
+** node -> gastropoda # mediaUrls: "/taxonomy/walta/media/speedbug/flat_snail_b.png" 
+** node -> gastropoda # mediaUrls: "/taxonomy/walta/media/speedbug/snails_b.png" 
+
+* node -> turbellaria # mediaUrls: "/taxonomy/walta/media/speedbug/turbellaria_b.png"
+	
+* Group 3
+** Not sure -> k_worm_like	
+** node -> oligochaeta # mediaUrls: "/taxonomy/walta/media/speedbug/oligochaeta_b.png"
+** node -> hirudinea # mediaUrls: "/taxonomy/walta/media/speedbug/hirudinea_b.png"
+** node -> nematoda # mediaUrls: "/taxonomy/walta/media/speedbug/nematoda_b.png"
+** node -> nematomorpha # mediaUrls: "/taxonomy/walta/media/speedbug/gordian_b.png"
+** node -> diptera # mediaUrls: "/taxonomy/walta/media/speedbug/bloodworm_b.png"
+** node -> diptera # mediaUrls: "/taxonomy/walta/media/speedbug/tipulidae_b.png"
+	
+* Group 4
+** Not sure -> diptera	
+** node -> diptera # mediaUrls: "/taxonomy/walta/media/speedbug/athericidae_b.png"
+** node -> diptera # mediaUrls: "/taxonomy/walta/media/speedbug/blephariceridae_b.png"
+** node -> diptera # mediaUrls: "/taxonomy/walta/media/speedbug/simuliidae_b.png"
+** node -> diptera # mediaUrls: "/taxonomy/walta/media/speedbug/mosquitolarva_b.png"
+	
+* Group 5
+** Not sure -> coleoptera	
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/psephenidae_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/elmidae_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/scirtidae_b.png"
+
+	
+* Group 6
+** Not sure -> k_larval	
+** node -> trichoptera # mediaUrls: "/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"
+** node -> trichoptera # mediaUrls: "/taxonomy/walta/media/speedbug/hydropsychidae_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"
+** node -> neuroptera # mediaUrls: "/taxonomy/walta/media/speedbug/neuroptera_b.png"
+** node -> corydalidae # mediaUrls: "/taxonomy/walta/media/speedbug/megaloptera_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/berosus_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"
+	
+* Group 7
+** node -> lepidoptera # mediaUrls: "/taxonomy/walta/media/speedbug/lepidoptera_b.png"
+** node -> trichoptera # mediaUrls: "/taxonomy/walta/media/speedbug/atriplectides_b.png"
+** node -> trichoptera # mediaUrls: "/taxonomy/walta/media/speedbug/philorheithridae_b.png"
+** node -> trichoptera # mediaUrls: "/taxonomy/walta/media/speedbug/triplectides_b.png"
+	
+* Group 8 
+** Not sure -> hemiptera	
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/enithares_b2.png"
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/veliids_b.png"
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/corixidae_b.png"
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/naucoridae_b.png"
+	
+* Group 9
+** Not sure -> coleoptera	
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/divingbeetles_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/hydrophilus_b.png"
+** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/gyrinidae_b.png"
+	
+* Group 10
+** Not sure -> hemiptera	
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/ranatra_b.png"
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/laccotrephes_b.png"
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/hydrometridae_b.png"
+** node -> hemiptera # mediaUrls: "/taxonomy/walta/media/speedbug/gerridae_b.png"
+	
+* Group 11
+** Not sure -> epiproctophora	
+** node -> epiproctophora # mediaUrls: "/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"
+** node -> epiproctophora # mediaUrls: "/taxonomy/walta/media/speedbug/spidermudeye_b.png"
+	
+* Group 12
+** Not sure -> zygoptera	
+** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
+** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
+	
+* Group 13
+** Not sure -> plecoptera	
+** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
+** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"
+	
+* Group 14
+** Not sure -> ephemeroptera	
+** node -> ephemeroptera # mediaUrls: "/taxonomy/walta/media/speedbug/baetidae_b.png"
+** node -> ephemeroptera # mediaUrls: "/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"
+
+* node -> acarina # mediaUrls: "/taxonomy/walta/media/speedbug/hydracarina_b.png"
+
+* node -> pisauridae_and_lycosidae # mediaUrls: "/taxonomy/walta/media/speedbug/pisauridae_b.png"
+	
+* Group 15
+** node -> decapoda # mediaUrls: "/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"
+** node -> decapoda # mediaUrls: "/taxonomy/walta/media/speedbug/atyidae_b.png"
+** node -> decapoda # mediaUrls: "/taxonomy/walta/media/speedbug/parastacidae_b.png"
+** node -> amphipoda # mediaUrls: "/taxonomy/walta/media/speedbug/amphipoda_b.png"
+** node -> notostraca # mediaUrls: "/taxonomy/walta/media/speedbug/notostraca_b.png"
+** node -> anostraca # mediaUrls: "/taxonomy/walta/media/speedbug/anostraca_b.png" 
+
+/*MayflyMuster Speed bug */
+=== mmspeedbug ===
+
+* Group 1
+** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
+	
+* Group 14
+** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
+** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"
+	
+* Group 15
+** Not sure -> ephemeroptera	
+** node -> baetidae # mediaUrls: "/taxonomy/walta/media/speedbug/baetidae_b.png"
+** node -> k_leptophlebiidae # mediaUrls: "/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"
+** node -> atalophlebia # mediaUrls: "/taxonomy/walta/media/speedbug/atalophlebia_b.png"
+** node -> coloburiscoides # mediaUrls: "/taxonomy/walta/media/speedbug/coloburiscidae_b.png"
 
 
 /* Question Nodes */
@@ -400,7 +530,7 @@ INCLUDE taxa.ink
 * Not as above. -> node_46 # mediaUrls: []
 
 === node_46 ===
-* Case made mainly from coarse sand. -> node_47 # mediaUrls: []
+* Case made mainly from sand. -> node_47 # mediaUrls: []
 * Case made from plant material or silk secretion but may incorporate some mineral particles. -> node_48 # mediaUrls: []
 
 === node_47 ===
@@ -581,7 +711,7 @@ INCLUDE taxa.ink
 
 === node_41 ===
 * with two tails -> node_75 # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]
-* with three tails -> mayfly_start_point  # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
+* with three tails -> node_76 # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
 
 === node_75 ===
 * with compound eyes (like a mirror ball upclose) and wing buds (except on very young animals) -> order_plecoptera # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]
@@ -619,7 +749,7 @@ INCLUDE taxa.ink
 * Nymphs with a double row of spines along their backs. -> acruroperla_atra # mediaUrls: []
 * Nymphs without a double row of spines. -> austroperlids # mediaUrls: []
 
-=== mayfly_start_point ===
+=== node_76 ===
 * tails flattened or broad, jaw large and folded away under head -> k_odonata # mediaUrls: ["/taxonomy/walta/media/damselfly.gif"]
 * tails thin, round in cross section -> order_ephemeroptera # mediaUrls: ["/taxonomy/walta/media/mayfly.gif"]
 

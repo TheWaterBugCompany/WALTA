@@ -16,9 +16,3 @@ function openErrorsClick(e) {
         dialog.show();
     }
 }
-function formatSample( model ) {
-    var m = model.toJSON();
-    m.dateCompleted = moment(m.dateCompleted).format("DD/MMM/YYYY h:mm:ss a");
-    m.uploaded = (m.serverSampleId ? "Yes" : "No" );
-    return m;
-}

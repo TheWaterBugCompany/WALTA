@@ -27,4 +27,5 @@ exports.createCollection = function(name, content) {
     } else {
         throw "No Array specified for createCollection";
     }
+    return Alloy.Collections[name];
 };

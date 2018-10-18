@@ -1,17 +1,44 @@
 <Alloy>
 	<Model src="sample" />
 	<View id="content" class="container" layout="vertical">
-		<Label id="message" class="labelText" text="Congratulations you've completed your survey!\n\nThe survey has been queued for upload and will be sent as a background task to the Waterbug Blitz servers when internet access becomes available."/>
-		<View id="gpsObtained" visible="false" layout="horizontal">
-			<Label class="labelText" text="GPS lock obtained"/>
-			<Label class="labelText leftSpace" text="(latitude="/>
-			<Label id="latLabel" class="labelText" text="{sample.lat}"/>
-			<Label class="labelText" text=", longitude="/>
-			<Label id="longLabel" class="labelText" text="{sample.lng}"/>
-			<Label class="labelText" text=")"/>
+		<View id="siteInfoPanel" layout="vertical">
+			<Label id="heading" class="headingText" text="{sample.surveyType} Survey"/>
+			<Label class="labelText" text="{sample.siteInfo}"/>
+			<Label class="labelText" text="Date: {sample.dateCompleted}"/>
+			<Label id="message" class="labelText"/>
 		</View>
-		<View>
-			<Button id="doneButton" class="actionButton" title="Done" onClick="doneClick" />
+		<View id="bottomFrame" layout="horizontal">
+			<View id="signalFrame">
+				<View class="scoreContainer">
+					<Label class="labelText" text="SIGNAL score"/>
+					<View class="scoreWrapper">
+						<Label id="signalScore" class="labelText score"  backgroundColor="{sample.scoreColor}" text="{sample.score}"/>
+					</View> 
+				</View>
+				<View class="scoreContainer">
+					<Label class="labelText" text="Weighted SIGNAL score"/>
+					<View class="scoreWrapper">
+						<Label id="weightedSignalScore" class="labelText score" backgroundColor="{sample.w_scoreColor}" text="{sample.w_score}"/>
+					</View>
+            	</View>
+				<View class="scoreContainer">
+					<Label class="labelText" text="Number of different\nwaterbug taxa"/>
+					<View class="scoreWrapper">
+						<Label id="taxaCount" class="labelText" text="{sample.taxaCount}"/>
+					</View>
+            	</View>
+		
+			</View>
+			<View id="rightFrame" layout="vertical">
+				<View id="interpretationFrame" layout="vertical">
+					<Label id="quickInterpretation" class="labelText" text="Quick Interpretation:"/>
+					<Label id="interpretation" class="labelText" text="{sample.impactText}"/>
+				</View>
+				<View>
+					<Button id="doneButton" class="actionButton" title="Done" onClick="doneClick" />
+				</View>
+			</View>
 		</View>
+		
 	</View>
 </Alloy>

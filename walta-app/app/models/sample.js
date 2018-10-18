@@ -1,4 +1,5 @@
-var moment = require('lib/moment');
+var moment = require("lib/moment");
+var Sample = require("logic/Sample");
 exports.definition = {
 	config: {
 		columns: {
@@ -45,9 +46,108 @@ exports.definition = {
 				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
 			},
 
-			toCerdiApiJson: function() {
+			loadTaxa() {
 				var taxa = Alloy.createCollection("taxa");
 				taxa.load( this.get("sampleId") );
+				return taxa;
+			},
+
+			calculateSignalScore(taxa) {
+				var count = 0;
+				return (taxa.reduce( (a,t) => {
+						count++;
+						return Alloy.Globals.Key.findTaxonById( t.getTaxonId()  ).signalScore;
+					}, 0)/count);
+			},
+
+			calculateWeightedSignalScore(taxa) {
+				var count = 0;
+				return (taxa.reduce( (a,t) => {
+					var n = t.getAbundance();
+					count += n;
+					return Alloy.Globals.Key.findTaxonById( t.getTaxonId() ).signalScore * n;
+				}, 0)/count);
+			},
+
+			transform: function() { 
+				var sampleJson = this.toJSON();
+				var taxa = this.loadTaxa();
+
+				if ( sampleJson.lat )
+					sampleJson.lat = sampleJson.lat.toFixed(5);
+				if ( sampleJson.lng )
+					sampleJson.lng = sampleJson.lng.toFixed(5);
+
+				sampleJson.score = this.calculateSignalScore(taxa).toFixed(1);
+				sampleJson.w_score = this.calculateWeightedSignalScore(taxa).toFixed(1);
+				sampleJson.siteInfo = sampleJson.waterbodyName;
+				if ( sampleJson.nearbyFeature )
+					sampleJson.siteInfo += ` @ ${sampleJson.nearbyFeature}`;
+
+				switch( sampleJson.surveyType ) {
+					case Sample.MAYFLY:
+						sampleJson.surveyType = "Mayfly";
+						break;
+					case Sample.ORDER:
+						sampleJson.surveyType = "Quick";
+						break;
+					case Sample.DETAILED:
+						sampleJson.surveyType = "Detailed";
+				} 
+
+				sampleJson.dateCompleted = moment(sampleJson.dateCompleted).format("DD/MMM/YYYY h:mm:ss a");
+				sampleJson.uploaded = (sampleJson.serverSampleId ? "Yes" : "No" );
+
+				// Provide textual assessment information
+				function scoreColor(score) {
+					if ( score <= 4.0 ) {
+						return "#ff6161";
+					} else if ( score <= 5.0 ) {
+						return "#ffc000";
+					} else if ( score <= 6.0 ) {
+						return "#92d050";
+					} else if ( score > 6.0) {
+						return "#9cc2e5";
+					}
+				}
+
+				sampleJson.scoreColor = scoreColor( sampleJson.score);
+				sampleJson.w_scoreColor = scoreColor( sampleJson.w_score);
+				var scoreDiff = sampleJson.scoreColor  - sampleJson.w_scoreColor;
+
+
+				if ( sampleJson.score <= 4.0 ) {
+					sampleJson.impactText = "Unfortunately your site is heavily impacted.";
+				} else if ( sampleJson.score <= 5.0 ) {
+					sampleJson.impactText = "Your site is impacted.";
+				} else if ( sampleJson.score <= 6.0 ) {
+					sampleJson.impactText = "Your site is probably mildly polluted.";
+				} else if ( sampleJson.score > 6.0 ) {
+					sampleJson.impactText = "Your site is probably healthy.";
+				}
+				
+				if ( scoreDiff < 2  && sampleJson.score > 6.0 ) {
+					sampleJson.impactText += "\n\nIt is scoring less with the weighted SIGNAL because there are many more tolerant animals than sensitive ones ....perhaps there is some nutrient enrichment at the site?";
+				}
+
+				if ( taxa.length < 5 ) {
+					if ( sampleJson.score > 5.0 ) {
+						sampleJson.impactText += "\n\nIt might have suffered from a recent flood or some other abrupt impact.";
+					}
+				} else if ( taxa.length > 15 ) {
+					if ( sampleJson.score > 6.0 ) {
+						sampleJson.impactText += "\n\nIt has a great diversity of waterbugs.";
+					} else {
+						sampleJson.impactText += "\n\nIt has lots of different waterbugs.";
+					}
+				}
+
+				sampleJson.taxaCount = taxa.length;
+				return sampleJson;
+			},
+
+			toCerdiApiJson: function() {
+				var taxa = loadTaxa();
 				Ti.API.info(`surveyType = ${this.get("surveyType")}, waterbodyType = ${this.get("waterbodyType")} `)
 				var attrs = {
 					"sample_date": this.get("dateCompleted"),
