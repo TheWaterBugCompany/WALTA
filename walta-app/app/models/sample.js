@@ -74,9 +74,9 @@ exports.definition = {
 				var taxa = this.loadTaxa();
 
 				if ( sampleJson.lat )
-					sampleJson.lat = sampleJson.lat.toFixed(5);
+					sampleJson.lat = parseFloat(sampleJson.lat).toFixed(5);
 				if ( sampleJson.lng )
-					sampleJson.lng = sampleJson.lng.toFixed(5);
+					sampleJson.lng = parseFloat(sampleJson.lng).toFixed(5);
 
 				sampleJson.score = this.calculateSignalScore(taxa).toFixed(1);
 				sampleJson.w_score = this.calculateWeightedSignalScore(taxa).toFixed(1);
@@ -84,7 +84,7 @@ exports.definition = {
 				if ( sampleJson.nearbyFeature )
 					sampleJson.siteInfo += ` @ ${sampleJson.nearbyFeature}`;
 
-				switch( sampleJson.surveyType ) {
+				switch( parseInt( sampleJson.surveyType ) ) {
 					case Sample.MAYFLY:
 						sampleJson.surveyType = "Mayfly";
 						break;
@@ -147,7 +147,7 @@ exports.definition = {
 			},
 
 			toCerdiApiJson: function() {
-				var taxa = loadTaxa();
+				var taxa = this.loadTaxa();
 				Ti.API.info(`surveyType = ${this.get("surveyType")}, waterbodyType = ${this.get("waterbodyType")} `)
 				var attrs = {
 					"sample_date": this.get("dateCompleted"),

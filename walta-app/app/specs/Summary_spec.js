@@ -57,7 +57,7 @@ describe("Summary controller", function() {
         });
     });
 
-	it('should display the Summary view with lock not obtained message', function(done) {
+	it.only('should display the Summary view with lock not obtained message', function(done) {
         doTest( done, function() {
             expect( ctl.message.text ).to.include("GPS lock yet");
             expect( ctl.doneButton.title ).to.equal("Done");

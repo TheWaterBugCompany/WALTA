@@ -10,7 +10,8 @@
 "#siteInfoPanel": {
     top: "2%",
     height: "40%",
-    width: Ti.UI.FILL
+    width: Ti.UI.FILL,
+    right: "2%"
 }
 
 "#heading": {
@@ -22,7 +23,8 @@
 
 "#bottomFrame": {
     width: Ti.UI.FILL,
-    height: Ti.UI.FILL
+    height: Ti.UI.FILL,
+    right: "2%"
 }
 "#signalFrame": {
     height: Ti.UI.FILL,
@@ -42,7 +44,7 @@
     width: "60dp",
     height: "60dp",
     borderWidth: 2,
-    borderRadius: 60,
+    borderRadius: 30,
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
     font: {
 		fontFamily: 'sans-serif',
@@ -58,7 +60,7 @@
 }
 
 ".score": {
-    borderRadius: 30,
+    borderRadius: 15,
     width: "30dp",
     height: "30dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
