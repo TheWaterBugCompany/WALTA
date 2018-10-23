@@ -1,6 +1,6 @@
 <Alloy>
 	<View id="photoSelect">
 		<ImageView id="photo" />
-		<ImageView id="camera" image="images/camera-icon.png"/>
+		<ImageView id="camera" image="images/camera-icon.png" onClick="takePhoto"/>
 	</View>
 </Alloy>

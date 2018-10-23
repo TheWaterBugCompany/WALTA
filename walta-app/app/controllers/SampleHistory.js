@@ -10,7 +10,7 @@ function openErrorsClick(e) {
     if ( error ) {
         var dialog = Ti.UI.createAlertDialog({
             message: error,
-            ok: 'Okay',
+            ok: 'Ok',
             title: 'Last server error'
         });
         dialog.show();
