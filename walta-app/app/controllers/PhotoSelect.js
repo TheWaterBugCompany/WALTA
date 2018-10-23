@@ -35,9 +35,9 @@ function takePhoto() {
                     $.photo.image = result.media;
                 },
                 error: function (error) {
-                    alert(`${error.error}`);
+                    alert(`Unable to open camera: ${error.error}.`);
                 },
-                saveToPhotoGallery: true,
+                saveToPhotoGallery: false,
                 mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
             });
         },

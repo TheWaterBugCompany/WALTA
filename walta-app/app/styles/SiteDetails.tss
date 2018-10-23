@@ -31,7 +31,9 @@
 
 "#photoSelect" : {
     top: "8dp",
-    right: "8dp"
+    right: "8dp",
+    width: "40%",
+    height: Ti.UI.FILL 
 }
 
 "#nextButton": {
