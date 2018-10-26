@@ -16,11 +16,10 @@ var COMPLETE = "The survey is complete and will be uploaded in the background wh
 var COMPLETE_NOT_REGISTERED = "The survey is complete. The next step is to register via the home screen and data will be uploaded in the background when internet access becomes available.";
 var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please ensure you have location enabled and move to out into the open to allow the coordinates to be collected.";
 
-// We only want to do this once each time this screen is displayed...
-var saveSampleAndUpload = _.once(function() {
+var saveSampleAndUpload = function() {
     Alloy.Models.sample.saveCurrentSample();
     SampleSync.forceUpload();
-})
+};
 
 function checkGpsLock() {
     if ( !(Alloy.Models.sample.get("lat") && Alloy.Models.sample.get("lng") ) ) {
@@ -38,7 +37,7 @@ function setMessageText() {
     
     if ( !Alloy.Globals.CerdiApi.retrieveUserToken() ) {
         $.message.text = COMPLETE_NOT_REGISTERED
-        $.doneButton.title= "Register";
+        $.doneButton.title= "Submit";
     } else {
         $.message.text = COMPLETE
         $.doneButton.title= "Submit";

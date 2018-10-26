@@ -16,33 +16,45 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function makeJsonRequest( serverUrl, data, accessToken = null ) {
+function createHttpClient(method, url, contentType, accessToken, sendDataFunction ) {
     return new Promise( (resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
-            onload: function() {
-                resolve( JSON.parse(this.responseText) );
-            },
-            onerror: function(err) {
-                if ( this.responseText ) {
-                    try {
-                        reject( JSON.parse(this.responseText) );
-                    } catch(err) {
-                        reject( this.responseText)
+                onload: function() {
+                    resolve( JSON.parse(this.responseText) );
+                },
+                onerror: function(err) {
+                    if ( this.responseText ) {
+                        try {
+                            reject( JSON.parse(this.responseText) );
+                        } catch(err) {
+                            reject( this.responseText)
+                        }
+                    } else {
+                        reject(err);
                     }
-                } else {
-                    reject(err);
-                }
-            },
-            timeout: 30000 
-        });
-        client.open("POST", serverUrl);
+                },
+                timeout: 30000 
+            });
+        client.open(method, url);
         client.setRequestHeader('Accept', 'application/json');
-        client.setRequestHeader('Content-Type', 'application/json');
-        if ( accessToken ) {
+        if ( contentType !== "multipart/form-data" ) 
+            client.setRequestHeader('Content-Type', contentType);
+        
+            if ( accessToken ) {
             client.setRequestHeader('Authorization', `Bearer ${accessToken}`);
         }
-        client.send( JSON.stringify( data ) );
+        sendDataFunction( client );
     });
+}
+
+function makeJsonRequest( serverUrl, data, accessToken = null ) {
+    return createHttpClient("POST", serverUrl, "application/json", accessToken, 
+                (client) => client.send( JSON.stringify( data ) ) );
+}
+
+function makeImagePost( serverUrl, imageData, accessToken = null ) {
+    return createHttpClient("POST", serverUrl, "multipart/form-data", accessToken, 
+                (client) => client.send( { "photo": imageData } ) );
 }
 
 
@@ -99,6 +111,20 @@ function createCerdiApi( serverUrl, client_secret  ) {
                         this.storeUserToken( resp );
                         return resp;
                     })
+            },
+
+            submitSitePhoto( serverSampleId, photoBlob ) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeImagePost( `${this.serverUrl}/samples/${serverSampleId}/photos`, photoBlob, accessToken );
+            },
+
+            submitCreaturePhoto( serverSampleId, creatureId, photoBlob ) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeImagePost( `${this.serverUrl}/samples/${serverSampleId}/creatures/${creatureId}/photos`, photoBlob, accessToken );
             },
         
             submitSample( sample ) {

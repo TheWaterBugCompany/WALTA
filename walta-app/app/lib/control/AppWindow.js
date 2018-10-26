@@ -153,6 +153,10 @@ function createAppWindow( keyName, keyPath ) {
 		privates.logInWindow();
 	});
 
+	privates.subscribe( Topics.LOGGEDIN, function() {
+		Topics.fireTopicEvent( Topics.HOME, null );
+	});
+
     privates.subscribe( Topics.KEYSEARCH, function() {
 		var node = ( Alloy.Models.sample.get("surveyType") == 0 ? 
 			privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );

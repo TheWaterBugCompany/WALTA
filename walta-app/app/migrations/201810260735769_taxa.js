@@ -16,7 +16,7 @@ migration.down = function(migrator) {
 			"taxonId": "INTEGER PRIMARY KEY",
         },
     });
-    db.execute('INSERT INTO ' + table + ' abundance,sampleId,taxonId FROM taxa_backup;');
+    db.execute('INSERT INTO ' + table + ' SELECT abundance,sampleId,taxonId FROM taxa_backup;');
     db.execute('DROP TABLE taxa_backup;');
 };
 

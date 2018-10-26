@@ -21,13 +21,15 @@ exports.definition = {
 			"aquaticPlants": "INTEGER",
 			"openWater": "INTEGER",
 			"edgePlants": "INTEGER",
-			"sitePhotoPath": "VARCHAR(255)"
+			"sitePhotoPath": "VARCHAR(255)",
+			"uploaded": "BOOLEAN"
 		},
 		adapter: {
 			type: "sql",
 			collection_name: "sample",
 			db_name: "samples",
 			idAttribute: "sampleId"
+			//,migration: "201810260735769"
 		}
 	},
 	extendModel: function(Model) {
@@ -112,8 +114,12 @@ exports.definition = {
 						sampleJson.surveyType = "Detailed";
 				} 
 
-				sampleJson.dateCompleted = moment(sampleJson.dateCompleted).format("DD/MMM/YYYY h:mm:ss a");
-				sampleJson.uploaded = (sampleJson.serverSampleId ? "Yes" : "No" );
+				if ( sampleJson.dateCompleted ) {
+					sampleJson.dateCompleted = moment(sampleJson.dateCompleted).format("DD/MMM/YYYY h:mm:ss a");
+				} else {
+					sampleJson.dateCompleted = moment().format("DD/MMM/YYYY h:mm:ss a");
+				}
+				sampleJson.uploaded = (sampleJson.uploaded > 0 ? "Yes" : "No" );
 
 				// Provide textual assessment information
 				function scoreColor(score) {
@@ -165,7 +171,6 @@ exports.definition = {
 
 			toCerdiApiJson: function() {
 				var taxa = this.loadTaxa();
-				Ti.API.info(`surveyType = ${this.get("surveyType")}, waterbodyType = ${this.get("waterbodyType")} `)
 				var attrs = {
 					"sample_date": this.get("dateCompleted"),
 					"lat": parseFloat(this.get("lat")).toFixed(5),
@@ -192,6 +197,12 @@ exports.definition = {
 				}
 				return attrs;
 			},
+
+			getTaxa: function() {
+				return this.loadTaxa();
+			}
+
+
 		});
 
 		return Model;
@@ -223,7 +234,7 @@ exports.definition = {
 			},
 
 			loadUploadQueue: function() {
-				this.fetch( { query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL AND serverSampleId IS NULL ORDER BY dateCompleted DESC"});
+				this.fetch( { query: "SELECT * FROM sample WHERE (dateCompleted IS NOT NULL) AND (uploaded IS NULL) ORDER BY dateCompleted DESC"});
 			}
 		});
 

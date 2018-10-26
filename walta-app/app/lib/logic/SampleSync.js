@@ -1,16 +1,39 @@
+var Topics = require('ui/Topics');
+
 var SYNC_INTERVAL = 1000*60*5; // 5 minutes
 var timeoutHandler;
 
-function init() {
-    Ti.API.info("Initialising SampleSync...");
-    timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
+
+Topics.subscribe( Topics.LOGGEDIN, startUpload );
+
+function networkChanged( e ) {
+    if ( e.networkType === Ti.Network.NETWORK_NONE ) {
+        // don't bother trying to upload (saves battery)
+        Ti.API.info("Lost network connection, sleeping.");
+        clearUploadTimer();
+    } else {
+        Ti.API.info("Network connection up.");
+        startUpload();
+    }
 }
 
-function forceUpload() {
+Ti.Network.addEventListener( "change", networkChanged );
+
+
+function clearUploadTimer() {
     if ( timeoutHandler ) {
         clearTimeout( timeoutHandler );
         timeoutHandler = null;
     }
+}
+
+function init() {
+    Ti.API.info("Initialising SampleSync...");
+    startUpload();
+}
+
+function forceUpload() {
+    clearUploadTimer();
     startUpload();
 }
 
@@ -30,27 +53,93 @@ function uploadRemainingSamples(samples) {
     }
 }
 
+function uploadSitePhoto(sample) {
+    Ti.API.info("Uploading site photo...");
+    var sitePhoto = sample.getSitePhoto();
+    var sampleId = sample.get("serverSampleId");
+    if ( sitePhoto ) {
+        return Alloy.Globals.CerdiApi.submitSitePhoto( sampleId, sitePhoto )
+                .then( () => sample );
+    } else {
+        Ti.API.info("No site photo found.");
+        return sample;
+    }
+}
+
+function uploadTaxaPhotos(sample) {
+    
+    var taxa = sample.getTaxa();
+    var sampleId = sample.get("serverSampleId");
+    Ti.API.info(`Uploading ${taxa.length} taxa photos...`);
+    return taxa.reduce( (acc, t) => {
+            return acc.then( () => {
+                Ti.API.info(`Uploading ${JSON.stringify(t)}`);
+                var taxonId = t.getTaxonId();
+                var photo = t.getPhoto();
+                if ( photo ) {
+                    Ti.API.info(`Uploading photo for taxon ${taxonId}`);
+                    return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photo )
+                                
+                } else {
+                    Ti.API.info(`No photo for taxon ${taxonId}`);
+                }
+            })
+        }, Promise.resolve() ).then( () => sample );
+        
+}
+
+function setServerSampleId( sample ) {
+    return (r) => {
+        Ti.API.info(`success, server returned: ${JSON.stringify(r)}`);
+        sample.set("serverSampleId", r.id );
+        sample.save();
+        return sample;
+    }
+}
+
+function markSampleComplete( sample ) {
+        sample.set("uploaded", 1);
+        sample.save();
+        return sample;
+}
+
+function errorHandler( sample ) {
+    return (err) => {
+        if ( err.message === "The given data was invalid.") {
+            var errors = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
+            Ti.API.info(`Data was invalid continuing: ${errors}`);
+            sample.set("lastError", errors );
+            sample.save();
+        }
+        return Promise.reject(err);
+    };
+}
+
 function uploadNextSample(samples) {
     var sample = samples.shift();
-    Ti.API.info(JSON.stringify(sample.toCerdiApiJson()));
-    return Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
-        .then( (r) => {
-            Ti.API.info(`success, server returned: ${r}`);
-            sample.set("serverSampleId", r.id );
-            sample.save();
-        }).catch( (err) => {
-            if ( err.message === "The given data was invalid.") {
-                var errors = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
-                Ti.API.info(`Data was invalid continuing: ${errors}`);
-                sample.set("lastError", errors );
-                sample.save();
-            }
-            return Promise.reject(err);
-        });
+    var uploadIfNeeded;
+    var serverSampleId = sample.get("serverSampleId");
+
+    if ( !serverSampleId )
+        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
+    else
+        uploadIfNeeded = Promise.resolve( { id: serverSampleId }); 
+
+    return uploadIfNeeded
+            .then( setServerSampleId( sample ) )
+            .then( uploadSitePhoto )
+            .then( uploadTaxaPhotos )
+            .then( markSampleComplete )
+            .catch( errorHandler( sample ) );
 }
 
 function startUpload() {
     Ti.API.info("Starting sample syncronisation process...");
+    if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
+        Ti.API.info("No network available, sleeping until network becomes avaiable.");
+        return;
+    }
+
     var samples = Alloy.createCollection("sample");
     samples.loadUploadQueue();
     if ( samples.length >= 1 ) {
@@ -67,7 +156,7 @@ function startUpload() {
         }
     } else {
         Ti.API.info("Nothing to do");
-        timeoutHandler =setTimeout( startUpload, SYNC_INTERVAL );
+        timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
     }
 }
 

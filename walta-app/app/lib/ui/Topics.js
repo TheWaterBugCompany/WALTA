@@ -23,6 +23,8 @@
  */
 var topics = {
 
+	LOGGEDIN: 'loggedin',
+
 	HOME: 'home',
 	SETTINGS: 'settings',
 	INFO: 'info',

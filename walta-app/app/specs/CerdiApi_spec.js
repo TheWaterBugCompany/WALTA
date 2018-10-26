@@ -204,7 +204,7 @@ describe('CerdiApi', function() {
                 password: 'tstPassw0rd!'
             })).to.eventually.have.property("accessToken").to.be.a('string');
         });
-        it.only( 'should fail with bad password', function() {
+        it( 'should fail with bad password', function() {
             return expect( cerdi.registerUser( {
                 email: `test-${Date.now()}@example.com`,
                 group: false,
@@ -220,11 +220,11 @@ describe('CerdiApi', function() {
 
     describe( '#loginUser', function() {
         
-        it.only("should fail if a user doesn't exist",function() {
+        it("should fail if a user doesn't exist",function() {
             return expect( cerdi.loginUser( 'nonexistentuser@example.com', 'badpassword' ) )
                 .to.be.rejected;
         });
-        it.only("should fail if the password doesn't match",function() {
+        it("should fail if the password doesn't match",function() {
             return expect( cerdi.loginUser( 'testlogin@example.com', 'badpassword' ) )
                 .to.be.rejected;
         });
