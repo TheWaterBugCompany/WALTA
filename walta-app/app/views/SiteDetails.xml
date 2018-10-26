@@ -14,7 +14,9 @@
 					</View>
 					<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
 				</View>
-				<Require id="photoSelect" type="view" src="PhotoSelect"/>
+				<View id="photoSelect"> 
+					<Require type="view" src="PhotoSelect"/>
+				</View>
 			</View>
 			<View id="bottom" class="panel" layout="horizontal">
 				<View id="bottomLeft" layout="vertical">	
