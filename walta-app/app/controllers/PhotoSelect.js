@@ -16,11 +16,14 @@ function generateThumbnail( blob ) {
     var pxHeight = Ti.UI.convertUnits( `${$.photoSelect.size.height}dp`, Ti.UI.UNIT_PX );
     var newHeight = pxWidth*(thumbnailImage.height/thumbnailImage.width);
     thumbnailImage = thumbnailImage.imageAsResized( pxWidth, newHeight );
-    return thumbnailImage.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:((newHeight-pxHeight)/2) });
+    var cropY = ((newHeight-pxHeight)/2);
+    if ( cropY > 0 )
+        thumbnailImage = thumbnailImage.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
+    return thumbnailImage;
 }
 
 function generateUpload( blob ) {
-    var uploadImage = Ti.UI.createImageView( { image: blob } ).toBlob();
+    var uploadImage = blob;
     Ti.API.info(`image size width = ${uploadImage.width} height = ${uploadImage.height}`);
 
     if ( uploadImage.width > MAX_IMAGE_WIDTH ) {

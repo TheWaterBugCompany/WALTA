@@ -4,6 +4,10 @@
     height: "58%"
 }
 
+"#top": {
+    horizontalWrap: false
+}
+
 "#topLeft" : {
     width: Ti.UI.SIZE,
     top: "8dp",
@@ -31,9 +35,12 @@
 
 "#photoSelectWrapper" : {
     top: "8dp",
-    right: "8dp",
-    width: "40%",
+    width: Ti.UI.FILL,
     height: Ti.UI.FILL 
+}
+
+"#photoSelect": {
+    right: "8dp"
 }
 
 "#nextButton": {
