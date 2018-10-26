@@ -36,7 +36,7 @@ exports.definition = {
 		_.extend(Model.prototype, {
 
 			setSitePhoto: function(blob) {
-				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `sitePhoto_${this.get("sampleId")}`);
+				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `sitePhoto_${this.get("sampleId")}.jpeg`);
 				if ( sitePhotoPath.write(blob) === false )
 					alert("Error writing file");
 				this.set( "sitePhotoPath", sitePhotoPath.nativePath );

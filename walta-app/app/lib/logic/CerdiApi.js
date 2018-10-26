@@ -40,7 +40,7 @@ function createHttpClient(method, url, contentType, accessToken, sendDataFunctio
         if ( contentType !== "multipart/form-data" ) 
             client.setRequestHeader('Content-Type', contentType);
         
-            if ( accessToken ) {
+        if ( accessToken ) {
             client.setRequestHeader('Authorization', `Bearer ${accessToken}`);
         }
         sendDataFunction( client );

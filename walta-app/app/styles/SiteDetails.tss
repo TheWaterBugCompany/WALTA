@@ -29,7 +29,7 @@
     height: Ti.UI.FILL
 }
 
-"#photoSelect" : {
+"#photoSelectWrapper" : {
     top: "8dp",
     right: "8dp",
     width: "40%",

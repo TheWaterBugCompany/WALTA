@@ -1,31 +1,33 @@
 <Alloy>
-	<ScrollView id="content" class="container" layout="horizontal">
-		<View id="leftPanel" class="panel" layout="vertical">
-			<Label id="emailLabel" class="labelText" text="Email:"/>
-			<TextField id="emailTextField" accessibilityLabel="Email" class="textField" onChange="emailChanged" />
-			<Label id="nameLabel" class="labelText" text="Name:"/>
-			<TextField id="nameTextField" accessibilityLabel="Name"  class="textField" onChange="nameChanged" />
-			<Label id="passwordLabel" class="labelText" text="Password:"/>
-			<TextField id="passwordTextField" accessibilityLabel="Password" hintText="Must be at least 8 characters" class="textField password" onChange="passwordChanged"/>
-			<Label id="passwordConfirmLabel" class="labelText" text="Confirm Password:"/>
-			<TextField id="passwordConfirmTextField" accessibilityLabel="Password Confirmation" hintText="Include numbers, symbols and mixed case" class="textField password" onChange="passwordConfirmChanged"/>
-		</View>
-		<View id="rightPanel" class="panel" layout="vertical">
-			<View id="registerAsGroup" class="optionLine" layout="horizontal">
-				<Switch id="groupToggle" class="checkbox" accessibilityLabel="Group Registration"/>
-				<Label class="labelText" text="I am registering on behalf of\na group"/>
+	<ScrollView id="content">
+		<View id="innerContent">
+			<View id="leftPanel" class="panel" layout="vertical">
+				<Label id="emailLabel" class="labelText" text="Email:"/>
+				<TextField id="emailTextField" accessibilityLabel="Email" class="textField" onChange="emailChanged" />
+				<Label id="nameLabel" class="labelText" text="Name:"/>
+				<TextField id="nameTextField" accessibilityLabel="Name"  class="textField" onChange="nameChanged" />
+				<Label id="passwordLabel" class="labelText" text="Password:"/>
+				<TextField id="passwordTextField" accessibilityLabel="Password" hintText="Must be at least 8 characters" class="textField password" onChange="passwordChanged"/>
+				<Label id="passwordConfirmLabel" class="labelText" text="Confirm Password:"/>
+				<TextField id="passwordConfirmTextField" accessibilityLabel="Password Confirmation" hintText="Include numbers, symbols and mixed case" class="textField password" onChange="passwordConfirmChanged"/>
 			</View>
-			<View id="surveyConsent" class="optionLine"  layout="horizontal">
-				<Switch id="surveyToggle" class="checkbox" accessibilityLabel="Survey Permission"/>
-				<Label class="labelText" text="I consent to participating in a\nuser survey for research\npurposes"/>
+			<View id="rightPanel" class="panel" layout="vertical">
+				<View id="registerAsGroup" class="optionLine" layout="horizontal">
+					<Switch id="groupToggle" class="checkbox" accessibilityLabel="Group Registration"/>
+					<Label class="labelText" text="I am registering on behalf of\na group"/>
+				</View>
+				<View id="surveyConsent" class="optionLine"  layout="horizontal">
+					<Switch id="surveyToggle" class="checkbox" accessibilityLabel="Survey Permission"/>
+					<Label class="labelText" text="I consent to participating in a\nuser survey for research\npurposes"/>
+				</View>
+				<View id="dataConsent" class="optionLine" layout="horizontal">
+					<Switch id="dataToggle" class="checkbox" accessibilityLabel="Data Share Permission"/>
+					<Label class="labelText" text="I consent to my data being\nshared"/>
+				</View>
+				<Label id="errorMessage" class="error" text="Error message"/>
+			
+				<Button id="submitButton" class="actionButton" title="Submit" onClick="submitClick"/>
 			</View>
-			<View id="dataConsent" class="optionLine" layout="horizontal">
-				<Switch id="dataToggle" class="checkbox" accessibilityLabel="Data Share Permission"/>
-				<Label class="labelText" text="I consent to my data being\nshared"/>
-			</View>
-			<Label id="errorMessage" class="error" text="Error message"/>
-		
-			<Button id="submitButton" class="actionButton" title="Submit" onClick="submitClick"/>
 		</View>
 	</ScrollView>
 </Alloy>

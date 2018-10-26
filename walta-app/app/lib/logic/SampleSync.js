@@ -110,6 +110,9 @@ function errorHandler( sample ) {
             Ti.API.info(`Data was invalid continuing: ${errors}`);
             sample.set("lastError", errors );
             sample.save();
+        } else {
+            sample.set("lastError", err.message );
+            sample.save();
         }
         return Promise.reject(err);
     };
