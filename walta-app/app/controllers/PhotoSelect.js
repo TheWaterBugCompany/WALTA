@@ -30,14 +30,17 @@ function takePhoto() {
     requestCameraPermissions(
         function success() {
             Ti.Media.showCamera({
+                autohide: true,
                 success: function (result) {
-                    Ti.API.info( `got photo: ${JSON.stringify(result)}`);
-                    $.photo.image = result.media;
+                    var blob = result.media;
+                    $.photo.image = blob;
+                    $.trigger("photoTaken", blob);
                 },
                 error: function (error) {
                     alert(`${error.error}`);
                 },
                 saveToPhotoGallery: true,
+                whichCamera: Titanium.Media.CAMERA_REAR,
                 mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
             });
         },

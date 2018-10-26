@@ -4,18 +4,21 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
-setImage( taxon.get("taxonId") );
+setImage( taxon.getPhoto() );
 setAbundance( taxon.get("abundance") );
 
-function setImage( taxonId ) {
-  $.photoSelect.setImage( speedbugIndex.getSpeedbugFromTaxonId( taxonId  ) );
+function setImage( photo ) {
+    if ( photo ) {
+        $.photoSelect.setImage( photo );
+    } else {
+        $.photoSelect.setImage( speedbugIndex.getSpeedbugFromTaxonId( taxon.get("taxonId")  ) );
+    }
 }
 
 function setAbundance( binValue  ) {
     taxon.set("abundance", binValue) 
     var nums = binValue.split("-");
     $.abundanceValue.value = ( parseInt(nums[1]) + parseInt(nums[0]) ) / 2;
-    
 }
 
 function updateAbundance() {
@@ -39,6 +42,9 @@ function saveEvent() {
     taxon.set("abundance", $.abundanceLabel.text );
     Alloy.Collections["taxa"].add( taxon );
     taxon.save();
+    if ( cachedPhoto ) {
+        taxon.setPhoto(cachedPhoto);
+    }
     $.trigger("save", taxon );
 }
 
@@ -51,3 +57,7 @@ function deleteEvent() {
 function closeEvent() {
     $.trigger("close") 
 }
+var cachedPhoto;
+$.photoSelect.on("photoTaken", function(photo) {
+    cachedPhoto = photo;
+});

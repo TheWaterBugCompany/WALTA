@@ -20,7 +20,8 @@ exports.definition = {
 			"wood": "INTEGER",
 			"aquaticPlants": "INTEGER",
 			"openWater": "INTEGER",
-			"edgePlants": "INTEGER"
+			"edgePlants": "INTEGER",
+			"sitePhotoPath": "VARCHAR(255)"
 		},
 		adapter: {
 			type: "sql",
@@ -31,6 +32,22 @@ exports.definition = {
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
+
+			setSitePhoto: function(blob) {
+				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `sitePhoto_${this.get("sampleId")}`);
+				if ( sitePhotoPath.write(blob) === false )
+					alert("Error writing file");
+				this.set( "sitePhotoPath", sitePhotoPath.nativePath );
+				sitePhotoPath = null;
+			},
+
+			getSitePhoto: function() {
+				if ( this.get("sitePhotoPath") ) {
+					var sitePhotoPath = Ti.Filesystem.getFile(this.get("sitePhotoPath"));
+					return sitePhotoPath.read();
+				}
+			},
+			
 
 			saveCurrentSample: function() {
 				var taxa = Alloy.Collections.taxa;

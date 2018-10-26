@@ -18,6 +18,7 @@ function loadAttributes() {
     }
     $.waterbodyNameField.value = sample.get("waterbodyName");
     $.nearByFeatureField.value = sample.get("nearbyFeature");
+    $.photoSelect.setImage( sample.getSitePhoto() );
     checkValidity();
 }
 
@@ -98,6 +99,10 @@ function validateSubmit() {
 function nextClick() {
     Topics.fireTopicEvent( Topics.HABITAT );
 }
+
+$.photoSelect.on("photoTaken", function(blob) {
+    sample.setSitePhoto(blob);
+});
 
 $.TopLevelWindow.title = "Site Details";
 $.surveyLevelSelect.init(["Mayfly","Quick","Detailed"], checkValidity);
