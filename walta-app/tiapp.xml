@@ -99,6 +99,7 @@
   <transpile>true</transpile>
   <plugins>
     <plugin version="1.0">ti.alloy</plugin>
+    <plugin version="1.0">global.alloy</plugin>
   </plugins>
   <property name="appc-app-id" type="string">5b965f69874a56256e3818e8</property>
   <property name="appc-org-id" type="string">100013091</property>

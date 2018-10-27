@@ -19,6 +19,7 @@
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
+    "alloy": "^1.13.3",
     "babel-register": "^6.26.0",
     "chai-as-promised": "^7.1.1",
     "gittio": "^0.6.4",
