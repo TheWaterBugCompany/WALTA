@@ -74,7 +74,7 @@ function takePhoto() {
                 success: function (result) {
                     var blob = result.media;
                     $.photo.image = generateThumbnail(blob);
-                    $.trigger("photoTaken", generateUpload(blob));
+                    $.trigger("photoTaken", blob);
                 },
                 error: function (error) {
                     alert(`${error.error}`); 

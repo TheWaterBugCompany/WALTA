@@ -45,7 +45,7 @@ function uploadRemainingSamples(samples) {
                 if ( err.message === "The given data was invalid.") {
                     return uploadRemainingSamples(samples);
                 } else {
-                    return Promise.reject(e);
+                    return Promise.reject(err);
                 }
             })
     } else {
@@ -149,8 +149,8 @@ function startUpload() {
         if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
             uploadRemainingSamples(samples)
                 .then( () => timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL ) )
-                .catch( (e) => {
-                    Ti.API.error(`Error trying to upload: ${JSON.stringify(e)}`);
+                .catch( (error) => { 
+                    Ti.API.info(`Error trying to upload: ${error}`);
                     timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
                 });
         } else {

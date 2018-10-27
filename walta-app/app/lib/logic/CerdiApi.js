@@ -26,8 +26,8 @@ function createHttpClient(method, url, contentType, accessToken, sendDataFunctio
                     if ( this.responseText ) {
                         try {
                             reject( JSON.parse(this.responseText) );
-                        } catch(err) {
-                            reject( this.responseText)
+                        } catch(err2) {
+                            reject(err);
                         }
                     } else {
                         reject(err);
