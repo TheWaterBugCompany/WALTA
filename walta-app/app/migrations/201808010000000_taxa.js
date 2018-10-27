@@ -4,7 +4,7 @@ migration.up = function(migrator) {
             "abundance": "VARCHAR(6)",
 			"sampleId": "INTEGER",
 			"taxonId": "INTEGER PRIMARY KEY",
-        },
+        }
     });
 };
 

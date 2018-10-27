@@ -19,7 +19,7 @@ migration.up = function(migrator) {
 			"aquaticPlants": "INTEGER",
 			"openWater": "INTEGER",
 			"edgePlants": "INTEGER"
-        },
+        }
     });
 };
 
