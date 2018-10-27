@@ -29,7 +29,6 @@ exports.definition = {
 			collection_name: "sample",
 			db_name: "samples",
 			idAttribute: "sampleId"
-			//,migration: "201810260735769"
 		}
 	},
 	extendModel: function(Model) {

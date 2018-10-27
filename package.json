@@ -14,6 +14,7 @@
     "npm": "^6.4.1",
     "request": "^2.87.0",
     "ti-mocha": "^0.2.0",
+    "uglify-js": "^3.4.9",
     "underscore": "^1.9.0",
     "xmldom": "^0.1.27"
   },

@@ -3,7 +3,6 @@ migration.up = function(migrator) {
 };
 
 migration.down = function(migrator) {
-    // FXIME: Nasty - make a utility function to drop column by reading the metadata about a table?
     var db = migrator.db;
     var table = migrator.table;
     db.execute('CREATE TEMPORARY TABLE samples_backup(serverSampleId,lastError,sampleId,dateCompleted,lat,lng,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants);');
@@ -29,7 +28,7 @@ migration.down = function(migrator) {
 			"aquaticPlants": "INTEGER",
 			"openWater": "INTEGER",
 			"edgePlants": "INTEGER"
-        },
+        }
     });
     db.execute('INSERT INTO ' + table + ' SELECT serverSampleId,lastError,sampleId,dateCompleted,lat,lng,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants FROM samples_backup;');
     db.execute('DROP TABLE samples_backup;');
