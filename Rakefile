@@ -69,7 +69,7 @@ task :debug => [ :start_emulator, :uninstall_app ] do
 end
 
 task :preview_android => [ ] do
-  sh("appc ti build  --project-dir walta-app --platform android --deploy-type development --target emulator --device-id ${AVD_NAME}")
+  sh("appc ti build  --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}")
 end
 
 task :preview_ios => [] do

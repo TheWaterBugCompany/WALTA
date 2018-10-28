@@ -7,5 +7,6 @@
     width: "48dp",
     height: "48dp",
     bottom: "0",
-    right: "0"
+    right: "0",
+    image: "/images/camera-icon.png"
 }

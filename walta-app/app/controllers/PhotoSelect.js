@@ -79,7 +79,7 @@ function takePhoto() {
                 error: function (error) {
                     alert(`${error.error}`); 
                 },
-                saveToPhotoGallery: true,
+                saveToPhotoGallery: false,
                 whichCamera: Titanium.Media.CAMERA_FRONT,
                 mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
             });

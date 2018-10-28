@@ -3,7 +3,7 @@
     <style name="Theme.WaterbugApp.Checkbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="buttonTint">#26849c</item>
     </style>
-    <style name="Theme.WaterbugApp" parent="@style/Theme.AppCompat.NoTitleBar.Fullscreen">
+    <style name="Theme.WaterbugApp" parent="Theme.Titanium">
         <item name="checkboxStyle">@style/Theme.WaterbugApp.Checkbox</item>
     </style>
 </resources>

@@ -3,7 +3,7 @@
   xmlns:ti="http://ti.appcelerator.org">
   <id>net.thewaterbug.waterbug</id>
   <name>Waterbug</name>
-  <version>1.9.9.12</version>
+  <version>1.9.9.14</version>
   <publisher>The Code Sharman</publisher>
   <url>http://www.thewaterbug.net/</url>
   <description>The Waterbug App</description>
@@ -59,31 +59,32 @@
   </ios>
   <android 
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <manifest android:versionCode="1009009012" android:versionName="1.9.9.12">
-     <application android:debuggable="false" android:theme="@style/Theme.WaterbugApp">
-        <activity android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:label="@string/app_name" android:name=".WaterbugActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.WaterbugApp">
-          <intent-filter>
-            <action android:name="android.intent.action.MAIN"/>
-            <category android:name="android.intent.category.LAUNCHER"/>
-          </intent-filter>
-        </activity>
-        <activity android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="sensorLandscape"/>
-        <activity android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.Titanium.Translucent"/>
-        <activity android:configChanges="screenSize|density" android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="sensorLandscape"/>
-        <activity android:configChanges="keyboardHidden|orientation|screenSize|density" android:name="ti.modules.titanium.media.TiVideoActivity" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.AppCompat.Fullscreen"/>
-        <provider android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true" android:name="org.appcelerator.titanium.io.TiFileProvider" android:screenOrientation="sensorLandscape"/>
-      </application>
-      <supports-screens android:anyDensity="true" android:smallScreens="true" android:normalScreens="true" android:largeScreens="true" android:xlargeScreens="true" />
-      <uses-permission android:name="android.permission.INTERNET"/>
-      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-      <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
-      <uses-permission android:name="android.permission.CAMERA" />
-      <uses-feature android:name="android.hardware.camera" />
-    </manifest>
+    <manifest android:versionCode="1009009014" android:versionName="1.9.9.14">
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="27"/>
+    <application android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:debuggable="false" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
+      <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape">
+        <intent-filter>
+          <action android:name="android.intent.action.MAIN"/>
+          <category android:name="android.intent.category.LAUNCHER"/>
+        </intent-filter>
+      </activity>
+       <supports-screens android:anyDensity="true" android:smallScreens="true" android:normalScreens="true" android:largeScreens="true" android:xlargeScreens="true" />
+      <activity android:name="org.appcelerator.titanium.TiActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape"/>
+      <activity android:name="org.appcelerator.titanium.TiTranslucentActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:theme="@style/Theme.Titanium.Translucent" android:screenOrientation="sensorLandscape"/>
+      <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:configChanges="screenSize|density" android:screenOrientation="sensorLandscape"/>
+      <activity android:name="ti.modules.titanium.media.TiCameraActivity" android:configChanges="keyboardHidden|orientation|screenSize|density" android:theme="@style/Theme.AppCompat.Translucent.NoTitleBar.Fullscreen" android:screenOrientation="sensorLandscape"/>
+      <activity android:name="ti.modules.titanium.media.TiVideoActivity" android:configChanges="keyboardHidden|orientation|screenSize|density" android:theme="@style/Theme.AppCompat.Fullscreen" android:launchMode="singleTask" android:screenOrientation="sensorLandscape"/>
+      <provider android:name="org.appcelerator.titanium.io.TiFileProvider" android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true" />
+    </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+  </manifest>
   </android>
   <modules>
     <module platform="android">ti.playservices</module>
@@ -95,13 +96,15 @@
     <target device="android">true</target>
     <target device="windows">false</target>
   </deployment-targets>
-  <sdk-version>7.3.1.GA</sdk-version>
+  <sdk-version>7.4.1.GA</sdk-version>
   <transpile>true</transpile>
   <plugins>
     <plugin version="1.0">ti.alloy</plugin>
     <plugin version="1.0">global.alloy</plugin>
   </plugins>
+  <!--
   <property name="appc-app-id" type="string">5b965f69874a56256e3818e8</property>
   <property name="appc-org-id" type="string">100013091</property>
   <property name="appc-creator-user-id" type="string">2d3d7368-6f21-49e0-a5b7-e7aa9bfe3b88</property>
+  -->
 </ti:app>

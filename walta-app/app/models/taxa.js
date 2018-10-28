@@ -23,7 +23,7 @@ exports.definition = {
 			},
 
 			setPhoto: function(blob) {
-				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `taxon_${this.get("sampleId")}_${this.get("taxonId").jpg}`);
+				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `taxon_${this.get("sampleId")}_${this.get("taxonId")}.jpg`);
 				if ( taxonPhotoPath.write(blob) === false )
 					alert("Error writing file");
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
