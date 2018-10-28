@@ -150,7 +150,7 @@ function startUpload() {
             uploadRemainingSamples(samples)
                 .then( () => timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL ) )
                 .catch( (error) => { 
-                    Ti.API.info(`Error trying to upload: ${error}`);
+                    Ti.API.info(`Error trying to upload: ${JSON.stringify(error)}`);
                     timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
                 });
         } else {
