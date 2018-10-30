@@ -8,8 +8,6 @@ $.photoSelect.width = $.args.width;
 $.photoSelect.height = $.args.height;
 $.photo.image = $.args.image;
 
-var MAX_IMAGE_WIDTH = 1600;
-
 function generateThumbnail( blob ) {
     var thumbnailImage = Ti.UI.createImageView( { image: blob } ).toBlob();
     var pxWidth = Ti.UI.convertUnits( `${$.photoSelect.size.width}dp`, Ti.UI.UNIT_PX );
@@ -25,13 +23,7 @@ function generateThumbnail( blob ) {
 function generateUpload( blob ) {
     var uploadImage = blob;
     Ti.API.info(`image size width = ${uploadImage.width} height = ${uploadImage.height}`);
-
-    if ( uploadImage.width > MAX_IMAGE_WIDTH ) {
-        let newHeight = MAX_IMAGE_WIDTH*(uploadImage.height/uploadImage.width);
-        uploadImage = uploadImage.imageAsResized( MAX_IMAGE_WIDTH, newHeight );
-        Ti.API.info(`resized image to size width = ${uploadImage.width} height = ${uploadImage.height}`);
-    } 
-    return uploadImage;
+    return blob.imageAsCompressed( 1.0 );
 }
 
 function setImage( image ) {
@@ -72,9 +64,8 @@ function takePhoto() {
             Ti.Media.showCamera({
                 autohide: true,
                 success: function (result) {
-                    var blob = result.media;
-                    $.photo.image = generateThumbnail(blob);
-                    $.trigger("photoTaken", blob);
+                    $.photo.image = generateThumbnail( result.media );
+                    $.trigger("photoTaken", generateUpload(result.media) );
                 },
                 error: function (error) {
                     alert(`${error.error}`); 
