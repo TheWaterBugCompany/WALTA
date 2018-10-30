@@ -81,7 +81,7 @@ task :device_preview_android => [] do
 end
 
 task :device_preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target device  --liveview")
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target device")
 end
 
 task :release_ios => [ 'clean' ] do

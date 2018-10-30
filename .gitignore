@@ -3,6 +3,8 @@
 *.ipa
 **/*.lock
 .DS_Store
+**/.DS_Store
+release/*
 **/node_modules
 node_modules
 .bundle
