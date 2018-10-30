@@ -17,7 +17,6 @@
 */
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
-var GeoLocationService = require('logic/GeoLocationService');
 var anchorBar = Alloy.createController("AnchorBar" );
 function openWindow() {
 	Ti.API.info(`Opening window "${getName()}"`);
@@ -48,20 +47,8 @@ function backEvent(e) {
 	Topics.fireTopicEvent( Topics.BACK, $.name );
 }
 
-function startGps() {
-    GeoLocationService.start();
-}
-if ( $.args.gps ) {
-	$.TopLevelWindow.addEventListener( 'open', startGps);
-}
-
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-	if ( $.args.gps ) {
-		GeoLocationService.stop();
-		GeoLocationService.cleanup();
-	}
-	$.TopLevelWindow.removeEventListener('open', startGps );
 	$.TopLevelWindow.removeEventListener('androidback', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });

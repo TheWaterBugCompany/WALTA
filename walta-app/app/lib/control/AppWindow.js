@@ -147,7 +147,9 @@ function createAppWindow( keyName, keyPath ) {
 
 		var appWin = { keyUrl: keyUrl };
 
-		privates.subscribe( Topics.HOME, function() { privates.menuWindow();  } );
+		privates.subscribe( Topics.HOME, function() { 
+			privates.menuWindow();  
+		} );
 
 	privates.subscribe( Topics.LOGIN, function() {
 		privates.logInWindow();

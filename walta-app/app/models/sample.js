@@ -1,5 +1,6 @@
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
+var GeoLocationService = require('logic/GeoLocationService');
 exports.definition = {
 	config: {
 		columns: {
@@ -58,6 +59,7 @@ exports.definition = {
 				});
 				this.set("dateCompleted", moment().format() );
 				this.save();
+				GeoLocationService.stop();
 			},
 
 			loadCurrent() {
@@ -218,6 +220,7 @@ exports.definition = {
 			},
 
 			startNewSurveyIfComplete: function(type) {
+				GeoLocationService.start();
 				if (    Alloy.Models.sample.get("dateCompleted") 
 					 || !Alloy.Models.sample.get("sampleId")
 				     || Alloy.Collections.sample.length == 0  )  {
