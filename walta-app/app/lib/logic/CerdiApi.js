@@ -61,15 +61,15 @@ function makeImagePost( serverUrl, imageData, accessToken = null ) {
 function createCerdiApi( serverUrl, client_secret  ) {
         var cerdiApi = {
             retrieveUserToken() {
-                return Ti.App.Properties.getObject('userAccessToken');
+                return Ti.App.Properties.getObject('userAccessTokenProd');
             },
         
             storeUserToken( accessToken ) {
-                Ti.App.Properties.setObject('userAccessToken', accessToken );
+                Ti.App.Properties.setObject('userAccessTokenProd', accessToken );
             },
         
             obtainServerAccessToken() {
-                return Promise.resolve(Ti.App.Properties.getObject('appAccessToken'))
+                return Promise.resolve(Ti.App.Properties.getObject('appAccessTokenProd'))
                     .then( (cachedAppAccessToken) => {
                         if ( cachedAppAccessToken ) {
                             let tokenAge = Date.now() - cachedAppAccessToken.retrieved_at;
@@ -84,7 +84,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
                     })
                     .then( (appAccessToken) => {
                         appAccessToken.retrieved_at = Date.now();
-                        Ti.App.Properties.setObject('appAccessToken', appAccessToken);
+                        Ti.App.Properties.setObject('appAccessTokenProd', appAccessToken);
                         return appAccessToken.access_token;
                     } );
             },
