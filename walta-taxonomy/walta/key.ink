@@ -63,7 +63,7 @@ INCLUDE taxa.ink
 	
 * Group 7
 ** Not sure -> k_cased	
-** node -> lepidoptera # mediaUrls: "/taxonomy/walta/media/speedbug/lepidoptera_b.png"
+** node -> k_cased # mediaUrls: "/taxonomy/walta/media/speedbug/lepidoptera_b.png"
 ** node -> atriplectides # mediaUrls: "/taxonomy/walta/media/speedbug/atriplectides_b.png"
 ** node -> k_cased # mediaUrls: "/taxonomy/walta/media/speedbug/conoesucidae_b.png"
 ** node -> k_cased # mediaUrls: "/taxonomy/walta/media/speedbug/philorheithridae_b.png"
@@ -100,15 +100,15 @@ INCLUDE taxa.ink
 ** node -> spider_mud_eye # mediaUrls: "/taxonomy/walta/media/speedbug/spidermudeye_b.png"
 	
 * Group 13
-** Not sure -> k_zygoptera	
-** node -> megapodagrionidae # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
-** node -> k_zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
-	
-* Group 14
 ** Not sure -> k_plecoptera	
 ** node -> illiesoperla # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
 ** node -> eustheniidae # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"
 	
+* Group 14
+
+** Not sure -> k_zygoptera	
+** node -> megapodagrionidae # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
+** node -> k_zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"	
 * Group 15
 ** Not sure -> k_ephemeroptera	
 ** node -> baetidae # mediaUrls: "/taxonomy/walta/media/speedbug/baetidae_b.png"
@@ -211,14 +211,13 @@ INCLUDE taxa.ink
 ** node -> epiproctophora # mediaUrls: "/taxonomy/walta/media/speedbug/spidermudeye_b.png"
 	
 * Group 12
-** Not sure -> zygoptera	
-** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
-** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
-	
-* Group 13
 ** Not sure -> plecoptera	
 ** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
-** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"
+** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"** Not sure -> zygoptera	
+
+* Group 13
+** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
+** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
 	
 * Group 14
 ** Not sure -> ephemeroptera	
@@ -746,8 +745,12 @@ INCLUDE taxa.ink
 * Not as above. -> gripops_or_fluffy_bums # mediaUrls: []
 
 === node_79 ===
-* Nymphs with a double row of spines along their backs. -> acruroperla_atra # mediaUrls: []
+* Nymphs with a double row of spines along their backs. -> acruroperla_crypturoperla # mediaUrls: []
 * Nymphs without a double row of spines. -> austroperlids # mediaUrls: []
+
+=== acruroperla_crypturoperla ===
+* Mainland. -> acruroperla_atra # mediaUrls: []
+* Tasmania. -> crypturoperla_paradoxa # mediaUrls: []
 
 === node_76 ===
 * tails flattened or broad, jaw large and folded away under head -> k_odonata # mediaUrls: ["/taxonomy/walta/media/damselfly.gif"]
@@ -869,5 +872,5 @@ INCLUDE taxa.ink
 * shorter than 1.5cm, tapering -> nematoda # mediaUrls: ["/taxonomy/walta/media/short_tapering.gif"]
 * longer than 1.5cm -> nematomorpha # mediaUrls: ["/taxonomy/walta/media/horsehairworm.gif"]
 
-/* Taxa Nodes */
+
 

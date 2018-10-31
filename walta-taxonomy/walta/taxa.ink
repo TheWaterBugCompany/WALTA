@@ -1,4 +1,4 @@
-
+/* Taxa Nodes */
 === flat_snails ===
 # taxonId: "189"
 # name: "Planorbidae"
@@ -12,6 +12,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/flatsnails_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/flat_snail_b.png"]
 -> DONE
 
 === potamopyrgus_antipodarum ===
@@ -27,6 +28,7 @@
 # taxonomicLevel: "species"
 # mediaUrls: ["/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif"]
 # description: "The shells of these snails vary considerably.  Some are smooth, while others develop pegs or teeth on the edges of the whorls."
+# bluebug: ["/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"]
 -> DONE
 
 === physa_acuta ===
@@ -42,6 +44,7 @@
 # taxonomicLevel: "species"
 # mediaUrls: ["/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/Physa_acuta_closeup.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
 
 === planorbids ===
@@ -57,6 +60,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/planorbids_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
 
 === lymnaeidae ===
@@ -72,6 +76,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/lymnaeidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
 
 === ancylidae ===
@@ -87,6 +92,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/ancylidae.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
 
 === hyriidae ===
@@ -102,6 +108,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/hyriidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hyriidae_b.png"]
 -> DONE
 
 === sphaeriidae_and_corbiculidae ===
@@ -117,6 +124,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/sphaeriidae_and_corbiculidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"]
 -> DONE
 
 === parastacidae ===
@@ -132,6 +140,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/parastacide_01.jpg","/taxonomy/walta/media/parastacide_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/parastacidae_b.png"]
 -> DONE
 
 === macrobrachium ===
@@ -147,6 +156,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/macrobrachium_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atyidae_b.png"]
 -> DONE
 
 === atyidae ===
@@ -162,6 +172,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/atyidae_01.jpg","/taxonomy/walta/media/atyidae_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atyidae_b.png"]
 -> DONE
 
 === hymenosomatidae ===
@@ -177,6 +188,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/hymenosomatidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"]
 -> DONE
 
 === amphipoda ===
@@ -192,6 +204,7 @@
 # taxonomicLevel: "class"
 # mediaUrls: ["/taxonomy/walta/media/amphipoda_01.jpg","/taxonomy/walta/media/amphipoda_02.jpg","/taxonomy/walta/media/amphipoda_03.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/amphipoda_b.png"]
 -> DONE
 
 === phreatoicidae ===
@@ -207,6 +220,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/phreatoicidae_01.jpg","/taxonomy/walta/media/phreatoicidae_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/amphipoda_b.png"]
 -> DONE
 
 === janiridae ===
@@ -222,6 +236,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/janiridae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/amphipoda_b.png"]
 -> DONE
 
 === anostraca ===
@@ -237,6 +252,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: ["/taxonomy/walta/media/anostraca_01.jpg","/taxonomy/walta/media/anostraca_02.jpg","/taxonomy/walta/media/anostraca_03.jpg","/taxonomy/walta/media/anostraca_m1.mp4"]
 # description: "\n          Native fairy shrimp (left) tend to be larger (up to 25mm) and paler coloured, while the introduced sea monkeys (right) tend to be smaller (up to 10mm) and pink or orange. Native fairy shrimp can live in fresh or salty waters, while sea monkeys prefer salty waters\n        "
+# bluebug: ["/taxonomy/walta/media/speedbug/anostraca_b.png"]
 -> DONE
 
 === notostraca ===
@@ -252,6 +268,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: ["/taxonomy/walta/media/notostraca_01.jpg","/taxonomy/walta/media/notostraca_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/notostraca_b.png"]
 -> DONE
 
 === conchostraca ===
@@ -267,6 +284,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: ["/taxonomy/walta/media/conchostraca_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"]
 -> DONE
 
 === acarina ===
@@ -282,6 +300,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: ["/taxonomy/walta/media/acarina_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydracarina_b.png"]
 -> DONE
 
 === pisauridae_and_lycosidae ===
@@ -297,6 +316,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/pisauridae_and_lycosidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/pisauridae_b.png"]
 -> DONE
 
 === gyrinidae_adult ===
@@ -312,6 +332,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/gyrinidae_adult_01.jpg","/taxonomy/walta/media/gyrinidae_adult_m1.mp4","/taxonomy/walta/media/gyrinidae_adult_m2.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/gyrinidae_b.png"]
 -> DONE
 
 === hygrobia_adult ===
@@ -327,6 +348,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/hygrobia_adult_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
 -> DONE
 
 === hydrophilidae_adult ===
@@ -342,6 +364,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/water_scavenger_beetle_adult_01.jpg","/taxonomy/walta/media/water_scavenger_beetle_adult_02.jpg","/taxonomy/walta/media/hydrophilidae_m1.mp4"]
 # description: "very variable size, can be as small as 2mm"
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
 -> DONE
 
 === carabhydrus ===
@@ -357,6 +380,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/carabhydrus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === australphilus ===
@@ -372,6 +396,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/australphilus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"]
 -> DONE
 
 === little_diving_beetles ===
@@ -387,6 +412,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/little_diving_beetles_01.jpg","/taxonomy/walta/media/little_diving_beetles_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === mixed_diving_beetles ===
@@ -402,6 +428,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/mixed_diving_beetles_01.jpg","/taxonomy/walta/media/mixed_diving_beetles_02.jpg","/taxonomy/walta/media/mixed_diving_beetles_03.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"]
 -> DONE
 
 === stealth_diving_beetles ===
@@ -417,6 +444,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/stealth_diving_beetles_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"]
 -> DONE
 
 === lancetes ===
@@ -432,6 +460,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/lancetes_01.jpg","/taxonomy/walta/media/lancetes_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === eretes ===
@@ -447,6 +476,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/eretes_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === rhantus ===
@@ -462,6 +492,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/rhantus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === hyderodes ===
@@ -477,6 +508,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/hyderodes_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === spencerhydrus ===
@@ -492,6 +524,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/spencerhydrus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === onychohydrus ===
@@ -507,6 +540,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/onychohydrus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === curculionidae ===
@@ -522,6 +556,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/curculionidae_01.jpg","/taxonomy/walta/media/curculionidae_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === elmidae_adult ===
@@ -537,6 +572,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/elmidae_adult_01.jpg","/taxonomy/walta/media/elmidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
 -> DONE
 
 === hydraenidae_and_hydrochidae ===
@@ -552,6 +588,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/hydraenidae_and_hydrochidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
 -> DONE
 
 === helochares ===
@@ -567,6 +604,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/helochares_01.jpg","/taxonomy/walta/media/helochares_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
 -> DONE
 
 === gerridae ===
@@ -582,6 +620,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/gerridae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/gerridae_b.png"]
 -> DONE
 
 === veliidae_mesoveliidae_and_hebridae ===
@@ -597,6 +636,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/veliidae_Mesoveliidae_and_herbridae_01.jpg","/taxonomy/walta/media/veliidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/veliids_b.png"]
 -> DONE
 
 === hydrometridae ===
@@ -612,6 +652,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/hydrometridae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrometridae_b.png"]
 -> DONE
 
 === gelastocoridae ===
@@ -627,6 +668,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/gelastocoridae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
 -> DONE
 
 === ranatra ===
@@ -642,6 +684,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/ranatra_01.jpg","/taxonomy/walta/media/ranatra_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/ranatra_b.png"]
 -> DONE
 
 === laccotrephes ===
@@ -657,6 +700,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/laccotrephes_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/laccotrephes_b.png"]
 -> DONE
 
 === pleidae ===
@@ -672,6 +716,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/pleidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/enithares_b2.png"]
 -> DONE
 
 === enithares ===
@@ -687,6 +732,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/enithares_01.jpg","/taxonomy/walta/media/enithares_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/enithares_b2.png"]
 -> DONE
 
 === anisops ===
@@ -702,6 +748,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/anisops_01.jpg","/taxonomy/walta/media/anisops_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/anisops_b.png"]
 -> DONE
 
 === naucoris ===
@@ -717,6 +764,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/naucoris_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
 -> DONE
 
 === diplonychus ===
@@ -732,6 +780,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/diplonychus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
 -> DONE
 
 === diaprepocoris_barycephala ===
@@ -747,6 +796,7 @@
 # taxonomicLevel: "species"
 # mediaUrls: ["/taxonomy/walta/media/diaprepocoris_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/corixidae_b.png"]
 -> DONE
 
 === sigara ===
@@ -762,6 +812,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/sigara_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/corixidae_b.png"]
 -> DONE
 
 === micronecta ===
@@ -777,6 +828,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/micronecta_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/corixidae_b.png"]
 -> DONE
 
 === agraptocorixa ===
@@ -792,6 +844,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/agraptocorixa_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/corixidae_b.png"]
 -> DONE
 
 === hydroptilidae ===
@@ -807,6 +860,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/hydroptilidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
 -> DONE
 
 === atriplectides ===
@@ -822,6 +876,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/atriplectides_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
 -> DONE
 
 === agapetus ===
@@ -837,6 +892,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/glossosomatidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
 -> DONE
 
 === helicopsyche ===
@@ -852,6 +908,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/helicopsyche_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/flatsnail_b.png"]
 -> DONE
 
 === tasimiidae ===
@@ -867,6 +924,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/tasimiidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
 -> DONE
 
 === philorheithridae ===
@@ -882,6 +940,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/philorheithridae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
 -> DONE
 
 === attack_caddis_lowlander ===
@@ -897,6 +956,7 @@
 # taxonomicLevel: ""
 # mediaUrls: ["/taxonomy/walta/media/oecetis_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
 -> DONE
 
 === anisocentropus ===
@@ -912,6 +972,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/anisocentropus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
 -> DONE
 
 === caenota_plicata ===
@@ -927,6 +988,7 @@
 # taxonomicLevel: ""
 # mediaUrls: ["/taxonomy/walta/media/caenota_plicata_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
 -> DONE
 
 === lectrides_varians ===
@@ -942,6 +1004,7 @@
 # taxonomicLevel: "species"
 # mediaUrls: ["/taxonomy/walta/media/lectrides_varians_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/triplectides_b.png"]
 -> DONE
 
 === conoesucidae_calocidae_and_helicophidae ===
@@ -957,6 +1020,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/conoesucidae_calocidae_and_helicophidae_01.jpg","/taxonomy/walta/media/conoesucidae_calocidae_and_helicophidae_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/conoesucidae_b.png"]
 -> DONE
 
 === triplectides ===
@@ -972,6 +1036,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/triplectides_01.jpg","/taxonomy/walta/media/triplectides_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/triplectides_b.png"]
 -> DONE
 
 === log_cabin_caddis ===
@@ -987,6 +1052,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/log_cabin_caddis_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/triplectides_b.png"]
 -> DONE
 
 === symphitoneuria ===
@@ -1002,6 +1068,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/symphitoneuria_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/triplectides_b.png"]
 -> DONE
 
 === notalina ===
@@ -1017,6 +1084,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/notalina_01.jpg","/taxonomy/walta/media/headbanger_caddis_m1.mp4"]
 # description: "Notalina are special for the way they move. They thrash their thorax, head and legs back and forth to move through the water. This exhausting movement earns them the name head banger caddis. They always have slender cases. Cases can sometimes be made of spirally arranged\n              bits of vegetation"
+# bluebug: ["/taxonomy/walta/media/speedbug/triplectides_b.png"]
 -> DONE
 
 === leptocerids ===
@@ -1032,6 +1100,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/leptocerids_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/triplectides_b.png"]
 -> DONE
 
 === hydropsychidae ===
@@ -1047,6 +1116,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/hydropsychidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydropsychidae_b.png"]
  -> DONE
 
 === ecnomus ===
@@ -1062,6 +1132,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/ecnomus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydropsychidae_b.png"]
 -> DONE
 
 === hydrobiosidae ===
@@ -1077,6 +1148,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_m1.mp4","/taxonomy/walta/media/hydrobiosidae_m2.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"]
 -> DONE
 
 === philopotamidae_polycentropodidae_and_ecnomidae ===
@@ -1092,6 +1164,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/philopotamidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"]
 -> DONE
 
 === lepidoptera ===
@@ -1107,6 +1180,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: ["/taxonomy/walta/media/lepidoptera_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/lepidoptera_b.png"]
 -> DONE
 
 === megapodagrionidae ===
@@ -1122,6 +1196,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/megapodagrionidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"]
 -> DONE
 
 === synlestidae ===
@@ -1137,6 +1212,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/synlestidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/damselfly_b.png"]
 -> DONE
 
 === isostictidae ===
@@ -1152,6 +1228,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/isostictidae_01.jpg","/taxonomy/walta/media/isostictidae_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/damselfly_b.png"]
 -> DONE
 
 === diphlebiidae ===
@@ -1167,6 +1244,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/diphlebiidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/damselfly_b.png"]
 -> DONE
 
 === lestidae_and_coenagrionidae ===
@@ -1182,6 +1260,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg","/taxonomy/walta/media/zygoptera_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/damselfly_b.png"]
 -> DONE
 
 === spider_mud_eye ===
@@ -1197,6 +1276,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/spidermudeye_b.png"]
 -> DONE
 
 === gomphidae ===
@@ -1212,6 +1292,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/gomphidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/spidermudeye_b.png"]
 -> DONE
 
 === telephlebiidae ===
@@ -1227,6 +1308,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/telephlebiidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
 -> DONE
 
 === aeshnidae ===
@@ -1242,6 +1324,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
 -> DONE
 
 === neuroptera ===
@@ -1257,6 +1340,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: ["/taxonomy/walta/media/neurorthridae_01.jpg","/taxonomy/walta/media/osmylidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/neuroptera_b.png"]
 -> DONE
 
 === corydalidae ===
@@ -1272,6 +1356,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/corydalidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/megaloptera_b.png"]
 -> DONE
 
 === taper_tailed_tiger_larvae ===
@@ -1287,6 +1372,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/taper-tailed_tiger_larvae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"]
 -> DONE
 
 === two_tailed_tiger_larvae ===
@@ -1302,6 +1388,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/two-tailed_tiger_larvae_01.jpg","/taxonomy/walta/media/dytiscidae_larva_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"]
 -> DONE
 
 === nosey_tiger_larvae ===
@@ -1317,6 +1404,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/nosey_tiger_larvae_01.jpg","/taxonomy/walta/media/nosey_tiger_larvae_02.jpg","/taxonomy/walta/media/nosey_tiger_larvae_03.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"]
 -> DONE
 
 === swimming_water_tiger_larvae ===
@@ -1332,6 +1420,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/swimming_water_tiger_larvae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"]
 -> DONE
 
 === crawling_water_tiger_larvae ===
@@ -1347,6 +1436,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/crawling_water_tiger_larvae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"]
 -> DONE
 
 === sclerocyphon ===
@@ -1362,6 +1452,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/sclerocyphon_01.jpg","/taxonomy/walta/media/sclerocyphon_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/psephenidae_L_b.png"]
 -> DONE
 
 === scirtidae ===
@@ -1377,6 +1468,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/scirtidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/scirtidae_b.png"]
 -> DONE
 
 === elmidae_larvae ===
@@ -1392,6 +1484,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/elmidae_larvae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/elmidae_b.png"]
 -> DONE
 
 === byrrocryptus ===
@@ -1407,6 +1500,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/byrrocryptus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"]
 -> DONE
 
 === gyrinidae_larvae ===
@@ -1422,6 +1516,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/gyrinidae_larvae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"]
 -> DONE
 
 === berosus ===
@@ -1437,6 +1532,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/berosus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/berosus_b.png"]
 -> DONE
 
 === hydrophilus ===
@@ -1452,6 +1548,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/hydrophilus_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/berosus_b.png"]
 -> DONE
 
 === water_scavenger_beetle_larvae ===
@@ -1467,6 +1564,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/water_scavenger_beetle_larvae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"]
 -> DONE
 
 === eustheniidae ===
@@ -1482,6 +1580,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/eustheniidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/eusthenia_b.png"]
 -> DONE
 
 === riekoperla ===
@@ -1497,6 +1596,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/riekoperla_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === hairy_sprawler ===
@@ -1512,6 +1612,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/hairy_sprawler_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === illiesoperla ===
@@ -1527,6 +1628,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/illiesoperla_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === gripops_or_fluffy_bums ===
@@ -1542,6 +1644,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/gripopterygidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === notonemouridae ===
@@ -1557,6 +1660,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/notonemouridae_01.jpg"]
 # description: "Notice the 'alert' posture. Inset photo shows the abdomen without gills."
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === acruroperla_atra ===
@@ -1572,6 +1676,7 @@
 # taxonomicLevel: "species"
 # mediaUrls: ["/taxonomy/walta/media/acruroperla_atra_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === austroperlids ===
@@ -1587,6 +1692,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/austroperlids_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === coloburiscoides ===
@@ -1602,6 +1708,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/coloburiscoides_01.jpg","/taxonomy/walta/media/coloburiscoides_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/coloburiscidae_b.png"]
 -> DONE
 
 === mirawara ===
@@ -1617,6 +1724,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/mirawara_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/baetidae_b.png"]
 -> DONE
 
 === jappa ===
@@ -1632,6 +1740,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/jappa_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"]
 -> DONE
 
 === atalophlebia ===
@@ -1647,6 +1756,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/atalophlebia_01.jpg","/taxonomy/walta/media/atalophlebia_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atalophlebia_b.png"]
 -> DONE
 
 === leptophlebs ===
@@ -1662,6 +1772,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/leptophlebs_01.jpg","/taxonomy/walta/media/leptophlebiidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"]
 -> DONE
 
 === siphlonuridae ===
@@ -1677,6 +1788,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/siphlonuridae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/baetidae_b.png"]
 -> DONE
 
 === baetidae ===
@@ -1692,6 +1804,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/baetidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/baetidae_b.png"]
 -> DONE
 
 === caenidae ===
@@ -1707,6 +1820,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/caenidae_01.jpg","/taxonomy/walta/media/caenidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"]
 -> DONE
 
 === tasmanophlebia ===
@@ -1718,10 +1832,11 @@
 # signalScore: 8
 # habitat: "Cool flowing water, edges, backwaters, forest streams. Uncommon."
 # movement: "Slow moving. "
-# confusedWith: "Nothing, very distinctive patterning."
+# confusedWith: "baetids if you don't see the gill covers."
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/tasmanophlebia_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/baetidae_b.png"]
 -> DONE
 
 === stratiomyidae ===
@@ -1737,6 +1852,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/stratiomyidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
 
 === psychodidae ===
@@ -1752,6 +1868,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/psychodidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
 
 === dixidae ===
@@ -1767,6 +1884,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/dixidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/mosquitolarva_b.png"]
 -> DONE
 
 === culicidae ===
@@ -1782,6 +1900,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/culicidae_01.jpg","/taxonomy/walta/media/culicidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/mosquitolarva_b.png"]
 -> DONE
 
 === syrphidae ===
@@ -1797,6 +1916,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/syrphidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
 
 === ephydridae_and_sciomyzidae ===
@@ -1812,6 +1932,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/ephydridae_and_sciomyzidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/athericidae_b.png"]
 -> DONE
 
 === blephariceridae ===
@@ -1827,6 +1948,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/blephariceridae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/blephariceridae_b.png"]
 -> DONE
 
 === simuliidae ===
@@ -1842,6 +1964,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/simuliidae_02.jpg","/taxonomy/walta/media/simuliidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/simuliidae_b.png"]
 -> DONE
 
 === Chironomus ===
@@ -1857,6 +1980,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/Chironomus_01.jpg","/taxonomy/walta/media/Chironomus_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/bloodworm_b.png"]
 -> DONE
 
 === ceratopogonidae ===
@@ -1872,6 +1996,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/ceratopogonidae_01.jpg","/taxonomy/walta/media/ceratopogonidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/bloodworm_b.png"]
 -> DONE
 
 === chironomid ===
@@ -1887,6 +2012,7 @@
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/chironomid_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/bloodworm_b.png"]
 -> DONE
 
 === tipulidae ===
@@ -1902,6 +2028,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/Tipulidae_01.jpg","/taxonomy/walta/media/Tipulidae_02.jpg","/taxonomy/walta/media/Tipulidae_03.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
 
 === athericidae ===
@@ -1917,6 +2044,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/athericidae_02.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/athericidae_b.png"]
 -> DONE
 
 === tabanidae_dolichopodidae_empididae_some_tipulidae ===
@@ -1932,6 +2060,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_01.jpg","/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_02.jpg","/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_03.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
 
 === oligochaeta ===
@@ -1947,6 +2076,7 @@
 # taxonomicLevel: "class"
 # mediaUrls: ["/taxonomy/walta/media/oligochaeta_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/oligochaeta_b.png"]
 -> DONE
 
 === hirudinea ===
@@ -1962,6 +2092,7 @@
 # taxonomicLevel: "class"
 # mediaUrls: ["/taxonomy/walta/media/hirudinea_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hirudinea_b.png"]
 -> DONE
 
 === turbellaria ===
@@ -1977,6 +2108,7 @@
 # taxonomicLevel: "phylum"
 # mediaUrls: ["/taxonomy/walta/media/turbellaria_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/turbellaria_b.png"]
 -> DONE
 
 === nematoda ===
@@ -1992,6 +2124,7 @@
 # taxonomicLevel: "phylum"
 # mediaUrls: ["/taxonomy/walta/media/nematoda_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/nematoda_b.png"]
 -> DONE
 
 === nematomorpha ===
@@ -2007,6 +2140,7 @@
 # taxonomicLevel: "phylum"
 # mediaUrls: ["/taxonomy/walta/media/nematomorpha_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/gordian_b.png"]
 -> DONE
 
 === plecoptera ===
@@ -2020,8 +2154,9 @@
 # movement: "Variable, but usually slow walk or side to side lizard-like gate"
 # confusedWith: "Mayflies with damaged tails."
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg"]
+# mediaUrls: ["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/acruroperla_atra_01.jpg","/taxonomy/walta/media/austroperlids_01.jpg", "/taxonomy/walta/media/hairy_sprawler_01.jpg","/taxonomy/walta/media/blond_sprawler_01.jpg","/taxonomy/walta/media/eustheniidae_01.jpg","/taxonomy/walta/media/ gripopterygidae_m1.mp4"]
 # description: "Stoneflies are some of the most sensitive waterbugs to water quality."
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === ephemeroptera ===
@@ -2035,8 +2170,9 @@
 # movement: "Variable, some swim rapidly like little fish, others walk or thrash"
 # confusedWith: "Mayflies with damaged tails might look like stoneflies (2 tails)."
 # taxonomicLevel: "order"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/leptophlebs_01.jpg","/taxonomy/walta/media/mirawara_01.jpg"]
 # description: "Mayflies are some of the most sensitive waterbugs to water quality."
+# bluebug: ["/taxonomy/walta/media/speedbug/baetidae_b.png"]
 -> DONE
 
 === megaloptera ===
@@ -2052,6 +2188,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: ["/taxonomy/walta/media/corydalidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/megaloptera_b.png"]
 -> DONE
 
 === anaspidacea ===
@@ -2067,6 +2204,7 @@
 # taxonomicLevel: "order"
 # mediaUrls: [""]
 # description: "Anaspides is mainly found in mountainous parts of Tasmania, a smaller (to 20mm), lowland anaspid called Koonunga can be found in groundwater fed streams and wetlands."
+# bluebug: ["/taxonomy/walta/media/speedbug/atyidae_b.png"]
 -> DONE
 
 === coleoptera ===
@@ -2080,8 +2218,9 @@
 # movement: "Swimming or slow walking."
 # confusedWith: "Bugs can appear similar to adult beetles , but are less rounded dorsally, and have asymetrically folded wings."
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/hydraenidae_and_hydrochidae_01.jpg"]
-# description: ""
+# mediaUrls: ["/taxonomy/walta/media/swimming_water_tiger_larvae_01.jpg","/taxonomy/walta/media/hydraenidae_and_hydrochidae_01.jpg","/taxonomy/walta/media/scirtidae_01.jpg","/taxonomy/walta/media/sclerocyphon_01.jpg","/taxonomy/walta/media/lancetes_01" ]
+# description: "An extremely diverse group that occur both as larvae and adults in fresh waters"
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
 -> DONE
 
 === decapoda ===
@@ -2095,8 +2234,9 @@
 # movement: "swimming or walking."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/atyidae_01.jpg","/taxonomy/walta/media/hymenosomatidae_01.jpg","/taxonomy/walta/media/parastacidae_01.jpg","/taxonomy/walta/media/macrobrachium_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atyidae_b.png"]
 -> DONE
 
 === diptera ===
@@ -2110,8 +2250,9 @@
 # movement: "Slow moving, usually wriggling."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/stratiomyidae_01.jpg","/taxonomy/walta/media/blood_worm_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
 
 
@@ -2126,8 +2267,9 @@
 # movement: "Slow, but may swim with a rapid sideways undulating motion if disturbed."
 # confusedWith: "Nothing, unless it has lost its gills."
 # taxonomicLevel: "suborder"
-# mediaUrls: [""]
-# description: ""
+# mediaUrls: ["/taxonomy/walta/media/megapodagrionidae_01.jpg","/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg"]
+# description: "Slender sit and wait predators wth prominant terminal gills"
+# bluebug: ["/taxonomy/walta/media/speedbug/damselfly_b.png"]
 -> DONE
 
 === epiproctophora ===
@@ -2141,8 +2283,9 @@
 # movement: "Slow and careful, but can use a bum jet if disturbed."
 # confusedWith: ""
 # taxonomicLevel: "suborder"
-# mediaUrls: ["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4"]
+# mediaUrls: ["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4","/taxonomy/walta/media/gomphidae_01.jpg","/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
 -> DONE
 
 === odonata ===
@@ -2156,8 +2299,9 @@
 # movement: ""
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4","/taxonomy/walta/media/gomphidae_01.jpg","/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4","/taxonomy/walta/media/megapodagrionidae_01.jpg","/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
 -> DONE
 
 === bivalvia ===
@@ -2171,8 +2315,9 @@
 # movement: "Not really."
 # confusedWith: "Nothing, very distinctive."
 # taxonomicLevel: "class"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/hyriidae_01.jpg","/taxonomy/walta/media/sphaeriidae_and_corbiculidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hyriidae_b.png"]
 -> DONE
 
 === isopoda ===
@@ -2186,8 +2331,9 @@
 # movement: "Slow walking."
 # confusedWith: " Amphipods, but they are far more robust looking and slow moving."
 # taxonomicLevel: "order"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/phreatoicidae_02.jpg","/taxonomy/walta/media/janiridae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/amphipoda_b.png"]
 -> DONE
 
 === hemiptera ===
@@ -2199,10 +2345,11 @@
 # signalScore: 2
 # habitat: "Wetlands and slow river sections. Still water, very common."
 # movement: "varied."
-# confusedWith: "Beetles, but beetles are more symetrical."
+# confusedWith: "Beetles, but beetles have their wings separated symetrically."
 # taxonomicLevel: "order"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/anisops_01.jpg","/taxonomy/walta/media/corixidae_m1.mp4","/taxonomy/walta/media/diplonychus_01.jpg","/taxonomy/walta/media/enithares_anisops.jpg", "/taxonomy/walta/media/gelastocoridae_01.jpg","/taxonomy/walta/media/naucoris_01.jpg","/taxonomy/walta/media/pleidae_01.jpg","/taxonomy/walta/media/gerridae_01.jpg","/taxonomy/walta/media/ranatra_01.jpg","/taxonomy/walta/media/laccotrephes_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
 -> DONE
 
 === gastropoda ===
@@ -2212,12 +2359,13 @@
 # commonName: "gastropods"
 # size: 40
 # signalScore: 1
-# habitat: "Wetlands / slower lowland rivers."
+# habitat: "Wetlands / rivers."
 # movement: "Snail's pace."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: [""]
-# description: ""
+# mediaUrls: ["/taxonomy/walta/media/flatsnails_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif",/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/Physa_acuta_closeup.jpg","/taxonomy/walta/media/lymnaeidae_01.jpg", "/taxonomy/walta/media/ancylidae.jpg"]
+# description: "To quote T. Sloane, booger with a crash helmet."
+# bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
 
 === trichoptera ===
@@ -2231,8 +2379,9 @@
 # movement: "usually fairly quick unless playing possum."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: [""]
-# description: "The Trichoptera are some of the waterbugs more sensitive to pollution."
+# mediaUrls: ["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydropsychidae_01.jpg","/taxonomy/walta/media/oecetis_01.jpg","/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/log_cabin_caddis_01.jpg","/taxonomy/walta/media/triplectides_01.jpg]
+# description: "The Trichoptera are considered sensitive to pollution."
+# bluebug: ["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
 -> DONE
 
 === trichoptera_free_living ===
@@ -2246,8 +2395,9 @@
 # movement: "usually fairly quick unless playing possum."
 # confusedWith: "Young leptocerids have a tubular sand case, but they have much longer hind legs."
 # taxonomicLevel: "alt"
-# mediaUrls: ["/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/philorheithridae_m1.mp4"]
+# mediaUrls: ["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydropsychidae_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"]
 -> DONE
 
 === trichoptera_cased ===
@@ -2261,8 +2411,9 @@
 # movement: "usually fairly quick unless playing possum."
 # confusedWith: ""
 # taxonomicLevel: "alt"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/oecetis_01.jpg","/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/log_cabin_caddis_01.jpg","/taxonomy/walta/media/triplectides_01.jpg"]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
 -> DONE
 
 === sialidae ===
@@ -2274,10 +2425,11 @@
 # signalScore: 5
 # habitat: "Slow flowing rivers."
 # movement: "Undulatuing swim or crawl."
-# confusedWith: "Gyrinid and Hydrophilid beetle larvae, which are slightly smaller and don't end in a single long filamentatyi."
+# confusedWith: "Gyrinid and Hydrophilid beetle larvae, which are slightly smaller and don't end in a single long filament."
 # taxonomicLevel: "family"
 # mediaUrls: [""]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/megaloptera_b.png"]
 -> DONE
 
 === australatya ===
@@ -2286,13 +2438,14 @@
 # scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Crustacea"},{"taxonomicLevel":"class","name":"Decapoda"},{"taxonomicLevel":"family","name":"Atyidae"},{"taxonomicLevel":"genus","name":"Australatya"}]
 # commonName: "GT shrimp"
 # size: 35
-# signalScore: 3
+# signalScore: 6
 # habitat: "fast moving parts of rivers. Common and often abundant."
 # movement: "Fast, with lots of flipping when in a tray."
 # confusedWith: "Palaemonidae and other Atyidae, but all the legs are short and the stripes are prominent ."
 # taxonomicLevel: "genus"
 # mediaUrls: [""]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/atyidae_b.png"]
 -> DONE
 
 === sphaeromatidae ===
@@ -2308,6 +2461,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: [""]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/amphipoda.png"]
 -> DONE
 
 === leptoperla ===
@@ -2323,6 +2477,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: [""]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
 === crypturoperla_paradoxa ===
@@ -2338,5 +2493,6 @@
 # taxonomicLevel: "species"
 # mediaUrls: [""]
 # description: ""
+# bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
 
