@@ -40,6 +40,16 @@ exports.definition = {
 				}
 			},
 
+			getSilhouette: function() {
+				var taxon = Alloy.Globals.Key.findTaxonById( this.getTaxonId() );
+				var bluebug = taxon.bluebug;
+				if ( bluebug !== undefined ) {
+				  return bluebug[0];
+				} else {
+				  return Alloy.Globals.Key.getSpeedbugIndex().getSpeedbugFromTaxonId( this.getTaxonId());
+				}
+			},
+
 			toCerdiApiJson() {
 				return {
 					"count": this.getAbundance(),

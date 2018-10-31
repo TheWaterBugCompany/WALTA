@@ -11,7 +11,7 @@ function setImage( photo ) {
     if ( photo ) {
         $.photoSelect.setImage( photo );
     } else {
-        $.photoSelect.setImage( speedbugIndex.getSpeedbugFromTaxonId( taxon.get("taxonId")  ) );
+        $.photoSelect.setImage( taxon.getSilhouette() );
     }
 }
 
