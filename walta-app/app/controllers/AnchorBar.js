@@ -57,8 +57,12 @@ function createToolBarButton( image, topic, title ) {
 	return btn;
 }
 
-function addTool( view ) {
-	$.rightTools.add( view );
+function addTool( view, left ) {
+	if ( left ) {
+		$.leftTools.add( view );
+	} else {
+		$.rightTools.add( view );
+	}
 }
 
 function setTitle( title ) {

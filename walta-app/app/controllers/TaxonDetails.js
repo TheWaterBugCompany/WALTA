@@ -135,5 +135,7 @@ $.getView().addEventListener( "close", function cleanup() {
   $.content.removeEventListener('swipe', cleanup);
 });
 
-$.getAnchorBar()
- .addTool( GoBackButton.createGoBackButton() );
+var acb = $.getAnchorBar();
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ), true );
+acb.addTool( GoBackButton.createGoBackButton() );

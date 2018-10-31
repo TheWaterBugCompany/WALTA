@@ -34,8 +34,8 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
 var acb = $.getAnchorBar();
-acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ) );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ) );
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ), true );
 acb.addTool( GoBackButton.createGoBackButton() );
 
 
