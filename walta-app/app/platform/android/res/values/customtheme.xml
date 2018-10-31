@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="Theme.WaterbugApp.Checkbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="buttonTint">#26849c</item>
     </style>
-    <style name="Theme.WaterbugApp" parent="Theme.Titanium">
+    <style name="Theme.WaterbugApp" parent="Theme.AppCompat.Light">
+
+        <item name="android:windowFullscreen">true</item>
+
         <item name="checkboxStyle">@style/Theme.WaterbugApp.Checkbox</item>
+       
+        <item name="android:windowBackground">@drawable/background</item>
+		<item name="android:windowActionBar">false</item>		
+		<item name="android:windowNoTitle">true</item>
+
+		<!-- AppCompat Compatibility -->
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+        
     </style>
 </resources>

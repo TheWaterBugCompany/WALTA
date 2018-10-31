@@ -30,12 +30,12 @@ describe("EditTaxon controller", function() {
     function makeEditTaxon( taxon ) {
         ctl = Alloy.createController("EditTaxon", { 
             key: keyMock,
-            taxon: createModel( "Taxon", taxon )
+            taxon: Alloy.createModel( "taxa", taxon )
          });
         win = wrapViewInWindow( ctl.getView() );
     }
     
-	it('should display the taxon edit view', function(done) {
+	it.only('should display the taxon edit view', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
             checkTestResult( (e) => closeWindow( win, () => done( e ) ), 

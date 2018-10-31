@@ -1,3 +1,4 @@
+
 "#taxonName": {
     top: "4dp",
     bottom: "4dp",
@@ -6,6 +7,10 @@
 "#header": {
     width: Ti.UI.FILL
 }
+"#howMany": {
+    left: "5%",
+    height: Ti.UI.SIZE
+}
 "#howManyLabel": {
     top: "4dp",
     bottom: "4dp",
@@ -13,17 +18,16 @@
 }
 
 "#abundance": {
-    width : Ti.UI.FILL,
-    left: "2%",
-    right: "2%"
+    width : Ti.UI.FILL
 }
 "#abundanceValue": {
-    width: "85%"
+    width: "82%"
 }
 
 "#photoSelect": {
-    width: "230dp",
-    height: "160dp"
+    top: "4dp",
+    width: "85%",
+    height: "50%"
 }
 
 "#closeButton": {
@@ -33,14 +37,19 @@
 }
 
 "#window": {
-  width: "300dp",
-  height: "295dp"
+  width: "50%",
+  height: "98%"
 }
-
+"#buttons": {
+    top: "5%",
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE
+}
 "#deleteButton": {
-    backgroundColor: "#ef8b8b"
+  backgroundColor: "#ef8b8b"
 }
 
 "#saveButton": {
+  backgroundColor: "#92d050",
   left: "8dp"
 }

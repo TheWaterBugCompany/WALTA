@@ -48,10 +48,25 @@ function saveEvent() {
     $.trigger("save", taxon );
 }
 
-function deleteEvent() {
+function doDelete() {
     Alloy.Collections["taxa"].remove( taxon );
     taxon.destroy();
     $.trigger("delete", taxon );
+}
+
+function deleteEvent() {
+    var dialog = Ti.UI.createAlertDialog({
+        message: 'Are you sure you want to delete this taxon?',
+        cancel: 1,
+        buttonNames: [ 'Delete', 'Cancel' ],
+        title: 'Confirm Delete'
+      });
+      dialog.addEventListener('click', function(e) {
+        if (e.index === 1) {
+            doDelete();
+        }
+      });
+      dialog.show();
 }
 
 function closeEvent() {

@@ -7,17 +7,17 @@
 					<ImageView class="close_button_image" accessibilityLabel="Close"></ImageView>
 				</View>
 			</View>
-			<Require type="view" src="PhotoSelect" id="photoSelect" />
-			<View id="right" layout="vertical">
+			<View id="howMany" layout="vertical">
 				<Label id="howManyLabel" class="labelText" text="How many did you see?"/>
 				<View id="abundance" class="shrinkWrap" layout="horizontal">
 					<Slider id="abundanceValue" accessibilityLabel="Abundance Slider" min="1" max="21" value="1" onChange="updateAbundance"/>
 					<Label id="abundanceLabel" text="1-2" class="labelText"/>
 				</View>
-				<View class="shrinkWrap" layout="horizontal">
-					<Button id="deleteButton" class="actionButton" title="Delete" onClick="deleteEvent" />
-					<Button id="saveButton" class="actionButton" title="Save" onClick="saveEvent"/>
-				</View>
+			</View>
+			<Require type="view" src="PhotoSelect" id="photoSelect" />
+			<View id="buttons" layout="horizontal">
+				<Button id="deleteButton" class="actionButton" title="Delete" onClick="deleteEvent" />
+				<Button id="saveButton" class="actionButton" title="Save" onClick="saveEvent"/>
 			</View>
 		</View>
 	</View>
