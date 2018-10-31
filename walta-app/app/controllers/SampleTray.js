@@ -237,6 +237,7 @@ function drawIcecubeTray() {
 };
 
 function startIdentification(e) {
+
   $.selectMethod = Alloy.createController("MethodSelect");
   function closeSelectMethod() {
     $.TopLevelWindow.remove($.selectMethod.getView());
@@ -248,17 +249,17 @@ function startIdentification(e) {
 
   $.selectMethod.on("keysearch", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.KEYSEARCH );
+    Topics.fireTopicEvent( Topics.KEYSEARCH, true );
   });
 
   $.selectMethod.on("speedbug", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.SPEEDBUG );
+    Topics.fireTopicEvent( Topics.SPEEDBUG, true );
   });
 
   $.selectMethod.on("browselist", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.BROWSE );
+    Topics.fireTopicEvent( Topics.BROWSE, true );
   });
 
   $.TopLevelWindow.add($.selectMethod.getView());

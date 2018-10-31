@@ -54,12 +54,12 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("Menu").open();
 			},
 
-			browseWindow: function() {
+			browseWindow: function(allowAddToSample) {
 
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'browse',
 					title: 'Browse',
-					uiObj: BrowseView.createBrowseView(privates.key),
+					uiObj: BrowseView.createBrowseView(privates.key,allowAddToSample),
 					swivel: false,
 					gps: true
 				});
@@ -93,8 +93,8 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("SampleHistory").open();
 			},
 
-			speedBugWindow: function() {
-				Alloy.createController("Speedbug", { key: privates.key, gps: true }).open();
+			speedBugWindow: function(allowAddToSample) {
+				Alloy.createController("Speedbug", { key: privates.key, gps: true, allowAddToSample: allowAddToSample }).open();
 			},
 
 			galleryWindow: function() {
@@ -159,11 +159,11 @@ function createAppWindow( keyName, keyPath ) {
 		Topics.fireTopicEvent( Topics.HOME, null );
 	});
 
-    privates.subscribe( Topics.KEYSEARCH, function() {
+    privates.subscribe( Topics.KEYSEARCH, function(allowAddToSample) {
 		var node = ( Alloy.Models.sample.get("surveyType") == 0 ? 
 			privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );
     	privates.key.reset(node);
-    	privates.updateDecisionWindow({ slide: 'right' });
+    	privates.updateDecisionWindow({ slide: 'right', allowAddToSample: allowAddToSample });
     });
 
     privates.subscribe( Topics.BACK, function(name) {
@@ -185,7 +185,7 @@ function createAppWindow( keyName, keyPath ) {
 
     privates.subscribe( Topics.FORWARD, function( data ) {
     	privates.key.choose( data.index );
-	    privates.updateDecisionWindow({ slide: 'right' });
+	    privates.updateDecisionWindow({ slide: 'right', allowAddToSample: data.allowAddToSample });
     });
 
     privates.subscribe( Topics.VIDEO, function( data ) {
@@ -194,8 +194,8 @@ function createAppWindow( keyName, keyPath ) {
     	vv.open();
     });
 
-    privates.subscribe( Topics.BROWSE, function() {
-    	privates.browseWindow();
+    privates.subscribe( Topics.BROWSE, function(allowAddToSample) {
+    	privates.browseWindow(allowAddToSample);
 	});
 	
 	privates.subscribe( Topics.SAMPLETRAY, function(data) {
@@ -227,7 +227,7 @@ function createAppWindow( keyName, keyPath ) {
     privates.subscribe( Topics.JUMPTO, function( data ) {
     	if ( ! _.isUndefined( data.id ) ) {
     		privates.key.setCurrentNode(data.id);
-	    	privates.updateDecisionWindow();
+	    	privates.updateDecisionWindow({ allowAddToSample: data.allowAddToSample });
 	    } else {
 	    	Ti.API.error("Topics.JUMPTO undefined node!");
 	    }
@@ -248,8 +248,8 @@ function createAppWindow( keyName, keyPath ) {
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
-    privates.subscribe( Topics.SPEEDBUG, function() {
-    	privates.speedBugWindow();
+    privates.subscribe( Topics.SPEEDBUG, function(allowAddToSample) {
+    	privates.speedBugWindow(allowAddToSample);
     });
 
     privates.subscribe( Topics.GALLERY, function() {
@@ -262,7 +262,7 @@ function createAppWindow( keyName, keyPath ) {
 
     privates.subscribe( Topics.ABOUT, function() {
     	privates.aboutWindow();
-    });
+	});
 
 	// Return public API
 	_(appWin).extend({

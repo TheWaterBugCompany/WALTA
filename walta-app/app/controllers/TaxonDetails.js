@@ -110,12 +110,15 @@ if ($.args.taxon.videoUrl) {
 }
 
 // Add the add to sample button
-$.actionBtns.add(
-	createActionButton("/images/plus-icon.png", "Add To Sample",
-		function(e) {
-			Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId } );
-			e.cancelBubble = true;
-		}) );
+Ti.API.info(`taxonallowAddToSample = ${$.args.allowAddToSample}`);
+if ( $.args.allowAddToSample !== false ) {
+	$.actionBtns.add(
+		createActionButton("/images/plus-icon.png", "Add To Sample",
+			function(e) {
+				Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId } );
+				e.cancelBubble = true;
+			}) );
+}
 
 function swipeListener(e){
 	if ( e.direction === 'right' ) {

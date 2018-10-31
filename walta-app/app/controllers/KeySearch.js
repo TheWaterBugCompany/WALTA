@@ -51,7 +51,7 @@ _(keyNode.questions).each(
     questions.push( qv );
 		$.content.add( _(qv.view).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
 		meld.on( qv, 'onSelect', function() {
-			Topics.fireTopicEvent( Topics.FORWARD, { index: index } );
+			Topics.fireTopicEvent( Topics.FORWARD, { index: index, allowAddToSample: $.args.allowAddToSample } );
 		} );
 	}
 );

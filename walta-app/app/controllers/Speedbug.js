@@ -113,7 +113,8 @@ function _drawSpeedBug() {
             _pushTile( sb.imgUrl, cnt );
 
             cnt.addEventListener( 'click', function(e) {
-                Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId } );
+                Ti.API.info(`allowAddToSample = ${$.args.allowAddToSample}`);
+                Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId, allowAddToSample: $.args.allowAddToSample } );
                 e.cancelBubble = true;
             });
  
@@ -137,7 +138,8 @@ function _drawSpeedBug() {
             });
 
             notSureBtn.addEventListener( 'click', function(e) {
-                Topics.fireTopicEvent( Topics.JUMPTO, { id: sg.refId } );
+                Ti.API.info(`allowAddToSample = ${$.args.allowAddToSample}`);
+                Topics.fireTopicEvent( Topics.JUMPTO, { id: sg.refId, allowAddToSample: $.args.allowAddToSample } );
                 e.cancelBubble = true;
             });
 

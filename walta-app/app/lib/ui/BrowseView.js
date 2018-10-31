@@ -25,7 +25,7 @@
 
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
-function createBrowseView(  /* Key */ key ) {
+function createBrowseView(  /* Key */ key, allowAddToSample ) {
 	
 	var _ = require('lib/underscore')._;
 
@@ -104,7 +104,7 @@ function createBrowseView(  /* Key */ key ) {
 			            }
 			        } ],
 			     events: {click: function(e) {
-			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId } );
+			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId, allowAddToSample: allowAddToSample } );
 			     }}
 			   } 
 			},

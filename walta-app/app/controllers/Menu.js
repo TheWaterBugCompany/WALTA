@@ -19,6 +19,34 @@ function detailedClick() {
   Topics.fireTopicEvent( Topics.DETAILED, null );
 }
 
+function identifyClick() {
+  $.selectMethod = Alloy.createController("MethodSelect");
+  function closeSelectMethod() {
+    $.TopLevelWindow.remove($.selectMethod.getView());
+  }
+
+  $.selectMethod.on("close", function() {
+    closeSelectMethod();
+  });
+
+  $.selectMethod.on("keysearch", function() {
+    closeSelectMethod();
+    Topics.fireTopicEvent( Topics.KEYSEARCH, false );
+  });
+
+  $.selectMethod.on("speedbug", function() {
+    closeSelectMethod();
+    Topics.fireTopicEvent( Topics.SPEEDBUG, false );
+  });
+
+  $.selectMethod.on("browselist", function() {
+    closeSelectMethod();
+    Topics.fireTopicEvent( Topics.BROWSE, false );
+  });
+
+  $.TopLevelWindow.add($.selectMethod.getView());
+}
+
 function historyClick() {
   Topics.fireTopicEvent( Topics.HISTORY, null );
 }
