@@ -40,8 +40,6 @@ function updateAbundance() {
 
 function saveEvent() {
     taxon.set("abundance", $.abundanceLabel.text );
-    Alloy.Collections["taxa"].add( taxon );
-    taxon.save();
     if ( cachedPhoto ) {
         taxon.setPhoto(cachedPhoto);
     }
@@ -49,8 +47,6 @@ function saveEvent() {
 }
 
 function doDelete() {
-    Alloy.Collections["taxa"].remove( taxon );
-    taxon.destroy();
     $.trigger("delete", taxon );
 }
 
@@ -62,7 +58,7 @@ function deleteEvent() {
         title: 'Confirm Delete'
       });
       dialog.addEventListener('click', function(e) {
-        if (e.index === 1) {
+        if (e.index === 0) {
             doDelete();
         }
       });

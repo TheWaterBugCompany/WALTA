@@ -2,10 +2,25 @@ var Topics = require('ui/Topics');
 exports.baseController  = "TopLevelWindow";
 $.name = "home";
 
+function logOut() {
+  Alloy.Globals.CerdiApi.storeUserToken(null);
+  $.logInLabel.text = "Log In";
+}
+
 function logInClick() {
   if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
-    Alloy.Globals.CerdiApi.storeUserToken(null);
-    $.logInLabel.text = "Log In";
+    var dialog = Ti.UI.createAlertDialog({
+      message: 'Are you sure you want to log out?',
+      cancel: 1,
+      buttonNames: [ 'Log Out', 'Cancel' ],
+      title: 'Confirm Log Out'
+    });
+    dialog.addEventListener('click', function(e) {
+      if (e.index === 0) {
+        logOut();
+      }
+    });
+    dialog.show();
   } else {
     Topics.fireTopicEvent( Topics.LOGIN, null );
   }

@@ -53,7 +53,7 @@ exports.definition = {
 					if ( taxonPhotoPath.deleteFile() === false )
 						Ti.API.warn(`Unable to delete file ${taxonPhotoPath.nativePath}`);
 				}
-				Model.prototype.destroy.apply(this, arguments);
+				Backbone.Model.prototype.destroy.apply(this, arguments);
 			}
 		});
 
