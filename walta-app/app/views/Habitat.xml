@@ -29,7 +29,7 @@
 				</View>
 				<View id="gridRight" layout="vertical" class="gridColumn">
 					<View class="inputBox" layout="horizontal">
-						<Label text="Boulders:" class="labelText inputLabel" />
+						<Label text="Rocks:" class="labelText inputLabel" />
 						<TextField id="rocks" class="textField" accessibilityLabel="Boulders" onChange="validateSum" />
 						<Label text="%" class="labelText" />
 					</View>
