@@ -72,21 +72,21 @@ exports.definition = {
 				return taxa;
 			},
 
-			calculateSignalScore(taxa) {
+			calculateSignalScore(taxa,key) {
 				var count = 0;
 				return (taxa.reduce( (a,t) => {
 						count++;
-						return Alloy.Globals.Key.findTaxonById( t.getTaxonId()  ).signalScore;
-					}, 0)/count);
+						return key.findTaxonById( t.getTaxonId()  ).signalScore;
+					}, 0)/count).toFixed(1);
 			},
 
-			calculateWeightedSignalScore(taxa) {
+			calculateWeightedSignalScore(taxa,key) {
 				var count = 0;
 				return (taxa.reduce( (a,t) => {
 					var n = t.getAbundance();
 					count += n;
-					return Alloy.Globals.Key.findTaxonById( t.getTaxonId() ).signalScore * n;
-				}, 0)/count);
+					return key.findTaxonById( t.getTaxonId() ).signalScore * n;
+				}, 0)/count).toFixed(1);
 			},
 
 			transform: function() { 
@@ -98,8 +98,8 @@ exports.definition = {
 				if ( sampleJson.lng )
 					sampleJson.lng = parseFloat(sampleJson.lng).toFixed(5);
 
-				sampleJson.score = this.calculateSignalScore(taxa).toFixed(1);
-				sampleJson.w_score = this.calculateWeightedSignalScore(taxa).toFixed(1);
+				sampleJson.score = this.calculateSignalScore(taxa,Alloy.Globals.Key).toFixed(1);
+				sampleJson.w_score = this.calculateWeightedSignalScore(taxa,Alloy.Globals.Key).toFixed(1);
 				sampleJson.siteInfo = sampleJson.waterbodyName;
 				if ( sampleJson.nearbyFeature )
 					sampleJson.siteInfo += ` @ ${sampleJson.nearbyFeature}`;

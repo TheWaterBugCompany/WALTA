@@ -19,7 +19,10 @@ exports.definition = {
 				return this.get("taxonId");
 			},
 			getAbundance() {
-				return parseInt(this.get("abundance").split("-")[0]);
+				var abundance = this.get("abundance");
+				if ( abundance.startsWith(">")) return 30;
+				let [ min, max ] = abundance.split("-").map((a) => parseInt(a) );
+				return Math.round((min+max)/2);
 			},
 
 			setPhoto: function(blob) {

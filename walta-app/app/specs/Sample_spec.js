@@ -1,36 +1,83 @@
-require('specs/lib/ti-mocha');
-var { expect } = require('specs/lib/chai');
+/*
+ 	The Waterbug App - Dichotomous key based insect identification
+    Copyright (C) 2014 The Waterbug Company
 
-describe( 'Sample model', function() {
-  context('SampleDatabase', function() {
-    beforeEach( function() {
-      /*var dbFile = Ti.Filesystem.getFile(SampleDatabase.DATABASE_FILE_NAME);
-      if ( dbFile.exists() ) {
-        if (! dbFile.deleteFile() ) {
-          throw new Error(`Unable to delete ${SampleDatabase.DATABASE_FILE_NAME}`);
-        }
-      }*/
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+require("specs/lib/ti-mocha");
+var { expect } = require("specs/lib/chai");
+var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
+var mocx = require("specs/lib/mocx");
+describe.only("Sample model", function() {
+	var ctl;
+	beforeEach( function() {
+        Alloy.Models.sample = Alloy.Models.instance("sample");
+        Alloy.Models.sample.set("waterbodyName","Test Waterbody");
+        Alloy.Models.sample.set("nearbyFeature", "near the office intersection cupboard");
+        Alloy.Models.sample.set( "dateCompleted", Date.now() );
+        Alloy.Models.sample.set( "surveyType", 0 );
+        Alloy.Models.sample.saveCurrentSample = function() {};
+        Alloy.Models.sample.loadTaxa = function() { return []; };
+        Alloy.Globals.CerdiApi = {};
+        Alloy.Globals.CerdiApi.retrieveUserToken = function() {return "token"; };
     });
-
-    context('#load', function() {
-      it('should start with an empty database', function() {
-        //SampleDatabase.load();
-        //expect( SampleDatabase.samples().length ).to.equal(0);
-      });
-      it('should load the last non completed sample');
-      it('should create a new sample if no incomplete sample exists');
-    });
-
-    context("#newSample", function() {
-
-      it('should default date to NULL');
-      it('should set the data when a sample is marked complete');
-      it('should fetch the current incomplete sample');
-    });
-
+	
+	it('should the calculate the correct SIGNAL score ', function() {
+    function newTaxa(id, ab) {
+      return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
+    }
+    var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "11-20" ) ];
+    var key = {
+      findTaxonById( id ) {
+        if ( id === 193 )
+          return { signalScore: 1 };
+        else ( id === 22 )
+          return { signalScore: 10 };
+      }
+    }
+    expect( Alloy.Models.sample.calculateSignalScore(taxa,key) ).to.equal("5.0");
   });
-  context('Sample model', function() {
-    it('should store a taxonId');
-    it('should store a abundance');
+
+  it('should the calculate the correct weighted SIGNAL score ', function() {
+    function newTaxa(id, ab) {
+      return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
+    }
+    var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "11-20" ) ];
+    var key = {
+      findTaxonById( id ) {
+        if ( id === 193 )
+          return { signalScore: 1 };
+        else ( id === 22 )
+          return { signalScore: 10 };
+      }
+    }
+		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("8.9");
+  });
+
+  it('should the calculate the correct weighted SIGNAL score with >20 ', function() {
+    function newTaxa(id, ab) {
+      return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
+    }
+    var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "> 20" ) ];
+    var key = {
+      findTaxonById( id ) {
+        if ( id === 193 )
+          return { signalScore: 1 };
+        else ( id === 22 )
+          return { signalScore: 10 };
+      }
+    }
+		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.4"); 
   });
 });
