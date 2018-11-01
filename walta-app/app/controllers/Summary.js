@@ -1,5 +1,6 @@
 var Topics = require('ui/Topics');
 var SampleSync = require('logic/SampleSync');
+var GeoLocationService = require('logic/GeoLocationService');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
