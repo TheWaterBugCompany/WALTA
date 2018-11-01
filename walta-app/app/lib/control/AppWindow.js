@@ -177,7 +177,13 @@ function createAppWindow( keyName, keyPath ) {
     			privates.key.back();
 	    		privates.updateDecisionWindow({ slide: 'left' } );
 	    	}
-	    } else {
+		} else if ( name === "habitat" ) {
+			privates.siteDetailsWindow();
+		} else if ( name === "sampletray" ) {
+			privates.habitatWindow();
+		} else if ( name === "summary" ) {
+			privates.sampleTrayWindow();
+		} else {
 	    	privates.menuWindow();
 	    }
 

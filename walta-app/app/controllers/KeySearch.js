@@ -59,7 +59,7 @@ _(keyNode.questions).each(
 function swipeListener(e){
 	if ( e.direction === 'right' ) {
 		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK );
+		Topics.fireTopicEvent( Topics.BACK, $.name );
 	}
 }
 

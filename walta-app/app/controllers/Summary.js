@@ -3,6 +3,7 @@ var SampleSync = require('logic/SampleSync');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
+$.name = "summary";
 
 function doneClick() {
     saveSampleAndUpload();

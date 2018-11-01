@@ -98,8 +98,8 @@ exports.definition = {
 				if ( sampleJson.lng )
 					sampleJson.lng = parseFloat(sampleJson.lng).toFixed(5);
 
-				sampleJson.score = this.calculateSignalScore(taxa,Alloy.Globals.Key).toFixed(1);
-				sampleJson.w_score = this.calculateWeightedSignalScore(taxa,Alloy.Globals.Key).toFixed(1);
+				sampleJson.score = this.calculateSignalScore(taxa,Alloy.Globals.Key);
+				sampleJson.w_score = this.calculateWeightedSignalScore(taxa,Alloy.Globals.Key);
 				sampleJson.siteInfo = sampleJson.waterbodyName;
 				if ( sampleJson.nearbyFeature )
 					sampleJson.siteInfo += ` @ ${sampleJson.nearbyFeature}`;
