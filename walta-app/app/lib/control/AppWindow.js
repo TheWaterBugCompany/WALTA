@@ -59,9 +59,7 @@ function createAppWindow( keyName, keyPath ) {
 				TopLevelWindow.makeTopLevelWindow({
 					name: 'browse',
 					title: 'Browse',
-					uiObj: BrowseView.createBrowseView(privates.key,allowAddToSample),
-					swivel: false,
-					gps: true
+					uiObj: BrowseView.createBrowseView(privates.key,allowAddToSample)
 				});
 			},
 
@@ -69,7 +67,6 @@ function createAppWindow( keyName, keyPath ) {
 				if ( ! args )
 					args = {};
 				args.key = this.key;
-				args.gps = true;
 				Alloy.createController("SampleTray",args).open();
 			},
 
@@ -78,15 +75,34 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			siteDetailsWindow: function(args) {
-				Alloy.createController("SiteDetails", { gps: true }).open();
+				function startSurvey() {
+					GeoLocationService.start();
+					Alloy.createController("SiteDetails").open();
+				}
+
+				if ( OS_ANDROID ) {
+					Ti.API.info('Asking for permissions...');
+					Ti.Android.requestPermissions(
+						[ 'android.permission.ACCESS_FINE_LOCATION','android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE' ], 
+						function(e) {
+							if (e.success) {
+								startSurvey();
+							} else {
+								alert("You need to enable access to location, the camera, and photos on external storage, in order to perform a survey!");
+							}
+						});
+				} else {
+					startSurvey()	
+				}
+				
 			},
 
 			habitatWindow: function(args) {
-				Alloy.createController("Habitat", { gps: true }).open();
+				Alloy.createController("Habitat").open();
 			},
 
 			summaryWindow: function(args) {
-				Alloy.createController("Summary", { gps: true }).open();
+				Alloy.createController("Summary").open();
 			},
 
 			historyWindow: function() {
@@ -94,7 +110,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			speedBugWindow: function(allowAddToSample, speedbugName) {
-				Alloy.createController("Speedbug", { key: privates.key, speedbugName: speedbugName, gps: true, allowAddToSample: allowAddToSample }).open();
+				Alloy.createController("Speedbug", { key: privates.key, speedbugName: speedbugName, allowAddToSample: allowAddToSample }).open();
 			},
 
 			galleryWindow: function() {
@@ -122,7 +138,6 @@ function createAppWindow( keyName, keyPath ) {
 				var node = this.key.getCurrentNode();
 				if ( ! args )
 					args = {};
-				args.gps = true;
 				if ( this.key.isNode( node ) ) {
 					args.keyNode = node;
 					Alloy.createController("KeySearch", args ).open();

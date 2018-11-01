@@ -23,7 +23,11 @@ function generateThumbnail( blob ) {
 function generateUpload( blob ) {
     var uploadImage = blob;
     Ti.API.info(`image size width = ${uploadImage.width} height = ${uploadImage.height}`);
-    return blob.imageAsCompressed( 1.0 );
+    if ( OS_ANDROID ) {
+        return blob;
+    } else {
+        return blob.imageAsCompressed( 1.0 );
+    }
 }
 
 function setImage( image ) {

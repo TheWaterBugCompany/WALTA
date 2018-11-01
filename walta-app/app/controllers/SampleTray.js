@@ -273,14 +273,14 @@ function startIdentification(e) {
 
 var lastWidth;
 function adjustTraySize() {
-  if ( ! ($.content.height == endcapHeight && $.content.getSize().width == lastWidth) ) {
+  //if ( ! ($.content.height == endcapHeight && $.content.getSize().width == lastWidth) ) {
     endcapHeight = $.TopLevelWindow.size.height - $.getAnchorBar().getView().size.height;
     endcapWidth = $.endcapBackground.size.width;
     middleWidth = endcapWidth*1.384;
     lastWidth = $.content.getSize().width;
     clearTileCache();
     drawIcecubeTray();
-  }
+  //}
 }
 
 $.content.addEventListener( "click", startIdentification );

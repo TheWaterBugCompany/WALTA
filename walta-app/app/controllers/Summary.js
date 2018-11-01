@@ -20,6 +20,7 @@ var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please e
 var saveSampleAndUpload = function() {
     Alloy.Models.sample.saveCurrentSample();
     SampleSync.forceUpload();
+    GeoLocationService.stop();
 };
 
 function checkGpsLock() {

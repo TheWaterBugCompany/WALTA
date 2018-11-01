@@ -220,7 +220,6 @@ exports.definition = {
 			},
 
 			startNewSurveyIfComplete: function(type) {
-				GeoLocationService.start();
 				if (    Alloy.Models.sample.get("dateCompleted") 
 					 || !Alloy.Models.sample.get("sampleId")
 				     || Alloy.Collections.sample.length == 0  )  {

@@ -11,13 +11,13 @@
 				<Button id="logInButton" class="actionButton" passwordMask=true title="Log In" onClick="loginClick" />
 			</View>
 			<View id="rightPanel" class="panel" layout="vertical">
-				<Label class="headingText" text="via social media:"/>
+				<!--<Label class="headingText" text="via social media:"/>
 				<Label class="headingText" text="(coming soon)"/>
 				<View id="socialMedia" height="38%" layout="horizontal">
 					<ImageView visible="false" class="socialMediaImage" image="/images/twitter-icon.png"/>
 					<ImageView visible="false" class="socialMediaImage" image="/images/google-plus-icon.png"/>
 					<ImageView visible="false" class="socialMediaImage" image="/images/facebook-icon.png"/>
-				</View>
+				</View>-->
 				<Label id="registerHeading" class="headingText" textAlign=Ti.UI.TEXT_ALIGNMENT_CENTER text="or register with an email\n and password:"/>
 				<Button id="registerButton" class="actionButton" title="Register" onClick="registerClick"/>
 			</View>
