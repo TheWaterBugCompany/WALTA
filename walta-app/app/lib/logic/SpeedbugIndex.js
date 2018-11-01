@@ -1,11 +1,13 @@
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 
-function createSpeedbugIndex() {
+function createSpeedbugIndex( name, key )  {
   var speedbugIndex = {};
   return {
-    speedbugIndex: speedbugIndex,
+    speedbugIndexInternal: speedbugIndex,
 
-    key: null,
+    name: name,
+
+    key: key,
 
     setKey: function( key ) {
       this.key = key;
@@ -51,7 +53,7 @@ function createSpeedbugIndex() {
 
     reverseLookup: function( refId ) {
       var foundBug;
-      _(this.speedbugIndex).each(
+      _(this.speedbugIndexInternal).each(
         (grp) => grp.bugs.forEach( (bug) => {
           if ( bug.refId == refId ) {
             foundBug = bug;
@@ -62,11 +64,11 @@ function createSpeedbugIndex() {
     },
 
     setSpeedbugIndex: function( index ) {
-      this.speedbugIndex = index;
+      this.speedbugIndexInternal = index;
     },
 
     getSpeedbugIndex: function() {
-			return this.speedbugIndex;
+			return this.speedbugIndexInternal;
 		}
 
   };

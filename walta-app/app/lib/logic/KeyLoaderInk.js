@@ -448,34 +448,48 @@ function parseInk( inkJson, key ) {
 	console.log("Processing speed bug...");
 	var root = key.getRootNode(); // original root node
 	var altKey = root.findQuestion( "ALT Key" ).outcome;
-	var speedBug = root.findQuestion( "Speedbug" ).outcome;
+
+	
+
+
 	key.dettachNode( root );
 	key.dettachNode( altKey );
-	key.dettachNode( speedBug );
+	
 	altKey.parentLink = null;
 	key.setRootNode( altKey );
-	var speedbugIndex = key.getSpeedbugIndex();
-	console.log(`number of speed bug links = ${speedBug.questions.length}`);
-	speedBug.questions.forEach( (q) =>{ 
-		if ( q.text && q.outcome.questions ) {
-			var notSure = q.outcome.questions.shift();
-			console.log( `not sure = ${notSure.text}` );
-			if ( notSure.text.trim().toLowerCase() !== "not sure" ) 
-				throw new Error("The first link needs to be the Not Sure link");
-			var groupId = notSure.outcome.id;
-			speedbugIndex.addSpeedbugGroup( groupId );
-			console.log( `${q.text} -> ${groupId}`);
-			q.outcome.questions.forEach( (q2) => {
-				console.log(`\t${q2.text} -> ${q2.outcome.id}` );
-				speedbugIndex.addSpeedbugIndex( q2.mediaUrls, groupId, q2.outcome.id );
-			});
+	
+	
 
-		} else {
-			console.log(`${q.text} -> ${q.outcome.id}` );
-			speedbugIndex.addSpeedbugGroup( q.outcome.id );
-			speedbugIndex.addSpeedbugIndex( q.mediaUrls, q.outcome.id, q.outcome.id );
-		}
-	});
+	 function processSpeedbug( speedbugName ) {
+		 console.log(`Processing speedbug index ${speedbugName}`);
+		 var speedBug = root.findQuestion( speedbugName ).outcome;
+		 key.dettachNode( speedBug );
+		 var speedbugIndex = SpeedbugIndex.createSpeedbugIndex( speedbugName );
+		 console.log(`number of speed bug links = ${speedBug.questions.length}`);
+		speedBug.questions.forEach( (q) =>{ 
+			if ( q.text && q.outcome.questions ) {
+				var notSure = q.outcome.questions.shift();
+				console.log( `not sure = ${notSure.text}` );
+				if ( notSure.text.trim().toLowerCase() !== "not sure" ) 
+					throw new Error("The first link needs to be the Not Sure link");
+				var groupId = notSure.outcome.id;
+				speedbugIndex.addSpeedbugGroup( groupId );
+				console.log( `${q.text} -> ${groupId}`);
+				q.outcome.questions.forEach( (q2) => {
+					console.log(`\t${q2.text} -> ${q2.outcome.id}` );
+					speedbugIndex.addSpeedbugIndex( q2.mediaUrls, groupId, q2.outcome.id );
+				});
+	
+			} else {
+				console.log(`${q.text} -> ${q.outcome.id}` );
+				speedbugIndex.addSpeedbugGroup( q.outcome.id );
+				speedbugIndex.addSpeedbugIndex( q.mediaUrls, q.outcome.id, q.outcome.id );
+			}
+		});
+		key.addSpeedbugIndex(speedbugIndex);
+	 }
+
+	 [ "Speedbug", "Mayfly Muster Speedbug", "Order Speedbug" ].map( processSpeedbug );
 	console.log("Finished.");
 	return key;
 }

@@ -50,7 +50,8 @@ function createKey( args ) {
 		url: null,
 		name: null,
 		root: null,
-		currentDecision: null
+		currentDecision: null,
+		speedbugIndex: {}
 	});
 
 	// Private variables here
@@ -189,13 +190,14 @@ function createKey( args ) {
 			node.parentLink = parent;
 		},
 
-		setSpeedbugIndex: function( sbIndex ) {
+		addSpeedbugIndex: function( sbIndex ) {
 			sbIndex.setKey( this );
-			this.speedbugIndex = sbIndex;
+			this.speedbugIndex[sbIndex.name] = sbIndex;
 		},
 
-		getSpeedbugIndex: function() {
-			return this.speedbugIndex;
+		getSpeedbugIndex: function(name) {
+			Ti.API.info(`looking up speedbug: ${name}`);
+			return this.speedbugIndex[name];
 		},
 
 		linkTaxonToParent: function( parent, qn, taxon ) {
@@ -214,12 +216,8 @@ function createKey( args ) {
 			return this.root;
 		}
 	});
-	var sbIndex = SpeedbugIndex.createSpeedbugIndex();
-	if ( obj.speedbugIndex && obj.speedbugIndex.speedbugIndex ) {
-		// redhydrate
-		sbIndex.setSpeedbugIndex( obj.speedbugIndex.speedbugIndex );
-	}
-	obj.setSpeedbugIndex( sbIndex );
+	
+	
 	return obj;
 }
 

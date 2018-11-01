@@ -180,6 +180,7 @@ INCLUDE taxa.ink
 ** node -> coleoptera # mediaUrls: "/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"
 	
 * Group 7
+** Not sure -> k_cased	
 ** node -> lepidoptera # mediaUrls: "/taxonomy/walta/media/speedbug/lepidoptera_b.png"
 ** node -> trichoptera # mediaUrls: "/taxonomy/walta/media/speedbug/atriplectides_b.png"
 ** node -> trichoptera # mediaUrls: "/taxonomy/walta/media/speedbug/philorheithridae_b.png"
@@ -216,6 +217,7 @@ INCLUDE taxa.ink
 ** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"** Not sure -> zygoptera	
 
 * Group 13
+** Not sure -> k_plecoptera	
 ** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
 ** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
 	
@@ -229,6 +231,7 @@ INCLUDE taxa.ink
 * node -> pisauridae_and_lycosidae # mediaUrls: "/taxonomy/walta/media/speedbug/pisauridae_b.png"
 	
 * Group 15
+** Not sure -> k_ephemeroptera	
 ** node -> decapoda # mediaUrls: "/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"
 ** node -> decapoda # mediaUrls: "/taxonomy/walta/media/speedbug/atyidae_b.png"
 ** node -> decapoda # mediaUrls: "/taxonomy/walta/media/speedbug/parastacidae_b.png"
@@ -239,10 +242,10 @@ INCLUDE taxa.ink
 /*MayflyMuster Speed bug */
 === mmspeedbug ===
 
-* Group 1
-** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
+* node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
 	
 * Group 14
+** Not sure -> ephemeroptera
 ** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
 ** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"
 	

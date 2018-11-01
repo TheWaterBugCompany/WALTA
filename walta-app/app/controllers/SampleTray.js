@@ -3,6 +3,7 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
+var Sample = require('logic/Sample');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
@@ -254,7 +255,9 @@ function startIdentification(e) {
 
   $.selectMethod.on("speedbug", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.SPEEDBUG, true );
+    var surveyType = Alloy.Models.sample.get("surveyType");
+    var speedbugName = Sample.getSpeedbugIndexName( parseInt(surveyType) );
+    Topics.fireTopicEvent( Topics.SPEEDBUG, { allowAddToSample: true, speedbugName: speedbugName  }  );
   });
 
   $.selectMethod.on("browselist", function() {

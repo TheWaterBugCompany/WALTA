@@ -22,6 +22,7 @@ var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var key = $.args.key;
+var speedbugName = $.args.speedbugName;
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Speedbug";
@@ -79,10 +80,9 @@ function _showTileImageData( n ) {
 
 var scrollView = $.content;
 
-function _drawSpeedBug() {
+function _drawSpeedBug(sbug) {
     // Iterate the speed bug index groups and create a view with a "Not Sure?"
     // button that spans all the silhouettes in the group.
-    var sbug = key.getSpeedbugIndex().getSpeedbugIndex();
     _(sbug).each( function( sg ) {
         var grpCnt = Ti.UI.createView( {
                 layout: 'vertical',
@@ -193,4 +193,5 @@ function _loadAndReleaseTiles(e) {
 };
 scrollView.addEventListener( 'scroll', _loadAndReleaseTiles );
 scrollView.addEventListener( 'postlayout', _loadAndReleaseTiles );
- _drawSpeedBug();
+
+ _drawSpeedBug( key.getSpeedbugIndex(speedbugName).getSpeedbugIndex() );

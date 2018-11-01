@@ -51,7 +51,7 @@ function identifyClick() {
 
   $.selectMethod.on("speedbug", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.SPEEDBUG, false );
+    Topics.fireTopicEvent( Topics.SPEEDBUG, { allowAddToSample: false, speedbugName: "Speedbug" } );
   });
 
   $.selectMethod.on("browselist", function() {

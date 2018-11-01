@@ -93,8 +93,8 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("SampleHistory").open();
 			},
 
-			speedBugWindow: function(allowAddToSample) {
-				Alloy.createController("Speedbug", { key: privates.key, gps: true, allowAddToSample: allowAddToSample }).open();
+			speedBugWindow: function(allowAddToSample, speedbugName) {
+				Alloy.createController("Speedbug", { key: privates.key, speedbugName: speedbugName, gps: true, allowAddToSample: allowAddToSample }).open();
 			},
 
 			galleryWindow: function() {
@@ -248,8 +248,8 @@ function createAppWindow( keyName, keyPath ) {
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
-    privates.subscribe( Topics.SPEEDBUG, function(allowAddToSample) {
-    	privates.speedBugWindow(allowAddToSample);
+    privates.subscribe( Topics.SPEEDBUG, function(data) {
+    	privates.speedBugWindow(data.allowAddToSample, data.speedbugName);
     });
 
     privates.subscribe( Topics.GALLERY, function() {

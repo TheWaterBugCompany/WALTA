@@ -20,6 +20,7 @@ var CircularJSON = require('lib/circular-json');
 var Key = require('logic/Key');
 var Question = require('logic/Question');
 var Taxon = require('logic/Taxon');
+var SpeedbugIndex = require('./SpeedbugIndex');
 
 
 // attach proper classes to key from plain json object hierarchy
@@ -43,15 +44,28 @@ function rehydrateKey( key, node ) {
 		key.attachTaxon( Taxon.createTaxon( node ) );
 		return node;
 	}
+	
+}
+
+function rehydrateSpeedBug( key ) {
+	_(key.speedbugIndex)
+		.mapObject( (sbObj) => {
+			Ti.API.info(`Rehyrdating ${sbObj.name}`);
+			var sbIndex = SpeedbugIndex.createSpeedbugIndex(sbObj.name,key);
+			sbIndex.setSpeedbugIndex( sbObj.speedbugIndexInternal );
+			key.addSpeedbugIndex( sbIndex );
+		});
 }
 
 // loads a key from a circular-json persisted object
 function loadKey( root ) {
+
 	var file = Ti.Filesystem.getFile( root + "key.json" );
 	var key = CircularJSON.parse( file.read().text );
 	key.url = root;
 
 	var rehydrated = rehydrateKey( key );
+	rehydrateSpeedBug( key );
 
 	return rehydrated;
 }
