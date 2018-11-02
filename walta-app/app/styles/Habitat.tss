@@ -6,6 +6,11 @@
     top: "24dp",
     height: Ti.UI.SIZE
 }
+
+"#wrapper2[if=Alloy.Globals.isSmallHeight]" : {
+    top: 0
+}
+
 "#header": {
     layout: "composite",
     height: Ti.UI.SIZE
@@ -56,6 +61,9 @@
     width: Ti.UI.SIZE,
     height: Ti.UI.SIZE,
     horizontalWrap: false
+}
+"#grid[if=Alloy.Globals.isSmallHeight]" : {
+    top: 0
 }
 
 ".gridColumn": {

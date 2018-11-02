@@ -21,10 +21,10 @@
  */
 var PlatformSpecific = require('ui/PlatformSpecific');
 
-Alloy.Globals.Layout = require('ui/Layout');
+Alloy.Globals.Layout = require('ui/Layout'); 
 Alloy.Events = _.clone(Backbone.Events);
-Ti.API.info("density = " + Ti.Platform.displayCaps.density);
 Alloy.Globals.Key = null;
+Alloy.Globals.isSmallHeight = (Ti.Platform.displayCaps.platformHeight < 500 );
 Alloy.Globals.isLdpi = (Ti.Platform.displayCaps.density == "low");
 //Alloy.Globals.isMdpi = (Ti.Platform.displayCaps.density == "mdpi");
 Alloy.Globals.isHdpi = (Ti.Platform.displayCaps.density == "high");
