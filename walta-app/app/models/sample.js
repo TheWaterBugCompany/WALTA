@@ -78,7 +78,6 @@ exports.definition = {
 				return (taxa.reduce( (acc,t) => {
 						count++;
 						var score = key.findTaxonById( t.getTaxonId()  ).signalScore;
-						Ti.API.info(`acc = ${acc} taxonId = ${ t.getTaxonId()} score = ${score} result = ${acc+score}`);
 						return acc+score;
 					}, 0)/count).toFixed(1);
 			},
@@ -90,7 +89,6 @@ exports.definition = {
 					var n = t.getAbundance();
 					count += n;
 					var score = key.findTaxonById( t.getTaxonId()  ).signalScore;
-					Ti.API.info(`acc = ${acc} n = ${n} taxonId = ${ t.getTaxonId()} score = ${score} result = ${acc+score*n}`);
 					return acc+score*n;
 				}, 0)/count).toFixed(1);
 			},
