@@ -19,7 +19,7 @@ require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
 var mocx = require("specs/lib/mocx");
-describe.only("Sample model", function() {
+describe("Sample model", function() {
 	var ctl;
 	beforeEach( function() {
         Alloy.Models.sample = Alloy.Models.instance("sample");

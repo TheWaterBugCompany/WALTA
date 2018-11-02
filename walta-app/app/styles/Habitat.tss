@@ -2,12 +2,17 @@
 "#content": {
     scrollType: "horizontal"
 }
+"#wrapper2": {
+    top: "24dp",
+    height: Ti.UI.SIZE
+}
+"#header": {
+    layout: "composite",
+    height: Ti.UI.SIZE
+}
 
-"#wrapper": {
-    top: "12dp",
-    left: "12dp",
-    width: Ti.UI.FILL,
-    height: Ti.UI.FILL
+"#question": {
+    left: null
 }
 
 "#content[platform=android]": {
@@ -28,14 +33,9 @@
     fullscreen: false
 }
 
-"#bottom": {
-    height: Ti.UI.SIZE,
+"#footer": {
+    height: Ti.UI.FILL,
     width: Ti.UI.FILL
-}
-
-".labelText": {
-    top: "8dp",
-    left: "8dp"
 }
 
 ".inputLabel": {
@@ -47,19 +47,23 @@
 ".inputBox": {
     top: "2dp",
     left: "12dp",
+    width: Ti.UI.SIZE,
     height: Ti.UI.SIZE
 }
 
 "#grid": {
-    width: Ti.UI.FILL,
-    height: Ti.UI.SIZE
+    top: "24dp",
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE,
+    horizontalWrap: false
 }
 
 ".gridColumn": {
-    width: "50%",
+    width: Ti.UI.SIZE,
     height: Ti.UI.SIZE
 }
 
 "#nextButton": {
-    right: "32dp"
+    right: "32dp",
+    bottom: "10dp"
 }
