@@ -72,20 +72,26 @@ exports.definition = {
 				return taxa;
 			},
 
+
 			calculateSignalScore(taxa,key) {
 				var count = 0;
-				return (taxa.reduce( (a,t) => {
+				return (taxa.reduce( (acc,t) => {
 						count++;
-						return key.findTaxonById( t.getTaxonId()  ).signalScore;
+						var score = key.findTaxonById( t.getTaxonId()  ).signalScore;
+						Ti.API.info(`acc = ${acc} taxonId = ${ t.getTaxonId()} score = ${score} result = ${acc+score}`);
+						return acc+score;
 					}, 0)/count).toFixed(1);
 			},
 
 			calculateWeightedSignalScore(taxa,key) {
 				var count = 0;
-				return (taxa.reduce( (a,t) => {
+				
+				return (taxa.reduce( (acc,t) => {
 					var n = t.getAbundance();
 					count += n;
-					return key.findTaxonById( t.getTaxonId() ).signalScore * n;
+					var score = key.findTaxonById( t.getTaxonId()  ).signalScore;
+					Ti.API.info(`acc = ${acc} n = ${n} taxonId = ${ t.getTaxonId()} score = ${score} result = ${acc+score*n}`);
+					return acc+score*n;
 				}, 0)/count).toFixed(1);
 			},
 
@@ -129,16 +135,15 @@ exports.definition = {
 					} else if ( score <= 5.0 ) {
 						return "#ffc000";
 					} else if ( score <= 6.0 ) {
-						return "#92d050";
+						return "#99930d";
 					} else if ( score > 6.0) {
-						return "#9cc2e5";
+						return "#5ea90d";
 					}
 				}
 
 				sampleJson.scoreColor = scoreColor( sampleJson.score);
 				sampleJson.w_scoreColor = scoreColor( sampleJson.w_score);
 				var scoreDiff = sampleJson.scoreColor  - sampleJson.w_scoreColor;
-
 
 				if ( sampleJson.score <= 4.0 ) {
 					sampleJson.impactText = "Unfortunately your site is heavily impacted.";

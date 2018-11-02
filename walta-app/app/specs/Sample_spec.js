@@ -19,7 +19,7 @@ require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
 var mocx = require("specs/lib/mocx");
-describe("Sample model", function() {
+describe.only("Sample model", function() {
 	var ctl;
 	beforeEach( function() {
         Alloy.Models.sample = Alloy.Models.instance("sample");
@@ -32,52 +32,37 @@ describe("Sample model", function() {
         Alloy.Globals.CerdiApi = {};
         Alloy.Globals.CerdiApi.retrieveUserToken = function() {return "token"; };
     });
+  
+  function newTaxa(id, ab) {
+    return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
+  }
+
+  var key = {
+    findTaxonById( id ) { 
+      var obj = null;
+      if ( id == "193" ) {
+        obj = { signalScore: 5 };
+      } else if ( id == "22" ) {
+        obj =  { signalScore: 10 };
+      }
+      Ti.API.info(`lookup ${id} (${typeof(id)}) ${JSON.stringify(obj)}`);
+      return obj;
+    }
+  }
+
 	
 	it('should the calculate the correct SIGNAL score ', function() {
-    function newTaxa(id, ab) {
-      return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
-    }
     var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "11-20" ) ];
-    var key = {
-      findTaxonById( id ) {
-        if ( id === 193 )
-          return { signalScore: 1 };
-        else ( id === 22 )
-          return { signalScore: 10 };
-      }
-    }
-    expect( Alloy.Models.sample.calculateSignalScore(taxa,key) ).to.equal("5.0");
+    expect( Alloy.Models.sample.calculateSignalScore(taxa,key) ).to.equal("7.5");
   });
 
   it('should the calculate the correct weighted SIGNAL score ', function() {
-    function newTaxa(id, ab) {
-      return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
-    }
     var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "11-20" ) ];
-    var key = {
-      findTaxonById( id ) {
-        if ( id === 193 )
-          return { signalScore: 1 };
-        else ( id === 22 )
-          return { signalScore: 10 };
-      }
-    }
-		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("8.9");
+		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.4");
   });
 
   it('should the calculate the correct weighted SIGNAL score with >20 ', function() {
-    function newTaxa(id, ab) {
-      return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
-    }
     var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "> 20" ) ];
-    var key = {
-      findTaxonById( id ) {
-        if ( id === 193 )
-          return { signalScore: 1 };
-        else ( id === 22 )
-          return { signalScore: 10 };
-      }
-    }
-		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.4"); 
+		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.7"); 
   });
 });
