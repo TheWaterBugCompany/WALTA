@@ -25,7 +25,7 @@ Alloy.Globals.Layout = require('ui/Layout');
 Alloy.Events = _.clone(Backbone.Events);
 Alloy.Globals.Key = null;
 Ti.API.info(`platform display caps: width = ${Ti.Platform.displayCaps.platformWidth}, height = ${Ti.Platform.displayCaps.platformHeight}, density = ${Ti.Platform.displayCaps.density}, logicalDensityFactor  = ${Ti.Platform.displayCaps.logicalDensityFactor},`);
-Alloy.Globals.isSmallHeight = (Ti.Platform.displayCaps.platformHeight < 500 );
+Alloy.Globals.isSmallHeight = (Ti.Platform.displayCaps.platformHeight*Ti.Platform.displayCaps.logicalDensityFactor < 750 );
 Alloy.Globals.isLdpi = (Ti.Platform.displayCaps.density == "low");
 //Alloy.Globals.isMdpi = (Ti.Platform.displayCaps.density == "mdpi");
 Alloy.Globals.isHdpi = (Ti.Platform.displayCaps.density == "high");
