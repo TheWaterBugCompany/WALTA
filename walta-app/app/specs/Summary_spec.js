@@ -33,14 +33,15 @@ describe("Summary controller", function() {
     }
 
 	beforeEach( function() {
+        Alloy.Models.sample = null;
         Alloy.Models.sample = Alloy.Models.instance("sample");
         Alloy.Models.sample.set("waterbodyName","Test Waterbody");
         Alloy.Models.sample.set("nearbyFeature", "near the office intersection cupboard");
         Alloy.Models.sample.set( "dateCompleted", Date.now() );
         Alloy.Models.sample.set( "surveyType", 0 );
 
-        Alloy.Models.sample.calculateSignalScore = function() { return 3.0123123123; };
-        Alloy.Models.sample.calculateWeightedSignalScore = function() { return 3.5123123123; };
+        Alloy.Models.sample.calculateSignalScore = function() { return "3.0"; };
+        Alloy.Models.sample.calculateWeightedSignalScore = function() { return "3.5"; };
         Alloy.Models.sample.saveCurrentSample = function() {};
         Alloy.Models.sample.loadTaxa = function() { return []; };
         Alloy.Globals.CerdiApi = {};
@@ -71,9 +72,9 @@ describe("Summary controller", function() {
         Alloy.Models.sample.set('lat', 37.4223423342 );
         doTest( done, function() {
             expect( ctl.message.text ).to.include("next step is to register");
-            expect( ctl.latLabel.text ).to.equal('37.42234');
-            expect( ctl.longLabel.text ).to.be.equal('-122.84123');
-            expect( ctl.doneButton.title ).to.equal("Register");
+            //expect( ctl.latLabel.text ).to.equal('37.42234');
+            //expect( ctl.longLabel.text ).to.be.equal('-122.84123');
+            expect( ctl.doneButton.title ).to.equal("Submit");
             expect( ctl.doneButton.touchEnabled ).to.be.true;
         });
     });
@@ -82,17 +83,17 @@ describe("Summary controller", function() {
         Alloy.Models.sample.set('lng', -122.841234234234 );
         Alloy.Models.sample.set('lat', 37.4223423342 );
         doTest( done, function() {
-            expect( ctl.message.text ).to.include("Congratulations");
-            expect( ctl.latLabel.text ).to.equal('37.42234');
-            expect( ctl.longLabel.text ).to.equal('-122.84123');
-            expect( ctl.doneButton.title ).to.equal("Done");
+            expect( ctl.message.text ).to.include("survey is complete");
+            //expect( ctl.latLabel.text ).to.equal('37.42234');
+            //expect( ctl.longLabel.text ).to.equal('-122.84123');
+            expect( ctl.doneButton.title ).to.equal("Submit");
         });
     });
     [
-        [ 0.0, 4.0, "Unfortunately your site is heavily impacted", "", "", "It has lots of different waterbugs" ],
-        [ 4.0, 5.0, "Your site is impacted", "", "", "It has lots of different waterbugs" ],
-        [ 5.0, 6.0, "Your site is probably mildly polluted", "Your site is probably mildly polluted", "It might have suffered from a recent flood or some other abrupt impact", "It has lots of different waterbugs" ],
-        [ 6.0, 10.0, "Your site is probably healthy", "It is scoring less with the weighted SIGNAL because there are many more tolerant animals than sensitive ones ....perhaps there is some nutrient enrichment at the site?",
+        [ 0.0, 4.0, "is heavily impacted", "", "", "It has lots of different waterbugs" ],
+        [ 4.0, 5.0, "is impacted", "", "", "It has lots of different waterbugs" ],
+        [ 5.0, 6.0, "is probably mildly polluted", "", "It might have suffered from a recent flood or some other abrupt impact", "It has lots of different waterbugs" ],
+        [ 6.0, 10.0, "is probably healthy", "It is scoring less with the weighted SIGNAL because there are many more tolerant animals than sensitive ones ....perhaps there is some nutrient enrichment at the site?",
          "It might have suffered from a recent flood or some other abrupt impact", "It has a great diversity of waterbugs" ]
     ].forEach( ([ min, max, text, extraDiff2, extraTaxa5, extraTaxa15]) => {
         describe(`${min}-${max} scores summary report`, function() {
@@ -100,14 +101,24 @@ describe("Summary controller", function() {
             it("should have the correct main text", function(done) {
                 Alloy.Models.sample.calculateSignalScore = function() { return (min+max)/2; };
                 Alloy.Models.sample.calculateWeightedSignalScore = function() { return (min+max)/2; };
+                Alloy.Models.sample.loadTaxa = function() {
+                    return mocx.createCollection("taxa", [
+                        { taxonId: "1", abundance: "3-5" },
+                        { taxonId: "2", abundance: "1-2" },
+                        { taxonId: "3", abundance: "3-5" },
+                        { taxonId: "4", abundance: "1-2" },
+                        { taxonId: "5", abundance: "3-5" },
+                        { taxonId: "6", abundance: "1-2" }
+                    ]);
+                }
                 doTest( done, function() {
-                    expect( ctl.intrepretation.text ).to.include(text);
-                    if ( extraDiff2 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraDiff2);
-                    if ( extraTaxa5 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa5);
-                    if ( extraTaxa15 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa15);
+                    expect( ctl.interpretation.text ).to.include(text);
+                    if ( extraDiff2.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraDiff2);
+                    if ( extraTaxa5.length > 0  )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa5);
+                    if ( extraTaxa15.length > 0  )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa15);
                 } );
             });
 
@@ -125,12 +136,13 @@ describe("Summary controller", function() {
                     ]);
                 };
                 doTest( done, function() {
-                    expect( ctl.intrepretation.text ).to.include(text);
-                    expect( ctl.intrepretation.text ).to.include(extraDiff2);
-                    if ( extraTaxa5 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa5);
-                    if ( extraTaxa15 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa15);
+                    expect( ctl.interpretation.text ).to.include(text);
+                    if ( extraDiff2.length > 0 )
+                        expect( ctl.interpretation.text ).to.include(extraDiff2);
+                    if ( extraTaxa5.length > 0  )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa5);
+                    if ( extraTaxa15.length > 0  )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa15);
                 } );
             });
 
@@ -148,13 +160,13 @@ describe("Summary controller", function() {
                     ]);
                 }
                 doTest( done, function() {
-                    expect( ctl.intrepretation.text ).to.include(text);
-                    if ( extraDiff2 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraDiff2);
-                    if ( extraTaxa5 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa5);
-                    if ( extraTaxa15 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa15);
+                    expect( ctl.interpretation.text ).to.include(text);
+                    if ( extraDiff2.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraDiff2);
+                    if ( extraTaxa5.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa5);
+                    if ( extraTaxa15.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa15);
                 } );
             });
 
@@ -168,12 +180,13 @@ describe("Summary controller", function() {
                     ]);
                 }
                 doTest( done, function() {
-                    expect( ctl.intrepretation.text ).to.include(text);
-                    if ( extraDiff2 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraDiff2);
-                    expect( ctl.intrepretation.text ).to.include(extraTaxa5);
-                    if ( extraTaxa15 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa15);
+                    expect( ctl.interpretation.text ).to.include(text);
+                    if ( extraDiff2.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraDiff2);
+                    if ( extraTaxa5.length > 0 )
+                        expect( ctl.interpretation.text ).to.include(extraTaxa5);
+                    if ( extraTaxa15.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa15);
                 } );
             });
 
@@ -201,12 +214,13 @@ describe("Summary controller", function() {
                     ]);
                 }
                 doTest( done, function() {
-                    expect( ctl.intrepretation.text ).to.include(text);
-                    if ( extraDiff2 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraDiff2);
-                    if ( extraTaxa5 )
-                        expect( ctl.intrepretation.text ).to.not.include(extraTaxa5);
-                    expect( ctl.intrepretation.text ).to.include(extraTaxa15);
+                    expect( ctl.interpretation.text ).to.include(text);
+                    if ( extraDiff2.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraDiff2);
+                    if ( extraTaxa5.length > 0 )
+                        expect( ctl.interpretation.text ).to.not.include(extraTaxa5);
+                    if ( extraTaxa15.length > 0 )
+                        expect( ctl.interpretation.text ).to.include(extraTaxa15);
                 } );
             });
 

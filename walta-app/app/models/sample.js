@@ -141,7 +141,7 @@ exports.definition = {
 
 				sampleJson.scoreColor = scoreColor( sampleJson.score);
 				sampleJson.w_scoreColor = scoreColor( sampleJson.w_score);
-				var scoreDiff = sampleJson.scoreColor  - sampleJson.w_scoreColor;
+				var scoreDiff = sampleJson.score  - sampleJson.w_score;
 
 				if ( sampleJson.score <= 4.0 ) {
 					sampleJson.impactText = "Unfortunately your site is heavily impacted.";
@@ -153,7 +153,7 @@ exports.definition = {
 					sampleJson.impactText = "Your site is probably healthy.";
 				}
 				
-				if ( scoreDiff < 2  && sampleJson.score > 6.0 ) {
+				if ( scoreDiff > 2  && sampleJson.score > 6.0 ) {
 					sampleJson.impactText += "\n\nIt is scoring less with the weighted SIGNAL because there are many more tolerant animals than sensitive ones ....perhaps there is some nutrient enrichment at the site?";
 				}
 

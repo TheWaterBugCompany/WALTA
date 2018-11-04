@@ -43,10 +43,6 @@ describe('Menu controller', function() {
 		actionFiresTopicTest( mnu.detailed, 'click', Topics.DETAILED, done );
 	});
 
-	it('should fire the BROWSE topic', function(done) {
-		actionFiresTopicTest( mnu.browse, 'click', Topics.BROWSE, done );
-	});
-
 	it('should fire the HELP topic', function(done) {
 		actionFiresTopicTest( mnu.help, 'click', Topics.HELP, done );
 	});

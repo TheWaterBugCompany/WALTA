@@ -214,10 +214,10 @@ INCLUDE taxa.ink
 * Group 12
 ** Not sure -> plecoptera	
 ** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
-** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"** Not sure -> zygoptera	
+** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"	
 
 * Group 13
-** Not sure -> k_plecoptera	
+** Not sure -> zygoptera	
 ** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
 ** node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
 	
@@ -242,10 +242,10 @@ INCLUDE taxa.ink
 /*MayflyMuster Speed bug */
 === mmspeedbug ===
 
-* node -> zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
+* node -> k_zygoptera # mediaUrls: "/taxonomy/walta/media/speedbug/damselfly_b.png"
 	
 * Group 14
-** Not sure -> ephemeroptera
+** Not sure -> plecoptera
 ** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
 ** node -> plecoptera # mediaUrls: "/taxonomy/walta/media/speedbug/eusthenia_b.png"
 	
@@ -269,11 +269,11 @@ INCLUDE taxa.ink
 
 === order_gastropoda ===
 * Order level ID Gastropoda. -> gastropoda # mediaUrls: []
-* Keep going. -> k_gastropoda # mediaUrls: []
+* Identify further. -> k_gastropoda # mediaUrls: []
 
 === order_bivalvia ===
 * Class level ID. Bivalvia (mussels). -> bivalvia # mediaUrls: []
-* Keep going. -> k_bivalvia # mediaUrls: []
+* Identify further. -> k_bivalvia # mediaUrls: []
 
 === node_2 ===
 * Animals look like snails. -> k_gastropoda # mediaUrls: []
@@ -313,7 +313,7 @@ INCLUDE taxa.ink
 
 === decapoda_intercept_1 ===
 * Oder level ID Decapoda (decapods) -> decapoda # mediaUrls: []
-* Keep going -> parastacidae # mediaUrls: []
+* Identify further. -> parastacidae # mediaUrls: []
 
 === node_7 ===
 * Shrimp or prawn-like animals. -> decapoda_intercept_2 # mediaUrls: ["/taxonomy/walta/media/shrimplike.gif"]
@@ -321,7 +321,7 @@ INCLUDE taxa.ink
 
 === decapoda_intercept_2 ===
 * Oder level ID Decapoda (decapods) -> decapoda # mediaUrls: []
-* Keep going -> k_shrimpandprawns # mediaUrls: []
+* Identify further. -> k_shrimpandprawns # mediaUrls: []
 
 === k_shrimpandprawns ===
 * Second leg with pincers and noticeably longer than others. Body translucent/opaque. -> macrobrachium # mediaUrls: []
@@ -333,7 +333,7 @@ INCLUDE taxa.ink
 
 === decapoda_intercept_3 ===
 * Oder level ID Decapoda (decapods) -> decapoda # mediaUrls: []
-* Keep going -> hymenosomatidae # mediaUrls: []
+* Identify further. -> hymenosomatidae # mediaUrls: []
 
 === node_9 ===
 * Animals strongly flattened from the sides (like dogs and cats); often lying on their side or moving with their side flat against the substrate. -> node_10 # mediaUrls: ["/taxonomy/walta/media/sidesquashed.gif"]
@@ -373,7 +373,7 @@ INCLUDE taxa.ink
 
 === order_coleoptera ===
 * Order level ID Coleoptera (beetles) -> coleoptera
-* Keep going ->  k_coleoptera
+* Identify further. ->  k_coleoptera
 
 === k_coleoptera ===
 * Beetles active swimmers -> node_16 # mediaUrls: []
@@ -445,7 +445,7 @@ INCLUDE taxa.ink
 
 === order_hemiptera ===
 * Order level ID Hemiptera (true bugs). -> hemiptera # mediaUrls: []
-* Keep going. -> k_hemiptera # mediaUrls: []
+* Identify further. -> k_hemiptera # mediaUrls: []
 
 === k_hemiptera ===
 * Bugs walking/running on the water surface. -> node_31 # mediaUrls: []
@@ -517,7 +517,7 @@ INCLUDE taxa.ink
 
 === order_trichoptera ===
 * Order level ID Trichoptera (caddisflies) ->  trichoptera
-* Keep going ->  k_trichoptera
+* Identify further. ->  k_trichoptera
 
 === k_trichoptera ===
 * Caddis living in a portable case. Most crawl slowly, some swim by head-thrashing or arm-waving; if out of case, body blunt ending with tiny prolegs and hooks. -> k_cased # mediaUrls: []
@@ -585,7 +585,7 @@ INCLUDE taxa.ink
 
 === node_44 ===
 * Order level ID Trichoptera (caddisflies) ->  trichoptera
-* Keep going ->  node_44b
+* Identify further. ->  node_44b
 
 === node_44b ===
 * All three thoracic segments hard or sclerotised, they appear darker or different in colour to the soft abdomen. -> node_58 # mediaUrls: []
@@ -605,11 +605,19 @@ INCLUDE taxa.ink
 
 === order_odonata ===
 * Order level ID Odonata (dragonflies and damselflies). -> odonata # mediaUrls: []
-* Keep going. -> k_odonata  # mediaUrls: []
+* Identify further. -> k_odonata  # mediaUrls: []
 
 === k_odonata ===
-* Slender larvae, with 3 terminal gills. Swim by undulating (snake-like). -> k_zygoptera # mediaUrls: []
-* Robust larvae, without terminal gills. Swim by jetting water out of their bums. -> k_epiproctophora # mediaUrls: []
+* Slender larvae, with 3 terminal gills. Swim by undulating (snake-like). -> k_prezygoptera # mediaUrls: []
+* Robust larvae, without terminal gills. Swim by jetting water out of their bums. -> k_preepiproctophora # mediaUrls: []
+
+=== k_prezygoptera ===
+* sub order ID Zygoptera (damselfly nymphs) -> zygoptera  # mediaUrls: []
+* Identify further. -> k_zygoptera # mediaUrls: []
+
+=== k_preepiproctophora ===
+* sub order ID Epiproctophora (dragonfly nymphs) -> epiproctophora # mediaUrls: []
+* Identify further. -> k_epiproctophora # mediaUrls: []
 
 === k_zygoptera ===
 * Leaf-like terminal gills held flat and fanned out horizontally. -> megapodagrionidae # mediaUrls: []
@@ -628,12 +636,12 @@ INCLUDE taxa.ink
 * Gills leaf like. -> lestidae_and_coenagrionidae # mediaUrls: []
 
 === k_epiproctophora ===
-* Fat, round ended body and long legs make them look spider-like. Mouthparts form a ladle-shaped mask in front of face. -> spider_mud_eye # mediaUrls: ["/taxonomy/walta/media/mudeyeface.jpg"]
-* Relatively elongate body, NOT spider-like. Mouthparts flat, folded under 'chin' -> node_63 # mediaUrls: ["/taxonomy/walta/media/mouthpartsfolded.jpg"]
+* Medium sized nymphs with club or sausage shaped antennae. Sluggish, often green or brown. No obvious spines on the edges of abdominal segments. -> gomphidae # mediaUrls: []
+* Large nymphs with tiny antennae -> node_63 # mediaUrls: ["/taxonomy/walta/media/mouthpartsfolded.jpg"]
 
 === node_63 ===
-* Medium sized nymphs with club or sausage shaped antennae. Sluggish, often green or brown. No obvious spines on the edges of abdominal segments. -> gomphidae # mediaUrls: []
-* Large nymphs with tiny antennae and with spines on the edges of the abdominal segments. -> node_64 # mediaUrls: []
+* Fat, round ended body and long legs make them look spider-like. Mouthparts form a ladle-shaped mask in front of face. -> spider_mud_eye # mediaUrls: ["/taxonomy/walta/media/mudeyeface.jpg"]
+* Relatively elongate body, NOT spider-like. Mouthparts flat, folded under 'chin'  -> node_64 # mediaUrls: []
 
 === node_64 ===
 * Dark mottled nymphs usually with large spines on the edges of the abdominal segments. Central bum-spine pointed. -> telephlebiidae # mediaUrls: []
@@ -645,15 +653,19 @@ INCLUDE taxa.ink
 
 === node_104 ===
 * animals with a single row of projections along the sides of the abdomen -> node_65 # mediaUrls: []
-* animals without a single row of projections (may have a mess of gills)  -> node_44 # mediaUrls: []
+* animals without a single row of projections (may have a mess of gills)  -> node_44c # mediaUrls: []
+
+=== node_44c ===
+* animals with robust posterior prolegs (like a pair of hooks on short prolegs at the end of the abdomen) -> node_44 # mediaUrls: []
+* animals without robust posterior prolegs -> k_coleoptera_larvae # mediaUrls: []
 
 === node_65 ===
 * 7 or 8 abdominal projections (dangly bits), found in rivers -> order_megaloptera # mediaUrls: ["/taxonomy/walta/media/toebiter.gif"]
-* 10 abdominal projections (dangly bits), found in pools and wetlands -> k_coleoptera_larvae # mediaUrls: ["/taxonomy/walta/media/beetlelarvae.gif"]
+* 9 or 10 abdominal projections (dangly bits), found in pools and wetlands -> k_coleoptera_larvae # mediaUrls: ["/taxonomy/walta/media/beetlelarvae.gif"]
 
 === order_megaloptera ===
 * Order level ID Megaloptera (Dobson flies and Alderflies) -> megaloptera # mediaUrls: []
-* Keep going -> k_megaloptera_larvae # mediaUrls: []
+* Identify further. -> k_megaloptera_larvae # mediaUrls: []
 
 === k_megaloptera_larvae ===
 * robust animal, distinctive, abdominal projections robust (see image), found in cobbly rivers -> corydalidae # mediaUrls: []
@@ -661,7 +673,7 @@ INCLUDE taxa.ink
 
 === k_coleoptera_larvae ===
 * Order level ID Coleoptera (beetles) -> coleoptera
-* Keep going ->  k_coleoptera_larvae_b
+* Identify further. ->  k_coleoptera_larvae_b
 
 === k_coleoptera_larvae_b ===
 * Beetle larvae swim actively with all legs; usually with wide flat heads and prominent mandibles; middle of the head sometimes projected forwards like a nose on smaller examples; may be biting and killing other animals in the tray. -> k_dytiscidae_L # mediaUrls: ["/taxonomy/walta/media/dytiscidae_larva_m1.mp4"]
@@ -721,7 +733,7 @@ INCLUDE taxa.ink
 
 === order_plecoptera ===
 * Order level ID Plecoptera (Stoneflies) -> plecoptera # mediaUrls: []
-* Keep going -> k_plecoptera # mediaUrls: []
+* Identify further. -> k_plecoptera # mediaUrls: []
 
 === k_plecoptera ===
 * Large nymphs up to 40mm usually bright green, orange or blue. Animals have gills along the side of the abdomen. -> eustheniidae # mediaUrls: ["/taxonomy/walta/media/sidegills.jpg"]
@@ -761,11 +773,11 @@ INCLUDE taxa.ink
 
 === order_ephemeroptera ===
 * Order level ID Ephemeroptera (mayflies) -> ephemeroptera # mediaUrls: []
-* Keep going -> k_ephemeroptera # mediaUrls: []
+* Identify further. -> k_ephemeroptera # mediaUrls: []
 
 === k_ephemeroptera ===
 * Nymphs with gills along the side of the abdomen. -> node_83 # mediaUrls: []
-* Nymphs with no visible gills along the sides of the abdomen; gill covers over part of the abdomen; gill covers can look like wing buds but are always behind the last pair of legs. -> node_84 # mediaUrls: []
+* Nymphs with gill covers over part of the abdomen; gill covers can look like wing buds but are always behind the last pair of legs. -> node_84 # mediaUrls: []
 
 === node_83 ===
 * Robust dark brown nymphs with alternating spiny V-shaped gills and smaller feathery gills. Move with a distinct rocking horse motion. Large thorax giving a hunched appearance. -> coloburiscoides # mediaUrls: []
@@ -809,7 +821,7 @@ INCLUDE taxa.ink
 
 === order_diptera ===
 * Order level ID Diptera (maggots or true fly larvae) -> diptera
-* Keep going  -> k_diptera # mediaUrls: []
+* Identify further.  -> k_diptera # mediaUrls: []
 
 === k_diptera ===
 * Maggots break the surface of the water to breathe; their bodies are buoyant in deeper water (floaters). -> node_93 # mediaUrls: []
@@ -865,7 +877,7 @@ INCLUDE taxa.ink
 
 === node_92 ===
 * without a hardened head capsule -> hirudinea # mediaUrls: ["/taxonomy/walta/media/leeches.gif"]
-* with a head capsule -> k_diptera # mediaUrls: ["/taxonomy/walta/media/blackflylarva.gif"]
+* with a head capsule -> order_diptera # mediaUrls: ["/taxonomy/walta/media/blackflylarva.gif"]
 
 === node_90 ===
 * flattened, short and slimy -> turbellaria # mediaUrls: ["/taxonomy/walta/media/flatshortslimy.gif"]

@@ -467,7 +467,7 @@ function parseInk( inkJson, key ) {
 		 var speedbugIndex = SpeedbugIndex.createSpeedbugIndex( speedbugName );
 		 console.log(`number of speed bug links = ${speedBug.questions.length}`);
 		speedBug.questions.forEach( (q) =>{ 
-			if ( q.text && q.outcome.questions ) {
+			if ( q.text && q.outcome.id.length == 0 ) {
 				var notSure = q.outcome.questions.shift();
 				console.log( `not sure = ${notSure.text}` );
 				if ( notSure.text.trim().toLowerCase() !== "not sure" ) 

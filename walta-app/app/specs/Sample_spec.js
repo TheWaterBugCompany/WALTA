@@ -22,6 +22,7 @@ var mocx = require("specs/lib/mocx");
 describe("Sample model", function() {
 	var ctl;
 	beforeEach( function() {
+        Alloy.Models.sample = null;
         Alloy.Models.sample = Alloy.Models.instance("sample");
         Alloy.Models.sample.set("waterbodyName","Test Waterbody");
         Alloy.Models.sample.set("nearbyFeature", "near the office intersection cupboard");

@@ -2068,7 +2068,7 @@
 # name: "Oligochaeta"
 # scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"phylum","name":"Annelida"},{"taxonomicLevel":"class","name":"Oligochaeta"}]
 # commonName: "Worms"
-# size: 10
+# size: 100
 # signalScore: 1
 # habitat: "Rivers, wetlands, in sediment."
 # movement: "Like an earthworm. Smaller worms may swim by wriggling."
@@ -2163,7 +2163,7 @@
 # taxonId: "87"
 # name: "Mayflies"
 # scientificName: [{"taxonomicLevel":"order","name":"Ephemeroptera"}]
-# commonName: "Stoneflies"
+# commonName: "Mayflies"
 # size: 20
 # signalScore: 9
 # habitat: "Rivers."
@@ -2355,7 +2355,7 @@
 === gastropoda ===
 # taxonId: "181"
 # name: "gastropods"
-# scientificName: [{"taxonomicLevel":"class","name":"Gastropoda"},{"taxonomicLevel":"family","name":"Lymnaeidae"}]
+# scientificName: [{"taxonomicLevel":"class","name":"Gastropoda"}]
 # commonName: "gastropods"
 # size: 40
 # signalScore: 1
@@ -2363,7 +2363,7 @@
 # movement: "Snail's pace."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/flatsnails_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif",/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/Physa_acuta_closeup.jpg","/taxonomy/walta/media/lymnaeidae_01.jpg", "/taxonomy/walta/media/ancylidae.jpg"]
+# mediaUrls: ["/taxonomy/walta/media/flatsnails_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif","/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/Physa_acuta_closeup.jpg","/taxonomy/walta/media/lymnaeidae_01.jpg","/taxonomy/walta/media/ancylidae.jpg"]
 # description: "To quote T. Sloane, booger with a crash helmet."
 # bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
@@ -2393,7 +2393,7 @@
 # signalScore: 8
 # habitat: "flowing water, edges, riffles. Common. "
 # movement: "usually fairly quick unless playing possum."
-# confusedWith: "Young leptocerids have a tubular sand case, but they have much longer hind legs."
+# confusedWith: "Sometimes glossosomatids will and other cased caddis will fall out of their cases, you can differentiate them by their short anal prolegs."
 # taxonomicLevel: "alt"
 # mediaUrls: ["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydropsychidae_01.jpg"]
 # description: ""
@@ -2427,7 +2427,7 @@
 # movement: "Undulatuing swim or crawl."
 # confusedWith: "Gyrinid and Hydrophilid beetle larvae, which are slightly smaller and don't end in a single long filament."
 # taxonomicLevel: "family"
-# mediaUrls: [""]
+# mediaUrls: ["/taxonomy/walta/media/sialidae_01.jpg"]
 # description: ""
 # bluebug: ["/taxonomy/walta/media/speedbug/megaloptera_b.png"]
 -> DONE
