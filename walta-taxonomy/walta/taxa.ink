@@ -2379,7 +2379,7 @@
 # movement: "usually fairly quick unless playing possum."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydropsychidae_01.jpg","/taxonomy/walta/media/oecetis_01.jpg","/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/log_cabin_caddis_01.jpg","/taxonomy/walta/media/triplectides_01.jpg]
+# mediaUrls: ["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydropsychidae_01.jpg","/taxonomy/walta/media/oecetis_01.jpg","/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/log_cabin_caddis_01.jpg","/taxonomy/walta/media/triplectides_01.jpg"]
 # description: "The Trichoptera are considered sensitive to pollution."
 # bluebug: ["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
 -> DONE
