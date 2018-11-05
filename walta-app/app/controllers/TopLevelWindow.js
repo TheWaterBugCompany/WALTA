@@ -44,7 +44,7 @@ function openWindow() {
 
 function backEvent(e) {
 	e.cancelBubble = true;
-	Topics.fireTopicEvent( Topics.BACK, $.name );
+	Topics.fireTopicEvent( Topics.BACK, { name: $.name, surveyType: $.args.surveyType, allowAddToSample: ($.args.allowAddToSample?true : false) } );
 }
 
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);

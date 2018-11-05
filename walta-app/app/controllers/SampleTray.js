@@ -251,19 +251,20 @@ function startIdentification(e) {
 
   $.selectMethod.on("keysearch", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.KEYSEARCH, true );
+    var surveyType = parseInt( Alloy.Models.sample.get("surveyType") );
+    Topics.fireTopicEvent( Topics.KEYSEARCH, { allowAddToSample: true, surveyType: surveyType  }  );
   });
 
   $.selectMethod.on("speedbug", function() {
     closeSelectMethod();
-    var surveyType = Alloy.Models.sample.get("surveyType");
-    var speedbugName = Sample.getSpeedbugIndexName( parseInt(surveyType) );
-    Topics.fireTopicEvent( Topics.SPEEDBUG, { allowAddToSample: true, speedbugName: speedbugName  }  );
+    var surveyType = parseInt(Alloy.Models.sample.get("surveyType"));
+    Topics.fireTopicEvent( Topics.SPEEDBUG, { allowAddToSample: true, surveyType: surveyType  }  );
   });
 
   $.selectMethod.on("browselist", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.BROWSE, true );
+    var surveyType = parseInt(Alloy.Models.sample.get("surveyType"));
+    Topics.fireTopicEvent( Topics.BROWSE, { allowAddToSample: true, surveyType: surveyType  }  );
   });
 
   $.TopLevelWindow.add($.selectMethod.getView());

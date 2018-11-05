@@ -20,23 +20,24 @@
 
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
+var Sample = require('logic/Sample');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var key = $.args.key;
-var speedbugName = $.args.speedbugName;
+var surveyType = $.args.surveyType;
+var speedbugName = Sample.getSpeedbugIndexName( surveyType );
+
+Ti.API.info(`Speedbug name = ${speedbugName}`);
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Speedbug";
 $.name = "speedbug";
 var acb = $.getAnchorBar();
-acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH ) );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ) );
+acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample }  ) );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample }  ) );
 
 var buttonMargin = parseInt( Layout.BUTTON_MARGIN );
 var tileHeight = parseInt( Layout.SPEEDBUG_TILE_HEIGHT );
 var tileWidth = parseInt( Layout.SPEEDBUG_TILE_WIDTH );
-
-Ti.API.info(`buttonMargin = ${buttonMargin}, tileHeight = ${tileHeight}, tileWidth = ${tileWidth}`);
-
 var spanTileX = buttonMargin*2 + tileWidth;
 
 

@@ -136,6 +136,6 @@ $.getView().addEventListener( "close", function cleanup() {
 });
 
 var acb = $.getAnchorBar();
-acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ), true );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( GoBackButton.createGoBackButton() );

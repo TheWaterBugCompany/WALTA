@@ -196,7 +196,6 @@ function createKey( args ) {
 		},
 
 		getSpeedbugIndex: function(name) {
-			Ti.API.info(`looking up speedbug: ${name}`);
 			return this.speedbugIndex[name];
 		},
 

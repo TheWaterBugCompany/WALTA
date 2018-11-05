@@ -34,10 +34,9 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
 var acb = $.getAnchorBar();
-acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG ), true );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample }  ), true );
 acb.addTool( GoBackButton.createGoBackButton() );
-
 
 var keyNode = $.args.keyNode;
 var questions = [];
@@ -51,7 +50,7 @@ _(keyNode.questions).each(
     questions.push( qv );
 		$.content.add( _(qv.view).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
 		meld.on( qv, 'onSelect', function() {
-			Topics.fireTopicEvent( Topics.FORWARD, { index: index, allowAddToSample: $.args.allowAddToSample } );
+			Topics.fireTopicEvent( Topics.FORWARD, { index: index, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
 		} );
 	}
 );
@@ -59,7 +58,7 @@ _(keyNode.questions).each(
 function swipeListener(e){
 	if ( e.direction === 'right' ) {
 		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, $.name );
+		Topics.fireTopicEvent( Topics.BACK, { name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
 	}
 }
 

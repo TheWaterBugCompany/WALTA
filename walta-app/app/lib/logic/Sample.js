@@ -12,7 +12,7 @@ exports.getSpeedbugIndexName = function( type ) {
             return "Mayfly Muster Speedbug";
         case ORDER:
             return "Order Speedbug";
-        case DETAILED:
+        default:
             return "Speedbug";
     }
 }

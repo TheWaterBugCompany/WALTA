@@ -54,13 +54,19 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("Menu").open();
 			},
 
-			browseWindow: function(allowAddToSample) {
-
-				TopLevelWindow.makeTopLevelWindow({
+			browseWindow: function(data) {
+				Ti.API.info(`data = ${JSON.stringify(data)}`)
+				var win = TopLevelWindow.makeTopLevelWindow({
+					surveyType: data.surveyType,
+					allowAddToSample:  data.allowAddToSample,
 					name: 'browse',
 					title: 'Browse',
-					uiObj: BrowseView.createBrowseView(privates.key,allowAddToSample)
+					uiObj: BrowseView.createBrowseView(privates.key,data.surveyType, data.allowAddToSample)
 				});
+				acb = win.getAnchorBar();
+				acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: data.surveyType, allowAddToSample:  data.allowAddToSample }  ) );
+				acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: data.surveyType, allowAddToSample:  data.allowAddToSample }  ) );
+				win.open();
 			},
 
 			sampleTrayWindow: function(args) {
@@ -109,8 +115,8 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("SampleHistory").open();
 			},
 
-			speedBugWindow: function(allowAddToSample, speedbugName) {
-				Alloy.createController("Speedbug", { key: privates.key, speedbugName: speedbugName, allowAddToSample: allowAddToSample }).open();
+			speedBugWindow: function(allowAddToSample, surveyType) {
+				Alloy.createController("Speedbug", { key: privates.key, surveyType: surveyType, allowAddToSample: allowAddToSample }).open();
 			},
 
 			galleryWindow: function() {
@@ -123,7 +129,7 @@ function createAppWindow( keyName, keyPath ) {
 					name: 'help',
 					title: 'Help',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
-				});
+				}).open();
 			},
 
 			aboutWindow: function() {
@@ -131,7 +137,7 @@ function createAppWindow( keyName, keyPath ) {
 					name: 'about',
 					title: 'About',
 					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
-				});
+				}).open();
 			},
 
 			updateDecisionWindow: function( args ) {
@@ -174,23 +180,28 @@ function createAppWindow( keyName, keyPath ) {
 		Topics.fireTopicEvent( Topics.HOME, null );
 	});
 
-    privates.subscribe( Topics.KEYSEARCH, function(allowAddToSample) {
-		var node = ( Alloy.Models.sample.get("surveyType") == 0 ? 
-			privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );
-    	privates.key.reset(node);
-    	privates.updateDecisionWindow({ slide: 'right', allowAddToSample: allowAddToSample });
+    privates.subscribe( Topics.KEYSEARCH, function(data) {
+		var node = ( data.surveyType == Sample.MAYFLY ? privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );
+		privates.key.reset(node);
+    	privates.updateDecisionWindow({ slide: 'right', surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
     });
 
-    privates.subscribe( Topics.BACK, function(name) {
-		Ti.API.info(`back: ${name}`);
+    privates.subscribe( Topics.BACK, function(data) {
+		var name  = data.name;
+		var surveyType = data.surveyType;
+		var allowAddToSample = data.allowAddToSample;
+		Ti.API.info(`back: ${name} surveyType = ${surveyType} allowAddToSample = ${allowAddToSample} currentDecision = ${privates.key.currentDecision.id}`);
     	if ( name === "home" ) {
     		privates.closeApp();
-    	} else if ( name === "decision" ) {
-    		if ( privates.key.isRoot() ) {
-    			privates.sampleTrayWindow({ slide: 'left' });
+		} else if ( name === "decision") {
+    		if ( surveyType == Sample.MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
+				if ( allowAddToSample )
+					privates.sampleTrayWindow({ slide: 'left' });
+				else
+					privates.menuWindow(); 
 			} else {
     			privates.key.back();
-	    		privates.updateDecisionWindow({ slide: 'left' } );
+	    		privates.updateDecisionWindow({ slide: 'left', surveyType: surveyType, allowAddToSample: allowAddToSample } );
 	    	}
 		} else if ( name === "habitat" ) {
 			privates.siteDetailsWindow();
@@ -198,6 +209,12 @@ function createAppWindow( keyName, keyPath ) {
 			privates.habitatWindow();
 		} else if ( name === "summary" ) {
 			privates.sampleTrayWindow();
+		} else if ( name === "browse" || name === "speedbug" ) {
+			if ( allowAddToSample ) {
+				privates.sampleTrayWindow();
+			} else {
+				privates.menuWindow();
+			}
 		} else {
 	    	privates.menuWindow();
 	    }
@@ -206,7 +223,7 @@ function createAppWindow( keyName, keyPath ) {
 
     privates.subscribe( Topics.FORWARD, function( data ) {
     	privates.key.choose( data.index );
-	    privates.updateDecisionWindow({ slide: 'right', allowAddToSample: data.allowAddToSample });
+	    privates.updateDecisionWindow({ slide: 'right', surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
     });
 
     privates.subscribe( Topics.VIDEO, function( data ) {
@@ -215,8 +232,8 @@ function createAppWindow( keyName, keyPath ) {
     	vv.open();
     });
 
-    privates.subscribe( Topics.BROWSE, function(allowAddToSample) {
-    	privates.browseWindow(allowAddToSample);
+    privates.subscribe( Topics.BROWSE, function(data) {
+    	privates.browseWindow({ surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
 	});
 	
 	privates.subscribe( Topics.SAMPLETRAY, function(data) {
@@ -248,7 +265,7 @@ function createAppWindow( keyName, keyPath ) {
     privates.subscribe( Topics.JUMPTO, function( data ) {
     	if ( ! _.isUndefined( data.id ) ) {
     		privates.key.setCurrentNode(data.id);
-	    	privates.updateDecisionWindow({ allowAddToSample: data.allowAddToSample });
+	    	privates.updateDecisionWindow({ surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
 	    } else {
 	    	Ti.API.error("Topics.JUMPTO undefined node!");
 	    }
@@ -270,7 +287,7 @@ function createAppWindow( keyName, keyPath ) {
 	} );
 
     privates.subscribe( Topics.SPEEDBUG, function(data) {
-    	privates.speedBugWindow(data.allowAddToSample, data.speedbugName);
+    	privates.speedBugWindow(data.allowAddToSample, data.surveyType );
     });
 
     privates.subscribe( Topics.GALLERY, function() {

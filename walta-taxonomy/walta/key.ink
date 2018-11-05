@@ -725,7 +725,7 @@ INCLUDE taxa.ink
 
 === node_41 ===
 * with two tails -> node_75 # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]
-* with three tails -> node_76 # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
+* with three tails -> mayfly_start_point # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
 
 === node_75 ===
 * with compound eyes (like a mirror ball upclose) and wing buds (except on very young animals) -> order_plecoptera # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]
@@ -767,8 +767,8 @@ INCLUDE taxa.ink
 * Mainland. -> acruroperla_atra # mediaUrls: []
 * Tasmania. -> crypturoperla_paradoxa # mediaUrls: []
 
-=== node_76 ===
-* tails flattened or broad, jaw large and folded away under head -> k_odonata # mediaUrls: ["/taxonomy/walta/media/damselfly.gif"]
+=== mayfly_start_point ===
+* tails flattened, leaf-like or broad, jaw large and folded away under head -> k_odonata # mediaUrls: ["/taxonomy/walta/media/damselfly.gif"]
 * tails thin, round in cross section -> order_ephemeroptera # mediaUrls: ["/taxonomy/walta/media/mayfly.gif"]
 
 === order_ephemeroptera ===

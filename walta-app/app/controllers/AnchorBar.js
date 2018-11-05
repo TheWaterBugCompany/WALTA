@@ -27,7 +27,7 @@
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
-function createToolBarButton( image, topic, title ) {
+function createToolBarButton( image, topic, title, eventData ) {
 	var attrs = {};
 	var btn;
 	if ( title ) {
@@ -48,7 +48,7 @@ function createToolBarButton( image, topic, title ) {
 	
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {
-			Topics.fireTopicEvent( topic, null );
+			Topics.fireTopicEvent( topic, eventData );
 			e.cancelBubble = true;
 		});
 	}

@@ -46,17 +46,17 @@ function identifyClick() {
 
   $.selectMethod.on("keysearch", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.KEYSEARCH, false );
+    Topics.fireTopicEvent( Topics.KEYSEARCH, { allowAddToSample: false, surveyType: null } );
   });
 
   $.selectMethod.on("speedbug", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.SPEEDBUG, { allowAddToSample: false, speedbugName: "Speedbug" } );
+    Topics.fireTopicEvent( Topics.SPEEDBUG, { allowAddToSample: false, surveyType: null } );
   });
 
   $.selectMethod.on("browselist", function() {
     closeSelectMethod();
-    Topics.fireTopicEvent( Topics.BROWSE, false );
+    Topics.fireTopicEvent( Topics.BROWSE,  { allowAddToSample: false, surveyType: null } );
   });
 
   $.TopLevelWindow.add($.selectMethod.getView());

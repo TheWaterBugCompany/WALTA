@@ -25,7 +25,7 @@
 
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
-function createBrowseView(  /* Key */ key, allowAddToSample ) {
+function createBrowseView(  /* Key */ key, surveyType, allowAddToSample ) {
 	
 	var _ = require('lib/underscore')._;
 
@@ -89,7 +89,7 @@ function createBrowseView(  /* Key */ key, allowAddToSample ) {
 			            }
 			        } ],
 			     events: {click: function(e) {
-			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId } );
+			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId, surveyType: surveyType, allowAddToSample: allowAddToSample } );
 			     } }
 			   },
 			'genusOrSpecies': {
@@ -104,7 +104,7 @@ function createBrowseView(  /* Key */ key, allowAddToSample ) {
 			            }
 			        } ],
 			     events: {click: function(e) {
-			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId, allowAddToSample: allowAddToSample } );
+			     	Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId, surveyType: surveyType, allowAddToSample: allowAddToSample } );
 			     }}
 			   } 
 			},
