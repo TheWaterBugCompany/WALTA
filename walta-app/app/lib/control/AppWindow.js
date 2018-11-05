@@ -58,12 +58,12 @@ function createAppWindow( keyName, keyPath ) {
 				Ti.API.info(`data = ${JSON.stringify(data)}`)
 				var win = TopLevelWindow.makeTopLevelWindow({
 					surveyType: data.surveyType,
-					allowAddToSample:  data.allowAddToSample,
+					allowAddToSample: data.allowAddToSample,
 					name: 'browse',
 					title: 'Browse',
 					uiObj: BrowseView.createBrowseView(privates.key,data.surveyType, data.allowAddToSample)
 				});
-				acb = win.getAnchorBar();
+				var acb = win.getAnchorBar();
 				acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: data.surveyType, allowAddToSample:  data.allowAddToSample }  ) );
 				acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: data.surveyType, allowAddToSample:  data.allowAddToSample }  ) );
 				win.open();

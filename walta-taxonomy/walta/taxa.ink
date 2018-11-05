@@ -1452,7 +1452,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/sclerocyphon_01.jpg","/taxonomy/walta/media/sclerocyphon_02.jpg"]
 # description: ""
-# bluebug: ["/taxonomy/walta/media/speedbug/psephenidae_L_b.png"]
+# bluebug: ["/taxonomy/walta/media/speedbug/psephenidae_b.png"]
 -> DONE
 
 === scirtidae ===

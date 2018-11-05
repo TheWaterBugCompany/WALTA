@@ -13,6 +13,7 @@ function generateThumbnail( blob ) {
     var pxWidth = Ti.UI.convertUnits( `${$.photoSelect.size.width}dp`, Ti.UI.UNIT_PX );
     var pxHeight = Ti.UI.convertUnits( `${$.photoSelect.size.height}dp`, Ti.UI.UNIT_PX );
     var newHeight = pxWidth*(thumbnailImage.height/thumbnailImage.width);
+    Ti.API.info(`${pxWidth} ${pxHeight} ${newHeight}`);
     thumbnailImage = thumbnailImage.imageAsResized( pxWidth, newHeight );
     var cropY = ((newHeight-pxHeight)/2);
     if ( cropY > 0 )
