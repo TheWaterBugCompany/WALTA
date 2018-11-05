@@ -14,7 +14,7 @@
 }
 
 "#leftTools": {
-  left: "2dp",
+  left: "5dp",
   width: "30%",
   height: Ti.UI.FILL,
   layout: "horizontal",
@@ -23,7 +23,7 @@
 }
 
 "#rightTools": {
-  right: "4dip",
+  right: "5dp",
   width: Ti.UI.SIZE,
   height: Ti.UI.FILL,
   layout: "horizontal",
