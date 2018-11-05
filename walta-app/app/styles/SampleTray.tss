@@ -1,5 +1,6 @@
 
-".container" : {
+"#content" : {
+  disableBounce: true,
   backgroundColor: "#aaa"
 }
 "#endcap": {
