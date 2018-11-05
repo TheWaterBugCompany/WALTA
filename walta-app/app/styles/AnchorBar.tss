@@ -15,7 +15,7 @@
 
 "#leftTools": {
   left: "5dp",
-  width: "30%",
+  width: "35%",
   height: Ti.UI.FILL,
   layout: "horizontal",
   horizontalWrap: false,
