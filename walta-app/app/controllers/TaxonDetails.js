@@ -81,7 +81,28 @@ $.details.html = `<html><head><meta name="viewport" content="initial-scale=1.0, 
 <style>html,body {margin:0;padding:0;color:black;font-family:${Layout.TEXT_FONT};font-size:${Layout.DETAILS_TEXT_SIZE};}</style>
 </head><body id="details">${$.args.taxon.asDetailHtml()}</body></html>`;
 
-// If tere are photos add the photo view and button
+/*
+ * =============== HACK: Workaround for odd WebView resizing bug under iOS ===============
+ * See Trac issue #72
+ * Under iOS the WebView seems to mysteriously change zoom level after the initial layout.
+ *
+ * To fix this we set the explicit width of the view on the postlayout event to make sure
+ * it won't change from the value first calculated.
+ */
+
+if ( Ti.Platform.osname === 'iphone' ) {
+	var hackListener = function() {
+		$.details.width = $.details.size.width;
+		$.details.removeEventListener( 'postlayout', hackListener );
+	};
+	$.details.addEventListener( 'postlayout', hackListener );
+}
+
+/*
+ * ============================== END HACK ================================================
+ */
+
+// If there are photos add the photo view and button
 if ($.args.taxon.photoUrls.length > 0) {
 	$.photoView = PhotoView.createPhotoView($.taxon.photoUrls);
 	$.photoViewCtn.add(_($.photoView.view).extend({
@@ -138,4 +159,4 @@ $.getView().addEventListener( "close", function cleanup() {
 var acb = $.getAnchorBar();
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
-acb.addTool( GoBackButton.createGoBackButton() );
+acb.addTool( GoBackButton.createGoBackButton( { name: "decision", surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ) );

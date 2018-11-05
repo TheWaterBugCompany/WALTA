@@ -22,7 +22,7 @@
  */
 
 
-function createGoBackButton() {
+function createGoBackButton(data) {
 	var Layout = require('ui/Layout');
 	var Topics = require('ui/Topics');
 
@@ -49,7 +49,7 @@ function createGoBackButton() {
 		color: 'white'
 	} ) );
 	goBack.addEventListener( 'click', function(e) {
-		Topics.fireTopicEvent( Topics.BACK, "decision" );
+		Topics.fireTopicEvent( Topics.BACK, data );
 		e.cancelBubble = true;
 	} );
 	return goBack;

@@ -195,10 +195,12 @@ function createAppWindow( keyName, keyPath ) {
     		privates.closeApp();
 		} else if ( name === "decision") {
     		if ( surveyType == Sample.MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
-				if ( allowAddToSample )
+				Ti.API.info(`isRoot = ${privates.key.isRoot()}`)
+				if ( allowAddToSample ) {
 					privates.sampleTrayWindow({ slide: 'left' });
-				else
+				} else {
 					privates.menuWindow(); 
+				}
 			} else {
     			privates.key.back();
 	    		privates.updateDecisionWindow({ slide: 'left', surveyType: surveyType, allowAddToSample: allowAddToSample } );
