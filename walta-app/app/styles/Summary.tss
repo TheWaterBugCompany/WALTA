@@ -23,8 +23,7 @@
 
 "#bottomFrame": {
     width: Ti.UI.FILL,
-    height: Ti.UI.FILL,
-    right: "2%"
+    height: Ti.UI.FILL
 }
 "#signalFrame": {
     height: Ti.UI.FILL,

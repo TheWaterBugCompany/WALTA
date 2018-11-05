@@ -208,7 +208,7 @@ function releaseTiles( start_n, end_n ) {
 function addTiles( start_n, end_n ) {
   for( var i = start_n; i<=end_n; i++ ) {
     // max() below is to add an extra blank tile with an empty tray...
-    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length - 2)/4,2) ) ) {
+    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length - 2)/4,4) ) ) {
       var tile;
       if ( typeof( tileIndex[i] ) !== "undefined") {
         updateSampleTrayTile( i );

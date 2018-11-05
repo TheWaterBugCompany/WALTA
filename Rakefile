@@ -72,8 +72,9 @@ task :preview_android => [ ] do
   sh("appc ti build  --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}")
 end
 
-# iphone 5s = C03480F3-D5A7-4444-A1FA-1CA9AF7D9861
-# ipad mini = 85EDE93D-CFEA-40F5-8CD7-ED2556D9472F
+# i[hone 6s plus = E99CE79B-97BF-49B8-9357-C3DFE5611EF2
+# iphone 5s =      C03480F3-D5A7-4444-A1FA-1CA9AF7D9861
+# ipad mini =      85EDE93D-CFEA-40F5-8CD7-ED2556D9472F
 task :preview_ios => [] do
   sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target simulator --liveview --device-id \"C03480F3-D5A7-4444-A1FA-1CA9AF7D9861\"")
 end

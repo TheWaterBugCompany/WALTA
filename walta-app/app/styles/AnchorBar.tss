@@ -14,8 +14,7 @@
 }
 
 "#leftTools": {
-  top: 0,
-  left: 0,
+  left: "2dp",
   width: "30%",
   height: Ti.UI.FILL,
   layout: "horizontal",
@@ -24,9 +23,7 @@
 }
 
 "#rightTools": {
-  top: '2dip',
-  bottom: '2dip',
-  right: '4dip',
+  right: "4dip",
   width: Ti.UI.SIZE,
   height: Ti.UI.FILL,
   layout: "horizontal",
@@ -43,16 +40,18 @@
 
 ".anchorBarButton": {
   left: "8dp",
-  top: "1dp",
   height: Ti.UI.SIZE,
-  width: Ti.UI.SIZE
+  width: "35dp"
 }
 
 ".anchorBarTextButton": {
-  top: "2%",
-  width: Ti.UI.SIZE,
+  width: "100dp",
+  height: "78%",
+  center: { y: "50%" },
+  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   font: {
-    fontWeight: "semibold"
+    fontWeight: "semibold",
+    fontSize: "16dp"
   },
 	backgroundColor: "#26849c",
 	borderColor: "#26849c",

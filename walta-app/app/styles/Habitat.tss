@@ -72,6 +72,6 @@
 }
 
 "#nextButton": {
-    right: "32dp",
-    bottom: "10dp"
+    right: "12dp",
+    bottom: "12dp"
 }

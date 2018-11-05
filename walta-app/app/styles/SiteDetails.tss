@@ -29,7 +29,7 @@
 }
 
 "#bottomRight": {
-    width: Ti.UI.SIZE,
+    width: Ti.UI.FILL,
     height: Ti.UI.FILL
 }
 
@@ -44,8 +44,8 @@
 }
 
 "#nextButton": {
-    bottom: "8dp",
-    right: "8dp"
+    bottom: "12dp",
+    right: "12dp"
 }
 
 "#waterbodyNameLabel": {

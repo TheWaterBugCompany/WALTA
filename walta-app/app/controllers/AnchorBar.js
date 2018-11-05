@@ -28,17 +28,12 @@ var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
 function createToolBarButton( image, topic, title, eventData ) {
-	var attrs = {};
 	var btn;
-	if ( title ) {
-		attrs.title = title.toUpperCase();
-	}
 
 	if ( ! image ) {
-		btn = Ti.UI.createButton(attrs);
+		btn = Ti.UI.createLabel({ class: "labelText", text: title.toUpperCase() });
 	} else {
-		btn = Ti.UI.createView(attrs);
-		btn.add( Ti.UI.createImageView({ image: image, width: "30dp", height: "30dp" }))
+		btn = Ti.UI.createImageView({ image: image, width: Ti.UI.SIZE, height: Ti.UI.SIZE });
 	}	
 	
 	if ( title ) {
