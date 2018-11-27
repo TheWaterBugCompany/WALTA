@@ -15,36 +15,14 @@
 			<key>certificate</key>
 			<dict>
 				<key>SHA1</key>
-				<string>F6260998055D24D78EEA7BBBBF1ED3220454289E</string>
+				<string></string>
 				<key>dateExpires</key>
-				<string>4/10/19</string>
+				<string></string>
 				<key>type</key>
-				<string>iOS Distribution</string>
-			</dict>
-			<key>entitlements</key>
-			<dict>
-				<key>application-identifier</key>
-				<string>6RRED3LUUV.net.thewaterbug.waterbug</string>
-				<key>beta-reports-active</key>
-				<true/>
-				<key>com.apple.developer.team-identifier</key>
-				<string>6RRED3LUUV</string>
-				<key>get-task-allow</key>
-				<false/>
-				<key>keychain-access-groups</key>
-				<array>
-					<string>6RRED3LUUV.net.thewaterbug.waterbug</string>
-				</array>
+				<string>Unknown</string>
 			</dict>
 			<key>name</key>
 			<string>Waterbug.app</string>
-			<key>profile</key>
-			<dict>
-				<key>UUID</key>
-				<string>e2935a1f-0c22-4716-8020-b61024ce143f</string>
-				<key>name</key>
-				<string>The Waterbug App</string>
-			</dict>
 			<key>symbols</key>
 			<true/>
 			<key>team</key>
