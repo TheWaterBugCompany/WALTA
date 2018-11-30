@@ -27,7 +27,7 @@ function generateUpload( blob ) {
     if ( OS_ANDROID ) {
         return blob;
     } else {
-        return blob.imageAsCompressed( 1.0 );
+        return blob.imageAsCompressed( 0.9 );
     }
 }
 
