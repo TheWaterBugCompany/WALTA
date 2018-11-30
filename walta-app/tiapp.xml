@@ -54,6 +54,8 @@
         <string>To allow attaching photos to samples and sites.</string>
         <key>NSPhotoLibraryAddUsageDescription</key>
         <string>To allow attaching photos to samples and sites.</string>
+        <key>ITSAppUsesNonExemptEncryption</key>
+        <false/>
       </dict>
     </plist>
   </ios>
