@@ -51,9 +51,7 @@ end
 
 task :unit_test  => [ :start_emulator ] do
   sh("appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android "\
-    "--deploy-type test --keystore ${KEYSTORE} "\
-    "--store-password ${KEYSTORE_PASSWORD} "\
-    "--alias ${KEYSTORE_SUBKEY} ")
+    "--deploy-type development")
 end
 
 task :unit_test_node do
@@ -81,7 +79,7 @@ task :preview_ios => [] do
 end
 
 task :device_preview_android => [] do
-  sh("appc ti build --force --project-dir walta-app --platform android --deploy-type development --liveview --target device")
+  sh("appc ti build --force --project-dir walta-app --platform android --deploy-type development --target device")
 end
 
 task :device_preview_ios => [] do

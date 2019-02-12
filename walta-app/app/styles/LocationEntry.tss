@@ -1,0 +1,31 @@
+
+".window": {
+  width: "96%",
+  height: "96%"
+}
+
+".title": {
+  top: "8dp",
+  left: "24dp",
+  font: {
+    fontFamily: "sans-serif",
+    fontSize: "16dp"
+  }
+}
+
+"#closeButton": {
+  top: 0,
+  height: Ti.UI.FILL,
+  width: "10%",
+  right: 0
+}
+
+"#mapview": {
+    mapType: Alloy.Globals.Map.HYBRID_TYPE,
+    region: {
+        latitude: -27.507653,
+        longitude: 133.611655,
+        latitudeDelta: 33.0,
+        longitudeDelta: 33.0
+    }
+}

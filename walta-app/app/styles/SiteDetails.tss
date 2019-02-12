@@ -21,7 +21,7 @@
     horizontalWrap: false
 }
 "#bottomLeft" : {
-    width: "75%",
+    width: "57%",
     height: Ti.UI.SIZE,
     top: "8dp",
     left: "8dp",
@@ -82,4 +82,22 @@
 }
 
 "#waterbodyTypeSelect": {
+}
+"#locationIndicator": {
+    height: "50%",
+    top: "2dp",
+    right: "2dp",
+    left: "8%"
+}
+
+"#locationStatus": {
+    top: "2dp",
+    left: "8dp",
+    right: "8dp"
+}
+
+"#locationIndicatorIcon": {
+    image: "/images/location-icon.png",
+    height: "32dp",
+    width: "20dp"
 }

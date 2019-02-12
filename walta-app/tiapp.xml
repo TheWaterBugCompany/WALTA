@@ -64,6 +64,7 @@
     <manifest android:versionCode="1009010002" android:versionName="1.9.10.2">
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="27"/>
     <application android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:debuggable="false" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
+      <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCOYMRokSMZ7t5l_8fZ7SPIW-riNpcUl18" />
       <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape">
         <intent-filter>
           <action android:name="android.intent.action.MAIN"/>
@@ -90,6 +91,7 @@
   </android>
   <modules>
     <module platform="android">ti.playservices</module>
+    <module platform="android">ti.map</module>
   </modules>
   <deployment-targets>
     <target device="mobileweb">false</target>

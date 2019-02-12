@@ -1,10 +1,27 @@
 exports.baseController  = "TopLevelWindow";
 var Topics = require("ui/Topics");
+var GeoLocationService = require('logic/GeoLocationService');
 
 var sample = Alloy.Models.sample;
+sample.on("change:lng change:lat", updateLocation );
+
 
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
+
+
+function updateLocation() {
+    var lat = sample.get("lat");
+    var lng = sample.get("lng");
+    if ( lat && lng ) {
+        $.locationStatus.text = -parseFloat(lat).toFixed(4) + "\u00B0S " + parseFloat(lng).toFixed(4) + "\u00B0E";
+        $.locationStatus.color = "#5ea90d";
+    }
+    else {
+        $.locationStatus.text = "Location unobtained";
+        $.locationStatus.color = "#ffc000";
+    }
+}
 
 function loadAttributes() {
     Ti.API.info(`Survey sampleId = ${sample.get("sampleId")}`);
@@ -19,6 +36,7 @@ function loadAttributes() {
     $.waterbodyNameField.value = sample.get("waterbodyName");
     $.nearByFeatureField.value = sample.get("nearbyFeature");
     $.photoSelect.setImage( sample.getSitePhoto() );
+    updateLocation();
     checkValidity();
 }
 
@@ -100,6 +118,11 @@ function nextClick() {
     Topics.fireTopicEvent( Topics.HABITAT );
 }
 
+function openLocationEntry() {
+    $.locationEntry = Alloy.createController("LocationEntry");
+    $.TopLevelWindow.add($.locationEntry.getView());
+}
+
 $.photoSelect.on("photoTaken", function(blob) {
     sample.setSitePhoto(blob);
 });
@@ -108,3 +131,11 @@ $.TopLevelWindow.title = "Site Details";
 $.surveyLevelSelect.init(["Mayfly","Quick","Detailed"], checkValidity);
 $.waterbodyTypeSelect.init(["River","Wetland","Lake/Dam"], checkValidity);
 loadAttributes();
+
+// Start location services only for this screen
+if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
+    GeoLocationService.start();
+    $.TopLevelWindow.addEventListener('close', function cleanUp() {
+	    GeoLocationService.stop();
+    });
+}

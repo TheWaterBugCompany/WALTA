@@ -32,3 +32,4 @@ Alloy.Globals.isHdpi = (Ti.Platform.displayCaps.density == "high");
 //Alloy.Globals.isXdpi = (Ti.Platform.displayCaps.density == "xhdpi");
 //Alloy.Globals.isXXdpi = (Ti.Platform.displayCaps.density == "xxhdpi");
 //Alloy.Globals.isXXXdpi = (Ti.Platform.displayCaps.density == "xxxhdpi");
+Alloy.Globals.Map = require('ti.map');
