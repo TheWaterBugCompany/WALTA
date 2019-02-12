@@ -43,6 +43,7 @@ function gotLocation(e) {
         Ti.API.info(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude}`)
         Alloy.Models.sample.set('lat', e.coords.latitude);
         Alloy.Models.sample.set('lng', e.coords.longitude);
+        stop();
     } else {
         //Ti.API.info(`Ignoring error from location services: ${e.error}`);
     }

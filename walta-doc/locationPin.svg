@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="locationPin.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="270.16079"
+     inkscape:cy="808.72756"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1025"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid28" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="opacity:0.54434252;fill:#eb0000;fill-opacity:1;stroke:#c92900;stroke-width:0.264375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:3.1725, 0.264375;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 76.729167,39.03125 c -21.166666,0 -31.75,13.229167 -31.75,34.395833 5.291667,29.104167 15.875,14.552084 31.75,78.052087 15.875,-63.500003 26.458333,-48.94792 31.750003,-76.72917 0,-22.489583 -15.875,-35.71875 -31.750003,-35.71875 z m -0.767911,17.697112 c 6.799041,-1.17e-4 12.310824,5.9346 12.310875,13.255521 -5e-5,7.320921 -5.511834,13.255639 -12.310875,13.255522 -6.799042,1.18e-4 -12.310827,-5.9346 -12.310877,-13.255522 5.1e-5,-7.320921 5.511835,-13.255639 12.310877,-13.255521 z"
+       id="path10"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="scccsccccc"
+       inkscape:export-filename="/home/msharman/Projects/walta/walta-app/app/assets/images/location-icon.png"
+       inkscape:export-xdpi="20.056381"
+       inkscape:export-ydpi="20.056381" />
+  </g>
+</svg>

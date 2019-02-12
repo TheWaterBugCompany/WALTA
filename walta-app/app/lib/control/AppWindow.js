@@ -82,7 +82,7 @@ function createAppWindow( keyName, keyPath ) {
 
 			siteDetailsWindow: function(args) {
 				function startSurvey() {
-					GeoLocationService.start();
+					
 					Alloy.createController("SiteDetails").open();
 				}
 

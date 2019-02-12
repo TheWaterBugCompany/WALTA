@@ -27,6 +27,10 @@
 					</View>
 				</View>
 				<View id="bottomRight">
+					<View id="locationIndicator" class="shrinkWrap" layout="horizontal" onClick="openLocationEntry">
+						<ImageView id="locationIndicatorIcon" />
+						<Label id="locationStatus" class="labelText" text="Location not obtained"/>
+					</View>
 					<Label id="nextButton" class="actionButton" text="Next" onClick="nextClick"/>
 				</View>
 			</View>

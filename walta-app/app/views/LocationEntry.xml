@@ -1,0 +1,15 @@
+<Alloy>
+	<View class="overlay">
+			<View class="window" layout="vertical">
+				<View class="titlebar">
+					<Label class="title">Use swipe/zoom, then tap to manually select location:</Label>
+					<View id="closeButton" onClick="closeEvent">
+							<ImageView class="close_button_image"></ImageView>
+					</View>
+				</View>
+				<View id="content" layout="vertical">
+					<Module module="ti.map" id="mapview"></Module>
+				</View>
+			</View>
+	</View>
+</Alloy>
