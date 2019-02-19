@@ -16,3 +16,10 @@ function openErrorsClick(e) {
         dialog.show();
     }
 }
+function openSample(e) {
+    var sample = $.samples.at(e.index);
+    var sampleId = sample.get("sampleId");
+    Alloy.Models.instance("sample").loadById(sampleId);
+	Alloy.Collections.instance("taxa").load(sampleId);
+    Alloy.createController("SiteDetails").open();
+}

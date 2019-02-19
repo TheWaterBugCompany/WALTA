@@ -66,6 +66,10 @@ exports.definition = {
 				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
 			},
 
+			loadById(sampleId) {
+				this.fetch({ query: `SELECT * FROM sample WHERE sampleId = ${sampleId}` });
+			},
+
 			loadTaxa() {
 				var taxa = Alloy.createCollection("taxa");
 				taxa.load( this.get("sampleId") );
