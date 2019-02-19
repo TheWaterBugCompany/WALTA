@@ -24,7 +24,7 @@ function updateLocation() {
 }
 
 function loadAttributes() {
-    Ti.API.info(`Survey sampleId = ${sample.get("sampleId")}`);
+    Ti.API.info(JSON.stringify(sample));
     var surveyType = sample.get("surveyType"),
         waterbodyType = sample.get("waterbodyType");
     if ( surveyType !== undefined ) {
