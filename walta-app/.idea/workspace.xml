@@ -1,7 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f642ac59-5123-4dbb-a877-890da385305b" name="Default" comment="" />
+    <list default="true" id="f642ac59-5123-4dbb-a877-890da385305b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../.gitmodules" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../Gemfile" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../Rakefile" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Headers" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Resources" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/0.21.6" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/CalabashServer.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPCORSResponse.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPHTTPAsyncFileResponse.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPHTTPDataResponse.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPHTTPDynamicFileResponse.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPHTTPFileResponse.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPHTTPResponse.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPRoute.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPRouter.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPVersionRoute.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPWebQuery.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPWebViewProtocol.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/LPWebViewUtils.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Headers/UIWebView+LPWebView.h" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/Resources/version" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/A/calabash" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/Versions/Current" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../calabash.framework/calabash" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../features/edit_samples.feature" afterPath="$PROJECT_DIR$/../features/edit_samples.feature" />
+      <change beforePath="$PROJECT_DIR$/../features/step_definitions/identify_taxa_steps.rb" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../features/step_definitions/registration.rb" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../features/step_definitions/submit_sample_steps.rb" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../mirage.log" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../networkdump.js" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../new bug.txt" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../output" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../package-lock.json" afterPath="$PROJECT_DIR$/../package-lock.json" />
+      <change beforePath="$PROJECT_DIR$/../package.json" afterPath="$PROJECT_DIR$/../package.json" />
+      <change beforePath="$PROJECT_DIR$/../release_android_app.sh" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../screenshot_0.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../screenshot_1.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../screenshot_2.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../screenshot_3.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../test_cerdi.sh" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/plugins/ti.alloy/hooks/alloy.js" afterPath="$PROJECT_DIR$/plugins/ti.alloy/hooks/alloy.js" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,10 +60,11 @@
       <projects_view />
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="y" value="25" />
-    <option name="width" value="1920" />
-    <option name="height" value="1055" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="1971" />
+    <option name="y" value="332" />
+    <option name="width" value="1717" />
+    <option name="height" value="941" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -139,7 +183,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="25" width="1920" height="1055" extended-state="7" />
+    <frame x="1920" y="-2" width="1920" height="1082" extended-state="6" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -149,9 +193,10 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2497332" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -159,14 +204,13 @@
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
