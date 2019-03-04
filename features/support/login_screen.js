@@ -1,6 +1,18 @@
-const Screen = require('./screenobject');
+'use strict';
 
-class LoginScreen extends Screen {
+const BaseScreen = require('./base_screen.js');
+
+class LoginScreen extends BaseScreen {
+    constructor( world ) {
+        super( world );
+    }
+    async login( email, password ) {
+        await this.enter('login_email_textfield', email );
+        await this.enter('login_password_textfield', password );
+        return this.click('login_login_button');
+    }
+} 
+module.exports = LoginScreen
 /*     def trait
       "* marked:'Log in with your existing account:'"
     end
@@ -23,4 +35,3 @@ class LoginScreen extends Screen {
     def password_field
       field("Password.")
     end */
-}

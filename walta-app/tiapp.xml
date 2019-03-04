@@ -74,8 +74,8 @@
       <activity android:name="org.appcelerator.titanium.TiActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape"/>
       <activity android:name="org.appcelerator.titanium.TiTranslucentActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:theme="@style/Theme.Titanium.Translucent" android:screenOrientation="sensorLandscape"/>
       <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:configChanges="screenSize|density" android:screenOrientation="sensorLandscape"/>
-      <activity android:name="ti.modules.titanium.media.TiCameraActivity" android:configChanges="keyboardHidden|orientation|screenSize|density" android:theme="@style/Theme.AppCompat.Fullscreen"/>
-      <activity android:name="ti.modules.titanium.media.TiVideoActivity" android:configChanges="keyboardHidden|orientation|screenSize|density" android:theme="@style/Theme.AppCompat.Fullscreen" />
+      <activity android:name="ti.modules.titanium.media.TiCameraActivity" android:configChanges="keyboardHidden|orientation|screenSize|density" android:theme="@style/Theme.AppCompat.Translucent.NoTitleBar.Fullscreen" android:screenOrientation="sensorLandscape"/>
+      <activity android:name="ti.modules.titanium.media.TiVideoActivity" android:configChanges="keyboardHidden|orientation|screenSize|density" android:theme="@style/Theme.AppCompat.Fullscreen"  android:screenOrientation="sensorLandscape"/>
       <provider android:name="org.appcelerator.titanium.io.TiFileProvider" android:authorities="net.thewaterbug.waterbug.tifileprovider" android:exported="false" android:grantUriPermissions="true" />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>

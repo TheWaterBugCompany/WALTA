@@ -1,3 +1,4 @@
+'use strict';
 const { Given, When, Then } = require('cucumber');
 Given('one or more samples have been stored but not uploaded', function() {
   /*  MockServer.create_sample_upload()

@@ -1,7 +1,9 @@
+'use strict';
 const { Given, When, Then } = require('cucumber');
 
 Given('I have already completed a sample', function () {
-    $("Log In").click();
+    return this.menu.login( "test", "password" )
+
 });
 
 Then('I can add or remove new species', function () {

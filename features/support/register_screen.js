@@ -1,6 +1,5 @@
-const Screen = require('./screenobject');
-
-class RegisterScreen extends Screen {
+'use strict';
+/*class RegisterScreen extends Screen {
 /*    def trait
       "* marked:'Register'"
     end
@@ -39,4 +38,3 @@ class RegisterScreen extends Screen {
     def passwordConfirm_field
       field("Password Confirmation.")
     end */
-}

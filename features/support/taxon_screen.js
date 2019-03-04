@@ -1,6 +1,5 @@
-const Screen = require('./screenobject');
-
-class TaxonScreen extends Screen {
+'use strict';
+/*class TaxonScreen extends Screen {
 /*     def trait
       "* marked:'ALT Key'"
     end
@@ -14,4 +13,3 @@ class TaxonScreen extends Screen {
       touch(add_to_sample_button)
       return page(EditTaxonScreen).await
     end   */
-}

@@ -1,6 +1,6 @@
-const Screen = require('./screenobject');
+'use strict';
 
-class MethodScreen extends Screen {
+/*class MethodScreen extends Screen {
 /*     def trait
       "* marked:'Select identification method:'"
     end
@@ -19,4 +19,3 @@ class MethodScreen extends Screen {
         select("Key")
         return page(QuestionScreen).await
     end */
-}

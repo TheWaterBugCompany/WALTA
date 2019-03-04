@@ -1,5 +1,5 @@
-
-class RegistrationDriver {
+'use strict';
+/*class RegistrationDriver {
     /*     extend RSpec::Matchers
 
     def self.page(clz, *args)
@@ -15,4 +15,3 @@ class RegistrationDriver {
         expect( serverReq["password"] ).to eq(password)
         current_page
     end */
-}

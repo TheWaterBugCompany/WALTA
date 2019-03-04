@@ -3,7 +3,6 @@ Feature: Upload Samples
 
 I want submit this sample to the database when internet is available.
 
-@only
 Scenario: Upload a sample when server is reachable
   Given I am logged in as "text@example.com.au"
     And one or more samples have been stored but not uploaded

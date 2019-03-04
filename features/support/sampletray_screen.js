@@ -1,4 +1,5 @@
-const Screen = require('./screenobject');
+'use strict';
+/*
 
 class SampleTrayScreen extends Screen {
 /*     def trait
@@ -22,4 +23,3 @@ class SampleTrayScreen extends Screen {
     def abundance_label
         field( "Abundance.")
     end */
-}
