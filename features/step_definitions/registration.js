@@ -1,3 +1,4 @@
+'use strict';
 const { Given, When, Then } = require('cucumber');
 Given('I am not logged in', function() {
 /*     @current_page = page(MenuScreen).await

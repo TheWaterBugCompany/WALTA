@@ -2,43 +2,43 @@
 	<View id="content" class="container">
 			<View id="bigOptions">
 				<View id="logInOrRegister" onClick="logInClick">
-					<Label id="logInLabel" class="smallMenuText" text="Log In" />
+					<Label id="logInLabel" class="smallMenuText" text="Log In"  accessibilityLabel="menu_login_button"  />
 				</View>
 				<View>
 					<View  id="mayfly" onClick="mayflyClick">
 						<View id="mayflyIconWrapper">
 							<ImageView id="mayflyIcon" />
 						</View>
-						<Label id="mayflyLabel" class="bigMenuText" text="Mayfly\nMuster" />
+						<Label id="mayflyLabel" class="bigMenuText" text="Mayfly\nMuster"  accessibilityLabel="menu_mayfly_muster_button"/>
 					</View>
 				</View>
 				<View id="detailed" onClick="detailedClick">
 					<View id="detailedIconWrapper">
 						<ImageView id="detailedIcon" />
 					</View>
-					<Label id="detailedLabel" class="bigMenuText" text="Waterbug\nSurvey" />
+					<Label id="detailedLabel" class="bigMenuText" text="Waterbug\nSurvey"  accessibilityLabel="menu_waterbug_survey_button"/>
 				</View>
 			</View>
 			<View id="smallOptions" layout="horizontal">
 				<View id="help" class="smallButton" onClick="helpClick">
 					<ImageView id="helpIcon" class="smallButtonIcon" />
-					<Label id="helpLabel" class="smallMenuText" text="Help and Info" />	
+					<Label id="helpLabel" class="smallMenuText" text="Help and Info" accessibilityLabel="menu_help_and_info_button" />	
 				</View>
 				<View id="identify" class="smallButton" onClick="identifyClick">
 					<ImageView id="identifyIcon" class="smallButtonIcon"  />
-					<Label id="identifyLabel" class="smallMenuText" text="Identify" />
+					<Label id="identifyLabel" class="smallMenuText" text="Identify" accessibilityLabel="menu_identitify_button" />
 				</View>
 				<View id="history" class="smallButton" onClick="historyClick">
 					<ImageView id="historyIcon" class="smallButtonIcon"  />
-					<Label id="historyLabel" class="smallMenuText" text="Surveys" />
+					<Label id="historyLabel" class="smallMenuText" text="Surveys"  accessibilityLabel="menu_surveys_button" />
 				</View>
 				<View id="gallery" class="smallButton" onClick="galleryClick">
 					<ImageView id="galleryIcon" class="smallButtonIcon"  />
-					<Label id="galleryLabel" class="smallMenuText" text="Photo Gallery" />
+					<Label id="galleryLabel" class="smallMenuText" text="Photo Gallery" accessibilityLabel="menu_photo_gallery_button" />
 				</View>
 				<View id="about" class="smallButton" onClick="aboutClick">
 					<ImageView id="aboutIcon" class="smallButtonIcon"  />
-					<Label id="aboutLabel" class="smallMenuText" text="About" />
+					<Label id="aboutLabel" class="smallMenuText" text="About"  accessibilityLabel="menu_about_button" />
 				</View>
 			</View>
 	</View>

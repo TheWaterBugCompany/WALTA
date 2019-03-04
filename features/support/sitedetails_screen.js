@@ -1,6 +1,6 @@
-const Screen = require('./screenobject');
+'use strict';
 
-class SiteDetailsScreen extends Screen {
+/*class SiteDetailsScreen extends Screen {
 /*     def trait
       "* marked:'Site Details'"
     end
@@ -34,4 +34,3 @@ class SiteDetailsScreen extends Screen {
     def next_button
       field("Next")
     end */
-}

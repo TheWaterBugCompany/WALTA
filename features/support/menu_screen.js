@@ -1,7 +1,17 @@
-const Screen = require('./screenobject');
-
-class MenuScreen extends Screen {
-/*     def trait
+'use strict';
+const BaseScreen = require('./base_screen.js');
+class MenuScreen extends BaseScreen {
+    constructor( world ) {
+        super( world );
+    }
+     async login( email, password ) {
+        await this.click('menu_login_button');
+        return this.world.login.login( email, password );
+    }
+} 
+module.exports = MenuScreen
+/*class MenuScreen extends Screen {
+     def trait
       "* marked:'Waterbug\nSurvey'"
     end
 
@@ -24,4 +34,3 @@ class MenuScreen extends Screen {
       select("You are Logged in")
       wait_for_text("Log In")
     end */
-}

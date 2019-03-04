@@ -33,7 +33,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -41,17 +41,14 @@ exports.config = {
     //
     capabilities: [{
         // The defaults you need to have in your config
-        automationName: 'UiAutomator2',
+        automationName: "Espresso",
         platformName: "Android",
-        platformVersion: "7.0",
+        avd: 'HDPI',
         deviceName: "Android Emulator",
-        orientation: 'LANDSCAPE',
         app: join(process.cwd(), './walta-app/build/android/bin/Waterbug.apk'),
-        // Read the reset strategies very well, they differ per platform, see
-        // http://appium.io/docs/en/writing-running-appium/other/reset-strategies/
-        noReset: true,
-        newCommandTimeout: 240,
-        adbExecTime: 400000
+        /*appPackage: 'net.thewaterbug.waterbug',
+        appActivity: '.WaterbugActivity',*/
+        appWaitActivity: 'org.appcelerator.titanium.TiActivity'
     }],
     //
     // ===================
@@ -65,7 +62,7 @@ exports.config = {
     sync: true,
     //
     // Level of logging verbosity: silent | verbose | command | data | result | error
-    logLevel: 'verbose',
+    logLevel: 'error',
     //
     // Enables colors for log output.
     coloredLogs: true,
@@ -75,7 +72,7 @@ exports.config = {
     //
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
-    bail: 0,
+    bail: 1,
     //
     // Saves a screenshot to a given path if a command fails.
     screenshotPath: './errorShots/',
@@ -94,7 +91,7 @@ exports.config = {
     connectionRetryTimeout: 90000,
     //
     // Default request retries count
-    connectionRetryCount: 3,
+    connectionRetryCount: 0,
     //
     // Initialize the browser instance with a WebdriverIO plugin. The object should have the
     // plugin name as key and the desired plugin options as properties. Make sure you have
@@ -130,21 +127,21 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: http://webdriver.io/guide/reporters/dot.html
-    // reporters: ['dot'],//
+    reporters: ['spec' ],
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
-        require: ['./features/step-definitions'],        // <string[]> (file/dir) require files before executing features
+        require: ['./features/step_definitions/**/*.js'],        // <string[]> (file/dir) require files before executing features
         backtrace: false,   // <boolean> show full backtrace for errors
         compiler: [],       // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
         dryRun: false,      // <boolean> invoke formatters without executing steps
-        failFast: false,    // <boolean> abort the run on first failure
+        failFast: true,    // <boolean> abort the run on first failure
         format: ['pretty'], // <string[]> (type[:path]) specify the output format, optionally supply PATH to redirect formatter output (repeatable)
         colors: true,       // <boolean> disable colors in formatter output
         snippets: true,     // <boolean> hide step definition snippets for pending steps
         source: true,       // <boolean> hide source uris
         profile: [],        // <string[]> (name) specify the profile to use
         strict: false,      // <boolean> fail if there are any undefined or pending steps
-        tags: [],           // <string[]> (expression) only execute the features or scenarios with tags matching the expression
+        tags: ['@only'],           // <string[]> (expression) only execute the features or scenarios with tags matching the expression
         timeout: 20000,     // <number> timeout for step definitions
         ignoreUndefinedDefinitions: false, // <boolean> Enable this config to treat undefined definitions as warnings.
     },

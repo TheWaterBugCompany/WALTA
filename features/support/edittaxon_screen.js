@@ -1,7 +1,8 @@
-const Screen = require('./screenobject');
+'use strict';
 
-class EditTaxonScreen extends Screen {
-/*     def trait
+
+/*class EditTaxonScreen extends Screen {
+     def trait
       "* marked:'How many did you see?'"
     end
 
@@ -37,4 +38,3 @@ class EditTaxonScreen extends Screen {
       wait_for_element_does_not_exist(trait)
       return page(SampleTrayScreen).await
     end  */
-}

@@ -1,6 +1,5 @@
-const Screen = require('./screenobject');
-
-class HabitatScreen extends Screen {
+'use strict';
+/*class HabitatScreen extends Screen {
     /* def trait
       "* marked:'Habitat'"
     end
@@ -45,4 +44,3 @@ class HabitatScreen extends Screen {
       field("Open Water.")
     end
    */
-}

@@ -5,11 +5,10 @@
 				<Label class="headingText" text="Log in with your existing account:"/>
 				<Label id="errorMessage" class="error" text="Error message"/>
 				<Label id="emailLabel" class="labelText" text="Email:"/>
-				<TextField id="emailTextField" class="textField" accessibilityLabel="Email"  onChange="emailChanged" />
+				<TextField id="emailTextField" class="textField" accessibilityLabel="login_email_textfield"  onChange="emailChanged" />
 				<Label id="passwordLabel" class="labelText" text="Password:"/>
-				<TextField id="passwordTextField" class="textField password" accessibilityLabel="Password" onChange="passwordChanged"/>
-				<Button id="logInButton" class="actionButton" title="Log In" onClick="loginClick" />
-				
+				<TextField id="passwordTextField" class="textField password" accessibilityLabel="login_password_textfield"  onChange="passwordChanged"/>
+				<Button id="logInButton" class="actionButton" passwordMask=true title="Log In" onClick="loginClick" accessibilityLabel="login_login_button"/>
 			</View>
 			<View id="rightPanel" class="panel" layout="vertical">
 				<!--<Label class="headingText" text="via social media:"/>

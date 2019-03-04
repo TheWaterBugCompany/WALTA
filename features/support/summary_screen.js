@@ -1,6 +1,5 @@
-const Screen = require('./screenobject');
-
-class SummaryScreen extends Screen {
+'use strict';
+/*class SummaryScreen extends Screen {
 /*     def trait
       "* marked:'Summary'"
     end
@@ -14,4 +13,3 @@ class SummaryScreen extends Screen {
       select("Register")
       page(LogInScreen).await
     end */
-}

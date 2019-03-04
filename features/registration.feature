@@ -36,7 +36,6 @@ Scenario: Register with existing email address
    When I register as "testuser@example.com"
    Then I get an error message
    
-@only
 Scenario: Log in with bad credentials
  Given The "testuser@example.com" account exists with password "t3stPassw0rd"
      And I am not logged in

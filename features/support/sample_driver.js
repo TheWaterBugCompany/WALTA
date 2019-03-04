@@ -1,5 +1,6 @@
-class SampleDriver {
-/* 
+'use strict';
+/*class SampleDriver {
+ 
     def self.page(clz, *args)
         clz.new(self, *args)
     end
@@ -27,4 +28,3 @@ class SampleDriver {
     end
 
  */
-}

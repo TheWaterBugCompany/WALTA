@@ -8,12 +8,17 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
       exec: {
-          //start_appium: `appium`,
-          build: `appc ti build --build-only --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android --deploy-type development`,
-          start_emulator: `emulator -avd ${AVD_NAME} && adb -avd ${AVD_NAME} -e shell rm -rf /mnt/sdcard/* &`,
+          clean: {
+            command: `appc ti clean --project-dir walta-app`, stdout: 'inherit', stderr: 'inherit'
+          },
+          build: {
+            command: `appc ti build --build-only --project-dir walta-app --target emulator --platform android --deploy-type development`, stdout: 'inherit', stderr: 'inherit'
+          },
           uninstall_app: `adb uninstall ${APP_ID}`,
           // test: "calabash-android run walta-app/build/android/bin/Waterbug.apk features/registration.feature --tags @only"
-          acceptance_test: `./node_modules/.bin/wdio --name "Edit sample"`,
+          acceptance_test: {
+            command: `./node_modules/.bin/cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+          },
           // test_console: "calabash-android console walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature"
           unit_test: `appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android --deploy-type development`,
           unit_test_node: `NODE_PATH="./walta-app/app:./walta-app/app/lib" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js`,
@@ -30,17 +35,27 @@ module.exports = function(grunt) {
           device_preview_ios: `appc ti build --project-dir walta-app --platform ios --deploy-type development --target device`,
           release_ios: `appc ti build --project-dir walta-app --build-only --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release`,
           release_android: `appc ti build --project-dir walta-app --build-only --platform android  --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release`
+        },
+        newer: {
+          titanium_build: {
+            src: [  './walta-app/app/**/*.js', 
+                      './walta-app/app/**/*.xml', 
+                      './walta-app/app/**/*.css' ],
+            dest: './walta-app/build/android/bin/Waterbug.apk',
+            options: { tasks: [ 'exec:clean', 'exec:build' ] }  
+          }
         }
     });
 
     
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks("grunt-newer-explicit");
   
     // Default task(s).
     grunt.registerTask('default', ['build'] );
     grunt.registerTask('build', ['exec:build'] );
-    grunt.registerTask('acceptance_test', [ 'exec:start_emulator', 'exec:acceptance_test']);
+    grunt.registerTask('acceptance_test', [ 'newer:titanium_build', 'exec:acceptance_test']);
     grunt.registerTask('unit_test', ['exec:unit_test'] );
     grunt.registerTask('unit_test_node', ['exec:unit_test_node'] );
     grunt.registerTask('clean', ['exec:clean'] );

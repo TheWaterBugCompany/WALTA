@@ -1,7 +1,6 @@
-const Screen = require('./screenobject');
-
-class QuestionScreen extends Screen {
-/*     def trait
+'use strict';
+/*class QuestionScreen extends Screen {
+     def trait
       "* marked:'Choose the best match'"
     end
 
@@ -13,4 +12,3 @@ class QuestionScreen extends Screen {
       expect( query("ti.modules.titanium.ui.widget.TiUILabel$1 marked:'#{top}'") ).not_to be_empty
       expect( query("ti.modules.titanium.ui.widget.TiUILabel$1 marked:'#{bottom}'") ).not_to be_empty
     end */
-}
