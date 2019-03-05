@@ -1,4 +1,23 @@
 'use strict';
+const { After, Before } = require('cucumber');
+const mockServer = require('node-mock-server');
+const serverConfig = require('../../mock-server/config');
+
+var server = null;
+
+Before({tags: "@mockserver"}, function() {
+    if ( !server ) {
+        server = mockServer(serverConfig);
+    }
+});
+
+
+After({tags: "@mockserver"}, function() {
+    if ( server ) {
+        server.server.close();
+    }
+});
+
 /* require 'calabash-android/abase'
 class MockServer
 

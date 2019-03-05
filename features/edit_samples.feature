@@ -2,7 +2,6 @@ Feature: Edit samples
 
 I want to be able to edit samples I have already completed.
 
-@only
 Scenario: Edit sample
    Given I have already completed a sample
     When I activate the sample edit mode

@@ -1,5 +1,5 @@
 'use strict';
-const BaseScreen = require('./base_screen.js');
+const BaseScreen = require('./base-screen');
 class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );

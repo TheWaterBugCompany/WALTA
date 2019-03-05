@@ -8,6 +8,9 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
       exec: {
+          mock_server: {
+            command: 'node mock-server', stdout: 'inherit', stderr: 'inherit'
+          },
           clean: {
             command: `appc ti clean --project-dir walta-app`, stdout: 'inherit', stderr: 'inherit'
           },
@@ -66,5 +69,6 @@ module.exports = function(grunt) {
     grunt.registerTask('device_preview_ios', ['exec:device_preview_ios'] );
     grunt.registerTask('release_ios', ['exec:release_ios'] );
     grunt.registerTask('release_android', ['exec:release_android'] );
+    grunt.registerTask('mock_server', [ 'exec:mock_server' ] );
   
   };

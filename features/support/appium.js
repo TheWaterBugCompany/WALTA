@@ -6,8 +6,8 @@ var { After, Before } = require('cucumber');
 const { remote } = require('webdriverio');
 const { join } = require('path');
 
-const LoginScreen = require('./login_screen');
-const MenuScreen = require('./menu_screen');
+const LoginScreen = require('./login-screen');
+const MenuScreen = require('./menu-screen');
 
 
 Before( {timeout: 60*1000}, startAppiumClient );
