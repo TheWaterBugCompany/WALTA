@@ -13,3 +13,5 @@ node_modules
 .irb-history
 .~*
 .calabash_settings
+
+features/support/mock_data/rest/*/*/*/mock/response.txt

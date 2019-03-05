@@ -1,6 +1,6 @@
 'use strict';
 
-const BaseScreen = require('./base_screen.js');
+const BaseScreen = require('./base-screen');
 
 class LoginScreen extends BaseScreen {
     constructor( world ) {
