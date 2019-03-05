@@ -36,4 +36,37 @@ describe.only("SiteDetails controller", function() {
 	it('should display the SiteDetails view', function(done) {
 		controllerOpenTest( ctl, done );
     });
+
+    it('should display "unobtained location" with no lock', function(done) {
+        controllerOpenTest( ctl, function() {
+            expect( ctl.locationStatus.text ).to.equal("Location unobtained");
+            done();
+        } );
+    });
+
+    it('should display location coordinates with a lock', function(done) {
+        sample.clear();
+        sample.set("surveyType", 2);
+        sample.set("lng", "147.671339");
+        sample.set("lat", "-42.890748");
+        controllerOpenTest( ctl, function() {
+            expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
+            done();
+        } );
+    });
+
+    it('should open a map viewer when locatin icon is clicked', function(done) {
+        sample.clear();
+        sample.set("surveyType", 2);
+        sample.set("lng", "147.671339");
+        sample.set("lat", "-42.890748");
+        controllerOpenTest( ctl, function() {
+            expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
+            ctl.locationIndicator.fireEvent("click");
+            setTimeout( function() {
+                expect( ctl.locationEntry.getView().visible ).to.be.true;
+                done();
+            }, 50 );
+        } );
+    });
 });
