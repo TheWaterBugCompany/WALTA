@@ -39,6 +39,8 @@ describe.only("SiteDetails controller", function() {
 	beforeEach( function() {
         sample = Alloy.Models.instance("sample");
         sample.clear();
+        sample.set("lng", "147.671339");
+        sample.set("lat", "-42.890748");
         sample.set("surveyType", 2);
         
 		ctl = Alloy.createController("SiteDetails");
@@ -107,14 +109,15 @@ describe.only("SiteDetails controller", function() {
 
     it('should display "unobtained location" with no lock', function(done) {
         controllerOpenTest( ctl, function() {
+            // unset these here to avoid triggering the geolocation service
+            sample.unset("lng");
+            sample.unset("lat");
             expect( ctl.locationStatus.text ).to.equal("Location unobtained");
             done();
         } );
     });
 
     it('should display location coordinates with a lock', function(done) {
-        sample.set("lng", "147.671339");
-        sample.set("lat", "-42.890748");
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             done();
@@ -122,8 +125,7 @@ describe.only("SiteDetails controller", function() {
     });
 
     it('should update coordinates when location is changed', function(done) {
-        sample.set("lng", "147.671339");
-        sample.set("lat", "-42.890748");
+        
         
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
@@ -147,7 +149,7 @@ describe.only("SiteDetails controller", function() {
         } );
     });
 
-    it('should  have read only fields after 14 days', function(done) {
+    it('should have read only fields after 14 days', function(done) {
         sample.set("dateCompleted", moment().subtract(15, "days") );
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;
