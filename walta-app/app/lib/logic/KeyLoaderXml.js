@@ -142,7 +142,7 @@ function parseQuestion( key, nd, parentLink ) {
 
 	// Create the question node
 	if ( !foundOutcome ) {
-		Ti.API.info("Unable to find outcome for question.text = '" + text + "'");
+		Ti.API.debug("Unable to find outcome for question.text = '" + text + "'");
 	}
 	var qn = Question.createQuestion({
 		text: text,

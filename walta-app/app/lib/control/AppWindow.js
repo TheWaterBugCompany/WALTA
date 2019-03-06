@@ -55,7 +55,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			browseWindow: function(data) {
-				Ti.API.info(`data = ${JSON.stringify(data)}`)
+				Ti.API.debug(`data = ${JSON.stringify(data)}`)
 				var win = TopLevelWindow.makeTopLevelWindow({
 					surveyType: data.surveyType,
 					allowAddToSample: data.allowAddToSample,
@@ -87,7 +87,7 @@ function createAppWindow( keyName, keyPath ) {
 				}
 
 				if ( OS_ANDROID ) {
-					Ti.API.info('Asking for permissions...');
+					Ti.API.debug('Asking for permissions...');
 					Ti.Android.requestPermissions(
 						[ 'android.permission.ACCESS_FINE_LOCATION','android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE' ], 
 						function(e) {
@@ -190,12 +190,12 @@ function createAppWindow( keyName, keyPath ) {
 		var name  = data.name;
 		var surveyType = data.surveyType;
 		var allowAddToSample = data.allowAddToSample;
-		Ti.API.info(`back: ${name} surveyType = ${surveyType} allowAddToSample = ${allowAddToSample} currentDecision = ${privates.key.currentDecision.id}`);
+		Ti.API.debug(`back: ${name} surveyType = ${surveyType} allowAddToSample = ${allowAddToSample} currentDecision = ${privates.key.currentDecision.id}`);
     	if ( name === "home" ) {
     		privates.closeApp();
 		} else if ( name === "decision") {
     		if ( surveyType == Sample.MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
-				Ti.API.info(`isRoot = ${privates.key.isRoot()}`)
+				Ti.API.debug(`isRoot = ${privates.key.isRoot()}`)
 				if ( allowAddToSample ) {
 					privates.sampleTrayWindow({ slide: 'left' });
 				} else {

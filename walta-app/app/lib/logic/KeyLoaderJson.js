@@ -50,7 +50,7 @@ function rehydrateKey( key, node ) {
 function rehydrateSpeedBug( key ) {
 	_(key.speedbugIndex)
 		.mapObject( (sbObj) => {
-			Ti.API.info(`Rehyrdating ${sbObj.name}`);
+			Ti.API.debug(`Rehyrdating ${sbObj.name}`);
 			var sbIndex = SpeedbugIndex.createSpeedbugIndex(sbObj.name,key);
 			sbIndex.setSpeedbugIndex( sbObj.speedbugIndexInternal );
 			key.addSpeedbugIndex( sbIndex );

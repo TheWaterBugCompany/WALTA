@@ -39,10 +39,10 @@ function createSpeedbugIndex( name, key )  {
         var bug = this.reverseLookup( node.id );
 
         if ( bug ) {
-          Ti.API.info(`found: ${bug.imgUrl}`);
+          Ti.API.debug(`found: ${bug.imgUrl}`);
           return bug.imgUrl;
         } else {
-          Ti.API.info(`can't find silhouette for: ${node.id}`);
+          Ti.API.debug(`can't find silhouette for: ${node.id}`);
           return;
         }
       }

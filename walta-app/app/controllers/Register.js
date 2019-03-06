@@ -101,7 +101,7 @@ function submitClick() {
       name: $.nameTextField.value,
       password: $.passwordTextField.value
   }).then( (response ) => {
-    Ti.API.info(`Registered user ${$.emailTextField.value}`);
+    Ti.API.debug(`Registered user ${$.emailTextField.value}`);
     Alloy.Globals.CerdiApi.storeUserToken( response );
     Topics.fireTopicEvent( Topics.HOME, null );
   })

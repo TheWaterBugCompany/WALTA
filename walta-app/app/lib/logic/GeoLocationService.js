@@ -28,7 +28,7 @@ function init() {
 }
 
 function cleanup() {
-    Ti.API.info("Stopping geolocation service...");
+    Ti.API.debug("Stopping geolocation service...");
     activityDestroyed();
     if (Titanium.Platform.name == 'android')
     {
@@ -40,12 +40,12 @@ function cleanup() {
 
 function gotLocation(e) {
     if ( e.success && e.coords ) {
-        Ti.API.info(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude}`)
+        Ti.API.debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude}`)
         Alloy.Models.sample.set('lat', e.coords.latitude);
         Alloy.Models.sample.set('lng', e.coords.longitude);
         stop();
     } else {
-        //Ti.API.info(`Ignoring error from location services: ${e.error}`);
+        //Ti.API.debug(`Ignoring error from location services: ${e.error}`);
     }
 }
 
@@ -61,19 +61,19 @@ function stopListening( state = "stopped" ) {
 
 function start() {
     if ( Alloy.Globals.GeoLocationState === "stopped" ) {
-        Ti.API.info("Starting geolocation service...");
+        Ti.API.debug("Starting geolocation service...");
         Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_HIGH;
         Ti.Geolocation.distanceFilter = 10;
         if (Ti.Geolocation.hasLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE)) {
-            Ti.API.info("Got permissions");
+            Ti.API.debug("Got permissions");
             startListening();
         } else {
             Ti.Geolocation.requestLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE, (e) => {
                 if ( e.success ) {
-                    Ti.API.info("Got permissions");
+                    Ti.API.debug("Got permissions");
                     startListening();
                 } else {
-                    Ti.API.info("Unable to get geolcation permissions");
+                    Ti.API.debug("Unable to get geolcation permissions");
                 }
             });
         };
@@ -82,7 +82,7 @@ function start() {
 
 function stop() {
     if ( Alloy.Globals.GeoLocationState !== "stopped" ) {
-        Ti.API.info("Stopping geolocation service...");
+        Ti.API.debug("Stopping geolocation service...");
         stopListening();
     }
 }

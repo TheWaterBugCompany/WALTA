@@ -46,7 +46,7 @@ describe("Sample model", function() {
       } else if ( id == "22" ) {
         obj =  { signalScore: 10 };
       }
-      Ti.API.info(`lookup ${id} (${typeof(id)}) ${JSON.stringify(obj)}`);
+      Ti.API.debug(`lookup ${id} (${typeof(id)}) ${JSON.stringify(obj)}`);
       return obj;
     }
   }

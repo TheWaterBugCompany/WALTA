@@ -155,9 +155,9 @@ function checkTestResult( done, f ) {
 
 function controllerOpenTest( ctl, done ) {
 	if ( done ) {
-		ctl.getView().addEventListener('open' , function open() {
-			ctl.getView().removeEventListener('open', open);
-			done();
+		ctl.getView().addEventListener('postlayout' , function open() {
+			ctl.getView().removeEventListener('postlayout', open);
+			setTimeout( done, 5 ); // the window some time to stabilise after rendering
 		} );
 	}
 	ctl.open();

@@ -9,10 +9,10 @@ Topics.subscribe( Topics.LOGGEDIN, startUpload );
 function networkChanged( e ) {
     if ( e.networkType === Ti.Network.NETWORK_NONE ) {
         // don't bother trying to upload (saves battery)
-        Ti.API.info("Lost network connection, sleeping.");
+        Ti.API.debug("Lost network connection, sleeping.");
         clearUploadTimer();
     } else {
-        Ti.API.info("Network connection up.");
+        Ti.API.debug("Network connection up.");
         startUpload();
     }
 }
@@ -28,7 +28,7 @@ function clearUploadTimer() {
 }
 
 function init() {
-    Ti.API.info("Initialising SampleSync...");
+    Ti.API.debug("Initialising SampleSync...");
     startUpload();
 }
 
@@ -54,14 +54,14 @@ function uploadRemainingSamples(samples) {
 }
 
 function uploadSitePhoto(sample) {
-    Ti.API.info("Uploading site photo...");
+    Ti.API.debug("Uploading site photo...");
     var sitePhoto = sample.getSitePhoto();
     var sampleId = sample.get("serverSampleId");
     if ( sitePhoto ) {
         return Alloy.Globals.CerdiApi.submitSitePhoto( sampleId, sitePhoto )
                 .then( () => sample );
     } else {
-        Ti.API.info("No site photo found.");
+        Ti.API.debug("No site photo found.");
         return sample;
     }
 }
@@ -70,18 +70,18 @@ function uploadTaxaPhotos(sample) {
     
     var taxa = sample.getTaxa();
     var sampleId = sample.get("serverSampleId");
-    Ti.API.info(`Uploading ${taxa.length} taxa photos...`);
+    Ti.API.debug(`Uploading ${taxa.length} taxa photos...`);
     return taxa.reduce( (acc, t) => {
             return acc.then( () => {
-                Ti.API.info(`Uploading ${JSON.stringify(t)}`);
+                Ti.API.debug(`Uploading ${JSON.stringify(t)}`);
                 var taxonId = t.getTaxonId();
                 var photo = t.getPhoto();
                 if ( photo ) {
-                    Ti.API.info(`Uploading photo for taxon ${taxonId}`);
+                    Ti.API.debug(`Uploading photo for taxon ${taxonId}`);
                     return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photo )
                                 
                 } else {
-                    Ti.API.info(`No photo for taxon ${taxonId}`);
+                    Ti.API.debug(`No photo for taxon ${taxonId}`);
                 }
             })
         }, Promise.resolve() ).then( () => sample );
@@ -90,7 +90,7 @@ function uploadTaxaPhotos(sample) {
 
 function setServerSampleId( sample ) {
     return (r) => {
-        Ti.API.info(`success, server returned: ${JSON.stringify(r)}`);
+        Ti.API.debug(`success, server returned: ${JSON.stringify(r)}`);
         sample.set("serverSampleId", r.id );
         sample.save();
         return sample;
@@ -107,7 +107,7 @@ function errorHandler( sample ) {
     return (err) => {
         if ( err.message === "The given data was invalid.") {
             var errors = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
-            Ti.API.info(`Data was invalid continuing: ${errors}`);
+            Ti.API.debug(`Data was invalid continuing: ${errors}`);
             sample.set("lastError", errors );
             sample.save();
         } else {
@@ -137,9 +137,9 @@ function uploadNextSample(samples) {
 }
 
 function startUpload() {
-    Ti.API.info("Starting sample syncronisation process...");
+    Ti.API.debug("Starting sample syncronisation process...");
     if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
-        Ti.API.info("No network available, sleeping until network becomes avaiable.");
+        Ti.API.debug("No network available, sleeping until network becomes avaiable.");
         return;
     }
 
@@ -150,15 +150,15 @@ function startUpload() {
             uploadRemainingSamples(samples)
                 .then( () => timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL ) )
                 .catch( (error) => { 
-                    Ti.API.info(`Error trying to upload: ${JSON.stringify(error)}`);
+                    Ti.API.debug(`Error trying to upload: ${JSON.stringify(error)}`);
                     timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
                 });
         } else {
-            Ti.API.info("Not logged in so can not upload!");
+            Ti.API.debug("Not logged in so can not upload!");
             timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
         }
     } else {
-        Ti.API.info("Nothing to do");
+        Ti.API.debug("Nothing to do");
         timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
     }
 }

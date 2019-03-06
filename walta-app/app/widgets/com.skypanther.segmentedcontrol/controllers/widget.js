@@ -259,6 +259,13 @@ exports.enableAllButtons = function () {
 	}
 };
 
+exports.isDisabled= function() {
+	return !enabled || _.every( buttons, function(b) { b.disabled } );
+}
+
+exports.getButtons = function() {
+	return buttons;
+}
 
 function onThreeDPDevice() {
 	// If we are on a 3DP device (6+ or 6s+) we need to slightly adjust the button width.
