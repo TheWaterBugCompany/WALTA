@@ -33,7 +33,17 @@ for (var i = 0; i < types.length; i++) {
 
 
 // set the ti-spec reporter by default
-Ti.API.info("Starting ti-mocha...");
+Ti.API.debug("Starting ti-mocha...");
+
+Ti.App.addEventListener( "uncaughtException", function(e) {
+	try {
+		Ti.API.debug( `uncaughtException ${e.message} url = ${e.sourceURL} line = ${e.line} ` );
+		mocha.throwError( new Error(e.message + ' (' + e.sourceURL + ':' + e.line + ')') );
+	} catch(err) {
+		Ti.API.error( `Error in error handler! ${err}`);
+	}
+});
+
 mocha.setup({
 	ui: 'bdd',
 	reporter: 'ti-spec'

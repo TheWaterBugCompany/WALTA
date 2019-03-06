@@ -1,5 +1,5 @@
-Ti.API.info(`Alloy.CFG.unitTestMode = ${Alloy.CFG.unitTestMode}`);
-Ti.API.info(`Alloy.CFG.stopAfterEachTest = ${Alloy.CFG.stopAfterEachTest}`);
+Ti.API.debug(`Alloy.CFG.unitTestMode = ${Alloy.CFG.unitTestMode}`);
+Ti.API.debug(`Alloy.CFG.stopAfterEachTest = ${Alloy.CFG.stopAfterEachTest}`);
 if ( Alloy.CFG.unitTestMode ) {
   
   require("specs/index");

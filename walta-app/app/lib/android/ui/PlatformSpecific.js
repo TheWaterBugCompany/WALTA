@@ -21,7 +21,7 @@ function appStartUp( privates ) {
 }
 
 function appShutdown( privates ) {
-	Ti.API.info("Application shutdown");
+	Ti.API.debug("Application shutdown");
 	Alloy.Globals.lastWindow.forEach( (w) => w.close() );
 	Ti.Android.currentActivity.finish();
 }
@@ -40,7 +40,7 @@ function transitionWindows( win, effect ) {
 	}
 	win.open( args );
 	if ( Alloy.Globals.lastWindow )
-		Ti.API.info(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>w.title)}`);
+		Ti.API.debug(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>w.title)}`);
 	if ( ! Alloy.Globals.lastWindow ) {
 		Alloy.Globals.lastWindow = [];
 	}

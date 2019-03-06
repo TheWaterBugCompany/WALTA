@@ -13,7 +13,7 @@ function generateThumbnail( blob ) {
     var pxWidth = Ti.UI.convertUnits( `${$.photoSelect.size.width}dp`, Ti.UI.UNIT_PX );
     var pxHeight = Ti.UI.convertUnits( `${$.photoSelect.size.height}dp`, Ti.UI.UNIT_PX );
     var newHeight = pxWidth*(thumbnailImage.height/thumbnailImage.width);
-    Ti.API.info(`${pxWidth} ${pxHeight} ${newHeight}`);
+    Ti.API.debug(`${pxWidth} ${pxHeight} ${newHeight}`);
     thumbnailImage = thumbnailImage.imageAsResized( pxWidth, newHeight );
     var cropY = ((newHeight-pxHeight)/2);
     if ( cropY > 0 )
@@ -23,7 +23,7 @@ function generateThumbnail( blob ) {
 
 function generateUpload( blob ) {
     var uploadImage = blob;
-    Ti.API.info(`image size width = ${uploadImage.width} height = ${uploadImage.height}`);
+    Ti.API.debug(`image size width = ${uploadImage.width} height = ${uploadImage.height}`);
     if ( OS_ANDROID ) {
         return blob;
     } else {

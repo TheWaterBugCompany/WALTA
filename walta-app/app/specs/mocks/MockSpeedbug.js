@@ -38,6 +38,7 @@ var speedBugIndexMock = {
   setKey: function() {
 
   },
+  
   getSpeedbugIndex: function() {
     return this.speedbugIndex;
   },

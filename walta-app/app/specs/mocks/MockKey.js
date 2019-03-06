@@ -4,7 +4,13 @@ var Question = require('logic/Question');
 
 var keyMock = Key.createKey( {
     url: 'https://example.com',
-    name: 'WALTA'
+    name: 'WALTA',
+    setSpeedbugIndex: function (sbIndex) {
+        this.speedbugIndex = sbIndex;
+    },
+    getSpeedbugIndex: function () {
+        return this.sppedbugIndex;
+    }
 });
 
 var taxons = [

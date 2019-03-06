@@ -35,6 +35,10 @@ exports.definition = {
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
 
+			isReadOnly: function() {
+				return moment( this.get("dateCompleted") ).add(14, 'days') < moment();
+			},
+
 			setSitePhoto: function(blob) {
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `sitePhoto_${this.get("sampleId")}.jpg`);
 				if ( sitePhotoPath.write(blob) === false )
@@ -218,12 +222,12 @@ exports.definition = {
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, {
 			createNewSample: function() {
-				Ti.API.info("Creating new sample..");
+				Ti.API.debug("Creating new sample..");
 				Alloy.Models.sample = Alloy.createModel("sample");
 				Alloy.Collections.taxa = Alloy.createCollection("taxa");
 				this.add(Alloy.Models.sample);
 				Alloy.Models.sample.save();
-				Ti.API.info(`sampleId = ${Alloy.Models.sample.get("sampleId")}`);
+				Ti.API.debug(`sampleId = ${Alloy.Models.sample.get("sampleId")}`);
 			},
 
 			startNewSurveyIfComplete: function(type) {

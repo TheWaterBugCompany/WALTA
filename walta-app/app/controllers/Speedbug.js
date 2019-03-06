@@ -26,7 +26,7 @@ var key = $.args.key;
 var surveyType = $.args.surveyType;
 var speedbugName = Sample.getSpeedbugIndexName( surveyType );
 
-Ti.API.info(`Speedbug name = ${speedbugName}`);
+Ti.API.debug(`Speedbug name = ${speedbugName}`);
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Speedbug";
@@ -69,7 +69,7 @@ function _showTileImageData( n ) {
     if ( n >= 1 && n <=  speedbugTileIndex.length ) {
         var tile = speedbugTileIndex[n-1];
         if ( tile.imageView == null ) {
-            //Ti.API.info(`tile ${n} width = ${tile.parent.rect.width} x = ${tile.parent.rect.x}`);
+            //Ti.API.debug(`tile ${n} width = ${tile.parent.rect.width} x = ${tile.parent.rect.x}`);
             tile.imageView = Ti.UI.createImageView({
                         image: tile.url,
                         width: Ti.UI.FILL
@@ -110,11 +110,11 @@ function _drawSpeedBug(sbug) {
             //cnt.add( Ti.UI.createLabel({ width: Ti.UI.FILL, zIndex:"99", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, height: Ti.UI.FILL, font: { fontSize: "50dp" }, color: "red", text: (speedbugTileIndex.length + 1) }));
 
             // Defer loading images until they are on screen
-            //Ti.API.info('speedbug ' + sb.imgUrl );
+            //Ti.API.debug('speedbug ' + sb.imgUrl );
             _pushTile( sb.imgUrl, cnt );
 
             cnt.addEventListener( 'click', function(e) {
-                Ti.API.info(`allowAddToSample = ${$.args.allowAddToSample}`);
+                Ti.API.debug(`allowAddToSample = ${$.args.allowAddToSample}`);
                 Topics.fireTopicEvent( Topics.JUMPTO, { id: sb.refId, allowAddToSample: $.args.allowAddToSample } );
                 e.cancelBubble = true;
             });
@@ -139,7 +139,7 @@ function _drawSpeedBug(sbug) {
             });
 
             notSureBtn.addEventListener( 'click', function(e) {
-                Ti.API.info(`allowAddToSample = ${$.args.allowAddToSample}`);
+                Ti.API.debug(`allowAddToSample = ${$.args.allowAddToSample}`);
                 Topics.fireTopicEvent( Topics.JUMPTO, { id: sg.refId, allowAddToSample: $.args.allowAddToSample } );
                 e.cancelBubble = true;
             });
@@ -161,11 +161,11 @@ function _loadAndReleaseTiles(e) {
     // getContentOffset can be undefined during postLayout
     // scrollView.getSize can be undefined during postLayout also ?
     var scrollx = ( scrollView.contentOffset ? PlatformSpecific.convertSystemToDip( scrollView.contentOffset.x ) : 0 );
-   // Ti.API.info(`contentWidth = ${$.content.contentWidth}, contentWidth - scrollx = ${parseInt($.content.contentWidth)- scrollx}`);
+   // Ti.API.debug(`contentWidth = ${$.content.contentWidth}, contentWidth - scrollx = ${parseInt($.content.contentWidth)- scrollx}`);
     if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > 0) ) {
         var start_n, end_n; 
         var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.size? scrollView.size.width : 0 );
-       // Ti.API.info(`_convertToTileNum( scrollx ) = ${_convertToTileNum( scrollx )} scrollx = ${scrollx} spanTilex = ${spanTileX} tileWidth = ${tileWidth}`);
+       // Ti.API.debug(`_convertToTileNum( scrollx ) = ${_convertToTileNum( scrollx )} scrollx = ${scrollx} spanTilex = ${spanTileX} tileWidth = ${tileWidth}`);
         
         // Release any tiles that are now off the screen
         if ( lastScroll < scrollx ) {

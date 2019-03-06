@@ -131,7 +131,7 @@ if ($.args.taxon.videoUrl) {
 }
 
 // Add the add to sample button
-Ti.API.info(`taxonallowAddToSample = ${$.args.allowAddToSample}`);
+Ti.API.debug(`taxonallowAddToSample = ${$.args.allowAddToSample}`);
 if ( $.args.allowAddToSample !== false ) {
 	$.actionBtns.add(
 		createActionButton("/images/plus-icon.png", "Add To Sample",

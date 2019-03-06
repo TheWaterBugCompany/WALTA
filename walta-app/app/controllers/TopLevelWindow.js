@@ -19,7 +19,7 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 var anchorBar = Alloy.createController("AnchorBar" );
 function openWindow() {
-	Ti.API.info(`Opening window "${getName()}"`);
+	Ti.API.debug(`Opening window "${getName()}"`);
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.TopLevelWindow.add( anchorBar.getView() );
@@ -31,7 +31,7 @@ function openWindow() {
 		}
 		$.TopLevelWindow.addEventListener("postlayout", adjustContentSize );
 		$.TopLevelWindow.addEventListener("close", function cleanUp() {
-			Ti.API.info(`Closing window "${getName()}"`);
+			Ti.API.debug(`Closing window "${getName()}"`);
 			$.TopLevelWindow.removeEventListener('postlayout', adjustContentSize );
 			$.TopLevelWindow.removeEventListener('close', cleanUp );
 		});

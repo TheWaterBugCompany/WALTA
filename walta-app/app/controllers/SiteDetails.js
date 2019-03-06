@@ -24,7 +24,7 @@ function updateLocation() {
 }
 
 function loadAttributes() {
-    Ti.API.info(JSON.stringify(sample));
+    Ti.API.debug(JSON.stringify(sample));
     var surveyType = sample.get("surveyType"),
         waterbodyType = sample.get("waterbodyType");
     if ( surveyType !== undefined ) {
@@ -41,11 +41,14 @@ function loadAttributes() {
 }
 
 function checkValidity() {
+   
     surveyTypeChanged();
     waterbodyTypeChanged();
     waterbodyNameChanged();
     nearbyFeatureChanged();
     validateSubmit();
+    Ti.API.info("Fire updated");
+    $.trigger("updated");
 }
 
 var surveyTypeValid = false;
@@ -73,6 +76,7 @@ function surveyTypeChanged() {
       setTabError($.surveyLevelError);
       surveyTypeValid = false;
     }
+    
 }
 
 function waterbodyTypeChanged() {
