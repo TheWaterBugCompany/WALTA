@@ -22,7 +22,7 @@ var { SURVEY_ORDER, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
 
-describe.only("SiteDetails controller", function() {
+describe("SiteDetails controller", function() {
     var ctl;
     var sample;
 
@@ -125,8 +125,6 @@ describe.only("SiteDetails controller", function() {
     });
 
     it('should update coordinates when location is changed', function(done) {
-        
-        
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             sample.set("lng", "145.671339");
