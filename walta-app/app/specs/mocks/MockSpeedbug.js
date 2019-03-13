@@ -1,66 +1,13 @@
 var speedBugResource = "specs/resources/simpleKey1/media/speedbug/";
-var speedBugIndexMock = {
-  speedbugIndex: {
-    "group1": {
-      refId: "group1",
-      bugs: [
-        {
-          refId: "aeshnidae_telephleb",
-          imgUrl: speedBugResource + "aeshnidae_telephleb_b.png"
-        },
-        {
-          refId: "amphipoda",
-          imgUrl: speedBugResource + "amphipoda_b.png"
-        }
-      ]
-    },
-    "group2": {
-      bugs: [
-        {
-          refId: "anostraca",
-          imgUrl: speedBugResource + "anostraca_b.png"
-        }
-      ]
-    },
-    "group3": {
-      bugs: [
-        {
-          refId: "anisops",
-          imgUrl: speedBugResource + "anisops_b.png"
-        },
-        {
-          refId: "atalophlebia",
-          imgUrl: speedBugResource + "atalophlebia_b.png"
-        }
-      ]
-    }
-  },
-  setKey: function() {
+var SpeedbugIndex = require('logic/SpeedbugIndex');
+var speedBugIndexMock = SpeedbugIndex.createSpeedbugIndex("test", null );
+speedBugIndexMock.addSpeedbugGroup( "group1" );
+speedBugIndexMock.addSpeedbugIndex( speedBugResource + "aeshnidae_telephleb_b.png", "group1", "aeshnidae_telephleb" );
+speedBugIndexMock.addSpeedbugIndex( speedBugResource + "amphipoda_b.png", "group1", "amphipoda" );
+speedBugIndexMock.addSpeedbugGroup( "group2" );
+speedBugIndexMock.addSpeedbugIndex( speedBugResource + "anostraca_b.png", "group2", "anostraca" );
+speedBugIndexMock.addSpeedbugGroup( "group3" );
+speedBugIndexMock.addSpeedbugIndex( speedBugResource + "anisops_b.png", "group3", "anisops" );
+speedBugIndexMock.addSpeedbugIndex( speedBugResource + "atalophlebia_b.png", "group3", "atalophlebia" );
 
-  },
-  
-  getSpeedbugIndex: function() {
-    return this.speedbugIndex;
-  },
-
-  getSpeedbugFromTaxonId: function( id ) {
-    switch(id) {
-      case "1":
-        return speedBugResource + "aeshnidae_telephleb_b.png";
-
-      case "2":
-        return speedBugResource + "amphipoda_b.png";
-
-      case "3":
-        return speedBugResource + "anisops_b.png";
-
-      case "4":
-        return  speedBugResource + "anostraca_b.png";
-
-      case "5":
-        return speedBugResource + "atalophlebia_b.png";
-
-    }
-  }
-}
 exports.speedBugIndexMock = speedBugIndexMock;

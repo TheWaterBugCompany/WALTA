@@ -4,21 +4,15 @@ var Question = require('logic/Question');
 
 var keyMock = Key.createKey( {
     url: 'https://example.com',
-    name: 'WALTA',
-    setSpeedbugIndex: function (sbIndex) {
-        this.speedbugIndex = sbIndex;
-    },
-    getSpeedbugIndex: function () {
-        return this.sppedbugIndex;
-    }
+    name: 'WALTA'
 });
-
+var speedBugResource = "specs/resources/simpleKey1/media/speedbug/";
 var taxons = [
-    Taxon.createTaxon({ taxonId: 1, name: "Aeshnidae Telephleb", commonName: "Aeshnidae Telephleb" }),
-    Taxon.createTaxon({ taxonId: 2, name: "Amphipoda", commonName: "Amphipoda" }),
-    Taxon.createTaxon({ taxonId: 3, name: "Anisops", commonName: "Anisops" }),
-    Taxon.createTaxon({ taxonId: 4, name: "Anostraca", commonName: "Anostraca" }),
-    Taxon.createTaxon({ taxonId: 5, name: "Atalophlebia", commonName: "Atalophlebia" })
+    Taxon.createTaxon({ taxonId: 1, name: "Aeshnidae Telephleb", commonName: "Aeshnidae Telephleb", bluebug: [ speedBugResource + "aeshnidae_telephleb_b.png" ]  }),
+    Taxon.createTaxon({ taxonId: 2, name: "Amphipoda", bluebug: speedBugResource + "amphipoda_b.png" }),
+    Taxon.createTaxon({ taxonId: 3, name: "Anisops", commonName: "Anisops", bluebug: [ speedBugResource + "anisops_b.png" ] }),
+    Taxon.createTaxon({ taxonId: 4, name: "Anostraca", commonName: "Anostraca", bluebug: [ speedBugResource + "anostraca_b.png" ] }),
+    Taxon.createTaxon({ taxonId: 5, name: "Atalophlebia", commonName: "Atalophlebia", bluebug: [ speedBugResource + "atalophlebia_b.png" ] })
    ];
 
 _(taxons).each( function(t) { keyMock.attachTaxon( t ); } );
