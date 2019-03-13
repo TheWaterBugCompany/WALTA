@@ -46,7 +46,7 @@ exports.definition = {
 				if ( bluebug !== undefined ) {
 				  return bluebug[0];
 				} else {
-				  return Alloy.Globals.Key.getSpeedbugIndex().getSpeedbugFromTaxonId( this.getTaxonId());
+				  Ti.API.info(`Warning: missing bluebug on ${this.getTaxonId()}`);
 				}
 			},
 

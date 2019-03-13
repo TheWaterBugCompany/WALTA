@@ -22,7 +22,13 @@ var { createModel } = require("specs/lib/mocx");
 
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
-keyMock.setSpeedbugIndex( speedBugIndexMock );
+keyMock.addSpeedbugIndex( speedBugIndexMock );
+
+
+// FIXME: Alloy.Globals.Key is a global so that it can be accessed in the model itself
+// is there a way of passing services to Alloy models without using globals?
+Alloy.Globals.Key = keyMock; 
+//Ti.API.info(`${JSON.stringify(Alloy.Globals.Key.speedbugIndex["test"].name)}`);
 
 describe("EditTaxon controller", function() { 
     var ctl,win;
@@ -35,7 +41,7 @@ describe("EditTaxon controller", function() {
         win = wrapViewInWindow( ctl.getView() );
     }
     
-	it('should display the taxon edit view', function(done) {
+	it.only('should display the taxon edit view', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
             checkTestResult( (e) => closeWindow( win, () => done( e ) ), 
