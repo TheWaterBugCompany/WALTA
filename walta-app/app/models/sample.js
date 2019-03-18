@@ -36,7 +36,14 @@ exports.definition = {
 		_.extend(Model.prototype, {
 
 			isReadOnly: function() {
-				return moment( this.get("dateCompleted") ).add(14, 'days') < moment();
+				var dateCompleted = this.get("dateCompleted");
+				if ( ! dateCompleted )
+					return;
+
+				var expireAt = moment( dateCompleted ).add(14, 'days');
+				var now = moment();
+				var readOnly = expireAt < now;
+				return readOnly;
 			},
 
 			setSitePhoto: function(blob) {
@@ -61,7 +68,7 @@ exports.definition = {
 					t.set("sampleId", this.get("sampleId"));
 					t.save();
 				});
-				this.set("dateCompleted", moment().format() );
+				this.set("dateCompleted", moment().valueOf() );
 				this.save();
 				GeoLocationService.stop();
 			},

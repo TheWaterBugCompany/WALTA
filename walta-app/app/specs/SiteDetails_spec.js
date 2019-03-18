@@ -46,6 +46,7 @@ describe("SiteDetails controller", function() {
 		ctl = Alloy.createController("SiteDetails");
 	});
 	afterEach( function(done) {
+        sample.off();
         closeWindow( ctl.getView(), done );
     });
     
@@ -148,7 +149,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should have read only fields after 14 days', function(done) {
-        sample.set("dateCompleted", moment().subtract(15, "days") );
+        sample.set("dateCompleted", moment().subtract(16, "days").valueOf() );
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;
             expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.true;
@@ -159,7 +160,15 @@ describe("SiteDetails controller", function() {
     });
 
     it("photo shouldn't be selectable afer 14 days", function(done) {
-        sample.set("dateCompleted", moment().subtract(15, "days") );
+        sample.set("dateCompleted", moment().subtract(16, "days").valueOf() );
+        controllerOpenTest( ctl, function() {
+            expect( ctl.photoSelect.disabled ).to.be.true;
+            done();
+        } );
+    });
+
+    it("location shouldn't be selectable afer 14 days", function(done) {
+        sample.set("dateCompleted", moment().subtract(16, "days").valueOf() );
         controllerOpenTest( ctl, function() {
             expect( ctl.photoSelect.disabled ).to.be.true;
             done();
