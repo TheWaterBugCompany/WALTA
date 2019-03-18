@@ -18,11 +18,12 @@
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, windowOpenTest, wrapViewInWindow, waitForDomEvent } = require("specs/util/TestUtils");
-describe("LocationEntry controller", function() {
+describe.only("LocationEntry controller", function() {
 	var win, scr, view;
   var sample= Alloy.Models.sample;
   beforeEach( function() {
     sample = Alloy.Models.instance("sample");
+    sample.off();
     sample.clear();
     scr = Alloy.createController("LocationEntry");
     view = scr.getView();
@@ -59,6 +60,7 @@ describe("LocationEntry controller", function() {
     // not sure why done() gets call twice and 
     // there isn't anything I can do about it
     var removeDupsDone = _.once( done ); 
+    scr.enable();
     windowOpenTest( win, function(){
       sample.on("change:lng change:lat", function() {
         let lat = parseFloat(sample.get("lat")),
@@ -69,5 +71,17 @@ describe("LocationEntry controller", function() {
       } );
       scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
     } );
-	});
+  });
+  
+  it('should NOT set the location on a click if disabled', function(done) {
+    scr.disable();
+    windowOpenTest( win, function(){
+      sample.on("change:lng change:lat", function() {
+        expect.fail("map click changed point when control disabled!");
+      } ); 
+      scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
+      setTimeout( done, 100 ); // 100 ms is enough to catch event if is going to happen
+    } );
+  });
+
 });

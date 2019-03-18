@@ -27,7 +27,19 @@ function closeEvent() {
 }
 
 $.mapview.addEventListener( "mapclick", function(e) {
-    sample.set({ "lat": e.latitude, "lng": e.longitude });
+    if ( ! $.disabled ) {
+        sample.set({ "lat": e.latitude, "lng": e.longitude });
+    }
     e.cancelBubble = true;
 });
 
+function disable() {
+    $.disabled = true;
+}
+
+function enable() {
+    $.disabled = false;
+}
+
+exports.disable = disable;
+exports.enable = enable;

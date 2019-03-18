@@ -64,30 +64,41 @@ function requestCameraPermissions( success, failure ) {
 }
 
 function takePhoto() {
-    requestCameraPermissions(
-        function success() {
-            Ti.Media.showCamera({
-                autohide: true,
-                success: function (result) {
-                    $.photo.image = generateThumbnail( result.media );
-                    $.trigger("photoTaken", generateUpload(result.media) );
-                },
-                error: function (error) {
-                    alert(`${error.error}`); 
-                },
-                saveToPhotoGallery: false,
-                whichCamera: Titanium.Media.CAMERA_FRONT,
-                mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
-            });
-        },
+    if ( !$.disabled )  {
+        requestCameraPermissions(
+            function success() {
+                Ti.Media.showCamera({
+                    autohide: true,
+                    success: function (result) {
+                        $.photo.image = generateThumbnail( result.media );
+                        $.trigger("photoTaken", generateUpload(result.media) );
+                    },
+                    error: function (error) {
+                        alert(`${error.error}`); 
+                    },
+                    saveToPhotoGallery: false,
+                    whichCamera: Titanium.Media.CAMERA_FRONT,
+                    mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
+                });
+            },
 
-        function failure() {
-            alert("Unable to get permissions for the camera, please allow camera permissions to take photos");
-        }
+            function failure() {
+                alert("Unable to get permissions for the camera, please allow camera permissions to take photos");
+            }
 
-    )
+        )
+    };
     
 } 
 
+function disable() {
+    $.disabled = true;
+}
+
+function enable() {
+    $.disabled = false;
+}
 
 exports.setImage = setImage;
+exports.disable = disable;
+exports.enable = enable;

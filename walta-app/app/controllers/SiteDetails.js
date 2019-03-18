@@ -4,6 +4,7 @@ var GeoLocationService = require('logic/GeoLocationService');
 
 var sample = Alloy.Models.sample;
 sample.on("change:lng change:lat", updateLocation );
+sample.on("change:dateCompleted", loadAttributes );
 
 
 var { applyKeyboardTweaks } = require("ui/Layout");
@@ -24,7 +25,6 @@ function updateLocation() {
 }
 
 function loadAttributes() {
-    Ti.API.debug(JSON.stringify(sample));
     var surveyType = sample.get("surveyType"),
         waterbodyType = sample.get("waterbodyType");
     if ( surveyType !== undefined ) {
@@ -38,16 +38,22 @@ function loadAttributes() {
     $.photoSelect.setImage( sample.getSitePhoto() );
     updateLocation();
     checkValidity();
+
+    if  ( sample.isReadOnly() )  {
+        $.surveyLevelSelect.disable();
+        $.waterbodyTypeSelect.disable();
+        $.waterbodyNameField.setEditable(false);
+        $.nearByFeatureField.setEditable(false);
+        $.photoSelect.disable();
+    } 
 }
 
 function checkValidity() {
-   
     surveyTypeChanged();
     waterbodyTypeChanged();
     waterbodyNameChanged();
     nearbyFeatureChanged();
     validateSubmit();
-    Ti.API.info("Fire updated");
     $.trigger("updated");
 }
 
@@ -124,6 +130,9 @@ function nextClick() {
 
 function openLocationEntry() {
     $.locationEntry = Alloy.createController("LocationEntry");
+    if ( sample.isReadOnly() )
+        $.locationEntry.disable();
+
     $.TopLevelWindow.add($.locationEntry.getView());
 }
 

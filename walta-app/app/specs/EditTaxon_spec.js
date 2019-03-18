@@ -41,7 +41,7 @@ describe("EditTaxon controller", function() {
         win = wrapViewInWindow( ctl.getView() );
     }
     
-	it.only('should display the taxon edit view', function(done) {
+	it('should display the taxon edit view', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
             checkTestResult( (e) => closeWindow( win, () => done( e ) ), 
