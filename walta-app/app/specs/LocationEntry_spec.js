@@ -18,7 +18,7 @@
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton } = require("specs/util/TestUtils");
-describe.only("LocationEntry controller", function() {
+describe("LocationEntry controller", function() {
 	var win, scr, view;
   var sample= Alloy.Models.sample;
   beforeEach( function() {
