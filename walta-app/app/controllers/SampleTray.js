@@ -9,7 +9,8 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
 $.name = "sampletray";
 var anchorBar = $.getAnchorBar();
-anchorBar.addTool( anchorBar.createToolBarButton( null, Topics.COMPLETE, "Next") );
+$.completeBtn = anchorBar.createToolBarButton( null, Topics.COMPLETE, "Next");
+anchorBar.addTool( $.completeBtn );
 
 var endcapHeight = 0;
 var endcapWidth = 0;
