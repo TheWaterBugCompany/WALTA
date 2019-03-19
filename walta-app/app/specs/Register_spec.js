@@ -17,13 +17,13 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var { closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
+var { closeWindow, controllerOpenTest, enterText, clickButton } = require('specs/util/TestUtils');
+var CerdiApi = require("specs/mocks/MockCerdiApi");
 
 function setTextField( field, value ) {
     return () => { 
         return new Promise( function( resolve ) {
-            field.value = value;
-            field.fireEvent("change");
+            enterText( field, value );
             resolve();
         });
     };
@@ -35,20 +35,21 @@ describe('Register controller', function() {
 
     function fillOutValidForm() {
         return Promise.resolve()
-        .then( setTextField( ct.emailTextField, "example@test.com.au" ) )
+        .then( setTextField( ct.emailTextField, "test@example.com" ) )
         .then( setTextField( ct.nameTextField, "Test User") )
         .then( setTextField( ct.passwordTextField, "validPassw0rd!" ) )
         .then( setTextField( ct.passwordConfirmTextField, "validPassw0rd!" ) )
         .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     }
 	before( function(done) {
+        Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
         ct = Alloy.createController("Register");
-        controllerOpenTest( ct, done );
         ct.groupToggle.value = true;
         ct.surveyToggle.value = true;
         ct.dataToggle.value = true;
-        
-	});
+        controllerOpenTest( ct, done );
+    });
+    
 	after( function() {
 		closeWindow( ct.getView() );
 	});
@@ -75,29 +76,29 @@ describe('Register controller', function() {
             .then( setTextField( ct.passwordConfirmTextField, "sM8!l" ) )
             .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
     });
-    it('should disable submit if password has no upper case', function() {
+    it('should enable submit if password has no upper case', function() {
         return fillOutValidForm()
             .then( setTextField( ct.passwordTextField, "freddytext!8" ) )
             .then( setTextField( ct.passwordConfirmTextField, "freddytext!8" ) )
-            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     });
-    it('should disable submit if password has no lower case', function() {
+    it('should enable submit if password has no lower case', function() {
         return fillOutValidForm()
             .then( setTextField( ct.passwordTextField, "FREDDYTEXT!8" ) )
             .then( setTextField( ct.passwordConfirmTextField, "FREDDYTEXT!8" ) )
-            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     });
-    it('should disable submit if password has no symbol', function() {
+    it('should enable submit if password has no symbol', function() {
         return fillOutValidForm()
             .then( setTextField( ct.passwordTextField, "fReddytext8" ) )
             .then( setTextField( ct.passwordConfirmTextField, "fReddytext8" ) )
-            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     });
-    it('should disable submit if password has no number', function() {
+    it('should enable submit if password has no number', function() {
         return fillOutValidForm()
             .then( setTextField( ct.passwordTextField, "fReddytext!" ) )
             .then( setTextField( ct.passwordConfirmTextField, "fReddytext!" ) )
-            .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     });
     it('should disable submit if password does not equal confirm password', function() {
         return fillOutValidForm()
@@ -105,8 +106,30 @@ describe('Register controller', function() {
             .then( setTextField( ct.passwordConfirmTextField, "p0ssWord2" ) )
             .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
     });
-    it('should call the serve API if the submit button is pressed', function() {
-        return fillOutValidForm();
+    it('should call the server API if the submit button is pressed', function(done) {
+        Alloy.Globals.CerdiApi.registerUser = function( userInfo ) {
+            try {
+                expect( userInfo.email ).to.equal("test@example.com");
+                expect( userInfo.group ).to.be.true;
+                expect( userInfo.survey_consent ).to.be.true;
+                expect( userInfo.share_name_consent ).to.be.true;
+                expect( userInfo.name ).to.equal("Test User");
+                expect( userInfo.password ).to.equal("validPassw0rd!");
+                done(); 
+                return Promise.resolve();
+            } catch(err) {
+                done(err);
+            }
+        };
+        fillOutValidForm()
+            .then( function() {
+                clickButton(ct.submitButton);
+            }); 
+    });
+    it('should trim the email address of spaces',function() {
+        return fillOutValidForm()
+            .then( setTextField( ct.emailTextField, "  test@example.com  " ) )
+            .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     });
 
 });
