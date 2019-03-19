@@ -20,9 +20,10 @@ var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
 
 var mocx = require("specs/lib/mocx");
+
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
-keyMock.setSpeedbugIndex( speedBugIndexMock );
+keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe('Speedbug controller', function() {
 	var SpeedBug, SpeedBugWin, key;

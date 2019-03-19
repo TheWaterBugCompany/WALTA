@@ -17,9 +17,9 @@ exports.WATERBODY_LAKE = WATERBODY_LAKE;
 
 exports.getSpeedbugIndexName = function( type ) {
     switch( type ) {
-        case MAYFLY:
+        case SURVEY_MAYFLY:
             return "Mayfly Muster Speedbug";
-        case ORDER:
+        case SURVEY_ORDER:
             return "Order Speedbug";
         default:
             return "Speedbug";

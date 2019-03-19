@@ -5,16 +5,18 @@ var { closeWindow, checkTestResult, actionFiresTopicTest } = require('specs/util
 
 var Topics = require('ui/Topics');
 var mocx = require("specs/lib/mocx");
+
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
-keyMock.setSpeedbugIndex( speedBugIndexMock );
+keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 
-describe( 'SampleTray controller', function() {
+describe.only( 'SampleTray controller', function() {
   this.timeout(10000);
   var SampleTray, SampleTrayWin;
 
   function setupSampleTray() {
+    Alloy.Models.instance("sample");
     SampleTray = Alloy.createController("SampleTray", { key: keyMock });
     SampleTrayWin = SampleTray.getView();
   }
@@ -107,8 +109,8 @@ describe( 'SampleTray controller', function() {
 
     afterEach(cleanupSampleTray);
 
-    it('should fire the SUMMARY topic', function(done) {
-      actionFiresTopicTest( SampleTray.getAnchorBar().submit, 'click', Topics.SUMMARY, done );
+    it('should fire the COMPLETE topic', function(done) {
+      actionFiresTopicTest( SampleTray.completeBtn, 'click', Topics.COMPLETE, done );
     });
   });
 
@@ -123,7 +125,7 @@ describe( 'SampleTray controller', function() {
         .then( openSampleTray )
         .then( function() {
           var tiles = SampleTray.content.getChildren();
-          expect( tiles ).to.have.lengthOf(4); // check that extra blank tiles are added
+          expect( tiles ).to.have.lengthOf(5); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertPlus( sampleTaxa[0] );
@@ -134,14 +136,14 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "1-2" } )
           ]);
           setupSampleTray();
         })
         .then( openSampleTray )
         .then( function() {
           var tiles = SampleTray.content.getChildren();
-          expect( tiles ).to.have.lengthOf(4); // check that extra blank tiles are added
+          expect( tiles ).to.have.lengthOf(5); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertPlus( sampleTaxa[1] );
@@ -152,8 +154,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "3-5" },
-            { taxonId: "3", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
+            Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } )
           ]);
           setupSampleTray();
         })
@@ -170,9 +172,9 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "3-5" },
-            { taxonId: "3", abundance: "1-2" },
-            { taxonId: "5", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
+            Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } ),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" } )
           ]);
           setupSampleTray();
         })
@@ -190,10 +192,10 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "3-5" },
-            { taxonId: "3", abundance: "1-2" },
-            { taxonId: "5", abundance: "1-2" },
-            { taxonId: "2", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
+            Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } ),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" } ),
+            Alloy.createModel( "taxa", { taxonId: "2", abundance: "1-2" } )
           ]);
           setupSampleTray();
         })
@@ -210,11 +212,11 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "3-5" },
-            { taxonId: "3", abundance: "1-2" },
-            { taxonId: "5", abundance: "3-5" },
-            { taxonId: "2", abundance: "1-2" },
-            { taxonId: "4", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
+            Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } ),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "3-5" } ),
+            Alloy.createModel( "taxa", { taxonId: "2", abundance: "1-2" } ),
+            Alloy.createModel( "taxa", { taxonId: "4", abundance: "1-2" } )
           ]);
           setupSampleTray();
         })
@@ -231,27 +233,27 @@ describe( 'SampleTray controller', function() {
         return Promise.resolve()
           .then( function() {
             mocx.createCollection("taxa", [
-              { taxonId: "1", abundance: "3-5" },
-              { taxonId: "2", abundance: "6-10" },
+              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "2", abundance: "6-10" }),
 
-              { taxonId: "3", abundance: "3-5" },
-              { taxonId: "4", abundance: "1-2" },
-              { taxonId: "5", abundance: "1-2" },
-              { taxonId: "1", abundance: "6-10" },
+              Alloy.createModel( "taxa", { taxonId: "3", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "4", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "6", abundance: "6-10" }),
 
-              { taxonId: "1", abundance: "1-2" },
-              { taxonId: "3", abundance: "1-2" },
-              { taxonId: "2", abundance: "1-2" },
-              { taxonId: "2", abundance: "3-5" },
+              Alloy.createModel( "taxa", { taxonId: "11", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "9", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "13", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "7", abundance: "3-5" }),
 
-              { taxonId: "5", abundance: "11-20" }
+              Alloy.createModel( "taxa", { taxonId: "10", abundance: "11-20" })
             ]);
             setupSampleTray();
           })
           .then( openSampleTray )
           .then( function() {
               var tiles = SampleTray.content.getChildren();
-              expect( tiles ).to.have.lengthOf(4);
+              expect( tiles ).to.have.lengthOf(5);
               // assert end cap
               assertTaxaBackground( tiles[0], "images/endcap_320.png" );
               var sampleTaxa = getTaxaIcons( tiles[0] );
@@ -273,8 +275,8 @@ describe( 'SampleTray controller', function() {
               sampleTaxa = getTaxaIcons( tiles[2] );
               expect( sampleTaxa ).to.have.lengthOf(4);
               assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", "1-2" );
-              assertSample( sampleTaxa[1], "/amphipoda_b.png", "1-2" );
-              assertSample( sampleTaxa[2], "/anisops_b.png", "1-2" );
+              assertSample( sampleTaxa[1], "/anisops_b.png", "1-2" );
+              assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
               assertSample( sampleTaxa[3], "/amphipoda_b.png", "3-5" );
 
               // assert third tile
@@ -294,38 +296,38 @@ describe( 'SampleTray controller', function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
       mocx.createCollection("taxa", [
-        { taxonId: "1", abundance: "3-5" }, // 0
-        { taxonId: "2", abundance: "6-10" },
+        Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }), // 0
+        Alloy.createModel( "taxa", { taxonId: "2", abundance: "6-10" }),
 
-        { taxonId: "3", abundance: "3-5" }, // 1
-        { taxonId: "4", abundance: "1-2" },
-        { taxonId: "5", abundance: "1-2" },
-        { taxonId: "1", abundance: "6-10" },
+        Alloy.createModel( "taxa", { taxonId: "3", abundance: "3-5" }), // 1
+        Alloy.createModel( "taxa", { taxonId: "4", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "6", abundance: "6-10" }),
 
-        { taxonId: "2", abundance: "1-2" }, // 2
-        { taxonId: "3", abundance: "1-2" },
-        { taxonId: "4", abundance: "1-2" },
-        { taxonId: "5", abundance: "3-5" },
+        Alloy.createModel( "taxa", { taxonId: "7", abundance: "1-2" }), // 2
+        Alloy.createModel( "taxa", { taxonId: "8", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "9", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "10", abundance: "3-5" }),
 
-        { taxonId: "1", abundance: "3-5" }, // 3
-        { taxonId: "2", abundance: "1-2" },
-        { taxonId: "3", abundance: "3-5" },
-        { taxonId: "4", abundance: "6-10" },
+        Alloy.createModel( "taxa", { taxonId: "11", abundance: "3-5" }), // 3
+        Alloy.createModel( "taxa", { taxonId: "12", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "13", abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "14", abundance: "6-10" }),
 
-        { taxonId: "5", abundance: "3-5" }, // 4
-        { taxonId: "4", abundance: "1-2" },
-        { taxonId: "3", abundance: "3-5" },
-        { taxonId: "2", abundance: "1-2" },
+        Alloy.createModel( "taxa", { taxonId: "15", abundance: "3-5" }), // 4
+        Alloy.createModel( "taxa", { taxonId: "16", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "17", abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "18", abundance: "1-2" }),
 
-        { taxonId: "1", abundance: "3-5" },
-        { taxonId: "2", abundance: "1-2" },
-        { taxonId: "3", abundance: "3-5" },
-        { taxonId: "4", abundance: "1-2" },
+        Alloy.createModel( "taxa", { taxonId: "19", abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "20", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "21", abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "22", abundance: "1-2" }),
 
-        { taxonId: "1", abundance: "3-5" },
-        { taxonId: "2", abundance: "1-2" },
-        { taxonId: "3", abundance: "3-5" },
-        { taxonId: "4", abundance: "1-2" }
+        Alloy.createModel( "taxa", { taxonId: "23", abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "24", abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "25", abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "26", abundance: "1-2" })
       ]);
       setupSampleTray();
     });
@@ -345,7 +347,7 @@ describe( 'SampleTray controller', function() {
           .then( scrollSampleTray( 209*4 ) )
           .then( function() {
             var tiles = SampleTray.content.getChildren();
-            expect( tiles ).to.have.lengthOf(6);
+            expect( tiles ).to.have.lengthOf(7);
 
             tiles.shift(); // discard end cap since that is always static
 
@@ -364,10 +366,11 @@ describe( 'SampleTray controller', function() {
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", "3-5" );
-            assertSample( sampleTaxa[1], "/anisops_b.png", "3-5" );
-            assertSample( sampleTaxa[2], "/amphipoda_b.png", "1-2" );
-            assertSample( sampleTaxa[3], "/anostraca_b.png", "1-2" );
+            
+            assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
+            assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
+            assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
+            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "1-2" );
           });
 
     });
@@ -398,10 +401,10 @@ describe( 'SampleTray controller', function() {
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/atalophlebia_b.png", "3-5" );
-            assertSample( sampleTaxa[1], "/anisops_b.png", "3-5" );
+            assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
+            assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
             assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
-            assertSample( sampleTaxa[3], "/amphipoda_b.png", "1-2" );
+            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "1-2" );
           });
     });
   });
@@ -488,7 +491,7 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].add( { taxonId: "1", abundance: "3-5" } );
+              Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ) );
           });
         })
         .then( function() {
@@ -504,9 +507,9 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "3-5" },
-            { taxonId: "3", abundance: "1-2" },
-            { taxonId: "5", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
+            Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" })
           ]);
           setupSampleTray();
         })
@@ -517,7 +520,7 @@ describe( 'SampleTray controller', function() {
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
               updateSampleTrayOnce(resolve);
-              Alloy.Collections["taxa"].add( { taxonId: "4", abundance: "3-5" } );
+              Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "4", abundance: "3-5" } ));
           });
         })
         .then( function() {
@@ -533,8 +536,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "3-5" },
-            { taxonId: "5", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" })
           ]);
           setupSampleTray();
         })
@@ -560,10 +563,10 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "3-5" },
-            { taxonId: "3", abundance: "1-2" },
-            { taxonId: "5", abundance: "1-2" },
-            { taxonId: "2", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
+            Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+            Alloy.createModel( "taxa", { taxonId: "2", abundance: "1-2" })
           ]);
           setupSampleTray();
         })
@@ -589,8 +592,8 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
-            { taxonId: "1", abundance: "1-2" },
-            { taxonId: "5", abundance: "1-2" }
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "1-2" }),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" })
           ]);
           setupSampleTray();
         })
