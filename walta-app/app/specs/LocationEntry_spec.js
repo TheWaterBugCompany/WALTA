@@ -67,6 +67,7 @@ describe("LocationEntry controller", function() {
             lng = parseFloat(sample.get("lng"));
         expect( lat ).to.equal(-42.888);
         expect( lng ).to.equal(147.665);
+        expect( view.visible, "window should hide" ).to.be.false;
         removeDupsDone();
       } );
       scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});

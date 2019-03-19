@@ -1,6 +1,6 @@
 var speedBugResource = "specs/resources/simpleKey1/media/speedbug/";
 var SpeedbugIndex = require('logic/SpeedbugIndex');
-var speedBugIndexMock = SpeedbugIndex.createSpeedbugIndex("test", null );
+var speedBugIndexMock = SpeedbugIndex.createSpeedbugIndex("Speedbug", null );
 speedBugIndexMock.addSpeedbugGroup( "group1" );
 speedBugIndexMock.addSpeedbugIndex( speedBugResource + "aeshnidae_telephleb_b.png", "group1", "aeshnidae_telephleb" );
 speedBugIndexMock.addSpeedbugIndex( speedBugResource + "amphipoda_b.png", "group1", "amphipoda" );
