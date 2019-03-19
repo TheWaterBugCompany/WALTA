@@ -48,3 +48,13 @@
 "#registerHeading": {
     top: "1%"
 }
+
+"#passwordHeading": {
+    top: "5%",
+    left: "1%"
+}
+
+"#forgotPasswordButton": {
+    width: "160dp",
+    top: "5%"
+}

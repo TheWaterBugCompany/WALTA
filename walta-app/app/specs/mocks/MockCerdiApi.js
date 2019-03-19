@@ -27,6 +27,10 @@ function createCerdiApi( serverUrl, client_secret  ) {
     
         submitSample( sample ) {
            
+        },
+
+        forgotPassword( email ) {
+            
         }
     
     }

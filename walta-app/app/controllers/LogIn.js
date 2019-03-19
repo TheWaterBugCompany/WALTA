@@ -11,6 +11,7 @@ var passwordValid = false;
 applyKeyboardTweaks( $, [ $.emailTextField, $.passwordTextField ]);
 
 function emailChanged() {
+    $.emailTextField.value = $.emailTextField.value.trim();
     if ( emailValidity($.emailTextField.value) ) {
         $.clearError( $.emailTextField );
         emailValid = true;
@@ -39,6 +40,12 @@ function validateSubmit() {
     } else {
       $.disable($.logInButton);
     }
+
+    if ( emailValid  ) {
+      $.enable($.forgotPasswordButton);
+    } else {
+      $.disable($.forgotPasswordButton);
+    }
   }
 
 function loginClick() {
@@ -54,7 +61,20 @@ function loginClick() {
       });
 }
 
+function forgotPassword() {
+  Alloy.Globals.CerdiApi.forgotPassword( $.emailTextField.value)
+        .then( (response ) => {
+      Ti.API.debug(`Sent password reset for user ${$.emailTextField.value}`);
+      alert(`A password reset request email has been sent to "${$.emailTextField.value}" check your email to continue password reset process, then come back here and log in with the new password.`)
+;    }).catch( (err) => {
+        Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
+        $.setError( $.emailTextField );
+        $.setError( $.passwordTextField );
+        $.setErrorMessage( err );
+      });
+}
+
 function registerClick() {
     Alloy.createController("Register").open();
 }
-$.disable($.logInButton);
+validateSubmit();
