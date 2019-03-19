@@ -36,15 +36,15 @@ function passwordChanged() {
 
 function validateSubmit() {
     if ( emailValid && passwordValid ) {
-      $.enable($.logInButton);
+      $.enableControl($.logInButton);
     } else {
-      $.disable($.logInButton);
+      $.disableControl($.logInButton);
     }
 
     if ( emailValid  ) {
-      $.enable($.forgotPasswordButton);
+      $.enableControl($.forgotPasswordButton);
     } else {
-      $.disable($.forgotPasswordButton);
+      $.disableControl($.forgotPasswordButton);
     }
   }
 

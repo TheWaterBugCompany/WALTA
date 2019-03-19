@@ -87,9 +87,9 @@ function passwordConfirmChanged() {
 
 function validateSubmit() {
   if ( emailValid && nameValid && passwordValid ) {
-    $.enable($.submitButton);
+    $.enableControl($.submitButton);
   } else {
-    $.disable($.submitButton);
+    $.disableControl($.submitButton);
   }
 }
 

@@ -118,9 +118,9 @@ function nearbyFeatureChanged() {
 
 function validateSubmit() {
     if ( surveyTypeValid && waterbodyNameValid && waterbodyTypeValid && nearbyFeatureValid) {
-        $.enable($.nextButton);
+        $.enableControl($.nextButton);
     } else {
-        $.disable($.nextButton);
+        $.disableControl($.nextButton);
     }
 }
 

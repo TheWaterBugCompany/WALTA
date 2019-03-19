@@ -26,11 +26,11 @@ var saveSampleAndUpload = function() {
 
 function checkGpsLock() {
     if ( !(Alloy.Models.sample.get("lat") && Alloy.Models.sample.get("lng") ) ) {
-        $.disable($.doneButton);
+        $.disableControl($.doneButton);
         $.message.text = INCOMPLETE_NO_LOCK;
         $.message.color = "red";
     } else {
-        $.enable($.doneButton);
+        $.enableControl($.doneButton);
         setMessageText();
         $.message.color = "#70Ad47";
     }
