@@ -21,7 +21,7 @@ var { expect } = require('specs/lib/chai');
 var { closeWindow, controllerOpenTest, enterText, clickButton } = require('specs/util/TestUtils');
 var CerdiApi = require("specs/mocks/MockCerdiApi");
 
-describe.only('LogIn controller', function() {
+describe('LogIn controller', function() {
 	var login;
 	beforeEach( function() {
         Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
@@ -55,7 +55,7 @@ describe.only('LogIn controller', function() {
         } );
     });
     
-    it.only('it should send a change password request to Cerdi Api', function(done) {
+    it('it should send a change password request to Cerdi Api', function(done) {
         Alloy.Globals.CerdiApi.forgotPassword = function( email ) {
             expect( email ).to.equal("test@example.com");
             done(); 
