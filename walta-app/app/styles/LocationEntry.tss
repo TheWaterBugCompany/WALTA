@@ -13,11 +13,19 @@
   }
 }
 
-"#closeButton": {
-  top: 0,
-  height: Ti.UI.FILL,
-  width: "10%",
-  right: 0
+"#buttonBar": {
+  bottom: "4dp",
+  right: 0,
+  width: Ti.UI.SIZE,
+  height: Ti.UI.SIZE
+}
+
+"#cancelButton": {
+
+}
+
+"#saveButton": {
+  left: "5%"
 }
 
 "#mapview": {

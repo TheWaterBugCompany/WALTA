@@ -17,8 +17,8 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
-var { closeWindow, windowOpenTest, wrapViewInWindow, waitForDomEvent } = require("specs/util/TestUtils");
-describe("LocationEntry controller", function() {
+var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton } = require("specs/util/TestUtils");
+describe.only("LocationEntry controller", function() {
 	var win, scr, view;
   var sample= Alloy.Models.sample;
   beforeEach( function() {
@@ -38,7 +38,7 @@ describe("LocationEntry controller", function() {
     windowOpenTest( win, done );
 	});
 
-  it('should fire close event', function(done) {
+  it('should fire cancel event', function(done) {
     windowOpenTest( win, function () { 
       expect( view.visible ).to.be.true;
       scr.on("close", function event() {
@@ -46,7 +46,7 @@ describe("LocationEntry controller", function() {
         expect( view.visible ).to.be.false;
         done();
       });
-      scr.closeButton.fireEvent("click");
+      scr.cancelButton.fireEvent("click");
     });
   });
 
@@ -56,7 +56,7 @@ describe("LocationEntry controller", function() {
     windowOpenTest( win, done );
   });
   
-  it('should set the location on a click', function(done) {
+  it('should set the location on a map save', function(done) {
     // not sure why done() gets call twice and 
     // there isn't anything I can do about it
     var removeDupsDone = _.once( done ); 
@@ -70,6 +70,22 @@ describe("LocationEntry controller", function() {
         removeDupsDone();
       } );
       scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
+      clickButton( scr.saveButton );
+    } );
+  });
+
+  it('should NOT set the location on a map cancel', function(done) {
+    // not sure why done() gets call twice and 
+    // there isn't anything I can do about it
+    var removeDupsDone = _.once( done ); 
+    scr.enable();
+    windowOpenTest( win, function(){
+      sample.on("change:lng change:lat", function() {
+        expect.fail("map click changed point when map cancelled!");
+      } );
+      scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
+      clickButton( scr.cancelButton );
+      setTimeout( done, 100 ); // 100 ms is enough to catch event if is going to happen
     } );
   });
   
