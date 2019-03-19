@@ -18,6 +18,7 @@
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 var anchorBar = Alloy.createController("AnchorBar" );
+var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 function openWindow() {
 	Ti.API.debug(`Opening window "${getName()}"`);
 	if ( $.TopLevelWindow.title ) {
@@ -58,31 +59,7 @@ function getAnchorBar() {
 	return anchorBar;
 }
 
-function disable(view) {
-	view.enabled = false;
-	view.touchEnabled = false;
-	view.backgroundColor = "#c9cacb";
-	view.borderColor = "#c9cacb";
-	view.color = "white"; 
-}
 
-function enable(view) {
-	view.enabled = true;
-	view.touchEnabled = true;
-	view.backgroundColor = "#b4d2d9";
-	view.borderColor = "#b4d2d9";
-	view.color = "#26849c";
-}
-
-function setError(view) {
-	view.color = "red";
-	view.borderColor = "red";
-}
-
-function clearError(view) {
-	view.color = "#26849c";
-	view.borderColor = "#26849c";
-}
 
 function setErrorMessage( err ) {
 	if ( err.errors && _(err.errors).keys().length > 0 ) {
@@ -108,8 +85,8 @@ function getName() {
 }
 
 exports.getName = getName;
-exports.disable = disable;
-exports.enable = enable;
+exports.disableControl = disableControl;
+exports.enableControl = enableControl;
 exports.setError = setError;
 exports.clearError = clearError;
 exports.setErrorMessage = setErrorMessage;
