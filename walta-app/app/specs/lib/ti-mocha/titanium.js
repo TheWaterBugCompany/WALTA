@@ -37,10 +37,9 @@ Ti.API.debug("Starting ti-mocha...");
 
 Ti.App.addEventListener( "uncaughtException", function(e) {
 	try {
-		Ti.API.debug( `uncaughtException ${e.message} url = ${e.sourceURL} line = ${e.line} ` );
-		mocha.throwError( new Error(e.message + ' (' + e.sourceURL + ':' + e.line + ')') );
+		mocha.throwError( e );
 	} catch(err) {
-		Ti.API.error( `Error in error handler! ${err}`);
+
 	}
 });
 

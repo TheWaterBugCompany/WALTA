@@ -163,6 +163,17 @@ function controllerOpenTest( ctl, done ) {
 	ctl.open();
 }
 
+function enterText( field, text) {
+	field.value  = text;
+	field.fireEvent("change", {value: text});
+}
+
+function clickButton( button ) {
+	button.fireEvent("click");
+}
+
+exports.enterText = enterText;
+exports.clickButton = clickButton;
 exports.forceCloseWindow = forceCloseWindow;
 exports.controllerOpenTest = controllerOpenTest;
 exports.checkTestResult = checkTestResult;

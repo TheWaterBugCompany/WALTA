@@ -16,14 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("specs/lib/ti-mocha");
+var Topics = require('ui/Topics');
 var { expect } = require('specs/lib/chai');
-var { closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
+var { closeWindow, controllerOpenTest, enterText, clickButton } = require('specs/util/TestUtils');
 var CerdiApi = require("specs/mocks/MockCerdiApi");
-Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 
-describe('LogIn controller', function() {
+describe.only('LogIn controller', function() {
 	var login;
 	beforeEach( function() {
+        Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 		login = Alloy.createController( "LogIn" );
 	});
 
@@ -33,5 +34,72 @@ describe('LogIn controller', function() {
 	
 	it('it should render', function(done) {
 		controllerOpenTest( login, done );
-	});
+    });
+    
+    it('it should send a login request to Cerdi Api', function(done) {
+        Alloy.Globals.CerdiApi.loginUser = function( email, password ) {
+            expect( email ).to.equal("test@example.com");
+            expect( password ).to.equal("password");
+            done(); 
+            return Promise.resolve();
+        }
+        expect( login.logInButton.enabled ).to.be.false;
+		controllerOpenTest( login, function() {
+            enterText( login.emailTextField, "test@example.com" );
+            enterText( login.passwordTextField, "password" );
+            setTimeout( function() {
+                expect( login.logInButton.enabled ).to.be.true;
+                clickButton( login.logInButton );
+            }, 10)
+            
+        } );
+    });
+    
+    it.only('it should send a change password request to Cerdi Api', function(done) {
+        Alloy.Globals.CerdiApi.forgotPassword = function( email ) {
+            expect( email ).to.equal("test@example.com");
+            done(); 
+            return Promise.resolve();
+        }
+        expect( login.forgotPasswordButton.enabled, "reset password should be disabled" ).to.be.false;
+		controllerOpenTest( login, function() {
+            enterText( login.emailTextField, "test@example.com" );
+            enterText( login.passwordTextField, "" );
+            setTimeout( function() {
+                expect( login.forgotPasswordButton.enabled, "reset password should be enabled" ).to.be.true;
+                clickButton( login.forgotPasswordButton );
+            }, 10)
+        } );
+    });
+    
+    it('should fire LOGGEDIN event when login is a success', function(done) {
+        // not sure why done() gets call twice and 
+        // there isn't anything I can do about it
+        var removeDupsDone = _.once( done );
+        Alloy.Globals.CerdiApi.loginUser = function( email, password ) {
+            return Promise.resolve();
+        }
+        Topics.subscribe( Topics.LOGGEDIN, removeDupsDone );
+        controllerOpenTest( login, function() {
+            enterText( login.emailTextField, "  test@example.com  " );
+            enterText( login.passwordTextField, "password" );
+            clickButton( login.logInButton );
+        } );
+    });
+
+    it('should indicate invalid email');
+    it('should indicate missing password');
+
+    it('should trim spaces from email', function(done) {
+        Alloy.Globals.CerdiApi.loginUser = function( email, password ) {
+            expect( email ).to.equal("test@example.com");
+            done(); 
+            return Promise.resolve();
+        }
+        controllerOpenTest( login, function() {
+            enterText( login.emailTextField, "  test@example.com  " );
+            enterText( login.passwordTextField, "password" );
+            clickButton( login.logInButton );
+        } );
+    });
 });

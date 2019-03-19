@@ -13,6 +13,7 @@ applyKeyboardTweaks( $, [ $.emailTextField, $.nameTextField, $.passwordTextField
 
 
 function emailChanged() {
+  $.emailTextField.value = $.emailTextField.value.trim();
   if ( emailValidity($.emailTextField.value) ) {
     $.clearError( $.emailTextField );
     $.clearErrorMessage();

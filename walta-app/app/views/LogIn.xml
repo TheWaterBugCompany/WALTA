@@ -8,7 +8,8 @@
 				<TextField id="emailTextField" class="textField" accessibilityLabel="Email"  onChange="emailChanged" />
 				<Label id="passwordLabel" class="labelText" text="Password:"/>
 				<TextField id="passwordTextField" class="textField password" accessibilityLabel="Password" onChange="passwordChanged"/>
-				<Button id="logInButton" class="actionButton" passwordMask=true title="Log In" onClick="loginClick" />
+				<Button id="logInButton" class="actionButton" title="Log In" onClick="loginClick" />
+				
 			</View>
 			<View id="rightPanel" class="panel" layout="vertical">
 				<!--<Label class="headingText" text="via social media:"/>
@@ -20,6 +21,8 @@
 				</View>-->
 				<Label id="registerHeading" class="headingText" textAlign=Ti.UI.TEXT_ALIGNMENT_CENTER text="or register with an email\n and password:"/>
 				<Button id="registerButton" class="actionButton" title="Register" onClick="registerClick"/>
+				<Label id="passwordHeading" class="headingText" textAlign=Ti.UI.TEXT_ALIGNMENT_CENTER text="or if you've forgotten your password:"/>
+				<Button id="forgotPasswordButton" class="actionButton" title="Reset Password" onClick="forgotPassword" />
 			</View>
 		</View>
 	</ScrollView>

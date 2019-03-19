@@ -132,6 +132,11 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
                 return makeJsonRequest( this.serverUrl + '/samples', sample, accessToken );
+            },
+
+            forgotPassword( email ) {
+                return this.obtainServerAccessToken()
+                    .then( accessToken => makeJsonRequest( this.serverUrl + '/password/email', email, accessToken ) ); 
             }
         
         }

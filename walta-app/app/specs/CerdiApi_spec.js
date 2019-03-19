@@ -271,4 +271,12 @@ describe('CerdiApi', function() {
             ).to.eventually.have.property("id");
         });
     });
+
+    describe( '#forgotPassword', function() {
+        it("should submit a sample" /*, function() {
+            return expect( 
+                cerdi.forgotPassword('testlogin@example.com')
+            ).to.eventually.have.property("id");
+        }*/);
+    });
 });
