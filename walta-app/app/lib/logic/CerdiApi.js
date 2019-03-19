@@ -136,7 +136,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
 
             forgotPassword( email ) {
                 return this.obtainServerAccessToken()
-                    .then( accessToken => makeJsonRequest( this.serverUrl + '/password/email', email, accessToken ) ); 
+                    .then( accessToken => makeJsonRequest( this.serverUrl + '/password/email', { "email": email }, accessToken ) ); 
             }
         
         }

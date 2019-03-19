@@ -38,11 +38,11 @@ function nameChanged() {
 }
 
 function passwordChanged() {
-  if ( $.passwordTextField.value.length >= 8) {
-    if ( /[0-9]+/.test($.passwordTextField.value) ) {
-      if ( /[A-Z]+/.test($.passwordTextField.value) ) {
-        if ( /[a-z]+/.test($.passwordTextField.value) ) {
-          if ( !/^[a-zA-Z0-9]+$/.test($.passwordTextField.value) ) {
+  if ( $.passwordTextField.value.length >= 6) {
+    //if ( /[0-9]+/.test($.passwordTextField.value) ) {
+      //if ( /[A-Z]+/.test($.passwordTextField.value) ) {
+       // if ( /[a-z]+/.test($.passwordTextField.value) ) {
+          //if ( !/^[a-zA-Z0-9]+$/.test($.passwordTextField.value) ) {
             if ( $.passwordTextField.value == $.passwordConfirmTextField.value ) {
               $.clearError($.passwordTextField);
               $.clearError($.passwordConfirmTextField);
@@ -54,25 +54,25 @@ function passwordChanged() {
               passwordValid = false;
               $.setErrorMessageString("Passwords do not match");
             }
-          } else {
-            passwordValid = false;
-            $.setErrorMessageString("Password must contain a symbol");
-          }
-        } else {
-          passwordValid = false;
-          $.setErrorMessageString("Password must contain at least one lower case character");
-        }
-      } else {
-        passwordValid = false;
-        $.setErrorMessageString("Password must contain at least one upper case character");
-      }
-    } else {
-      passwordValid = false;
-      $.setErrorMessageString("Password must contain a digit");
-    }
+    //       } else {
+    //         passwordValid = false;
+    //         $.setErrorMessageString("Password must contain a symbol");
+    //       }
+    //     } else {
+    //       passwordValid = false;
+    //       $.setErrorMessageString("Password must contain at least one lower case character");
+    //     }
+    //   } else {
+    //     passwordValid = false;
+    //     $.setErrorMessageString("Password must contain at least one upper case character");
+    //   }
+    // } else {
+    //   passwordValid = false;
+    //   $.setErrorMessageString("Password must contain a digit");
+    // }
   } else {
     passwordValid = false;
-    $.setErrorMessageString("Password must have at least 8 characters");
+    $.setErrorMessageString("Password must have at least 6 characters");
   }
 
   $.setError($.passwordTextField);
