@@ -18,14 +18,12 @@
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
 var TestUtils = require('specs/util/TestUtils');
-
-var mocx = require("specs/lib/mocx");
-
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
+Alloy.Globals.Key = keyMock;
 
-describe('Speedbug controller', function() {
+describe.only('Speedbug controller', function() {
 	var SpeedBug, SpeedBugWin, key;
 	beforeEach( function() {
 		SpeedBug = Alloy.createController("Speedbug", { key: keyMock });

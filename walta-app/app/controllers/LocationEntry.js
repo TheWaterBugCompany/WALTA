@@ -18,9 +18,9 @@ function updateLocation( lat, lng ) {
 }
 
 function saveClick() {
-    if ( ! $.disabled ) {
-        sample.set(mapPoint);
-    }
+    sample.set(mapPoint);
+    $.LocationEntry.hide();
+    $.trigger("close");
 }
 
 function cancelClick() { 
