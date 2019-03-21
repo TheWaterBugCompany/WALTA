@@ -5,6 +5,12 @@ var { emailValidity } = require("util/EmailUtils");
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sign Up";
 
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+  $.destroy();
+  $.off();
+  $.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 var emailValid = false;
 var passwordValid = false;
 

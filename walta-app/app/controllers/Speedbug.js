@@ -31,6 +31,13 @@ Ti.API.debug(`Speedbug name = ${speedbugName}`);
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Speedbug";
 $.name = "speedbug";
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.destroy();
+    $.off();
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 var acb = $.getAnchorBar();
 acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample }  ) );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample }  ) );

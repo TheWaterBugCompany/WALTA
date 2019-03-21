@@ -3,8 +3,17 @@ var Topics = require("ui/Topics");
 var GeoLocationService = require('logic/GeoLocationService');
 
 var sample = Alloy.Models.sample;
+
 sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.destroy();
+    $.off();
+    sample.off( null, updateLocation );
+    sample.off( null, loadAttributes );
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
 
 
 var { applyKeyboardTweaks } = require("ui/Layout");

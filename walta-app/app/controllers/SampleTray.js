@@ -8,6 +8,13 @@ var Sample = require('logic/Sample');
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
 $.name = "sampletray";
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+  $.destroy();
+  $.off();
+$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 var anchorBar = $.getAnchorBar();
 $.completeBtn = anchorBar.createToolBarButton( null, Topics.COMPLETE, "Next");
 anchorBar.addTool( $.completeBtn );

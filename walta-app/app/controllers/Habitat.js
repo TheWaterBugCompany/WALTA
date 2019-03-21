@@ -8,6 +8,12 @@ var sample = Alloy.Models.sample;
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ] );
 
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.destroy();
+    $.off();
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 function loadAttributes() {
     $.leaves.value = sample.get("leafPacks");
     $.plants.value = sample.get("aquaticPlants");

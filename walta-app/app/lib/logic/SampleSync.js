@@ -121,7 +121,7 @@ function errorHandler( sample ) {
 function uploadNextSample(samples) {
     var sample = samples.shift();
     var uploadIfNeeded;
-    var serverSampleId = sample.get("serverSampleId");
+    var serverSampleId = sample.get("uploaded");
 
     if ( !serverSampleId )
         uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )

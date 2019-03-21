@@ -1,6 +1,13 @@
 var moment = require("lib/moment");
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.destroy();
+    $.off();
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 $.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
 $.TopLevelWindow.addEventListener('close', function() {
     $.destroy();

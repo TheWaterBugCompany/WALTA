@@ -33,6 +33,13 @@ var meld = require("lib/meld");
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+  $.destroy();
+  $.off();
+  $.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 var acb = $.getAnchorBar(); 
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample }  ), true );

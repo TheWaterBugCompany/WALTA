@@ -148,8 +148,19 @@ describe("SiteDetails controller", function() {
         } );
     });
 
+    it.only('should have editable fields before 14 days', function(done) {
+        sample.set("dateCompleted", moment().subtract(13, "days").format() );
+        controllerOpenTest( ctl, function() {
+            expect( ctl.surveyLevelSelect.isDisabled() ).to.be.false;
+            expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.false;
+            expect( ctl.waterbodyNameField.editable ).to.be.undefined;
+            expect( ctl.nearByFeatureField.editable ).to.be.undefined;
+            done();
+        } );
+    });
+
     it('should have read only fields after 14 days', function(done) {
-        sample.set("dateCompleted", moment().subtract(16, "days").valueOf() );
+        sample.set("dateCompleted", moment().subtract(16, "days").format() );
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;
             expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.true;
@@ -160,7 +171,7 @@ describe("SiteDetails controller", function() {
     });
 
     it("photo shouldn't be selectable afer 14 days", function(done) {
-        sample.set("dateCompleted", moment().subtract(16, "days").valueOf() );
+        sample.set("dateCompleted", moment().subtract(16, "days").format() );
         controllerOpenTest( ctl, function() {
             expect( ctl.photoSelect.disabled ).to.be.true;
             done();
@@ -168,7 +179,7 @@ describe("SiteDetails controller", function() {
     });
 
     it("location shouldn't be selectable afer 14 days", function(done) {
-        sample.set("dateCompleted", moment().subtract(16, "days").valueOf() );
+        sample.set("dateCompleted", moment().subtract(16, "days").format() );
         controllerOpenTest( ctl, function() {
             expect( ctl.photoSelect.disabled ).to.be.true;
             done();

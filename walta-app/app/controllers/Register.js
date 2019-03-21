@@ -115,4 +115,4 @@ function submitClick() {
     $.setErrorMessage(err);
   });
 }
-$.disable($.submitButton);
+$.disableControl($.submitButton);
