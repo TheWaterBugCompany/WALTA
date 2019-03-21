@@ -5,7 +5,7 @@
 }
 
 ".title": {
-  top: "8dp",
+  top: "4dp",
   left: "24dp",
   font: {
     fontFamily: "sans-serif",
@@ -15,17 +15,33 @@
 
 "#buttonBar": {
   bottom: "4dp",
-  right: 0,
+  right: "4dp",
   width: Ti.UI.SIZE,
   height: Ti.UI.SIZE
 }
 
-"#cancelButton": {
+"#closeButton": {
+  top: 0,
+  height: Ti.UI.FILL,
+  width: "10%",
+  right: 0
+}
 
+"#locateButton": {
+  image: "/images/locate-icon.png",
+  width: "44dp" 
+}
+
+"#cancelButton": {
+ backgroundColor: "#ef8b8b",
+ left: "8dp",
+ width: "60dp"
 }
 
 "#saveButton": {
-  left: "5%"
+  backgroundColor: "#92d050",
+  left: "8dp",
+  width: "60dp"
 }
 
 "#mapview": {
