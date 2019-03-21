@@ -51,6 +51,7 @@ function backEvent(e) {
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.destroy();
+	$.off();
 	$.TopLevelWindow.removeEventListener('androidback', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });

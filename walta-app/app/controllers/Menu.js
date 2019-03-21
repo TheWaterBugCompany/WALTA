@@ -2,6 +2,12 @@ var Topics = require('ui/Topics');
 exports.baseController  = "TopLevelWindow";
 $.name = "home";
 
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+  $.destroy();
+  $.off();
+  $.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 function logOut() {
   Alloy.Globals.CerdiApi.storeUserToken(null);
   $.logInLabel.text = "Log In";

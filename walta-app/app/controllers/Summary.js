@@ -6,6 +6,12 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
 $.name = "summary";
 
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.destroy();
+    $.off();
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 function doneClick() {
     saveSampleAndUpload();
     if ( Alloy.Globals.CerdiApi.retrieveUserToken() )

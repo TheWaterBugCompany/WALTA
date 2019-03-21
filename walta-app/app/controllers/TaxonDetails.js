@@ -32,6 +32,12 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
 
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+	$.destroy();
+	$.off();
+$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 function createActionButton(imageUrl, label, onClick) {
 	var obj = {
 		_views: {},
