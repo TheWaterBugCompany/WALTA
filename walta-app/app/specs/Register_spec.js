@@ -17,7 +17,7 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var { closeWindow, controllerOpenTest, enterText, clickButton } = require('specs/util/TestUtils');
+var { closeWindow, controllerOpenTest, enterText, clickButton, checkTestResult } = require('specs/util/TestUtils');
 var CerdiApi = require("specs/mocks/MockCerdiApi");
 
 function setTextField( field, value ) {
@@ -108,7 +108,7 @@ describe('Register controller', function() {
     });
     it('should call the server API if the submit button is pressed', function(done) {
         Alloy.Globals.CerdiApi.registerUser = function( userInfo ) {
-            try {
+            checkTestResult( function() {
                 expect( userInfo.email ).to.equal("test@example.com");
                 expect( userInfo.group ).to.be.true;
                 expect( userInfo.survey_consent ).to.be.true;
@@ -117,9 +117,7 @@ describe('Register controller', function() {
                 expect( userInfo.password ).to.equal("validPassw0rd!");
                 done(); 
                 return Promise.resolve();
-            } catch(err) {
-                done(err);
-            }
+            } );
         };
         fillOutValidForm()
             .then( function() {
