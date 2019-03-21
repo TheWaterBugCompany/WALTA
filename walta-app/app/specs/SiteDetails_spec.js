@@ -148,7 +148,7 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it.only('should have editable fields before 14 days', function(done) {
+    it('should have editable fields before 14 days', function(done) {
         sample.set("dateCompleted", moment().subtract(13, "days").format() );
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.false;
