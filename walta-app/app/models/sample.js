@@ -10,6 +10,7 @@ exports.definition = {
 			"dateCompleted": "VARCHAR(255)",
 			"lat": "DECIMAL(3,5)",
 			"lng": "DECIMAL(3,5)",
+			"accuracy": "DECIMAL(3,5)",
 			"surveyType": "INTEGER",
 			"waterbodyType": "INTEGER",
 			"waterbodyName": "VARCHAR(255)",
@@ -44,6 +45,12 @@ exports.definition = {
 				var now = moment();
 				var readOnly = expireAt < now;
 				return readOnly;
+			},
+
+			setLocation: function( coords ) {
+				this.set('lat', coords.latitude);
+				this.set('lng', coords.longitude);
+				this.set('accuracy', coords.accuracy);
 			},
 
 			setSitePhoto: function(blob) {

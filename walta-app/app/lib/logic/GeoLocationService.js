@@ -40,9 +40,8 @@ function cleanup() {
 
 function gotLocation(e) {
     if ( e.success && e.coords ) {
-        Ti.API.debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude}`)
-        Alloy.Models.sample.set('lat', e.coords.latitude);
-        Alloy.Models.sample.set('lng', e.coords.longitude);
+        Ti.API.debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`)
+        Alloy.Models.sample.setLocation(e.coords);
         stop();
     } else {
         //Ti.API.debug(`Ignoring error from location services: ${e.error}`);
@@ -88,6 +87,11 @@ function stop() {
 }
 
 
+function getCurrentPosition( callback ) {
+    Ti.Geolocation.getCurrentPosition( callback );
+}
+
+exports.getCurrentPosition = getCurrentPosition;
 exports.init = init;
 exports.start = start;
 exports.stop = stop;

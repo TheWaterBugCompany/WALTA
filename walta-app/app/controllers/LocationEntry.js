@@ -2,19 +2,48 @@
 var args = $.args;
 var mapPoint;
 var sample = Alloy.Models.sample;
+
+var { getCurrentPosition } = require("logic/GeoLocationService");
 var { disableControl, enableControl } = require("ui/ViewUtils");
-function updateLocation( lat, lng ) {
+
+// to allow mocking getCurrentPoisition in unit tests
+if ( $.args.getCurrentPosition ) {
+    getCurrentPosition =  $.args.getCurrentPosition;
+}
+
+function updateLocation( lat, lng, accuracy ) {
     if ( isNaN(lat) || isNaN(lng) )
         return;
-    mapPoint = { lat: lat, lng: lng };
-    $.mapview.setAnnotations( [
+
+    mapPoint = { lat: lat, lng: lng, accuracy: accuracy };
+    $.mapview.removeAllAnnotations();
+    $.mapview.removeAllCircles();
+    if ( accuracy ) {
+        $.mapview.addCircle( Alloy.Globals.Map.createCircle({
+            center: {
+                latitude: lat,
+                longitude: lng
+            },
+            radius: accuracy,
+            strokeWidth: "4dp",
+            strokeColor: "#aa26849c",
+            fillColor: "#6626849c"
+        }) );
+    }
+    $.mapview.addAnnotation(
         Alloy.Globals.Map.createAnnotation({
             latitude: lat,
             longitude: lng,
             title: "Survey Location"
         })
-    ] );
+    );
     $.mapview.setRegion({ latitude:lat, longitude:lng, latitudeDelta:0.005, longitudeDelta:0.005});
+}
+
+function locateClick() {
+    getCurrentPosition( function(e) {
+        updateLocation( e.coords.latitude, e.coords.longitude, e.coords.accuracy );
+    });
 }
 
 function saveClick() {
@@ -45,7 +74,8 @@ function enable() {
     enableControl( $.saveButton );
 }
 let lat = parseFloat(sample.get("lat")),
-lng = parseFloat(sample.get("lng"));
-updateLocation( lat, lng );
+    lng = parseFloat(sample.get("lng")),
+    accuracy = parseFloat(sample.get("accuracy"));
+updateLocation( lat, lng, accuracy );
 exports.disable = disable; 
 exports.enable = enable;

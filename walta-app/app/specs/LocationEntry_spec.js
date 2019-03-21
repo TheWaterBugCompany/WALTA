@@ -17,7 +17,7 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
-var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton } = require("specs/util/TestUtils");
+var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton, checkTestResult } = require("specs/util/TestUtils");
 describe("LocationEntry controller", function() {
 	var win, scr, view;
   var sample= Alloy.Models.sample;
@@ -25,7 +25,17 @@ describe("LocationEntry controller", function() {
     sample = Alloy.Models.instance("sample");
     sample.off();
     sample.clear();
-    scr = Alloy.createController("LocationEntry");
+    scr = Alloy.createController("LocationEntry", { 
+      getCurrentPosition: function( callback ) {
+        callback( { 
+          coords: {
+            accuracy: 100,
+            latitude: -42.890734,
+            longitude: 147.671216
+          }
+        });
+      }
+    });
     view = scr.getView();
     win = wrapViewInWindow( view );
   });
@@ -42,9 +52,11 @@ describe("LocationEntry controller", function() {
     windowOpenTest( win, function () { 
       expect( view.visible ).to.be.true;
       scr.on("close", function event() {
-        scr.off("close",event);
-        expect( view.visible ).to.be.false;
-        done();
+        checkTestResult( ()=> {
+          scr.off("close",event);
+          expect( view.visible ).to.be.false;
+          done();
+        });
       });
       scr.cancelButton.fireEvent("click");
     });
@@ -55,20 +67,46 @@ describe("LocationEntry controller", function() {
     sample.set("lng","147.665715");
     windowOpenTest( win, done );
   });
-  
-  it('should set the location on a map save', function(done) {
-    // not sure why done() gets call twice and 
-    // there isn't anything I can do about it
+
+  it.only('should set the location when the locate button is pressed', function(done) { 
     var removeDupsDone = _.once( done ); 
     scr.enable();
     windowOpenTest( win, function(){
       sample.on("change:lng change:lat", function() {
-        let lat = parseFloat(sample.get("lat")),
-            lng = parseFloat(sample.get("lng"));
-        expect( lat ).to.equal(-42.888);
-        expect( lng ).to.equal(147.665);
-        expect( view.visible, "window should hide" ).to.be.false;
-        removeDupsDone();
+        checkTestResult( ()=> {
+          let lat = parseFloat(sample.get("lat")),
+              lng = parseFloat(sample.get("lng")),
+              accuracy = parseFloat(sample.get("accuracy"));
+          expect( lat ).to.equal(-42.890734);
+          expect( lng ).to.equal(147.671216);
+          expect( accuracy ).to.equal(100);
+          setTimeout( function() {
+            expect( view.visible, "window should hide" ).to.be.false;
+            removeDupsDone();
+          }, 10 );
+        });
+        
+      } );
+      clickButton( scr.locateButton );
+      clickButton( scr.saveButton );
+    } );
+  });
+  
+  it('should set the location on a map save', function(done) {
+    var removeDupsDone = _.once( done ); 
+    scr.enable();
+    windowOpenTest( win, function(){
+      sample.on("change:lng change:lat", function() {
+        checkTestResult( ()=> {
+          let lat = parseFloat(sample.get("lat")),
+              lng = parseFloat(sample.get("lng"));
+          expect( lat ).to.equal(-42.888);
+          expect( lng ).to.equal(147.665);
+          setTimeout( function() {
+            expect( view.visible, "window should hide" ).to.be.false;
+            removeDupsDone();
+          }, 10 );
+        });
       } );
       scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
       clickButton( scr.saveButton );
@@ -76,8 +114,6 @@ describe("LocationEntry controller", function() {
   });
 
   it('should NOT set the location on a map cancel', function(done) {
-    // not sure why done() gets call twice and 
-    // there isn't anything I can do about it
     var removeDupsDone = _.once( done ); 
     scr.enable();
     windowOpenTest( win, function(){
