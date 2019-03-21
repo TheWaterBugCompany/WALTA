@@ -7,7 +7,7 @@ exports.definition = {
 			"serverSampleId": "INTEGER",
 			"lastError": "VARCHAR(255)",
 		    "sampleId": "INTEGER PRIMARY KEY AUTOINCREMENT",
-			"dateCompleted": "INTEGER",
+			"dateCompleted": "VARCHAR(255)",
 			"lat": "DECIMAL(3,5)",
 			"lng": "DECIMAL(3,5)",
 			"surveyType": "INTEGER",
@@ -68,7 +68,7 @@ exports.definition = {
 					t.set("sampleId", this.get("sampleId"));
 					t.save();
 				});
-				this.set("dateCompleted", moment().valueOf() );
+				this.set("dateCompleted", moment().format() );
 				this.save();
 				GeoLocationService.stop();
 			},
