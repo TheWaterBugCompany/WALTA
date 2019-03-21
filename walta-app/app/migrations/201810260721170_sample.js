@@ -13,7 +13,7 @@ migration.down = function(migrator) {
             "serverSampleId": "INTEGER",
 			"lastError": "VARCHAR(255)",
 		    "sampleId": "INTEGER PRIMARY KEY AUTOINCREMENT",
-			"dateCompleted": "INTEGER",
+			"dateCompleted": "VARCHAR(255)",
 			"lat": "DECIMAL(3,5)",
 			"lng": "DECIMAL(3,5)",
 			"surveyType": "INTEGER",
