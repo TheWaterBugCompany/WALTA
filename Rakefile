@@ -32,6 +32,10 @@ file 'walta-app/build/android/bin/Waterbug.apk' => titanium_source_files do
     "--alias ${KEYSTORE_SUBKEY} ")
 end
 
+task :build do 
+  sh("appc ti build --project-dir walta-app --build-only --platform android --deploy-type development")
+end
+
 task :start_emulator do
   sh("emulator -avd ${AVD_NAME} && adb -avd ${AVD_NAME} -e shell rm -rf /mnt/sdcard/* &")
 end
