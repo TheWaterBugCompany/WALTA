@@ -1,7 +1,7 @@
 var taxon = $.args.taxon;
 var key = $.args.key;
 var speedbugIndex = $.args.key.getSpeedbugIndex();
-
+var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
 setImage( taxon.getPhoto() );
@@ -11,6 +11,8 @@ function setImage( photo ) {
     if ( photo ) {
         $.photoSelect.setImage( photo );
     } else {
+        setError($.photoSelect.photoSelect);
+        disableControl($.saveButton); 
         $.photoSelect.setImage( taxon.getSilhouette() );
     }
 }
@@ -71,4 +73,6 @@ function closeEvent() {
 var cachedPhoto;
 $.photoSelect.on("photoTaken", function(photo) {
     cachedPhoto = photo;
+    clearError($.photoSelect.photoSelect);
+    enableControl($.saveButton);
 });

@@ -1,6 +1,13 @@
 function disableControl(view) {
 	view.enabled = false;
 	view.touchEnabled = false;
+
+	view.oldProps = {
+		backgroundColor: view.backgroundColor,
+		borderColor: view.borderColor,
+		color: view.color
+	}
+
 	view.backgroundColor = "#c9cacb";
 	view.borderColor = "#c9cacb";
 	view.color = "white"; 
@@ -9,19 +16,23 @@ function disableControl(view) {
 function enableControl(view) {
 	view.enabled = true;
 	view.touchEnabled = true;
-	view.backgroundColor = "#b4d2d9";
-	view.borderColor = "#b4d2d9";
-	view.color = "#26849c";
+	view.backgroundColor = view.oldProps.backgroundColor;
+	view.borderColor = view.oldProps.borderColor;
+	view.color = view.oldProps.color;
 }
 
 function setError(view) {
+	view.oldProps = {
+		color: view.color,
+		borderColor: view.borderColor
+	}
 	view.color = "red";
 	view.borderColor = "red";
 }
 
 function clearError(view) {
-	view.color = "#26849c";
-	view.borderColor = "#26849c";
+	view.color = view.oldProps.color;
+	view.borderColor = view.oldProps.borderColor;;
 }
 
 exports.disableControl = disableControl;
