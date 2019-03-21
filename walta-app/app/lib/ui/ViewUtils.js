@@ -14,11 +14,13 @@ function disableControl(view) {
 }
 
 function enableControl(view) {
-	view.enabled = true;
-	view.touchEnabled = true;
-	view.backgroundColor = view.oldProps.backgroundColor;
-	view.borderColor = view.oldProps.borderColor;
-	view.color = view.oldProps.color;
+	if ( view.oldProps ) {
+		view.enabled = true;
+		view.touchEnabled = true;
+		view.backgroundColor = view.oldProps.backgroundColor;
+		view.borderColor = view.oldProps.borderColor;
+		view.color = view.oldProps.color;
+	}
 }
 
 function setError(view) {
@@ -31,8 +33,10 @@ function setError(view) {
 }
 
 function clearError(view) {
-	view.color = view.oldProps.color;
-	view.borderColor = view.oldProps.borderColor;;
+	if ( view.oldProps ) {
+		view.color = view.oldProps.color;
+		view.borderColor = view.oldProps.borderColor;
+	}
 }
 
 exports.disableControl = disableControl;
