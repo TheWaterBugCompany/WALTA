@@ -63,7 +63,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <manifest android:versionCode="1009011003" android:versionName="1.9.11.3">
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="27"/>
-    <application android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:debuggable="true" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
+    <application android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:debuggable="false" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
       <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCOYMRokSMZ7t5l_8fZ7SPIW-riNpcUl18" />
       <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape">
         <intent-filter>
