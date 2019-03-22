@@ -20,7 +20,7 @@ var moment = require("lib/moment");
 
 var { SURVEY_ORDER, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("specs/lib/chai");
-var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
+var { closeWindow, controllerOpenTest, checkTestResult } = require("specs/util/TestUtils");
 
 describe("SiteDetails controller", function() {
     var ctl;
@@ -106,13 +106,15 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should disable the next button if mandatory fields are unset', function() {
+    it('should disable the next button if mandatory fields are unset', function(done) {
         controllerOpenTest( ctl, function() {
             expect( ctl.nextButton.enabled ).to.be.false;
             ctl.on("updated", function changeHandler() {
                     ctl.off("updated", changeHandler);
-                    expect( ctl.nextButton.enabled ).to.be.true;
-                    done();
+                    setTimeout( function() {
+                        expect( ctl.nextButton.enabled, "button should be enabled" ).to.be.true;
+                        done();
+                    },10);
             } );
             fireTabClick( ctl.surveyLevelSelect, SURVEY_ORDER );
             fireTabClick( ctl.waterbodyTypeSelect, WATERBODY_LAKE );

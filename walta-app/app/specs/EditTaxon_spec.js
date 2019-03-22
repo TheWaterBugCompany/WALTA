@@ -18,7 +18,6 @@
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, forceCloseWindow, wrapViewInWindow, windowOpenTest, checkTestResult } = require("specs/util/TestUtils");
-var { createModel } = require("specs/lib/mocx");
 
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
@@ -40,11 +39,18 @@ describe("EditTaxon controller", function() {
          });
         win = wrapViewInWindow( ctl.getView() );
     }
-    
+
+    afterEach( function(done ) {
+        if ( win )
+            closeWindow( win, done );
+        else
+            done();
+    });
+
 	it('should display the taxon edit view', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
-            checkTestResult( (e) => closeWindow( win, () => done( e ) ), 
+            checkTestResult( (e) => closeWindow( win, () => { win = null; done( e ) } ), 
                 function() {
                     expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
                     expect( ctl.photoSelect.photo.image ).to.include("aeshnidae_telephleb_b.png");
@@ -87,7 +93,7 @@ describe("EditTaxon controller", function() {
             return new Promise( (resolve) => {
                 makeEditTaxon( { taxonId:"1", abundance:bin} );
                 windowOpenTest( win, function() {
-                    checkTestResult( () => forceCloseWindow( win, resolve ), 
+                    checkTestResult( () => forceCloseWindow( win, ()=> { win = null; resolve(); } ), 
                         function() {
                             expect( ctl.abundanceValue.value ).to.equal(val);
                             expect( ctl.abundanceLabel.text ).to.equal(bin);

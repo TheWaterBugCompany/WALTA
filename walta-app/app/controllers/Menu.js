@@ -6,6 +6,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();
   $.off();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
+  closeSelectMethod();
 });
 
 function logOut() {
@@ -40,12 +41,15 @@ function detailedClick() {
   Topics.fireTopicEvent( Topics.DETAILED, null );
 }
 
+function closeSelectMethod() {
+  if ( $.selectMethod ) {
+    $.TopLevelWindow.remove($.selectMethod.getView());
+    $.selectMethod.cleanUp();
+  }
+}
+
 function identifyClick() {
   $.selectMethod = Alloy.createController("MethodSelect");
-  function closeSelectMethod() {
-    $.TopLevelWindow.remove($.selectMethod.getView());
-  }
-
   $.selectMethod.on("close", function() {
     closeSelectMethod();
   });

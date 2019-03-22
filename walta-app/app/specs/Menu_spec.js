@@ -17,24 +17,19 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
-var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("specs/util/TestUtils");
+var { closeWindow, controllerOpenTest, actionFiresTopicTest, clickButton } = require("specs/util/TestUtils");
 var Topics = require("ui/Topics");
 var CerdiApi = require("specs/mocks/MockCerdiApi");
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 describe('Menu controller', function() {
 	var mnu;
-	before( function() {
+	beforeEach( function( done ) {
 		mnu = Alloy.createController("Menu");
-	});
-	after( function(done) {
-		closeWindow( mnu.getView(), done );
-	});
-	it('should display the menu view', function(done) {
-		this.timeout(3000);
 		controllerOpenTest( mnu, done );
 	});
-
-
+	afterEach( function(done) {
+		closeWindow( mnu.getView(), done );
+	}); 
 	it('should fire the MAYFLY topic', function(done) {
 		actionFiresTopicTest( mnu.mayfly, 'click', Topics.MAYFLY, done );
 	});
@@ -55,5 +50,23 @@ describe('Menu controller', function() {
 		actionFiresTopicTest( mnu.about, 'click', Topics.ABOUT, done );
 	});
 
+	/* These tests freeze mocha for some reason??
+	it('should fire the KEYSEARCH topic', function(done) {
+		clickButton( mnu.identify );
+		Topics.subscribe(Topics.KEYSEARCH, done );
+		mnu.selectMethod.trigger("keysearch");
+	});
+
+	it('should fire the SPEEDBUG topic', function(done) {
+		clickButton( mnu.identify );
+		Topics.subscribe(Topics.SPEEDBUG, done );
+		mnu.selectMethod.trigger("speedbug");
+	});
+
+	it('should fire the BROWSE topic', function(done) {
+		clickButton( mnu.identify );
+		Topics.subscribe(Topics.BROWSE, done );
+		mnu.selectMethod.trigger("browse");
+	});*/
 
 });
