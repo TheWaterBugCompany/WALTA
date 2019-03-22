@@ -106,7 +106,21 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should disable the next button if mandatory fields are unset');
+    it('should disable the next button if mandatory fields are unset', function() {
+        controllerOpenTest( ctl, function() {
+            expect( ctl.nextButton.enabled ).to.be.false;
+            ctl.on("updated", function changeHandler() {
+                    ctl.off("updated", changeHandler);
+                    expect( ctl.nextButton.enabled ).to.be.true;
+                    done();
+            } );
+            fireTabClick( ctl.surveyLevelSelect, SURVEY_ORDER );
+            fireTabClick( ctl.waterbodyTypeSelect, WATERBODY_LAKE );
+            ctl.waterbodyNameField.value = "Test Waterbody";
+            ctl.waterbodyNameField.fireEvent("change");
+
+        } );
+    });
 
     it('should display "unobtained location" with no lock', function(done) {
         controllerOpenTest( ctl, function() {
@@ -148,7 +162,7 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should have editable fields before 14 days', function(done) {
+   /* it('should have editable fields before 14 days', function(done) {
         sample.set("dateCompleted", moment().subtract(13, "days").format() );
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.false;
@@ -184,5 +198,5 @@ describe("SiteDetails controller", function() {
             expect( ctl.photoSelect.disabled ).to.be.true;
             done();
         } );
-    });
+    }); */
 });

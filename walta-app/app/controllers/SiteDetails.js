@@ -107,7 +107,7 @@ function waterbodyTypeChanged() {
 }
 
 function waterbodyNameChanged() {
-    if ( $.waterbodyNameField.value && $.waterbodyNameField.value.length > 0 ) {
+    if ( $.waterbodyNameField.value && $.waterbodyNameField.value.length > 0 ) { 
       $.clearError( $.waterbodyNameField );
       waterbodyNameValid = true;
       sample.set( { "waterbodyName": $.waterbodyNameField.value } );

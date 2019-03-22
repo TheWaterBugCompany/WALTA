@@ -68,7 +68,7 @@ describe("LocationEntry controller", function() {
     windowOpenTest( win, done );
   });
 
-  it.only('should set the location when the locate button is pressed', function(done) { 
+  it('should set the location when the locate button is pressed', function(done) { 
     var removeDupsDone = _.once( done ); 
     scr.enable();
     windowOpenTest( win, function(){
@@ -80,10 +80,7 @@ describe("LocationEntry controller", function() {
           expect( lat ).to.equal(-42.890734);
           expect( lng ).to.equal(147.671216);
           expect( accuracy ).to.equal(100);
-          setTimeout( function() {
-            expect( view.visible, "window should hide" ).to.be.false;
-            removeDupsDone();
-          }, 10 );
+          removeDupsDone();
         });
         
       } );
