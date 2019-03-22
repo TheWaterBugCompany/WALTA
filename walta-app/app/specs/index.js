@@ -20,6 +20,7 @@ require("specs/Summary_spec");
 require("specs/TaxonDetails_spec");
 require("specs/SiteDetails_spec");
 require("specs/VideoView_spec");
+require("specs/ViewUtils_spec");
 require("specs/LocationEntry_spec");
 
 

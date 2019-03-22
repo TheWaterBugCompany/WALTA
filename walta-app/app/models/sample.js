@@ -37,14 +37,15 @@ exports.definition = {
 		_.extend(Model.prototype, {
 
 			isReadOnly: function() {
-				var dateCompleted = this.get("dateCompleted");
+				/*var dateCompleted = this.get("dateCompleted");
 				if ( ! dateCompleted )
 					return;
 
 				var expireAt = moment( dateCompleted ).add(14, 'days');
 				var now = moment();
 				var readOnly = expireAt < now;
-				return readOnly;
+				return readOnly;*/
+				return false;
 			},
 
 			setLocation: function( coords ) {
