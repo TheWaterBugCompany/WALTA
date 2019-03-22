@@ -18,3 +18,12 @@ $.browselist.on("click", () => $.trigger("browselist") );
 function closeEvent() {
   $.trigger("close");
 }
+
+function cleanUp() {
+  $.destroy();
+  $.off();
+  $.keysearch.cleanUp();
+  $.browselist.cleanUp();
+  $.sppedbug.cleanUp();
+}
+exports.cleanUp = cleanUp;

@@ -10,10 +10,20 @@ if ( $.args.fill ) {
   $.resetClass( $.button, ["fill"] );
   $.resetClass( $.text, ["margin"] );
 }
-$.button.addEventListener( 'click', function(e) {
+
+function onClick(e) {
   if ( $.args.topic ) {
     Topics.fireTopicEvent( $.args.topic, null );
   }
   $.trigger('click');
   e.cancelBubble = true;
-});
+}
+
+$.button.addEventListener( 'click', onClick );
+function cleanUp() {
+  $.button.removeEventListner("click", onClick);
+  $.destroy();
+  $.off();
+}
+
+exports.cleanUp = cleanUp;

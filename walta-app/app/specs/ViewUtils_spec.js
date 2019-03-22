@@ -19,7 +19,7 @@ require("specs/lib/ti-mocha");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, windowOpenTest } = require("specs/util/TestUtils");
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
-describe.only("ViewUtils", function() {
+describe("ViewUtils", function() {
 	var win, btn;
 	beforeEach( function() {
     win = Ti.UI.createWindow( { title: 'Test Window' });
