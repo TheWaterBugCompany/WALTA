@@ -181,7 +181,7 @@ function createAppWindow( keyName, keyPath ) {
 	});
 
     privates.subscribe( Topics.KEYSEARCH, function(data) {
-		var node = ( data.surveyType == Sample.MAYFLY ? privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );
+		var node = ( data.surveyType === Sample.SURVEY_MAYFLY ? privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );
 		privates.key.reset(node);
     	privates.updateDecisionWindow({ slide: 'right', surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
     });
@@ -194,7 +194,7 @@ function createAppWindow( keyName, keyPath ) {
     	if ( name === "home" ) {
     		privates.closeApp();
 		} else if ( name === "decision") {
-    		if ( surveyType == Sample.MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
+    		if ( surveyType === Sample.SURVEY_MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
 				Ti.API.debug(`isRoot = ${privates.key.isRoot()}`)
 				if ( allowAddToSample ) {
 					privates.sampleTrayWindow({ slide: 'left' });

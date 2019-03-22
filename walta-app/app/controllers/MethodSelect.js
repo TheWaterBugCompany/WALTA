@@ -24,6 +24,6 @@ function cleanUp() {
   $.off();
   $.keysearch.cleanUp();
   $.browselist.cleanUp();
-  $.sppedbug.cleanUp();
+  $.speedbug.cleanUp();
 }
 exports.cleanUp = cleanUp;

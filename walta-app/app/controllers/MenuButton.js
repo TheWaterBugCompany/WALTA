@@ -21,7 +21,7 @@ function onClick(e) {
 
 $.button.addEventListener( 'click', onClick );
 function cleanUp() {
-  $.button.removeEventListner("click", onClick);
+  $.button.removeEventListener("click", onClick);
   $.destroy();
   $.off();
 }
