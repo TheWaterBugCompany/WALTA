@@ -155,9 +155,20 @@ $.waterbodyTypeSelect.init(["River","Wetland","Lake/Dam"], checkValidity);
 loadAttributes();
 
 // Start location services only for this screen
+GeoLocationService.start();
+
+// Only allow automatic location updates if the location was
+// undefined when this screen was opened
 if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
-    GeoLocationService.start();
-    $.TopLevelWindow.addEventListener('close', function cleanUp() {
-	    GeoLocationService.stop();
-    });
+    Topics.subscribe(Topics.GPSLOCK, function(coords) {
+        // only set location if the accuracy is present and less than 100m
+        if ( coords.accuracy < 100 ) {
+            var accuracy = sample.get("accuracy");
+            Alloy.Models.sample.setLocation(coords);
+        }
+    } );
 }
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    GeoLocationService.stop();
+});

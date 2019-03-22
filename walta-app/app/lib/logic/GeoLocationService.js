@@ -1,3 +1,7 @@
+var Topics = require("ui/Topics");
+
+var lastGpsPointEvent;
+
 function activityPaused() {
     if (Alloy.Globals.GeoLocationState === "listening") {
         stopListening( "listening:paused" );
@@ -40,9 +44,9 @@ function cleanup() {
 
 function gotLocation(e) {
     if ( e.success && e.coords ) {
-        Ti.API.debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`)
-        Alloy.Models.sample.setLocation(e.coords);
-        stop();
+        Ti.API.debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`);
+        lastGpsPointEvent = e;
+        Topics.fireTopicEvent(Topics.GPSLOCK, e.coords);
     } else {
         //Ti.API.debug(`Ignoring error from location services: ${e.error}`);
     }
@@ -88,7 +92,7 @@ function stop() {
 
 
 function getCurrentPosition( callback ) {
-    Ti.Geolocation.getCurrentPosition( callback );
+    callback( lastGpsPointEvent );
 }
 
 exports.getCurrentPosition = getCurrentPosition;

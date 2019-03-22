@@ -74,6 +74,8 @@ var topics = {
 
 	LOGIN: 'login',
 
+	GPSLOCK: 'gpslock',
+
 	unsubscribe: function( topic, callback ) {
 		Alloy.Events.off( 'waterbug:' + topic, callback );
 	},
