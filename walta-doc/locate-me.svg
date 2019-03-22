@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -54,7 +54,10 @@
      id="layer1">
     <g
        id="g834"
-       transform="translate(-275.21454,-35.397368)">
+       transform="translate(-275.21454,-35.397368)"
+       inkscape:export-filename="/home/msharman/Projects/walta/walta-app/app/assets/images/locate-icon.png"
+       inkscape:export-xdpi="9.499979"
+       inkscape:export-ydpi="9.499979">
       <path
          style="fill:#26849c;fill-opacity:0.97435895;stroke-width:0.94019884"
          id="path815"
