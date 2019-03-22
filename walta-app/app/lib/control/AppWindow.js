@@ -51,7 +51,7 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			menuWindow: function(args) {
-				Alloy.createController("Menu").open();
+				Alloy.createController("Menu",args).open();
 			},
 
 			browseWindow: function(data) {
@@ -83,7 +83,7 @@ function createAppWindow( keyName, keyPath ) {
 			siteDetailsWindow: function(args) {
 				function startSurvey() {
 					
-					Alloy.createController("SiteDetails").open();
+					Alloy.createController("SiteDetails",args).open();
 				}
 
 				if ( OS_ANDROID ) {
@@ -104,11 +104,11 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			habitatWindow: function(args) {
-				Alloy.createController("Habitat").open();
+				Alloy.createController("Habitat",args).open();
 			},
 
 			summaryWindow: function(args) {
-				Alloy.createController("Summary").open();
+				Alloy.createController("Summary",args).open();
 			},
 
 			historyWindow: function() {
@@ -192,7 +192,8 @@ function createAppWindow( keyName, keyPath ) {
 		var allowAddToSample = data.allowAddToSample;
 		Ti.API.debug(`back: ${name} surveyType = ${surveyType} allowAddToSample = ${allowAddToSample} currentDecision = ${privates.key.currentDecision.id}`);
     	if ( name === "home" ) {
-    		privates.closeApp();
+			if ( ! data.swipe )
+				privates.closeApp();
 		} else if ( name === "decision") {
     		if ( surveyType === Sample.SURVEY_MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
 				Ti.API.debug(`isRoot = ${privates.key.isRoot()}`)
@@ -206,11 +207,11 @@ function createAppWindow( keyName, keyPath ) {
 	    		privates.updateDecisionWindow({ slide: 'left', surveyType: surveyType, allowAddToSample: allowAddToSample } );
 	    	}
 		} else if ( name === "habitat" ) {
-			privates.siteDetailsWindow();
+			privates.siteDetailsWindow({ slide: 'left' });
 		} else if ( name === "sampletray" ) {
-			privates.habitatWindow();
+			privates.habitatWindow({ slide: 'left' });
 		} else if ( name === "summary" ) {
-			privates.sampleTrayWindow();
+			privates.sampleTrayWindow({ slide: 'left' });
 		} else if ( name === "browse" || name === "speedbug" ) {
 			if ( allowAddToSample ) {
 				privates.sampleTrayWindow();
