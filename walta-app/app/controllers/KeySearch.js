@@ -61,19 +61,4 @@ _(keyNode.questions).each(
 		} );
 	}
 );
-
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, { name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
-	}
-}
-
-$.content.addEventListener('swipe', swipeListener);
-
-$.content.addEventListener( "close", function cleanup() {
-  $.content.removeEventListener( 'swipe', swipeListener );
-  $.content.removeEventListener( 'swipe', cleanup );
-});
-
 exports.getQuestions = getQuestions;

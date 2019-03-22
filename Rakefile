@@ -71,7 +71,7 @@ task :debug => [ :start_emulator, :uninstall_app ] do
 end
 
 task :preview_android => [ ] do
-  sh("appc ti build  --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}")
+  sh("appc ti build  --log-level debug --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}")
 end
 
 # iphone 6s =      AEA9B0BA-8715-4029-AE8A-1CAFE77653E1
@@ -79,7 +79,7 @@ end
 # iphone 5s =      C03480F3-D5A7-4444-A1FA-1CA9AF7D9861
 # ipad mini =      85EDE93D-CFEA-40F5-8CD7-ED2556D9472F
 task :preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target simulator --liveview --device-id \"AEA9B0BA-8715-4029-AE8A-1CAFE77653E1\"")
+  sh("appc ti build --log-level debug --project-dir walta-app --platform ios --deploy-type development --target simulator --liveview --device-id \"AEA9B0BA-8715-4029-AE8A-1CAFE77653E1\"")
 end
 
 task :device_preview_android => [] do
