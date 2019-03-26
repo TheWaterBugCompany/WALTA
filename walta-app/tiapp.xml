@@ -13,7 +13,7 @@
   <navbar-hidden>true</navbar-hidden>
   <guid>88036c17-aac4-4628-9555-5c0302217fe4</guid>
   <property name="run-on-main-thread" type="bool">true</property>
-  <property name="ti.ui.defaultunit" type="string">dp</property>
+  <property name="ti.ui.defaultunit" type="string">system</property>
   <ios>
     <enable-launch-screen-storyboard>false</enable-launch-screen-storyboard>
     <use-autolayout>false</use-autolayout>
