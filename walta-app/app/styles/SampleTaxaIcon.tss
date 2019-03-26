@@ -9,3 +9,8 @@
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   borderRadius: "8dp"
 }
+
+".padIcon": {
+  width: "80%",
+  height: "80%"
+}

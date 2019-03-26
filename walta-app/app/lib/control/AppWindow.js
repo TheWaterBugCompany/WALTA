@@ -275,17 +275,17 @@ function createAppWindow( keyName, keyPath ) {
     });
 
 	privates.subscribe( Topics.MAYFLY, function() {
-		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.MAYFLY);
+		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_MAYFLY);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.ORDER, function() {
-		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.ORDER);
+		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_ORDER);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 
 	privates.subscribe( Topics.DETAILED, function() {
-		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.DETAILED);
+		Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_DETAILED);
 		Topics.fireTopicEvent( Topics.SITEDETAILS, null );
 	} );
 

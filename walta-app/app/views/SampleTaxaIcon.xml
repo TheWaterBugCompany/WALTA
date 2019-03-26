@@ -1,6 +1,8 @@
 <Alloy>
-	<View class="container" onClick="clickEvent">
+	<View class="container">
+		<View class="padIcon">
 			<ImageView id="icon" accessibilityLabel="Icon"/>
 			<Label id="abundance" accessibilityLabel="Abundance"/>
+		</View>
 	</View>
 </Alloy>
