@@ -90,7 +90,7 @@ function addTrayIcon( container, index ) {
       var taxonClickHandler = function(e) {
         icon.fireEditEvent();
         e.cancelBubble = true;
-      } ;
+      };
       thumbnail.addEventListener("click", taxonClickHandler );
       thumbnail.add( icon.getView() );
       return {
@@ -191,9 +191,8 @@ function createTaxaIcon(taxon) {
   var speedbugIcon = Alloy.createController( "SampleTaxaIcon", {
       taxon: taxon,
       speedbugIndex: speedbugIndex
-    } );
-    
-    return speedbugIcon;
+    } );  
+  return speedbugIcon;
 }
 
 /*
