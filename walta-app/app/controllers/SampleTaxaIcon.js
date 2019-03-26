@@ -32,9 +32,15 @@ function update( newTaxon ) {
   }
 }
 
-function clickEvent(e) {
+function fireEditEvent() {
   Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: taxon.get("taxonId") } );
-  e.cancelBubble = true;
 }
 
+function cleanUp() {
+  $.destroy();
+  $.off();
+}
+
+exports.fireEditEvent = fireEditEvent;
+exports.cleanUp = cleanUp;
 exports.update = update;

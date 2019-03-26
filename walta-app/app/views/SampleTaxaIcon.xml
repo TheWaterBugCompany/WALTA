@@ -1,5 +1,5 @@
 <Alloy>
-	<View class="container" onClick="clickEvent">
+	<View class="container">
 			<ImageView id="icon" accessibilityLabel="Icon"/>
 			<Label id="abundance" accessibilityLabel="Abundance"/>
 	</View>

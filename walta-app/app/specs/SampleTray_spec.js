@@ -34,7 +34,7 @@ describe( 'SampleTray controller', function() {
             SampleTrayWin.removeEventListener("open", openWin );
             updateSampleTrayOnce(function() {
               try {
-                expect( SampleTray.content.height + SampleTray.getAnchorBar().getView().size.height )
+                expect( SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height )
                   .to.equal( SampleTray.getView().size.height );
                   resolve();
               } catch( err ) {
@@ -208,7 +208,7 @@ describe( 'SampleTray controller', function() {
         } );
     });
 
-    it('should render an add button with five taxa in the tray', function (){
+    it.only('should render an add button with five taxa in the tray', function (){
       return Promise.resolve()
         .then( function() {
           mocx.createCollection("taxa", [
@@ -587,6 +587,8 @@ describe( 'SampleTray controller', function() {
           assertPlus( sampleTaxa[2] );
         });
     });
+
+    it('should fire the IDENTIFY event if a taxon is clicked');
 
     it('should update when a taxon abundance is changed', function() {
       return Promise.resolve()
