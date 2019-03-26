@@ -205,7 +205,7 @@ function createSampleTrayTile( tileNum ) {
   var endcapWidth = getEndcapWidth();
   var tile = Ti.UI.createView({
     height: Ti.UI.FILL,
-    width: `${middleWidth}dip`,
+    width: `${middleWidth+1}dip`,
     left: `${tileNum*middleWidth+endcapWidth}dip`
   });
   if ( DEBUG ) {
