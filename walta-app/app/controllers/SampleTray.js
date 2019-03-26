@@ -5,13 +5,14 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 var Sample = require('logic/Sample');
 
-var DEBUG = true;
+var DEBUG = false;
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
 $.name = "sampletray";
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+  clearTileCache();
   $.destroy();
   $.off();
 $.TopLevelWindow.removeEventListener('close', cleanUp );
@@ -41,11 +42,22 @@ function getMiddleWidth() {
   return getEndcapWidth()*1.3;
 }
 
+// TODO: Factor Tile into a controller and handle clean up there?
+function cleanUpTile( tile ) {
+  tile.icons.forEach( function(icon ) {
+    if ( icon.handler )
+      icon.view.removeEventListener("click",icon.handler);
+    if ( icon.controller )
+      icon.controller.cleanUp();
+  });
+}
+
 function clearTileCache() {
   for( var i = 0; i<=tileIndex.length; i++ ) {
     var tile = tileIndex[i];
     if ( typeof( tile ) !== "undefined" ) {
       $.content.remove( tile.container );
+      cleanUpTile( tile );
       delete tileIndex[i];
     }
   }
@@ -94,8 +106,6 @@ function addTrayIcon( container, index ) {
     view: thumbnail
   }
 }
-
-
 
 function updateTrayIcon( icon, index ) {
   if ( index < Alloy.Collections["taxa"].length) {
@@ -251,13 +261,7 @@ function releaseTiles( start_n, end_n ) {
       var tile = tileIndex[i];
       if ( typeof( tile ) !== "undefined" ) {
         $.content.remove( tile.container );
-        // TODO: Factor Tile into a controller and handle clean up there?
-        tile.icons.forEach( function(icon ) {
-          if ( icon.handler )
-            icon.view.removeEventListener("click",icon.handler);
-          if ( icon.controller )
-            icon.controller.cleanUp();
-        });
+        cleanUpTile( tile );
         delete tileIndex[i];
       }
     }
