@@ -11,11 +11,21 @@ $.TopLevelWindow.title = "Sample";
 $.name = "sampletray";
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+  closeEditScreen();
   clearTileCache();
   $.destroy();
   $.off();
-$.TopLevelWindow.removeEventListener('close', cleanUp );
+  $.TopLevelWindow.removeEventListener('close', cleanUp );
+  $.TopLevelWindow.removeEventListener('swipe', swipeListener);
 });
+
+function swipeListener(e){
+	if ( e.direction === 'right' && getScrollOffset() == 0) {
+		e.cancelBubble = true;
+		Topics.fireTopicEvent( Topics.BACK, { swipe: true, name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+	}
+}
+$.TopLevelWindow.addEventListener('swipe', swipeListener);
 
 var anchorBar = $.getAnchorBar();
 $.completeBtn = anchorBar.createToolBarButton( null, Topics.COMPLETE, "Next");
@@ -369,7 +379,11 @@ $.getView().addEventListener( "close", function cleanup() {
 });
 
 function closeEditScreen() {
-  $.getView().remove( $.editTaxon.getView() );
+  if ( $.editTaxon ) {
+    $.getView().remove( $.editTaxon.getView() );
+    $.editTaxon.cleanUp();
+    delete $.editTaxon;
+  }
 }
 
 function editTaxon( taxon_id ) {
