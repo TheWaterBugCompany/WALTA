@@ -18,7 +18,7 @@
 require("specs/lib/ti-mocha");
 var moment = require("lib/moment");
 
-var { SURVEY_ORDER, WATERBODY_LAKE } = require("logic/Sample");
+var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("specs/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("specs/util/TestUtils");
 
@@ -30,9 +30,6 @@ describe("SiteDetails controller", function() {
         var tab = ctl.getButtons()[index];
         var position = tab.rect;
         position.x = position.x + position.width/2;
-        if ( OS_ANDROID ) {
-            position.x = position.x*Ti.Platform.displayCaps.logicalDensityFactor;
-        }
         ctl.segCtrlWrapper.fireEvent("click", position );
     }
 
@@ -41,7 +38,7 @@ describe("SiteDetails controller", function() {
         sample.clear();
         sample.set("lng", "147.671339");
         sample.set("lat", "-42.890748");
-        sample.set("surveyType", 2);
+        sample.set("surveyType", SURVEY_DETAILED );
         
 		ctl = Alloy.createController("SiteDetails");
 	});
