@@ -3,7 +3,6 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
-var Sample = require('logic/Sample');
 
 var DEBUG = false;
 
@@ -273,7 +272,7 @@ function addTiles( start_n, end_n ) {
   }
   for( var i = start_n; i<=end_n; i++ ) {
     // max() below is to add an extra blank tile with an empty tray...
-    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length - 2)/4,4) ) ) {
+    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length - 2)/4,3) ) ) {
       var tile;
       if ( typeof( tileIndex[i] ) !== "undefined") {
         updateSampleTrayTile( i );
@@ -300,7 +299,7 @@ function updateVisibleTiles( scrollx) {
   }
   addTiles(leftEdge,rightEdge);
   releaseTiles( 0, leftEdge - 1 );
-  releaseTiles( rightEdge + 1, tileIndex.length );
+  releaseTiles( rightEdge, tileIndex.length );
 }
 
 function drawIcecubeTray() {
