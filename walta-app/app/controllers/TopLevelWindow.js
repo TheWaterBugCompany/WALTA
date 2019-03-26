@@ -23,20 +23,16 @@ function openWindow() {
 	Ti.API.debug(`Opening window "${getName()}"`);
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
+		$.content.top = 0;
+		$.content.height = "90%";
+		$.content.width = Ti.UI.FILL;
+		anchorBar.getView().height = "10%";
+		anchorBar.getView().width = Ti.UI.FILL;
+		$.TopLevelWindow.add( $.content );
 		$.TopLevelWindow.add( anchorBar.getView() );
-		function adjustContentSize() {
-			$.content.top = 0; 
-			$.content.height = $.TopLevelWindow.size.height - anchorBar.getView().size.height;
-			$.TopLevelWindow.add( $.content );
-			
-		}
-		$.TopLevelWindow.addEventListener("postlayout", adjustContentSize );
-		$.TopLevelWindow.addEventListener("close", function cleanUp() {
-			Ti.API.debug(`Closing window "${getName()}"`);
-			$.TopLevelWindow.removeEventListener('postlayout', adjustContentSize );
-			$.TopLevelWindow.removeEventListener('close', cleanUp );
-		});
 	} else {
+		$.content.height = Ti.UI.FILL;
+		$.content.width = Ti.UI.FILL;
 		$.TopLevelWindow.add( $.content );
 	}
 	
@@ -48,20 +44,10 @@ function backEvent(e) {
 	Topics.fireTopicEvent( Topics.BACK, { name: $.name, surveyType: $.args.surveyType, allowAddToSample: ($.args.allowAddToSample?true : false) } );
 }
 
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, { swipe: true, name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
-	}
-}
-
-$.TopLevelWindow.addEventListener('swipe', swipeListener);
-
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.destroy();
 	$.off();
-	$.TopLevelWindow.removeEventListener( 'swipe', swipeListener );
 	$.TopLevelWindow.removeEventListener('androidback', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });

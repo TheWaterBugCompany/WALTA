@@ -34,7 +34,7 @@ describe( 'SampleTray controller', function() {
             SampleTrayWin.removeEventListener("open", openWin );
             updateSampleTrayOnce(function() {
               try {
-                expect( SampleTray.content.height + SampleTray.getAnchorBar().getView().size.height )
+                expect( SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height )
                   .to.equal( SampleTray.getView().size.height );
                   resolve();
               } catch( err ) {
@@ -60,7 +60,9 @@ describe( 'SampleTray controller', function() {
   }
 
   function findLeftMost(arr) {
-    return _.min( arr, function(c) { return c.getRect().x } );
+    return _.min( arr, function(c) { 
+      return c.getRect().x 
+    } );
   }
 
   function findRightMost(arr) {
@@ -68,7 +70,7 @@ describe( 'SampleTray controller', function() {
   }
 
   function assertSample( taxon, image, abundance ) {
-    var unwrapped = taxon.getChildren()[0];
+    var unwrapped = taxon.getChildren()[0].getChildren()[0];
     var [ icon, label ] = unwrapped.getChildren();
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
     expect( label.text, `Expected the abundance label to be ${abundance}` ).to.equal( abundance );
@@ -85,7 +87,7 @@ describe( 'SampleTray controller', function() {
   }
 
   function assertSampleBlank( taxon ) {
-    expect( taxon.getChildren() ).to.be.empty;
+    expect( taxon.getChildren()  ).to.be.empty;
   }
 
   function assertTaxaBackground( tile, image ) {
@@ -279,7 +281,7 @@ describe( 'SampleTray controller', function() {
               assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
               assertSample( sampleTaxa[3], "/amphipoda_b.png", "3-5" );
 
-              // assert third tile
+              // // assert third tile
               assertTaxaBackground( tiles[3], "images/tiling_interior_320.png" );
               sampleTaxa = getTaxaIcons( tiles[3] );
               expect( sampleTaxa ).to.have.lengthOf(4);
@@ -384,27 +386,28 @@ describe( 'SampleTray controller', function() {
             var tiles = SampleTray.content.getChildren();
             expect( tiles ).to.have.lengthOf(5);
 
-            tiles.shift(); // discard end cap since that is always static
-
+            var endcap = tiles.shift(); // discard end cap since that is always static
+          
             // assert left most tile
             var tile = findLeftMost( tiles  );
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
+            
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
             assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
             assertSample( sampleTaxa[1], "/atalophlebia_b.png", "1-2" );
             assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
-            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "6-10" );
+            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "6-10" ); 
 
             // assert rightmost tile
             var tile = findRightMost( tiles );
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
-            assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
-            assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
-            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "1-2" );
+            assertSample( sampleTaxa[0], "/atalophlebia_b.png", "3-5" );
+            assertSample( sampleTaxa[1], "/amphipoda_b.png", "3-5" );
+            assertSample( sampleTaxa[2], "/aeshnidae_telephleb_b.png", "1-2" );
+            assertSample( sampleTaxa[3], "/anisops_b.png", "1-2" );
           });
     });
   });
@@ -587,6 +590,12 @@ describe( 'SampleTray controller', function() {
           assertPlus( sampleTaxa[2] );
         });
     });
+
+    it('should fire the IDENTIFY event if a taxon is clicked');
+
+    it('should scroll to the far right upon opening');
+
+    it('should scroll to the far right after adding a new taxon');
 
     it('should update when a taxon abundance is changed', function() {
       return Promise.resolve()

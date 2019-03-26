@@ -4,13 +4,13 @@
   backgroundColor: "#aaa"
 }
 "#endcap": {
-  width: "139dp",
+  width: "25%",
   left: 0,
   bottom: 0,
-  top: "0.5dp"
+  top: 0
 }
 "#endcapBackground" : {
     image: "/images/endcap_320.png",
-    height: "100%",
-    width: "100%"
+    height: Ti.UI.FILL,
+    width: Ti.UI.FILL
 }

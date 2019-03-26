@@ -11,8 +11,17 @@ applyKeyboardTweaks( $, [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.g
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
     $.off();
-	$.TopLevelWindow.removeEventListener('close', cleanUp );
+    $.TopLevelWindow.removeEventListener('close', cleanUp );
+    $.TopLevelWindow.removeEventListener('swipe', swipeListener);
 });
+
+function swipeListener(e){
+	if ( e.direction === 'right' ) {
+		e.cancelBubble = true;
+		Topics.fireTopicEvent( Topics.BACK, { swipe: true, name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+	}
+}
+$.TopLevelWindow.addEventListener('swipe', swipeListener);
 
 function loadAttributes() {
     $.leaves.value = sample.get("leafPacks");
