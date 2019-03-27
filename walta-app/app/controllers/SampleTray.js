@@ -44,8 +44,13 @@ function getViewWidth() {
 }
 
 function getEndcapWidth() {
-  return PlatformSpecific.convertSystemToDip( $.endcap.getSize().width ); 
+  return getEndcapHeight()*0.5;
 }
+
+function getEndcapHeight() {
+  return PlatformSpecific.convertSystemToDip( $.content.getSize().height ); 
+}
+
 
 function getMiddleWidth() {
   return getEndcapWidth()*1.3;
@@ -149,7 +154,7 @@ function updateFirstTwoSampleTrayIcons() {
     firstTwoTiles = {
       container: Ti.UI.createView({
               width: "73%",
-              height: Ti.UI.FILL,
+              height: `${getEndcapHeight()}dip`,
               left: "27%",
               layout: "vertical"
             }),
@@ -174,7 +179,7 @@ function updateFirstTwoSampleTrayIcons() {
 function createIconContainer() {
   var iconContainer = Ti.UI.createView( {
     top: 0,
-    width: `${getMiddleWidth()/2-1}dp`,
+    width: `${getMiddleWidth()/2-1}dip`,
     height: "50%"
   });
   if ( DEBUG ) {
@@ -212,8 +217,9 @@ function createTaxaIcon(taxon) {
 function createSampleTrayTile( tileNum ) {
   var middleWidth = getMiddleWidth();
   var endcapWidth = getEndcapWidth();
+  var endcapHeight = getEndcapHeight();
   var tile = Ti.UI.createView({
-    height: Ti.UI.FILL,
+    height: `${endcapHeight}dip`,
     width: `${middleWidth+1}dip`,
     left: `${tileNum*middleWidth+endcapWidth}dip`
   });
@@ -228,7 +234,7 @@ function createSampleTrayTile( tileNum ) {
   tile.add( trayBackground );
   
   if ( DEBUG ) {
-   var debugNumber = Ti.UI.createLabel({color: "grey", text: tileNum, font: {fontSize: 150 } });
+   var debugNumber = Ti.UI.createLabel({color: "gray", text: tileNum, font: {fontSize: 150 } });
     tile.add( debugNumber );
   }
   
@@ -305,7 +311,7 @@ function updateVisibleTiles( scrollx) {
   var rightEdge = roundToTile( scrollx + viewWidth + middleWidth );
   var leftEdge = roundToTile( scrollx - middleWidth - endcapWidth );
   if ( DEBUG ) {
-    Ti.API.debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}`);
+    Ti.API.debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}`);
   }
   addTiles(leftEdge,rightEdge);
   releaseTiles( 0, leftEdge - 1 );
@@ -352,7 +358,26 @@ function startIdentification(e) {
   e.cancelBubble = true;
 };
 
+// In order to get the correct dimensions for the end cap image
+// we create the endcap tile based on the measured height of the
+// "content" pane. Then the tile width and height are based off
+// this standard measure to ensure consistency.
+//
+// We rely on the postlayout event to set this initial position.
+function drawEndcapTile() {
+ $.endcap = Ti.UI.createImageView({ 
+   image: "/images/endcap_320.png",
+   left: 0,
+   top: 0,
+   height: `${getEndcapHeight()}dip`,
+   width: `${getEndcapWidth()}dip`
+  })
+  $.content.add( $.endcap );
+}
+
+
 function initializeTray() {
+    drawEndcapTile();
     clearTileCache();
     drawIcecubeTray();
 }
@@ -360,16 +385,11 @@ function initializeTray() {
 $.content.addEventListener( "click", startIdentification );
 $.content.addEventListener( "scroll", drawIcecubeTray );
 
-// need to wait for Titanium to settle the rendering of the view to read the sizes 
-// for the tray rendering.
-//
-// FIXME: This is nasty - how long to wait?
 $.content.addEventListener( "postlayout", function initEvent() {
   $.content.removeEventListener( "postlayout", initEvent );
-  setTimeout( initializeTray, 10 );
+  initializeTray();
 });
  
-
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
 
 $.getView().addEventListener( "close", function cleanup() {
@@ -379,7 +399,7 @@ $.getView().addEventListener( "close", function cleanup() {
 });
 
 function closeEditScreen() {
-  if ( $.editTaxon ) {
+  if ( typeof $.editTaxon === "object" ) {
     $.getView().remove( $.editTaxon.getView() );
     $.editTaxon.cleanUp();
     delete $.editTaxon;

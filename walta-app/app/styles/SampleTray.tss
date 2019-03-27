@@ -4,7 +4,8 @@
   backgroundColor: "#aaa"
 }
 "#endcap": {
-  width: "25%",
+  height: Ti.UI.FILL,
+  width: "200dip",
   left: 0,
   bottom: 0,
   top: 0

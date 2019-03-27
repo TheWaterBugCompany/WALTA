@@ -1,7 +1,4 @@
 <Alloy>
 	<ScrollView id="content" class="container" scrollType="horizontal">
-		<View id="endcap">
-			<ImageView id="endcapBackground"/>
-		</View>
 	</ScrollView>
 </Alloy>
