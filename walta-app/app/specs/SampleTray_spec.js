@@ -50,7 +50,7 @@ describe.only( 'SampleTray controller', function() {
     return function() {
       return new Promise( function( resolve ) {
           updateSampleTrayOnce(resolve);
-          SampleTray.content.scrollTo( x, 0 );
+          SampleTray.content.scrollTo( x, 0, {animated: false} );
         });
     }
   }
@@ -343,7 +343,7 @@ describe.only( 'SampleTray controller', function() {
       the implementation - we need to look up expect tile positions by
       there coordinates in the view. */
 
-    it('when scrolled to the right it should update the screen properly', function() {
+    it.only('when scrolled to the right it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
           .then( scrollSampleTray( 209*4 ) )
@@ -432,7 +432,7 @@ describe.only( 'SampleTray controller', function() {
             clickPlus( sampleTaxa[0] );
             setTimeout( function() {
               SampleTray.selectMethod.keysearch.getView().fireEvent('click');
-            }, 100);
+            }, 150);
           });
         });
     });
