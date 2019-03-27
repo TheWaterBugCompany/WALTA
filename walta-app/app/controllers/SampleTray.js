@@ -190,7 +190,7 @@ function createIconContainer() {
 
 function createAddIcon() {
   var addIconCache = Ti.UI.createButton({
-    top: "25%",
+    top: "40%",
     left: "25%",
     width: "50%",
     height: "36%",
