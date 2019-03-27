@@ -3,15 +3,3 @@
   disableBounce: true,
   backgroundColor: "#aaa"
 }
-"#endcap": {
-  height: Ti.UI.FILL,
-  width: "200dip",
-  left: 0,
-  bottom: 0,
-  top: 0
-}
-"#endcapBackground" : {
-    image: "/images/endcap_320.png",
-    height: Ti.UI.FILL,
-    width: Ti.UI.FILL
-}
