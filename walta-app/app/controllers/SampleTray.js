@@ -365,14 +365,18 @@ function startIdentification(e) {
 //
 // We rely on the postlayout event to set this initial position.
 function drawEndcapTile() {
- $.endcap = Ti.UI.createImageView({ 
-   image: "/images/endcap_320.png",
+ $.endcap = Ti.UI.createView({ 
    left: 0,
    top: 0,
    height: `${getEndcapHeight()}dip`,
    width: `${getEndcapWidth()}dip`
   })
   $.content.add( $.endcap );
+  $.endcap.add( Ti.UI.createImageView({ 
+    image: "/images/endcap_320.png",
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL
+  }));
 }
 
 
