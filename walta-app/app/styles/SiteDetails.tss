@@ -1,64 +1,64 @@
 
-".panel": {
-    width: Ti.UI.SIZE,
-    height: "58%"
-}
-
-"#top": {
-    horizontalWrap: false
-}
-
-"#topLeft" : {
-    width: Ti.UI.SIZE,
-    top: "8dp",
-    left: "8dp",
-    right: "8dp"
-}
-
-"#bottom": {
-    height: Ti.UI.SIZE,
+"#container": {
+    horizontalWrap: false,
     width: Ti.UI.FILL,
-    horizontalWrap: false
-}
-"#bottomLeft" : {
-    width: "57%",
-    height: Ti.UI.SIZE,
-    top: "8dp",
-    left: "8dp",
-    right: "8dp"
+    height: Ti.UI.FILL,
+    left: "1%",
+    right: "1%",
+    top: "5%"
 }
 
-"#bottomRight": {
-    width: Ti.UI.FILL,
-    height: Ti.UI.FILL
+"#right" : {
+    width: "45%"
 }
 
-"#photoSelectWrapper" : {
-    top: "8dp",
-    width: Ti.UI.FILL,
-    height: Ti.UI.FILL 
+"#left" : {
+    width: "55%"
 }
 
-"#photoSelect": {
-    right: "8dp"
+"#right[if=Alloy.Globals.isPhablet]" : {
+    width: "50%"
 }
 
-"#nextButton": {
-    bottom: "12dp",
-    right: "12dp"
+"#left[if=Alloy.Globals.isPhablet]" : {
+    width: "50%"
 }
 
-"#waterbodyNameLabel": {
-    top: "10dp"
+
+"#left[if=Alloy.Globals.isTablet]" : {
+    width: "50%"
+}
+
+"#right[if=Alloy.Globals.isTablet]" : {
+    width: "50%"
+}
+
+"#photoSelect" : {
+    height: "60%"
+}
+
+"#nextWrapper": {
+    bottom: "5%",
+    right: "1%"
 }
 
 ".labelText": {
-    left: "8dp",
-    bottom: "4dp",
+    left: "1%",
+    bottom: "1%",
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
 ".errorWrap": {
-    borderRadius: 6
+    borderWidth: "1dp",
+    borderRadius: 10,
+    bottom: "1%"
+}
+".errorWrap[if=Alloy.Globals.isPhablet]": {
+    borderRadius: 25,
+    borderWidth: "6dp",
+}
+".errorWrap[if=Alloy.Globals.isTablet]": {
+    borderRadius: 50,
+    borderWidth: "5px"
 }
 ".tabs" : {
     width: "300dp",
@@ -70,19 +70,19 @@
 	unselectedButtonColor: "#fff", 
 	selectedButtonTextColor: "#fff",
 	unselectedButtonTextColor: "#26849c",
-	withDividers: true,
-	font: {
-        fontFamily: "Tahoma",
-        fontWeight: "bold",
-        fontSize: "14dp"
-    }
+	withDividers: true
 }
 
-"#surveyLevelSelect": {
+".tabs[if=Alloy.Globals.isPhablet]": {
+    width: "300dp",
+    height: "40dp",
 }
 
-"#waterbodyTypeSelect": {
+".tabs[if=Alloy.Globals.isTablet]": {
+    width: "600dp",
+    height: "70dp",
 }
+
 "#locationIndicator": {
     height: "50%",
     top: "2dp",

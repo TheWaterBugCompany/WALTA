@@ -1,37 +1,36 @@
 <Alloy>
 	<ScrollView id="content">
-		<View layout="vertical">
-			<View id="top" class="panel" layout="horizontal">
-				<View id="topLeft" layout="vertical">
-					<Label id="surveyLevelLabel" class="labelText" text="Survey level:"/>
-					<View id="surveyLevelError" class="errorWrap shrinkWrap">
-						<Widget id="surveyLevelSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Survey level" />
-					</View>
-					
-					<Label id="waterbodyTypeLabel" class="labelText" text="Waterbody type:"/>
-					<View id="waterbodyTypeError" class="errorWrap shrinkWrap">
-						<Widget id="waterbodyTypeSelect" class="tabs" src="com.skypanther.segmentedcontrol" accessibilityLabel="Waterbody type" />
-					</View>
-					<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
+		<View id="container" layout="horizontal">
+			<View id="left" layout="vertical">
+				<Label id="surveyLevelLabel" class="labelText" text="Survey level:"/>
+				<View id="surveyLevelError" class="errorWrap shrinkWrap">
+					<Widget id="surveyLevelSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol" accessibilityLabel="Survey level" />
 				</View>
-				<View id="photoSelectWrapper"> 
-					<Require id="photoSelect" type="view" src="PhotoSelect"/>
+				<Label id="waterbodyTypeLabel" class="labelText" text="Waterbody type:"/>
+				<View id="waterbodyTypeError" class="errorWrap shrinkWrap">
+					<Widget id="waterbodyTypeSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol" accessibilityLabel="Waterbody type" />
+				</View>
+				<View id="waterbodyName" layout="vertical" class="shrinkWrap">
+					<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
+					<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" onChange="checkValidity" />
+				</View>
+				<View id="nearByFeature" layout="vertical" class="shrinkWrap">
+					<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
+					<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near by feature" onChange="checkValidity"/>
 				</View>
 			</View>
-			<View id="bottom" class="panel" layout="horizontal">
-				<View id="bottomLeft" layout="vertical">	
-					<View class="shrinkWrap" layout="vertical">
-						<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" onChange="checkValidity" />
-						<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
-						<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near by feature" onChange="checkValidity"/>
-					</View>
+			<View id="right" layout="vertical">
+				<View id="photoSelectWrapper" class="shrinkWrap"> 
+					<Require id="photoSelect" type="view" src="PhotoSelect"/>
 				</View>
-				<View id="bottomRight">
+				<View id="bottomRight" class="shrinkWrap" layout="absolute">
 					<View id="locationIndicator" class="shrinkWrap" layout="horizontal" onClick="openLocationEntry">
 						<ImageView id="locationIndicatorIcon" />
 						<Label id="locationStatus" class="labelText" text="Location not obtained"/>
 					</View>
-					<Label id="nextButton" class="actionButton" text="Next" onClick="nextClick"/>
+					<View id="nextWrapper" class="shrinkWrap">
+						<Label id="nextButton" class="actionButton" text="Next" onClick="nextClick"/>
+					</View>
 				</View>
 			</View>
 		</View>
