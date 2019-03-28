@@ -59,3 +59,20 @@
 	borderRadius: 6,
 	borderWidth: 2
 }
+
+".anchorBarTextButton[if=Alloy.Globals.isPhablet]": {
+  font: { fontSize: "17dp" }
+}
+
+".anchorBarTextButton[if=Alloy.Globals.isTablet]": {
+  width: "210dp",
+  font: { fontSize: "34dp" }
+}
+
+".anchorBarButton[if=Alloy.Globals.isPhablet]": {
+  
+}
+
+".anchorBarButton[if=Alloy.Globals.isTablet]": {
+  width: "70dp"
+}

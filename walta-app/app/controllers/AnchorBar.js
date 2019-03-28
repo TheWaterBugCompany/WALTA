@@ -38,8 +38,9 @@ function createToolBarButton( image, topic, title, eventData ) {
 	
 	if ( title ) {
 		$.addClass( btn, "anchorBarTextButton" );
-	} 
-	$.addClass( btn, "anchorBarButton" );
+	} else {
+		$.addClass( btn, "anchorBarButton" );
+	}
 	
 	if ( topic ) {
 		btn.addEventListener( 'click', function(e) {

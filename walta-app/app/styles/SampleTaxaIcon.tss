@@ -7,7 +7,21 @@
   width: "28dp",
   height: "16dp",
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  borderRadius: "8dp"
+  borderRadius: "8dp",
+  font: { fontSize: "10dp" }
+}
+
+"#abundance[if=Alloy.Globals.isPhablet]": {
+  font: { fontSize: "12dp" },
+  width: "30dp",
+  height: "18dp"
+}
+
+"#abundance[if=Alloy.Globals.isTablet]": {
+  font: { fontSize: "24dp" },
+  width: "56dp",
+  height: "32dp",
+  borderRadius: "16dp"
 }
 
 ".padIcon": {
