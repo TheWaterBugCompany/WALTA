@@ -29,7 +29,7 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 Alloy.Globals.Key = keyMock; 
 //Ti.API.info(`${JSON.stringify(Alloy.Globals.Key.speedbugIndex["test"].name)}`);
 
-describe("EditTaxon controller", function() { 
+describe.only("EditTaxon controller", function() { 
     var ctl,win;
     
     function makeEditTaxon( taxon ) {
@@ -50,7 +50,7 @@ describe("EditTaxon controller", function() {
 	it('should display the taxon edit view', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
-            checkTestResult( (e) => closeWindow( win, () => { win = null; done( e ) } ), 
+            checkTestResult( (e) => done(e), 
                 function() {
                     expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
                     expect( ctl.photoSelect.photo.image ).to.include("aeshnidae_telephleb_b.png");
@@ -61,22 +61,25 @@ describe("EditTaxon controller", function() {
         
     });
 
-    it('save should be disabled if the photo is blank', function(done) {
+    it.only('save should be disabled if the photo is blank', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
-            expect( ctl.saveButton.enabled ).to.be.false;
-            expect( ctl.photoSelect.photoSelect.borderColor ).to.equal("red");
-            done();
+            checkTestResult( (e) => done(e), function() {
+                expect( ctl.saveButton.enabled ).to.be.false;
+                expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.true;
+                expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.equal("red");
+            });
         });
     });
-
-    it('save should be eabled if a photo is selected', function(done) {
+ 
+    it('save should be enabled if a photo is selected', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
             var photo = Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, "specs/resources/simpleKey1/media/amphipoda_02.jpg");
             ctl.photoSelect.trigger("photoTaken", photo);
             expect( ctl.saveButton.enabled ).to.be.true;
-            expect( ctl.photoSelect.photoSelect.borderColor ).to.equal("#26849c");
+            expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.false;
+            expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.be.null;
             done();
         });
     });

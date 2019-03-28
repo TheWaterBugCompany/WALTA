@@ -24,10 +24,19 @@
     width: "82%"
 }
 
-"#photoSelect": {
-    top: "4dp",
-    width: "85%",
-    height: "50%"
+"#photoSelect": { 
+  width: "85%",
+  height: "50%"
+}
+
+"#photoSelect[if=Alloy.Globals.isPhablet]": {
+  width: "85%",
+  height: "58%"
+}
+
+"#photoSelect[if=Alloy.Globals.isTablet]": {
+  width: "85%",
+  height: "80%"
 }
 
 "#closeButton": {
@@ -40,8 +49,15 @@
   width: "50%",
   height: "98%"
 }
+
+"#window[if=Alloy.Globals.isTablet]": {
+  width: "70%",
+  height: "98%"
+}
+
+
 "#buttons": {
-    top: "5%",
+    top: "8dp",
     width: Ti.UI.SIZE,
     height: Ti.UI.SIZE
 }

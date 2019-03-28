@@ -1,8 +1,37 @@
+"#photoSelectBoundary": {
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE
+}
 
-"#photoSelect" : {
+".photoError": {
+    borderColor: "red",
+    borderWidth: "2dp",
+    borderRadius: 10,
+}
+
+"#photoSelectInner" : {
+    left: "8dp",
+    right: "8dp",
+    top: "8dp",
+    bottom: "8dp",
     borderColor: "#26849c",
     backgroundColor: "#cee8ef"
 }
+
+"#photoSelectLabel" : {
+    visible: false,
+    color: "red",
+    wordWrap: true,
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    backgroundColor: "#aaffffff",
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL,
+    font: {
+        fontFamily: "Tahoma",
+        fontSize: "20dp"
+    }
+}
+
 "#camera": {
     width: "48dp",
     height: "48dp",

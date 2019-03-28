@@ -4,6 +4,11 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
+function cleanUp() {
+    $.destroy();
+    $.off();
+    $.abundanceValue.removeEventListener('swipe', swipeListener);
+}
 
 function swipeListener(e){
 		e.cancelBubble = true;
@@ -13,11 +18,12 @@ $.abundanceValue.addEventListener('swipe', swipeListener);
 setImage( taxon.getPhoto() );
 setAbundance( taxon.get("abundance") );
 
+
 function setImage( photo ) {
     if ( photo ) {
         $.photoSelect.setImage( photo );
     } else {
-        setError($.photoSelect.photoSelect);
+        $.photoSelect.setError();
         disableControl($.saveButton); 
         $.photoSelect.setImage( taxon.getSilhouette() );
     }
@@ -79,14 +85,8 @@ function closeEvent() {
 var cachedPhoto;
 $.photoSelect.on("photoTaken", function(photo) {
     cachedPhoto = photo;
-    clearError($.photoSelect.photoSelect);
+    $.photoSelect.clearError();
     enableControl($.saveButton);
 });
-
-function cleanUp() {
-    $.destroy();
-    $.off();
-    $.abundanceValue.removeEventListener('swipe', swipeListener);
-}
 
 exports.cleanUp = cleanUp;
