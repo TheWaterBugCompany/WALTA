@@ -51,7 +51,7 @@ describe("Summary controller", function() {
 	afterEach( function(done) {
 		closeWindow( ctl.getView(), done );
     });
-    it('should display the SIGNAL scores on the Summary view', function(done) {
+    it.only('should display the SIGNAL scores on the Summary view', function(done) {
         doTest( done, function() {
             expect( ctl.signalScore.text ).to.equal("3.0");
             expect( ctl.weightedSignalScore.text ).to.equal("3.5");
