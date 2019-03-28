@@ -43,12 +43,28 @@
     width: "60dp",
     height: "60dp",
     borderWidth: 2,
-    borderRadius: 30,
+    borderRadius: "30dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
     font: {
 		fontFamily: 'sans-serif',
 		fontSize: '20dp'
 	}
+}
+
+"#taxaCount[if=Alloy.Globals.isPhablet]" : {
+    width: "80dp",
+    height: "80dp",
+    borderWidth: 3,
+    borderRadius: "40dp",
+    font: { fontSize: '22dp' }
+}
+
+"#taxaCount[if=Alloy.Globals.isTablet]" : {
+    width: "150dp",
+    height: "150dp",
+    borderWidth: 6,
+    borderRadius: "75dp",
+    font: { fontSize: '42dp' }
 }
 
 ".scoreWrapper": {
@@ -59,12 +75,25 @@
 }
 
 ".score": {
-    borderRadius: 15,
+    borderRadius: "15dp",
     width: "30dp",
     height: "30dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
     right: "20dp",
     color: "white"
+}
+
+".score[if=Alloy.Globals.isPhablet]" : {
+    borderRadius: "18dp",
+    width: "36dp",
+    height: "36dp"
+
+}
+
+".score[if=Alloy.Globals.isTablet]" : {
+    borderRadius: "35dp",
+    width: "70dp",
+    height: "70dp"
 }
 
 "#rightFrame": {
@@ -73,8 +102,8 @@
 }
 
 "#doneButton": {
-    bottom: "12dp",
-    right: "12dp"
+    bottom: "5%",
+    right: "1%"
 }
 
 "#quickInterpretation": {
