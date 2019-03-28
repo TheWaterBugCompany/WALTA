@@ -29,7 +29,7 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 Alloy.Globals.Key = keyMock; 
 //Ti.API.info(`${JSON.stringify(Alloy.Globals.Key.speedbugIndex["test"].name)}`);
 
-describe.only("EditTaxon controller", function() { 
+describe("EditTaxon controller", function() { 
     var ctl,win;
     
     function makeEditTaxon( taxon ) {
@@ -61,7 +61,7 @@ describe.only("EditTaxon controller", function() {
         
     });
 
-    it.only('save should be disabled if the photo is blank', function(done) {
+    it('save should be disabled if the photo is blank', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
             checkTestResult( (e) => done(e), function() {

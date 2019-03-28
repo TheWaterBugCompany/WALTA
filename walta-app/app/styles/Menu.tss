@@ -43,6 +43,18 @@
   }
 }
 
+".bigMenuText[if=Alloy.Globals.isPhablet]": {
+   font: {
+    fontSize: "30dp"
+  }
+}
+
+".bigMenuText[if=Alloy.Globals.isTablet]": {
+   font: {
+    fontSize: "60dp"
+  }
+}
+
 "#mayfly": {
   top: "10%",
   left: "1%",
@@ -128,6 +140,18 @@
 ".smallMenuText[if=Alloy.Globals.isLdpi]": {
    font: {
     fontSize: "16dp"
+  }
+}
+
+".smallMenuText[if=Alloy.Globals.isPhablet]": {
+   font: {
+    fontSize: "16dp"
+  }
+}
+
+".smallMenuText[if=Alloy.Globals.isTablet]": {
+   font: {
+    fontSize: "32dp"
   }
 }
 
