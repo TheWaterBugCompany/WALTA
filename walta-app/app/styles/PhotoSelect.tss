@@ -6,15 +6,27 @@
 ".photoError": {
     borderColor: "red",
     borderWidth: "2dp",
-    borderRadius: 10,
+    borderRadius: "10dp"
 }
 
+".photoError[if=Alloy.Globals.isPhablet]": {
+    borderWidth: "2dp",
+    borderRadius: "12dp"
+}
+
+".photoError[if=Alloy.Globals.isTablet]": {
+    borderWidth: "4dp",
+    borderRadius: "20dp"
+}
+
+
 "#photoSelectInner" : {
-    left: "8dp",
-    right: "8dp",
-    top: "8dp",
-    bottom: "8dp",
+    left: "5%",
+    right: "5%",
+    top: "5%",
+    bottom: "3%",
     borderColor: "#26849c",
+    borderWidth: "1dp",
     backgroundColor: "#cee8ef"
 }
 
@@ -32,10 +44,29 @@
     }
 }
 
+"#photoSelectLabel[if=Alloy.Globals.isPhablet]": {
+  font: { fontSize: "22dp" }
+}
+
+"#photoSelectLabel[if=Alloy.Globals.isTablet]": {
+  font: { fontSize: "40dp" }
+}
+
+
 "#camera": {
     width: "48dp",
     height: "48dp",
     bottom: "0",
     right: "0",
     image: "/images/camera-icon.png"
+}
+
+"#camera[if=Alloy.Globals.isPhablet]": {
+    width: "96dp",
+    height: "96dp"
+}
+
+"#camera[if=Alloy.Globals.isTablet]": {
+    width: "96dp",
+    height: "96dp"
 }
