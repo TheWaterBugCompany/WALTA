@@ -20,7 +20,6 @@ var KeyLoader = require('logic/KeyLoaderJson');
 var TopLevelWindow = require('ui/TopLevelWindow');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var HtmlView = require('ui/HtmlView');
-var BrowseView = require('ui/BrowseView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
 var Sample = require('logic/Sample');
@@ -54,19 +53,11 @@ function createAppWindow( keyName, keyPath ) {
 				Alloy.createController("Menu",args).open();
 			},
 
-			browseWindow: function(data) {
-				Ti.API.debug(`data = ${JSON.stringify(data)}`)
-				var win = TopLevelWindow.makeTopLevelWindow({
-					surveyType: data.surveyType,
-					allowAddToSample: data.allowAddToSample,
-					name: 'browse',
-					title: 'Browse',
-					uiObj: BrowseView.createBrowseView(privates.key,data.surveyType, data.allowAddToSample)
-				});
-				var acb = win.getAnchorBar();
-				acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: data.surveyType, allowAddToSample:  data.allowAddToSample }  ) );
-				acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: data.surveyType, allowAddToSample:  data.allowAddToSample }  ) );
-				win.open();
+			browseWindow: function(args) {
+				if ( ! args )
+					args = {};
+				args.key = this.key;
+				Alloy.createController("TaxonList",args).open();
 			},
 
 			sampleTrayWindow: function(args) {

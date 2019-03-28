@@ -1,0 +1,12 @@
+<Alloy>
+	<ListView id="content" class="container" defaultItemTemplate="taxon">
+		<Templates>
+			<ItemTemplate name="taxon">
+				<Label bindId='title' id="taxon" class="labelText" onClick="clickItem"/>
+			</ItemTemplate>
+			<ItemTemplate name="genusOrSpeciesTaxon">
+				<Label bindId='title' id="genusOrSpeciesTaxon" class="labelText"  onClick="clickItem"/>
+			</ItemTemplate>
+		</Templates>
+	</ListView>
+</Alloy>
