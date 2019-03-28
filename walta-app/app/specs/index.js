@@ -1,7 +1,7 @@
 require("specs/lib/ti-mocha");
 
 require("specs/AnchorBar_spec");
-require("specs/BrowseView_spec");
+require("specs/TaxonList_spec");
 require("specs/EditTaxon_spec");
 require("specs/Habitat_spec");
 require("specs/KeyNode_spec");

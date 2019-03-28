@@ -17,25 +17,23 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var TestUtils = require('specs/util/TestUtils');
 var KeyLoaderJson = require('logic/KeyLoaderJson');
-var BrowseView = require('ui/BrowseView');
+var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
 
-describe('BrowseView', function() {
-	var bv, win, key;
+describe('TaxonList controller', function() {
+	var key, ctl;
 	this.timeout(3000);
 	before( function(){
 		key = KeyLoaderJson.loadKey( Ti.Filesystem.resourcesDirectory + '/specs/resources/simpleKey1/' );
-		bv = BrowseView.createBrowseView( key );
-		win = TestUtils.wrapViewInWindow( bv.view );
+		ctl = Alloy.createController("TaxonList", { key: key });
 	});
 
 	after( function() {
-		TestUtils.closeWindow( win );
+		closeWindow( ctl.getView() );
 	});
 
 	it('should display the browse view window', function(done) {
-		TestUtils.windowOpenTest( win, done );
+		controllerOpenTest( ctl, done );
 	});
 
 });
