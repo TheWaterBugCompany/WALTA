@@ -3,12 +3,20 @@
     scrollType: "horizontal"
 }
 "#wrapper2": {
-    top: "24dp",
+    top: "1%",
     height: Ti.UI.SIZE
 }
 
 "#wrapper2[if=Alloy.Globals.isSmallHeight]" : {
     top: 0
+}
+
+"#wrapper2[if=Alloy.Globals.isPhablet]" : {
+    top: "0.1%"
+}
+
+"#wrapper2[if=Alloy.Globals.isTablet]" : {
+    top: "5%"
 }
 
 "#header": {
@@ -38,6 +46,16 @@
     fullscreen: false
 }
 
+".textField[if=Alloy.Globals.isPhablet]" : {
+    width: "110dp",
+    height: "40dp",
+}
+
+".textField[if=Alloy.Globals.isTablet]" : {
+    width: "210dp",
+    height: "80dp",
+}
+
 "#footer": {
     height: Ti.UI.FILL,
     width: Ti.UI.FILL
@@ -45,9 +63,19 @@
 
 ".inputLabel": {
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-    top: "10dp",
+    top: "0.5%",
     width: "90dp"
 }
+
+".inputLabel[if=Alloy.Globals.isPhablet]": {
+    width: "110dp"
+}
+
+".inputLabel[if=Alloy.Globals.isTablet]": {
+
+    width: "210dp"
+}
+
 
 ".inputBox": {
     top: "2dp",
@@ -72,6 +100,6 @@
 }
 
 "#nextButton": {
-    right: "12dp",
-    bottom: "12dp"
+    right: "1%",
+    bottom: "5%"
 }
