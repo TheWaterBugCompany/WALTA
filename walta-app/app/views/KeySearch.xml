@@ -1,5 +1,5 @@
 <Alloy>
 	<View id="content" class="container">
-		<Label id="heading">Choose the best match</Label>
+		<Label id="heading" class="headingText" >Choose the best match</Label>
 	</View>
 </Alloy>

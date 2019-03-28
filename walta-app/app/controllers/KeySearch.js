@@ -37,13 +37,16 @@ $.name = "decision";
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();
   $.off();
+  goBackBtn.cleanUp();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
 var acb = $.getAnchorBar(); 
+$.args.name = "decision";
+var goBackBtn = Alloy.createController("GoBackButton", $.args );
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample }  ), true );
-acb.addTool( GoBackButton.createGoBackButton({ name: "decision", surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ) );
+acb.addTool( goBackBtn.getView() );
 
 var keyNode = $.args.keyNode;
 var questions = [];

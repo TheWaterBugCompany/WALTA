@@ -27,6 +27,16 @@
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
+var eventHandlers = [];
+function cleanUp() {
+	$.destroy();
+	$.off();
+	eventHandlers.forEach( function(d) {
+		d.btn.removeEventListener( 'click', d.handler );
+	});
+	eventHandlers = null;
+}
+
 function createToolBarButton( image, topic, title, eventData ) {
 	var btn;
 
@@ -38,15 +48,22 @@ function createToolBarButton( image, topic, title, eventData ) {
 	
 	if ( title ) {
 		$.addClass( btn, "anchorBarTextButton" );
+		$.addClass( btn, "anchorBarTextButtonLabel" );
 	} else {
 		$.addClass( btn, "anchorBarButton" );
 	}
 	
 	if ( topic ) {
-		btn.addEventListener( 'click', function(e) {
+		var handler = function(e) {
 			Topics.fireTopicEvent( topic, eventData );
 			e.cancelBubble = true;
+		};
+		eventHandlers.push( {
+			handler:  handler,
+			btn: btn
 		});
+
+		btn.addEventListener( 'click', handler );
 	}
 	
 	$[topic] = btn;
@@ -73,3 +90,4 @@ $.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HEL
 exports.createToolBarButton = createToolBarButton;
 exports.setTitle = setTitle;
 exports.addTool = addTool;
+exports.cleanUp = cleanUp;

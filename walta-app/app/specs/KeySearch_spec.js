@@ -55,7 +55,7 @@ describe('KeySearch controller', function() {
 			closeWindow( knv.getView(), done );
 	})
 
-	it('should fire the FORWARD topic', function(done) {
+	it.only('should fire the FORWARD topic', function(done) {
 		actionFiresTopicTest( knv.getQuestions()[1].view, 'click', Topics.FORWARD, done );
 	});
 

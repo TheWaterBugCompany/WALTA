@@ -1,0 +1,18 @@
+
+".container" : {
+  horizontalWrap: false,
+  width: "125dp"
+}
+
+".container[if=Alloy.Globals.isPhablet]": {
+  width: "125dp"
+}
+
+".container[if=Alloy.Globals.isTablet]": {
+  width: "260dp"
+}
+
+
+"#goBackLabel": {
+ left: "12dp"
+}

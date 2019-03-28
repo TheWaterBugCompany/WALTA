@@ -7,7 +7,3 @@
   layout: 'vertical'
 }
 
-"#heading": {
-  font: { fontFamily: 'Tahoma', fontSize: '15dip' },
-  color: 'black'
-}
