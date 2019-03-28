@@ -250,3 +250,53 @@ overrode the settings with other TSS, XML, or JS settings:
         fontSize: "32dp"
     },
 }
+".anchorBarButton": {
+  left: "8dp",
+  height: Ti.UI.SIZE,
+  width: "35dp"
+}
+
+".anchorBarTextButton": {
+  width: "100dp",
+  height: "78%",
+  center: { y: "54%" },
+	backgroundColor: "#26849c",
+	borderColor: "#26849c",
+	borderRadius: "6dp",
+	borderWidth: "2dp"
+}
+
+".anchorBarTextButton[if=Alloy.Globals.isPhablet]": {
+  width: "110dp",
+  borderRadius: "8dp"
+}
+
+".anchorBarTextButton[if=Alloy.Globals.isTablet]": {
+  width: "210dp",
+  borderRadius: "12dp"
+}
+
+".anchorBarTextButtonLabel": {
+  color: "white",
+  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+  font: {
+    fontWeight: "semibold",
+    fontSize: "16dp"
+  }
+}
+
+".anchorBarTextButtonLabel[if=Alloy.Globals.isPhablet]": {
+  font: { fontSize: "17dp" }
+}
+
+".anchorBarTextButtonLabel[if=Alloy.Globals.isTablet]": {
+  font: { fontSize: "34dp" }
+}
+
+".anchorBarButton[if=Alloy.Globals.isPhablet]": {
+  
+}
+
+".anchorBarButton[if=Alloy.Globals.isTablet]": {
+  width: "70dp"
+}
