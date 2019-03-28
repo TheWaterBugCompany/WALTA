@@ -1,7 +1,5 @@
 
 "#taxonName": {
-    top: "4dp",
-    bottom: "4dp",
     height: Ti.UI.SIZE
 }
 "#header": {
@@ -12,8 +10,8 @@
     height: Ti.UI.SIZE
 }
 "#howManyLabel": {
-    top: "4dp",
-    bottom: "4dp",
+    top: "1%",
+    bottom: "1%",
     height: Ti.UI.SIZE
 }
 
@@ -28,20 +26,19 @@
   width: "85%",
   height: "50%"
 }
-
 "#photoSelect[if=Alloy.Globals.isPhablet]": {
   width: "85%",
-  height: "58%"
+  height: "52%" 
 }
 
 "#photoSelect[if=Alloy.Globals.isTablet]": {
   width: "85%",
-  height: "80%"
+  height: "58%"
 }
-
 "#closeButton": {
-  height: "32dp",
-  width: "24dp",
+  top: 0,
+  height: "8%",
+  width: "8%",
   right: "4dp"
 }
 
@@ -49,12 +46,6 @@
   width: "50%",
   height: "98%"
 }
-
-"#window[if=Alloy.Globals.isTablet]": {
-  width: "70%",
-  height: "98%"
-}
-
 
 "#buttons": {
     top: "8dp",

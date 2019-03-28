@@ -39,13 +39,13 @@ overrode the settings with other TSS, XML, or JS settings:
 
 "TextField[if=Alloy.Globals.isPhablet]": {
    font: {
-    fontSize: "22dp"
+    fontSize: "18dp"
   }
 }
 
 "TextField[if=Alloy.Globals.isTablet]": {
    font: {
-    fontSize: "36dp"
+    fontSize: "32dp"
   }
 }
 
@@ -119,13 +119,13 @@ overrode the settings with other TSS, XML, or JS settings:
 
 ".headingText[if=Alloy.Globals.isPhablet]": {
    font: {
-    fontSize: "22dp"
+    fontSize: "18dp"
   }
 }
 
 ".headingText[if=Alloy.Globals.isTablet]": {
    font: {
-    fontSize: "3dp"
+    fontSize: "34dp"
   }
 }
 
@@ -133,7 +133,7 @@ overrode the settings with other TSS, XML, or JS settings:
    font: {
     fontFamily: "Tahoma",
 	fontWeight: "bold",
-    fontSize: "14dp"
+    fontSize: "16dp"
   },
   left: "2%",
   textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
@@ -155,7 +155,7 @@ overrode the settings with other TSS, XML, or JS settings:
 
 ".labelText[if=Alloy.Globals.isTablet]": {
     font: {
-      fontSize: "34dp"
+      fontSize: "32dp"
     }
 }
 
@@ -234,7 +234,19 @@ overrode the settings with other TSS, XML, or JS settings:
     font: {
         fontFamily: "Tahoma",
         fontWeight: "bold",
-        fontSize: "14dp"
+        fontSize: "16dp"
     },
     visible: false
+}
+
+".error[if=Alloy.Globals.isPhablet]": {
+    font: {
+        fontSize: "18dp"
+    },
+}
+
+".error[if=Alloy.Globals.isTablet]": {
+    font: {
+        fontSize: "32dp"
+    },
 }
