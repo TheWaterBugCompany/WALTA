@@ -1,12 +1,12 @@
 // Arguments passed into this controller can be accessed via the `$.args` object directly or:
 var args = $.args;
-$.photoSelect.left = $.args.left;
-$.photoSelect.right = $.args.right;
-$.photoSelect.top = $.args.top;
-$.photoSelect.bottom = $.args.bottom;
-$.photoSelect.width = $.args.width;
-$.photoSelect.height = $.args.height;
-$.photo.image = $.args.image;
+if ( $.args.left ) $.photoSelectInner.left = $.args.left;
+if ( $.args.right ) $.photoSelectInner.right = $.args.right;
+if ( $.args.top ) $.photoSelectInner.top = $.args.top;
+if ( $.args.bottom ) $.photoSelectInner.bottom = $.args.bottom;
+if ( $.args.width ) $.photoSelectInner.width = $.args.width;
+if ( $.args.height ) $.photoSelectInner.height = $.args.height;
+if ( $.args.image )$.photo.image = $.args.image;
 
 function generateThumbnail( blob ) {
     var thumbnailImage = Ti.UI.createImageView( { image: blob } ).toBlob();
@@ -99,6 +99,18 @@ function enable() {
     $.disabled = false;
 }
 
+function setError() {
+    $.resetClass( $.photoSelectBoundary, "photoError" );
+    $.photoSelectLabel.visible = true;
+}
+
+function clearError() {
+    $.resetClass( $.photoSelectBoundary, "");
+    $.photoSelectLabel.visible = false;
+}
+
 exports.setImage = setImage;
+exports.setError = setError;
+exports.clearError = clearError;
 exports.disable = disable;
 exports.enable = enable;
