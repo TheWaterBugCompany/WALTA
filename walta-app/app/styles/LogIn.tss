@@ -25,18 +25,18 @@
 }
 
 "#emailTextField": {
-    height: "15%",
+    height: "14%",
     width: Ti.UI.FILL
 }
 
 "#passwordTextField": {
-    height: "15%",
+    height: "14%",
     width: Ti.UI.FILL
 }
 
 
 "#passwordLabel": {
-    width: "250dp",
+    width: Ti.UI.FILL,
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
 

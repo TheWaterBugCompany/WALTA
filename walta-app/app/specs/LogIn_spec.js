@@ -32,7 +32,7 @@ describe('LogIn controller', function() {
 		closeWindow( login.getView(), done );
 	});
 	
-	it('it should render', function(done) {
+	it.only('it should render', function(done) {
 		controllerOpenTest( login, done );
     });
     

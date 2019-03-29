@@ -26,8 +26,10 @@
 				</View>
 				<Label id="errorMessage" class="error" text="Error message"/>
 			
-				<Button id="submitButton" class="actionButton" title="Submit" onClick="submitClick"/>
+				
 			</View>
+			
 		</View>
+		<Button id="submitButton" class="actionButton" title="Submit" onClick="submitClick"/>
 	</ScrollView>
 </Alloy>
