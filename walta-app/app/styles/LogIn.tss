@@ -24,6 +24,17 @@
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
 
+"#emailTextField": {
+    height: "15%",
+    width: Ti.UI.FILL
+}
+
+"#passwordTextField": {
+    height: "15%",
+    width: Ti.UI.FILL
+}
+
+
 "#passwordLabel": {
     width: "250dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
@@ -55,6 +66,6 @@
 }
 
 "#forgotPasswordButton": {
-    width: "160dp",
+    width: "60%",
     top: "5%"
 }
