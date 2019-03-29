@@ -1,0 +1,7 @@
+<Alloy>
+	<View class="container" layout="horizontal" onClick="clickEvent">
+		<Label id="question" class="labelText" text="Question text goes here"/>
+		<Require type="view"  readonly=true src="PhotoSelect" id="photoSelect" />
+		<ImageView id="arrow"image="/images/rightarrow.png"/>
+	</View>
+</Alloy>

@@ -1,0 +1,29 @@
+
+".container" : {
+  backgroundColor:"#cfdbf3",
+  horizontalWrap: false,
+  borderRadius: "25dp"
+}
+
+".container[if=Alloy.Globals.isPhablet]": {
+    borderRadius: "27dp"
+}
+
+".container[if=Alloy.Globals.isTablet]": {
+    borderRadius: "50dp"
+}
+
+"#photoSelect": {
+    width: "35%",
+    height: "95%"
+}
+
+"#question": {
+    width: "58%",
+    height: "100%"
+}
+
+"#arrow":{
+    width: "3%",
+    height: "40%"
+}

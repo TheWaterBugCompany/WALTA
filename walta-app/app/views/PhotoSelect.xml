@@ -3,7 +3,10 @@
 		<View id="photoSelectInner">
 			<ImageView id="photo" />
 			<Label id="photoSelectLabel" text="Please take a photo\nto continue"/>
-			<ImageView id="camera" onClick="takePhoto"/>
+			<View id="iconHolder" class="shrinkWrap">
+				<ImageView id="magnify" class="icon" onClick="openGallery"/>
+				<ImageView id="camera" class="icon" onClick="takePhoto"/>
+			</View>
 		</View>
 	</View>
 </Alloy>
