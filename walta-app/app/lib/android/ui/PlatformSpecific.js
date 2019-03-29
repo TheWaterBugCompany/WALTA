@@ -55,6 +55,8 @@ function convertSystemToDip( n ) {
 }
 
 function urlToLocalAsset( path ) {
+	if ( path.slice(0,7) === "file://" )
+		return path;
 	if ( path[0] != '/' ) path = '/' + path;
 	return `file:///android_asset/Resources${path}`;
 }

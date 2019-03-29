@@ -83,13 +83,7 @@ function createQuestionView(  /* Question */ qn ) {
 		qnViewObj.onSelect( e );
 		
 	});
-	qnView.addEventListener('swipe', function(e){
-		if ( e.direction === 'left' ) {
-			e.cancelBubble = true;
-			qnViewObj.onSelect( e );
-		}
-	});
-
+	
 	qnViewObj.view = qnView;
 	
 	return qnViewObj;

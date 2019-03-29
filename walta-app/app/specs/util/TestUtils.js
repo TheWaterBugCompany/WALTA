@@ -39,6 +39,12 @@ function waitForMeldEvent( obj, evtName, fireEvent, done ) {
 		fireEvent();
 }
 
+function waitForBackboneEvent( obj, evtName, fireEvent, done ) {
+	obj.on( evtName, function() { done() } );
+	fireEvent();
+}
+
+
 function waitForTopic( topicName, fireEvent, done, result ) {
 		Topics.subscribe( topicName, function( data ) {
 			result.data = data;
@@ -99,7 +105,7 @@ function waitForTick( timeout ) {
 }
 
 function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done ) {
-	waitForMeldEvent( evtObj, evtName, function() {
+	waitForBackboneEvent( evtObj, evtName, function() {
 		actionObj.fireEvent( actionEvtName );
 	}, done);
 }

@@ -23,21 +23,21 @@
  * KeyNode object.
  *
  */
-
-var Layout = require('ui/Layout');
-var GoBackButton = require('ui/GoBackButton');
 var Topics = require('ui/Topics');
-var QuestionView = require('ui/QuestionView');
-var meld = require("lib/meld");
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
 
+var keyNode = $.args.keyNode;
+var questions = [];
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();
   $.off();
   goBackBtn.cleanUp();
+  questions.forEach( function(q) { q.cleanUp(); } );
+  questions = null;
   $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
@@ -48,20 +48,15 @@ acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample }  ), true );
 acb.addTool( goBackBtn.getView() );
 
-var keyNode = $.args.keyNode;
-var questions = [];
-function getQuestions() {
-  return questions;
-}
+
 // Add each question
-_(keyNode.questions).each(
+_(keyNode.questions).each( 
 	function( q, index ) {
-		var qv = QuestionView.createQuestionView( q );
+		var qv = Alloy.createController("Question", { question: q });
     questions.push( qv );
-		$.content.add( _(qv.view).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
-		meld.on( qv, 'onSelect', function() {
+    $.content.add( _(qv.getView()).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
+    qv.on("select",function() {
 			Topics.fireTopicEvent( Topics.FORWARD, { index: index, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
-		} );
+		});
 	}
 );
-exports.getQuestions = getQuestions;
