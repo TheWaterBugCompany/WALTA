@@ -4,8 +4,8 @@
 			<ImageView id="icon" />
 			<View id="text">
 				<View  layout="vertical"> <!-- inserting another View seems to workaround layout bugs -->
-					<Label id="title" />
-					<Label id="description" />
+					<Label id="title" class="headingText"/>
+					<Label id="description" class="labelText"/>
 				</View>
 			</View>
 		</View>

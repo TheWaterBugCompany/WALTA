@@ -33,7 +33,7 @@ describe('MethodSelect', function() {
 		closeWindow( win, done );
 	});
 
-	it('should fire the keysearch event', function(done) {
+	it.only('should fire the keysearch event', function(done) {
 		mnu.on("keysearch", function event() {
 			mnu.off("keysearch",event);
 			done();
