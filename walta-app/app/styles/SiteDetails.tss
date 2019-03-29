@@ -38,7 +38,7 @@
 }
 
 "#nextWrapper": {
-    bottom: "5%",
+    bottom: "3%",
     right: "1%"
 }
 

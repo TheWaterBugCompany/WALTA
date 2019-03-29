@@ -27,13 +27,33 @@
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
 
+"#nameTextField": {
+    height: "14%",
+    width: Ti.UI.FILL
+}
+
+"#emailTextField": {
+    height: "14%",
+    width: Ti.UI.FILL
+}
+
+"#passwordTextField": {
+    height: "14%",
+    width: Ti.UI.FILL
+}
+
+"#passwordConfirmTextField": {
+    height: "14%",
+    width: Ti.UI.FILL
+}
+
 "#passwordLabel": {
-    width: "250dp",
+    width: Ti.UI.FILL,
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
 
 "#passwordConfirmLabel": {
-    width: "250dp",
+    width: Ti.UI.FILL,
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
 }
 
@@ -45,9 +65,12 @@
 }
 
 ".checkbox": {
-    tintColor: "#b4d2d9"
+    tintColor: "#b4d2d9",
+    width: "10%",
+    height: "10%"
 }
 
 "#submitButton" : {
-    top: "10%"
+    bottom: "3%",
+    right: "1%"
 }
