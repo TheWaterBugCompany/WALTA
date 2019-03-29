@@ -115,11 +115,11 @@ function _loadAndReleaseTiles(e) {
     
     // getContentOffset can be undefined during postLayout
     // scrollView.getSize can be undefined during postLayout also ?
-    var scrollx = ( scrollView.contentOffset ? PlatformSpecific.convertSystemToDip( scrollView.contentOffset.x ) : 0 );
+    var scrollx = ( scrollView.contentOffset ? scrollView.contentOffset.x : 0 );
    // Ti.API.debug(`contentWidth = ${$.content.contentWidth}, contentWidth - scrollx = ${parseInt($.content.contentWidth)- scrollx}`);
     if ( (lastScroll == null) || (Math.abs( scrollx - lastScroll ) > 0) ) {
         var start_n, end_n; 
-        var viewWidth = PlatformSpecific.convertSystemToDip( scrollView.size? scrollView.size.width : 0 );
+        var viewWidth = scrollView.size? scrollView.size.width : 0;
         //Ti.API.debug(`_convertToTileNum( scrollx ) = ${_convertToTileNum( scrollx )} scrollx = ${scrollx} spanTilex = ${spanTileX} tileWidth = ${tileWidth}`);
         
         // Release any tiles that are now off the screen
