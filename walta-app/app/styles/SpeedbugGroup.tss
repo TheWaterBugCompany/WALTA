@@ -1,0 +1,28 @@
+
+".container" : {
+    layout: "vertical",
+    borderColor: "#b4d2d9",
+    borderWidth: "1dp",
+    width: Ti.UI.SIZE,
+    height: "100%"
+}
+
+"#bugContainer": {
+    layout: "horizontal",
+    horizontalWrap: false,
+    width: Ti.UI.SIZE,
+    height: "80%"
+}
+
+"#notSureButton": {
+    height: "10%",
+    width: "90%",
+    top: "5%",
+    left: "5%",
+    right: "5%",
+    bottom: "3%",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    color: 	"#26849c",
+    backgroundColor: "#b4d2d9",
+    visible: false
+}

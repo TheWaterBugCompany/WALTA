@@ -34,7 +34,7 @@ describe('Speedbug controller', function() {
 		TestUtils.closeWindow( SpeedBugWin );
 	});
 
-	it('should display the speed bug window', function() {
+	it.only('should display the speed bug window', function() {
 		TestUtils.windowOpenTest( SpeedBug );
 	});
 
