@@ -1,0 +1,4 @@
+<Alloy>
+	<View class="container" onClick="clickEvent">
+	</View>
+</Alloy>

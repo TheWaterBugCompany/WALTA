@@ -1,0 +1,6 @@
+<Alloy>
+	<View class="container">
+		<View id="bugContainer"/>
+		<Label id="notSureButton" class="labelText" text="Not Sure?" onClick="clickEvent"/>
+	</View>
+</Alloy>
