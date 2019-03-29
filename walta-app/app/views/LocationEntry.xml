@@ -3,7 +3,7 @@
 			<View class="window">
 				<View layout="vertical"> 
 					<View class="titlebar">
-						<Label class="title">Use swipe/zoom, then tap to manually select location:</Label>
+						<Label class="titleText">Use swipe/zoom, then tap to manually select location:</Label>
 						<View id="closeButton" onClick="cancelClick">
 							<ImageView class="close_button_image"></ImageView>
 						</View>
@@ -13,7 +13,9 @@
 					</View> 
 				</View>
 				<View id="buttonBar" layout="horizontal">
-					<Button id="locateButton" class="actionButton" onClick="locateClick" />
+					<View id="locateButton" class="actionButton" onClick="locateClick" >
+						<ImageView id="locateButtonIcon" />
+					</View>
 					<Button id="cancelButton" class="actionButton" title="Close" onClick="cancelClick" />
 					<Button id="saveButton" class="actionButton" title="Save" onClick="saveClick" />
 				</View>
