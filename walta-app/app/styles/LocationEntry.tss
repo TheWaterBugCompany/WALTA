@@ -46,6 +46,8 @@
 
 "#mapview": {
     mapType: Alloy.Globals.Map.HYBRID_TYPE,
+    indoorEnabled: false,
+    mapToolbarEnabled: false,
     region: {
         latitude: -27.507653,
         longitude: 133.611655,
