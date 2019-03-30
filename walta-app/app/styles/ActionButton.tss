@@ -1,4 +1,36 @@
 
 ".container" : {
-  
+  top: "10%",
+  left: "3%",
+  right: "3%"
+}
+
+"#icon": {
+    width: "55dp",
+    height: "55dp"
+}
+
+"#icon[if=Alloy.Globals.isPhablet]": {
+  width: "55dp",
+  height: "55dp" 
+}
+
+"#icon[if=Alloy.Globals.isTablet]": {
+  width: "80dp",
+  height: "80dp"
+}
+
+"#label": {
+    font: {
+        fontWeight: "normal",
+        fontSize: "9dp" 
+    }
+}
+
+"#label[if=Alloy.Globals.isPhablet]": {
+  font: { fontSize: "11dp" }
+}
+
+"#label[if=Alloy.Globals.isTablet]": {
+  font: { fontSize: "20dp" }
 }

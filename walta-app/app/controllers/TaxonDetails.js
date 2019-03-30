@@ -29,52 +29,24 @@ var Topics = require('ui/Topics');
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Details";
 $.name = "decision";
+var actions = [];
+
+function addActionButton( image, label, action ) {
+	var ctl = Alloy.createController("ActionButton", { 
+		image: image, 
+		label: label,
+		action: action
+	});
+	actions.push(ctl);
+	$.actionBtns.add(ctl.getView());
+}
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.destroy();
 	$.off();
+	actions.forEach( (a) => a.cleanUp() );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
-
-function createActionButton(imageUrl, label, onClick) {
-	var obj = {
-		_views: {},
-		view: null
-	};
-	var vws = obj._views;
-	vws.btn = Ti.UI.createButton({
-		width : Layout.BUTTON_SIZE,
-		height : Layout.BUTTON_SIZE,
-		backgroundImage : imageUrl,
-		accessibilityLabel: `${label} Button`
-	});
-	vws.btn.addEventListener('click', onClick);
-
-	vws.lbl = Ti.UI.createLabel({
-		font : {
-			font : Layout.TEXT_FONT,
-			fontSize : Layout.BUTTON_FONT_SIZE
-		},
-		text : label,
-		color : 'black',
-		textAlign : Ti.UI.TEXT_ALIGNMENT_CENTER
-	});
-
-	var ctn = Ti.UI.createView({
-		width : Layout.BUTTON_SIZE,
-		height : Ti.UI.SIZE,
-		left : Layout.BUTTON_MARGIN,
-		top : Layout.BUTTON_MARGIN,
-		right : Layout.BUTTON_MARGIN,
-		bottom : Layout.BUTTON_MARGIN,
-		layout : 'vertical'
-	});
-
-	ctn.add(vws.btn);
-	ctn.add(vws.lbl);
-
-	return ctn;
-};
 
 $.taxon = $.args.taxon;
 
@@ -98,34 +70,31 @@ $.description.text = $.taxon.description;
 // If there are photos add the photo view and button
 if ($.args.taxon.photoUrls.length > 0) {
 	$.photoSelect.setImage( $.taxon.photoUrls );
-	$.actionBtns.add(
-		createActionButton("/images/gallery-icon.png", "Photo gallery",
-			function(e) {
-				$.photoView.open();
-				e.cancelBubble = true;
-			}));
+	addActionButton( "/images/gallery-icon.png", "Photo gallery",
+		function(e) {
+			$.photoSelect.openGallery();
+			e.cancelBubble = true;
+		}
+	);
 }
 
 // If there is a video add the video button
 if ($.args.taxon.videoUrl) {
-	$.actionBtns.add(
-		createActionButton("/images/icon-video.png", "Watch video",
-			function(e) {
-				// open video player
-				Topics.fireTopicEvent( Topics.VIDEO, { url: $.taxon.videoUrl } );
-				e.cancelBubble = true;
-			}) );
+	addActionButton("/images/icon-video.png", "Watch video",
+		function(e) {
+			Topics.fireTopicEvent( Topics.VIDEO, { url: $.taxon.videoUrl } );
+			e.cancelBubble = true;
+		});
 }
 
 // Add the add to sample button
 Ti.API.debug(`taxonallowAddToSample = ${$.args.allowAddToSample}`);
 if ( $.args.allowAddToSample !== false ) {
-	$.actionBtns.add(
-		createActionButton("/images/plus-icon.png", "Add To Sample",
+	addActionButton("/images/plus-icon.png", "Add To Sample",
 			function(e) {
 				Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId } );
 				e.cancelBubble = true;
-			}) );
+	});
 }
 
 function swipeListener(e){
@@ -136,7 +105,6 @@ function swipeListener(e){
 }
 
 $.content.addEventListener('swipe', swipeListener);
-
 
 $.getView().addEventListener( "close", function cleanup() {
   $.content.removeEventListener('swipe', swipeListener);
