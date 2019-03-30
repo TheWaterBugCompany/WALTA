@@ -20,10 +20,10 @@
 				</View>
 			</View>
 			<View id="right" layout="vertical">
-				<View id="photoSelectWrapper" class="shrinkWrap"> 
+				<View id="photoSelectWrapper"> 
 					<Require id="photoSelect" type="view" src="PhotoSelect"/>
 				</View>
-				<View id="bottomRight" class="shrinkWrap" layout="absolute">
+				<View id="bottomRight" layout="absolute">
 					<View id="locationIndicator" class="shrinkWrap" layout="horizontal" onClick="openLocationEntry">
 						<ImageView id="locationIndicatorIcon" />
 						<Label id="locationStatus" class="labelText" text="Location not obtained"/>

@@ -33,7 +33,7 @@
     width: "50%"
 }
 
-"#photoSelect" : {
+"#photoSelectWrapper" : {
     height: "60%"
 }
 

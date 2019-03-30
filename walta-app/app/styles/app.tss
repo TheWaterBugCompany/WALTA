@@ -30,6 +30,7 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 "TextField": {
+    height: "16dp",
     font: {
         fontFamily: "Tahoma",
         fontSize: "16dp"
@@ -38,15 +39,21 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 "TextField[if=Alloy.Globals.isPhablet]": {
+   height: "18dp",
    font: {
     fontSize: "18dp"
   }
 }
 
 "TextField[if=Alloy.Globals.isTablet]": {
+   height: "32dp",
    font: {
     fontSize: "32dp"
   }
+}
+
+"TextField[platform=ios]": {
+    borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
 }
 
 "Label": {
@@ -198,18 +205,11 @@ overrode the settings with other TSS, XML, or JS settings:
     borderColor: "#b4d2d9",
     borderWidth: "1dp",
     borderRadius: "10dp",
-    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE,
     left: "2%",
     right: "2%",
-    height: Ti.UI.SIZE,
 	color: "#26849c",
     fullscreen: false
-}
-
-".textField[platform=ios]": {
-    padding: {
-        left: "4dp"
-    }
 }
 
 ".textField[if=Alloy.Globals.isLdpi]": {
