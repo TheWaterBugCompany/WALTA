@@ -1,4 +1,6 @@
 <Alloy>
-	<View class="container">
+	<View class="container" layout="vertical">
+		<View id="icon" onClick="clickEvent"/>
+		<Label id="label" class="labelText"/>
 	</View>
 </Alloy>

@@ -128,6 +128,7 @@ function clearError() {
     $.photoSelectLabel.visible = false;
 }
 
+exports.openGallery = openGallery;
 exports.setImage = setImage;
 exports.setError = setError;
 exports.clearError = clearError;

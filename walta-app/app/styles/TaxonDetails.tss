@@ -117,15 +117,15 @@
 
 "#photoSelect": {
   width: Ti.UI.FILL,
-  height: "60%"
+  height: "65%"
 }
 
 "#photoSelect[if=Alloy.Globals.isPhablet]": {
-  height: "70%"
+  height: "65%"
 }
 
 "#photoSelect[if=Alloy.Globals.isTablet]": {
-  height: "80%"
+  height: "75%"
 }
 
 "#actionBtns": {
