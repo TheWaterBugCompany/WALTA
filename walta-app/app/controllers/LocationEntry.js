@@ -37,7 +37,18 @@ function updateLocation( lat, lng, accuracy ) {
             title: "Survey Location"
         })
     );
-    $.mapview.setRegion({ latitude:lat, longitude:lng, latitudeDelta:0.005, longitudeDelta:0.005});
+    var newRegion = { 
+        latitude:lat, 
+        longitude:lng, 
+        bearing: $.mapview.region.bearing,
+        latitudeDelta: $.mapview.region.latitudeDelta, 
+        longitudeDelta: $.mapview.region.longitudeDelta
+    };
+    if ( newRegion.latitudeDelta > 0.05 || newRegion.longitudeDelta > 0.05 ) {
+        newRegion.latitudeDelta = 0.05;
+        newRegion.longitudeDelta = 0.05;
+    } 
+    $.mapview.setRegion(newRegion);
 }
 
 function locateClick() {
@@ -57,7 +68,7 @@ function cancelClick() {
     $.trigger("close");
 }
 
-$.mapview.addEventListener( "mapclick", function(e) {
+$.mapview.addEventListener( "longclick", function(e) {
     if ( ! $.disabled ) {
         updateLocation( e.latitude, e.longitude );
     }
