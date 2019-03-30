@@ -9,37 +9,100 @@
   width : "100%",
   height : Ti.UI.SIZE,
   top : "8dp",
-  left : "8dp",
-  font : {
-    font : 'Tahoma',
-    fontSize : '22dip'
-  },
-  color : '#2F61CC'
-}
+  left : "8dp"
+} 
 
 "#detailsBox": {
+  showVerticalScrollIndicator: true,
   width : "55%",
   height : Ti.UI.FILL,
-  borderRadius : 25,
-  backgroundColor : '#cfdbf3',
-  layout : 'vertical',
+  borderRadius : "10dp",
+  backgroundColor : "#cfdbf3",
+  layout : "vertical",
   left: "8dp",
   top: "8dp",
   bottom: "8dp"
 }
 
-"#details": {
-  scalesPageToFit: false,
-  disableBounce: true,
-  enableZoomControls: false,
-  backgroundColor: '#cfdbf3',
-  width : Ti.UI.FILL,
-  height : Ti.UI.FILL,
-  left: "8dp",
-  top: "8dp",
-  bottom: "8dp",
-  right: "8dp",
-  willHandleTouches: false
+"#detailsBox[if=Alloy.Globals.isPhablet]": {
+  borderRadius : "10dp",
+}
+
+"#spacer": {
+  height: "10%"
+}
+
+"#detailsBox[if=Alloy.Globals.isTablet]": {
+  borderRadius : "25dp",
+}
+
+".italics": {
+  font: { fontStyle: "italic" }
+}
+
+".field" : {
+  horizontalWrap: false,
+  width: Ti.UI.FILL,
+  bottom: "2%"
+}
+
+"#signalScoreHeading": {
+  width: Ti.UI.SIZE
+}
+
+
+"#scientificClassificationLabel": {
+  top: "1%",
+  width: Ti.UI.FILL
+}
+
+".detailsHeading": {
+  left: "2%",
+  width: "25%",
+  top: 0,
+  font: {
+    fontSize: "12dp"
+  }
+}
+
+".detailsHeading[if=Alloy.Globals.isPhablet]": {
+  width: "20%",
+  font: {
+    fontSize: "14dp"
+  }
+}
+
+".detailsHeading[if=Alloy.Globals.isTablet]": {
+  width: "17%",
+  font: {
+    fontSize: "24dp"
+  }
+}
+"#description": {
+  width: Ti.UI.FILL,
+  right: "2%"
+}
+".detailsText": {
+  left: "2%",
+  width: "68%",
+  font: {
+    fontWeight: "normal",
+    fontSize: "12dp"
+  }
+}
+
+".detailsText[if=Alloy.Globals.isPhablet]": {
+    width: "75%",
+    font: {
+      fontSize: "13dp"
+    }
+}
+
+".detailsText[if=Alloy.Globals.isTablet]": {
+    width: "75%",
+    font: {
+      fontSize: "24dp"
+    }
 }
 
 "#actions": {
@@ -52,9 +115,17 @@
   bottom: "8dp"
 }
 
-"#photoViewCtn": {
-  width: Ti.UI.SIZE,
-  height: Ti.UI.SIZE
+"#photoSelect": {
+  width: Ti.UI.FILL,
+  height: "60%"
+}
+
+"#photoSelect[if=Alloy.Globals.isPhablet]": {
+  height: "70%"
+}
+
+"#photoSelect[if=Alloy.Globals.isTablet]": {
+  height: "80%"
 }
 
 "#actionBtns": {

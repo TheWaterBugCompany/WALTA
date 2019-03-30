@@ -25,17 +25,15 @@
 
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
-var PhotoView = require('ui/PhotoView');
-var PlatformSpecific = require('ui/PlatformSpecific');
 
 exports.baseController  = "TopLevelWindow";
-$.TopLevelWindow.title = "ALT Key";
+$.TopLevelWindow.title = "Details";
 $.name = "decision";
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.destroy();
 	$.off();
-$.TopLevelWindow.removeEventListener('close', cleanUp );
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
 function createActionButton(imageUrl, label, onClick) {
@@ -81,40 +79,25 @@ function createActionButton(imageUrl, label, onClick) {
 $.taxon = $.args.taxon;
 
 $.title.text = $.taxon.commonName;
-$.details.html = `<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no"></meta>
-<style>html,body {margin:0;padding:0;color:black;font-family:${Layout.TEXT_FONT};font-size:${Layout.DETAILS_TEXT_SIZE};}</style>
-</head><body id="details">${$.args.taxon.asDetailHtml()}</body></html>`;
-
-/*
- * =============== HACK: Workaround for odd WebView resizing bug under iOS ===============
- * See Trac issue #72
- * Under iOS the WebView seems to mysteriously change zoom level after the initial layout.
- *
- * To fix this we set the explicit width of the view on the postlayout event to make sure
- * it won't change from the value first calculated.
- */
-
-if ( Ti.Platform.osname === 'iphone' ) {
-	var hackListener = function() {
-		$.details.width = $.details.size.width;
-		$.details.removeEventListener( 'postlayout', hackListener );
-	};
-	$.details.addEventListener( 'postlayout', hackListener );
-}
-
-/*
- * ============================== END HACK ================================================
- */
+$.taxon.scientificName.forEach( (part) => {
+	var label = $.UI.create('Label',{ text: `${part.taxonomicLevel}: ${part.name}` });
+	$.addClass( label, "labelText");
+	$.addClass( label, "detailsText");
+	if ( part.taxonomicLevel === "genus" || part.taxonomicLevel === "species" ) {
+		$.addClass( label, "italics");
+	}
+	$.scientificClassification.add( label );
+});
+$.size.text = $.taxon.size; 
+$.habitat.text = $.taxon.habitat;
+$.movement.text = $.taxon.movement;
+$.confusedWith.text = $.taxon.confusedWith;
+$.signalScore.text = $.taxon.signalScore;
+$.description.text = $.taxon.description;
 
 // If there are photos add the photo view and button
 if ($.args.taxon.photoUrls.length > 0) {
-	$.photoView = PhotoView.createPhotoView($.taxon.photoUrls);
-	$.photoViewCtn.add(_($.photoView.view).extend({
-		left : 0,
-		width : Layout.THUMBNAIL_WIDTH,
-		top : Layout.WHITESPACE_GAP
-	}));
-
+	$.photoSelect.setImage( $.taxon.photoUrls );
 	$.actionBtns.add(
 		createActionButton("/images/gallery-icon.png", "Photo gallery",
 			function(e) {
