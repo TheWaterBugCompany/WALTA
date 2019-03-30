@@ -50,7 +50,7 @@ describe('TaxonDetails controller', function() {
 	});
 
 	/* Yuck couldn't figure out a way to do this without setTimeout() hopefuly 1s is enough */
-	it('the description text should be visible', function(done) {
+	it.only('the description text should be visible', function(done) {
 		this.timeout(2000);
 		controllerOpenTest( tv );
 		setTimeout(function() {

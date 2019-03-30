@@ -79,8 +79,6 @@ function createActionButton(imageUrl, label, onClick) {
 };
 
 $.taxon = $.args.taxon;
-var platformHeight = PlatformSpecific.convertSystemToDip( Titanium.Platform.displayCaps.platformHeight );
-var GoBackButton = require('ui/GoBackButton');
 
 $.title.text = $.taxon.commonName;
 $.details.html = `<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=no"></meta>
@@ -163,6 +161,8 @@ $.getView().addEventListener( "close", function cleanup() {
 });
 
 var acb = $.getAnchorBar();
+$.args.name = "decision";
+var goBackBtn = Alloy.createController("GoBackButton", $.args );
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
-acb.addTool( GoBackButton.createGoBackButton( { name: "decision", surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ) );
+acb.addTool( goBackBtn.getView() );
