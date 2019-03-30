@@ -33,6 +33,7 @@ Alloy.Globals.isXHdpi = (Ti.Platform.displayCaps.density == "xhigh");
 Alloy.Globals.isXXHdpi = (Ti.Platform.displayCaps.density == "xxhigh");
 Alloy.Globals.isPhablet = (Ti.Platform.displayCaps.platformHeight/Ti.Platform.displayCaps.platformWidth < 0.6) && Ti.Platform.displayCaps.logicalDensityFactor > 2;
 Alloy.Globals.isTablet= (Ti.Platform.displayCaps.platformHeight/Ti.Platform.displayCaps.platformWidth < 0.6) && Alloy.Globals.isXHdpi;
+Ti.API.info(`isPhablet=${Alloy.Globals.isPhablet}, isTablet=${Alloy.Globals.isTablet}`);
 //Alloy.Globals.isXdpi = (Ti.Platform.displayCaps.density == "xhdpi");
 //Alloy.Globals.isXXdpi = (Ti.Platform.displayCaps.density == "xxhdpi");
 //Alloy.Globals.isXXXdpi = (Ti.Platform.displayCaps.density == "xxxhdpi");

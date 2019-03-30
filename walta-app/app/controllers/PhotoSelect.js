@@ -5,8 +5,8 @@ if ( $.args.left ) $.photoSelectInner.left = $.args.left;
 if ( $.args.right ) $.photoSelectInner.right = $.args.right;
 if ( $.args.top ) $.photoSelectInner.top = $.args.top;
 if ( $.args.bottom ) $.photoSelectInner.bottom = $.args.bottom;
-if ( $.args.width ) $.photoSelectInner.width = $.args.width;
-if ( $.args.height ) $.photoSelectInner.height = $.args.height;
+if ( $.args.width ) $.photoSelectBoundary.width = $.args.width;
+if ( $.args.height ) $.photoSelectBoundary.height = $.args.height;
 if ( $.args.image ) $.photo.image = $.args.image;
 
 var readOnlyMode = $.args.readonly ;
