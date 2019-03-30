@@ -1,10 +1,10 @@
-<Alloy autoStyle="true">
+<Alloy>
 	<View class="container">
-			<View id="leftTools">
-			</View>
-			<Label id="title" class="titleText">
-			</Label>
-			<View id="rightTools">
-			</View>
+		<View id="leftTools">
+		</View>
+		<Label id="title" class="titleText">
+		</Label>
+		<View id="rightTools">
+		</View>
 	</View>
 </Alloy>

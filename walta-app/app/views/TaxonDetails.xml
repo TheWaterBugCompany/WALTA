@@ -1,12 +1,41 @@
 <Alloy>
 	<View id="content" class="container">
-			<Label id="title"></Label>
-			<View id="detailsBox">
-				<WebView id="details">
-				</WebView>
-			</View>
+			<Label id="title" class="headingText"></Label>
+			<ScrollView id="detailsBox">
+
+				<Label id="scientificClassificationLabel" class="detailsHeading headingText" text="Scientific Classification:"/>
+				<View id="scientificClassification" class="field shrinkWrap" layout="vertical"/>
+
+				<View layout="horizontal" class="field shrinkWrap">
+					<Label class="detailsHeading headingText" text="Size:"/>
+					<Label id="size" class="detailsText labelText"/>
+				</View>
+
+				<View layout="horizontal" class="field shrinkWrap">
+					<Label class="detailsHeading headingText" text="Habitat:"/>
+					<Label id="habitat" class="detailsText labelText"/>
+				</View>
+
+				<View layout="horizontal" class="field shrinkWrap">
+					<Label class="detailsHeading headingText" text="Movement:"/>
+					<Label id="movement" class="detailsText labelText"/>
+				</View>
+
+				<View layout="horizontal" class="field shrinkWrap">
+					<Label class="detailsHeading headingText" text="Confused with:"/>
+					<Label id="confusedWith" class="detailsText labelText"/>
+				</View>
+
+				<View layout="horizontal" class="field shrinkWrap">
+					<Label id="signalScoreHeading" class="detailsHeading headingText" text="SIGNAL score:"/>
+					<Label id="signalScore" class="detailsText labelText"/>
+				</View>
+
+				<Label id="description" class="detailsText labelText"/>
+				<View id="spacer"/>
+			</ScrollView>
 			<View id="actions">
-				<View id="photoViewCtn"></View>
+				<Require type="view" readonly=true src="PhotoSelect" id="photoSelect" />
 				<View id="actionBtns"></View>
 			</View>
 	</View>

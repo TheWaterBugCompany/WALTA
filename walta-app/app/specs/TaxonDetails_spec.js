@@ -31,11 +31,13 @@ describe('TaxonDetails controller', function() {
 						id: "testTaxon",
 						name: "Family Palaemonidae, Genus Macrobrachium",
 						commonName: "Freshwater prawn",
+						scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Crustacea"},{"taxonomicLevel":"class","name":"Decapoda"},{"taxonomicLevel":"family","name":"Palaemonidae"},{"taxonomicLevel":"genus","name":"Macrobrachium"}],
 						size: 300,
 						habitat: "Crayfish in rivers (upper photo) yabbies in wetlands/pools (lower photo).",
 						movement: "walking, with sudden flips when disturbed.",
 						confusedWith: "Nothing, very distinctive, We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to spearate when young.",
 						signalScore: 4,
+						description: "Random text to to at the end. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc.",
 						mediaUrls: [
 							"/specs/resources/simpleKey1/media/amphipoda_01.jpg",
 							"/specs/resources/simpleKey1/media/amphipoda_02.jpg",
@@ -51,36 +53,6 @@ describe('TaxonDetails controller', function() {
 
 	/* Yuck couldn't figure out a way to do this without setTimeout() hopefuly 1s is enough */
 	it.only('the description text should be visible', function(done) {
-		this.timeout(2000);
-		controllerOpenTest( tv );
-		setTimeout(function() {
-			checkTestResult( done, function() {
-				expect( tv.details.size.height ).to.be.above( 0 );
-			}); 
-		}, 1000 );
-	});
-
-	it('the size of the text in the webview should be stable', function(done) {
-		this.timeout(10000);
-		controllerOpenTest( tv, function(){
-			setTimeout( function() {
-				var oldHeight = tv.details.evalJS("document.body.children[0].offsetHeight");
-				var photoView = tv.photoView;
-				meld.before( photoView, 'onGalleryWinOpened', function( win ) {
-					setTimeout( function() {
-						win.addEventListener( 'close', function checkOffsetHeight() {
-							win.removeEventListener('close', checkOffsetHeight );
-							setTimeout( function() {
-								checkTestResult( done, function() {
-									expect( tv.details.evalJS("document.body.children[0].offsetHeight") ).to.equal( oldHeight );
-								});
-							}, 1000 );
-						} );
-						win.closeButton.fireEvent('click');
-					}, 1000);
-				} );
-				photoView.zoomIcon.fireEvent('click');
-			}, 1000 );
-		});
+		controllerOpenTest( tv, done );
 	});
 });

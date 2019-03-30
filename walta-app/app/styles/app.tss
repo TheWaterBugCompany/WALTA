@@ -132,7 +132,7 @@ overrode the settings with other TSS, XML, or JS settings:
 ".labelText": {
    font: {
     fontFamily: "Tahoma",
-	fontWeight: "bold",
+	  fontWeight: "bold",
     fontSize: "16dp"
   },
   left: "2%",
