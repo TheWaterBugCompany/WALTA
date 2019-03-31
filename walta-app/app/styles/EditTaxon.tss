@@ -34,13 +34,13 @@
   height: "58%"
 }
 "#photoSelectWrapper[if=Alloy.Globals.isHighRes]": {
-  width: "85%",
-  height: "52%" 
+  width: "92%",
+  height: "61%" 
 }
 
 "#photoSelectWrapper[if=Alloy.Globals.isXHighRes]": {
-  width: "85%",
-  height: "58%"
+  width: "92%",
+  height: "64%"
 }
 "#closeButton": {
   top: 0,
