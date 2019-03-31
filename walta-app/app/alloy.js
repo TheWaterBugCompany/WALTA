@@ -19,22 +19,26 @@
 /*
  * Bootstrap the application
  */
-var PlatformSpecific = require('ui/PlatformSpecific');
 
-Alloy.Globals.Layout = require('ui/Layout'); 
+Alloy.Globals.Map = require('ti.map');
+
 Alloy.Events = _.clone(Backbone.Events);
 Alloy.Globals.Key = null;
+
+Ti.API.info("Determining device screen parameters...")
+
 Ti.API.info(`platform display caps: width = ${Ti.Platform.displayCaps.platformWidth}, height = ${Ti.Platform.displayCaps.platformHeight}, density = ${Ti.Platform.displayCaps.density}, logicalDensityFactor  = ${Ti.Platform.displayCaps.logicalDensityFactor},`);
-Alloy.Globals.isSmallHeight = (Ti.Platform.displayCaps.platformHeight*Ti.Platform.displayCaps.logicalDensityFactor < 750 );
-Alloy.Globals.isLdpi = (Ti.Platform.displayCaps.density == "low");
-Alloy.Globals.isMdpi = (Ti.Platform.displayCaps.density == "mdpi");
-Alloy.Globals.isHdpi = (Ti.Platform.displayCaps.density == "high");
-Alloy.Globals.isXHdpi = (Ti.Platform.displayCaps.density == "xhigh");
-Alloy.Globals.isXXHdpi = (Ti.Platform.displayCaps.density == "xxhigh");
-Alloy.Globals.isPhablet = (Ti.Platform.displayCaps.platformHeight/Ti.Platform.displayCaps.platformWidth < 0.6) && Ti.Platform.displayCaps.logicalDensityFactor > 2;
-Alloy.Globals.isTablet= (Ti.Platform.displayCaps.platformHeight/Ti.Platform.displayCaps.platformWidth < 0.6) && Alloy.Globals.isXHdpi;
-Ti.API.info(`isPhablet=${Alloy.Globals.isPhablet}, isTablet=${Alloy.Globals.isTablet}`);
-//Alloy.Globals.isXdpi = (Ti.Platform.displayCaps.density == "xhdpi");
-//Alloy.Globals.isXXdpi = (Ti.Platform.displayCaps.density == "xxhdpi");
-//Alloy.Globals.isXXXdpi = (Ti.Platform.displayCaps.density == "xxxhdpi");
-Alloy.Globals.Map = require('ti.map');
+
+var relWidth = Ti.Platform.displayCaps.platformWidth / Ti.Platform.displayCaps.logicalDensityFactor;
+var relHeight= Ti.Platform.displayCaps.platformHeight / Ti.Platform.displayCaps.logicalDensityFactor;
+var aspectRatio = relWidth/relHeight;
+var sizeFactor = relWidth/533;
+
+Ti.API.info(`relWidth=${Alloy.Globals.isHighRes}, relHeight=${Alloy.Globals.isXHighRes}, aspectRatio=${Alloy.Globals.aspectRatio}, sizeFactor=${Alloy.Globals.sizeFactor}`);
+
+Alloy.Globals.isLowRes = sizeFactor < 0.7;
+Alloy.Globals.isSquare = aspectRatio < 1.5;
+Alloy.Globals.isHighRes = sizeFactor > 1.1 && sizeFactor <= 2;
+Alloy.Globals.isXHighRes=  sizeFactor > 2;
+
+Ti.API.info(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isHighRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);

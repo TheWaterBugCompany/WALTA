@@ -11,11 +11,11 @@
     top: 0
 }
 
-"#wrapper2[if=Alloy.Globals.isPhablet]" : {
+"#wrapper2[if=Alloy.Globals.isHighRes]" : {
     top: "0.1%"
 }
 
-"#wrapper2[if=Alloy.Globals.isTablet]" : {
+"#wrapper2[if=Alloy.Globals.isXHighRes]" : {
     top: "5%"
 }
 
@@ -46,12 +46,12 @@
     fullscreen: false
 }
 
-".textField[if=Alloy.Globals.isPhablet]" : {
+".textField[if=Alloy.Globals.isHighRes]" : {
     width: "110dp",
     height: "40dp",
 }
 
-".textField[if=Alloy.Globals.isTablet]" : {
+".textField[if=Alloy.Globals.isXHighRes]" : {
     width: "210dp",
     height: "80dp",
 }
@@ -67,11 +67,11 @@
     width: "90dp"
 }
 
-".inputLabel[if=Alloy.Globals.isPhablet]": {
+".inputLabel[if=Alloy.Globals.isHighRes]": {
     width: "110dp"
 }
 
-".inputLabel[if=Alloy.Globals.isTablet]": {
+".inputLabel[if=Alloy.Globals.isXHighRes]": {
 
     width: "210dp"
 }

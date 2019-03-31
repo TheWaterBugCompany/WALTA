@@ -24,7 +24,7 @@
   bottom: "8dp"
 }
 
-"#detailsBox[if=Alloy.Globals.isPhablet]": {
+"#detailsBox[if=Alloy.Globals.isHighRes]": {
   borderRadius : "10dp",
 }
 
@@ -32,7 +32,7 @@
   height: "10%"
 }
 
-"#detailsBox[if=Alloy.Globals.isTablet]": {
+"#detailsBox[if=Alloy.Globals.isXHighRes]": {
   borderRadius : "25dp",
 }
 
@@ -65,14 +65,14 @@
   }
 }
 
-".detailsHeading[if=Alloy.Globals.isPhablet]": {
+".detailsHeading[if=Alloy.Globals.isHighRes]": {
   width: "20%",
   font: {
     fontSize: "14dp"
   }
 }
 
-".detailsHeading[if=Alloy.Globals.isTablet]": {
+".detailsHeading[if=Alloy.Globals.isXHighRes]": {
   width: "17%",
   font: {
     fontSize: "24dp"
@@ -91,14 +91,14 @@
   }
 }
 
-".detailsText[if=Alloy.Globals.isPhablet]": {
+".detailsText[if=Alloy.Globals.isHighRes]": {
     width: "75%",
     font: {
       fontSize: "13dp"
     }
 }
 
-".detailsText[if=Alloy.Globals.isTablet]": {
+".detailsText[if=Alloy.Globals.isXHighRes]": {
     width: "75%",
     font: {
       fontSize: "24dp"
@@ -120,11 +120,11 @@
   height: "65%"
 }
 
-"#photoSelect[if=Alloy.Globals.isPhablet]": {
+"#photoSelect[if=Alloy.Globals.isHighRes]": {
   height: "65%"
 }
 
-"#photoSelect[if=Alloy.Globals.isTablet]": {
+"#photoSelect[if=Alloy.Globals.isXHighRes]": {
   height: "75%"
 }
 

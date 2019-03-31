@@ -38,14 +38,14 @@ overrode the settings with other TSS, XML, or JS settings:
     hintTextColor: "#c9cacb"
 }
 
-"TextField[if=Alloy.Globals.isPhablet]": {
+"TextField[if=Alloy.Globals.isHighRes]": {
    height: "18dp",
    font: {
     fontSize: "18dp"
   }
 }
 
-"TextField[if=Alloy.Globals.isTablet]": {
+"TextField[if=Alloy.Globals.isXHighRes]": {
    height: "32dp",
    font: {
     fontSize: "32dp"
@@ -103,13 +103,13 @@ overrode the settings with other TSS, XML, or JS settings:
   }
 }
 
-".titleText[if=Alloy.Globals.isPhablet]": {
+".titleText[if=Alloy.Globals.isHighRes]": {
    font: {
     fontSize: "20dp"
   }
 }
 
-".titleText[if=Alloy.Globals.isTablet]": {
+".titleText[if=Alloy.Globals.isXHighRes]": {
    font: {
     fontSize: "35dp"
   }
@@ -124,13 +124,13 @@ overrode the settings with other TSS, XML, or JS settings:
   color: "#26849c"
 }
 
-".headingText[if=Alloy.Globals.isPhablet]": {
+".headingText[if=Alloy.Globals.isHighRes]": {
    font: {
     fontSize: "18dp"
   }
 }
 
-".headingText[if=Alloy.Globals.isTablet]": {
+".headingText[if=Alloy.Globals.isXHighRes]": {
    font: {
     fontSize: "34dp"
   }
@@ -148,19 +148,19 @@ overrode the settings with other TSS, XML, or JS settings:
   wordWrap: true
 }
 
-".labelText[if=Alloy.Globals.isLdpi]": {
+".labelText[if=Alloy.Globals.isLowRes]": {
     font: {
       fontSize: "16dp"
     }
 }
 
-".labelText[if=Alloy.Globals.isPhablet]": {
+".labelText[if=Alloy.Globals.isHighRes]": {
     font: {
       fontSize: "18dp"
     }
 }
 
-".labelText[if=Alloy.Globals.isTablet]": {
+".labelText[if=Alloy.Globals.isXHighRes]": {
     font: {
       fontSize: "32dp"
     }
@@ -181,7 +181,7 @@ overrode the settings with other TSS, XML, or JS settings:
   height: "32dp"
 }
 
-".actionButton[if=Alloy.Globals.isPhablet]": {
+".actionButton[if=Alloy.Globals.isHighRes]": {
     width: "120dp",
     height: "40dp",
     font: {
@@ -190,7 +190,7 @@ overrode the settings with other TSS, XML, or JS settings:
     borderRadius: "8dp"
 }
 
-".actionButton[if=Alloy.Globals.isTablet]": {
+".actionButton[if=Alloy.Globals.isXHighRes]": {
     width: "250dp",
     height: "80dp",
     font: {
@@ -212,7 +212,7 @@ overrode the settings with other TSS, XML, or JS settings:
     fullscreen: false
 }
 
-".textField[if=Alloy.Globals.isLdpi]": {
+".textField[if=Alloy.Globals.isLowRes]": {
     borderWidth: "2dp",
 }
 
@@ -236,13 +236,13 @@ overrode the settings with other TSS, XML, or JS settings:
     visible: false
 }
 
-".error[if=Alloy.Globals.isPhablet]": {
+".error[if=Alloy.Globals.isHighRes]": {
     font: {
         fontSize: "18dp"
     },
 }
 
-".error[if=Alloy.Globals.isTablet]": {
+".error[if=Alloy.Globals.isXHighRes]": {
     font: {
         fontSize: "32dp"
     },
@@ -263,12 +263,12 @@ overrode the settings with other TSS, XML, or JS settings:
 	borderWidth: "2dp"
 }
 
-".anchorBarTextButton[if=Alloy.Globals.isPhablet]": {
+".anchorBarTextButton[if=Alloy.Globals.isHighRes]": {
   width: "110dp",
   borderRadius: "8dp"
 }
 
-".anchorBarTextButton[if=Alloy.Globals.isTablet]": {
+".anchorBarTextButton[if=Alloy.Globals.isXHighRes]": {
   width: "210dp",
   borderRadius: "12dp"
 }
@@ -282,18 +282,18 @@ overrode the settings with other TSS, XML, or JS settings:
   }
 }
 
-".anchorBarTextButtonLabel[if=Alloy.Globals.isPhablet]": {
+".anchorBarTextButtonLabel[if=Alloy.Globals.isHighRes]": {
   font: { fontSize: "17dp" }
 }
 
-".anchorBarTextButtonLabel[if=Alloy.Globals.isTablet]": {
+".anchorBarTextButtonLabel[if=Alloy.Globals.isXHighRes]": {
   font: { fontSize: "34dp" }
 }
 
-".anchorBarButton[if=Alloy.Globals.isPhablet]": {
+".anchorBarButton[if=Alloy.Globals.isHighRes]": {
   
 }
 
-".anchorBarButton[if=Alloy.Globals.isTablet]": {
+".anchorBarButton[if=Alloy.Globals.isXHighRes]": {
   width: "70dp"
 }

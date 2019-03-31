@@ -4,11 +4,11 @@
   width: "125dp"
 }
 
-".container[if=Alloy.Globals.isPhablet]": {
+".container[if=Alloy.Globals.isHighRes]": {
   width: "125dp"
 }
 
-".container[if=Alloy.Globals.isTablet]": {
+".container[if=Alloy.Globals.isXHighRes]": {
   width: "260dp"
 }
 

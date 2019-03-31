@@ -11,13 +11,13 @@
   font: { fontSize: "10dp" }
 }
 
-"#abundance[if=Alloy.Globals.isPhablet]": {
+"#abundance[if=Alloy.Globals.isHighRes]": {
   font: { fontSize: "12dp" },
   width: "30dp",
   height: "18dp"
 }
 
-"#abundance[if=Alloy.Globals.isTablet]": {
+"#abundance[if=Alloy.Globals.isXHighRes]": {
   font: { fontSize: "24dp" },
   width: "56dp",
   height: "32dp",

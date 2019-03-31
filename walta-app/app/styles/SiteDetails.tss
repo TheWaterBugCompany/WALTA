@@ -16,20 +16,20 @@
     width: "55%"
 }
 
-"#right[if=Alloy.Globals.isPhablet]" : {
+"#right[if=Alloy.Globals.isHighRes]" : {
     width: "50%"
 }
 
-"#left[if=Alloy.Globals.isPhablet]" : {
+"#left[if=Alloy.Globals.isHighRes]" : {
     width: "50%"
 }
 
 
-"#left[if=Alloy.Globals.isTablet]" : {
+"#left[if=Alloy.Globals.isXHighRes]" : {
     width: "50%"
 }
 
-"#right[if=Alloy.Globals.isTablet]" : {
+"#right[if=Alloy.Globals.isXHighRes]" : {
     width: "50%"
 }
 
@@ -52,11 +52,11 @@
     borderRadius: 10,
     bottom: "1%"
 }
-".errorWrap[if=Alloy.Globals.isPhablet]": {
+".errorWrap[if=Alloy.Globals.isHighRes]": {
     borderRadius: 25,
     borderWidth: "6dp",
 }
-".errorWrap[if=Alloy.Globals.isTablet]": {
+".errorWrap[if=Alloy.Globals.isXHighRes]": {
     borderRadius: 50,
     borderWidth: "5px"
 }
@@ -73,12 +73,12 @@
 	withDividers: true
 }
 
-".tabs[if=Alloy.Globals.isPhablet]": {
+".tabs[if=Alloy.Globals.isHighRes]": {
     width: "300dp",
     height: "40dp",
 }
 
-".tabs[if=Alloy.Globals.isTablet]": {
+".tabs[if=Alloy.Globals.isXHighRes]": {
     width: "600dp",
     height: "70dp",
 }

@@ -10,12 +10,12 @@
     height: "55dp"
 }
 
-"#icon[if=Alloy.Globals.isPhablet]": {
+"#icon[if=Alloy.Globals.isHighRes]": {
   width: "55dp",
   height: "55dp" 
 }
 
-"#icon[if=Alloy.Globals.isTablet]": {
+"#icon[if=Alloy.Globals.isXHighRes]": {
   width: "80dp",
   height: "80dp"
 }
@@ -27,10 +27,10 @@
     }
 }
 
-"#label[if=Alloy.Globals.isPhablet]": {
+"#label[if=Alloy.Globals.isHighRes]": {
   font: { fontSize: "11dp" }
 }
 
-"#label[if=Alloy.Globals.isTablet]": {
+"#label[if=Alloy.Globals.isXHighRes]": {
   font: { fontSize: "20dp" }
 }

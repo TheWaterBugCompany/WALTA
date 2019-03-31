@@ -9,12 +9,12 @@
     borderRadius: "10dp"
 }
 
-".photoError[if=Alloy.Globals.isPhablet]": {
+".photoError[if=Alloy.Globals.isHighRes]": {
     borderWidth: "2dp",
     borderRadius: "12dp"
 }
 
-".photoError[if=Alloy.Globals.isTablet]": {
+".photoError[if=Alloy.Globals.isXHighRes]": {
     borderWidth: "4dp",
     borderRadius: "20dp"
 }
@@ -44,11 +44,11 @@
     }
 }
 
-"#photoSelectLabel[if=Alloy.Globals.isPhablet]": {
+"#photoSelectLabel[if=Alloy.Globals.isHighRes]": {
   font: { fontSize: "22dp" }
 }
 
-"#photoSelectLabel[if=Alloy.Globals.isTablet]": {
+"#photoSelectLabel[if=Alloy.Globals.isXHighRes]": {
   font: { fontSize: "40dp" }
 }
 
@@ -63,12 +63,12 @@
     height: "48dp"
 }
 
-".icon[if=Alloy.Globals.isPhablet]": {
+".icon[if=Alloy.Globals.isHighRes]": {
     width: "52dp",
     height: "52dp"
 }
 
-".icon[if=Alloy.Globals.isTablet]": {
+".icon[if=Alloy.Globals.isXHighRes]": {
     width: "96dp",
     height: "96dp"
 }
