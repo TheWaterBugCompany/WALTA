@@ -9,13 +9,18 @@
 }
 
 "#leftPanel" : {
-    width: "56%"
+    width: "50%"
 }
 
 "#rightPanel" : {
     width: "44%",
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
 }
+
+".labelText": {
+    wordWrap: true
+}
+
 
 "#emailLabel": {
     width: "250dp",
@@ -61,13 +66,25 @@
     horizontalWrap: false,
     width: Ti.UI.FILL,
     height: Ti.UI.SIZE,
-    top: "8%"
+    top: "6%"
+}
+
+".optionLabel[platform=android]": {
+    left: "20%"
+}
+
+".optionLabel[platform=ios]": {
+    left: "22%"
 }
 
 ".checkbox": {
     tintColor: "#b4d2d9",
     width: "10%",
-    height: "10%"
+    height: "10%",
+    left: 0
+}
+".checkbox[platform=ios]" : {
+    width: "18%"
 }
 
 "#submitButton" : {
