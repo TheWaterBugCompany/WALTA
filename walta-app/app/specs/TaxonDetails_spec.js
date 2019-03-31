@@ -51,8 +51,7 @@ describe('TaxonDetails controller', function() {
 		closeWindow( tv.getView(), done );
 	});
 
-	/* Yuck couldn't figure out a way to do this without setTimeout() hopefuly 1s is enough */
-	it('the description text should be visible', function(done) {
+	it.only('the description text should be visible', function(done) {
 		controllerOpenTest( tv, done );
 	});
 });

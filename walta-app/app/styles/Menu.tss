@@ -4,7 +4,7 @@
   backgroundImage: "/images/menu-background.png"
 }
 
-".container[Alloy.Globals.isSquare]": {
+".container[if=Alloy.Globals.isSquare]": { 
   top: "10%",
   height: "60%" 
 }

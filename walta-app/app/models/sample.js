@@ -131,17 +131,9 @@ exports.definition = {
 				if ( sampleJson.nearbyFeature )
 					sampleJson.siteInfo += ` @ ${sampleJson.nearbyFeature}`;
 
-				switch( parseInt( sampleJson.surveyType ) ) {
-					case Sample.MAYFLY:
-						sampleJson.surveyType = "Mayfly";
-						break;
-					case Sample.ORDER:
-						sampleJson.surveyType = "Quick";
-						break;
-					case Sample.DETAILED:
-						sampleJson.surveyType = "Detailed";
-				} 
 
+				sampleJson.surveyType = Sample.surveyTypeToString( parseInt( sampleJson.surveyType ) );
+					
 				if ( sampleJson.dateCompleted ) {
 					sampleJson.dateCompleted = moment(sampleJson.dateCompleted).format("DD/MMM/YYYY h:mm:ss a");
 				} else {

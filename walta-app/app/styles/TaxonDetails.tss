@@ -1,6 +1,6 @@
 
 ".container" : {
-  width : Ti.UI.FILL,
+  width : "100%",
   backgroundColor : "white",
   layout: "horizontal"
 }
@@ -14,8 +14,8 @@
 
 "#detailsBox": {
   showVerticalScrollIndicator: true,
-  width : "55%",
-  height : Ti.UI.FILL,
+  width : "50%",
+  height : "85%",
   borderRadius : "10dp",
   backgroundColor : "#cfdbf3",
   layout : "vertical",
@@ -25,7 +25,7 @@
 }
 
 "#detailsBox[if=Alloy.Globals.isHighRes]": {
-  borderRadius : "10dp",
+  borderRadius : "10dp"
 }
 
 "#spacer": {
@@ -33,7 +33,7 @@
 }
 
 "#detailsBox[if=Alloy.Globals.isXHighRes]": {
-  borderRadius : "25dp",
+  borderRadius : "25dp"
 }
 
 ".italics": {
@@ -115,16 +115,16 @@
   bottom: "8dp"
 }
 
-"#photoSelect": {
-  width: Ti.UI.FILL,
+"#photoSelectWrapper": {
+  width: "90%",
   height: "65%"
 }
 
-"#photoSelect[if=Alloy.Globals.isHighRes]": {
+"#photoSelectWrapper[if=Alloy.Globals.isHighRes]": {
   height: "65%"
 }
 
-"#photoSelect[if=Alloy.Globals.isXHighRes]": {
+"#photoSelectWrapper[if=Alloy.Globals.isXHighRes]": {
   height: "75%"
 }
 

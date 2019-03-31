@@ -35,7 +35,9 @@
 				<View id="spacer"/>
 			</ScrollView>
 			<View id="actions">
-				<Require type="view" readonly=true src="PhotoSelect" id="photoSelect" />
+				<View id="photoSelectWrapper">
+					<Require type="view" readonly=true src="PhotoSelect" id="photoSelect" />
+				</View>
 				<View id="actionBtns"></View>
 			</View>
 	</View>
