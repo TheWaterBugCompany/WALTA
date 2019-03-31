@@ -12,6 +12,20 @@
   height: "15%"
 }
 
+"#buttonBar[if=Alloy.Globals.isHighRes]": {
+  width: "40%"
+}
+
+"#buttonBar[if=Alloy.Globals.isXHighRes]": {
+  width: "35%",
+  height: "13%"
+}
+
+"#buttonBar[platform=android]": {
+  width: "50%"
+}
+
+
 "#closeButton": {
   top: 0,
   height: Ti.UI.FILL,
@@ -22,6 +36,23 @@
 "#locateButton": {
   width: Ti.UI.SIZE,
   height: Ti.UI.SIZE
+}
+
+
+"#locateButtonIcon[platform=android]": {
+  width: "16%",
+  height: "70%"
+
+}
+
+"#locateButtonIcon[platform=android if=Alloy.Globals.isHighRes]": {
+  width: "16%",
+  height: "75%"
+}
+
+"#locateButtonIcon[platform=android if=Alloy.Globals.isXHighRes]": {
+  width: "16%",
+  height: "74%"
 }
 
 "#locateButtonIcon": {
