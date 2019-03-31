@@ -12,17 +12,17 @@
 				<TextField id="passwordConfirmTextField" accessibilityLabel="Password Confirmation"  class="textField password" onChange="passwordConfirmChanged"/>
 			</View>
 			<View id="rightPanel" class="panel" layout="vertical">
-				<View id="registerAsGroup" class="optionLine" layout="horizontal">
+				<View id="registerAsGroup" class="optionLine">
 					<Switch id="groupToggle" class="checkbox" accessibilityLabel="Group Registration"/>
-					<Label class="labelText" text="I am registering on behalf of\na group"/>
+					<Label class="labelText optionLabel" text="I am registering on behalf of a group"/>
 				</View>
-				<View id="surveyConsent" class="optionLine"  layout="horizontal">
+				<View id="surveyConsent" class="optionLine">
 					<Switch id="surveyToggle" class="checkbox" accessibilityLabel="Survey Permission"/>
-					<Label class="labelText" text="I consent to participating in a\nuser survey for research\npurposes"/>
+					<Label class="labelText optionLabel" text="I consent to participating in a user survey for research purposes"/>
 				</View>
-				<View id="dataConsent" class="optionLine" layout="horizontal">
+				<View id="dataConsent" class="optionLine">
 					<Switch id="dataToggle" class="checkbox" accessibilityLabel="Data Share Permission"/>
-					<Label class="labelText" text="I consent to my data being\nshared"/>
+					<Label class="labelText optionLabel" text="I consent to my data being shared"/>
 				</View>
 				<Label id="errorMessage" class="error" text="Error message"/>
 			

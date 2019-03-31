@@ -54,7 +54,7 @@ describe('Register controller', function() {
 		closeWindow( ct.getView() );
 	});
     
-    it('should disable submit if email is invalid', function() {
+    it.only('should disable submit if email is invalid', function() {
         return fillOutValidForm()
             .then( setTextField( ct.emailTextField, "notanemailaddress" ) )
             .then( () => expect( ct.submitButton.touchEnabled ).to.be.false );
