@@ -92,7 +92,7 @@ task :device_preview_android => [] do
 end
 
 task :device_preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target device")
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --liveview --target device")
 end
 
 task :release_ios => [ ] do

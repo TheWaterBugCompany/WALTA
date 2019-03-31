@@ -1,6 +1,6 @@
 "#photoSelectBoundary": {
-    width: Ti.UI.SIZE,
-    height: Ti.UI.SIZE
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL
 }
 
 ".photoError": {
@@ -21,10 +21,7 @@
 
 
 "#photoSelectInner" : {
-    top: "1%",
-    left: "1%",
-    right: "1%",
-    bottom: "1%",
+
     borderColor: "#26849c",
     borderWidth: "1dp",
     backgroundColor: "#cee8ef"

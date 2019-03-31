@@ -14,7 +14,9 @@
 					<Label id="abundanceLabel" text="1-2" class="labelText"/>
 				</View>
 			</View>
-			<Require type="view" src="PhotoSelect" id="photoSelect" />
+			<View id="photoSelectWrapper">
+				<Require type="view" src="PhotoSelect" id="photoSelect" />
+			</View>
 			<View id="buttons" layout="horizontal">
 				<Button id="deleteButton" class="actionButton" title="Delete" onClick="deleteEvent" />
 				<Button id="saveButton" class="actionButton" title="Save" onClick="saveEvent"/>
