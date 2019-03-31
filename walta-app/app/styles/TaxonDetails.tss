@@ -63,6 +63,7 @@
   width: "25%",
   top: 0,
   font: {
+    fontWeight: "bold",
     fontSize: "12dp"
   }
 }
