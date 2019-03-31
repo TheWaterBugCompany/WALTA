@@ -15,7 +15,7 @@
 				<View id="buttonBar" layout="horizontal">
 					<View id="locateButton" class="actionButton" onClick="locateClick" >
 						<ImageView id="locateButtonIcon" />
-						<Label title="Q" color="#b4d2d9"/>
+						<Label title=" " color="#b4d2d9"/>
 					</View>
 					
 					<Button id="cancelButton" class="actionButton" title="  Close  " onClick="cancelClick" />
