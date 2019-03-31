@@ -12,7 +12,11 @@
   width: "260dp"
 }
 
-
+"#icon": {
+  left: "12dp",
+  width: "18%",
+  height: "80%"
+}
 "#goBackLabel": {
  left: "12dp"
 }

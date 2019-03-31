@@ -254,13 +254,14 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 ".anchorBarTextButton": {
-  width: "100dp",
-  height: "78%",
-  center: { y: "54%" },
-	backgroundColor: "#26849c",
-	borderColor: "#26849c",
-	borderRadius: "6dp",
-	borderWidth: "2dp"
+    width: "100dp",
+    height: "78%",
+    center: { y: "54%" },
+    horizontalWrap: false,
+    backgroundColor: "#26849c",
+    borderColor: "#26849c",
+    borderRadius: "6dp",
+    borderWidth: "2dp"
 }
 
 ".anchorBarTextButton[if=Alloy.Globals.isHighRes]": {
@@ -274,6 +275,7 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 ".anchorBarTextButtonLabel": {
+  width: Ti.UI.SIZE,
   color: "white",
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   font: {
