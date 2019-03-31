@@ -33,6 +33,12 @@
   width: "92%",
   height: "58%"
 }
+
+"#photoSelectWrapper[if=Alloy.Globals.isSquare]": {
+  width: "92%",
+  height: "76%" 
+}
+
 "#photoSelectWrapper[if=Alloy.Globals.isHighRes]": {
   width: "92%",
   height: "61%" 
@@ -51,6 +57,11 @@
 
 "#window": {
   width: "50%",
+  height: "98%"
+}
+
+"#window[if=Alloy.Globals.isSquare]": { 
+  width: "70%",
   height: "98%"
 }
 
