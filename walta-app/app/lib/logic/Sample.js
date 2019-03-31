@@ -25,3 +25,16 @@ exports.getSpeedbugIndexName = function( type ) {
             return "Speedbug";
     }
 }
+
+exports.surveyTypeToString = function( surveyType ) {
+    switch( surveyType ) {
+        case SURVEY_MAYFLY:
+            return "Mayfly";
+        case SURVEY_ORDER:
+            return "Quick";
+        case SURVEY_DETAILED:
+            return "Detailed";
+        default:
+            return "Unknown";
+    } 
+}
