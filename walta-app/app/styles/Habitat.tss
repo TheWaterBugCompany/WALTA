@@ -2,9 +2,15 @@
 "#content": {
     scrollType: "horizontal"
 }
+"wrapper": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL,
+    backgroundColor: "blue"
+}
 "#wrapper2": {
     top: "1%",
-    height: Ti.UI.SIZE
+    height: Ti.UI.SIZE,
+    width: Ti.UI.FILL
 }
 
 "#wrapper2[if=Alloy.Globals.isSmallHeight]" : {
@@ -90,7 +96,7 @@
     height: Ti.UI.SIZE,
     horizontalWrap: false
 }
-"#grid[if=Alloy.Globals.isSmallHeight]" : {
+"#grid[if=Alloy.Globals.isLowRes]" : {
     top: 0
 }
 
