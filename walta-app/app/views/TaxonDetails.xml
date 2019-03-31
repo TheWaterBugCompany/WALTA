@@ -3,31 +3,31 @@
 			<Label id="title" class="headingText"></Label>
 			<ScrollView id="detailsBox">
 
-				<Label id="scientificClassificationLabel" class="detailsHeading headingText" text="Scientific Classification:"/>
+				<Label id="scientificClassificationLabel" class="detailsHeading" text="Scientific Classification:"/>
 				<View id="scientificClassification" class="field shrinkWrap" layout="vertical"/>
-
+ 
 				<View layout="horizontal" class="field shrinkWrap">
-					<Label class="detailsHeading headingText" text="Size:"/>
+					<Label class="detailsHeading" text="Size:"/>
 					<Label id="size" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
-					<Label class="detailsHeading headingText" text="Habitat:"/>
+					<Label class="detailsHeading" text="Habitat:"/>
 					<Label id="habitat" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
-					<Label class="detailsHeading headingText" text="Movement:"/>
+					<Label class="detailsHeading" text="Movement:"/>
 					<Label id="movement" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
-					<Label class="detailsHeading headingText" text="Confused with:"/>
+					<Label class="detailsHeading" text="Confused with:"/>
 					<Label id="confusedWith" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
-					<Label id="signalScoreHeading" class="detailsHeading headingText" text="SIGNAL score:"/>
+					<Label id="signalScoreHeading" class="detailsHeading" text="SIGNAL score:"/>
 					<Label id="signalScore" class="detailsText"/>
 				</View>
 
