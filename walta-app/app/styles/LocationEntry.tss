@@ -5,10 +5,11 @@
 }
 
 "#buttonBar": {
+  horizontalWrap: false,
   bottom: "1%",
   right: 0,
-  width: Ti.UI.SIZE,
-  height: Ti.UI.SIZE
+  width: "30%",
+  height: "15%"
 }
 
 "#closeButton": {
@@ -19,29 +20,26 @@
 }
 
 "#locateButton": {
-  width: "6%" 
+  width: Ti.UI.SIZE,
+  height: Ti.UI.SIZE
 }
 
 "#locateButtonIcon": {
-  top: "10%",
-  left: "10%",
-  right: "10%",
-  bottom: "10%",
   image: "/images/locate-icon.png",
-  width: Ti.UI.FILL,
-  height: Ti.UI.FILL
+  width: Ti.UI.SIZE,
+  height: Ti.UI.SIZE
 }
 
 "#cancelButton": {
   backgroundColor: "#ef8b8b",
-  left: "2%",
-  width: "12%"
+  left: "5%",
+  width: Ti.UI.SIZE
 }
 
 "#saveButton": {
   backgroundColor: "#92d050",
-  left: "2%",
-  width: "12%"
+  left: "5%",
+  width: Ti.UI.SIZE
 }
 
 "#mapview": {

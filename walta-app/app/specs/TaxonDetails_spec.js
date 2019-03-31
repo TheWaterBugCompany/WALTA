@@ -51,7 +51,7 @@ describe('TaxonDetails controller', function() {
 		closeWindow( tv.getView(), done );
 	});
 
-	it.only('the description text should be visible', function(done) {
+	it('the description text should be visible', function(done) {
 		controllerOpenTest( tv, done );
 	});
 });
