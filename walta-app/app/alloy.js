@@ -33,8 +33,8 @@ var relWidth = Ti.Platform.displayCaps.platformWidth / Ti.Platform.displayCaps.l
 var relHeight= Ti.Platform.displayCaps.platformHeight / Ti.Platform.displayCaps.logicalDensityFactor;
 var aspectRatio = relWidth/relHeight;
 var sizeFactor = relWidth/533;
-
-Ti.API.info(`relWidth=${Alloy.Globals.isHighRes}, relHeight=${Alloy.Globals.isXHighRes}, aspectRatio=${Alloy.Globals.aspectRatio}, sizeFactor=${Alloy.Globals.sizeFactor}`);
+ 
+Ti.API.info(`relWidth=${relWidth}, relHeight=${relHeight}, aspectRatio=${aspectRatio}, sizeFactor=${sizeFactor}`);
 
 Alloy.Globals.isLowRes = sizeFactor < 0.7;
 Alloy.Globals.isSquare = aspectRatio < 1.5;

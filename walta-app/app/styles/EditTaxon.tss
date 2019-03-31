@@ -22,16 +22,23 @@
     width: "82%"
 }
 
-"#photoSelect": { 
-  width: "85%",
-  height: "50%"
+"#photoSelect": {
+  left: "4%",
+  right: "4%",
+  top: "5%",
+  bottom: "5%"
 }
-"#photoSelect[if=Alloy.Globals.isHighRes]": {
+
+"#photoSelectWrapper": { 
+  width: "92%",
+  height: "58%"
+}
+"#photoSelectWrapper[if=Alloy.Globals.isHighRes]": {
   width: "85%",
   height: "52%" 
 }
 
-"#photoSelect[if=Alloy.Globals.isXHighRes]": {
+"#photoSelectWrapper[if=Alloy.Globals.isXHighRes]": {
   width: "85%",
   height: "58%"
 }
