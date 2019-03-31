@@ -53,10 +53,9 @@ $.taxon = $.args.taxon;
 $.title.text = $.taxon.commonName;
 $.taxon.scientificName.forEach( (part) => {
 	var label = $.UI.create('Label',{ text: `${part.taxonomicLevel}: ${part.name}` });
-	$.addClass( label, "labelText");
 	$.addClass( label, "detailsText");
 	if ( part.taxonomicLevel === "genus" || part.taxonomicLevel === "species" ) {
-		$.addClass( label, "italics");
+		$.addClass( label, "italics"); 
 	}
 	$.scientificClassification.add( label );
 });
