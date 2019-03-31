@@ -1,3 +1,4 @@
+var Topics = require('ui/Topics');
 function cleanUp() {
     $.destroy();
     $.off();

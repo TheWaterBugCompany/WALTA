@@ -28,7 +28,7 @@ describe("Habitat controller", function() {
 	after( function(done) {
 		closeWindow( ctl.getView(), done );
 	});
-	it.only('should display the Habitat view', function(done) { 
+	it('should display the Habitat view', function(done) { 
 		controllerOpenTest( ctl, done );
     });
 });

@@ -24,9 +24,15 @@ function openWindow() {
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.content.top = 0;
-		$.content.height = "90%";
 		$.content.width = Ti.UI.FILL;
-		anchorBar.getView().height = "10%";
+		if ( Alloy.Globals.isSquare ) {
+			$.content.top = "10%";
+			$.content.height = "80%";
+			anchorBar.getView().height = "5%";
+		} else {
+			$.content.height = "90%";
+			anchorBar.getView().height = "10%";
+		}
 		anchorBar.getView().width = Ti.UI.FILL;
 		$.TopLevelWindow.add( $.content );
 		$.TopLevelWindow.add( anchorBar.getView() );

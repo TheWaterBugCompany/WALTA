@@ -8,7 +8,6 @@
     colors: [ {color: '#26849c', offset: 0.0 }, {color: '#b4d2d9', offset: 1.0 } ]
   },
   bottom: 0,
-  height: "10%",
   layout: "composite",
   width: Ti.UI.FILL
 }
