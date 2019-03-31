@@ -51,7 +51,7 @@
 	}
 }
 
-"#taxaCount[if=Alloy.Globals.isPhablet]" : {
+"#taxaCount[if=Alloy.Globals.isHighRes]" : {
     width: "80dp",
     height: "80dp",
     borderWidth: 3,
@@ -59,7 +59,7 @@
     font: { fontSize: '22dp' }
 }
 
-"#taxaCount[if=Alloy.Globals.isTablet]" : {
+"#taxaCount[if=Alloy.Globals.isXHighRes]" : {
     width: "150dp",
     height: "150dp",
     borderWidth: 6,
@@ -83,14 +83,14 @@
     color: "white"
 }
 
-".score[if=Alloy.Globals.isPhablet]" : {
+".score[if=Alloy.Globals.isHighRes]" : {
     borderRadius: "18dp",
     width: "36dp",
     height: "36dp"
 
 }
 
-".score[if=Alloy.Globals.isTablet]" : {
+".score[if=Alloy.Globals.isXHighRes]" : {
     borderRadius: "35dp",
     width: "70dp",
     height: "70dp"

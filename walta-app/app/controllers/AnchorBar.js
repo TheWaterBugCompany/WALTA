@@ -24,7 +24,6 @@
  * view.
  *
  */
-var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 
 var eventHandlers = [];

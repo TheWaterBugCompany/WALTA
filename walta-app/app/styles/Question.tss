@@ -5,11 +5,11 @@
   borderRadius: "25dp"
 }
 
-".container[if=Alloy.Globals.isPhablet]": {
+".container[if=Alloy.Globals.isHighRes]": {
     borderRadius: "27dp"
 }
 
-".container[if=Alloy.Globals.isTablet]": {
+".container[if=Alloy.Globals.isXHighRes]": {
     borderRadius: "50dp"
 }
 

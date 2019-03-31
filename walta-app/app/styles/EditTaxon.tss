@@ -26,12 +26,12 @@
   width: "85%",
   height: "50%"
 }
-"#photoSelect[if=Alloy.Globals.isPhablet]": {
+"#photoSelect[if=Alloy.Globals.isHighRes]": {
   width: "85%",
   height: "52%" 
 }
 
-"#photoSelect[if=Alloy.Globals.isTablet]": {
+"#photoSelect[if=Alloy.Globals.isXHighRes]": {
   width: "85%",
   height: "58%"
 }

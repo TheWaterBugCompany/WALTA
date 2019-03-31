@@ -37,19 +37,19 @@
   color: "#26849c"
 }
 
-".bigMenuText[if=Alloy.Globals.isLdpi]": {
+".bigMenuText[if=Alloy.Globals.isLowRes]": {
    font: {
     fontSize: "27dp"
   }
 }
 
-".bigMenuText[if=Alloy.Globals.isPhablet]": {
+".bigMenuText[if=Alloy.Globals.isHighRes]": {
    font: {
     fontSize: "30dp"
   }
 }
 
-".bigMenuText[if=Alloy.Globals.isTablet]": {
+".bigMenuText[if=Alloy.Globals.isXHighRes]": {
    font: {
     fontSize: "60dp"
   }
@@ -137,19 +137,19 @@
   color: "#26849c"
 }
 
-".smallMenuText[if=Alloy.Globals.isLdpi]": {
+".smallMenuText[if=Alloy.Globals.isLowRes]": {
    font: {
     fontSize: "16dp"
   }
 }
 
-".smallMenuText[if=Alloy.Globals.isPhablet]": {
+".smallMenuText[if=Alloy.Globals.isHighRes]": {
    font: {
     fontSize: "16dp"
   }
 }
 
-".smallMenuText[if=Alloy.Globals.isTablet]": {
+".smallMenuText[if=Alloy.Globals.isXHighRes]": {
    font: {
     fontSize: "32dp"
   }

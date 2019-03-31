@@ -24,7 +24,7 @@ describe('AnchorBar', function() {
 	var acb, win;
 
 	before( function() {
-		acb = Alloy.createController( "AnchorBar" );
+		acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
 		win = wrapViewInWindow( acb.getView() );
 	});
 
