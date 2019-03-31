@@ -14,8 +14,10 @@
 
 "#detailsBox": {
   showVerticalScrollIndicator: true,
-  width : "50%",
+  width : "55%",
   height : "85%",
+  contentWidth: "100%",
+  contentHeight: Ti.UI.SIZE,
   borderRadius : "10dp",
   backgroundColor : "#cfdbf3",
   layout : "vertical",
