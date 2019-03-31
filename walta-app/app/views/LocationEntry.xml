@@ -15,9 +15,11 @@
 				<View id="buttonBar" layout="horizontal">
 					<View id="locateButton" class="actionButton" onClick="locateClick" >
 						<ImageView id="locateButtonIcon" />
+						<Label title=" "/>
 					</View>
-					<Button id="cancelButton" class="actionButton" title="Close" onClick="cancelClick" />
-					<Button id="saveButton" class="actionButton" title="Save" onClick="saveClick" />
+					
+					<Button id="cancelButton" class="actionButton" title="  Close  " onClick="cancelClick" />
+					<Button id="saveButton" class="actionButton" title="  Save  " onClick="saveClick" />
 				</View>
 			</View>
 	</View>

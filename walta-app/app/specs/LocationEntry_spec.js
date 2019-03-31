@@ -44,7 +44,7 @@ describe("LocationEntry controller", function() {
     closeWindow( win, done );
   });
 
-  it('should display overlay', function(done) {
+  it.only('should display overlay', function(done) {
     windowOpenTest( win, done );
 	});
 
