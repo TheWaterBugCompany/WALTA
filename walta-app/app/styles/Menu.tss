@@ -4,6 +4,11 @@
   backgroundImage: "/images/menu-background.png"
 }
 
+".container[Alloy.Globals.isSquare]": {
+  top: "10%",
+  height: "60%" 
+}
+
 "#logInOrRegister" : {
   height: Ti.UI.SIZE,
   width: Ti.UI.SIZE,
