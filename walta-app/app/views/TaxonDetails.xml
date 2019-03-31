@@ -1,4 +1,4 @@
-<Alloy>
+<Alloy autostyle="true">
 	<View id="content" class="container">
 			<Label id="title" class="headingText"></Label>
 			<ScrollView id="detailsBox">
@@ -8,30 +8,30 @@
 
 				<View layout="horizontal" class="field shrinkWrap">
 					<Label class="detailsHeading headingText" text="Size:"/>
-					<Label id="size" class="detailsText labelText"/>
+					<Label id="size" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
 					<Label class="detailsHeading headingText" text="Habitat:"/>
-					<Label id="habitat" class="detailsText labelText"/>
+					<Label id="habitat" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
 					<Label class="detailsHeading headingText" text="Movement:"/>
-					<Label id="movement" class="detailsText labelText"/>
+					<Label id="movement" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
 					<Label class="detailsHeading headingText" text="Confused with:"/>
-					<Label id="confusedWith" class="detailsText labelText"/>
+					<Label id="confusedWith" class="detailsText"/>
 				</View>
 
 				<View layout="horizontal" class="field shrinkWrap">
 					<Label id="signalScoreHeading" class="detailsHeading headingText" text="SIGNAL score:"/>
-					<Label id="signalScore" class="detailsText labelText"/>
+					<Label id="signalScore" class="detailsText"/>
 				</View>
 
-				<Label id="description" class="detailsText labelText"/>
+				<Label id="description" class="detailsText"/>
 				<View id="spacer"/>
 			</ScrollView>
 			<View id="actions">
