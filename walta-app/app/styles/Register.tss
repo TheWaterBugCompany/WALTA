@@ -17,11 +17,6 @@
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
 }
 
-".labelText": {
-    wordWrap: true
-}
-
-
 "#emailLabel": {
     width: "250dp",
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT

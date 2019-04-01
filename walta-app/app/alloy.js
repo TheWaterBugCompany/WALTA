@@ -41,4 +41,4 @@ Alloy.Globals.isSquare = aspectRatio < 1.5;
 Alloy.Globals.isHighRes = sizeFactor > 1.1 && sizeFactor <= 2;
 Alloy.Globals.isXHighRes=  sizeFactor > 2;
 
-Ti.API.info(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isHighRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);
+Ti.API.info(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);

@@ -92,7 +92,7 @@ task :device_preview_android => [] do
 end
 
 task :device_preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --liveview --target device")
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --liveview --target device -V \"Michael Sharman (ZG6HRCUR8Q)\" -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\"")
 end
 
 task :release_ios => [ ] do
