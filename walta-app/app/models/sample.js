@@ -55,18 +55,16 @@ exports.definition = {
 			},
 
 			setSitePhoto: function(blob) {
+				Ti.API.info(`Setting site photo: ${blob.width} ${blob.height}`);
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `sitePhoto_${this.get("sampleId")}.jpg`);
 				if ( sitePhotoPath.write(blob) === false )
-					alert("Error writing file");
+					Ti.API.error(`Error writing file: ${sitePhotoPath.nativePath}`);
 				this.set( "sitePhotoPath", sitePhotoPath.nativePath );
 				sitePhotoPath = null;
 			},
 
 			getSitePhoto: function() {
-				if ( this.get("sitePhotoPath") ) {
-					var sitePhotoPath = Ti.Filesystem.getFile(this.get("sitePhotoPath"));
-					return sitePhotoPath.read();
-				}
+				return this.get("sitePhotoPath");
 			},
 			
 

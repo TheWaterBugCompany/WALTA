@@ -13,38 +13,48 @@ if ( readOnlyMode ) {
     $.iconHolder.remove( $.camera );
 }
 
-function generateThumbnail( thumbnailImage ) {
-    Ti.API.info(`Generating thumbnail...`);
-    var newThumbnail = Ti.UI.createImageView( { image: thumbnailImage } ).toBlob();
+function generateThumbnail( fileOrBlob ) {
+
+    function savePhoto( blob, filename  ) {
+        var photoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename );
+
+        Ti.API.info(`File path ${photoPath.nativePath}`);
+        if ( photoPath.exists() ) {
+            var result = photoPath.deleteFile();
+            if ( !result )
+                Ti.API.error(`Error deleting file: writable: ${photoPath.writable}`);
+        }
     
-    Ti.API.info(`image width = ${newThumbnail.width} image height = ${newThumbnail.height}`);
+        var result = photoPath.write(blob);
+        if ( !result )
+            Ti.API.error(`Error writing file: exists: ${photoPath.exists()}`);
+
+        return photoPath.nativePath;
+    }
+
+    Ti.API.info(`Generating thumbnail...`);
+    var fullPhoto = Ti.UI.createImageView( { image: fileOrBlob } ).toBlob();
+    
+    Ti.API.info(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
     var pxWidth = Ti.UI.convertUnits( `${$.photoSelectInner.size.width}dp`, Ti.UI.UNIT_PX );
     var pxHeight = Ti.UI.convertUnits( `${$.photoSelectInner.size.height}dp`, Ti.UI.UNIT_PX );
 
     Ti.API.info(`photo view width = ${$.photoSelectInner.size.width} height = ${$.photoSelectInner.size.height}`);
-    var newHeight = pxWidth*(newThumbnail.height/newThumbnail.width);
+    var newHeight = pxWidth*(fullPhoto.height/fullPhoto.width);
     
-    newThumbnail = thumbnailImage.imageAsResized( pxWidth, newHeight );
+    thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
     var cropY = ((newHeight-pxHeight)/2);
     if ( cropY > 0 )
-        newThumbnail = newThumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
+        thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
 
     // We need to save the photo thumbnail to a file path so that the photo gallery 
     // can read it via a URL
-    Ti.API.info(`Saving thumbnail... ${JSON.stringify(newThumbnail)}`);
-    var photoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `tmp_preview_photo.jpg`);
-    Ti.API.info(`File path ${photoPath.nativePath}`);
-    if ( photoPath.exists() ) {
-        var result = photoPath.deleteFile();
-        if ( !result )
-            Ti.API.error(`Error deleting file: writable: ${photoPath.writable}`);
-    }
+    Ti.API.info(`Saving thumbnail...`);
+    var thumbnailPath = savePhoto( thumbnail, "tmp_preview_photo_thumbnail.jpg");
 
-    var result = photoPath.write(newThumbnail);
-    if ( !result )
-        Ti.API.error(`Error writing file: exists: ${photoPath.exists()}`);
-  
-    return photoPath.nativePath;
+    Ti.API.info(`Saving full size photo...`);
+    var fullPhotoPath = savePhoto( fullPhoto, "tmp_preview_full_photo.jpg");
+    return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
 function generateUpload( blob ) {
@@ -56,26 +66,50 @@ function generateUpload( blob ) {
     }
 }
 
-function setImage( image ) {
-    if ( !image ) {
+function setImage( fileOrBlob ) {
+    Ti.API.info(`setImage(${JSON.stringify(fileOrBlob)})`);
+    if ( !fileOrBlob ) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
         return;
     } 
-    
-    $.photoSelectOptionalLabel.visible = false;
-    $.magnify.visible = true;
-    if ( Array.isArray(image) ) {
-        $.photo.image = image[0];
-        $.photoUrls = image;
-    } else if ( typeof(image) === "object" ) {
-        $.photo.image = generateThumbnail( image.media );
-        $.photoUrls = [$.photo.image];
-    } else {
-        $.photo.image = image;
-        $.photoUrls = [image];
+
+    function setThumbnail( fileOrBlob) {
+        var { thumbnail, photo } = generateThumbnail( fileOrBlob );
+        $.photo.image = thumbnail;
+        $.photoUrls = [photo];
     }
-    
+
+    function processPhoto( fileOrBlob ) {
+        // If an array, then it must contain URL paths to many photos, the first is displayed 
+        // in the thumbnail view
+        if ( Array.isArray(fileOrBlob) ) {
+            setThumbnail( fileOrBlob[0] );
+            $.photoUrls = fileOrBlob; // overwrite photoUrls with the complete array of URLs
+        } 
+        // When an object is passed it must be a TiBlob containing image data
+        else if ( typeof(fileOrBlob) === "object" ) {
+            setThumbnail( fileOrBlob.media );
+        } 
+        // Otherwise it can be a URL path to a single photo
+        else {
+            setThumbnail( fileOrBlob );
+        }
+        $.photoSelectOptionalLabel.visible = false;
+        $.magnify.visible = true;
+    }
+
+    // When the view first opens then we need to postpone the thumbnail creation
+    // until after the postlayout event which ensures the width/height are valid
+    // and we can use them to crop the image.
+    if ( $.photoSelectInner.size.width === 0 && $.photoSelectInner.size.height === 0) {
+        $.photoSelectInner.addEventListener("postlayout", function postpone() {
+            $.photoSelectInner.removeEventListener("postlayout", postpone);
+            processPhoto( fileOrBlob );
+        });
+    } else {
+        processPhoto( fileOrBlob );
+    }
 }
 
 function requestCameraPermissions( success, failure ) {
@@ -106,7 +140,7 @@ function takePhoto() {
             Ti.Media.showCamera({
                 autohide: true,
                 animated: false,
-                autorotate: false,
+                autorotate: true,
                 success: function (result) {
                     setImage( result );
                     $.trigger("photoTaken", generateUpload( result.media ) );
