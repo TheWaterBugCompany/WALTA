@@ -2,7 +2,8 @@
 	<View id="photoSelectBoundary">
 		<View id="photoSelectInner">
 			<ImageView id="photo" />
-			<Label id="photoSelectLabel" text="Please take a photo\nto continue"/>
+			<Label id="photoSelectLabel" class="photoMessage" text="Please take a photo\nto continue"/>
+			<Label id="photoSelectOptionalLabel"  class="photoMessage" text="Tap camera to\nadd a photo"/>
 			<View id="iconHolder" class="shrinkWrap">
 				<ImageView id="magnify" class="icon" onClick="openGallery"/>
 				<ImageView id="camera" class="icon" onClick="takePhoto"/>

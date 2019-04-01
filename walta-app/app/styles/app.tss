@@ -144,8 +144,7 @@ overrode the settings with other TSS, XML, or JS settings:
   },
   left: "2%",
   textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-  color: "#26849c",
-  wordWrap: true
+  color: "#26849c"
 }
 
 ".labelText[if=Alloy.Globals.isLowRes]": {
@@ -212,9 +211,7 @@ overrode the settings with other TSS, XML, or JS settings:
     fullscreen: false
 }
 
-".textField[if=Alloy.Globals.isLowRes]": {
-    borderWidth: "2dp",
-}
+
 
 ".password": {
 	passwordMask: true
@@ -234,6 +231,10 @@ overrode the settings with other TSS, XML, or JS settings:
         fontSize: "16dp"
     },
     visible: false
+}
+
+".error[if=Alloy.Globals.isLowRes]": {
+  fontSize: "14dp"
 }
 
 ".error[if=Alloy.Globals.isHighRes]": {

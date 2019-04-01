@@ -196,6 +196,6 @@ describe("SiteDetails controller", function() {
         controllerOpenTest( ctl, function() {
             expect( ctl.photoSelect.disabled ).to.be.true;
             done();
-        } );
+        } ); 
     }); */
 });

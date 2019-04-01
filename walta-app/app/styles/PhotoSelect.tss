@@ -27,10 +27,8 @@
     backgroundColor: "#cee8ef"
 }
 
-"#photoSelectLabel" : {
+".photoMessage": {
     visible: false,
-    color: "red",
-    wordWrap: true,
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
     backgroundColor: "#aaffffff",
     width: Ti.UI.FILL,
@@ -41,11 +39,19 @@
     }
 }
 
-"#photoSelectLabel[if=Alloy.Globals.isHighRes]": {
+"#photoSelectOptionalLabel": {
+    color: "#26849c"
+}
+
+"#photoSelectLabel" : {
+    color: "red"
+}
+
+".photoMessage[if=Alloy.Globals.isHighRes]": {
   font: { fontSize: "22dp" }
 }
 
-"#photoSelectLabel[if=Alloy.Globals.isXHighRes]": {
+".photoMessage[if=Alloy.Globals.isXHighRes]": {
   font: { fontSize: "40dp" }
 }
 
@@ -71,6 +77,7 @@
 }
 
 "#magnify": {
+    visible: false,
     image: "/images/icon-magnify.png"
 }
 
