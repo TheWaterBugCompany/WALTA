@@ -26,6 +26,7 @@ exports.definition = {
 			},
 
 			setPhoto: function(blob) {
+				Ti.API.info(`Setting taxon photo: ${blob.width} ${blob.height}`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `taxon_${this.get("sampleId")}_${this.get("taxonId")}.jpg`);
 				if ( taxonPhotoPath.write(blob) === false )
 					alert("Error writing file");
@@ -34,10 +35,7 @@ exports.definition = {
 			},
 
 			getPhoto: function() {
-				if ( this.get("taxonPhotoPath") ) {
-					var taxonPhotoPath = Ti.Filesystem.getFile(this.get("taxonPhotoPath"));
-					return taxonPhotoPath.read();
-				}
+				return this.get("taxonPhotoPath");
 			},
 
 			getSilhouette: function() {
