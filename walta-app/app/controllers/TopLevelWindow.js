@@ -25,6 +25,7 @@ function openWindow() {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.content.top = 0;
 		$.content.width = Ti.UI.FILL;
+		
 		if ( Alloy.Globals.isSquare ) {
 			$.content.top = "10%";
 			$.content.height = "80%";
