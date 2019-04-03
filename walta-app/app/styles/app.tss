@@ -140,7 +140,7 @@ overrode the settings with other TSS, XML, or JS settings:
    font: {
     fontFamily: "Tahoma",
 	fontWeight: "bold",
-    fontSize: "16dp"
+    fontSize: "15dp"
   },
   left: "2%",
   textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,

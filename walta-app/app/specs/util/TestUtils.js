@@ -150,14 +150,9 @@ function forceCloseWindow( win, done ) {
 	win.close();
 }
 
-function checkTestResult( done, f ) {
-	try {
-	  f();
-	  done();
-	} catch( e ) {
-	  done( e );
-	}
-  }
+function checkTestResult( done, f, delay=0 ) {
+	setTimeout( function() { try { f(); done(); } catch( e ) { done( e );} }, delay );
+} 
 
 function controllerOpenTest( ctl, done ) {
 	if ( done ) {

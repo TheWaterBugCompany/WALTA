@@ -67,7 +67,7 @@ function generateUpload( blob ) {
 }
 
 function setImage( fileOrBlob ) {
-    Ti.API.info(`setImage(${JSON.stringify(fileOrBlob)})`);
+
     if ( !fileOrBlob ) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;

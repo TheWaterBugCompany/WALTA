@@ -4,7 +4,6 @@
     width: Ti.UI.FILL,
     height: Ti.UI.FILL,
     left: "1%",
-    right: "1%",
     top: "5%"
 }
 
@@ -34,7 +33,7 @@
 }
 
 "#photoSelectWrapper" : {
-    left: "3%",
+    left: "2%",
     height: "70%"
 }
 
