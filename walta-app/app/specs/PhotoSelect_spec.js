@@ -19,7 +19,7 @@ require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
 var { wrapViewInWindow, closeWindow, windowOpenTest, checkTestResult } = require('specs/util/TestUtils');
 
-describe.only('PhotoSelect controller', function() {
+describe('PhotoSelect controller', function() {
 	var win, vw, pv;
 
 	function makePhotoSelect( readonly, images ) {
