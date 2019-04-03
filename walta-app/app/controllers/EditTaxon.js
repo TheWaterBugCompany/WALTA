@@ -23,9 +23,10 @@ function setImage( photo ) {
     if ( photo ) {
         $.photoSelect.setImage( photo );
     } else {
+        $.photoSelect.setImage( taxon.getSilhouette() );
         $.photoSelect.setError();
         disableControl($.saveButton); 
-        $.photoSelect.setImage( taxon.getSilhouette() );
+        
     }
 }
 
