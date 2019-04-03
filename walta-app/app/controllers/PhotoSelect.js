@@ -1,5 +1,5 @@
 var GalleryWindow = require('ui/GalleryWindow');
-
+var moment = require('lib/moment');
 var args = $.args;
 if ( $.args.left ) $.photoSelectInner.left = $.args.left;
 if ( $.args.right ) $.photoSelectInner.right = $.args.right;
@@ -11,6 +11,8 @@ setImage( $.args.image );
 var readOnlyMode = $.args.readonly ;
 if ( readOnlyMode ) {
     $.iconHolder.remove( $.camera );
+    $.photoSelectLabel.visible = false;
+    $.photoSelectOptionalLabel.visible = false;
 }
 
 function generateThumbnail( fileOrBlob ) {
@@ -49,11 +51,22 @@ function generateThumbnail( fileOrBlob ) {
 
     // We need to save the photo thumbnail to a file path so that the photo gallery 
     // can read it via a URL
+    Ti.API.info("removing old preview files...");
+    var appDir = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory);
+    appDir.getDirectoryListing()
+        .forEach( (f) => { 
+            
+            if ( f.slice(0,8) === "preview_") {
+                Ti.API.info(`deleting ${f}`);
+                Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, f )
+                    .deleteFile();
+            }
+        });
     Ti.API.info(`Saving thumbnail...`);
-    var thumbnailPath = savePhoto( thumbnail, "tmp_preview_photo_thumbnail.jpg");
+    var thumbnailPath = savePhoto( thumbnail, `preview_${moment().unix()}.jpg`);
 
     Ti.API.info(`Saving full size photo...`);
-    var fullPhotoPath = savePhoto( fullPhoto, "tmp_preview_full_photo.jpg");
+    var fullPhotoPath = savePhoto( fullPhoto, `preview_${moment().unix()}.jpg`);
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
@@ -67,8 +80,8 @@ function generateUpload( blob ) {
 }
 
 function setImage( fileOrBlob ) {
-
-    if ( !fileOrBlob ) {
+    Ti.API.info(`set thumbail to ${fileOrBlob}`);
+    if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
         return;
