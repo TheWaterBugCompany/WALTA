@@ -30,7 +30,7 @@
 }
 
 "#question": {
-    left: null
+    left: 0
 }
 
 "#content[platform=android]": {
@@ -86,14 +86,13 @@
 
 
 ".inputBox": {
-    top: "2dp",
     left: "12dp",
     width: Ti.UI.SIZE,
     height: Ti.UI.SIZE
 }
 
 "#grid": {
-    top: "5%",
+    top: "2%",
     width: Ti.UI.SIZE,
     height: Ti.UI.SIZE,
     horizontalWrap: false
