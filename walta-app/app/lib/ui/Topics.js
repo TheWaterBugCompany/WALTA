@@ -76,6 +76,8 @@ var topics = {
 
 	GPSLOCK: 'gpslock',
 
+	UPLOAD_PROGRESS: 'uploadprogress',
+
 	unsubscribe: function( topic, callback ) {
 		Alloy.Events.off( 'waterbug:' + topic, callback );
 	},

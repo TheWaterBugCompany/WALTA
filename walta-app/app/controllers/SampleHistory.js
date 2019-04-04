@@ -1,14 +1,19 @@
 var moment = require("lib/moment");
+var Topics = require('ui/Topics');
+
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
+
+Topics.subscribe( Topics.LOGGEDIN, updateSampleList );
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
     $.off();
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
-
-$.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
+function updateSampleList() {
+    $.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
+}
 $.TopLevelWindow.addEventListener('close', function() {
     $.destroy();
 });
@@ -30,3 +35,4 @@ function openSample(e) {
 	Alloy.Collections.instance("taxa").load(sampleId);
     Alloy.createController("SiteDetails").open();
 }
+updateSampleList();

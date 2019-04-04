@@ -113,14 +113,16 @@ function createCerdiApi( serverUrl, client_secret  ) {
                     })
             },
 
-            submitSitePhoto( serverSampleId, photoBlob ) {
+            submitSitePhoto( serverSampleId, photoPath ) {
+                var photoBlob = Ti.UI.createImageView( { image: photoPath } ).toBlob();
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
                 return makeImagePost( `${this.serverUrl}/samples/${serverSampleId}/photos`, photoBlob, accessToken );
             },
 
-            submitCreaturePhoto( serverSampleId, creatureId, photoBlob ) {
+            submitCreaturePhoto( serverSampleId, creatureId, photoPath ) {
+                var photoBlob = Ti.UI.createImageView( { image: photoPath } ).toBlob();
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
