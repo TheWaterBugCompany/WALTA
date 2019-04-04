@@ -1,3 +1,5 @@
+var moment = require("lib/moment");
+var { removeFilesBeginningWith } = require('logic/FileUtils');
 exports.definition = {
 	config: {
 		columns: {
@@ -25,13 +27,13 @@ exports.definition = {
 				return Math.round((min+max)/2);
 			},
 
-			setPhoto: function(blob) {
-				Ti.API.info(`Setting taxon photo: ${blob.width} ${blob.height}`);
-				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `taxon_${this.get("sampleId")}_${this.get("taxonId")}.jpg`);
-				if ( taxonPhotoPath.write(blob) === false )
-					alert("Error writing file");
+			setPhoto: function(file) {
+				var newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
+				Ti.API.info(`updating photo at ${newPhotoName}`);
+				removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
+				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
+				Ti.Filesystem.getFile(file).move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
-				taxonPhotoPath = null;
 			},
 
 			getPhoto: function() {

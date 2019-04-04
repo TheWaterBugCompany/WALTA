@@ -56,6 +56,10 @@ overrode the settings with other TSS, XML, or JS settings:
     borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
 }
 
+"ScrollView": {
+  scrollType: "vertical"
+}
+
 "Label": {
 	color: "#26849c",
 	font: {

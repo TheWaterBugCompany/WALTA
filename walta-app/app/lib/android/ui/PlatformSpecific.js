@@ -25,6 +25,13 @@ function appShutdown( privates ) {
 	Alloy.Globals.lastWindow.forEach( (w) => w.close() );
 	Ti.Android.currentActivity.finish();
 }
+
+function getWindowName(w){ 
+	if (w.title)
+		return w.title;
+	else
+		return "Menu";
+}
  
 function transitionWindows( win, effect ) {
 	var args = {};
@@ -38,16 +45,19 @@ function transitionWindows( win, effect ) {
 		args.activityEnterAnimation = Ti.Android.R.anim.fade_in;
 		args.activityExitAnimation = Ti.Android.R.anim.fade_out;
 	}
-	win.open( args );
-	if ( Alloy.Globals.lastWindow )
-		Ti.API.debug(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>w.title)}`);
+
 	if ( ! Alloy.Globals.lastWindow ) {
 		Alloy.Globals.lastWindow = [];
 	}
-	if ( Alloy.Globals.lastWindow.length > 1 ) {
-		Alloy.Globals.lastWindow.shift().close();
-	} 
+
 	Alloy.Globals.lastWindow.push( win );
+	Ti.API.info(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>getWindowName(w))}`);
+	win.open( args );
+	if ( Alloy.Globals.lastWindow.length > 1 ) {
+		var oldWindow = Alloy.Globals.lastWindow.shift();
+		Ti.API.info(`oldWindow = ${getWindowName(oldWindow)} `);
+		oldWindow.close();
+	};
 }
 
 function convertSystemToDip( n ) {

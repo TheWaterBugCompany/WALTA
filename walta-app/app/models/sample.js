@@ -1,5 +1,6 @@
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
+var { removeFilesBeginningWith } = require('logic/FileUtils');
 var GeoLocationService = require('logic/GeoLocationService');
 exports.definition = {
 	config: {
@@ -54,13 +55,13 @@ exports.definition = {
 				this.set('accuracy', coords.accuracy);
 			},
 
-			setSitePhoto: function(blob) {
-				Ti.API.info(`Setting site photo: ${blob.width} ${blob.height}`);
-				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, `sitePhoto_${this.get("sampleId")}.jpg`);
-				if ( sitePhotoPath.write(blob) === false )
-					Ti.API.error(`Error writing file: ${sitePhotoPath.nativePath}`);
+			setSitePhoto: function(file) {
+				var newPhotoName = `sitePhoto_${this.get("sampleId")}_${moment().unix()}.jpg`;
+				Ti.API.info(`updating photo at ${newPhotoName}`);
+				removeFilesBeginningWith(`sitePhoto_${this.get("sampleId")}_`);
+				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
+				Ti.Filesystem.getFile(file).move(sitePhotoPath.nativePath);
 				this.set( "sitePhotoPath", sitePhotoPath.nativePath );
-				sitePhotoPath = null;
 			},
 
 			getSitePhoto: function() {

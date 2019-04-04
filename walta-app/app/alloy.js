@@ -31,6 +31,15 @@ Ti.API.info(`platform display caps: width = ${Ti.Platform.displayCaps.platformWi
 
 var relWidth = Ti.Platform.displayCaps.platformWidth / Ti.Platform.displayCaps.logicalDensityFactor;
 var relHeight= Ti.Platform.displayCaps.platformHeight / Ti.Platform.displayCaps.logicalDensityFactor;
+
+if ( relHeight > relWidth ) {
+    Ti.API.warn(`Ugh we got portrait sized dimensions width = ${relWidth} height = ${relHeight} :-( swapping...`)
+    var tmp = relHeight;
+    relHeight = relWidth;
+    relWidth = relHeight;   
+    // we are reporting protrait mode
+}
+
 var aspectRatio = relWidth/relHeight;
 var sizeFactor = relWidth/533;
  

@@ -1,5 +1,6 @@
 var GalleryWindow = require('ui/GalleryWindow');
 var moment = require('lib/moment');
+var { removeFilesBeginningWith } = require('logic/FileUtils');
 var args = $.args;
 if ( $.args.left ) $.photoSelectInner.left = $.args.left;
 if ( $.args.right ) $.photoSelectInner.right = $.args.right;
@@ -36,7 +37,14 @@ function generateThumbnail( fileOrBlob ) {
     }
 
     Ti.API.info(`Generating thumbnail...`);
-    var fullPhoto = Ti.UI.createImageView( { image: fileOrBlob } ).toBlob();
+    var fullPhoto = null;
+    if ( typeof fileOrBlob === "string") {
+        fullPhoto = Ti.UI.createImageView( { image: fileOrBlob } ).toBlob();
+    } else {
+        fullPhoto = fileOrBlob;
+    }
+    Ti.API.info(`Saving full size photo...`);
+    var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().unix()}.jpg`);
     
     Ti.API.info(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
     var pxWidth = Ti.UI.convertUnits( `${$.photoSelectInner.size.width}dp`, Ti.UI.UNIT_PX );
@@ -46,6 +54,7 @@ function generateThumbnail( fileOrBlob ) {
     var newHeight = pxWidth*(fullPhoto.height/fullPhoto.width);
     
     var thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
+    fullPhoto = null;
     var cropY = ((newHeight-pxHeight)/2);
     if ( cropY > 0 )
         thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
@@ -53,26 +62,19 @@ function generateThumbnail( fileOrBlob ) {
     // We need to save the photo thumbnail to a file path so that the photo gallery 
     // can read it via a URL
     Ti.API.info("removing old preview files...");
-    var appDir = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory);
-    appDir.getDirectoryListing()
-        .forEach( (f) => { 
-            
-            if ( f.slice(0,8) === "preview_") {
-                Ti.API.info(`deleting ${f}`);
-                Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, f )
-                    .deleteFile();
-            }
-        });
+    removeFilesBeginningWith("preview_");
     Ti.API.info(`Saving thumbnail...`);
     var thumbnailPath = savePhoto( thumbnail, `preview_${moment().unix()}.jpg`);
-
-    Ti.API.info(`Saving full size photo...`);
-    var fullPhotoPath = savePhoto( fullPhoto, `preview_${moment().unix()}.jpg`);
+    thumbnail = null;
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
 function generateUpload( blob ) {
-    return blob.imageAsCompressed( 0.9 );
+    Ti.API.info(`compressing photo for upload`);
+    if ( ! blob.nativePath )
+        return blob.imageAsCompressed( 0.9 );
+    else
+        return blob.nativePath;
 }
 
 function setImage( fileOrBlob ) {
@@ -157,7 +159,8 @@ function takePhoto() {
                 autorotate: true,
                 success: function (result) {
                     setImage( result );
-                    $.trigger("photoTaken", generateUpload( result.media ) );
+                    Ti.API.info(`${JSON.stringify(result)}`);
+                    $.trigger("photoTaken", $.photo.image );
                 },
                 error: function (error) {
                     alert(`${error.error}`); 
