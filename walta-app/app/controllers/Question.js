@@ -5,7 +5,7 @@ $.question.text = question.text;
 if ( question.photoUrls.length > 0 ) {
     $.photoSelect.setImage( question.photoUrls );
 } else {
-    $.Question.remove( $.photoSelect.getView() );
+    $.Question.remove( $.photoSelectWrapper );
     $.question.width="80%";
     $.question.right="5%";
 }
