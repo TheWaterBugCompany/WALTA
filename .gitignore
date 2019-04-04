@@ -4,8 +4,9 @@
 **/*.lock
 .DS_Store
 **/.DS_Store
-release/*
+release/**
 **/node_modules
+walta-app/plugins/**
 node_modules
 .bundle
 .irb-history
