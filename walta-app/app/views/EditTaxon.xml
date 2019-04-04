@@ -15,7 +15,7 @@
 				</View>
 			</View>
 			<View id="photoSelectWrapper">
-				<Require type="view" src="PhotoSelect" id="photoSelect" />
+				<Require type="view" src="PhotoSelect" cropPhoto=true id="photoSelect" />
 			</View>
 			<View id="buttons" layout="horizontal">
 				<Button id="deleteButton" class="actionButton" title="Delete" onClick="deleteEvent" />

@@ -9,6 +9,7 @@ setImage( $.args.image );
 
 
 var readOnlyMode = $.args.readonly ;
+var cropPhoto = $.args.cropPhoto;
 if ( readOnlyMode ) {
     $.iconHolder.remove( $.camera );
     $.photoSelectLabel.visible = false;
@@ -88,9 +89,14 @@ function setImage( fileOrBlob ) {
     } 
 
     function setThumbnail( fileOrBlob) {
-        var { thumbnail, photo } = generateThumbnail( fileOrBlob );
-        $.photo.image = thumbnail;
-        $.photoUrls = [photo];
+        if ( cropPhoto || typeof fileOrBlob === "object") {
+            var { thumbnail, photo } = generateThumbnail( fileOrBlob );
+            $.photo.image = thumbnail;
+            $.photoUrls = [photo];
+        } else {
+            $.photo.image = fileOrBlob;
+            $.photoUrls = [fileOrBlob];
+        }
     }
 
     function processPhoto( fileOrBlob ) {

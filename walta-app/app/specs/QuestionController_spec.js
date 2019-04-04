@@ -20,7 +20,7 @@ var { expect } = require('specs/lib/chai');
 var { wrapViewInWindow, closeWindow, windowOpenTest, actionFiresEventTest } = require('specs/util/TestUtils');
 var Question = require('logic/Question');
 
-describe('Question controller', function() { 
+describe.only('Question controller', function() { 
 	var win, qv;
 
 	function makeQuestionWindow(question) {
@@ -32,7 +32,7 @@ describe('Question controller', function() {
 		closeWindow( win, done );
 	});
 
-	it.only('should display the question view with a photo', function(done) {
+	it('should display the question view with a photo', function(done) {
 		win = makeQuestionWindow(Question.createQuestion( {
 			text: "This is a test question text! With a longer question text that needs to wrap plus a couple of media images",
 			mediaUrls: [
@@ -44,7 +44,7 @@ describe('Question controller', function() {
 		windowOpenTest( win, done );
 	});
 
-	it('should display the question view without a photo', function(done) {
+	it.only('should display the question view without a photo', function(done) {
 		win = makeQuestionWindow(Question.createQuestion( {
 			text: "This is a test question text! With a longer question text that needs to wrap without media images.",
 			mediaUrls: []
