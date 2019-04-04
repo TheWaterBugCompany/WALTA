@@ -44,7 +44,7 @@ function generateThumbnail( fileOrBlob ) {
     Ti.API.info(`photo view width = ${$.photoSelectInner.size.width} height = ${$.photoSelectInner.size.height}`);
     var newHeight = pxWidth*(fullPhoto.height/fullPhoto.width);
     
-    thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
+    var thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
     var cropY = ((newHeight-pxHeight)/2);
     if ( cropY > 0 )
         thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
