@@ -88,11 +88,11 @@ task :preview_ios => [] do
 end
 
 task :device_preview_android => [] do
-  sh("appc ti build --force --project-dir walta-app --platform android --deploy-type development --liveview --target device")
+  sh("appc ti build --force --project-dir walta-app --platform android --deploy-type development --liveview  --target device")
 end
 
 task :device_preview_ios => [] do
-  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --liveview --target device -V \"Michael Sharman (ZG6HRCUR8Q)\" -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\"")
+  sh("appc ti build --project-dir walta-app --platform ios --deploy-type development --target device -V \"Michael Sharman (ZG6HRCUR8Q)\" -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\"")
 end
 
 task :release_ios => [ ] do
@@ -100,5 +100,5 @@ task :release_ios => [ ] do
 end
 
 task :release_android => [] do
-  sh("appc ti build --project-dir walta-app --build-only --platform android  --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release");
+  sh("appc ti build --project-dir walta-app --build-only --platform android --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release");
 end

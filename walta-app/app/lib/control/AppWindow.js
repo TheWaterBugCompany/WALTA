@@ -38,7 +38,7 @@ function createAppWindow( keyName, keyPath ) {
 
 		// Private variables that are not to be exposed as API
 		var privates = {
-
+			controller: null,
 			key: null,
 
 			loadKey: function( keyUrl ) {
@@ -49,32 +49,38 @@ function createAppWindow( keyName, keyPath ) {
 				}
 			},
 
+			openController(ctl,args) {
+				this.controller = Alloy.createController(ctl,args);
+				this.controller.open();
+			},
+
 			menuWindow: function(args) {
-				Alloy.createController("Menu",args).open();
+				this.openController("Menu",args);
 			},
 
 			browseWindow: function(args) {
 				if ( ! args )
 					args = {};
 				args.key = this.key;
-				Alloy.createController("TaxonList",args).open();
+				this.openController("TaxonList",args);
 			},
 
 			sampleTrayWindow: function(args) {
 				if ( ! args )
 					args = {};
 				args.key = this.key;
-				Alloy.createController("SampleTray",args).open();
+				this.openController("SampleTray",args);
 			},
 
 			logInWindow: function(args) {
-				Alloy.createController("LogIn").open();
+				this.openController("LogIn");
 			},
 
 			siteDetailsWindow: function(args) {
+				var me = this;
 				function startSurvey() {
 					
-					Alloy.createController("SiteDetails",args).open();
+					me.openController("SiteDetails",args);
 				}
 
 				if ( OS_ANDROID ) {
@@ -95,19 +101,19 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			habitatWindow: function(args) {
-				Alloy.createController("Habitat",args).open();
+				this.openController("Habitat",args);
 			},
 
 			summaryWindow: function(args) {
-				Alloy.createController("Summary",args).open();
+				this.openController("Summary",args);
 			},
 
 			historyWindow: function() {
-				Alloy.createController("SampleHistory").open();
+				this.openController("SampleHistory");
 			},
 
 			speedBugWindow: function(allowAddToSample, surveyType) {
-				Alloy.createController("Speedbug", { key: privates.key, surveyType: surveyType, allowAddToSample: allowAddToSample }).open();
+				this.openController("Speedbug", { key: privates.key, surveyType: surveyType, allowAddToSample: allowAddToSample });
 			},
 
 			galleryWindow: function() {
@@ -137,10 +143,10 @@ function createAppWindow( keyName, keyPath ) {
 					args = {};
 				if ( this.key.isNode( node ) ) {
 					args.keyNode = node;
-					Alloy.createController("KeySearch", args ).open();
+					this.openController("KeySearch", args );
 				} else {
 					args.taxon = node;
-					Alloy.createController("TaxonDetails", args ).open();
+					this.openController("TaxonDetails", args );
 				}
 			},
 

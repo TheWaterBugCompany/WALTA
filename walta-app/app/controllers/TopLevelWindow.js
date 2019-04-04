@@ -53,6 +53,7 @@ function backEvent(e) {
 
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+	Ti.API.info(`cleaning up window...`);
 	$.destroy();
 	$.off();
 	anchorBar.cleanUp();

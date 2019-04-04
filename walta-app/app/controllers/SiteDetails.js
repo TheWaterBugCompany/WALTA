@@ -8,6 +8,7 @@ sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+    Ti.API.info(`closing SiteDetails`);
     $.destroy();
     $.off();
     sample.off( null, updateLocation );
