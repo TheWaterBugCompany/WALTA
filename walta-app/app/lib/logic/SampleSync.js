@@ -90,7 +90,7 @@ function uploadTaxaPhotos(sample) {
 
 function setServerSampleId( sample ) {
     return (r) => {
-        Ti.API.debug(`success, server returned: ${JSON.stringify(r)}`);
+        Ti.API.info(`success, server returnedid = ${r.id}`);
         sample.set("serverSampleId", r.id );
         sample.save();
         return sample;
@@ -98,9 +98,11 @@ function setServerSampleId( sample ) {
 }
 
 function markSampleComplete( sample ) {
-        sample.set("uploaded", 1);
-        sample.save();
-        return sample;
+    Ti.API.info(`Sample ${sample.get("serverSampleId")} and photos successfully uploaded setting uploaded flag.`);
+    sample.set("uploaded", 1);
+    sample.save();
+    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("id") } );
+    return sample;
 }
 
 function errorHandler( sample ) {
@@ -121,12 +123,15 @@ function errorHandler( sample ) {
 function uploadNextSample(samples) {
     var sample = samples.shift();
     var uploadIfNeeded;
-    var serverSampleId = sample.get("uploaded");
+    var serverSampleId = sample.get("serverSampleId");
 
-    if ( !serverSampleId )
-        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
-    else
+    if ( !serverSampleId ) {
+        Ti.API.info(`Uploading new sample record...`);
+        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() );
+    } else {
+        Ti.API.info(`Attempting re-upload of ${serverSampleId} photo records...`);
         uploadIfNeeded = Promise.resolve( { id: serverSampleId }); 
+    }
 
     return uploadIfNeeded
             .then( setServerSampleId( sample ) )

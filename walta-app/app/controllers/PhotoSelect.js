@@ -6,6 +6,8 @@ if ( $.args.left ) $.photoSelectInner.left = $.args.left;
 if ( $.args.right ) $.photoSelectInner.right = $.args.right;
 if ( $.args.top ) $.photoSelectInner.top = $.args.top;
 if ( $.args.bottom ) $.photoSelectInner.bottom = $.args.bottom;
+$.photoSelectLabel.visible = false;
+$.photoSelectOptionalLabel.visible = false;
 setImage( $.args.image );
 
 
@@ -13,8 +15,6 @@ var readOnlyMode = $.args.readonly ;
 var cropPhoto = $.args.cropPhoto;
 if ( readOnlyMode ) {
     $.iconHolder.remove( $.camera );
-    $.photoSelectLabel.visible = false;
-    $.photoSelectOptionalLabel.visible = false;
 }
 
 function generateThumbnail( fileOrBlob ) {
@@ -35,6 +35,10 @@ function generateThumbnail( fileOrBlob ) {
 
         return photoPath.nativePath;
     }
+    // We need to save the photo thumbnail to a file path so that the photo gallery 
+    // can read it via a URL
+    Ti.API.info("removing old preview files...");
+    removeFilesBeginningWith("preview_");
 
     Ti.API.info(`Generating thumbnail...`);
     var fullPhoto = null;
@@ -42,6 +46,10 @@ function generateThumbnail( fileOrBlob ) {
         fullPhoto = Ti.UI.createImageView( { image: fileOrBlob } ).toBlob();
     } else {
         fullPhoto = fileOrBlob;
+    }
+    if ( ( fullPhoto.mimeType !== "image/jpeg" && fullPhoto.mimeType != "image/gif" ) || fullPhoto.length > 4*1024*1024 ) {
+        // attempt to compress and/or convert to JPEG
+        fullPhoto = fullPhoto.imageAsCompressed(0.9);
     }
     Ti.API.info(`Saving full size photo...`);
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().unix()}.jpg`);
@@ -59,10 +67,7 @@ function generateThumbnail( fileOrBlob ) {
     if ( cropY > 0 )
         thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
 
-    // We need to save the photo thumbnail to a file path so that the photo gallery 
-    // can read it via a URL
-    Ti.API.info("removing old preview files...");
-    removeFilesBeginningWith("preview_");
+    
     Ti.API.info(`Saving thumbnail...`);
     var thumbnailPath = savePhoto( thumbnail, `preview_${moment().unix()}.jpg`);
     thumbnail = null;
@@ -144,6 +149,7 @@ function requestCameraPermissions( success, failure ) {
 
 function openGallery() {
     if ( $.magnify.visible ) {
+        Ti.API.info(`opening gallery photoUrls: ${JSON.stringify($.photoUrls)}`);
         var galleryWin = GalleryWindow.createGalleryWindow($.photoUrls);
         galleryWin.open();
     }

@@ -102,6 +102,7 @@ function addTrayIcon( container, index ) {
     if ( typeof( taxon ) !== "undefined" ) {
       var icon = createTaxaIcon( taxon );
       var taxonClickHandler = function(e) {
+        Ti.API.info(`firing edit event` );
         icon.fireEditEvent();
         e.cancelBubble = true;
       };
@@ -115,6 +116,8 @@ function addTrayIcon( container, index ) {
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
     thumbnail.add( createAddIcon() );
+  } else {
+    thumbnail.addEventListener( "click", startIdentification );
   }
   return {
     view: thumbnail
@@ -386,7 +389,7 @@ function initializeTray() {
     drawIcecubeTray();
 }
 
-$.content.addEventListener( "click", startIdentification );
+//$.content.addEventListener( "click", startIdentification );
 $.content.addEventListener( "scroll", drawIcecubeTray );
 
 $.content.addEventListener( "postlayout", function initEvent() {
@@ -431,9 +434,9 @@ function editTaxon( taxon_id ) {
 
   $.editTaxon.on("save", function() {
     closeEditScreen();
-    Alloy.Collections["taxa"].add( taxon );
     taxon.save();
-
+    Alloy.Collections["taxa"].add( taxon );
+    
   });
 }
 
