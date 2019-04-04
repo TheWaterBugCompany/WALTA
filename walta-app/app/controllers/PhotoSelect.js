@@ -72,12 +72,7 @@ function generateThumbnail( fileOrBlob ) {
 }
 
 function generateUpload( blob ) {
-    var uploadImage = blob;
-    if ( OS_ANDROID ) {
-        return blob;
-    } else {
-        return blob.imageAsCompressed( 0.9 );
-    }
+    return blob.imageAsCompressed( 0.9 );
 }
 
 function setImage( fileOrBlob ) {
