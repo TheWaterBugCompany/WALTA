@@ -32,7 +32,7 @@ describe('Question controller', function() {
 		closeWindow( win, done );
 	});
 
-	it('should display the question view with a photo', function(done) {
+	it.only('should display the question view with a photo', function(done) {
 		win = makeQuestionWindow(Question.createQuestion( {
 			text: "This is a test question text! With a longer question text that needs to wrap plus a couple of media images",
 			mediaUrls: [
