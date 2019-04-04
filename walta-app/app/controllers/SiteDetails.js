@@ -157,6 +157,7 @@ function openLocationEntry() {
 
 $.photoSelect.on("photoTaken", function(blob) {
     sample.setSitePhoto(blob);
+    $.photoSelect.setImage( sample.getSitePhoto() ); // update image to new path
     // force layout to fit scroll pane to actual size
     $.content.contentHeight="0";
 	$.content.contentWidth="0";
