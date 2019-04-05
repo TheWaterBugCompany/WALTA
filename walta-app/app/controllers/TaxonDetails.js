@@ -59,7 +59,7 @@ $.taxon.scientificName.forEach( (part) => {
 	}
 	$.scientificClassification.add( label );
 });
-$.size.text = $.taxon.size; 
+$.size.text = $.taxon.size + " mm"; 
 $.habitat.text = $.taxon.habitat;
 $.movement.text = $.taxon.movement;
 $.confusedWith.text = $.taxon.confusedWith;
