@@ -1,3 +1,5 @@
+
+walta-app/plugins/**
 .metadata
 *.apk
 *.ipa
@@ -6,7 +8,6 @@
 **/.DS_Store
 release/**
 **/node_modules
-walta-app/plugins/**
 node_modules
 .bundle
 .irb-history
