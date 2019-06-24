@@ -1,0 +1,15 @@
+<Alloy>
+	<View class="overlay">
+			<View class="window" layout="vertical">
+				<View class="titlebar">
+					<Label class="titleText"></Label>
+					<View id="closeButton" onClick="closeEvent">
+							<ImageView class="close_button_image"></ImageView>
+					</View>
+				</View>
+				<View id="content" layout="vertical">
+
+				</View>
+			</View>
+	</View>
+</Alloy>

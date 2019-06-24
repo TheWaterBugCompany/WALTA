@@ -3,7 +3,7 @@
   xmlns:ti="http://ti.appcelerator.org">
   <id>net.thewaterbug.waterbug</id>
   <name>Waterbug</name>
-  <version>1.9.11.14</version>
+  <version>1.9.12.0</version>
   <publisher>The Code Sharman</publisher>
   <url>http://www.thewaterbug.net/</url>
   <description>The Waterbug App</description>
@@ -104,7 +104,6 @@
   <transpile>true</transpile>
   <plugins>
     <plugin version="1.0">ti.alloy</plugin>
-    <plugin version="1.0">global.alloy</plugin>
   </plugins>
   <analytics>false</analytics>
   <!--

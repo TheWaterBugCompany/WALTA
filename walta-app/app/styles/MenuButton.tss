@@ -18,18 +18,15 @@
 }
 
 ".large": {
-  width: "47.75%",
-  height: "30.67%"
+  width: "47.75%"
 }
 
 ".fill" : {
-  width: "96%",
-  height: "30.67%"
+  width: "96%"
 }
 
 ".small" : {
-  width: "31.34%",
-  height: "30.67%"
+  width: "31.34%"
 }
 
 "#icon" : {

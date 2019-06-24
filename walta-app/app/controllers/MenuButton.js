@@ -11,6 +11,10 @@ if ( $.args.fill ) {
   $.resetClass( $.text, ["margin"] );
 }
 
+if ( $.args.size ) {
+  $.button.height = $.args.size;
+}
+
 function onClick(e) {
   if ( $.args.topic ) {
     Topics.fireTopicEvent( $.args.topic, null );

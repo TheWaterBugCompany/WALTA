@@ -1,0 +1,31 @@
+".window": {
+  width: "96%",
+  height: "96%"
+}
+
+"#buttonBar": {
+  horizontalWrap: false,
+  bottom: "1%",
+  right: 0,
+  width: "30%",
+  height: "15%"
+}
+
+"#buttonBar[if=Alloy.Globals.isHighRes]": {
+  width: "20%"
+}
+
+"#buttonBar[if=Alloy.Globals.isXHighRes]": {
+  width: "20%",
+  height: "13%"
+}
+
+"#buttonBar[platform=android]": {
+  width: "20%"
+}
+
+"#cancelButton": {
+  backgroundColor: "#ef8b8b",
+  left: "5%",
+  width: Ti.UI.SIZE
+}

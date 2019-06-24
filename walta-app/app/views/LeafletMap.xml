@@ -1,0 +1,3 @@
+<Alloy>
+	<WebView willHandleTouches=false enableZoomControls=false url="mapview.html" />
+</Alloy>
