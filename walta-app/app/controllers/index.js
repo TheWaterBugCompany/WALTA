@@ -1,5 +1,6 @@
 Ti.API.debug(`Alloy.CFG.unitTestMode = ${Alloy.CFG.unitTestMode}`);
 Ti.API.debug(`Alloy.CFG.stopAfterEachTest = ${Alloy.CFG.stopAfterEachTest}`);
+//Ti.Android.currentActivity.intent.getBooleanExtra("android.intent.action.UnitTest", false )
 if ( Alloy.CFG.unitTestMode ) {
   
   require("specs/index");

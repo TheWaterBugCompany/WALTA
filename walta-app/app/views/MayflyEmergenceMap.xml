@@ -1,0 +1,14 @@
+<Alloy>
+	<View class="overlay">
+		<View class="window">
+				<View layout="vertical"> 
+					<View id="content" layout="vertical">
+						<Require type="view" src="LeafletMap" id="mapView" />
+					</View> 
+				</View>
+				<View id="buttonBar" layout="horizontal">
+					<Button id="cancelButton" class="actionButton" title="  Close  " onClick="cancelClick" />
+				</View>
+			</View>
+	</View>
+</Alloy>

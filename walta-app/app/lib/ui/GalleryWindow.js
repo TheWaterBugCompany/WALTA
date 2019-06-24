@@ -71,7 +71,7 @@ function createGalleryWindow(photoUrls, showPager ) {
 					backgroundColor: 'transparent',
 					width : Ti.UI.FILL,
 					height : Ti.UI.FILL,
-					html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=6.0, minimum-scale=1.0, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { postion: absolute; top:0; bottom: 0; background-color: black; margin-left: auto; margin-right: auto; margin: 0; padding: 0; border: 0 } ::-webkit-scrollbar { display: none;} img { display: block; margin-left:auto;margin-right:auto; padding:0; width:100%; }</style></head><body><img src="' + urlToLocalAsset(url) + '"></body></html>'
+					html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=6.0, minimum-scale=1.0, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { position: absolute; top:0; bottom: 0; background-color: black; margin-left: auto; margin-right: auto; margin: 0; padding: 0; border: 0 } ::-webkit-scrollbar { display: none;} img { display: block; margin-left:auto;margin-right:auto; padding:0; width:100%; }</style></head><body><img src="' + urlToLocalAsset(url) + '"></body></html>'
 				};
 				if ( OS_ANDROID ) 
 					params.cacheMode = Ti.UI.Android.WEBVIEW_LOAD_NO_CACHE;

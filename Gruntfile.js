@@ -11,9 +11,17 @@ module.exports = function(grunt) {
           mock_server: {
             command: 'node mock-server', stdout: 'inherit', stderr: 'inherit'
           },
+          alloy_plugins: {
+            command: `alloy install plugin walta-app`
+          },
           clean: {
             command: `appc ti clean --project-dir walta-app`, stdout: 'inherit', stderr: 'inherit'
           },
+
+          unit_test_android: {
+            command: `adb shell am start -n "net.thewaterbug.waterbug/.WaterbugActivity --ez "android.intent.action.UnitTest" true`
+          },
+
           build: {
             command: `appc ti build --build-only --project-dir walta-app --target emulator --platform android --deploy-type development`, stdout: 'inherit', stderr: 'inherit'
           },
@@ -23,7 +31,7 @@ module.exports = function(grunt) {
             command: `./node_modules/.bin/cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
           },
           // test_console: "calabash-android console walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature"
-          unit_test: `appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android --deploy-type development`,
+         // unit_test: `appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android --deploy-type development`,
           unit_test_node: `NODE_PATH="./walta-app/app:./walta-app/app/lib" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js`,
           clean: `rm -rf walta-app/build/* && rm -rf walta-app/dist/* && rm -rf walta-app/Resources/*`,
           debug: `appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331`,
@@ -57,9 +65,9 @@ module.exports = function(grunt) {
   
     // Default task(s).
     grunt.registerTask('default', ['build'] );
-    grunt.registerTask('build', ['exec:build'] );
+    grunt.registerTask('build', ['exec:alloy_plugins', 'exec:build'] );
     grunt.registerTask('acceptance_test', [ 'newer:titanium_build', 'exec:acceptance_test']);
-    grunt.registerTask('unit_test', ['exec:unit_test'] );
+    grunt.registerTask('unit_test_android', [ 'exec:unit_test_android' ] );
     grunt.registerTask('unit_test_node', ['exec:unit_test_node'] );
     grunt.registerTask('clean', ['exec:clean'] );
     grunt.registerTask('debug', ['exec:debug'] );
