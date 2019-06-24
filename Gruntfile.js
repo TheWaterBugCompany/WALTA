@@ -36,12 +36,7 @@ module.exports = function(grunt) {
           clean: `rm -rf walta-app/build/* && rm -rf walta-app/dist/* && rm -rf walta-app/Resources/*`,
           debug: `appc ti build --project-dir walta-app --platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331`,
           preview_android: `appc ti build  --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}`,
-          
-          /* iphone 6s =      AEA9B0BA-8715-4029-AE8A-1CAFE77653E1
-             iphone 6s plus = E99CE79B-97BF-49B8-9357-C3DFE5611EF2
-             iphone 5s =      C03480F3-D5A7-4444-A1FA-1CA9AF7D9861
-             ipad mini =      85EDE93D-CFEA-40F5-8CD7-ED2556D9472F*/
-          preview_ios: `appc ti build --project-dir walta-app --platform ios --deploy-type development --target simulator --liveview --device-id "AEA9B0BA-8715-4029-AE8A-1CAFE77653E1"`,
+          preview_ios: `appc ti build --project-dir walta-app --platform ios --deploy-type development --target simulator --liveview --device-id "0797B956-B9F1-4AF5-BFC8-085A97F7F34B"`,
           device_preview_android: `appc ti build --force --project-dir walta-app --platform android --deploy-type development --target device`,
           device_preview_ios: `appc ti build --project-dir walta-app --platform ios --deploy-type development --target device`,
           release_ios: `appc ti build --project-dir walta-app --build-only --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release`,
