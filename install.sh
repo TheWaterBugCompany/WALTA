@@ -14,5 +14,6 @@ fi
 cp ./node_modules/chai/chai.js $SPECS_LIB_DIR/chai.js
 cp ./node_modules/mocha/mocha.js $SPECS_LIB_DIR/mocha.js
 cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
-cp -rf ./node_modules/leaflet/dist $ASSET_DIR/leaflet
+cp -rf ./node_modules/leaflet/dist/* $ASSET_DIR/leaflet
 liveview install clihooks
+appc alloy install plugin walta-app
