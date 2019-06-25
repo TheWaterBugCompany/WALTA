@@ -3,6 +3,7 @@ var args = $.args;
 function cleanUp() {
     $.destroy();
     $.off();
-    $.LeafletMap.release();
+    if ( Ti.Platform.osname === 'android' )
+        $.LeafletMap.release();
 }
 exports.cleanUp = cleanUp;

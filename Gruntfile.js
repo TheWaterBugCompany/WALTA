@@ -38,7 +38,7 @@ module.exports = function(grunt) {
           preview_android: `appc ti build  --project-dir walta-app --platform android --deploy-type development --liveview --target emulator --device-id ${AVD_NAME}`,
           preview_ios: `appc ti build --project-dir walta-app --platform ios --deploy-type development --target simulator --liveview --device-id "0797B956-B9F1-4AF5-BFC8-085A97F7F34B"`,
           device_preview_android: `appc ti build --force --project-dir walta-app --platform android --deploy-type development --target device`,
-          device_preview_ios: `appc ti build --project-dir walta-app --platform ios --deploy-type development --target device`,
+          device_preview_ios: `appc ti build --project-dir walta-app --platform ios -V  \"Michael Sharman (ZG6HRCUR8Q)\"  -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\" --deploy-type development --target device `,
           release_ios: `appc ti build --project-dir walta-app --build-only --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release`,
           release_android: `appc ti build --project-dir walta-app --build-only --platform android  --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release`
         },
