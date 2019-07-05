@@ -1,0 +1,4 @@
+{
+    "mochaExplorer.files":"walta-app/app/specs/**/*_node_spec.js",
+    "mochaExplorer.logpanel": true
+}

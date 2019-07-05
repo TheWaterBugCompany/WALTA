@@ -14,7 +14,7 @@
     </script>
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <script src="leaflet/leaflet.js"></script>
-    
+    <script src="mayfly.js"></script>
     <style>
         body {
             padding: 0;
@@ -53,19 +53,19 @@
         updateWhenIdle: false
     }).addTo(map);
 
-    L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', {
+   /* L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', {
         layers: 'wwew:tas_creatures',
         format: 'image/png',
         transparent: true
-    }).addTo(map);
+    }).addTo(map); */
 
-    /*
+    
     new WFSLayer( {
         url: "http://geo.cerdi.com.au/geoserver/wwew/ows",
         typeName: "wwew:tas_creatures",
-        minZoom: 10
+        minZoom: 0.5 // degrees
     }).addTo(map);
-    */
+    
     
     
     /*L.geoJSON('http://geo.cerdi.com.au/geoserver/wwew/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={layer}&maxFeatures={maxFeatures}&outputFormat=application%2Fjson', {

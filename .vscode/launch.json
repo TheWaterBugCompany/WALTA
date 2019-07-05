@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Compile key from ink",
             "program": "${workspaceFolder}/walta-taxonomy/compileKey-from-ink.js",
             "cwd" : "${workspaceFolder}/walta-taxonomy",
             "env" : {

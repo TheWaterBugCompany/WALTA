@@ -7,6 +7,13 @@ module.exports = function(grunt) {
     
     // Project configuration.
     grunt.initConfig({
+      browserify: {
+        mayfly: {
+          files: {
+            'walta-app/app/assets/mayfly.js': [ 'walta-app/app/lib/logic/WfsLayer.js' ]
+          }
+        }
+      },
       exec: {
           mock_server: {
             command: 'node mock-server', stdout: 'inherit', stderr: 'inherit'
@@ -57,10 +64,11 @@ module.exports = function(grunt) {
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks("grunt-newer-explicit");
+    grunt.loadNpmTasks('grunt-browserify');
   
     // Default task(s).
     grunt.registerTask('default', ['build'] );
-    grunt.registerTask('build', ['exec:alloy_plugins', 'exec:build'] );
+    grunt.registerTask('build', ['exec:alloy_plugins', 'browserify:mayfly', 'exec:build'] );
     grunt.registerTask('acceptance_test', [ 'newer:titanium_build', 'exec:acceptance_test']);
     grunt.registerTask('unit_test_android', [ 'exec:unit_test_android' ] );
     grunt.registerTask('unit_test_node', ['exec:unit_test_node'] );
