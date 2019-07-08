@@ -40,6 +40,7 @@ describe('BBoxCache', function() {
 		var cache = new BBoxCache();
 		var bbox1 = [0,0,10,10], bbox2 = [5,5,15,15];
 		cache.bboxsToFetch(bbox1);
-		expect( cache.bboxsToFetch(bbox2) ).to.deep.equal([ [5,10,15,15], [10,5,15,10] ] );
+		expect( cache.bboxsToFetch(bbox2) )
+			.to.deep.include.members([ [5,10,15,15], [10,5,15,10] ] );
 	});
 });

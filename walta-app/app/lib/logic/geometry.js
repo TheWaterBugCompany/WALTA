@@ -145,8 +145,7 @@ class OrthoRing extends Ring {
 }
 
 function partitionOrthoRing( ring ) {
-    let partition = _.map(new OrthoRing(ring).partition(), (p) => p.ring);
-    return partition;
+    return _.map(new OrthoRing(ring).partition(), (p) => p.ring);
 }
 
 exports.equals = equals;

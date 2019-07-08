@@ -6,7 +6,9 @@
 const bbox = require('@turf/bbox').default;
 const bboxPolygon = require('@turf/bbox-polygon').default;
 const difference = require('@turf/difference');
+const { polygon } = require('@turf/helpers');
 const { flattenReduce } = require('@turf/meta');
+const { partitionOrthoRing } = require('logic/geometry');
 const union = require('@turf/union').default;
 const _ = require('lodash');
 const RBush = require('rbush');
@@ -24,6 +26,13 @@ function fromRBushBBox(rrb) {
     return [ rrb.minX, rrb.minY, rrb.maxX, rrb.maxY ];
 }
 
+function processPolygons( p ) {
+    return _.map( 
+        partitionOrthoRing( p.geometry.coordinates[0] ), 
+        (r)=> bbox( polygon( [r] ) ) 
+    );
+}
+
 class BBoxCache {
     constructor() {
         this.index = new RBush();
@@ -39,8 +48,7 @@ class BBoxCache {
             } else {
                 this.index.insert( toBBoxRBush( bbox1 ) );
             }
-            // TODO need to split any concave polygons into rectangles ???
-            return flattenReduce( differenceBBoxes, (acc,p) => acc.concat( [bbox( p )] ), [] );
+            return flattenReduce( differenceBBoxes, (acc,p) => acc.concat( processPolygons(p) ), [] );
         } else {
             this.index.insert( toBBoxRBush( bbox1 ) );
             return [ bbox1 ];
