@@ -15,7 +15,7 @@
 				<View id="detailed" onClick="detailedClick">
 					<View id="detailedIconWrapper">
 						<ImageView id="detailedIcon" />
-					</View>
+					</View> 
 					<Label id="detailedLabel" class="bigMenuText" text="Waterbug\nSurvey"  accessibilityLabel="menu_waterbug_survey_button"/>
 				</View>
 			</View>
@@ -30,7 +30,7 @@
 				</View>
 				<View id="history" class="smallButton" onClick="historyClick">
 					<ImageView id="historyIcon" class="smallButtonIcon"  />
-					<Label id="historyLabel" class="smallMenuText" text="Surveys"  accessibilityLabel="menu_surveys_button" />
+					<Label id="historyLabel" class="smallMenuText" text="Archive"  accessibilityLabel="menu_surveys_button" />
 				</View>
 				<View id="gallery" class="smallButton" onClick="galleryClick">
 					<ImageView id="galleryIcon" class="smallButtonIcon"  />
