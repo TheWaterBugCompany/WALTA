@@ -13,7 +13,10 @@ if ( $.args.fill ) {
 
 if ( $.args.size ) {
   $.button.height = $.args.size;
+  
 }
+
+$.button.accessibilityLabel = `submenu_${$.args.title.toLowerCase().replace(' ','_')}_button`;
 
 function onClick(e) {
   if ( $.args.topic ) {

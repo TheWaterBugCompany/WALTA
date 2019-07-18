@@ -10,6 +10,8 @@ if ( question.photoUrls.length > 0 ) {
     $.question.right="5%";
 }
 
+$.Question.accessibilityLabel = `question_${$.args.label}`;
+
 function clickEvent(e) {
     e.cancelBubble = true;
     $.trigger( "select", e );

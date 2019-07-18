@@ -4,9 +4,13 @@ class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );
     }
-     async login( email, password ) {
+    async login( email, password ) {
         await this.click('menu_login_button');
         return this.world.login.login( email, password );
+    }
+    async identify() {
+        await this.click('menu_identify_button');
+        await this.world.methodSelect.waitFor();
     }
 } 
 module.exports = MenuScreen

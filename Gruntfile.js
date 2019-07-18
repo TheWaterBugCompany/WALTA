@@ -49,7 +49,7 @@ module.exports = function(grunt) {
           unit_test_node: `NODE_PATH="./walta-app/app:./walta-app/app/lib" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js`,
           //clean: `rm -rf walta-app/build/* && rm -rf walta-app/dist/* && rm -rf walta-app/Resources/*`,
           debug: build(`--platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331`),
-          preview_android: build(`--platform android --deploy-type development --target emulator --device-id ${AVD_NAME}`),
+          preview_android: build(`--platform android --deploy-type development --liveview -target emulator --device-id ${AVD_NAME}`),
           preview_ios: build(`--platform ios --deploy-type development --target simulator --liveview --device-id "0797B956-B9F1-4AF5-BFC8-085A97F7F34B"`),
           device_preview_android: build(`--platform android --deploy-type development --target device`),
           device_preview_ios: build(`--platform ios -V  \"Michael Sharman (ZG6HRCUR8Q)\"  -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\" --deploy-type development --target device `),
@@ -76,6 +76,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build'] );
     grunt.registerTask('build', ['exec:clean', 'exec:alloy_plugins', 'exec:build'] );
     grunt.registerTask('acceptance_test', [ 'newer:titanium_build', 'exec:acceptance_test']);
+    grunt.registerTask('quick_acceptance_test', [ 'exec:acceptance_test' ]);
     grunt.registerTask('unit_test_android', [ 'exec:unit_test_android' ] );
     grunt.registerTask('unit_test_node', ['exec:unit_test_node'] );
     grunt.registerTask('clean', ['exec:clean'] );
