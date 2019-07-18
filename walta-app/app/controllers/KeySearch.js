@@ -52,7 +52,7 @@ acb.addTool( goBackBtn.getView() );
 // Add each question
 _(keyNode.questions).each( 
 	function( q, index ) {
-		var qv = Alloy.createController("Question", { question: q });
+		var qv = Alloy.createController("Question", { question: q, label: (index === 0 ? 'top' : 'bottom') });
     questions.push( qv );
     $.content.add( _(qv.getView()).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
     qv.on("select",function() {

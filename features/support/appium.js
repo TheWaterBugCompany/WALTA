@@ -8,6 +8,8 @@ const { join } = require('path');
 
 const LoginScreen = require('./login-screen');
 const MenuScreen = require('./menu-screen');
+const KeySearchScreen = require('./key-search-screen');
+const MethodSelectScreen = require('./method-select-screen');
 
 
 Before( {timeout: 60*1000}, startAppiumClient );
@@ -31,6 +33,8 @@ After( stopAppiumClient );
         this.driver = driver; 
         this.login = new LoginScreen( this );
         this.menu = new MenuScreen( this );
+        this.keySearch = new KeySearchScreen( this );
+        this.methodSelect = new MethodSelectScreen( this );
 
 }
 

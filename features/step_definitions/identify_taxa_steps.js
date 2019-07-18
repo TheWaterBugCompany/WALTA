@@ -72,21 +72,23 @@ Then('selected identification is stored into the current sample tray', function(
   return "pending";
 });
 
-Given('a node from the ALT key is displayed', function(){
-  return "pending";
+Given('a node from the ALT key is displayed', async function(){
+  await this.menu.identify();
+  await this.methodSelect.viaKey();
+  await this.keySearch.chooseTopAndExpect("Animals look like snails or limpets.");
 });
 
 
 Given('I don\'t think this is the correct place in the key', function(){
-  return "pending";
+  // do nothing
 });
 
-When('I select the back button', function(){
-  return "pending";
+When('I select the back button', async function(){
+  await this.keySearch.goBack();
 });
 
-Then('the parent node of this ALT node is displayed', function(){
-  return "pending";
+Then('the parent node of this ALT node is displayed', async function(){
+  await this.keySearch.waitForText("Animal with a shell");
 });
 
 Given('inside the ALT key identification process', function(){

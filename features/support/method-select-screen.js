@@ -1,5 +1,20 @@
 'use strict';
 
+'use strict';
+const BaseScreen = require('./base-screen');
+class MethodSelectScreen extends BaseScreen {
+    constructor( world ) {
+        super( world );
+        this.presenceSelector = "method_select_title";
+    }
+    async viaKey() {
+        await this.click('submenu_key_button');
+        await this.world.keySearch.waitFor();
+    }
+} 
+module.exports = MethodSelectScreen
+
+
 /*class MethodScreen extends Screen {
 /*     def trait
       "* marked:'Select identification method:'"

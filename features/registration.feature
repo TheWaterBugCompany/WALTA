@@ -3,7 +3,6 @@ Feature: Registration
 
 I want to be able to register with WaterbugBlitz to allow uploading samples.
 
-@only
 Scenario: Register
   Given I am not logged in
     And the user "testuser@example.com" does not exist
