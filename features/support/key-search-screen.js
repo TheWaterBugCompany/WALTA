@@ -1,4 +1,3 @@
-'use strict';
 const BaseScreen = require('./base-screen');
 
 class KeySearchScreen extends BaseScreen {

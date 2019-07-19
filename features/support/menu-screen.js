@@ -3,12 +3,14 @@ const BaseScreen = require('./base-screen');
 class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );
+        this.presenceSelector = "menu_waterbug_survey_button";
     }
     async login( email, password ) {
         await this.click('menu_login_button');
         return this.world.login.login( email, password );
     }
     async identify() {
+        await this.waitFor();
         await this.click('menu_identify_button');
         await this.world.methodSelect.waitFor();
     }

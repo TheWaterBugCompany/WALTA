@@ -1,6 +1,6 @@
 <Alloy autostyle="true">
 	<View id="content" class="container">
-			<Label id="title" class="headingText"></Label>
+			<Label id="title" class="headingText" accessibilityLabel="taxon_heading_text"></Label>
 			<ScrollView id="detailsBox">
 
 				<Label id="scientificClassificationLabel" class="detailsHeading" text="Scientific Classification:"/>

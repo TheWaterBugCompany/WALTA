@@ -31,6 +31,22 @@ $.TopLevelWindow.title = "Details";
 $.name = "decision";
 var actions = [];
 
+function swipeListener(e){
+	if ( e.direction === 'right' ) {
+		e.cancelBubble = true;
+		Topics.fireTopicEvent( Topics.BACK, $.name  );
+	}
+}
+
+$.TopLevelWindow.addEventListener('swipe', swipeListener);
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+	$.destroy();
+	$.off();
+	actions.forEach( (a) => a.cleanUp() );
+	$.TopLevelWindow.removeEventListener('swipe', swipeListener);
+	$.TopLevelWindow.removeEventListener('close', cleanUp );
+});
+
 function addActionButton( image, label, action ) {
 	var ctl = Alloy.createController("ActionButton", { 
 		image: image, 
@@ -40,13 +56,6 @@ function addActionButton( image, label, action ) {
 	actions.push(ctl);
 	$.actionBtns.add(ctl.getView());
 }
-
-$.TopLevelWindow.addEventListener('close', function cleanUp() {
-	$.destroy();
-	$.off();
-	actions.forEach( (a) => a.cleanUp() );
-	$.TopLevelWindow.removeEventListener('close', cleanUp );
-});
 
 $.taxon = $.args.taxon;
 
@@ -95,20 +104,6 @@ if ( $.args.allowAddToSample !== false ) {
 				e.cancelBubble = true;
 	});
 }
-
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, $.name  );
-	}
-}
-
-$.content.addEventListener('swipe', swipeListener);
-
-$.getView().addEventListener( "close", function cleanup() {
-  $.content.removeEventListener('swipe', swipeListener);
-  $.content.removeEventListener('swipe', cleanup);
-});
 
 var acb = $.getAnchorBar();
 $.args.name = "decision";

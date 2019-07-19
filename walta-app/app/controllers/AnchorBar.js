@@ -25,6 +25,7 @@
  *
  */
 var Topics = require('ui/Topics');
+var { setAccessibilityLabel } = require('ui/ViewUtils');
 
 var eventHandlers = [];
 function cleanUp() {
@@ -77,16 +78,20 @@ function addTool( view, left ) {
 	}
 }
 
+
+
 function setTitle( title ) {
 	$.title.text = title;
+	setAccessibilityLabel( $.title, "toolbar", title);
 }
 
-$.title.text = $.args.title
+setTitle( $.args.title );
 $.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME );
 $.leftTools.add( $.home );
 $.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HELP ) );
 
 exports.createToolBarButton = createToolBarButton;
+
 exports.setTitle = setTitle;
 exports.addTool = addTool;
 exports.cleanUp = cleanUp;

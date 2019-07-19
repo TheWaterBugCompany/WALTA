@@ -1,4 +1,4 @@
-'use strict';
+var { expect } = require('chai');
 class BaseScreen {
     constructor( world ) {
         this.driver = world.driver;
@@ -7,12 +7,15 @@ class BaseScreen {
     }
 
     async waitFor() {
-        await this.driver.$( this.selector(this.presenceSelector) );
+        var el = await this.driver.$( this.selector(this.presenceSelector) );
+        var displayed = await el.isDisplayed();
+        expect( displayed, `${this.constructor.name} not present` ).to.be.true;
     }
 
     async waitForText(text) {
-        await this.driver.$( `//android.widget.TextView[@text="${text}"]` );
-
+        var el = await this.driver.$( `//android.widget.TextView[contains(@text,"${text}")]` );
+        var displayed = await el.isDisplayed();
+        expect( displayed, `text "${text}" not present` ).to.be.true;
     }
 
     textSelector( sel ) {
@@ -22,11 +25,19 @@ class BaseScreen {
     selector( sel ) {
         return `~${sel}.`;
     }
-
+    async getElement( sel ) {
+        var el = await this.driver.$( this.selector( sel ) );
+        return el;
+    }
     async enter( sel, text ) {
         var el = await this.driver
             .$( this.textSelector( sel ) );
         return el.addValue(text);
+    }
+    async clickByText( text ) {
+        var el = await this.driver
+            .$( `//android.widget.TextView[@text="${text}"]` );
+        return el.click();
     }
     async click( sel ) {
         var el = await this.driver

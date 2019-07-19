@@ -1,4 +1,5 @@
 var Topics = require('ui/Topics');
+var { makeAccessibilityLabel } = require('ui/ViewUtils');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Browse";
@@ -22,13 +23,13 @@ _.each( taxonList, function( txn ) {
         dataSet.push( {
             title: { text: txn.name },
             template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpeciesTaxon': 'taxon' ),
-            properties: { itemId: txn.id }
+            properties: { itemId: txn.id}
         });
     }
     if ( txn.commonName != '') {
         if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.commonName; } ) == -1 ) {
             dataSet.push( {
-                title: { text: txn.commonName },
+                title: { text: txn.commonName  },
                 properties: { itemId: txn.id }
             });
         }

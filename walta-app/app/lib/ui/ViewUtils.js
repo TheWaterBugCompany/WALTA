@@ -43,6 +43,19 @@ function clearError(view) {
 	}
 }
 
+function makeAccessibilityLabel( prefix, label, postfix = ""  ) {
+	return `${prefix}_${label.toLowerCase().replace(' ','_')}${( postfix.length > 0 ? 
+		"_" + postfix : "")}`;
+}
+
+function setAccessibilityLabel( view, prefix, label, postfix = "" ) {
+	if ( label ) {
+		view.accessibilityLabel = makeAccessibilityLabel( prefix, label, postfix);
+	}
+}
+
+exports.makeAccessibilityLabel = makeAccessibilityLabel;
+exports.setAccessibilityLabel = setAccessibilityLabel;
 exports.disableControl = disableControl;
 exports.enableControl = enableControl;
 exports.setError = setError;
