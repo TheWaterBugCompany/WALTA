@@ -1,11 +1,16 @@
-'use strict';
-/*class BrowseScreen extends Screen {
-    def trait
-      "* marked:'Browse'"
-    end
+const BaseScreen = require('./base-screen');
+class BrowseScreen extends BaseScreen {
+    constructor( world ) {
+        super( world );
+        this.presenceSelector = "toolbar_browse";
+    }
+    async chooseSpecies(name) {
+        await this.clickByText(name);
+    }
+    async chooseSpeciesAndExpect(name, text) {
+      await this.chooseSpecies(name);
+      await this.waitForText(text);
 
-    def choose_taxon( taxon )
-        select(taxon)
-        return page(TaxonScreen).await
-    end 
-}*/
+  }
+} 
+module.exports = BrowseScreen

@@ -1,3 +1,4 @@
+var { setAccessibilityLabel } = require('ui/ViewUtils');
 function cleanUp() {
     $.destroy();
     $.off();
@@ -9,6 +10,6 @@ function clickEvent(e) {
 
 $.icon.backgroundImage = $.args.image;
 $.label.text = $.args.label;
-$.icon.accessibilityLabel = `${$.args.label} Button`;
+setAccessibilityLabel( $.icon, "icon", $.args.label );
 
 exports.cleanUp = cleanUp;

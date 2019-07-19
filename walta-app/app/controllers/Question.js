@@ -1,5 +1,6 @@
 
 var question = $.args.question;
+var { setAccessibilityLabel } = require('ui/ViewUtils');
 $.question.text = question.text;
 
 if ( question.photoUrls.length > 0 ) {
@@ -10,7 +11,7 @@ if ( question.photoUrls.length > 0 ) {
     $.question.right="5%";
 }
 
-$.Question.accessibilityLabel = `question_${$.args.label}`;
+setAccessibilityLabel( $.Question, "question", $.args.label );
 
 function clickEvent(e) {
     e.cancelBubble = true;

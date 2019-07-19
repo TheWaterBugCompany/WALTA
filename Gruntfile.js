@@ -44,6 +44,11 @@ module.exports = function(grunt) {
           acceptance_test: {
             command: `./node_modules/.bin/cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
           },
+
+          end_to_end_test: {
+            command: `./node_modules/.bin/mocha --timeout 50000 --color --recursive "./end-to-end-testing/*.js"`
+          },
+
           // test_console: "calabash-android console walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature"
          // unit_test: `appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android --deploy-type development`,
           unit_test_node: `NODE_PATH="./walta-app/app:./walta-app/app/lib" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js`,
@@ -76,7 +81,8 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build'] );
     grunt.registerTask('build', ['exec:clean', 'exec:alloy_plugins', 'exec:build'] );
     grunt.registerTask('acceptance_test', [ 'newer:titanium_build', 'exec:acceptance_test']);
-    grunt.registerTask('quick_acceptance_test', [ 'exec:acceptance_test' ]);
+    grunt.registerTask('quick_acceptance_test', [ 'exec:acceptance_test' ] );
+    grunt.registerTask('quick_end_to_end_test', ['exec:end_to_end_test' ] );
     grunt.registerTask('unit_test_android', [ 'exec:unit_test_android' ] );
     grunt.registerTask('unit_test_node', ['exec:unit_test_node'] );
     grunt.registerTask('clean', ['exec:clean'] );

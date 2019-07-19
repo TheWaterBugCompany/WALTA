@@ -1,6 +1,3 @@
-'use strict';
-
-'use strict';
 const BaseScreen = require('./base-screen');
 class MethodSelectScreen extends BaseScreen {
     constructor( world ) {
@@ -10,6 +7,10 @@ class MethodSelectScreen extends BaseScreen {
     async viaKey() {
         await this.click('submenu_key_button');
         await this.world.keySearch.waitFor();
+    }
+    async viaBrowse() {
+        await this.click('submenu_browse_button');
+        await this.world.browse.waitFor();
     }
 } 
 module.exports = MethodSelectScreen
