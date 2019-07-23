@@ -17,25 +17,44 @@
 */
 require("specs/lib/ti-mocha");
 var { expect } = require('specs/lib/chai');
-var TestUtils = require('specs/util/TestUtils');
+var Topics = require('ui/Topics');
+var { checkTestResult, actionFiresTopicTest, closeWindow, controllerOpenTest } = require('specs/util/TestUtils');
 var { speedBugIndexMock } = require('specs/mocks/MockSpeedbug');
 var { keyMock } = require('specs/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 Alloy.Globals.Key = keyMock;
 
-describe('Speedbug controller', function() {
-	var SpeedBug, SpeedBugWin, key;
+describe.only('Speedbug controller', function() {
+	var SpeedBug;
 	beforeEach( function() {
 		SpeedBug = Alloy.createController("Speedbug", { key: keyMock });
-    	SpeedBugWin = SpeedBug.getView();
 	});
 
 	afterEach( function() {
-		TestUtils.closeWindow( SpeedBugWin );
+		closeWindow( SpeedBug.getView() );
 	});
 
-	it('should display the speed bug window', function() {
-		TestUtils.windowOpenTest( SpeedBug );
+	it('should display the speed bug window', function(done) {
+		controllerOpenTest( SpeedBug, done );
 	});
 
+	it.only('should link to correct taxon node when a speed bug is selected', function(done) {
+		controllerOpenTest( SpeedBug, function() {
+			var tile = SpeedBug.getSpeedbugTiles().tiles[0];
+			actionFiresTopicTest( tile.SpeedbugTile, 'click', Topics.JUMPTO, function(data) {
+				 expect( data.id ).to.equal('aeshnidae_telephleb');
+				 done();
+			});
+		} );
+	});
+
+	it.only('should link to correct key node when a not sure link is selected', function(done) {
+		controllerOpenTest( SpeedBug, function() {
+			var group = SpeedBug.getSpeedbugGroups()[0];
+			actionFiresTopicTest( group.notSureButton, 'click', Topics.JUMPTO, function(data) {
+				expect( data.id ).to.equal('group1');
+				done();
+			});
+		});
+	});
 });

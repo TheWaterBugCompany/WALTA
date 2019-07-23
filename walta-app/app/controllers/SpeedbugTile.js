@@ -1,5 +1,5 @@
 
-
+var { makeAccessibilityLabel } = require('ui/ViewUtils');
 var imgUrl = $.args.image;
 var refId = $.args.refId;
 
@@ -27,7 +27,8 @@ function showImageData() {
             Ti.UI.createImageView({
                 image: imgUrl,
                 width: $.args.width,
-                height: $.args.height
+                height: $.args.height,
+                accessibilityLabel: makeAccessibilityLabel( "speedbug", refId )
              }) );
     }
 }

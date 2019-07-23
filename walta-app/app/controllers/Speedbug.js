@@ -21,7 +21,7 @@
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 var Sample = require('logic/Sample');
-var PlatformSpecific = require('ui/PlatformSpecific');
+
 var key = $.args.key;
 var surveyType = $.args.surveyType;
 var speedbugName = Sample.getSpeedbugIndexName( surveyType );
@@ -97,7 +97,7 @@ function _drawSpeedBug(sbug) {
         spanTileX = tileWidth + tileGap*2;
         
         _(sbug).each( function( sg ) {
-            var group = Alloy.createController("SpeedbugGroup", { tileWidth: tileWidth, tileHeight: tileHeight, tileGap: tileGap, speedbugs: sg.bugs, index: speedbugTileIndex } );
+            var group = Alloy.createController("SpeedbugGroup", { tileWidth: tileWidth, tileHeight: tileHeight, tileGap: tileGap, refId: sg.refId, speedbugs: sg.bugs, index: speedbugTileIndex } );
             group.on("select", (refId) => Topics.fireTopicEvent( Topics.JUMPTO, { id: refId, allowAddToSample: $.args.allowAddToSample } ) );
             groups.push(group);
             scrollView.add( group.getView() );
@@ -150,4 +150,13 @@ function _loadAndReleaseTiles(e) {
 scrollView.addEventListener( 'scroll', _loadAndReleaseTiles );
 scrollView.addEventListener( 'postlayout', _loadAndReleaseTiles );
 
- 
+function getSpeedbugTiles() {
+    return speedbugTileIndex;
+}
+
+function getSpeedbugGroups() {
+    return groups;
+}
+
+ exports.getSpeedbugTiles = getSpeedbugTiles;
+ exports.getSpeedbugGroups = getSpeedbugGroups;
