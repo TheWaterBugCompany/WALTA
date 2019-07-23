@@ -1,5 +1,4 @@
 var Topics = require('ui/Topics');
-var { makeAccessibilityLabel } = require('ui/ViewUtils');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Browse";

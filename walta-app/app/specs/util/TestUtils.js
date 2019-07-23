@@ -29,6 +29,8 @@ function setManualTests( b ) { Alloy.CFG.stopAfterEachTest = b; }
 
 function isManualTests() { return Alloy.CFG.stopAfterEachTest; }
 
+
+// TODO: Convert to Promise based API
 function waitForDomEvent( obj, evtName, fireEvent, done ) {
 		obj.addEventListener( evtName, function() { done() } );
 		fireEvent();
@@ -46,13 +48,14 @@ function waitForBackboneEvent( obj, evtName, fireEvent, done ) {
 
 
 function waitForTopic( topicName, fireEvent, done, result ) {
-		Topics.subscribe( topicName, function( data ) {
+		Topics.subscribe( topicName, function cb( data ) {
 			result.data = data;
-			done();
+			Topics.unsubscribe(topicName, cb);
+			done(data);
 		} );
 		fireEvent();
 }
-
+// END TODO: convert to promises
 function wrapViewInWindow( view ) {
 	var win = Ti.UI.createWindow( { backgroundColor: 'white' } );
 	win.add( view );

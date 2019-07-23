@@ -27,11 +27,11 @@ describe('MayflyMusterSelect', function() {
 		win = wrapViewInWindow( mnu.getView() );
 	});
 
-	after( function(done) {
+	after( function(done) { 
 		closeWindow( win, done );
 	});
 
-	it.only('should open menu', function(done) { 
+	it('should open menu', function(done) { 
 		windowOpenTest( win, done );
 	});
 

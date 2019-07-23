@@ -187,13 +187,13 @@ function createAppWindow( keyName, keyPath ) {
 		var name  = data.name;
 		var surveyType = data.surveyType;
 		var allowAddToSample = data.allowAddToSample;
-		Ti.API.debug(`back: ${name} surveyType = ${surveyType} allowAddToSample = ${allowAddToSample} currentDecision = ${privates.key.currentDecision.id}`);
+		Ti.API.info(`back: ${name} surveyType = ${surveyType} allowAddToSample = ${allowAddToSample} currentDecision = ${privates.key.currentDecision.id}`);
     	if ( name === "home" ) {
 			if ( ! data.swipe )
 				privates.closeApp();
 		} else if ( name === "decision") {
     		if ( surveyType === Sample.SURVEY_MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
-				Ti.API.debug(`isRoot = ${privates.key.isRoot()}`)
+				Ti.API.info(`isRoot = ${privates.key.isRoot()}`)
 				if ( allowAddToSample ) {
 					privates.sampleTrayWindow({ slide: 'left' });
 				} else {
