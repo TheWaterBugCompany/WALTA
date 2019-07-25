@@ -45,7 +45,7 @@ function clearError(view) {
 
 function makeAccessibilityLabel( prefix, label, postfix = ""  ) {
 	if ( label ) {
-		return `${prefix}_${label.toLowerCase().replace(' ','_')}${( postfix.length > 0 ? 
+		return `${prefix}_${label.toLowerCase().replace(/ /g,'_')}${( postfix.length > 0 ? 
 			"_" + postfix : "")}`;
 	} else {
 		return `${prefix}_unknown`;

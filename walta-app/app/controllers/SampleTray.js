@@ -197,7 +197,7 @@ function createAddIcon() {
     left: "25%",
     width: "50%",
     height: "36%",
-    accessibilityLabel: "Add",
+    accessibilityLabel: "sample_add",
     backgroundImage: "/images/plus-icon.png"
   });
   addIconCache.addEventListener( "click", startIdentification );

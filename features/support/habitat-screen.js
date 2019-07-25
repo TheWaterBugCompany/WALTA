@@ -1,46 +1,45 @@
-'use strict';
-/*class HabitatScreen extends Screen {
-    /* def trait
-      "* marked:'Habitat'"
-    end
+const BaseScreen = require('./base-screen');
+class HabitatScreen extends BaseScreen {
+    constructor( world ) {
+        super( world );
+        this.presenceSelector = "toolbar_habitat";
+    }
 
-    def fillout_habitat_details     
-      enter_text(open_water_field, "100")
-      hide_soft_keyboard
-      sleep 0.5
-      select("Next")
-      page(SampleTrayScreen).await()
-    end
+    async setLeafPacks( p ) {
+      await this.enter("habitat_leaf_packs",p);
+    }
 
-    def leaf_packs_field
-      field("Leaf Packs.")
-    end
+    async setAquaticPlants( p ) {
+      await this.enter("habitat_aquatic_plants",p);
+    }
 
-    def aquatic_plants_field
-      field("Aquatic Plants.")
-    end
+    async setWood( p ) {
+      await this.enter("habitat_wood",p);
+    }
 
-    def wood_field
-      field("Wood.")
-    end
+    async setEdgePlants( p ) {
+      await this.enter("habitat_edge_plants",p);
+    }
 
-    def edge_plants_field
-      field("Edge Plants.")
-    end
+    async setBoulders( p ) {
+      await this.enter("habitat_boulders",p);
+    }
 
-    def boulders_field
-      field("Boulders.")
-    end
+    async setGravel( p ) {
+      await this.enter("habitat_gravel",p);
+    }
 
-    def gravel_field
-      field("Gravel.")
-    end
+    async setSandOrSilt( p ) {
+      await this.enter("habitat_sand_or_silt",p);
+    }
 
-    def sand_or_silt_field
-      field("Sand Or Silt.")
-    end
+    async setOpenWater( p ) {
+      await this.enter("habitat_open_water",p);
+    }
 
-    def open_water_field
-      field("Open Water.")
-    end
-   */
+    async goNext() {
+      await this.click("habitat_next");
+      await this.world.sample.waitFor();
+    }
+} 
+module.exports = HabitatScreen;

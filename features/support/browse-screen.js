@@ -6,11 +6,8 @@ class BrowseScreen extends BaseScreen {
     }
     async chooseSpecies(name) {
         await this.clickByText(name);
+        await world.taxon.waitFor();
     }
-    async chooseSpeciesAndExpect(name, text) {
-      await this.chooseSpecies(name);
-      await this.waitForText(text);
 
-  }
 } 
 module.exports = BrowseScreen

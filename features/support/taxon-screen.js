@@ -12,23 +12,15 @@ class TaxonScreen extends BaseScreen {
     async goBack() {
       await this.click("go_back_button");
     }
-    async goBackAndExpect(text) {
-      await this.goBack();
-      await this.waitForText(text);
+
+    async goMagnify() {
+      await this.click("photo_select_magnify_button");
+      await this.world.gallery.waitFor();
+    }
+
+    async selectAddToSample() {
+      await this.click("icon_add_to_sample");
+      await this.world.sample.waitFor();
     }
 } 
 module.exports = TaxonScreen;
-/*class TaxonScreen extends Screen {
-/*     def trait
-      "* marked:'ALT Key'"
-    end
-    
-    def add_to_sample_button
-      field("Add To Sample Button.")
-    end
-
-    def add_to_sample
-      wait_for_elements_exist( [add_to_sample_button] )
-      touch(add_to_sample_button)
-      return page(EditTaxonScreen).await
-    end   */

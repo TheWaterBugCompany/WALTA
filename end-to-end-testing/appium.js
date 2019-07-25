@@ -13,13 +13,13 @@ async function swipeRight() {
         {action: 'moveTo', options: {x: 700, y: 214}},
         {action:'release'}]);
 }
-before( async function() {
-    let driver = await startAppiumClient();
-    world.driver = driver;
-    setUpWorld( world );
-});
 beforeEach( async function() {
-    await world.driver.reset();
+    if ( world.driver ) {
+        await world.driver.reset();
+    } else {
+        world.driver = await startAppiumClient(true);
+        setUpWorld( world );
+    }
 })
 after( async function() {
     await stopAppiumClient(world.driver);
