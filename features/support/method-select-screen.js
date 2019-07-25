@@ -12,6 +12,10 @@ class MethodSelectScreen extends BaseScreen {
         await this.click('submenu_browse_button');
         await this.world.browse.waitFor();
     }
+    async viaSpeedbug() {
+        await this.click('submenu_speedbug_button');
+        await this.world.speedbug.waitFor();
+    }
 } 
 module.exports = MethodSelectScreen
 

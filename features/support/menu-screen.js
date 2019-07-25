@@ -9,11 +9,18 @@ class MenuScreen extends BaseScreen {
         await this.click('menu_login_button');
         return this.world.login.login( email, password );
     }
-    async identify() {
-        await this.waitFor();
+    async selectIdentify() {
         await this.click('menu_identify_button');
         await this.world.methodSelect.waitFor();
     }
+    async selectWaterbugSurvey() {
+        await this.click("menu_waterbug_survey_button");
+        await this.world.siteDetails.waitFor();
+    }
+    /*async selectMayflyMuster() {
+      await this.click("menu_waterbug_survey_button");
+      await this.world.siteDetails.waitFor();
+    }*/
 } 
 module.exports = MenuScreen
 /*class MenuScreen extends Screen {

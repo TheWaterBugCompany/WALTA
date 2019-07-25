@@ -52,6 +52,7 @@ function createGalleryWindow(photoUrls, showPager ) {
 	if ( _.isUndefined( showPager ) ) showPager = true;
 
 	var galleryWin = Ti.UI.createWindow({
+			accessibilityLabel: 'photo_gallery',
 			backgroundColor: 'black',
 			navBarHidden: true,
 			fullscreen: true

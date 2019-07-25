@@ -12,11 +12,11 @@
 				</View>
 				<View id="waterbodyName" layout="vertical" class="shrinkWrap">
 					<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
-					<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody name" onChange="checkValidity" />
+					<TextField id="waterbodyNameField" class="textField" accessibilityLabel="site_details_waterbody_name" onChange="checkValidity" />
 				</View>
 				<View id="nearByFeature" layout="vertical" class="shrinkWrap">
 					<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
-					<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near by feature" onChange="checkValidity"/>
+					<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="site_details_near_by_feature" onChange="checkValidity"/>
 				</View>
 			</View>
 			<View id="right" layout="vertical">
@@ -29,7 +29,7 @@
 						<Label id="locationStatus" class="labelText" text="Location not obtained"/>
 					</View>
 					<View id="nextWrapper" class="shrinkWrap">
-						<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick"/>
+						<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick" accessibilityLabel="site_details_next" />
 					</View>
 				</View>
 			</View>
