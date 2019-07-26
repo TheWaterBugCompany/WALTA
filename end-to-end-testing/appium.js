@@ -17,7 +17,7 @@ beforeEach( async function() {
     if ( world.driver ) {
         await world.driver.reset();
     } else {
-        world.driver = await startAppiumClient(true);
+        world.driver = await startAppiumClient(false);
         setUpWorld( world );
     }
 })

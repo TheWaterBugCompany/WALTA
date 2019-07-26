@@ -25,7 +25,6 @@
  *  Key, KeyNode, Question and Taxon constitute the data model describing a key
  */
 if ( typeof(_) == "undefined") _ = require('underscore')._;
-var SpeedbugIndex = require('./SpeedbugIndex');
 
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
@@ -107,6 +106,11 @@ function createKey( args ) {
 
 		isNode: function(node) {
 			return ! this.isTaxon( node );
+		},
+
+		// Set the cursor to the passed node
+		setCurrentNodeObj: function( node ) {
+			this.currentDecision = node;
 		},
 
 		// Move the current decision to the referenced node

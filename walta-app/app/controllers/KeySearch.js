@@ -29,7 +29,13 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
 
+var key = $.args.key;
 var keyNode = $.args.keyNode;
+
+// FIXME: The key object has state - but we ideally should be stateless
+// this is a hack to return the key object to the correct place.
+// (implemented so that the AppWindow class does not need to keep track of key state)
+key.setCurrentNodeObj( keyNode );
 var questions = [];
 
 function swipeListener(e){
@@ -65,7 +71,8 @@ _(keyNode.questions).each(
     questions.push( qv );
     $.content.add( _(qv.getView()).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
     qv.on("select",function() {
-			Topics.fireTopicEvent( Topics.FORWARD, { index: index, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+      key.choose( index );
+			Topics.fireTopicEvent( Topics.FORWARD, { node: key.getCurrentNode(), surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
 		});
 	}
 );

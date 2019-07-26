@@ -13,6 +13,9 @@ async function startAppiumClient(quick=false) {
         caps.app = join(process.cwd(), './walta-app/build/android/bin/Waterbug.apk');
     } else {
         caps.appPackage = "net.thewaterbug.waterbug";
+        caps.skipDeviceInitialization = true;
+        caps.skipServerInstallation = true;
+        caps.ignoreUnimportantViews = true;
     }
     return await remote({
         logLevel: 'error',
