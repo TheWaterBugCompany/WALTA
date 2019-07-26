@@ -17,9 +17,7 @@
 */
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
-var TopLevelWindow = require('ui/TopLevelWindow');
 var PlatformSpecific = require('ui/PlatformSpecific');
-var HtmlView = require('ui/HtmlView');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
 var Sample = require('logic/Sample');
@@ -40,6 +38,7 @@ function createAppWindow( keyName, keyPath ) {
 		var privates = {
 			controller: null,
 			key: null,
+			history: [],
 
 			loadKey: function( keyUrl ) {
 				this.key = KeyLoader.loadKey(keyUrl);
@@ -52,6 +51,18 @@ function createAppWindow( keyName, keyPath ) {
 			openController(ctl,args) {
 				this.controller = Alloy.createController(ctl,args);
 				this.controller.open();
+				this.history.push({ctl:ctl,args:args});
+			},
+
+			goBack(args) {
+				this.history.pop();
+				if ( this.history.length === 0 ) {
+					this.closeApp();
+				} else {
+					var ctlArgs = this.history[this.history.length-1];
+					this.controller = Alloy.createController(ctlArgs.ctl,_(ctlArgs.args).extend(args));
+					this.controller.open();
+				}
 			},
 
 			menuWindow: function(args) {
@@ -122,25 +133,22 @@ function createAppWindow( keyName, keyPath ) {
 			},
 
 			helpWindow: function() {
-				TopLevelWindow.makeTopLevelWindow({
-					name: 'help',
-					title: 'Help',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'help/help.html' )
-				}).open();
+				this.openController("Help", { keyUrl: keyUrl });
 			},
 
 			aboutWindow: function() {
-				TopLevelWindow.makeTopLevelWindow({
-					name: 'about',
-					title: 'About',
-					uiObj: HtmlView.createHtmlView( keyUrl + 'credits/credits.html' )
-				}).open();
+				this.openController("About", { keyUrl: keyUrl });
 			},
 
 			updateDecisionWindow: function( args ) {
-				var node = this.key.getCurrentNode();
+				var node = args.node;
+				if ( ! node ) {
+					node = this.key.getRootNode();
+					args.node = node;
+				}
 				if ( ! args )
 					args = {};
+				args.key = this.key;
 				if ( this.key.isNode( node ) ) {
 					args.keyNode = node;
 					this.openController("KeySearch", args );
@@ -180,50 +188,15 @@ function createAppWindow( keyName, keyPath ) {
     privates.subscribe( Topics.KEYSEARCH, function(data) {
 		var node = ( data.surveyType === Sample.SURVEY_MAYFLY ? privates.key.findNode("mayfly_start_point") : privates.key.getRootNode() );
 		privates.key.reset(node);
-    	privates.updateDecisionWindow({ slide: 'right', surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
+    	privates.updateDecisionWindow(_(data).extend({ slide: 'right' }));
     });
 
     privates.subscribe( Topics.BACK, function(data) {
-		var name  = data.name;
-		var surveyType = data.surveyType;
-		var allowAddToSample = data.allowAddToSample;
-		Ti.API.info(`back: ${name} surveyType = ${surveyType} allowAddToSample = ${allowAddToSample} currentDecision = ${privates.key.currentDecision.id}`);
-    	if ( name === "home" ) {
-			if ( ! data.swipe )
-				privates.closeApp();
-		} else if ( name === "decision") {
-    		if ( surveyType === Sample.SURVEY_MAYFLY ? privates.key.currentDecision.id === "mayfly_start_point" : privates.key.isRoot() ) {
-				Ti.API.info(`isRoot = ${privates.key.isRoot()}`)
-				if ( allowAddToSample ) {
-					privates.sampleTrayWindow({ slide: 'left' });
-				} else {
-					privates.menuWindow(); 
-				}
-			} else {
-    			privates.key.back();
-	    		privates.updateDecisionWindow({ slide: 'left', surveyType: surveyType, allowAddToSample: allowAddToSample } );
-	    	}
-		} else if ( name === "habitat" ) {
-			privates.siteDetailsWindow({ slide: 'left' });
-		} else if ( name === "sampletray" ) {
-			privates.habitatWindow({ slide: 'left' });
-		} else if ( name === "summary" ) {
-			privates.sampleTrayWindow({ slide: 'left' });
-		} else if ( name === "browse" || name === "speedbug" ) {
-			if ( allowAddToSample ) {
-				privates.sampleTrayWindow();
-			} else {
-				privates.menuWindow();
-			}
-		} else {
-	    	privates.menuWindow();
-	    }
-
+		privates.goBack(_(data).extend({slide:'left'}));
     });
 
     privates.subscribe( Topics.FORWARD, function( data ) {
-    	privates.key.choose( data.index );
-	    privates.updateDecisionWindow({ slide: 'right', surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
+	    privates.updateDecisionWindow(_(data).extend({ slide: 'right' }));
     });
 
     privates.subscribe( Topics.VIDEO, function( data ) {
@@ -233,7 +206,7 @@ function createAppWindow( keyName, keyPath ) {
     });
 
     privates.subscribe( Topics.BROWSE, function(data) {
-    	privates.browseWindow({ surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
+    	privates.browseWindow(data);
 	});
 	
 	privates.subscribe( Topics.SAMPLETRAY, function(data) {
@@ -265,7 +238,7 @@ function createAppWindow( keyName, keyPath ) {
     privates.subscribe( Topics.JUMPTO, function( data ) {
     	if ( ! _.isUndefined( data.id ) ) {
     		privates.key.setCurrentNode(data.id);
-	    	privates.updateDecisionWindow({ surveyType: data.surveyType, allowAddToSample: data.allowAddToSample });
+	    	privates.updateDecisionWindow(_(data).extend({ node: privates.key.getCurrentNode()}));
 	    } else {
 	    	Ti.API.error("Topics.JUMPTO undefined node!");
 	    }

@@ -58,7 +58,7 @@ describe('Back button tests', function() {
         await world.taxon.waitForText("Freshwater mussels");
         await navigateGoBack(world);
         await world.speedbug.waitFor();
-        await world.speedbug.goBack();
+        await navigateGoBack(world);
         await world.sample.waitFor();
     });
 
@@ -67,7 +67,7 @@ describe('Back button tests', function() {
         await world.taxon.waitForText("Shell halves are large");
         await navigateGoBack(world);
         await world.speedbug.waitFor();
-        await world.speedbug.goBack();
+        await navigateGoBack(world);
         await world.sample.waitFor();
     });
 
@@ -95,7 +95,7 @@ describe('Back button tests', function() {
         await world.keySearch.waitFor();
     });
 
-    it.only('should return to edit taxon when returning from gallery',async function() {
+    it('should return to edit taxon when returning from gallery',async function() {
         await navigateBrowseViaTray( world, "Adult Baetidae");
         expect( await world.taxon.getHeading() ).to.equal("Baetids");
         await world.taxon.selectAddToSample();

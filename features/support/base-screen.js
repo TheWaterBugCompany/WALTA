@@ -17,9 +17,10 @@ class BaseScreen {
     }
 
     async waitForText(text) {
-        var el = await this.driver.$( `//android.widget.TextView[contains(@text,"${text}")]` );
-        var displayed = await el.isDisplayed();
-        expect( displayed, `text "${text}" not present` ).to.be.true;
+        await this.driver.waitUntil( async () => {
+            var el = await this.driver.$( `//android.widget.TextView[contains(@text,"${text}")]` );
+            return await el.isDisplayed();
+        }, 5000, `text "${text}" not present` );
     }
 
     textSelector( sel ) {

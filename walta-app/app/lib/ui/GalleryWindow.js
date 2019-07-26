@@ -26,7 +26,6 @@
 var _ = require('lib/underscore')._;
 
 var Layout = require('ui/Layout');
-var Topics = require('ui/Topics');
 var { urlToLocalAsset } = require("ui/PlatformSpecific");
 
 // Create a dot view
