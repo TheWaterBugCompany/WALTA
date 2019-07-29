@@ -50,7 +50,7 @@ function rehydrateKey( key, node ) {
 function rehydrateSpeedBug( key ) {
 	_(key.speedbugIndex)
 		.mapObject( (sbObj) => {
-			Ti.API.debug(`Rehyrdating ${sbObj.name}`);
+			console.info(`Rehyrdating ${sbObj.name}`);
 			var sbIndex = SpeedbugIndex.createSpeedbugIndex(sbObj.name,key);
 			sbIndex.setSpeedbugIndex( sbObj.speedbugIndexInternal );
 			key.addSpeedbugIndex( sbIndex );
@@ -59,9 +59,14 @@ function rehydrateSpeedBug( key ) {
 
 // loads a key from a circular-json persisted object
 function loadKey( root ) {
-
-	var file = Ti.Filesystem.getFile( root + "key.json" );
-	var key = CircularJSON.parse( file.read().text );
+	var fileText;
+	var filePath = root + "key.json" ;
+	if ( typeof Ti !== "undefined" ) {
+		fileText = Ti.Filesystem.getFile(filePath).read().text;
+	} else {
+		fileText = require('fs').readFileSync(filePath, 'utf8' );
+	}
+	var key = CircularJSON.parse( fileText );
 	key.url = root;
 
 	var rehydrated = rehydrateKey( key );

@@ -53,7 +53,7 @@ describe('Back button tests', function() {
         await world.speedbug.waitFor();
     }  );
 
-    it.only('should return to speedbug when returning from taxon via sample tray', async function() {
+    it('should return to speedbug when returning from taxon via sample tray', async function() {
         await navigateSpeedbugViaTray( world, "hyriidae" );
         await world.taxon.waitForText("Freshwater mussels");
         await navigateGoBack(world);
