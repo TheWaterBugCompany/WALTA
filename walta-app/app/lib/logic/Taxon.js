@@ -45,6 +45,17 @@ function createTaxon( args ) {
 		parentLink: null,		// A link to the parent key question
 		taxonParent: null, // a link to parent taxon
 
+		getScientificName: function() {
+			var name = "";
+			_.each( this.scientificName, function( n ) {
+				if ( name !== "") {
+					name=name+", ";
+				}
+				name += n.taxonomicLevel + ": " + n.name;
+			});
+			return name;
+		},
+
 		// Returns the full scientific name
 		getScientificNameHtml: function() {
 			var htmlNames = "";

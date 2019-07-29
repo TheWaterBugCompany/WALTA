@@ -6,21 +6,19 @@ class BaseScreen {
         this.presenceSelector="unknown_base_screen"; // casues waitFor to fail
     }
 
-    async waitForRaw(sel) {
-        var el = await this.driver.$( sel );
-        var displayed = await el.isDisplayed();
-        expect( displayed, `${this.constructor.name} not present` ).to.be.true;
+    async waitForRaw(sel, message) {
+        await this.driver.waitUntil( async () => {
+            var el = await this.driver.$( sel );
+            return await el.isDisplayed();
+        }, 5000, message);
     }
 
     async waitFor() {
-        await this.waitForRaw( this.selector(this.presenceSelector) );
+        await this.waitForRaw( this.selector(this.presenceSelector), `${this.constructor.name} not present` );
     }
 
     async waitForText(text) {
-        await this.driver.waitUntil( async () => {
-            var el = await this.driver.$( `//android.widget.TextView[contains(@text,"${text}")]` );
-            return await el.isDisplayed();
-        }, 5000, `text "${text}" not present` );
+        await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`);
     }
 
     textSelector( sel ) {
