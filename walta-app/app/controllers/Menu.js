@@ -35,11 +35,7 @@ function logInClick() {
 }
 
 function mayflyClick() {
-  $.selectMethod = Alloy.createController("MayflyMusterSelect");
-  $.TopLevelWindow.add($.selectMethod.getView());
-  $.selectMethod.on("close", function() {
-    closeSelectMethod();
-  });
+  Topics.fireTopicEvent( Topics.MAYFLY, null );
 }
 
 function detailedClick() {

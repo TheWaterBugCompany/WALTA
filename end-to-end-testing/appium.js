@@ -8,7 +8,7 @@ global.swipeRight = swipeRight;
 
 async function swipeRight() {
     await world.driver.touchPerform([ 
-        {action: 'press', options: {x: 44, y: 214}},
+        {action: 'press', options: {x: 4, y: 214}},
         {action: 'wait', options:{ ms: 500 } },
         {action: 'moveTo', options: {x: 700, y: 214}},
         {action:'release'}]);
