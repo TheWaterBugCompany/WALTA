@@ -65,6 +65,7 @@ function convertSystemToDip( n ) {
 }
 
 function urlToLocalAsset( path ) {
+	console.info(`urlToLocalAsset("${path}")`);
 	if ( path.slice(0,7) === "file://" )
 		return path;
 	if ( path[0] != '/' ) path = '/' + path;
