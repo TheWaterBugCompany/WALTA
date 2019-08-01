@@ -4,13 +4,14 @@ async function startAppiumClient(quick=false) {
     let caps = {
         automationName: "uiautomator2",
         platformName: "Android",
-        avd: "HDPI",
-        deviceName: "Android Emulator",
+        autoGrantPermissions: true,
+        autoAcceptAlerts: true,
+        deviceName: "device",
         appActivity: ".WaterbugActivity",
         appWaitActivity: "org.appcelerator.titanium.TiActivity"
     };
     if ( !quick ) {
-        caps.app = join(process.cwd(), './walta-app/build/android/bin/Waterbug.apk');
+        caps.app = join(process.cwd(), './release/Waterbug.apk');
     } else {
         caps.appPackage = "net.thewaterbug.waterbug";
         caps.skipDeviceInitialization = true;

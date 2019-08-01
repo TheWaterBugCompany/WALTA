@@ -21,12 +21,25 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
 var Sample = require('logic/Sample');
-var GeoLocationService = require('logic/GeoLocationService');
+var GeoLocationService = require('logic/GeoLocationService'); 
 
 /*
  * Module: AppWindow
  *
  */
+
+function questionToString( args ) {
+	if ( !args || !args.node )
+		return "";
+	return `[0]= ${args.node.questions[0].text} [1]= ${args.node.questions[1].text}`;
+}
+
+function dumpHistory( history ) {
+	history.forEach((obj,i)=>{
+		console.info(`${i}: ${obj.ctl} ${questionToString(obj.args)}`)
+	});
+}
+
 function createAppWindow( keyName, keyPath ) {
 
 		if ( ! keyPath ) {
@@ -59,8 +72,12 @@ function createAppWindow( keyName, keyPath ) {
 				if ( this.history.length === 0 ) {
 					this.closeApp();
 				} else {
-					var ctlArgs = this.history[this.history.length-1];
-					this.controller = Alloy.createController(ctlArgs.ctl,_(ctlArgs.args).extend(args));
+					var cargs = this.history[this.history.length-1];
+					var ctl = cargs.ctl;
+					var oldArgs = cargs.args;
+					if ( oldArgs )
+						args = _(oldArgs).extend(args);
+					this.controller = Alloy.createController(ctl,args);
 					this.controller.open();
 				}
 			},

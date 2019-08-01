@@ -41,7 +41,7 @@ var questions = [];
 function swipeListener(e){
 	if ( e.direction === 'right' ) {
 		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, $.name  );
+		Topics.fireTopicEvent( Topics.BACK );
 	}
 }
 
@@ -58,7 +58,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 
 var acb = $.getAnchorBar(); 
 $.args.name = "decision";
-var goBackBtn = Alloy.createController("GoBackButton", $.args );
+var goBackBtn = Alloy.createController("GoBackButton" );
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample }  ), true );
 acb.addTool( goBackBtn.getView() );
