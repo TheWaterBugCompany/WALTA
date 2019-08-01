@@ -24,7 +24,7 @@ var { keyMock } = require('specs/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 Alloy.Globals.Key = keyMock;
 
-describe.only('Speedbug controller', function() {
+describe('Speedbug controller', function() {
 	var SpeedBug;
 	beforeEach( function() {
 		SpeedBug = Alloy.createController("Speedbug", { key: keyMock });
@@ -38,7 +38,7 @@ describe.only('Speedbug controller', function() {
 		controllerOpenTest( SpeedBug, done );
 	});
 
-	it.only('should link to correct taxon node when a speed bug is selected', function(done) {
+	it('should link to correct taxon node when a speed bug is selected', function(done) {
 		controllerOpenTest( SpeedBug, function() {
 			var tile = SpeedBug.getSpeedbugTiles().tiles[0];
 			actionFiresTopicTest( tile.SpeedbugTile, 'click', Topics.JUMPTO, function(data) {
@@ -48,7 +48,7 @@ describe.only('Speedbug controller', function() {
 		} );
 	});
 
-	it.only('should link to correct key node when a not sure link is selected', function(done) {
+	it('should link to correct key node when a not sure link is selected', function(done) {
 		controllerOpenTest( SpeedBug, function() {
 			var group = SpeedBug.getSpeedbugGroups()[0];
 			actionFiresTopicTest( group.notSureButton, 'click', Topics.JUMPTO, function(data) {

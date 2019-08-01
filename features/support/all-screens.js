@@ -28,6 +28,24 @@ function setUpWorld(world) {
     world.editTaxon = new EditTaxonScreen( world) ;
     world.photoSelect = new PhotoSelectScreen( world );
     world.camera = new CameraScreen( world );
+    world.swipeRight = swipeRight;
+    world.swipeLeft = swipeLeft;
 }
 
-module.exports.setUpWorld = setUpWorld;
+async function swipeRight(world) {
+    await world.driver.touchPerform([ 
+        {action: 'press', options: {x: 4, y: 214}},
+        {action: 'wait', options:{ ms: 500 } },
+        {action: 'moveTo', options: {x: 700, y: 214}},
+        {action:'release'}]);
+}
+async function swipeLeft(world) {
+    await world.driver.touchPerform([ 
+        {action: 'press', options: {x: 700, y: 214}},
+        {action: 'wait', options:{ ms: 500 } },
+        {action: 'moveTo', options: {x: 4, y: 214}},
+        {action:'release'}]);
+}
+
+exports.setUpWorld = setUpWorld;
+exports.swipeRight = swipeRight;

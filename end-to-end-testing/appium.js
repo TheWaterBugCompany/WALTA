@@ -1,18 +1,12 @@
 var { expect } = require("chai");
 const { startAppiumClient, stopAppiumClient } = require('../features/support/appium');
-const { setUpWorld } = require('../features/support/all-screens');
+const { setUpWorld, swipeRight } = require('../features/support/all-screens');
 
 global.world = {};
 global.expect = expect;
-global.swipeRight = swipeRight;
+global.swipeRight = function() { swipeRight(world) };
 
-async function swipeRight() {
-    await world.driver.touchPerform([ 
-        {action: 'press', options: {x: 4, y: 214}},
-        {action: 'wait', options:{ ms: 500 } },
-        {action: 'moveTo', options: {x: 700, y: 214}},
-        {action:'release'}]);
-}
+
 beforeEach( async function() {
     if ( world.driver ) {
         await world.driver.reset();

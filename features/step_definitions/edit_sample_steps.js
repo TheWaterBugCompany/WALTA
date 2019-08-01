@@ -1,4 +1,4 @@
-'use strict';
+
 const { Given, When, Then } = require('cucumber');
 
 Given('I have already completed a sample', function () {

@@ -34,7 +34,7 @@ var actions = [];
 function swipeListener(e){
 	if ( e.direction === 'right' ) {
 		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, $.name  );
+		Topics.fireTopicEvent( Topics.BACK );
 	}
 }
 
@@ -57,7 +57,7 @@ function addActionButton( image, label, action ) {
 	$.actionBtns.add(ctl.getView());
 }
 
-$.taxon = $.args.taxon;
+$.taxon = $.args.node;
 
 $.title.text = $.taxon.commonName;
 $.taxon.scientificName.forEach( (part) => {
@@ -76,18 +76,18 @@ $.signalScore.text = $.taxon.signalScore;
 $.description.text = $.taxon.description;
 
 // If there are photos add the photo view and button
-if ($.args.taxon.photoUrls.length > 0) {
+if ($.taxon.photoUrls.length > 0) {
 	$.photoSelect.setImage( $.taxon.photoUrls );
 	addActionButton( "/images/gallery-icon.png", "Photo gallery",
 		function(e) {
-			$.photoSelect.openGallery();
+			$.photoSelect.openGallery(e);
 			e.cancelBubble = true;
 		}
 	);
 }
 
 // If there is a video add the video button
-if ($.args.taxon.videoUrl) {
+if ($.taxon.videoUrl) {
 	addActionButton("/images/icon-video.png", "Watch video",
 		function(e) {
 			Topics.fireTopicEvent( Topics.VIDEO, { url: $.taxon.videoUrl } );
@@ -107,7 +107,7 @@ if ( $.args.allowAddToSample !== false ) {
 
 var acb = $.getAnchorBar();
 $.args.name = "decision";
-var goBackBtn = Alloy.createController("GoBackButton", $.args );
+var goBackBtn = Alloy.createController("GoBackButton");
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( goBackBtn.getView() );

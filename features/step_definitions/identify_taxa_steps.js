@@ -1,4 +1,3 @@
-'use strict';
 const { Given, When, Then } = require('cucumber');
 Given('I have found a species to identify', function(){
   /* @current_page = page(MenuScreen).await */

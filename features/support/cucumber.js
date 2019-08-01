@@ -8,10 +8,15 @@ setDefaultTimeout(30 * 1000);
 BeforeAll( {timeout: 120*1000}, async function() {
     let driver =  await startAppiumClient(); 
     global.driver = driver;
-    
+    global.first = true;
 });
 
-Before( function() {
+Before(  {timeout: 120*1000}, async function() {
+    if ( !global.first ) {
+        await this.driver.reset();
+    } else {
+        global.first = false;
+    }
     this.driver = global.driver;
     setUpWorld( this );
 });

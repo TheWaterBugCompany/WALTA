@@ -15,14 +15,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var HtmlView = require('ui/HtmlView');
-exports.baseController  = "TopLevelWindow";
-$.TopLevelWindow.title = "Help";
-$.name = "help";
-$.content = HtmlView.createHtmlView( $.args.keyUrl + 'help/help.html' ).view; 
-$.TopLevelWindow.addEventListener('close', function cleanUp() {
-    $.content.release();
-    $.destroy();
-    $.off();
-    $.TopLevelWindow.removeEventListener('close', cleanUp );
-  });
+require("specs/lib/ti-mocha");
+var { expect } = require("specs/lib/chai");
+var { closeWindow, controllerOpenTest } = require("specs/util/TestUtils");
+var { keyMock } = require('specs/mocks/MockKey');
+var mediaResource = "specs/resources/simpleKey1/media/";
+describe.only("Gallery controller", function() {
+	var ctl;
+	before( function() {
+		ctl = Alloy.createController("Gallery", { photos: [mediaResource + 'amphipoda_01.jpg',mediaResource + 'amphipoda_02.jpg',mediaResource + 'amphipoda_03.jpg'] });
+	});
+	after( function(done) {
+		closeWindow( ctl.getView(), done );
+	});
+	it('should display the Gallery view', function(done) {
+		controllerOpenTest( ctl, done );
+    });
+});
