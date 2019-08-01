@@ -78,7 +78,7 @@ describe('Back button tests', function() {
         await world.browse.waitFor();
     });
 
-    it('should return to key when returning from gallery',async function() {
+    it.only('should return to key when returning from gallery',async function() {
         await world.menu.selectIdentify();
         await world.methodSelect.viaKey();
         await world.keySearch.waitForText("Animal with a shell");

@@ -73,7 +73,7 @@ Then('selected identification is stored into the current sample tray', function(
 });
 
 Given('a node from the ALT key is displayed', async function(){
-  await this.menu.identify();
+  await this.menu.selectIdentify();
   await this.methodSelect.viaKey();
   await this.keySearch.chooseTopAndExpect("Animals look like snails or limpets.");
 });

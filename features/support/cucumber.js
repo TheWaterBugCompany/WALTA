@@ -1,11 +1,22 @@
 'use strict';
-const { After, Before } = require('cucumber');
+const { AfterAll, BeforeAll, Before } = require('cucumber');
 const { startAppiumClient, stopAppiumClient } = require('./appium');
 const { setUpWorld } = require('./all-screens');
-Before( {timeout: 60*1000}, async function() {
-    this.driver = await startAppiumClient(); 
+const {setDefaultTimeout} = require('cucumber');
+setDefaultTimeout(30 * 1000);
+
+BeforeAll( {timeout: 120*1000}, async function() {
+    let driver =  await startAppiumClient(); 
+    global.driver = driver;
+    
+});
+
+Before( function() {
+    this.driver = global.driver;
     setUpWorld( this );
 });
-After( async function() {
-    stopAppiumClient( this.driver );
+
+AfterAll( async function() {
+    if ( global.driver )
+        await stopAppiumClient( global.driver );
 });

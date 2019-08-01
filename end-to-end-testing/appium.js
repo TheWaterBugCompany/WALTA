@@ -22,5 +22,5 @@ beforeEach( async function() {
     }
 })
 after( async function() {
-    //await stopAppiumClient(world.driver);
+    await stopAppiumClient(world.driver);
 });
