@@ -18,7 +18,6 @@
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
 var PlatformSpecific = require('ui/PlatformSpecific');
-var GalleryWindow = require('ui/GalleryWindow');
 var VideoView = require('ui/VideoView');
 var Sample = require('logic/Sample');
 var GeoLocationService = require('logic/GeoLocationService'); 
@@ -144,9 +143,8 @@ function createAppWindow( keyName, keyPath ) {
 				this.openController("Speedbug", { key: privates.key, surveyType: surveyType, allowAddToSample: allowAddToSample });
 			},
 
-			galleryWindow: function() {
-				var win = GalleryWindow.createGalleryWindow( _.first( _.shuffle( privates.key.findAllMedia('photoUrls') ), 20 ), false );
-				win.open();
+			galleryWindow: function(args) {
+				this.openController("Gallery", _(args).extend({ key: privates.key }) );
 			},
 
 			helpWindow: function() {
@@ -167,10 +165,8 @@ function createAppWindow( keyName, keyPath ) {
 					args = {};
 				args.key = this.key;
 				if ( this.key.isNode( node ) ) {
-					args.keyNode = node;
 					this.openController("KeySearch", args );
 				} else {
-					args.taxon = node;
 					this.openController("TaxonDetails", args );
 				}
 			},
@@ -280,8 +276,8 @@ function createAppWindow( keyName, keyPath ) {
     	privates.speedBugWindow(data.allowAddToSample, data.surveyType );
     });
 
-    privates.subscribe( Topics.GALLERY, function() {
-    	privates.galleryWindow();
+    privates.subscribe( Topics.GALLERY, function(data) {
+    	privates.galleryWindow(data);
     });
 
     privates.subscribe( Topics.HELP, function() {

@@ -1,0 +1,18 @@
+
+"#closeButton": {
+  top: 0,
+  height: Ti.UI.SIZE,
+  width: "8%",
+  right: 0,
+  zIndex: 999
+}
+
+"#scrollView": {
+    height: Ti.UI.FILL,
+    width: Ti.UI.FILL
+}
+
+"#content" : {
+  backgroundColor: "black",
+  height: Ti.UI.FILL
+}

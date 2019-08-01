@@ -1,7 +1,7 @@
-var GalleryWindow = require('ui/GalleryWindow');
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
-var args = $.args;
+var Topics = require("ui/Topics");
+
 if ( $.args.left ) $.photoSelectInner.left = $.args.left;
 if ( $.args.right ) $.photoSelectInner.right = $.args.right;
 if ( $.args.top ) $.photoSelectInner.top = $.args.top;
@@ -147,16 +147,17 @@ function requestCameraPermissions( success, failure ) {
     }
 }
 
-function openGallery() {
+function openGallery(e) {
+    e.cancelBubble = true;
     if ( $.magnify.visible ) {
         Ti.API.info(`opening gallery photoUrls: ${JSON.stringify($.photoUrls)}`);
-        var galleryWin = GalleryWindow.createGalleryWindow($.photoUrls);
-        galleryWin.open();
+        Topics.fireTopicEvent( Topics.GALLERY, { photos: $.photoUrls, showPager: true }  );
     }
 }
 
-function takePhoto() {
+function takePhoto(e) {
     if ( $.disabled) return;
+    e.cancelBubble = true;
     requestCameraPermissions(
         function success() {
             Ti.Media.showCamera({

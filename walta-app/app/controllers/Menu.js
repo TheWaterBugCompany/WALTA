@@ -78,11 +78,11 @@ function identifyClick() {
 }
 
 function historyClick() {
-  Topics.fireTopicEvent( Topics.HISTORY, null );
+  Topics.fireTopicEvent( Topics.HISTORY );
 }
 
 function galleryClick() {
-  Topics.fireTopicEvent( Topics.GALLERY, null );
+  Topics.fireTopicEvent( Topics.GALLERY, { showPager: false }  );
 }
 
 function aboutClick() {

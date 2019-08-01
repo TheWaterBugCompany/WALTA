@@ -25,6 +25,7 @@ require("specs/LocationEntry_spec");
 require("specs/LeafletMap_spec");
 require("specs/MayflyEmergenceMap_spec");
 require("specs/MayflyMusterSelect_spec");
+require("specs/Gallery_spec.js");
 
 
 // Create a blank window: for some reason closing the last window hangs

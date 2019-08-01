@@ -30,7 +30,7 @@ $.TopLevelWindow.title = "ALT Key";
 $.name = "decision";
 
 var key = $.args.key;
-var keyNode = $.args.keyNode;
+var keyNode = $.args.node;
 
 // FIXME: The key object has state - but we ideally should be stateless
 // this is a hack to return the key object to the correct place.

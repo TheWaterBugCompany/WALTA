@@ -7,6 +7,7 @@ var keyMock = Key.createKey( {
     name: 'WALTA'
 });
 var speedBugResource = "specs/resources/simpleKey1/media/speedbug/";
+var mediaResource = "specs/resources/simpleKey1/media/";
 var taxons = [
     Taxon.createTaxon({ taxonId: 1, name: "Aeshnidae Telephleb", commonName: "Aeshnidae Telephleb", bluebug: [ speedBugResource + "aeshnidae_telephleb_b.png" ]  }),
     Taxon.createTaxon({ taxonId: 2, name: "Amphipoda", bluebug: [ speedBugResource + "amphipoda_b.png" ] }),
@@ -24,8 +25,8 @@ var taxons = [
     Taxon.createTaxon({ taxonId: 12, name: "Amphipoda", bluebug: [ speedBugResource + "amphipoda_b.png" ] }),
     Taxon.createTaxon({ taxonId: 13, name: "Anisops", commonName: "Anisops", bluebug: [ speedBugResource + "anisops_b.png" ] }),
     Taxon.createTaxon({ taxonId: 14, name: "Anostraca", commonName: "Anostraca", bluebug: [ speedBugResource + "anostraca_b.png" ] }),
-    Taxon.createTaxon({ taxonId: 15, name: "Atalophlebia", commonName: "Atalophlebia", bluebug: [ speedBugResource + "atalophlebia_b.png" ] }),Taxon.createTaxon({ taxonId: 1, name: "Aeshnidae Telephleb", commonName: "Aeshnidae Telephleb", bluebug: [ speedBugResource + "aeshnidae_telephleb_b.png" ]  }),
-    
+    Taxon.createTaxon({ taxonId: 15, name: "Atalophlebia", commonName: "Atalophlebia", bluebug: [ speedBugResource + "atalophlebia_b.png" ] }),
+     
     Taxon.createTaxon({ taxonId: 16, name: "Aeshnidae Telephleb", commonName: "Aeshnidae Telephleb", bluebug: [ speedBugResource + "aeshnidae_telephleb_b.png" ]  }),
     Taxon.createTaxon({ taxonId: 17, name: "Amphipoda", bluebug: [ speedBugResource + "amphipoda_b.png" ] }),
     Taxon.createTaxon({ taxonId: 18, name: "Anisops", commonName: "Anisops", bluebug: [ speedBugResource + "anisops_b.png" ] }),

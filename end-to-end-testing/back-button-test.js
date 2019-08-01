@@ -78,7 +78,7 @@ describe('Back button tests', function() {
         await world.browse.waitFor();
     });
 
-    it.only('should return to key when returning from gallery',async function() {
+    it('should return to key when returning from gallery',async function() {
         await world.menu.selectIdentify();
         await world.methodSelect.viaKey();
         await world.keySearch.waitForText("Animal with a shell");
@@ -92,7 +92,7 @@ describe('Back button tests', function() {
         expect( await world.taxon.getHeading() ).to.equal("Baetids");
         await world.taxon.goMagnify();
         await navigateGoBack(world);
-        await world.keySearch.waitFor();
+        await world.taxon.waitFor();
     });
 
     it('should return to edit taxon when returning from gallery',async function() {
