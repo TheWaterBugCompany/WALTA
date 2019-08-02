@@ -95,7 +95,9 @@ describe('Back button tests', function() {
         await world.taxon.waitFor();
     });
 
-    it('should return to edit taxon when returning from gallery',async function() {
+    // relies on having a specific camera app installed so fails on real devices
+
+    it.skip('should return to edit taxon when returning from gallery',async function() {
         await navigateBrowseViaTray( world, "Adult Baetidae");
         expect( await world.taxon.getHeading() ).to.equal("Baetids");
         await world.taxon.selectAddToSample();

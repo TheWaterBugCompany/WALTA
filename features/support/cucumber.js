@@ -12,13 +12,13 @@ BeforeAll( {timeout: 120*1000}, async function() {
 });
 
 Before(  {timeout: 120*1000}, async function() {
+    this.driver = global.driver;
+    setUpWorld( this );
     if ( !global.first ) {
         await this.driver.reset();
     } else {
         global.first = false;
     }
-    this.driver = global.driver;
-    setUpWorld( this );
 });
 
 AfterAll( async function() {
