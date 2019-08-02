@@ -79,7 +79,7 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 ".close_button_image": {
-  image: "images/delete-icon-blue.png",
+  image: "/images/delete-icon-blue.png",
   width: Ti.UI.SIZE,
   height: Ti.UI.SIZE
 }

@@ -22,7 +22,7 @@ class BaseScreen {
     }
 
     textSelector( sel ) {
-        return `//android.widget.LinearLayout[@content-desc="${sel}."]/android.widget.FrameLayout/android.widget.EditText`;
+        return `//*[@content-desc="${sel}."]/android.widget.FrameLayout/android.widget.EditText`;
     }
 
     selector( sel ) {

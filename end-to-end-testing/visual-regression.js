@@ -1,4 +1,5 @@
 var fs = require('fs');
+var sizeOf = require('image-size');
 var looksSame = require('looks-same');
 const { navigateGoBack,
     navigateBrowseViaTray,
@@ -23,14 +24,25 @@ function assertLooksSame( img1, img2 ) {
     });
 }
 
+function screenshotPath( screenshot, name, postfix="" ) {
+    var dims = sizeOf(screenshot);
+    return `${__dirname}/baseline-images/${name.replace(/ /g,"_")}_${dims.width}x${dims.height}${postfix.length > 0 ?"_"+postfix:""}.png`;
+}
+
 async function verifyScreenShot( name ) {
-    var path = `${__dirname}/baseline-images/${name.replace(/ /g,"_")}.png`;
     var base64 = await world.driver.takeScreenshot();
     var screenshot = Buffer.from( base64, 'base64' );
-    if ( fs.existsSync( path ) ) {
-        await assertLooksSame( screenshot, path );
+    if ( fs.existsSync( screenshotPath( screenshot, name ) ) ) {
+        try {
+            await assertLooksSame( screenshot, screenshotPath( screenshot, name ) );
+        } catch(e) {
+            fs.writeFileSync(screenshotPath( screenshot, name, "regression" ), screenshot );
+            throw e;
+        }
     } else {
-        fs.writeFileSync(path , screenshot );
+        var path = screenshotPath( screenshot, name, "baseline" );
+        fs.writeFileSync( path, screenshot );
+        throw new Error(`Generated base line image: ${path}. Manually verify image and remove the "_baseline" from the string to accept.`);
     }
 }
 
