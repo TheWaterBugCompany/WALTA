@@ -1,3 +1,5 @@
+const BaseScreen = require('./base-screen.js');
+
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -73,7 +75,11 @@ async function navigateSpeedbugNotSureViaTray( world, refId ) {
 }
 
 async function navigateGoBack( world ) {
-  await world.driver.pressKeyCode(4);
+  if ( world.platform === "android" ) {
+    await world.driver.pressKeyCode(4);
+  } else {
+    await new BaseScreen(world).click("Back");
+  }
 }
 
 // assumes alrady at EditTaxon or SiteDetails screen

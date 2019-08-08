@@ -2,7 +2,7 @@
 	<View class="overlay">
 			<View class="window" layout="vertical">
 				<View class="titlebar">
-					<Label class="titleText" accessibilityLabel="method_select_title">Select identification method:</Label>
+					<Label class="titleText" accessibilityLabel="Select Method">Select identification method:</Label>
 					<View id="closeButton" onClick="closeEvent">
 							<ImageView class="close_button_image"></ImageView>
 					</View>

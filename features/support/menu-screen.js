@@ -3,22 +3,22 @@ const BaseScreen = require('./base-screen');
 class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "menu_waterbug_survey_button";
+        this.presenceSelector = "Waterbug Survey";
     }
     async login( email, password ) {
-        await this.click('menu_login_button');
+        await this.click('Login');
         return this.world.login.login( email, password );
     }
     async selectIdentify() {
-        await this.click('menu_identify_button');
+        await this.click('Identify');
         await this.world.methodSelect.waitFor();
     }
     async selectWaterbugSurvey() {
-        await this.click("menu_waterbug_survey_button");
+        await this.click("Waterbug Survey");
         await this.world.siteDetails.waitFor();
     }
     async selectGallery() {
-      await this.click("menu_photo_gallery_button");
+      await this.click("Photo Gallery");
       await this.world.gallery.waitFor();
     }
     /*async selectMayflyMuster() {

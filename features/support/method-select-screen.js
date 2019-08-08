@@ -2,18 +2,18 @@ const BaseScreen = require('./base-screen');
 class MethodSelectScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "method_select_title";
+        this.presenceSelector = "Select Method";
     }
     async viaKey() {
-        await this.click('submenu_key_button');
+        await this.click('Key');
         await this.world.keySearch.waitFor();
     }
     async viaBrowse() {
-        await this.click('submenu_browse_button');
+        await this.click('Browse');
         await this.world.browse.waitFor();
     }
     async viaSpeedbug() {
-        await this.click('submenu_speedbug_button');
+        await this.click('Speedbug');
         await this.world.speedbug.waitFor();
     }
 } 

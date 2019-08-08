@@ -10,8 +10,6 @@
 				<string>armv7</string>
 				<string>arm64</string>
 			</array>
-			<key>bitcode</key>
-			<false/>
 			<key>certificate</key>
 			<dict>
 				<key>SHA1</key>
@@ -26,11 +24,11 @@
 				<dict>
 					<key>architectures</key>
 					<array>
+						<string>i386</string>
+						<string>x86_64</string>
 						<string>armv7</string>
 						<string>arm64</string>
 					</array>
-					<key>bitcode</key>
-					<false/>
 					<key>certificate</key>
 					<dict>
 						<key>SHA1</key>
@@ -42,8 +40,6 @@
 					</dict>
 					<key>name</key>
 					<string>TitaniumKit.framework</string>
-					<key>symbols</key>
-					<true/>
 					<key>team</key>
 					<dict>
 						<key>id</key>
@@ -57,8 +53,6 @@
 			<dict>
 				<key>application-identifier</key>
 				<string>6RRED3LUUV.net.thewaterbug.waterbug</string>
-				<key>beta-reports-active</key>
-				<true/>
 				<key>com.apple.developer.team-identifier</key>
 				<string>6RRED3LUUV</string>
 				<key>get-task-allow</key>
@@ -73,12 +67,10 @@
 			<key>profile</key>
 			<dict>
 				<key>UUID</key>
-				<string>e2935a1f-0c22-4716-8020-b61024ce143f</string>
+				<string>eb88a8c0-d6e1-4622-a69b-3513ebe5be62</string>
 				<key>name</key>
-				<string>The Waterbug App</string>
+				<string>WaterbugAppAdhoc</string>
 			</dict>
-			<key>symbols</key>
-			<true/>
 			<key>team</key>
 			<dict>
 				<key>id</key>

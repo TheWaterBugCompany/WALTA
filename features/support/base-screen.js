@@ -2,15 +2,19 @@ var { expect } = require('chai');
 class BaseScreen {
     constructor( world ) {
         this.driver = world.driver;
+        this.platform = world.platform;
         this.world = world;
         this.presenceSelector="unknown_base_screen"; // casues waitFor to fail
     }
+
+    isIos() { return this.platform === "ios"; }
+    isAndroid() { return this.platform === "android"; }
 
     async waitForRaw(sel, message) {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, 5000, message);
+        }, 50000, message);
     }
 
     async waitFor() {
@@ -18,7 +22,11 @@ class BaseScreen {
     }
 
     async waitForText(text) {
-        await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`);
+        if ( this.isIos() ) {
+            await this.waitForRaw( this.selector(text), `text "${text}" not present`);
+        } else {
+            await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`);
+        }
     }
 
     textSelector( sel ) {
@@ -26,7 +34,10 @@ class BaseScreen {
     }
 
     selector( sel ) {
-        return `~${sel}.`;
+        let res = "~"+sel;
+        if ( this.isAndroid() )
+            res += res + "."; // accessibility labels get periods
+        return res;
     }
 
     async getElement( sel ) {
@@ -40,7 +51,11 @@ class BaseScreen {
     }
 
     async clickByText( text ) {
-        await this.clickRaw(`//android.widget.TextView[contains(@text,"${text}")]`);
+        if ( this.isIos() ) {
+            await this.click(text);
+        } else {
+            await this.clickRaw(`//android.widget.TextView[contains(@text,"${text}")]`);
+        }
     }
 
     async clickRaw( sel ) {

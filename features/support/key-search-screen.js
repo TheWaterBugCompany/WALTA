@@ -3,28 +3,15 @@ const BaseScreen = require('./base-screen');
 class KeySearchScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "keysearch_choose_best_match";
+        this.presenceSelector = "Choose the best match";
     }
 
     async choose( questionText ) {
-      await this.clickByText( questionText );
+      await this.click( questionText );
     }
-    async chooseTop() {
-      await this.click("question_top");
-    }
-    async chooseTopAndExpect(text) {
-      await this.chooseTop();
-      await this.waitForText(text);
-    }
-    async chooseBottom() {
-      await this.click("question_bottom");
-    }
-    async chooseBottomAndExpect(text) {
-      await this.chooseBottom();
-      await this.waitForText(text);
-    }
+    
     async goBack() {
-      await this.click("go_back_button");
+      await this.click("Back");
     }
     async goBackAndExpect(text) {
       await this.goBack();
