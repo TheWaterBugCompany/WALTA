@@ -11,7 +11,12 @@ beforeEach( async function() {
     if ( world.driver ) {
         await world.driver.reset();
     } else {
-        world.driver = await startAppiumClient(false);
+        let platform = "android";
+        if ( process.platform === "darwin" ) {
+            platform = "ios";
+        }
+        world.driver = await startAppiumClient(platform,true);
+        world.platform = platform;
         setUpWorld( world );
     }
 })

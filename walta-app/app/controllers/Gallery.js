@@ -23,7 +23,6 @@
  * opens a modal view displaying a gallery of all the images.
  *
  */
-var { makeAccessibilityLabel } = require('ui/ViewUtils');
 exports.baseController  = "TopLevelWindow";
 $.name = "gallery";
 
@@ -68,7 +67,7 @@ $.scrollView.bottom = ( showPager ? Layout.PAGER_HEIGHT : 0 );
 // Create a dot view
 function createDot(i) {
 	var dot = Ti.UI.createView( {
-        accessibilityLabel: makeAccessibilityLabel('photo_gallery_page', i ),
+        accessibilityLabel: `Photo ${i}`,
 		backgroundImage: '/images/dot.png',
 		width: Layout.PAGER_DOT_SIZE,
 		height: Layout.PAGER_DOT_SIZE,

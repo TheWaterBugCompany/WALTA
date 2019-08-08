@@ -1,5 +1,4 @@
 var Topics = require('ui/Topics');
-var { setAccessibilityLabel } = require('ui/ViewUtils');
 
 $.icon.image = $.args.icon;
 $.title.text = $.args.title;
@@ -17,7 +16,7 @@ if ( $.args.size ) {
   
 }
 
-setAccessibilityLabel( $.button, "submenu", $.args.title ,"button" );
+$.button.accessibilityLabel = $.args.title;
 
 function onClick(e) {
   if ( $.args.topic ) {

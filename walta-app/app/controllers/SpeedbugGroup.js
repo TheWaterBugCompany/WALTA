@@ -27,7 +27,7 @@ function addTile(sb) {
     tile.on("select", (refId) => $.trigger("select", refId ) );
     index.pushTile( tile );
     $.bugContainer.add( tile.getView() );
-    $.notSureButton.accessibilityLabel = makeAccessibilityLabel("speedbug_not_sure", refId);
+    $.notSureButton.accessibilityLabel = 'Not Sure ';
     if ( $.bugContainer.children.length > 1 ) {
         $.notSureButton.visible = true;
     } else {

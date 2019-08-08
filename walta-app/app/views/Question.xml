@@ -4,6 +4,6 @@
 		<View id="photoSelectWrapper">
 		<Require type="view"  readonly=true src="PhotoSelect" id="photoSelect" />
 		</View>
-		<ImageView id="arrow"image="/images/rightarrow.png"/>
+		<ImageView id="arrow" image="/images/rightarrow.png"/>
 	</View>
 </Alloy>

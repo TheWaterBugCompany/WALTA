@@ -5,7 +5,7 @@
 				<Label bindId='title' id="taxon" class="labelText" onClick="clickItem"/>
 			</ItemTemplate>
 			<ItemTemplate name="genusOrSpeciesTaxon">
-				<Label bindId='title' id="genusOrSpeciesTaxon" class="labelText"  onClick="clickItem"/>
+				<Label bindId='title' id="genusOrSpeciesTaxon" class="labelText" onClick="clickItem"/>
 			</ItemTemplate>
 		</Templates>
 	</ListView>

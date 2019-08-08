@@ -11,7 +11,7 @@ const { navigateGoBack,
 describe('Back button tests', function() {
     it('should return to menu when back pressed on the root of a key', async function() {
         await navigateKeyViaIdentify( world, ["Animal with a shell"]);
-        await world.keySearch.waitForText("Animals look like snails or limpets");
+        await world.keySearch.waitForText("Animals look like snails or limpets.");
         await navigateGoBack(world);
         await world.keySearch.waitForText("Animal with a shell");
         await world.keySearch.goBack();
@@ -20,21 +20,21 @@ describe('Back button tests', function() {
 
     it('should return to browse list when back pressed on key search via browse', async function() {
         await navigateBrowseViaIdentify( world, "Adult Baetidae");
-        expect( await world.taxon.getHeading() ).to.equal("Baetids");
+        await world.taxon.waitForText("Baetids");
         await navigateGoBack(world);
         await world.browse.waitFor();
     });
 
     it('should return to browse list when right swipe on key search via browse', async function() {
         await navigateBrowseViaIdentify( world, "Adult Baetidae");
-        expect( await world.taxon.getHeading() ).to.equal("Baetids");
+        await world.taxon.waitForText("Baetids");
         await swipeRight();
         await world.browse.waitFor();
     });
 
     it('should return to key when right swipe on key search', async function() {
         await navigateKeyViaIdentify( world, ["Animal with a shell"]);
-        await world.keySearch.waitForText("Animals look like snails or limpets");
+        await world.keySearch.waitForText("Animals look like snails or limpets.");
         await swipeRight();
         await world.keySearch.waitForText("Animal with a shell");
     });
@@ -73,7 +73,7 @@ describe('Back button tests', function() {
 
     it('should return to list when returning from taxon via sample tray', async function() {
         await navigateBrowseViaTray( world, "Adult Baetidae");
-        expect( await world.taxon.getHeading() ).to.equal("Baetids");
+        await world.taxon.waitForText("Baetids");
         await world.taxon.goBack();
         await world.browse.waitFor();
     });
@@ -89,7 +89,7 @@ describe('Back button tests', function() {
 
     it('should return to taxon when returning from gallery',async function() {
         await navigateBrowseViaIdentify( world, "Adult Baetidae");
-        expect( await world.taxon.getHeading() ).to.equal("Baetids");
+        await world.taxon.waitForText("Baetids");
         await world.taxon.goMagnify();
         await navigateGoBack(world);
         await world.taxon.waitFor();
@@ -99,7 +99,7 @@ describe('Back button tests', function() {
 
     it.skip('should return to edit taxon when returning from gallery',async function() {
         await navigateBrowseViaTray( world, "Adult Baetidae");
-        expect( await world.taxon.getHeading() ).to.equal("Baetids");
+        await world.taxon.waitForText("Baetids");
         await world.taxon.selectAddToSample();
         await navigateTakePhoto(world);
         await world.editTaxon.waitFor();
