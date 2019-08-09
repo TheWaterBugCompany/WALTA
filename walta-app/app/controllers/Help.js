@@ -21,7 +21,7 @@ $.TopLevelWindow.title = "Help";
 $.name = "help";
 $.content = HtmlView.createHtmlView( $.args.keyUrl + 'help/help.html' ).view; 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-    $.content.release();
+    if ( Ti.Platform.osname === 'android') { $.content.release(); }
     $.destroy();
     $.off();
     $.TopLevelWindow.removeEventListener('close', cleanUp );

@@ -42,26 +42,48 @@ module.exports = function(grunt) {
           },
 
           unit_test_android: {
-            command: `adb shell am start -n "net.thewaterbug.waterbug/.WaterbugActivity --ez "android.intent.action.UnitTest" true`
+            command: `adb shell am start -n net.thewaterbug.waterbug/.WaterbugActivity --ez "android.intent.action.UnitTest" true`
           },
 
-          build_android_test: build("--build-only --platform android --deploy-type production --output-dir test"),
+          build_android_test: build(`--build-only --platform android --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir test`),
           build_ios_test: build("--build-only --platform ios --target dist-adhoc --deploy-type production -R  \"Michael Sharman (6RRED3LUUV)\" -P \"eb88a8c0-d6e1-4622-a69b-3513ebe5be62\" --output-dir test"),
 
           install_app_android: `adb install ./release/Waterbug.apk`,
-          uninstall_app_android: `adb uninstall ${APP_ID}`,
+          uninstall_app_android: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
 
-          install_app_ios: `xcrun simctl install ./release/Waterbug.ipa`,
-          uninstall_app_ios: `xcrun simctl uninstall booted ${APP_ID}`,
+          install_app_ios: `./node_modules/.bin/ios-deploy --uninstall --noninteractive --bundle ./release/Waterbug.ipa`,
+          uninstall_app_ios: `./node_modules/.bin/ios-deploy --uninstall_only --bundle_id ${APP_ID}`,
 
-
-
-          acceptance_test: {
-            command: `PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+          acceptance_test_android: {
+            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
           },
 
-          end_to_end_test: {
-            command: `PATH=./node_modules/.bin/:$PATH mocha --timeout 50000 --color --recursive "./end-to-end-testing/*.js"`
+          end_to_end_test_android: {
+            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
+          },
+
+          quick_acceptance_test_android: {
+            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+          },
+
+          quick_end_to_end_test_android: {
+            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
+          },
+
+          acceptance_test_ios: {
+            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+          },
+
+          end_to_end_test_ios: {
+            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
+          },
+
+          quick_acceptance_test_ios: {
+            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+          },
+
+          quick_end_to_end_test_ios: {
+            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
           },
 
           // test_console: "calabash-android console walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature"
@@ -72,10 +94,10 @@ module.exports = function(grunt) {
           preview_android: build(`--platform android --deploy-type development --liveview -target emulator --device-id ${AVD_NAME}`),
           preview_ios: build(`--platform ios --deploy-type development --target simulator --liveview --device-id "5750311A-5F18-477F-AF43-C97FDB8D49D0"`),
           device_preview_android: build(`--platform android --deploy-type development --target device`),
-          device_preview_ios: build(`--platform ios -V  \"Michael Sharman (ZG6HRCUR8Q)\"  -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\" --deploy-type development --target device `),
+          device_preview_ios: build(`--liveview --platform ios -V  \"Michael Sharman (ZG6HRCUR8Q)\"  -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\" --deploy-type development --target device `),
           
-          release_ios: build(`--build-only --skip-js-minify  --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release`),
-          release_android: build(` --build-only --skip-js-minify  --platform android  --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release`)
+          release_ios: build(`--build-only --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release`),
+          release_android: build(` --build-only  --platform android  --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release`)
         },
         newer: {
           test_android: {
@@ -93,12 +115,12 @@ module.exports = function(grunt) {
           release_android: {
             src: SOURCES,
             dest: './release/Waterbug.apk',
-            options: { tasks: [ 'exec:clean','release_android'] }  
+            options: { tasks: [ 'exec:clean','exec:release_android'] }  
           },
           release_ios: {
             src: SOURCES,
             dest: './release/Waterbug.ipa',
-            options: { tasks: [ 'exec:clean', 'release_ios' ] }  
+            options: { tasks: [ 'exec:clean', 'exec:release_ios' ] }  
           },
         }
     });
@@ -109,36 +131,21 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-newer-explicit");
 
     // Default task(s).
-    grunt.registerTask('default', ['test'] );
-
-
-    grunt.registerTask('build', function() {
-      // if we are on darwin assume IOS platform
-      if ( process.platform === "darwin" ) {
-        grunt.task.run( [ 'exec:clean', 'exec:alloy_plugins', 'exec:build_ios_test' ] )
-      } else {
-        grunt.task.run( [ 'exec:clean', 'exec:alloy_plugins', 'exec:build_android_test' ] )
-      }
-    });
-
-    grunt.registerTask('test', function() {
-      // if we are on darwin assume IOS platform
-      if ( process.platform === "darwin" ) {
-        grunt.task.run( [ 'newer:test_ios', 'exec:acceptance_test', 'exec:end_to_end_test' ] )
-      } else {
-        grunt.task.run( [ 'newer:test_android', 'exec:acceptance_test', 'exec:end_to_end_test' ] )
-      }
-    });
-
-    grunt.registerTask('quick_acceptance_test', [ 'exec:acceptance_test' ] );
-    grunt.registerTask('quick_end_to_end_test', ['exec:end_to_end_test' ] );
+    grunt.registerTask('test_ios', [ 'newer:test_ios', 'exec:acceptance_test_ios', 'exec:end_to_end_test_ios' ] );
+    grunt.registerTask('test_android', ['newer:test_android', 'exec:uninstall_app_android', 'exec:acceptance_test_android', 'exec:end_to_end_test_android' ] );
+    grunt.registerTask('install_ios', ['newer:test_ios', 'exec:install_app_ios' ]);
+    grunt.registerTask('install_android', ['newer:test_android', 'exec:install_app_android' ]);
+    grunt.registerTask('quick_acceptance_test_ios', [ 'exec:quick_acceptance_test_ios' ] );
+    grunt.registerTask('quick_end_to_end_test_ios', ['exec:quick_end_to_end_test_ios' ] );
+    grunt.registerTask('quick_acceptance_test_android', [ 'exec:quick_acceptance_test_android' ] );
+    grunt.registerTask('quick_end_to_end_test_android', ['exec:quick_end_to_end_test_android' ] );
     grunt.registerTask('unit_test_android', [ 'exec:unit_test_android' ] );
     grunt.registerTask('unit_test_node', ['exec:unit_test_node'] );
     grunt.registerTask('clean', ['exec:clean', 'exec:clean_test'] );
     grunt.registerTask('debug', ['exec:debug'] );
     grunt.registerTask('preview_android', ['exec:preview_android'] );
     grunt.registerTask('preview_ios', ['exec:preview_ios'] );
-    grunt.registerTask('device_preview_android', ['exec:device_preview_android'] );
+    grunt.registerTask('device_preview_android', ['exec:uninstall_app_android', 'exec:device_preview_android'] );
     grunt.registerTask('device_preview_ios', ['exec:device_preview_ios'] );
     grunt.registerTask('release_ios', ['newer:release_ios'] );
     grunt.registerTask('release_android', ['newer:release_android'] );

@@ -38,18 +38,9 @@ var keyNode = $.args.node;
 key.setCurrentNodeObj( keyNode );
 var questions = [];
 
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK );
-	}
-}
-
-$.TopLevelWindow.addEventListener('swipe', swipeListener);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();
   $.off();
-  $.content.removeEventListener('swipe', swipeListener);
   goBackBtn.cleanUp();
   questions.forEach( function(q) { q.cleanUp(); } );
   questions = null;

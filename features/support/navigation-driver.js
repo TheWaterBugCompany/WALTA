@@ -12,14 +12,14 @@ async function navigateToSampleTray( world ) {
   // site details
   await world.siteDetails.selectDetailed();
   await world.siteDetails.selectRiver();
-  await world.siteDetails.setWaterbodyName("End To End Test");
-  await world.siteDetails.setNearByFeature("End To End Test");
+  await world.siteDetails.setWaterbodyName("a");
   await world.siteDetails.goNext();
 
   // habitat
   await world.habitat.setSandOrSilt("100");
   await world.habitat.goNext();
 
+  await world.sample.waitFor();
 }
 
 async function navigateKeyViaIdentify( world, questions ) {

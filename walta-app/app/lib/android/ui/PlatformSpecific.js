@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function appStartUp( privates ) {
+function appStartUp() {
 	// Not needed any more
 }
 
-function appShutdown( privates ) {
+function appShutdown( ) {
 	Ti.API.debug("Application shutdown");
 	Alloy.Globals.lastWindow.forEach( (w) => w.close() );
 	Ti.Android.currentActivity.finish();

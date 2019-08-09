@@ -14,17 +14,8 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     sample.off( null, updateLocation );
     sample.off( null, loadAttributes );
     $.TopLevelWindow.removeEventListener('close', cleanUp );
-    $.TopLevelWindow.removeEventListener( 'swipe', swipeListener );
     GeoLocationService.stop();
 });
-
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, { swipe: true, name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
-	}
-}
-$.TopLevelWindow.addEventListener('swipe', swipeListener);
 
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );

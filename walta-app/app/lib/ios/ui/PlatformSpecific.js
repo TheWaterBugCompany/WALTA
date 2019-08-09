@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function appStartUp( privates ) {
+function appStartUp() {
 
 }
 
-function appShutdown( privates ) {
+function appShutdown() {
 
 }
 
@@ -49,23 +49,22 @@ function transitionWindows( win, effect ) {
 				tx1 = -tx2;
 			}
 
-			win2.setTransform( Ti.UI.create2DMatrix().translate( tx1, 0 ) );
-			win2.open(); // Open window first: opening a window is a heavy operation
-			             // so we open it early to make sure it is ready to be
-			             // animated instantly in the following code.
+			win2.transform = Ti.UI.createMatrix2D().translate( tx1, 0 );
+			 
 			var a1 = Ti.UI.createAnimation({
-				transform: Ti.UI.create2DMatrix().translate( tx2, 0 ),
+				transform: Ti.UI.createMatrix2D().translate( tx2, 0 ),
 				duration: 200
 			});
 			var a2 = Ti.UI.createAnimation({
-				transform: Ti.UI.create2DMatrix(),
+				transform: Ti.UI.createMatrix2D(),
 				duration: 200
 			});
+			win2.open();
 			win2.animate( a2 );
-			win1.close( a1 );
+			win1.animate( a1, ()=> win1.close() );
 		} else {
-			win2.open( {animate: false} );
-			win1.close( {animate: false} );
+			win2.open();
+			win1.close();
 		}
 	} else {
 		win2.open();

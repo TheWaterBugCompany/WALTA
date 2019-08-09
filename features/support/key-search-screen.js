@@ -7,7 +7,7 @@ class KeySearchScreen extends BaseScreen {
     }
 
     async choose( questionText ) {
-      await this.click( questionText );
+      await this.clickByText( questionText );
     }
     
     async goBack() {

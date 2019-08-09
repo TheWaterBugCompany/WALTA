@@ -32,13 +32,31 @@ describe('Back button tests', function() {
         await world.browse.waitFor();
     });
 
-    it('should return to key when right swipe on key search', async function() {
-        await navigateKeyViaIdentify( world, ["Animal with a shell"]);
-        await world.keySearch.waitForText("Animals look like snails or limpets.");
+    it.only('should go back with a right swipe from survey wizard', async function() {
+        await world.menu.selectWaterbugSurvey();
         await swipeRight();
-        await world.keySearch.waitForText("Animal with a shell");
-    });
+        await world.menu.waitFor();
 
+        await world.menu.selectWaterbugSurvey();
+        await world.siteDetails.selectDetailed();
+        await world.siteDetails.selectRiver();
+        await world.siteDetails.setWaterbodyName("a");
+
+        await world.siteDetails.goNext();
+        await world.habitat.waitFor();
+
+        await swipeRight();
+        await world.siteDetails.goNext();
+        await world.habitat.waitFor();
+
+        await world.habitat.setSandOrSilt("100");
+        await world.habitat.goNext();
+  
+        await world.sample.waitFor();
+        await swipeRight();
+        await world.habitat.waitFor();
+    });
+ 
     it('should return to speedbug when returning from taxon via identify', async function() {
         await navigateSpeedbugViaIdentify( world, "hyriidae" );
         await world.keySearch.waitForText("Freshwater mussels");

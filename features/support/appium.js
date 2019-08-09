@@ -10,7 +10,6 @@ function getCapabilities( platform, quick ) {
             automationName: "uiautomator2",
             platformName: "Android",
             autoGrantPermissions: true,
-            autoAcceptAlerts: true,
             deviceName: "device",
             appActivity: ".WaterbugActivity",
             appWaitActivity: "org.appcelerator.titanium.TiActivity"
@@ -30,6 +29,7 @@ function getCapabilities( platform, quick ) {
             automationName: "XCUITest",
             platformName: "iOS",
             platformVersion: "12.4",
+            autoAcceptAlerts: true,
             deviceName: "The Code Sharman Test iPhone",
             udid: "auto",
             xcodeOrgId: "ZG6HRCUR8Q",

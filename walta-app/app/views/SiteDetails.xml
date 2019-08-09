@@ -4,19 +4,19 @@
 			<View id="left" layout="vertical">
 				<Label id="surveyLevelLabel" class="labelText" text="Survey level:"/>
 				<View id="surveyLevelError" class="errorWrap shrinkWrap">
-					<Widget id="surveyLevelSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol" accessibilityLabel="Survey level" />
+					<Widget id="surveyLevelSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol"/>
 				</View>
 				<Label id="waterbodyTypeLabel" class="labelText" text="Waterbody type:"/>
 				<View id="waterbodyTypeError" class="errorWrap shrinkWrap">
-					<Widget id="waterbodyTypeSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol" accessibilityLabel="Waterbody type" />
+					<Widget id="waterbodyTypeSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol"/>
 				</View>
 				<View id="waterbodyName" layout="vertical" class="shrinkWrap">
 					<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
-					<TextField id="waterbodyNameField" class="textField" accessibilityLabel="site_details_waterbody_name" onChange="checkValidity" />
+					<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody Name" onChange="checkValidity" />
 				</View>
 				<View id="nearByFeature" layout="vertical" class="shrinkWrap">
 					<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
-					<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="site_details_near_by_feature" onChange="checkValidity"/>
+					<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near By Feature" onChange="checkValidity"/>
 				</View>
 			</View>
 			<View id="right" layout="vertical">
@@ -29,7 +29,7 @@
 						<Label id="locationStatus" class="labelText" text="Location not obtained"/>
 					</View>
 					<View id="nextWrapper" class="shrinkWrap">
-						<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick" accessibilityLabel="site_details_next" />
+						<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick" accessibilityLabel="Next" />
 					</View>
 				</View>
 			</View>
