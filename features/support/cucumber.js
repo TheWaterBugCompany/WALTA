@@ -6,12 +6,10 @@ const {setDefaultTimeout} = require('cucumber');
 setDefaultTimeout(30 * 1000);
 
 BeforeAll( {timeout: 99999*1000}, async function() {
-    let platform = "android";
-    console.info( process.platform );
-    if ( process.platform === "darwin" ) {
-        platform = "ios";
-    }
-    let driver =  await startAppiumClient(platform, true); 
+    let platform = process.env.PLATFORM;
+    if ( ! platform )
+        throw new Error("Please set the PLATFORM enviornment variable");
+    let driver =  await startAppiumClient(platform, (process.env.QUICK==="true"?true:false)); 
     global.driver = driver;
     global.platform = platform;
     global.first = true;

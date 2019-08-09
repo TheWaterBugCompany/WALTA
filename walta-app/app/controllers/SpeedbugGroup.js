@@ -1,4 +1,3 @@
-var { makeAccessibilityLabel } = require('ui/ViewUtils');
 function cleanUp() {
     $.destroy();
     $.off();
@@ -27,7 +26,7 @@ function addTile(sb) {
     tile.on("select", (refId) => $.trigger("select", refId ) );
     index.pushTile( tile );
     $.bugContainer.add( tile.getView() );
-    $.notSureButton.accessibilityLabel = 'Not Sure ';
+    $.notSureButton.accessibilityLabel = `Not Sure ${refId}`;
     if ( $.bugContainer.children.length > 1 ) {
         $.notSureButton.visible = true;
     } else {

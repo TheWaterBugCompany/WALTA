@@ -31,19 +31,10 @@ $.TopLevelWindow.title = "Details";
 $.name = "decision";
 var actions = [];
 
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK );
-	}
-}
-
-$.TopLevelWindow.addEventListener('swipe', swipeListener);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.destroy();
 	$.off();
 	actions.forEach( (a) => a.cleanUp() );
-	$.TopLevelWindow.removeEventListener('swipe', swipeListener);
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 

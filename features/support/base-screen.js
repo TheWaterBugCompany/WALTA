@@ -14,7 +14,7 @@ class BaseScreen {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, 50000, message);
+        }, 6000, message);
     }
 
     async waitFor() {
@@ -29,14 +29,10 @@ class BaseScreen {
         }
     }
 
-    textSelector( sel ) {
-        return `//*[@content-desc="${sel}."]/android.widget.FrameLayout/android.widget.EditText`;
-    }
-
     selector( sel ) {
         let res = "~"+sel;
         if ( this.isAndroid() )
-            res += res + "."; // accessibility labels get periods
+            res += "."; // accessibility labels get periods
         return res;
     }
 
@@ -46,8 +42,16 @@ class BaseScreen {
     }
 
     async enter( sel, text ) {
-        var el = await this.driver.$( this.textSelector( sel ) );
-        await el.addValue(text);
+        var el = await this.driver.$( this.selector( sel ) );
+        if ( this.isAndroid() && el.getTagName() !== "android.widget.EditText" ) {
+            el = await el.$("//android.widget.EditText");
+        }
+        await el.setValue(text);
+        if ( this.isIos() ) {
+            await this.driver.touchAction({ action: "tap", x: 0, y: 0  });
+        } else {
+            await this.driver.hideKeyboard();
+        }
     }
 
     async clickByText( text ) {

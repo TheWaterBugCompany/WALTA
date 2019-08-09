@@ -5,18 +5,16 @@ When('I select the random gallery', async function () {
 
 Then('A photo gallery with a random selection of {int} images is opened', async function (int) {
     await this.gallery.waitFor();
-    
     await this.swipeLeft(this);
     await this.swipeLeft(this);
-    await this.swipeLeft(this);
-    await this.swipeLeft(this);
-    await this.swipeLeft(this);
-    
     await this.swipeRight(this);
-    await this.swipeRight(this);
-    await this.swipeRight(this);
-    await this.swipeRight(this);
-    await this.swipeRight(this);
+    await this.swipeRight(this)
+});
 
-    // How to test for failure - screenshot check??
+When('the photo gallery is closed', async function () {
+  await this.gallery.close();
+});
+
+Then('the menu screen appears', async function () {
+  await this.menu.waitFor();
 });

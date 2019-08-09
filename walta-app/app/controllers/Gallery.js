@@ -25,14 +25,16 @@
  */
 exports.baseController  = "TopLevelWindow";
 $.name = "gallery";
-
+var Topics = require('ui/Topics');
 var Layout = require('ui/Layout');
 var { urlToLocalAsset } = require("ui/PlatformSpecific");
 
-$.TopLevelWindow.addEventListener('close', function cleanUp() {
-    $.views.forEach( (v) => v.release() );
-	$.TopLevelWindow.removeEventListener('close', cleanUp );
-});
+if ( Ti.Platform.osname === 'android') {
+    $.TopLevelWindow.addEventListener('close', function cleanUp() {
+        $.views.forEach( (v) => v.release() );
+        $.TopLevelWindow.removeEventListener('close', cleanUp );
+    });
+}
 
 var key = $.args.key;
 var photos = $.args.photos;
@@ -41,7 +43,7 @@ if ( _.isUndefined( showPager ) ) showPager = true;
 
 if ( !photos && key )
     photos = _.first( _.shuffle( key.findAllMedia('photoUrls') ), 20 );
-console.info(JSON.stringify(photos));
+
 $.views = _(photos).map( (url) => {
         // NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
         // we cheat by using a WebView.
@@ -113,5 +115,6 @@ if ( showPager ) {
 }
 
 function closeEvent(e) {
-    $.TopLevelWindow.close();
+    Topics.fireTopicEvent( Topics.BACK );
+    e.cancelBubble = true;
 }

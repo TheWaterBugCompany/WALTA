@@ -1,9 +1,9 @@
 <Alloy>
 	<View id="content">
-		<View id="closeButton" onClick="closeEvent">
+		<View id="closeButton" onClick="closeEvent" accessibilityLabel="Close" >
 			<ImageView class="close_button_image"></ImageView>
 		</View>
-		<ScrollableView onScroll="scrollEvent" showPagingControl=false accessibilityLabel='photo_gallery' id="scrollView">
+		<ScrollableView onScroll="scrollEvent" showPagingControl="false" accessibilityLabel="Photo Gallery" id="scrollView">
 		</ScrollableView>
 	</View>
 </Alloy>

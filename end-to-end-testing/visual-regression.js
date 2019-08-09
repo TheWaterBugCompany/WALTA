@@ -47,7 +47,7 @@ async function verifyScreenShot( name ) {
 }
 
 describe('Visual regression tests', function() {
-    it.only('gallery images should display correctly',async function() {
+    it('gallery images should display correctly',async function() {
         await navigateBrowseViaIdentify( world, "Adult Baetidae");
         await world.taxon.waitForText("Baetids");
         await world.taxon.goMagnify();
