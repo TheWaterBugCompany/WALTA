@@ -3,7 +3,7 @@ const BaseScreen = require('./base-screen');
 class KeySearchScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Choose the best match";
+        this.presenceSelector = this.selector("Choose the best match");
     }
 
     async choose( questionText ) {
@@ -20,7 +20,7 @@ class KeySearchScreen extends BaseScreen {
 
     async goMagnifyTop() {
       var el = await this.driver.$(this.selector("question_top"));
-      el = await el.$(this.selector("photo_select_magnify_button"));
+      el = await el.$(this.selector("Magnify"));
       await el.click();
       await this.world.gallery.waitFor();
     }

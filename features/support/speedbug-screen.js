@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class SpeedbugScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Speedbug";
+        this.presenceSelector = this.selector("Speedbug");
     }
     async chooseSpeedbug( refId ) {
         await this.click( `Speedbug ${refId}` );

@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class SampleScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Sample";
+        this.presenceSelector = this.selector("Sample");
     }
     async selectAddSample() {
         await this.click("Add Sample");

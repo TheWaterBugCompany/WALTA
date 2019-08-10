@@ -38,7 +38,10 @@ async function navigateKeyViaTray( world, questions ) {
 async function navigateBrowseViaIdentify( world, species ) {
   await world.menu.selectIdentify();
   await world.methodSelect.viaBrowse();
-  await world.browse.chooseSpecies(species);
+  if ( species )
+     await world.browse.chooseSpecies(species);
+  else
+    await world.browse.quickSelectFirst();
 }
 
 async function navigateBrowseViaTray( world, species ) {

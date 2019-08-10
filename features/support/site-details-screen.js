@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class SiteDetailsScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Site Details";
+        this.presenceSelector = this.selector("Site Details");
     }
 
     async selectMayfly() {

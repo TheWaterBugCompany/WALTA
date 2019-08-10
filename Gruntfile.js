@@ -19,7 +19,9 @@ module.exports = function(grunt) {
       }
     }
 
-    const SOURCES = [  './walta-app/app/**/*.js', 
+    const SOURCES = [  
+    './walta-app/tiapp.xml',  
+    './walta-app/app/**/*.js', 
     './walta-app/app/**/*.xml', 
     './walta-app/app/**/*.css' ];
 
@@ -48,10 +50,10 @@ module.exports = function(grunt) {
           build_android_test: build(`--build-only --platform android --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir test`),
           build_ios_test: build("--build-only --platform ios --target dist-adhoc --deploy-type production -R  \"Michael Sharman (6RRED3LUUV)\" -P \"eb88a8c0-d6e1-4622-a69b-3513ebe5be62\" --output-dir test"),
 
-          install_app_android: `adb install ./release/Waterbug.apk`,
+          install_app_android: `adb install ./test/Waterbug.apk`,
           uninstall_app_android: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
 
-          install_app_ios: `./node_modules/.bin/ios-deploy --uninstall --noninteractive --bundle ./release/Waterbug.ipa`,
+          install_app_ios: `./node_modules/.bin/ios-deploy --nostart --uninstall --noninteractive --bundle ./test/Waterbug.ipa --bundle_id ${APP_ID}`,
           uninstall_app_ios: `./node_modules/.bin/ios-deploy --uninstall_only --bundle_id ${APP_ID}`,
 
           acceptance_test_android: {

@@ -3,7 +3,7 @@ const BaseScreen = require('./base-screen');
 class TaxonScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Details";
+        this.presenceSelector = this.selector("Details");
     }
     async goBack() {
       await this.click("Back");

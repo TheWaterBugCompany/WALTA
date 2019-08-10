@@ -33,7 +33,10 @@ function getCapabilities( platform, quick ) {
             deviceName: "The Code Sharman Test iPhone",
             udid: "auto",
             xcodeOrgId: "ZG6HRCUR8Q",
-            xcodeSigningId: "iPhone Developer"
+            xcodeSigningId: "iPhone Developer",
+            useJSONSource: false,
+            waitForQuiescence: false,
+            skipLogCapture: true
 
         });
         if ( !quick ) {

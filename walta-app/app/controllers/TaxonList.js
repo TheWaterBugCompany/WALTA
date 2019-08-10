@@ -9,7 +9,9 @@ acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.
 acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample }  ) );
 
 function clickItem(e) {
-    Topics.fireTopicEvent( Topics.JUMPTO, { id: e.itemId, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+    var item = $.content.sections[e.sectionIndex].getItemAt(e.itemIndex);
+    console.info(`item = ${JSON.stringify(item)}`);
+    Topics.fireTopicEvent( Topics.JUMPTO, { id: item.properties.itemId, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
 }
 
 // Create a data set that displays all the taxon species
@@ -24,12 +26,12 @@ _.each( taxonList, function( txn ) {
             template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpeciesTaxon': 'taxon' ),
             properties: { itemId: txn.id}
         });
-    }
+    } 
     if ( txn.commonName != '') {
         if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.commonName; } ) == -1 ) {
             dataSet.push( {
                 title: { text: txn.commonName  },
-                properties: { itemId: txn.id }
+                properties: { itemId: txn.id}
             });
         }
     }
