@@ -130,7 +130,7 @@ function startApp() {
   Topics.subscribe( Topics.HOME, () => openController("Menu",{ slide: "none" }) );
   Topics.subscribe( Topics.LOGIN, () => openController("LogIn", { slide: "none" }));
   Topics.subscribe( Topics.LOGGEDIN, () => Topics.fireTopicEvent( Topics.HOME ) );
-  Topics.subscribe( Topics.BROWSE, () => openController("Browse") );
+  Topics.subscribe( Topics.BROWSE, () => openController("TaxonList") );
   Topics.subscribe( Topics.SAMPLETRAY, () => openController("SampleTray") );
   Topics.subscribe( Topics.IDENTIFY, (data) => openController("SampleTray",data) );
   Topics.subscribe( Topics.SITEDETAILS, (args) => siteDetailsWindow(args) );

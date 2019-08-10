@@ -27,6 +27,5 @@ Before(  {timeout: 120*1000}, async function() {
 });
 
 AfterAll( async function() {
-    if ( global.driver )
-        await stopAppiumClient( global.driver );
+    //if ( global.driver ) await stopAppiumClient( global.driver );
 });

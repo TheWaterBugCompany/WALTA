@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class HabitatScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Habitat";
+        this.presenceSelector = this.selector("Habitat");
     }
 
     async setLeafPacks( p ) {

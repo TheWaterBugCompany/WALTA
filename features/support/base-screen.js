@@ -4,7 +4,7 @@ class BaseScreen {
         this.driver = world.driver;
         this.platform = world.platform;
         this.world = world;
-        this.presenceSelector="unknown_base_screen"; // casues waitFor to fail
+        this.presenceSelector=this.selector("unknown_base_screen"); // casues waitFor to fail
     }
 
     isIos() { return this.platform === "ios"; }
@@ -14,11 +14,11 @@ class BaseScreen {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, 6000, message);
+        }, 60000, message);
     }
 
     async waitFor() {
-        await this.waitForRaw( this.selector(this.presenceSelector), `${this.constructor.name} not present` );
+        await this.waitForRaw( this.presenceSelector, `${this.constructor.name} not present` );
     }
 
     async waitForText(text) {

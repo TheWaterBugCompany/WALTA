@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class MethodSelectScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Select Method";
+        this.presenceSelector = this.selector("Select Method");
     }
     async viaKey() {
         await this.click('Key');

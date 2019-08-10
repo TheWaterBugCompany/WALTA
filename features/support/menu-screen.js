@@ -3,7 +3,7 @@ const BaseScreen = require('./base-screen');
 class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "Waterbug Survey";
+        this.presenceSelector = this.selector("Waterbug Survey");
     }
     async login( email, password ) {
         await this.click('Login');

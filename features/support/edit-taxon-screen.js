@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class EditTaxonScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "edit_taxon_species_name";
+        this.presenceSelector = this.selector("edit_taxon_species_name");
     }
     async goMagnify() {
       await this.click("photo_select_magnify_button");
