@@ -34,9 +34,7 @@ describe('Back button tests', function() {
         await world.browse.waitFor();
     });
 
-    //failed
-
-    it.only('should go back with a right swipe from survey wizard', async function() {
+    it('should go back with a right swipe from survey wizard', async function() {
         await world.menu.selectWaterbugSurvey();
         await swipeRight();
         await world.menu.waitFor();
@@ -68,7 +66,6 @@ describe('Back button tests', function() {
         await world.speedbug.waitFor();
     } );
 
-//failed
     it('should return to speedbug when returning from question via identify', async function() {
         await navigateSpeedbugNotSureViaIdentify( world, "k_bivalvia" );
         await world.taxon.waitForText("Shell halves are large");
@@ -76,7 +73,6 @@ describe('Back button tests', function() {
         await world.speedbug.waitFor();
     }  );
 
- //failed
     it('should return to speedbug when returning from taxon via sample tray', async function() {
         await navigateSpeedbugViaTray( world, "hyriidae" );
         await world.taxon.waitForText("Freshwater mussels");
@@ -86,7 +82,6 @@ describe('Back button tests', function() {
         await world.sample.waitFor();
     });
 
-//failed
     it('should return to speedbug when returning from question via sample tray', async function() {
         await navigateSpeedbugNotSureViaTray( world, "k_bivalvia" );
         await world.taxon.waitForText("Shell halves are large");
@@ -95,14 +90,14 @@ describe('Back button tests', function() {
         await navigateGoBack(world);
         await world.sample.waitFor();
     });
- //failed
+
     it('should return to list when returning from taxon via sample tray', async function() {
-        await navigateBrowseViaTray( world, "'U' bent midges");
-        await world.taxon.waitForText("Baetids");
+        await navigateSpeedbugViaIdentify( world, "hyriidae" );
+        await world.taxon.waitForText("Freshwater mussels");
         await world.taxon.goBack();
-        await world.browse.waitFor();
+        await world.speedbug.waitFor();
     });
- //failed
+
     it('should return to key when returning from gallery',async function() {
         await world.menu.selectIdentify();
         await world.methodSelect.viaKey();
@@ -111,20 +106,19 @@ describe('Back button tests', function() {
         await navigateGoBack(world);
         await world.keySearch.waitFor();
     });
- //failed
+
     it('should return to taxon when returning from gallery',async function() {
-        await navigateBrowseViaIdentify( world );
-        await world.taxon.waitForText("'U' bent midges");
+        await navigateSpeedbugViaIdentify( world, "hyriidae" );
+        await world.taxon.waitForText("Freshwater mussels");
         await world.taxon.goMagnify();
         await navigateGoBack(world);
         await world.taxon.waitFor();
     });
 
     // relies on having a specific camera app installed so fails on real devices
- //failed
-    it.skip('should return to edit taxon when returning from gallery',async function() {
-        await navigateBrowseViaTray( world );
-        await world.taxon.waitForText("'U' bent midges");
+    it('should return to edit taxon when returning from gallery',async function() {
+        await navigateSpeedbugViaTray( world, "hyriidae" );
+        await world.taxon.waitForText("Freshwater mussels");
         await world.taxon.selectAddToSample();
         await navigateTakePhoto(world);
         await world.editTaxon.waitFor();
