@@ -41,8 +41,10 @@ var photos = $.args.photos;
 var showPager = $.args.showPager;
 if ( _.isUndefined( showPager ) ) showPager = true;
 
-if ( !photos && key )
+Ti.API.info(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
+if ( !photos && key ) {
     photos = _.first( _.shuffle( key.findAllMedia('photoUrls') ), 20 );
+}
 
 $.views = _(photos).map( (url) => {
         // NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
@@ -83,7 +85,7 @@ function createDot(i) {
 function updateCurrentPage( dots, selPage ) {
     $.scrollView.accessibilityLabel = `Photo ${selPage+1}`;
 	for( var i = 0; i < dots.length; i++ ) {
-		dots[i].setOpacity( selPage === i ? 1.0 : 0.5 );
+		dots[i].opacity = ( selPage === i ? 1.0 : 0.5 );
 	}
 }
 function scrollEvent(e) {
@@ -111,7 +113,7 @@ if ( showPager ) {
     });
     $.content.add( pager );
 
-    var lastPage = $.scrollView.getCurrentPage();
+    var lastPage = $.scrollView.currentPage;
     updateCurrentPage( dots, lastPage );
 }
 

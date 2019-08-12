@@ -138,7 +138,7 @@ function startApp() {
   Topics.subscribe( Topics.COMPLETE, () => openController("Summary") );
   Topics.subscribe( Topics.HISTORY, () => openController("SampleHistory") );
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
-  Topics.subscribe( Topics.GALLERY, () => openController("Gallery", { showPager: false }) );
+  Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
   Topics.subscribe( Topics.HELP, () => openController("Help") );
   Topics.subscribe( Topics.ABOUT, () => openController("About") );
 
