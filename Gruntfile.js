@@ -32,7 +32,8 @@ module.exports = function(grunt) {
             command: 'node mock-server', stdout: 'inherit', stderr: 'inherit'
           },
           alloy_plugins: {
-            command: `./node_modules/.bin/alloy install plugin walta-app`
+            command: `./node_modules/.bin/alloy install plugin walta-app`,
+            exitCode: [ 0, 1 ]
           },
 
           clean: {
@@ -53,39 +54,47 @@ module.exports = function(grunt) {
           install_app_android: `adb install ./test/Waterbug.apk`,
           uninstall_app_android: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
 
-          install_app_ios: `./node_modules/.bin/ios-deploy --nostart --uninstall --noninteractive --bundle ./test/Waterbug.ipa --bundle_id ${APP_ID}`,
+          install_app_ios: `./node_modules/.bin/ios-deploy --uninstall --bundle ./test/Waterbug.ipa`,
           uninstall_app_ios: `./node_modules/.bin/ios-deploy --uninstall_only --bundle_id ${APP_ID}`,
 
           acceptance_test_android: {
-            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
+            exitCode: [ 0, 1 ]
           },
 
           end_to_end_test_android: {
-            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
+            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
+            exitCode: [ 0, 1 ]
           },
 
           quick_acceptance_test_android: {
-            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
+            exitCode: [ 0, 1 ]
           },
 
           quick_end_to_end_test_android: {
-            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
+            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
+            exitCode: [ 0, 1 ]
           },
 
           acceptance_test_ios: {
-            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
+            exitCode: [ 0, 1 ]
           },
 
           end_to_end_test_ios: {
-            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
+            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
+            exitCode: [ 0, 1 ]
           },
 
           quick_acceptance_test_ios: {
-            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit'
+            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
+            exitCode: [ 0, 1 ]
           },
 
           quick_end_to_end_test_ios: {
-            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`
+            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
+            exitCode: [ 0, 1 ]
           },
 
           // test_console: "calabash-android console walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature"
@@ -94,8 +103,8 @@ module.exports = function(grunt) {
           //clean: `rm -rf walta-app/build/* && rm -rf walta-app/dist/* && rm -rf walta-app/Resources/*`,
           debug: build(`--platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331`),
           preview_android: build(`--platform android --deploy-type development --liveview -target emulator --device-id ${AVD_NAME}`),
-          preview_ios: build(`--platform ios --deploy-type development --target simulator --liveview --device-id "5750311A-5F18-477F-AF43-C97FDB8D49D0"`),
-          device_preview_android: build(`--platform android --deploy-type development --target device`),
+          preview_ios: build(` --platform ios --deploy-type development --target simulator --liveview --device-id "5750311A-5F18-477F-AF43-C97FDB8D49D0"`),
+          device_preview_android: build(`--liveview --platform android --deploy-type development --target device`),
           device_preview_ios: build(`--liveview --platform ios -V  \"Michael Sharman (ZG6HRCUR8Q)\"  -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\" --deploy-type development --target device `),
           
           release_ios: build(`--build-only --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release`),

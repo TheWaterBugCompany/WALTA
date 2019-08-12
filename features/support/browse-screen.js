@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class BrowseScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = this.selector("Browse"); 
+        this.presenceSelector = "XCUIElementTypeTable";
     }
     async quickSelectFirst() {
         await this.driver.touchAction([{action:"tap",x:25,y:9}]);
