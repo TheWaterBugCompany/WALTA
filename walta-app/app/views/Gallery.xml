@@ -3,7 +3,7 @@
 		<View id="closeButton" onClick="closeEvent" accessibilityLabel="Close" >
 			<ImageView class="close_button_image"></ImageView>
 		</View>
-		<ScrollableView onScroll="scrollEvent" showPagingControl="false" accessibilityLabel="Photo Gallery" id="scrollView">
+		<ScrollableView onScroll="scrollEvent" showPagingControl="false" accessibilityLabel="Photo 1" id="scrollView">
 		</ScrollableView>
 	</View>
 </Alloy>

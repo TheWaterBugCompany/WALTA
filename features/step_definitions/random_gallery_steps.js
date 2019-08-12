@@ -4,11 +4,15 @@ When('I select the random gallery', async function () {
   });
 
 Then('A photo gallery with a random selection of {int} images is opened', async function (int) {
-    await this.gallery.waitFor();
+    await this.gallery.waitForLabel("Photo 1");
     await this.swipeLeft(this);
+    await this.gallery.waitForLabel("Photo 1");
     await this.swipeLeft(this);
+    await this.gallery.waitForLabel("Photo 1");
     await this.swipeRight(this);
-    await this.swipeRight(this)
+    await this.gallery.waitForLabel("Photo 1");
+    await this.swipeRight(this);
+    await this.gallery.waitForLabel("Photo 1");
 });
 
 When('the photo gallery is closed', async function () {

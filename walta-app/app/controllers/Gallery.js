@@ -69,7 +69,7 @@ $.scrollView.bottom = ( showPager ? Layout.PAGER_HEIGHT : 0 );
 // Create a dot view
 function createDot(i) {
 	var dot = Ti.UI.createView( {
-        accessibilityLabel: `Photo ${i}`,
+        accessibilityLabel: `Jump To Photo ${i}`,
 		backgroundImage: '/images/dot.png',
 		width: Layout.PAGER_DOT_SIZE,
 		height: Layout.PAGER_DOT_SIZE,
@@ -81,6 +81,7 @@ function createDot(i) {
 
 // Update current page
 function updateCurrentPage( dots, selPage ) {
+    $.scrollView.accessibilityLabel = `Photo ${selPage+1}`;
 	for( var i = 0; i < dots.length; i++ ) {
 		dots[i].setOpacity( selPage === i ? 1.0 : 0.5 );
 	}

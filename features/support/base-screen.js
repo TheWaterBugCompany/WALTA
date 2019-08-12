@@ -14,13 +14,17 @@ class BaseScreen {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, 60000, message);
+        }, 25000, message);
     }
 
     async waitFor() {
         await this.waitForRaw( this.presenceSelector, `${this.constructor.name} not present` );
     }
 
+    async waitForLabel(label) {
+        await this.waitForRaw( this.selector(label), `${label} not present` );
+    }
+ 
     async waitForText(text) {
         if ( this.isIos() ) {
             await this.waitForRaw( this.selector(text), `text "${text}" not present`);
