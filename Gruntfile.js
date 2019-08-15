@@ -32,7 +32,7 @@ module.exports = function(grunt) {
               if ( platform === "android" ) {
                 return `adb install ./${build_type}/Waterbug.apk`;
               } else if ( platform === "ios" ) {
-                return `./node_modules/.bin/ios-deploy --no-wifi --nostart --uninstall --bundle ./${build_type}/Waterbug.app`;
+                return `./node_modules/.bin/ios-deploy --no-wifi --nostart --uninstall --bundle ./${build_type}/Waterbug.ipa --bundle_id ${APP_ID}`;
               } else {
                 throw new Error(`Unknown platform "${platform}"`);
               }
@@ -59,7 +59,8 @@ module.exports = function(grunt) {
                 if ( platform === "android" ) {
                   return `${process.env.ANDROID_HOME}/platform-tools/adb shell am start -W -S -n ${APP_ID}/${APP_ACTIVITY}`;
                 } else if ( platform === "ios" ) {
-                  return `./node_modules/.bin/ios-deploy --no-wifi -m --bundle_id ${APP_ID}`;
+                  //return `./node_modules/.bin/ios-deploy --no-wifi -m --bundle_id ${APP_ID}`;
+                  return "echo FIXME: use appium to launch IPA?";
                 } else {
                   throw new Error(`Unknown platform "${platform}"`);
                 }
@@ -181,7 +182,6 @@ module.exports = function(grunt) {
         },
 
         run: {
-         
           start_live_view: {
             options: { wait: false },
             exec: "./node_modules/.bin/liveview server start -p walta-app"
