@@ -181,14 +181,4 @@ function startApp() {
   Topics.fireTopicEvent( Topics.HOME );
 }
 
-/* A hacky switch to enter unit test mode. 
-  FIXME: Would it be cleaner to have unit tests in seperate app?
-*/
-Ti.API.debug(`Alloy.CFG.unitTestMode = ${Alloy.CFG.unitTestMode}`);
-Ti.API.debug(`Alloy.CFG.stopAfterEachTest = ${Alloy.CFG.stopAfterEachTest}`);
-//Ti.Android.currentActivity.intent.getBooleanExtra("android.intent.action.UnitTest", false )
-if ( Alloy.CFG.unitTestMode ) {
-  require("specs/index");
-} else {
-  startApp();
-}
+startApp();

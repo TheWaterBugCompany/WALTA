@@ -47,9 +47,13 @@ function generateThumbnail( fileOrBlob ) {
     } else {
         fullPhoto = fileOrBlob;
     }
+    var aspectRatio = (fullPhoto.height/fullPhoto.width);
     if ( ( fullPhoto.mimeType !== "image/jpeg" && fullPhoto.mimeType != "image/gif" ) || fullPhoto.length > 4*1024*1024 ) {
-        // attempt to compress and/or convert to JPEG
+        Ti.API.info("Resizing and compressing photo...");
+ 
+        fullPhoto = fullPhoto.imageAsReszied(1024, 1024*aspectRatio);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
+
     }
     Ti.API.info(`Saving full size photo...`);
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().unix()}.jpg`);
@@ -59,7 +63,7 @@ function generateThumbnail( fileOrBlob ) {
     var pxHeight = Ti.UI.convertUnits( `${$.photoSelectInner.size.height}dp`, Ti.UI.UNIT_PX );
 
     Ti.API.info(`photo view width = ${$.photoSelectInner.size.width} height = ${$.photoSelectInner.size.height}`);
-    var newHeight = pxWidth*(fullPhoto.height/fullPhoto.width);
+    var newHeight = pxWidth*aspectRatio;
     
     var thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
     fullPhoto = null;
