@@ -17,5 +17,5 @@ cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
 cp -rf ./node_modules/leaflet/dist/* $ASSET_DIR/leaflet
 PATH=./node_modules/.bin:$PATH
 ti config -a paths.hooks ./plugins/unittest/1.0/hooks
-liveview install clihook
+# not needed in 8 GA liveview install clihook
 alloy install plugin walta-app

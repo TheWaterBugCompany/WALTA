@@ -27,7 +27,6 @@ exports.init = function (logger, config, cli) {
 
 		if (cli.argv["unit-test"]) {
 			const RESOURCES_DIR = join(this.projectDir, 'Resources');
-			debug(`args are: ${JSON.stringify(data.args)}`);
 			const srcFile = data.args[0];
 			  
 			if (new RegExp('^' + RESOURCES_DIR.replace(/\\/g, '/') + '(/(android|ipad|ios|iphone|windows|blackberry|tizen))?/alloy/controllers/index.js$').test(srcFile.replace(/\\/g, '/'))) {
