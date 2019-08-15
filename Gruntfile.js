@@ -1,24 +1,12 @@
 module.exports = function(grunt) {
-    const APP_ID = process.env.APP_ID || 'net.thewaterbug.waterbug';
-    const AVD_NAME = process.env.AVD_NAME || 'Nexus7';
+    const APP_ID = "net.thewaterbug.waterbug";
+    const APP_ACTIVITY = ".WaterbugActivity";
     const KEYSTORE = process.env.KEYSTORE || '/home/msharman/Documents/Business/thecodesharman.keystore';
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
+    const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
+    const PROFILE = process.env.PROFILE || "eb88a8c0-d6e1-4622-a69b-3513ebe5be62";
     
-    // Project configuration.
-    function build(extra_args) {
-      return {
-        command: `./node_modules/.bin/titanium build --project-dir walta-app ${extra_args}`, 
-        stdout: 'inherit', 
-        stderr: 'inherit',
-        options: { 
-          env: Object.assign({}, process.env, {
-            "ALLOY_PATH": "./node_modules/.bin/alloy"
-          })
-        } 
-      }
-    }
-
     const SOURCES = [  
     './walta-app/tiapp.xml',  
     './walta-app/app/**/*.js', 
@@ -26,14 +14,9 @@ module.exports = function(grunt) {
     './walta-app/app/**/*.css' ];
 
     grunt.initConfig({
-      
       exec: {
           mock_server: {
             command: 'node mock-server', stdout: 'inherit', stderr: 'inherit'
-          },
-          alloy_plugins: {
-            command: `./node_modules/.bin/alloy install plugin walta-app`,
-            exitCode: [ 0, 1 ]
           },
 
           clean: {
@@ -41,21 +24,47 @@ module.exports = function(grunt) {
           },
 
           clean_test: {
-            command: 'rm ./test/*.{apk,ipa}'
+            command: 'rm ./test/*.{apk,ipa} || rm ./unit-test/*.{apk,ipa}'
           },
 
-          unit_test_android: {
-            command: `adb shell am start -n net.thewaterbug.waterbug/.WaterbugActivity --ez "android.intent.action.UnitTest" true`
+          install: {
+            command: function(platform,build_type) {
+              if ( platform === "android" ) {
+                return `adb install ./${build_type}/Waterbug.apk`;
+              } else if ( platform === "ios" ) {
+                return `./node_modules/.bin/ios-deploy --no-wifi --nostart --uninstall --bundle ./${build_type}/Waterbug.app`;
+              } else {
+                throw new Error(`Unknown platform "${platform}"`);
+              }
+            },
+            stdout: false
           },
 
-          build_android_test: build(`--build-only --platform android --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir test`),
-          build_ios_test: build("--build-only --platform ios --target dist-adhoc --deploy-type production -R  \"Michael Sharman (6RRED3LUUV)\" -P \"eb88a8c0-d6e1-4622-a69b-3513ebe5be62\" --output-dir test"),
+          uninstall: {
+            command: function(platform,build_type) {
+            if ( platform === "android" ) {
+              return `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`;
+            } else if ( platform === "ios" ) {
+              return `./node_modules/.bin/ios-deploy --uninstall_only --bundle_id ${APP_ID}`;
+            } else {
+              throw new Error(`Unknown platform "${platform}"`);
+            }
+           },
+           stdout: false
+          },
 
-          install_app_android: `adb install ./test/Waterbug.apk`,
-          uninstall_app_android: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
-
-          install_app_ios: `./node_modules/.bin/ios-deploy --uninstall --bundle ./test/Waterbug.ipa`,
-          uninstall_app_ios: `./node_modules/.bin/ios-deploy --uninstall_only --bundle_id ${APP_ID}`,
+          launch: {
+             command: function(platform) {
+                
+                if ( platform === "android" ) {
+                  return `${process.env.ANDROID_HOME}/platform-tools/adb shell am start -W -S -n ${APP_ID}/${APP_ACTIVITY}`;
+                } else if ( platform === "ios" ) {
+                  return `./node_modules/.bin/ios-deploy --no-wifi -m --bundle_id ${APP_ID}`;
+                } else {
+                  throw new Error(`Unknown platform "${platform}"`);
+                }
+              }
+          },
 
           acceptance_test_android: {
             command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
@@ -97,41 +106,145 @@ module.exports = function(grunt) {
             exitCode: [ 0, 1 ]
           },
 
-          // test_console: "calabash-android console walta-app/build/android/bin/Waterbug.apk features/submit_sample.feature"
-         // unit_test: `appc ti build --project-dir walta-app --target emulator --device-id ${AVD_NAME} --liveview --platform android --deploy-type development`,
           unit_test_node: `NODE_PATH="./walta-app/app:./walta-app/app/lib" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js`,
-          //clean: `rm -rf walta-app/build/* && rm -rf walta-app/dist/* && rm -rf walta-app/Resources/*`,
-          debug: build(`--platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331`),
-          preview_android: build(`--platform android --deploy-type development --liveview -target emulator --device-id ${AVD_NAME}`),
-          preview_ios: build(` --platform ios --deploy-type development --target simulator --liveview --device-id "5750311A-5F18-477F-AF43-C97FDB8D49D0"`),
-          device_preview_android: build(`--liveview --platform android --deploy-type development --target device`),
-          device_preview_ios: build(`--liveview --platform ios -V  \"Michael Sharman (ZG6HRCUR8Q)\"  -P \"9bc28620-8680-4eea-9458-c346b32fb4f2\" --deploy-type development --target device `),
-          
-          release_ios: build(`--build-only --platform ios -R  \"Michael Sharman (6RRED3LUUV)\" -P \"e2935a1f-0c22-4716-8020-b61024ce143f\" --target dist-appstore --output-dir release`),
-          release_android: build(` --build-only  --platform android  --target dist-playstore --keystore ${KEYSTORE} --store-password ${KEYSTORE_PASSWORD} --alias ${KEYSTORE_SUBKEY} --output-dir release`)
+          //debug: build(`--platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331`),
+
+          build: {
+            command: function(platform,build_type) {
+              let args = [ "--project-dir walta-app", "--build-only" ];
+
+              function production() {
+                if ( platform === "android" ) {
+                  args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                } else if ( platform === "ios" ){
+                  args.push( "--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
+                } else {
+                  throw new Error(`Unknwon platform "${platform}"`);
+                }
+              }
+
+              if ( platform ) {
+                args.push(`--platform ${platform}`);
+              } else {
+                throw new Error("please specify platform!");
+              }
+
+              switch( build_type ) {
+                case "test":
+                  production();
+                  args.push("--output-dir test");
+                  break;
+
+                case "unit-test":
+                  production();
+                  args.push("--unit-test");
+                  args.push("--output-dir unit-test");
+                  break;
+
+                case "release":
+                  production();
+                  args.push("--output-dir release");
+                  break;
+
+                case "preview":
+                  production();
+                  args.push("--liveview");
+                  args.push("--output-dir preview");
+                  break;
+
+                case "preview/unit-test":
+                  production();
+                  args.push("--unit-test");
+                  args.push("--liveview");
+                  args.push("--output-dir preview/unit-test");
+                  break;
+
+                default:
+                  throw new Error(`Unknown build "${build_type}" type!`)
+              }
+              return `./node_modules/.bin/titanium build ${args.join(" ")}`;
+            },
+            stdout: 'inherit', 
+            stderr: 'inherit',
+            options: { 
+                env: Object.assign({}, process.env, {
+                  "ALLOY_PATH": "./node_modules/.bin/alloy"
+                })
+              },
+          },
+
+          stop_live_view: {
+            command: "./node_modules/.bin/liveview server stop",
+            exitCode: [ 0, 1 ]
+          },
+              
         },
+
+        run: {
+         
+          start_live_view: {
+            options: { wait: false },
+            exec: "./node_modules/.bin/liveview server start -p walta-app"
+          }
+        },
+
         newer: {
+          unit_test_android: {
+            src: SOURCES,
+            dest: "./unit-test/Waterbug.apk",
+            options: { tasks: [ "exec:clean","exec:build:android:unit-test"] }  
+          },
+
+          unit_test_ios: {
+            src: SOURCES,
+            dest: './unit-test/Waterbug.ipa',
+            options: { tasks: [ 'exec:clean', 'exec:build:ios:unit-test'] }  
+          },
+
           test_android: {
             src: SOURCES,
-            dest: './test/Waterbug.apk',
-            options: { tasks: [ 'exec:clean','exec:build_android_test'] }  
+            dest: "./test/Waterbug.apk",
+            options: { tasks: [ "exec:clean","exec:build:android:test"] }  
           },
 
           test_ios: {
             src: SOURCES,
-            dest: './test/Waterbug.ipa',
-            options: { tasks: [ 'exec:clean', 'exec:build_ios_test'] }  
+            dest: "./test/Waterbug.ipa",
+            options: { tasks: [ "exec:clean", "exec:build:ios:test"] }  
           },
 
           release_android: {
             src: SOURCES,
-            dest: './release/Waterbug.apk',
-            options: { tasks: [ 'exec:clean','exec:release_android'] }  
+            dest: "./release/Waterbug.apk",
+            options: { tasks: [ "exec:clean", "exec:build:android:release" ] }  
           },
           release_ios: {
             src: SOURCES,
-            dest: './release/Waterbug.ipa',
-            options: { tasks: [ 'exec:clean', 'exec:release_ios' ] }  
+            dest: "./release/Waterbug.ipa",
+            options: { tasks: [ "exec:clean", "exec:build:ios:release" ] }  
+          },
+
+          preview_android: {
+            src: SOURCES,
+            dest: "./preview/Waterbug.apk",
+            options: { tasks: [ "exec:clean", "exec:build:android:preview" ] }  
+          },
+
+          preview_ios: {
+            src: SOURCES,
+            dest: "./preview/Waterbug.ipa",
+            options: { tasks: [ "exec:clean", "exec:build:ios:preview" ] }  
+          },
+
+          preview_unit_test_android: {
+            src: SOURCES,
+            dest: "./preview/unit-test/Waterbug.apk",
+            options: { tasks: [ "exec:clean", "exec:build:android:preview" ] }  
+          },
+          preview_unit_test_ios: {
+            src: SOURCES,
+            dest: "./preview/unit-test/Waterbug.ipa",
+            options: { tasks: [ "exec:clean", "exec:build:ios:preview" ] }  
           },
         }
     });
@@ -139,11 +252,12 @@ module.exports = function(grunt) {
     
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks("grunt-exec");
+    grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
 
     // Default task(s).
-    grunt.registerTask('test_ios', [ 'newer:test_ios', 'exec:acceptance_test_ios', 'exec:end_to_end_test_ios' ] );
-    grunt.registerTask('test_android', ['newer:test_android', 'exec:uninstall_app_android', 'exec:acceptance_test_android', 'exec:end_to_end_test_android' ] );
+    grunt.registerTask('test_ios', [ 'unit_test_ios', 'newer:test_ios', 'exec:end_to_end_test_ios', 'exec:acceptance_test_ios' ] );
+    grunt.registerTask('test_android', [ 'unit_test_ios', 'newer:test_android', 'exec:acceptance_test_android', 'exec:end_to_end_test_android' ] );
     grunt.registerTask('install_ios', ['newer:test_ios', 'exec:install_app_ios' ]);
     grunt.registerTask('install_android', ['newer:test_android', 'exec:install_app_android' ]);
     grunt.registerTask('quick_acceptance_test_ios', [ 'exec:quick_acceptance_test_ios' ] );
@@ -151,13 +265,22 @@ module.exports = function(grunt) {
     grunt.registerTask('quick_acceptance_test_android', [ 'exec:quick_acceptance_test_android' ] );
     grunt.registerTask('quick_end_to_end_test_android', ['exec:quick_end_to_end_test_android' ] );
     grunt.registerTask('unit_test_android', [ 'exec:unit_test_android' ] );
-    grunt.registerTask('unit_test_node', ['exec:unit_test_node'] );
+    grunt.registerTask('unit_test_ios', [ "newer:unit_test_ios", "exec:unit_test_ios" ] );
+    grunt.registerTask('unit_test_node', [ "newer:unit_test_android","exec:unit_test_node"] );
     grunt.registerTask('clean', ['exec:clean', 'exec:clean_test'] );
     grunt.registerTask('debug', ['exec:debug'] );
-    grunt.registerTask('preview_android', ['exec:preview_android'] );
-    grunt.registerTask('preview_ios', ['exec:preview_ios'] );
+
+    grunt.registerTask('preview', function(platform) {
+      grunt.task.run("exec:stop_live_view");
+      grunt.task.run("run:start_live_view");
+      grunt.task.run(`exec:launch:${platform}:preview`);
+      grunt.task.run("wait:start_live_view");
+    } );
+  
+
     grunt.registerTask('device_preview_android', ['exec:uninstall_app_android', 'exec:device_preview_android'] );
     grunt.registerTask('device_preview_ios', ['exec:device_preview_ios'] );
+
     grunt.registerTask('release_ios', ['newer:release_ios'] );
     grunt.registerTask('release_android', ['newer:release_android'] );
     grunt.registerTask('mock_server', [ 'exec:mock_server' ] );

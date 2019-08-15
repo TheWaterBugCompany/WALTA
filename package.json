@@ -19,6 +19,7 @@
     "grunt": "^1.0.4",
     "grunt-exec": "^3.0.0",
     "grunt-newer-explicit": "^0.9.8",
+    "grunt-run": "^0.8.1",
     "image-size": "^0.7.4",
     "ios-deploy": "^1.9.4",
     "leaflet": "^1.5.1",

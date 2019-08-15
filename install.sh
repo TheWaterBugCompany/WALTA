@@ -16,5 +16,6 @@ cp ./node_modules/mocha/mocha.js $SPECS_LIB_DIR/mocha.js
 cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
 cp -rf ./node_modules/leaflet/dist/* $ASSET_DIR/leaflet
 PATH=./node_modules/.bin:$PATH
+ti config -a paths.hooks ./plugins/unittest/1.0/hooks
 liveview install clihook
 alloy install plugin walta-app
