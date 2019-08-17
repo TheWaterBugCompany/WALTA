@@ -15,7 +15,7 @@ function getCapabilities( platform, quick ) {
             appWaitActivity: "org.appcelerator.titanium.TiActivity"
         });
         if ( !quick ) {
-            caps.app = join(process.cwd(), './test/Waterbug.apk');
+            caps.app = join(process.cwd(), './builds/test/Waterbug.apk');
         } else {
             _(caps).extend({
                 appPackage: "net.thewaterbug.waterbug",
@@ -36,11 +36,12 @@ function getCapabilities( platform, quick ) {
             xcodeSigningId: "iPhone Developer",
             useJSONSource: false,
             waitForQuiescence: false,
-            skipLogCapture: true
-
+            skipLogCapture: true,
+            realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
+            usePrebuiltWDA: true
         });
         if ( !quick ) {
-            caps.app = join(process.cwd(), './test/Waterbug.ipa');
+            caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');
         } else {
             _(caps).extend({
                 bundleId: "net.thewaterbug.waterbug"
@@ -50,17 +51,19 @@ function getCapabilities( platform, quick ) {
     return caps;
 }
 
-async function startAppiumClient( platform="android", quick=false) {
+async function startAppiumClient( caps ) {
     return await remote({
         logLevel: 'error',
         hostname: 'localhost',
         port: 4723, 
-        capabilities: getCapabilities( platform, quick )
+        capabilities: caps
     });
 }
 
 async function stopAppiumClient(driver) {
     await driver.deleteSession()
 }
+
+module.exports.getCapabilities = getCapabilities;
 module.exports.startAppiumClient = startAppiumClient;
 module.exports.stopAppiumClient = stopAppiumClient;

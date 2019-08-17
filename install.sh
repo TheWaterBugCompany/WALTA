@@ -1,5 +1,5 @@
 #! /bin/sh
-SPECS_LIB_DIR=walta-app/app/specs/lib
+SPECS_LIB_DIR=walta-app/app/unit-test/lib
 LIB_DIR=walta-app/app/lib/lib
 ASSET_DIR=walta-app/app/assets
 if [ ! -d $SPECS_LIB_DIR ]; then
@@ -17,5 +17,5 @@ cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
 cp -rf ./node_modules/leaflet/dist/* $ASSET_DIR/leaflet
 PATH=./node_modules/.bin:$PATH
 ti config -a paths.hooks ./plugins/unittest/1.0/hooks
-# not needed in 8 GA liveview install clihook
+# not needed in 8 GA: liveview install clihook
 alloy install plugin walta-app

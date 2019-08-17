@@ -1,4 +1,6 @@
 module.exports = function(grunt) {
+    const { getCapabilities, startAppiumClient, stopAppiumClient } = require("./features/support/appium")
+    const { decodeSyslog } = require('./features/support/ios-colors');
     const APP_ID = "net.thewaterbug.waterbug";
     const APP_ACTIVITY = ".WaterbugActivity";
     const KEYSTORE = process.env.KEYSTORE || '/home/msharman/Documents/Business/thecodesharman.keystore';
@@ -8,107 +10,62 @@ module.exports = function(grunt) {
     const PROFILE = process.env.PROFILE || "eb88a8c0-d6e1-4622-a69b-3513ebe5be62";
     
     const SOURCES = [  
-    './walta-app/tiapp.xml',  
-    './walta-app/app/**/*.js', 
-    './walta-app/app/**/*.xml', 
-    './walta-app/app/**/*.css' ];
+      './walta-app/tiapp.xml',  
+      './walta-app/app/**/*.js', 
+      './walta-app/app/**/*.xml', 
+      './walta-app/app/**/*.css' 
+    ];
+
+    function build_if_newer_options(platform,build_type) {
+      const ext = (platform === "ios"?"ipa":"apk");
+      const tasks = [ "exec:clean",`exec:build:${platform}:${build_type}`, `install:${platform}:${build_type}`];
+      if ( build_type !== "release" ) 
+        tasks.push(`install:${platform}:${build_type}`);
+      return {
+        src: SOURCES,
+        dest: `./builds/${build_type}/Waterbug.${ext}`,
+        options: { tasks: tasks }  
+      }
+    }
 
     grunt.initConfig({
       exec: {
           mock_server: {
-            command: 'node mock-server', stdout: 'inherit', stderr: 'inherit'
+            command: 'node mock-server',
+            stdout: "inherit", stderr: "inherit"
           },
 
           clean: {
-            command: './node_modules/.bin/titanium clean --project-dir ./walta-app', stdout: 'inherit', stderr: 'inherit'
+            command: './node_modules/.bin/titanium clean --project-dir ./walta-app',
+            stdout: "inherit", stderr: "inherit"
           },
 
           clean_test: {
-            command: 'rm ./test/*.{apk,ipa} || rm ./unit-test/*.{apk,ipa}'
+            command: 'rm ./{release,test,unit-test,preview}/*.{apk,ipa}',
+            exitCode: [ 0, 1 ],
+            stdout: "inherit", stderr: "inherit"
           },
 
-          install: {
-            command: function(platform,build_type) {
-              if ( platform === "android" ) {
-                return `adb install ./${build_type}/Waterbug.apk`;
-              } else if ( platform === "ios" ) {
-                return `./node_modules/.bin/ios-deploy --no-wifi --nostart --uninstall --bundle ./${build_type}/Waterbug.ipa --bundle_id ${APP_ID}`;
-              } else {
-                throw new Error(`Unknown platform "${platform}"`);
-              }
+          acceptance_test: {
+            command: function(platform,option) {
+              return `${option==="quick" ? 'QUICK="true"':""},PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip"`;
             },
-            stdout: false
+            exitCode: [0,1]
           },
 
-          uninstall: {
-            command: function(platform,build_type) {
-            if ( platform === "android" ) {
-              return `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`;
-            } else if ( platform === "ios" ) {
-              return `./node_modules/.bin/ios-deploy --uninstall_only --bundle_id ${APP_ID}`;
-            } else {
-              throw new Error(`Unknown platform "${platform}"`);
-            }
-           },
-           stdout: false
+          end_to_end_test: {
+            command: function(platform,option) {
+              return `${option==="quick" ? 'QUICK="true"':""},PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH $PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`;
+            },
+            exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
           },
 
-          launch: {
-             command: function(platform) {
-                
-                if ( platform === "android" ) {
-                  return `${process.env.ANDROID_HOME}/platform-tools/adb shell am start -W -S -n ${APP_ID}/${APP_ACTIVITY}`;
-                } else if ( platform === "ios" ) {
-                  //return `./node_modules/.bin/ios-deploy --no-wifi -m --bundle_id ${APP_ID}`;
-                  return "echo FIXME: use appium to launch IPA?";
-                } else {
-                  throw new Error(`Unknown platform "${platform}"`);
-                }
-              }
+          unit_test_node: {
+            command: `PATH=./node_modules/.bin/:$PATH mocha`,
+            exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
           },
-
-          acceptance_test_android: {
-            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
-            exitCode: [ 0, 1 ]
-          },
-
-          end_to_end_test_android: {
-            command: `PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
-            exitCode: [ 0, 1 ]
-          },
-
-          quick_acceptance_test_android: {
-            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
-            exitCode: [ 0, 1 ]
-          },
-
-          quick_end_to_end_test_android: {
-            command: `QUICK="true" PLATFORM="android" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
-            exitCode: [ 0, 1 ]
-          },
-
-          acceptance_test_ios: {
-            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
-            exitCode: [ 0, 1 ]
-          },
-
-          end_to_end_test_ios: {
-            command: `PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
-            exitCode: [ 0, 1 ]
-          },
-
-          quick_acceptance_test_ios: {
-            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH cucumber-js --tags @only`, stdout: 'inherit', stderr: 'inherit',
-            exitCode: [ 0, 1 ]
-          },
-
-          quick_end_to_end_test_ios: {
-            command: `QUICK="true" PLATFORM="ios" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`,
-            exitCode: [ 0, 1 ]
-          },
-
-          unit_test_node: `NODE_PATH="./walta-app/app:./walta-app/app/lib" mocha --compilers js:babel-core/register walta-app/app/specs/CerdiApi_spec.js`,
-          //debug: build(`--platform android --target emulator --device-id ${AVD_NAME} --debug-host /127.0.0.1:38331`),
 
           build: {
             command: function(platform,build_type) {
@@ -133,31 +90,24 @@ module.exports = function(grunt) {
               switch( build_type ) {
                 case "test":
                   production();
-                  args.push("--output-dir test");
+                  args.push("--output-dir builds/test");
                   break;
 
                 case "unit-test":
                   production();
                   args.push("--unit-test");
-                  args.push("--output-dir unit-test");
+                  args.push("--output-dir builds/unit-test");
                   break;
 
                 case "release":
                   production();
-                  args.push("--output-dir release");
+                  args.push("--output-dir builds/release");
                   break;
 
                 case "preview":
                   production();
                   args.push("--liveview");
-                  args.push("--output-dir preview");
-                  break;
-
-                case "preview/unit-test":
-                  production();
-                  args.push("--unit-test");
-                  args.push("--liveview");
-                  args.push("--output-dir preview/unit-test");
+                  args.push("--output-dir builds/preview");
                   break;
 
                 default:
@@ -165,90 +115,127 @@ module.exports = function(grunt) {
               }
               return `./node_modules/.bin/titanium build ${args.join(" ")}`;
             },
-            stdout: 'inherit', 
-            stderr: 'inherit',
             options: { 
                 env: Object.assign({}, process.env, {
                   "ALLOY_PATH": "./node_modules/.bin/alloy"
                 })
               },
+            stdout: "inherit", stderr: "inherit"
           },
 
           stop_live_view: {
             command: "./node_modules/.bin/liveview server stop",
-            exitCode: [ 0, 1 ]
+            exitCode: [ 0, 1 ],
+            stdout: "inherit", stderr: "inherit"
           },
               
         },
 
         run: {
-          start_live_view: {
+          appium: {
+            options: { 
+              wait: false,
+              quiet: true,
+              ready: /Appium REST http interface listener started on/ 
+            },
+            exec: "PATH=./node_modules/.bin/:$PATH appium --log-level info",
+          },
+          live_view_ios: {
             options: { wait: false },
-            exec: "./node_modules/.bin/liveview server start -p walta-app"
+            exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform ios"
+          },
+          live_view_android: {
+            options: { wait: false },
+            exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform android"
           }
         },
 
         newer: {
-          unit_test_android: {
-            src: SOURCES,
-            dest: "./unit-test/Waterbug.apk",
-            options: { tasks: [ "exec:clean","exec:build:android:unit-test"] }  
-          },
+          unit_test_android: build_if_newer_options("android", "unit-test"),
+          unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
-          unit_test_ios: {
-            src: SOURCES,
-            dest: './unit-test/Waterbug.ipa',
-            options: { tasks: [ 'exec:clean', 'exec:build:ios:unit-test'] }  
-          },
+          test_android: build_if_newer_options("android", "test"),
+          test_ios: build_if_newer_options("ios", "unit-test"),
 
-          test_android: {
-            src: SOURCES,
-            dest: "./test/Waterbug.apk",
-            options: { tasks: [ "exec:clean","exec:build:android:test"] }  
-          },
+          release_android: build_if_newer_options("android", "release"),
+          release_ios: build_if_newer_options("ios", "release"),
 
-          test_ios: {
-            src: SOURCES,
-            dest: "./test/Waterbug.ipa",
-            options: { tasks: [ "exec:clean", "exec:build:ios:test"] }  
-          },
-
-          release_android: {
-            src: SOURCES,
-            dest: "./release/Waterbug.apk",
-            options: { tasks: [ "exec:clean", "exec:build:android:release" ] }  
-          },
-          release_ios: {
-            src: SOURCES,
-            dest: "./release/Waterbug.ipa",
-            options: { tasks: [ "exec:clean", "exec:build:ios:release" ] }  
-          },
-
-          preview_android: {
-            src: SOURCES,
-            dest: "./preview/Waterbug.apk",
-            options: { tasks: [ "exec:clean", "exec:build:android:preview" ] }  
-          },
-
-          preview_ios: {
-            src: SOURCES,
-            dest: "./preview/Waterbug.ipa",
-            options: { tasks: [ "exec:clean", "exec:build:ios:preview" ] }  
-          },
-
-          preview_unit_test_android: {
-            src: SOURCES,
-            dest: "./preview/unit-test/Waterbug.apk",
-            options: { tasks: [ "exec:clean", "exec:build:android:preview" ] }  
-          },
-          preview_unit_test_ios: {
-            src: SOURCES,
-            dest: "./preview/unit-test/Waterbug.ipa",
-            options: { tasks: [ "exec:clean", "exec:build:ios:preview" ] }  
-          },
+          preview_android: build_if_newer_options("android", "preview"),
+          preview_ios: build_if_newer_options("ios", "unit-test"),
         }
     });
 
+    // keep track of the current appium session
+    let appiumSession = null;
+    function startAppium(caps) {
+      let p;
+      if ( appiumSession ) {
+        p = stopAppiumClient(appiumSession);
+      } else {
+        p = Promise.resolve();
+      }
+      return  p.then( () => startAppiumClient( caps ) )
+        .then( (driver) => {
+          appiumSession = driver;
+          return driver;
+        } )
+        .catch( (err) => { grunt.fail.warn(err); } );
+    }
+
+    grunt.registerTask("install", function(platform,build_type) {
+      const done = this.async();
+      let appPath = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
+      const caps = getCapabilities(platform,true);
+      caps.autoLaunch = false;
+      startAppium(caps)
+        .then( () => appiumSession.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
+        .then( () => appiumSession.installApp(appPath) )
+        .then( done );
+    });
+
+    grunt.registerTask("launch", function(platform,build_type) {
+      const done = this.async();
+      const caps = getCapabilities(platform,true);
+      caps.skipLogCapture = false;
+      startAppium(caps)
+        .then( done );
+    });
+
+    grunt.registerTask("terminate", function(platform,build_type) {
+      const done = this.async();
+      const caps = getCapabilities(platform,true);
+      caps.autoLaunch = false;
+      startAppium(caps)
+        .then( () => appiumSession.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
+        .then( done );
+    });
+
+    grunt.registerTask("output-logs", function() {
+      let done = this.async();
+      const retain = /\[(INFO|ERROR|DEBUG|WARN)\]/m;
+      function processLogs() {
+        return appiumSession
+          .getLogs("syslog")
+          .then( (logs) => {
+              logs.forEach( (line) => {
+                //TODO: filter correctly on android
+                  if ( line.message.includes("Waterbug(TitaniumKit)") && retain.test(line.message)) {
+                    let parts = line.message.split(retain);
+                    if ( parts.length > 1 ) {
+                      grunt.log.writeln(decodeSyslog(parts[2]));
+                    } else {
+                      grunt.log.writeln(decodeSyslog(line.message));
+                    }
+                    
+                } 
+              });
+              return processLogs();
+          });
+      }
+      processLogs()
+        .then( done )
+        .catch( (err) => { grunt.fail.warn(err); done(); } );
+    });
     
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks("grunt-exec");
@@ -256,33 +243,31 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-newer-explicit");
 
     // Default task(s).
-    grunt.registerTask('test_ios', [ 'unit_test_ios', 'newer:test_ios', 'exec:end_to_end_test_ios', 'exec:acceptance_test_ios' ] );
-    grunt.registerTask('test_android', [ 'unit_test_ios', 'newer:test_android', 'exec:acceptance_test_android', 'exec:end_to_end_test_android' ] );
-    grunt.registerTask('install_ios', ['newer:test_ios', 'exec:install_app_ios' ]);
-    grunt.registerTask('install_android', ['newer:test_android', 'exec:install_app_android' ]);
-    grunt.registerTask('quick_acceptance_test_ios', [ 'exec:quick_acceptance_test_ios' ] );
-    grunt.registerTask('quick_end_to_end_test_ios', ['exec:quick_end_to_end_test_ios' ] );
-    grunt.registerTask('quick_acceptance_test_android', [ 'exec:quick_acceptance_test_android' ] );
-    grunt.registerTask('quick_end_to_end_test_android', ['exec:quick_end_to_end_test_android' ] );
-    grunt.registerTask('unit_test_android', [ 'exec:unit_test_android' ] );
-    grunt.registerTask('unit_test_ios', [ "newer:unit_test_ios", "exec:unit_test_ios" ] );
-    grunt.registerTask('unit_test_node', [ "newer:unit_test_android","exec:unit_test_node"] );
+    grunt.registerTask('test_ios', [ 'run:appium', 'unit_test_ios', 'newer:test_ios', 'exec:end_to_end_test:ios', 'exec:acceptance_test_:os', 'stop:appium' ] );
+    grunt.registerTask('test_android', [ 'run:appium', 'unit_test_ios', 'newer:test_android', 'exec:acceptance_test:android', 'exec:end_to_end_test:android', 'stop:appium', ] );
+
+    grunt.registerTask('unit_test_android', [ 'run:appium', "newer:unit_test_android", "launch:android:unit-test" ] );
+    grunt.registerTask('unit_test_ios', [ 'run:appium', "newer:unit_test_ios",  "launch:ios:unit-test" ] );
+
+    //grunt.registerTask('unit_test_node', [ "newer:unit_test_android","exec:unit_test_node"] );
+
     grunt.registerTask('clean', ['exec:clean', 'exec:clean_test'] );
     grunt.registerTask('debug', ['exec:debug'] );
 
-    grunt.registerTask('preview', function(platform) {
+    grunt.registerTask('preview', function(platform,option) {
+      grunt.task.run("run:appium");
+      // It's often possible to get away without do a rebuild and relying on the file server 
+      // to copy changes to the device. The quick optoin enables that.
+      if ( option !== "quick") { 
+        grunt.task.run(`newer:preview_${platform}`);
+      } 
       grunt.task.run("exec:stop_live_view");
-      grunt.task.run("run:start_live_view");
-      grunt.task.run(`exec:launch:${platform}:preview`);
-      grunt.task.run("wait:start_live_view");
+      grunt.task.run(`run:live_view_${platform}`);
+      grunt.task.run(`launch:${platform}:preview`);
+      grunt.task.run("output-logs");
     } );
   
-
-    grunt.registerTask('device_preview_android', ['exec:uninstall_app_android', 'exec:device_preview_android'] );
-    grunt.registerTask('device_preview_ios', ['exec:device_preview_ios'] );
-
-    grunt.registerTask('release_ios', ['newer:release_ios'] );
-    grunt.registerTask('release_android', ['newer:release_android'] );
-    grunt.registerTask('mock_server', [ 'exec:mock_server' ] );
-  
+    grunt.registerTask('release', function(platform) {
+      grunt.task.run(`newer:release_${platform}`); 
+    });
   };

@@ -1,4 +1,4 @@
-<Alloy>
+<Alloy> 
 	<View id="content" class="container">
 			<View id="bigOptions">
 				<View id="logInOrRegister" onClick="logInClick">
