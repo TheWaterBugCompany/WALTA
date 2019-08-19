@@ -18,7 +18,7 @@
 require("unit-test/lib/ti-mocha");
 var Topics = require('ui/Topics');
 var { expect } = require('unit-test/lib/chai');
-var { closeWindow, controllerOpenTest, enterText, clickButton } = require('unit-test/util/TestUtils');
+var { closeWindow, controllerOpenTest, enterText, clickButton, checkTestResult } = require('unit-test/util/TestUtils');
 var CerdiApi = require("unit-test/mocks/MockCerdiApi");
 
 describe('LogIn controller', function() {
@@ -38,9 +38,10 @@ describe('LogIn controller', function() {
     
     it('it should send a login request to Cerdi Api', function(done) {
         Alloy.Globals.CerdiApi.loginUser = function( email, password ) {
-            expect( email ).to.equal("test@example.com");
-            expect( password ).to.equal("password");
-            done(); 
+            checkTestResult( done, function() {
+                expect( email ).to.equal("test@example.com");
+                expect( password ).to.equal("password");
+            });
             return Promise.resolve();
         }
         expect( login.logInButton.enabled ).to.be.false;
@@ -57,8 +58,9 @@ describe('LogIn controller', function() {
     
     it('it should send a change password request to Cerdi Api', function(done) {
         Alloy.Globals.CerdiApi.forgotPassword = function( email ) {
-            expect( email ).to.equal("test@example.com");
-            done(); 
+            checkTestResult( done, function() {
+                expect( email ).to.equal("test@example.com");
+            });
             return Promise.resolve();
         }
         expect( login.forgotPasswordButton.enabled, "reset password should be disabled" ).to.be.false;
@@ -73,13 +75,10 @@ describe('LogIn controller', function() {
     });
     
     it('should fire LOGGEDIN event when login is a success', function(done) {
-        // not sure why done() gets call twice and 
-        // there isn't anything I can do about it
-        var removeDupsDone = _.once( done );
-        Alloy.Globals.CerdiApi.loginUser = function( email, password ) {
-            return Promise.resolve();
+        Alloy.Globals.CerdiApi.loginUser = function( email, password ) { 
+            return Promise.resolve(); 
         }
-        Topics.subscribe( Topics.LOGGEDIN, removeDupsDone );
+        Topics.subscribe( Topics.LOGGEDIN, _.once( done ) );
         controllerOpenTest( login, function() {
             enterText( login.emailTextField, "  test@example.com  " );
             enterText( login.passwordTextField, "password" );
@@ -92,9 +91,10 @@ describe('LogIn controller', function() {
 
     it('should trim spaces from email', function(done) {
         Alloy.Globals.CerdiApi.loginUser = function( email, password ) {
-            expect( email ).to.equal("test@example.com");
-            done(); 
-            return Promise.resolve();
+            checkTestResult( done, function() {
+                expect( email ).to.equal("test@example.com");
+            });
+            return Promise.resolve(); 
         }
         controllerOpenTest( login, function() {
             enterText( login.emailTextField, "  test@example.com  " );

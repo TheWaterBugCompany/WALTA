@@ -41,7 +41,7 @@ var photos = $.args.photos;
 var showPager = $.args.showPager;
 if ( _.isUndefined( showPager ) ) showPager = true;
 
-Ti.API.info(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
+Ti.API.debug(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
 if ( !photos && key ) {
     photos = _.first( _.shuffle( key.findAllMedia('photoUrls') ), 20 );
 }

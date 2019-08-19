@@ -20,7 +20,7 @@ var { expect } = require('unit-test/lib/chai');
 var { wrapViewInWindow, closeWindow, windowOpenTest, actionFiresTopicTest } = require('unit-test/util/TestUtils');
 var Topics = require('ui/Topics');
 
-describe('AnchorBar', function() {
+describe('AnchorBar controller', function() {
 	var acb, win;
 
 	before( function() {

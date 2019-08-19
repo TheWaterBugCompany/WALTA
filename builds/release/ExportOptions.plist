@@ -2,14 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>generateAppStoreInformation</key>
+	<key>compileBitcode</key>
 	<false/>
 	<key>method</key>
-	<string>app-store</string>
+	<string>ad-hoc</string>
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>net.thewaterbug.waterbug</key>
-		<string>e2935a1f-0c22-4716-8020-b61024ce143f</string>
+		<string>eb88a8c0-d6e1-4622-a69b-3513ebe5be62</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>iPhone Distribution: Michael Sharman (6RRED3LUUV)</string>
@@ -19,9 +19,7 @@
 	<true/>
 	<key>teamID</key>
 	<string>6RRED3LUUV</string>
-	<key>uploadBitcode</key>
-	<false/>
-	<key>uploadSymbols</key>
-	<true/>
+	<key>thinning</key>
+	<string>&lt;none&gt;</string>
 </dict>
 </plist>

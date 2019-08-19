@@ -3,7 +3,6 @@ exports.baseController  = "TopLevelWindow";
 $.name = "home";
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-  Ti.API.info("closing Menu");
   $.destroy();
   $.off();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
