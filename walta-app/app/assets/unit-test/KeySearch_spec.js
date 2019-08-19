@@ -33,12 +33,14 @@ describe('KeySearch controller', function() {
 					root: Key.createKeyNode({
 						questions: [
 							Question.createQuestion( {
+								outcome: 1,
 								text: "This is a test question text! With an longer question text that needs to wrap plus a couple of media images",
 								mediaUrls: [
 									'/unit-test/resources/simpleKey1/media/amphipoda_01.jpg'
 									]
 								}),
 								Question.createQuestion( {
+								outcome: 1,
 								text: "This is the a second test question",
 								mediaUrls: [
 									"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg",
@@ -48,7 +50,7 @@ describe('KeySearch controller', function() {
 							]
 					})
 				});
-			knv = Alloy.createController("KeySearch", { keyNode: key.getCurrentNode() });
+			knv = Alloy.createController("KeySearch", { node: key.getCurrentNode(), key: key });
 			controllerOpenTest( knv, done );
 	});
 	after( function(done) {
@@ -56,7 +58,7 @@ describe('KeySearch controller', function() {
 	})
 
 	it('should fire the FORWARD topic', function(done) {
-		actionFiresTopicTest( knv.getQuestions()[1].view, 'click', Topics.FORWARD, done );
+		actionFiresTopicTest( knv.questions[1].Question, 'click', Topics.FORWARD, () => done() );
 	});
 
 });

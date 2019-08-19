@@ -40,7 +40,7 @@ function generateThumbnail( fileOrBlob ) {
     Ti.API.debug("removing old preview files...");
     removeFilesBeginningWith("preview_");
 
-    Ti.API.debug(`Generating thumbnail...`);
+    Ti.API.debug("generating thumbnail...");
     var fullPhoto = null;
     if ( typeof fileOrBlob === "string") {
         fullPhoto = Ti.UI.createImageView( { image: fileOrBlob } ).toBlob();
@@ -49,13 +49,13 @@ function generateThumbnail( fileOrBlob ) {
     }
     var aspectRatio = (fullPhoto.height/fullPhoto.width);
     if ( ( fullPhoto.mimeType !== "image/jpeg" && fullPhoto.mimeType != "image/gif" ) || fullPhoto.length > 4*1024*1024 ) {
-        Ti.API.debug("Resizing and compressing photo...");
+        Ti.API.debug("resizing and compressing photo...");
  
         fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
 
     }
-    Ti.API.debug(`Saving full size photo...`);
+    Ti.API.debug("saving full size photo..");
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().unix()}.jpg`);
     
     Ti.API.debug(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
@@ -72,7 +72,7 @@ function generateThumbnail( fileOrBlob ) {
         thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
 
     
-    Ti.API.debug(`Saving thumbnail...`);
+    Ti.API.debug(`saving thumbnail...`);
     var thumbnailPath = savePhoto( thumbnail, `preview_${moment().unix()}.jpg`);
     thumbnail = null;
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };

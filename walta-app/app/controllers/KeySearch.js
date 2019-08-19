@@ -36,7 +36,7 @@ var keyNode = $.args.node;
 // this is a hack to return the key object to the correct place.
 // (implemented so that the AppWindow class does not need to keep track of key state)
 key.setCurrentNodeObj( keyNode );
-var questions = [];
+var questions = $.questions = [];
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();

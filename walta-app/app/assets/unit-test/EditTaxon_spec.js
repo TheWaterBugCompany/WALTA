@@ -28,7 +28,7 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 // is there a way of passing services to Alloy models without using globals?
 Alloy.Globals.Key = keyMock; 
 
-describe.only("EditTaxon controller", function() { 
+describe("EditTaxon controller", function() { 
     var ctl,win;
     
     function makeEditTaxon( taxon ) {
@@ -52,7 +52,7 @@ describe.only("EditTaxon controller", function() {
             checkTestResult( (e) => done(e), 
                 function() {
                     expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
-                    expect( ctl.photoSelect.photo.image ).to.include("aeshnidae_telephleb_b.png");
+                    expect( ctl.photoSelect.photo.image ).to.include("preview");
                     expect( ctl.abundanceLabel.text ).to.equal("3-5");
                 }); 
             
@@ -74,12 +74,13 @@ describe.only("EditTaxon controller", function() {
     it('save should be enabled if a photo is selected', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
-            var photo = Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, "unit-test/resources/simpleKey1/media/amphipoda_02.jpg");
-            ctl.photoSelect.trigger("photoTaken", photo);
-            expect( ctl.saveButton.enabled ).to.be.true;
-            expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.false;
-            expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.be.null;
-            done();
+            checkTestResult( done, function() {
+                var photo = Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, "unit-test/resources/simpleKey1/media/amphipoda_02.jpg");
+                ctl.photoSelect.trigger("photoTaken", photo);
+                expect( ctl.saveButton.enabled ).to.be.true;
+                expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.false;
+                expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.equal("transparent");
+            });
         });
     });
 

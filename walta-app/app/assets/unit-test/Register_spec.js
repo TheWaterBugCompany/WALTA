@@ -108,16 +108,15 @@ describe('Register controller', function() {
     });
     it('should call the server API if the submit button is pressed', function(done) {
         Alloy.Globals.CerdiApi.registerUser = function( userInfo ) {
-            checkTestResult( function() {
+            checkTestResult( done, function() {
                 expect( userInfo.email ).to.equal("test@example.com");
                 expect( userInfo.group ).to.be.true;
                 expect( userInfo.survey_consent ).to.be.true;
                 expect( userInfo.share_name_consent ).to.be.true;
                 expect( userInfo.name ).to.equal("Test User");
                 expect( userInfo.password ).to.equal("validPassw0rd!");
-                done(); 
-                return Promise.resolve();
             } );
+            return Promise.resolve();
         };
         fillOutValidForm()
             .then( function() {

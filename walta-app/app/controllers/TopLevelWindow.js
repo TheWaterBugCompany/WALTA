@@ -75,7 +75,7 @@ function addSwipeBack() {
 addSwipeBack();
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-	Ti.API.info(`cleaning up window...`);
+	Ti.API.debug(`cleaning up window...`); 
 	$.destroy();
 	$.off();
 	anchorBar.cleanUp();

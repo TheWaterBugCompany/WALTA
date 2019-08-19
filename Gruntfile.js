@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
-      const tasks = [ "exec:clean",`exec:build:${platform}:${build_type}`, `install:${platform}:${build_type}`];
+      const tasks = [ "exec:clean",`exec:build:${platform}:${build_type}`];
       if ( build_type !== "release" ) 
         tasks.push(`install:${platform}:${build_type}`);
       return {
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
           },
 
           clean_test: {
-            command: 'rm ./{release,test,unit-test,preview}/*.{apk,ipa}',
+            command: 'rm ./builds/{release,test,unit-test,preview}/*.{apk,ipa}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "inherit"
           },
@@ -155,28 +155,28 @@ module.exports = function(grunt) {
           unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
           test_android: build_if_newer_options("android", "test"),
-          test_ios: build_if_newer_options("ios", "unit-test"),
+          test_ios: build_if_newer_options("ios", "test"),
 
           release_android: build_if_newer_options("android", "release"),
           release_ios: build_if_newer_options("ios", "release"),
 
           preview_android: build_if_newer_options("android", "preview"),
-          preview_ios: build_if_newer_options("ios", "unit-test"),
+          preview_ios: build_if_newer_options("ios", "preview"),
         }
     });
 
     // keep track of the current appium session
-    let appiumSession = null;
+    let appium_session = null;
     function startAppium(caps) {
       let p;
-      if ( appiumSession ) {
-        p = stopAppiumClient(appiumSession);
+      if ( appium_session ) {
+        p = stopAppiumClient(appium_session);
       } else {
         p = Promise.resolve();
       }
       return  p.then( () => startAppiumClient( caps ) )
         .then( (driver) => {
-          appiumSession = driver;
+          appium_session = driver;
           return driver;
         } )
         .catch( (err) => { grunt.fail.warn(err); } );
@@ -188,8 +188,8 @@ module.exports = function(grunt) {
       const caps = getCapabilities(platform,true);
       caps.autoLaunch = false;
       startAppium(caps)
-        .then( () => appiumSession.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
-        .then( () => appiumSession.installApp(appPath) )
+        .then( () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
+        .then( () => appium_session.installApp(appPath) )
         .then( done );
     });
 
@@ -206,27 +206,27 @@ module.exports = function(grunt) {
       const caps = getCapabilities(platform,true);
       caps.autoLaunch = false;
       startAppium(caps)
-        .then( () => appiumSession.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
+        .then( () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
         .then( done );
     });
 
     grunt.registerTask("output-logs", function() {
       let done = this.async();
-      const retain = /\[(INFO|ERROR|DEBUG|WARN)\]/m;
+      const levels = [ "ERROR", "WARN", "INFO" ];
+      if ( process.env.DEBUG )
+        levels.push("DEBUG");
+      const retain = new RegExp(`\\[(${levels.join("|")})\\]`,"m");
       function processLogs() {
-        return appiumSession
+        return appium_session
           .getLogs("syslog")
           .then( (logs) => {
               logs.forEach( (line) => {
                 //TODO: filter correctly on android
-                  if ( line.message.includes("Waterbug(TitaniumKit)") && retain.test(line.message)) {
-                    let parts = line.message.split(retain);
-                    if ( parts.length > 1 ) {
-                      grunt.log.writeln(decodeSyslog(parts[2]));
-                    } else {
-                      grunt.log.writeln(decodeSyslog(line.message));
-                    }
-                    
+                if ( line.message.includes("Waterbug(TitaniumKit)") && retain.test(line.message)) {
+                  let parts = line.message.split(retain);
+                  if ( parts.length >= 1 ) {
+                    grunt.log.writeln(decodeSyslog(parts[2]));
+                  } 
                 } 
               });
               return processLogs();

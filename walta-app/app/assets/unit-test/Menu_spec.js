@@ -36,19 +36,19 @@ describe('Menu controller', function() {
 	});
 
 	it('should fire the DETAILED topic', function(done) {
-		actionFiresTopicTest( mnu.detailed, 'click', Topics.DETAILED, done );
+		actionFiresTopicTest( mnu.detailed, 'click', Topics.DETAILED, () => done() );
 	});
 
 	it('should fire the HELP topic', function(done) {
-		actionFiresTopicTest( mnu.help, 'click', Topics.HELP, done );
+		actionFiresTopicTest( mnu.help, 'click', Topics.HELP, () => done() );
 	});
 
 	it('should fire the GALLERY topic', function(done) {
-		actionFiresTopicTest( mnu.gallery, 'click', Topics.GALLERY, done );
+		actionFiresTopicTest( mnu.gallery, 'click', Topics.GALLERY, () => done() );
 	});
 
 	it('should fire the ABOUT topic', function(done) {
-		actionFiresTopicTest( mnu.about, 'click', Topics.ABOUT, done );
+		actionFiresTopicTest( mnu.about, 'click', Topics.ABOUT, () => done() );
 	});
 
 	/* These tests freeze mocha for some reason??
