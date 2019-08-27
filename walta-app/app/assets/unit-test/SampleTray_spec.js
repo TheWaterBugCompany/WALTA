@@ -49,8 +49,15 @@ describe( 'SampleTray controller', function() {
   function scrollSampleTray( x ) {
     return function() {
       return new Promise( function( resolve ) {
-          updateSampleTrayOnce(resolve);
-          SampleTray.content.scrollTo( x, 0, {animated: false} );
+          function isAtScrollX(e) {
+            console.log(`e.x = ${e.x} x = ${x}`)
+            if ( e.x === x ) {
+              SampleTray.content.removeEventListener("scroll",isAtScrollX);
+              resolve();
+            }
+          } 
+          SampleTray.content.addEventListener("scroll", isAtScrollX );
+          SampleTray.content.scrollTo( x, 0 );
         });
     }
   }
@@ -59,14 +66,14 @@ describe( 'SampleTray controller', function() {
     closeWindow( SampleTrayWin, done );
   }
 
-  function findLeftMost(arr) {
-    return _.min( arr, function(c) { 
-      return c.getRect().x 
-    } );
+  function findLeftMost(arr,i=0) {
+    var sorted = arr.slice(0).sort( (a,b) => a.getRect().x - b.getRect().x );
+    return sorted[i];
   }
 
-  function findRightMost(arr) {
-    return _.max( arr, function(c) { return c.getRect().x } );
+  function findRightMost(arr,i=0) {
+    var sorted = arr.slice(0).sort( (a,b) => b.getRect().x - a.getRect().x );
+    return sorted[i];
   }
 
   function assertSample( taxon, image, abundance ) {
@@ -349,26 +356,19 @@ describe( 'SampleTray controller', function() {
           .then( scrollSampleTray( 209*4 ) )
           .then( function() {
             var tiles = SampleTray.content.getChildren();
-            expect( tiles ).to.have.lengthOf(7);
-
-            tiles.shift(); // discard end cap since that is always static
-
-            // assert first tile
-            var tile = findLeftMost( tiles  );
-            assertTaxaBackground( tile, "images/tiling_interior_320.png" );
-            var sampleTaxa = getTaxaIcons( tile );
-            expect( sampleTaxa ).to.have.lengthOf(4);
-            assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
-            assertSample( sampleTaxa[1], "/atalophlebia_b.png", "1-2" );
-            assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
-            assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "6-10" );
-
+           
             // assert last tile
             var tile = findRightMost( tiles  );
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
+            var sampleTaxa = getTaxaIcons( tile );
+            expect( sampleTaxa ).to.have.lengthOf(4);
+            assertPlus( sampleTaxa[0] );
+            
+            // assert second last tile
+            tile = findRightMost( tiles, 1);
+            assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            
             assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
             assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
             assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
@@ -386,7 +386,7 @@ describe( 'SampleTray controller', function() {
             var tiles = SampleTray.content.getChildren();
             expect( tiles ).to.have.lengthOf(5);
 
-            var endcap = tiles.shift(); // discard end cap since that is always static
+            tiles.shift(); // discard end cap since that is always static
           
             // assert left most tile
             var tile = findLeftMost( tiles  );

@@ -386,13 +386,11 @@ let timeoutHandler = null;
 
 function timeoutOnDrag() {
   if ( getScrollOffset() === 0 ) {
-    Ti.API.info("fireing BACK due to swipe drag and hold");
     Topics.fireTopicEvent( Topics.BACK );
   } 
 }
 
 function handleDragStart(e) {
-  Ti.API.info(`in handleDragStart scrollOffset = ${getScrollOffset() }`);
   if ( getScrollOffset() === 0 ) {
     timeoutHandler = setTimeout(timeoutOnDrag,200);
   }
@@ -400,7 +398,6 @@ function handleDragStart(e) {
 
 function handleDragEnd(e) {
   if ( timeoutHandler ) {
-    Ti.API.info("cancelling BACK due to swipe drag and hold");
     clearTimeout(timeoutHandler);
     timeoutHandler = null;
   } 
@@ -418,7 +415,7 @@ $.content.addEventListener( "postlayout", function initEvent() {
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
 
 $.getView().addEventListener( "close", function cleanup() {
-  $.content.removeEventListener("dragstart", handleDragStart );
+  $.content.removeEventListener("dragstart", handleDragStart ); 
   $.content.removeEventListener("dragend", handleDragEnd );
   $.content.removeEventListener("scroll", drawIcecubeTray );
   Alloy.Collections["taxa"].off("add change remove", drawIcecubeTray );

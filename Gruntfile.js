@@ -138,7 +138,7 @@ module.exports = function(grunt) {
               quiet: true,
               ready: /Appium REST http interface listener started on/ 
             },
-            exec: "PATH=./node_modules/.bin/:$PATH appium --log-level info",
+            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:debug",
           },
           live_view_ios: {
             options: { wait: false },
@@ -168,6 +168,7 @@ module.exports = function(grunt) {
     // keep track of the current appium session
     let appium_session = null;
     function startAppium(caps) {
+      
       let p;
       if ( appium_session ) {
         p = stopAppiumClient(appium_session);
@@ -182,14 +183,19 @@ module.exports = function(grunt) {
         .catch( (err) => { grunt.fail.warn(err); } );
     }
 
+    function terminateApp(platform) {
+      return () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
+    }
+
     grunt.registerTask("install", function(platform,build_type) {
       const done = this.async();
       let appPath = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
-      const caps = getCapabilities(platform,true);
-      caps.autoLaunch = false;
+      const caps =  getCapabilities(platform,false);
+      caps.app = appPath;
+      caps.autoLaunch = true;
       startAppium(caps)
-        .then( () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
-        .then( () => appium_session.installApp(appPath) )
+        //.then( terminateApp(platform) )
+        //.then( () => appium_session.installApp(appPath) )
         .then( done );
     });
 
@@ -206,7 +212,7 @@ module.exports = function(grunt) {
       const caps = getCapabilities(platform,true);
       caps.autoLaunch = false;
       startAppium(caps)
-        .then( () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined) )
+        .then( terminateApp(platform) )
         .then( done );
     });
 
