@@ -249,12 +249,21 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-newer-explicit");
 
     // Default task(s).
-    grunt.registerTask('test_ios', [ 'run:appium', 'unit_test_ios', 'newer:test_ios', 'exec:end_to_end_test:ios', 'exec:acceptance_test_:os', 'stop:appium' ] );
-    grunt.registerTask('test_android', [ 'run:appium', 'unit_test_ios', 'newer:test_android', 'exec:acceptance_test:android', 'exec:end_to_end_test:android', 'stop:appium', ] );
+    grunt.registerTask('test', function (platform) {
+      grunt.task.run('run:appium');
+      grunt.task.run(`unit-test:${platform}`);
+      grunt.task.run(`newer:test_${platform}`);
+      grunt.task.run(`exec:end_to_end_test:${platform}`);
+      grunt.task.run(`exec:acceptance_test:${platform}`);
+    });
+    
+    grunt.registerTask('unit-test', function( platform ) {
+      grunt.task.run('run:appium');
+      grunt.task.run(`newer:unit_test_${platform}`);
+      grunt.task.run(`launch:${platform}:unit-test` );
 
-    grunt.registerTask('unit_test_android', [ 'run:appium', "newer:unit_test_android", "launch:android:unit-test" ] );
-    grunt.registerTask('unit_test_ios', [ 'run:appium', "newer:unit_test_ios",  "launch:ios:unit-test" ] );
-
+    } );
+ 
     //grunt.registerTask('unit_test_node', [ "newer:unit_test_android","exec:unit_test_node"] );
 
     grunt.registerTask('clean', ['exec:clean', 'exec:clean_test'] );
