@@ -99,13 +99,10 @@ describe("LocationEntry controller", function() {
               lng = parseFloat(sample.get("lng"));
           expect( lat ).to.equal(-42.888);
           expect( lng ).to.equal(147.665);
-          setTimeout( function() {
-            expect( view.visible, "window should hide" ).to.be.false;
-            removeDupsDone();
-          }, 10 );
+          removeDupsDone();
         });
       } );
-      scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
+      scr.mapview.fireEvent("longclick", { latitude: -42.888, longitude: 147.665});
       clickButton( scr.saveButton );
     } );
   });
