@@ -87,4 +87,7 @@ describe('TaxonDetails controller', function() {
 			expect(labels[4].text).to.equal("genus: Macrobrachium");
 		});
 	});
+	it('should display only the relevant media icons');
+	it('should only display the add sample button during a survey');
+	it('should correctly pass the media to the gallery widget');
 });
