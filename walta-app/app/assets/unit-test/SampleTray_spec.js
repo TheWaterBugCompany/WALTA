@@ -50,7 +50,6 @@ describe( 'SampleTray controller', function() {
     return function() {
       return new Promise( function( resolve ) {
           function isAtScrollX(e) {
-            console.log(`e.x = ${e.x} x = ${x}`)
             if ( e.x === x ) {
               SampleTray.content.removeEventListener("scroll",isAtScrollX);
               resolve();
