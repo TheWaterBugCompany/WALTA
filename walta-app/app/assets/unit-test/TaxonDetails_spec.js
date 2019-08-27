@@ -19,39 +19,72 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
 var { checkTestResult, closeWindow, controllerOpenTest } = require('unit-test/util/TestUtils');
 
-if ( typeof(_) == "undefined") _ = require('underscore')._;
-var meld = require('lib/meld');
-
 var Taxon = require('logic/Taxon');
-describe('TaxonDetails controller', function() {
-	var tv;
-	beforeEach( function() {
-		tv = Alloy.createController( "TaxonDetails", {
-					taxon: Taxon.createTaxon({
-						id: "testTaxon",
-						name: "Family Palaemonidae, Genus Macrobrachium",
-						commonName: "Freshwater prawn",
-						scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Crustacea"},{"taxonomicLevel":"class","name":"Decapoda"},{"taxonomicLevel":"family","name":"Palaemonidae"},{"taxonomicLevel":"genus","name":"Macrobrachium"}],
-						size: 300,
-						habitat: "Crayfish in rivers (upper photo) yabbies in wetlands/pools (lower photo).",
-						movement: "walking, with sudden flips when disturbed.",
-						confusedWith: "Nothing, very distinctive, We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to spearate when young.",
-						signalScore: 4,
-						description: "Random text to to at the end. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc.",
-						mediaUrls: [
-							"/unit-test/resources/simpleKey1/media/amphipoda_01.jpg",
-							"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg",
-							"/unit-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4"
-						]
-					})
-			});
-	});
+describe.only('TaxonDetails controller', function() {
+	context("descriptive text ", function() { 
+		var tv;
+		before( function(done) {
+			tv = Alloy.createController( "TaxonDetails", {
+						node: Taxon.createTaxon({
+							id: "testTaxon",
+							name: "Family Palaemonidae, Genus Macrobrachium",
+							commonName: "Freshwater prawn",
+							scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Crustacea"},{"taxonomicLevel":"class","name":"Decapoda"},{"taxonomicLevel":"family","name":"Palaemonidae"},{"taxonomicLevel":"genus","name":"Macrobrachium"}],
+							size: 300,
+							habitat: "Crayfish in rivers (upper photo) yabbies in wetlands/pools (lower photo).",
+							movement: "walking, with sudden flips when disturbed.",
+							confusedWith: "Nothing, very distinctive, We have left crayfish and Yabbies grouped together because they mostly turn up as juveniles in samples and are difficult to spearate when young.",
+							signalScore: 4,
+							description: "Random text at the end. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc. Lorem ipsum etc.",
+							mediaUrls: [
+								"/unit-test/resources/simpleKey1/media/amphipoda_01.jpg",
+								"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg",
+								"/unit-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4"
+							]
+						})
+				});
+			controllerOpenTest( tv, done );
+		});
+	
+		after( function(done) {
+			closeWindow( tv.getView(), done );
+		});
 
-	afterEach( function(done) {
-		closeWindow( tv.getView(), done );
-	});
+		it('the description text should be visible', function() {
+			expect(tv.description.text).to.contain("Random text at the end");
+		});
 
-	it('the description text should be visible', function(done) {
-		controllerOpenTest( tv, done );
+		it('the common name should be visible', function() {
+			expect(tv.title.text).to.equal("Freshwater prawn");
+		});
+
+		it('the size field should be correct', function() {
+			expect(tv.size.text).to.equal("300 mm");
+		});
+
+		it('the habitat field should be correct', function() {
+			expect(tv.habitat.text).to.contain("yabbies in wetlands/pools");
+		});
+
+		it('the movement field should be correct', function() {
+			expect(tv.movement.text).to.equal("walking, with sudden flips when disturbed.");
+		});
+
+		it('the confused with field should be correct', function() {
+			expect(tv.confusedWith.text).to.contain("Nothing, very distinctive");
+		});
+		
+		it('the signal score field should be correct', function() {
+			expect(tv.signalScore.text).to.equal(4);
+		});
+
+		it('the scientific name field should be correct', function() {
+			const labels = tv.scientificClassification.getChildren();
+			expect(labels[0].text).to.equal("phylum: Arthropoda");
+			expect(labels[1].text).to.equal("subphylum: Crustacea");
+			expect(labels[2].text).to.equal("class: Decapoda");
+			expect(labels[3].text).to.equal("family: Palaemonidae");
+			expect(labels[4].text).to.equal("genus: Macrobrachium");
+		});
 	});
 });
