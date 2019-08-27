@@ -28,9 +28,7 @@ describe("SiteDetails controller", function() {
 
     function fireTabClick( ctl, index ) {
         var tab = ctl.getButtons()[index];
-        var position = tab.rect;
-        position.x = position.x + position.width/2;
-        ctl.segCtrlWrapper.fireEvent("click", position );
+        ctl.segCtrlWrapper.fireEvent("click", { x: tab.rect.x + tab.rect.width/2, y: tab.rect.y} );
     }
 
 	beforeEach( function() {
@@ -53,20 +51,18 @@ describe("SiteDetails controller", function() {
 
     it('should save the survey type field', function(done) {
 		controllerOpenTest( ctl, function() {
-            ctl.on("updated", function() {
+            ctl.on("updated", () => checkTestResult( () => {
                 expect( parseInt( sample.get("surveyType") ) ).to.equal(SURVEY_ORDER);
-                done();
-            });
+            }, done));
             fireTabClick( ctl.surveyLevelSelect, SURVEY_ORDER );
         } );
     });
 
     it('should save the water body type field', function(done) {
 		controllerOpenTest( ctl, function() {
-            ctl.on("updated", function() {
-                expect( parseInt( sample.get("waterbodyType") ) ).to.equal(WATERBODY_LAKE);
-                done();
-            });
+            ctl.on("updated", () => checkTestResult( () => {
+                expect( parseInt( sample.get("surveyType") ) ).to.equal(WATERBODY_LAKE);
+            }, done));
             fireTabClick( ctl.waterbodyTypeSelect, WATERBODY_LAKE );
         } );
     });
