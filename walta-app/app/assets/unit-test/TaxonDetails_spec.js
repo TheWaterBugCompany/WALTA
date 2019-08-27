@@ -20,7 +20,7 @@ var { expect } = require('unit-test/lib/chai');
 var { checkTestResult, closeWindow, controllerOpenTest } = require('unit-test/util/TestUtils');
 
 var Taxon = require('logic/Taxon');
-describe.only('TaxonDetails controller', function() {
+describe('TaxonDetails controller', function() {
 	context("descriptive text ", function() { 
 		var tv;
 		before( function(done) {
