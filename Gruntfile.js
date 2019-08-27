@@ -261,6 +261,7 @@ module.exports = function(grunt) {
       grunt.task.run('run:appium');
       grunt.task.run(`newer:unit_test_${platform}`);
       grunt.task.run(`launch:${platform}:unit-test` );
+      grunt.task.run("output-logs");
 
     } );
  
