@@ -51,11 +51,11 @@ function transitionWindows( win, effect ) {
 	}
 
 	Alloy.Globals.lastWindow.push( win );
-	Ti.API.info(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>getWindowName(w))}`);
+	Ti.API.debug(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>getWindowName(w))}`);
 	win.open( args );
 	if ( Alloy.Globals.lastWindow.length > 1 ) {
 		var oldWindow = Alloy.Globals.lastWindow.shift();
-		Ti.API.info(`oldWindow = ${getWindowName(oldWindow)} `);
+		Ti.API.debug(`oldWindow = ${getWindowName(oldWindow)} `);
 		oldWindow.close();
 	};
 }
@@ -65,7 +65,7 @@ function convertSystemToDip( n ) {
 }
 
 function urlToLocalAsset( path ) {
-	console.info(`urlToLocalAsset("${path}")`);
+	console.debug(`urlToLocalAsset("${path}")`);
 	if ( path.slice(0,7) === "file://" )
 		return path;
 	if ( path[0] != '/' ) path = '/' + path;

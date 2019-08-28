@@ -11,8 +11,8 @@ function getCapabilities( platform, quick ) {
             platformName: "Android",
             autoGrantPermissions: true,
             deviceName: "device",
-            appActivity: ".WaterbugActivity",
-            appWaitActivity: "org.appcelerator.titanium.TiActivity"
+            appActivity: ".WaterbugActivity"
+            //appWaitActivity: "org.appcelerator.titanium.TiActivity"
         });
         if ( !quick ) {
             caps.app = join(process.cwd(), './builds/test/Waterbug.apk');

@@ -19,14 +19,15 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, windowOpenTest, wrapViewInWindow } = require("unit-test/util/TestUtils");
 describe("MayflyEmergenceMap controller", function() {
-	var ctl;
+	var ctl,win;
 	before( function() {
-		ctl = Alloy.createController("MayflyEmergenceMap");
+    ctl = Alloy.createController("MayflyEmergenceMap");
+    win = wrapViewInWindow( ctl.getView() );
 	});
 	after( function(done) {
-		closeWindow( ctl.getView(), done );
+		closeWindow( win, done );
 	});
 	it('should display the MayflyEmergenceMap view', function(done) {
-		windowOpenTest( wrapViewInWindow( ctl.getView() ), done );
+		windowOpenTest( win, done );
     });
 });

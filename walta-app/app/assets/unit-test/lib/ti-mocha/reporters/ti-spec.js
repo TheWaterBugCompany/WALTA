@@ -125,6 +125,8 @@ function TiSpec(runner) {
 			log(fmt, stats.failures);
 			list(failures);
 		}
+
+		log(`>>>>> UNIT TESTS: ${stats.failures>0?"FAILED":"PASSED"}`);
 	} );
 }
 
