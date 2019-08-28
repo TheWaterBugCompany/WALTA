@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
     const { getCapabilities, startAppiumClient, stopAppiumClient } = require("./features/support/appium")
     const { decodeSyslog } = require('./features/support/ios-colors');
+    const _ = require("lodash");
     const APP_ID = "net.thewaterbug.waterbug";
     const APP_ACTIVITY = ".WaterbugActivity";
     const KEYSTORE = process.env.KEYSTORE || '/home/msharman/Documents/Business/thecodesharman.keystore';
@@ -216,26 +217,33 @@ module.exports = function(grunt) {
         .then( done );
     });
 
-    grunt.registerTask("output-logs", function() {
+    grunt.registerTask("output-logs", function(platform) {
       let done = this.async();
       const levels = [ "ERROR", "WARN", "INFO" ];
       if ( process.env.DEBUG )
         levels.push("DEBUG");
-      const retain = new RegExp(`\\[(${levels.join("|")})\\]`,"m");
+      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +TiAPI +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
+      
       function processLogs() {
         return appium_session
-          .getLogs("syslog")
+          .getLogs(platform==="android"?"logcat":"syslog")
           .then( (logs) => {
+              let stop = false;
               logs.forEach( (line) => {
-                //TODO: filter correctly on android
-                if ( line.message.includes("Waterbug(TitaniumKit)") && retain.test(line.message)) {
+                if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
+                  stop = true;
+                } else if ( line.message.includes(platform === "android"? "TiAPI":"Waterbug(TitaniumKit)") && retain.test(line.message)) {
                   let parts = line.message.split(retain);
                   if ( parts.length >= 1 ) {
                     grunt.log.writeln(decodeSyslog(parts[2]));
                   } 
                 } 
               });
-              return processLogs();
+              if ( stop ) {
+                return;
+              } else {
+                return processLogs();
+              }
           });
       }
       processLogs()
@@ -261,7 +269,7 @@ module.exports = function(grunt) {
       grunt.task.run('run:appium');
       grunt.task.run(`newer:unit_test_${platform}`);
       grunt.task.run(`launch:${platform}:unit-test` );
-      grunt.task.run("output-logs");
+      grunt.task.run(`output-logs:${platform}`);
 
     } );
  
@@ -280,7 +288,7 @@ module.exports = function(grunt) {
       grunt.task.run("exec:stop_live_view");
       grunt.task.run(`run:live_view_${platform}`);
       grunt.task.run(`launch:${platform}:preview`);
-      grunt.task.run("output-logs");
+      grunt.task.run(`output-logs:${platform}`);
     } );
   
     grunt.registerTask('release', function(platform) {

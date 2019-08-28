@@ -19,14 +19,15 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, windowOpenTest, wrapViewInWindow } = require("unit-test/util/TestUtils");
 describe("LeafletMap controller", function() {
-	var ctl;
+	var ctl,win;
 	before( function() {
-		ctl = Alloy.createController("LeafletMap");
+    ctl = Alloy.createController("LeafletMap");
+    win = wrapViewInWindow( ctl.getView() );
 	});
 	after( function(done) {
-		closeWindow( ctl.getView(), done );
+		closeWindow( win, done );
 	});
 	it('should display the LeafletMap view', function(done) {
-		windowOpenTest( wrapViewInWindow( ctl.getView() ), done );
+		windowOpenTest( win, done );
     });
 });
