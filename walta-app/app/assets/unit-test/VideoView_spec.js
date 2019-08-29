@@ -16,25 +16,67 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
-var { expect } = require('unit-test/lib/chai');
-var TestUtils = require('unit-test/util/TestUtils');
-
-var meld = require('lib/meld');
-var VideoView = require('ui/VideoView');
+var Topics = require('ui/Topics');
+var { expect } = require("unit-test/lib/chai");
+var { checkTestResult, closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
 
 describe('VideoView', function() {
-	var vv;
-
+	var ctl;
+    this.timeout(3000);
 	beforeEach(function() {
-		vv = VideoView.createVideoView( '/unit-test/resources/simpleKey1/media/attack_caddis_01_x264.mp4' );
+        ctl = Alloy.createController("VideoPlayer", { 
+                url: '/unit-test/resources/simpleKey1/media/test_clip.mp4' 
+            });
 	});
 
-	afterEach( function() {
-	    vv.close();
+	afterEach( function(done) {
+	    closeWindow( ctl.getView(), done );
 	});
 
-	it('should fire the onComplete event when the video has finished playing', function(done) {
-        this.timeout(75000);
-		TestUtils.waitForMeldEvent( vv, 'onComplete', () => vv.open(), done );
-	});
+	it('should fire the complete event when the video has finished playing', function(done) {
+        function success() {
+            ctl.videoPlayer.removeEventListener("complete", success);
+            done();
+        } 
+        ctl.videoPlayer.addEventListener("complete", success );
+		controllerOpenTest( ctl, function() {} );
+    });
+
+    it('should fire the BACK topic when the close button is pressed',function(done){
+        function success() {
+            Topics.unsubscribe(Topics.BACK, success);
+            done();
+        }
+        Topics.subscribe(Topics.BACK, success);
+        controllerOpenTest( ctl, function() {
+            ctl.closeButton.fireEvent("click");
+        } );
+    });
+
+    it('should play the movie again if the play button is pressed',function(done){
+        this.timeout(6000);
+        function first() {
+            ctl.videoPlayer.removeEventListener("complete", first);
+            ctl.videoPlayer.addEventListener("complete", second);
+            setTimeout( () => ctl.playButton.fireEvent("click"), 100 );
+        } 
+        function second() {
+            ctl.videoPlayer.removeEventListener("complete", second);
+            done();
+        } 
+        ctl.videoPlayer.addEventListener("complete", first );
+        controllerOpenTest( ctl, function() {} );
+    });
+
+    it('should pause the video if the screen is clicked',function(done){
+        controllerOpenTest( ctl, function() {
+            setTimeout( function() {
+                ctl.videoPlayer.fireEvent("click");
+                setTimeout( ()=> checkTestResult( 
+                    function() {
+                        expect( ctl.videoPlayer.playbackState).to.equal(Ti.Media.VIDEO_PLAYBACK_STATE_PAUSED);
+                    },done), 1000 );
+                },1200);
+            });
+    });
 });

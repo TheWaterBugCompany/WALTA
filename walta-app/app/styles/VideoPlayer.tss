@@ -1,0 +1,27 @@
+"#closeButton": {
+  top: 0,
+  height: Ti.UI.SIZE,
+  width: "8%",
+  right: 0,
+  zIndex: 999
+}
+
+".play_button_image": {
+    image: "/images/play.png",
+    height: Ti.UI.FILL
+}
+"#playButton": {
+    width: "20%",
+    height: "30%",
+    zIndex: 999
+}
+
+"#videoPlayer": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL,
+    autoplay: false,
+    backgroundColor: "black",
+    mediaControlStyle:Ti.Media.VIDEO_CONTROL_FULLSCREEN,
+    scalingMode:Titanium.Media.VIDEO_SCALING_MODE_FILL,
+    showsControls: false
+}

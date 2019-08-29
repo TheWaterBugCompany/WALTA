@@ -20,7 +20,6 @@ var SampleSync = require("logic/SampleSync");
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
 var PlatformSpecific = require('ui/PlatformSpecific');
-var VideoView = require('ui/VideoView');
 var Sample = require('logic/Sample');
 var GeoLocationService = require('logic/GeoLocationService'); 
 
@@ -120,11 +119,7 @@ function startApp() {
     updateDecisionWindow(_(data).extend({ slide: 'right' }));
   });
 
-  Topics.subscribe( Topics.VIDEO, function( data ) {
-    var vv = VideoView.createVideoView( data.url );
-    vv.open();
-  });
-
+  Topics.subscribe( Topics.VIDEO, (data) => openController("VideoPlayer", data ) );
   Topics.subscribe( Topics.BACK, (data) => goBack(data));
   Topics.subscribe( Topics.FORWARD, (data)=> updateDecisionWindow(_(data).extend({ slide: 'right' })));
   Topics.subscribe( Topics.HOME, () => openController("Menu",{ slide: "none" }) );
@@ -133,7 +128,7 @@ function startApp() {
   Topics.subscribe( Topics.BROWSE, () => openController("TaxonList") );
   Topics.subscribe( Topics.SAMPLETRAY, () => openController("SampleTray") );
   Topics.subscribe( Topics.IDENTIFY, (data) => openController("SampleTray",data) );
-  Topics.subscribe( Topics.SITEDETAILS, (args) => siteDetailsWindow(args) );
+  Topics.subscribe( Topics.SITEDETAILS, (data) => siteDetailsWindow(data) );
   Topics.subscribe( Topics.HABITAT, () => openController("Habitat") );
   Topics.subscribe( Topics.COMPLETE, () => openController("Summary") );
   Topics.subscribe( Topics.HISTORY, () => openController("SampleHistory") );

@@ -118,7 +118,6 @@ function TiSpec(runner) {
 			fmt = color('pending', ' ') + color('pending', ' %d pending');
 			log(fmt, stats.pending);
 		}
-
 		// failures
 		if (stats.failures) {
 			fmt = color('fail', '  %d failing');
@@ -126,7 +125,7 @@ function TiSpec(runner) {
 			list(failures);
 		}
 
-		log(`>>>>> UNIT TESTS: ${stats.failures>0?"FAILED":"PASSED"}`);
+		Ti.API.info(`>>>>> UNIT TESTS: ${stats.failures?"FAILED":"PASSED"}`);
 	} );
 }
 
