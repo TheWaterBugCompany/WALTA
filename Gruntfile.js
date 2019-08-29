@@ -217,7 +217,7 @@ module.exports = function(grunt) {
         .then( done );
     });
 
-    grunt.registerTask("output-logs", function(platform) {
+    grunt.registerTask("output-logs", function(platform,option) {
       let done = this.async();
       const levels = [ "ERROR", "WARN", "INFO" ];
       if ( process.env.DEBUG )
@@ -239,7 +239,7 @@ module.exports = function(grunt) {
                   } 
                 } 
               });
-              if ( stop ) {
+              if ( stop && option !== "preview") {
                 return;
               } else {
                 return processLogs();
@@ -281,14 +281,17 @@ module.exports = function(grunt) {
     grunt.registerTask('preview', function(platform,option) {
       grunt.task.run("run:appium");
       // It's often possible to get away without do a rebuild and relying on the file server 
-      // to copy changes to the device. The quick optoin enables that.
+      // to copy changes to the device. The quick option enables that.
       if ( option !== "quick") { 
         grunt.task.run(`newer:preview_${platform}`);
       } 
       grunt.task.run("exec:stop_live_view");
       grunt.task.run(`run:live_view_${platform}`);
       grunt.task.run(`launch:${platform}:preview`);
-      grunt.task.run(`output-logs:${platform}`);
+
+      // the preview option here enters an infinite loop so that the log output
+      // continues as changes are made during development
+      grunt.task.run(`output-logs:${platform}:preview`);
     } );
   
     grunt.registerTask('release', function(platform) {
