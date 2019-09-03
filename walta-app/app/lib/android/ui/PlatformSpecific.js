@@ -64,6 +64,10 @@ function convertSystemToDip( n ) {
 	return Ti.UI.convertUnits( n + "px", Ti.UI.UNIT_DIP );
 }
 
+function convertDipToSystem( n ) {
+	return Ti.UI.convertUnits( n + "dp", Ti.UI.UNIT_PX );
+}
+
 function urlToLocalAsset( path ) {
 	console.debug(`urlToLocalAsset("${path}")`);
 	if ( path.slice(0,7) === "file://" )
@@ -76,5 +80,6 @@ exports.urlToLocalAsset = urlToLocalAsset;
 exports.appStartUp = appStartUp;
 exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;
+exports.convertDipToSystem = convertDipToSystem;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Titanium.UI.ActivityIndicatorStyle.BIG;

@@ -25,10 +25,15 @@ describe('Question controller', function() {
 
 	function makeQuestionWindow(question) {
 		qv = Alloy.createController("Question", { question: question });
-		return wrapViewInWindow(  _(qv.getView()).extend( { height: '45%', width: '98%' } ) );
+		win = wrapViewInWindow(  _(qv.getView()).extend( { height: '45%', width: '98%' } ) );
+		win.addEventListener("close", function cleanUp() {
+			win.removeEventListener("close", cleanUp);
+			qv.cleanUp();
+		});
+		return win;
 	}
 
-	after( function(done) {
+	afterEach( function(done) {
 		closeWindow( win, done );
 	});
 

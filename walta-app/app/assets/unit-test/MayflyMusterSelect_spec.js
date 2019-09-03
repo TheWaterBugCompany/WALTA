@@ -25,6 +25,10 @@ describe('MayflyMusterSelect', function() {
 	before( function() {
 		mnu = Alloy.createController("MayflyMusterSelect");
 		win = wrapViewInWindow( mnu.getView() );
+		win.addEventListener("close", function cleanUp() {
+            win.removeEventListener("close", cleanUp );
+            mnu.cleanUp();
+        })
 	});
 
 	after( function(done) { 

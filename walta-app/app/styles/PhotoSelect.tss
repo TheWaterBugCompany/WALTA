@@ -1,8 +1,11 @@
 "#photoSelectBoundary": {
     width: Ti.UI.FILL,
     height: Ti.UI.FILL
-}
+} 
 
+".photoNoError": {
+    borderColor: "transparent"
+}
 ".photoError": {
     borderColor: "red",
     borderWidth: "2dp",
@@ -19,13 +22,11 @@
     borderRadius: "20dp"
 }
 
-
 "#photoSelectInner" : {
-
     borderColor: "#26849c",
     borderWidth: "1dp",
     backgroundColor: "#cee8ef"
-}
+} 
 
 ".photoMessage": {
     visible: false,
@@ -77,11 +78,13 @@
 }
 
 "#magnify": {
+    backgroundDisabledColor: "grey",
     visible: false,
     image: "/images/icon-magnify.png"
 }
 
 "#camera": {
+    backgroundDisabledColor: "grey",
     image: "/images/camera-icon.png"
 }
 
