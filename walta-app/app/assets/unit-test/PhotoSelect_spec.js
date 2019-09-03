@@ -26,42 +26,38 @@ describe('PhotoSelect controller', function() {
 		pv = Alloy.createController("PhotoSelect", {readonly: readonly});
 		pv.setImage(images);
 		win = wrapViewInWindow(  _(pv.getView()).extend( { height: '100%', width: '100%' } ) );
+		win.addEventListener("close", function cleanUp() {
+			win.removeEventListener( "close", cleanUp );
+			pv.cleanUp();
+		});
 	}
 
-	before( function() {
-		
-	});
-
-	after( function(done) {
+	afterEach( function(done) {
 		closeWindow( win, done );
 	});
 
-	it('should display readonly view', function( done ) { 
+	it("should display readonly view", function( done ) { 
 		makePhotoSelect( true, [
 			'/unit-test/resources/simpleKey1/media/amphipoda_01.jpg',
 			'/unit-test/resources/simpleKey1/media/amphipoda_02.jpg',
 			'/unit-test/resources/simpleKey1/media/amphipoda_03.jpg'
 		]);
 		windowOpenTest( win, function() {
-			checkTestResult( (e) => done(e), () => {
-				expect( pv.iconHolder.children ).to.contain( pv.magnify );
-				Ti.API.debug(`${JSON.stringify(pv.magnify.visible)}`);
+			checkTestResult( done, () => {
 				expect( pv.magnify.visible ).to.be.true;
-				expect( pv.iconHolder.children ).to.not.contain( pv.camera );
-				//expect( pv.photo.image ).to.equal("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+				//expect( pv.camera.visible ).to.be.false;
+				expect( pv.photo.image.nativePath ).to.contain("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
 				expect( pv.photoSelectLabel.visible ).to.be.false;
 			}, 100);
-		} );3
+		} );
 	});
 
 	it('should display a take photo view with please take photo message', function(done) {
 		makePhotoSelect( false );
 		windowOpenTest( win, function() {
-			checkTestResult( (e) => done(e), () => {
-				expect( pv.iconHolder.children ).to.contain( pv.magnify );
+			checkTestResult( done, () => {
 				expect( pv.magnify.visible ).to.be.false;
-				expect( pv.iconHolder.children ).to.contain( pv.camera );
-
+				expect( pv.camera.visible ).to.be.true;
 				expect( pv.photoSelectOptionalLabel.visible ).to.be.true;
 				expect( pv.photoSelectLabel.visible ).to.be.false;
 				// TODO: automate the capture of a photo impossible from mocha ?!
@@ -74,10 +70,11 @@ describe('PhotoSelect controller', function() {
 		pv.setError();
 		windowOpenTest( win, function() {
 			checkTestResult( (e) => done(e), () => {
-				expect( pv.iconHolder.children ).to.contain( pv.magnify );
+				//expect( pv.iconHolder.children ).to.contain( pv.magnify );
 				expect( pv.magnify.visible ).to.be.true;
-				expect( pv.iconHolder.children ).to.contain( pv.camera );
-				//expect( pv.photo.image ).to.equal("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+				expect( pv.camera.visible ).to.be.true;
+				//expect( pv.iconHolder.children ).to.contain( pv.camera );
+				expect( pv.photo.image.nativePath ).to.contain("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
 				expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
 				expect( pv.photoSelectLabel.visible ).to.be.true;
 			}, 100);
@@ -88,10 +85,11 @@ describe('PhotoSelect controller', function() {
 		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/amphipoda_01.jpg' );
 		windowOpenTest( win, function() {
 			checkTestResult( (e) => done(e), () => {
-				expect( pv.iconHolder.children ).to.contain( pv.magnify );
+				//expect( pv.iconHolder.children ).to.contain( pv.magnify );
 				expect( pv.magnify.visible ).to.be.true;
-				expect( pv.iconHolder.children ).to.contain( pv.camera );
-				//expect( pv.photo.image ).to.equal("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+				expect( pv.camera.visible ).to.be.true;
+				//expect( pv.iconHolder.children ).to.contain( pv.camera );
+				expect( pv.photo.image.nativePath ).to.contain("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
 				expect( pv.photoSelectLabel.visible ).to.be.false;
 				// TODO: automate the capture of a photo impossible from mocha ?!
 			}, 100 )

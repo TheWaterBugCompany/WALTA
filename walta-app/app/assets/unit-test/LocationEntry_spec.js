@@ -19,6 +19,7 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton, checkTestResult } = require("unit-test/util/TestUtils");
 describe("LocationEntry controller", function() {
+  this.timeout(10000);
 	var win, scr, view;
   var sample= Alloy.Models.sample;
   beforeEach( function() {

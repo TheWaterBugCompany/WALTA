@@ -1,19 +1,13 @@
 var taxon = $.args.taxon;
 var key = $.args.key;
-var speedbugIndex = $.args.key.getSpeedbugIndex();
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
 function cleanUp() {
+    $.photoSelect.cleanUp();
     $.destroy();
     $.off();
-    $.abundanceValue.removeEventListener('swipe', swipeListener);
 }
-
-function swipeListener(e){
-		e.cancelBubble = true;
-}
-$.abundanceValue.addEventListener('swipe', swipeListener);
 
 setImage( taxon.getPhoto() );
 setAbundance( taxon.get("abundance") );
@@ -26,14 +20,12 @@ function setImage( photo ) {
         $.photoSelect.setImage( taxon.getSilhouette() );
         $.photoSelect.setError();
         disableControl($.saveButton); 
-        
     }
 }
 
 function setAbundance( binValue  ) {
-    taxon.set("abundance", binValue) 
-    var nums = binValue.split("-");
-    $.abundanceValue.value = ( parseInt(nums[1]) + parseInt(nums[0]) ) / 2;
+    taxon.set("abundance", binValue);
+    $.abundanceValue.value = taxon.getAbundance();
 }
 
 function updateAbundance() {
@@ -55,9 +47,7 @@ function updateAbundance() {
 
 function saveEvent() {
     taxon.set("abundance", $.abundanceLabel.text );
-    if ( cachedPhoto ) {
-        taxon.setPhoto(cachedPhoto);
-    }
+    taxon.setPhoto($.photoSelect.getImageUrl);
     $.trigger("save", taxon );
 }
 
@@ -84,8 +74,7 @@ function closeEvent() {
     $.trigger("close");
 }
 var cachedPhoto;
-$.photoSelect.on("photoTaken", function(photo) {
-    cachedPhoto = photo;
+$.photoSelect.on("photoTaken", function() {
     $.photoSelect.clearError();
     enableControl($.saveButton);
 });

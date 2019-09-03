@@ -22,7 +22,7 @@ var { checkTestResult, closeWindow, controllerOpenTest } = require("unit-test/ut
 
 describe('VideoView', function() {
 	var ctl;
-    this.timeout(3000);
+    this.timeout(6000);
 	beforeEach(function() {
         ctl = Alloy.createController("VideoPlayer", { 
                 url: '/unit-test/resources/simpleKey1/media/test_clip.mp4' 
@@ -72,10 +72,10 @@ describe('VideoView', function() {
         controllerOpenTest( ctl, function() {
             setTimeout( function() {
                 ctl.videoPlayer.fireEvent("click");
-                setTimeout( ()=> checkTestResult( 
+                setTimeout( ()=> checkTestResult( done,
                     function() {
                         expect( ctl.videoPlayer.playbackState).to.equal(Ti.Media.VIDEO_PLAYBACK_STATE_PAUSED);
-                    },done), 1000 );
+                    }), 1000 );
                 },1200);
             });
     });

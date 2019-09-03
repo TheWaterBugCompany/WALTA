@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "/Users/msharman/Source/titanium_mobile"
+		},
+		{
+			"path": "node_modules/liveview"
 		}
 	],
 	"settings": {

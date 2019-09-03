@@ -63,7 +63,7 @@ function clearTileCache() {
   for( var i = 0; i<=tileIndex.length; i++ ) {
     var tile = tileIndex[i];
     if ( typeof( tile ) !== "undefined" ) {
-      $.content.remove( tile.container );
+      $.tray.remove( tile.container );
       cleanUpTile( tile );
       delete tileIndex[i];
     }
@@ -270,7 +270,7 @@ function releaseTiles( start_n, end_n ) {
     if ( i >=  0 ) {
       var tile = tileIndex[i];
       if ( typeof( tile ) !== "undefined" ) {
-        $.content.remove( tile.container );
+        $.tray.remove( tile.container );
         cleanUpTile( tile );
         delete tileIndex[i];
       }
@@ -291,7 +291,7 @@ function addTiles( start_n, end_n ) {
       } else {
         tile = createSampleTrayTile( i );
         tileIndex[i] = tile;
-        $.content.add( tile.container );
+        $.tray.add( tile.container );
       }
 
     }
@@ -367,7 +367,7 @@ function drawEndcapTile() {
    height: `${getEndcapHeight()}dip`,
    width: `${getEndcapWidth()}dip`
   })
-  $.content.add( $.endcap );
+  $.tray.add( $.endcap );
   $.endcap.add( Ti.UI.createImageView({ 
     image: "/images/endcap_320.png",
     width: Ti.UI.FILL,
@@ -375,11 +375,26 @@ function drawEndcapTile() {
   }));
 }
 
+function getTrayWidth() {
+  let taxons = Alloy.Collections["taxa"].length;
+  let tiles = Math.floor((taxons-2) / 4);
+  let width = tiles*getMiddleWidth() + getEndcapWidth() + getMiddleWidth();
+  if ( width < getViewWidth() )
+    return getViewWidth();
+  else
+    return width;
+}
+
+function scrollToRightEdge() {
+  $.content.scrollTo( PlatformSpecific.convertDipToSystem( getTrayWidth() - getViewWidth() ), 0, { animate: true } );
+}
+
 
 function initializeTray() {
-    drawEndcapTile();
-    clearTileCache();
-    drawIcecubeTray();
+  $.tray.width = getTrayWidth() + 'dp';
+  drawEndcapTile();
+  clearTileCache();
+  drawIcecubeTray();
 }
 
 let timeoutHandler = null;
@@ -410,6 +425,7 @@ $.content.addEventListener("dragend", handleDragEnd );
 $.content.addEventListener( "postlayout", function initEvent() {
   $.content.removeEventListener( "postlayout", initEvent );
   initializeTray();
+  scrollToRightEdge();
 });
  
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
@@ -453,7 +469,7 @@ function editTaxon( taxon_id ) {
     closeEditScreen();
     taxon.save();
     Alloy.Collections["taxa"].add( taxon );
-    
+    scrollToRightEdge();
   });
 }
 
@@ -469,3 +485,5 @@ if ( $.args.taxonId ) {
   })
 }
 exports.editTaxon = editTaxon;
+exports.getTrayWidth = getTrayWidth;
+exports.getViewWidth = getViewWidth;

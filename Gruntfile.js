@@ -47,6 +47,16 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
+          install_android: {
+            command: function(build_type) { 
+              return `${process.env.ANDROID_HOME}/platform-tools/adb install ./builds/${build_type}/Waterbug.apk`;
+            }
+          },
+
+          uninstall_android: {
+            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`
+          },
+
           acceptance_test: {
             command: function(platform,option) {
               return `${option==="quick" ? 'QUICK="true"':""},PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip"`;
@@ -184,6 +194,11 @@ module.exports = function(grunt) {
         .catch( (err) => { grunt.fail.warn(err); } );
     }
 
+    
+    function uninstallApp(platform) {
+      return () => appium_session.removeApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
+    }
+
     function terminateApp(platform) {
       return () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
     }
@@ -191,13 +206,24 @@ module.exports = function(grunt) {
     grunt.registerTask("install", function(platform,build_type) {
       const done = this.async();
       let appPath = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
-      const caps =  getCapabilities(platform,false);
-      caps.app = appPath;
-      caps.autoLaunch = true;
-      startAppium(caps)
-        //.then( terminateApp(platform) )
-        //.then( () => appium_session.installApp(appPath) )
-        .then( done );
+
+      if ( platform === "ios" ) {
+        const caps =  getCapabilities(platform,false);
+        caps.app = appPath;
+        caps.autoLaunch = true;
+        startAppium(caps)
+          .then( terminateApp(platform) )
+          .then( uninstall(platform) )
+          .then( () => appium_session.installApp(appPath) )
+          .then( done );
+      } else {
+        grunt.task.run("exec:uninstall_android");
+        grunt.task.run(`exec:install_android:${build_type}`);
+        done();
+      }
+
+
+
     });
 
     grunt.registerTask("launch", function(platform,build_type) {
@@ -222,33 +248,31 @@ module.exports = function(grunt) {
       const levels = [ "ERROR", "WARN", "INFO" ];
       if ( process.env.DEBUG )
         levels.push("DEBUG");
-      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +TiAPI +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
       
-      function processLogs() {
-        return appium_session
-          .getLogs(platform==="android"?"logcat":"syslog")
-          .then( (logs) => {
-              let stop = false;
-              logs.forEach( (line) => {
-                if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
-                  stop = true;
-                } else if ( line.message.includes(platform === "android"? "TiAPI":"Waterbug(TitaniumKit)") && retain.test(line.message)) {
-                  let parts = line.message.split(retain);
-                  if ( parts.length >= 1 ) {
-                    grunt.log.writeln(decodeSyslog(parts[2]));
-                  } 
-                } 
-              });
-              if ( stop && option !== "preview") {
-                return;
-              } else {
-                return processLogs();
-              }
-          });
+      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +TiAPI +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
+      function delay(t) {
+        return new Promise( resolve => setTimeout(resolve, t) ); 
       }
-      processLogs()
-        .then( done )
-        .catch( (err) => { grunt.fail.warn(err); done(); } );
+
+      async function processLogs() {
+        let stop = false;
+        while( !stop || option === "preview") {
+          let logs = await appium_session.getLogs(platform==="android"?"logcat":"syslog");
+          logs.forEach( (line) => {
+            if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
+              stop = true;
+            } else if ( line.message.includes(platform === "android"? "TiAPI":"Waterbug(TitaniumKit)") && retain.test(line.message)) {
+              let parts = line.message.split(retain);
+              if ( parts.length >= 1 ) {
+                grunt.log.writeln(decodeSyslog(parts[2]));
+              } 
+            } 
+          });
+          await delay(100);
+        }
+      }
+
+      processLogs().then(done);
     });
     
     // Load the plugin that provides the "uglify" task.

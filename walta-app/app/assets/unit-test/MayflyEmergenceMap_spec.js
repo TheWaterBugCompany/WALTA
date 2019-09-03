@@ -21,8 +21,12 @@ var { closeWindow, windowOpenTest, wrapViewInWindow } = require("unit-test/util/
 describe("MayflyEmergenceMap controller", function() {
 	var ctl,win;
 	before( function() {
-    ctl = Alloy.createController("MayflyEmergenceMap");
-    win = wrapViewInWindow( ctl.getView() );
+        ctl = Alloy.createController("MayflyEmergenceMap");
+        win = wrapViewInWindow( ctl.getView() );
+        win.addEventListener("close", function cleanUp() {
+            win.removeEventListener("close", cleanUp );
+            ctl.cleanUp();
+        })
 	});
 	after( function(done) {
 		closeWindow( win, done );

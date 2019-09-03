@@ -88,5 +88,6 @@ exports.urlToLocalAsset = urlToLocalAsset;
 exports.appStartUp = appStartUp;
 exports.appShutdown = appShutdown;
 exports.convertSystemToDip = convertSystemToDip;
+exports.convertDipToSystem = convertSystemToDip;
 exports.transitionWindows = transitionWindows;
 exports.getLoadingIndicatorStyle = Ti.UI.ActivityIndicatorStyle.BIG;

@@ -3,7 +3,7 @@
 		<View id="photoSelectInner">
 			<ImageView id="photo" />
 			<Label id="photoSelectLabel" class="photoMessage" text="Please take a photo\nto continue"/>
-			<Label id="photoSelectOptionalLabel"  class="photoMessage" text="Tap camera to\nadd a photo"/>
+			<Label id="photoSelectOptionalLabel"  class="photoMessage" text="Tap camera icon to\nadd a photo"/>
 			<View id="iconHolder" class="shrinkWrap">
 				<ImageView id="magnify" class="icon" accessibilityLabel="Magnify" onClick="openGallery"/>
 				<ImageView id="camera" class="icon" accessibilityLabel="Take Photo" onClick="takePhoto"/>
