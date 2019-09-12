@@ -69,7 +69,7 @@ function generateThumbnail( fileOrBlob ) {
         fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
     }
 
-    if ( ( fullPhoto.mimeType !== "image/png" ) ) {
+    if ( ( fullPhoto.mimeType === "image/png" ) ) {
         Ti.API.info(`Got a PNG: converting photo in JPEG...`);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
     }
@@ -183,7 +183,6 @@ function takePhoto(e) {
                 autorotate: true,
                 success: function (result) {
                     setImage( result );
-                    Ti.API.info(`${JSON.stringify(result)}`);
                     $.trigger("photoTaken", $.photo.image );
                 },
                 error: function (error) {
