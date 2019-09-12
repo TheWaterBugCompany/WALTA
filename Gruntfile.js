@@ -59,14 +59,14 @@ module.exports = function(grunt) {
 
           acceptance_test: {
             command: function(platform,option) {
-              return `${option==="quick" ? 'QUICK="true"':""},PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip"`;
+              return `${option==="quick" ? 'QUICK="true",':""}PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip"`;
             },
             exitCode: [0,1]
           },
 
           end_to_end_test: {
             command: function(platform,option) {
-              return `${option==="quick" ? 'QUICK="true"':""},PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH $PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`;
+              return `${option==="quick" ? 'QUICK="true",':""}PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH mocha --timeout 9990000 --color --recursive "./end-to-end-testing/*.js"`;
             },
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
@@ -280,7 +280,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
 
-    // Default task(s).
     grunt.registerTask('test', function (platform) {
       grunt.task.run('run:appium');
       grunt.task.run(`unit-test:${platform}`);
@@ -288,6 +287,19 @@ module.exports = function(grunt) {
       grunt.task.run(`exec:end_to_end_test:${platform}`);
       grunt.task.run(`exec:acceptance_test:${platform}`);
     });
+
+    grunt.registerTask('end-to-end-test', function (platform) {
+      grunt.task.run('run:appium');
+      grunt.task.run(`newer:test_${platform}`);
+      grunt.task.run(`exec:end_to_end_test:${platform}`);
+    });
+
+    grunt.registerTask('acceptance-test', function (platform) {
+      grunt.task.run('run:appium');
+      grunt.task.run(`newer:test_${platform}`);
+      grunt.task.run(`exec:acceptance_test:${platform}`);
+    });
+
     
     grunt.registerTask('unit-test', function( platform ) {
       grunt.task.run('run:appium');

@@ -10,6 +10,10 @@ class BaseScreen {
     isIos() { return this.platform === "ios"; }
     isAndroid() { return this.platform === "android"; }
 
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     async waitForRaw(sel, message) {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );

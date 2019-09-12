@@ -44,7 +44,7 @@ describe("EditTaxon controller", function() {
 
     afterEach( function(done ) {
         if ( win ) {
-            closeWindow( win, done );
+            closeWindow( win, () => setTimeout( done, 50 ) ); // race condition on cleanUp() ??
         } else {
             done();
         }

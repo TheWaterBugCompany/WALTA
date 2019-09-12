@@ -13,12 +13,16 @@ const { navigateGoBack,
 
 function assertLooksSame( img1, img2 ) {
     return new Promise( function(resolve, reject) {
-        looksSame( img1, img2, function(error, {equal}) {
-            try { 
-                expect(equal, "baseline image is different" ).to.be.true;
-                resolve();
-            } catch(e) {
-                reject(e);
+        looksSame( img1, img2, { tolerance: 5, ignoreAntialiasing: true, antialiasingTolerance: 6 }, function(error, result) {
+            if ( error ) {
+                reject(error);
+            } else {
+                try { 
+                    expect(result.equal, "baseline image is different" ).to.be.true;
+                    resolve();
+                } catch(e) {
+                    reject(e);
+                }
             }
         });
     });
@@ -37,6 +41,13 @@ async function verifyScreenShot( name ) {
             await assertLooksSame( screenshot, screenshotPath( screenshot, name ) );
         } catch(e) {
             fs.writeFileSync(screenshotPath( screenshot, name, "regression" ), screenshot );
+            looksSame.createDiff({
+                reference: screenshotPath( screenshot, name ),
+                current: screenshotPath( screenshot, name, "regression" ),
+                diff: screenshotPath( screenshot, name, "diff" ),
+                highlightColor: "#ff0000",
+                tolerance: 5
+            });
             throw e;
         }
     } else {
@@ -47,10 +58,12 @@ async function verifyScreenShot( name ) {
 }
 
 describe('Visual regression tests', function() {
-    it.only('gallery images should display correctly',async function() {
+    it('gallery images should display correctly',async function() {
         await navigateSpeedbugViaIdentify( world, "hyriidae" );
         await world.taxon.waitForText("Freshwater mussels");
         await world.taxon.goMagnify();
+        await world.gallery.sleep(100); // wait for scroll bar to disappear
+
         await verifyScreenShot( this.test.title );
     });
 });
