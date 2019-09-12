@@ -24,7 +24,7 @@ Scenario: Taxon node is selected
   When I select the store operation
   Then selected identification is stored into the current sample tray
 
-@only
+#@only
 Scenario: Backwards navigation up the tree
   Given a node from the ALT key is displayed
     And I don't think this is the correct place in the key

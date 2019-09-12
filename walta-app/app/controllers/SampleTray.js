@@ -10,22 +10,15 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
 $.name = "sampletray";
 
+$.noSwipeBack();
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   closeEditScreen();
   clearTileCache();
   $.destroy();
   $.off();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
-  $.TopLevelWindow.removeEventListener('swipe', swipeListener);
 });
-
-function swipeListener(e){
-	if ( e.direction === 'right' && getScrollOffset() == 0) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, { swipe: true, name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
-	}
-}
-$.TopLevelWindow.addEventListener('swipe', swipeListener);
 
 var anchorBar = $.getAnchorBar();
 $.completeBtn = anchorBar.createToolBarButton( null, Topics.COMPLETE, "Next");
@@ -36,11 +29,11 @@ var tileIndex = [];
 var firstTwoTiles = null;
 
 function getScrollOffset() {
-  return PlatformSpecific.convertSystemToDip( $.content.getContentOffset().x );
+  return PlatformSpecific.convertSystemToDip( $.content.contentOffset.x );
 }
 
 function getViewWidth() {
-  return PlatformSpecific.convertSystemToDip( $.content.getSize().width );
+  return PlatformSpecific.convertSystemToDip( $.content.size.width );
 }
 
 function getEndcapWidth() {
@@ -48,7 +41,7 @@ function getEndcapWidth() {
 }
 
 function getEndcapHeight() {
-  return PlatformSpecific.convertSystemToDip( $.content.getSize().height ); 
+  return PlatformSpecific.convertSystemToDip( $.content.size.height ); 
 }
 
 
@@ -197,7 +190,7 @@ function createAddIcon() {
     left: "25%",
     width: "50%",
     height: "36%",
-    accessibilityLabel: "sample_add",
+    accessibilityLabel: "Add Sample",
     backgroundImage: "/images/plus-icon.png"
   });
   addIconCache.addEventListener( "click", startIdentification );
@@ -389,8 +382,30 @@ function initializeTray() {
     drawIcecubeTray();
 }
 
-//$.content.addEventListener( "click", startIdentification );
+let timeoutHandler = null;
+
+function timeoutOnDrag() {
+  if ( getScrollOffset() === 0 ) {
+    Topics.fireTopicEvent( Topics.BACK );
+  } 
+}
+
+function handleDragStart(e) {
+  if ( getScrollOffset() === 0 ) {
+    timeoutHandler = setTimeout(timeoutOnDrag,200);
+  }
+}
+
+function handleDragEnd(e) {
+  if ( timeoutHandler ) {
+    clearTimeout(timeoutHandler);
+    timeoutHandler = null;
+  } 
+}
+
 $.content.addEventListener( "scroll", drawIcecubeTray );
+$.content.addEventListener("dragstart", handleDragStart );
+$.content.addEventListener("dragend", handleDragEnd );
 
 $.content.addEventListener( "postlayout", function initEvent() {
   $.content.removeEventListener( "postlayout", initEvent );
@@ -400,7 +415,9 @@ $.content.addEventListener( "postlayout", function initEvent() {
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
 
 $.getView().addEventListener( "close", function cleanup() {
-  $.content.removeEventListener("scroll", drawIcecubeTray);
+  $.content.removeEventListener("dragstart", handleDragStart ); 
+  $.content.removeEventListener("dragend", handleDragEnd );
+  $.content.removeEventListener("scroll", drawIcecubeTray );
   Alloy.Collections["taxa"].off("add change remove", drawIcecubeTray );
   $.getView().removeEventListener("close", cleanup);
 });

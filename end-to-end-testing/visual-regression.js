@@ -47,9 +47,9 @@ async function verifyScreenShot( name ) {
 }
 
 describe('Visual regression tests', function() {
-    it('gallery images should display correctly',async function() {
-        await navigateBrowseViaIdentify( world, "Adult Baetidae");
-        expect( await world.taxon.getHeading() ).to.equal("Baetids");
+    it.only('gallery images should display correctly',async function() {
+        await navigateSpeedbugViaIdentify( world, "hyriidae" );
+        await world.taxon.waitForText("Freshwater mussels");
         await world.taxon.goMagnify();
         await verifyScreenShot( this.test.title );
     });

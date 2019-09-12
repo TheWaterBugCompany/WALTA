@@ -25,7 +25,6 @@
  *
  */
 var Topics = require('ui/Topics');
-var { setAccessibilityLabel } = require('ui/ViewUtils');
 
 var eventHandlers = [];
 function cleanUp() {
@@ -82,7 +81,7 @@ function addTool( view, left ) {
 
 function setTitle( title ) {
 	$.title.text = title;
-	setAccessibilityLabel( $.title, "toolbar", title);
+	$.title.accessibilityLabel = title;
 }
 
 setTitle( $.args.title );

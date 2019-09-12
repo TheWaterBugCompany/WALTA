@@ -1,5 +1,4 @@
 
-var { makeAccessibilityLabel } = require('ui/ViewUtils');
 var imgUrl = $.args.image;
 var refId = $.args.refId;
 
@@ -28,7 +27,7 @@ function showImageData() {
                 image: imgUrl,
                 width: $.args.width,
                 height: $.args.height,
-                accessibilityLabel: makeAccessibilityLabel( "speedbug", refId )
+                accessibilityLabel: `Speedbug ${refId}`
              }) );
     }
 }

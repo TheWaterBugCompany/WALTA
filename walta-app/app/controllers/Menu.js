@@ -3,16 +3,16 @@ exports.baseController  = "TopLevelWindow";
 $.name = "home";
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-  Ti.API.info("closing Menu");
   $.destroy();
   $.off();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
   closeSelectMethod();
 });
 
+
 function logOut() {
   Alloy.Globals.CerdiApi.storeUserToken(null);
-  $.logInLabel.text = "Log In";
+  updateLoginText();
 }
 
 function logInClick() {
@@ -93,7 +93,15 @@ function helpClick() {
   Topics.fireTopicEvent( Topics.HELP, null );
 }
 
-if ( Alloy.Globals.CerdiApi.retrieveUserToken() )
-    $.logInLabel.text = "You are Logged in";
-else
-    $.logInLabel.text = "Log In";
+function updateLoginText() {
+  if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
+      $.logInLabel.text = "You are Logged in";
+      $.logInLabel.accessibilityLabel = "You are Logged in";
+  }
+  else
+  {
+      $.logInLabel.text = "Log In";
+      $.logInLabel.accessibilityLabel = "Log In";
+  }
+}
+updateLoginText();

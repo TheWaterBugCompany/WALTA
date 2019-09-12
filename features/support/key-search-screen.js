@@ -3,28 +3,15 @@ const BaseScreen = require('./base-screen');
 class KeySearchScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "keysearch_choose_best_match";
+        this.presenceSelector = this.selector("Choose the best match");
     }
 
     async choose( questionText ) {
       await this.clickByText( questionText );
     }
-    async chooseTop() {
-      await this.click("question_top");
-    }
-    async chooseTopAndExpect(text) {
-      await this.chooseTop();
-      await this.waitForText(text);
-    }
-    async chooseBottom() {
-      await this.click("question_bottom");
-    }
-    async chooseBottomAndExpect(text) {
-      await this.chooseBottom();
-      await this.waitForText(text);
-    }
+    
     async goBack() {
-      await this.click("go_back_button");
+      await this.click("Back");
     }
     async goBackAndExpect(text) {
       await this.goBack();
@@ -33,7 +20,7 @@ class KeySearchScreen extends BaseScreen {
 
     async goMagnifyTop() {
       var el = await this.driver.$(this.selector("question_top"));
-      el = await el.$(this.selector("photo_select_magnify_button"));
+      el = await el.$(this.selector("Magnify"));
       await el.click();
       await this.world.gallery.waitFor();
     }

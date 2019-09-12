@@ -29,7 +29,7 @@ exports.definition = {
 
 			setPhoto: function(file) {
 				var newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
-				Ti.API.info(`updating photo at ${newPhotoName}`);
+				Ti.API.debug(`updating photo at ${newPhotoName}`);
 				removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(taxonPhotoPath.nativePath);
@@ -46,7 +46,7 @@ exports.definition = {
 				if ( bluebug !== undefined ) {
 				  return bluebug[0];
 				} else {
-				  Ti.API.info(`Warning: missing bluebug on ${this.getTaxonId()}`);
+				  Ti.API.warn(`Warning: missing bluebug on ${this.getTaxonId()}`);
 				}
 			},
 

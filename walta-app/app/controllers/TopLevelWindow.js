@@ -48,15 +48,38 @@ function openWindow() {
 
 function backEvent(e) {
 	e.cancelBubble = true;
-	Topics.fireTopicEvent( Topics.BACK, { name: $.name, surveyType: $.args.surveyType, allowAddToSample: ($.args.allowAddToSample?true : false) } );
+	Topics.fireTopicEvent( Topics.BACK );
 }
 
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
+
+let swipeListenerAdded = false;
+function noSwipeBack() {
+	if  (! swipeListenerAdded ) {
+		$.TopLevelWindow.removeEventListener( 'swipe', swipeListener );
+		swipeListenerAdded = false;
+	}
+}
+
+function swipeListener(e){
+	if ( e.direction === 'right' ) {
+		e.cancelBubble = true;
+		Topics.fireTopicEvent( Topics.BACK );
+	}
+}
+
+function addSwipeBack() {
+	swipeListenerAdded = true;
+	$.TopLevelWindow.addEventListener('swipe', swipeListener);
+}
+addSwipeBack();
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-	Ti.API.info(`cleaning up window...`);
+	Ti.API.debug(`cleaning up window...`); 
 	$.destroy();
 	$.off();
 	anchorBar.cleanUp();
+	noSwipeBack();
 	$.TopLevelWindow.removeEventListener('androidback', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
@@ -100,3 +123,4 @@ exports.setErrorMessageString = setErrorMessageString;
 exports.clearErrorMessage = clearErrorMessage;
 exports.open = openWindow;
 exports.getAnchorBar = getAnchorBar;
+exports.noSwipeBack = noSwipeBack;

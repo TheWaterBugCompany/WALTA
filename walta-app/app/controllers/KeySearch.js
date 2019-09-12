@@ -36,20 +36,11 @@ var keyNode = $.args.node;
 // this is a hack to return the key object to the correct place.
 // (implemented so that the AppWindow class does not need to keep track of key state)
 key.setCurrentNodeObj( keyNode );
-var questions = [];
+var questions = $.questions = [];
 
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK );
-	}
-}
-
-$.TopLevelWindow.addEventListener('swipe', swipeListener);
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();
   $.off();
-  $.content.removeEventListener('swipe', swipeListener);
   goBackBtn.cleanUp();
   questions.forEach( function(q) { q.cleanUp(); } );
   questions = null;

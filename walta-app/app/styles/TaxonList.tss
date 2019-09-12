@@ -2,3 +2,36 @@
 "#genusOrSpeciesTaxon" : {
   font: { fontStyle: "italic" }
 }
+
+".speciesItem" : {
+  height: "30dp",
+  font: {
+    fontFamily: "Tahoma",
+	  fontWeight: "bold",
+    fontSize: "18dp"
+  },
+  left: "10dp",
+  textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+  color: "#26849c"
+}
+
+".speciesItem[if=Alloy.Globals.isLowRes]": {
+    height: "30dp",
+    font: {
+      fontSize: "20dp"
+    }
+}
+
+".speciesItem[if=Alloy.Globals.isHighRes]": {
+    height: "31dp",
+    font: {
+      fontSize: "23dp"
+    }
+}
+
+".speciesItem[if=Alloy.Globals.isXHighRes]": {
+    height: "45dp",
+    font: {
+      fontSize: "34dp"
+    }
+}

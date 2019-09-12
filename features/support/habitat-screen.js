@@ -2,43 +2,43 @@ const BaseScreen = require('./base-screen');
 class HabitatScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "toolbar_habitat";
+        this.presenceSelector = this.selector("Habitat");
     }
 
     async setLeafPacks( p ) {
-      await this.enter("habitat_leaf_packs",p);
+      await this.enter("Leaf Packs",p);
     }
 
     async setAquaticPlants( p ) {
-      await this.enter("habitat_aquatic_plants",p);
+      await this.enter("Aquatic Plants",p);
     }
 
     async setWood( p ) {
-      await this.enter("habitat_wood",p);
+      await this.enter("Wood",p);
     }
 
     async setEdgePlants( p ) {
-      await this.enter("habitat_edge_plants",p);
+      await this.enter("Edge Plants",p);
     }
 
     async setBoulders( p ) {
-      await this.enter("habitat_boulders",p);
+      await this.enter("Boulders",p);
     }
 
     async setGravel( p ) {
-      await this.enter("habitat_gravel",p);
+      await this.enter("Gravel",p);
     }
 
     async setSandOrSilt( p ) {
-      await this.enter("habitat_sand_or_silt",p);
+      await this.enter("Sand Or Silt",p);
     }
 
     async setOpenWater( p ) {
-      await this.enter("habitat_open_water",p);
+      await this.enter("Open Water",p);
     }
 
     async goNext() {
-      await this.click("habitat_next");
+      await this.click("Next");
       await this.world.sample.waitFor();
     }
 } 

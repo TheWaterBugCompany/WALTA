@@ -3,7 +3,7 @@
 			<View class="window">
 				<View layout="vertical"> 
 					<View class="titlebar">
-						<Label class="titleText">Use swipe/zoom, then tap to manually select location:</Label>
+						<Label class="titleText">Tap and hold to change location:</Label>
 						<View id="closeButton" onClick="cancelClick">
 							<ImageView class="close_button_image"></ImageView>
 						</View>
