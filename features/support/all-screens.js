@@ -32,18 +32,20 @@ function setUpWorld(world) {
     world.swipeLeft = swipeLeft;
 }
 
-async function swipeRight(world) {
-    await world.driver.touchPerform([ 
-        {action: 'press', options: {x: 4, y: 214}},
-        {action: 'wait', options:{ ms: 500 } },
-        {action: 'moveTo', options: {x: 700, y: 214}},
-        {action:'release'}]);
+async function swipeRight( world, { start_x=30, end_x=0.95 } = {} ) {
+    let size = await world.driver.getWindowSize();
+    await world.driver.touchAction([ 
+        {action: 'press', x: start_x, y: size.height/2},
+        {action: 'wait',  ms: 1000  },
+        {action: 'moveTo', x: size.width*end_x, y: size.height/2},
+        'release']);
 }
 async function swipeLeft(world) {
+    let size = await world.driver.getWindowSize();
     await world.driver.touchPerform([ 
-        {action: 'press', options: {x: 700, y: 214}},
-        {action: 'wait', options:{ ms: 500 } },
-        {action: 'moveTo', options: {x: 4, y: 214}},
+        {action: 'press', options: {x: size.width*0.60, y: size.height/2}},
+        {action: 'wait', options:{ ms: 100 } },
+        {action: 'moveTo', options: {x: 4, y: size.height/2}},
         {action:'release'}]);
 }
 

@@ -1,10 +1,10 @@
 var { expect } = require("chai");
-const { startAppiumClient, stopAppiumClient } = require('../features/support/appium');
+const { startAppiumClient, stopAppiumClient, getCapabilities } = require('../features/support/appium');
 const { setUpWorld, swipeRight } = require('../features/support/all-screens');
 
 global.world = {};
 global.expect = expect;
-global.swipeRight = function() { swipeRight(world) };
+global.swipeRight = function(options) { swipeRight(world,options) };
 
 beforeEach( async function() {
     if ( world.driver ) {
@@ -13,7 +13,7 @@ beforeEach( async function() {
         let platform = process.env.PLATFORM;
         if ( ! platform )
             throw new Error("Please set the PLATFORM enviornment variable");
-        world.driver = await startAppiumClient(platform,(process.env.QUICK==="true"?true:false));
+        world.driver = await startAppiumClient( getCapabilities( platform,(process.env.QUICK==="true"?true:false) ) );
         world.platform = platform;
         setUpWorld( world );
     }

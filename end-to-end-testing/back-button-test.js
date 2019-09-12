@@ -21,7 +21,6 @@ describe('Back button tests', function() {
     it('should return to browse list when back pressed on taxon details via browse', async function() {
         let start = Date.now();
         await navigateBrowseViaIdentify( world );
-        console.info(`click took = ${Date.now()-start}`);
         await world.taxon.waitForText("'U' bent midges");
         await navigateGoBack(world);
         await world.browse.waitFor();
@@ -30,7 +29,7 @@ describe('Back button tests', function() {
     it('should return to browse list when right swipe on taxon details via browse', async function() {
         await navigateBrowseViaIdentify( world );
         await world.taxon.waitForText("'U' bent midges");
-        await swipeRight();
+        await swipeRight( { start_x: 4 });
         await world.browse.waitFor();
     });
 
@@ -48,6 +47,7 @@ describe('Back button tests', function() {
         await world.habitat.waitFor();
 
         await swipeRight();
+        await world.siteDetails.waitFor();
         await world.siteDetails.goNext();
         await world.habitat.waitFor();
 
@@ -116,7 +116,7 @@ describe('Back button tests', function() {
     });
 
     // relies on having a specific camera app installed so fails on real devices
-    it('should return to edit taxon when returning from gallery',async function() {
+    it.skip('should return to edit taxon when returning from gallery',async function() {
         await navigateSpeedbugViaTray( world, "hyriidae" );
         await world.taxon.waitForText("Freshwater mussels");
         await world.taxon.selectAddToSample();

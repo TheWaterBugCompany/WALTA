@@ -19,15 +19,13 @@ class KeySearchScreen extends BaseScreen {
     }
 
     async goMagnifyTop() {
-      var el = await this.driver.$(this.selector("question_top"));
-      el = await el.$(this.selector("Magnify"));
+      var el = await this.driver.$(this.selector("Magnify"));
       await el.click();
       await this.world.gallery.waitFor();
     }
 
     async goMagnifyBottom() {
-      var el = await this.driver.$(this.selector("question_bottom"));
-      el = await el.$(this.selector("photo_select_magnify_button"));
+      var el = await this.driver.$(this.selector("Magnify"));
       await el.click();
       await this.world.gallery.waitFor();
     }
