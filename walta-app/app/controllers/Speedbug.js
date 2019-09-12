@@ -31,6 +31,7 @@ Ti.API.debug(`Speedbug name = ${speedbugName}`);
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Speedbug";
 $.name = "speedbug";
+$.noSwipeBack();
 
 var scrollView = $.content;
 var groups = [];

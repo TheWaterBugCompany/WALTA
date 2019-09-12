@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "/Users/msharman/Source/titanium_mobile"
 		}
 	],
 	"settings": {

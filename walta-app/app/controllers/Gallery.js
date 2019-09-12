@@ -23,26 +23,29 @@
  * opens a modal view displaying a gallery of all the images.
  *
  */
-var { makeAccessibilityLabel } = require('ui/ViewUtils');
 exports.baseController  = "TopLevelWindow";
 $.name = "gallery";
-
+var Topics = require('ui/Topics');
 var Layout = require('ui/Layout');
 var { urlToLocalAsset } = require("ui/PlatformSpecific");
 
-$.TopLevelWindow.addEventListener('close', function cleanUp() {
-    $.views.forEach( (v) => v.release() );
-	$.TopLevelWindow.removeEventListener('close', cleanUp );
-});
+if ( Ti.Platform.osname === 'android') {
+    $.TopLevelWindow.addEventListener('close', function cleanUp() {
+        $.views.forEach( (v) => v.release() );
+        $.TopLevelWindow.removeEventListener('close', cleanUp );
+    });
+}
 
 var key = $.args.key;
 var photos = $.args.photos;
 var showPager = $.args.showPager;
 if ( _.isUndefined( showPager ) ) showPager = true;
 
-if ( !photos && key )
+Ti.API.debug(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
+if ( !photos && key ) {
     photos = _.first( _.shuffle( key.findAllMedia('photoUrls') ), 20 );
-console.info(JSON.stringify(photos));
+}
+
 $.views = _(photos).map( (url) => {
         // NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
         // we cheat by using a WebView.
@@ -68,7 +71,7 @@ $.scrollView.bottom = ( showPager ? Layout.PAGER_HEIGHT : 0 );
 // Create a dot view
 function createDot(i) {
 	var dot = Ti.UI.createView( {
-        accessibilityLabel: makeAccessibilityLabel('photo_gallery_page', i ),
+        accessibilityLabel: `Jump To Photo ${i}`,
 		backgroundImage: '/images/dot.png',
 		width: Layout.PAGER_DOT_SIZE,
 		height: Layout.PAGER_DOT_SIZE,
@@ -80,8 +83,9 @@ function createDot(i) {
 
 // Update current page
 function updateCurrentPage( dots, selPage ) {
+    $.scrollView.accessibilityLabel = `Photo ${selPage+1}`;
 	for( var i = 0; i < dots.length; i++ ) {
-		dots[i].setOpacity( selPage === i ? 1.0 : 0.5 );
+		dots[i].opacity = ( selPage === i ? 1.0 : 0.5 );
 	}
 }
 function scrollEvent(e) {
@@ -109,10 +113,11 @@ if ( showPager ) {
     });
     $.content.add( pager );
 
-    var lastPage = $.scrollView.getCurrentPage();
+    var lastPage = $.scrollView.currentPage;
     updateCurrentPage( dots, lastPage );
 }
 
 function closeEvent(e) {
-    $.TopLevelWindow.close();
+    Topics.fireTopicEvent( Topics.BACK );
+    e.cancelBubble = true;
 }

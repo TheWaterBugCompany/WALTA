@@ -22,7 +22,7 @@ function generateThumbnail( fileOrBlob ) {
     function savePhoto( blob, filename  ) {
         var photoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename );
 
-        Ti.API.info(`File path ${photoPath.nativePath}`);
+        Ti.API.debug(`File path ${photoPath.nativePath}`);
         if ( photoPath.exists() ) {
             var result = photoPath.deleteFile();
             if ( !result )
@@ -37,29 +37,33 @@ function generateThumbnail( fileOrBlob ) {
     }
     // We need to save the photo thumbnail to a file path so that the photo gallery 
     // can read it via a URL
-    Ti.API.info("removing old preview files...");
+    Ti.API.debug("removing old preview files...");
     removeFilesBeginningWith("preview_");
 
-    Ti.API.info(`Generating thumbnail...`);
+    Ti.API.debug("generating thumbnail...");
     var fullPhoto = null;
     if ( typeof fileOrBlob === "string") {
         fullPhoto = Ti.UI.createImageView( { image: fileOrBlob } ).toBlob();
     } else {
         fullPhoto = fileOrBlob;
     }
+    var aspectRatio = (fullPhoto.height/fullPhoto.width);
     if ( ( fullPhoto.mimeType !== "image/jpeg" && fullPhoto.mimeType != "image/gif" ) || fullPhoto.length > 4*1024*1024 ) {
-        // attempt to compress and/or convert to JPEG
+        Ti.API.debug("resizing and compressing photo...");
+ 
+        fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
+
     }
-    Ti.API.info(`Saving full size photo...`);
+    Ti.API.debug("saving full size photo..");
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().unix()}.jpg`);
     
-    Ti.API.info(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
+    Ti.API.debug(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
     var pxWidth = Ti.UI.convertUnits( `${$.photoSelectInner.size.width}dp`, Ti.UI.UNIT_PX );
     var pxHeight = Ti.UI.convertUnits( `${$.photoSelectInner.size.height}dp`, Ti.UI.UNIT_PX );
 
-    Ti.API.info(`photo view width = ${$.photoSelectInner.size.width} height = ${$.photoSelectInner.size.height}`);
-    var newHeight = pxWidth*(fullPhoto.height/fullPhoto.width);
+    Ti.API.debug(`photo view width = ${$.photoSelectInner.size.width} height = ${$.photoSelectInner.size.height}`);
+    var newHeight = pxWidth*aspectRatio;
     
     var thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
     fullPhoto = null;
@@ -68,22 +72,14 @@ function generateThumbnail( fileOrBlob ) {
         thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
 
     
-    Ti.API.info(`Saving thumbnail...`);
+    Ti.API.debug(`saving thumbnail...`);
     var thumbnailPath = savePhoto( thumbnail, `preview_${moment().unix()}.jpg`);
     thumbnail = null;
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
-function generateUpload( blob ) {
-    Ti.API.info(`compressing photo for upload`);
-    if ( ! blob.nativePath )
-        return blob.imageAsCompressed( 0.9 );
-    else
-        return blob.nativePath;
-}
-
 function setImage( fileOrBlob ) {
-    Ti.API.info(`set thumbail to ${fileOrBlob}`);
+    Ti.API.debug(`set thumbail to ${fileOrBlob}`);
     if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
@@ -150,7 +146,7 @@ function requestCameraPermissions( success, failure ) {
 function openGallery(e) {
     e.cancelBubble = true;
     if ( $.magnify.visible ) {
-        Ti.API.info(`opening gallery photoUrls: ${JSON.stringify($.photoUrls)}`);
+        Ti.API.debug(`opening gallery photoUrls: ${JSON.stringify($.photoUrls)}`);
         Topics.fireTopicEvent( Topics.GALLERY, { photos: $.photoUrls, showPager: true }  );
     }
 }

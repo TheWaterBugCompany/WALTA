@@ -1,5 +1,5 @@
 <Alloy>
 	<View id="content" class="container">
-		<Label id="heading" class="headingText" accessibilityLabel="keysearch_choose_best_match">Choose the best match</Label>
+		<Label id="heading" class="headingText" accessibilityLabel="Choose the best match">Choose the best match</Label>
 	</View>
 </Alloy>

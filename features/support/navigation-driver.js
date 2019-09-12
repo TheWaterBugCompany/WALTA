@@ -1,3 +1,5 @@
+const BaseScreen = require('./base-screen.js');
+
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -10,14 +12,14 @@ async function navigateToSampleTray( world ) {
   // site details
   await world.siteDetails.selectDetailed();
   await world.siteDetails.selectRiver();
-  await world.siteDetails.setWaterbodyName("End To End Test");
-  await world.siteDetails.setNearByFeature("End To End Test");
+  await world.siteDetails.setWaterbodyName("a");
   await world.siteDetails.goNext();
 
   // habitat
   await world.habitat.setSandOrSilt("100");
   await world.habitat.goNext();
 
+  await world.sample.waitFor();
 }
 
 async function navigateKeyViaIdentify( world, questions ) {
@@ -36,7 +38,10 @@ async function navigateKeyViaTray( world, questions ) {
 async function navigateBrowseViaIdentify( world, species ) {
   await world.menu.selectIdentify();
   await world.methodSelect.viaBrowse();
-  await world.browse.chooseSpecies(species);
+  if ( species )
+     await world.browse.chooseSpecies(species);
+  else
+    await world.browse.quickSelectFirst();
 }
 
 async function navigateBrowseViaTray( world, species ) {
@@ -73,7 +78,11 @@ async function navigateSpeedbugNotSureViaTray( world, refId ) {
 }
 
 async function navigateGoBack( world ) {
-  await world.driver.pressKeyCode(4);
+  if ( world.platform === "android" ) {
+    await world.driver.pressKeyCode(4);
+  } else {
+    await new BaseScreen(world).click("Back");
+  }
 }
 
 // assumes alrady at EditTaxon or SiteDetails screen

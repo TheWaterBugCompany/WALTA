@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class SiteDetailsScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = "toolbar_site_details";
+        this.presenceSelector = this.selector("Site Details");
     }
 
     async selectMayfly() {
@@ -30,15 +30,15 @@ class SiteDetailsScreen extends BaseScreen {
     }
 
     async setWaterbodyName( text ) {
-        await this.enter( "site_details_waterbody_name", text );
+        await this.enter( "Waterbody Name", text );
     }
 
     async setNearByFeature( text ) {
-        await this.enter( "site_details_near_by_feature", text );
+        await this.enter( "Near By Feature", text );
     }
 
     async goNext() {
-        await this.click( "site_details_next" );
+        await this.click( "Next" );
         await this.world.habitat.waitFor();
     }
 } 

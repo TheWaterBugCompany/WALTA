@@ -1,0 +1,5 @@
+{
+    "name": "unittest",
+    "version": "1.0",
+    "description": "Build Titanium app with mocha unit tests"
+}

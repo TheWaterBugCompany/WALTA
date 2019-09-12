@@ -1,23 +1,57 @@
 const { remote } = require('webdriverio');
 const { join } = require('path');
-async function startAppiumClient(quick=false) {
-    let caps = {
-        automationName: "uiautomator2",
-        platformName: "Android",
-        autoGrantPermissions: true,
-        autoAcceptAlerts: true,
-        deviceName: "device",
-        appActivity: ".WaterbugActivity",
-        appWaitActivity: "org.appcelerator.titanium.TiActivity"
-    };
-    if ( !quick ) {
-        caps.app = join(process.cwd(), './release/Waterbug.apk');
+const _ = require('underscore');
+
+
+function getCapabilities( platform, quick ) {
+    let caps = {};
+     if ( platform === "android") {
+        _(caps).extend({
+            automationName: "uiautomator2",
+            platformName: "Android",
+            autoGrantPermissions: true,
+            deviceName: "device",
+            appActivity: ".WaterbugActivity"
+            //appWaitActivity: "org.appcelerator.titanium.TiActivity"
+        });
+        if ( !quick ) {
+            caps.app = join(process.cwd(), './builds/test/Waterbug.apk');
+        } else {
+            _(caps).extend({
+                appPackage: "net.thewaterbug.waterbug",
+                skipDeviceInitialization: true,
+                skipServerInstallation: true,
+                ignoreUnimportantViews: true
+            });
+        }
     } else {
-        caps.appPackage = "net.thewaterbug.waterbug";
-        caps.skipDeviceInitialization = true;
-        caps.skipServerInstallation = true;
-        caps.ignoreUnimportantViews = true;
+        _(caps).extend({
+            automationName: "XCUITest",
+            platformName: "iOS",
+            platformVersion: "12.4",
+            autoAcceptAlerts: true,
+            deviceName: "The Code Sharman Test iPhone",
+            udid: "auto",
+            xcodeOrgId: "ZG6HRCUR8Q",
+            xcodeSigningId: "iPhone Developer",
+            useJSONSource: false,
+            waitForQuiescence: false,
+            skipLogCapture: true,
+            realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
+            usePrebuiltWDA: true
+        });
+        if ( !quick ) {
+            caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');
+        } else {
+            _(caps).extend({
+                bundleId: "net.thewaterbug.waterbug"
+            });
+        }
     }
+    return caps;
+}
+
+async function startAppiumClient( caps ) {
     return await remote({
         logLevel: 'error',
         hostname: 'localhost',
@@ -29,5 +63,7 @@ async function startAppiumClient(quick=false) {
 async function stopAppiumClient(driver) {
     await driver.deleteSession()
 }
+
+module.exports.getCapabilities = getCapabilities;
 module.exports.startAppiumClient = startAppiumClient;
 module.exports.stopAppiumClient = stopAppiumClient;

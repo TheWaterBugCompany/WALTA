@@ -1,4 +1,5 @@
 
+
 walta-app/plugins/**
 .metadata
 *.apk
@@ -13,5 +14,7 @@ node_modules
 .irb-history
 .~*
 .calabash_settings
-
 features/support/mock_data/rest/*/*/*/mock/response.txt
+appium.log
+builds/**/*.log
+builds/**/*.plist

@@ -1,11 +1,11 @@
 <Alloy>
-	<ListView id="content" class="container" defaultItemTemplate="taxon">
+	<ListView id="content" class="container" accessibilityHidden="true" defaultItemTemplate="taxon" onItemclick="clickItem">
 		<Templates>
-			<ItemTemplate name="taxon">
-				<Label bindId='title' id="taxon" class="labelText" onClick="clickItem"/>
+			<ItemTemplate name="taxon" accessibilityHidden="true" >
+				<Label bindId="title" id="taxon" class="speciesItem"/>
 			</ItemTemplate>
-			<ItemTemplate name="genusOrSpeciesTaxon">
-				<Label bindId='title' id="genusOrSpeciesTaxon" class="labelText"  onClick="clickItem"/>
+			<ItemTemplate name="genusOrSpeciesTaxon" accessibilityHidden="true" >
+				<Label bindId="title" id="genusOrSpeciesTaxon" class="speciesItem"/>
 			</ItemTemplate>
 		</Templates>
 	</ListView>
