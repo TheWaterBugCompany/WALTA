@@ -2497,3 +2497,115 @@
 -> DONE
 
 
+=== adult_ameletopsidae ===
+# taxonId: "256"
+# name: "Adult Ameletopsidae"
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Ephemeroptera"},{"taxonomicLevel":"family","name":"Ameletopsidae"}]
+# commonName: "killer mayflies/purple perils"
+# size: 20
+# signalScore: 7
+# habitat: "Fast flowing cool cobbly streams."
+# movement: ""
+# confusedWith: "Nothing, very distinctive shape and size."
+# taxonomicLevel: "family"
+# mediaUrls: ["/taxonomy/walta/media/mirawara_01.jpg"]
+# description: ""
+# bluebug: []
+-> DONE
+
+=== adult_siphlonuridae ===
+# taxonId: "250"
+# name: "Adult Siphlonuridae"
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Ephemeroptera"},{"taxonomicLevel":"family","name":"Siphlonuridae"}]
+# commonName: "siphlonurids"
+# size: 17
+# signalScore: 10
+# habitat: "Cool, fish free alpine streams and lakes."
+# movement: ""
+# confusedWith: ""
+# taxonomicLevel: "family"
+# mediaUrls: ["/taxonomy/walta/media/siphlonuridae_01.jpg"]
+# description: ""
+# bluebug: []
+-> DONE
+
+=== adult_oniscigastridae ===
+# taxonId: "251"
+# name: "Adult Oniscigastridae"
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Ephemeroptera"},{"taxonomicLevel":"family","name":"Oniscigastridae"}]
+# commonName: "oniscigastrids"
+# size: 15
+# signalScore: 8
+# habitat: "Cool flowing water, edges, backwaters, forest streams. Uncommon."
+# movement: "Slow moving. "
+# confusedWith: "Coloburiscidae, but these are smaller"
+# taxonomicLevel: "family"
+# mediaUrls: ["/taxonomy/walta/media/tasmanophlebia_01.jpg"]
+# description: ""
+# bluebug: []
+-> DONE
+
+=== adult_coloburiscidae ===
+# taxonId: "252"
+# name: "Adult Coloburiscidae"
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Ephemeroptera"},{"taxonomicLevel":"family","name":"Coloburiscidae"}]
+# commonName: "stream horses"
+# size: 20
+# signalScore: 8
+# habitat: "Cool upland streams. Common and abundant in healthy boulder streams."
+# movement: ""
+# confusedWith: "Oniscigastridae, but they are smaller."
+# taxonomicLevel: "family"
+# mediaUrls: ["/taxonomy/walta/media/coloburiscoides_01.jpg","/taxonomy/walta/media/coloburiscoides_m1.mp4"]
+# description: ""
+# bluebug: []
+-> DONE
+
+=== adult_baetidae ===
+# taxonId: "253"
+# name: "Adult Baetidae"
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Ephemeroptera"},{"taxonomicLevel":"family","name":"Baetidae"}]
+# commonName: "Baetids"
+# size: 10
+# signalScore: 5
+# habitat: "Still and flowing waters. Common."
+# movement: ""
+# confusedWith: "Caenids, you may need a hand lens to see the unconnected marginal veins."
+# taxonomicLevel: "family"
+# mediaUrls: ["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/baetidae_m1.mp4"]
+# description: ""
+# bluebug: [
+-> DONE
+
+=== adult_leptophlebiidae ===
+# taxonId: "254"
+# name: "Adult Leptophlebiidae"
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Ephemeroptera"},{"taxonomicLevel":"family","name":"Leptophlebiidae"}]
+# commonName: "Leptophlebs"
+# size: 20
+# signalScore: 8
+# habitat: "Cool running water. Very common."
+# movement: "Red and black spinners are males from this group, that sometimes cruise just above the water surface.  They have double tails."
+# confusedWith: "Nothing."
+# taxonomicLevel: "family"
+# mediaUrls: ["/taxonomy/walta/media/leptophlebs_01.jpg"]
+# description: ""
+# bluebug: []
+-> DONE
+
+=== adult_caenidae_prosopistomatidae ===
+# taxonId: "255"
+# name: "Adult Caenidae and Prosopistomatidae"
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Ephemeroptera"},{"taxonomicLevel":"family","name":"Caenidae"}]
+# commonName: "Caenids"
+# size: 8
+# signalScore: 4
+# habitat: "Still and slow moving waters with silty areas. Common. "
+# movement: ""
+# confusedWith: "Nothing, very distinctive once you have seen unconnected marginal veins."
+# taxonomicLevel: "family"
+# mediaUrls: ["/taxonomy/walta/media/caenidae_01.jpg","/taxonomy/walta/media/caenidae_m1.mp4"]
+# description: "The Prosopistomatidae don't occur outside Far North Queensland.  If you are south of here you have a caenid."
+# bluebug: []
+-> DONE
+
