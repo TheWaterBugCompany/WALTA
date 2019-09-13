@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
-    const PROFILE = process.env.PROFILE || "eb88a8c0-d6e1-4622-a69b-3513ebe5be62";
+    const PROFILE = process.env.PROFILE || "e2935a1f-0c22-4716-8020-b61024ce143f";
     
     const SOURCES = [  
       './walta-app/tiapp.xml',  
@@ -86,9 +86,9 @@ module.exports = function(grunt) {
                 if ( platform === "android" ) {
                   args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
                 } else if ( platform === "ios" ){
-                  args.push( "--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
+                  args.push( "--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
                 } else {
-                  throw new Error(`Unknwon platform "${platform}"`);
+                  throw new Error(`Unknown platform "${platform}"`);
                 }
               }
 
@@ -213,7 +213,7 @@ module.exports = function(grunt) {
         caps.autoLaunch = true;
         startAppium(caps)
           .then( terminateApp(platform) )
-          .then( uninstall(platform) )
+          .then( uninstallApp(platform) )
           .then( () => appium_session.installApp(appPath) )
           .then( done );
       } else {
