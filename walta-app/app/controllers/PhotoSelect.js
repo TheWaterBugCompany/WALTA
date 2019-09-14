@@ -18,7 +18,7 @@ if ( readOnlyMode ) {
     $.iconHolder.remove( $.camera );
 }
 
-function debug(mess) {
+function debug(mess) { 
     Ti.API.debug(mess);
 }
 
@@ -98,7 +98,7 @@ function generateThumbnail( fileOrBlob ) {
 }
 
 function setImage( fileOrBlob ) {
-    
+    debug(`setImage ${fileOrBlob}`)
     if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
@@ -107,17 +107,20 @@ function setImage( fileOrBlob ) {
     
 
     function setThumbnail( fileOrBlob) {
+        debug("setThumbnail")
         if ( cropPhoto || typeof fileOrBlob === "object") {
             var { thumbnail, photo } = generateThumbnail( fileOrBlob );
             $.photo.image = thumbnail;
             $.photoUrls = [photo];
         } else {
-            $.photo.image = readFile(fileOrBlob);
+            debug("not calling generateThumbnail")
+            $.photo.image = fileOrBlob;
             $.photoUrls = [fileOrBlob];
         }
     }
 
     function processPhoto( fileOrBlob ) {
+        debug("processPhoto")
         // If an array, then it must contain URL paths to many photos, the first is displayed 
         // in the thumbnail view
         if ( Array.isArray(fileOrBlob) ) {
@@ -183,7 +186,7 @@ function takePhoto(e) {
                 autorotate: true,
                 success: function (result) {
                     setImage( result );
-                    $.trigger("photoTaken", $.photo.image );
+                    $.trigger("photoTaken", $.photo.image.nativePath );
                 },
                 error: function (error) {
                     alert(`${error.error}`); 
