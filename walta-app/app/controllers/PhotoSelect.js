@@ -19,7 +19,7 @@ if ( readOnlyMode ) {
 }
 
 function debug(mess) { 
-    Ti.API.info(mess);
+    Ti.API.debug(mess);
 }
 
 function readFile(path) {
@@ -70,7 +70,7 @@ function generateThumbnail( fileOrBlob ) {
     }
 
     if ( ( fullPhoto.mimeType === "image/png" ) ) {
-        Ti.API.info(`Got a PNG: converting photo in JPEG...`);
+        Ti.API.info(`got a PNG: converting photo in JPEG...`);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
     }
     
@@ -137,6 +137,7 @@ function setImage( fileOrBlob ) {
         }
         $.photoSelectOptionalLabel.visible = false;
         $.magnify.visible = true;
+        $.trigger("loaded");
     }
 
     // When the view first opens then we need to postpone the thumbnail creation

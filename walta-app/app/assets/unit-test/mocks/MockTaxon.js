@@ -1,8 +1,11 @@
 var { createModel } = require('unit-test/lib/mocx');
 function createMockTaxon( taxon ) {
     let model = createModel( "taxa", taxon);
+    model.setPhoto = function(path) {
+        this.set("taxonPhotoPath", path)
+    }
     model.getPhoto = function() {
-        return this.get("taxonPhotoPath");;
+        return this.get("taxonPhotoPath");
     };
     model.getAbundance = function (){
         var abundance = this.get("abundance");

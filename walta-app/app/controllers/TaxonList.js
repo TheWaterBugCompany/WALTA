@@ -3,6 +3,7 @@ var Topics = require('ui/Topics');
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Browse";
 $.name = "browse";
+$.noSwipeBack();
 
 var acb = $.getAnchorBar();
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample }  ) );
