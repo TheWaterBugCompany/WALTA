@@ -50,7 +50,7 @@ describe( 'SampleTray controller', function() {
     return function() {
       return new Promise( function( resolve ) {
           function isAtScrollX(e) {
-            if ( e.x === PlatformSpecific.convertDipToSystem(x) ) {
+            if ( Math.abs(e.x - PlatformSpecific.convertDipToSystem(x)) < 1.0 ) {
               SampleTray.content.removeEventListener("scroll",isAtScrollX);
               setTimeout( resolve, 5 );
             }
@@ -350,7 +350,7 @@ describe( 'SampleTray controller', function() {
       the implementation - we need to look up expect tile positions by
       there coordinates in the view. */
 
-    it('when scrolled to the right it should update the screen properly', function() {
+    it.only('when scrolled to the right it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
           .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
