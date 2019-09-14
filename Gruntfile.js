@@ -9,6 +9,7 @@ module.exports = function(grunt) {
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
     const PROFILE = process.env.PROFILE || "e2935a1f-0c22-4716-8020-b61024ce143f";
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "eb88a8c0-d6e1-4622-a69b-3513ebe5be62";
     
     const SOURCES = [  
       './walta-app/tiapp.xml',  
@@ -92,6 +93,17 @@ module.exports = function(grunt) {
                 }
               }
 
+              function test() {
+                if ( platform === "android" ) {
+                  args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                } else if ( platform === "ios" ){
+                  args.push( "--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+                } else {
+                  throw new Error(`Unknown platform "${platform}"`);
+                }
+              }
+
+
               if ( platform ) {
                 args.push(`--platform ${platform}`);
               } else {
@@ -100,12 +112,12 @@ module.exports = function(grunt) {
 
               switch( build_type ) {
                 case "test":
-                  production();
+                  test();
                   args.push("--output-dir builds/test");
                   break;
 
                 case "unit-test":
-                  production();
+                  test();
                   args.push("--unit-test");
                   args.push("--output-dir builds/unit-test");
                   break;
@@ -116,7 +128,7 @@ module.exports = function(grunt) {
                   break;
 
                 case "preview":
-                  production();
+                  test();
                   args.push("--liveview");
                   args.push("--output-dir builds/preview");
                   break;
@@ -228,7 +240,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask("launch", function(platform,build_type) {
       const done = this.async();
-      const caps = getCapabilities(platform,true);
+      const caps = getCapabilities(platform,false);
+      caps.app = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
       caps.skipLogCapture = false;
       startAppium(caps)
         .then( done );
