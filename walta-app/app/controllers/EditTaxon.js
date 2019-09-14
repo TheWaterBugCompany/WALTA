@@ -4,22 +4,35 @@ var { disableControl, enableControl, setError, clearError } = require("ui/ViewUt
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
 function cleanUp() {
+    
     $.photoSelect.cleanUp();
     $.destroy();
     $.off();
 }
 
-setImage( taxon.getPhoto() );
-setAbundance( taxon.get("abundance") );
+function postlayoutHandler() {
+    // setImage needs to be called after rendering
+    $.window.removeEventListener("postlayout", postlayoutHandler )
+    setTimeout( function() {
+        setImage( taxon.getPhoto() );
+        setAbundance( taxon.get("abundance") );
+        }, 50 );
+}
 
+
+
+var realPhoto = false;
+updateSaveButton();
+
+$.window.addEventListener("postlayout",postlayoutHandler);
 
 function setImage( photo ) {
     if ( photo ) {
-        $.photoSelect.setImage( photo );
+        realPhoto = true;
+        $.photoSelect.setImage( photo );  
     } else {
+        realPhoto = false;
         $.photoSelect.setImage( taxon.getSilhouette() );
-        $.photoSelect.setError();
-        disableControl($.saveButton); 
     }
 }
 
@@ -47,7 +60,7 @@ function updateAbundance() {
 
 function saveEvent() {
     taxon.set("abundance", $.abundanceLabel.text );
-    taxon.setPhoto($.photoSelect.getImageUrl);
+    taxon.setPhoto( $.photoSelect.getImageUrl() );
     $.trigger("save", taxon );
 }
 
@@ -73,10 +86,19 @@ function deleteEvent() {
 function closeEvent() {
     $.trigger("close");
 }
-var cachedPhoto;
-$.photoSelect.on("photoTaken", function() {
-    $.photoSelect.clearError();
-    enableControl($.saveButton);
-});
+
+function updateSaveButton() {
+    if ( realPhoto ) {
+        $.photoSelect.clearError();
+        enableControl($.saveButton);
+    } else {
+        $.photoSelect.setError();
+        disableControl($.saveButton);
+    }
+}
+
+$.photoSelect.on("loaded", updateSaveButton);
+$.photoSelect.on("photoTaken", updateSaveButton );
 
 exports.cleanUp = cleanUp;
+exports.setImage = setImage;

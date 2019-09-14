@@ -1,1 +1,1 @@
-Alloy.createController("Main"); 
+Alloy.createController("UnitTest"); 
