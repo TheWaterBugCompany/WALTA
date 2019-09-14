@@ -9,9 +9,17 @@ class MenuScreen extends BaseScreen {
         await this.click('Login');
         return this.world.login.login( email, password );
     }
+    async selectAbout() {
+      await this.click('About')
+      await this.world.about.waitFor();
+    }
+    async selectHelp() {
+      await this.click('Help and Info')
+      await this.world.help.waitFor();
+    }
     async selectIdentify() {
-        await this.click('Identify');
-        await this.world.methodSelect.waitFor();
+      await this.click('Identify');
+      await this.world.methodSelect.waitFor();
     }
     async selectWaterbugSurvey() {
         await this.click("Waterbug Survey");

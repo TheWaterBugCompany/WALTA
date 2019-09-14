@@ -1,10 +1,10 @@
 <Alloy>
-	<ListView id="content" class="container" accessibilityHidden="true" defaultItemTemplate="taxon" onItemclick="clickItem">
+	<ListView id="content" class="container"  defaultItemTemplate="taxon" onItemclick="clickItem">
 		<Templates>
-			<ItemTemplate name="taxon" accessibilityHidden="true" >
+			<ItemTemplate name="taxon" >
 				<Label bindId="title" id="taxon" class="speciesItem"/>
 			</ItemTemplate>
-			<ItemTemplate name="genusOrSpeciesTaxon" accessibilityHidden="true" >
+			<ItemTemplate name="genusOrSpeciesTaxon">
 				<Label bindId="title" id="genusOrSpeciesTaxon" class="speciesItem"/>
 			</ItemTemplate>
 		</Templates>

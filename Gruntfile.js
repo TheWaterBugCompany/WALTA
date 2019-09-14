@@ -54,8 +54,18 @@ module.exports = function(grunt) {
             }
           },
 
+          install_ios: {
+            command: function(build_type) { 
+                return `PATH=./node_modules/.bin/:$PATH ios-deploy --bundle ./builds/${build_type}/Waterbug.ipa`;
+            }, stdout: false, stderr: true
+          },
+
           uninstall_android: {
             command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`
+          },
+
+          uninstall_ios: {
+            command: `PATH=./node_modules/.bin/:$PATH ios-deploy --uninstall_only --bundle_id ${APP_ID}`
           },
 
           acceptance_test: {
@@ -216,32 +226,14 @@ module.exports = function(grunt) {
     }
 
     grunt.registerTask("install", function(platform,build_type) {
-      const done = this.async();
-      let appPath = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
-
-      if ( platform === "ios" ) {
-        const caps =  getCapabilities(platform,false);
-        caps.app = appPath;
-        caps.autoLaunch = true;
-        startAppium(caps)
-          .then( terminateApp(platform) )
-          .then( uninstallApp(platform) )
-          .then( () => appium_session.installApp(appPath) )
-          .then( done );
-      } else {
-        grunt.task.run("exec:uninstall_android");
-        grunt.task.run(`exec:install_android:${build_type}`);
-        done();
-      }
-
-
-
+      grunt.task.run(`exec:uninstall_${platform}`);
+      grunt.task.run(`exec:install_${platform}:${build_type}`);
     });
 
     grunt.registerTask("launch", function(platform,build_type) {
       const done = this.async();
-      const caps = getCapabilities(platform,false);
-      caps.app = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
+      const caps = getCapabilities(platform,true);
+      //caps.app = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
       caps.skipLogCapture = false;
       startAppium(caps)
         .then( done );

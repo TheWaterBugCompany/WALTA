@@ -13,7 +13,7 @@ beforeEach( async function() {
         let platform = process.env.PLATFORM;
         if ( ! platform )
             throw new Error("Please set the PLATFORM enviornment variable");
-        world.driver = await startAppiumClient( getCapabilities( platform,(process.env.QUICK==="true"?true:false) ) );
+        world.driver = await startAppiumClient( getCapabilities( platform,true) );
         world.platform = platform;
         setUpWorld( world );
     }

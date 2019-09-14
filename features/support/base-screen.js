@@ -18,7 +18,7 @@ class BaseScreen {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, 25000, message);
+        }, 60000, message);
     }
 
     async waitFor() {

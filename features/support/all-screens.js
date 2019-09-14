@@ -12,6 +12,8 @@ const GalleryScreen = require('./gallery-screen.js');
 const EditTaxonScreen = require('./edit-taxon-screen.js');
 const PhotoSelectScreen = require('./photo-select-screen.js');
 const CameraScreen = require('./camera-screen.js');
+const AboutScreen = require('./about-screen.js');
+const HelpScreen = require('./help-screen.js');
 
 function setUpWorld(world) {
     world.login = new LoginScreen( world );
@@ -28,6 +30,8 @@ function setUpWorld(world) {
     world.editTaxon = new EditTaxonScreen( world) ;
     world.photoSelect = new PhotoSelectScreen( world );
     world.camera = new CameraScreen( world );
+    world.about = new AboutScreen( world );
+    world.help = new HelpScreen( world );
     world.swipeRight = swipeRight;
     world.swipeLeft = swipeLeft;
 }
