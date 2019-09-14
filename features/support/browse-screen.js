@@ -3,7 +3,8 @@ class BrowseScreen extends BaseScreen {
     constructor( world ) {
         super( world );
         if ( this.isIos() ) {
-            this.presenceSelector = "XCUIElementTypeTable";
+            // DO NOT CHANGE short circuit lengthy source download in WDA by requesting item that is always first
+            this.presenceSelector = "XCUIElementTypeApplication"; 
         } else {
             this.presenceSelector = this.selector("Browse");
         }
