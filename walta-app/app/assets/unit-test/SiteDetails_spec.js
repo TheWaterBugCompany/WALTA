@@ -60,16 +60,23 @@ describe("SiteDetails controller", function() {
 
     it('should save the water body type field', function(done) {
 		controllerOpenTest( ctl, function() {
-            ctl.on("updated", () => checkTestResult( () => {
+            ctl.on("updated", () => checkTestResult( done, () => {
                 expect( parseInt( sample.get("surveyType") ) ).to.equal(WATERBODY_LAKE);
-            }, done));
+            }));
             fireTabClick( ctl.waterbodyTypeSelect, WATERBODY_LAKE );
         } );
     });
 
-    // FIXME: Missing unit test PhotoSelect_spec !!
-    // then should have integration test here...
-    it('should save the photo field');
+    it('should save the photo field', function(done){
+        controllerOpenTest( ctl, () => checkTestResult( done, ()=>{
+            // set a photo as if taken by the user
+            var photoPath = Ti.Filesystem.getFile( "unit-test/resources/site-mock.jpg" );
+            var mockPreview = `${Ti.Filesystem.applicationDataDirectory}preview_full_${moment().unix()}.jpg`;
+            photoPath.copy( mockPreview );
+            ctl.photoSelect.trigger("photoTaken", mockPreview);
+            expect( ctl.photoSelect.getImageUrl() ).to.include("sitePhoto");
+        }) );
+    });
 
     it('should save waterbody name field', function(done) {
         controllerOpenTest( ctl, function() {

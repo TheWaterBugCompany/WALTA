@@ -145,8 +145,9 @@ function openLocationEntry() {
     $.TopLevelWindow.add($.locationEntry.getView());
 }
 
-$.photoSelect.on("photoTaken", function(blob) {
-    sample.setSitePhoto(blob);
+$.photoSelect.on("photoTaken", function(path) {
+    Ti.API.info(`photo taken updating site with ${path}`)
+    sample.setSitePhoto(path);
     $.photoSelect.setImage( sample.getSitePhoto() ); // update image to new path
     // force layout to fit scroll pane to actual size
     $.content.contentHeight="0";
