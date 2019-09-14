@@ -2026,7 +2026,7 @@
 # movement: "Slow moving burrowing with twists, or with expansion and contraction."
 # confusedWith: "Nothing, very distinctive. Some have distinctive, swollen, rear ends (photo left) and others complicated breathing appendages (photo right)."
 # taxonomicLevel: "family"
-# mediaUrls: ["/taxonomy/walta/media/Tipulidae_01.jpg","/taxonomy/walta/media/Tipulidae_02.jpg","/taxonomy/walta/media/Tipulidae_03.jpg"]
+# mediaUrls: ["/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/tipulidae_02.jpg","/taxonomy/walta/media/tipulidae_03.jpg"]
 # description: ""
 # bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
@@ -2154,7 +2154,7 @@
 # movement: "Variable, but usually slow walk or side to side lizard-like gate"
 # confusedWith: "Mayflies with damaged tails."
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/acruroperla_atra_01.jpg","/taxonomy/walta/media/austroperlids_01.jpg", "/taxonomy/walta/media/hairy_sprawler_01.jpg","/taxonomy/walta/media/blond_sprawler_01.jpg","/taxonomy/walta/media/eustheniidae_01.jpg","/taxonomy/walta/media/gripopterygidae_m1.mp4"]
+# mediaUrls: ["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/acruroperla_atra_01.jpg","/taxonomy/walta/media/austroperlids_01.jpg", "/taxonomy/walta/media/hairy_sprawler_01.jpg","/taxonomy/walta/media/illiesoperla_01.jpg","/taxonomy/walta/media/eustheniidae_01.jpg","/taxonomy/walta/media/gripopterygidae_m1.mp4"]
 # description: "Stoneflies are some of the most sensitive waterbugs to water quality."
 # bluebug: ["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
 -> DONE
@@ -2250,7 +2250,7 @@
 # movement: "Slow moving, usually wriggling."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/stratiomyidae_01.jpg","/taxonomy/walta/media/blood_worm_01.jpg"]
+# mediaUrls: ["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/stratiomyidae_01.jpg","/taxonomy/walta/media/Chironomus_01.jpg"]
 # description: ""
 # bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
