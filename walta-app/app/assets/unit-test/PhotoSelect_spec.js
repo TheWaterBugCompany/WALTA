@@ -46,7 +46,7 @@ describe('PhotoSelect controller', function() {
 			checkTestResult( done, () => {
 				expect( pv.magnify.visible ).to.be.true;
 				//expect( pv.camera.visible ).to.be.false;
-				expect( pv.photo.image.nativePath ).to.contain("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+				expect( pv.getImageUrl() ).to.include("amphipoda_01.jpg");
 				expect( pv.photoSelectLabel.visible ).to.be.false;
 			}, 100);
 		} );
@@ -74,7 +74,7 @@ describe('PhotoSelect controller', function() {
 				expect( pv.magnify.visible ).to.be.true;
 				expect( pv.camera.visible ).to.be.true;
 				//expect( pv.iconHolder.children ).to.contain( pv.camera );
-				expect( pv.photo.image.nativePath ).to.contain("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+				expect( pv.getImageUrl() ).to.include("amphipoda_01.jpg");
 				expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
 				expect( pv.photoSelectLabel.visible ).to.be.true;
 			}, 100);
@@ -89,7 +89,7 @@ describe('PhotoSelect controller', function() {
 				expect( pv.magnify.visible ).to.be.true;
 				expect( pv.camera.visible ).to.be.true;
 				//expect( pv.iconHolder.children ).to.contain( pv.camera );
-				expect( pv.photo.image.nativePath ).to.contain("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+				expect( pv.getImageUrl() ).to.include("amphipoda_01.jpg");
 				expect( pv.photoSelectLabel.visible ).to.be.false;
 				// TODO: automate the capture of a photo impossible from mocha ?!
 			}, 100 )

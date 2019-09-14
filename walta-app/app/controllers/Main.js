@@ -134,8 +134,8 @@ function startApp() {
   Topics.subscribe( Topics.HISTORY, () => openController("SampleHistory") );
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
   Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
-  Topics.subscribe( Topics.HELP, () => openController("Help") );
-  Topics.subscribe( Topics.ABOUT, () => openController("About") );
+  Topics.subscribe( Topics.HELP, () => openController("Help", { keyUrl: key.url }) );
+  Topics.subscribe( Topics.ABOUT, () => openController("About", { keyUrl: key.url }) );
 
   Topics.subscribe( Topics.JUMPTO, function( data ) {
     if ( ! _.isUndefined( data.id ) ) {

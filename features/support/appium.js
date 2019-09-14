@@ -39,7 +39,10 @@ function getCapabilities( platform, quick ) {
             waitForQuiescence: false,
             skipLogCapture: true,
             realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
-            usePrebuiltWDA: true
+            showXcodeLog: true,
+            usePrebuiltWDA: true,
+            noReset: true,
+            commandTimeouts: 60000
         });
         if ( !quick ) {
             caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');

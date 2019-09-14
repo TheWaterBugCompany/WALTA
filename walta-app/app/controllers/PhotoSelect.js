@@ -19,7 +19,7 @@ if ( readOnlyMode ) {
 }
 
 function debug(mess) { 
-    Ti.API.debug(mess);
+    Ti.API.info(mess);
 }
 
 function readFile(path) {

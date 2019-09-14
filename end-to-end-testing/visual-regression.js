@@ -53,17 +53,41 @@ async function verifyScreenShot( name ) {
     } else {
         var path = screenshotPath( screenshot, name, "baseline" );
         fs.writeFileSync( path, screenshot );
-        throw new Error(`Generated base line image: ${path}. Manually verify image and remove the "_baseline" from the string to accept.`);
+        console.warn(`Generated base line image: ${path}. Manually verify image and remove the "_baseline" from the string to accept.`);
     }
 }
 
-describe('Visual regression tests', function() {
+describe.only('Visual regression tests', function() {
     it('gallery images should display correctly',async function() {
-        await navigateSpeedbugViaIdentify( world, "hyriidae" );
+
+        await verifyScreenShot( 'menu screen' );
+
+        await world.menu.selectIdentify();
+
+        await verifyScreenShot( 'menu screen identify' );
+
+        await world.methodSelect.viaSpeedbug();
+
+        await verifyScreenShot( 'speedbug' );
+
+        await world.speedbug.chooseSpeedbug("hyriidae");
+
         await world.taxon.waitForText("Freshwater mussels");
+        await verifyScreenShot( 'taxon detail screen' );
+
         await world.taxon.goMagnify();
         await world.gallery.sleep(100); // wait for scroll bar to disappear
 
+        await verifyScreenShot( this.test.title );
+    });
+
+    it('about page should render',async function() {
+        await world.menu.selectAbout();
+        await verifyScreenShot( this.test.title );
+    });
+
+    it('help page should render',async function() {
+        await world.menu.selectHelp();
         await verifyScreenShot( this.test.title );
     });
 });

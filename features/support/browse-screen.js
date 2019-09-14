@@ -9,6 +9,7 @@ class BrowseScreen extends BaseScreen {
             this.presenceSelector = this.selector("Browse");
         }
     }
+
     async quickSelectFirst() {
         await this.driver.touchAction([{action:"tap",x:25,y:9}]);
     }

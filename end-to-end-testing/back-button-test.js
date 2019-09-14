@@ -18,7 +18,8 @@ describe('Back button tests', function() {
         await world.menu.waitFor();
     });
 
-    it('should return to browse list when back pressed on taxon details via browse', async function() {
+    /* Broken on iOS it seems XCUITest interacts very badly with tables see https://github.com/facebookarchive/WebDriverAgent/issues/675 */
+    it.skip('should return to browse list when back pressed on taxon details via browse', async function() {
         let start = Date.now();
         await navigateBrowseViaIdentify( world );
         await world.taxon.waitForText("'U' bent midges");
@@ -26,7 +27,7 @@ describe('Back button tests', function() {
         await world.browse.waitFor();
     });
 
-    it('should return to browse list when right swipe on taxon details via browse', async function() {
+    it.skip('should return to browse list when right swipe on taxon details via browse', async function() {
         await navigateBrowseViaIdentify( world );
         await world.taxon.waitForText("'U' bent midges");
         await swipeRight( { start_x: 4 });
