@@ -350,7 +350,7 @@ describe( 'SampleTray controller', function() {
       the implementation - we need to look up expect tile positions by
       there coordinates in the view. */
 
-    it.only('when scrolled to the right it should update the screen properly', function() {
+    it('when scrolled to the right it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
           .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
