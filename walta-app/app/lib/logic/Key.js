@@ -155,11 +155,16 @@ function createKey( args ) {
 			return _.values( taxIdToNode );
 		},
 
+		// Return a list of all Taxons
+		findAllNodes: function() {
+			return _.values( taxIdToNode );
+		},
+
 		// Retrieves all the media
-		findAllMedia: function( prp ) {
+		findAllMedia: function( prp, taxonsOnly = true ) {
 			var media = [];
 			if ( ! prp ) prp = 'mediaUrls';
-			_.each( this.findAllTaxons(), function( t ) { media = media.concat( t[prp] ); });
+			_.each( (taxonsOnly? this.findAllTaxons() : this.findAllNodes() ), function( t ) { media = media.concat( t[prp] ); });
 			return media;
 		},
 
