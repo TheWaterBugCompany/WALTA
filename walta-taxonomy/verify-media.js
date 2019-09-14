@@ -1,4 +1,4 @@
-#! /usr/local/bin/node
+#! /usr/bin/node
 var fs = require('fs');
 var colors = require('colors');
 var KeyLoader = require("logic/KeyLoaderJson");

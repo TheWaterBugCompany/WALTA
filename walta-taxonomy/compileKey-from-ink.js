@@ -1,4 +1,4 @@
-#! /usr/local/bin/node
+#! /usr/bin/node
 var fs = require('fs');
 var CircularJSON = require('circular-json');
 var KeyLoader = require("logic/KeyLoaderInk");
