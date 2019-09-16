@@ -55,7 +55,7 @@ $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 
 let swipeListenerAdded = false;
 function noSwipeBack() {
-	if  (! swipeListenerAdded ) {
+	if  (swipeListenerAdded ) {
 		$.TopLevelWindow.removeEventListener( 'swipe', swipeListener );
 		swipeListenerAdded = false;
 	}

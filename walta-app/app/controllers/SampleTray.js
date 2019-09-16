@@ -401,26 +401,30 @@ let timeoutHandler = null;
 
 function timeoutOnDrag() {
   if ( getScrollOffset() === 0 ) {
+    console.log("firing back");
     Topics.fireTopicEvent( Topics.BACK );
   } 
 }
 
 function handleDragStart(e) {
+  console.log(`offset is ${getScrollOffset()}`);
   if ( getScrollOffset() === 0 ) {
+    
     timeoutHandler = setTimeout(timeoutOnDrag,200);
   }
 }
 
 function handleDragEnd(e) {
   if ( timeoutHandler ) {
+    console.log("timing out");
     clearTimeout(timeoutHandler);
     timeoutHandler = null;
   } 
 }
 
 $.content.addEventListener( "scroll", drawIcecubeTray );
-$.content.addEventListener("dragstart", handleDragStart );
-$.content.addEventListener("dragend", handleDragEnd );
+$.TopLevelWindow.addEventListener("dragstart", handleDragStart );
+$.TopLevelWindow.addEventListener("dragend", handleDragEnd );
 
 $.content.addEventListener( "postlayout", function initEvent() {
   $.content.removeEventListener( "postlayout", initEvent );
@@ -431,8 +435,8 @@ $.content.addEventListener( "postlayout", function initEvent() {
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
 
 $.getView().addEventListener( "close", function cleanup() {
-  $.content.removeEventListener("dragstart", handleDragStart ); 
-  $.content.removeEventListener("dragend", handleDragEnd );
+  $.TopLevelWindow.removeEventListener("dragstart", handleDragStart ); 
+  $.TopLevelWindow.removeEventListener("dragend", handleDragEnd );
   $.content.removeEventListener("scroll", drawIcecubeTray );
   Alloy.Collections["taxa"].off("add change remove", drawIcecubeTray );
   $.getView().removeEventListener("close", cleanup);
@@ -466,7 +470,9 @@ function editTaxon( taxon_id ) {
   });
 
   $.editTaxon.on("save", function() {
+    console.log("saving")
     closeEditScreen();
+    
     taxon.save();
     Alloy.Collections["taxa"].add( taxon );
     scrollToRightEdge();

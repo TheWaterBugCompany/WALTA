@@ -73,18 +73,32 @@ describe("EditTaxon controller", function() {
         });
     });
  
-    it('save should be enabled if a photo is selected', function(done) {  
+    it('save should be enabled if a photo is selected', function(done) {
+        var doneOnce = _.once(done);  
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, () => {
-            ctl.photoSelect.trigger("photoTaken");
-            checkTestResult( done, () => {
+            ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
                 expect( ctl.saveButton.enabled ).to.be.true;
                 expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.false;
                 expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.equal("transparent");
-            }, 150 );
-        });
+            }, 0 ) ) ;
+            ctl.setImage("unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
+        }); 
     });
 
+    it('should call the save event when save is selected', function(done) {  
+        var doneOnce = _.once(done);
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
+        windowOpenTest( win, () => {
+            ctl.photoSelect.on("loaded", () => {
+                ctl.on("save", (txn) => checkTestResult(doneOnce, () => {
+                    expect( txn.getPhoto() ).to.include("preview");
+                } ) );
+                ctl.saveButton.fireEvent("click");
+            });
+            ctl.setImage("unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
+        } );
+    });
     
     [ ["1-2", 1.5],  ["3-5", 4.0], ["6-10", 8.0], ["11-20", 15.5] ]
         .forEach( ( [ bin, val ] ) => {
