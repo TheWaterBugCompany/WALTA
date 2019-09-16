@@ -24,7 +24,7 @@ var { createMockTaxon } = require('unit-test/mocks/MockTaxon');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-describe("EditTaxon controller", function() {
+describe.only("EditTaxon controller", function() {
     this.timeout(6000);
     var ctl,win;
     
