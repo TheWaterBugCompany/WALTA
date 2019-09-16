@@ -8,7 +8,7 @@ const { navigateGoBack,
         navigateSpeedbugNotSureViaIdentify,
         navigateTakePhoto } = require('../features/support/navigation-driver');
 
-describe('Back button tests', function() {
+describe.only('Back button tests', function() {
     it('should return to menu when back pressed on the root of a key', async function() {
         await navigateKeyViaIdentify( world, ["Animal with a shell"]);
         await world.keySearch.waitForText("Animals look like snails or limpets.");
@@ -34,7 +34,7 @@ describe('Back button tests', function() {
         await world.browse.waitFor();
     });
 
-    it('should go back with a right swipe from survey wizard', async function() {
+    it.only('should go back with a right swipe from survey wizard', async function() {
         await world.menu.selectWaterbugSurvey();
         await swipeRight();
         await world.menu.waitFor();
@@ -58,6 +58,9 @@ describe('Back button tests', function() {
         await world.sample.waitFor();
         await swipeRight();
         await world.habitat.waitFor();
+        await world.habitat.goNext();
+
+        
     });
  
     it('should return to speedbug when returning from taxon via identify', async function() {

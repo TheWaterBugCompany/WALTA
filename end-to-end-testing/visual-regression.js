@@ -57,7 +57,7 @@ async function verifyScreenShot( name ) {
     }
 }
 
-describe.only('Visual regression tests', function() {
+describe('Visual regression tests', function() {
     it('gallery images should display correctly',async function() {
 
         await verifyScreenShot( 'menu screen' );
