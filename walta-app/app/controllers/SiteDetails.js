@@ -164,14 +164,14 @@ GeoLocationService.start();
 
 // Only allow automatic location updates if the location was
 // undefined when this screen was opened
-if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
-    Topics.subscribe(Topics.GPSLOCK, function(coords) {
-        // only set location if the accuracy is present and less than 100m
+Topics.subscribe(Topics.GPSLOCK, function(coords) {
+    // only set location if the accuracy is present and less than 100m
+    if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
         if ( coords.accuracy < 100 ) {
             var accuracy = sample.get("accuracy");
             Alloy.Models.sample.setLocation(coords);
         }
-    } );
-}
+    }
+} );
 
 
