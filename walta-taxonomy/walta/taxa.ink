@@ -42,7 +42,7 @@
 # movement: "Fast... for a snail."
 # confusedWith: "Planorbids can look very similar, but Physa acuta has a mottled mantle that is usually visible through the shell."
 # taxonomicLevel: "species"
-# mediaUrls: ["/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/Physa_acuta_closeup.jpg"]
+# mediaUrls: ["/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/physa_acuta_closeup.jpg"]
 # description: ""
 # bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
@@ -1967,7 +1967,7 @@
 # bluebug: ["/taxonomy/walta/media/speedbug/simuliidae_b.png"]
 -> DONE
 
-=== Chironomus ===
+=== chironomus ===
 # taxonId: "76"
 # name: "Chironomus"
 # scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Diptera"},{"taxonomicLevel":"family","name":"Chironomidae"},{"taxonomicLevel":"genus","name":"Chironomus"}]
@@ -1978,7 +1978,7 @@
 # movement: ": Coil and uncoil quickly in a figure of eight, sometimes thrashing or using prolegs to drag themselves along the ground."
 # confusedWith: "Nothing, very distinctive."
 # taxonomicLevel: "genus"
-# mediaUrls: ["/taxonomy/walta/media/Chironomus_01.jpg","/taxonomy/walta/media/Chironomus_m1.mp4"]
+# mediaUrls: ["/taxonomy/walta/media/chironomus_01.jpg","/taxonomy/walta/media/chironomus_m1.mp4"]
 # description: ""
 # bluebug: ["/taxonomy/walta/media/speedbug/bloodworm_b.png"]
 -> DONE
@@ -2250,7 +2250,7 @@
 # movement: "Slow moving, usually wriggling."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/stratiomyidae_01.jpg","/taxonomy/walta/media/Chironomus_01.jpg"]
+# mediaUrls: ["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/stratiomyidae_01.jpg","/taxonomy/walta/media/chironomus_01.jpg"]
 # description: ""
 # bluebug: ["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
 -> DONE
@@ -2363,7 +2363,7 @@
 # movement: "Snail's pace."
 # confusedWith: ""
 # taxonomicLevel: "order"
-# mediaUrls: ["/taxonomy/walta/media/flatsnails_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif","/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/Physa_acuta_closeup.jpg","/taxonomy/walta/media/lymnaeidae_01.jpg","/taxonomy/walta/media/ancylidae.jpg"]
+# mediaUrls: ["/taxonomy/walta/media/flatsnails_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif","/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/physa_acuta_closeup.jpg","/taxonomy/walta/media/lymnaeidae_01.jpg","/taxonomy/walta/media/ancylidae.jpg"]
 # description: "To quote T. Sloane, booger with a crash helmet."
 # bluebug: ["/taxonomy/walta/media/speedbug/snails_b.png"]
 -> DONE
