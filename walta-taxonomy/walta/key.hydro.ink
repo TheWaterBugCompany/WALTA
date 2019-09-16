@@ -293,7 +293,7 @@ INCLUDE taxa.ink
 * Shell dextral (right handed) -> lymnaeidae # mediaUrls: ["/taxonomy/walta/media/shell_dextral.gif"]
 
 === node_5 ===
-* Mottled pattern visible through the shell. You might need good light to see this -> physa_acuta # mediaUrls: ["/taxonomy/walta/media/Physa_acuta_closeup.jpg"]
+* Mottled pattern visible through the shell. You might need good light to see this -> physa_acuta # mediaUrls: ["/taxonomy/walta/media/physa_acuta_closeup.jpg"]
 * Snail without obvious mottling. -> planorbids # mediaUrls: []
 
 === k_bivalvia ===
@@ -486,7 +486,7 @@ INCLUDE taxa.ink
 
 === k_bugs ===
 * Larger 10-30mm bugs. Front legs pointed for piercing prey. Do not flick swimming legs when at rest. -> node_37 # mediaUrls: []
-* Small (<10mm) active bugs with two broad paddle like swimming legs which they flick back and forth when at rest. Streamlined body, blunt head. An air bubble may be visible under the body. May make buzzing or squeaking sounds in the tray. -> k_corixidae # mediaUrls: ["/taxonomy/walta/media/corixidae_m2.mp4"]
+* Small (<10mm) active bugs with two broad paddle like swimming legs which they flick back and forth when at rest. Streamlined body, blunt head. An air bubble may be visible under the body. May make buzzing or squeaking sounds in the tray. -> k_corixidae # mediaUrls: ["/taxonomy/walta/media/corixidae_m1.mp4"]
 
 === node_37 ===
 * Medium sized bugs (10-15mm) with broad heads and light/dark checks (taxi stripes) along their sides. -> naucoris # mediaUrls: []
@@ -865,7 +865,7 @@ INCLUDE taxa.ink
 * Animal moves by coiling and uncoiling, or by rapid undulations. Unattached to the substrate; abdomen may be swollen but only the very end; antennae small and simple if present. -> k_chironomid # mediaUrls: []
 
 === k_chironomid ===
-* Animals obviously red. -> Chironomus # mediaUrls: []
+* Animals obviously red. -> chironomus # mediaUrls: []
 * Colour variable but not red. -> node_101 # mediaUrls: []
 
 === node_101 ===

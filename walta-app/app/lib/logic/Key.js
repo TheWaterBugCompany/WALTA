@@ -156,15 +156,20 @@ function createKey( args ) {
 		},
 
 		// Return a list of all Taxons
-		findAllNodes: function() {
-			return _.values( taxIdToNode );
+		findAllQuestionsOrTaxons: function() {
+			return _(allNodes).reduce( (memo,n) => memo.concat(n.questions), [])
+					 .concat( this.findAllTaxons );
 		},
 
 		// Retrieves all the media
 		findAllMedia: function( prp, taxonsOnly = true ) {
 			var media = [];
 			if ( ! prp ) prp = 'mediaUrls';
-			_.each( (taxonsOnly? this.findAllTaxons() : this.findAllNodes() ), function( t ) { media = media.concat( t[prp] ); });
+			_.each( (taxonsOnly? this.findAllTaxons() : this.findAllQuestionsOrTaxons() ), function( t ) { 
+				if ( t[prp] ) {
+					media = media.concat( t[prp] );
+				} 
+			});
 			return media;
 		},
 
