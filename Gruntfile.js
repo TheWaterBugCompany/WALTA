@@ -342,7 +342,7 @@ module.exports = function(grunt) {
       grunt.task.run("exec:stop_live_view");
       grunt.task.run(`run:live_view_${platform}`);
       grunt.task.run(`launch:${platform}:preview-unit-test`);
-      grunt.task.run(`output-logs:${platform}:preview-unit-test`);
+      grunt.task.run(`output-logs:${platform}:preview`);
     } );
   
     grunt.registerTask('release', function(platform) {

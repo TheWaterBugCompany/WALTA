@@ -1,6 +1,7 @@
 const debug = require('debug')('thecodesharman:unittest'),
 	path = require('path'),
-	join = path.join;
+	join = path.join,
+	fs = require('fs')
 
 exports.cliVersion = '>=5.2';
 
@@ -22,13 +23,26 @@ exports.init = function (logger, config, cli) {
 	cli.addHook('build.ios.config', doConfig);
 	cli.addHook('build.windows.config', doConfig);
 
-	function copyResource(data, finished) {
-		debug('Running pre:build.' + cli.argv.platform + '.copyResource hook');
+	function patchLiveViewJs(build, finished) {
+		if (cli.argv.liveview) {
+			debug('Running pre:compile to modify live view code');
+			logger.info(`Patching liveview.js`);
 
+			// load livepatch code and add our own
+			let liveviewJS = join(tempdir(), 'liveview.js');
+			let payloadJs= join(__dirname, "../build/payload.js");
+			fs.writeFileSync(liveviewJS,
+				fs.readFileSync(liveviewJS)
+					.toString()
+					.replace(/Module\.patch\(globalScope,/g, fs.readFileSync(payloadJs).toString() + "\n$&" ));
+		}
+		finished();
+	}
+
+	function copyResource(data, finished) {
 		if (cli.argv["unit-test"]) {
 			const RESOURCES_DIR = join(this.projectDir, 'Resources');
 			const srcFile = data.args[0];
-			  
 			if (new RegExp('^' + RESOURCES_DIR.replace(/\\/g, '/') + '(/(android|ipad|ios|iphone|windows|blackberry|tizen))?/alloy/controllers/index.js$').test(srcFile.replace(/\\/g, '/'))) {
 				logger.info(`Replacing controllers/index.js with controllers/UnitTest.js`);
 				data.args[0] = data.args[0].replace(/\/index\.js$/g, "/UnitTest.js");
@@ -37,8 +51,9 @@ exports.init = function (logger, config, cli) {
 		finished(null, data);
 	}
 
-	cli.addHook('build.ios.copyResource', { pre: copyResource });
-	cli.addHook('build.android.copyResource', { pre: copyResource });
-	cli.addHook('build.windows.copyResource', { pre: copyResource });
+	cli.addHook('build.ios.copyResource', { pre: copyResource, priority: 5000 });
+	cli.addHook('build.android.copyResource', { pre: copyResource, priority: 5000  });
+	cli.addHook('build.windows.copyResource', { pre: copyResource , priority: 5000 });
+	cli.addHook('build.pre.compile', { post: patchLiveViewJs, priority: 5000 });
 
 };
