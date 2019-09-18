@@ -8,11 +8,12 @@ sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.TopLevelWindow.removeEventListener('close', cleanUp );
+    $.photoSelect.cleanUp();
     $.destroy();
     $.off();
     sample.off( null, updateLocation );
     sample.off( null, loadAttributes );
-    $.TopLevelWindow.removeEventListener('close', cleanUp );
     GeoLocationService.stop();
 });
 
