@@ -24,7 +24,7 @@ describe('PhotoSelect controller', function() {
 
 	function makePhotoSelect( readonly, images ) {
 		pv = Alloy.createController("PhotoSelect", {readonly: readonly});
-		pv.setImage(images);
+		if ( images ) pv.setImage(images);
 		win = wrapViewInWindow(  _(pv.getView()).extend( { height: '100%', width: '100%' } ) );
 		win.addEventListener("close", function cleanUp() {
 			win.removeEventListener( "close", cleanUp );

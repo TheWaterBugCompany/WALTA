@@ -14,7 +14,7 @@ function createMockTaxon( taxon ) {
         return Math.round((min+max)/2);
     };
     model.getSilhouette = function() {
-        return "unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png";
+        return "/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png";
     }
     return model;
 }

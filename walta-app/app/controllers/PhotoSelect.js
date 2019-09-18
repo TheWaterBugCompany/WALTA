@@ -62,16 +62,30 @@ function generateThumbnail( fileOrBlob ) {
     } else {
         fullPhoto = fileOrBlob;
     }
+
+    if ( ! fullPhoto ) { 
+        Ti.API.error(`Error loading photo: ${fileOrBlob}`);
+        throw new Error("Unable to load photo");
+    }
+
     var aspectRatio = (fullPhoto.height/fullPhoto.width);
 
     if ( fullPhoto.length > 4*1024*1024 ) {
         Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb resizing and compressing photo...`);
         fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
+        if ( ! fullPhoto ) {
+            Ti.API.error(`Error resizing photo: ${fileOrBlob}`);
+            throw new Error("Unable to resize photo");
+        }
     }
 
-    if ( ( fullPhoto.mimeType === "image/png" ) ) {
-        Ti.API.info(`got a PNG: converting photo in JPEG...`);
+    if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
+        Ti.API.info(`got a PNG: converting photo into JPEG...`);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
+        if ( ! fullPhoto ) {
+            Ti.API.error(`Error converting photo: ${fileOrBlob}`);
+            throw new Error("Unable to convert photo into JPEG");
+        }
     }
     
     debug("saving full size photo..");
@@ -85,12 +99,20 @@ function generateThumbnail( fileOrBlob ) {
     var newHeight = pxWidth*aspectRatio;
     
     var thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
+    if ( ! thumbnail ) {
+        Ti.API.error(`Error resizing photo to create thumbnail: ${fullPhotoPath}`);
+        throw new Error("Unable to resize photo ");
+    }
     fullPhoto = null;
     var cropY = ((newHeight-pxHeight)/2);
-    if ( cropY > 0 )
+    if ( cropY > 0 ) {
         thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
+        if ( ! thumbnail ) {
+            Ti.API.error(`Error cropping to create thumbnail: ${fullPhotoPath}`);
+            throw new Error("Unable to crop photo");
+        }
+    }
 
-    
     debug(`saving thumbnail...`);
     var thumbnailPath = savePhoto( thumbnail, `preview_${moment().unix()}.jpg`);
     thumbnail = null;
@@ -228,7 +250,7 @@ function getImageUrl() {
 }
 
 exports.getImageUrl = getImageUrl;
-exports.openGallery = openGallery;
+exports.openGallery = openGallery; 
 exports.setImage = setImage;
 exports.setError = setError;
 exports.clearError = clearError;
@@ -236,6 +258,7 @@ exports.disable = disable;
 exports.enable = enable;
 
 function cleanUp() {
+    debug("cleaning up PhotoSelect")
     $.destroy();
     $.off();
 }

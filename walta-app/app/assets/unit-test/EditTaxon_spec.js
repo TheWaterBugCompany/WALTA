@@ -24,7 +24,7 @@ var { createMockTaxon } = require('unit-test/mocks/MockTaxon');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-describe.only("EditTaxon controller", function() {
+describe("EditTaxon controller", function() {
     this.timeout(6000);
     var ctl,win;
     
@@ -46,7 +46,7 @@ describe.only("EditTaxon controller", function() {
         if ( win ) {
             closeWindow( win, () => setTimeout( done, 50 ) ); // race condition on cleanUp() ??
         } else {
-            done();
+            setTimeout( done, 50 );
         }
     });
 
@@ -82,7 +82,7 @@ describe.only("EditTaxon controller", function() {
                 expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.false;
                 expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.equal("transparent");
             }, 0 ) ) ;
-            ctl.setImage("unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
+            ctl.setImage("/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
         }); 
     });
 
@@ -96,7 +96,7 @@ describe.only("EditTaxon controller", function() {
                 } ) );
                 ctl.saveButton.fireEvent("click");
             });
-            ctl.setImage("unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
+            ctl.setImage("/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
         } );
     });
     
@@ -105,8 +105,9 @@ describe.only("EditTaxon controller", function() {
             it(`should display abundance correctly: ${bin} (${val})`, function(done) {
                 makeEditTaxon( { taxonId:"1", abundance:bin} );
                 windowOpenTest( win, function() {
-                    checkTestResult( () => forceCloseWindow( win, ()=> { win = null; done(); } ), 
+                    checkTestResult( done, 
                         function() {
+                            
                             expect( ctl.abundanceValue.value ).to.equal(val);
                             expect( ctl.abundanceLabel.text ).to.equal(bin);
                         } );
