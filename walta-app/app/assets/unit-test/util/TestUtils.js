@@ -25,10 +25,9 @@ var meld = require('lib/meld');
 
 var Topics = require('ui/Topics');
 
-function setManualTests( b ) { Alloy.CFG.stopAfterEachTest = b; }
-
-function isManualTests() { return Alloy.CFG.stopAfterEachTest; }
-
+var manualTests = false;
+function setManualTests( b ) { manualTests = b; }
+function isManualTests() { return manualTests; }
 
 // TODO: Convert to Promise based API
 function waitForDomEvent( obj, evtName, fireEvent, done ) {
@@ -134,9 +133,11 @@ function ifNotManual( cbTrue, cbFalse ) {
 }
 
 function closeWindow( win, done ) {
+	// TODO: a realy nice feature would be to pause
+	// test and allow a menu option to continue
 	ifNotManual(function() {
-		win.addEventListener( "close", function e() {
-			win.removeEventListener( "close", e );
+		win.addEventListener( "close", function handler() {
+			win.removeEventListener( "close", handler );
 			if ( done )
 				done();
 		} );

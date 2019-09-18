@@ -17,14 +17,16 @@
 */
 require("unit-test/lib/ti-mocha");
 var moment = require("lib/moment");
-var Topics = require('ui/Topics');
+var Topics = require('ui/Topics'); 
 var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
 
-describe.only("SiteDetails controller", function() {
+describe("SiteDetails controller", function() {
     var ctl;
     var sample;
+
+    this.timeout(15000);
 
     function fireTabClick( ctl, index ) {
         var tab = ctl.getButtons()[index];
@@ -43,6 +45,8 @@ describe.only("SiteDetails controller", function() {
 	afterEach( function(done) {
         sample.off();
         closeWindow( ctl.getView(), done );
+        sample = null;
+        ctl = null;
     });
     
 	it('should display the SiteDetails view', function(done) {
@@ -81,12 +85,11 @@ describe.only("SiteDetails controller", function() {
     it('should save waterbody name field', function(done) {
         controllerOpenTest( ctl, function() {
             ctl.waterbodyNameField
-                .addEventListener("change", function changeHandler() {
+                .addEventListener("change", () => checkTestResult( done, function changeHandler() {
                     ctl.waterbodyNameField
                         .removeEventListener("change", changeHandler);
                     expect( sample.get("waterbodyName") ).to.equal("Test Waterbody");
-                    done();
-            });
+            }));
             ctl.waterbodyNameField.value = "Test Waterbody";
             ctl.waterbodyNameField.fireEvent("change");
         } );
@@ -183,7 +186,7 @@ describe.only("SiteDetails controller", function() {
                 done();
             }, 50 );
         } );
-    });
+    }); 
 
    /* it('should have editable fields before 14 days', function(done) {
         sample.set("dateCompleted", moment().subtract(13, "days").format() );
