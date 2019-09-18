@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
-      const tasks = [ "exec:clean",`exec:build:${platform}:${build_type}`];
+      const tasks = [`exec:build:${platform}:${build_type}`];
       if ( build_type !== "release" ) 
         tasks.push(`install:${platform}:${build_type}`);
       return {
@@ -181,11 +181,11 @@ module.exports = function(grunt) {
             exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:debug",
           },
           live_view_ios: {
-            options: { wait: false },
+            options: { wait: false, ready: "Event Server Started"  },
             exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform ios"
           },
           live_view_android: {
-            options: { wait: false },
+            options: { wait: false, ready: "Event Server Started" },
             exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform android"
           }
         },
@@ -262,6 +262,8 @@ module.exports = function(grunt) {
       function delay(t) {
         return new Promise( resolve => setTimeout(resolve, t) ); 
       }
+      
+      
 
       async function processLogs() {
         let stop = false;
@@ -280,8 +282,14 @@ module.exports = function(grunt) {
           await delay(100);
         }
       }
-
-      processLogs().then(done);
+      (function() { if ( ! appium_session ) {
+        const caps = getCapabilities(platform,true);
+        caps.autoLaunch = false;
+        return startAppium(caps);
+      } else {
+        return Promise.resolve();
+      }})().then( processLogs )
+          .then( done );
     });
     
     grunt.loadNpmTasks("grunt-exec");

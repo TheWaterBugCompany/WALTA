@@ -1,1 +1,1 @@
-require('./ti-mocha/titanium');
+exports = module.exports = require('./ti-mocha/titanium');
