@@ -1,10 +1,14 @@
 var Mocha = require("unit-test/lib/ti-mocha"); 
+var { setManualTests, isManualTests } = require('unit-test/util/TestUtils');
 
 function runTests() {
   let mocha = new Mocha({
     ui: 'bdd',
     reporter: 'ti-spec'
   });
+  if ( isManualTests() ) {
+    mocha.timeout(0);
+  }
   return new Promise( function(resolve, reject) {
     [ "AnchorBar", 
       "TaxonList",
@@ -44,7 +48,10 @@ function runTests() {
 }
 
 // useful for testing memory leaks
-infinteLoopMode = (ENV === 'liveview');
+infinteLoopMode = __hacked_live_view && false;
+
+// freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
+setManualTests( __hacked_live_view && false );
 
 // Create a blank window: for some reason closing the last window hangs 
 // the test suite.

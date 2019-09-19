@@ -8,6 +8,7 @@ global.location = {};
 Mocha.prototype.loadFiles = function(fn) {
 	var self = this;
 	var suite = this.suite;
+	
 	this.files.forEach(function(file) {
 	  suite.emit('pre-require', global, file, self);
 	  suite.emit('require', require(file), file, self);

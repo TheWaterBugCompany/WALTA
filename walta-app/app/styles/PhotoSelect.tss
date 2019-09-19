@@ -2,7 +2,10 @@
     width: Ti.UI.FILL,
     height: Ti.UI.FILL
 } 
-
+"#photo": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL
+}
 ".photoNoError": {
     borderColor: "transparent"
 }
@@ -25,7 +28,9 @@
 "#photoSelectInner" : {
     borderColor: "#26849c",
     borderWidth: "1dp",
-    backgroundColor: "#cee8ef"
+    backgroundColor: "#cee8ef",
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL
 } 
 
 ".photoMessage": {

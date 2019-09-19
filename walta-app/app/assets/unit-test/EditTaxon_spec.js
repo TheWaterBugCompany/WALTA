@@ -25,10 +25,8 @@ var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe("EditTaxon controller", function() {
-    this.timeout(6000);
     var ctl,win;
-    
-    
+
     function makeEditTaxon( taxon ) {
         ctl = Alloy.createController("EditTaxon", { 
             key: keyMock,
@@ -43,11 +41,7 @@ describe("EditTaxon controller", function() {
     }
 
     afterEach( function(done ) {
-        if ( win ) {
-            closeWindow( win, () => setTimeout( done, 50 ) ); // race condition on cleanUp() ??
-        } else {
-            setTimeout( done, 50 );
-        }
+        closeWindow( win, done ); 
     });
 
 	it('should display the taxon edit view', function(done) {  
@@ -56,9 +50,8 @@ describe("EditTaxon controller", function() {
             checkTestResult( done,
                 function() {
                     expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
-                    expect( ctl.photoSelect.getImageUrl() ).to.include("preview");
                     expect( ctl.abundanceLabel.text ).to.equal("3-5");
-                }, 150 ); 
+                } ); 
         } );
     });
 
@@ -69,7 +62,7 @@ describe("EditTaxon controller", function() {
                 expect( ctl.saveButton.enabled ).to.be.false;
                 expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.true;
                 expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.equal("red");
-            }, 150 );
+            } );
         });
     });
  
@@ -81,7 +74,7 @@ describe("EditTaxon controller", function() {
                 expect( ctl.saveButton.enabled ).to.be.true;
                 expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.false;
                 expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.equal("transparent");
-            }, 0 ) ) ;
+            } ) ) ;
             ctl.setImage("/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
         }); 
     });
@@ -100,14 +93,13 @@ describe("EditTaxon controller", function() {
         } );
     });
     
-    [ ["1-2", 1.5],  ["3-5", 4.0], ["6-10", 8.0], ["11-20", 15.5] ]
+    [ ["1-2", 2],  ["3-5", 4.0], ["6-10", 8.0], ["11-20", 16] ]
         .forEach( ( [ bin, val ] ) => {
             it(`should display abundance correctly: ${bin} (${val})`, function(done) {
                 makeEditTaxon( { taxonId:"1", abundance:bin} );
                 windowOpenTest( win, function() {
                     checkTestResult( done, 
                         function() {
-                            
                             expect( ctl.abundanceValue.value ).to.equal(val);
                             expect( ctl.abundanceLabel.text ).to.equal(bin);
                         } );
