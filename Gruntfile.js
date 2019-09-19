@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
-      const tasks = [`exec:build:${platform}:${build_type}`];
+      const tasks = ['exec:clean', `exec:build:${platform}:${build_type}`];
       if ( build_type !== "release" ) 
         tasks.push(`install:${platform}:${build_type}`);
       return {
