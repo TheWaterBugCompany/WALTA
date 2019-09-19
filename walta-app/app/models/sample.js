@@ -57,7 +57,7 @@ exports.definition = {
 
 			setSitePhoto: function(file) {
 				var newPhotoName = `sitePhoto_${this.get("sampleId")}_${moment().unix()}.jpg`;
-				Ti.API.info(`updating photo at ${newPhotoName}`);
+				Ti.API.info(`updating photo ${file} to ${newPhotoName}`);
 				removeFilesBeginningWith(`sitePhoto_${this.get("sampleId")}_`);
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(sitePhotoPath.nativePath);

@@ -133,16 +133,20 @@ function ifNotManual( cbTrue, cbFalse ) {
 }
 
 function closeWindow( win, done ) {
-	// TODO: a realy nice feature would be to pause
-	// test and allow a menu option to continue
-	ifNotManual(function() {
-		win.addEventListener( "close", function handler() {
-			win.removeEventListener( "close", handler );
-			if ( done )
-				done();
-		} );
-		win.close();
-	}, done);
+	win.addEventListener( "close", function handler() {
+		win.removeEventListener( "close", handler );
+		if ( done )
+			done();
+	} );
+	ifNotManual(() => win.close(), function() {
+		if ( win.activity ) {
+			win.activity.onCreateOptionsMenu = (e) => {
+				var menu = e.menu;
+				var menuItem = menu.add( { title: "Continue", showAs: Ti.Android.SHOW_AS_ACTION_NEVER });
+				menuItem.addEventListener("click", () => win.close() )
+			}
+		}
+	});
 }
 
 function forceCloseWindow( win, done ) {

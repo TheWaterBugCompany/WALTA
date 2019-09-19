@@ -21,7 +21,7 @@ var Topics = require('ui/Topics');
 var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
-
+var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
 describe("SiteDetails controller", function() {
     var ctl;
     var sample;
@@ -72,14 +72,15 @@ describe("SiteDetails controller", function() {
     });
 
     it('should save the photo field', function(done){
-        controllerOpenTest( ctl, () => checkTestResult( done, ()=>{
+        var doneOnce = _.once(done);
+        controllerOpenTest( ctl,  ()=>{
             // set a photo as if taken by the user
-            var photoPath = Ti.Filesystem.getFile( "unit-test/resources/site-mock.jpg" );
-            var mockPreview = `${Ti.Filesystem.applicationDataDirectory}preview_full_${moment().unix()}.jpg`;
-            photoPath.copy( mockPreview );
-            ctl.photoSelect.trigger("photoTaken", mockPreview);
-            expect( ctl.photoSelect.getImageUrl() ).to.include("sitePhoto");
-        }) );
+            ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
+                expect( ctl.photoSelect.getImageUrl() ).to.include("sitePhoto");
+                expect( Ti.Filesystem.getFile( ctl.photoSelect.getImageUrl() ).exists() ).to.be.ok;
+            }) );
+            simulatePhotoCapture( ctl.photoSelect );
+        });
     });
 
     it('should save waterbody name field', function(done) {

@@ -258,13 +258,11 @@ module.exports = function(grunt) {
       if ( process.env.DEBUG )
         levels.push("DEBUG");
       
-      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +TiAPI +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
+      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +Ti\\w+ +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
       function delay(t) {
         return new Promise( resolve => setTimeout(resolve, t) ); 
       }
-      
-      
-
+      const logFilter = (platform === "android"? /Ti\w+/ : /Waterbug\(TitaniumKit\)/);
       async function processLogs() {
         let stop = false;
         while( !stop || option === "preview") {
@@ -272,7 +270,7 @@ module.exports = function(grunt) {
           logs.forEach( (line) => {
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
-            } else if ( line.message.includes(platform === "android"? "TiAPI":"Waterbug(TitaniumKit)") && retain.test(line.message)) {
+            } else if ( logFilter.test(line.message) && retain.test(line.message)) {
               let parts = line.message.split(retain);
               if ( parts.length >= 1 ) {
                 grunt.log.writeln(decodeSyslog(parts[2]));
