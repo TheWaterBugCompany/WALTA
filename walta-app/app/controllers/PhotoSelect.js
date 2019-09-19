@@ -244,8 +244,13 @@ function openGallery(e) {
 }
 
 function photoCapturedHandler( result ) {
+    function triggerPhotoTaken() {
+        $.off("loaded", triggerPhotoTaken);
+        $.trigger("photoTaken", getImageUrl() );
+    }
+    $.on("loaded", triggerPhotoTaken );
     setImage( result );
-    $.trigger("photoTaken", getImageUrl() );
+    
 }
 
 function takePhoto(e) {
