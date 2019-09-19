@@ -38,9 +38,7 @@ function runTests() {
       "EditTaxon",
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
-      if ( __remove_module_from_preview_cache ) {
-        __remove_module_from_preview_cache(specPath);
-      }
+      try { __remove_module_from_preview_cache(specPath);} catch(e) {}
       mocha.addFile(specPath);
     });
     return mocha.run(resolve);
@@ -48,10 +46,10 @@ function runTests() {
 }
 
 // useful for testing memory leaks
-infinteLoopMode = __hacked_live_view && false;
+infinteLoopMode = false;
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
-setManualTests( __hacked_live_view && false );
+setManualTests( false );
 
 // Create a blank window: for some reason closing the last window hangs 
 // the test suite.
