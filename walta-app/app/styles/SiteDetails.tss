@@ -85,9 +85,7 @@
 
 "#locationIndicator": {
     height: "50%",
-    top: "2dp",
-    right: "2dp",
-    left: "8%"
+    width: "75%"
 }
 
 "#locationStatus": {

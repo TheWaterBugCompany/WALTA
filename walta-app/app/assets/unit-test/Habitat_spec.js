@@ -18,17 +18,21 @@
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var mocx = require("unit-test/lib/mocx");
-var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
+var { closeWindow, controllerOpenTest, setManualTests } = require("unit-test/util/TestUtils");
+
 describe("Habitat controller", function() {
-	var ctl;
-	before( function() {
+    var ctl;
+	beforeEach( function() {
         mocx.createModel("sample");
 		ctl = Alloy.createController("Habitat");
 	});
-	after( function(done) {
+	afterEach( function(done) {
 		closeWindow( ctl.getView(), done );
 	});
 	it('should display the Habitat view', function(done) { 
+		controllerOpenTest( ctl, done );
+    });
+    it('should enable the next button when habitat totals 100%', function(done) { 
 		controllerOpenTest( ctl, done );
     });
 });

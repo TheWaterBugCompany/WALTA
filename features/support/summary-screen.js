@@ -1,15 +1,13 @@
-'use strict';
-/*class SummaryScreen extends Screen {
-/*     def trait
-      "* marked:'Summary'"
-    end
+const BaseScreen = require('./base-screen');
+class SummaryScreen extends BaseScreen {
+    constructor( world ) {
+        super( world );
+        this.presenceSelector = this.selector("Sample");
+    }
 
-    def done
-      select("Done")
-      page(MenuScreen).await
-    end
-
-    def register
-      select("Register")
-      page(LogInScreen).await
-    end */
+    async goBack() {
+        await this.click("Back");
+        await this.world.sample.waitFor();
+    }
+} 
+module.exports = SampleScreen

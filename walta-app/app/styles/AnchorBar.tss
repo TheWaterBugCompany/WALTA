@@ -34,5 +34,6 @@
   color: 'white',
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   width: Ti.UI.FILL,
-  height: Ti.UI.FILL
+  height: Ti.UI.FILL,
+  center: { x: "40%" }
 }

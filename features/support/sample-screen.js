@@ -11,5 +11,15 @@ class SampleScreen extends BaseScreen {
     async selectEditTaxon( trayNo ) {
         // TODO
     }
+
+    async goNext() {
+        await this.click("Next");
+        await this.world.summary.waitFor();
+    }
+
+    async goBack() {
+        await this.click("Back");
+        await this.world.habitat.waitFor();
+    }
 } 
 module.exports = SampleScreen

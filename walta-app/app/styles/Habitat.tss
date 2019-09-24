@@ -7,26 +7,15 @@
     height: Ti.UI.FILL
 }
 "#wrapper2": {
-    top: "1%",
     height: Ti.UI.SIZE,
     width: Ti.UI.FILL
 }
 
-"#wrapper2[if=Alloy.Globals.isSmallHeight]" : {
-    top: 0
-}
-
-"#wrapper2[if=Alloy.Globals.isHighRes]" : {
-    top: "0.1%"
-}
-
-"#wrapper2[if=Alloy.Globals.isXHighRes]" : {
-    top: "5%"
-}
-
 "#header": {
     layout: "composite",
-    height: Ti.UI.SIZE
+    width: "95%",
+    height: Ti.UI.SIZE,
+    bottom: "4dp"
 }
 
 "#question": {

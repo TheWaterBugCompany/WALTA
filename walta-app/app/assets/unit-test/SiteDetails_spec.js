@@ -20,7 +20,7 @@ var moment = require("lib/moment");
 var Topics = require('ui/Topics'); 
 var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, controllerOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
+var { closeWindow, controllerOpenTest, checkTestResult, setManualTests } = require("unit-test/util/TestUtils");
 var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
 describe("SiteDetails controller", function() {
     var ctl;
@@ -110,13 +110,14 @@ describe("SiteDetails controller", function() {
         } );
     });
 
+    
     it('should disable the next button if mandatory fields are unset', function(done) {
         controllerOpenTest( ctl, function() {
-            expect( ctl.nextButton.enabled ).to.be.false;
+            expect( ctl.nextButton.button.enabled ).to.be.false;
             ctl.on("updated", function changeHandler() {
                     ctl.off("updated", changeHandler);
                     setTimeout( function() {
-                        expect( ctl.nextButton.enabled, "button should be enabled" ).to.be.true;
+                        expect( ctl.nextButton.button.enabled, "button should be enabled" ).to.be.true;
                         done();
                     },10);
             } );
@@ -125,6 +126,25 @@ describe("SiteDetails controller", function() {
             ctl.waterbodyNameField.value = "Test Waterbody";
             ctl.waterbodyNameField.fireEvent("change");
 
+        } );
+    });
+
+    it('should fire Topics.Habitat if next button pressed', function(done) {
+        Topics.subscribe( Topics.HABITAT, function handler() {
+            Topics.unsubscribe( Topics.HABITAT, handler );
+            // we recieved the signal so pass!
+            done();
+        });
+        controllerOpenTest( ctl, function() {
+            expect( ctl.nextButton.button.enabled ).to.be.false;
+            ctl.on("updated", function handler() {
+                    ctl.off("updated", handler);
+                    ctl.nextButton.NavButton.fireEvent("click");
+            } );
+            fireTabClick( ctl.surveyLevelSelect, SURVEY_ORDER );
+            fireTabClick( ctl.waterbodyTypeSelect, WATERBODY_LAKE );
+            ctl.waterbodyNameField.value = "Test Waterbody";
+            ctl.waterbodyNameField.fireEvent("change");
         } );
     });
 

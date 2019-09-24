@@ -36,6 +36,9 @@ function runTests() {
       "Gallery",
       "PhotoSelect",
       "EditTaxon",
+      "NavButton",
+      "GoBackButton",
+      "GoForwardButton"
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
       try { __remove_module_from_preview_cache(specPath);} catch(e) {}

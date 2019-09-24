@@ -61,8 +61,8 @@ describe("Summary controller", function() {
 	it('should display the Summary view with lock not obtained message', function(done) {
         doTest( done, function() {
             expect( ctl.message.text ).to.include("GPS lock yet");
-            expect( ctl.doneButton.title ).to.equal("Done");
-            expect( ctl.doneButton.touchEnabled ).to.be.false;
+            expect( ctl.nextButton.getView().children[0].children[0].text ).to.equal("DONE");
+            expect( ctl.nextButton.getView().children[0].touchEnabled ).to.be.false;
         });
     });
     
@@ -74,8 +74,8 @@ describe("Summary controller", function() {
             expect( ctl.message.text ).to.include("next step is to register");
             //expect( ctl.latLabel.text ).to.equal('37.42234');
             //expect( ctl.longLabel.text ).to.be.equal('-122.84123');
-            expect( ctl.doneButton.title ).to.equal("Submit");
-            expect( ctl.doneButton.touchEnabled ).to.be.true;
+            expect( ctl.nextButton.getView().children[0].children[0].text ).to.equal("SUBMIT");
+            expect( ctl.nextButton.getView().children[0].touchEnabled ).to.be.true;
         });
     });
 
@@ -86,7 +86,7 @@ describe("Summary controller", function() {
             expect( ctl.message.text ).to.include("survey is complete");
             //expect( ctl.latLabel.text ).to.equal('37.42234');
             //expect( ctl.longLabel.text ).to.equal('-122.84123');
-            expect( ctl.doneButton.title ).to.equal("Submit");
+            expect( ctl.nextButton.getView().children[0].children[0].text  ).to.equal("SUBMIT");
         });
     });
     [

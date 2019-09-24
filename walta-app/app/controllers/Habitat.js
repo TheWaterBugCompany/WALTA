@@ -14,6 +14,12 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
+var acb = $.getAnchorBar(); 
+$.backButton = Alloy.createController("GoBackButton" ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.SAMPLETRAY } ); 
+acb.addTool( $.backButton.getView() ); 
+acb.addTool( $.nextButton.getView() );
+
 function loadAttributes() {
     $.leaves.value = sample.get("leafPacks");
     $.plants.value = sample.get("aquaticPlants");
@@ -69,11 +75,6 @@ function saveAttributes() {
     });
     sample.save();
 }
-
-function nextClick() {
-    Topics.fireTopicEvent( Topics.SAMPLETRAY );
-}
-
 loadAttributes();
 validateSum();
 
