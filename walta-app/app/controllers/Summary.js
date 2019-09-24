@@ -10,16 +10,15 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
     $.off();
     $.TopLevelWindow.removeEventListener('close', cleanUp );
-    $.TopLevelWindow.removeEventListener('swipe', swipeListener);
 });
 
-function swipeListener(e){
-	if ( e.direction === 'right' ) {
-		e.cancelBubble = true;
-		Topics.fireTopicEvent( Topics.BACK, { swipe: true, name: $.name, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
-	}
-}
-$.TopLevelWindow.addEventListener('swipe', swipeListener);
+var acb = $.getAnchorBar(); 
+$.backButton = Alloy.createController("GoBackButton" ); 
+$.nextButton = Alloy.createController("NavButton");
+$.nextButton.setLabel("Done");
+$.nextButton.on("click", doneClick ) 
+acb.addTool( $.backButton.getView() ); 
+acb.addTool( $.nextButton.getView() );
 
 function doneClick() {
     saveSampleAndUpload();
@@ -41,11 +40,11 @@ var saveSampleAndUpload = function() {
 
 function checkGpsLock() {
     if ( !(Alloy.Models.sample.get("lat") && Alloy.Models.sample.get("lng") ) ) {
-        $.disableControl($.doneButton);
+        $.nextButton.disable();
         $.message.text = INCOMPLETE_NO_LOCK;
         $.message.color = "red";
     } else {
-        $.enableControl($.doneButton);
+        $.nextButton.enable();
         setMessageText();
         $.message.color = "#70Ad47";
     }
@@ -55,11 +54,10 @@ function setMessageText() {
     
     if ( !Alloy.Globals.CerdiApi.retrieveUserToken() ) {
         $.message.text = COMPLETE_NOT_REGISTERED
-        $.doneButton.title= "Submit";
     } else {
         $.message.text = COMPLETE
-        $.doneButton.title= "Submit";
     }
+    $.nextButton.setLabel("Submit");
 }
 
 Alloy.Models.sample.on("change", checkGpsLock );	

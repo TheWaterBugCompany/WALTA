@@ -1,6 +1,0 @@
-<Alloy>
-	<View class="container anchorBarTextButton" layout="horizontal">
-		<ImageView id="icon" image="/images/icon-go-back.png"/>
-		<Label id="goBackLabel" class="anchorBarTextButtonLabel" accessibilityLabel="Back" text="GO BACK"/>
-	</View>
-</Alloy>

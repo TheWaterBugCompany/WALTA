@@ -1,7 +1,7 @@
 require('unit-test/lib/ti-mocha');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var { expect } = require('unit-test/lib/chai');
-var { closeWindow, checkTestResult, actionFiresTopicTest } = require('unit-test/util/TestUtils');
+var { closeWindow, checkTestResult, actionFiresTopicTest, setManualTests } = require('unit-test/util/TestUtils');
 
 var Topics = require('ui/Topics');
 var mocx = require("unit-test/lib/mocx");
@@ -119,7 +119,7 @@ describe( 'SampleTray controller', function() {
     afterEach(cleanupSampleTray);
 
     it('should fire the COMPLETE topic', function(done) {
-      actionFiresTopicTest( SampleTray.completeBtn, 'click', Topics.COMPLETE, done );
+      actionFiresTopicTest( SampleTray.nextButton.NavButton, 'click', Topics.COMPLETE, () => done() );
     });
   });
 

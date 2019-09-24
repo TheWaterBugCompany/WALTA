@@ -9,10 +9,11 @@ function disableControl(view) {
 			color: view.color
 		}
 	}
-
+	
 	view.backgroundColor = "#c9cacb";
 	view.borderColor = "#c9cacb";
-	view.color = "white"; 
+	view.color = "white";
+
 }
 
 function enableControl(view) {
@@ -22,7 +23,7 @@ function enableControl(view) {
 		view.backgroundColor = view.oldProps.backgroundColor;
 		view.borderColor = view.oldProps.borderColor;
 		view.color = view.oldProps.color;
-	}
+	} 
 }
 
 function setError(view) {

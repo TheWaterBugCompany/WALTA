@@ -20,9 +20,11 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
-var anchorBar = $.getAnchorBar();
-$.completeBtn = anchorBar.createToolBarButton( null, Topics.COMPLETE, "Next");
-anchorBar.addTool( $.completeBtn );
+var acb = $.getAnchorBar(); 
+$.backButton = Alloy.createController("GoBackButton" ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE } ); 
+acb.addTool( $.backButton.getView() ); 
+acb.addTool( $.nextButton.getView() );
 
 // Keeps track of the tile views we cache
 var tileIndex = [];

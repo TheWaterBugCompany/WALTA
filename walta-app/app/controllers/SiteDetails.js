@@ -20,6 +20,11 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
 
+var acb = $.getAnchorBar(); 
+$.backButton = Alloy.createController("GoBackButton" ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.HABITAT } ); 
+acb.addTool( $.backButton.getView() ); 
+acb.addTool( $.nextButton.getView() );
 
 function updateLocation() {
     var lat = sample.get("lat");
@@ -128,14 +133,10 @@ function nearbyFeatureChanged() {
 
 function validateSubmit() {
     if ( surveyTypeValid && waterbodyNameValid && waterbodyTypeValid && nearbyFeatureValid) {
-        $.enableControl($.nextButton);
+        $.nextButton.enable();
     } else {
-        $.disableControl($.nextButton);
+        $.nextButton.disable();
     }
-}
-
-function nextClick() {
-    Topics.fireTopicEvent( Topics.HABITAT );
 }
 
 function openLocationEntry() {
@@ -170,7 +171,9 @@ Topics.subscribe(Topics.GPSLOCK, function(coords) {
     if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
         if ( coords.accuracy < 100 ) {
             var accuracy = sample.get("accuracy");
-            Alloy.Models.sample.setLocation(coords);
+            if ( !accuracy || accuracy > coords.accuracy ) {
+                Alloy.Models.sample.setLocation(coords);
+            }
         }
     }
 } );

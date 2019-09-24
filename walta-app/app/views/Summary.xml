@@ -34,9 +34,6 @@
 					<Label id="quickInterpretation" class="labelText" text="Quick Interpretation:"/>
 					<Label id="interpretation" class="labelText" text="{sample.impactText}"/>
 				</View>
-				<View>
-					<Button id="doneButton" class="actionButton" title="Done" onClick="doneClick" />
-				</View>
 			</View>
 		</View>
 		

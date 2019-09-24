@@ -41,5 +41,10 @@ class SiteDetailsScreen extends BaseScreen {
         await this.click( "Next" );
         await this.world.habitat.waitFor();
     }
+
+    async goBack() {
+        await this.click("Back");
+        await this.world.menu.waitFor();
+      }
 } 
 module.exports = SiteDetailsScreen;

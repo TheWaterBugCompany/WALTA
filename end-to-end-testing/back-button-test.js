@@ -18,25 +18,16 @@ describe.only('Back button tests', function() {
         await world.menu.waitFor();
     });
 
-    /* Broken on iOS it seems XCUITest interacts very badly with tables see https://github.com/facebookarchive/WebDriverAgent/issues/675 */
-    it.skip('should return to browse list when back pressed on taxon details via browse', async function() {
-        let start = Date.now();
+    it('should return to browse list when back pressed on taxon details via browse', async function() {
         await navigateBrowseViaIdentify( world );
         await world.taxon.waitForText("'U' bent midges");
         await navigateGoBack(world);
         await world.browse.waitFor();
     });
 
-    it.skip('should return to browse list when right swipe on taxon details via browse', async function() {
-        await navigateBrowseViaIdentify( world );
-        await world.taxon.waitForText("'U' bent midges");
-        await swipeRight( { start_x: 4 });
-        await world.browse.waitFor();
-    });
-
-    it.only('should go back with a right swipe from survey wizard', async function() {
+    it.only('should go back from each page of the survey wizard', async function() {
         await world.menu.selectWaterbugSurvey();
-        await swipeRight();
+        await navigateGoBack(world);
         await world.menu.waitFor();
 
         await world.menu.selectWaterbugSurvey();
@@ -45,22 +36,18 @@ describe.only('Back button tests', function() {
         await world.siteDetails.setWaterbodyName("a");
 
         await world.siteDetails.goNext();
-        await world.habitat.waitFor();
+        await world.siteDetails.goBack();
 
-        await swipeRight();
-        await world.siteDetails.waitFor();
         await world.siteDetails.goNext();
-        await world.habitat.waitFor();
 
         await world.habitat.setSandOrSilt("100");
         await world.habitat.goNext();
   
-        await world.sample.waitFor();
-        await swipeRight();
-        await world.habitat.waitFor();
+        await world.sample.goBack();
         await world.habitat.goNext();
+        await world.sample.goNext();
 
-        
+        await world.summary.goBack();
     });
  
     it('should return to speedbug when returning from taxon via identify', async function() {
@@ -120,7 +107,7 @@ describe.only('Back button tests', function() {
     });
 
     // relies on having a specific camera app installed so fails on real devices
-    it.skip('should return to edit taxon when returning from gallery',async function() {
+    it('should return to edit taxon when returning from gallery',async function() {
         await navigateSpeedbugViaTray( world, "hyriidae" );
         await world.taxon.waitForText("Freshwater mussels");
         await world.taxon.selectAddToSample();

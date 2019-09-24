@@ -1,6 +1,6 @@
 <Alloy>
 	<ScrollView id="content">
-		<View id="wrapper" layout="vertical"> 
+		<View id="wrapper" layout="composite"> 
 			<View id="wrapper2" layout="vertical">
 				<View id="header">
 					<Label id="question" class="labelText" text="Enter percentage of each habitat type below, note that total must be 100% before continuing."/>
@@ -53,9 +53,6 @@
 						</View>
 					</View>
 				</View>
-			</View>
-			<View id="buttons">
-				<Button id="nextButton" class="actionButton" title="Next" accessibilityLabel="Next" onClick="nextClick" />
 			</View>
 		</View>
 	</ScrollView>

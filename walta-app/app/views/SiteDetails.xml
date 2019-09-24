@@ -28,9 +28,7 @@
 						<ImageView id="locationIndicatorIcon" />
 						<Label id="locationStatus" class="labelText" text="Location not obtained"/>
 					</View>
-					<View id="nextWrapper" class="shrinkWrap">
-						<Button id="nextButton" class="actionButton" title="Next" onClick="nextClick" accessibilityLabel="Next" />
-					</View>
+					
 				</View>
 			</View>
 		</View>

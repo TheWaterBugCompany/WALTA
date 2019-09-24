@@ -41,5 +41,10 @@ class HabitatScreen extends BaseScreen {
       await this.click("Next");
       await this.world.sample.waitFor();
     }
+
+    async goBack() {
+      await this.click("Back");
+      await this.world.siteDetails.waitFor();
+    }
 } 
 module.exports = HabitatScreen;
