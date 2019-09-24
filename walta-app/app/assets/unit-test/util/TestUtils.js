@@ -25,10 +25,9 @@ var meld = require('lib/meld');
 
 var Topics = require('ui/Topics');
 
-function setManualTests( b ) { Alloy.CFG.stopAfterEachTest = b; }
-
-function isManualTests() { return Alloy.CFG.stopAfterEachTest; }
-
+var manualTests = false;
+function setManualTests( b ) { manualTests = b; }
+function isManualTests() { return manualTests; }
 
 // TODO: Convert to Promise based API
 function waitForDomEvent( obj, evtName, fireEvent, done ) {
@@ -134,14 +133,20 @@ function ifNotManual( cbTrue, cbFalse ) {
 }
 
 function closeWindow( win, done ) {
-	ifNotManual(function() {
-		win.addEventListener( "close", function e() {
-			win.removeEventListener( "close", e );
-			if ( done )
-				done();
-		} );
-		win.close();
-	}, done);
+	win.addEventListener( "close", function handler() {
+		win.removeEventListener( "close", handler );
+		if ( done )
+			done();
+	} );
+	ifNotManual(() => win.close(), function() {
+		if ( win.activity ) {
+			win.activity.onCreateOptionsMenu = (e) => {
+				var menu = e.menu;
+				var menuItem = menu.add( { title: "Continue", showAs: Ti.Android.SHOW_AS_ACTION_NEVER });
+				menuItem.addEventListener("click", () => win.close() )
+			}
+		}
+	});
 }
 
 function forceCloseWindow( win, done ) {

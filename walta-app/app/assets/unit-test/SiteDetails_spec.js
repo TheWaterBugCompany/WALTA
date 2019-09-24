@@ -17,14 +17,16 @@
 */
 require("unit-test/lib/ti-mocha");
 var moment = require("lib/moment");
-
+var Topics = require('ui/Topics'); 
 var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
-
+var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
 describe("SiteDetails controller", function() {
     var ctl;
     var sample;
+
+    this.timeout(15000);
 
     function fireTabClick( ctl, index ) {
         var tab = ctl.getButtons()[index];
@@ -43,6 +45,8 @@ describe("SiteDetails controller", function() {
 	afterEach( function(done) {
         sample.off();
         closeWindow( ctl.getView(), done );
+        sample = null;
+        ctl = null;
     });
     
 	it('should display the SiteDetails view', function(done) {
@@ -68,25 +72,25 @@ describe("SiteDetails controller", function() {
     });
 
     it('should save the photo field', function(done){
-        controllerOpenTest( ctl, () => checkTestResult( done, ()=>{
+        var doneOnce = _.once(done);
+        controllerOpenTest( ctl,  ()=>{
             // set a photo as if taken by the user
-            var photoPath = Ti.Filesystem.getFile( "unit-test/resources/site-mock.jpg" );
-            var mockPreview = `${Ti.Filesystem.applicationDataDirectory}preview_full_${moment().unix()}.jpg`;
-            photoPath.copy( mockPreview );
-            ctl.photoSelect.trigger("photoTaken", mockPreview);
-            expect( ctl.photoSelect.getImageUrl() ).to.include("sitePhoto");
-        }) );
+            ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
+                expect( ctl.photoSelect.getImageUrl() ).to.include("sitePhoto");
+                expect( Ti.Filesystem.getFile( ctl.photoSelect.getImageUrl() ).exists() ).to.be.ok;
+            }) );
+            simulatePhotoCapture( ctl.photoSelect );
+        });
     });
 
     it('should save waterbody name field', function(done) {
         controllerOpenTest( ctl, function() {
             ctl.waterbodyNameField
-                .addEventListener("change", function changeHandler() {
+                .addEventListener("change", () => checkTestResult( done, function changeHandler() {
                     ctl.waterbodyNameField
                         .removeEventListener("change", changeHandler);
                     expect( sample.get("waterbodyName") ).to.equal("Test Waterbody");
-                    done();
-            });
+            }));
             ctl.waterbodyNameField.value = "Test Waterbody";
             ctl.waterbodyNameField.fireEvent("change");
         } );
@@ -141,17 +145,38 @@ describe("SiteDetails controller", function() {
         } );
     });
 
+    it('should update coordinates when gps lock is obtained', function(done) {
+        controllerOpenTest( ctl, function() {
+            sample.unset("lng");
+            sample.unset("lat");
+            Topics.fireTopicEvent(Topics.GPSLOCK, { latitude: -41.8907, longitude: 145.6713, accuracy: 1 });
+            setTimeout( () => checkTestResult( done, () => {
+                expect( ctl.locationStatus.text ).to.equal("41.8907°S 145.6713°E");
+            }), 50 );
+        } );
+    });
+    
     it('should update coordinates when location is changed', function(done) {
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             sample.set("lng", "145.671339");
             sample.set("lat", "-41.890748");
-            setTimeout( function() {
+            setTimeout( () => checkTestResult( done, () => {
                 expect( ctl.locationStatus.text ).to.equal("41.8907°S 145.6713°E");
-                done();
-            }, 50 );
+            }), 50 );
         } );
     });
+
+    it('should NOT update coordinates when a new gps lock is obtained if location already set', function(done) {
+        controllerOpenTest( ctl, function() {
+            expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
+            Topics.fireTopicEvent(Topics.GPSLOCK, { latitude: 23, longitude: 100, accuracy: 1 });
+            setTimeout( () => checkTestResult( done, () =>  {
+                expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
+            }), 50 );
+        } );
+    });
+
 
     it('should open a map viewer when location icon is clicked', function(done) {
         controllerOpenTest( ctl, function() {
@@ -162,7 +187,7 @@ describe("SiteDetails controller", function() {
                 done();
             }, 50 );
         } );
-    });
+    }); 
 
    /* it('should have editable fields before 14 days', function(done) {
         sample.set("dateCompleted", moment().subtract(13, "days").format() );

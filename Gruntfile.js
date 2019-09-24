@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
-      const tasks = [ "exec:clean",`exec:build:${platform}:${build_type}`];
+      const tasks = ['exec:clean', `exec:build:${platform}:${build_type}`];
       if ( build_type !== "release" ) 
         tasks.push(`install:${platform}:${build_type}`);
       return {
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
           },
 
           clean_test: {
-            command: 'rm ./builds/{release,test,unit-test,preview}/*.{apk,ipa}',
+            command: 'rm ./builds/{release,test,unit-test,preview,preview-unit-test}/*.{apk,ipa}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "inherit"
           },
@@ -143,6 +143,13 @@ module.exports = function(grunt) {
                   args.push("--output-dir builds/preview");
                   break;
 
+                case "preview-unit-test":
+                  test();
+                  args.push("--liveview");
+                  args.push("--unit-test");
+                  args.push("--output-dir builds/preview-unit-test");
+                  break;
+
                 default:
                   throw new Error(`Unknown build "${build_type}" type!`)
               }
@@ -174,11 +181,11 @@ module.exports = function(grunt) {
             exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:debug",
           },
           live_view_ios: {
-            options: { wait: false },
+            options: { wait: false, ready: "Event Server Started"  },
             exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform ios"
           },
           live_view_android: {
-            options: { wait: false },
+            options: { wait: false, ready: "Event Server Started" },
             exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform android"
           }
         },
@@ -195,6 +202,9 @@ module.exports = function(grunt) {
 
           preview_android: build_if_newer_options("android", "preview"),
           preview_ios: build_if_newer_options("ios", "preview"),
+
+          preview_unit_test_android: build_if_newer_options("android", "preview-unit-test"),
+          preview_unit_test_ios: build_if_newer_options("ios", "preview-unit-test"),
         }
     });
 
@@ -216,11 +226,6 @@ module.exports = function(grunt) {
         .catch( (err) => { grunt.fail.warn(err); } );
     }
 
-    
-    function uninstallApp(platform) {
-      return () => appium_session.removeApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
-    }
-
     function terminateApp(platform) {
       return () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
     }
@@ -233,7 +238,6 @@ module.exports = function(grunt) {
     grunt.registerTask("launch", function(platform,build_type) {
       const done = this.async();
       const caps = getCapabilities(platform,true);
-      //caps.app = (platform === "android"?`./builds/${build_type}/Waterbug.apk`:`./builds/${build_type}/Waterbug.ipa`);
       caps.skipLogCapture = false;
       startAppium(caps)
         .then( done );
@@ -254,11 +258,11 @@ module.exports = function(grunt) {
       if ( process.env.DEBUG )
         levels.push("DEBUG");
       
-      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +TiAPI +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
+      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +Ti\\w+ +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
       function delay(t) {
         return new Promise( resolve => setTimeout(resolve, t) ); 
       }
-
+      const logFilter = (platform === "android"? /Ti\w+/ : /Waterbug\(TitaniumKit\)/);
       async function processLogs() {
         let stop = false;
         while( !stop || option === "preview") {
@@ -266,7 +270,7 @@ module.exports = function(grunt) {
           logs.forEach( (line) => {
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
-            } else if ( line.message.includes(platform === "android"? "TiAPI":"Waterbug(TitaniumKit)") && retain.test(line.message)) {
+            } else if ( logFilter.test(line.message) && retain.test(line.message)) {
               let parts = line.message.split(retain);
               if ( parts.length >= 1 ) {
                 grunt.log.writeln(decodeSyslog(parts[2]));
@@ -276,11 +280,16 @@ module.exports = function(grunt) {
           await delay(100);
         }
       }
-
-      processLogs().then(done);
+      (function() { if ( ! appium_session ) {
+        const caps = getCapabilities(platform,true);
+        caps.autoLaunch = false;
+        return startAppium(caps);
+      } else {
+        return Promise.resolve();
+      }})().then( processLogs )
+          .then( done );
     });
     
-    // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
@@ -313,12 +322,8 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}`);
 
     } );
- 
-    //grunt.registerTask('unit_test_node', [ "newer:unit_test_android","exec:unit_test_node"] );
 
-    grunt.registerTask('clean', ['exec:clean', 'exec:clean_test'] );
-    grunt.registerTask('debug', ['exec:debug'] );
-
+    grunt.registerTask('dist-clean', ['exec:clean', 'exec:clean_test'] );
     grunt.registerTask('preview', function(platform,option) {
       grunt.task.run("run:appium");
       // It's often possible to get away without do a rebuild and relying on the file server 
@@ -332,6 +337,17 @@ module.exports = function(grunt) {
 
       // the preview option here enters an infinite loop so that the log output
       // continues as changes are made during development
+      grunt.task.run(`output-logs:${platform}:preview`);
+    } );
+
+    grunt.registerTask('preview-unit-test', function(platform,option) {
+      grunt.task.run("run:appium");
+      if ( option !== "quick") { 
+        grunt.task.run(`newer:preview_unit_test_${platform}`);
+      } 
+      grunt.task.run("exec:stop_live_view");
+      grunt.task.run(`run:live_view_${platform}`);
+      grunt.task.run(`launch:${platform}:preview-unit-test`);
       grunt.task.run(`output-logs:${platform}:preview`);
     } );
   

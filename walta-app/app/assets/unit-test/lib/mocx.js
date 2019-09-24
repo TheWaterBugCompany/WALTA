@@ -11,17 +11,12 @@ Backbone.sync = function(method, model, options) {
 };
 
 exports.createModel = function(name, attributes) {
-    if (!Alloy.Models[name]) {
-        Alloy.Models[name] = new Backbone.Model(attributes);
-    }
+    Alloy.Models[name] = new Backbone.Model(attributes);
     return Alloy.Models[name];
 };
 
 exports.createCollection = function(name, content) {
-    if (!Alloy.Collections[name]) {
-        Alloy.Collections[name] = new Backbone.Collection();
-    }
-
+    Alloy.Collections[name] = new Backbone.Collection();
     if (content instanceof Array) {
         Alloy.Collections[name].reset(content);
     } else {

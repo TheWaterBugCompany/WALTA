@@ -4,16 +4,18 @@ require('./reporters/ti-spec');
 // stub location that mocha uses
 global.location = {};
 
-exports = module.exports = mocha;
 
-// reset the suites each time mocha is run
-var _mochaRun = mocha.run;
-mocha.run = function(fn) {
-	return _mochaRun.call(this, function() {
-		mocha.suite.suites.length = 0;
-		if (fn) { fn.apply(this, arguments); }
+Mocha.prototype.loadFiles = function(fn) {
+	var self = this;
+	var suite = this.suite;
+	
+	this.files.forEach(function(file) {
+	  suite.emit('pre-require', global, file, self);
+	  suite.emit('require', require(file), file, self);
+	  suite.emit('post-require', global, file, self);
 	});
-};
+	fn && fn();
+  };
 
 // set the ti-spec reporter by default
 Ti.API.debug("Starting ti-mocha...");
@@ -25,8 +27,4 @@ Ti.App.addEventListener( "uncaughtException", function(e) {
 
 	}
 });
-
-mocha.setup({
-	ui: 'bdd',
-	reporter: 'ti-spec'
-});
+exports = module.exports = Mocha;
