@@ -10,21 +10,12 @@ function cleanUp() {
     $.off();
 }
 
-function postlayoutHandler() {
-    // setImage needs to be called after rendering
-    $.window.removeEventListener("postlayout", postlayoutHandler )
-    setTimeout( function() {
-        setImage( taxon.getPhoto() );
-        setAbundance( taxon.get("abundance") );
-        }, 50 );
-}
-
-
+setAbundance( taxon.get("abundance") );
+if ( taxon.getPhoto() )
+    setImage( taxon.getPhoto() );
 
 var realPhoto = false;
 updateSaveButton();
-
-$.window.addEventListener("postlayout",postlayoutHandler);
 
 function setImage( photo ) {
     if ( photo ) {

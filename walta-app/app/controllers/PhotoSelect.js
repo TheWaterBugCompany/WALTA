@@ -16,24 +16,38 @@ var readOnlyMode = $.args.readonly ;
 var cropPhoto = $.args.cropPhoto;
 if ( readOnlyMode ) {
     $.iconHolder.remove( $.camera );
+    $.camera.visible = false;
 }
 
 function debug(mess) { 
     Ti.API.debug(mess);
 }
 
+function absolutePath(path) {
+    if ( path.startsWith("file:///") ) {
+        debug(`${path} starts with file:///`);
+        return Ti.Filesystem.getFile(path);
+    } else if ( path.startsWith("/") ) {
+        debug(`${path} starts with /`)
+        return Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,path);
+    } else {
+        debug(`${path} doesn't start with /`)
+        return Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, path);
+    }
+}
+
 function readFile(path) {
-    let file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, path);
-    return file.read();
+    debug(`reading ${path}`)
+    return absolutePath(path).read();
 }
 
 function generateThumbnail( fileOrBlob ) {
     debug("generateThumbnail");
     function savePhoto( blob, filename  ) {
-        var photoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename );
-
+        var photoPath = absolutePath(filename);
         debug(`File path ${photoPath.nativePath}`);
         if ( photoPath.exists() ) {
+            debug("file already exists deletin");
             var result = photoPath.deleteFile();
             if ( !result ) {
                 Ti.API.error(`Error deleting file: writable: ${photoPath.writable}`);
@@ -43,6 +57,7 @@ function generateThumbnail( fileOrBlob ) {
         }
     
         var result = photoPath.write(blob);
+        blob = null; 
         if ( !result ) {
             Ti.API.error(`Error writing file: exists: ${photoPath.exists()}`);
             throw new Error(`Unable to write file ${photoPath}`);
@@ -50,10 +65,8 @@ function generateThumbnail( fileOrBlob ) {
 
         return photoPath.nativePath;
     }
-    // We need to save the photo thumbnail to a file path so that the photo gallery 
-    // can read it via a URL
-    debug("removing old preview files...");
-    removeFilesBeginningWith("preview_");
+    
+    
 
     debug("generating thumbnail...");
     var fullPhoto = null;
@@ -62,38 +75,88 @@ function generateThumbnail( fileOrBlob ) {
     } else {
         fullPhoto = fileOrBlob;
     }
-    var aspectRatio = (fullPhoto.height/fullPhoto.width);
 
-    if ( fullPhoto.length > 4*1024*1024 ) {
-        Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb resizing and compressing photo...`);
-        fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
+    if ( ! fullPhoto ) { 
+        Ti.API.error(`Error loading photo: ${fileOrBlob}`);
+        throw new Error("Unable to load photo");
     }
 
-    if ( ( fullPhoto.mimeType === "image/png" ) ) {
-        Ti.API.info(`got a PNG: converting photo in JPEG...`);
+    // We need to save the photo thumbnail to a file path so that the photo gallery 
+    // can read it via a URL
+    debug("removing old preview files...");
+    removeFilesBeginningWith("preview_");
+
+    var aspectRatio = (fullPhoto.height/fullPhoto.width);
+
+    debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
+    if ( fullPhoto.length > 4*1024*1024 || fullPhoto.width > 1024 || fullPhoto.height > 1024 ) {
+        Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb resizing and compressing photo...`);
+        fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
+        if ( ! fullPhoto ) {
+            Ti.API.error(`Error resizing photo: ${fileOrBlob}`);
+            throw new Error("Unable to resize photo");
+        }
+    }
+
+    if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
+        Ti.API.info(`got a PNG: converting photo into JPEG...`);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
+        if ( ! fullPhoto ) {
+            Ti.API.error(`Error converting photo: ${fileOrBlob}`);
+            throw new Error("Unable to convert photo into JPEG");
+        }
     }
     
     debug("saving full size photo..");
-    var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().unix()}.jpg`);
+
+    var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().valueOf()}.jpg`);
+    fullPhoto = null; // release memory - fingers crossed
+    fullPhoto = readFile( fullPhotoPath );
     
     debug(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
-    var pxWidth = Ti.UI.convertUnits( `${$.photoSelectInner.size.width}dp`, Ti.UI.UNIT_PX );
-    var pxHeight = Ti.UI.convertUnits( `${$.photoSelectInner.size.height}dp`, Ti.UI.UNIT_PX );
+    var pxWidth = $.photoSelectInner.size.width;
+    var pxHeight = $.photoSelectInner.size.height;
 
-    debug(`photo view width = ${$.photoSelectInner.size.width} height = ${$.photoSelectInner.size.height}`);
-    var newHeight = pxWidth*aspectRatio;
+    // if the photo was scaled to the size of the view port
+    // calculate the height in view coords that would be needed
+    // to prevserver aspect ratio.
     
-    var thumbnail = fullPhoto.imageAsResized( pxWidth, newHeight );
-    fullPhoto = null;
-    var cropY = ((newHeight-pxHeight)/2);
-    if ( cropY > 0 )
-        thumbnail = thumbnail.imageAsCropped( { width: pxWidth, height: pxHeight, x:0, y:cropY });
 
+    var viewRatio = pxWidth/pxHeight;
+    var newHeight = fullPhoto.height, newWidth = fullPhoto.width, cropX = 0, cropY = 0;
+    var thumbnail = fullPhoto;
+
+    var viewScaleRatioWidth = pxWidth/fullPhoto.width;
+    var photoHeightScaled = viewScaleRatioWidth * fullPhoto.height;
+    var heightRatio = pxHeight/photoHeightScaled;
     
+
+    if ( heightRatio < 1 ) {
+        newHeight = fullPhoto.height*heightRatio; 
+        newWidth = fullPhoto.width;
+        cropY = (fullPhoto.height-newHeight)/2;
+    } else {
+        var viewScaleRatioHeight = pxHeight/fullPhoto.height;
+        var photoWidthScaled = viewScaleRatioHeight * fullPhoto.width;
+        var widthRatio = pxWidth/photoWidthScaled;
+        newWidth= fullPhoto.width*widthRatio;
+        newHeight = fullPhoto.height;
+        cropX = (fullPhoto.width-newWidth)/2;
+    }
+
+    if ( newHeight != fullPhoto.height || newWidth != fullPhoto.width ) {
+        debug(`cropping image to view aspect new width = ${newWidth} new height = ${newHeight}`);
+        var cropY = (fullPhoto.height-newHeight)/2;
+        var thumbnail = fullPhoto.imageAsCropped( { width: newWidth, height: newHeight, x:cropX, y:cropY });
+        if ( ! thumbnail ) {
+            Ti.API.error(`Error cropping to create thumbnail: ${fullPhotoPath}`);
+            throw new Error("Unable to crop photo");
+        }
+    }
+    debug(`ratio after crop ${thumbnail.width/thumbnail.height} - view ratio ${viewRatio}`)
+
     debug(`saving thumbnail...`);
-    var thumbnailPath = savePhoto( thumbnail, `preview_${moment().unix()}.jpg`);
-    thumbnail = null;
+    var thumbnailPath = savePhoto( thumbnail, `preview_thumbnail_${moment().valueOf()}.jpg`);
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
@@ -129,14 +192,18 @@ function setImage( fileOrBlob ) {
         } 
         // When an object is passed it must be a TiBlob containing image data
         else if ( typeof(fileOrBlob) === "object" ) {
-            setThumbnail( fileOrBlob.media );
+            var blob = fileOrBlob.media;
+            fileOrBlob.media = null;
+            setThumbnail( blob );
         } 
         // Otherwise it can be a URL path to a single photo
         else {
-            setThumbnail( fileOrBlob );
+            var file = fileOrBlob;
+            setThumbnail( file );
         }
         $.photoSelectOptionalLabel.visible = false;
         $.magnify.visible = true;
+        debug("triggering loaded event")
         $.trigger("loaded");
     }
 
@@ -176,6 +243,16 @@ function openGallery(e) {
     }
 }
 
+function photoCapturedHandler( result ) {
+    function triggerPhotoTaken() {
+        $.off("loaded", triggerPhotoTaken);
+        $.trigger("photoTaken", getImageUrl() );
+    }
+    $.on("loaded", triggerPhotoTaken );
+    setImage( result );
+    
+}
+
 function takePhoto(e) {
     if ( $.disabled) return;
     e.cancelBubble = true;
@@ -185,14 +262,11 @@ function takePhoto(e) {
                 autohide: true,
                 animated: false,
                 autorotate: true,
-                success: function (result) {
-                    setImage( result );
-                    $.trigger("photoTaken", $.photo.image.nativePath );
-                },
+                success: photoCapturedHandler,
                 error: function (error) {
                     alert(`${error.error}`); 
                 },
-                saveToPhotoGallery: false,
+                saveToPhotoGallery: true,
                 whichCamera: Titanium.Media.CAMERA_FRONT,
                 mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
             });
@@ -228,14 +302,16 @@ function getImageUrl() {
 }
 
 exports.getImageUrl = getImageUrl;
-exports.openGallery = openGallery;
+exports.openGallery = openGallery; 
 exports.setImage = setImage;
 exports.setError = setError;
 exports.clearError = clearError;
 exports.disable = disable;
 exports.enable = enable;
+exports.photoCapturedHandler = photoCapturedHandler; // for tests
 
 function cleanUp() {
+    debug("cleaning up PhotoSelect");
     $.destroy();
     $.off();
 }

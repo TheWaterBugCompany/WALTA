@@ -18,17 +18,17 @@
 require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
 var { wrapViewInWindow, closeWindow, windowOpenTest, checkTestResult } = require('unit-test/util/TestUtils');
-
-describe('PhotoSelect controller', function() {
+var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
+describe('PhotoSelect controller', function() { 
 	var win, vw, pv;
-
 	function makePhotoSelect( readonly, images ) {
-		pv = Alloy.createController("PhotoSelect", {readonly: readonly});
-		pv.setImage(images);
+		pv = Alloy.createController("PhotoSelect", {readonly: readonly, image: images, cropPhoto: true});
 		win = wrapViewInWindow(  _(pv.getView()).extend( { height: '100%', width: '100%' } ) );
 		win.addEventListener("close", function cleanUp() {
 			win.removeEventListener( "close", cleanUp );
+			win = null;
 			pv.cleanUp();
+			pv = null;
 		});
 	}
 
@@ -42,59 +42,65 @@ describe('PhotoSelect controller', function() {
 			'/unit-test/resources/simpleKey1/media/amphipoda_02.jpg',
 			'/unit-test/resources/simpleKey1/media/amphipoda_03.jpg'
 		]);
-		windowOpenTest( win, function() {
-			checkTestResult( done, () => {
-				expect( pv.magnify.visible ).to.be.true;
-				//expect( pv.camera.visible ).to.be.false;
-				expect( pv.getImageUrl() ).to.include("amphipoda_01.jpg");
-				expect( pv.photoSelectLabel.visible ).to.be.false;
-			}, 100);
-		} );
+		pv.on("loaded", () => checkTestResult( done, () => {
+			expect( pv.magnify.visible ).to.be.true;
+			//expect( pv.camera.visible ).to.be.false;
+			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+			expect( pv.photoSelectLabel.visible ).to.be.false;
+			expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+		}) );
+		windowOpenTest( win );
 	});
 
 	it('should display a take photo view with please take photo message', function(done) {
 		makePhotoSelect( false );
-		windowOpenTest( win, function() {
-			checkTestResult( done, () => {
-				expect( pv.magnify.visible ).to.be.false;
-				expect( pv.camera.visible ).to.be.true;
-				expect( pv.photoSelectOptionalLabel.visible ).to.be.true;
-				expect( pv.photoSelectLabel.visible ).to.be.false;
-				// TODO: automate the capture of a photo impossible from mocha ?!
-			}, 100);
-		} );
+		windowOpenTest( win, () => checkTestResult( done, () => {
+			expect( pv.magnify.visible, "magnify invisible" ).to.be.false;
+			expect( pv.camera.visible, "camera visible"  ).to.be.true;
+			expect( pv.photoSelectOptionalLabel.visible, "photoSelectOptionalLabel visible"  ).to.be.true;
+			expect( pv.photoSelectLabel.visible, "photoSelectLabel invisible"  ).to.be.false;
+		}) );
 	});
 
 	it('should display a take photo view with must take photo message', function(done) {
 		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/amphipoda_01.jpg' );
 		pv.setError();
-		windowOpenTest( win, function() {
-			checkTestResult( (e) => done(e), () => {
-				//expect( pv.iconHolder.children ).to.contain( pv.magnify );
-				expect( pv.magnify.visible ).to.be.true;
-				expect( pv.camera.visible ).to.be.true;
-				//expect( pv.iconHolder.children ).to.contain( pv.camera );
-				expect( pv.getImageUrl() ).to.include("amphipoda_01.jpg");
-				expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
-				expect( pv.photoSelectLabel.visible ).to.be.true;
-			}, 100);
-		} );
+		pv.on("loaded", () => checkTestResult( done, () => {
+			expect( pv.magnify.visible ).to.be.true;
+			expect( pv.camera.visible ).to.be.true;
+			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+			expect( pv.photoSelectLabel.visible ).to.be.true;
+			expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+		}) );
+		windowOpenTest( win );
 	});
 
 	it('should display a take photo view', function(done) {
 		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/amphipoda_01.jpg' );
-		windowOpenTest( win, function() {
-			checkTestResult( (e) => done(e), () => {
-				//expect( pv.iconHolder.children ).to.contain( pv.magnify );
-				expect( pv.magnify.visible ).to.be.true;
-				expect( pv.camera.visible ).to.be.true;
-				//expect( pv.iconHolder.children ).to.contain( pv.camera );
-				expect( pv.getImageUrl() ).to.include("amphipoda_01.jpg");
-				expect( pv.photoSelectLabel.visible ).to.be.false;
-				// TODO: automate the capture of a photo impossible from mocha ?!
-			}, 100 )
-		});
-	})
+		pv.on("loaded", () => checkTestResult( done, () => {
+			expect( pv.magnify.visible ).to.be.true;
+			expect( pv.camera.visible ).to.be.true;
+			expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+			expect( pv.photoSelectLabel.visible ).to.be.false;
+		}) );
+		windowOpenTest( win );
+	});
 
-	
+	it('should remove take photo message after photo is taken', function(done) {
+		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/beetlelarvae.gif' );
+		function testPhotoCapture() {
+			pv.off("loaded", testPhotoCapture );
+			pv.on("loaded", () => checkTestResult( done, () => {
+					expect( pv.magnify.visible ).to.be.true;
+					expect( pv.camera.visible ).to.be.true;
+					expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+					expect( pv.photoSelectLabel.visible ).to.be.false;
+				} ) );
+			setTimeout( () => simulatePhotoCapture( pv ), 500 );
+		} 
+		pv.on("loaded", testPhotoCapture);
+		windowOpenTest( win );
+	});
+
 });

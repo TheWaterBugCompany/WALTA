@@ -8,11 +8,12 @@ sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.TopLevelWindow.removeEventListener('close', cleanUp );
+    $.photoSelect.cleanUp();
     $.destroy();
     $.off();
     sample.off( null, updateLocation );
     sample.off( null, loadAttributes );
-    $.TopLevelWindow.removeEventListener('close', cleanUp );
     GeoLocationService.stop();
 });
 
@@ -164,14 +165,14 @@ GeoLocationService.start();
 
 // Only allow automatic location updates if the location was
 // undefined when this screen was opened
-if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
-    Topics.subscribe(Topics.GPSLOCK, function(coords) {
-        // only set location if the accuracy is present and less than 100m
+Topics.subscribe(Topics.GPSLOCK, function(coords) {
+    // only set location if the accuracy is present and less than 100m
+    if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
         if ( coords.accuracy < 100 ) {
             var accuracy = sample.get("accuracy");
             Alloy.Models.sample.setLocation(coords);
         }
-    } );
-}
+    }
+} );
 
 

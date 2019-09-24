@@ -1,5 +1,5 @@
 #! /bin/sh
-SPECS_LIB_DIR=walta-app/app/unit-test/lib
+SPECS_LIB_DIR=walta-app/app/assets/unit-test/lib
 LIB_DIR=walta-app/app/lib/lib
 ASSET_DIR=walta-app/app/assets
 if [ ! -d $SPECS_LIB_DIR ]; then
