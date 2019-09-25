@@ -11,7 +11,7 @@ class BaseScreen {
     isAndroid() { return this.platform === "android"; }
 
     sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout( () => resolve(), ms));
     }
 
     async waitForRaw(sel, message) {

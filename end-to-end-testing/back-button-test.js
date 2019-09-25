@@ -8,7 +8,9 @@ const { navigateGoBack,
         navigateSpeedbugNotSureViaIdentify,
         navigateTakePhoto } = require('../features/support/navigation-driver');
 
-describe.only('Back button tests', function() {
+describe('Back button tests', function() {
+    beforeEach( startAppium );
+    afterEach( stopAppium );
     it('should return to menu when back pressed on the root of a key', async function() {
         await navigateKeyViaIdentify( world, ["Animal with a shell"]);
         await world.keySearch.waitForText("Animals look like snails or limpets.");
@@ -25,7 +27,7 @@ describe.only('Back button tests', function() {
         await world.browse.waitFor();
     });
 
-    it.only('should go back from each page of the survey wizard', async function() {
+    it('should go back from each page of the survey wizard', async function() {
         await world.menu.selectWaterbugSurvey();
         await navigateGoBack(world);
         await world.menu.waitFor();
@@ -36,7 +38,7 @@ describe.only('Back button tests', function() {
         await world.siteDetails.setWaterbodyName("a");
 
         await world.siteDetails.goNext();
-        await world.siteDetails.goBack();
+        await world.habitat.goBack();
 
         await world.siteDetails.goNext();
 

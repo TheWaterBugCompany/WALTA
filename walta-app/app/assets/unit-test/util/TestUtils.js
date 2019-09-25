@@ -56,7 +56,7 @@ function waitForTopic( topicName, fireEvent, done, result ) {
 }
 // END TODO: convert to promises
 function wrapViewInWindow( view ) {
-	var win = Ti.UI.createWindow( { backgroundColor: 'white' } );
+	var win = Ti.UI.createWindow( { backgroundColor: 'white', width: Ti.UI.FILL, height: Ti.UI.FILL } );
 	win.add( view );
 	return win;
 }
@@ -145,6 +145,11 @@ function closeWindow( win, done ) {
 				var menuItem = menu.add( { title: "Continue", showAs: Ti.Android.SHOW_AS_ACTION_NEVER });
 				menuItem.addEventListener("click", () => win.close() )
 			}
+		} else {
+			var cont = Ti.UI.createButton( { title: "Continue" } );
+			var toolbar = Ti.UI.createToolbar({ items: [cont], top: 0 });
+			cont.addEventListener("click", () => win.close() );
+			win.add(toolbar);
 		}
 	});
 }

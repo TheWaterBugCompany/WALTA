@@ -25,16 +25,31 @@
  *
  */
 var Topics = require('ui/Topics');
+var { convertSystemToDip } = require("ui/PlatformSpecific");
 
 var eventHandlers = [];
 function cleanUp() {
 	$.destroy();
 	$.off();
+	
 	eventHandlers.forEach( function(d) {
 		d.btn.removeEventListener( 'click', d.handler );
 	});
 	eventHandlers = null;
 }
+
+function updateTitleWidth() {
+	$.AnchorBar.removeEventListener("postlayout", updateTitleWidth);
+	if ( $.rightTools.size.width > 0 ) {
+		var width = convertSystemToDip($.AnchorBar.size.width);
+		var titleWidth = convertSystemToDip($.title.size.width);
+		var left = convertSystemToDip($.leftTools.rect.x) + convertSystemToDip($.leftTools.rect.width);
+		var right = convertSystemToDip($.AnchorBar.size.width - $.rightTools.rect.x - $.rightTools.rect.width) + convertSystemToDip($.rightTools.rect.width);
+		$.title.left = left + (width-left-right-titleWidth)/2;
+	}
+}
+
+$.AnchorBar.addEventListener("postlayout", updateTitleWidth)
 
 function createToolBarButton( image, topic, title, eventData ) {
 	var btn;

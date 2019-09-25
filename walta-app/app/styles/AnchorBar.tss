@@ -14,7 +14,7 @@
 
 "#leftTools": {
   left: "5dp",
-  width: "35%",
+  width: Ti.UI.SIZE,
   height: Ti.UI.FILL,
   layout: "horizontal",
   horizontalWrap: false,
@@ -33,7 +33,6 @@
 "#title": {
   color: 'white',
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  width: Ti.UI.FILL,
-  height: Ti.UI.FILL,
-  center: { x: "40%" }
+  width: Ti.UI.SIZE,
+  height: Ti.UI.FILL
 }

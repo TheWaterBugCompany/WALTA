@@ -77,7 +77,7 @@ module.exports = function(grunt) {
 
           end_to_end_test: {
             command: function(platform,option) {
-              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --color --recursive "./end-to-end-testing/*.js"`;
+              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 "./end-to-end-testing/*.js"`;
             },
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"

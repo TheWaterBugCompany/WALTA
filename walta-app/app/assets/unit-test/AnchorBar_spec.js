@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
-var { wrapViewInWindow, closeWindow, windowOpenTest, actionFiresTopicTest } = require('unit-test/util/TestUtils');
+var { wrapViewInWindow, closeWindow, windowOpenTest, actionFiresTopicTest, setManualTests } = require('unit-test/util/TestUtils');
 var Topics = require('ui/Topics');
 
 describe('AnchorBar controller', function() {
@@ -25,7 +25,10 @@ describe('AnchorBar controller', function() {
 
 	before( function() {
 		acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
-		win = wrapViewInWindow( acb.getView() );
+		vw = acb.getView();
+		vw.bottom = 0;
+		vw.height = "10%";
+		win = wrapViewInWindow(vw);
 	});
 
  	after( function(done) {

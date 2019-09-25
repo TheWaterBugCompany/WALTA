@@ -9,12 +9,12 @@ function setLabel( s ) {
 }
 
 function setIconLeft( img ) {
-    $.icon = Ti.UI.createImageView( { image: img, id: "icon", left: "4dp" } );
+    $.icon = Ti.UI.createImageView( { image: img, id: "icon", left: "4dp", width: "18%", height: "100%" } );
     $.button.insertAt( { view: $.icon, position: 0 } );
 }
 
 function setIconRight( img ) {
-    $.icon = Ti.UI.createImageView( { image: img, id: "icon", right: "4dp" } );
+    $.icon = Ti.UI.createImageView( { image: img, id: "icon", right: "4dp", width: "18%", height: "100%" } );
     $.button.add( $.icon );
 }
 
