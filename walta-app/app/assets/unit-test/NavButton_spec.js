@@ -18,12 +18,15 @@
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var Topics = require("ui/Topics");
-var { closeWindow, windowOpenTest, wrapViewInWindow } = require("unit-test/util/TestUtils");
+var { closeWindow, windowOpenTest, wrapViewInWindow, setManualTests } = require("unit-test/util/TestUtils");
 describe("NavButton controller", function() {
   var acb, win;
 	before( function(done) {
-		acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
-    win = wrapViewInWindow( acb.getView() );
+    acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
+    vw = acb.getView();
+    vw.bottom = 0;
+    vw.height = "10%";
+    win = wrapViewInWindow( vw );
 
 
     var btn = Alloy.createController("NavButton");
@@ -38,8 +41,6 @@ describe("NavButton controller", function() {
     btn.setIconRight( "/images/icon-go-forward.png" );
     acb.addTool( btn.getView() ); 
 
-    
-    win.height = "10%";
     windowOpenTest( win, done );
 	});
 

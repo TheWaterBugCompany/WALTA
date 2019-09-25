@@ -2,7 +2,7 @@ const BaseScreen = require('./base-screen');
 class SummaryScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = this.selector("Sample");
+        this.presenceSelector = this.selector("Summary");
     }
 
     async goBack() {
@@ -10,4 +10,4 @@ class SummaryScreen extends BaseScreen {
         await this.world.sample.waitFor();
     }
 } 
-module.exports = SampleScreen
+module.exports = SummaryScreen

@@ -6,7 +6,7 @@ global.world = {};
 global.expect = expect;
 global.swipeRight = function(options) { swipeRight(world,options) };
 
-beforeEach( async function() {
+global.startAppium = async function() {
     if ( world.driver ) {
         await world.driver.reset();
     } else {
@@ -17,7 +17,8 @@ beforeEach( async function() {
         world.platform = platform;
         setUpWorld( world );
     }
-})
-after( async function() {
+}
+
+global.stopAppium = async function() {
     //await stopAppiumClient(world.driver);
-});
+}
