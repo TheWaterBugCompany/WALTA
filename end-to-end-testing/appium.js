@@ -20,5 +20,5 @@ global.startAppium = async function() {
 }
 
 global.stopAppium = async function() {
-    //await stopAppiumClient(world.driver);
+   // await stopAppiumClient(global.world.driver);
 }

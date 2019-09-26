@@ -70,7 +70,7 @@ module.exports = function(grunt) {
 
           acceptance_test: {
             command: function(platform,option) {
-              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip"`;
+              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip" --tags "@only"`;
             },
             exitCode: [0,1]
           },

@@ -19,8 +19,10 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var Topics = require("ui/Topics");
 var { closeWindow, windowOpenTest, wrapViewInWindow, setManualTests } = require("unit-test/util/TestUtils");
-describe("NavButton controller", function() {
+describe.only("NavButton controller", function() {
   var acb, win;
+  setManualTests(true);
+  this.timeout(0);
 	before( function(done) {
     acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
     vw = acb.getView();

@@ -260,8 +260,8 @@ overrode the settings with other TSS, XML, or JS settings:
 
 ".anchorBarTextButton": {
     width: "100dp",
+    top: "5%",
     height: "90%",
-    top:"10%",
     horizontalWrap: false,
     backgroundColor: "#26849c",
     borderColor: "#26849c",
