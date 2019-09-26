@@ -1,15 +1,16 @@
 'use strict';
 const { AfterAll, BeforeAll, Before } = require('cucumber');
-const { startAppiumClient, stopAppiumClient } = require('./appium');
+const { startAppiumClient, stopAppiumClient, getCapabilities } = require('./appium');
 const { setUpWorld } = require('./all-screens');
 const {setDefaultTimeout} = require('cucumber');
-setDefaultTimeout(30 * 1000);
+setDefaultTimeout(2000);
 
 BeforeAll( {timeout: 99999*1000}, async function() {
     let platform = process.env.PLATFORM;
+    let caps = getCapabilities( platform, true )
     if ( ! platform )
         throw new Error("Please set the PLATFORM enviornment variable");
-    let driver =  await startAppiumClient(platform, (process.env.QUICK==="true"?true:false)); 
+    let driver =  await startAppiumClient(caps); 
     global.driver = driver;
     global.platform = platform;
     global.first = true;

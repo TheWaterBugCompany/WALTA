@@ -16,7 +16,7 @@ class TaxonScreen extends BaseScreen {
 
     async selectAddToSample() {
       await this.click("Add to sample");
-      await this.world.sample.waitFor();
+      await this.world.editTaxon.waitFor()
     }
 } 
 module.exports = TaxonScreen;

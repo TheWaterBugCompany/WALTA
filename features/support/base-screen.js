@@ -49,6 +49,32 @@ class BaseScreen {
         return el;
     }
 
+    async setSliderPercent( selector, percent ) {
+        var el = await this.driver.$(selector);
+        var size = await el.getSize();
+        var dist = size.width*percent/100;
+        if ( this.isIos() ) {
+            let xpos = await el.getValue();
+            await this.driver.debug();
+            // $("XCUIElementTypeSlider").then( (el) => el.elementId )
+            // driver.execute("mobile: dragFromToForDuration", { duration: 0.5, fromX: 11, fromY: 16, toX:40, toY: 16, element: "1B030000-0000-0000-F106-000000000000" })
+            await this.driver.execute("mobile: dragFromToForDuration", {
+                duration: 0.5,
+                fromX: size.width*parseInt(xpos)/100,
+                fromY: size.height/2,
+                toX: dist,
+                toY: size.height/2,
+                element: el.elementId
+            });
+        } else {
+            await el.touchAction([ 
+                {action: 'press', x: 0, y: size.height/2},
+                {action: 'wait',  ms: 500  },
+                {action: 'moveTo', x: dist, y: size.height/2},
+                'release']);
+        }
+    }
+
     async enter( sel, text ) {
         var el = await this.driver.$( this.selector( sel ) );
         if ( this.isAndroid() && el.getTagName() !== "android.widget.EditText" ) {
