@@ -41,10 +41,10 @@ function cleanUp() {
 function updateTitleWidth() {
 	$.AnchorBar.removeEventListener("postlayout", updateTitleWidth);
 	if ( $.rightTools.size.width > 0 ) {
-		var width = convertSystemToDip($.AnchorBar.size.width);
-		var titleWidth = convertSystemToDip($.title.size.width);
-		var left = convertSystemToDip($.leftTools.rect.x) + convertSystemToDip($.leftTools.rect.width);
-		var right = convertSystemToDip($.AnchorBar.size.width - $.rightTools.rect.x - $.rightTools.rect.width) + convertSystemToDip($.rightTools.rect.width);
+		var width = ($.AnchorBar.size.width);
+		var titleWidth = ($.title.size.width);
+		var left = ($.leftTools.rect.x) + ($.leftTools.rect.width);
+		var right = ($.AnchorBar.size.width - $.rightTools.rect.x - $.rightTools.rect.width) + ($.rightTools.rect.width);
 		$.title.left = left + (width-left-right-titleWidth)/2;
 	}
 }

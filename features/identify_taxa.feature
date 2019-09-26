@@ -2,6 +2,7 @@ Feature: Identify Taxa
 
 Having found a species I would like to identify its taxa.
 
+@only
 Scenario: Add a taxon to the sample
   Given I identify and store a Taxon
    Then the EditTaxon screen is opened
@@ -24,13 +25,11 @@ Scenario: Taxon node is selected
   When I select the store operation
   Then selected identification is stored into the current sample tray
 
-#@only
 Scenario: Backwards navigation up the tree
   Given a node from the ALT key is displayed
     And I don't think this is the correct place in the key
    When I select the back button
    Then the parent node of this ALT node is displayed
-
 
 Scenario: View species photo gallery
   Given a node from the ALT key is displayed

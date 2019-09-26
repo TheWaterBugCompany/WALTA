@@ -34,6 +34,7 @@ function screenshotPath( screenshot, name, postfix="" ) {
 }
 
 async function verifyScreenShot( name ) {
+    await world.gallery.sleep(500); // wait for scroll bar to disappear
     var base64 = await world.driver.takeScreenshot();
     var screenshot = Buffer.from( base64, 'base64' );
     if ( fs.existsSync( screenshotPath( screenshot, name ) ) ) {
@@ -57,7 +58,7 @@ async function verifyScreenShot( name ) {
     }
 }
 
-describe.only('Visual regression tests', function() {
+describe('Visual regression tests', function() {
     describe('identify via speedbug workflow',async function() {
         before( startAppium );
         after( stopAppium );
@@ -83,20 +84,22 @@ describe.only('Visual regression tests', function() {
 
         it('gallery screen should look correct', async function() {
             await world.taxon.goMagnify();
-            await world.gallery.sleep(100); // wait for scroll bar to disappear
+            
             await verifyScreenShot( 'gallery screen' );
         });
     });
 
     describe('about and help pages', async function() {
-        beforeEach( startAppium );
-        afterEach( stopAppium );
+        before( startAppium );
+        after( stopAppium );
         it('about page should render',async function() {
             await world.menu.selectAbout();
             await verifyScreenShot( this.test.title );
         });
 
         it('help page should render',async function() {
+            await navigateGoBack(world);
+            await world.menu.waitFor();
             await world.menu.selectHelp();
             await verifyScreenShot( this.test.title );
         });
