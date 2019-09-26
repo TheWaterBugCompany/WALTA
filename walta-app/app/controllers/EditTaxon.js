@@ -1,6 +1,7 @@
 var taxon = $.args.taxon;
 var key = $.args.key;
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
+
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
 function cleanUp() {
@@ -11,8 +12,7 @@ function cleanUp() {
 }
 
 setAbundance( taxon.get("abundance") );
-if ( taxon.getPhoto() )
-    setImage( taxon.getPhoto() );
+setImage( taxon.getPhoto() );
 
 var realPhoto = false;
 updateSaveButton();
@@ -89,7 +89,7 @@ function updateSaveButton() {
 }
 
 $.photoSelect.on("loaded", updateSaveButton);
-$.photoSelect.on("photoTaken", updateSaveButton );
+$.photoSelect.on("photoTaken", () => { realPhoto = true; updateSaveButton(); } );
 
 exports.cleanUp = cleanUp;
 exports.setImage = setImage;
