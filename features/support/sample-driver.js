@@ -1,30 +1,31 @@
-'use strict';
-/*class SampleDriver {
+
  
-    def self.page(clz, *args)
-        clz.new(self, *args)
-    end
+   
+async function startSurvey(world) {
+    await world.menu.waitFor();
+    await world.menu.selectWaterbugSurvey();
+    await world.siteDetails.selectDetailed();
+    await world.siteDetails.selectRiver();
+    await world.siteDetails.setWaterbodyName("a");
+    await world.siteDetails.goNext();
+    await world.habitat.setSandOrSilt("100");
+    await world.habitat.goNext();
+}
 
-    def self.start_survey
-        page(MenuScreen).await()
-            .select_survey()
-            .fillout_site_details()
-            .fillout_habitat_details()
-    end
+async function addTaxonViaSpeedBug( world, refId ) {
+    await world.sample.waitFor();
+    await world.sample.selectAddSample();
+    await world.methodSelect.viaSpeedbug();
+    await world.speedbug.chooseSpeedbug(refId);
+    await world.taxon.selectAddToSample();
 
-    def self.add_taxon_via_browse( taxonName )
-        page(SampleTrayScreen).await()
-            .start_identification()
-            .browse()
-            .choose_taxon(taxonName)
-            .add_to_sample()
-            .save()
-    end
+}
 
-    def self.submit_sample
-        current_page = page(SampleTrayScreen).await()
-            .submit_sample()
-            .done()
-    end
+async function submitSample(world) {
+    await world.sample.goNext();
+    await world.summary.submit();
+}
 
- */
+exports.startSurvey = startSurvey;
+exports.addTaxonViaSpeedBug = addTaxonViaSpeedBug;
+exports.submitSample = submitSample;

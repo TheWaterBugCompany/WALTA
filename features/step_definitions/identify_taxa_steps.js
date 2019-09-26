@@ -1,4 +1,6 @@
 const { Given, When, Then } = require('cucumber');
+const { startSurvey, addTaxonViaSpeedBug }  = require('../support/sample-driver');
+
 Given('I have found a species to identify', function(){
   /* @current_page = page(MenuScreen).await */
 });
@@ -39,25 +41,24 @@ Given('A leaf node of the ALT is displayed', function(){
   @current_page = page(TaxonScreen).await */
 });
 
-Given('I identify and store a Taxon', function(){
- /*  @current_page = SampleDriver
-    .start_survey()
-    .add_taxon_via_browse('Acarina') */
+Given('I identify and store a Taxon', {timeout: 60000}, async function(){
+  await startSurvey( this );
+  await addTaxonViaSpeedBug( this, "hyriidae" )
 });
 
-Then('the EditTaxon screen is opened', function(){
-  /* expect( @current_page ).to be_a(EditTaxonScreen) */
+Then('the EditTaxon screen is opened', async function(){
+  await this.editTaxon.waitFor();
 });
 
-When('I set the abundance to "([^"]*)"', function(abundance){
-  /* @current_page.set_abundance abundance */
+When('I set the abundance to {string}', {timeout: -1}, async function(abundance){
+  await this.editTaxon.setAbundance(abundance);
 });
 
-When('I save the taxon', function(){ 
-  /* @current_page = @current_page.save */
+When('I save the taxon', async function(){ 
+  await this.editTaxon.save();
 });
 
-Then('the taxon displays "([^"]*)" for the abundance', function(abundance){
+Then('the taxon displays {string} for the abundance', function(abundance){
   /* expect( @current_page ).to be_a(SampleTrayScreen)
   expect( @current_page.abundance ).to eq(abundance) */
 });

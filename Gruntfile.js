@@ -72,7 +72,8 @@ module.exports = function(grunt) {
             command: function(platform,option) {
               return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip" --tags "@only"`;
             },
-            exitCode: [0,1]
+            exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
           },
 
           end_to_end_test: {
@@ -315,7 +316,7 @@ module.exports = function(grunt) {
       if ( option !== "quick" ) {
         grunt.task.run(`newer:test_${platform}`);
       }
-      grunt.task.run(`exec:end_to_end_test:${platform}${option === "quick"?":quick":""}`);
+      grunt.task.run(`exec:acceptance_test:${platform}${option === "quick"?":quick":""}`);
     });
 
     
