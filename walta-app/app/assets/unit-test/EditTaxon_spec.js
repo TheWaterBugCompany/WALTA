@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, forceCloseWindow, wrapViewInWindow, windowOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
+var { closeWindow, setManualTests, wrapViewInWindow, windowOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
 
 var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { createMockTaxon } = require('unit-test/mocks/MockTaxon');
@@ -26,7 +26,6 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe("EditTaxon controller", function() {
     var ctl,win;
-
     function makeEditTaxon( taxon ) {
         ctl = Alloy.createController("EditTaxon", { 
             key: keyMock,
@@ -67,15 +66,23 @@ describe("EditTaxon controller", function() {
     });
  
     it('save should be enabled if a photo is selected', function(done) {
-        var doneOnce = _.once(done);  
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
-        windowOpenTest( win, () => {
-            ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
+
+        function checkSaveEnabled() {
+            ctl.photoSelect.off("loaded", checkSaveEnabled );
+            checkTestResult( done, () => {
                 expect( ctl.saveButton.enabled ).to.be.true;
                 expect( ctl.photoSelect.photoSelectLabel.visible ).to.be.false;
                 expect( ctl.photoSelect.photoSelectBoundary.borderColor ).to.equal("transparent");
-            } ) ) ;
-            ctl.setImage("/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
+            } )
+        }
+
+        windowOpenTest( win, () => {
+            ctl.photoSelect.on("loaded", function handler() {
+                ctl.photoSelect.off("loaded", handler );
+                ctl.photoSelect.on("loaded", checkSaveEnabled );
+                ctl.setImage("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg")
+            }) ;
         }); 
     });
 
