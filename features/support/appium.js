@@ -13,7 +13,7 @@ function getCapabilities( platform, quick ) {
             deviceName: "device",
             appActivity: ".WaterbugActivity",
             appWaitActivity: "org.appcelerator.titanium.TiActivity",
-            "newCommandTimeout": 0 // forever
+            "newCommandTimeout": 600000
         });
         if ( !quick ) {
             caps.app = join(process.cwd(), './builds/test/Waterbug.apk');
@@ -41,7 +41,7 @@ function getCapabilities( platform, quick ) {
             realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
             showXcodeLog: true,
             usePrebuiltWDA: true,
-            noReset: true,
+            noReset: false,
             commandTimeouts: 60000
         });
         if ( !quick ) {
