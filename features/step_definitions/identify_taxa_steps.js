@@ -50,26 +50,22 @@ Then('the EditTaxon screen is opened', async function(){
   await this.editTaxon.waitFor();
 });
 
-When('I set the abundance to {string}', {timeout: -1}, async function(abundance){
+When('I set the abundance to {string}', {timeout: 60000}, async function(abundance){
   await this.editTaxon.setAbundance(abundance);
 });
 
-When('I save the taxon', async function(){ 
+When('I save the taxon', {timeout: -1}, async function(){ 
+  await this.editTaxon.openCamera();
+  // photos aren't optional but we want to decouple the feature files
+  // so "save" is interpreted as take photo and save...
+  await this.camera.takePhoto(); 
+  await this.editTaxon.waitFor();
   await this.editTaxon.save();
 });
 
-Then('the taxon displays {string} for the abundance', function(abundance){
-  /* expect( @current_page ).to be_a(SampleTrayScreen)
-  expect( @current_page.abundance ).to eq(abundance) */
-});
-
-
-When('I select the store operation', function(){
-  return "pending";
-});
-
-Then('selected identification is stored into the current sample tray', function(){
-  return "pending";
+Then('the taxon displays {string} for the abundance', {timeout: 60000}, async function(abundance){
+  await this.sample.waitFor(); // check we are really on the sample screen
+  await this.sample.waitForText(abundance); // since we only have one taxon this should check for existence
 });
 
 Given('a node from the ALT key is displayed', async function(){

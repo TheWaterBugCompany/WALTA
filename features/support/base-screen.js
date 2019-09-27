@@ -55,7 +55,6 @@ class BaseScreen {
         var dist = size.width*percent/100;
         if ( this.isIos() ) {
             let xpos = await el.getValue();
-            await this.driver.debug();
             // $("XCUIElementTypeSlider").then( (el) => el.elementId )
             // driver.execute("mobile: dragFromToForDuration", { duration: 0.5, fromX: 11, fromY: 16, toX:40, toY: 16, element: "1B030000-0000-0000-F106-000000000000" })
             await this.driver.execute("mobile: dragFromToForDuration", {

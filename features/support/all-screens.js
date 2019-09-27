@@ -49,9 +49,9 @@ async function swipeRight( world, { start_x=30, end_x=0.95 } = {} ) {
 async function swipeLeft(world) {
     let size = await world.driver.getWindowSize();
     await world.driver.touchPerform([ 
-        {action: 'press', options: {x: size.width*0.60, y: size.height/2}},
-        {action: 'wait', options:{ ms: 100 } },
-        {action: 'moveTo', options: {x: 4, y: size.height/2}},
+        {action: 'press', x: size.width*0.60, y: size.height/2},
+        {action: 'wait',  ms: 1000 },
+        {action: 'moveTo', x: 4, y: size.height/2},
         {action:'release'}]);
 }
 

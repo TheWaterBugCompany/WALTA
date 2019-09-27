@@ -1,8 +1,8 @@
 <Alloy>
 	<View class="container">
 		<View class="padIcon">
-			<ImageView id="icon" accessibilityLabel="Icon"/>
-			<Label id="abundance" accessibilityLabel="Abundance"/>
+			<ImageView id="icon"/>
+			<Label id="abundance"/>
 		</View>
 	</View>
 </Alloy>
