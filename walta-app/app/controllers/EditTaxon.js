@@ -5,16 +5,13 @@ var { disableControl, enableControl, setError, clearError } = require("ui/ViewUt
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
 function cleanUp() {
-    
     $.photoSelect.cleanUp();
     $.destroy();
     $.off();
 }
-
+var realPhoto = false;
 setAbundance( taxon.get("abundance") );
 setImage( taxon.getPhoto() );
-
-var realPhoto = false;
 updateSaveButton();
 
 function setImage( photo ) {
