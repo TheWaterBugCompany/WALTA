@@ -258,18 +258,26 @@ function takePhoto(e) {
     e.cancelBubble = true;
     requestCameraPermissions(
         function success() {
-            Ti.Media.showCamera({
-                autohide: true,
-                animated: false,
-                autorotate: true,
-                success: photoCapturedHandler,
-                error: function (error) {
-                    alert(`${error.error}`); 
-                },
-                saveToPhotoGallery: true,
-                whichCamera: Titanium.Media.CAMERA_FRONT,
-                mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
-            });
+            // Create "blinds" to block the display with a black window so that artifacts in any 
+            // orientation changes whilst the camera app is opened are not visible to user.
+            let blinds = Ti.UI.createWindow( { backgroundColor: "black", exitOnClose: false } );
+            blinds.open();
+            try { 
+                Ti.Media.showCamera({
+                    autohide: true,
+                    animated: false,
+                    autorotate: true,
+                    success: photoCapturedHandler,
+                    error: function (error) {
+                        alert(`Unable to open camera: ${error.error}`); 
+                    },
+                    saveToPhotoGallery: true,
+                    whichCamera: Titanium.Media.CAMERA_FRONT,
+                    mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
+                });
+            } finally {
+                blinds.close();
+            }
         },
 
         function failure() {
