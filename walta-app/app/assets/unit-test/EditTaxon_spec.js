@@ -27,16 +27,18 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 describe("EditTaxon controller", function() {
     var ctl,win;
     function makeEditTaxon( taxon ) {
+        let txn = createMockTaxon( taxon );
         ctl = Alloy.createController("EditTaxon", { 
             key: keyMock,
-            taxon: createMockTaxon( taxon )
+            taxon: txn
          });
          
         win = wrapViewInWindow( ctl.getView() );
         win.addEventListener( "close", function cleanUp() {
             win.removeEventListener("close", cleanUp);
             ctl.cleanUp();
-         })
+         });
+         return txn;
     }
 
     afterEach( function(done ) {
@@ -56,6 +58,7 @@ describe("EditTaxon controller", function() {
 
     it('save should be disabled if the photo is blank', function(done) {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
+            
         windowOpenTest( win, function() {
             checkTestResult( done, function() {
                 expect( ctl.saveButton.enabled ).to.be.false;
@@ -84,6 +87,20 @@ describe("EditTaxon controller", function() {
                 ctl.setImage("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg")
             }) ;
         }); 
+    });
+
+    it('save should be enabled if a taxon already has a photo set', function(done) {
+        makeEditTaxon( { taxonId:"1", abundance:"3-5", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg" } )
+        function checkSaveEnabled() {
+            ctl.photoSelect.off("loaded", checkSaveEnabled );
+            checkTestResult( done, () => {
+                expect( ctl.saveButton.enabled, "save button enabled" ).to.be.true;
+                expect( ctl.photoSelect.photoSelectLabel.visible, "please take photo should be invisible" ).to.be.false;
+                expect( ctl.photoSelect.photoSelectBoundary.borderColor, "should not have a red border" ).to.equal("transparent");
+            } )
+        }
+        ctl.photoSelect.on("loaded", checkSaveEnabled );
+        windowOpenTest( win );
     });
 
     it('should call the save event when save is selected', function(done) {  
