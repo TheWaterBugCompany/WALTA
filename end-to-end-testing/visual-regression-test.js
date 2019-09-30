@@ -63,29 +63,29 @@ describe('Visual regression tests', function() {
         before( startAppium );
         after( stopAppium );
         it('menu screen should look correct', async function() {
-            await verifyScreenShot( 'menu screen' );
+            return verifyScreenShot( 'menu screen' );
         });
 
         it('menu screen identify should look correct', async function() {
             await world.menu.selectIdentify();
-            await verifyScreenShot( 'menu screen identify' );
+            return verifyScreenShot( 'menu screen identify' );
         });
 
         it('speedbug should look correct', async function() {
             await world.methodSelect.viaSpeedbug();
-            await verifyScreenShot( 'speedbug' );
+            return verifyScreenShot( 'speedbug' );
         });
 
         it('taxon screen should look correct', async function() {
             await world.speedbug.chooseSpeedbug("hyriidae");
             await world.taxon.waitForText("Freshwater mussels");
-            await verifyScreenShot( 'taxon detail screen' );
+            return verifyScreenShot( 'taxon detail screen' );
         });
 
         it('gallery screen should look correct', async function() {
             await world.taxon.goMagnify();
             
-            await verifyScreenShot( 'gallery screen' );
+            return verifyScreenShot( 'gallery screen' );
         });
     });
 
@@ -94,7 +94,7 @@ describe('Visual regression tests', function() {
         after( stopAppium );
         it('about page should render',async function() {
             await world.menu.selectAbout();
-            await verifyScreenShot( this.test.title );
+            return verifyScreenShot( this.test.title );
         });
 
         it('help page should render',async function() {
@@ -117,18 +117,18 @@ describe('Visual regression tests', function() {
             await world.siteDetails.selectRiver();
             await world.siteDetails.setWaterbodyName("a");
             await world.siteDetails.goNext();
-            await verifyScreenShot( "habitat" );
+            return verifyScreenShot( "habitat" );
         });
 
         it('empty sample tray should look correct', async function() {
             await world.habitat.setSandOrSilt("100");
             await world.habitat.goNext();
-            await verifyScreenShot( "empty sample tray" );
+            return verifyScreenShot( "empty sample tray" );
         });
   
         it('zero bug summary should look correct', async function() {
             await world.sample.goNext();
-            await verifyScreenShot( "zero bug summary" );
+            return verifyScreenShot( "zero bug summary" );
         });
     })
 });

@@ -89,13 +89,14 @@
 }
 
 "#locationStatus": {
+    horizontalWrap: "false",
     top: "2dp",
-    left: "8dp",
-    right: "8dp"
+    left: "2dp"
 }
 
 "#locationIndicatorIcon": {
     image: "/images/location-icon.png",
     height: "32dp",
-    width: "20dp"
+    width: "20dp",
+    right: "4dp"
 }
