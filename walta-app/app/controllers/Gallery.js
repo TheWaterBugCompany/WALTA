@@ -29,12 +29,15 @@ var Topics = require('ui/Topics');
 var Layout = require('ui/Layout');
 var { urlToLocalAsset } = require("ui/PlatformSpecific");
 
-if ( Ti.Platform.osname === 'android') {
-    $.TopLevelWindow.addEventListener('close', function cleanUp() {
-        $.views.forEach( (v) => v.release() );
-        $.TopLevelWindow.removeEventListener('close', cleanUp );
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.views.forEach( (v) => {
+        if ( OS_ANDROID ) { 
+            v.release() 
+        } 
     });
-}
+    $.TopLevelWindow.removeEventListener('close', cleanUp );
+});
 
 var key = $.args.key;
 var photos = $.args.photos;
@@ -47,22 +50,36 @@ if ( !photos && key ) {
 }
 
 $.views = _(photos).map( (url) => {
-        // NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
-        // we cheat by using a WebView.
-        var params = {
-            setScalesPageToFit: false,
-            disableBounce: true,
-            enableZoomControls: true,
-            backgroundColor: 'transparent',
-            width : Ti.UI.FILL,
-            height : Ti.UI.FILL,
-            html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=6.0, minimum-scale=1.0, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { margin: 0; } ::-webkit-scrollbar { display: none;} img { display: block; width:100%; }</style></head><body><img src="' + urlToLocalAsset(url) + '"></body></html>'
-        };
-        if ( OS_ANDROID ) 
-            params.cacheMode = Ti.UI.Android.WEBVIEW_LOAD_NO_CACHE;
-        if ( OS_IOS )
-            params.cachPolicy = Ti.UI.iOS.CACHE_POLICY_IGNORING_LOCAL_CACHE_DATA;
-        return Ti.UI.createWebView(params);
+        if ( OS_ANDROID ) { 
+            // NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
+            // we cheat by using a WebView.
+            var params = {
+                setScalesPageToFit: false,
+                disableBounce: true,
+                enableZoomControls: true,
+                backgroundColor: 'transparent',
+                width : Ti.UI.FILL,
+                height : Ti.UI.FILL,
+                html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=6.0, minimum-scale=1.0, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { margin: 0; } ::-webkit-scrollbar { display: none;} img { display: block; width:100%; }</style></head><body><img src="' + urlToLocalAsset(url) + '"></body></html>'
+            };
+            if ( OS_ANDROID ) 
+                params.cacheMode = Ti.UI.Android.WEBVIEW_LOAD_NO_CACHE;
+            if ( OS_IOS )
+                params.cachePolicy = Ti.UI.iOS.CACHE_POLICY_IGNORING_LOCAL_CACHE_DATA;
+            return Ti.UI.createWebView(params);
+        } else {
+            var imageView = Ti.UI.createImageView({ image: url, width: Ti.UI.SIZE, height: Ti.UI.SIZE } );
+            var zoomable = Ti.UI.createScrollView( { disableBounce: true, maxZoomScale: 10.0, minZoomScale: 1.0, width: Ti.UI.FILL, height: Ti.UI.FILL });
+            zoomable.add( imageView );
+            zoomable.addEventListener("postlayout", function setInitialZoom() {
+                zoomable.removeEventListener("postlayout", setInitialZoom);
+                var fullScale = zoomable.rect.width / imageView.rect.width;
+                zoomable.minZoomScale = fullScale;
+                zoomable.zoomScale = fullScale;
+            
+            });
+            return zoomable;
+        }
     });
 
 $.views.forEach( (v) => $.scrollView.addView(v) );
