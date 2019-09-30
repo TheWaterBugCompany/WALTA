@@ -72,7 +72,9 @@ function addSwipeBack() {
 	swipeListenerAdded = true;
 	$.TopLevelWindow.addEventListener('swipe', swipeListener);
 }
-addSwipeBack();
+// Swipe seems to conflict with the user interface on different screens...
+// so making the execution decision to globally disable it.
+//addSwipeBack();
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	Ti.API.debug(`cleaning up window...`); 
