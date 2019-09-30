@@ -42,8 +42,16 @@ function readFile(path) {
 }
 
 function getFullPhotoUrl() {
-    return $.photoUrls[0];
+    if ( $.photoUrls )
+        return $.photoUrls[0];
+    else
+        return undefined;
 }
+
+function getThumbnailImageUrl() {
+    return $.photo.image;
+}
+
 
 function generateThumbnail( fileOrBlob ) {
     debug("generateThumbnail");
@@ -318,13 +326,11 @@ function clearError() {
     $.photoSelectLabel.visible = false;
 }
 
-function getImageUrl() {
-    return $.photo.image;
-}
 
 
 
-exports.getImageUrl = getImageUrl;
+exports.getThumbnailImageUrl = getThumbnailImageUrl;
+exports.getFullPhotoUrl = getFullPhotoUrl;
 exports.openGallery = openGallery; 
 exports.setImage = setImage;
 exports.setError = setError;

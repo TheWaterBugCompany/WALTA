@@ -76,8 +76,8 @@ describe("SiteDetails controller", function() {
         controllerOpenTest( ctl,  ()=>{
             // set a photo as if taken by the user
             ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
-                expect( ctl.photoSelect.getImageUrl() ).to.include("sitePhoto");
-                expect( Ti.Filesystem.getFile( ctl.photoSelect.getImageUrl() ).exists() ).to.be.ok;
+                expect( ctl.photoSelect.getThumbnailImageUrl() ).to.include("sitePhoto");
+                expect( Ti.Filesystem.getFile( ctl.photoSelect.getThumbnailImageUrl() ).exists() ).to.be.ok;
             }) );
             simulatePhotoCapture( ctl.photoSelect );
         });

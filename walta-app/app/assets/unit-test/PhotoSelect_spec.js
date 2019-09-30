@@ -47,7 +47,7 @@ describe('PhotoSelect controller', function() {
 			//expect( pv.camera.visible ).to.be.false;
 			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
 			expect( pv.photoSelectLabel.visible ).to.be.false;
-			expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
 		}) );
 		windowOpenTest( win );
 	});
@@ -70,7 +70,7 @@ describe('PhotoSelect controller', function() {
 			expect( pv.camera.visible ).to.be.true;
 			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
 			expect( pv.photoSelectLabel.visible ).to.be.true;
-			expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
 		}) );
 		windowOpenTest( win );
 	});
@@ -80,7 +80,7 @@ describe('PhotoSelect controller', function() {
 		pv.on("loaded", () => checkTestResult( done, () => {
 			expect( pv.magnify.visible ).to.be.true;
 			expect( pv.camera.visible ).to.be.true;
-			expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
 			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
 			expect( pv.photoSelectLabel.visible ).to.be.false;
 		}) );
@@ -94,7 +94,7 @@ describe('PhotoSelect controller', function() {
 			pv.on("loaded", () => checkTestResult( done, () => {
 					expect( pv.magnify.visible ).to.be.true;
 					expect( pv.camera.visible ).to.be.true;
-					expect( pv.getImageUrl() ).to.include("preview_thumbnail");
+					expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
 					expect( pv.photoSelectLabel.visible ).to.be.false;
 				} ) );
 			setTimeout( () => simulatePhotoCapture( pv ), 500 );

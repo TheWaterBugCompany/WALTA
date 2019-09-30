@@ -4,7 +4,6 @@ var { expect } = require('unit-test/lib/chai');
 var { closeWindow, checkTestResult, actionFiresTopicTest, setManualTests } = require('unit-test/util/TestUtils');
 
 var Topics = require('ui/Topics');
-var mocx = require("unit-test/lib/mocx");
 
 var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
@@ -12,7 +11,7 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 
 describe( 'SampleTray controller', function() {
-  this.timeout(10000);
+  this.timeout(0); // FIXME: 10000
   var SampleTray, SampleTrayWin;
 
   function setupSampleTray() {
@@ -109,8 +108,8 @@ describe( 'SampleTray controller', function() {
 
     beforeEach( function() {
       return Promise.resolve()
-        .then( function() {
-          mocx.createCollection("taxa", []);
+        .then( function() {A
+          Alloy.Collections.taxa = Alloy.createCollection("taxa");
           setupSampleTray();
         })
         .then( openSampleTray );
@@ -128,7 +127,7 @@ describe( 'SampleTray controller', function() {
     it('should render an add button with a blank tray', function (){
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", []);
+          Alloy.Collections.taxa = Alloy.createCollection("taxa");
           setupSampleTray();
         })
         .then( openSampleTray )
@@ -144,7 +143,7 @@ describe( 'SampleTray controller', function() {
     it('should render an add button with a single taxa in the tray', function (){
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa", [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "1-2" } )
           ]);
           setupSampleTray();
@@ -162,7 +161,7 @@ describe( 'SampleTray controller', function() {
     it('should render an add button with two taxa in the tray', function (){
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa",  [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
             Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } )
           ]);
@@ -180,7 +179,7 @@ describe( 'SampleTray controller', function() {
     it('should render an add button with three taxa in the tray', function (){
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa",  [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
             Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } ),
             Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" } )
@@ -200,7 +199,7 @@ describe( 'SampleTray controller', function() {
     it('should render an add button with four taxa in the tray', function (){
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa",  [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
             Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } ),
             Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" } ),
@@ -220,7 +219,7 @@ describe( 'SampleTray controller', function() {
     it('should render an add button with five taxa in the tray', function (){
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa",  [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ),
             Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" } ),
             Alloy.createModel( "taxa", { taxonId: "5", abundance: "3-5" } ),
@@ -241,7 +240,7 @@ describe( 'SampleTray controller', function() {
     it('should display the correct sample entry for each tray position displayed', function() {
         return Promise.resolve()
           .then( function() {
-            mocx.createCollection("taxa", [
+            Alloy.Collections.taxa = Alloy.createCollection("taxa",  [
               Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
               Alloy.createModel( "taxa", { taxonId: "2", abundance: "6-10" }),
 
@@ -304,7 +303,7 @@ describe( 'SampleTray controller', function() {
     beforeEach(function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
-      mocx.createCollection("taxa", [
+      Alloy.Collections.taxa = Alloy.createCollection("taxa",  [
         Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }), // 0
         Alloy.createModel( "taxa", { taxonId: "2", abundance: "6-10" }),
 
@@ -428,7 +427,7 @@ describe( 'SampleTray controller', function() {
       // now opens MethodSelect open
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", []);
+          Alloy.Collections.taxa = Alloy.createCollection("taxa");
           setupSampleTray();
         })
         .then( openSampleTray )
@@ -450,7 +449,7 @@ describe( 'SampleTray controller', function() {
       // now opens MethodSelect open
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", []);
+          Alloy.Collections.taxa = Alloy.createCollection("taxa");
           setupSampleTray();
         })
         .then( openSampleTray )
@@ -472,7 +471,7 @@ describe( 'SampleTray controller', function() {
       // now opens MethodSelect open
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", []);
+          Alloy.Collections.taxa = Alloy.createCollection("taxa");
           setupSampleTray();
         })
         .then( openSampleTray )
@@ -493,7 +492,7 @@ describe( 'SampleTray controller', function() {
     it('should update when a taxon is added in first two holes', function() {
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", []);
+          Alloy.Collections.taxa = Alloy.createCollection("taxa");
           setupSampleTray();
         })
         .then( openSampleTray )
@@ -518,7 +517,7 @@ describe( 'SampleTray controller', function() {
     it('should update when a taxon is added after first two holes', function() {
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa", [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
             Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
             Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" })
@@ -547,7 +546,7 @@ describe( 'SampleTray controller', function() {
     it('should update when a taxon is removed from the first two holes', function() {
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa",[
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
             Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" })
           ]);
@@ -574,7 +573,7 @@ describe( 'SampleTray controller', function() {
     it('should update when a taxon is removed after first two holes', function() {
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa", [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
             Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
             Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
@@ -606,10 +605,12 @@ describe( 'SampleTray controller', function() {
 
     it('should scroll to the far right after adding a new taxon');
 
+    
+
     it('should update when a taxon abundance is changed', function() {
       return Promise.resolve()
         .then( function() {
-          mocx.createCollection("taxa", [
+          Alloy.Collections.taxa = Alloy.createCollection("taxa", [
             Alloy.createModel( "taxa", { taxonId: "1", abundance: "1-2" }),
             Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" })
           ]);
@@ -632,5 +633,44 @@ describe( 'SampleTray controller', function() {
           assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
         });
     });
+  });
+
+  describe.only('editing taxon and model persistence',function() {
+    setManualTests(true);
+    this.timeout(0); 
+    before(async function() {
+      Alloy.Collections.instance("sample").createNewSample();
+      Alloy.Collections.instance("taxa").load( Alloy.Models.sample.get("sampleId") );
+      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: 1 });
+      SampleTrayWin = SampleTray.getView();
+      await openSampleTray();
+    });
+    it('should display an empty tray', function() {
+      var tiles = SampleTray.tray.getChildren();
+      var sampleTaxa = getTaxaIcons( tiles[0] );
+      expect( sampleTaxa ).to.have.lengthOf(2);
+      assertPlus( sampleTaxa[0] );
+    });
+    
+    it('should persist temporary taxon if closed before saving', async function() {
+      expect( SampleTray.editTaxon ).to.be.ok;
+      expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
+      expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
+
+      SampleTray.editTaxon.setAbundance("> 20");
+      SampleTray.editTaxon.setImage("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      
+      // simulated close
+      SampleTrayWin.close()
+      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: 1 });
+      SampleTrayWin = SampleTray.getView();
+      // reopening should restore edit taxon attributes
+      await openSampleTray();
+      expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("> 20");
+      expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
+      // expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.equal("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+
+    });
+    it('should persist a saved taxon to the new sample');
   });
 });

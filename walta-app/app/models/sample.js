@@ -226,14 +226,22 @@ exports.definition = {
 		return Model;
 	},
 	extendCollection: function(Collection) {
-		_.extend(Collection.prototype, {
+		_.extend(Collection.prototype, { 
 			createNewSample: function() {
 				Ti.API.debug("Creating new sample..");
-				Alloy.Models.sample = Alloy.createModel("sample");
-				Alloy.Collections.taxa = Alloy.createCollection("taxa");
-				this.add(Alloy.Models.sample);
-				Alloy.Models.sample.save();
-				Ti.API.debug(`sampleId = ${Alloy.Models.sample.get("sampleId")}`);
+				var sample = Alloy.Models.instance("sample");
+				
+				// remove temporary taxon since a new sample
+				// is being created
+				var tmp = Alloy.createCollection("taxa");
+				var taxon = tmp.loadTemporary();
+					if ( taxon ) {
+					taxon.destroy();
+				} 
+
+				this.add(sample);
+				sample.save();
+				Ti.API.debug(`sampleId = ${sample.get("sampleId")}`);
 			},
 
 			startNewSurveyIfComplete: function(type) {
