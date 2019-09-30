@@ -12,8 +12,7 @@ function getCapabilities( platform, quick ) {
             autoGrantPermissions: true,
             deviceName: "device",
             appActivity: ".WaterbugActivity",
-            appWaitActivity: "org.appcelerator.titanium.TiActivity",
-            "newCommandTimeout": 600000
+            appWaitActivity: "org.appcelerator.titanium.TiActivity"
         });
         if ( !quick ) {
             caps.app = join(process.cwd(), './builds/test/Waterbug.apk');
@@ -35,14 +34,13 @@ function getCapabilities( platform, quick ) {
             udid: "auto",
             xcodeOrgId: "ZG6HRCUR8Q",
             xcodeSigningId: "iPhone Developer",
-            useJSONSource: false,
+            useJSONSource: true,
             waitForQuiescence: false,
             skipLogCapture: true,
             realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
             showXcodeLog: true,
             usePrebuiltWDA: true,
-            noReset: false,
-            commandTimeouts: 60000
+            noReset: false
         });
         if ( !quick ) {
             caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');

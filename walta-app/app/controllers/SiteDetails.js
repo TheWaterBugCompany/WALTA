@@ -21,7 +21,7 @@ var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton" ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HOME }  ); 
 $.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.HABITAT } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );

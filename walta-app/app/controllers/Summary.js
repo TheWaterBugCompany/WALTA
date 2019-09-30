@@ -13,7 +13,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton" ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY }  ); 
 $.nextButton = Alloy.createController("NavButton");
 $.nextButton.setLabel("Done");
 $.nextButton.on("click", doneClick ) 

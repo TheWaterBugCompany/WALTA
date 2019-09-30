@@ -2,4 +2,5 @@ var Topics = require('ui/Topics');
 exports.baseController  = "NavButton";
 $.setLabel( "Next" );
 $.setIconRight( "/images/icon-go-forward.png" );
-$.on("click", () => Topics.fireTopicEvent( $.args.topic , $.args ) );
+_( $.args ).extend({slide: "right"});
+$.on("click", () => Topics.fireTopicEvent( $.args.topic, $.args ) );
