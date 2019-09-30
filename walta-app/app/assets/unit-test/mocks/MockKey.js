@@ -6,8 +6,8 @@ var keyMock = Key.createKey( {
     url: 'https://example.com',
     name: 'WALTA'
 });
-var speedBugResource = "unit-test/resources/simpleKey1/media/speedbug/";
-var mediaResource = "unit-test/resources/simpleKey1/media/";
+var speedBugResource = "/unit-test/resources/simpleKey1/media/speedbug/";
+var mediaResource = "/unit-test/resources/simpleKey1/media/";
 var taxons = [
     Taxon.createTaxon({ taxonId: 1, name: "Aeshnidae Telephleb", commonName: "Aeshnidae Telephleb", bluebug: [ speedBugResource + "aeshnidae_telephleb_b.png" ]  }),
     Taxon.createTaxon({ taxonId: 2, name: "Amphipoda", bluebug: [ speedBugResource + "amphipoda_b.png" ] }),

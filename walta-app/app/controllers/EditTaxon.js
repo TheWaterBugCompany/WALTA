@@ -10,6 +10,9 @@ function cleanUp() {
     $.off();
 }
 var realPhoto = false;
+function isDefaultPhoto() {
+    return !realPhoto; 
+}
 setAbundance( taxon.get("abundance") );
 setImage( taxon.getPhoto() );
 updateSaveButton();
@@ -18,6 +21,10 @@ function setImage( photo ) {
     if ( photo ) {
         realPhoto = true;
         $.photoSelect.setImage( photo );  
+        if ( $.photoSelect.getFullPhotoUrl() ) {
+            taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
+            taxon.save();
+        }
     } else {
         realPhoto = false;
         $.photoSelect.setImage( taxon.getSilhouette() );
@@ -27,6 +34,7 @@ function setImage( photo ) {
 function setAbundance( binValue  ) {
     taxon.set("abundance", binValue);
     $.abundanceValue.value = taxon.getAbundance();
+    taxon.save();
 }
 
 function updateAbundance() {
@@ -47,13 +55,15 @@ function updateAbundance() {
 }
 
 function saveEvent() {
-    taxon.set("abundance", $.abundanceLabel.text );
-    taxon.setPhoto( $.photoSelect.getImageUrl() );
+    taxon.set("sampleId", sample.get("sampleId"));
+    taxon.save();
     $.trigger("save", taxon );
 }
 
 function doDelete() {
     $.trigger("delete", taxon );
+    Alloy.Collections.taxa.remove( taxon );
+    taxon.destroy();
 }
 
 function deleteEvent() {
@@ -80,7 +90,7 @@ function updateSaveButton() {
         $.photoSelect.clearError();
         enableControl($.saveButton);
     } else {
-        $.photoSelect.setError();
+        $.photoSelect.setError(); 
         disableControl($.saveButton);
     }
 }
@@ -90,3 +100,5 @@ $.photoSelect.on("photoTaken", () => { realPhoto = true; updateSaveButton(); } )
 
 exports.cleanUp = cleanUp;
 exports.setImage = setImage;
+exports.setAbundance = setAbundance;
+exports.isDefaultPhoto = isDefaultPhoto;

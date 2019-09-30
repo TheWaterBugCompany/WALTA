@@ -20,6 +20,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
+
 var acb = $.getAnchorBar(); 
 $.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT }  ); 
 $.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE } ); 
@@ -433,7 +434,7 @@ $.content.addEventListener( "postlayout", function initEvent() {
   initializeTray();
   scrollToRightEdge();
 });
- 
+
 Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
 
 $.getView().addEventListener( "close", function cleanup() {
@@ -453,10 +454,16 @@ function closeEditScreen() {
 }
 
 function editTaxon( taxon_id ) {
-  var taxon = Alloy.Collections["taxa"].get( taxon_id );
+  var tempColl = Alloy.createCollection("taxa");
+  var taxon = tempColl.loadTemporary();
   var sample = Alloy.Models.sample;
   if ( !taxon ) {
-    taxon = Alloy.createModel( 'taxa', { sampleId: sample.get('sampleId'), taxonId: taxon_id, abundance: "1-2" } );
+    // creates a taxa but leaves it unlinked from sample until save event recieved
+    Ti.API.info("creating new taxon as temporary taxon")
+    taxon = Alloy.createModel( 'taxa', { taxonId: taxon_id, abundance: "1-2" } );
+    taxon.save();
+  } else {
+    Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
   }
   $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
   $.getView().add( $.editTaxon.getView() );
@@ -467,17 +474,12 @@ function editTaxon( taxon_id ) {
 
   $.editTaxon.on("delete", function() {
     closeEditScreen();
-    Alloy.Collections["taxa"].remove( taxon );
-    taxon.destroy();
   });
 
   $.editTaxon.on("save", function() {
-    console.log("saving")
     closeEditScreen();
-    
-    taxon.save();
-    Alloy.Collections["taxa"].add( taxon );
     scrollToRightEdge();
+ 
   });
 }
 

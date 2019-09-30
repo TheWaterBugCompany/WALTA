@@ -17,8 +17,6 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
-var mocx = require("unit-test/lib/mocx");
 describe("Sample model", function() {
 	var ctl;
 	beforeEach( function() {

@@ -27,16 +27,22 @@ exports.definition = {
 				return Math.round((min+max)/2);
 			},
 
-			setPhoto: function(file) {
-				var newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
-				Ti.API.debug(`updating photo at ${newPhotoName}`);
+			setPhoto(file) {
+				var newPhotoName;
+				if ( ! this.get("sampleId") ) {
+					newPhotoName = `taxon_temporary.jpg`;
+				} else {
+				 	newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
+				}
+				Ti.API.info(`updating photo from ${file} to ${newPhotoName}`);
 				removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
+				
 			},
 
-			getPhoto: function() {
+			getPhoto() {
 				return this.get("taxonPhotoPath");
 			},
 
@@ -77,8 +83,12 @@ exports.definition = {
 			loadCurrent() {
 				this.fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );
 			},
+			loadTemporary() {
+				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId IS NULL)`} );
+				return this.at(0);
+			},
 			load( sampleId ) {
-				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId = ${sampleId}`} );
+				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId})`} );
 			}
 		});
 
