@@ -41,6 +41,10 @@ function readFile(path) {
     return absolutePath(path).read();
 }
 
+function getFullPhotoUrl() {
+    return $.photoUrls[0];
+}
+
 function generateThumbnail( fileOrBlob ) {
     debug("generateThumbnail");
     function savePhoto( blob, filename  ) {
@@ -246,7 +250,7 @@ function openGallery(e) {
 function photoCapturedHandler( result ) {
     function triggerPhotoTaken() {
         $.off("loaded", triggerPhotoTaken);
-        $.trigger("photoTaken", getImageUrl() );
+        $.trigger("photoTaken", getFullPhotoUrl() );
     }
     $.on("loaded", triggerPhotoTaken );
     setImage( result );
@@ -317,6 +321,8 @@ function clearError() {
 function getImageUrl() {
     return $.photo.image;
 }
+
+
 
 exports.getImageUrl = getImageUrl;
 exports.openGallery = openGallery; 
