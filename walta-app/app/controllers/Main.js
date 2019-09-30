@@ -49,7 +49,7 @@ function loadKey( keyUrl ) {
 
 function openController(ctl,args) {
   if ( !args ) args = {};
-  if ( !args.slide ) args.slide = "right";
+  if ( !args.slide ) args.slide = "none";
   if ( !args.key ) args.key = key;
   Ti.API.info(`opening controller="${ctl}" with args.slide= ${args.slide}`);
   controller = Alloy.createController(ctl,args);
@@ -119,23 +119,29 @@ function startApp() {
     updateDecisionWindow(_(data).extend({ slide: 'right' }));
   });
 
+  function extend( obj, atts ) {
+    if ( ! obj ) obj = {};
+    _(obj).extend(atts);
+    return obj;
+  }
+
   Topics.subscribe( Topics.VIDEO, (data) => openController("VideoPlayer", data ) );
   Topics.subscribe( Topics.BACK, (data) => goBack(data));
-  Topics.subscribe( Topics.FORWARD, (data)=> updateDecisionWindow(_(data).extend({ slide: 'right' })));
-  Topics.subscribe( Topics.HOME, () => openController("Menu",{ slide: "none" }) );
-  Topics.subscribe( Topics.LOGIN, () => openController("LogIn", { slide: "none" }));
-  Topics.subscribe( Topics.LOGGEDIN, () => Topics.fireTopicEvent( Topics.HOME ) );
-  Topics.subscribe( Topics.BROWSE, () => openController("TaxonList") );
-  Topics.subscribe( Topics.SAMPLETRAY, () => openController("SampleTray") );
+  Topics.subscribe( Topics.FORWARD, (data)=> updateDecisionWindow(extend(data,{ slide: 'right' })));
+  Topics.subscribe( Topics.HOME, (data) => openController("Menu",data) );
+  Topics.subscribe( Topics.LOGIN, (data) => openController("LogIn", data));
+  Topics.subscribe( Topics.LOGGEDIN, (data) => Topics.fireTopicEvent( Topics.HOME, data ) );
+  Topics.subscribe( Topics.BROWSE, (data) => openController("TaxonList",data) );
+  Topics.subscribe( Topics.SAMPLETRAY, (data) => openController("SampleTray",data) );
   Topics.subscribe( Topics.IDENTIFY, (data) => openController("SampleTray",data) );
   Topics.subscribe( Topics.SITEDETAILS, (data) => siteDetailsWindow(data) );
-  Topics.subscribe( Topics.HABITAT, () => openController("Habitat") );
-  Topics.subscribe( Topics.COMPLETE, () => openController("Summary") );
-  Topics.subscribe( Topics.HISTORY, () => openController("SampleHistory") );
+  Topics.subscribe( Topics.HABITAT, (data) => openController("Habitat",data) );
+  Topics.subscribe( Topics.COMPLETE, (data) => openController("Summary",data) );
+  Topics.subscribe( Topics.HISTORY, (data) => openController("SampleHistory",data) );
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
   Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
-  Topics.subscribe( Topics.HELP, () => openController("Help", { keyUrl: key.url }) );
-  Topics.subscribe( Topics.ABOUT, () => openController("About", { keyUrl: key.url }) );
+  Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: key.url }) ) );
+  Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend({ keyUrl: key.url }) ) );
 
   Topics.subscribe( Topics.JUMPTO, function( data ) {
     if ( ! _.isUndefined( data.id ) ) {

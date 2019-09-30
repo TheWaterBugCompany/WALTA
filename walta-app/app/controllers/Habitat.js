@@ -15,7 +15,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton" ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SITEDETAILS }  ); 
 $.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.SAMPLETRAY } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
