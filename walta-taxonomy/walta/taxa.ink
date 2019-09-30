@@ -946,7 +946,7 @@
 === attack_caddis_lowlander ===
 # taxonId: "166"
 # name: "Some Oecetis sp. (Leptoceridae) and Odontoceridae"
-# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Trichoptera"},{"taxonomicLevel":"family","name":"Leptoceridae"},{"taxonomicLevel":"genus","name":"Oecetis"},{"name":"Some Oecetis sp. (Leptoceridae) and Odontoceridae"}]
+# scientificName: [{"taxonomicLevel":"phylum","name":"Arthropoda"},{"taxonomicLevel":"subphylum","name":"Hexapoda"},{"taxonomicLevel":"class","name":"Insecta"},{"taxonomicLevel":"order","name":"Trichoptera"},{"taxonomicLevel":"family","name":"Leptoceridae"},{"taxonomicLevel":"genus","name":"Oecetis"}]
 # commonName: "Attack caddis - lowlander"
 # size: 25
 # signalScore: 8
