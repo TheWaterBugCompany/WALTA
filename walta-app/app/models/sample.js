@@ -229,19 +229,19 @@ exports.definition = {
 		_.extend(Collection.prototype, { 
 			createNewSample: function() {
 				Ti.API.debug("Creating new sample..");
-				var sample = Alloy.Models.instance("sample");
+				Alloy.Models.sample = Alloy.createModel("sample");
 				
 				// remove temporary taxon since a new sample
 				// is being created
 				var tmp = Alloy.createCollection("taxa");
 				var taxon = tmp.loadTemporary();
-					if ( taxon ) {
+				if ( taxon ) {
 					taxon.destroy();
 				} 
 
-				this.add(sample);
-				sample.save();
-				Ti.API.debug(`sampleId = ${sample.get("sampleId")}`);
+				this.add(Alloy.Models.sample);
+				Alloy.Models.sample.save();
+				Ti.API.debug(`sampleId = ${Alloy.Models.sample.get("sampleId")}`);
 			},
 
 			startNewSurveyIfComplete: function(type) {

@@ -20,11 +20,13 @@ updateSaveButton();
 function setImage( photo ) {
     if ( photo ) {
         realPhoto = true;
-        $.photoSelect.setImage( photo );  
-        if ( $.photoSelect.getFullPhotoUrl() ) {
+        function loadHandler() {
+            $.photoSelect.off("loaded", loadHandler );
             taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
-            taxon.save();
-        }
+            $.trigger("persist", taxon );
+        };
+        $.photoSelect.on("loaded", loadHandler );
+        $.photoSelect.setImage( photo );
     } else {
         realPhoto = false;
         $.photoSelect.setImage( taxon.getSilhouette() );
@@ -34,7 +36,7 @@ function setImage( photo ) {
 function setAbundance( binValue  ) {
     taxon.set("abundance", binValue);
     $.abundanceValue.value = taxon.getAbundance();
-    taxon.save();
+    $.trigger("persist", taxon );
 }
 
 function updateAbundance() {
@@ -55,15 +57,11 @@ function updateAbundance() {
 }
 
 function saveEvent() {
-    taxon.set("sampleId", sample.get("sampleId"));
-    taxon.save();
     $.trigger("save", taxon );
 }
 
 function doDelete() {
     $.trigger("delete", taxon );
-    Alloy.Collections.taxa.remove( taxon );
-    taxon.destroy();
 }
 
 function deleteEvent() {

@@ -11,7 +11,7 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 
 describe( 'SampleTray controller', function() {
-  this.timeout(0); // FIXME: 10000
+  this.timeout(10000);
   var SampleTray, SampleTrayWin;
 
   function setupSampleTray() {
@@ -108,7 +108,7 @@ describe( 'SampleTray controller', function() {
 
     beforeEach( function() {
       return Promise.resolve()
-        .then( function() {A
+        .then( function() {
           Alloy.Collections.taxa = Alloy.createCollection("taxa");
           setupSampleTray();
         })
@@ -635,16 +635,16 @@ describe( 'SampleTray controller', function() {
     });
   });
 
-  describe.only('editing taxon and model persistence',function() {
-    setManualTests(true);
-    this.timeout(0); 
+  context('editing taxon and model persistence',function() { 
     before(async function() {
-      Alloy.Collections.instance("sample").createNewSample();
+      var sampleColl = Alloy.Collections.instance("sample");
+      sampleColl.createNewSample();
       Alloy.Collections.instance("taxa").load( Alloy.Models.sample.get("sampleId") );
       SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: 1 });
       SampleTrayWin = SampleTray.getView();
       await openSampleTray();
     });
+    after(cleanupSampleTray);
     it('should display an empty tray', function() {
       var tiles = SampleTray.tray.getChildren();
       var sampleTaxa = getTaxaIcons( tiles[0] );
@@ -671,6 +671,22 @@ describe( 'SampleTray controller', function() {
       // expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.equal("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
 
     });
-    it('should persist a saved taxon to the new sample');
+    it('should persist a saved taxon to the new sample', function(done) {
+      // SampleTray should still be open after last test (I know this is dependency - consider this integration testing)
+      SampleTray.editTaxon.saveButton.fireEvent("click");
+      // It should be possible to reload sample and see added taxon - we wait 50 ms then try to read it
+      checkTestResult( done, function() {
+        var taxon = Alloy.Collections.taxa.at(0);
+        var sampleId = Alloy.Models.sample.get("sampleId");
+        Alloy.Models.sample.loadById(sampleId);
+        Alloy.Collections.taxa.load(sampleId);
+        
+        expect( taxon ).to.be.ok;
+        expect( taxon.get("sampleId") ).to.equal(sampleId);
+        expect( taxon.get("abundance") ).to.equal("> 20");
+        expect( taxon.get("taxonId") ).to.equal(1);
+        expect( taxon.get("taxonPhotoPath") ).to.include(`taxon_${sampleId}`);
+      }, 50 );
+    });
   });
 });
