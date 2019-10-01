@@ -273,6 +273,7 @@ function takePhoto(e) {
             // Create "blinds" to block the display with a black window so that artifacts in any 
             // orientation changes whilst the camera app is opened are not visible to user.
             let blinds = Ti.UI.createWindow( { backgroundColor: "black", exitOnClose: false } );
+           
             function openCamera() {
                 Ti.Media.showCamera({
                     autohide: true,
@@ -280,8 +281,13 @@ function takePhoto(e) {
                     autorotate: false,
                     cancel: () => blinds.close(),
                     success: (result) => {
-                        photoCapturedHandler(result);
-                        blinds.close();
+                        // ensure the blind window is closed before starting
+                        // the heavy operation of processing the photo
+                        blinds.addEventListener( "close", function handler() {
+                            blinds.removeEventListener("close", handler);
+                            setTimeout( () => photoCapturedHandler(result), 50 );
+                        });
+                        blinds.close(); 
                     },
                     error: function (error) {
                         blinds.close();

@@ -17,13 +17,18 @@ setAbundance( taxon.get("abundance") );
 setImage( taxon.getPhoto() );
 updateSaveButton();
 
+
+function persistPhoto() {
+    taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
+    $.trigger("persist", taxon );
+}
+
 function setImage( photo ) {
     if ( photo ) {
         realPhoto = true;
         function loadHandler() {
             $.photoSelect.off("loaded", loadHandler );
-            taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
-            $.trigger("persist", taxon );
+            persistPhoto();
         };
         $.photoSelect.on("loaded", loadHandler );
         $.photoSelect.setImage( photo );
@@ -53,7 +58,10 @@ function updateAbundance() {
     } else {
         binValue = "> 20";
     }
-    $.abundanceLabel.text = binValue; 
+    if ( $.abundanceLabel.text !== binValue ) {
+        $.abundanceLabel.text = binValue; 
+        setAbundance(binValue);
+    }
 }
 
 function saveEvent() {
@@ -94,7 +102,11 @@ function updateSaveButton() {
 }
 
 $.photoSelect.on("loaded", updateSaveButton);
-$.photoSelect.on("photoTaken", () => { realPhoto = true; updateSaveButton(); } );
+$.photoSelect.on("photoTaken", () => { 
+    realPhoto = true;
+    persistPhoto(); 
+    updateSaveButton(); 
+} );
 
 exports.cleanUp = cleanUp;
 exports.setImage = setImage;
