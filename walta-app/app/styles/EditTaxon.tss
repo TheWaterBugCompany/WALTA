@@ -62,7 +62,7 @@
 
 "#closeButton": {
   top: 0,
-  height: Ti.UI.FILL,
+  height: Ti.UI.SIZE,
   width: "10%",
   right: 0
 }

@@ -64,8 +64,7 @@ function generateThumbnail( fileOrBlob ) {
             if ( !result ) {
                 Ti.API.error(`Error deleting file: writable: ${photoPath.writable}`);
                 throw new Error(`Unable to delete file ${photoPath}`);
-            }
-                
+            }         
         }
     
         var result = photoPath.write(blob);
@@ -77,8 +76,6 @@ function generateThumbnail( fileOrBlob ) {
 
         return photoPath.nativePath;
     }
-    
-    
 
     debug("generating thumbnail...");
     var fullPhoto = null;
