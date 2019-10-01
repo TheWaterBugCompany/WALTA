@@ -10,7 +10,7 @@ function runTests() {
     mocha.timeout(0);
   }
   return new Promise( function(resolve, reject) {
-    [ "VideoView",
+    [ //"VideoView",
       "AnchorBar", 
       "TaxonList",
       "Habitat",
