@@ -10,7 +10,8 @@ function runTests() {
     mocha.timeout(0);
   }
   return new Promise( function(resolve, reject) {
-    [ "AnchorBar", 
+    [ "VideoView",
+      "AnchorBar", 
       "TaxonList",
       "Habitat",
       "KeyNode",
@@ -27,7 +28,6 @@ function runTests() {
       "Summary",
       "TaxonDetails",
       "SiteDetails",
-      "VideoView",
       "ViewUtils",
       "LocationEntry",
       "LeafletMap",
