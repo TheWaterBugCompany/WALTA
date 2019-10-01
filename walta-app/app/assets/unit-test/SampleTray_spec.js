@@ -607,6 +607,8 @@ describe( 'SampleTray controller', function() {
 
     
 
+    
+
     it('should update when a taxon abundance is changed', function() {
       return Promise.resolve()
         .then( function() {
@@ -635,6 +637,8 @@ describe( 'SampleTray controller', function() {
     });
   });
 
+  // FIXME: The following is an integration/functional style test where each test relies on succesful completion of the 
+  // previous ones. Extract into separate file to make this clearer??
   context('editing taxon and model persistence',function() { 
     before(async function() {
       var sampleColl = Alloy.Collections.instance("sample");
@@ -682,6 +686,15 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
       // expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.equal("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
 
+    });
+    it('should open the gallery with the correct temporary image url', function(done) { 
+      Topics.subscribe( Topics.GALLERY, function handler(data) {
+        Topics.unsubscribe( Topics.GALLERY, handler);
+        checkTestResult( done, function() {
+          expect(data.photos[0]).to.include("taxon_temporary"); // make sure the correct photo url is sent
+        });
+      });
+      setTimeout( () => SampleTray.editTaxon.photoSelect.magnify.fireEvent("click"), 500 );
     });
     it('should persist a saved taxon to the new sample', function(done) {
       // SampleTray should still be open after last test (I know this is dependency - consider this integration testing)
