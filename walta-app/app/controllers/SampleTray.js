@@ -469,17 +469,27 @@ function editTaxon( taxon_id ) {
   $.getView().add( $.editTaxon.getView() );
   
   $.editTaxon.on("close", function() {
+    // closes but leaves temporary state untouched
     closeEditScreen();
   });
 
-  $.editTaxon.on("delete", function() {
+  $.editTaxon.on("delete", function(taxon) {
+    Alloy.Collections.taxa.remove( taxon );
+    taxon.destroy();
     closeEditScreen();
   });
 
-  $.editTaxon.on("save", function() {
+  // called to persist temporarily
+  $.editTaxon.on("persist", function(taxon) {
+    taxon.save();
+  });
+
+  $.editTaxon.on("save", function(taxon) {
+    taxon.set("sampleId", sample.get("sampleId"));
+    taxon.save();
+    Alloy.Collections.taxa.add( taxon );
     closeEditScreen();
     scrollToRightEdge();
- 
   });
 }
 

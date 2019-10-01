@@ -17,6 +17,12 @@ exports.definition = {
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
+			initialize() {
+				this.on("change:sampleId", function() {
+					// move from temporary to permanent storage
+					this.setPhoto( this.get("taxonPhotoPath") );
+				});
+			},
 			getTaxonId() {
 				return this.get("taxonId");
 			},
@@ -29,13 +35,16 @@ exports.definition = {
 
 			setPhoto(file) {
 				var newPhotoName;
+				
 				if ( ! this.get("sampleId") ) {
 					newPhotoName = `taxon_temporary.jpg`;
+					removeFilesBeginningWith(`taxon_temporary`);
 				} else {
-				 	newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
+					newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
+					removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
 				}
+				
 				Ti.API.info(`updating photo from ${file} to ${newPhotoName}`);
-				removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );

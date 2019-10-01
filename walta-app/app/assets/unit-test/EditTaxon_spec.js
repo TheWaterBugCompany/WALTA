@@ -104,13 +104,16 @@ describe("EditTaxon controller", function() {
     });
 
     it('should call the save event when save is selected', function(done) {  
-        var doneOnce = _.once(done);
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, () => {
-            ctl.photoSelect.on("loaded", () => {
-                ctl.on("save", (txn) => checkTestResult(doneOnce, () => {
-                    expect( txn.getPhoto() ).to.include("preview");
-                } ) );
+            ctl.photoSelect.on("loaded",function handler() {
+                ctl.photoSelect.off("loaded",handler);
+                ctl.on("save", function handler(txn) { 
+                    ctl.off("save", handler);
+                    checkTestResult(done, () => {
+                        expect( txn.getPhoto() ).to.include("preview");
+                    } );
+                });
                 ctl.saveButton.fireEvent("click");
             });
             ctl.setImage("/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
