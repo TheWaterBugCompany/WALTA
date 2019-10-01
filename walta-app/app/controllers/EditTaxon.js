@@ -20,6 +20,10 @@ updateSaveButton();
 
 function persistPhoto() {
     taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
+    // necessary because setPhoto as a side effect changes the photo url.
+    // CODE SMELL: this breaks encapsulation, long term fix would be to rewrite to
+    // use events on taxon model to propagate changes.
+    $.photoSelect.photoUrls = [taxon.getPhoto()]; 
     $.trigger("persist", taxon );
 }
 
