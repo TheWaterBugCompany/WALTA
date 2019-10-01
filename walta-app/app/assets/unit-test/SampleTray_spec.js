@@ -657,8 +657,20 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
 
-      SampleTray.editTaxon.setAbundance("> 20");
-      SampleTray.editTaxon.setImage("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      // simulate user interaction with widget
+      await new Promise( (resolve)=>{
+        SampleTray.editTaxon.photoSelect.on("photoTaken", function handler() {
+          SampleTray.editTaxon.photoSelect.off("photoTaken", handler);
+          resolve();
+        } );
+        SampleTray.editTaxon.abundanceValue.value = 21;
+        SampleTray.editTaxon.abundanceValue.fireEvent("change");
+        SampleTray.editTaxon.photoSelect.on("loaded", function handler() {
+          SampleTray.editTaxon.photoSelect.off("loaded", handler);
+          SampleTray.editTaxon.photoSelect.trigger("photoTaken", SampleTray.editTaxon.photoSelect.getFullPhotoUrl() );
+        });
+        SampleTray.editTaxon.photoSelect.setImage( "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      });
       
       // simulated close
       SampleTrayWin.close()
