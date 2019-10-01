@@ -60,6 +60,11 @@
   height: "98%"
 }
 
+"#closeButton": {
+  height: Ti.UI.SIZE,
+  width: "8%",
+  right: 0
+}
 "#window[if=Alloy.Globals.isSquare]": { 
   width: "70%",
   height: "98%"
