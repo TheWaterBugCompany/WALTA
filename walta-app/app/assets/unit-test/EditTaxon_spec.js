@@ -26,8 +26,6 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe("EditTaxon controller", function() {
     var ctl,win;
-    setManualTests(true);
-    this.timeout(0);
     function makeEditTaxon( taxon ) {
         let txn = createMockTaxon( taxon );
         ctl = Alloy.createController("EditTaxon", { 
@@ -47,7 +45,7 @@ describe("EditTaxon controller", function() {
         closeWindow( win, done ); 
     });
 
-	it.only('should display the taxon edit view', function(done) {  
+	it('should display the taxon edit view', function(done) {  
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, function() {
             checkTestResult( done,
