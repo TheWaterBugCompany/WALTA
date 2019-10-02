@@ -599,15 +599,33 @@ describe( 'SampleTray controller', function() {
         });
     });
 
-    it('should fire the IDENTIFY event if a taxon is clicked');
+    it('should fire the IDENTIFY event if a taxon is clicked', function() {
+      return Promise.resolve()
+        .then( function() {
+          Alloy.Collections.taxa = Alloy.createCollection("taxa", [
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" })
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          return new Promise( (resolve) => {  
+            Topics.subscribe( Topics.IDENTIFY, function handler(data) {
+              Topics.unsubscribe(Topics.IDENTIFY,handler);
+              checkTestResult(resolve, function() {
+                expect( data.taxonId).to.equal(1);
+              });
+
+            });
+            var tileIndex = SampleTray.getTileIndex();
+            tileIndex.firstTwoTiles.icons[0].view.fireEvent("click");
+          });
+        });
+    });
 
     it('should scroll to the far right upon opening');
 
     it('should scroll to the far right after adding a new taxon');
-
-    
-
-    
 
     it('should update when a taxon abundance is changed', function() {
       return Promise.resolve()
@@ -635,21 +653,110 @@ describe( 'SampleTray controller', function() {
           assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
         });
     });
+
+    it('should still raise click handler when taxon is added', function() {
+      return Promise.resolve()
+        .then( function() {
+          Alloy.Collections.taxa = Alloy.createCollection("taxa", [
+            Alloy.createModel( "taxa", { taxonId: "1", abundance: "1-2" }),
+            Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" })
+          ]);
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.tray.getChildren();
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( function(resolve) {
+              updateSampleTrayOnce(resolve);
+              Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "4", abundance: "3-5" } ));
+          });
+        })
+        .then( function() {
+          return new Promise( (resolve) => {  Topics.subscribe( Topics.IDENTIFY, function handler(data) {
+              Topics.unsubscribe(Topics.IDENTIFY,handler);
+              checkTestResult(resolve, function() {
+                expect( data.taxonId).to.equal(4);
+              });
+
+            });
+            var tileIndex = SampleTray.getTileIndex();
+            tileIndex.tileIndex[0].icons[0].view.fireEvent("click");
+          });
+        });
+    });
   });
 
-  // FIXME: The following is an integration/functional style test where each test relies on succesful completion of the 
-  // previous ones. Extract into separate file to make this clearer??
   context('editing taxon and model persistence',function() { 
-    before(async function() {
-      var sampleColl = Alloy.Collections.instance("sample");
-      sampleColl.createNewSample();
-      Alloy.Collections.instance("taxa").load( Alloy.Models.sample.get("sampleId") );
+
+    function simulateUserEdit(value, photoPath ) {
+      return new Promise( (resolve) => {
+        SampleTray.editTaxon.photoSelect.on("photoTaken", function handler() {
+          SampleTray.editTaxon.photoSelect.off("photoTaken", handler);
+          resolve();
+        } );
+        SampleTray.editTaxon.abundanceValue.value = value;
+        SampleTray.editTaxon.abundanceValue.fireEvent("change");
+        SampleTray.editTaxon.photoSelect.on("loaded", function handler() {
+          SampleTray.editTaxon.photoSelect.off("loaded", handler);
+          SampleTray.editTaxon.photoSelect.trigger("photoTaken", SampleTray.editTaxon.photoSelect.getFullPhotoUrl() );
+        });
+        SampleTray.editTaxon.photoSelect.setImage(photoPath);
+      });
+    }
+
+    async function openGallery() {
+      return new Promise( (resolve) => {
+        Topics.subscribe( Topics.GALLERY, function handler(data) {
+          Topics.unsubscribe( Topics.GALLERY, handler);
+          resolve(data.photos[0]);
+            
+        });
+        setTimeout( () => SampleTray.editTaxon.photoSelect.magnify.fireEvent("click"), 500 );
+      });
+    }
+
+    async function closeSampleTray() {
+      SampleTrayWin.close();
+    }
+
+    async function simulateEditTaxonEvent() {
+      return new Promise( (resolve) => {
+        var tileIndex = SampleTray.getTileIndex();
+        Topics.subscribe( Topics.IDENTIFY, function handler(data) {
+          Topics.unsubscribe(Topics.IDENTIFY,handler);
+          checkTestResult(resolve, function() {
+            resolve(data);
+          });
+        });
+        tileIndex.firstTwoTiles.icons[0].view.fireEvent("click");
+      });
+    }
+
+    async function openSampleTrayToEdit( taxonId ) {
       SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: 1 });
       SampleTrayWin = SampleTray.getView();
       await openSampleTray();
+    }
+
+    async function simulateSaveTaxon() {
+      return new Promise( (resolve) => {
+        SampleTray.on("taxonSaved", resolve );
+        SampleTray.editTaxon.saveButton.fireEvent("click");
+      });
+    }
+
+    beforeEach(async function() {
+      var sampleColl = Alloy.Collections.instance("sample");
+      sampleColl.createNewSample();
+      Alloy.Collections.instance("taxa").load( Alloy.Models.sample.get("sampleId") );
     });
-    after(cleanupSampleTray);
-    it('should display an empty tray', function() {
+    
+    afterEach(cleanupSampleTray);
+
+    it('should display an empty tray', async function() {
+      await openSampleTrayToEdit(1);
       var tiles = SampleTray.tray.getChildren();
       var sampleTaxa = getTaxaIcons( tiles[0] );
       expect( sampleTaxa ).to.have.lengthOf(2);
@@ -657,61 +764,56 @@ describe( 'SampleTray controller', function() {
     });
     
     it('should persist temporary taxon if closed before saving', async function() {
+      await openSampleTrayToEdit(1);
       expect( SampleTray.editTaxon ).to.be.ok;
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
-
-      // simulate user interaction with widget
-      await new Promise( (resolve)=>{
-        SampleTray.editTaxon.photoSelect.on("photoTaken", function handler() {
-          SampleTray.editTaxon.photoSelect.off("photoTaken", handler);
-          resolve();
-        } );
-        SampleTray.editTaxon.abundanceValue.value = 21;
-        SampleTray.editTaxon.abundanceValue.fireEvent("change");
-        SampleTray.editTaxon.photoSelect.on("loaded", function handler() {
-          SampleTray.editTaxon.photoSelect.off("loaded", handler);
-          SampleTray.editTaxon.photoSelect.trigger("photoTaken", SampleTray.editTaxon.photoSelect.getFullPhotoUrl() );
-        });
-        SampleTray.editTaxon.photoSelect.setImage( "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
-      });
       
-      // simulated close
-      SampleTrayWin.close()
-      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: 1 });
-      SampleTrayWin = SampleTray.getView();
-      // reopening should restore edit taxon attributes
-      await openSampleTray();
+      await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      await closeSampleTray();
+      await openSampleTrayToEdit(1);
+
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("> 20");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
-      // expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.equal("/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.include("preview_thumbnail");
 
     });
-    it('should open the gallery with the correct temporary image url', function(done) { 
-      Topics.subscribe( Topics.GALLERY, function handler(data) {
-        Topics.unsubscribe( Topics.GALLERY, handler);
-        checkTestResult( done, function() {
-          expect(data.photos[0]).to.include("taxon_temporary"); // make sure the correct photo url is sent
-        });
-      });
-      setTimeout( () => SampleTray.editTaxon.photoSelect.magnify.fireEvent("click"), 500 );
+    it('should open the gallery with the correct temporary image url', async function() { 
+      await openSampleTrayToEdit(1);
+      await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      var photoUrl = await openGallery();
+      expect(photoUrl).to.include("taxon_temporary"); // make sure the correct photo url is sent
     });
-    it('should persist a saved taxon to the new sample', function(done) {
-      // SampleTray should still be open after last test (I know this is dependency - consider this integration testing)
-      SampleTray.editTaxon.saveButton.fireEvent("click");
-      // It should be possible to reload sample and see added taxon - we wait 50 ms then try to read it
-      checkTestResult( done, function() {
-        var taxon = Alloy.Collections.taxa.at(0);
-        var sampleId = Alloy.Models.sample.get("sampleId");
-        Alloy.Models.sample.loadById(sampleId);
-        Alloy.Collections.taxa.load(sampleId);
-        
-        expect( taxon ).to.be.ok;
-        expect( taxon.get("sampleId") ).to.equal(sampleId);
-        expect( taxon.get("abundance") ).to.equal("> 20");
-        expect( taxon.get("taxonId") ).to.equal(1);
-        expect( taxon.get("taxonPhotoPath") ).to.include(`taxon_${sampleId}`);
-      }, 50 );
+
+    it('should persist a saved taxon to the new sample', async function() {
+      await openSampleTrayToEdit(1);
+      await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      await simulateSaveTaxon();
+
+      var sampleId = Alloy.Models.sample.get("sampleId");
+      Alloy.Models.sample.loadById(sampleId);
+      Alloy.Collections.taxa.reset();
+      Alloy.Collections.taxa.load(sampleId);
+      var taxon = Alloy.Collections.taxa.at(0);
+
+      expect( taxon ).to.be.ok;
+      expect( taxon.get("sampleId") ).to.equal(sampleId);
+      expect( taxon.get("abundance") ).to.equal("> 20");
+      expect( taxon.get("taxonId") ).to.equal(1);
+      expect( taxon.get("taxonPhotoPath") ).to.include(`taxon_${sampleId}`);
+
+    });
+    it('should load the persisted data when editing taxon', async function() {
+      await openSampleTrayToEdit(1);
+      await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      await simulateSaveTaxon();
+      var data = await simulateEditTaxonEvent();
+      expect( data.taxonId ).to.equal(1);
+      await closeSampleTray();
+      await openSampleTrayToEdit(1);
+      expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("> 20");
+      expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
+      expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.include("preview_thumbnail");
     });
   });
 });

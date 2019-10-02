@@ -88,6 +88,7 @@ describe('PhotoSelect controller', function() {
 	});
 
 	it('should remove take photo message after photo is taken', function(done) {
+		this.timeout(10000);
 		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/beetlelarvae.gif' );
 		function testPhotoCapture() {
 			pv.off("loaded", testPhotoCapture );

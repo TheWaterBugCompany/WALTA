@@ -61,7 +61,8 @@ module.exports = function(grunt) {
           },
 
           uninstall_android: {
-            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`
+            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
+            exitCode: [ 0, 255 ]
           },
 
           uninstall_ios: {

@@ -94,7 +94,6 @@ exports.definition = {
 			},
 			loadTemporary() {
 				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId IS NULL)`} );
-				return this.at(0);
 			},
 			load( sampleId ) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId})`} );

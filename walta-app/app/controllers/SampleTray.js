@@ -28,7 +28,22 @@ acb.addTool( $.backButton.getView() );
 acb.addTool( $.nextButton.getView() );
 
 // Keeps track of the tile views we cache
-var tileIndex = [];
+var tileIndex = []; // TODO: extract a class to make this datastrcuture easier to comphrend
+/*
+  tileIndex  = [
+    {
+      icons: [
+        {
+          view: ...
+          *controller: ...
+          *handler: ...
+          * means only when a taxon is present
+        }
+      ]
+    }
+  ]
+*/
+
 var firstTwoTiles = null;
 
 function getScrollOffset() {
@@ -90,34 +105,52 @@ function mapTileNumToCollection( n ) {
 
 /* addTrayIcon and updateTrayIcon return a controller if and only if
    one was created */
+
+// CODE SMELL: Why don't we bind to the events on the collection to trigger these
+// updates. This could be done even in the icon controller - hopefully avoiding all
+// adding/removing logic, adding/creating event handlers etc.
+//
+// Each tray cell should be responsible for maintaining its event handlers etc.
+// so updates don't require this dance.
+
+function addTaxonTrayIcon( taxon, thumbnail ) {
+  
+  var icon = createTaxaIcon( taxon );
+  var taxonClickHandler = function(e) {
+    icon.fireEditEvent();
+    e.cancelBubble = true;
+  };
+  thumbnail.addEventListener("click", taxonClickHandler );
+  thumbnail.add( icon.getView() );
+  return {
+    view: thumbnail,
+    controller: icon,
+    handler: taxonClickHandler
+  };
+}
+
+
 function addTrayIcon( container, index ) {
   var thumbnail = createIconContainer();
   container.add( thumbnail );
   if ( index < Alloy.Collections["taxa"].length) {
     var taxon = Alloy.Collections["taxa"].at(index);
     if ( typeof( taxon ) !== "undefined" ) {
-      var icon = createTaxaIcon( taxon );
-      var taxonClickHandler = function(e) {
-        Ti.API.info(`firing edit event` );
-        icon.fireEditEvent();
-        e.cancelBubble = true;
-      };
-      thumbnail.addEventListener("click", taxonClickHandler );
-      thumbnail.add( icon.getView() );
-      return {
-        view: thumbnail,
-        controller: icon,
-        handler: taxonClickHandler
-      };
+      return addTaxonTrayIcon( taxon, thumbnail );
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
     thumbnail.add( createAddIcon() );
+    return {
+      view: thumbnail
+    }
   } else {
     thumbnail.addEventListener( "click", startIdentification );
+    return {
+      view: thumbnail,
+      handler: startIdentification
+    }
   }
-  return {
-    view: thumbnail
-  }
+  
 }
 
 function updateTrayIcon( icon, index ) {
@@ -127,10 +160,13 @@ function updateTrayIcon( icon, index ) {
       if ( typeof( icon.controller ) !== "undefined" ) {
         icon.controller.update(taxon);
       } else {
-        var controller = createTaxaIcon( taxon );
-        icon.controller = controller;
         icon.view.removeAllChildren();
-        icon.view.add( controller.getView() );
+        if ( icon.handler )
+          icon.view.removeEventListener( "click", icon.handler );
+
+        var newIcon = addTaxonTrayIcon( taxon, icon.view );
+        icon.controller = newIcon.controller;
+        icon.handler = newIcon.handler;
       }
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
@@ -454,17 +490,24 @@ function closeEditScreen() {
 }
 
 function editTaxon( taxon_id ) {
-  var tempColl = Alloy.createCollection("taxa");
-  var taxon = tempColl.loadTemporary();
-  var sample = Alloy.Models.sample;
-  if ( !taxon ) {
-    // creates a taxa but leaves it unlinked from sample until save event recieved
-    Ti.API.info("creating new taxon as temporary taxon")
-    taxon = Alloy.createModel( 'taxa', { taxonId: taxon_id, abundance: "1-2" } );
-    taxon.save();
+  var taxon = Alloy.Collections["taxa"].find( (t) => t.get("taxonId") === taxon_id);
+  if (!taxon ) {
+    var taxons = Alloy.createCollection("taxa");
+    taxons.loadTemporary();
+    taxon = taxons.first();
+    if ( !taxon ) {
+      // creates a taxa but leaves it unlinked from sample until save event recieved
+      Ti.API.info("creating new taxon as temporary taxon")
+      taxon = Alloy.createModel( 'taxa', { taxonId: taxon_id, abundance: "1-2" } );
+      taxon.save();
+    } else {
+      Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
+    }
   } else {
-    Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
+    Ti.API.info(`existing persisted taxon ${JSON.stringify(taxon)}`);
   }
+  var sample = Alloy.Models.sample;
+  
   $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
   $.getView().add( $.editTaxon.getView() );
   
@@ -486,10 +529,13 @@ function editTaxon( taxon_id ) {
 
   $.editTaxon.on("save", function(taxon) {
     taxon.set("sampleId", sample.get("sampleId"));
-    taxon.save();
     Alloy.Collections.taxa.add( taxon );
+    taxon.save();
+    
     closeEditScreen();
+    $.trigger("taxonSaved"); 
     scrollToRightEdge();
+
   });
 }
 
@@ -504,6 +550,13 @@ if ( $.args.taxonId ) {
     $.TopLevelWindow.removeEventListener("close", closeWindow );
   })
 }
+
+// needed for testing
+function getTileIndex() {
+  return { tileIndex: tileIndex, firstTwoTiles: firstTwoTiles };
+}
+
+exports.getTileIndex = getTileIndex;
 exports.editTaxon = editTaxon;
 exports.getTrayWidth = getTrayWidth;
 exports.getViewWidth = getViewWidth;

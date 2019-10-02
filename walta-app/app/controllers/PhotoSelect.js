@@ -98,13 +98,17 @@ function generateThumbnail( fileOrBlob ) {
     var aspectRatio = (fullPhoto.height/fullPhoto.width);
 
     debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
-    if ( fullPhoto.length > 4*1024*1024 || fullPhoto.width > 1024 || fullPhoto.height > 1024 ) {
-        Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb resizing and compressing photo...`);
-        fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
+    // we downscale for high resolution, otherwise the crop will fail due to out of memory errors.
+    if ( fullPhoto.length > 4*1024*1024 || fullPhoto.width > 1600 || fullPhoto.height > 1600 ) {
+        Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}, resizing and compressing photo...`);
+        //if ( aspectRatio < )
+        fullPhoto = fullPhoto.imageAsResized(1600, 1600*aspectRatio);
+        debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
         if ( ! fullPhoto ) {
             Ti.API.error(`Error resizing photo: ${fileOrBlob}`);
             throw new Error("Unable to resize photo");
         }
+        Ti.API.info(`compressed size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}`);
     }
 
     if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
@@ -128,7 +132,7 @@ function generateThumbnail( fileOrBlob ) {
 
     // if the photo was scaled to the size of the view port
     // calculate the height in view coords that would be needed
-    // to prevserver aspect ratio.
+    // to preserve aspect ratio.
     
 
     var viewRatio = pxWidth/pxHeight;
@@ -240,7 +244,7 @@ function requestCameraPermissions( success, failure ) {
             }
         });
     } else {
-        success();
+       success();
     }
 }
 
