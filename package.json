@@ -12,6 +12,7 @@
     "carthage": "^1.0.6",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "chai-date-string": "^0.1.0",
     "circular-json": "^0.5.1",
     "cucumber": "^5.1.0",
     "deviceconsole": "^1.0.1",

@@ -35,6 +35,9 @@ var topics = {
 	// Backwards on the decision tree
 	BACK: 'back',
 
+	// Go up in the decision tree
+	UP: 'up',
+
 	// Forwards on the decision tree passing choice as parameter
 	FORWARD: 'forward', // the choice number is passed as parameter
 

@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
-var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require('unit-test/util/TestUtils');
+var { closeWindow, controllerOpenTest, actionFiresTopicTest, setManualTests } = require('unit-test/util/TestUtils');
 
 var Question = require('logic/Question');
 var Key = require('logic/Key');
@@ -59,6 +59,10 @@ describe('KeySearch controller', function() {
 
 	it('should fire the FORWARD topic', function(done) {
 		actionFiresTopicTest( knv.questions[1].Question, 'click', Topics.FORWARD, () => done() );
+	});
+
+	it.only('should fire the UP topic', function(done) {
+		actionFiresTopicTest( knv.upButton, 'click', Topics.UP, () => done() );
 	});
 
 });

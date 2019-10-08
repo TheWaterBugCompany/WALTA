@@ -1,5 +1,6 @@
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
+var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 var Topics = require("ui/Topics");
 
 if ( $.args.left ) $.photoSelectInner.left = $.args.left;
@@ -11,7 +12,6 @@ $.photoSelectOptionalLabel.visible = false;
 setImage( $.args.image );
 clearError();
 
-
 var readOnlyMode = $.args.readonly ;
 var cropPhoto = $.args.cropPhoto;
 if ( readOnlyMode ) {
@@ -21,24 +21,6 @@ if ( readOnlyMode ) {
 
 function debug(mess) { 
     Ti.API.debug(mess);
-}
-
-function absolutePath(path) {
-    if ( path.startsWith("file:///") ) {
-        debug(`${path} starts with file:///`);
-        return Ti.Filesystem.getFile(path);
-    } else if ( path.startsWith("/") ) {
-        debug(`${path} starts with /`)
-        return Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,path);
-    } else {
-        debug(`${path} doesn't start with /`)
-        return Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, path);
-    }
-}
-
-function readFile(path) {
-    debug(`reading ${path}`)
-    return absolutePath(path).read();
 }
 
 function getFullPhotoUrl() {
@@ -54,33 +36,10 @@ function getThumbnailImageUrl() {
 
 
 function generateThumbnail( fileOrBlob ) {
-    debug("generateThumbnail");
-    function savePhoto( blob, filename  ) {
-        var photoPath = absolutePath(filename);
-        debug(`File path ${photoPath.nativePath}`);
-        if ( photoPath.exists() ) {
-            debug("file already exists deletin");
-            var result = photoPath.deleteFile();
-            if ( !result ) {
-                Ti.API.error(`Error deleting file: writable: ${photoPath.writable}`);
-                throw new Error(`Unable to delete file ${photoPath}`);
-            }         
-        }
-    
-        var result = photoPath.write(blob);
-        blob = null; 
-        if ( !result ) {
-            Ti.API.error(`Error writing file: exists: ${photoPath.exists()}`);
-            throw new Error(`Unable to write file ${photoPath}`);
-        }
-
-        return photoPath.nativePath;
-    }
-
     debug("generating thumbnail...");
     var fullPhoto = null;
     if ( typeof fileOrBlob === "string") {
-        fullPhoto = readFile( fileOrBlob );
+        fullPhoto = loadPhoto( fileOrBlob );
     } else {
         fullPhoto = fileOrBlob;
     }
@@ -95,36 +54,15 @@ function generateThumbnail( fileOrBlob ) {
     debug("removing old preview files...");
     removeFilesBeginningWith("preview_");
 
-    var aspectRatio = (fullPhoto.height/fullPhoto.width);
-
-    debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
     // we downscale for high resolution, otherwise the crop will fail due to out of memory errors.
-    if ( fullPhoto.length > 4*1024*1024 || fullPhoto.width > 1600 || fullPhoto.height > 1600 ) {
-        Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}, resizing and compressing photo...`);
-        //if ( aspectRatio < )
-        fullPhoto = fullPhoto.imageAsResized(1600, 1600*aspectRatio);
-        debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
-        if ( ! fullPhoto ) {
-            Ti.API.error(`Error resizing photo: ${fileOrBlob}`);
-            throw new Error("Unable to resize photo");
-        }
-        Ti.API.info(`compressed size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}`);
-    }
-
-    if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
-        Ti.API.info(`got a PNG: converting photo into JPEG...`);
-        fullPhoto = fullPhoto.imageAsCompressed(0.9);
-        if ( ! fullPhoto ) {
-            Ti.API.error(`Error converting photo: ${fileOrBlob}`);
-            throw new Error("Unable to convert photo into JPEG");
-        }
-    }
+    optimisePhoto(fullPhoto);
     
     debug("saving full size photo..");
 
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().valueOf()}.jpg`);
     fullPhoto = null; // release memory - fingers crossed
-    fullPhoto = readFile( fullPhotoPath );
+
+    fullPhoto = loadPhoto( fullPhotoPath );
     
     debug(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
     var pxWidth = $.photoSelectInner.size.width;
@@ -332,9 +270,6 @@ function clearError() {
     $.resetClass( $.photoSelectBoundary, "photoNoError");
     $.photoSelectLabel.visible = false;
 }
-
-
-
 
 exports.getThumbnailImageUrl = getThumbnailImageUrl;
 exports.getFullPhotoUrl = getFullPhotoUrl;

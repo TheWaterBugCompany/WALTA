@@ -11,7 +11,6 @@ acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSE
 
 function clickItem(e) {
     var item = $.content.sections[e.sectionIndex].getItemAt(e.itemIndex);
-    console.info(`item = ${JSON.stringify(item)}`);
     Topics.fireTopicEvent( Topics.JUMPTO, { id: item.properties.itemId, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
 }
 
@@ -29,9 +28,14 @@ function addTaxon(id, name, level) {
 }
 
 _.each( taxonList, function( txn ) {
-    addTaxon( txn.id, txn.name, txn.taxonomicLevel );
-    if ( txn.commonName != '') {
-        addTaxon( txn.id, txn.commonName, txn.taxonomicLevel );
+    let id = txn.id;
+    // for order level nodes go to the parent key node
+    if ( txn.taxonomicLevel === "order") {
+        id = txn.parentLink.id;
+    }
+    addTaxon( id, txn.name, txn.taxonomicLevel );
+    if ( txn.commonName !== '' && txn.commonName !== txn.name ) {
+        addTaxon( id, txn.commonName, txn.taxonomicLevel );
     }
 });
     

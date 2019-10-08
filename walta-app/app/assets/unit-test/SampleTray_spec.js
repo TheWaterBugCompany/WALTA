@@ -726,9 +726,7 @@ describe( 'SampleTray controller', function() {
         var tileIndex = SampleTray.getTileIndex();
         Topics.subscribe( Topics.IDENTIFY, function handler(data) {
           Topics.unsubscribe(Topics.IDENTIFY,handler);
-          checkTestResult(resolve, function() {
-            resolve(data);
-          });
+          resolve(data);
         });
         tileIndex.firstTwoTiles.icons[0].view.fireEvent("click");
       });
@@ -792,8 +790,6 @@ describe( 'SampleTray controller', function() {
 
       var sampleId = Alloy.Models.sample.get("sampleId");
       Alloy.Models.sample.loadById(sampleId);
-      Alloy.Collections.taxa.reset();
-      Alloy.Collections.taxa.load(sampleId);
       var taxon = Alloy.Collections.taxa.at(0);
 
       expect( taxon ).to.be.ok;

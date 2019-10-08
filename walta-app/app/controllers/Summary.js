@@ -1,6 +1,5 @@
 var Topics = require('ui/Topics');
 var SampleSync = require('logic/SampleSync');
-var GeoLocationService = require('logic/GeoLocationService');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
@@ -35,7 +34,6 @@ var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please e
 var saveSampleAndUpload = function() {
     Alloy.Models.sample.saveCurrentSample();
     SampleSync.forceUpload();
-    GeoLocationService.stop();
 };
 
 function checkGpsLock() {
