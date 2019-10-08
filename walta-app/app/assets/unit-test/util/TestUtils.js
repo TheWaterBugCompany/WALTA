@@ -146,8 +146,8 @@ function closeWindow( win, done ) {
 				menuItem.addEventListener("click", () => win.close() )
 			}
 		} else {
-			var cont = Ti.UI.createButton( { title: "Continue" } );
-			var toolbar = Ti.UI.createToolbar({ items: [cont], top: 0 });
+			var cont = Ti.UI.createButton( { title: "Continue Test" } );
+			var toolbar = Ti.UI.createToolbar({ items: [cont], barColor: "transparent", translucent: true, bottom: 0 });
 			cont.addEventListener("click", () => win.close() );
 			win.add(toolbar);
 		}
@@ -187,6 +187,12 @@ function clickButton( button ) {
 	button.fireEvent("click");
 }
 
+function makeTestPhoto(name) {
+    let photo = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, name);
+    Ti.Filesystem.getFile("unit-test/resources/site-mock.jpg").copy(photo.nativePath);
+    return photo.nativePath;
+}
+
 exports.enterText = enterText;
 exports.clickButton = clickButton;
 exports.forceCloseWindow = forceCloseWindow;
@@ -206,3 +212,4 @@ exports.waitForMeldEvent = waitForMeldEvent;
 exports.waitForDomEvent = waitForDomEvent;
 exports.isManualTests = isManualTests;
 exports.setManualTests = setManualTests;
+exports.makeTestPhoto = makeTestPhoto;

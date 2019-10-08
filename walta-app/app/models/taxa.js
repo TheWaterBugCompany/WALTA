@@ -5,7 +5,7 @@ exports.definition = {
 		columns: {
 		    "abundance": "VARCHAR(6)",
 			"sampleId": "INTEGER", // Foreign key to sample database
-			"taxonId": "INTEGER PRIMARY KEY",
+			"taxonId": "INTEGER", // Foreign "key" to taxon in key
 			"taxonPhotoPath": "VARCHAR(255)"
 		},
 		adapter: {
@@ -20,7 +20,8 @@ exports.definition = {
 			initialize() {
 				this.on("change:sampleId", function() {
 					// move from temporary to permanent storage
-					this.setPhoto( this.get("taxonPhotoPath") );
+					let photoPath = this.get("taxonPhotoPath");
+					if ( photoPath ) this.setPhoto(photoPath);
 				});
 			},
 			getTaxonId() {

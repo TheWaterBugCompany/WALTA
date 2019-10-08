@@ -29,16 +29,17 @@ function runTests() {
       "TaxonDetails",
       "SiteDetails",
       "ViewUtils",
-      "LocationEntry",
-      "LeafletMap",
-      "MayflyEmergenceMap",
-      "MayflyMusterSelect",
+      //"LeafletMap",
+      //"MayflyEmergenceMap",
+      //"MayflyMusterSelect",
+      "SampleSync",
       "Gallery",
       "PhotoSelect",
       "EditTaxon",
       "NavButton",
       "GoBackButton",
-      "GoForwardButton"
+      "GoForwardButton",
+      "LocationEntry",
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
       try { __remove_module_from_preview_cache(specPath);} catch(e) {}
@@ -52,7 +53,7 @@ function runTests() {
 infinteLoopMode = false;
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
-setManualTests( false );
+setManualTests( true );
 
 // Create a blank window: for some reason closing the last window hangs 
 // the test suite.

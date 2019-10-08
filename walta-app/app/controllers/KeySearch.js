@@ -24,6 +24,7 @@
  *
  */
 var Topics = require('ui/Topics');
+var PlatformSpecific = require('ui/PlatformSpecific');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
@@ -54,6 +55,14 @@ acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample }  ), true );
 acb.addTool( goBackBtn.getView() );
 
+function goUp(e) {
+  if ( !key.isRoot() && (PlatformSpecific.convertSystemToDip(e.x) < (PlatformSpecific.convertSystemToDip($.header.size.width)*0.2) ) ) {
+    Topics.fireTopicEvent( Topics.UP, { node: key.getCurrentNode().parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+  }
+}
+if ( key.isRoot() ) {
+  $.header.remove($.upButton);
+}
 
 // Add each question
 _(keyNode.questions).each( 

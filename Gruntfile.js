@@ -8,8 +8,8 @@ module.exports = function(grunt) {
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
-    const PROFILE = process.env.PROFILE || "e2935a1f-0c22-4716-8020-b61024ce143f";
-    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "eb88a8c0-d6e1-4622-a69b-3513ebe5be62";
+    const PROFILE = process.env.PROFILE || "7081d6f7-618b-4c10-b5bb-e48e63085767";
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "810ab12c-fd91-41f7-a2c0-91bff72afe05";
     
     const SOURCES = [  
       './walta-app/tiapp.xml',  

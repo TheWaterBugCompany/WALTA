@@ -16,22 +16,127 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
-var { expect } = require("unit-test/lib/chai");
-describe("Sample model", function() {
-	var ctl;
+var { use, expect } = require("unit-test/lib/chai");
+var { makeTestPhoto } = require("unit-test/util/TestUtils");
+use( require('unit-test/lib/chai-date-string') );
+var Sample = require('logic/Sample');
+
+function resetSample() {
+  // reset globals
+  Alloy.Models.sample = null;
+  Alloy.Models.taxa = null;
+  Alloy.Collections.sample = null;
+  Alloy.Collections.taxa = null;
+
+  Alloy.Collections.instance("sample");
+  Alloy.Collections.instance("taxa");
+
+  Alloy.Models.instance("sample");
+  Alloy.Models.instance("taxa");
+}
+describe("Taxa model", function() {
+  beforeEach( function() {
+     // clear out of memory the taxa and fetch from database
+     Alloy.Models.taxa = null;
+  })
+  it('should persist a taxon', function() {
+    // create taxa model
+    var taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("abundance", "> 20");
+    taxon.set("taxonId", 1 );
+    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo.jpg"));
+    taxon.save();
+
+    // clear out of memory the taxa and fetch from database
+    taxon = null;
+    taxon = Alloy.createModel("taxa");
+    taxon.fetch({query: "SELECT * FROM taxa WHERE sampleId = 666 AND taxonId = 1"});
+
+    expect( taxon.get("sampleId") ).to.equal(666);
+    expect( taxon.get("taxonId") ).to.equal(1);
+    expect( taxon.get("abundance") ).to.equal("> 20");
+
+    // should rename photo path to correct name
+    expect( taxon.get("taxonPhotoPath")).to.include("taxon_666_1");
+  });
+  it('should persist a taxon with the same id into two different sample ids', function() {
+    // create taxa model
+    var taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("taxonId", 1 );
+    taxon.set("abundance", "1-2");
+    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo-666.jpg"));
+    taxon.save();
+
+    taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 667 );
+    taxon.set("taxonId", 1 );
+    taxon.set("abundance", "3-4");
+    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo-667.jpg"));
+    taxon.save();
+
+    // clear out of memory the taxa and fetch from database
+    taxon = Alloy.createModel("taxa");
+    taxon.fetch({query: "SELECT * FROM taxa WHERE sampleId = 667 AND taxonId = 1"});
+    expect( taxon.get("sampleId") ).to.equal(667);
+    expect( taxon.get("taxonId") ).to.equal(1);
+    expect( taxon.get("abundance") ).to.equal("3-4");
+    expect( taxon.get("taxonPhotoPath") ).to.include("taxon_667_1");
+
+    // the previous taxon should still exist - if not its because the primary key constraint
+    // on the taxonId has indicated to Alloy that this is an update :-(
+    taxon = null;
+    taxon = Alloy.createModel("taxa");
+    taxon.fetch({query: "SELECT * FROM taxa WHERE sampleId = 666 AND taxonId = 1"});
+    expect( taxon.get("sampleId") ).to.equal(666);
+    expect( taxon.get("taxonId") ).to.equal(1);
+    expect( taxon.get("abundance") ).to.equal("1-2");
+    expect( taxon.get("taxonPhotoPath") ).to.include("taxon_666_1");
+  });
+});
+describe("Sample collection, model including taxa", function() {
+  var initialSampleId;
 	beforeEach( function() {
-        Alloy.Models.sample = null;
-        Alloy.Models.sample = Alloy.Models.instance("sample");
-        Alloy.Models.sample.set("waterbodyName","Test Waterbody");
-        Alloy.Models.sample.set("nearbyFeature", "near the office intersection cupboard");
-        Alloy.Models.sample.set( "dateCompleted", Date.now() );
-        Alloy.Models.sample.set( "surveyType", 0 );
-        Alloy.Models.sample.saveCurrentSample = function() {};
-        Alloy.Models.sample.loadTaxa = function() { return []; };
-        Alloy.Globals.CerdiApi = {};
-        Alloy.Globals.CerdiApi.retrieveUserToken = function() {return "token"; };
+    resetSample();
+
+    // set initial sample fields
+    Alloy.Models.sample.set("serverSampleId", 666);
+    Alloy.Models.sample.set("lastError", "Test error");
+    Alloy.Models.sample.set("lat", -42.0 );
+    Alloy.Models.sample.set("lng", 135.0 );
+    Alloy.Models.sample.set("accuracy", 100.0 );
+    Alloy.Models.sample.set("surveyType", Sample.SURVEY_DETAILED);
+    Alloy.Models.sample.set("waterbodyType", Sample.WATERBODY_LAKE);
+    Alloy.Models.sample.set("waterbodyName","Test Waterbody");
+    Alloy.Models.sample.set("nearbyFeature", "near the office intersection cupboard");
+    Alloy.Models.sample.set("boulder", 15 );
+    Alloy.Models.sample.set("gravel", 14 );
+    Alloy.Models.sample.set("sandOrSilt", 13 );
+    Alloy.Models.sample.set("wood", 8 );
+    Alloy.Models.sample.set("leafPacks", 17 );
+    Alloy.Models.sample.set("aquaticPlants", 12 );
+    Alloy.Models.sample.set("openWater", 11 );
+    Alloy.Models.sample.set("edgePlants", 10 );
+    Alloy.Models.sample.set("sitePhotoPath", "/photo/path" );
+    Alloy.Models.sample.set("uploaded", true );
+    Alloy.Models.sample.save(); // set the autoincremented sampleId
+    initialSampleId = Alloy.Models.sample.get("sampleId");
+    
+    // add some taxons
+    [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => { 
+        let taxon = Alloy.createModel("taxa", { 
+          sampleId:  Alloy.Models.sample.get("sampleId"),
+          taxonId: taxonId 
+          });
+        taxon.save();
+        Alloy.Collections.taxa.add(taxon);
     });
-  
+
+    // add the sample to the sample collection
+    Alloy.Collections.sample.add(Alloy.Models.sample);
+  });
+
   function newTaxa(id, ab) {
     return Alloy.createModel("taxa", { taxonId: id, abundance: ab } );
   }
@@ -63,5 +168,93 @@ describe("Sample model", function() {
   it('should the calculate the correct weighted SIGNAL score with >20 ', function() {
     var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "> 20" ) ];
 		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.7"); 
+  });
+
+  it('should load a blank sample when database is empty and load() is called', function() {
+      // ensure database is empty
+      let samples = Ti.Database.open("samples");
+      samples.execute("DELETE FROM sample");
+      samples.execute("DELETE FROM taxa");
+
+      // reset global instances
+      Alloy.Models.sample = null;
+      Alloy.Models.taxa = null;
+      Alloy.Collections.sample = null;
+      Alloy.Collections.taxa = null;
+
+      // create a new sample
+      Alloy.Collections.instance("sample").load();
+
+      expect( Alloy.Collections.sample.length ).to.equal(0);
+      expect( Alloy.Collections.taxa.length ).to.equal(0);
+  });
+
+  context('should correctly persist sample', function() {
+    beforeEach(function() {
+      Alloy.Models.sample.saveCurrentSample();
+      resetSample();
+      Alloy.Models.sample.loadById(initialSampleId);
+    })   
+    it('should persist all the fields', function() {
+      expect( Alloy.Models.sample.get("serverSampleId") ).to.equal(666);
+      expect( Alloy.Models.sample.get("sampleId") ).to.equal(initialSampleId);
+      expect( Alloy.Models.sample.get("lastError") ).to.equal("Test error");
+      expect( Alloy.Models.sample.get("dateCompleted")).to.be.a.dateString();
+      expect( parseFloat(Alloy.Models.sample.get("lat")) ).to.equal(-42);
+      expect( parseFloat(Alloy.Models.sample.get("lng")) ).to.equal(135);
+      expect( Alloy.Models.sample.get("accuracy") ).to.equal(100.0);
+      expect( Alloy.Models.sample.get("surveyType") ).to.equal(Sample.SURVEY_DETAILED);
+      expect( Alloy.Models.sample.get("waterbodyType") ).to.equal(Sample.WATERBODY_LAKE);
+      expect( Alloy.Models.sample.get("waterbodyName") ).to.equal("Test Waterbody");
+      expect( Alloy.Models.sample.get("nearbyFeature") ).to.equal("near the office intersection cupboard");
+      expect( Alloy.Models.sample.get("boulder") ).to.equal(15);
+      expect( Alloy.Models.sample.get("gravel") ).to.equal(14);
+      expect( Alloy.Models.sample.get("sandOrSilt") ).to.equal(13);
+      expect( Alloy.Models.sample.get("wood") ).to.equal(8);
+      expect( Alloy.Models.sample.get("leafPacks") ).to.equal(17);
+      expect( Alloy.Models.sample.get("aquaticPlants") ).to.equal(12);
+      expect( Alloy.Models.sample.get("openWater") ).to.equal(11);
+      expect( Alloy.Models.sample.get("edgePlants") ).to.equal(10);
+      expect( Alloy.Models.sample.get("sitePhotoPath") ).to.equal("/photo/path");
+      expect( Alloy.Models.sample.get("uploaded") ).to.be.ok;
+    });
+    it('should persist all the taxons', function() {
+      expect( Alloy.Collections.taxa.length ).to.equal(5);
+      [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => {
+        let taxon = Alloy.Collections.taxa.at(taxonId-1);
+        expect( taxon.get("taxonId") ).to.equal(taxonId); 
+      }); 
+    });
+  });
+
+  context('should reset sample when new sample is created', function() {
+    beforeEach(function() {
+      Alloy.Collections.sample.createNewSample();
+    });
+    it('should reset the current sample fields', function() {
+      expect( Alloy.Models.sample.get("serverSampleId") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("lastError") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("sampleId") ).to.not.equal(initialSampleId);
+      expect( Alloy.Models.sample.get("dateCompleted") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("lat") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("lng") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("accuracy") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("surveyType") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("waterbodyType") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("waterbodyName") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("nearbyFeature") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("boulder") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("gravel") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("sandOrSilt") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("wood") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("aquaticPlants") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("openWater") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("edgePlants") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("sitePhotoPath") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("uploaded") ).to.be.undefined;
+    });
+    it('should reset the taxa collection', function() {
+      expect( Alloy.Collections.taxa.length ).to.equal(0);
+    });
   });
 });
