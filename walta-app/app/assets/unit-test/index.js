@@ -10,7 +10,8 @@ function runTests() {
     mocha.timeout(0);
   }
   return new Promise( function(resolve, reject) {
-    [ "VideoView",
+    [ "Database",
+      "VideoView",
       "AnchorBar", 
       "TaxonList",
       "Habitat",
@@ -50,10 +51,10 @@ function runTests() {
 }
 
 // useful for testing memory leaks
-infinteLoopMode = false;
+var infinteLoopMode = false;
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
-setManualTests( true );
+setManualTests( false );
 
 // Create a blank window: for some reason closing the last window hangs 
 // the test suite.
