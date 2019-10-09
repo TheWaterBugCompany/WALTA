@@ -87,8 +87,8 @@ describe('TaxonDetails controller', function() {
 			expect(labels[4].text).to.equal("genus: Macrobrachium");
 		});
 
-		it.only('should fire the UP topic', function(done) {
-			actionFiresTopicTest( tv.upButton, 'click', Topics.UP, () => done() );
+		it('should fire the UP topic', function(done) {
+			actionFiresTopicTest( tv.header, 'click', Topics.UP, () => done() );
 		});
 	});
 	it('should display only the relevant media icons');

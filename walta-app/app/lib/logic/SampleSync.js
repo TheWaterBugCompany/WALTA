@@ -92,10 +92,10 @@ function uploadTaxaPhotos(sample) {
                     debug(`Uploading photo for taxon ${taxonId}`);
                     let blob = loadPhoto( photoPath );
                     if ( needsOptimising(blob) ) {
-                        debug(`Optimising ${photoPath}`);
+                        debug(`Optimising ${photoPath} = ${blob.width}x${blob.heihgt} size = ${blob.lenght}`);
                         savePhoto( optimisePhoto( blob ), photoPath );
                     } else {
-                        debug(`Optimising ${photoPath}`);
+                        debug(`Not Optimising ${photoPath}`);
                     }
                     return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath )
                                 

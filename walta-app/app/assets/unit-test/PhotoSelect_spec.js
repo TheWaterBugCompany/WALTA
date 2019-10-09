@@ -36,6 +36,16 @@ describe('PhotoSelect controller', function() {
 		closeWindow( win, done );
 	});
 
+	it("should resize image", function(done) { 
+		makePhotoSelect( true, '/unit-test/resources/site-mock.jpg' );
+		pv.on("loaded", () => checkTestResult( done, () => {
+			var photo = Ti.Filesystem.getFile(pv.photo.image).read();
+			expect( photo.width ).to.equal(1600);
+			expect( photo.height ).to.equal(900);
+		}) );
+		windowOpenTest( win );
+	});
+
 	it("should display readonly view", function( done ) { 
 		makePhotoSelect( true, [
 			'/unit-test/resources/simpleKey1/media/amphipoda_01.jpg',

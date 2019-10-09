@@ -28,9 +28,11 @@ describe('KeySearch controller', function() {
 	before( function(done) {
 		// Create a test key to display
 	 var key = Key.createKey( {
+		 			
 					url: 'https://example.com/',
 					name: 'TestTaxonomy',
 					root: Key.createKeyNode({
+						parentLink: {}, // suppress isRoot
 						questions: [
 							Question.createQuestion( {
 								outcome: 1,
@@ -61,8 +63,8 @@ describe('KeySearch controller', function() {
 		actionFiresTopicTest( knv.questions[1].Question, 'click', Topics.FORWARD, () => done() );
 	});
 
-	it.only('should fire the UP topic', function(done) {
-		actionFiresTopicTest( knv.upButton, 'click', Topics.UP, () => done() );
+	it('should fire the UP topic', function(done) {
+		actionFiresTopicTest( knv.header, 'click', Topics.UP, () => done() );
 	});
 
 });
