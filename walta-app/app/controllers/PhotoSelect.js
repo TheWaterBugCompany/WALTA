@@ -55,7 +55,7 @@ function generateThumbnail( fileOrBlob ) {
     removeFilesBeginningWith("preview_");
 
     // we downscale for high resolution, otherwise the crop will fail due to out of memory errors.
-    optimisePhoto(fullPhoto);
+    fullPhoto = optimisePhoto(fullPhoto);
     
     debug("saving full size photo..");
 

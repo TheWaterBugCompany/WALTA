@@ -115,7 +115,7 @@ function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done 
 function actionFiresTopicTest( actionObj, actionEvtName, topicName, done ) {
 	var result = {};
 	waitForTopic( topicName, function() {
-		actionObj.fireEvent( actionEvtName );
+		actionObj.fireEvent( actionEvtName, { x:0, y:0 } );
 	}, done, result);
 	return result;
 }
