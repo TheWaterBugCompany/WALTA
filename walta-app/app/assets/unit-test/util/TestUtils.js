@@ -193,6 +193,12 @@ function makeTestPhoto(name) {
     return photo.nativePath;
 }
 
+function removeDatabase(db_name) {
+	var db = Ti.Database.open(db_name);
+	db.close();
+    db.remove();
+}
+
 exports.enterText = enterText;
 exports.clickButton = clickButton;
 exports.forceCloseWindow = forceCloseWindow;
@@ -213,3 +219,4 @@ exports.waitForDomEvent = waitForDomEvent;
 exports.isManualTests = isManualTests;
 exports.setManualTests = setManualTests;
 exports.makeTestPhoto = makeTestPhoto;
+exports.removeDatabase = removeDatabase;

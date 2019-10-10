@@ -45,7 +45,7 @@ describe("SampleSync", function() {
         
         taxon.save();
         samples.add(sample);
-        console.log(`existing api? = ${JSON.stringify(Alloy.Globals.CerdiApi)}`)
+
         await SampleSync.uploadNextSample(samples);
         expect(Alloy.Globals.CerdiApi.photosSubmitted.length).to.equal(2);
 

@@ -10,7 +10,7 @@ function runTests() {
     mocha.timeout(0);
   }
   return new Promise( function(resolve, reject) {
-    [ "Database",
+    [ 
       "VideoView",
       "AnchorBar", 
       "TaxonList",
@@ -41,6 +41,7 @@ function runTests() {
       "GoBackButton",
       "GoForwardButton",
       "LocationEntry",
+      "Database" // needs to run last
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
       try { __remove_module_from_preview_cache(specPath);} catch(e) {}
