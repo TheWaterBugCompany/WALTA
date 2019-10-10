@@ -3,6 +3,7 @@ var { removeFilesBeginningWith } = require('logic/FileUtils');
 exports.definition = {
 	config: {
 		columns: {
+			"sampleTaxonId": "INTEGER PRIMARY KEY AUTOINCREMENT",
 		    "abundance": "VARCHAR(6)",
 			"sampleId": "INTEGER", // Foreign key to sample database
 			"taxonId": "INTEGER", // Foreign "key" to taxon in key
@@ -12,7 +13,7 @@ exports.definition = {
 			type: "sql",
 			collection_name: "taxa",
 			db_name: "samples",
-			idAttribute: "taxonId"
+			idAttribute: "sampleTaxonId"
 		}
 	},
 	extendModel: function(Model) {

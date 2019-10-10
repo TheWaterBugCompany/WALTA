@@ -40,8 +40,8 @@ describe('PhotoSelect controller', function() {
 		makePhotoSelect( true, '/unit-test/resources/site-mock.jpg' );
 		pv.on("loaded", () => checkTestResult( done, () => {
 			var photo = Ti.Filesystem.getFile(pv.photo.image).read();
-			expect( photo.width ).to.equal(1600);
-			expect( photo.height ).to.equal(900);
+			expect( photo.width ).to.be.at.most( 1600 );
+            expect( photo.height ).to.be.at.most( 1200 );
 		}) );
 		windowOpenTest( win );
 	});

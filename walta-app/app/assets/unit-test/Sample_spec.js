@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { use, expect } = require("unit-test/lib/chai");
-var { makeTestPhoto } = require("unit-test/util/TestUtils");
+var { makeTestPhoto, removeDatabase } = require("unit-test/util/TestUtils");
 use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
@@ -33,11 +33,20 @@ function resetSample() {
 
   Alloy.Models.instance("sample");
   Alloy.Models.instance("taxa");
+
+ 
+}
+
+function clearDatabase() {
+  resetSample();
+  var db = Ti.Database.open("samples");
+  db.execute("DELETE FROM sample");
+  db.execute("DELETE FROM taxa");
+  db.close();
 }
 describe("Taxa model", function() {
   beforeEach( function() {
-     // clear out of memory the taxa and fetch from database
-     Alloy.Models.taxa = null;
+    clearDatabase();
   })
   it('should persist a taxon', function() {
     // create taxa model
@@ -78,21 +87,21 @@ describe("Taxa model", function() {
 
     // clear out of memory the taxa and fetch from database
     taxon = Alloy.createModel("taxa");
+   
+    taxon = null;
+    taxon = Alloy.createModel("taxa");
+    taxon.fetch({query: "SELECT * FROM taxa WHERE sampleId = 666 AND taxonId = 1"});
+    console.log(taxon);
+    expect( taxon.get("sampleId") ).to.equal(666);
+    expect( taxon.get("taxonId") ).to.equal(1);
+    expect( taxon.get("abundance") ).to.equal("1-2");
+    expect( taxon.get("taxonPhotoPath") ).to.include("taxon_666_1");
+
     taxon.fetch({query: "SELECT * FROM taxa WHERE sampleId = 667 AND taxonId = 1"});
     expect( taxon.get("sampleId") ).to.equal(667);
     expect( taxon.get("taxonId") ).to.equal(1);
     expect( taxon.get("abundance") ).to.equal("3-4");
     expect( taxon.get("taxonPhotoPath") ).to.include("taxon_667_1");
-
-    // the previous taxon should still exist - if not its because the primary key constraint
-    // on the taxonId has indicated to Alloy that this is an update :-(
-    taxon = null;
-    taxon = Alloy.createModel("taxa");
-    taxon.fetch({query: "SELECT * FROM taxa WHERE sampleId = 666 AND taxonId = 1"});
-    expect( taxon.get("sampleId") ).to.equal(666);
-    expect( taxon.get("taxonId") ).to.equal(1);
-    expect( taxon.get("abundance") ).to.equal("1-2");
-    expect( taxon.get("taxonPhotoPath") ).to.include("taxon_666_1");
   });
 });
 describe("Sample collection, model including taxa", function() {

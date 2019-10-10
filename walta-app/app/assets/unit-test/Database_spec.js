@@ -19,38 +19,46 @@ require("unit-test/lib/ti-mocha");
 var { use, expect } = require("unit-test/lib/chai");
 use( require('unit-test/lib/chai-date-string') );
 var moment = require("lib/moment");
-var { makeTestPhoto } = require("unit-test/util/TestUtils");
+var { makeTestPhoto, removeDatabase } = require("unit-test/util/TestUtils");
 var Sample = require('logic/Sample');
-
-// WARNING this is full of hack and relies on the internals of Alloy
-
-// intercept alloy model creation to defer it to later and allow us
-// capture the migrations list
-var models = {}
-var oldAlloyM = Alloy.M;
-Alloy.M = function (name, definition, migrations ) {
-    models[name] = {};
-    models[name].definition = definition;
-    models[name].migrations = migrations;
-}
-
-// cache buster - add the time to the cache key so that
-// Models and configs are never actually cached.
 var sql = require('/alloy/sync/sql');
+var models = {};
+var oldAlloyM = Alloy.M;
 var oldBeforeModelCreate = sql.beforeModelCreate;
 var oldAfterModelCreate = sql.afterModelCreate;
 
-sql.beforeModelCreate = function(config, name) {
-    return oldBeforeModelCreate( config, name + moment() );
+function undoMonkeyPatch() {
+    Alloy.M = oldAlloyM;
+    sql.beforeModelCreate = oldBeforeModelCreate;
+    sql.afterModelCreate = oldAfterModelCreate;
 }
 
-sql.afterModelCreate = function(Model, name) {
-    return oldAfterModelCreate( Model, name + moment() );
+function monkeyPatch() {
+    // WARNING this is full of hack and relies on the internals of Alloy
+
+    // intercept alloy model creation to defer it to later and allow us
+    // capture the migrations list
+    
+    
+    Alloy.M = function (name, definition, migrations ) {
+        models[name] = {};
+        models[name].definition = definition;
+        models[name].migrations = migrations;
+        return oldAlloyM(name, definition, migrations); 
+    }
+
+    // cache buster - add the time to the cache key so that
+    // Models and configs are never actually cached.
+    sql.beforeModelCreate = function(config, name) {
+        return oldBeforeModelCreate( config, name + moment() );
+    }
+
+    sql.afterModelCreate = function(Model, name) {
+        return oldAfterModelCreate( Model, name + moment() );
+    }
 }
 
-// import models
-var taxaModel = require("/alloy/models/Taxa");
-var sampleModel = require("/alloy/models/Sample");
+
 
 function cloneDefinition(name) {
     var def = _.clone(models[name].definition);
@@ -67,21 +75,37 @@ function upMigration(name, definition, migration ) {
     // let Alloy do its thing
     return oldAlloyM( name, definition, migrations );
 }
-
-function removeDatabase(db) {
-    Ti.Database.open(db).remove();
-}
-
+ 
+// because of the wau this hacks Alloy, it doesn't play well others
 describe.only("Database Migrations", function() {
+    before(function() {
+        // import models
+        monkeyPatch();
+        var taxaModel = require("/alloy/models/Taxa");
+        var sampleModel = require("/alloy/models/Sample");
+    });
+    after(undoMonkeyPatch);
     context("Taxa", function() {
         before(function(){
             removeDatabase(models["taxa"].definition.config.adapter.db_name);
         })
         it("should apply 201808010000000_taxa migration", async function() {
 
-            // modify defintion to suite old taxa
-            var def = cloneDefinition("taxa");
-            delete def.config.columns["taxonPhotoPath"];
+            var def = {
+                config: {
+                    columns: {
+                        "abundance": "VARCHAR(6)",
+                        "sampleId": "INTEGER", // Foreign key to sample database
+                        "taxonId": "INTEGER PRIMARY KEY", // Foreign "key" to taxon in key
+                    },
+                    adapter: {
+                        type: "sql",
+                        collection_name: "taxa",
+                        db_name: "samples",
+                        idAttribute: "taxonId"
+                    }
+                }
+            };
         
             // creates database and applies migration
             var taxon = new (upMigration("taxa", def, "201808010000000" ))();
@@ -103,8 +127,25 @@ describe.only("Database Migrations", function() {
         // depends on previous database state
         it("should apply 201810260735769_taxa migration", async function() {
 
+            var def = {
+                config: {
+                    columns: {
+                        "abundance": "VARCHAR(6)",
+                        "sampleId": "INTEGER", // Foreign key to sample database
+                        "taxonId": "INTEGER PRIMARY KEY", // Foreign "key" to taxon in key
+                        "taxonPhotoPath": "VARCHAR(255)"
+                    },
+                    adapter: {
+                        type: "sql",
+                        collection_name: "taxa",
+                        db_name: "samples",
+                        idAttribute: "taxonId"
+                    }
+                }
+            };
+
             // save new structure taxon
-            var taxon = new (upMigration("taxa", models["taxa"].definition, "201810260735769" ))();
+            var taxon = new (upMigration("taxa", def, "201810260735769" ))();
             taxon.set("sampleId", 666);
             taxon.set("taxonId", 2);
             taxon.set("abundance", "1-2");
@@ -119,7 +160,7 @@ describe.only("Database Migrations", function() {
             expect( taxon.get("taxonId") ).to.equal(2);
             expect( taxon.get("abundance") ).to.equal("1-2");
             expect( taxon.get("sampleId") ).to.equal(666);
-            expect( taxon.get("taxonPhotoPath") ).to.include("taxon_666_2");
+            expect( taxon.get("taxonPhotoPath") ).to.include("photo");
 
             taxon.fetch({id:1});
 
@@ -128,6 +169,31 @@ describe.only("Database Migrations", function() {
             expect( taxon.get("sampleId") ).to.equal(666);
             expect( taxon.get("taxonPhotoPath") ).to.be.null;
         
+        });
+
+        it("should apply 201910100459397_taxa migration", function() {
+            var taxa = new (upMigration("taxa", models["taxa"].definition, "201910100459397" ))();
+            taxa.set("sampleId", 668 );
+            taxa.set("taxonId", 1);
+            taxa.set("abundance", "> 20");
+            taxa.set("taxonPhotoPath", makeTestPhoto("photo"));
+            taxa.save();
+
+            taxa.clear({silent:true});
+            taxa.set("sampleId", 669 );
+            taxa.set("taxonId", 1);
+            taxa.set("abundance", "1-2");
+            taxa.set("taxonPhotoPath", makeTestPhoto("photo2"));
+            taxa.save();
+
+            taxa.clear({silent:true});
+
+            // ensure both rows exist independently
+            taxa.fetch({query: `SELECT * FROM taxa WHERE sampleId = 669 AND taxonId = 1`});
+            expect( taxa.get("abundance") ).to.equal("1-2");
+
+            taxa.fetch({query: `SELECT * FROM taxa WHERE sampleId = 668 AND taxonId = 1`});
+            expect( taxa.get("abundance") ).to.equal("> 20");
         });
     });
 
@@ -214,16 +280,16 @@ describe.only("Database Migrations", function() {
             sample.fetch({id:666});
             expect( sample.get("uploaded") ).to.equal(0);
        });
-       it("should apply 201903211031372_sample migration", function() {
-        var sample = new (upMigration("sample", models["sample"].definition, "201903211031372" ))();
-        sample.fetch({id:666});
-        expect( sample.get("accuracy") ).to.be.null;
-        sample.set("accuracy", 100 )
-        sample.save();
-        sample.clear({silent:true});
-        sample.fetch({id:666});
-        expect( sample.get("accuracy") ).to.equal(100);
-   });
+        it("should apply 201903211031372_sample migration", function() {
+            var sample = new (upMigration("sample", models["sample"].definition, "201903211031372" ))();
+            sample.fetch({id:666});
+            expect( sample.get("accuracy") ).to.be.null;
+            sample.set("accuracy", 100 )
+            sample.save();
+            sample.clear({silent:true});
+            sample.fetch({id:666});
+            expect( sample.get("accuracy") ).to.equal(100);
+        });
+      
     });
-
 });
