@@ -19,6 +19,7 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
 var { wrapViewInWindow, closeWindow, windowOpenTest, checkTestResult } = require('unit-test/util/TestUtils');
 var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
+
 describe('PhotoSelect controller', function() { 
 	var win, vw, pv;
 	function makePhotoSelect( readonly, images ) {
@@ -102,12 +103,48 @@ describe('PhotoSelect controller', function() {
 		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/beetlelarvae.gif' );
 		function testPhotoCapture() {
 			pv.off("loaded", testPhotoCapture );
+			pv.on("")
 			pv.on("loaded", () => checkTestResult( done, () => {
 					expect( pv.magnify.visible ).to.be.true;
 					expect( pv.camera.visible ).to.be.true;
 					expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
 					expect( pv.photoSelectLabel.visible ).to.be.false;
 				} ) );
+			setTimeout( () => simulatePhotoCapture( pv ), 500 );
+		} 
+		pv.on("loaded", testPhotoCapture);
+		windowOpenTest( win );
+	});
+
+	// I can't figure out how to make this test succeed - I think by the time the
+	// expect() in the "loading" event is called then the activity indicator has
+	// already been hidden. Would be nice to make the optimisePhoto take a long time
+	// but we can't intercept a require(). Could use dependency injection in the 
+	// photo controller but is the first time we've needed that.
+	it.skip('should display loading indicator', function(done) {
+		this.timeout(10000);
+		function doneOnError(e) {
+			if ( e ) {
+				done(e);
+			}
+		}
+		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/beetlelarvae.gif' );
+		function testPhotoCapture() {
+			pv.off("loaded", testPhotoCapture );
+			pv.on("loading", function handler() { 
+				pv.off("loading", handler );
+				checkTestResult( doneOnError, () => {
+					expect( pv.activity.visible, "activity should be visible" ).to.be.true;
+					expect( pv.photo.visible, "photo should not be visible" ).to.be.false;
+					pv.on("loaded", function handler() {
+						pv.off("loaded", handler );
+						checkTestResult( done, () => {
+							expect( pv.activity.visible, "activity should not be visible"  ).to.be.false;
+							expect( pv.photo.visible, "photo should be visible" ).to.be.true;
+						} ) 
+					});
+				})
+			});
 			setTimeout( () => simulatePhotoCapture( pv ), 500 );
 		} 
 		pv.on("loaded", testPhotoCapture);

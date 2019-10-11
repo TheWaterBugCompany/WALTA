@@ -25,11 +25,11 @@
 					<Label class="labelText optionLabel" text="I consent to my data being shared"/>
 				</View>
 				<Label id="errorMessage" class="error" text="Error message"/>
-			
 				
 			</View>
 			
 		</View>
+		<ActivityIndicator id="activity"/>
 		<Button id="submitButton" class="actionButton" title="Submit" onClick="submitClick"/>
 	</ScrollView>
 </Alloy>

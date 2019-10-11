@@ -86,3 +86,8 @@
     bottom: "3%",
     right: "1%"
 }
+
+"#activity": {
+    bottom: "3%",
+    right: "8%"
+}

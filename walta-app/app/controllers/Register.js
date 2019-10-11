@@ -94,6 +94,8 @@ function validateSubmit() {
 }
 
 function submitClick() {
+  $.activity.show(); 
+  $.submitButton.visible = false; 
   Alloy.Globals.CerdiApi.registerUser( {
       email: $.emailTextField.value,
       group: $.groupToggle.value,
@@ -102,11 +104,15 @@ function submitClick() {
       name: $.nameTextField.value,
       password: $.passwordTextField.value
   }).then( (response ) => {
+    $.activity.hide();
+    $.submitButton.visible = true;
     Ti.API.debug(`Registered user ${$.emailTextField.value}`);
     Alloy.Globals.CerdiApi.storeUserToken( response );
     Topics.fireTopicEvent( Topics.HOME, null );
   })
   .catch( (err) => {
+    $.activity.hide();
+    $.submitButton.visible = true;
     Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
     $.setError($.passwordTextField);
     $.setError($.passwordConfirmTextField);

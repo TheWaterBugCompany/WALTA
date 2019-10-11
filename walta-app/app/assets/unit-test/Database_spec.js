@@ -77,7 +77,7 @@ function upMigration(name, definition, migration ) {
 }
  
 // because of the wau this hacks Alloy, it doesn't play well others
-describe.only("Database Migrations", function() {
+describe.skip("Database Migrations", function() {
     before(function() {
         // import models
         monkeyPatch();

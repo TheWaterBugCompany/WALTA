@@ -134,7 +134,10 @@ function setImage( fileOrBlob ) {
     }
 
     function processPhoto( fileOrBlob ) {
-        debug("processPhoto")
+        debug("processPhoto");
+        $.activity.show();
+        $.photo.visible = false;
+        $.trigger("loading");
         // If an array, then it must contain URL paths to many photos, the first is displayed 
         // in the thumbnail view
         if ( Array.isArray(fileOrBlob) ) {
@@ -155,6 +158,8 @@ function setImage( fileOrBlob ) {
         $.photoSelectOptionalLabel.visible = false;
         $.magnify.visible = true;
         debug("triggering loaded event")
+        $.activity.hide();
+        $.photo.visible = true;
         $.trigger("loaded");
     }
 
