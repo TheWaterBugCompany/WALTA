@@ -97,7 +97,6 @@ function goBack(args) {
     if ( args.slide ) {
       newargs.slide = args.slide
     } else {
-      console.log("currentArgs.slide = ${currentArgs.slide}")
       if ( currentArgs.slide === "none" ) {
         newargs.slide = "none";
       } else {
