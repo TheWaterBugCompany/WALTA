@@ -44,11 +44,11 @@ function validateSum() {
    if ( sum !== 100 ) {
         [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
             .forEach( (f) => $.setError(f) );
-        $.disableControl($.nextButton);
+       $.nextButton.disable();
     } else {
         [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
             .forEach( (f) => $.clearError(f) );
-        $.enableControl($.nextButton);
+        $.nextButton.enable();
         saveAttributes();
     }
 }
