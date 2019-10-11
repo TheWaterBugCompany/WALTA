@@ -55,7 +55,7 @@ function runTests() {
 var infinteLoopMode = false;
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
-setManualTests( true );
+setManualTests( false );
 
 // Create a blank window: for some reason closing the last window hangs 
 // the test suite.
