@@ -133,13 +133,15 @@ describe('LogIn controller', function() {
             enterText( login.emailTextField, "test@example.com" );
             enterText( login.passwordTextField, "password" );
             clickButton( login.logInButton );
-            expect( login.activity.visible ).to.be.true;
-            expect( login.logInButton.visible ).to.be.false;
-            doneLogin();
             setTimeout( () => {
-                expect( login.activity.visible ).to.be.false;
-                expect( login.logInButton.visible ).to.be.true;
-            }, 10);
+                expect( login.activity.visible ).to.be.true;
+                expect( login.logInButton.visible ).to.be.false;
+                doneLogin();
+                setTimeout( () => {
+                    expect( login.activity.visible ).to.be.false;
+                    expect( login.logInButton.visible ).to.be.true;
+                }, 50);
+            }, 50);
         } ));
     });
 });
