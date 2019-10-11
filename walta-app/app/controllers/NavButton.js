@@ -46,7 +46,9 @@ function cleanUp() {
     $.NavButton.removeEventListener( 'click', clickButton);
 }
 function clickButton(e) {
-    $.trigger("click", $.args);
+    if ( $.button.enabled === undefined || $.button.enabled ) {
+        $.trigger("click", $.args);
+    }
     e.cancelBubble = true;
 } 
 $.NavButton.addEventListener( 'click', clickButton);
