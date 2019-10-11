@@ -86,9 +86,8 @@ function openController(ctl,args) {
 }
 
 function goBack(args) {
-  console.log(`args = ${args.slide}`)
   if ( ! args ) args = {};
-  history.pop();
+  var currentArgs = history.pop().args;
   if ( history.length === 0 ) {
     closeApp();
   } else {
@@ -97,7 +96,14 @@ function goBack(args) {
     var newargs = cargs.args;
     if ( args.slide ) {
       newargs.slide = args.slide
-    } 
+    } else {
+      console.log("currentArgs.slide = ${currentArgs.slide}")
+      if ( currentArgs.slide === "none" ) {
+        newargs.slide = "none";
+      } else {
+        newargs.slide = "left";
+      }
+    }
     Ti.API.info(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
     openController(ctl,newargs);
 
@@ -171,7 +177,7 @@ function startApp() {
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
   Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
   Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: key.url }) ) );
-  Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend({ keyUrl: key.url }) ) );
+  Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: key.url }) ) );
 
   Topics.subscribe( Topics.JUMPTO, function( data ) {
     if ( ! _.isUndefined( data.id ) ) {
