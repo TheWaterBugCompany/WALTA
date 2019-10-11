@@ -116,7 +116,7 @@ describe('PhotoSelect controller', function() {
 		windowOpenTest( win );
 	});
 
-	it.only('should display loading indicator', function(done) {
+	it('should display loading indicator', function(done) {
 		function doneOnError(e) {
 			if ( e ) {
 				done(e);

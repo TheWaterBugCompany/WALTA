@@ -136,10 +136,16 @@ describe('Register controller', function() {
         return Promise.resolve()
             .then( () => expect( ct.activity.visible ).to.be.false )
             .then( fillOutValidForm )
-            .then( () => clickButton(ct.submitButton) )
+            .then( () => new Promise( (resolve) => {
+                clickButton(ct.submitButton);
+                setTimeout( resolve, 50 );
+             } ) )
             .then( () => expect( ct.activity.visible ).to.be.true )
             .then( () => expect( ct.submitButton.visible ).to.be.false )
-            .then( () => done() )
+            .then(  () => new Promise( (resolve) => {
+                done();
+                setTimeout( resolve, 50 );
+             }) )
             .then( () => expect( ct.activity.visible ).to.be.false )
             .then( () => expect( ct.submitButton.visible ).to.be.true );
     });
