@@ -22,8 +22,8 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE } ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left" }  ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE, slide: "right" } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 
@@ -550,7 +550,7 @@ if ( $.args.taxonId ) {
     $.TopLevelWindow.removeEventListener("close", closeWindow );
   })
 }
-
+ 
 // needed for testing
 function getTileIndex() {
   return { tileIndex: tileIndex, firstTwoTiles: firstTwoTiles };

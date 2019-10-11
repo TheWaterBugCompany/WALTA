@@ -3,7 +3,7 @@ var SampleSync = require('logic/SampleSync');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
-$.name = "summary";
+$.name = "summary"; 
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
@@ -12,7 +12,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY }  ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY, slide: "left" }  ); 
 $.nextButton = Alloy.createController("NavButton");
 $.nextButton.setLabel("Done");
 $.nextButton.on("click", doneClick ) 

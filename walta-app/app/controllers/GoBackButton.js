@@ -3,6 +3,6 @@ exports.baseController  = "NavButton";
 $.setLabel( "Back");
 $.setIconLeft( "/images/icon-go-back.png" );
 if ( ! $.args.topic ) {
-    $.args.topic = Topics.BACK
+    $.args.topic = Topics.BACK;
 }
 $.on("click", () => Topics.fireTopicEvent( $.args.topic, $.args ) );

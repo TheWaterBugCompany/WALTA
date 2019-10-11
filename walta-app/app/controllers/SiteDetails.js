@@ -20,9 +20,9 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
 
-var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HOME }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.HABITAT } ); 
+var acb = $.getAnchorBar();  
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HOME, slide: "left" }  ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.HABITAT, slide: "right" } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 
