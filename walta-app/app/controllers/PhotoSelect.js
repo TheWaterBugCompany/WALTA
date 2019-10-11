@@ -135,32 +135,40 @@ function setImage( fileOrBlob ) {
 
     function processPhoto( fileOrBlob ) {
         debug("processPhoto");
+
         $.activity.show();
         $.photo.visible = false;
         $.trigger("loading");
-        // If an array, then it must contain URL paths to many photos, the first is displayed 
-        // in the thumbnail view
-        if ( Array.isArray(fileOrBlob) ) {
-            setThumbnail( fileOrBlob[0] );
-            $.photoUrls = fileOrBlob; // overwrite photoUrls with the complete array of URLs
-        } 
-        // When an object is passed it must be a TiBlob containing image data
-        else if ( typeof(fileOrBlob) === "object" ) {
-            var blob = fileOrBlob.media;
-            fileOrBlob.media = null;
-            setThumbnail( blob );
-        } 
-        // Otherwise it can be a URL path to a single photo
-        else {
-            var file = fileOrBlob;
-            setThumbnail( file );
-        }
-        $.photoSelectOptionalLabel.visible = false;
-        $.magnify.visible = true;
-        debug("triggering loaded event")
-        $.activity.hide();
-        $.photo.visible = true;
-        $.trigger("loaded");
+
+        // allow some time to update the display
+        setTimeout( function() {
+                // If an array, then it must contain URL paths to many photos, the first is displayed 
+                // in the thumbnail view
+                if ( Array.isArray(fileOrBlob) ) {
+                    setThumbnail( fileOrBlob[0] );
+                    $.photoUrls = fileOrBlob; // overwrite photoUrls with the complete array of URLs
+                } 
+                // When an object is passed it must be a TiBlob containing image data
+                else if ( typeof(fileOrBlob) === "object" ) {
+                    var blob = fileOrBlob.media;
+                    fileOrBlob.media = null;
+                    setThumbnail( blob );
+                } 
+                // Otherwise it can be a URL path to a single photo
+                else {
+                    var file = fileOrBlob;
+                    setThumbnail( file );
+                }
+                $.photoSelectOptionalLabel.visible = false;
+                $.magnify.visible = true;
+                debug("triggering loaded event")
+                $.activity.hide();
+                $.photo.visible = true;
+                $.trigger("loaded");
+        }, 1);
+
+        
+        
     }
 
     // When the view first opens then we need to postpone the thumbnail creation

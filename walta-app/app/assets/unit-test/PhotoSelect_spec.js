@@ -116,13 +116,7 @@ describe('PhotoSelect controller', function() {
 		windowOpenTest( win );
 	});
 
-	// I can't figure out how to make this test succeed - I think by the time the
-	// expect() in the "loading" event is called then the activity indicator has
-	// already been hidden. Would be nice to make the optimisePhoto take a long time
-	// but we can't intercept a require(). Could use dependency injection in the 
-	// photo controller but is the first time we've needed that.
-	it.skip('should display loading indicator', function(done) {
-		this.timeout(10000);
+	it.only('should display loading indicator', function(done) {
 		function doneOnError(e) {
 			if ( e ) {
 				done(e);
@@ -136,14 +130,15 @@ describe('PhotoSelect controller', function() {
 				checkTestResult( doneOnError, () => {
 					expect( pv.activity.visible, "activity should be visible" ).to.be.true;
 					expect( pv.photo.visible, "photo should not be visible" ).to.be.false;
-					pv.on("loaded", function handler() {
-						pv.off("loaded", handler );
-						checkTestResult( done, () => {
-							expect( pv.activity.visible, "activity should not be visible"  ).to.be.false;
-							expect( pv.photo.visible, "photo should be visible" ).to.be.true;
-						} ) 
-					});
+					
 				})
+			});
+			pv.on("loaded", function handler() {
+				pv.off("loaded", handler );
+				checkTestResult( done, () => {
+					expect( pv.activity.visible, "activity should not be visible"  ).to.be.false;
+					expect( pv.photo.visible, "photo should be visible" ).to.be.true;
+				} ) 
 			});
 			setTimeout( () => simulatePhotoCapture( pv ), 500 );
 		} 
