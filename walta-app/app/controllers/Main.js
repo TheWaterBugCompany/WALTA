@@ -51,6 +51,21 @@ function openController(ctl,args) {
   if ( !args ) args = {};
   if ( !args.slide ) args.slide = "none";
   if ( !args.key ) args.key = key;
+
+  // find the previous instance of an equivalent screen and truncate
+  // the history to avoid the ability to create long loops as this
+  // is annoying to the user.
+  var page = {ctl:ctl,args:args};
+  var index = _(history).findIndex( (h)=>isPageEquivalent(h,page) );
+  if ( index >= 0 ){
+    history = history.slice(0,index);
+  }
+
+  // add this page to the history
+  history.push(page);
+  dumpHistory();
+
+  
   Ti.API.info(`opening controller="${ctl}" with args.slide= ${args.slide}`);
   controller = Alloy.createController(ctl,args);
   controller.open();
@@ -67,42 +82,25 @@ function openController(ctl,args) {
     return false;
   }
 
-  // find the previous instance of an equivalent screen and truncate
-  // the history to avoid the ability to create long loops as this
-  // is annoying to the user.
-  var page = {ctl:ctl,args:args};
-  var index = _(history).findIndex( (h)=>isPageEquivalent(h,page) );
-  if ( index >= 0 ){
-    console.log("clipping")
-    history = history.slice(0,index);
-  }
-
-  // add this page to the history
-  history.push({ctl:ctl,args:args});
-  dumpHistory();
+  
 }
 
 function goBack(args) {
+  console.log(`args = ${args.slide}`)
   if ( ! args ) args = {};
-  
-  Ti.API.info(`going back with args.slide= ${args.slide}`);
   history.pop();
-  dumpHistory();
   if ( history.length === 0 ) {
     closeApp();
   } else {
     var cargs = history[history.length-1];
     var ctl = cargs.ctl;
-    var oldArgs = cargs.args;
-    if ( oldArgs ) args = _(oldArgs).extend(args);
-    if ( args.slide === "right") { 
-        args.slide = "left";
-    } else if ( args.slide === "left" ) {
-      args.slide = "right";
-    }
-    Ti.API.info(`opening controller (on back) ="${ctl}" with args.slide= ${args.slide}`);
-    controller = Alloy.createController(ctl,args);
-    controller.open();
+    var newargs = cargs.args;
+    if ( args.slide ) {
+      newargs.slide = args.slide
+    } 
+    Ti.API.info(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
+    openController(ctl,newargs);
+
   }
 }
 
@@ -185,18 +183,21 @@ function startApp() {
   });
 
   Topics.subscribe( Topics.MAYFLY, function(data) {
+    if ( !data ) data = {};
     Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_MAYFLY);
-    Topics.fireTopicEvent( Topics.SITEDETAILS, data );
+    Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
   Topics.subscribe( Topics.ORDER, function(data) {
+    if ( !data ) data = {};
     Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_ORDER);
-    Topics.fireTopicEvent( Topics.SITEDETAILS, data );
+    Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
   Topics.subscribe( Topics.DETAILED, function(data) {
+    if ( !data ) data = {};
     Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_DETAILED);
-    Topics.fireTopicEvent( Topics.SITEDETAILS, data );
+    Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
   Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );

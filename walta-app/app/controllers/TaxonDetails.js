@@ -67,7 +67,7 @@ $.description.text = $.taxon.description;
 
 function goUp(e) {
 	if (PlatformSpecific.convertSystemToDip(e.x) < (PlatformSpecific.convertSystemToDip($.header.size.width)*0.2)) {
-		Topics.fireTopicEvent( Topics.UP, { node: $.taxon.parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+		Topics.fireTopicEvent( Topics.UP, { node: $.taxon.parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, slide: "left" } );
 	}
 }
 
@@ -111,7 +111,7 @@ if ($.taxon.videoUrl) {
 
 var acb = $.getAnchorBar();
 $.args.name = "decision";
-var goBackBtn = Alloy.createController("GoBackButton");
+var goBackBtn = Alloy.createController("GoBackButton", {slide: "left"});
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( goBackBtn.getView() );
