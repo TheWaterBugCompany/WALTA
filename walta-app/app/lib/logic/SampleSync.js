@@ -8,8 +8,6 @@ function debug(mess) {
     Ti.API.info(mess);
 }
 
-Topics.subscribe( Topics.LOGGEDIN, startUpload );
-
 function networkChanged( e ) {
     if ( e.networkType === Ti.Network.NETWORK_NONE ) {
         // don't bother trying to upload (saves battery)
@@ -33,6 +31,7 @@ function clearUploadTimer() {
 
 function init() {
     debug("Initialising SampleSync...");
+    Topics.subscribe( Topics.LOGGEDIN, startUpload );
     startUpload();
 }
 
