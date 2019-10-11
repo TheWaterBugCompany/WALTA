@@ -27,7 +27,8 @@ overrode the settings with other TSS, XML, or JS settings:
 "ActivityIndicator": {
   style: Ti.UI.ActivityIndicatorStyle.BIG,
   width: Ti.UI.SIZE,
-  height: Ti.UI.SIZE
+  height: Ti.UI.SIZE,
+  indicatorColor: "#26849c"
 }
 "TableViewRow": {
     color: "#26849c"
