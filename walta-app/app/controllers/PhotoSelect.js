@@ -116,8 +116,13 @@ function setImage( fileOrBlob ) {
     if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
+        $.camera.visible = !readOnlyMode;
         return;
     } 
+
+    $.photoSelectOptionalLabel.visible = false;
+    $.magnify.visible = true;
+    $.camera.visible = true;
     
 
     function setThumbnail( fileOrBlob) {
@@ -135,7 +140,10 @@ function setImage( fileOrBlob ) {
 
     function processPhoto( fileOrBlob ) {
         debug("processPhoto");
-
+        $.photoSelectOptionalLabel.visible = false;
+        $.magnify.visible = true;
+        $.camera.visible = true;
+        clearError();
         $.activity.show();
         $.photo.visible = false;
         $.trigger("loading");
@@ -159,8 +167,7 @@ function setImage( fileOrBlob ) {
                     var file = fileOrBlob;
                     setThumbnail( file );
                 }
-                $.photoSelectOptionalLabel.visible = false;
-                $.magnify.visible = true;
+                
                 debug("triggering loaded event")
                 $.activity.hide();
                 $.photo.visible = true;
