@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
-var moment = require("lib/moment");
 var Topics = require('ui/Topics'); 
 var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("unit-test/lib/chai");
@@ -25,8 +24,6 @@ var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
 describe("SiteDetails controller", function() {
     var ctl;
     var sample;
-
-    this.timeout(15000);
 
     function fireTabClick( ctl, index ) {
         var tab = ctl.getButtons()[index];
@@ -76,7 +73,7 @@ describe("SiteDetails controller", function() {
         controllerOpenTest( ctl,  ()=>{
             // set a photo as if taken by the user
             ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
-                expect( ctl.photoSelect.getThumbnailImageUrl() ).to.include("sitePhoto");
+                expect( ctl.photoSelect.getThumbnailImageUrl() ).to.include("preview_thumbnail");
                 expect( Ti.Filesystem.getFile( ctl.photoSelect.getThumbnailImageUrl() ).exists() ).to.be.ok;
             }) );
             simulatePhotoCapture( ctl.photoSelect );
@@ -139,7 +136,9 @@ describe("SiteDetails controller", function() {
             expect( ctl.nextButton.button.enabled ).to.be.false;
             ctl.on("updated", function handler() {
                     ctl.off("updated", handler);
-                    ctl.nextButton.NavButton.fireEvent("click");
+                    // screen refresh neeeds to happen so put the click action on 
+                    // the queue to run afterwards.
+                    setTimeout( () => ctl.nextButton.NavButton.fireEvent("click"), 0 );
             } );
             fireTabClick( ctl.surveyLevelSelect, SURVEY_ORDER );
             fireTabClick( ctl.waterbodyTypeSelect, WATERBODY_LAKE );
@@ -219,8 +218,7 @@ describe("SiteDetails controller", function() {
             done();
         } );
     });
-
-    it('should have read only fields after 14 days', function(done) {
+ fields after 14 days', function(done) {
         sample.set("dateCompleted", moment().subtract(16, "days").format() );
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;

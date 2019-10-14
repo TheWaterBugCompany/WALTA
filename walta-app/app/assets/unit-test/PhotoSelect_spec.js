@@ -73,16 +73,34 @@ describe('PhotoSelect controller', function() {
 		}) );
 	});
 
-	it('should display a take photo view with must take photo message', function(done) {
-		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/amphipoda_01.jpg' );
-		pv.setError();
-		pv.on("loaded", () => checkTestResult( done, () => {
-			expect( pv.magnify.visible ).to.be.true;
-			expect( pv.camera.visible ).to.be.true;
-			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
-			expect( pv.photoSelectLabel.visible ).to.be.true;
-			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
-		}) );
+	it('should display a take photo view with must take photo message on setError()', function(done) {
+		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png' );
+		pv.setError(); 
+		pv.on("loaded", () => 
+			checkTestResult( done, () => {
+				expect( pv.magnify.visible ).to.be.false;
+				expect( pv.camera.visible ).to.be.true;
+				expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+				expect( pv.photoSelectLabel.visible ).to.be.true;
+				expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
+			}) 
+		);
+		windowOpenTest( win );
+	});
+
+	it('should clear must take photo message after clearError()', function(done) {
+		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png' );
+		pv.setError(); 
+		pv.on("loaded", () => 
+			checkTestResult( done, () => {
+				pv.clearError(); 
+				expect( pv.magnify.visible ).to.be.true;
+				expect( pv.camera.visible ).to.be.true;
+				expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+				expect( pv.photoSelectLabel.visible ).to.be.false;
+				expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
+			}) 
+		);
 		windowOpenTest( win );
 	});
 
