@@ -29,6 +29,20 @@ var manualTests = false;
 function setManualTests( b ) { manualTests = b; }
 function isManualTests() { return manualTests; }
 
+function waitFor(predicate) {
+	return new Promise( (resolve) => {
+		function checkCondition() {
+			if ( predicate() ) {
+				resolve();
+			} else {
+				setTimeout( checkCondition, 50 );
+			}
+		}
+		checkCondition()
+	})
+}
+
+
 // TODO: Convert to Promise based API
 function waitForDomEvent( obj, evtName, fireEvent, done ) {
 		obj.addEventListener( evtName, function() { done() } );
@@ -199,6 +213,13 @@ function removeDatabase(db_name) {
     db.remove();
 }
 
+function resetDatabase(db_name) {
+	var db = Ti.Database.open(db_name);
+	db.execute("DELETE FROM taxa");
+	db.execute("DELETE FROM sample");
+	db.close();
+}
+
 exports.enterText = enterText;
 exports.clickButton = clickButton;
 exports.forceCloseWindow = forceCloseWindow;
@@ -220,3 +241,5 @@ exports.isManualTests = isManualTests;
 exports.setManualTests = setManualTests;
 exports.makeTestPhoto = makeTestPhoto;
 exports.removeDatabase = removeDatabase;
+exports.resetDatabase = resetDatabase;
+exports.waitFor = waitFor;

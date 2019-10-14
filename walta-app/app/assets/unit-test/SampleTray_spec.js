@@ -1,10 +1,10 @@
 require('unit-test/lib/ti-mocha');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var { expect } = require('unit-test/lib/chai');
-var { closeWindow, checkTestResult, actionFiresTopicTest, setManualTests } = require('unit-test/util/TestUtils');
+var { closeWindow, checkTestResult, actionFiresTopicTest, setManualTests, resetDatabase, waitFor } = require('unit-test/util/TestUtils');
 
 var Topics = require('ui/Topics');
-
+ 
 var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
@@ -13,6 +13,10 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 describe( 'SampleTray controller', function() {
   this.timeout(10000);
   var SampleTray, SampleTrayWin;
+
+  beforeEach( function() {
+    resetDatabase("samples");
+  });
 
   function setupSampleTray() {
     Alloy.Models.instance("sample");
@@ -691,6 +695,7 @@ describe( 'SampleTray controller', function() {
   context('editing taxon and model persistence',function() { 
 
     function simulateUserEdit(value, photoPath ) {
+      console.log(`simulateUserEdit: ${photoPath}`);
       return new Promise( (resolve) => {
         SampleTray.editTaxon.photoSelect.on("photoTaken", function handler() {
           SampleTray.editTaxon.photoSelect.off("photoTaken", handler);
@@ -702,6 +707,7 @@ describe( 'SampleTray controller', function() {
           SampleTray.editTaxon.photoSelect.off("loaded", handler);
           SampleTray.editTaxon.photoSelect.trigger("photoTaken", SampleTray.editTaxon.photoSelect.getFullPhotoUrl() );
         });
+        console.log(`setImage in simulate: ${photoPath}`);
         SampleTray.editTaxon.photoSelect.setImage(photoPath);
       });
     }
@@ -735,7 +741,9 @@ describe( 'SampleTray controller', function() {
     async function openSampleTrayToEdit( taxonId ) {
       SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: 1 });
       SampleTrayWin = SampleTray.getView();
+      SampleTray.photoSelect
       await openSampleTray();
+      await waitFor( () => SampleTray.editTaxon.photoSelect.getThumbnailImageUrl() );
     }
 
     async function simulateSaveTaxon() {
@@ -762,10 +770,13 @@ describe( 'SampleTray controller', function() {
     });
     
     it('should persist temporary taxon if closed before saving', async function() {
+      
       await openSampleTrayToEdit(1);
+
       expect( SampleTray.editTaxon ).to.be.ok;
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
+      
       
       await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
       await closeSampleTray();

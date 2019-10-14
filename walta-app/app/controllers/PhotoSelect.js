@@ -36,7 +36,7 @@ function getThumbnailImageUrl() {
 
 
 function generateThumbnail( fileOrBlob ) {
-    debug("generating thumbnail...");
+    debug(`generating thumbnail... fileOrBlob = ${fileOrBlob}`);
     var fullPhoto = null;
     if ( typeof fileOrBlob === "string") {
         fullPhoto = loadPhoto( fileOrBlob );
@@ -141,9 +141,6 @@ function setImage( fileOrBlob ) {
     function processPhoto( fileOrBlob ) {
         debug("processPhoto");
         $.photoSelectOptionalLabel.visible = false;
-        $.magnify.visible = true;
-        $.camera.visible = true;
-        clearError();
         $.activity.show();
         $.photo.visible = false;
         $.trigger("loading");
@@ -284,11 +281,15 @@ function enable() {
 function setError() {
     $.resetClass( $.photoSelectBoundary, "photoError" );
     $.photoSelectLabel.visible = true;
+    $.magnify.visible = false;
 }
 
 function clearError() {
     $.resetClass( $.photoSelectBoundary, "photoNoError");
     $.photoSelectLabel.visible = false;
+    if ( $.photo.image ) {
+        $.magnify.visible = true;
+    }
 }
 
 exports.getThumbnailImageUrl = getThumbnailImageUrl;
