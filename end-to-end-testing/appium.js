@@ -4,9 +4,12 @@ const { setUpWorld, swipeRight } = require('../features/support/all-screens');
 
 global.world = {};
 global.expect = expect;
-global.swipeRight = function(options) { swipeRight(world,options) };
+global.swipeRight = function(options) { 
+    swipeRight(world,options) 
+};
 
 global.startAppium = async function() {
+    this.timeout(600000);
     if ( world.driver ) {
         await world.driver.reset();
     } else {

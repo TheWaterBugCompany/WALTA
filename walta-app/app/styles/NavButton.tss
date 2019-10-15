@@ -3,7 +3,7 @@
 ".container" : {
   left: "1dp",
   right: "1dp"
-}
+} 
 ".anchorBarTextButton": {
   horizontalWrap: "false",
   color: "white"
