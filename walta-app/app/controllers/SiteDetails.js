@@ -12,6 +12,10 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.photoSelect.cleanUp();
     $.destroy();
     $.off();
+    if ( $.locationEntry ) {
+        $.locationEntry.cleanUp();
+        $.locationEntry = null;
+    }
     sample.off( null, updateLocation );
     sample.off( null, loadAttributes );
     GeoLocationService.stop();
@@ -145,6 +149,12 @@ function openLocationEntry() {
         $.locationEntry.disable();
 
     $.TopLevelWindow.add($.locationEntry.getView());
+    $.locationEntry.on("close", function handler() {
+        $.locationEntry.off("close", handler);
+        $.TopLevelWindow.remove($.locationEntry.getView());
+        $.locationEntry.cleanUp();
+        $.locationEntry = null;
+    })
 }
 
 $.photoSelect.on("photoTaken", function(path) {

@@ -21,8 +21,8 @@
 }
 
 "#upButtonImage": {
-  image: "/images/leftarrow.png", 
+  image: "/images/icon-go-up.png", 
   left: 0,
-  width: "12dp",
+  width: "20dp",
   height: "20dp"
 }

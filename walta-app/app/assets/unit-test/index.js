@@ -11,7 +11,7 @@ function runTests() {
   }
   return new Promise( function(resolve, reject) {
     [ 
-      "VideoView",
+      /*"VideoView",
       "AnchorBar", 
       "TaxonList",
       "Habitat",
@@ -27,21 +27,21 @@ function runTests() {
       "Sample",
       "Speedbug",
       "Summary",
-      "TaxonDetails",
+      "TaxonDetails",*/
       "SiteDetails",
-      "ViewUtils",
+      /*"ViewUtils",
       //"LeafletMap",
       //"MayflyEmergenceMap",
       //"MayflyMusterSelect",
-      "SampleSync",
+      /*"SampleSync",
       "Gallery",
       "PhotoSelect",
       "EditTaxon",
       "NavButton",
       "GoBackButton",
-      "GoForwardButton",
-      "LocationEntry",
-      "Database" // needs to run last
+      "GoForwardButton",*/
+      //"LocationEntry",
+      //"Database" // needs to run last
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
       try { __remove_module_from_preview_cache(specPath);} catch(e) {}
@@ -52,7 +52,7 @@ function runTests() {
 }
 
 // useful for testing memory leaks
-var infinteLoopMode = false;
+var infinteLoopMode = true;
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
 setManualTests( false );
