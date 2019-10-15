@@ -31,7 +31,7 @@ class BaseScreen {
  
     async waitForText(text) {
         if ( this.isIos() ) {
-            await this.waitForRaw( this.selector(text), `text "${text}" not present`);
+            await this.waitForRaw( `-ios predicate string:name CONTAINS '${text}'`, `text "${text}" not present`);
         } else {
             await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`);
         }

@@ -15,7 +15,8 @@ module.exports = function(grunt) {
       './walta-app/tiapp.xml',  
       './walta-app/app/**/*.js', 
       './walta-app/app/**/*.xml', 
-      './walta-app/app/**/*.css' 
+      './walta-app/app/**/*.css',
+      './walta-app/app/**/*.tss' 
     ];
 
     function build_if_newer_options(platform,build_type) {
