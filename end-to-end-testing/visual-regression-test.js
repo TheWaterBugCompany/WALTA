@@ -33,6 +33,10 @@ function screenshotPath( screenshot, name, postfix="" ) {
     return `${__dirname}/baseline-images/${name.replace(/ /g,"_")}_${dims.width}x${dims.height}${postfix.length > 0 ?"_"+postfix:""}.png`;
 }
 
+// todo: collect failures to report at the end of the run, currently one failure causes that test
+// to stop execution, thus causing future tests to fail. This could be taken further to allow
+// screenshots to be compared from any appium based test thus removing the need to run slow
+// tests just for screenshots. 
 async function verifyScreenShot( name ) {
     await world.gallery.sleep(500); // wait for scroll bar to disappear
     var base64 = await world.driver.takeScreenshot();
