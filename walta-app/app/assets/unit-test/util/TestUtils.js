@@ -215,9 +215,15 @@ function removeDatabase(db_name) {
 
 function resetDatabase(db_name) {
 	var db = Ti.Database.open(db_name);
-	db.execute("DELETE FROM taxa");
-	db.execute("DELETE FROM sample");
-	db.close();
+	try {
+		db.execute("DELETE FROM taxa");
+		db.execute("DELETE FROM sample");
+	} finally{
+		if ( db ) {
+			db.close();
+		}
+	}
+	
 }
 
 exports.enterText = enterText;
