@@ -197,7 +197,7 @@ describe("SiteDetails controller", function() {
     });
 
 
-    it.only('should open a map viewer when location icon is clicked', function(done) {
+    it('should open a map viewer when location icon is clicked', function(done) {
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             ctl.locationIndicator.fireEvent("click");

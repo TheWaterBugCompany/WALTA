@@ -23,7 +23,7 @@ describe("NavButton controller", function() {
   var acb, win;
 	before( function(done) {
     acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
-    vw = acb.getView();
+    var vw = acb.getView();
     vw.bottom = 0;
     vw.height = "10%";
     win = wrapViewInWindow( vw );
