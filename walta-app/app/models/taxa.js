@@ -94,8 +94,12 @@ exports.definition = {
 			loadCurrent() {
 				this.fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );
 			},
-			loadTemporary() {
-				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId IS NULL)`} );
+			removeAllTemporary() {
+				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL`} );
+				this.forEach( (t) => t.destroy() );
+			},
+			loadTemporary(taxonId) {
+				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL AND taxonId = ${taxonId}`} );
 			},
 			load( sampleId ) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId})`} );

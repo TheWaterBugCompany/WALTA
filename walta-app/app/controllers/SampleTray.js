@@ -492,8 +492,8 @@ function closeEditScreen() {
 function editTaxon( taxon_id ) {
   var taxon = Alloy.Collections["taxa"].find( (t) => t.get("taxonId") === taxon_id);
   if (!taxon ) {
-    var taxons = Alloy.createCollection("taxa");
-    taxons.loadTemporary();
+    var taxons = Alloy.createCollection("taxa"); 
+    taxons.loadTemporary(taxon_id); 
     taxon = taxons.first();
     if ( !taxon ) {
       // creates a taxa but leaves it unlinked from sample until save event recieved

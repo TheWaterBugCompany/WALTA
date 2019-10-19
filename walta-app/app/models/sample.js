@@ -230,17 +230,10 @@ exports.definition = {
 			createNewSample: function() {
 				Ti.API.debug("Creating new sample..");
 				Alloy.Models.sample = Alloy.createModel("sample");
-				
-				// remove temporary taxon since a new sample
-				// is being created
-				var tmp = Alloy.createCollection("taxa");
-				var taxon = tmp.loadTemporary();
-				if ( taxon ) {
-					taxon.destroy();
-				} 
-
 				this.add(Alloy.Models.sample);
 				Alloy.Models.sample.save();
+				
+				Alloy.Collections.instance("taxa").removeAllTemporary();
 				Alloy.Collections.instance("taxa").reset();
 			},
 

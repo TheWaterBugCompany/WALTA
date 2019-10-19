@@ -9,13 +9,12 @@ var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-
 describe( 'SampleTray controller', function() {
   this.timeout(10000);
   var SampleTray, SampleTrayWin;
 
   beforeEach( function() {
-    resetDatabase("samples");
+    resetDatabase();
   });
 
   function setupSampleTray() {
@@ -739,9 +738,8 @@ describe( 'SampleTray controller', function() {
     }
 
     async function openSampleTrayToEdit( taxonId ) {
-      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: 1 });
+      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: taxonId });
       SampleTrayWin = SampleTray.getView();
-      SampleTray.photoSelect
       await openSampleTray();
       await waitFor( () => SampleTray.editTaxon.photoSelect.getThumbnailImageUrl() );
     }
@@ -773,6 +771,7 @@ describe( 'SampleTray controller', function() {
       
       await openSampleTrayToEdit(1);
 
+      expect( SampleTray.editTaxon.taxonName.text).to.equal("Aeshnidae Telephleb");
       expect( SampleTray.editTaxon ).to.be.ok;
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
@@ -786,6 +785,27 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
       expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.include("preview_thumbnail");
 
+    });
+    it('should persist switch the temporary taxon to the newly selectly taxon after selection', async function() {
+      
+      // first ensure there is a temporary unsaved taxon and photo
+      await openSampleTrayToEdit(1);
+
+      expect( SampleTray.editTaxon.taxonName.text).to.equal("Aeshnidae Telephleb");
+      expect( SampleTray.editTaxon ).to.be.ok;
+      expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
+      expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
+      
+      
+      await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
+      await closeSampleTray();
+
+
+      await openSampleTrayToEdit(2);
+
+      expect( SampleTray.editTaxon.taxonName.text).to.equal("Amphipoda");
+      expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
+      expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
     });
     it('should open the gallery with the correct temporary image url', async function() { 
       await openSampleTrayToEdit(1);
@@ -818,6 +838,7 @@ describe( 'SampleTray controller', function() {
       expect( data.taxonId ).to.equal(1);
       await closeSampleTray();
       await openSampleTrayToEdit(1);
+      expect( SampleTray.editTaxon.taxonName.text).to.equal("Aeshnidae Telephleb");
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("> 20");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
       expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.include("preview_thumbnail");

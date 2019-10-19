@@ -52,7 +52,7 @@ function runTests() {
 }
 
 // useful for testing memory leaks
-var infinteLoopMode = false;
+var infinteLoopMode = false; 
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
 setManualTests( false );
