@@ -213,16 +213,15 @@ function removeDatabase(db_name) {
     db.remove();
 }
 
-function resetDatabase(db_name) {
-	var db = Ti.Database.open(db_name);
-	try {
-		db.execute("DELETE FROM taxa");
-		db.execute("DELETE FROM sample");
-	} finally{
-		if ( db ) {
-			db.close();
-		}
-	}
+function resetDatabase() {
+	// creates database if missing
+	var taxa = Alloy.createModel("taxa");
+	Alloy.createModel("sample");
+	// opens database
+	var db = Ti.Database.open(taxa.config.adapter.db_name);
+	db.execute("DELETE FROM taxa");
+	db.execute("DELETE FROM sample");
+	db.close();
 	
 }
 
