@@ -202,8 +202,20 @@ function clickButton( button ) {
 }
 
 function makeTestPhoto(name) {
-    let photo = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, name);
-    Ti.Filesystem.getFile("unit-test/resources/site-mock.jpg").copy(photo.nativePath);
+	let photo = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, name);
+	let mockPhoto = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/unit-test/resources/site-mock.jpg");
+	if ( ! mockPhoto.exists() ) {
+		throw new Error(`${mockPhoto.nativePath} doesn't exist!`);
+	}
+	else {
+
+		if ( ! mockPhoto.copy(photo.nativePath) ) {
+			console.log(`error copying file to: ${photo.nativePath}`);
+		} else if ( ! photo.exists() ) {
+			console.log(`copying file to: ${photo.nativePath} succeeded but the file still doesn't exist?`);
+		}
+	}
+	
     return photo.nativePath;
 }
 
