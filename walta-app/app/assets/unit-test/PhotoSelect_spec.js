@@ -135,6 +135,7 @@ describe('PhotoSelect controller', function() {
 	});
 
 	it('should display loading indicator', function(done) {
+		this.timeout(10000);
 		function doneOnError(e) {
 			if ( e ) {
 				done(e);
