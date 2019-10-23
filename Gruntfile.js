@@ -44,7 +44,7 @@ module.exports = function(grunt) {
           },
 
           clean_test: {
-            command: 'rm ./builds/{release,test,unit-test,preview,preview-unit-test}/*.{apk,ipa}',
+            command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "inherit"
           },
@@ -124,6 +124,11 @@ module.exports = function(grunt) {
               }
 
               switch( build_type ) {
+                case "debug":
+                  test();
+                  args.push("--output-dir builds/debug --debug-host=localhost:9229")
+                  break;
+                
                 case "test":
                   test();
                   args.push("--output-dir builds/test");
@@ -199,6 +204,9 @@ module.exports = function(grunt) {
 
           test_android: build_if_newer_options("android", "test"),
           test_ios: build_if_newer_options("ios", "test"),
+
+          debug_android: build_if_newer_options("android", "debug"),
+          debug_ios: build_if_newer_options("ios", "debug"),
 
           release_android: build_if_newer_options("android", "release"),
           release_ios: build_if_newer_options("ios", "release"),
@@ -361,4 +369,10 @@ module.exports = function(grunt) {
     grunt.registerTask('release', function(platform) {
       grunt.task.run(`newer:release_${platform}`); 
     });
+
+    grunt.registerTask('debug', function(platform) {
+      grunt.task.run(`newer:debug_${platform}`); 
+      grunt.task.run(`launch:${platform}:debug`);
+      grunt.task.run(`output-logs:${platform}:preview`);
+    })
   };

@@ -7,12 +7,12 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/walta-taxonomy/compileKey-from-ink.js",
-            "cwd" : "${workspaceFolder}/walta-taxonomy",
-            "env" : {
-                "NODE_PATH": "${workspaceFolder}/walta-app/app:${workspaceFolder}/walta-app/app/lib"
-            }
+            "name": "Launch Debug Android",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "grunt",
+            "runtimeArgs": [ "debug:android"],
+            "port": 9229
         }
+    
     ]
 }
