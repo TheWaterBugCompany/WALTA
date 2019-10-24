@@ -4,7 +4,7 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 
-var DEBUG = false;
+var DEBUG = false; // WARNING turning htis on breaks unit tests
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
@@ -67,6 +67,22 @@ function getMiddleWidth() {
   return getEndcapWidth()*1.3;
 }
 
+function getTrayWidth() {
+  let taxons = Alloy.Collections["taxa"].length - 2;
+  let tiles = Math.floor(taxons / 4);
+  // If the number of taxons is divisble by 4 we also need an extra tile
+  // for the plus button so extend the size by 1
+  if ( taxons % 4 === 0 ) {
+    tiles += 1;
+  }
+  let width = tiles*getMiddleWidth() + getEndcapWidth();
+  
+  if ( width < getViewWidth() )
+    return getViewWidth();
+  else
+    return width;
+}
+
 // TODO: Factor Tile into a controller and handle clean up there?
 function cleanUpTile( tile ) {
   tile.icons.forEach( function(icon ) {
@@ -93,11 +109,7 @@ function clearTileCache() {
   }
 }
 
-function roundToTile( x ) {
-  var middleWidth = getMiddleWidth();
-  var endcapWidth = getEndcapWidth();
-  return Math.floor((x + endcapWidth) / middleWidth);
-}
+
 
 function mapTileNumToCollection( n ) {
   return n*4+2;
@@ -254,9 +266,9 @@ function createSampleTrayTile( tileNum ) {
   var endcapWidth = getEndcapWidth();
   var endcapHeight = getEndcapHeight();
   var tile = Ti.UI.createView({
-    height: `${endcapHeight}dip`,
-    width: `${middleWidth+1}dip`,
-    left: `${tileNum*middleWidth+endcapWidth}dip`
+    height: `${endcapHeight}dp`,
+    width: `${middleWidth+1}dp`,
+    left: `${tileNum*middleWidth+endcapWidth}dp`
   });
   if ( DEBUG ) {
     tile.borderColor = "yellow";
@@ -303,7 +315,7 @@ function updateSampleTrayTile( tileNum ) {
 
 function releaseTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Ti.API.debug(`releaseTiles(${start_n},${end_n})`);
+    Ti.API.info(`releaseTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 ) {
@@ -319,44 +331,50 @@ function releaseTiles( start_n, end_n ) {
 
 function addTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Ti.API.debug(`addTiles(${start_n},${end_n})`);
+    Ti.API.info(`addTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
-    // max() below is to add an extra blank tile with an empty tray...
-    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length - 2)/4,3) ) ) {
-      var tile;
-      if ( typeof( tileIndex[i] ) !== "undefined") {
-        updateSampleTrayTile( i );
-      } else {
+   if ( i >=  0 ) {
+     var tile;
+     if ( typeof( tileIndex[i] ) !== "undefined") {
+       updateSampleTrayTile( i );
+    } else {
         tile = createSampleTrayTile( i );
         tileIndex[i] = tile;
         $.tray.add( tile.container );
       }
-
     }
   }
 }
 
-
+function roundToTile( x ) {
+  var middleWidth = getMiddleWidth();
+  var endcapWidth = getEndcapWidth();
+  return Math.floor((x - endcapWidth) / middleWidth);
+}
 
 function updateVisibleTiles( scrollx) {
   var viewWidth = getViewWidth();
   var middleWidth = getMiddleWidth();
   var endcapWidth = getEndcapWidth();
-  var rightEdge = roundToTile( scrollx + viewWidth + middleWidth );
-  var leftEdge = roundToTile( scrollx - middleWidth - endcapWidth );
+
+  var rightEdge = roundToTile( scrollx + viewWidth + middleWidth - 1 );
+  var leftEdge = roundToTile( scrollx );
   if ( DEBUG ) {
-    Ti.API.debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}`);
+    Ti.API.info(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}, leftEdge=${leftEdge}, rightEdge=${rightEdge}`);
   }
-  addTiles(leftEdge,rightEdge);
-  releaseTiles( 0, leftEdge - 1 );
+  addTiles(leftEdge,rightEdge - 1);
+  releaseTiles( 0, leftEdge-1 );
   releaseTiles( rightEdge, tileIndex.length );
 }
 
 function drawIcecubeTray() {
-    updateFirstTwoSampleTrayIcons();
-    updateVisibleTiles( getScrollOffset() );
-    $.trigger("trayupdated");
+  // froce the contentWidth to update - on iOS this doesn't seem to be automatic
+  $.tray.width = `${getTrayWidth()}dp`;
+  $.contentWidth = `${getTrayWidth()}dp`;
+  updateFirstTwoSampleTrayIcons();
+  updateVisibleTiles( getScrollOffset() );
+  $.trigger("trayupdated");
 };
 
 function startIdentification(e) {
@@ -414,18 +432,20 @@ function drawEndcapTile() {
   }));
 }
 
-function getTrayWidth() {
-  let taxons = Alloy.Collections["taxa"].length;
-  let tiles = Math.floor((taxons-2) / 4);
-  let width = tiles*getMiddleWidth() + getEndcapWidth() + getMiddleWidth();
-  if ( width < getViewWidth() )
-    return getViewWidth();
-  else
-    return width;
-}
+
 
 function scrollToRightEdge() {
-  $.content.scrollTo( PlatformSpecific.convertDipToSystem( getTrayWidth() - getViewWidth() ), 0, { animate: true } );
+  var rightEdge = PlatformSpecific.convertDipToSystem( getTrayWidth() - getViewWidth() );
+  return new Promise( function( resolve ) {
+        function isAtScrollX(e) {
+          if ( Math.abs(e.x - rightEdge) < 1.0 ) {
+            $.content.removeEventListener("scroll",isAtScrollX);
+            setTimeout( resolve, 5 );
+          }
+        } 
+        $.content.addEventListener("scroll", isAtScrollX );
+        setTimeout(() => $.content.scrollTo( rightEdge, 0, { animate: true }), 0  );
+      }).then( () => $.trigger("scrollrightend") ); 
 }
 
 
@@ -462,8 +482,11 @@ function handleDragEnd(e) {
 }
 
 $.content.addEventListener( "scroll", drawIcecubeTray );
+
+/*
 $.TopLevelWindow.addEventListener("dragstart", handleDragStart );
 $.TopLevelWindow.addEventListener("dragend", handleDragEnd );
+*/
 
 $.content.addEventListener( "postlayout", function initEvent() {
   $.content.removeEventListener( "postlayout", initEvent );
@@ -471,7 +494,10 @@ $.content.addEventListener( "postlayout", function initEvent() {
   scrollToRightEdge();
 });
 
-Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
+Alloy.Collections["taxa"].on("add change remove", () => {
+  drawIcecubeTray();
+  scrollToRightEdge();
+});
 
 $.getView().addEventListener( "close", function cleanup() {
   $.TopLevelWindow.removeEventListener("dragstart", handleDragStart ); 
@@ -534,8 +560,6 @@ function editTaxon( taxon_id ) {
     
     closeEditScreen();
     $.trigger("taxonSaved"); 
-    scrollToRightEdge();
-
   });
 }
 
