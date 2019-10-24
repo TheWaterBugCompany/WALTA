@@ -4,3 +4,8 @@
   canCancelEvents: true,
   backgroundColor: "#aaa"
 }
+
+"tray": {
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL
+}
