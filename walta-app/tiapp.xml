@@ -3,7 +3,7 @@
   xmlns:ti="http://ti.appcelerator.org">
   <id>net.thewaterbug.waterbug</id>
   <name>Waterbug</name>
-  <version>1.9.12.29</version>
+  <version>1.9.12.30</version>
   <publisher>The Code Sharman</publisher>
   <url>http://www.thewaterbug.net/</url>
   <description>The Waterbug App</description>
@@ -62,7 +62,7 @@
   </ios>
   <android 
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <manifest android:versionCode="1009012029" android:versionName="1.9.12.29">
+    <manifest android:versionCode="1009012030" android:versionName="1.9.12.30">
     <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="28"/>
     <application android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:debuggable="false" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
       <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCOYMRokSMZ7t5l_8fZ7SPIW-riNpcUl18" />
