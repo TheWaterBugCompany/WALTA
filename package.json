@@ -4,7 +4,7 @@
   "description": "The Waterbug App parent project",
   "main": "index.js",
   "dependencies": {
-    "alloy": "^1.14.0",
+    "alloy": "^1.14.1",
     "appium": "^1.14.2",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",

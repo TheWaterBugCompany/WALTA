@@ -21,6 +21,7 @@ exports.definition = {
 			initialize() {
 				this.on("change:sampleId", function() {
 					// move from temporary to permanent storage
+					console.log("change:sampleId");
 					let photoPath = this.get("taxonPhotoPath");
 					if ( photoPath ) this.setPhoto(photoPath);
 				});
@@ -36,11 +37,12 @@ exports.definition = {
 			},
 
 			setPhoto(file) {
-				var newPhotoName;
-				
+				var newPhotoName;	
 				if ( ! this.get("sampleId") ) {
-					newPhotoName = `taxon_temporary.jpg`;
-					removeFilesBeginningWith(`taxon_temporary`);
+					newPhotoName = `taxon_temporary_${this.get("taxonId")}.jpg`;
+					if ( file.endsWith(newPhotoName) )
+						return;
+					removeFilesBeginningWith(newPhotoName);
 				} else {
 					newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
 					removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);

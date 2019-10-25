@@ -4,7 +4,7 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 
-var DEBUG = false; // WARNING turning htis on breaks unit tests
+var DEBUG = false; // WARNING turning this on breaks unit tests
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
@@ -369,7 +369,19 @@ function updateVisibleTiles( scrollx) {
 }
 
 function drawIcecubeTray() {
+  /* If you save a taxon, this for some reasons calls this method without valid view size values. Its not clear to me why they aren't set
+     since you can see the tray behind the edit screen. But this cancels the redraw if the controller hasn't yet set its size values */
+  if ( $.content.size.height === 0 ) {
+    if ( DEBUG ) {
+      Ti.API.info("view not yet initialised skipping redraw!")
+    }
+    return;
+  }
+
   // froce the contentWidth to update - on iOS this doesn't seem to be automatic
+  if ( DEBUG ) {
+    Ti.API.info(`trayWidth=${getTrayWidth()}, viewWidth=${getViewWidth()}, scrollOffset=${getScrollOffset()}`);
+  }
   $.tray.width = `${getTrayWidth()}dp`;
   $.contentWidth = `${getTrayWidth()}dp`;
   updateFirstTwoSampleTrayIcons();
@@ -557,7 +569,6 @@ function editTaxon( taxon_id ) {
     taxon.set("sampleId", sample.get("sampleId"));
     Alloy.Collections.taxa.add( taxon );
     taxon.save();
-    
     closeEditScreen();
     $.trigger("taxonSaved"); 
   });
