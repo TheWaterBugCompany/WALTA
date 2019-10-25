@@ -426,7 +426,7 @@ describe( 'SampleTray controller', function() {
   context('adding and removing taxa', function() {
 
     afterEach(cleanupSampleTray);
-    it('should scroll to the far right after adding a new taxon', function() {
+    it('should scroll to the far right after adding 10th taxon', function() {
       
       return Promise.resolve()
           .then( function() {
@@ -458,6 +458,44 @@ describe( 'SampleTray controller', function() {
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
             assertPlus( sampleTaxa[0] );
+            expect( SampleTray.tray.size.width ).to.be.above( SampleTray.content.size.width );
+          });
+    });
+
+    it('should scroll to the far right after adding 11th taxon', function() {
+      
+      return Promise.resolve()
+          .then( function() {
+            Alloy.Collections.taxa = Alloy.createCollection("taxa", [
+              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+
+              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+
+              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" })
+
+            ]);
+            setupSampleTray();
+          })
+          .then( openSampleTray )
+          .then( () => {
+            Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ) );
+           })
+          .then( waitForScrollEnd )
+          .then( () => {
+            var tiles = SampleTray.tray.getChildren();
+            tiles.shift();
+            var tile = findRightMost( tiles );
+            var sampleTaxa = getTaxaIcons( tile );
+            expect( sampleTaxa ).to.have.lengthOf(4);
+            assertPlus( sampleTaxa[2] );
+            expect( SampleTray.tray.size.width ).to.be.above( SampleTray.content.size.width );
           });
     });
 

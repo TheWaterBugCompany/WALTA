@@ -69,14 +69,8 @@ function getMiddleWidth() {
 
 function getTrayWidth() {
   let taxons = Alloy.Collections["taxa"].length - 2;
-  let tiles = Math.floor(taxons / 4);
-  // If the number of taxons is divisble by 4 we also need an extra tile
-  // for the plus button so extend the size by 1
-  if ( taxons % 4 === 0 ) {
-    tiles += 1;
-  }
+  let tiles = Math.floor(taxons / 4) + 1;
   let width = tiles*getMiddleWidth() + getEndcapWidth();
-  
   if ( width < getViewWidth() )
     return getViewWidth();
   else
