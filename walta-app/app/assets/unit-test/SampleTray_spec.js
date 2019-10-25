@@ -845,8 +845,7 @@ describe( 'SampleTray controller', function() {
       expect(photoUrl).to.include("taxon_temporary"); // make sure the correct photo url is sent
     });
 
-    // freezes unit tests??
-    it.skip('should persist a saved taxon to the new sample', async function() {
+    it('should persist a saved taxon to the new sample', async function() {
       await openSampleTrayToEdit(1);
       await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
       await simulateSaveTaxon();
@@ -862,8 +861,7 @@ describe( 'SampleTray controller', function() {
       expect( taxon.get("taxonPhotoPath") ).to.include(`taxon_${sampleId}`);
 
     });
-    // freezes unit tests??
-    it.skip('should load the persisted data when editing taxon', async function() {
+    it('should load the persisted data when editing taxon', async function() {
       await openSampleTrayToEdit(1);
       await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
       await simulateSaveTaxon();
