@@ -85,9 +85,28 @@ describe('LogIn controller', function() {
             clickButton( login.logInButton );
         } );
     });
-
-    it('should indicate invalid email');
-    it('should indicate missing password');
+ 
+    it('should indicate missing password', function(done) {
+        controllerOpenTest( login, () => checkTestResult( done, function() {
+            enterText( login.emailTextField, "test@example.com" );
+            enterText( login.passwordTextField, "password" );
+            expect( login.logInButton.touchEnabled ).to.be.true;
+            enterText( login.passwordTextField, "" );
+            expect( login.logInButton.touchEnabled ).to.be.false;
+            expect( login.passwordTextField.borderColor ).to.equal("red");
+        }) );
+    });
+ 
+    it('should indicate invalid email', function(done) {
+        controllerOpenTest( login, () => checkTestResult( done,  function() {
+            enterText( login.emailTextField, "test@example.com" );
+            enterText( login.passwordTextField, "password" );
+            expect( login.logInButton.touchEnabled ).to.be.true;
+            enterText( login.emailTextField, "notvalidemail" );
+            expect( login.logInButton.touchEnabled ).to.be.false;
+            expect( login.emailTextField.borderColor ).to.equal("red");
+        }));
+    }); 
 
     it('should trim spaces from email', function(done) {
         Alloy.Globals.CerdiApi.loginUser = function( email, password ) {
@@ -101,5 +120,28 @@ describe('LogIn controller', function() {
             enterText( login.passwordTextField, "password" );
             clickButton( login.logInButton );
         } );
+    });
+
+    it('should display activity indicator when waiting for the server', function(done) {
+        var doneLogin;
+        Alloy.Globals.CerdiApi.loginUser = function( userInfo ) {
+            return new Promise( (resolve) => { doneLogin = resolve } );
+        };
+        controllerOpenTest( login, () => checkTestResult( done,  function() {
+            expect( login.activity.visible ).to.be.false;
+            expect( login.logInButton.visible ).to.be.true;
+            enterText( login.emailTextField, "test@example.com" );
+            enterText( login.passwordTextField, "password" );
+            clickButton( login.logInButton );
+            setTimeout( () => {
+                expect( login.activity.visible ).to.be.true;
+                expect( login.logInButton.visible ).to.be.false;
+                doneLogin();
+                setTimeout( () => {
+                    expect( login.activity.visible ).to.be.false;
+                    expect( login.logInButton.visible ).to.be.true;
+                }, 50);
+            }, 50);
+        } ));
     });
 });

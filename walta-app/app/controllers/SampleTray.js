@@ -4,7 +4,7 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Topics = require('ui/Topics');
 
-var DEBUG = false;
+var DEBUG = false; // WARNING turning this on breaks unit tests
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
@@ -22,13 +22,28 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE } ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left" }  ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE, slide: "right" } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 
 // Keeps track of the tile views we cache
-var tileIndex = [];
+var tileIndex = []; // TODO: extract a class to make this datastrcuture easier to comphrend
+/*
+  tileIndex  = [
+    {
+      icons: [
+        {
+          view: ...
+          *controller: ...
+          *handler: ...
+          * means only when a taxon is present
+        }
+      ]
+    }
+  ]
+*/
+
 var firstTwoTiles = null;
 
 function getScrollOffset() {
@@ -50,6 +65,16 @@ function getEndcapHeight() {
 
 function getMiddleWidth() {
   return getEndcapWidth()*1.3;
+}
+
+function getTrayWidth() {
+  let taxons = Alloy.Collections["taxa"].length - 2;
+  let tiles = Math.floor(taxons / 4) + 1;
+  let width = tiles*getMiddleWidth() + getEndcapWidth();
+  if ( width < getViewWidth() )
+    return getViewWidth();
+  else
+    return width;
 }
 
 // TODO: Factor Tile into a controller and handle clean up there?
@@ -78,11 +103,7 @@ function clearTileCache() {
   }
 }
 
-function roundToTile( x ) {
-  var middleWidth = getMiddleWidth();
-  var endcapWidth = getEndcapWidth();
-  return Math.floor((x + endcapWidth) / middleWidth);
-}
+
 
 function mapTileNumToCollection( n ) {
   return n*4+2;
@@ -90,34 +111,52 @@ function mapTileNumToCollection( n ) {
 
 /* addTrayIcon and updateTrayIcon return a controller if and only if
    one was created */
+
+// CODE SMELL: Why don't we bind to the events on the collection to trigger these
+// updates. This could be done even in the icon controller - hopefully avoiding all
+// adding/removing logic, adding/creating event handlers etc.
+//
+// Each tray cell should be responsible for maintaining its event handlers etc.
+// so updates don't require this dance.
+
+function addTaxonTrayIcon( taxon, thumbnail ) {
+  
+  var icon = createTaxaIcon( taxon );
+  var taxonClickHandler = function(e) {
+    icon.fireEditEvent();
+    e.cancelBubble = true;
+  };
+  thumbnail.addEventListener("click", taxonClickHandler );
+  thumbnail.add( icon.getView() );
+  return {
+    view: thumbnail,
+    controller: icon,
+    handler: taxonClickHandler
+  };
+}
+
+
 function addTrayIcon( container, index ) {
   var thumbnail = createIconContainer();
   container.add( thumbnail );
   if ( index < Alloy.Collections["taxa"].length) {
     var taxon = Alloy.Collections["taxa"].at(index);
     if ( typeof( taxon ) !== "undefined" ) {
-      var icon = createTaxaIcon( taxon );
-      var taxonClickHandler = function(e) {
-        Ti.API.info(`firing edit event` );
-        icon.fireEditEvent();
-        e.cancelBubble = true;
-      };
-      thumbnail.addEventListener("click", taxonClickHandler );
-      thumbnail.add( icon.getView() );
-      return {
-        view: thumbnail,
-        controller: icon,
-        handler: taxonClickHandler
-      };
+      return addTaxonTrayIcon( taxon, thumbnail );
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
     thumbnail.add( createAddIcon() );
+    return {
+      view: thumbnail
+    }
   } else {
     thumbnail.addEventListener( "click", startIdentification );
+    return {
+      view: thumbnail,
+      handler: startIdentification
+    }
   }
-  return {
-    view: thumbnail
-  }
+  
 }
 
 function updateTrayIcon( icon, index ) {
@@ -127,10 +166,13 @@ function updateTrayIcon( icon, index ) {
       if ( typeof( icon.controller ) !== "undefined" ) {
         icon.controller.update(taxon);
       } else {
-        var controller = createTaxaIcon( taxon );
-        icon.controller = controller;
         icon.view.removeAllChildren();
-        icon.view.add( controller.getView() );
+        if ( icon.handler )
+          icon.view.removeEventListener( "click", icon.handler );
+
+        var newIcon = addTaxonTrayIcon( taxon, icon.view );
+        icon.controller = newIcon.controller;
+        icon.handler = newIcon.handler;
       }
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
@@ -218,9 +260,9 @@ function createSampleTrayTile( tileNum ) {
   var endcapWidth = getEndcapWidth();
   var endcapHeight = getEndcapHeight();
   var tile = Ti.UI.createView({
-    height: `${endcapHeight}dip`,
-    width: `${middleWidth+1}dip`,
-    left: `${tileNum*middleWidth+endcapWidth}dip`
+    height: `${endcapHeight}dp`,
+    width: `${middleWidth+1}dp`,
+    left: `${tileNum*middleWidth+endcapWidth}dp`
   });
   if ( DEBUG ) {
     tile.borderColor = "yellow";
@@ -267,7 +309,7 @@ function updateSampleTrayTile( tileNum ) {
 
 function releaseTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Ti.API.debug(`releaseTiles(${start_n},${end_n})`);
+    Ti.API.info(`releaseTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 ) {
@@ -283,44 +325,62 @@ function releaseTiles( start_n, end_n ) {
 
 function addTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Ti.API.debug(`addTiles(${start_n},${end_n})`);
+    Ti.API.info(`addTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
-    // max() below is to add an extra blank tile with an empty tray...
-    if ( i >=  0 && ( i <= Math.max((Alloy.Collections["taxa"].length - 2)/4,3) ) ) {
-      var tile;
-      if ( typeof( tileIndex[i] ) !== "undefined") {
-        updateSampleTrayTile( i );
-      } else {
+   if ( i >=  0 ) {
+     var tile;
+     if ( typeof( tileIndex[i] ) !== "undefined") {
+       updateSampleTrayTile( i );
+    } else {
         tile = createSampleTrayTile( i );
         tileIndex[i] = tile;
         $.tray.add( tile.container );
       }
-
     }
   }
 }
 
-
+function roundToTile( x ) {
+  var middleWidth = getMiddleWidth();
+  var endcapWidth = getEndcapWidth();
+  return Math.floor((x - endcapWidth) / middleWidth);
+}
 
 function updateVisibleTiles( scrollx) {
   var viewWidth = getViewWidth();
   var middleWidth = getMiddleWidth();
   var endcapWidth = getEndcapWidth();
-  var rightEdge = roundToTile( scrollx + viewWidth + middleWidth );
-  var leftEdge = roundToTile( scrollx - middleWidth - endcapWidth );
+
+  var rightEdge = roundToTile( scrollx + viewWidth + middleWidth - 1 );
+  var leftEdge = roundToTile( scrollx );
   if ( DEBUG ) {
-    Ti.API.debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}`);
+    Ti.API.info(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}, leftEdge=${leftEdge}, rightEdge=${rightEdge}`);
   }
-  addTiles(leftEdge,rightEdge);
-  releaseTiles( 0, leftEdge - 1 );
+  addTiles(leftEdge,rightEdge - 1);
+  releaseTiles( 0, leftEdge-1 );
   releaseTiles( rightEdge, tileIndex.length );
 }
 
 function drawIcecubeTray() {
-    updateFirstTwoSampleTrayIcons();
-    updateVisibleTiles( getScrollOffset() );
-    $.trigger("trayupdated");
+  /* If you save a taxon, this for some reasons calls this method without valid view size values. Its not clear to me why they aren't set
+     since you can see the tray behind the edit screen. But this cancels the redraw if the controller hasn't yet set its size values */
+  if ( $.content.size.height === 0 ) {
+    if ( DEBUG ) {
+      Ti.API.info("view not yet initialised skipping redraw!")
+    }
+    return;
+  }
+
+  // froce the contentWidth to update - on iOS this doesn't seem to be automatic
+  if ( DEBUG ) {
+    Ti.API.info(`trayWidth=${getTrayWidth()}, viewWidth=${getViewWidth()}, scrollOffset=${getScrollOffset()}`);
+  }
+  $.tray.width = `${getTrayWidth()}dp`;
+  $.contentWidth = `${getTrayWidth()}dp`;
+  updateFirstTwoSampleTrayIcons();
+  updateVisibleTiles( getScrollOffset() );
+  $.trigger("trayupdated");
 };
 
 function startIdentification(e) {
@@ -378,18 +438,20 @@ function drawEndcapTile() {
   }));
 }
 
-function getTrayWidth() {
-  let taxons = Alloy.Collections["taxa"].length;
-  let tiles = Math.floor((taxons-2) / 4);
-  let width = tiles*getMiddleWidth() + getEndcapWidth() + getMiddleWidth();
-  if ( width < getViewWidth() )
-    return getViewWidth();
-  else
-    return width;
-}
+
 
 function scrollToRightEdge() {
-  $.content.scrollTo( PlatformSpecific.convertDipToSystem( getTrayWidth() - getViewWidth() ), 0, { animate: true } );
+  var rightEdge = PlatformSpecific.convertDipToSystem( getTrayWidth() - getViewWidth() );
+  return new Promise( function( resolve ) {
+        function isAtScrollX(e) {
+          if ( Math.abs(e.x - rightEdge) < 1.0 ) {
+            $.content.removeEventListener("scroll",isAtScrollX);
+            setTimeout( resolve, 5 );
+          }
+        } 
+        $.content.addEventListener("scroll", isAtScrollX );
+        setTimeout(() => $.content.scrollTo( rightEdge, 0, { animate: true }), 0  );
+      }).then( () => $.trigger("scrollrightend") ); 
 }
 
 
@@ -426,8 +488,11 @@ function handleDragEnd(e) {
 }
 
 $.content.addEventListener( "scroll", drawIcecubeTray );
+
+/*
 $.TopLevelWindow.addEventListener("dragstart", handleDragStart );
 $.TopLevelWindow.addEventListener("dragend", handleDragEnd );
+*/
 
 $.content.addEventListener( "postlayout", function initEvent() {
   $.content.removeEventListener( "postlayout", initEvent );
@@ -435,7 +500,10 @@ $.content.addEventListener( "postlayout", function initEvent() {
   scrollToRightEdge();
 });
 
-Alloy.Collections["taxa"].on("add change remove", drawIcecubeTray );
+Alloy.Collections["taxa"].on("add change remove", () => {
+  drawIcecubeTray();
+  scrollToRightEdge();
+});
 
 $.getView().addEventListener( "close", function cleanup() {
   $.TopLevelWindow.removeEventListener("dragstart", handleDragStart ); 
@@ -454,32 +522,49 @@ function closeEditScreen() {
 }
 
 function editTaxon( taxon_id ) {
-  var tempColl = Alloy.createCollection("taxa");
-  var taxon = tempColl.loadTemporary();
-  var sample = Alloy.Models.sample;
-  if ( !taxon ) {
-    // creates a taxa but leaves it unlinked from sample until save event recieved
-    Ti.API.info("creating new taxon as temporary taxon")
-    taxon = Alloy.createModel( 'taxa', { taxonId: taxon_id, abundance: "1-2" } );
-    taxon.save();
+  var taxon = Alloy.Collections["taxa"].find( (t) => t.get("taxonId") === taxon_id);
+  if (!taxon ) {
+    var taxons = Alloy.createCollection("taxa"); 
+    taxons.loadTemporary(taxon_id); 
+    taxon = taxons.first();
+    if ( !taxon ) {
+      // creates a taxa but leaves it unlinked from sample until save event recieved
+      Ti.API.info("creating new taxon as temporary taxon")
+      taxon = Alloy.createModel( 'taxa', { taxonId: taxon_id, abundance: "1-2" } );
+      taxon.save();
+    } else {
+      Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
+    }
   } else {
-    Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
+    Ti.API.info(`existing persisted taxon ${JSON.stringify(taxon)}`);
   }
+  var sample = Alloy.Models.sample;
+  
   $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
   $.getView().add( $.editTaxon.getView() );
   
   $.editTaxon.on("close", function() {
+    // closes but leaves temporary state untouched
     closeEditScreen();
   });
 
-  $.editTaxon.on("delete", function() {
+  $.editTaxon.on("delete", function(taxon) {
+    Alloy.Collections.taxa.remove( taxon );
+    taxon.destroy();
     closeEditScreen();
   });
 
-  $.editTaxon.on("save", function() {
+  // called to persist temporarily
+  $.editTaxon.on("persist", function(taxon) {
+    taxon.save();
+  });
+
+  $.editTaxon.on("save", function(taxon) {
+    taxon.set("sampleId", sample.get("sampleId"));
+    Alloy.Collections.taxa.add( taxon );
+    taxon.save();
     closeEditScreen();
-    scrollToRightEdge();
- 
+    $.trigger("taxonSaved"); 
   });
 }
 
@@ -494,6 +579,13 @@ if ( $.args.taxonId ) {
     $.TopLevelWindow.removeEventListener("close", closeWindow );
   })
 }
+ 
+// needed for testing
+function getTileIndex() {
+  return { tileIndex: tileIndex, firstTwoTiles: firstTwoTiles };
+}
+
+exports.getTileIndex = getTileIndex;
 exports.editTaxon = editTaxon;
 exports.getTrayWidth = getTrayWidth;
 exports.getViewWidth = getViewWidth;

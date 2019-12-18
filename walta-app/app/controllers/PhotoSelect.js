@@ -1,5 +1,6 @@
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
+var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 var Topics = require("ui/Topics");
 
 if ( $.args.left ) $.photoSelectInner.left = $.args.left;
@@ -11,7 +12,6 @@ $.photoSelectOptionalLabel.visible = false;
 setImage( $.args.image );
 clearError();
 
-
 var readOnlyMode = $.args.readonly ;
 var cropPhoto = $.args.cropPhoto;
 if ( readOnlyMode ) {
@@ -21,24 +21,6 @@ if ( readOnlyMode ) {
 
 function debug(mess) { 
     Ti.API.debug(mess);
-}
-
-function absolutePath(path) {
-    if ( path.startsWith("file:///") ) {
-        debug(`${path} starts with file:///`);
-        return Ti.Filesystem.getFile(path);
-    } else if ( path.startsWith("/") ) {
-        debug(`${path} starts with /`)
-        return Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,path);
-    } else {
-        debug(`${path} doesn't start with /`)
-        return Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, path);
-    }
-}
-
-function readFile(path) {
-    debug(`reading ${path}`)
-    return absolutePath(path).read();
 }
 
 function getFullPhotoUrl() {
@@ -54,36 +36,10 @@ function getThumbnailImageUrl() {
 
 
 function generateThumbnail( fileOrBlob ) {
-    debug("generateThumbnail");
-    function savePhoto( blob, filename  ) {
-        var photoPath = absolutePath(filename);
-        debug(`File path ${photoPath.nativePath}`);
-        if ( photoPath.exists() ) {
-            debug("file already exists deletin");
-            var result = photoPath.deleteFile();
-            if ( !result ) {
-                Ti.API.error(`Error deleting file: writable: ${photoPath.writable}`);
-                throw new Error(`Unable to delete file ${photoPath}`);
-            }
-                
-        }
-    
-        var result = photoPath.write(blob);
-        blob = null; 
-        if ( !result ) {
-            Ti.API.error(`Error writing file: exists: ${photoPath.exists()}`);
-            throw new Error(`Unable to write file ${photoPath}`);
-        }
-
-        return photoPath.nativePath;
-    }
-    
-    
-
-    debug("generating thumbnail...");
+    debug(`generating thumbnail... fileOrBlob = ${fileOrBlob}`);
     var fullPhoto = null;
     if ( typeof fileOrBlob === "string") {
-        fullPhoto = readFile( fileOrBlob );
+        fullPhoto = loadPhoto( fileOrBlob );
     } else {
         fullPhoto = fileOrBlob;
     }
@@ -98,32 +54,15 @@ function generateThumbnail( fileOrBlob ) {
     debug("removing old preview files...");
     removeFilesBeginningWith("preview_");
 
-    var aspectRatio = (fullPhoto.height/fullPhoto.width);
-
-    debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
-    if ( fullPhoto.length > 4*1024*1024 || fullPhoto.width > 1024 || fullPhoto.height > 1024 ) {
-        Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb resizing and compressing photo...`);
-        fullPhoto = fullPhoto.imageAsResized(1024, 1024*aspectRatio);
-        if ( ! fullPhoto ) {
-            Ti.API.error(`Error resizing photo: ${fileOrBlob}`);
-            throw new Error("Unable to resize photo");
-        }
-    }
-
-    if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
-        Ti.API.info(`got a PNG: converting photo into JPEG...`);
-        fullPhoto = fullPhoto.imageAsCompressed(0.9);
-        if ( ! fullPhoto ) {
-            Ti.API.error(`Error converting photo: ${fileOrBlob}`);
-            throw new Error("Unable to convert photo into JPEG");
-        }
-    }
+    // we downscale for high resolution, otherwise the crop will fail due to out of memory errors.
+    fullPhoto = optimisePhoto(fullPhoto);
     
     debug("saving full size photo..");
 
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().valueOf()}.jpg`);
     fullPhoto = null; // release memory - fingers crossed
-    fullPhoto = readFile( fullPhotoPath );
+
+    fullPhoto = loadPhoto( fullPhotoPath );
     
     debug(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
     var pxWidth = $.photoSelectInner.size.width;
@@ -131,7 +70,7 @@ function generateThumbnail( fileOrBlob ) {
 
     // if the photo was scaled to the size of the view port
     // calculate the height in view coords that would be needed
-    // to prevserver aspect ratio.
+    // to preserve aspect ratio.
     
 
     var viewRatio = pxWidth/pxHeight;
@@ -177,8 +116,13 @@ function setImage( fileOrBlob ) {
     if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
+        $.camera.visible = !readOnlyMode;
         return;
     } 
+
+    $.photoSelectOptionalLabel.visible = false;
+    $.magnify.visible = true;
+    $.camera.visible = true;
     
 
     function setThumbnail( fileOrBlob) {
@@ -195,28 +139,40 @@ function setImage( fileOrBlob ) {
     }
 
     function processPhoto( fileOrBlob ) {
-        debug("processPhoto")
-        // If an array, then it must contain URL paths to many photos, the first is displayed 
-        // in the thumbnail view
-        if ( Array.isArray(fileOrBlob) ) {
-            setThumbnail( fileOrBlob[0] );
-            $.photoUrls = fileOrBlob; // overwrite photoUrls with the complete array of URLs
-        } 
-        // When an object is passed it must be a TiBlob containing image data
-        else if ( typeof(fileOrBlob) === "object" ) {
-            var blob = fileOrBlob.media;
-            fileOrBlob.media = null;
-            setThumbnail( blob );
-        } 
-        // Otherwise it can be a URL path to a single photo
-        else {
-            var file = fileOrBlob;
-            setThumbnail( file );
-        }
+        debug("processPhoto");
         $.photoSelectOptionalLabel.visible = false;
-        $.magnify.visible = true;
-        debug("triggering loaded event")
-        $.trigger("loaded");
+        $.activity.show();
+        $.photo.visible = false;
+        $.trigger("loading");
+
+        // allow some time to update the display
+        setTimeout( function() {
+                // If an array, then it must contain URL paths to many photos, the first is displayed 
+                // in the thumbnail view
+                if ( Array.isArray(fileOrBlob) ) {
+                    setThumbnail( fileOrBlob[0] );
+                    $.photoUrls = fileOrBlob; // overwrite photoUrls with the complete array of URLs
+                } 
+                // When an object is passed it must be a TiBlob containing image data
+                else if ( typeof(fileOrBlob) === "object" ) {
+                    var blob = fileOrBlob.media;
+                    fileOrBlob.media = null;
+                    setThumbnail( blob );
+                } 
+                // Otherwise it can be a URL path to a single photo
+                else {
+                    var file = fileOrBlob;
+                    setThumbnail( file );
+                }
+                
+                debug("triggering loaded event")
+                $.activity.hide();
+                $.photo.visible = true;
+                $.trigger("loaded");
+        }, 1);
+
+        
+        
     }
 
     // When the view first opens then we need to postpone the thumbnail creation
@@ -243,7 +199,7 @@ function requestCameraPermissions( success, failure ) {
             }
         });
     } else {
-        success();
+       success();
     }
 }
 
@@ -273,6 +229,7 @@ function takePhoto(e) {
             // Create "blinds" to block the display with a black window so that artifacts in any 
             // orientation changes whilst the camera app is opened are not visible to user.
             let blinds = Ti.UI.createWindow( { backgroundColor: "black", exitOnClose: false } );
+           
             function openCamera() {
                 Ti.Media.showCamera({
                     autohide: true,
@@ -280,8 +237,13 @@ function takePhoto(e) {
                     autorotate: false,
                     cancel: () => blinds.close(),
                     success: (result) => {
-                        photoCapturedHandler(result);
-                        blinds.close();
+                        // ensure the blind window is closed before starting
+                        // the heavy operation of processing the photo
+                        blinds.addEventListener( "close", function handler() {
+                            blinds.removeEventListener("close", handler);
+                            setTimeout( () => photoCapturedHandler(result), 50 );
+                        });
+                        blinds.close(); 
                     },
                     error: function (error) {
                         blinds.close();
@@ -319,15 +281,16 @@ function enable() {
 function setError() {
     $.resetClass( $.photoSelectBoundary, "photoError" );
     $.photoSelectLabel.visible = true;
+    $.magnify.visible = false;
 }
 
 function clearError() {
     $.resetClass( $.photoSelectBoundary, "photoNoError");
     $.photoSelectLabel.visible = false;
+    if ( $.photo.image ) {
+        $.magnify.visible = true;
+    }
 }
-
-
-
 
 exports.getThumbnailImageUrl = getThumbnailImageUrl;
 exports.getFullPhotoUrl = getFullPhotoUrl;

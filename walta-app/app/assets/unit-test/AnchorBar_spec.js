@@ -21,7 +21,7 @@ var { wrapViewInWindow, closeWindow, windowOpenTest, actionFiresTopicTest, setMa
 var Topics = require('ui/Topics');
 
 describe('AnchorBar controller', function() {
-	var acb, win;
+	var acb, win, vw;
 
 	before( function() {
 		acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
@@ -32,7 +32,8 @@ describe('AnchorBar controller', function() {
 	});
 
  	after( function(done) {
-		closeWindow( win, done );
+		if ( win )
+			closeWindow( win, done );
 	});
 
 	it('should display an anchor bar', function(done) {

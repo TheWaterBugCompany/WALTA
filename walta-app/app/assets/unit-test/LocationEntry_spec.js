@@ -39,6 +39,10 @@ describe("LocationEntry controller", function() {
     });
     view = scr.getView();
     win = wrapViewInWindow( view );
+    win.addEventListener( "close", function handler() { 
+      win.removeEventListener("close", handler);
+      scr.cleanUp();
+    }) 
   });
 
   afterEach( function(done) {
@@ -51,14 +55,7 @@ describe("LocationEntry controller", function() {
 
   it('should fire cancel event', function(done) {
     windowOpenTest( win, function () { 
-      expect( view.visible ).to.be.true;
-      scr.on("close", function event() {
-        checkTestResult( ()=> {
-          scr.off("close",event);
-          expect( view.visible ).to.be.false;
-          done();
-        });
-      });
+      scr.on("close", () => done() );
       scr.cancelButton.fireEvent("click");
     });
   });

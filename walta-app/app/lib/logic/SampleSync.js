@@ -1,18 +1,20 @@
 var Topics = require('ui/Topics');
+var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 
 var SYNC_INTERVAL = 1000*60*5; // 5 minutes
 var timeoutHandler;
 
-
-Topics.subscribe( Topics.LOGGEDIN, startUpload );
+function debug(mess) { 
+    Ti.API.info(mess);
+}
 
 function networkChanged( e ) {
     if ( e.networkType === Ti.Network.NETWORK_NONE ) {
         // don't bother trying to upload (saves battery)
-        Ti.API.debug("Lost network connection, sleeping.");
+        debug("Lost network connection, sleeping.");
         clearUploadTimer();
     } else {
-        Ti.API.debug("Network connection up.");
+        debug("Network connection up.");
         startUpload();
     }
 }
@@ -28,7 +30,8 @@ function clearUploadTimer() {
 }
 
 function init() {
-    Ti.API.debug("Initialising SampleSync...");
+    debug("Initialising SampleSync...");
+    Topics.subscribe( Topics.LOGGEDIN, startUpload );
     startUpload();
 }
 
@@ -54,14 +57,22 @@ function uploadRemainingSamples(samples) {
 }
 
 function uploadSitePhoto(sample) {
-    Ti.API.debug("Uploading site photo...");
+    debug("Uploading site photo...");
     var sitePhoto = sample.getSitePhoto();
     var sampleId = sample.get("serverSampleId");
+    debug(`path = ${sitePhoto}`);
     if ( sitePhoto ) {
+        let blob = loadPhoto( sitePhoto );
+        if ( needsOptimising(blob) ) {
+            debug(`Optimising ${sitePhoto}`);
+            savePhoto( optimisePhoto(blob), sitePhoto );
+        } else {
+            debug(`Not optimising ${sitePhoto}`);
+        }
         return Alloy.Globals.CerdiApi.submitSitePhoto( sampleId, sitePhoto )
                 .then( () => sample );
     } else {
-        Ti.API.debug("No site photo found.");
+        debug("No site photo found.");
         return sample;
     }
 }
@@ -70,18 +81,25 @@ function uploadTaxaPhotos(sample) {
     
     var taxa = sample.getTaxa();
     var sampleId = sample.get("serverSampleId");
-    Ti.API.debug(`Uploading ${taxa.length} taxa photos...`);
+    debug(`Uploading ${taxa.length} taxa photos...`);
     return taxa.reduce( (acc, t) => {
             return acc.then( () => {
-                Ti.API.debug(`Uploading ${JSON.stringify(t)}`);
+                debug(`Uploading ${JSON.stringify(t)}`);
                 var taxonId = t.getTaxonId();
-                var photo = t.getPhoto();
-                if ( photo ) {
-                    Ti.API.debug(`Uploading photo for taxon ${taxonId}`);
-                    return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photo )
+                var photoPath = t.getPhoto();
+                if ( photoPath ) {
+                    debug(`Uploading photo for taxon ${taxonId}`);
+                    let blob = loadPhoto( photoPath );
+                    if ( needsOptimising(blob) ) {
+                        debug(`Optimising ${photoPath} = ${blob.width}x${blob.heihgt} size = ${blob.lenght}`);
+                        savePhoto( optimisePhoto( blob ), photoPath );
+                    } else {
+                        debug(`Not Optimising ${photoPath}`);
+                    }
+                    return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath )
                                 
                 } else {
-                    Ti.API.debug(`No photo for taxon ${taxonId}`);
+                    debug(`No photo for taxon ${taxonId}`);
                 }
             })
         }, Promise.resolve() ).then( () => sample );
@@ -90,7 +108,7 @@ function uploadTaxaPhotos(sample) {
 
 function setServerSampleId( sample ) {
     return (r) => {
-        Ti.API.info(`success, server returnedid = ${r.id}`);
+        Ti.API.info(`success, server returned id = ${r.id}`);
         sample.set("serverSampleId", r.id );
         sample.save();
         return sample;
@@ -109,7 +127,7 @@ function errorHandler( sample ) {
     return (err) => {
         if ( err.message === "The given data was invalid.") {
             var errors = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
-            Ti.API.debug(`Data was invalid continuing: ${errors}`);
+            debug(`Data was invalid continuing: ${errors}`);
             sample.set("lastError", errors );
             sample.save();
         } else {
@@ -142,9 +160,9 @@ function uploadNextSample(samples) {
 }
 
 function startUpload() {
-    Ti.API.debug("Starting sample syncronisation process...");
+    debug("Starting sample syncronisation process...");
     if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
-        Ti.API.debug("No network available, sleeping until network becomes avaiable.");
+        debug("No network available, sleeping until network becomes avaiable.");
         return;
     }
 
@@ -155,18 +173,19 @@ function startUpload() {
             uploadRemainingSamples(samples)
                 .then( () => timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL ) )
                 .catch( (error) => { 
-                    Ti.API.debug(`Error trying to upload: ${JSON.stringify(error)}`);
+                    debug(`Error trying to upload: ${JSON.stringify(error)}`);
                     timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
                 });
         } else {
-            Ti.API.debug("Not logged in so can not upload!");
+            debug("Not logged in so can not upload!");
             timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
         }
     } else {
-        Ti.API.debug("Nothing to do");
+        debug("Nothing to do");
         timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
     }
 }
 
+exports.uploadNextSample = uploadNextSample;
 exports.forceUpload = forceUpload;
 exports.init = init;

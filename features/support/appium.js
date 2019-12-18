@@ -12,15 +12,16 @@ function getCapabilities( platform, quick ) {
             autoGrantPermissions: true,
             deviceName: "device",
             appActivity: ".WaterbugActivity",
-            appWaitActivity: "org.appcelerator.titanium.TiActivity"
+            appWaitActivity: "org.appcelerator.titanium.TiActivity",
+            newCommandTimeout: 0
         });
         if ( !quick ) {
             caps.app = join(process.cwd(), './builds/test/Waterbug.apk');
         } else {
             _(caps).extend({
                 appPackage: "net.thewaterbug.waterbug",
-                skipDeviceInitialization: true,
-                skipServerInstallation: true,
+                skipDeviceInitialization: false,
+                skipServerInstallation: false,
                 ignoreUnimportantViews: true
             });
         }

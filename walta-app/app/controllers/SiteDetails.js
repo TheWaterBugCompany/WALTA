@@ -12,6 +12,10 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.photoSelect.cleanUp();
     $.destroy();
     $.off();
+    if ( $.locationEntry ) {
+        $.locationEntry.cleanUp();
+        $.locationEntry = null;
+    }
     sample.off( null, updateLocation );
     sample.off( null, loadAttributes );
     GeoLocationService.stop();
@@ -20,9 +24,9 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
 
-var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HOME }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.HABITAT } ); 
+var acb = $.getAnchorBar();  
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HOME, slide: "left" }  ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.HABITAT, slide: "right" } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 
@@ -145,6 +149,12 @@ function openLocationEntry() {
         $.locationEntry.disable();
 
     $.TopLevelWindow.add($.locationEntry.getView());
+    $.locationEntry.on("close", function handler() {
+        $.locationEntry.off("close", handler);
+        $.TopLevelWindow.remove($.locationEntry.getView());
+        $.locationEntry.cleanUp();
+        $.locationEntry = null;
+    })
 }
 
 $.photoSelect.on("photoTaken", function(path) {

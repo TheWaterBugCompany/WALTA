@@ -1,4 +1,4 @@
-<Alloy>
+<Alloy> 
 	<ScrollView id="content">
 		<View id="innerContent" layout="horizontal">
 			<View id="leftPanel" class="panel" layout="vertical">
@@ -8,7 +8,10 @@
 				<TextField id="emailTextField" class="textField" accessibilityLabel="login_email_textfield"  onChange="emailChanged" />
 				<Label id="passwordLabel" class="labelText" text="Password:"/>
 				<TextField id="passwordTextField" class="textField password" accessibilityLabel="login_password_textfield"  onChange="passwordChanged"/>
-				<Button id="logInButton" class="actionButton" passwordMask=true title="Log In" onClick="loginClick" accessibilityLabel="login_login_button"/>
+				<View class="shrinkWrap">
+					<Button id="logInButton" class="actionButton" passwordMask="true" title="Log In" onClick="loginClick" accessibilityLabel="login_login_button"/>
+					<ActivityIndicator id="activity"/>
+				</View>
 			</View>
 			<View id="rightPanel" class="panel" layout="vertical">
 				<!--<Label class="headingText" text="via social media:"/>

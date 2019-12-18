@@ -14,9 +14,9 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
-var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SITEDETAILS }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.SAMPLETRAY } ); 
+var acb = $.getAnchorBar();
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SITEDETAILS, slide: "left" }  ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.SAMPLETRAY, slide: "right" } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 
@@ -44,16 +44,14 @@ function validateSum() {
    if ( sum !== 100 ) {
         [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
             .forEach( (f) => $.setError(f) );
-        $.disableControl($.nextButton);
+       $.nextButton.disable();
     } else {
         [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ]
             .forEach( (f) => $.clearError(f) );
-        $.enableControl($.nextButton);
+        $.nextButton.enable();
         saveAttributes();
     }
 }
-
-
 
 function saveAttributes() {
     function zeroOrInt(v ) {

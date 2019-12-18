@@ -8,14 +8,15 @@ module.exports = function(grunt) {
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
-    const PROFILE = process.env.PROFILE || "e2935a1f-0c22-4716-8020-b61024ce143f";
-    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "eb88a8c0-d6e1-4622-a69b-3513ebe5be62";
+    const PROFILE = process.env.PROFILE || "7081d6f7-618b-4c10-b5bb-e48e63085767";
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "810ab12c-fd91-41f7-a2c0-91bff72afe05";
     
     const SOURCES = [  
       './walta-app/tiapp.xml',  
       './walta-app/app/**/*.js', 
       './walta-app/app/**/*.xml', 
-      './walta-app/app/**/*.css' 
+      './walta-app/app/**/*.css',
+      './walta-app/app/**/*.tss' 
     ];
 
     function build_if_newer_options(platform,build_type) {
@@ -43,7 +44,7 @@ module.exports = function(grunt) {
           },
 
           clean_test: {
-            command: 'rm ./builds/{release,test,unit-test,preview,preview-unit-test}/*.{apk,ipa}',
+            command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "inherit"
           },
@@ -61,7 +62,8 @@ module.exports = function(grunt) {
           },
 
           uninstall_android: {
-            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`
+            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
+            exitCode: [ 0, 255 ]
           },
 
           uninstall_ios: {
@@ -122,6 +124,11 @@ module.exports = function(grunt) {
               }
 
               switch( build_type ) {
+                case "debug":
+                  test();
+                  args.push("--output-dir builds/debug --debug-host=localhost:9229")
+                  break;
+                
                 case "test":
                   test();
                   args.push("--output-dir builds/test");
@@ -197,6 +204,9 @@ module.exports = function(grunt) {
 
           test_android: build_if_newer_options("android", "test"),
           test_ios: build_if_newer_options("ios", "test"),
+
+          debug_android: build_if_newer_options("android", "debug"),
+          debug_ios: build_if_newer_options("ios", "debug"),
 
           release_android: build_if_newer_options("android", "release"),
           release_ios: build_if_newer_options("ios", "release"),
@@ -359,4 +369,10 @@ module.exports = function(grunt) {
     grunt.registerTask('release', function(platform) {
       grunt.task.run(`newer:release_${platform}`); 
     });
+
+    grunt.registerTask('debug', function(platform) {
+      grunt.task.run(`newer:debug_${platform}`); 
+      grunt.task.run(`launch:${platform}:debug`);
+      grunt.task.run(`output-logs:${platform}:preview`);
+    })
   };

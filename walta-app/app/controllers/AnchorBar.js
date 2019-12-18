@@ -51,13 +51,13 @@ function updateTitleWidth() {
 
 $.AnchorBar.addEventListener("postlayout", updateTitleWidth)
 
-function createToolBarButton( image, topic, title, eventData ) {
+function createToolBarButton( image, topic, title, eventData, label ) {
 	var btn;
 
 	if ( ! image ) {
-		btn = Ti.UI.createLabel({ class: "labelText", text: title.toUpperCase() });
+		btn = Ti.UI.createLabel({ class: "labelText", text: title.toUpperCase(), accessibilityLabel: label });
 	} else {
-		btn = Ti.UI.createImageView({ image: image, width: Ti.UI.SIZE, height: Ti.UI.SIZE });
+		btn = Ti.UI.createImageView({ image: image, width: Ti.UI.SIZE, height: Ti.UI.SIZE, accessibilityLabel: label  });
 	}	
 	
 	if ( title ) {
@@ -100,7 +100,7 @@ function setTitle( title ) {
 }
 
 setTitle( $.args.title );
-$.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME );
+$.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME, undefined, undefined, "Home" );
 $.leftTools.add( $.home );
 $.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HELP ) );
 

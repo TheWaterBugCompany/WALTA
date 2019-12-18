@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+var { loadPhoto } = require('util/PhotoUtils');
 function createHttpClient(method, url, contentType, accessToken, sendDataFunction ) {
     return new Promise( (resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
@@ -114,7 +114,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
             },
 
             submitSitePhoto( serverSampleId, photoPath ) {
-                var photoBlob = Ti.UI.createImageView( { image: photoPath } ).toBlob();
+                var photoBlob = loadPhoto(photoPath);
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
@@ -122,7 +122,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
             },
 
             submitCreaturePhoto( serverSampleId, creatureId, photoPath ) {
-                var photoBlob = Ti.UI.createImageView( { image: photoPath } ).toBlob();
+                var photoBlob = loadPhoto(photoPath);
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");

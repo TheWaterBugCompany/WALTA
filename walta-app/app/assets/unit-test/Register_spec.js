@@ -128,5 +128,26 @@ describe('Register controller', function() {
             .then( setTextField( ct.emailTextField, "  test@example.com  " ) )
             .then( () => expect( ct.submitButton.touchEnabled ).to.be.true );
     });
+    it('should display activity indicator when waiting for the server', function() {
+        var done;
+        Alloy.Globals.CerdiApi.registerUser = function( userInfo ) {
+            return new Promise( (resolve) => { done = resolve } );
+        };
+        return Promise.resolve()
+            .then( () => expect( ct.activity.visible ).to.be.false )
+            .then( fillOutValidForm )
+            .then( () => new Promise( (resolve) => {
+                clickButton(ct.submitButton);
+                setTimeout( resolve, 50 );
+             } ) )
+            .then( () => expect( ct.activity.visible ).to.be.true )
+            .then( () => expect( ct.submitButton.visible ).to.be.false )
+            .then(  () => new Promise( (resolve) => {
+                done();
+                setTimeout( resolve, 50 );
+             }) )
+            .then( () => expect( ct.activity.visible ).to.be.false )
+            .then( () => expect( ct.submitButton.visible ).to.be.true );
+    });
 
 });

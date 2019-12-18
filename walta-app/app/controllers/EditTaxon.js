@@ -17,14 +17,25 @@ setAbundance( taxon.get("abundance") );
 setImage( taxon.getPhoto() );
 updateSaveButton();
 
+
+function persistPhoto() {
+    taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
+    // necessary because setPhoto as a side effect changes the photo url.
+    // CODE SMELL: this breaks encapsulation, long term fix would be to rewrite to
+    // use events on taxon model to propagate changes.
+    $.photoSelect.photoUrls = [taxon.getPhoto()]; 
+    $.trigger("persist", taxon );
+}
+
 function setImage( photo ) {
     if ( photo ) {
         realPhoto = true;
-        $.photoSelect.setImage( photo );  
-        if ( $.photoSelect.getFullPhotoUrl() ) {
-            taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
-            taxon.save();
-        }
+        function loadHandler() {
+            $.photoSelect.off("loaded", loadHandler );
+            persistPhoto();
+        };
+        $.photoSelect.on("loaded", loadHandler );
+        $.photoSelect.setImage( photo );
     } else {
         realPhoto = false;
         $.photoSelect.setImage( taxon.getSilhouette() );
@@ -34,7 +45,7 @@ function setImage( photo ) {
 function setAbundance( binValue  ) {
     taxon.set("abundance", binValue);
     $.abundanceValue.value = taxon.getAbundance();
-    taxon.save();
+    $.trigger("persist", taxon );
 }
 
 function updateAbundance() {
@@ -51,19 +62,18 @@ function updateAbundance() {
     } else {
         binValue = "> 20";
     }
-    $.abundanceLabel.text = binValue; 
+    if ( $.abundanceLabel.text !== binValue ) {
+        $.abundanceLabel.text = binValue; 
+        setAbundance(binValue);
+    }
 }
 
 function saveEvent() {
-    taxon.set("sampleId", sample.get("sampleId"));
-    taxon.save();
     $.trigger("save", taxon );
 }
 
 function doDelete() {
     $.trigger("delete", taxon );
-    Alloy.Collections.taxa.remove( taxon );
-    taxon.destroy();
 }
 
 function deleteEvent() {
@@ -96,7 +106,11 @@ function updateSaveButton() {
 }
 
 $.photoSelect.on("loaded", updateSaveButton);
-$.photoSelect.on("photoTaken", () => { realPhoto = true; updateSaveButton(); } );
+$.photoSelect.on("photoTaken", () => { 
+    realPhoto = true;
+    persistPhoto(); 
+    updateSaveButton(); 
+} );
 
 exports.cleanUp = cleanUp;
 exports.setImage = setImage;

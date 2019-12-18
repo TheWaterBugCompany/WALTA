@@ -1,10 +1,9 @@
 var Topics = require('ui/Topics');
 var SampleSync = require('logic/SampleSync');
-var GeoLocationService = require('logic/GeoLocationService');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
-$.name = "summary";
+$.name = "summary"; 
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
@@ -13,7 +12,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY }  ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY, slide: "left" }  ); 
 $.nextButton = Alloy.createController("NavButton");
 $.nextButton.setLabel("Done");
 $.nextButton.on("click", doneClick ) 
@@ -35,7 +34,6 @@ var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please e
 var saveSampleAndUpload = function() {
     Alloy.Models.sample.saveCurrentSample();
     SampleSync.forceUpload();
-    GeoLocationService.stop();
 };
 
 function checkGpsLock() {
