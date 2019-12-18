@@ -178,10 +178,12 @@ GeoLocationService.start();
 // undefined when this screen was opened
 Topics.subscribe(Topics.GPSLOCK, function(coords) {
     // only set location if the accuracy is present and less than 100m
+    Ti.API.info(`got lock`);
     if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
         if ( coords.accuracy < 100 ) {
             var accuracy = sample.get("accuracy");
             if ( !accuracy || accuracy > coords.accuracy ) {
+                Ti.API.info(`set location`);
                 Alloy.Models.sample.setLocation(coords);
             }
         }
