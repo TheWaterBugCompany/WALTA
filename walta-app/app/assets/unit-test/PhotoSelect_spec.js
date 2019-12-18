@@ -19,6 +19,7 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
 var { wrapViewInWindow, closeWindow, windowOpenTest, checkTestResult } = require('unit-test/util/TestUtils');
 var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
+
 describe('PhotoSelect controller', function() { 
 	var win, vw, pv;
 	function makePhotoSelect( readonly, images ) {
@@ -34,6 +35,16 @@ describe('PhotoSelect controller', function() {
 
 	afterEach( function(done) {
 		closeWindow( win, done );
+	});
+
+	it("should resize image", function(done) { 
+		makePhotoSelect( true, '/unit-test/resources/site-mock.jpg' );
+		pv.on("loaded", () => checkTestResult( done, () => {
+			var photo = Ti.Filesystem.getFile(pv.photo.image).read();
+			expect( photo.width ).to.be.at.most( 1600 );
+            expect( photo.height ).to.be.at.most( 1200 );
+		}) );
+		windowOpenTest( win );
 	});
 
 	it("should display readonly view", function( done ) { 
@@ -62,16 +73,34 @@ describe('PhotoSelect controller', function() {
 		}) );
 	});
 
-	it('should display a take photo view with must take photo message', function(done) {
-		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/amphipoda_01.jpg' );
-		pv.setError();
-		pv.on("loaded", () => checkTestResult( done, () => {
-			expect( pv.magnify.visible ).to.be.true;
-			expect( pv.camera.visible ).to.be.true;
-			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
-			expect( pv.photoSelectLabel.visible ).to.be.true;
-			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
-		}) );
+	it('should display a take photo view with must take photo message on setError()', function(done) {
+		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png' );
+		pv.setError(); 
+		pv.on("loaded", () => 
+			checkTestResult( done, () => {
+				expect( pv.magnify.visible ).to.be.false;
+				expect( pv.camera.visible ).to.be.true;
+				expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+				expect( pv.photoSelectLabel.visible ).to.be.true;
+				expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
+			}) 
+		);
+		windowOpenTest( win );
+	});
+
+	it('should clear must take photo message after clearError()', function(done) {
+		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png' );
+		pv.setError(); 
+		pv.on("loaded", () => 
+			checkTestResult( done, () => {
+				pv.clearError(); 
+				expect( pv.magnify.visible ).to.be.true;
+				expect( pv.camera.visible ).to.be.true;
+				expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+				expect( pv.photoSelectLabel.visible ).to.be.false;
+				expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
+			}) 
+		);
 		windowOpenTest( win );
 	});
 
@@ -88,15 +117,48 @@ describe('PhotoSelect controller', function() {
 	});
 
 	it('should remove take photo message after photo is taken', function(done) {
+		this.timeout(10000);
 		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/beetlelarvae.gif' );
 		function testPhotoCapture() {
 			pv.off("loaded", testPhotoCapture );
+			pv.on("")
 			pv.on("loaded", () => checkTestResult( done, () => {
 					expect( pv.magnify.visible ).to.be.true;
 					expect( pv.camera.visible ).to.be.true;
 					expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
 					expect( pv.photoSelectLabel.visible ).to.be.false;
 				} ) );
+			setTimeout( () => simulatePhotoCapture( pv ), 500 );
+		} 
+		pv.on("loaded", testPhotoCapture);
+		windowOpenTest( win );
+	});
+
+	it('should display loading indicator', function(done) {
+		this.timeout(10000);
+		function doneOnError(e) {
+			if ( e ) {
+				done(e);
+			}
+		}
+		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/beetlelarvae.gif' );
+		function testPhotoCapture() {
+			pv.off("loaded", testPhotoCapture );
+			pv.on("loading", function handler() { 
+				pv.off("loading", handler );
+				checkTestResult( doneOnError, () => {
+					expect( pv.activity.visible, "activity should be visible" ).to.be.true;
+					expect( pv.photo.visible, "photo should not be visible" ).to.be.false;
+					
+				})
+			});
+			pv.on("loaded", function handler() {
+				pv.off("loaded", handler );
+				checkTestResult( done, () => {
+					expect( pv.activity.visible, "activity should not be visible"  ).to.be.false;
+					expect( pv.photo.visible, "photo should be visible" ).to.be.true;
+				} ) 
+			});
 			setTimeout( () => simulatePhotoCapture( pv ), 500 );
 		} 
 		pv.on("loaded", testPhotoCapture);

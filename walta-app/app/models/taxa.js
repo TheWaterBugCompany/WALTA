@@ -3,20 +3,29 @@ var { removeFilesBeginningWith } = require('logic/FileUtils');
 exports.definition = {
 	config: {
 		columns: {
+			"sampleTaxonId": "INTEGER PRIMARY KEY AUTOINCREMENT",
 		    "abundance": "VARCHAR(6)",
 			"sampleId": "INTEGER", // Foreign key to sample database
-			"taxonId": "INTEGER PRIMARY KEY",
+			"taxonId": "INTEGER", // Foreign "key" to taxon in key
 			"taxonPhotoPath": "VARCHAR(255)"
 		},
 		adapter: {
 			type: "sql",
 			collection_name: "taxa",
 			db_name: "samples",
-			idAttribute: "taxonId"
+			idAttribute: "sampleTaxonId"
 		}
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
+			initialize() {
+				this.on("change:sampleId", function() {
+					// move from temporary to permanent storage
+					console.log("change:sampleId");
+					let photoPath = this.get("taxonPhotoPath");
+					if ( photoPath ) this.setPhoto(photoPath);
+				});
+			},
 			getTaxonId() {
 				return this.get("taxonId");
 			},
@@ -28,14 +37,18 @@ exports.definition = {
 			},
 
 			setPhoto(file) {
-				var newPhotoName;
+				var newPhotoName;	
 				if ( ! this.get("sampleId") ) {
-					newPhotoName = `taxon_temporary.jpg`;
+					newPhotoName = `taxon_temporary_${this.get("taxonId")}.jpg`;
+					if ( file.endsWith(newPhotoName) )
+						return;
+					removeFilesBeginningWith(newPhotoName);
 				} else {
-				 	newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
+					newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
+					removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
 				}
+				
 				Ti.API.info(`updating photo from ${file} to ${newPhotoName}`);
-				removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
@@ -83,9 +96,12 @@ exports.definition = {
 			loadCurrent() {
 				this.fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );
 			},
-			loadTemporary() {
-				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId IS NULL)`} );
-				return this.at(0);
+			removeAllTemporary() {
+				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL`} );
+				this.forEach( (t) => t.destroy() );
+			},
+			loadTemporary(taxonId) {
+				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL AND taxonId = ${taxonId}`} );
 			},
 			load( sampleId ) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId})`} );

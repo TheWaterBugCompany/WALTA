@@ -11,7 +11,6 @@ acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSE
 
 function clickItem(e) {
     var item = $.content.sections[e.sectionIndex].getItemAt(e.itemIndex);
-    console.info(`item = ${JSON.stringify(item)}`);
     Topics.fireTopicEvent( Topics.JUMPTO, { id: item.properties.itemId, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
 }
 
@@ -19,27 +18,36 @@ function clickItem(e) {
 var dataSet = [];
 var taxonList = $.args.key.findAllTaxons();
 
+function addTaxon(id, name, level) {
+    if ( _.findIndex( dataSet, function(i) { return i.title.text == name; } ) == -1 ) {
+        dataSet.push( {
+            title: { text: (level=== "order"? "Order: ":"")+name, level: level },
+            properties: { itemId: id }
+        });
+    }
+}
 
 _.each( taxonList, function( txn ) {
-    if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.name; } ) == -1 ) {
-        dataSet.push( {
-            title: { text: txn.name },
-            template: ( (txn.taxonomicLevel == 'species' || txn.taxonomicLevel == 'genus') ? 'genusOrSpeciesTaxon': 'taxon' ),
-            properties: { itemId: txn.id}
-        });
-    } 
-    if ( txn.commonName != '') {
-        if ( _.findIndex( dataSet, function(i) { return i.title.text == txn.commonName; } ) == -1 ) {
-            dataSet.push( {
-                title: { text: txn.commonName  },
-                properties: { itemId: txn.id}
-            });
-        }
+    let id = txn.id;
+    // for order level nodes go to the parent key node
+    if ( txn.taxonomicLevel === "order") {
+        id = txn.parentLink.id;
+    }
+    addTaxon( id, txn.name, txn.taxonomicLevel );
+    if ( txn.commonName !== '' && txn.commonName !== txn.name ) {
+        addTaxon( id, txn.commonName, txn.taxonomicLevel );
     }
 });
     
 // Sort list
-dataSet =_.sortBy(dataSet, function(i) { return i.title.text; });
+dataSet =_.sortBy(dataSet, function(i) { 
+    var key = i.title.text.toUpperCase();
+    key = key.replace(/[~`!@#$%^&*(){}\[\];:"'<,.>?\/\\|_+=-]/g,"");
+    if ( i.title.level === "order" ) {
+        key = "AAAA" + key; // make it first by prepending AAAA
+    }
+    return key;
+});
 
 // Colour list backgrounds
 var row = 0;	

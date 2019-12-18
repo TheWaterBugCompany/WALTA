@@ -1,7 +1,6 @@
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
-var GeoLocationService = require('logic/GeoLocationService');
 exports.definition = {
 	config: {
 		columns: {
@@ -68,24 +67,25 @@ exports.definition = {
 				return this.get("sitePhotoPath");
 			},
 			
-
 			saveCurrentSample: function() {
 				var taxa = Alloy.Collections.taxa;
-				taxa.forEach( (t) => {
-					t.set("sampleId", this.get("sampleId"));
-					t.save();
-				});
 				this.set("dateCompleted", moment().format() );
 				this.save();
-				GeoLocationService.stop();
 			},
 
 			loadCurrent() {
 				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
+				let sampleId = this.get("sampleId");
+				if ( sampleId ) {
+					Alloy.Collections.instance("taxa").load(sampleId);
+				} else {
+					Alloy.Collections.instance("taxa");
+				}
 			},
 
 			loadById(sampleId) {
 				this.fetch({ query: `SELECT * FROM sample WHERE sampleId = ${sampleId}` });
+				Alloy.Collections.instance("taxa").load(sampleId);
 			},
 
 			loadTaxa() {
@@ -229,25 +229,17 @@ exports.definition = {
 		_.extend(Collection.prototype, { 
 			createNewSample: function() {
 				Ti.API.debug("Creating new sample..");
-				var sample = Alloy.Models.instance("sample");
+				Alloy.Models.sample = Alloy.createModel("sample");
+				this.add(Alloy.Models.sample);
+				Alloy.Models.sample.save();
 				
-				// remove temporary taxon since a new sample
-				// is being created
-				var tmp = Alloy.createCollection("taxa");
-				var taxon = tmp.loadTemporary();
-					if ( taxon ) {
-					taxon.destroy();
-				} 
-
-				this.add(sample);
-				sample.save();
-				Ti.API.debug(`sampleId = ${sample.get("sampleId")}`);
+				Alloy.Collections.instance("taxa").removeAllTemporary();
+				Alloy.Collections.instance("taxa").reset();
 			},
 
 			startNewSurveyIfComplete: function(type) {
 				if (    Alloy.Models.sample.get("dateCompleted") 
-					 || !Alloy.Models.sample.get("sampleId")
-				     || Alloy.Collections.sample.length == 0  )  {
+					 || !Alloy.Models.sample.get("sampleId") )  {
 					 this.createNewSample();
 					 Alloy.Models.sample.set({"surveyType": type} );
 				}
@@ -256,7 +248,6 @@ exports.definition = {
 			load: function() {
 				this.fetch();
 				Alloy.Models.instance("sample").loadCurrent();
-				Alloy.Collections.instance("taxa").loadCurrent();
 			},
 
 			loadUploadQueue: function() {

@@ -29,6 +29,20 @@ var manualTests = false;
 function setManualTests( b ) { manualTests = b; }
 function isManualTests() { return manualTests; }
 
+function waitFor(predicate) {
+	return new Promise( (resolve) => {
+		function checkCondition() {
+			if ( predicate() ) {
+				resolve();
+			} else {
+				setTimeout( checkCondition, 50 );
+			}
+		}
+		checkCondition()
+	})
+}
+
+
 // TODO: Convert to Promise based API
 function waitForDomEvent( obj, evtName, fireEvent, done ) {
 		obj.addEventListener( evtName, function() { done() } );
@@ -115,7 +129,7 @@ function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done 
 function actionFiresTopicTest( actionObj, actionEvtName, topicName, done ) {
 	var result = {};
 	waitForTopic( topicName, function() {
-		actionObj.fireEvent( actionEvtName );
+		actionObj.fireEvent( actionEvtName, { x:0, y:0 } );
 	}, done, result);
 	return result;
 }
@@ -146,8 +160,8 @@ function closeWindow( win, done ) {
 				menuItem.addEventListener("click", () => win.close() )
 			}
 		} else {
-			var cont = Ti.UI.createButton( { title: "Continue" } );
-			var toolbar = Ti.UI.createToolbar({ items: [cont], top: 0 });
+			var cont = Ti.UI.createButton( { title: "Continue Test" } );
+			var toolbar = Ti.UI.createToolbar({ items: [cont], barColor: "transparent", translucent: true, bottom: 0 });
 			cont.addEventListener("click", () => win.close() );
 			win.add(toolbar);
 		}
@@ -187,6 +201,42 @@ function clickButton( button ) {
 	button.fireEvent("click");
 }
 
+function makeTestPhoto(name) {
+	let photo = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, name);
+	let mockPhoto = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/unit-test/resources/site-mock.jpg");
+	if ( ! mockPhoto.exists() ) {
+		throw new Error(`${mockPhoto.nativePath} doesn't exist!`);
+	}
+	else {
+
+		if ( ! mockPhoto.copy(photo.nativePath) ) {
+			console.log(`error copying file to: ${photo.nativePath}`);
+		} else if ( ! photo.exists() ) {
+			console.log(`copying file to: ${photo.nativePath} succeeded but the file still doesn't exist?`);
+		}
+	}
+	
+    return photo.nativePath;
+}
+
+function removeDatabase(db_name) {
+	var db = Ti.Database.open(db_name);
+	db.close();
+    db.remove();
+}
+
+function resetDatabase() {
+	// creates database if missing
+	var taxa = Alloy.createModel("taxa");
+	Alloy.createModel("sample");
+	// opens database
+	var db = Ti.Database.open(taxa.config.adapter.db_name);
+	db.execute("DELETE FROM taxa");
+	db.execute("DELETE FROM sample");
+	db.close();
+	
+}
+
 exports.enterText = enterText;
 exports.clickButton = clickButton;
 exports.forceCloseWindow = forceCloseWindow;
@@ -206,3 +256,7 @@ exports.waitForMeldEvent = waitForMeldEvent;
 exports.waitForDomEvent = waitForDomEvent;
 exports.isManualTests = isManualTests;
 exports.setManualTests = setManualTests;
+exports.makeTestPhoto = makeTestPhoto;
+exports.removeDatabase = removeDatabase;
+exports.resetDatabase = resetDatabase;
+exports.waitFor = waitFor;

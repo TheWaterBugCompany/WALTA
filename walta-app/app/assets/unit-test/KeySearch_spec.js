@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
-var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require('unit-test/util/TestUtils');
+var { closeWindow, controllerOpenTest, actionFiresTopicTest, setManualTests } = require('unit-test/util/TestUtils');
 
 var Question = require('logic/Question');
 var Key = require('logic/Key');
@@ -28,9 +28,11 @@ describe('KeySearch controller', function() {
 	before( function(done) {
 		// Create a test key to display
 	 var key = Key.createKey( {
+		 			
 					url: 'https://example.com/',
 					name: 'TestTaxonomy',
 					root: Key.createKeyNode({
+						parentLink: {}, // suppress isRoot
 						questions: [
 							Question.createQuestion( {
 								outcome: 1,
@@ -59,6 +61,10 @@ describe('KeySearch controller', function() {
 
 	it('should fire the FORWARD topic', function(done) {
 		actionFiresTopicTest( knv.questions[1].Question, 'click', Topics.FORWARD, () => done() );
+	});
+
+	it('should fire the UP topic', function(done) {
+		actionFiresTopicTest( knv.header, 'click', Topics.UP, () => done() );
 	});
 
 });

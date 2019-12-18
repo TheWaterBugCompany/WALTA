@@ -17,8 +17,8 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
-var { checkTestResult, closeWindow, controllerOpenTest } = require('unit-test/util/TestUtils');
-
+var { checkTestResult, closeWindow, controllerOpenTest, setManualTests, actionFiresTopicTest } = require('unit-test/util/TestUtils');
+var Topics = require('ui/Topics');
 var Taxon = require('logic/Taxon');
 describe('TaxonDetails controller', function() {
 	context("descriptive text ", function() { 
@@ -85,6 +85,10 @@ describe('TaxonDetails controller', function() {
 			expect(labels[2].text).to.equal("class: Decapoda");
 			expect(labels[3].text).to.equal("family: Palaemonidae");
 			expect(labels[4].text).to.equal("genus: Macrobrachium");
+		});
+
+		it('should fire the UP topic', function(done) {
+			actionFiresTopicTest( tv.header, 'click', Topics.UP, () => done() );
 		});
 	});
 	it('should display only the relevant media icons');

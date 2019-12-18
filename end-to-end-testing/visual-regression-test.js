@@ -33,6 +33,10 @@ function screenshotPath( screenshot, name, postfix="" ) {
     return `${__dirname}/baseline-images/${name.replace(/ /g,"_")}_${dims.width}x${dims.height}${postfix.length > 0 ?"_"+postfix:""}.png`;
 }
 
+// todo: collect failures to report at the end of the run, currently one failure causes that test
+// to stop execution, thus causing future tests to fail. This could be taken further to allow
+// screenshots to be compared from any appium based test thus removing the need to run slow
+// tests just for screenshots. 
 async function verifyScreenShot( name ) {
     await world.gallery.sleep(500); // wait for scroll bar to disappear
     var base64 = await world.driver.takeScreenshot();
@@ -98,18 +102,18 @@ describe('Visual regression tests', function() {
         });
 
         it('help page should render',async function() {
-            await navigateGoBack(world);
+            await world.about.click("Home")
             await world.menu.waitFor();
             await world.menu.selectHelp();
             await verifyScreenShot( this.test.title );
         });
     });
 
-    describe('survey work flow (empty tray)', async function() {
+    describe.skip('survey work flow (empty tray)', async function() {
         before( startAppium );
         after( stopAppium );
         it('site details should look correct', async function() {
-             await world.menu.selectWaterbugSurvey();
+             await world.menu.selectWaterbugSurvey();   // the problem here is that if a survey is partially complete the form will be filled out need a way to clear db for testing
              await verifyScreenShot( "site details" );
         });
         it('habitat should look correct', async function() {

@@ -10,7 +10,9 @@ function runTests() {
     mocha.timeout(0);
   }
   return new Promise( function(resolve, reject) {
-    [ "AnchorBar", 
+    [ 
+      "VideoView",
+      "AnchorBar", 
       "TaxonList",
       "Habitat",
       "KeyNode",
@@ -27,18 +29,19 @@ function runTests() {
       "Summary",
       "TaxonDetails",
       "SiteDetails",
-      "VideoView",
       "ViewUtils",
-      "LocationEntry",
-      "LeafletMap",
-      "MayflyEmergenceMap",
-      "MayflyMusterSelect",
+      //"LeafletMap",
+      //"MayflyEmergenceMap",
+      //"MayflyMusterSelect",
+      "SampleSync",
       "Gallery",
       "PhotoSelect",
       "EditTaxon",
       "NavButton",
       "GoBackButton",
-      "GoForwardButton"
+      "GoForwardButton",
+      "LocationEntry",
+      "Database" // needs to run last
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
       try { __remove_module_from_preview_cache(specPath);} catch(e) {}
@@ -49,7 +52,7 @@ function runTests() {
 }
 
 // useful for testing memory leaks
-infinteLoopMode = false;
+var infinteLoopMode = false; 
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
 setManualTests( false );

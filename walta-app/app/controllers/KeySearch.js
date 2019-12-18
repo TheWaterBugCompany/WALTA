@@ -24,6 +24,7 @@
  *
  */
 var Topics = require('ui/Topics');
+var PlatformSpecific = require('ui/PlatformSpecific');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "ALT Key";
@@ -45,15 +46,23 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
   questions.forEach( function(q) { q.cleanUp(); } );
   questions = null;
   $.TopLevelWindow.removeEventListener('close', cleanUp );
-});
+}); 
 
 var acb = $.getAnchorBar(); 
 $.args.name = "decision";
-var goBackBtn = Alloy.createController("GoBackButton" );
+var goBackBtn = Alloy.createController("GoBackButton", {slide: "left"} );
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample }  ), true );
 acb.addTool( goBackBtn.getView() );
 
+function goUp(e) {
+  if ( !key.isRoot() && (PlatformSpecific.convertSystemToDip(e.x) < (PlatformSpecific.convertSystemToDip($.header.size.width)*0.2) ) ) {
+    Topics.fireTopicEvent( Topics.UP, { node: key.getCurrentNode().parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, slide: "left" } );
+  }
+}
+if ( key.isRoot() ) {
+  $.header.remove($.upButton);
+}
 
 // Add each question
 _(keyNode.questions).each( 

@@ -1,9 +1,28 @@
 
 ".container" : {
   top: '1%',
-  width: Ti.UI.FILL,
-  height: Ti.UI.FILL,
+  width: "100%",
+  height: "100%",
   backgroundColor: 'white',
   layout: 'vertical'
 }
 
+"#header": {
+  width: Ti.UI.FILL,
+  height: "8.5%"
+}
+
+"#upButton": { 
+  horizontalWrap: false,
+  width: "50dp",
+  height: Ti.UI.FILL,
+  left: "6dp",
+  top: "6dp"
+}
+
+"#upButtonImage": {
+  image: "/images/icon-go-up.png", 
+  left: 0,
+  width: "20dp",
+  height: "20dp"
+}

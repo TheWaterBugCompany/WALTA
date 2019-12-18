@@ -18,6 +18,9 @@
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
+var { createCerdiApi } = require("unit-test/mocks/MockCerdiApi");
+Alloy.Globals.CerdiApi = createCerdiApi();
+
 var mocx = require("unit-test/lib/mocx");
 
 describe("Summary controller", function() {
@@ -44,8 +47,6 @@ describe("Summary controller", function() {
         Alloy.Models.sample.calculateWeightedSignalScore = function() { return "3.5"; };
         Alloy.Models.sample.saveCurrentSample = function() {};
         Alloy.Models.sample.loadTaxa = function() { return []; };
-        Alloy.Globals.CerdiApi = {};
-        Alloy.Globals.CerdiApi.retrieveUserToken = function() {return "token"; }; 
     });
     
 	afterEach( function(done) {

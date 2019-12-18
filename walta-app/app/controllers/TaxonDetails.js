@@ -22,10 +22,8 @@
  * Displays the details of a Taxon endpoint.
  *
  */
-
-var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
-
+var PlatformSpecific = require('ui/PlatformSpecific'); 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Details";
 $.name = "decision";
@@ -66,6 +64,29 @@ $.confusedWith.text = $.taxon.confusedWith;
 $.signalScore.text = $.taxon.signalScore;
 $.description.text = $.taxon.description;
 
+
+function goUp(e) {
+	if (PlatformSpecific.convertSystemToDip(e.x) < (PlatformSpecific.convertSystemToDip($.header.size.width)*0.2)) {
+		Topics.fireTopicEvent( Topics.UP, { node: $.taxon.parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, slide: "left" } );
+	}
+}
+
+// Add the go up action
+/*addActionButton("/images/up-icon.png", "",
+	function(e) {
+		Topics.fireTopicEvent( Topics.UP, { node: $.taxon.parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+		e.cancelBubble = true;
+});*/
+
+// Add the add to sample button
+if ( $.args.allowAddToSample !== false ) {
+	addActionButton("/images/plus-icon.png", "Add to sample",
+			function(e) {
+				Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId } );
+				e.cancelBubble = true;
+	});
+}
+
 // If there are photos add the photo view and button
 if ($.taxon.photoUrls.length > 0) {
 	$.photoSelect.setImage( $.taxon.photoUrls );
@@ -86,18 +107,11 @@ if ($.taxon.videoUrl) {
 		});
 }
 
-// Add the add to sample button
-if ( $.args.allowAddToSample !== false ) {
-	addActionButton("/images/plus-icon.png", "Add to sample",
-			function(e) {
-				Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId } );
-				e.cancelBubble = true;
-	});
-}
+
 
 var acb = $.getAnchorBar();
 $.args.name = "decision";
-var goBackBtn = Alloy.createController("GoBackButton");
+var goBackBtn = Alloy.createController("GoBackButton", {slide: "left"});
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } ), true );
 acb.addTool( goBackBtn.getView() );

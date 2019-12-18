@@ -1,5 +1,10 @@
 <Alloy>
 	<View id="content" class="container">
-		<Label id="heading" class="headingText" accessibilityLabel="Choose the best match">Choose the best match</Label>
+		<View id="header" onClick="goUp">
+			<Label id="heading" class="headingText" accessibilityLabel="Choose the best match">Choose the best match</Label>
+			<View id="upButton" >
+				<ImageView id="upButtonImage" ></ImageView>
+			</View>
+		</View>
 	</View>
 </Alloy>

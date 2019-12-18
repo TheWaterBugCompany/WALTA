@@ -1,14 +1,18 @@
-// Arguments passed into this controller can be accessed via the `$.args` object directly or:
-var args = $.args;
 var mapPoint;
 var sample = Alloy.Models.sample;
 
 var { getCurrentPosition } = require("logic/GeoLocationService");
 var { disableControl, enableControl } = require("ui/ViewUtils");
 
+
 // to allow mocking getCurrentPoisition in unit tests
 if ( $.args.getCurrentPosition ) {
     getCurrentPosition =  $.args.getCurrentPosition;
+}
+
+function cleanUp() {
+    $.destroy();
+	$.off();
 }
 
 function updateLocation( lat, lng, accuracy ) {
@@ -59,12 +63,10 @@ function locateClick() {
 
 function saveClick() {
     sample.set(mapPoint);
-    $.LocationEntry.hide();
     $.trigger("close");
 }
 
 function cancelClick() { 
-    $.LocationEntry.hide();
     $.trigger("close");
 }
 
@@ -90,3 +92,4 @@ let lat = parseFloat(sample.get("lat")),
 updateLocation( lat, lng, accuracy );
 exports.disable = disable; 
 exports.enable = enable;
+exports.cleanUp = cleanUp;

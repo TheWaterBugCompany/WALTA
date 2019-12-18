@@ -48,7 +48,8 @@ function openWindow() {
 
 function backEvent(e) {
 	e.cancelBubble = true;
-	Topics.fireTopicEvent( Topics.BACK );
+	console.log("androidback");
+	Topics.fireTopicEvent( Topics.BACK, {} );
 }
 
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);

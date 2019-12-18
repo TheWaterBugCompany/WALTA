@@ -1,6 +1,11 @@
 <Alloy autostyle="true">
 	<View id="content" class="container">
-			<Label id="title" class="headingText"></Label>
+			<View id="header" onClick="goUp">
+				<Label id="title" class="headingText"></Label>
+				<View id="upButton">
+					<ImageView id="upButtonImage" ></ImageView>
+				</View>
+			</View>
 			<ScrollView id="detailsBox">
 
 				<Label id="scientificClassificationLabel" class="detailsHeading" text="Scientific Classification:"/>

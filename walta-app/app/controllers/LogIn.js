@@ -55,16 +55,22 @@ function validateSubmit() {
   }
 
 function loginClick() {
-    Alloy.Globals.CerdiApi.loginUser( $.emailTextField.value, $.passwordTextField.value )
-        .then( (response ) => {
-      Ti.API.debug(`Logged in user ${$.emailTextField.value}`);
-      Topics.fireTopicEvent( Topics.LOGGEDIN, null );
-    }).catch( (err) => {
-        Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
-        $.setError( $.emailTextField );
-        $.setError( $.passwordTextField );
-        $.setErrorMessage( err );
-      });
+  $.activity.show();
+  $.logInButton.visible = false;
+  Alloy.Globals.CerdiApi.loginUser( $.emailTextField.value, $.passwordTextField.value )
+      .then( (response ) => {
+    $.activity.hide();
+    $.logInButton.visible = true;
+    Ti.API.debug(`Logged in user ${$.emailTextField.value}`);
+    Topics.fireTopicEvent( Topics.LOGGEDIN, null );
+  }).catch( (err) => {
+      $.activity.hide();
+      $.logInButton.visible = true;
+      Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
+      $.setError( $.emailTextField );
+      $.setError( $.passwordTextField );
+      $.setErrorMessage( err );
+    });
 }
 
 function forgotPassword() {
