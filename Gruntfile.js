@@ -147,7 +147,7 @@ module.exports = function(grunt) {
 
                 case "preview":
                   test();
-                  args.push("--liveview");
+                  //args.push("--liveview");
                   args.push("--output-dir builds/preview");
                   break;
 
