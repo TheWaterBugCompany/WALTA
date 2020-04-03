@@ -21,9 +21,7 @@ module.exports = function(grunt) {
 
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
-      const tasks = ['exec:clean', `exec:build:${platform}:${build_type}`];
-      if ( build_type !== "release" ) 
-        tasks.push(`install:${platform}:${build_type}`);
+      const tasks = ['exec:clean', `exec:build:${platform}:${build_type}`]; 
       return {
         src: SOURCES,
         dest: `./builds/${build_type}/Waterbug.${ext}`,
@@ -229,12 +227,14 @@ module.exports = function(grunt) {
       } else {
         p = Promise.resolve();
       }
-      return  p.then( () => startAppiumClient( caps ) )
-        .then( (driver) => {
-          appium_session = driver;
-          return driver;
-        } )
-        .catch( (err) => { grunt.fail.warn(err); } );
+      function setUpSession() {
+        return startAppiumClient( caps ) 
+          .then( (driver) => {
+            appium_session = driver;
+            return driver;
+          } )
+      }
+      return  p.then( setUpSession );
     }
 
     function terminateApp(platform) {
@@ -250,8 +250,13 @@ module.exports = function(grunt) {
       const done = this.async();
       const caps = getCapabilities(platform,true);
       caps.skipLogCapture = false;
-      startAppium(caps)
-        .then( done );
+      startAppium(caps) 
+        .catch( () => {
+          grunt.log.writeln("Attempting to start appium server");
+          grunt.task.run('run:appium');
+          grunt.task.run(`launch:${platform}:${build_type}`);
+        })
+        .then( done )
     });
 
     grunt.registerTask("terminate", function(platform,build_type) {
@@ -279,6 +284,7 @@ module.exports = function(grunt) {
         while( !stop || option === "preview") {
           let logs = await appium_session.getLogs(platform==="android"?"logcat":"syslog");
           logs.forEach( (line) => {
+            
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
             } else if ( logFilter.test(line.message) && retain.test(line.message)) {
@@ -304,47 +310,53 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
+    grunt.loadNpmTasks("grunt-then");
 
     grunt.registerTask('test', function (platform) {
-      grunt.task.run('run:appium');
+      //grunt.task.run('run:appium');
       grunt.task.run(`unit-test:${platform}`);
       grunt.task.run(`newer:test_${platform}`);
+      grunt.task.run(`install:${platform}:test`);
       grunt.task.run(`exec:end_to_end_test:${platform}`);
       grunt.task.run(`exec:acceptance_test:${platform}`);
     });
 
     grunt.registerTask('end-to-end-test', function (platform,option) {
-      grunt.task.run('run:appium');
+      //grunt.task.run('run:appium');
       if ( option !== "quick" ) {
         grunt.task.run(`newer:test_${platform}`);
+        grunt.task.run(`install:${platform}:test`);
       }
       grunt.task.run(`exec:end_to_end_test:${platform}${option === "quick"?":quick":""}`);
     });
 
     grunt.registerTask('acceptance-test', function (platform,option) {
-      grunt.task.run('run:appium');
+      //grunt.task.run('run:appium');
       if ( option !== "quick" ) {
         grunt.task.run(`newer:test_${platform}`);
+        grunt.task.run(`install:${platform}:test`);
       }
       grunt.task.run(`exec:acceptance_test:${platform}${option === "quick"?":quick":""}`);
     });
 
     
     grunt.registerTask('unit-test', function( platform ) {
-      grunt.task.run('run:appium');
+      //grunt.task.run('run:appium');
       grunt.task.run(`newer:unit_test_${platform}`);
-      grunt.task.run(`launch:${platform}:unit-test` );
+      grunt.task.run(`install:${platform}:unit-test`);
+      grunt.task.run(`launch:${platform}:unit-test`);
       grunt.task.run(`output-logs:${platform}`);
 
     } );
 
     grunt.registerTask('dist-clean', ['exec:clean', 'exec:clean_test'] );
     grunt.registerTask('preview', function(platform,option) {
-      grunt.task.run("run:appium");
+      //grunt.task.run("run:appium");
       // It's often possible to get away without do a rebuild and relying on the file server 
       // to copy changes to the device. The quick option enables that.
       if ( option !== "quick") { 
         grunt.task.run(`newer:preview_${platform}`);
+        grunt.task.run(`install:${platform}:preview`);
       } 
       grunt.task.run("exec:stop_live_view");
       grunt.task.run(`run:live_view_${platform}`);
@@ -356,9 +368,10 @@ module.exports = function(grunt) {
     } );
 
     grunt.registerTask('preview-unit-test', function(platform,option) {
-      grunt.task.run("run:appium");
+      //grunt.task.run("run:appium");
       if ( option !== "quick") { 
         grunt.task.run(`newer:preview_unit_test_${platform}`);
+        grunt.task.run(`install:${platform}:preview-unit-test`);
       } 
       grunt.task.run("exec:stop_live_view");
       grunt.task.run(`run:live_view_${platform}`);
@@ -372,6 +385,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('debug', function(platform) {
       grunt.task.run(`newer:debug_${platform}`); 
+      grunt.task.run(`install:${platform}:debug`);
       grunt.task.run(`launch:${platform}:debug`);
       grunt.task.run(`output-logs:${platform}:preview`);
     })
