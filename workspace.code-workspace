@@ -4,10 +4,10 @@
 			"path": "."
 		},
 		{
-			"path": "/Users/msharman/Source/titanium_mobile"
+			"path": "/Users/msharman/Library/Application Support/Titanium/mobilesdk/osx/8.0.2.GA/node_modules/liveview"
 		},
 		{
-			"path": "/Users/msharman/Library/Application Support/Titanium/mobilesdk/osx/8.0.2.GA/node_modules/liveview"
+			"path": "/home/msharman/Projects/titanium_mobile"
 		}
 	],
 	"settings": {
