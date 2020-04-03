@@ -12,7 +12,7 @@ function getCapabilities( platform, quick ) {
             autoGrantPermissions: true,
             deviceName: "device",
             appActivity: ".WaterbugActivity",
-            appWaitActivity: "org.appcelerator.titanium.TiActivity",
+            //appWaitActivity: ".WaterbugActivity",
             newCommandTimeout: 0
         });
         if ( !quick ) {

@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+var moment = require("lib/moment");
 require("unit-test/lib/ti-mocha");
 var { use, expect } = require("unit-test/lib/chai");
 var { makeTestPhoto, removeDatabase } = require("unit-test/util/TestUtils");
@@ -136,7 +137,8 @@ describe("Sample collection, model including taxa", function() {
     [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => { 
         let taxon = Alloy.createModel("taxa", { 
           sampleId:  Alloy.Models.sample.get("sampleId"),
-          taxonId: taxonId 
+          taxonId: taxonId, 
+          abundance: ["1-2","3-4","5-9","10-15",">20"][taxonId-1]
           });
         taxon.save();
         Alloy.Collections.taxa.add(taxon);
@@ -264,6 +266,80 @@ describe("Sample collection, model including taxa", function() {
     });
     it('should reset the taxa collection', function() {
       expect( Alloy.Collections.taxa.length ).to.equal(0);
+    });
+    
+  });
+  context.only('should serialise correctly', function() {
+    beforeEach(function() {
+      Alloy.Models.sample.saveCurrentSample();
+    });
+    it('should serialize mayfly survey type correctly', function() {
+      Alloy.Models.sample.set("surveyType", Sample.SURVEY_MAYFLY);
+      expect( Alloy.Models.sample.toCerdiApiJson().survey_type ).to.equal("mayfly");
+
+    });
+    it('should serialize quick survey type correctly', function() {
+      Alloy.Models.sample.set("surveyType", Sample.SURVEY_ORDER);
+      expect( Alloy.Models.sample.toCerdiApiJson().survey_type ).to.equal("quick");
+      
+    });
+    it('should serialize detailed survey type correctly', function() {
+      Alloy.Models.sample.set("surveyType", Sample.SURVEY_DETAILED);
+      expect( Alloy.Models.sample.toCerdiApiJson().survey_type ).to.equal("detailed");
+      
+    });
+    it('should serialize wetland survey type correctly', function() {
+      Alloy.Models.sample.set("waterbodyType", Sample.WATERBODY_WETLAND);
+      expect( Alloy.Models.sample.toCerdiApiJson().waterbody_type ).to.equal("wetland");
+
+    });
+    it('should serialize river waterbody type correctly', function() {
+      Alloy.Models.sample.set("waterbodyType", Sample.WATERBODY_RIVER);
+      expect( Alloy.Models.sample.toCerdiApiJson().waterbody_type ).to.equal("river");
+      
+    });
+    it('should serialize lake waterbody type correctly', function() {
+      Alloy.Models.sample.set("waterbodyType", Sample.WATERBODY_LAKE);
+      expect( Alloy.Models.sample.toCerdiApiJson().waterbody_type ).to.equal("lake");
+      
+    });
+    it('should serilaize attributes correctly', function() {
+      var json = Alloy.Models.sample.toCerdiApiJson();
+      expect( json ).to.be.ok;
+      expect( json.sample_date ).to.be.a.dateString();
+      expect( json.lat ).to.equal('-42.00000');
+      expect( json.lng ).to.equal('135.00000');
+      expect( json.scoring_method ).to.equal("alt");
+      expect( json.survey_type ).to.equal("detailed");
+      expect( json.waterbody_type ).to.equal("lake");
+      expect( json.waterbody_name ).to.equal("Test Waterbody");
+      expect( json.nearby_feature).to.equal("near the office intersection cupboard");
+      expect( json.habitat.boulder ).to.equal(15);
+      expect( json.habitat.gravel ).to.equal(14);
+      expect( json.habitat.sandOrSilt ).to.equal(13);
+      expect( json.habitat.wood ).to.equal(8);
+      expect( json.habitat.leafPacks ).to.equal(17);
+      expect( json.habitat.aquaticPlants ).to.equal(12);
+      expect( json.habitat.openWater ).to.equal(11);
+      expect( json.habitat.edgePlants ).to.equal(10);
+    });
+
+    it('should serilaize taxa correctly', function() {
+      var json = Alloy.Models.sample.toCerdiApiJson();
+      expect( json ).to.be.ok;
+      var taxa = json.creatures;
+      [[1,2],[2,4],[3,7],[4,13],[5,30]]
+        .forEach( ([taxonId,abundance]) => {
+          expect(taxa[taxonId-1].creature_id, "creature id").to.equal(taxonId);
+          expect(taxa[taxonId-1].count, "count").to.equal(abundance);
+        });
+    });
+
+    it('should serilaize server id correctly correctly', function() {
+      Alloy.Models.sample.set('serverSampleId', 99 );
+      var json = Alloy.Models.sample.toCerdiApiJson();
+      expect( json ).to.be.ok;
+      expect( json.sampleId ).to.equal(99);
     });
   });
 });
