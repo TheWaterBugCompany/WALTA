@@ -18,33 +18,10 @@
 var moment = require("lib/moment");
 require("unit-test/lib/ti-mocha");
 var { use, expect } = require("unit-test/lib/chai");
-var { makeTestPhoto, removeDatabase } = require("unit-test/util/TestUtils");
+var { makeTestPhoto, removeDatabase, resetSample, clearDatabase  } = require("unit-test/util/TestUtils");
 use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
-function resetSample() {
-  // reset globals
-  Alloy.Models.sample = null;
-  Alloy.Models.taxa = null;
-  Alloy.Collections.sample = null;
-  Alloy.Collections.taxa = null;
-
-  Alloy.Collections.instance("sample");
-  Alloy.Collections.instance("taxa");
-
-  Alloy.Models.instance("sample");
-  Alloy.Models.instance("taxa");
-
- 
-}
-
-function clearDatabase() {
-  resetSample();
-  var db = Ti.Database.open("samples");
-  db.execute("DELETE FROM sample");
-  db.execute("DELETE FROM taxa");
-  db.close();
-}
 describe("Taxa model", function() {
   beforeEach( function() {
     clearDatabase();
@@ -269,7 +246,7 @@ describe("Sample collection, model including taxa", function() {
     });
     
   });
-  context.only('should serialise correctly', function() {
+  context('should serialise correctly', function() {
     beforeEach(function() {
       Alloy.Models.sample.saveCurrentSample();
     });
