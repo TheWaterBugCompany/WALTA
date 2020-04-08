@@ -57,9 +57,9 @@ function saveAttributes() {
     function zeroOrInt(v ) {
         var i = parseInt(v);
         if ( isNaN(i) )
-            return "0";
+            return 0;
         else
-            return i.toString();
+            return i;
     }
     sample.set( {
         "leafPacks": zeroOrInt($.leaves.value),
