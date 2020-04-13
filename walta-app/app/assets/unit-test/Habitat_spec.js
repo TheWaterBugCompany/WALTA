@@ -21,6 +21,7 @@ var mocx = require("unit-test/lib/mocx");
 var { closeWindow, controllerOpenTest, resetDatabase, clickButton, setManualTests, enterText, checkTestResult } = require("unit-test/util/TestUtils");
 describe("Habitat controller", function() {
     var ctl;
+    this.timeout(6000);
 	beforeEach( function() {
     resetDatabase();
     mocx.createModel("sample");
