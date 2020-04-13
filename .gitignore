@@ -18,3 +18,5 @@ features/support/mock_data/rest/*/*/*/mock/response.txt
 appium.log
 builds/**/*.log
 builds/**/*.plist
+
+mock-server/rest/*/*/*/mock/response.txt
