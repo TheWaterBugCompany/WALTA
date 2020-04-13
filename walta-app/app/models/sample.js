@@ -202,12 +202,12 @@ exports.definition = {
 					"habitat": {
 						"boulder": this.get("boulder"),
 						"gravel": this.get("gravel"),
-						"sandOrSilt": this.get("sandOrSilt"),
-						"leafPacks": this.get("leafPacks"),
+						"sand_or_silt": this.get("sandOrSilt"),
+						"leaf_packs": this.get("leafPacks"),
 						"wood": this.get("wood"),
-						"aquaticPlants": this.get("aquaticPlants"),
-						"openWater": this.get("openWater"),
-						"edgePlants": this.get("edgePlants")
+						"aquatic_plants": this.get("aquaticPlants"),
+						"open_water": this.get("openWater"),
+						"edge_plants": this.get("edgePlants")
 					 } 
 				};
 				if (this.get("serverSampleId") ) {

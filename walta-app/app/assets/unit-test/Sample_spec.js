@@ -293,12 +293,12 @@ describe("Sample collection, model including taxa", function() {
       expect( json.nearby_feature).to.equal("near the office intersection cupboard");
       expect( json.habitat.boulder ).to.equal(15);
       expect( json.habitat.gravel ).to.equal(14);
-      expect( json.habitat.sandOrSilt ).to.equal(13);
+      expect( json.habitat.sand_or_silt ).to.equal(13);
       expect( json.habitat.wood ).to.equal(8);
-      expect( json.habitat.leafPacks ).to.equal(17);
-      expect( json.habitat.aquaticPlants ).to.equal(12);
-      expect( json.habitat.openWater ).to.equal(11);
-      expect( json.habitat.edgePlants ).to.equal(10);
+      expect( json.habitat.leaf_packs ).to.equal(17);
+      expect( json.habitat.aquatic_plants ).to.equal(12);
+      expect( json.habitat.open_water ).to.equal(11);
+      expect( json.habitat.edge_plants ).to.equal(10);
     });
 
     it('should serilaize taxa correctly', function() {
