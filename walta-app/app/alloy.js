@@ -41,7 +41,7 @@ if ( relHeight > relWidth ) {
 }
 
 var aspectRatio = relWidth/relHeight;
-var sizeFactor = relWidth/533;
+var sizeFactor = (relWidth*Ti.Platform.displayCaps.logicalDensityFactor)/1066;
  
 Ti.API.info(`relWidth=${relWidth}, relHeight=${relHeight}, aspectRatio=${aspectRatio}, sizeFactor=${sizeFactor}`);
 
