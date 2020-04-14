@@ -45,7 +45,7 @@ describe("SiteDetails controller", function() {
         ctl = null;
     });
     
-	it('should display the SiteDetails view', function(done) {
+	it.only('should display the SiteDetails view', function(done) {
 		controllerOpenTest( ctl, done );
     });
 
