@@ -42,8 +42,10 @@ function openWindow() {
 		$.content.width = Ti.UI.FILL;
 		$.TopLevelWindow.add( $.content );
 	}
-	
+	if ( ! $.TopLevelWindow.useUnSafeArea )
+		$.TopLevelWindow.addEventListener('postlayout', updateSafeArea);
 	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
+	
 }
 
 function backEvent(e) {
@@ -51,6 +53,13 @@ function backEvent(e) {
 	console.log("androidback");
 	Topics.fireTopicEvent( Topics.BACK, {} );
 }
+
+function updateSafeArea() {
+    // Update the safe-area view's dimensions after every 'postlayout' event.
+    $.content.applyProperties($.TopLevelWindow.safeAreaPadding);
+}
+
+
 
 $.TopLevelWindow.addEventListener( 'androidback', backEvent);
 
@@ -85,6 +94,8 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	noSwipeBack();
 	$.TopLevelWindow.removeEventListener('androidback', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
+	if ( ! $.TopLevelWindow.useUnSafeArea )
+		$.TopLevelWindow.removeEventListener('postlayout', updateSafeArea );
 });
 
 function getAnchorBar() {
