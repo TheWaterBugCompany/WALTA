@@ -24,7 +24,6 @@ var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
 describe("SiteDetails controller", function() {
     var ctl;
     var sample;
-
     function fireTabClick( ctl, index ) {
         var tab = ctl.getButtons()[index];
         ctl.segCtrlWrapper.fireEvent("click", { x: tab.rect.x + tab.rect.width/2, y: tab.rect.y} );
@@ -46,7 +45,7 @@ describe("SiteDetails controller", function() {
         ctl = null;
     });
     
-	it('should display the SiteDetails view', function(done) {
+	it.only('should display the SiteDetails view', function(done) {
 		controllerOpenTest( ctl, done );
     });
 
