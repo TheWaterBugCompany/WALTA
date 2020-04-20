@@ -42,7 +42,7 @@ module.exports = function(grunt) {
           },
 
           clean_test: {
-            command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa}',
+            command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa,aab}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "inherit"
           },
