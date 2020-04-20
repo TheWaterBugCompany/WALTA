@@ -2,6 +2,7 @@
 
 walta-app/plugins/**
 .metadata
+*.aab
 *.apk
 *.ipa
 **/*.lock
