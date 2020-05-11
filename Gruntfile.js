@@ -77,8 +77,8 @@ module.exports = function(grunt) {
           },
 
           end_to_end_test: {
-            command: function(platform,option) {
-              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 "./end-to-end-testing/*.js"`;
+            command: function(platform,option,host) {
+              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" ${host?'HOST='+host:""} PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 "./end-to-end-testing/*.js"`;
             },
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
@@ -92,13 +92,13 @@ module.exports = function(grunt) {
 
           build: {
             command: function(platform,build_type) {
-              let args = [ "--project-dir walta-app", "--build-only" ];
+              let args = [ "--project-dir walta-app"];
 
               function production() {
                 if ( platform === "android" ) {
-                  args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                  args.push( "--build-only", "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
                 } else if ( platform === "ios" ){
-                  args.push( "--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
+                  args.push( "--build-only","--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
                 } else {
                   throw new Error(`Unknown platform "${platform}"`);
                 }
@@ -106,9 +106,19 @@ module.exports = function(grunt) {
 
               function test() {
                 if ( platform === "android" ) {
-                  args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                  args.push( "--build-only","--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
                 } else if ( platform === "ios" ){
-                  args.push( "--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+                  args.push( "--build-only","--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+                } else {
+                  throw new Error(`Unknown platform "${platform}"`);
+                }
+              }
+
+              function emulator() {
+                if ( platform === "android" ) {
+                  args.push( "--deploy-type development", "--target emulator", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                } else if ( platform === "ios" ){
+                  args.push( "--deploy-type development", "--target simulator", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
                 } else {
                   throw new Error(`Unknown platform "${platform}"`);
                 }
@@ -149,6 +159,11 @@ module.exports = function(grunt) {
                   args.push("--output-dir builds/preview");
                   break;
 
+                case "emulate":
+                  emulator();
+                  args.push("--liveview");
+                  break;
+
                 case "preview-unit-test":
                   test();
                   args.push("--liveview");
@@ -184,7 +199,7 @@ module.exports = function(grunt) {
               quiet: true,
               ready: /Appium REST http interface listener started on/ 
             },
-            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:debug",
+            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:error",
           },
           live_view_ios: {
             options: { wait: false, ready: "Event Server Started"  },
@@ -206,6 +221,9 @@ module.exports = function(grunt) {
           debug_android: build_if_newer_options("android", "debug"),
           debug_ios: build_if_newer_options("ios", "debug"),
 
+          emulate_android: build_if_newer_options("android", "emulate"),
+          emulate_ios: build_if_newer_options("ios", "emulate"),
+
           release_android: build_if_newer_options("android", "release"),
           release_ios: build_if_newer_options("ios", "release"),
 
@@ -219,7 +237,7 @@ module.exports = function(grunt) {
 
     // keep track of the current appium session
     let appium_session = null;
-    function startAppium(caps) {
+    function startAppium(caps, host = 'local') {
       
       let p;
       if ( appium_session ) {
@@ -228,7 +246,7 @@ module.exports = function(grunt) {
         p = Promise.resolve();
       }
       function setUpSession() {
-        return startAppiumClient( caps ) 
+        return startAppiumClient( caps, host ) 
           .then( (driver) => {
             appium_session = driver;
             return driver;
@@ -321,13 +339,13 @@ module.exports = function(grunt) {
       grunt.task.run(`exec:acceptance_test:${platform}`);
     });
 
-    grunt.registerTask('end-to-end-test', function (platform,option) {
+    grunt.registerTask('end-to-end-test', function (platform,option,host) {
       //grunt.task.run('run:appium');
       if ( option !== "quick" ) {
         grunt.task.run(`newer:test_${platform}`);
         grunt.task.run(`install:${platform}:test`);
       }
-      grunt.task.run(`exec:end_to_end_test:${platform}${option === "quick"?":quick":""}`);
+      grunt.task.run(`exec:end_to_end_test:${platform}${option === "quick"?":quick":""}${host?":"+host:""}`);
     });
 
     grunt.registerTask('acceptance-test', function (platform,option) {
@@ -387,6 +405,11 @@ module.exports = function(grunt) {
       grunt.task.run(`newer:debug_${platform}`); 
       grunt.task.run(`install:${platform}:debug`);
       grunt.task.run(`launch:${platform}:debug`);
+      grunt.task.run(`output-logs:${platform}:preview`);
+    })
+
+    grunt.registerTask('emulate', function(platform) {
+      grunt.task.run(`newer:emulate_${platform}`); 
       grunt.task.run(`output-logs:${platform}:preview`);
     })
   };
