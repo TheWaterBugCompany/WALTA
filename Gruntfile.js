@@ -409,7 +409,9 @@ module.exports = function(grunt) {
     })
 
     grunt.registerTask('emulate', function(platform) {
-      grunt.task.run(`newer:emulate_${platform}`); 
+     // grunt.task.run("exec:stop_live_view");
+     // grunt.task.run(`run:live_view_${platform}`);
+      grunt.task.run(`exec:build:${platform}:emulate`); 
       grunt.task.run(`output-logs:${platform}:preview`);
     })
   };
