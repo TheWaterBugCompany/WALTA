@@ -44,13 +44,13 @@
 
 ".bigMenuText[if=Alloy.Globals.isLowRes]": {
    font: {
-    fontSize: "27dp"
+    fontSize: "25dp"
   }
 }
 
 ".bigMenuText[if=Alloy.Globals.isHighRes]": {
    font: {
-    fontSize: "30dp"
+    fontSize: "34dp"
   }
 }
 
@@ -115,16 +115,14 @@
 }
 
 "#smallOptions": {
-  height: "30%",
-  width: Ti.UI.FILL,
-  bottom: "2%",
-  left: "1%",
-  right: "1%"
+  height: "100dp",
+  width: "500dp",
+  bottom: "8dp"
 }
 
 ".smallButton": {
   height: Ti.UI.FILL,
-  width: "19.5%",
+  width: "100dp", 
   layout: "vertical",
   horizontalWrap: "false"
 }
@@ -144,19 +142,39 @@
 
 ".smallMenuText[if=Alloy.Globals.isLowRes]": {
    font: {
-    fontSize: "16dp"
+    fontSize: "14dp"
   }
+}
+
+"#smallOptions[if=Alloy.Globals.isHighRes]": {
+  height: "150dp",
+  width: "750dp"
+}
+
+".smallButton[if=Alloy.Globals.isHighRes]": {
+  height: "150dp",
+  width: "150dp" 
 }
 
 ".smallMenuText[if=Alloy.Globals.isHighRes]": {
    font: {
-    fontSize: "16dp"
+    fontSize: "20dp"
   }
+}
+
+"#smallOptions[if=Alloy.Globals.isXHighRes]": {
+  height: "200dp",
+  width: "1000dp"
+}
+
+".smallButton[if=Alloy.Globals.isXHighRes]": {
+  height: "200dp",
+  width: "200dp" 
 }
 
 ".smallMenuText[if=Alloy.Globals.isXHighRes]": {
    font: {
-    fontSize: "32dp"
+    fontSize: "30dp"
   }
 }
 
