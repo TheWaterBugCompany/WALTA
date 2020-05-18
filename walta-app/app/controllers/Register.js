@@ -1,3 +1,5 @@
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
 var Topics = require("ui/Topics");
 var { emailValidity } = require("util/EmailUtils");
 
@@ -106,14 +108,14 @@ function submitClick() {
   }).then( (response ) => {
     $.activity.hide();
     $.submitButton.visible = true;
-    Ti.API.debug(`Registered user ${$.emailTextField.value}`);
+    log(`Registered user ${$.emailTextField.value}`);
     Alloy.Globals.CerdiApi.storeUserToken( response );
     Topics.fireTopicEvent( Topics.HOME, null );
   })
   .catch( (err) => {
     $.activity.hide();
     $.submitButton.visible = true;
-    Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
+    log(`Unexpected error: ${JSON.stringify( err)}`);
     $.setError($.passwordTextField);
     $.setError($.passwordConfirmTextField);
     $.setError($.emailTextField);

@@ -1,12 +1,10 @@
+var Crashlytics = require('util/Crashlytics');
+var debug = Crashlytics.log;
 var Topics = require('ui/Topics');
 var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
-
+var Crashlytics = require('util/Crashlytics');
 var SYNC_INTERVAL = 1000*60*5; // 5 minutes
 var timeoutHandler;
-
-function debug(mess) { 
-    Ti.API.info(mess);
-}
 
 function networkChanged( e ) {
     if ( e.networkType === Ti.Network.NETWORK_NONE ) {
@@ -128,12 +126,8 @@ function errorHandler( sample ) {
         if ( err.message === "The given data was invalid.") {
             var errors = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
             debug(`Data was invalid continuing: ${errors}`);
-            sample.set("lastError", errors );
-            sample.save();
-        } else {
-            sample.set("lastError", err.message );
-            sample.save();
-        }
+        } 
+        Crashlytics.reportException( err );
         return Promise.reject(err);
     };
 }

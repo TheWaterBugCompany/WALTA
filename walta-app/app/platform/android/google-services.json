@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "19898857597",
+    "firebase_url": "https://walta-231505.firebaseio.com",
+    "project_id": "walta-231505",
+    "storage_bucket": "walta-231505.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19898857597:android:9d108eb607dc3a01e59914",
+        "android_client_info": {
+          "package_name": "net.thewaterbug.waterbug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "19898857597-rgp7me6fcbp0atq54i6empeg6orrto2m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOYMRokSMZ7t5l_8fZ7SPIW-riNpcUl18"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "19898857597-rgp7me6fcbp0atq54i6empeg6orrto2m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "19898857597-u9l1vvn8vc2u3vsu6pqa01c8h40gv8p8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.thewaterbug.waterbug",
+                "app_store_id": "4976246739639648917"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
