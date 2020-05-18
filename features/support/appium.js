@@ -3,9 +3,60 @@ const { join } = require('path');
 const _ = require('underscore');
 
 
-function getCapabilities( platform, quick ) {
+function getCapabilities( platform, quick, host = 'local' ) {
     let caps = {};
-     if ( platform === "android") {
+     if ( host === "kobiton") {
+        _(caps).extend({
+            // The generated session will be visible to you only. 
+            sessionName:        'Automation test session',
+            sessionDescription: '',
+            deviceOrientation:  'landscape',
+            captureScreenshots: true,
+            browserName:        'chrome',
+            deviceGroup:        'KOBITON',
+            app: 'kobiton-store:59235'
+          });
+
+          if ( platform === "android" ) {
+            _(caps).extend({
+                autoGrantPermissions: true,
+                deviceName:         '*',
+                platformVersion:    '*',
+                platformName:       'Android'
+            });
+          }
+
+     } else if ( platform === "ios" ) {
+        _(caps).extend({
+            automationName: "XCUITest",
+            platformName: "iOS",
+            autoAcceptAlerts: true,
+            waitForQuiescence: false,
+            skipLogCapture: true,
+            platformVersion: "12.4",
+            deviceName: "The Code Sharman Test iPhone",
+            udid: "auto",
+            xcodeOrgId: "ZG6HRCUR8Q",
+            xcodeSigningId: "iPhone Developer",
+            useJSONSource: true,
+            realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
+            showXcodeLog: true,
+            usePrebuiltWDA: true,
+            noReset: false,
+            processArguments: {
+                "args": [
+                    "-FIRDebugEnabled"
+                ]
+            }
+        });
+        if ( !quick ) {
+            caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');
+        } else {
+            _(caps).extend({
+                bundleId: "net.thewaterbug.waterbug"
+            });
+        }
+     } else if ( platform === "android") {
         _(caps).extend({
             automationName: "uiautomator2",
             platformName: "Android",
@@ -25,42 +76,29 @@ function getCapabilities( platform, quick ) {
                 ignoreUnimportantViews: true
             });
         }
-    } else {
-        _(caps).extend({
-            automationName: "XCUITest",
-            platformName: "iOS",
-            platformVersion: "12.4",
-            autoAcceptAlerts: true,
-            deviceName: "The Code Sharman Test iPhone",
-            udid: "auto",
-            xcodeOrgId: "ZG6HRCUR8Q",
-            xcodeSigningId: "iPhone Developer",
-            useJSONSource: true,
-            waitForQuiescence: false,
-            skipLogCapture: true,
-            realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
-            showXcodeLog: true,
-            usePrebuiltWDA: true,
-            noReset: false
-        });
-        if ( !quick ) {
-            caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');
-        } else {
-            _(caps).extend({
-                bundleId: "net.thewaterbug.waterbug"
-            });
-        }
-    }
+    } 
     return caps;
 }
 
-async function startAppiumClient( caps ) {
-    return await remote({
-        logLevel: 'error',
-        hostname: 'localhost',
-        port: 4723, 
-        capabilities: caps
-    });
+async function startAppiumClient( caps, host = 'local' ) {
+    if ( host === 'kobiton' ) {
+        return await remote({
+            protocol: 'https',
+            port: 443,
+            hostname: 'api.kobiton.com',
+            user: 'thecodesharman',
+            key: 'acbea4cd-f259-42bc-9f75-ad25f9cfec5c',
+            capabilities: caps,
+            logLevel: 'error'
+        });
+    } else {
+        return await remote({
+            logLevel: 'error',
+            hostname: 'localhost',
+            port: 4723, 
+            capabilities: caps
+        });
+    }
 }
 
 async function stopAppiumClient(driver) {

@@ -11,6 +11,7 @@ walta-app/plugins/**
 release/**
 **/node_modules
 node_modules
+Pods/**
 .bundle
 .irb-history
 .~*

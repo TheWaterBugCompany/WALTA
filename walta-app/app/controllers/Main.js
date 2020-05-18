@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 var CerdiApi = require("logic/CerdiApi");
 var SampleSync = require("logic/SampleSync");
 var Topics = require('ui/Topics');
@@ -22,6 +23,14 @@ var KeyLoader = require('logic/KeyLoaderJson');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Sample = require('logic/Sample');
 var GeoLocationService = require('logic/GeoLocationService'); 
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
+
+Ti.App.addEventListener( "uncaughtException", function(e) {
+  if ( Crashlytics.isAvailable() ) {
+    Crashlytics.recordException( e );
+  }
+});
 
 function questionToString( args ) {
   if ( !args || !args.node || !args.node.questions )
@@ -66,7 +75,7 @@ function openController(ctl,args) {
   dumpHistory();
 
   
-  Ti.API.info(`opening controller="${ctl}" with args.slide= ${args.slide}`);
+  log(`opening controller="${ctl}" with args.slide= ${args.slide}`);
   controller = Alloy.createController(ctl,args);
   controller.open();
 
@@ -103,7 +112,7 @@ function goBack(args) {
         newargs.slide = "left";
       }
     }
-    Ti.API.info(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
+    log(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
     openController(ctl,newargs);
 
   }
@@ -111,7 +120,7 @@ function goBack(args) {
 
 function siteDetailsWindow(args) {
   if ( OS_ANDROID ) {
-    Ti.API.debug('Asking for permissions...');
+    log('Asking for permissions...');
     Ti.Android.requestPermissions(
       [ 'android.permission.ACCESS_FINE_LOCATION','android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE' ], 
       function(e) {
@@ -165,7 +174,7 @@ function startApp() {
   Topics.subscribe( Topics.FORWARD, (data)=> updateDecisionWindow(extend(data,{ slide: 'right' })));
   Topics.subscribe( Topics.HOME, (data) => openController("Menu",data) );
   Topics.subscribe( Topics.LOGIN, (data) => openController("LogIn", data));
-  Topics.subscribe( Topics.LOGGEDIN, (data) => Topics.fireTopicEvent( Topics.HOME, data ) );
+  Topics.subscribe( Topics.LOGGEDIN, (data) => Topics.fireTopicEvent( Topics.HOME, data ));
   Topics.subscribe( Topics.BROWSE, (data) => openController("TaxonList",data) );
   Topics.subscribe( Topics.SAMPLETRAY, (data) => openController("SampleTray",data) );
   Topics.subscribe( Topics.IDENTIFY, (data) => openController("SampleTray",data) );
@@ -217,7 +226,20 @@ function startApp() {
   loadKey( keyUrl );
   PlatformSpecific.appStartUp();
   GeoLocationService.init();
+  
+  // Report user name to Crashlytics when logged in
+  if ( Crashlytics.isAvailable() ) {
+    function setUserId() { 
+      Crashlytics.setUserId( Ti.App.Properties.getObject('userAccessUsername') ); 
+    }
+    Topics.subscribe( Topics.LOGGEDIN, (data) => setUserId() );
+    if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
+      setUserId();
+    }
+  }
   Topics.fireTopicEvent( Topics.HOME );
+  Topics.subscribe( Topics.ABOUT, (data) => Crashlytics.crash() );
+ 
 }
 
 startApp();

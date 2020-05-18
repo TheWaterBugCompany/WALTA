@@ -1,3 +1,5 @@
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
@@ -56,7 +58,7 @@ exports.definition = {
 
 			setSitePhoto: function(file) {
 				var newPhotoName = `sitePhoto_${this.get("sampleId")}_${moment().unix()}.jpg`;
-				Ti.API.info(`updating photo ${file} to ${newPhotoName}`);
+				log(`updating photo ${file} to ${newPhotoName}`);
 				removeFilesBeginningWith(`sitePhoto_${this.get("sampleId")}_`);
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(sitePhotoPath.nativePath);
@@ -228,7 +230,7 @@ exports.definition = {
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, { 
 			createNewSample: function() {
-				Ti.API.debug("Creating new sample..");
+				log("Creating new sample..");
 				Alloy.Models.sample = Alloy.createModel("sample");
 				this.add(Alloy.Models.sample);
 				Alloy.Models.sample.save();
