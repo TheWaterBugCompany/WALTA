@@ -11,7 +11,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 
 
 function logOut() {
-  Alloy.Globals.CerdiApi.storeUserToken(null);
+  Alloy.Globals.CerdiApi.storeUserToken(null, null);
   updateLoginText();
 }
 

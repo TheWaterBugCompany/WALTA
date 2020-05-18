@@ -21,7 +21,7 @@ module.exports = function(grunt) {
 
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
-      const tasks = ['exec:clean', `exec:build:${platform}:${build_type}`]; 
+      const tasks = [`exec:build:${platform}:${build_type}`]; 
       return {
         src: SOURCES,
         dest: `./builds/${build_type}/Waterbug.${ext}`,
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
-          clean_test: {
+          clean_dist: {
             command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa,aab}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "inherit"
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 
           uninstall_android: {
             command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
-            exitCode: [ 0, 255 ]
+            exitCode: [ 0, 1, 255 ]
           },
 
           uninstall_ios: {
@@ -292,7 +292,7 @@ module.exports = function(grunt) {
       if ( process.env.DEBUG )
         levels.push("DEBUG");
       
-      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +Ti\\w+ +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
+      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +Ti\\w+ *: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
       function delay(t) {
         return new Promise( resolve => setTimeout(resolve, t) ); 
       }
@@ -366,8 +366,8 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}`);
 
     } );
-
-    grunt.registerTask('dist-clean', ['exec:clean', 'exec:clean_test'] );
+    grunt.registerTask('clean', ['exec:clean'] );
+    grunt.registerTask('dist-clean', ['exec:clean_dist'] );
     grunt.registerTask('preview', function(platform,option) {
       //grunt.task.run("run:appium");
       // It's often possible to get away without do a rebuild and relying on the file server 
@@ -376,8 +376,8 @@ module.exports = function(grunt) {
         grunt.task.run(`newer:preview_${platform}`);
         grunt.task.run(`install:${platform}:preview`);
       } 
-      grunt.task.run("exec:stop_live_view");
-      grunt.task.run(`run:live_view_${platform}`);
+      //grunt.task.run("exec:stop_live_view");
+      //grunt.task.run(`run:live_view_${platform}`);
       grunt.task.run(`launch:${platform}:preview`);
 
       // the preview option here enters an infinite loop so that the log output
@@ -406,7 +406,8 @@ module.exports = function(grunt) {
       grunt.task.run(`install:${platform}:debug`);
       grunt.task.run(`launch:${platform}:debug`);
       grunt.task.run(`output-logs:${platform}:preview`);
-    })
+    });
+
 
     grunt.registerTask('emulate', function(platform) {
      // grunt.task.run("exec:stop_live_view");

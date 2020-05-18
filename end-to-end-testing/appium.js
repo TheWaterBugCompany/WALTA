@@ -13,10 +13,10 @@ global.startAppium = async function() {
     if ( world.driver ) {
         await world.driver.reset();
     } else {
-        let platform = process.env.PLATFORM;
+        let platform = process.env.PLATFORM, host = process.env.HOST;
         if ( ! platform )
             throw new Error("Please set the PLATFORM enviornment variable");
-        world.driver = await startAppiumClient( getCapabilities( platform,true) );
+        world.driver = await startAppiumClient( getCapabilities( platform,true, host), host );
         world.platform = platform;
         setUpWorld( world );
     }
