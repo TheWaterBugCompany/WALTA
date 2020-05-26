@@ -1,9 +1,10 @@
 const { remote } = require('webdriverio');
 const { join } = require('path');
 const _ = require('underscore');
+const KobitonAPI = require("./kobiton");
 
 
-function getCapabilities( platform, quick, host = 'local' ) {
+async function  getCapabilities( platform, quick, host = 'local', kobitonVersion = null, deviceResolution = null ) {
     let caps = {};
      if ( host === "kobiton") {
         _(caps).extend({
@@ -14,18 +15,35 @@ function getCapabilities( platform, quick, host = 'local' ) {
             captureScreenshots: true,
             browserName:        'chrome',
             deviceGroup:        'KOBITON',
-            app: 'kobiton-store:59235'
+            app: `kobiton-store:v${kobitonVersion}`
           });
 
           if ( platform === "android" ) {
             _(caps).extend({
                 autoGrantPermissions: true,
-                deviceName:         '*',
-                platformVersion:    '*',
                 platformName:       'Android'
             });
-          }
+          } else if ( platform === "ios" ) {
+            _(caps).extend({
+                platformName:       'iOS'
+            });
+        }
 
+        if ( deviceResolution ) {
+            var kb = new KobitonAPI("thecodesharman","acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
+            var devices = await kb.getAvailableDevicesByResolution(platform,deviceResolution.width,deviceResolution.height);
+            if ( devices.length > 0 ) {
+                _(caps).extend({
+                    platformVersion: '*',
+                    deviceName: devices[0].deviceName
+                });
+            }
+        } else {
+            _(caps).extend({
+                platformVersion: '*',
+                deviceName: '*'
+            })
+        }
      } else if ( platform === "ios" ) {
         _(caps).extend({
             automationName: "XCUITest",
