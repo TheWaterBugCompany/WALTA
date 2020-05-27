@@ -19,6 +19,52 @@ module.exports = function(grunt) {
       './walta-app/app/**/*.tss' 
     ];
 
+    const Kobiton = new KobitonAPI("thecodesharman","acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
+
+    // List of possible resolutions, not all resolutions are available on all platforms though
+    const AVAILABLE_SCREEN_SIZES =
+    {
+      "android": [
+        { width:1080, height:1920 },
+        { width:1080, height:2220 },
+        { width:1440, height:3200 },
+        { width:720, height:1280 },
+        { width:1440, height:2560 },
+        { width:1440, height:3040 },
+        { width:720, height:1520 },
+        { width:720, height:1560 },
+        { width:1440, height:2960 },
+        { width:1440, height:2880 },
+        { width:480, height:854 },
+        { width:1200, height:1920 },
+        { width:1536, height:2048 },
+        { width:1080, height:2160 },
+        { width:1080, height:2280 },
+        { width:1600, height:2560 },
+        { width:1080, height:2520 },
+        { width:1440, height:3120 },
+        { width:1080, height:2340 },
+        { width:2560, height:1800 },
+        { width:800, height:1280 },
+        { width:1080, height:2270 },
+        { width:1080, height:2312 }
+      ],
+      "ios":[
+        { width:1080, height:1920 },
+        { width:1536, height:2048 },
+        { width:750, height:1334 },
+        { width:1125, height:2436 },
+        { width:2048, height:2732 },
+        { width:1242, height:2688 },
+        { width:640, height:1136 },
+        { width:828, height:1792 },
+        { width:1668, height:2388 },
+        { width:1668, height:2224 }
+      ]
+    } 
+    
+
+
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
       const tasks = ['exec:clean', `exec:build:${platform}:${build_type}`];
@@ -31,7 +77,25 @@ module.exports = function(grunt) {
       }
     }
 
+    function envVars() {
+      return {
+        "PATH": `./node_modules/.bin/:${process.env.PATH}`,
+        "PLATFORM": grunt.option('platform'),
+        "HOST": (grunt.option('kobiton') ? "kobiton":null)
+      }
+    }
+
+    
+
     grunt.initConfig({
+      parallel: {
+        visual_regression_test: {
+          options: {
+            grunt: true
+          },
+          tasks: AVAILABLE_SCREEN_SIZES[(grunt.option('platform')?grunt.option('platform'):'android')].map( r => `exec:visual_regression_test:${r.width}:${r.height}`)
+        }
+      },
       exec: {
           mock_server: {
             command: 'node mock-server',
@@ -246,12 +310,37 @@ module.exports = function(grunt) {
       grunt.task.run(`exec:install_${platform}:${build_type}`);
     });
 
+    grunt.registerTask("upload",function(platform,build_type) {
+      const done = this.async();
+      var ext = { "android": "apk", "ios": "ipa" }[platform];
+      var appId = WATERBUG_APPID[platform];
+      var filepath = `./builds/${build_type}/Waterbug.${ext}`;
+      grunt.log.writeln(`Uploading ${filepath}`);
+      Kobiton.uploadAppVersion(filepath, appId )
+        .then( version => kobitonCurrentVersion = version ) 
+        .then(done);
+    });
+
+    grunt.option('appium-retry-attempts', 2 );
     grunt.registerTask("launch", function(platform,build_type) {
       const done = this.async();
-      const caps = getCapabilities(platform,true);
-      caps.skipLogCapture = false;
-      startAppium(caps)
-        .then( done );
+      getCapabilities(platform,true)
+        .then( caps => {
+            caps.skipLogCapture = false;
+            return startAppium(caps) 
+              .catch( (err) => {
+                var attempts = parseInt(grunt.option('appium-retry-attempts'));
+                if (  attempts > 0 ) {
+                  grunt.option('appium-retry-attempts', attempts - 1);
+                  grunt.log.writeln("Attempting to start appium server");
+                  grunt.task.run('run:appium');
+                  grunt.task.run(`launch:${platform}:${build_type}`);
+                } else {
+                  throw err;
+                }
+                })
+              .then( done );
+        });
     });
 
     grunt.registerTask("terminate", function(platform,build_type) {
@@ -337,10 +426,11 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}`);
 
     } );
-
-    grunt.registerTask('dist-clean', ['exec:clean', 'exec:clean_test'] );
-    grunt.registerTask('preview', function(platform,option) {
-      grunt.task.run("run:appium");
+    grunt.registerTask('clean', ['exec:clean'] );
+    grunt.registerTask('dist-clean', ['exec:clean_dist'] );
+    grunt.registerTask('preview', function() {
+      var platform = grunt.option('platform');
+      //grunt.task.run("run:appium");
       // It's often possible to get away without do a rebuild and relying on the file server 
       // to copy changes to the device. The quick option enables that.
       if ( option !== "quick") { 
