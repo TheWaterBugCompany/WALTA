@@ -22,6 +22,14 @@ var KeyLoader = require('logic/KeyLoaderJson');
 var PlatformSpecific = require('ui/PlatformSpecific');
 var Sample = require('logic/Sample');
 var GeoLocationService = require('logic/GeoLocationService'); 
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
+
+/*Ti.App.addEventListener( "uncaughtException", function(e) {
+  if ( Crashlytics.isAvailable() ) {
+    Crashlytics.recordException( e );
+  }
+});*/
 
 function questionToString( args ) {
   if ( !args || !args.node || !args.node.questions )
@@ -218,6 +226,13 @@ function startApp() {
   PlatformSpecific.appStartUp();
   GeoLocationService.init();
   Topics.fireTopicEvent( Topics.HOME );
+
+
+  Topics.subscribe( Topics.ABOUT, (data) => {
+    var me = null;
+    me.nonexistant_method();
+  } );
+ 
 }
 
 startApp();
