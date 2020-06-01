@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:19898857597:ios:c49608fa27bacee9e59914</string>
+	<string>1:19898857597:ios:84a2946b489c4ca9e59914</string>
 	<key>DATABASE_URL</key>
 	<string>https://walta-231505.firebaseio.com</string>
 </dict>
