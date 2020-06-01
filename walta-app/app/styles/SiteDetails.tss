@@ -16,7 +16,7 @@
 }
 
 "#right[if=Alloy.Globals.isHighRes]" : {
-    width: "50%"
+    width: "45%"
 }
 
 "#left[if=Alloy.Globals.isHighRes]" : {

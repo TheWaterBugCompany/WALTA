@@ -1,3 +1,5 @@
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
 var moment = require("lib/moment");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 exports.definition = {
@@ -48,7 +50,7 @@ exports.definition = {
 					removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
 				}
 				
-				Ti.API.info(`updating photo from ${file} to ${newPhotoName}`);
+				log(`updating photo from ${file} to ${newPhotoName}`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
@@ -65,7 +67,7 @@ exports.definition = {
 				if ( bluebug !== undefined ) {
 				  return bluebug[0];
 				} else {
-				  Ti.API.warn(`Warning: missing bluebug on ${this.getTaxonId()}`);
+				  log(`Warning: missing bluebug on ${this.getTaxonId()}`);
 				}
 			},
 
@@ -80,7 +82,7 @@ exports.definition = {
 				if ( this.get("taxonPhotoPath") ) {
 					var taxonPhotoPath = Ti.Filesystem.getFile(this.get("taxonPhotoPath"));
 					if ( taxonPhotoPath.deleteFile() === false )
-						Ti.API.warn(`Unable to delete file ${taxonPhotoPath.nativePath}`);
+						log(`Unable to delete file ${taxonPhotoPath.nativePath}`);
 				}
 				Backbone.Model.prototype.destroy.apply(this, arguments);
 			}

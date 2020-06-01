@@ -64,7 +64,8 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 return Ti.App.Properties.getObject('userAccessTokenLive');
             },
         
-            storeUserToken( accessToken ) {
+            storeUserToken( email, accessToken ) {
+                Ti.App.Properties.setObject("userAccessUsername", email );
                 Ti.App.Properties.setObject('userAccessTokenLive', accessToken );
             },
         
@@ -108,7 +109,8 @@ function createCerdiApi( serverUrl, client_secret  ) {
                         }, accessToken ) )
                     .then( (resp) => {
                         resp.retrieved_at = Date.now();
-                        this.storeUserToken( resp );
+                        this.storeUserToken( email, resp );
+                        
                         return resp;
                     })
             },
