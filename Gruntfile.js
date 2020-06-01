@@ -2,6 +2,7 @@ module.exports = function(grunt) {
     const { getCapabilities, startAppiumClient, stopAppiumClient } = require("./features/support/appium")
     const { decodeSyslog } = require('./features/support/ios-colors');
     const _ = require("lodash");
+    const KobitonAPI = require("./features/support/kobiton");
     const APP_ID = "net.thewaterbug.waterbug";
     const APP_ACTIVITY = ".WaterbugActivity";
     const KEYSTORE = process.env.KEYSTORE || '/home/msharman/Documents/Business/thecodesharman.keystore';
@@ -11,6 +12,11 @@ module.exports = function(grunt) {
     const PROFILE = process.env.PROFILE || "7081d6f7-618b-4c10-b5bb-e48e63085767";
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "810ab12c-fd91-41f7-a2c0-91bff72afe05";
     
+    const WATERBUG_APPID = {
+      "android": 59235,
+      "ios": 59244
+    }
+
     const SOURCES = [  
       './walta-app/tiapp.xml',  
       './walta-app/app/**/*.js', 
@@ -67,9 +73,16 @@ module.exports = function(grunt) {
 
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
-      const tasks = ['exec:clean', `exec:build:${platform}:${build_type}`];
-      if ( build_type !== "release" ) 
-        tasks.push(`install:${platform}:${build_type}`);
+      const tasks = [];
+      
+      if ( ! grunt.option('skip-build') ) {
+        tasks.push(`exec:build:${platform}:${build_type}`);
+        if ( grunt.option('kobiton') ) {
+          tasks.push(`upload:${platform}:${build_type}`);
+        } else {
+          tasks.push(`install:${platform}:${build_type}`);
+        }
+      }
       return {
         src: SOURCES,
         dest: `./builds/${build_type}/Waterbug.${ext}`,
@@ -107,8 +120,8 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
-          clean_test: {
-            command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa}',
+          clean_dist: {
+            command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa,aab}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "inherit"
           },
@@ -127,7 +140,7 @@ module.exports = function(grunt) {
 
           uninstall_android: {
             command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
-            exitCode: [ 0, 255 ]
+            exitCode: [ 0, 1, 255 ]
           },
 
           uninstall_ios: {
@@ -136,18 +149,29 @@ module.exports = function(grunt) {
 
           acceptance_test: {
             command: function(platform,option) {
-              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH cucumber-js --tags "not @skip"`;
+              return `VERSION=${grunt.option('kobiton-version')} cucumber-js --tags "not @skip"`;
             },
-            exitCode: [0,1],
-            stdout: "inherit", stderr: "inherit"
+            options: {
+              env: envVars()
+            },
+            exitCode: [0,1]
           },
 
           end_to_end_test: {
             command: function(platform,option) {
-              return `${option==="quick" ? 'QUICK="true" ':""} PLATFORM="${platform}" PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 "./end-to-end-testing/*.js"`;
+              return `VERSION=${grunt.option('kobiton-version')}  mocha --timeout 60000 "./end-to-end-testing/*.js"`;
             },
-            exitCode: [0,1],
-            stdout: "inherit", stderr: "inherit"
+            options: {
+              env: envVars()
+            },
+            exitCode: [0,1,]
+          },
+
+          visual_regression_test: {
+            command: (width,height) => `VERSION=${grunt.option('kobiton-version')} RES=${width}x${height} mocha --reporter=list --report-option output=./visual-regression-testing/logs/${width}x${height}.test --timeout 60000 \"./visual-regression-testing/*.js\" >> ./visual-regression-testing/logs/${width}x${height}.log 2>> ./visual-regression-testing/logs/${width}x${height}.error; exit 0`,
+            options: {
+              env: envVars()
+            }
           },
 
           unit_test_node: {
@@ -158,13 +182,13 @@ module.exports = function(grunt) {
 
           build: {
             command: function(platform,build_type) {
-              let args = [ "--project-dir walta-app", "--build-only" ];
+              let args = [ "--project-dir walta-app"];
 
               function production() {
                 if ( platform === "android" ) {
-                  args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                  args.push( "--build-only", "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
                 } else if ( platform === "ios" ){
-                  args.push( "--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
+                  args.push( "--build-only","--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
                 } else {
                   throw new Error(`Unknown platform "${platform}"`);
                 }
@@ -172,9 +196,19 @@ module.exports = function(grunt) {
 
               function test() {
                 if ( platform === "android" ) {
-                  args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                  args.push( "--build-only","--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
                 } else if ( platform === "ios" ){
-                  args.push( "--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+                  args.push( "--build-only","--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+                } else {
+                  throw new Error(`Unknown platform "${platform}"`);
+                }
+              }
+
+              function emulator() {
+                if ( platform === "android" ) {
+                  args.push( "--deploy-type development", "--target emulator", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                } else if ( platform === "ios" ){
+                  args.push( "--deploy-type development", "--target simulator", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
                 } else {
                   throw new Error(`Unknown platform "${platform}"`);
                 }
@@ -211,13 +245,22 @@ module.exports = function(grunt) {
 
                 case "preview":
                   test();
-                  //args.push("--liveview");
+                  if ( grunt.option('liveview') ) {
+                    args.push("--liveview");
+                  }
                   args.push("--output-dir builds/preview");
+                  break;
+
+                case "emulate":
+                  emulator();
+                  args.push("--liveview");
                   break;
 
                 case "preview-unit-test":
                   test();
-                  args.push("--liveview");
+                  if ( grunt.option('liveview') ) {
+                    args.push("--liveview");
+                  }
                   args.push("--unit-test");
                   args.push("--output-dir builds/preview-unit-test");
                   break;
@@ -250,7 +293,7 @@ module.exports = function(grunt) {
               quiet: true,
               ready: /Appium REST http interface listener started on/ 
             },
-            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:debug",
+            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:error",
           },
           live_view_ios: {
             options: { wait: false, ready: "Event Server Started"  },
@@ -272,6 +315,9 @@ module.exports = function(grunt) {
           debug_android: build_if_newer_options("android", "debug"),
           debug_ios: build_if_newer_options("ios", "debug"),
 
+          emulate_android: build_if_newer_options("android", "emulate"),
+          emulate_ios: build_if_newer_options("ios", "emulate"),
+
           release_android: build_if_newer_options("android", "release"),
           release_ios: build_if_newer_options("ios", "release"),
 
@@ -285,7 +331,7 @@ module.exports = function(grunt) {
 
     // keep track of the current appium session
     let appium_session = null;
-    function startAppium(caps) {
+    function startAppium(caps, host = 'local') {
       
       let p;
       if ( appium_session ) {
@@ -293,12 +339,14 @@ module.exports = function(grunt) {
       } else {
         p = Promise.resolve();
       }
-      return  p.then( () => startAppiumClient( caps ) )
-        .then( (driver) => {
-          appium_session = driver;
-          return driver;
-        } )
-        .catch( (err) => { grunt.fail.warn(err); } );
+      function setUpSession() {
+        return startAppiumClient( caps, host ) 
+          .then( (driver) => {
+            appium_session = driver;
+            return driver;
+          } )
+      }
+      return  p.then( setUpSession );
     }
 
     function terminateApp(platform) {
@@ -358,7 +406,7 @@ module.exports = function(grunt) {
       if ( process.env.DEBUG )
         levels.push("DEBUG");
       
-      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +Ti\\w+ +: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
+      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +Ti\\w+ *: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
       function delay(t) {
         return new Promise( resolve => setTimeout(resolve, t) ); 
       }
@@ -368,6 +416,7 @@ module.exports = function(grunt) {
         while( !stop || option === "preview") {
           let logs = await appium_session.getLogs(platform==="android"?"logcat":"syslog");
           logs.forEach( (line) => {
+            
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
             } else if ( logFilter.test(line.message) && retain.test(line.message)) {
@@ -393,36 +442,54 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
+    grunt.loadNpmTasks("grunt-then");
+    grunt.loadNpmTasks('grunt-parallel');
 
     grunt.registerTask('test', function (platform) {
-      grunt.task.run('run:appium');
       grunt.task.run(`unit-test:${platform}`);
       grunt.task.run(`newer:test_${platform}`);
       grunt.task.run(`exec:end_to_end_test:${platform}`);
       grunt.task.run(`exec:acceptance_test:${platform}`);
     });
 
-    grunt.registerTask('end-to-end-test', function (platform,option) {
-      grunt.task.run('run:appium');
-      if ( option !== "quick" ) {
-        grunt.task.run(`newer:test_${platform}`);
-      }
-      grunt.task.run(`exec:end_to_end_test:${platform}${option === "quick"?":quick":""}`);
+    grunt.registerTask('end-to-end-test', function (platform) {
+      grunt.task.run(`newer:test_${platform}`);
+      grunt.task.run(`exec:end_to_end_test:${platform}`);
     });
 
-    grunt.registerTask('acceptance-test', function (platform,option) {
-      grunt.task.run('run:appium');
-      if ( option !== "quick" ) {
-        grunt.task.run(`newer:test_${platform}`);
+    grunt.registerTask('get-kobiton-version', function() {
+      var done = this.async();
+      Kobiton.getLatestVersion(WATERBUG_APPID[grunt.option('platform')])
+        .then( v => {
+          grunt.log.writeln(`Using Kobiton app version ${v.id}`);
+          grunt.option("kobiton-version", v.id );
+          done();
+        } )
+        .catch( err => grunt.fail.fatal(err) );
+    })
+
+    grunt.registerTask('visual-regression-test', function () {
+      var platform = grunt.option('platform');
+      grunt.task.run(`newer:test_${platform}`);
+      if ( grunt.option('kobiton') ) {
+        grunt.task.run('get-kobiton-version');
       }
-      grunt.task.run(`exec:acceptance_test:${platform}${option === "quick"?":quick":""}`);
+      /*var res = AVAILABLE_SCREEN_SIZES[platform][0];
+      grunt.task.run(`exec:visual_regression_test:${res.width}:${res.height}`);*/
+      grunt.task.run('parallel:visual_regression_test');
+    });
+
+    grunt.registerTask('acceptance-test', function (platform) {
+      grunt.task.run(`newer:test_${platform}`);
+      grunt.task.run(`exec:acceptance_test:${platform}`);
     });
 
     
     grunt.registerTask('unit-test', function( platform ) {
-      grunt.task.run('run:appium');
+      //grunt.task.run('run:appium');
       grunt.task.run(`newer:unit_test_${platform}`);
-      grunt.task.run(`launch:${platform}:unit-test` );
+      grunt.task.run(`install:${platform}:unit-test`);
+      grunt.task.run(`launch:${platform}:unit-test`);
       grunt.task.run(`output-logs:${platform}`);
 
     } );
@@ -433,11 +500,12 @@ module.exports = function(grunt) {
       //grunt.task.run("run:appium");
       // It's often possible to get away without do a rebuild and relying on the file server 
       // to copy changes to the device. The quick option enables that.
-      if ( option !== "quick") { 
-        grunt.task.run(`newer:preview_${platform}`);
-      } 
-      grunt.task.run("exec:stop_live_view");
-      grunt.task.run(`run:live_view_${platform}`);
+      
+      grunt.task.run(`newer:preview_${platform}`);
+      if ( grunt.option('liveview') ) {
+        grunt.task.run("exec:stop_live_view");
+        grunt.task.run(`run:live_view_${platform}`);
+      }
       grunt.task.run(`launch:${platform}:preview`);
 
       // the preview option here enters an infinite loop so that the log output
@@ -445,13 +513,12 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}:preview`);
     } );
 
-    grunt.registerTask('preview-unit-test', function(platform,option) {
-      grunt.task.run("run:appium");
-      if ( option !== "quick") { 
-        grunt.task.run(`newer:preview_unit_test_${platform}`);
-      } 
-      grunt.task.run("exec:stop_live_view");
-      grunt.task.run(`run:live_view_${platform}`);
+    grunt.registerTask('preview-unit-test', function(platform) {
+      grunt.task.run(`newer:preview_unit_test_${platform}`);
+      if ( grunt.option('liveview') ) {
+        grunt.task.run("exec:stop_live_view");
+        grunt.task.run(`run:live_view_${platform}`);
+      }
       grunt.task.run(`launch:${platform}:preview-unit-test`);
       grunt.task.run(`output-logs:${platform}:preview`);
     } );
@@ -462,7 +529,15 @@ module.exports = function(grunt) {
 
     grunt.registerTask('debug', function(platform) {
       grunt.task.run(`newer:debug_${platform}`); 
+      grunt.task.run(`install:${platform}:debug`);
       grunt.task.run(`launch:${platform}:debug`);
       grunt.task.run(`output-logs:${platform}:preview`);
-    })
+    });
+
+    grunt.registerTask('emulate', function(platform) {
+     // grunt.task.run("exec:stop_live_view");
+     // grunt.task.run(`run:live_view_${platform}`);
+      grunt.task.run(`exec:build:${platform}:emulate`); 
+      grunt.task.run(`output-logs:${platform}:preview`);
+    });
   };

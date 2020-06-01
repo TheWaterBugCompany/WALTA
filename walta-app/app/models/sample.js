@@ -1,3 +1,5 @@
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
@@ -56,7 +58,7 @@ exports.definition = {
 
 			setSitePhoto: function(file) {
 				var newPhotoName = `sitePhoto_${this.get("sampleId")}_${moment().unix()}.jpg`;
-				Ti.API.info(`updating photo ${file} to ${newPhotoName}`);
+				log(`updating photo ${file} to ${newPhotoName}`);
 				removeFilesBeginningWith(`sitePhoto_${this.get("sampleId")}_`);
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(file).move(sitePhotoPath.nativePath);
@@ -202,12 +204,12 @@ exports.definition = {
 					"habitat": {
 						"boulder": this.get("boulder"),
 						"gravel": this.get("gravel"),
-						"sandOrSilt": this.get("sandOrSilt"),
-						"leafPacks": this.get("leafPacks"),
+						"sand_or_silt": this.get("sandOrSilt"),
+						"leaf_packs": this.get("leafPacks"),
 						"wood": this.get("wood"),
-						"aquaticPlants": this.get("aquaticPlants"),
-						"openWater": this.get("openWater"),
-						"edgePlants": this.get("edgePlants")
+						"aquatic_plants": this.get("aquaticPlants"),
+						"open_water": this.get("openWater"),
+						"edge_plants": this.get("edgePlants")
 					 } 
 				};
 				if (this.get("serverSampleId") ) {
@@ -228,7 +230,7 @@ exports.definition = {
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, { 
 			createNewSample: function() {
-				Ti.API.debug("Creating new sample..");
+				log("Creating new sample..");
 				Alloy.Models.sample = Alloy.createModel("sample");
 				this.add(Alloy.Models.sample);
 				Alloy.Models.sample.save();

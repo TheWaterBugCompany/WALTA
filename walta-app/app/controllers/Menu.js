@@ -11,7 +11,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 
 
 function logOut() {
-  Alloy.Globals.CerdiApi.storeUserToken(null);
+  Alloy.Globals.CerdiApi.storeUserToken(null, null);
   updateLoginText();
 }
 
@@ -35,12 +35,12 @@ function logInClick() {
 }
 
 function mayflyClick() {
-  /*$.selectMethod = Alloy.createController("MayflyMusterSelect");
+  $.selectMethod = Alloy.createController("MayflyMusterSelect");
   $.TopLevelWindow.add($.selectMethod.getView());
   $.selectMethod.on("close", function() {
     closeSelectMethod();
-  });*/
-  Topics.fireTopicEvent( Topics.MAYFLY, null );
+  });
+  //Topics.fireTopicEvent( Topics.MAYFLY, null );
 }
 
 function detailedClick() {

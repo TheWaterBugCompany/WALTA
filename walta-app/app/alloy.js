@@ -20,34 +20,45 @@
  * Bootstrap the application
  */
 
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
+
+Crashlytics.configure();
+Crashlytics.setCustomKey("deployType", Ti.App.deployType );
+
+
+
 Alloy.Globals.Map = require('ti.map');
 
 Alloy.Events = _.clone(Backbone.Events);
 Alloy.Globals.Key = null;
 
-Ti.API.info("Determining device screen parameters...")
 
-Ti.API.info(`platform display caps: width = ${Ti.Platform.displayCaps.platformWidth}, height = ${Ti.Platform.displayCaps.platformHeight}, density = ${Ti.Platform.displayCaps.density}, logicalDensityFactor  = ${Ti.Platform.displayCaps.logicalDensityFactor},`);
+
+log("Determining device screen parameters...")
+
+log(`platform display caps: width = ${Ti.Platform.displayCaps.platformWidth}, height = ${Ti.Platform.displayCaps.platformHeight}, density = ${Ti.Platform.displayCaps.density}, logicalDensityFactor  = ${Ti.Platform.displayCaps.logicalDensityFactor},`);
 
 var relWidth = Ti.Platform.displayCaps.platformWidth / Ti.Platform.displayCaps.logicalDensityFactor;
 var relHeight= Ti.Platform.displayCaps.platformHeight / Ti.Platform.displayCaps.logicalDensityFactor;
 
 if ( relHeight > relWidth ) {
-    Ti.API.warn(`Ugh we got portrait sized dimensions width = ${relWidth} height = ${relHeight} :-( swapping...`)
+    log(`Ugh we got portrait sized dimensions width = ${relWidth} height = ${relHeight} :-( swapping...`)
     var tmp = relHeight;
     relHeight = relWidth;
-    relWidth = relHeight;   
+    relWidth = relHeight;    
     // we are reporting protrait mode
 }
 
-var aspectRatio = relWidth/relHeight;
-var sizeFactor = relWidth/533;
+var aspectRatio = relWidth/relHeight; 
  
-Ti.API.info(`relWidth=${relWidth}, relHeight=${relHeight}, aspectRatio=${aspectRatio}, sizeFactor=${sizeFactor}`);
+log(`relWidth=${relWidth}, relHeight=${relHeight}, aspectRatio=${aspectRatio}`);
 
-Alloy.Globals.isLowRes = sizeFactor < 0.7;
+
 Alloy.Globals.isSquare = aspectRatio < 1.5;
-Alloy.Globals.isHighRes = sizeFactor > 1.1 && sizeFactor <= 2;
-Alloy.Globals.isXHighRes=  sizeFactor > 2;
 
-Ti.API.info(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);
+Alloy.Globals.isLowRes = relHeight < 420; 
+Alloy.Globals.isHighRes = (relHeight >= 420) && (relHeight < 500);
+Alloy.Globals.isXHighRes=  relHeight >= 500;
+
+log(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);

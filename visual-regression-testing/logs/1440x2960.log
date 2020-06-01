@@ -1,0 +1,30 @@
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 5689ms
+    Visual regression tests about and help pages help page should render:   ✓ Visual regression tests about and help pages help page should render: 7756ms
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  2 passing (3m)
+  4 pending
+  1 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     session not created: No device matching the desired capabilities
+      at getErrorFromResponseBody (node_modules/webdriver/build/utils.js:371:10)
+      at Request._callback (node_modules/webdriver/build/request.js:122:64)
+      at Request.self.callback (node_modules/request/request.js:185:22)
+      at Request.EventEmitter.emit (domain.js:482:12)
+      at Request.<anonymous> (node_modules/request/request.js:1154:10)
+      at Request.EventEmitter.emit (domain.js:482:12)
+      at IncomingMessage.<anonymous> (node_modules/request/request.js:1076:12)
+      at IncomingMessage.EventEmitter.emit (domain.js:482:12)
+      at endReadableNT (_stream_readable.js:1187:12)
+      at processTicksAndRejections (internal/process/task_queues.js:84:21)
+
+
+

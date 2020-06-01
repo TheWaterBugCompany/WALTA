@@ -146,7 +146,9 @@ function _loadAndReleaseTiles(e) {
         }
 
         lastScroll = scrollx;
+        $.trigger("rendered");
    }
+
 };
 scrollView.addEventListener( 'scroll', _loadAndReleaseTiles );
 scrollView.addEventListener( 'postlayout', _loadAndReleaseTiles );

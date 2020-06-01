@@ -1,3 +1,5 @@
+var Crashlytics = require('util/Crashlytics');
+var debug = Crashlytics.log;
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
@@ -17,10 +19,6 @@ var cropPhoto = $.args.cropPhoto;
 if ( readOnlyMode ) {
     $.iconHolder.remove( $.camera );
     $.camera.visible = false;
-}
-
-function debug(mess) { 
-    Ti.API.debug(mess);
 }
 
 function getFullPhotoUrl() {
@@ -237,6 +235,7 @@ function takePhoto(e) {
                     autorotate: false,
                     cancel: () => blinds.close(),
                     success: (result) => {
+                        debug("Got camera success");
                         // ensure the blind window is closed before starting
                         // the heavy operation of processing the photo
                         blinds.addEventListener( "close", function handler() {

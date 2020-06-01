@@ -33,6 +33,6 @@ function openSample(e) {
     var sampleId = sample.get("sampleId");
     Alloy.Models.instance("sample").loadById(sampleId);
 	Alloy.Collections.instance("taxa").load(sampleId);
-    Alloy.createController("SiteDetails").open();
+    Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right"});
 }
 updateSampleList();

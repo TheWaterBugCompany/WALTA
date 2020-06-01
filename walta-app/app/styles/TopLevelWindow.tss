@@ -1,6 +1,7 @@
 
 ".container" : {
   navBarHidden: true,
+  extendSafeArea: true,
   fullscreen: true,
   width: Ti.UI.FILL,
   height: Ti.UI.FILL,

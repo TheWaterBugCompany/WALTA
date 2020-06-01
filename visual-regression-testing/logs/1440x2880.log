@@ -1,0 +1,27 @@
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+  2) Visual regression tests about and help pages "before all" hook
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  0 passing (10m)
+  4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Timeout of 600000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/Users/msharman/Source/WALTA/visual-regression-testing/visual-regression-test.js)
+      at listOnTimeout (internal/timers.js:549:17)
+      at processTimers (internal/timers.js:492:7)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Unable to find device for 1440x2880 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:30:19)
+
+
+
