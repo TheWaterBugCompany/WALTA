@@ -70,6 +70,7 @@ module.exports = function(grunt) {
     } 
     
 
+
     function build_if_newer_options(platform,build_type) {
       const ext = (platform === "ios"?"ipa":"apk");
       const tasks = [];
@@ -97,13 +98,15 @@ module.exports = function(grunt) {
       }
     }
 
+    
+
     grunt.initConfig({
       parallel: {
         visual_regression_test: {
           options: {
             grunt: true
           },
-          tasks: AVAILABLE_SCREEN_SIZES[grunt.option('platform')].map( r => `exec:visual_regression_test:${r.width}:${r.height}`)
+          tasks: AVAILABLE_SCREEN_SIZES[(grunt.option('platform')?grunt.option('platform'):'android')].map( r => `exec:visual_regression_test:${r.width}:${r.height}`)
         }
       },
       exec: {
@@ -242,7 +245,9 @@ module.exports = function(grunt) {
 
                 case "preview":
                   test();
-                  //args.push("--liveview");
+                  if ( grunt.option('liveview') ) {
+                    args.push("--liveview");
+                  }
                   args.push("--output-dir builds/preview");
                   break;
 
@@ -253,7 +258,9 @@ module.exports = function(grunt) {
 
                 case "preview-unit-test":
                   test();
-                  args.push("--liveview");
+                  if ( grunt.option('liveview') ) {
+                    args.push("--liveview");
+                  }
                   args.push("--unit-test");
                   args.push("--output-dir builds/preview-unit-test");
                   break;
@@ -362,17 +369,26 @@ module.exports = function(grunt) {
         .then(done);
     });
 
+    grunt.option('appium-retry-attempts', 2 );
     grunt.registerTask("launch", function(platform,build_type) {
       const done = this.async();
-      const caps = getCapabilities(platform,true);
-      caps.skipLogCapture = false;
-      startAppium(caps) 
-        .catch( () => {
-          grunt.log.writeln("Attempting to start appium server");
-          grunt.task.run('run:appium');
-          grunt.task.run(`launch:${platform}:${build_type}`);
-        })
-        .then( done )
+      getCapabilities(platform,true)
+        .then( caps => {
+            caps.skipLogCapture = false;
+            return startAppium(caps) 
+              .catch( (err) => {
+                var attempts = parseInt(grunt.option('appium-retry-attempts'));
+                if (  attempts > 0 ) {
+                  grunt.option('appium-retry-attempts', attempts - 1);
+                  grunt.log.writeln("Attempting to start appium server");
+                  grunt.task.run('run:appium');
+                  grunt.task.run(`launch:${platform}:${build_type}`);
+                } else {
+                  throw err;
+                }
+                })
+              .then( done );
+        });
     });
 
     grunt.registerTask("terminate", function(platform,build_type) {
@@ -479,13 +495,17 @@ module.exports = function(grunt) {
     } );
     grunt.registerTask('clean', ['exec:clean'] );
     grunt.registerTask('dist-clean', ['exec:clean_dist'] );
-    grunt.registerTask('preview', function(platform,option) {
+    grunt.registerTask('preview', function() {
+      var platform = grunt.option('platform');
       //grunt.task.run("run:appium");
       // It's often possible to get away without do a rebuild and relying on the file server 
       // to copy changes to the device. The quick option enables that.
+      
       grunt.task.run(`newer:preview_${platform}`);
-      //grunt.task.run("exec:stop_live_view");
-      //grunt.task.run(`run:live_view_${platform}`);
+      if ( grunt.option('liveview') ) {
+        grunt.task.run("exec:stop_live_view");
+        grunt.task.run(`run:live_view_${platform}`);
+      }
       grunt.task.run(`launch:${platform}:preview`);
 
       // the preview option here enters an infinite loop so that the log output
@@ -495,8 +515,10 @@ module.exports = function(grunt) {
 
     grunt.registerTask('preview-unit-test', function(platform) {
       grunt.task.run(`newer:preview_unit_test_${platform}`);
-      grunt.task.run("exec:stop_live_view");
-      grunt.task.run(`run:live_view_${platform}`);
+      if ( grunt.option('liveview') ) {
+        grunt.task.run("exec:stop_live_view");
+        grunt.task.run(`run:live_view_${platform}`);
+      }
       grunt.task.run(`launch:${platform}:preview-unit-test`);
       grunt.task.run(`output-logs:${platform}:preview`);
     } );

@@ -26,7 +26,7 @@ exports.init = (logger, config, cli) => {
     }
    
     if ( cli.argv.platform === 'iphone' || cli.argv.platform === 'ios' ) {
-      cli.on('build.post.compile', { pre: function (data, callback) {
+     /* cli.on('build.post.compile', { pre: function (data, callback) {
             try {
               logger.info(`Uploading DYSMs for iOS`);
               const buildType = (cli.argv['deploy-type']=== "development"? "Debug-iphonesimulator" : "Release-iphoneos"); 
@@ -45,6 +45,6 @@ exports.init = (logger, config, cli) => {
             } catch(e) {
               callback(e,data);
             }
-      }});
+      }});*/
     }
 };

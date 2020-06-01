@@ -5,7 +5,7 @@
   "main": "index.js",
   "optionalDependencies": {
     "carthage": "^1.0.6",
-    "ios-deploy": "^1.9.4"
+    "ios-deploy": "^1.10.0"
   },
   "dependencies": {
     "alloy": "^1.14.6",
