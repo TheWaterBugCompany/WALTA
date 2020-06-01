@@ -14,5 +14,7 @@
 	"os:android": {},
 	"os:ios": {},
 	"os:windows": {},
-	"dependencies": {}
+	"dependencies": {
+		"com.skypanther.segmentedcontrol": "*"
+	}
 }

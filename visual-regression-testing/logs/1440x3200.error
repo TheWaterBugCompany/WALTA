@@ -1,0 +1,20 @@
+Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_2400x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_identify_2400x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/speedbug_2400x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/taxon_detail_screen_2400x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/gallery_screen_2400x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+2020-05-26T10:30:09.555Z ERROR webdriver: Request failed due to unknown error: The session 1a4409e8-a4d5-4d7a-842f-49a8f64f49d2 is not running on Kobiton and device. Please rerun your test script again to start new session.
+    at getErrorFromResponseBody (/Users/msharman/Source/WALTA/node_modules/webdriver/build/utils.js:371:10)
+    at Request._callback (/Users/msharman/Source/WALTA/node_modules/webdriver/build/request.js:122:64)
+    at Request.self.callback (/Users/msharman/Source/WALTA/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:310:20)
+    at Request.EventEmitter.emit (domain.js:482:12)
+    at Request.<anonymous> (/Users/msharman/Source/WALTA/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:310:20)
+    at Request.EventEmitter.emit (domain.js:482:12)
+    at IncomingMessage.<anonymous> (/Users/msharman/Source/WALTA/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:416:28)
+    at IncomingMessage.emit (events.js:322:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:482:12)
+    at endReadableNT (_stream_readable.js:1187:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
