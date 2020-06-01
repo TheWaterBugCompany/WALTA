@@ -23,7 +23,6 @@
 var Crashlytics = require('util/Crashlytics');
 var log = Crashlytics.log;
 
-
 Crashlytics.configure();
 Crashlytics.setCustomKey("deployType", Ti.App.deployType );
 

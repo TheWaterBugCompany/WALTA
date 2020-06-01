@@ -26,11 +26,11 @@ var GeoLocationService = require('logic/GeoLocationService');
 var Crashlytics = require('util/Crashlytics');
 var log = Crashlytics.log;
 
-Ti.App.addEventListener( "uncaughtException", function(e) {
+/*Ti.App.addEventListener( "uncaughtException", function(e) {
   if ( Crashlytics.isAvailable() ) {
     Crashlytics.recordException( e );
   }
-});
+});*/
 
 function questionToString( args ) {
   if ( !args || !args.node || !args.node.questions )
@@ -238,8 +238,13 @@ function startApp() {
     }
   }
   Topics.fireTopicEvent( Topics.HOME );
-  Topics.subscribe( Topics.ABOUT, (data) => Crashlytics.crash() );
+
+
+  Topics.subscribe( Topics.ABOUT, (data) => {
+    const Crash = require("NonExistent/Crash");
+  } );
  
 }
 
 startApp();
+
