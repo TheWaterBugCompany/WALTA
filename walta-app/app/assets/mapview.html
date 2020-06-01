@@ -34,6 +34,52 @@
           left: 0;
           right: 0;
         }
+
+        .leaflet-top.leaflet-left { 
+            margin-left: 0px !important; 
+            margin-top: 0px !important;
+            width: 100vw; 
+            height: 100vh; 
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        .legend { 
+            display: none; 
+        }
+        
+        .legend.open { 
+            display: block; 
+        }
+        
+        dl { 
+            margin-left: 10px;  
+        }
+
+        dt { 
+            color: whitesmoke; 
+            margin-left: 10vh; 
+            line-height: 11vh; 
+            font-size: 8vh; 
+        }
+
+        dd { 
+            margin-top: -9.5vh; 
+            margin-left: 0px; 
+            width:8vh;
+            height:8vh;
+        }
+
+        .menu {
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+
+        .menu div {
+            width: 35px;
+            height: 5px;
+            background-color: white;
+            margin: 6px 0;
+        }
     </style>
 </head>
 
@@ -52,13 +98,91 @@
         accessToken: 'pk.eyJ1IjoidGhlY29kZXNoYXJtYW4iLCJhIjoiY2p4NXpvenEyMDdlczN5bzR4MWF0aDVoMiJ9.Tolm7-mPxWoXKH2D5zaF1g',
         updateWhenIdle: false
     }).addTo(map);
+//e3b505,95190c,610345,107e7d,044b7f,f86624,5fad41,3d2b3d
 
-    L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', {
+    const MAYFLY_LEGEND = [
+        { name: "Siphlonuridae", code: "QE01*", color: "#e3b505" },
+        { name: "Baetidae", code: "QE02*", color: "#95190c" },
+        { name: "Oniscigastridae", code: "QE03*", color: "#610345" },
+        { name: "Ameletopsidae", code: "QE04*", color: "#107e7d" },
+        { name: "Coloburiscidae", code: "QE05*", color: "#044b7f" },
+        { name: "Leptophlebiidae", code: "QE06*", color: "#f86624" },
+        { name: "Caenidae", code: "QE08*", color: "#5fad41" },
+        { name: "Prosopistomatidae", code: "QE09*", color: "#3d2b3d" }
+    ];
+
+    const SLD = `<?xml version="1.0" encoding="ISO-8859-1"?>
+        <StyledLayerDescriptor version="1.0.0" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd">
+            <NamedLayer>
+                <Name>wwew:tas_creatures</Name>
+                <UserStyle>
+                    <Name>inline_style</Name>
+                    <FeatureTypeStyle>`
+            + MAYFLY_LEGEND.map( ({ name, code, color }) => `
+                        <Rule> 
+                            <Name>${name}</Name>
+                            <ogc:Filter>
+                                <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                                    <ogc:PropertyName>epa_code</ogc:PropertyName>
+                                    <ogc:Literal>${code}</ogc:Literal>
+                                </ogc:PropertyIsLike>
+                            </ogc:Filter>
+                            <PointSymbolizer>
+                                <Graphic>
+                                    <Mark>
+                                        <WellKnownName>circle</WellKnownName>
+                                        <Fill>
+                                            <CssParameter name="fill">${color}</CssParameter>
+                                        </Fill>
+                                    </Mark>
+                                    <Size>10</Size>
+                                </Graphic>
+                            </PointSymbolizer>
+                        </Rule>` ).join("") +`
+                    </FeatureTypeStyle>
+                </UserStyle>
+            </NamedLayer>
+        </StyledLayerDescriptor>`; 
+
+    L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', { 
         layers: 'wwew:tas_creatures',
-        format: 'image/png',
-        transparent: true
+        styles: 'inline_style', 
+        format: 'image/png', 
+        transparent: true,
+        SLD_BODY: SLD.replace(/[\t\n ]+/g," ")
     }).addTo(map);
 
+    L.Control.Legend = L.Control.extend({
+        _showLegend: function() {
+            if ( L.DomUtil.hasClass(this.legend, "open") ) {
+                L.DomUtil.removeClass(this.legend,"open");
+            } else {
+                L.DomUtil.addClass(this.legend,"open");
+            }
+        },
+        onAdd: function() {
+            var container = L.DomUtil.create('div');
+            var menu = L.DomUtil.create('div', 'menu');
+            menu.innerHTML += "<div></div><div></div><div></div>";
+            var legend = L.DomUtil.create('dl', 'info legend')
+            legend.innerHTML += MAYFLY_LEGEND.map(
+                ({ name, code, color }) => `
+                    <dt>${name}</dt>
+                    <dd style="background-color:${color};"></dd>
+                `).join("");
+            L.DomEvent.on( menu, 'click', this._showLegend, this);
+            container.appendChild(menu);
+            container.appendChild(legend);
+            this.legend = legend;
+            return container;
+        },
+        onRemove: function() {
+            L.DomEvent.off( div, 'click', this._showLegend, this);;
+        }
+    });
+    new L.Control.Legend({position: 'topleft'}).addTo(map);
+
+   
     /*
     new WFSLayer( {
         url: "http://geo.cerdi.com.au/geoserver/wwew/ows",
