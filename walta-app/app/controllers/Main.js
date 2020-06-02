@@ -26,12 +26,6 @@ var GeoLocationService = require('logic/GeoLocationService');
 var Crashlytics = require('util/Crashlytics');
 var log = Crashlytics.log;
 
-/*Ti.App.addEventListener( "uncaughtException", function(e) {
-  if ( Crashlytics.isAvailable() ) {
-    Crashlytics.recordException( e );
-  }
-});*/
-
 function questionToString( args ) {
   if ( !args || !args.node || !args.node.questions )
     return "";
