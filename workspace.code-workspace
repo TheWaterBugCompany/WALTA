@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../TestApp"
+		},
+		{
+			"path": "../titanium_mobile"
 		}
 	],
 	"settings": {
