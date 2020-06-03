@@ -1,19 +1,11 @@
 
 var FirebaseApp = require("FirebaseCore/FIRApp");
-var FirebaseConfiguration = require("FirebaseCore/FIRConfiguration");
 var Crashlytics = require("FirebaseCrashlytics/FIRCrashlytics");
 var ExceptionModel = require("FirebaseCrashlytics/FIRExceptionModel");
-//var GULAppEnvironmentUtil = require("GoogleUtilities/GULAppEnvironmentUtil")
-exports.crash = function() {
-    Crashlytics.crashlytics().crash();
-}
-
+var StackFrame = require("FirebaseCrashlytics/FIRStackFrame");
+var { parseStackTrace } = require("util/ExceptionUtils");
 exports.configure = function() {
-    
     FirebaseApp.configure();
-    FirebaseConfiguration.sharedInstance.setLoggerLevel(7); 
-    //Ti.API.info( `isFromAppStore = ${GULAppEnvironmentUtil.isFromAppStore}`);
-    Ti.API.info( `isCrashlyticsCollectionEnabled = ${Crashlytics.crashlytics().isCrashlyticsCollectionEnabled()}`);
 }
 exports.isAvailable = function() {
     return ( Crashlytics.crashlytics() != null );
@@ -24,9 +16,10 @@ exports.setCustomKey = function(name, value) {
 }
 
 exports.recordException = function(e) {
-    Crashlytics.crashlytics().recordExceptionModel(
-        ExceptionModel.exceptionModelWithNameReason( e.title, `${e.message} in ${e.sourceName} at line ${e.line}`)
-    );
+    var ex = ExceptionModel.exceptionModelWithNameReason( e.type, e.message);
+    var stack = parseStackTrace(e.stack);
+    ex.setStackTrace( stack.map( ({ file, symbol, line }) => StackFrame.alloc().initWithSymbolFileLine( symbol, file, line ) ) );
+    Crashlytics.crashlytics().recordExceptionModel(ex);
 }
 
 exports.setUserId = function(userId) {
