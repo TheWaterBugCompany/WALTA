@@ -1,29 +1,29 @@
 var Crashlytics = require('util/Crashlytics');
-var debug = Ti.API.info;
+var info = Ti.API.info;
 var log = Crashlytics.log;
 function absolutePath(path) {
     if ( path.startsWith("file:///") ) {
-        debug(`${path} starts with file:///`);
+        info(`${path} starts with file:///`);
         return Ti.Filesystem.getFile(path);
     } else if ( path.startsWith("/") ) {
-        debug(`${path} starts with /`)
+        info(`${path} starts with /`)
         return Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,path);
     } else {
-        debug(`${path} doesn't start with /`)
+        info(`${path} doesn't start with /`)
         return Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, path);
     }
 }
 
 function loadPhoto(path) {
-    debug(`reading ${path}`)
+    info(`reading ${path}`)
     return absolutePath(path).read();
 }
 
 function savePhoto( blob, filename  ) {
     var photoPath = absolutePath(filename);
-    debug(`File path ${photoPath.nativePath}`);
+    info(`File path ${photoPath.nativePath}`);
     if ( photoPath.exists() ) {
-        debug("file already exists deletin");
+        info("file already exists deletin");
         var result = photoPath.deleteFile();
         if ( !result ) {
             log(`Error deleting file: writable: ${photoPath.writable}`);
@@ -52,7 +52,7 @@ function optimisePhoto( fullPhoto ) {
         log(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}, resizing and compressing photo...`);
         //if ( aspectRatio < )
         fullPhoto = fullPhoto.imageAsResized(1600, 1600*aspectRatio);
-        debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
+        info( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
         if ( ! fullPhoto ) {
             log(`Error resizing photo: ${fileOrBlob}`);
             throw new Error("Unable to resize photo");

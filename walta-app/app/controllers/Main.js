@@ -234,12 +234,18 @@ function startApp() {
   Topics.fireTopicEvent( Topics.HOME );
 
 
-  Topics.subscribe( Topics.ABOUT, (data) => {
+  function stackFrame2() {
+    console.log("frame 2");
     var me = null;
     me.nonexistant_method();
-  } );
+  }
+  
+  function stackFrame1() {
+    console.log("frame 1");
+    stackFrame2();
+  }
+  Topics.subscribe( Topics.ABOUT, (data) =>stackFrame1() );
  
 }
 
 startApp();
-

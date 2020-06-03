@@ -2,9 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../titanium_mobile/iphone/TitaniumKit/TitaniumKit.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:build/iphone/Waterbug.xcodeproj">
+      location = "group:build/iphone/Waterbug.xcodeproj">
    </FileRef>
 </Workspace>
