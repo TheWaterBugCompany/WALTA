@@ -183,6 +183,7 @@ module.exports = function(grunt) {
           build: {
             command: function(platform,build_type) {
               let args = [ "--project-dir walta-app"];
+              let post_cmds = [];
 
               function production() {
                 if ( platform === "android" ) {
@@ -199,6 +200,16 @@ module.exports = function(grunt) {
                   args.push( "--build-only","--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
                 } else if ( platform === "ios" ){
                   args.push( "--build-only","--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+                } else {
+                  throw new Error(`Unknown platform "${platform}"`);
+                }
+              }
+
+              function dev() {
+                if ( platform === "android" ) {
+                  args.push( "--build-only","--deploy-type development", "--target device", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+                } else if ( platform === "ios" ){
+                  args.push( "--build-only","--deploy-type development", "--target device", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
                 } else {
                   throw new Error(`Unknown platform "${platform}"`);
                 }
@@ -244,11 +255,18 @@ module.exports = function(grunt) {
                   break;
 
                 case "preview":
-                  test();
+                  dev();
+                  //test();
+                  //args.push("--output-dir builds/preview");
                   if ( grunt.option('liveview') ) {
                     args.push("--liveview");
                   }
-                  args.push("--output-dir builds/preview");
+                  //args.push("--output-dir builds/preview");
+                  if ( platform === "android" ) {
+                    post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/preview/Waterbug.apk");
+                  } else {
+                    throw new Error("Unimplemented on iOS!")
+                  }
                   break;
 
                 case "emulate":
@@ -268,7 +286,9 @@ module.exports = function(grunt) {
                 default:
                   throw new Error(`Unknown build "${build_type}" type!`)
               }
-              return `./node_modules/.bin/titanium build ${args.join(" ")}`;
+              var cmd = `./node_modules/.bin/titanium build ${args.join(" ")}`;
+              post_cmds.forEach( c => cmd += " && " + c);
+              return cmd;
             },
             options: { 
                 env: Object.assign({}, process.env, {
@@ -493,8 +513,8 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}`);
 
     } );
-    grunt.registerTask('clean', ['exec:clean'] );
-    grunt.registerTask('dist-clean', ['exec:clean_dist'] );
+
+    grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );
     grunt.registerTask('preview', function() {
       var platform = grunt.option('platform');
       //grunt.task.run("run:appium");
