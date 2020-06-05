@@ -24,6 +24,7 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var Sample = require('logic/Sample');
 var GeoLocationService = require('logic/GeoLocationService'); 
 var Crashlytics = require('util/Crashlytics');
+var debug = m => Ti.API.info(m);
 var log = Crashlytics.log;
 
 function questionToString( args ) {
@@ -69,7 +70,7 @@ function openController(ctl,args) {
   dumpHistory();
 
   
-  log(`opening controller="${ctl}" with args.slide= ${args.slide}`);
+  debug(`opening controller="${ctl}" with args.slide= ${args.slide}`);
   controller = Alloy.createController(ctl,args);
   controller.open();
 
@@ -106,7 +107,7 @@ function goBack(args) {
         newargs.slide = "left";
       }
     }
-    log(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
+    debug(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
     openController(ctl,newargs);
 
   }
@@ -114,7 +115,7 @@ function goBack(args) {
 
 function siteDetailsWindow(args) {
   if ( OS_ANDROID ) {
-    log('Asking for permissions...');
+    debug('Asking for permissions...');
     Ti.Android.requestPermissions(
       [ 'android.permission.ACCESS_FINE_LOCATION','android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE' ], 
       function(e) {
@@ -186,7 +187,7 @@ function startApp() {
       key.setCurrentNode(data.id);
       updateDecisionWindow(_(data).extend({ node: key.getCurrentNode()}));
     } else {
-      Ti.API.error("Topics.JUMPTO undefined node!");
+      debug("Topics.JUMPTO undefined node!");
     }
   });
 
@@ -232,20 +233,6 @@ function startApp() {
     }
   }
   Topics.fireTopicEvent( Topics.HOME );
-
-
-  function stackFrame2() {
-    console.log("frame 2");
-    var me = null;
-    me.nonexistant_method();
-  }
-  
-  function stackFrame1() {
-    console.log("frame 1");
-    stackFrame2();
-  }
-  Topics.subscribe( Topics.ABOUT, (data) =>stackFrame1() );
- 
 }
 
 startApp();
