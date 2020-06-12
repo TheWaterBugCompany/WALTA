@@ -543,7 +543,8 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}:preview`);
     } );
   
-    grunt.registerTask('release', function(platform) {
+    grunt.registerTask('release', function() {
+      var platform = grunt.option('platform');
       grunt.task.run(`newer:release_${platform}`); 
     });
 
