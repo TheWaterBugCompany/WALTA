@@ -8,7 +8,7 @@ INCLUDE taxa.ink
 * Mayfly Muster Speedbug -> mmspeedbug
 * Speedbug -> speedbug
 * Order Speedbug -> orderspeedbug
-* Mayfly start point -> old_mayfly_start_point
+* Mayfly start point -> mayfly_start_point
 
 
 
@@ -726,7 +726,7 @@ INCLUDE taxa.ink
 
 === node_41 ===
 * with two tails -> node_75 # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]
-* with three tails -> old_mayfly_start_point # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
+* with three tails -> mayfly_start_point # mediaUrls: ["/taxonomy/walta/media/threetails.gif"]
 
 === node_75 ===
 * with compound eyes (like a mirror ball upclose) and wing buds (except on very young animals) -> order_plecoptera # mediaUrls: ["/taxonomy/walta/media/stoneflynymph.gif"]
@@ -767,6 +767,10 @@ INCLUDE taxa.ink
 === acruroperla_crypturoperla ===
 * Mainland. -> acruroperla_atra # mediaUrls: []
 * Tasmania. -> crypturoperla_paradoxa # mediaUrls: []
+
+=== mayfly_start_point ===
+* adult mayfly with obvious wings, found out of the water, or on the surface -> k_adult_mayflies # mediaUrls: ["/taxonomy/walta/media/adult_mayfly.gif"]
+* without obvious wings.  may have wing buds; mostly found underwater -> old_mayfly_start_point # mediaUrls: ["/taxonomy/walta/media/mayfly.gif"]
 
 === old_mayfly_start_point ===
 * tails flattened, leaf-like or broad, jaw large and folded away under head -> k_odonata # mediaUrls: ["/taxonomy/walta/media/damselfly.gif"]
@@ -888,5 +892,32 @@ INCLUDE taxa.ink
 * shorter than 1.5cm, tapering -> nematoda # mediaUrls: ["/taxonomy/walta/media/short_tapering.gif"]
 * longer than 1.5cm -> nematomorpha # mediaUrls: ["/taxonomy/walta/media/horsehairworm.gif"]
 
+=== k_adult_mayflies ===
+* hind wing obviously greater than 1/3 the length of the forewing -> node_112
+* hind wing 1/3 the length of the forewing, smaller, or absent -> node_115
+
+=== node_112 ===	
+* wings pink-purple, and/or with a cluster of cells near the apex that have more than 5 sides -> adult_ameletopsidae # mediaUrls: []
+* wings clear, grey, yellow or brown, and all cells with a maximum of five sides	-> node_113
+	
+=== node_113 ===	
+* 3 tails (2 cerci and one terminal filament) -> adult_siphlonuridae # mediaUrls: []
+* 2 tails	-> node_114
+	
+=== node_114 ===	
+* small mayfly (found near lakes and slow flowing parts rivers) -> adult_oniscigastridae # mediaUrls: []
+* large mayfly (found near pebble /cobble streams and rivers) -> adult_coloburiscidae # mediaUrls: []
+	
+=== node_115 ===	
+* with hind wings	-> node_116
+* without hindwings -> node_117
+	
+=== node_116 ===	
+* hind wings very small, margin of forewing with numerous unconnected ends of veins 	 -> adult_baetidae # mediaUrls: ["/taxonomy/walta/media/adult_baetidae.gif"]
+* hind wings 1/3 the length of forewing, margin veins all connected -> adult_leptophlebiidae # mediaUrls: ["/taxonomy/walta/media/adult_mayfly.gif"]
+	
+=== node_117 ===	
+* forewings with very few cross veins, all marginal veins well connected -> adult_caenidae_prosopistomatidae # mediaUrls: ["/taxonomy/walta/media/adult_caenidae_prosopistomatidae.gif"]
+* forewings with many cross veins, some marginal veins unconnected -> adult_baetidae # mediaUrls: ["/taxonomy/walta/media/adult_baetidae.gif"]
 
 
