@@ -26,6 +26,7 @@ var GeoLocationService = require('logic/GeoLocationService');
 var Crashlytics = require('util/Crashlytics');
 var debug = m => Ti.API.info(m);
 var log = Crashlytics.log;
+Topics.init();
 
 function questionToString( args ) {
   if ( !args || !args.node || !args.node.questions )
@@ -179,6 +180,7 @@ function startApp() {
   Topics.subscribe( Topics.HISTORY, (data) => openController("SampleHistory",data) );
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
   Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
+  Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: key.url }) ) );
   Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: key.url }) ) );
 
