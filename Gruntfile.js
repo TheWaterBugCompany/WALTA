@@ -25,6 +25,7 @@ module.exports = function(grunt) {
 
     const SOURCES = [  
       './walta-app/tiapp.xml',  
+      './walt-app/app/assets/**/*',
       './walta-app/app/**/*.js', 
       './walta-app/app/**/*.xml', 
       './walta-app/app/**/*.css',
@@ -101,9 +102,9 @@ module.exports = function(grunt) {
 
       function dev() {
         if ( platform === "android" ) {
-          args.push( "--build-only","--deploy-type development", "--target device", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+          args.push( "--build-only","--deploy-type development", "--target device" );
         } else if ( platform === "ios" ){
-          args.push( "--build-only","--deploy-type development", "--target device", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+          args.push( "--build-only","--deploy-type development", "--target device");
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }
@@ -159,7 +160,7 @@ module.exports = function(grunt) {
           if ( platform === "android" ) {
             post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/preview/Waterbug.apk");
           } else {
-            throw new Error("Unimplemented on iOS!")
+            post_cmds.push( "cp ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/preview/Waterbug.app");
           }
           break;
 

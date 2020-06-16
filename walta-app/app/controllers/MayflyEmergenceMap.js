@@ -1,16 +1,12 @@
-// Arguments passed into this controller can be accessed via the `$.args` object directly or:
-var args = $.args;
-function locateClick() {
-
-}
+exports.baseController  = "TopLevelWindow";
+$.name = "mayfly emergence";
+$.TopLevelWindow.useUnSafeArea = true;
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.mapView.cleanUp();
+    $.TopLevelWindow.removeEventListener('close', cleanUp );
+});
 
 function cancelClick() { 
     $.MayflyEmergenceMap.hide();
     $.trigger("close");
 }
-
-function cleanUp() {
-    $.mapView.cleanUp();
-}
-
-exports.cleanUp = cleanUp;

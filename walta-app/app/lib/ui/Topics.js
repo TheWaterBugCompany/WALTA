@@ -49,7 +49,7 @@ var topics = {
 
 	IDENTIFY: 'identify',
 
-	MAYFLY: 'mayfly',
+	MAYFLY_EMERGENCE: 'mayfly',
 
 	ORDER: 'order',
 
@@ -91,11 +91,15 @@ var topics = {
 
 	fireTopicEvent: function( topic, data ) {
 		Alloy.Events.trigger( 'waterbug:' + topic, data );
+	}, 
+
+	init: function() {
+		// add a listener to bridge from webview to titanium events
+		Ti.App.addEventListener("waterbug", function(e) {
+			Alloy.Events.trigger(`waterbug:${e.event}`, e);
+		})
 	}
 
 };
 
-
-
-// Non-standard CommonJS but useful here
 module.exports = topics;

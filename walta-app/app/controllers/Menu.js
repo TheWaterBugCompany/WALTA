@@ -1,4 +1,5 @@
 var Topics = require('ui/Topics');
+
 exports.baseController  = "TopLevelWindow";
 $.name = "home";
 
