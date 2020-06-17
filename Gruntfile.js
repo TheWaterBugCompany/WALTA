@@ -196,7 +196,9 @@ module.exports = function(grunt) {
         if ( grunt.option('kobiton') ) {
           tasks.push(`upload:${platform}:${build_type}`);
         } else {
-          tasks.push(`install:${platform}:${build_type}`);
+          if ( build_type !== "release" ) {
+            tasks.push(`install:${platform}:${build_type}`);
+          }
         }
       }
       return {
