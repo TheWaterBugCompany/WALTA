@@ -1,3 +1,5 @@
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
 var Topics = require('ui/Topics');
 var { applyKeyboardTweaks } = require("ui/Layout");
 var { emailValidity } = require("util/EmailUtils");
@@ -61,7 +63,7 @@ function loginClick() {
       .then( (response ) => {
     $.activity.hide();
     $.logInButton.visible = true;
-    Ti.API.debug(`Logged in user ${$.emailTextField.value}`);
+    log(`Logged in user ${$.emailTextField.value}`);
     Topics.fireTopicEvent( Topics.LOGGEDIN, null );
   }).catch( (err) => {
       $.activity.hide();
@@ -76,7 +78,7 @@ function loginClick() {
 function forgotPassword() {
   Alloy.Globals.CerdiApi.forgotPassword( $.emailTextField.value)
         .then( (response ) => {
-      Ti.API.debug(`Sent password reset for user ${$.emailTextField.value}`);
+      log(`Sent password reset for user ${$.emailTextField.value}`);
       alert(`A password reset request email has been sent to "${$.emailTextField.value}" check your email to continue password reset process, then come back here and log in with the new password.`)
 ;    }).catch( (err) => {
         Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
