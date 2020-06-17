@@ -15,9 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
 /*
- * Conttoller: Gallery
+ * Controller: Gallery
  *
  * Shows a thumbnail of a list of photos, then if the zoom icon is pressed
  * opens a modal view displaying a gallery of all the images.
@@ -29,7 +30,7 @@ var Topics = require('ui/Topics');
 var Layout = require('ui/Layout');
 var { urlToLocalAsset } = require("ui/PlatformSpecific");
 
-
+$.TopLevelWindow.useUnSafeArea = true;
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.views.forEach( (v) => {
         if ( OS_ANDROID ) { 
@@ -44,7 +45,7 @@ var photos = $.args.photos;
 var showPager = $.args.showPager;
 if ( _.isUndefined( showPager ) ) showPager = true;
 
-Ti.API.debug(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
+log(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
 if ( !photos && key ) {
     photos = _.first( _.shuffle( key.findAllMedia('photoUrls') ), 20 );
 }

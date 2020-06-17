@@ -9,7 +9,7 @@ var DEBUG = false; // WARNING turning this on breaks unit tests
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
 $.name = "sampletray";
-
+$.TopLevelWindow.useUnSafeArea = true;
 $.noSwipeBack();
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {

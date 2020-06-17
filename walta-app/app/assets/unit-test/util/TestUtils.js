@@ -237,6 +237,33 @@ function resetDatabase() {
 	
 }
 
+function resetSample() {
+	// reset globals
+	Alloy.Models.sample = null;
+	Alloy.Models.taxa = null;
+	Alloy.Collections.sample = null;
+	Alloy.Collections.taxa = null;
+  
+	Alloy.Collections.instance("sample");
+	Alloy.Collections.instance("taxa");
+  
+	Alloy.Models.instance("sample");
+	Alloy.Models.instance("taxa");
+  
+   
+  }
+  
+  function clearDatabase() {
+	resetSample();
+	var db = Ti.Database.open("samples");
+	db.execute("DELETE FROM sample");
+	db.execute("DELETE FROM taxa");
+	db.close();
+  }
+
+exports.resetSample = resetSample;
+exports.clearDatabase = clearDatabase;
+
 exports.enterText = enterText;
 exports.clickButton = clickButton;
 exports.forceCloseWindow = forceCloseWindow;
