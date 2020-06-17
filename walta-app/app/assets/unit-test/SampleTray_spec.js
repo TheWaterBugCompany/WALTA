@@ -11,6 +11,7 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe( 'SampleTray controller', function() {
   this.timeout(10000);
+  
   var SampleTray, SampleTrayWin;
 
   beforeEach( function() {

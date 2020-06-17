@@ -6,7 +6,7 @@
 			<Label class="waterbodyName column" text="Waterbody Name"/>
 			<Label class="boolColumn column" text="Uploaded?"/>
 		</View>
-		<TableView id="sampleTable" dataCollection="$.samples" onClick="openErrorsClick">
+		<TableView id="sampleTable" dataCollection="$.samples" onClick="openSample">
 			<TableViewRow class="row">
 				<Label class="dateCompletedColumn column" text="{dateCompleted}"/>
 				<Label class="waterbodyName column" text="{waterbodyName}"/>

@@ -1,7 +1,6 @@
-function debug(mess) { 
-    Ti.API.debug(mess);
-}
-
+var Crashlytics = require('util/Crashlytics');
+var debug = Ti.API.info;
+var log = Crashlytics.log;
 function absolutePath(path) {
     if ( path.startsWith("file:///") ) {
         debug(`${path} starts with file:///`);
@@ -27,7 +26,7 @@ function savePhoto( blob, filename  ) {
         debug("file already exists deletin");
         var result = photoPath.deleteFile();
         if ( !result ) {
-            Ti.API.error(`Error deleting file: writable: ${photoPath.writable}`);
+            log(`Error deleting file: writable: ${photoPath.writable}`);
             throw new Error(`Unable to delete file ${photoPath}`);
         }         
     }
@@ -35,7 +34,7 @@ function savePhoto( blob, filename  ) {
     var result = photoPath.write(blob);
     blob = null; 
     if ( !result ) {
-        Ti.API.error(`Error writing file: exists: ${photoPath.exists()}`);
+        log(`Error writing file: exists: ${photoPath.exists()}`);
         throw new Error(`Unable to write file ${photoPath}`);
     }
 
@@ -50,22 +49,22 @@ function needsOptimising( photo ) {
 function optimisePhoto( fullPhoto ) {
     var aspectRatio = (fullPhoto.height/fullPhoto.width);
     if ( needsOptimising(fullPhoto) ) {
-        Ti.API.info(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}, resizing and compressing photo...`);
+        log(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}, resizing and compressing photo...`);
         //if ( aspectRatio < )
         fullPhoto = fullPhoto.imageAsResized(1600, 1600*aspectRatio);
         debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
         if ( ! fullPhoto ) {
-            Ti.API.error(`Error resizing photo: ${fileOrBlob}`);
+            log(`Error resizing photo: ${fileOrBlob}`);
             throw new Error("Unable to resize photo");
         }
-        Ti.API.info(`compressed size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}`);
+        log(`compressed size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}`);
     }
 
     if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
-        Ti.API.info(`got a PNG: converting photo into JPEG...`);
+        log(`got a PNG: converting photo into JPEG...`);
         fullPhoto = fullPhoto.imageAsCompressed(0.9);
         if ( ! fullPhoto ) {
-            Ti.API.error(`Error converting photo: ${fileOrBlob}`);
+            log(`Error converting photo: ${fileOrBlob}`);
             throw new Error("Unable to convert photo into JPEG");
         }
     }

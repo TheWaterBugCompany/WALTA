@@ -1,3 +1,6 @@
+var Crashlytics = require('util/Crashlytics');
+var log = Crashlytics.log;
+
 exports.baseController  = "TopLevelWindow";
 var Topics = require("ui/Topics");
 var GeoLocationService = require('logic/GeoLocationService');
@@ -158,7 +161,7 @@ function openLocationEntry() {
 }
 
 $.photoSelect.on("photoTaken", function(path) {
-    Ti.API.info(`photo taken updating site with ${path}`)
+    log(`photo taken updating site with ${path}`)
     sample.setSitePhoto(path);
     $.photoSelect.setImage( sample.getSitePhoto() ); // update image to new path
     // force layout to fit scroll pane to actual size
@@ -178,12 +181,12 @@ GeoLocationService.start();
 // undefined when this screen was opened
 Topics.subscribe(Topics.GPSLOCK, function(coords) {
     // only set location if the accuracy is present and less than 100m
-    Ti.API.info(`got lock`);
+    log(`got lock`);
     if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
         if ( coords.accuracy < 100 ) {
             var accuracy = sample.get("accuracy");
             if ( !accuracy || accuracy > coords.accuracy ) {
-                Ti.API.info(`set location`);
+                log(`set location`);
                 Alloy.Models.sample.setLocation(coords);
             }
         }
