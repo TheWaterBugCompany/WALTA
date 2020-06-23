@@ -1,6 +1,11 @@
 
 
 walta-app/plugins/**
+walta-app/app/assets/unit-test/lib/mocha.js
+walta-app/app/assets/unit-test/lib/chai.js
+walta-app/app/assets/unit-test/lib/chai-date-string.js
+walta-app/app/assets/leaflet/**
+walta-app/app/lib/lib/moment.js
 .metadata
 *.aab
 *.apk
@@ -20,5 +25,4 @@ features/support/mock_data/rest/*/*/*/mock/response.txt
 appium.log
 builds/**/*.log
 builds/**/*.plist
-
 mock-server/rest/*/*/*/mock/response.txt
