@@ -2,21 +2,6 @@
     "folders": [
         {
             "path": "."
-        },
-        {
-            "path": "/Users/msharman/Library/Application Support/Titanium/mobilesdk/osx/8.0.2.GA/node_modules/liveview"
-        },
-        {
-            "path": "../../Library/Application Support/Titanium/modules/iphone/hyperloop/5.0.3"
-        },
-        {
-            "path": "../TestApp"
-        },
-        {
-            "path": "../titanium_mobile"
-        },
-        {
-            "path": "../hyperloop-stacktrace"
         }
     ]
 }

@@ -30,7 +30,7 @@ loadAsync@file:///var/containers/Bundle/Application/2D13F357-8F8B-4797-93AB-8A1C
     });
 });
 
-describe.only('ExceptionUtils - Android', function() {
+describe('ExceptionUtils - Android', function() {
     it('should parse a stack frame', function() {
         const testFrame = `TypeError: Cannot read property 'nonexistant_method' of null
      at stackFrame2 (/alloy/controllers/Main.js:285:10)
