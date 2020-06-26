@@ -5,7 +5,7 @@
  * @param {*} size - the size of the arc
  */
 SEGMENTS = 5;
-exports.makeArc = function( start, end, size ) {
+module.exports.makeArc = function( start, end, size ) {
     let start_rads = start*Math.PI/180,
         end_rads = end*Math.PI/180;
     let theta = start_rads,

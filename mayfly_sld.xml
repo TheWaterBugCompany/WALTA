@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<StyledLayerDescriptor version="1.0.0" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd">
+    <NamedLayer>
+        <Name>wwew:tas_creatures</Name>
+        <UserStyle>
+            <Name>inline_style</Name>
+            <FeatureTypeStyle>
+                <Rule> 
+                    <Name>Siphlonuridae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE01*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#e3b505</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>0</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+                <Rule> 
+                    <Name>Baetidae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE02*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#95190c</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>45</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+                <Rule> 
+                    <Name>Oniscigastridae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE03*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#610345</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>90</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+                <Rule> 
+                    <Name>Ameletopsidae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE04*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#107e7d</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>135</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+                <Rule> 
+                    <Name>Coloburiscidae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE05*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#044b7f</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>180</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+                <Rule> 
+                    <Name>Leptophlebiidae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE06*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#f86624</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>225</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+                <Rule> 
+                    <Name>Caenidae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE08*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#5fad41</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>270</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+                <Rule> 
+                    <Name>Prosopistomatidae</Name>
+                    <ogc:Filter>
+                        <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
+                            <ogc:PropertyName>epa_code</ogc:PropertyName>
+                            <ogc:Literal>QE09*</ogc:Literal>
+                        </ogc:PropertyIsLike>
+                    </ogc:Filter>
+                    <PointSymbolizer>                    <Graphic>
+                        <Mark>
+                            <WellKnownName>wkt://POLYGON((0 0,1 0,0.9876883405951378 0.15643446504023087,0.9510565162951535 0.3090169943749474,0.8910065241883679 0.45399049973954675,0.8090169943749475 0.5877852522924731,0.7071067811865476 0.7071067811865475))</WellKnownName>
+                            <Fill>
+                                <CssParameter name="fill">#3d2b3d</CssParameter>
+                            </Fill>
+                        </Mark>
+                        <Size>10</Size>
+                        <Rotation>315</Rotation>
+                    </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+            </FeatureTypeStyle>
+        </UserStyle>
+    </NamedLayer>
+</StyledLayerDescriptor>
