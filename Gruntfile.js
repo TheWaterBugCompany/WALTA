@@ -219,6 +219,17 @@ module.exports = function(grunt) {
     
 
     grunt.initConfig({
+      browserify: {
+        mayfly: {
+          src: [ 'walta-app/app/lib/util/WktUtils.js' ],
+          dest: 'walta-app/app/assets/browserify/mayfly.js',
+          options: {
+            browserifyOptions: {
+              "standalone": "WktUtils"
+            },
+          }
+        }
+      },
       parallel: {
         visual_regression_test: {
           options: {
@@ -478,6 +489,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-newer-explicit");
     grunt.loadNpmTasks("grunt-then");
     grunt.loadNpmTasks('grunt-parallel');
+    grunt.loadNpmTasks('grunt-browserify');
+  
 
     grunt.registerTask('test', function (platform) {
       grunt.task.run(`unit-test:${platform}`);
@@ -584,5 +597,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build-key', function() {
       grunt.task.run("exec:build_key_ink");
       grunt.task.run("build-key-from-ink-json");
-    })
+    });
+    grunt.registerTask('build-html', ['browserify:mayfly']);
+    grunt.registerTask('build-misc', ['build-key', 'build-html']);
   };
