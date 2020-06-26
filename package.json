@@ -21,6 +21,7 @@
     "fstream": "^1.0.12",
     "gittio": "^0.6.4",
     "grunt": "^1.1.0",
+    "grunt-browserify": "^5.3.0",
     "grunt-exec": "^3.0.0",
     "grunt-newer-explicit": "^0.9.8",
     "grunt-parallel": "^0.5.1",

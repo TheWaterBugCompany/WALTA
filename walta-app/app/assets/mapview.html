@@ -15,7 +15,6 @@
     </script>
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <script src="leaflet/leaflet.js"></script>
-    
     <style>
         body {
             padding: 0;
@@ -98,11 +97,59 @@
 <body id="root">
     <div id='map'></div>
     <script>
+
+    const MAYFLY_LEGEND = [
+        { name: "Siphlonuridae", ref: "adult_siphlonuridae", code: "QE01*", color: "#e3b505" },
+        { name: "Baetidae", ref: "adult_baetidae", code: "QE02*", color: "#95190c" },
+        { name: "Oniscigastridae", ref: "adult_oniscigastridae", code: "QE03*", color: "#610345"} ,
+        { name: "Ameletopsidae", ref: "adult_ameletopsidae", code: "QE04*", color: "#107e7d" },
+        { name: "Coloburiscidae", ref: "adult_coloburiscidae", code: "QE05*", color: "#044b7f" },
+        { name: "Leptophlebiidae",ref: "adult_leptophlebiidae", code: "QE06*", color: "#f86624" },
+        { name: "Caenidae", ref: "adult_caenidae_prosopistomatidae", code: "QE08*", color: "#5fad41" },
+        { name: "Prosopistomatidae", ref: "adult_caenidae_prosopistomatidae", code: "QE09*", color: "#3d2b3d" },
+    ];
+
+    const SLD = `<?xml version="1.0" encoding="ISO-8859-1"?>
+<StyledLayerDescriptor version="1.0.0" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd">
+    <NamedLayer>
+        <Name>wwew:tas_creatures</Name>
+        <UserStyle>
+            <Name>inline_style</Name>
+            <FeatureTypeStyle>\
+                <Rule> 
+                    <Name>Species Distribution</Name>
+                    <PointSymbolizer> 
+                        <Graphic>
+                            <ExternalGraphic>
+                                <OnlineResource xlink:type="simple"
+                                                xlink:href="http://www.thecodesharman.com.au/walta/\${strToLowerCase(strSubstring(epa_code,0,4))}.svg?5" />
+                                <Format>image/svg+xml</Format>
+                            </ExternalGraphic>
+                            <Size><ogc:Literal>50</ogc:Literal></Size>
+                        </Graphic>
+                    </PointSymbolizer>
+                    <PointSymbolizer> 
+                        <Graphic>
+                            <ExternalGraphic>
+                                <OnlineResource xlink:type="simple"
+                                                xlink:href="http://www.thecodesharman.com.au/walta/outline.svg" />
+                                <Format>image/svg+xml</Format>
+                            </ExternalGraphic>
+                            <Size><ogc:Literal>50</ogc:Literal></Size>
+                        </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+            </FeatureTypeStyle>
+        </UserStyle>
+    </NamedLayer>
+</StyledLayerDescriptor>`; 
+
+
     var map = L.map('map',{
         zoomControl: false,
         attributionControl: false,
-    }).setView([-26.07, 133.98], 3.5);
-    
+    }).setView([-42.110449, 146.527405], 8);
+
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -110,61 +157,16 @@
         accessToken: 'pk.eyJ1IjoidGhlY29kZXNoYXJtYW4iLCJhIjoiY2p4NXpvenEyMDdlczN5bzR4MWF0aDVoMiJ9.Tolm7-mPxWoXKH2D5zaF1g',
         updateWhenIdle: false
     }).addTo(map);
-    function makeSymbolizer( angle, color ) {
-        return `<Graphic>
-            <Mark>
-                <WellKnownName>wkt://</WellKnownName>
-                <Fill>
-                    <CssParameter name="fill">${color}</CssParameter>
-                </Fill>
-            </Mark>
-            <Size>10</Size>
-            <Rotation>${angle}</Rotation>
-        </Graphic>` ;
-    }
-
-    const MAYFLY_LEGEND = [
-        { name: "Siphlonuridae", ref: "adult_siphlonuridae", code: "QE01*", color: "#e3b505", symbolizer: makeSymbolizer( 0, "#e3b505" ) },
-        { name: "Baetidae", ref: "adult_baetidae", code: "QE02*", color: "#95190c", symbolizer: makeSymbolizer( 45, "#95190c" ) },
-        { name: "Oniscigastridae", ref: "adult_oniscigastridae", code: "QE03*", color: "#610345", symbolizer: makeSymbolizer( 90, "#610345" ) },
-        { name: "Ameletopsidae", ref: "adult_ameletopsidae", code: "QE04*", color: "#107e7d", symbolizer: makeSymbolizer( 135, "#107e7d" ) },
-        { name: "Coloburiscidae", ref: "adult_coloburiscidae", code: "QE05*", color: "#044b7f", symbolizer: makeSymbolizer( 180, "#044b7f" ) },
-        { name: "Leptophlebiidae",ref: "adult_leptophlebiidae", code: "QE06*", color: "#f86624", symbolizer: makeSymbolizer( 225, "#f86624" ) },
-        { name: "Caenidae", ref: "adult_caenidae_prosopistomatidae", code: "QE08*", color: "#5fad41", symbolizer: makeSymbolizer( 270, "#5fad41" ) },
-        { name: "Prosopistomatidae", ref: "adult_caenidae_prosopistomatidae", code: "QE09*", color: "#3d2b3d", symbolizer: makeSymbolizer( 315, "#3d2b3d" ) },
-    ];
-  
-    const SLD = `<?xml version="1.0" encoding="ISO-8859-1"?>
-        <StyledLayerDescriptor version="1.0.0" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd">
-            <NamedLayer>
-                <Name>wwew:tas_creatures</Name>
-                <UserStyle>
-                    <Name>inline_style</Name>
-                    <FeatureTypeStyle>`
-            + MAYFLY_LEGEND.map( ({ name, code, symbolizer }) => `
-                        <Rule> 
-                            <Name>${name}</Name>
-                            <ogc:Filter>
-                                <ogc:PropertyIsLike  wildCard="*" singleChar="." escape="!">
-                                    <ogc:PropertyName>epa_code</ogc:PropertyName>
-                                    <ogc:Literal>${code}</ogc:Literal>
-                                </ogc:PropertyIsLike>
-                            </ogc:Filter>
-                            <PointSymbolizer>${symbolizer}</PointSymbolizer>
-                        </Rule>` ).join("") +`
-                    </FeatureTypeStyle>
-                </UserStyle>
-            </NamedLayer>
-        </StyledLayerDescriptor>`; 
 
     L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', { 
         layers: 'wwew:tas_creatures',
         styles: 'inline_style', 
         format: 'image/png', 
         transparent: true,
-        SLD_BODY: SLD.replace(/[\t\n ]+/g," ")
+        SLD_BODY: SLD
     }).addTo(map);
 
+    
     L.Control.Legend = L.Control.extend({
         _showLegend: function() {
             if ( L.DomUtil.hasClass(this.legend, "open") ) {
