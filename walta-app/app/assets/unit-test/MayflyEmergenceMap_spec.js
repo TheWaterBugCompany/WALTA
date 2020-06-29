@@ -34,4 +34,5 @@ describe("MayflyEmergenceMap controller", function() {
 	it('should display the MayflyEmergenceMap view', function(done) {
 		windowOpenTest( win, done );
     });
+    it('should send event for legend click'); // How to implement selecting a webview element
 });

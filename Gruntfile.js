@@ -3,6 +3,12 @@ module.exports = function(grunt) {
     const { decodeSyslog } = require('./features/support/ios-colors');
     const _ = require("lodash");
     const KobitonAPI = require("./features/support/kobiton");
+
+    const fs = require('fs');
+    const CircularJSON = require("circular-json");
+    const KeyLoader = require("./walta-app/app/lib/logic/KeyLoaderInk");
+
+
     const APP_ID = "net.thewaterbug.waterbug";
     const APP_ACTIVITY = ".WaterbugActivity";
     const KEYSTORE = process.env.KEYSTORE || '/home/msharman/Documents/Business/thecodesharman.keystore';
@@ -19,6 +25,7 @@ module.exports = function(grunt) {
 
     const SOURCES = [  
       './walta-app/tiapp.xml',  
+      './walt-app/app/assets/**/*',
       './walta-app/app/**/*.js', 
       './walta-app/app/**/*.xml', 
       './walta-app/app/**/*.css',
@@ -69,6 +76,115 @@ module.exports = function(grunt) {
       ]
     } 
     
+    function build_app(platform,build_type) {
+      let args = [ "--project-dir walta-app"];
+      let post_cmds = [];
+
+      function production() {
+        if ( platform === "android" ) {
+          args.push( "--build-only", "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+        } else if ( platform === "ios" ){
+          args.push( "--build-only","--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
+        } else {
+          throw new Error(`Unknown platform "${platform}"`);
+        }
+      }
+
+      function test() {
+        if ( platform === "android" ) {
+          args.push( "--build-only","--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+        } else if ( platform === "ios" ){
+          args.push( "--build-only","--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+        } else {
+          throw new Error(`Unknown platform "${platform}"`);
+        }
+      }
+
+      function dev() {
+        if ( platform === "android" ) {
+          args.push( "--build-only","--deploy-type development", "--target device" );
+        } else if ( platform === "ios" ){
+          args.push( "--build-only","--deploy-type development", "--target device");
+        } else {
+          throw new Error(`Unknown platform "${platform}"`);
+        }
+      }
+
+      function emulator() {
+        if ( platform === "android" ) {
+          args.push( "--deploy-type development", "--target emulator", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+        } else if ( platform === "ios" ){
+          args.push( "--deploy-type development", "--target simulator", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+        } else {
+          throw new Error(`Unknown platform "${platform}"`);
+        }
+      }
+
+
+      if ( platform ) {
+        args.push(`--platform ${platform}`);
+      } else {
+        throw new Error("please specify platform!");
+      }
+
+      switch( build_type ) {
+        case "debug":
+          test();
+          args.push("--output-dir builds/debug --debug-host=localhost:9229")
+          break;
+        
+        case "test":
+          test();
+          args.push("--output-dir builds/test");
+          break;
+
+        case "unit-test":
+          test();
+          args.push("--unit-test");
+          args.push("--output-dir builds/unit-test");
+          break;
+
+        case "release":
+          production();
+          args.push("--output-dir builds/release");
+          break;
+
+        case "preview":
+          dev();
+          //test();
+          //args.push("--output-dir builds/preview");
+          if ( grunt.option('liveview') ) {
+            args.push("--liveview");
+          }
+          //args.push("--output-dir builds/preview");
+          if ( platform === "android" ) {
+            post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/preview/Waterbug.apk");
+          } else {
+            post_cmds.push( "cp ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/preview/Waterbug.app");
+          }
+          break;
+
+        case "emulate":
+          emulator();
+          args.push("--liveview");
+          break;
+
+        case "preview-unit-test":
+          test();
+          if ( grunt.option('liveview') ) {
+            args.push("--liveview");
+          }
+          args.push("--unit-test");
+          args.push("--output-dir builds/preview-unit-test");
+          break;
+
+        default:
+          throw new Error(`Unknown build "${build_type}" type!`)
+      }
+      var cmd = `./node_modules/.bin/titanium build ${args.join(" ")}`;
+      post_cmds.forEach( c => cmd += " && " + c);
+      return cmd;
+    }
 
 
     function build_if_newer_options(platform,build_type) {
@@ -80,7 +196,9 @@ module.exports = function(grunt) {
         if ( grunt.option('kobiton') ) {
           tasks.push(`upload:${platform}:${build_type}`);
         } else {
-          tasks.push(`install:${platform}:${build_type}`);
+          if ( build_type !== "release" ) {
+            tasks.push(`install:${platform}:${build_type}`);
+          }
         }
       }
       return {
@@ -101,6 +219,17 @@ module.exports = function(grunt) {
     
 
     grunt.initConfig({
+      browserify: {
+        mayfly: {
+          src: [ 'walta-app/app/lib/util/WktUtils.js' ],
+          dest: 'walta-app/app/assets/browserify/mayfly.js',
+          options: {
+            browserifyOptions: {
+              "standalone": "WktUtils"
+            },
+          }
+        }
+      },
       parallel: {
         visual_regression_test: {
           options: {
@@ -180,96 +309,12 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
+          build_key_ink: {
+            command: "mono ./ink/inklecate/bin/Debug/netcoreapp2.1/inklecate.dll -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
+          },
+
           build: {
-            command: function(platform,build_type) {
-              let args = [ "--project-dir walta-app"];
-
-              function production() {
-                if ( platform === "android" ) {
-                  args.push( "--build-only", "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
-                } else if ( platform === "ios" ){
-                  args.push( "--build-only","--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
-                } else {
-                  throw new Error(`Unknown platform "${platform}"`);
-                }
-              }
-
-              function test() {
-                if ( platform === "android" ) {
-                  args.push( "--build-only","--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
-                } else if ( platform === "ios" ){
-                  args.push( "--build-only","--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
-                } else {
-                  throw new Error(`Unknown platform "${platform}"`);
-                }
-              }
-
-              function emulator() {
-                if ( platform === "android" ) {
-                  args.push( "--deploy-type development", "--target emulator", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
-                } else if ( platform === "ios" ){
-                  args.push( "--deploy-type development", "--target simulator", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
-                } else {
-                  throw new Error(`Unknown platform "${platform}"`);
-                }
-              }
-
-
-              if ( platform ) {
-                args.push(`--platform ${platform}`);
-              } else {
-                throw new Error("please specify platform!");
-              }
-
-              switch( build_type ) {
-                case "debug":
-                  test();
-                  args.push("--output-dir builds/debug --debug-host=localhost:9229")
-                  break;
-                
-                case "test":
-                  test();
-                  args.push("--output-dir builds/test");
-                  break;
-
-                case "unit-test":
-                  test();
-                  args.push("--unit-test");
-                  args.push("--output-dir builds/unit-test");
-                  break;
-
-                case "release":
-                  production();
-                  args.push("--output-dir builds/release");
-                  break;
-
-                case "preview":
-                  test();
-                  if ( grunt.option('liveview') ) {
-                    args.push("--liveview");
-                  }
-                  args.push("--output-dir builds/preview");
-                  break;
-
-                case "emulate":
-                  emulator();
-                  args.push("--liveview");
-                  break;
-
-                case "preview-unit-test":
-                  test();
-                  if ( grunt.option('liveview') ) {
-                    args.push("--liveview");
-                  }
-                  args.push("--unit-test");
-                  args.push("--output-dir builds/preview-unit-test");
-                  break;
-
-                default:
-                  throw new Error(`Unknown build "${build_type}" type!`)
-              }
-              return `./node_modules/.bin/titanium build ${args.join(" ")}`;
-            },
+            command: build_app,
             options: { 
                 env: Object.assign({}, process.env, {
                   "ALLOY_PATH": "./node_modules/.bin/alloy"
@@ -444,6 +489,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-newer-explicit");
     grunt.loadNpmTasks("grunt-then");
     grunt.loadNpmTasks('grunt-parallel');
+    grunt.loadNpmTasks('grunt-browserify');
+  
 
     grunt.registerTask('test', function (platform) {
       grunt.task.run(`unit-test:${platform}`);
@@ -493,8 +540,8 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}`);
 
     } );
-    grunt.registerTask('clean', ['exec:clean'] );
-    grunt.registerTask('dist-clean', ['exec:clean_dist'] );
+
+    grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );
     grunt.registerTask('preview', function() {
       var platform = grunt.option('platform');
       //grunt.task.run("run:appium");
@@ -523,7 +570,8 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}:preview`);
     } );
   
-    grunt.registerTask('release', function(platform) {
+    grunt.registerTask('release', function() {
+      var platform = grunt.option('platform');
       grunt.task.run(`newer:release_${platform}`); 
     });
 
@@ -540,4 +588,16 @@ module.exports = function(grunt) {
       grunt.task.run(`exec:build:${platform}:emulate`); 
       grunt.task.run(`output-logs:${platform}:preview`);
     });
+
+    grunt.registerTask('build-key-from-ink-json', function() {
+      const key = KeyLoader.loadKey( './walta-app/app/assets/taxonomy/walta/', '/taxonomy/walta' );
+      fs.writeFileSync( './walta-taxonomy/walta/key.json', CircularJSON.stringify(key) );
+    });
+
+    grunt.registerTask('build-key', function() {
+      grunt.task.run("exec:build_key_ink");
+      grunt.task.run("build-key-from-ink-json");
+    });
+    grunt.registerTask('build-html', ['browserify:mayfly']);
+    grunt.registerTask('build-misc', ['build-key', 'build-html']);
   };
