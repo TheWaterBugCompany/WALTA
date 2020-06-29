@@ -24,13 +24,9 @@ var PlatformSpecific = require('ui/PlatformSpecific');
 var Sample = require('logic/Sample');
 var GeoLocationService = require('logic/GeoLocationService'); 
 var Crashlytics = require('util/Crashlytics');
+var debug = m => Ti.API.info(m);
 var log = Crashlytics.log;
-
-/*Ti.App.addEventListener( "uncaughtException", function(e) {
-  if ( Crashlytics.isAvailable() ) {
-    Crashlytics.recordException( e );
-  }
-});*/
+Topics.init();
 
 function questionToString( args ) {
   if ( !args || !args.node || !args.node.questions )
@@ -75,7 +71,7 @@ function openController(ctl,args) {
   dumpHistory();
 
   
-  log(`opening controller="${ctl}" with args.slide= ${args.slide}`);
+  debug(`opening controller="${ctl}" with args.slide= ${args.slide}`);
   controller = Alloy.createController(ctl,args);
   controller.open();
 
@@ -112,7 +108,7 @@ function goBack(args) {
         newargs.slide = "left";
       }
     }
-    log(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
+    debug(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
     openController(ctl,newargs);
 
   }
@@ -120,7 +116,7 @@ function goBack(args) {
 
 function siteDetailsWindow(args) {
   if ( OS_ANDROID ) {
-    log('Asking for permissions...');
+    debug('Asking for permissions...');
     Ti.Android.requestPermissions(
       [ 'android.permission.ACCESS_FINE_LOCATION','android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE' ], 
       function(e) {
@@ -184,6 +180,7 @@ function startApp() {
   Topics.subscribe( Topics.HISTORY, (data) => openController("SampleHistory",data) );
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
   Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
+  Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: key.url }) ) );
   Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: key.url }) ) );
 
@@ -192,7 +189,7 @@ function startApp() {
       key.setCurrentNode(data.id);
       updateDecisionWindow(_(data).extend({ node: key.getCurrentNode()}));
     } else {
-      Ti.API.error("Topics.JUMPTO undefined node!");
+      debug("Topics.JUMPTO undefined node!");
     }
   });
 
@@ -238,14 +235,6 @@ function startApp() {
     }
   }
   Topics.fireTopicEvent( Topics.HOME );
-
-
-  Topics.subscribe( Topics.ABOUT, (data) => {
-    var me = null;
-    me.nonexistant_method();
-  } );
- 
 }
 
 startApp();
-

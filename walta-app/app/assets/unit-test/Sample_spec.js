@@ -137,7 +137,6 @@ describe("Sample collection, model including taxa", function() {
       } else if ( id == "22" ) {
         obj =  { signalScore: 10 };
       }
-      Ti.API.debug(`lookup ${id} (${typeof(id)}) ${JSON.stringify(obj)}`);
       return obj;
     }
   }

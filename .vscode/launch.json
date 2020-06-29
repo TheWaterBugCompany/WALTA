@@ -7,6 +7,25 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Mocha Tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test/ExceptionUtils_spec.js"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Debug Android",
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "grunt",
