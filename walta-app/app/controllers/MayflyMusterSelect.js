@@ -7,12 +7,7 @@ $.survey = menuEntry( $.content, "/images/mayfly-muster-icon.png", "Start Survey
   "Perform a mayfly survey.", false, true, "45%"  );
 
 $.explore.on("click", function() {
-    $.emergenceMap = Alloy.createController("MayflyEmergenceMap");
-    $.MayflyMusterSelect.add($.emergenceMap.getView());
-    $.emergenceMap.on("close", function() {
-      $.emergenceMap.cleanUp();
-      $.emergenceMap = null;
-    })
+  Topics.fireTopicEvent( Topics.MAYFLY_EMERGENCE );
 });
 
 function closeEvent() {
@@ -23,8 +18,6 @@ function cleanUp() {
   $.destroy();
   $.off();
   $.explore.cleanUp();
-  $.survey.cleanUp();
-  if ( $.emergenceMap )
-    $.emergenceMap.cleanUp();
+  $.survey.cleanUp(); 
 }
 exports.cleanUp = cleanUp;

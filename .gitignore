@@ -6,6 +6,7 @@ walta-app/app/assets/unit-test/lib/chai.js
 walta-app/app/assets/unit-test/lib/chai-date-string.js
 walta-app/app/assets/leaflet/**
 walta-app/app/lib/lib/moment.js
+walta-app/app/assets/browserify/**
 .metadata
 *.aab
 *.apk

@@ -1,5 +1,5 @@
 var Crashlytics = require('util/Crashlytics');
-var debug = Crashlytics.log;
+var info = Crashlytics.log;
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
@@ -34,7 +34,7 @@ function getThumbnailImageUrl() {
 
 
 function generateThumbnail( fileOrBlob ) {
-    debug(`generating thumbnail... fileOrBlob = ${fileOrBlob}`);
+    info(`generating thumbnail... fileOrBlob = ${fileOrBlob}`);
     var fullPhoto = null;
     if ( typeof fileOrBlob === "string") {
         fullPhoto = loadPhoto( fileOrBlob );
@@ -49,20 +49,20 @@ function generateThumbnail( fileOrBlob ) {
 
     // We need to save the photo thumbnail to a file path so that the photo gallery 
     // can read it via a URL
-    debug("removing old preview files...");
+    info("removing old preview files...");
     removeFilesBeginningWith("preview_");
 
     // we downscale for high resolution, otherwise the crop will fail due to out of memory errors.
     fullPhoto = optimisePhoto(fullPhoto);
     
-    debug("saving full size photo..");
+    info("saving full size photo..");
 
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().valueOf()}.jpg`);
     fullPhoto = null; // release memory - fingers crossed
 
     fullPhoto = loadPhoto( fullPhotoPath );
     
-    debug(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
+    info(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
     var pxWidth = $.photoSelectInner.size.width;
     var pxHeight = $.photoSelectInner.size.height;
 
@@ -94,7 +94,7 @@ function generateThumbnail( fileOrBlob ) {
     }
 
     if ( newHeight != fullPhoto.height || newWidth != fullPhoto.width ) {
-        debug(`cropping image to view aspect new width = ${newWidth} new height = ${newHeight}`);
+        info(`cropping image to view aspect new width = ${newWidth} new height = ${newHeight}`);
         var cropY = (fullPhoto.height-newHeight)/2;
         var thumbnail = fullPhoto.imageAsCropped( { width: newWidth, height: newHeight, x:cropX, y:cropY });
         if ( ! thumbnail ) {
@@ -102,15 +102,15 @@ function generateThumbnail( fileOrBlob ) {
             throw new Error("Unable to crop photo");
         }
     }
-    debug(`ratio after crop ${thumbnail.width/thumbnail.height} - view ratio ${viewRatio}`)
+    info(`ratio after crop ${thumbnail.width/thumbnail.height} - view ratio ${viewRatio}`)
 
-    debug(`saving thumbnail...`);
+    info(`saving thumbnail...`);
     var thumbnailPath = savePhoto( thumbnail, `preview_thumbnail_${moment().valueOf()}.jpg`);
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
 function setImage( fileOrBlob ) {
-    debug(`setImage ${fileOrBlob}`)
+    info(`setImage ${fileOrBlob}`)
     if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
@@ -124,20 +124,20 @@ function setImage( fileOrBlob ) {
     
 
     function setThumbnail( fileOrBlob) {
-        debug("setThumbnail")
+        info("setThumbnail")
         if ( cropPhoto || typeof fileOrBlob === "object") {
             var { thumbnail, photo } = generateThumbnail( fileOrBlob );
             $.photo.image = thumbnail;
             $.photoUrls = [photo];
         } else {
-            debug("not calling generateThumbnail")
+            info("not calling generateThumbnail")
             $.photo.image = fileOrBlob;
             $.photoUrls = [fileOrBlob];
         }
     }
 
     function processPhoto( fileOrBlob ) {
-        debug("processPhoto");
+        info("processPhoto");
         $.photoSelectOptionalLabel.visible = false;
         $.activity.show();
         $.photo.visible = false;
@@ -163,7 +163,7 @@ function setImage( fileOrBlob ) {
                     setThumbnail( file );
                 }
                 
-                debug("triggering loaded event")
+                info("triggering loaded event")
                 $.activity.hide();
                 $.photo.visible = true;
                 $.trigger("loaded");
@@ -204,7 +204,7 @@ function requestCameraPermissions( success, failure ) {
 function openGallery(e) {
     e.cancelBubble = true;
     if ( $.magnify.visible ) {
-        debug(`opening gallery photoUrls: ${JSON.stringify($.photoUrls)}`);
+        info(`opening gallery photoUrls: ${JSON.stringify($.photoUrls)}`);
         Topics.fireTopicEvent( Topics.GALLERY, { photos: $.photoUrls, showPager: true }  );
     }
 }
@@ -235,7 +235,7 @@ function takePhoto(e) {
                     autorotate: false,
                     cancel: () => blinds.close(),
                     success: (result) => {
-                        debug("Got camera success");
+                        info("Got camera success");
                         // ensure the blind window is closed before starting
                         // the heavy operation of processing the photo
                         blinds.addEventListener( "close", function handler() {
@@ -302,7 +302,7 @@ exports.enable = enable;
 exports.photoCapturedHandler = photoCapturedHandler; // for tests
 
 function cleanUp() {
-    debug("cleaning up PhotoSelect");
+    info("cleaning up PhotoSelect");
     $.destroy();
     $.off();
 }

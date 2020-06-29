@@ -109,8 +109,10 @@ function mockTiWithProxy() {
     mockTi(ProxyCreateHTTPClient);
 }
 
+mockTiWithProxy();
 
 var CerdiApi = require("../walta-app/app/lib/logic/CerdiApi");
+const { TIMEOUT } = require("dns");
 
 var SERVER_URL = 'https://api-wbb.till.cerdi.edu.au/v1';
 var CLIENT_SECRET = null;
@@ -125,7 +127,7 @@ describe('CerdiApi', function() {
     before( function() {
         // make sure our test user is registered for tests that
         // require it.
-        mockTiWithProxy();
+       
         return CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
             email: `testlogin@example.com`,
             group: false,

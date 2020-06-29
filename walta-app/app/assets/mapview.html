@@ -1,20 +1,20 @@
+<!DOCTYPE html>
 <html>
 
 <head>
     <meta name="viewport"
-        content="initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, width=device-width"/>
+        content="initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height"/>
     </meta>
     <script> 
-        function setSize() {
+       /* function setSize() {
             var height = window.innerHeight + 'px';
             console.log("setting height to" + height );
             document.getElementById("map").style.height = height;
         }
-        window.onresize = setSize;
+        window.onresize = setSize;*/
     </script>
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <script src="leaflet/leaflet.js"></script>
-    
     <style>
         body {
             padding: 0;
@@ -22,17 +22,74 @@
         }
         ::-webkit-scrollbar { display: none;} 
         html, body { 
-            width: 100%;
-            height: 100%;
             background-color: white; 
         }
         
         #map {
-          position: absolute;
+          position: fixed;
           top: 0;
           bottom: 0;
           left: 0;
           right: 0;
+        }
+
+        .leaflet-top.leaflet-left { 
+            margin-left: 0px !important; 
+            margin-top: 0px !important;
+        }
+
+        .legend { 
+            display: none; 
+            position: fixed;
+            bottom: 6px;
+            top: 40px;
+            left: 6px;
+            right: 12px;
+            background-color: rgba(0,0,0,0.2);
+        }
+        
+        .legend.open { 
+            display: flex; 
+            flex-direction: column;
+            flex-wrap: wrap;
+            height: 80%;
+        }
+        
+        dl { 
+            margin-left: 10px;  
+        }
+
+        .item {
+            padding-left: 6px;
+            margin-top: 6px;
+            margin-right: 6px;
+            margin-left: 6px;
+            margin-bottom: 6px;
+        }
+        dt { 
+            color: whitesmoke; 
+            margin-left: 38px; 
+            line-height: 40px; 
+            font-size: 24px; 
+        }
+
+        dd { 
+            margin-top: -35px; 
+            margin-left: 0px; 
+            width:30px;
+            height:30px;
+        }
+
+        .menu {
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+
+        .menu div {
+            width: 35px;
+            height: 5px;
+            background-color: whitesmoke;
+            margin: 6px 0;
         }
     </style>
 </head>
@@ -40,11 +97,59 @@
 <body id="root">
     <div id='map'></div>
     <script>
+
+    const MAYFLY_LEGEND = [
+        { name: "Siphlonuridae", ref: "adult_siphlonuridae", code: "QE01*", color: "#e3b505" },
+        { name: "Baetidae", ref: "adult_baetidae", code: "QE02*", color: "#95190c" },
+        { name: "Oniscigastridae", ref: "adult_oniscigastridae", code: "QE03*", color: "#610345"} ,
+        { name: "Ameletopsidae", ref: "adult_ameletopsidae", code: "QE04*", color: "#107e7d" },
+        { name: "Coloburiscidae", ref: "adult_coloburiscidae", code: "QE05*", color: "#044b7f" },
+        { name: "Leptophlebiidae",ref: "adult_leptophlebiidae", code: "QE06*", color: "#f86624" },
+        { name: "Caenidae", ref: "adult_caenidae_prosopistomatidae", code: "QE08*", color: "#5fad41" },
+        { name: "Prosopistomatidae", ref: "adult_caenidae_prosopistomatidae", code: "QE09*", color: "#3d2b3d" },
+    ];
+
+    const SLD = `<?xml version="1.0" encoding="ISO-8859-1"?>
+<StyledLayerDescriptor version="1.0.0" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd">
+    <NamedLayer>
+        <Name>wwew:tas_creatures</Name>
+        <UserStyle>
+            <Name>inline_style</Name>
+            <FeatureTypeStyle>\
+                <Rule> 
+                    <Name>Species Distribution</Name>
+                    <PointSymbolizer> 
+                        <Graphic>
+                            <ExternalGraphic>
+                                <OnlineResource xlink:type="simple"
+                                                xlink:href="http://www.thecodesharman.com.au/walta/\${strToLowerCase(strSubstring(epa_code,0,4))}.svg?5" />
+                                <Format>image/svg+xml</Format>
+                            </ExternalGraphic>
+                            <Size><ogc:Literal>50</ogc:Literal></Size>
+                        </Graphic>
+                    </PointSymbolizer>
+                    <PointSymbolizer> 
+                        <Graphic>
+                            <ExternalGraphic>
+                                <OnlineResource xlink:type="simple"
+                                                xlink:href="http://www.thecodesharman.com.au/walta/outline.svg" />
+                                <Format>image/svg+xml</Format>
+                            </ExternalGraphic>
+                            <Size><ogc:Literal>50</ogc:Literal></Size>
+                        </Graphic>
+                    </PointSymbolizer>
+                </Rule>
+            </FeatureTypeStyle>
+        </UserStyle>
+    </NamedLayer>
+</StyledLayerDescriptor>`; 
+
+
     var map = L.map('map',{
         zoomControl: false,
         attributionControl: false,
-    }).setView([-26.07, 133.98], 3.5);
-    
+    }).setView([-42.110449, 146.527405], 8);
+
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -53,30 +158,48 @@
         updateWhenIdle: false
     }).addTo(map);
 
-    L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', {
+    L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', { 
         layers: 'wwew:tas_creatures',
-        format: 'image/png',
-        transparent: true
+        styles: 'inline_style', 
+        format: 'image/png', 
+        transparent: true,
+        SLD_BODY: SLD
     }).addTo(map);
 
-    /*
-    new WFSLayer( {
-        url: "http://geo.cerdi.com.au/geoserver/wwew/ows",
-        typeName: "wwew:tas_creatures",
-        minZoom: 10
-    }).addTo(map);
-    */
     
-    
-    /*L.geoJSON('http://geo.cerdi.com.au/geoserver/wwew/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={layer}&maxFeatures={maxFeatures}&outputFormat=application%2Fjson', {
-        maxZoom: 18,
-        layer: 'wwew:tas_creatures',
-        maxFeatures: 500
-    });*/
-
-    
-   
-    
+    L.Control.Legend = L.Control.extend({
+        _showLegend: function() {
+            if ( L.DomUtil.hasClass(this.legend, "open") ) {
+                L.DomUtil.removeClass(this.legend,"open");
+            } else {
+                L.DomUtil.addClass(this.legend,"open");
+            }
+        },
+        onAdd: function() {
+            var container = L.DomUtil.create('div');
+            var menu = L.DomUtil.create('div', 'menu');
+            menu.innerHTML += "<div></div><div></div><div></div>";
+            var legend = L.DomUtil.create('dl', 'info legend');
+            MAYFLY_LEGEND.forEach(
+                ({ name, code, color, ref }) => {
+                    let div = L.DomUtil.create('div','item',legend);
+                    let title = L.DomUtil.create('dt','title',div);
+                    title.innerHTML = name;
+                    let icon = L.DomUtil.create('dd','icon',div);
+                    icon.style["background-color"] = color;
+                    L.DomEvent.on( div, 'click', () => Titanium.App.fireEvent( "waterbug",{ event: "jumpto", id: ref } ) );
+                });
+            L.DomEvent.on( menu, 'click', this._showLegend, this);
+            container.appendChild(menu);
+            container.appendChild(legend);
+            this.legend = legend;
+            return container;
+        },
+        onRemove: function() {
+            L.DomEvent.off( div, 'click', this._showLegend, this);;
+        }
+    });
+    new L.Control.Legend({position: 'topleft'}).addTo(map);
     </script>
 </body>
 
