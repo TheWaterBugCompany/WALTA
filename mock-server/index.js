@@ -24,7 +24,8 @@ mockServer({
 		host: 'api.waterbugblitz.org.au',
 		port: 443,
 		path: '/swagger',
-		dest: path.join(__dirname, '/swagger'),
+		dest: path.join(__dirname, '/rest'),
+		yaml: true,
 		createErrorFile: true,
 		createEmptyFile: true,
 		overwriteExistingDescriptions: true
