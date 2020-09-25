@@ -1,0 +1,14 @@
+{
+  "desc": "Get a list of creatures attached to a given sample",
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}

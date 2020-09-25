@@ -51,7 +51,7 @@ function ProxyCreateHTTPClient( params ) {
             this.method = method;
         },
         send( data ) {
-            console.log(`REQUEST: ${prettyJson(data)}`);
+            //console.log(`REQUEST: ${prettyJson(data)}`);
             request({ 
                 method: this.method, 
                 url: this.url, 
@@ -60,7 +60,7 @@ function ProxyCreateHTTPClient( params ) {
                 body: data
             }, 
             (err,res,body) => {
-                console.log(`RESPONSE ${res.statusCode}: ${prettyJson(res.body)}`);
+                //console.log(`RESPONSE ${res.statusCode}: ${prettyJson(res.body)}`);
                 this.responseText = body;
                 if ( err || isHttpError( res.statusCode ) ) {
                     params.onerror.call( this, err );
@@ -114,13 +114,15 @@ mockTiWithProxy();
 var CerdiApi = require("../walta-app/app/lib/logic/CerdiApi");
 const { TIMEOUT } = require("dns");
 
-var SERVER_URL = 'https://api-wbb.till.cerdi.edu.au/v1';
+var SERVER_URL = null;
 var CLIENT_SECRET = null;
 fs.readFile('./walta-app/app/config.json', 'utf8', function(err,contents) {
     if ( err ) {
         throw err;
     }
-    CLIENT_SECRET = JSON.parse( contents )["env:production"].cerdiApiSecret;
+    var config = JSON.parse( contents );
+    SERVER_URL = config["env:test"].cerdiServerUrl;
+    CLIENT_SECRET = config["env:test"].cerdiApiSecret;
 });
 describe('CerdiApi', function() {
     let cerdi;
@@ -148,11 +150,11 @@ describe('CerdiApi', function() {
     describe('#obtainAccessToken', function() {
         
         it( 'should obtain access token', function() {
-            expect( Ti.App.Properties.getObject('appAccessToken') ).to.be.undefined;
+            expect( Ti.App.Properties.getObject('appAccessTokenLive') ).to.be.undefined;
             return cerdi.obtainServerAccessToken()
                 .then( (result ) => {
                     expect( result ).to.be.a('string');
-                    expect( Ti.App.Properties.getObject('appAccessToken').access_token ).to.be.a('string');
+                    expect( Ti.App.Properties.getObject('appAccessTokenLive').access_token ).to.be.a('string');
                 });
         });
 
@@ -213,10 +215,9 @@ describe('CerdiApi', function() {
                 survey_consent: false,
                 share_name_consent: false,
                 name: 'Test Example',
-                password: 'badpassword'
+                password: '' // empty passwords disallowed
             })).to.be.rejected;
         });
-        it( 'should succesfully register a social user' );
 
     });
 
@@ -275,10 +276,10 @@ describe('CerdiApi', function() {
     });
 
     describe( '#forgotPassword', function() {
-        it("should submit a sample" /*, function() {
+        it("should sucessfully send forget password" , function() {
             return expect( 
                 cerdi.forgotPassword('testlogin@example.com')
-            ).to.eventually.have.property("id");
-        }*/);
+            ).to.eventually.have.property("success");
+        });
     });
 });

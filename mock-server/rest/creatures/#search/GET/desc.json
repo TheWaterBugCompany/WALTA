@@ -1,0 +1,25 @@
+{
+  "desc": "Search creatures by keyword",
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {
+    "query": {
+      "parameters": [
+        {
+          "name": "query",
+          "required": true,
+          "type": "",
+          "desc": "search phrase"
+        }
+      ]
+    }
+  },
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "desc": [
+    "Get score by id"
+  ],
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}
