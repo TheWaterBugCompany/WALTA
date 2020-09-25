@@ -1,0 +1,14 @@
+{
+  "desc": "Request access_token for app",
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}

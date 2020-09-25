@@ -1,0 +1,14 @@
+{
+  "desc": "Submit an unknown sampled creature for a sample.",
+  "desc2": "This is intended to allow users to submit a photo of a creature with a sample without being able to identify the creature. Assumption is that an administrator would periodically review unknownSampledCreatures and identify\n",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}
