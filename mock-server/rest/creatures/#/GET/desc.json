@@ -1,0 +1,14 @@
+{
+  "desc": "Gets a list of all creatures",
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}

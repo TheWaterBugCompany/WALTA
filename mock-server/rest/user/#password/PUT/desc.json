@@ -1,0 +1,14 @@
+{
+  "desc": "Update local user password",
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}
