@@ -30,7 +30,7 @@ module.exports = function(grunt) {
       './walta-app/app/**/*.xml', 
       './walta-app/app/**/*.css',
       './walta-app/app/**/*.tss' 
-    ];
+    ]; 
 
     const Kobiton = new KobitonAPI("thecodesharman","acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
 
