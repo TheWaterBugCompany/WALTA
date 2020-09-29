@@ -1,0 +1,14 @@
+{
+  "desc": "Update an unknown sampled creature for a sample",
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}

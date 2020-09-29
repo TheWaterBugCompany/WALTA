@@ -1,0 +1,16 @@
+{
+  "desc": [
+    "Get list of scores for specified scoring method"
+  ],
+  "desc2": "",
+  "security": [],
+  "protected": false,
+  "status": "swagger-imported",
+  "request": {},
+  "response": {
+    "statusCode": "",
+    "schema": {
+      "type": ""
+    }
+  }
+}

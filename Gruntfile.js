@@ -304,7 +304,7 @@ module.exports = function(grunt) {
           },
 
           unit_test_node: {
-            command: `PATH=./node_modules/.bin/:$PATH mocha`,
+            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --exit`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
@@ -538,6 +538,12 @@ module.exports = function(grunt) {
       grunt.task.run(`install:${platform}:unit-test`);
       grunt.task.run(`launch:${platform}:unit-test`);
       grunt.task.run(`output-logs:${platform}`);
+
+    } );
+
+    grunt.registerTask('unit-test-node', function( platform ) {
+      grunt.task.run(`exec:unit_test_node`);
+
 
     } );
 
