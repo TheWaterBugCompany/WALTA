@@ -47,7 +47,12 @@ function createHttpClient(method, url, contentType, accessToken, sendDataFunctio
     });
 }
 
-function makeJsonRequest( serverUrl, data, accessToken = null ) {
+function makeJsonGetRequest( serverUrl, accessToken = null) {
+    return createHttpClient("GET", serverUrl, "application/json", accessToken, 
+                (client) => client.send() );
+}
+
+function makeJsonPostRequest( serverUrl, data, accessToken = null) {
     return createHttpClient("POST", serverUrl, "application/json", accessToken, 
                 (client) => client.send( JSON.stringify( data ) ) );
 }
@@ -77,7 +82,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
                             if ( tokenAge < cachedAppAccessToken.expires_in*1000 )
                                 return cachedAppAccessToken;
                         }
-                        return makeJsonRequest( this.serverUrl + '/token/create/server',
+                        return makeJsonPostRequest( this.serverUrl + '/token/create/server',
                             {
                                 "client_secret": this.client_secret,
                                 "scope": this.scope
@@ -103,7 +108,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
             loginUser( email, password ) {
                 return this.obtainServerAccessToken()
                     .then( (accessToken) =>
-                         makeJsonRequest( this.serverUrl + '/token/create', {
+                        makeJsonPostRequest( this.serverUrl + '/token/create', {
                             "password": password,
                             "email": email
                         }, accessToken ) )
@@ -135,12 +140,19 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
-                return makeJsonRequest( this.serverUrl + '/samples', sample, accessToken );
+                return makeJsonPostRequest( this.serverUrl + '/samples', sample, accessToken );
+            },
+
+            retrieveSamples() {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeJsonGetRequest( this.serverUrl + '/samples', accessToken );
             },
 
             forgotPassword( email ) {
                 return this.obtainServerAccessToken()
-                    .then( accessToken => makeJsonRequest( this.serverUrl + '/password/email', { "email": email }, accessToken ) ); 
+                    .then( accessToken => makeJsonPostRequest( this.serverUrl + '/password/email', { "email": email }, accessToken ) ); 
             }
         
         }

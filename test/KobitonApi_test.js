@@ -9,7 +9,7 @@ var WATERBUG_ANDROID_APPID = 59235;
     .catch( err => console.log(`ERROR: ${err}`));*/
 //kb.getAvailableDevicesByResolution("iOS",828,1792)
 //    .then( data => data.forEach( d => console.log(`${d.id}\t${d.modelName}\t${d.platformName}\t${d.platformVersion}\t${d.resolution.width}x${d.resolution.height}`) ) );
-kb.getAvailableResolutions("ios")
-    .then( d => d.forEach( r => console.log(`{ width:${r.width}, height:${r.height} },`)) );
+/*kb.getAvailableResolutions("ios")
+    .then( d => d.forEach( r => console.log(`{ width:${r.width}, height:${r.height} },`)) );*/
 /*kb.getLatestVersion(WATERBUG_ANDROID_APPID)
     .then( data => console.log(data) );*/
