@@ -19,8 +19,6 @@ exports.createCollection = function(name, content) {
     Alloy.Collections[name] = new Backbone.Collection();
     if (content instanceof Array) {
         Alloy.Collections[name].reset(content);
-    } else {
-        throw "No Array specified for createCollection";
     }
     return Alloy.Collections[name];
 };

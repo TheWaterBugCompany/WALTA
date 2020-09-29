@@ -304,7 +304,7 @@ module.exports = function(grunt) {
           },
 
           unit_test_node: {
-            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha`,
+            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --exit`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
