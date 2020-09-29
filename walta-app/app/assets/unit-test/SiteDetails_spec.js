@@ -36,7 +36,7 @@ describe("SiteDetails controller", function() {
         sample.set("lat", "-42.890748");
         sample.set("surveyType", SURVEY_DETAILED );
         
-		ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails");
 	});
 	afterEach( function(done) {
         sample.off();

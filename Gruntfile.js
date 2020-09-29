@@ -112,7 +112,7 @@ module.exports = function(grunt) {
 
       function emulator() {
         if ( platform === "android" ) {
-          args.push( "--deploy-type development", "--target emulator", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+          args.push( "--deploy-type development", "--target emulator", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`, '-C "Default"'); 
         } else if ( platform === "ios" ){
           args.push( "--deploy-type development", "--target simulator", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
         } else {
@@ -151,12 +151,6 @@ module.exports = function(grunt) {
 
         case "preview":
           dev();
-          //test();
-          //args.push("--output-dir builds/preview");
-          if ( grunt.option('liveview') ) {
-            args.push("--liveview");
-          }
-          //args.push("--output-dir builds/preview");
           if ( platform === "android" ) {
             post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/preview/Waterbug.apk");
           } else {
@@ -166,14 +160,10 @@ module.exports = function(grunt) {
 
         case "emulate":
           emulator();
-          args.push("--liveview");
           break;
 
         case "preview-unit-test":
           test();
-          if ( grunt.option('liveview') ) {
-            args.push("--liveview");
-          }
           args.push("--unit-test");
           args.push("--output-dir builds/preview-unit-test");
           break;
@@ -181,6 +171,10 @@ module.exports = function(grunt) {
         default:
           throw new Error(`Unknown build "${build_type}" type!`)
       }
+      if ( grunt.option('liveview') ) {
+        args.push("--liveview");
+      }
+
       var cmd = `./node_modules/.bin/titanium build ${args.join(" ")}`;
       post_cmds.forEach( c => cmd += " && " + c);
       return cmd;

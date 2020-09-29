@@ -8,6 +8,8 @@ function runTests() {
   });
   if ( isManualTests() ) {
     mocha.timeout(0);
+  } else {
+    mocha.timeout(10000); // for slow devices
   }
   return new Promise( function(resolve, reject) {
     [ 

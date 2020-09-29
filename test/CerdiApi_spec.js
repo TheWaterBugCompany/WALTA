@@ -29,7 +29,7 @@ const _ = require("underscore");
 
 const Backbone = require('backbone');
 const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
-
+mocha.timeout(5000);
 
 
 // Mock for network testing that proxies to request library
