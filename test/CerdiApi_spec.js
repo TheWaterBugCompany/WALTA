@@ -19,15 +19,18 @@ require("mocha");
 const sinon = require("sinon");
 const { use, expect } = require("chai");
 const chaiAsPromised = require("chai-as-promised");
+use(chaiAsPromised);
 
 const nock = require('nock');
 const request = require('request');
 const fs = require('fs');
 const moment = require('moment');
+const _ = require("underscore");
 
+const Backbone = require('backbone');
 const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
 
-use(chaiAsPromised);
+
 
 // Mock for network testing that proxies to request library
 function ProxyCreateHTTPClient( params ) {
@@ -36,7 +39,10 @@ function ProxyCreateHTTPClient( params ) {
         return (lmd === 4) || (lmd === 5);
     }
     function prettyJson( obj ) {
-        return JSON.stringify( JSON.parse( obj ), null, 4 );
+        if ( obj )
+            return JSON.stringify( JSON.parse( obj ), null, 4 );
+        else 
+            return "";
     }
     return {
         onload: params.onload,
@@ -74,16 +80,19 @@ function ProxyCreateHTTPClient( params ) {
 
 function mockTi( mockCreateHTTPClient  ) {
     if ( typeof Ti === 'undefined' ) {
-
+        global.Backbone = Backbone;
         global.Ti = { 
             API: {
                 error: console.error,
                 info: console.info,
-                warn: console.warn
+                warn: console.warn,
+                debug: console.debug,
             },
             Network: {
+                NETWORK_NONE: 0,
                 createHTTPClient: mockCreateHTTPClient      
             },
+            
             App: {
                 Properties: {
                     globalProperties: {},
@@ -100,6 +109,10 @@ function mockTi( mockCreateHTTPClient  ) {
                 }
             }
         };
+        Ti.Network.networkType = Ti.Network.NETWORK_NONE; // stop sync just because SampleSync was loaded
+        
+        
+    
     } else {
         Ti.App.Properties.clear();
     }
@@ -112,6 +125,7 @@ function mockTiWithProxy() {
 mockTiWithProxy();
 
 var CerdiApi = require("../walta-app/app/lib/logic/CerdiApi");
+
 const { TIMEOUT } = require("dns");
 
 var SERVER_URL = null;
@@ -124,23 +138,25 @@ fs.readFile('./walta-app/app/config.json', 'utf8', function(err,contents) {
     SERVER_URL = config["env:test"].cerdiServerUrl;
     CLIENT_SECRET = config["env:test"].cerdiApiSecret;
 });
+
+function createTestLogin() {
+    // make sure our test user is registered for tests that
+    // require it.
+    return CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
+        email: `testlogin@example.com`,
+        group: false,
+        survey_consent: false,
+        share_name_consent: false,
+        name: 'Test Example',
+        password: 'tstPassw0rd!'
+    }).catch( (err)=> {
+        // Ignore failures
+    });
+}
+
 describe('CerdiApi', function() {
     let cerdi;
-    before( function() {
-        // make sure our test user is registered for tests that
-        // require it.
-       
-        return CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
-            email: `testlogin@example.com`,
-            group: false,
-            survey_consent: false,
-            share_name_consent: false,
-            name: 'Test Example',
-            password: 'tstPassw0rd!'
-        }).catch( (err)=> {
-            // Ignore failures
-        });
-    });
+    before(createTestLogin);
 
     beforeEach( function() {
         mockTiWithProxy();
@@ -275,11 +291,185 @@ describe('CerdiApi', function() {
         });
     });
 
+    describe( '#retrieveSamples', function() {
+        it.only("should retrieve samples", function() {
+            let createdAt = null, updatedAt = null, sampleDate = moment().format();
+            return cerdi
+                .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
+                .then( ()=> cerdi.submitSample( {
+                    "sample_date": sampleDate,
+                    "lat": "-37.5622",
+                    "lng": "143.87503",
+                    "scoring_method": "alt",
+                    "survey_type": "detailed",
+                    "waterbody_type": "wetland",
+                    "waterbody_name": "test water body",
+                    "nearby_feature": "test nearby feature",
+                    "notes": "test sample",
+                    "habitat": {
+                    "boulder": 5,
+                    "gravel": 5,
+                    "sand_or_silt": 5,
+                    "leaf_packs": 5,
+                    "wood": 5,
+                    "aquatic_plants": 5,
+                    "open_water": 5,
+                    "edge_plants": 5
+                    },
+                    "creatures": [
+                        {
+                        "creature_id": 1,
+                        "count": 10,
+                        "photos_count": 0
+                        }
+                    ],
+                }))
+                .then( result => {
+                    sampleDate = result.sample_date;
+                    createdAt = result.created_at;
+                    updatedAt = result.updated_at;
+                })
+                .then( () => cerdi.retrieveSamples() )
+                .then( result => {
+                    expect(result).to.an("array");
+                    var lastResult = result.pop();
+                    delete lastResult.id;
+                    delete lastResult.user_id;
+                    _(lastResult.sampled_creatures).forEach( c => {
+                        delete c.id;
+                        delete c.sample_id;
+                    });
+                    delete lastResult.habitat.id;
+                    delete lastResult.habitat.sample_id;
+                    expect(lastResult).deep.equal(
+                        {
+                            "sample_date": sampleDate,
+                            "lat": "-37.5622000",
+                            "lng": "143.8750300",
+                            "scoring_method": "alt",
+                            "created_at": createdAt,
+                            "updated_at": updatedAt,
+                            "survey_type": "detailed",
+                            "waterbody_type": "wetland",
+                            "waterbody_name": "test water body",
+                            "nearby_feature": "test nearby feature",
+                            "notes": "test sample",
+                            "reviewed": 0,
+                            "corrected": 0,
+                            "complete": null,
+                            "score": 0,
+                            "weighted_score": null,
+                            "sampled_creatures": [
+                                {
+                                    "creature_id": 1,
+                                    "count": 10,
+                                    "photos_count": 0
+                                }
+                            ],
+                            "habitat": {
+                                "boulder": 5,
+                                "gravel": 5,
+                                "sand_or_silt": 5,
+                                "leaf_packs": 5,
+                                "wood": 5,
+                                "aquatic_plants": 5,
+                                "open_water": 5,
+                                "edge_plants": 5
+                            },
+                            "photos": []
+                        }
+                    );
+                });
+        });
+    });
+
     describe( '#forgotPassword', function() {
-        it("should sucessfully send forget password" , function() {
+        it("should sucessfully send request forget password link" , function() {
             return expect( 
-                cerdi.forgotPassword('testlogin@example.com')
+                cerdi.forgotPassword('michael@thecodesharman.com.au')
             ).to.eventually.have.property("success");
         });
     });
+});
+
+const SampleSync = require("../walta-app/app/lib/logic/SampleSync");
+
+describe("SampleSync",function() {
+    before(createTestLogin);
+
+    beforeEach( function() {
+        mockTiWithProxy();
+        global.Alloy = {
+            createCollection(name) {
+                return Alloy.Collections[name];
+            }
+        }
+        Alloy.Collections = {
+            "sample": _.extend(Array.prototype, {
+                add(item) {
+                    this.push(item);
+                },
+                loadUploadQueue() {
+                    
+                }
+            })
+        };
+        Alloy.Models = {};
+        Alloy.Globals = {};
+        Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET );
+        
+        return Alloy.Globals.CerdiApi.loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
+    });
+
+    it("should upload samples", function() {
+        Alloy.Collections["sample"]
+        .add(
+            _.extend({}, {
+                set(field) {
+
+                },
+                get(field) {
+                    return undefined;
+                },
+                getSitePhoto() {
+                    return "something";
+                },
+                save() {
+
+                },
+                toCerdiApiJson() {
+                    return {
+                        "sample_date": moment().format(),
+                        "lat": "-37.5622",
+                        "lng": "143.87503",
+                        "scoring_method": "alt",
+                        "survey_type": "detailed",
+                        "waterbody_type": "wetland",
+                        "waterbody_name": "test water body",
+                        "nearby_feature": "test nearby feature",
+                        "creatures": [
+                            {
+                                "creature_id": 1,
+                                "count": 10,
+                                "photos_count": 1
+                            }
+                        ],
+                        "habitat": {
+                            "boulder": 5,
+                            "gravel": 5,
+                            "sand_or_silt": 5,
+                            "leaf_packs": 5,
+                            "wood": 5,
+                            "aquatic_plants": 5,
+                            "open_water": 5,
+                            "edge_plants": 5
+                        } 
+
+                    };
+                }
+            })
+        )
+        Ti.Network.networkType = 1;
+        return SampleSync.forceUpload();
+    })
 });
