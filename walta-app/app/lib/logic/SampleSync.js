@@ -36,7 +36,7 @@ function init() {
 
 function forceUpload() {
     clearUploadTimer();
-    startUpload();
+    return startUpload();
 }
 
 function uploadRemainingSamples(samples) {
@@ -128,7 +128,7 @@ function errorHandler( sample ) {
             var errors = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
             log(`Data was invalid continuing: ${errors}`);
         } 
-        Crashlytics.reportException( err );
+        Crashlytics.recordException( err );
         return Promise.reject(err);
     };
 }
@@ -158,14 +158,14 @@ function startUpload() {
     debug("Starting sample syncronisation process...");
     if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
         debug("No network available, sleeping until network becomes avaiable.");
-        return;
+        return Promise.resolve(false);
     }
 
     var samples = Alloy.createCollection("sample");
     samples.loadUploadQueue();
     if ( samples.length >= 1 ) {
         if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
-            uploadRemainingSamples(samples)
+            return uploadRemainingSamples(samples)
                 .then( () => timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL ) )
                 .catch( (error) => { 
                     debug(`Rescheduling upload...`);
@@ -179,6 +179,7 @@ function startUpload() {
         debug("Nothing to do");
         timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
     }
+    return Promise.resolve(false);
 }
 
 exports.uploadNextSample = uploadNextSample;

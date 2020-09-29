@@ -1,1 +1,52 @@
-{}
+{
+    "id": 725,
+    "user_id": 105,
+    "sample_date": "2020-09-25T09:18:24+00:00",
+    "lat": "-42.8907000",
+    "lng": "147.6711300",
+    "scoring_method": "alt",
+    "created_at": "2020-09-25T09:19:31+00:00",
+    "updated_at": "2020-09-25T09:19:31+00:00",
+    "survey_type": "detailed",
+    "waterbody_type": "lake",
+    "waterbody_name": "test",
+    "nearby_feature": "test",
+    "notes": null,
+    "reviewed": 0,
+    "corrected": 0,
+    "complete": null,
+    "score": 3,
+    "weighted_score": 3,
+    "sampled_creatures": [
+        {
+            "id": 4460,
+            "sample_id": 725,
+            "creature_id": 193,
+            "count": 2,
+            "photos_count": 2
+        }
+    ],
+    "habitat": {
+        "id": 725,
+        "sample_id": 725,
+        "boulder": 0,
+        "gravel": 0,
+        "sand_or_silt": 100,
+        "leaf_packs": 0,
+        "wood": 0,
+        "aquatic_plants": 0,
+        "open_water": 0,
+        "edge_plants": 0
+    },
+    "photos": [
+        {
+            "id": 5725,
+            "original_filename": "tixhr5698285428505160847.jpg",
+            "extension": "jpeg",
+            "mimetype": "image/jpeg",
+            "filesize": 949614,
+            "filename": "7ffded5dbf8d816a4c1ebb4878af7980",
+            "user_id": 105
+        }
+    ]
+}
