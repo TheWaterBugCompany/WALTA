@@ -520,13 +520,15 @@ module.exports = function(grunt) {
       grunt.task.run('parallel:visual_regression_test');
     });
 
-    grunt.registerTask('acceptance-test', function (platform) {
+    grunt.registerTask('acceptance-test', function () {
+      var platform = grunt.option('platform');
       grunt.task.run(`newer:test_${platform}`);
       grunt.task.run(`exec:acceptance_test:${platform}`);
     });
 
     
-    grunt.registerTask('unit-test', function( platform ) {
+    grunt.registerTask('unit-test', function( ) {
+      var platform = grunt.option('platform');
       //grunt.task.run('run:appium');
       grunt.task.run(`newer:unit_test_${platform}`);
       grunt.task.run(`install:${platform}:unit-test`);
@@ -560,7 +562,8 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}:preview`);
     } );
 
-    grunt.registerTask('preview-unit-test', function(platform) {
+    grunt.registerTask('preview-unit-test', function() {
+      var platform = grunt.option('platform');
       grunt.task.run(`newer:preview_unit_test_${platform}`);
       if ( grunt.option('liveview') ) {
         grunt.task.run("exec:stop_live_view");
@@ -575,14 +578,16 @@ module.exports = function(grunt) {
       grunt.task.run(`newer:release_${platform}`); 
     });
 
-    grunt.registerTask('debug', function(platform) {
+    grunt.registerTask('debug', function() {
+      var platform = grunt.option('platform');
       grunt.task.run(`newer:debug_${platform}`); 
       grunt.task.run(`install:${platform}:debug`);
       grunt.task.run(`launch:${platform}:debug`);
       grunt.task.run(`output-logs:${platform}:preview`);
     });
 
-    grunt.registerTask('emulate', function(platform) {
+    grunt.registerTask('emulate', function() {
+      var platform = grunt.option('platform');
      // grunt.task.run("exec:stop_live_view");
      // grunt.task.run(`run:live_view_${platform}`);
       grunt.task.run(`exec:build:${platform}:emulate`); 

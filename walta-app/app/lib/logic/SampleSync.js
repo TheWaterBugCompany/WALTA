@@ -5,7 +5,7 @@ var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/Pho
 var SYNC_INTERVAL = 1000*60*5; // 5 minutes
 
 var log = Crashlytics.log;
-var debug = m => Ti.API.debug(m);
+var debug = m => Ti.API.info(m);
 
 let timeoutHandler = null;
 
@@ -182,6 +182,24 @@ function startUpload() {
     return Promise.resolve(false);
 }
 
+function downloadSamples() {
+    debug("Retrieving samples from server...");
+    let sample = Alloy.Models.instance("sample");
+    function saveNewSamples( samples ) {
+        _(samples).forEach( serverSample => {
+            if ( sample.loadByServerId(serverSample.id) ) {
+                debug("UNINPLEMENTED UPDATE EXISTING!!")
+            } else {
+                sample.fromCerdiApiJson(serverSample);
+            }
+        });
+    }
+    Alloy.Globals.CerdiApi.retrieveSamples()
+        .then( saveNewSamples );
+
+}
+
 exports.uploadNextSample = uploadNextSample;
+exports.downloadSamples = downloadSamples;
 exports.forceUpload = forceUpload;
 exports.init = init;
