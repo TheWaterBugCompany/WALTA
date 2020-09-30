@@ -23,7 +23,6 @@ exports.definition = {
 			initialize() {
 				this.on("change:sampleId", function() {
 					// move from temporary to permanent storage
-					console.log("change:sampleId");
 					let photoPath = this.get("taxonPhotoPath");
 					if ( photoPath ) this.setPhoto(photoPath);
 				});
@@ -36,6 +35,19 @@ exports.definition = {
 				if ( abundance.startsWith(">")) return 30;
 				let [ min, max ] = abundance.split("-").map((a) => parseInt(a) );
 				return Math.round((min+max)/2);
+			},
+			convertCountToAbundance(count) {
+				if ( count >= 1 && count < 3 ) {
+					return "1-2";
+				} else if ( count >= 3 && count < 6 ) {
+					return "3-5";
+				} else if ( count >= 6 && count < 11 ) {
+					return "6-10";
+				} else if ( count >= 11 && count <= 20 ) {
+					return "11-20";
+				} else {
+					return "> 20";
+				}
 			},
 
 			setPhoto(file) {
@@ -71,6 +83,11 @@ exports.definition = {
 				}
 			},
 
+			fromCerdiApiJson(creature) {
+				this.set("taxonId", creature.creature_id );
+				this.set("abundance", this.convertCountToAbundance(creature.count));
+			},
+
 			toCerdiApiJson() {
 				return {
 					"count": this.getAbundance(),
@@ -92,6 +109,15 @@ exports.definition = {
 	},
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, {
+			fromCerdiApiJson(creatures,sampleId) {
+				_(creatures).forEach( creature => {
+					let taxon = Alloy.createModel("taxa");
+					taxon.set("sampleId", sampleId);
+					taxon.fromCerdiApiJson(creature);
+					taxon.save();
+					this.add(taxon);
+				});
+			},
 			toCerdiApiJson() {
 				return this.map( (taxon) => taxon.toCerdiApiJson() );
 			},

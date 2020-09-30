@@ -38,9 +38,14 @@ function createCerdiApi( serverUrl, client_secret  ) {
             return Promise.resolve();
         },
         photosSubmitted: [],
+        sampleData: [],
         submitSitePhoto(serverSampleId, photoPath ) {
             this.photosSubmitted.push(photoPath);
             return Promise.resolve();
+        },
+
+        retrieveSamples() {
+            return Promise.resolve(this.sampleData);
         },
 
         forgotPassword( email ) {
