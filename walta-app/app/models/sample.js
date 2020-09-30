@@ -26,7 +26,7 @@ exports.definition = {
 			"openWater": "INTEGER",
 			"edgePlants": "INTEGER",
 			"sitePhotoPath": "VARCHAR(255)",
-			"uploaded": "BOOLEAN"
+			"uploaded": "INTEGER" // timestamp of last upload (or 1 for legacy code)
 		},
 		adapter: {
 			type: "sql",
@@ -89,10 +89,23 @@ exports.definition = {
 				this.fetch({ query: `SELECT * FROM sample WHERE sampleId = ${sampleId}` });
 				Alloy.Collections.instance("taxa").load(sampleId);
 			},
+			
+			loadByServerId(serverSampleId) {
+				this.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId}` });
+				let sampleId  = this.get("sampleId");
+				if ( sampleId ) {
+					Alloy.Collections.instance("taxa").load(this.get("sampleId"));
+					return true;
+				} else {
+					return false;
+				}
+			},
 
 			loadTaxa() {
-				var taxa = Alloy.createCollection("taxa");
-				taxa.load( this.get("sampleId") );
+				let taxa = Alloy.createCollection("taxa");
+				let sampleId = this.get("sampleId");
+				if ( sampleId )
+					taxa.load( sampleId );
 				return taxa;
 			},
 
@@ -187,6 +200,47 @@ exports.definition = {
 
 				sampleJson.taxaCount = taxa.length;
 				return sampleJson;
+			},
+
+			fromCerdiApiJson: function(sample) {
+				var taxa = this.loadTaxa();
+				function toSurveyType(surveyType) {
+					if ( surveyType === "detailed")
+						return Sample.SURVEY_DETAILED;
+					else if ( surveyType === "quick")
+						return Sample.SURVEY_ORDER;
+					else if ( surveyType === "mayfly")
+						return Sample.SURVEY_MAYFLY;
+				}
+				function toWaterbodyType(waterbodyType) {
+					if ( waterbodyType === "river")
+						return Sample.WATERBODY_RIVER;
+					else if ( waterbodyType === "wetland")
+						return Sample.WATERBODY_WETLAND;
+					else if ( waterbodyType === "lake")
+						return Sample.WATERBODY_LAKE;
+				}
+				this.set("serverSampleId", sample.id);
+				this.set("dateCompleted", sample.sample_date);
+				this.set("lat", sample.lat);
+				this.set("lng", sample.lng);
+				this.set("surveyType", toSurveyType(sample.survey_type));
+				this.set("waterbodyType", toWaterbodyType(sample.waterbody_type));
+				this.set("waterbodyName", sample.waterbody_name);
+				this.set("nearbyFeature", sample.nearby_feature);
+				
+				this.set("boulder", sample.habitat.boulder);
+				this.set("gravel", sample.habitat.gravel);
+				this.set("sandOrSilt", sample.habitat.sand_or_silt);
+				this.set("leafPacks", sample.habitat.leaf_packs);
+				this.set("wood", sample.habitat.wood);
+				this.set("aquaticPlants", sample.habitat.aquatic_plants);
+				this.set("openWater", sample.habitat.open_water);
+				this.set("edgePlants", sample.habitat.edge_plants);
+				// needs a sampleId before added taxa
+				this.save(); 
+				taxa.fromCerdiApiJson(sample.sampled_creatures, this.get("sampleId"));
+
 			},
 
 			toCerdiApiJson: function() {

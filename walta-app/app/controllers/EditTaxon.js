@@ -50,18 +50,7 @@ function setAbundance( binValue  ) {
 
 function updateAbundance() {
     var val = $.abundanceValue.value
-    var binValue;
-    if ( val >= 1 && val <= 3 ) {
-        binValue = "1-2";
-    } else if ( val > 3 && val <= 6 ) {
-        binValue = "3-5";
-    } else if ( val > 6 && val <= 11 ) {
-        binValue = "6-10";
-    } else if ( val > 11 && val <= 20 ) {
-        binValue = "11-20";
-    } else {
-        binValue = "> 20";
-    }
+    var binValue = taxon.convertCountToAbundance(val);
     if ( $.abundanceLabel.text !== binValue ) {
         $.abundanceLabel.text = binValue; 
         setAbundance(binValue);
