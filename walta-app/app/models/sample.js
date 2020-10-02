@@ -26,7 +26,8 @@ exports.definition = {
 			"openWater": "INTEGER",
 			"edgePlants": "INTEGER",
 			"sitePhotoPath": "VARCHAR(255)",
-			"uploaded": "INTEGER" // timestamp of last upload (or 1 for legacy code)
+			"uploaded": "INTEGER", // timestamp of last upload (or 1 for legacy code)
+			"updatedAt": "INTEGER" // timestamp of the last update (or NULL for legacy)
 		},
 		adapter: {
 			type: "sql",
@@ -37,7 +38,15 @@ exports.definition = {
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
-
+			
+			initialize: function() {
+				this.on('change', function(a,event) {
+					if ( ! ( event.changes.length === 1 && event.changes.updatedAt ) ) {
+						this.set('updatedAt', moment().valueOf());
+						_.defer(() => this.save());
+					}
+				});
+			},
 			isReadOnly: function() {
 				/*var dateCompleted = this.get("dateCompleted");
 				if ( ! dateCompleted )
@@ -75,25 +84,25 @@ exports.definition = {
 				this.save();
 			},
 
-			loadCurrent() {
+			loadCurrent(alsoLoadTaxon = true) {
 				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
 				let sampleId = this.get("sampleId");
-				if ( sampleId ) {
+				if ( sampleId && alsoLoadTaxon ) {
 					Alloy.Collections.instance("taxa").load(sampleId);
 				} else {
 					Alloy.Collections.instance("taxa");
 				}
 			},
 
-			loadById(sampleId) {
+			loadById(sampleId, alsoLoadTaxon = true) {
 				this.fetch({ query: `SELECT * FROM sample WHERE sampleId = ${sampleId}` });
-				Alloy.Collections.instance("taxa").load(sampleId);
+				if ( alsoLoadTaxon) Alloy.Collections.instance("taxa").load(sampleId);
 			},
 			
-			loadByServerId(serverSampleId) {
+			loadByServerId(serverSampleId, alsoLoadTaxon = true) {
 				this.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId}` });
 				let sampleId  = this.get("sampleId");
-				if ( sampleId ) {
+				if ( sampleId && alsoLoadTaxon) {
 					Alloy.Collections.instance("taxa").load(this.get("sampleId"));
 					return true;
 				} else {
