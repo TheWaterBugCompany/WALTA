@@ -26,6 +26,16 @@ exports.definition = {
 					let photoPath = this.get("taxonPhotoPath");
 					if ( photoPath ) this.setPhoto(photoPath);
 				});
+				this.on('change', function() {
+					let sampleId = this.get('sampleId');
+					if ( sampleId ) {
+						let sample = Alloy.createModel("sample");
+						sample.loadById(sampleId, false);
+						sample.set({ 'updatedAt': moment().valueOf() }, {silent:true});
+						sample.save();
+					}
+					
+				});
 			},
 			getTaxonId() {
 				return this.get("taxonId");
