@@ -317,5 +317,12 @@ describe("Sample collection, model including taxa", function() {
       expect( json ).to.be.ok;
       expect( json.sampleId ).to.equal(99);
     });
+
+    it.only('should set the updatedAt field to the lastest date afer a field is set', function() {
+      let timestamp = moment();
+      let sample = Alloy.Models.sample;
+      sample.set('waterbodyName', 'test update name');
+      expect(sample.get('updatedAt')).to.be.above(timestamp.valueOf());
+    });
   });
 });

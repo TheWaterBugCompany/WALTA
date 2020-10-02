@@ -1,5 +1,6 @@
 var Crashlytics = require('util/Crashlytics');
 var Topics = require('ui/Topics');
+var moment = require("lib/moment");
 var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 
 var SYNC_INTERVAL = 1000*60*5; // 5 minutes
@@ -188,7 +189,13 @@ function downloadSamples() {
     function saveNewSamples( samples ) {
         _(samples).forEach( serverSample => {
             if ( sample.loadByServerId(serverSample.id) ) {
-                debug("UNINPLEMENTED UPDATE EXISTING!!")
+                // only update if updated after it was last uploaded - this allows user changes
+                // to not be overwritten. If the data on the server changes and the user makes a
+                // change then this will always preference the server change since we always
+                // call downloadSamples() before calling uploadSamples()
+                if ( moment(serverSample.updated_at).isAfter( sample.get("uploaded") ) ) {
+                    sample.fromCerdiApiJson(serverSample)
+                }
             } else {
                 sample.fromCerdiApiJson(serverSample);
             }

@@ -159,8 +159,10 @@ describe.only("SampleSync", function() {
 
         Need to add a server id for each photo and an uploaded date.
     */
-   it.only('should download new samples from the server',async function() {
-        clearMockSampleData();
+   this.beforeEach(function() {
+    clearMockSampleData();
+   });
+   it('should download new samples from the server',async function() {
         Alloy.Globals.CerdiApi.sampleData = [ MOCK_SAMPLE_DATA ];
         let samples = Alloy.Collections.instance("sample");
         let taxa = Alloy.Collections.instance("taxa");
@@ -192,7 +194,30 @@ describe.only("SampleSync", function() {
         expect(taxa.at(1).get("taxonId")).to.equal(2);
         expect(taxa.at(1).get("abundance")).to.equal("6-10");
    });
-   it('should update existing samples if they have been updated on the server');
+   it.only('should update existing samples if they have been updated on the server', async function() {
+    Alloy.Globals.CerdiApi.sampleData = [ MOCK_SAMPLE_DATA ];
+    let samples = Alloy.Collections.instance("sample");
+    let taxa = Alloy.Collections.instance("taxa");
+
+    // create existing sample to update
+    let sample = Alloy.Models.instance("sample");
+    sample.set("serverSampleId", 473);
+    sample.set("uploaded", 1 ); // a long time ago
+    sample.set("waterbodyName", "existing waterbody name");
+    sample.save();
+
+    await SampleSync.downloadSamples();
+
+    // load the updated sample - we are just testing the update is applied here
+    // assuming the same code path is followed for adding a new sample
+    sample = Alloy.Models.instance("sample");
+    sample.loadByServerId(473);
+    expect(sample.get("serverSampleId")).to.equal(473);
+    expect(sample.get("waterbodyName")).to.equal("test waterbody name");
+
+   });
+   it('should NOT update existing samples if the update on the server happened BEFORE our lastest save');
+   it('should update existing samples if the update on the server happened AFTER our lastest save');
    it('should download site photos if they are new');
    it('shoudl download taxa photos if they are new');
 });
