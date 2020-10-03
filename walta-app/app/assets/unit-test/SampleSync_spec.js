@@ -263,6 +263,6 @@ describe.only("SampleSync", function () {
 
         });
         it('should download site photos if they are new');
-        it('shoudl download taxa photos if they are new');
+        it('should download taxa photos if they are new');
     });
 });
