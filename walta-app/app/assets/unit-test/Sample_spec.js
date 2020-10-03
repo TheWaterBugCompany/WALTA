@@ -318,7 +318,7 @@ describe("Sample collection, model including taxa", function() {
       expect( json.sampleId ).to.equal(99);
     });
 
-    it.only('should set the updatedAt field to the lastest date afer a field is set', function() {
+    it('should set the updatedAt field to the lastest date afer a field is set', function() {
       let timestamp = moment();
       let sample = Alloy.Models.sample;
       sample.set('waterbodyName', 'test update name');
