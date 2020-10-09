@@ -98,7 +98,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
             registerUser( userInfo ) {
                 return this.obtainServerAccessToken()
                     .then( (accessToken) => 
-                        makeJsonRequest( this.serverUrl + '/user/create', 
+                        makeJsonPostRequest( this.serverUrl + '/user/create', 
                             userInfo, accessToken))
                     .then( (resp) => {
                         return { id: resp.id, accessToken: resp.accessToken } ;

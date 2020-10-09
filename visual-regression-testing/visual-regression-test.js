@@ -1,6 +1,6 @@
 var fs = require('fs');
 var sizeOf = require('image-size');
-var looksSame = require('looks-same');
+
 const { navigateGoBack,
     navigateBrowseViaTray,
     navigateSpeedbugNotSureViaTray, 
@@ -11,22 +11,7 @@ const { navigateGoBack,
     navigateSpeedbugNotSureViaIdentify,
     navigateTakePhoto } = require('../features/support/navigation-driver');
 
-function assertLooksSame( img1, img2 ) {
-    return new Promise( function(resolve, reject) {
-        looksSame( img1, img2, { tolerance: 5, ignoreAntialiasing: true, antialiasingTolerance: 6 }, function(error, result) {
-            if ( error ) {
-                reject(error);
-            } else {
-                try { 
-                    expect(result.equal, "baseline image is different" ).to.be.true;
-                    resolve();
-                } catch(e) {
-                    reject(e);
-                }
-            }
-        });
-    });
-}
+const assertLooksSame = require('../features/support/image-test');
 
 function screenshotPath( screenshot, name, postfix="" ) {
     var dims = sizeOf(screenshot);

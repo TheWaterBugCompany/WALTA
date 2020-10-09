@@ -33,19 +33,25 @@ function createCerdiApi( serverUrl, client_secret  ) {
            
         },
 
-        submitCreaturePhoto(sampleId, taxonId, photo ) {
-            this.photosSubmitted.push(photo);
-            return Promise.resolve();
+        submitCreaturePhoto(sampleId, taxonId, photoPath ) {
+            var photoId = `s${sampleId}_t${taxonId}_creature`;
+            this.photosSubmitted[photoId] = photoPath;
+            return Promise.resolve(photoId);
         },
         photosSubmitted: [],
         sampleData: [],
-        submitSitePhoto(serverSampleId, photoPath ) {
-            this.photosSubmitted.push(photoPath);
-            return Promise.resolve();
+        submitSitePhoto(sampleId, photoPath ) {
+            var photoId = `s${sampleId}_site`
+            this.photosSubmitted[photoId] = photoPath;
+            return Promise.resolve(photoId);
         },
 
         retrieveSamples() {
             return Promise.resolve(this.sampleData);
+        },
+
+        retrievePhoto(sampleId,) {
+            return photos[`id_${id}`];
         },
 
         forgotPassword( email ) {

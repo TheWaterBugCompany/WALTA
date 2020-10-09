@@ -262,7 +262,9 @@ describe.only("SampleSync", function () {
             expect(sample.get("waterbodyName")).to.equal("test waterbody name");
 
         });
-        it('should download site photos if they are new');
+        it('should download site photos if they are new',function() {
+
+        });
         it('should download taxa photos if they are new');
     });
 });
