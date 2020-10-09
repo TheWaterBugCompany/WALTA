@@ -90,7 +90,7 @@ function clearMockSampleData() {
     Alloy.Models.taxa = null;
 }
 
-describe.only("SampleSync", function () {
+describe("SampleSync", function () {
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         let samples = Alloy.Collections.instance("sample");
@@ -160,7 +160,7 @@ describe.only("SampleSync", function () {
 
         Need to add a server id for each photo and an uploaded date.
     */
-    context.only("Sample Sync Download", function () {
+    context("Sample Sync Download", function () {
         this.beforeEach(function () {
             clearMockSampleData();
         });
