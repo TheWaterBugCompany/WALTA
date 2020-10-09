@@ -23,7 +23,7 @@ function savePhoto( blob, filename  ) {
     var photoPath = absolutePath(filename);
     info(`File path ${photoPath.nativePath}`);
     if ( photoPath.exists() ) {
-        info("file already exists deletin");
+        info("file already exists deleting");
         var result = photoPath.deleteFile();
         if ( !result ) {
             log(`Error deleting file: writable: ${photoPath.writable}`);

@@ -23,13 +23,16 @@ use(chaiAsPromised);
 
 const nock = require('nock');
 const request = require('request');
+const path = require('path');
 const fs = require('fs');
 const moment = require('moment');
 const _ = require("underscore");
 
 const Backbone = require('backbone');
+const assertLooksSame = require('../features/support/image-test');
+
 const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
-mocha.timeout(5000);
+
 
 
 // Mock for network testing that proxies to request library
@@ -57,21 +60,31 @@ function ProxyCreateHTTPClient( params ) {
             this.method = method;
         },
         send( data ) {
-            //console.log(`REQUEST: ${prettyJson(data)}`);
-            request({ 
+            console.log(`REQUEST (${this.method}) to ${this.url}-  data =`, data);
+            let attrs = { 
                 method: this.method, 
                 url: this.url, 
                 headers: this.headers, 
-                json: false,
-                body: data
-            }, 
+                json: false
+            }
+            if ( typeof(data) === "object" && this.method === "POST" && data.photo ) {
+                attrs.formData = data; 
+            } else {
+                attrs.body = data;
+            }
+         
+            request(attrs, 
             (err,res,body) => {
-                //console.log(`RESPONSE ${res.statusCode}: ${prettyJson(res.body)}`);
-                this.responseText = body;
-                if ( err || isHttpError( res.statusCode ) ) {
-                    params.onerror.call( this, err );
+                if ( err ) {
+                    console.log(`ERROR ${err}`);
                 } else {
-                    params.onload.call( this, res );
+                    console.log(`RESPONSE ${res.statusCode}: ${prettyJson(res.body)}`);
+                    this.responseText = body;
+                    if ( err || isHttpError( res.statusCode ) ) {
+                        params.onerror.call( this, err );
+                    } else {
+                        params.onload.call( this, res );
+                    }
                 }
             });
         }
@@ -100,17 +113,44 @@ function mockTi( mockCreateHTTPClient  ) {
                         this.globalProperties = {};
                     },
                     setObject(name, value) { 
+                        console.log(`set ${name} = ${JSON.stringify(value)}`);
                         this.globalProperties[name] = value; 
                     },
                     getObject(name) { 
-                        return this.globalProperties[name]; 
+                        let value = this.globalProperties[name];
+                        console.log(`set ${name} = ${JSON.stringify(value)}`);
+                        return value; 
                     },
                     hasProperty() { return false }
                 }
+            },
+
+            Filesystem: {
+                getFile(...paths) {
+                    // Hack to detect unit test resource paths
+                    if ( paths[1].startsWith("./walta-app")) {
+                        paths.shift();
+                    }
+                    var filePath = path.join(...paths);
+                    console.log(`reading file = ${filePath}`);
+                    return {
+                        read() {
+                            let data = fs.readFileSync(filePath);
+                            if ( data === undefined ) 
+                                throw `Unable to read file ${filePath}`;
+                            console.log("data = ", data);
+                            return data;
+                        }
+                    };
+                },
+                resourcesDirectory: "/tmp/waterbugtest/resources",
+                applicationDataDirectory: "/tmp/waterbugtest/applicationData"
+
             }
         };
         Ti.Network.networkType = Ti.Network.NETWORK_NONE; // stop sync just because SampleSync was loaded
-        
+        fs.mkdirSync(Ti.Filesystem.resourcesDirectory, { recursive:true } );
+        fs.mkdirSync(Ti.Filesystem.applicationDataDirectory, { recursive:true } );
         
     
     } else {
@@ -130,14 +170,15 @@ const { TIMEOUT } = require("dns");
 
 var SERVER_URL = null;
 var CLIENT_SECRET = null;
-fs.readFile('./walta-app/app/config.json', 'utf8', function(err,contents) {
-    if ( err ) {
-        throw err;
-    }
-    var config = JSON.parse( contents );
-    SERVER_URL = config["env:test"].cerdiServerUrl;
-    CLIENT_SECRET = config["env:test"].cerdiApiSecret;
-});
+contents = fs.readFileSync('./walta-app/app/config.json', 'utf8');
+var config = JSON.parse( contents );
+SERVER_URL = config["env:test"].cerdiServerUrl;
+CLIENT_SECRET = config["env:test"].cerdiApiSecret;
+
+if ( SERVER_URL === null || CLIENT_SECRET == null ) {
+    console.log("Unable to read SERVER_URL or CLIENT_SECRET");
+    process.exit(1);
+}
 
 function createTestLogin() {
     // make sure our test user is registered for tests that
@@ -292,38 +333,76 @@ describe('CerdiApi', function() {
     });
 
     describe( '#retrieveSamples', function() {
-        it.only("should retrieve samples", function() {
+        const sitePhotoPath = "./walta-app/app/assets/unit-test/resources/site-mock.jpg";
+        const creaturePhotoPath = "./walta-app/app/assets/unit-test/resources/simpleKey1/media/amphipoda_01.jpg";
+        function submitSitePhoto(serverSampleId) {
+            return cerdi.submitSitePhoto(serverSampleId,sitePhotoPath)
+        }
+        function submitCreaturePhoto(serverSampleId,creatureId) {
+            return cerdi.submitSitePhoto(serverSampleId,creatureId,creaturePhotoPath)
+        }
+        function submitTestSample(sampleDate) {
+            return cerdi.submitSample( {
+                "sample_date": sampleDate,
+                "lat": "-37.5622",
+                "lng": "143.87503",
+                "scoring_method": "alt",
+                "survey_type": "detailed",
+                "waterbody_type": "wetland",
+                "waterbody_name": "test water body",
+                "nearby_feature": "test nearby feature",
+                "notes": "test sample",
+                "habitat": {
+                "boulder": 5,
+                "gravel": 5,
+                "sand_or_silt": 5,
+                "leaf_packs": 5,
+                "wood": 5,
+                "aquatic_plants": 5,
+                "open_water": 5,
+                "edge_plants": 5
+                },
+                "creatures": [
+                    {
+                    "creature_id": 1,
+                    "count": 10,
+                    "photos_count": 0
+                    }
+                ],
+            })
+        }
+        it.only("should retrieve site photo", function() {
+            this.timeout(5000);
+            let serverSampleId,sitePhotoId,creaturePhotoId;
+            return cerdi
+                .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
+                .then( () => submitTestSample(moment().format()) )
+                .then( res => serverSampleId = res.id )
+                .then( () => submitSitePhoto( serverSampleId ) )
+                .then( res => sitePhotoId = res.id )
+                .then( () => cerdi.retrieveSitePhoto(serverSampleId))
+                .then( res => assertLooksSame(sitePhotoPath,res.path));
+
+        });
+        it("should retrieve creature photo", function() {
+            let serverSampleId,sitePhotoId,creaturePhotoId;
+            return cerdi
+                .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
+                .then( () => submitTestSample(moment().format()) )
+                .then( res => serverSampleId = res.id )
+                .then( () => submitSitePhoto( serverSampleId ) )
+                .then( res => sitePhotoId = res.id )
+                .then( () => submitCreaturePhoto(serverSampleId,1) )
+                .then( res => creaturePhotoId = res.id )
+                .then( () => cerdi.retrieveCreaturePhoto(serverSampleId,1))
+                .then( res => assertLooksSame(creaturePhotoPath,res.path));
+
+        });
+        it("should retrieve samples", function() {
             let createdAt = null, updatedAt = null, sampleDate = moment().format();
             return cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
-                .then( ()=> cerdi.submitSample( {
-                    "sample_date": sampleDate,
-                    "lat": "-37.5622",
-                    "lng": "143.87503",
-                    "scoring_method": "alt",
-                    "survey_type": "detailed",
-                    "waterbody_type": "wetland",
-                    "waterbody_name": "test water body",
-                    "nearby_feature": "test nearby feature",
-                    "notes": "test sample",
-                    "habitat": {
-                    "boulder": 5,
-                    "gravel": 5,
-                    "sand_or_silt": 5,
-                    "leaf_packs": 5,
-                    "wood": 5,
-                    "aquatic_plants": 5,
-                    "open_water": 5,
-                    "edge_plants": 5
-                    },
-                    "creatures": [
-                        {
-                        "creature_id": 1,
-                        "count": 10,
-                        "photos_count": 0
-                        }
-                    ],
-                }))
+                .then( () => submitTestSample(sampleDate) )
                 .then( result => {
                     sampleDate = result.sample_date;
                     createdAt = result.created_at;
@@ -394,7 +473,7 @@ describe('CerdiApi', function() {
 
 const SampleSync = require("../walta-app/app/lib/logic/SampleSync");
 
-describe("SampleSync",function() {
+/* describe("SampleSync",function() {
     before(createTestLogin);
 
     beforeEach( function() {
@@ -472,4 +551,4 @@ describe("SampleSync",function() {
         Ti.Network.networkType = 1;
         return SampleSync.forceUpload();
     })
-});
+}); */
