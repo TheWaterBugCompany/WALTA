@@ -32,6 +32,7 @@ function runTests() {
       "TaxonDetails",
       "SiteDetails",
       "ViewUtils",
+      "CerdiApi",
       //"LeafletMap",
       //"MayflyEmergenceMap",
       //"MayflyMusterSelect",

@@ -15,12 +15,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var { loadPhoto } = require('util/PhotoUtils');
-function createHttpClient(method, url, contentType, accessToken, sendDataFunction ) {
+var info = Ti.API.info;
+var { loadPhoto, savePhoto } = require('util/PhotoUtils');
+function createHttpClient(method, url, contentType, acceptType = 'application/json', accessToken, sendDataFunction ) {
     return new Promise( (resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
                 onload: function() {
-                    resolve( JSON.parse(this.responseText) );
+                    if ( acceptType === 'application/json' ) {
+                        resolve(JSON.parse(this.responseText));
+                    } else {
+                        resolve( this.responseData );
+                    }
+                
                 },
                 onerror: function(err) {
                     if ( this.responseText ) {
@@ -36,8 +42,8 @@ function createHttpClient(method, url, contentType, accessToken, sendDataFunctio
                 timeout: 30000 
             });
         client.open(method, url);
-        client.setRequestHeader('Accept', 'application/json');
-        if ( contentType !== "multipart/form-data" ) 
+        client.setRequestHeader('Accept',acceptType) ;
+        if ( contentType !== "multipart/form-data" && contentType !== null) 
             client.setRequestHeader('Content-Type', contentType);
         
         if ( accessToken ) {
@@ -48,18 +54,24 @@ function createHttpClient(method, url, contentType, accessToken, sendDataFunctio
 }
 
 function makeJsonGetRequest( serverUrl, accessToken = null) {
-    return createHttpClient("GET", serverUrl, "application/json", accessToken, 
+    //info(`get request to ${serverUrl}`);
+    return createHttpClient("GET", serverUrl, null, "application/json", accessToken, 
                 (client) => client.send() );
 }
 
 function makeJsonPostRequest( serverUrl, data, accessToken = null) {
-    return createHttpClient("POST", serverUrl, "application/json", accessToken, 
+    return createHttpClient("POST", serverUrl, "application/json", "application/json",accessToken, 
                 (client) => client.send( JSON.stringify( data ) ) );
 }
 
-function makeImagePost( serverUrl, imageData, accessToken = null ) {
-    return createHttpClient("POST", serverUrl, "multipart/form-data", accessToken, 
+function makeImagePostRequest( serverUrl, imageData, accessToken = null ) {
+    return createHttpClient("POST", serverUrl, "multipart/form-data", "application/json", accessToken, 
                 (client) => client.send( { "photo": imageData } ) );
+}
+
+function makeImageGetRequest( serverUrl, accessToken = null ) {
+    return createHttpClient("GET", serverUrl, null, "image/jpeg", accessToken, 
+                (client) => client.send() );
 }
 
 
@@ -125,7 +137,34 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
-                return makeImagePost( `${this.serverUrl}/samples/${serverSampleId}/photos`, photoBlob, accessToken );
+                return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/photos`, photoBlob, accessToken );
+            },
+
+            retrieveSitePhoto( serverSampleId,photoPath ) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                let serverUrl = this.serverUrl;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+
+                function findLatestPhoto(photos) {
+                    //info("find latest photos: " + JSON.stringify(photos));
+                    return photos[photos.length-1];
+                }
+
+                function downloadPhoto(photo) {
+                    //info("downloadPhoto photo: " + JSON.stringify(photo));
+                    return makeImageGetRequest(`${serverUrl}/photos/${photo.id}/view`, accessToken);
+                }
+
+                function saveRetrievedPhoto(blob) {
+                    savePhoto(blob,photoPath);
+                    return photoPath;
+                }
+                return makeJsonGetRequest(  `${serverUrl}/samples/${serverSampleId}/photos`, accessToken )
+                    .then(findLatestPhoto)
+                    .then(downloadPhoto)
+                    .then(saveRetrievedPhoto);
+
             },
 
             submitCreaturePhoto( serverSampleId, creatureId, photoPath ) {
@@ -133,7 +172,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
-                return makeImagePost( `${this.serverUrl}/samples/${serverSampleId}/creatures/${creatureId}/photos`, photoBlob, accessToken );
+                return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/creatures/${creatureId}/photos`, photoBlob, accessToken );
             },
         
             submitSample( sample ) {
