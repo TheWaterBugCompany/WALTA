@@ -3,25 +3,25 @@ var info = Ti.API.info;
 var log = Crashlytics.log;
 function absolutePath(path) {
     if ( path.startsWith("file:///") ) {
-        info(`${path} starts with file:///`);
+        //info(`${path} starts with file:///`);
         return Ti.Filesystem.getFile(path);
     } else if ( path.startsWith("/") ) {
-        info(`${path} starts with /`)
+        //info(`${path} starts with /`)
         return Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,path);
     } else {
-        info(`${path} doesn't start with /`)
+       // info(`${path} doesn't start with /`)
         return Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, path);
     }
 }
 
 function loadPhoto(path) {
-    info(`reading ${path}`)
+    info(`reading photo from ${path}`)
     return absolutePath(path).read();
 }
 
 function savePhoto( blob, filename  ) {
     var photoPath = absolutePath(filename);
-    info(`File path ${photoPath.nativePath}`);
+    info(`saving photo to ${photoPath.nativePath}`);
     if ( photoPath.exists() ) {
         info("file already exists deleting");
         var result = photoPath.deleteFile();
