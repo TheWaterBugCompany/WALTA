@@ -29,7 +29,8 @@ const moment = require('moment');
 const _ = require("underscore");
 
 const Backbone = require('backbone');
-const assertLooksSame = require('../features/support/image-test');
+const { assertLooksSame, diffImages } = require('../features/support/image-test');
+const images = require('images');
 
 const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
 
@@ -60,7 +61,7 @@ function ProxyCreateHTTPClient( params ) {
             this.method = method;
         },
         send( data ) {
-            console.log(`REQUEST (${this.method}) to ${this.url}:s  data =`, data);
+            //console.log(`REQUEST (${this.method}) to ${this.url}:s  data =`, data);
             let attrs = { 
                 method: this.method, 
                 url: this.url, 
@@ -68,25 +69,42 @@ function ProxyCreateHTTPClient( params ) {
                 json: false
             }
             if ( typeof(data) === "object" && this.method === "POST" && data.photo ) {
-                attrs.formData = data; 
+                // Assume this is the image posts and set up options value 
+                // accordingly... Titanium seems to do this for us....
+                attrs.formData = {
+                    photo: {
+                        value: data.photo,
+                        options: {
+                            filename: "unittest.jpg",
+                            contentType: "image/jpeg"
+                        }
+
+                    }
+                }; 
+                
             } else {
                 attrs.body = data;
             }
-         
-            request(attrs, 
-            (err,res,body) => {
+            //console.log("headers= ", JSON.stringify(attrs.headers));
+            let rawContentChunks = [];
+            request(attrs, (err,res,body) => {
                 if ( err ) {
-                    console.log(`ERROR ${err}`);
+                    //console.log(`ERROR ${err}`);
                 } else {
-                    console.log(`RESPONSE ${res.statusCode}: ${prettyJson(res.body)}`);
-                    this.responseText = body;
+                    //console.log(`RESPONSE ${res.statusCode}: ${prettyJson(res.body)}`);
+                    let rawData = Buffer.concat(rawContentChunks);
+                    this.responseData = rawData;
+                    this.responseText = rawData.toString("utf8");
                     if ( err || isHttpError( res.statusCode ) ) {
                         params.onerror.call( this, err );
                     } else {
                         params.onload.call( this, res );
                     }
                 }
-            }).on('socket', socket => {
+            })
+            .on('error', err => params.onerror.call({}, err ) )
+            .on('data', chunk => rawContentChunks.push(chunk) )
+            .on('socket', socket => {
                 socket.on('keylog', line => fs.appendFileSync('/tmp/secrets.log', line));
             });
         }
@@ -115,12 +133,12 @@ function mockTi( mockCreateHTTPClient  ) {
                         this.globalProperties = {};
                     },
                     setObject(name, value) { 
-                        console.log(`set ${name} = ${JSON.stringify(value)}`);
+                       // console.log(`set ${name} = ${JSON.stringify(value)}`);
                         this.globalProperties[name] = value; 
                     },
                     getObject(name) { 
                         let value = this.globalProperties[name];
-                        console.log(`set ${name} = ${JSON.stringify(value)}`);
+                        //console.log(`set ${name} = ${JSON.stringify(value)}`);
                         return value; 
                     },
                     hasProperty() { return false }
@@ -134,13 +152,24 @@ function mockTi( mockCreateHTTPClient  ) {
                         paths.shift();
                     }
                     var filePath = path.join(...paths);
-                    console.log(`reading file = ${filePath}`);
+                    //console.log(`reading file = ${filePath}`);
                     return {
+                        exists() {
+                            return fs.existsSync(filePath);
+                        },
+                        deleteFile() {
+                            fs.unlinkSync(filePath);
+                            return true;
+                        },
+                        write(blob) {
+                            fs.writeFileSync(filePath,blob);
+                            return true;
+                        },
                         read() {
                             let data = fs.readFileSync(filePath);
                             if ( data === undefined ) 
                                 throw `Unable to read file ${filePath}`;
-                            console.log("data = ", data);
+                           /// console.log("data = ", data);
                             return data;
                         }
                     };
@@ -174,7 +203,7 @@ var SERVER_URL = null;
 var CLIENT_SECRET = null;
 contents = fs.readFileSync('./walta-app/app/config.json', 'utf8');
 var config = JSON.parse( contents );
-SERVER_URL = config["env:test"].cerdiServerUrl;
+SERVER_URL = "http://office-desktop.internal:8080/v1"; //config["env:test"].cerdiServerUrl;
 CLIENT_SECRET = config["env:test"].cerdiApiSecret;
 
 if ( SERVER_URL === null || CLIENT_SECRET == null ) {
@@ -193,15 +222,20 @@ function createTestLogin() {
         name: 'Test Example',
         password: 'tstPassw0rd!'
     }).catch( (err)=> {
-        // Ignore failures
+        //Ti.API.error("Error creating test user: ", JSON.stringify(err));
     });
 }
 
 describe('CerdiApi', function() {
+    
     let cerdi;
-    before(createTestLogin);
+    before(function() {
+        
+        createTestLogin(); 
+    });
 
     beforeEach( function() {
+        
         mockTiWithProxy();
         cerdi = CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET );
     });
@@ -374,17 +408,22 @@ describe('CerdiApi', function() {
             })
         }
         it.only("should retrieve site photo", function() {
-            this.timeout(5000);
             let serverSampleId,sitePhotoId,creaturePhotoId;
-            return cerdi
+            function rescaleImage(filePath,width) {
+                let img = fs.readFileSync(filePath);
+                if ( img === undefined ) 
+                        throw new Error(`Unable to read file ${filePath}`);
+                return images(img).size(width).encode("png");
+            }
+            let siteImageRescaled = rescaleImage(sitePhotoPath,1280);
+            cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
                 .then( () => submitTestSample(moment().format()) )
                 .then( res => serverSampleId = res.id )
                 .then( () => submitSitePhoto( serverSampleId ) )
                 .then( res => sitePhotoId = res.id )
-                .then( () => cerdi.retrieveSitePhoto(serverSampleId))
-                .then( res => assertLooksSame(sitePhotoPath,res.path));
-
+                .then( () => cerdi.retrieveSitePhoto(serverSampleId,"testsitephoto.jpg"))
+                .then( photoPath => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/${photoPath}`));
         });
         it("should retrieve creature photo", function() {
             let serverSampleId,sitePhotoId,creaturePhotoId;

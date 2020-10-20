@@ -20,73 +20,63 @@ var moment = require("lib/moment");
 var { use, expect } = require("unit-test/lib/chai");
 var { makeTestPhoto, removeDatabase, resetSample, clearDatabase } = require("unit-test/util/TestUtils");
 var { loadPhoto, needsOptimising } = require('util/PhotoUtils');
-var { createCerdiApi } = require("unit-test/mocks/MockCerdiApi");
-
+var { createCerdiApi } = require("logic/CerdiApi");
+ 
 use(require('unit-test/lib/chai-date-string'));
-
+const SERVER_URL = "http://office-desktop.internal:8080/v1"; //"https://api-wbb.till.cerdi.edu.au/v1";
+const CLIENT_SECRET = "hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz";
 
 function createTestLogin() {
+    Ti.API.info("creating test user = ", SERVER_URL ); 
     // make sure our test user is registered for tests that
     // require it.
-    return CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
-        email: `testlogin@example.com`,
+    return createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
+        email: "testlogin@example.com",
         group: false,
         survey_consent: false,
         share_name_consent: false,
-        name: 'Test Example',
-        password: 'tstPassw0rd!'
+        name: "Test Example",
+        password: "tstPassw0rd!" 
     }).catch( (err)=> {
-        // Ignore failures
+        Ti.API.error("Error creating test user: ", JSON.stringify(err));
     });
 }
 
 var MOCK_SAMPLE_DATA = {
     "id": 473,
     "user_id": 38,
-    "sample_date": "2020-09-25T09:41:46+00:00",
-    "lat": "-37.5622000",
-    "lng": "143.8750300",
+    "sample_date": `${moment().format()}`,
+    "lat": "-37.5622",
+    "lng": "143.87503",
     "scoring_method": "alt",
-    "created_at": "2020-09-25T09:41:47+00:00",
-    "updated_at": "2020-09-25T09:41:47+00:00",
     "survey_type": "detailed",
     "waterbody_type": "river",
     "waterbody_name": "test waterbody name",
     "nearby_feature": "test nearby feature",
-    "notes": "test sample",
-    "reviewed": 0,
-    "corrected": 0,
-    "complete": null,
-    "score": 0,
-    "weighted_score": null,
     "sampled_creatures": [
         {
-            "id": 2390,
-            "sample_id": 473,
+
+
             "creature_id": 1,
             "count": 2,
             "photos_count": 0
         },
         {
-            "id": 2391,
-            "sample_id": 473,
             "creature_id": 2,
             "count": 6,
             "photos_count": 0
         }
     ],
     "habitat": {
-        "id": 473,
-        "sample_id": 473,
         "boulder": 5,
         "gravel": 6,
         "sand_or_silt": 7,
         "leaf_packs": 8,
         "wood": 9,
         "aquatic_plants": 10,
-        "open_water": 11,
+        "open_water": 11, 
         "edge_plants": 12
-    },
+    }, 
     "photos": []
 };
 describe('#retrieveSamples', function () {
@@ -94,8 +84,7 @@ describe('#retrieveSamples', function () {
     before(createTestLogin);
 
     beforeEach( function() {
-        mockTiWithProxy();
-        cerdi = CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET );
+        cerdi = createCerdiApi( SERVER_URL, CLIENT_SECRET );
     });
 
     const sitePhotoPath = "/unit-test/resources/site-mock.jpg";
@@ -121,7 +110,10 @@ describe('#retrieveSamples', function () {
             .then(() => submitSitePhoto(serverSampleId))
             .then(res => sitePhotoId = res.id)
             .then(() => cerdi.retrieveSitePhoto(serverSampleId))
-            .then(res => assertLooksSame(sitePhotoPath, res.path));
+            .then(res => assertLooksSame(sitePhotoPath, res.path))
+            .catch(err=> {
+                    throw JSON.stringify(err);
+            });
 
     });
 });
