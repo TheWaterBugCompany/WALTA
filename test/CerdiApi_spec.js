@@ -154,6 +154,7 @@ function mockTi( mockCreateHTTPClient  ) {
                     var filePath = path.join(...paths);
                     //console.log(`reading file = ${filePath}`);
                     return {
+                        nativePath: filePath,
                         exists() {
                             return fs.existsSync(filePath);
                         },
@@ -371,11 +372,12 @@ describe('CerdiApi', function() {
     describe( '#retrieveSamples', function() {
         const sitePhotoPath = "./walta-app/app/assets/unit-test/resources/site-mock.jpg";
         const creaturePhotoPath = "./walta-app/app/assets/unit-test/resources/simpleKey1/media/amphipoda_01.jpg";
+        const creaturePhotoPath2 = "./walta-app/app/assets/unit-test/resources/simpleKey1/media/amphipoda_02.jpg";
         function submitSitePhoto(serverSampleId) {
             return cerdi.submitSitePhoto(serverSampleId,sitePhotoPath)
         }
         function submitCreaturePhoto(serverSampleId,creatureId) {
-            return cerdi.submitSitePhoto(serverSampleId,creatureId,creaturePhotoPath)
+            return cerdi.submitCreaturePhoto(serverSampleId,creatureId,creaturePhotoPath)
         }
         function submitTestSample(sampleDate) {
             return cerdi.submitSample( {
@@ -408,7 +410,7 @@ describe('CerdiApi', function() {
             })
         }
         it.only("should retrieve site photo", function() {
-            let serverSampleId,sitePhotoId,creaturePhotoId;
+            let serverSampleId,sitePhotoId;
             function rescaleImage(filePath,width) {
                 let img = fs.readFileSync(filePath);
                 if ( img === undefined ) 
@@ -416,7 +418,7 @@ describe('CerdiApi', function() {
                 return images(img).size(width).encode("png");
             }
             let siteImageRescaled = rescaleImage(sitePhotoPath,1280);
-            cerdi
+            return cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
                 .then( () => submitTestSample(moment().format()) )
                 .then( res => serverSampleId = res.id )
@@ -425,20 +427,19 @@ describe('CerdiApi', function() {
                 .then( () => cerdi.retrieveSitePhoto(serverSampleId,"testsitephoto.jpg"))
                 .then( photoPath => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/${photoPath}`));
         });
-        it("should retrieve creature photo", function() {
+        it.only("should retrieve creature photo", function() {
             let serverSampleId,sitePhotoId,creaturePhotoId;
             return cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
                 .then( () => submitTestSample(moment().format()) )
                 .then( res => serverSampleId = res.id )
-                .then( () => submitSitePhoto( serverSampleId ) )
-                .then( res => sitePhotoId = res.id )
                 .then( () => submitCreaturePhoto(serverSampleId,1) )
                 .then( res => creaturePhotoId = res.id )
-                .then( () => cerdi.retrieveCreaturePhoto(serverSampleId,1))
-                .then( res => assertLooksSame(creaturePhotoPath,res.path));
+                .then( () => cerdi.retrieveCreaturePhoto(serverSampleId,1,"testcreaturephoto.jpg"))
+                .then( photoPath => assertLooksSame(creaturePhotoPath,`/tmp/waterbugtest/applicationData/${photoPath}`));
 
         });
+        
         it("should retrieve samples", function() {
             let createdAt = null, updatedAt = null, sampleDate = moment().format();
             return cerdi
