@@ -31,55 +31,57 @@ Alloy.Globals.CerdiApi = createCerdiApi();
 var Sample = require("logic/Sample");
 var SampleSync = require('logic/SampleSync');
 
-var MOCK_SAMPLE_DATA = {
-    "id": 473,
-    "user_id": 38,
-    "sample_date": "2020-09-25T09:41:46+00:00",
-    "lat": "-37.5622000",
-    "lng": "143.8750300",
-    "scoring_method": "alt",
-    "created_at": "2020-09-25T09:41:47+00:00",
-    "updated_at": "2020-09-25T09:41:47+00:00",
-    "survey_type": "detailed",
-    "waterbody_type": "river",
-    "waterbody_name": "test waterbody name",
-    "nearby_feature": "test nearby feature",
-    "notes": "test sample",
-    "reviewed": 0,
-    "corrected": 0,
-    "complete": null,
-    "score": 0,
-    "weighted_score": null,
-    "sampled_creatures": [
-        {
-            "id": 2390,
-            "sample_id": 473,
-            "creature_id": 1,
-            "count": 2,
-            "photos_count": 0
-        },
-        {
-            "id": 2391,
-            "sample_id": 473,
-            "creature_id": 2,
-            "count": 6,
-            "photos_count": 0
-        }
-    ],
-    "habitat": {
+function makeMockSampleData( photos = [] ) {
+    return [{
         "id": 473,
-        "sample_id": 473,
-        "boulder": 5,
-        "gravel": 6,
-        "sand_or_silt": 7,
-        "leaf_packs": 8,
-        "wood": 9,
-        "aquatic_plants": 10,
-        "open_water": 11,
-        "edge_plants": 12
-    },
-    "photos": []
-};
+        "user_id": 38,
+        "sample_date": "2020-09-25T09:41:46+00:00",
+        "lat": "-37.5622000",
+        "lng": "143.8750300",
+        "scoring_method": "alt",
+        "created_at": "2020-09-25T09:41:47+00:00",
+        "updated_at": "2020-09-25T09:41:47+00:00",
+        "survey_type": "detailed",
+        "waterbody_type": "river",
+        "waterbody_name": "test waterbody name",
+        "nearby_feature": "test nearby feature",
+        "notes": "test sample",
+        "reviewed": 0,
+        "corrected": 0,
+        "complete": null,
+        "score": 0,
+        "weighted_score": null,
+        "sampled_creatures": [
+            {
+                "id": 2390,
+                "sample_id": 473,
+                "creature_id": 1,
+                "count": 2,
+                "photos_count": 0
+            },
+            {
+                "id": 2391,
+                "sample_id": 473,
+                "creature_id": 2,
+                "count": 6,
+                "photos_count": 0
+            }
+        ],
+        "habitat": {
+            "id": 473,
+            "sample_id": 473,
+            "boulder": 5,
+            "gravel": 6,
+            "sand_or_silt": 7,
+            "leaf_packs": 8,
+            "wood": 9,
+            "aquatic_plants": 10,
+            "open_water": 11,
+            "edge_plants": 12
+        },
+        "photos": photos
+    }];
+}
 
 function clearMockSampleData() {
     clearDatabase();
@@ -167,7 +169,8 @@ describe.only("SampleSync", function () {
             clearMockSampleData();
         });
         it.only('should download new samples from the server', async function () {
-            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples").resolveWith([MOCK_SAMPLE_DATA]);
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith(makeMockSampleData());
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
             await SampleSync.downloadSamples();
@@ -199,8 +202,8 @@ describe.only("SampleSync", function () {
             expect(taxa.at(1).get("abundance")).to.equal("6-10");
         });
         it('should update existing samples if they have been updated on the server', async function () {
-            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples").resolveWith([MOCK_SAMPLE_DATA]);
-          
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith(makeMockSampleData());
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
 
@@ -223,8 +226,8 @@ describe.only("SampleSync", function () {
         });
         it('should NOT update existing samples if they have been updated on the server but we have already downloaded that update');
         it('should NOT update existing samples if the update on the server happened BEFORE our lastest upload', async function () {
-            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples").resolveWith([MOCK_SAMPLE_DATA]);
-          
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith(makeMockSampleData());
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
 
@@ -245,8 +248,8 @@ describe.only("SampleSync", function () {
             expect(sample.get("waterbodyName")).to.equal("existing waterbody name");
         });
         it('should overwrite user changes with server updates if the update occured AFTER the last upload', async function () {
-            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples").resolveWith([MOCK_SAMPLE_DATA]);
-          
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith(makeMockSampleData());
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
 
@@ -270,7 +273,7 @@ describe.only("SampleSync", function () {
         });
         it.only('should download site photos if they are new', async function() {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([MOCK_SAMPLE_DATA]);
+                .resolveWith(makeMockSampleData([{"id": 1948}]));
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSitePhoto")
                 .resolveWith({"id": 1948});                              
             let samples = Alloy.Collections.instance("sample");
@@ -282,5 +285,8 @@ describe.only("SampleSync", function () {
             expect(sample.get("serverSitePhotoId")).to.equal(1948);
         });
         it('should download taxa photos if they are new');
+        it('should download more than one sample');
+        it('should update site photo if changed on server');
+        it('should update creature photos if changed on server');
     });
 });
