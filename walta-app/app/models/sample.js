@@ -28,7 +28,8 @@ exports.definition = {
 			"serverSitePhotoId": "INTEGER", // null if not on server
 			"sitePhotoPath": "VARCHAR(255)",
 			"uploaded": "INTEGER", // timestamp of last upload (or 1 for legacy code)
-			"updatedAt": "INTEGER" // timestamp of the last update (or NULL for legacy)
+			"updatedAt": "INTEGER", // timestamp of the last update (or NULL for legacy)
+			"downloadedAt": "INTEGER", // timestamp last downloaded from server
 		},
 		adapter: {
 			type: "sql",
@@ -293,6 +294,7 @@ exports.definition = {
 	},
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, { 
+			// Note sets the singleton sample (FIXME?)
 			createNewSample: function() {
 				log("Creating new sample..");
 				Alloy.Models.sample = Alloy.createModel("sample");
