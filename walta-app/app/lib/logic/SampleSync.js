@@ -185,28 +185,37 @@ function startUpload() {
 
 function downloadSamples() {
     debug("Retrieving samples from server...");
-    let sample = Alloy.Models.instance("sample");
+    
     // only update if updated after it was last uploaded - this allows user changes
     // to not be overwritten. If the data on the server changes and the user makes a
     // change then this will always preference the server change since we always
     // call downloadSamples() before calling uploadSamples()
-    function needsUpdate(sample) {
-        if ( ! sample ) {
+    function needsUpdate(serverSample,sample) {
+        if ( ! sample.get("sampleId") ) {
             return true;
         } else {
             return moment(serverSample.updated_at).isAfter( sample.get("uploaded") )
-                    && moment(serverSample.updated_at).isAfter( sample.get("updatedAt") );
+                    && moment(serverSample.updated_at).isAfter( sample.get("downloadedAt") );
         }
     }
-    function updateSample(serverSample) {
-        if ( needsUpdate( sample.loadByServerId(serverSample.id) ) ) {
+    function updateIncomingSample(serverSample) {
+        let sample = Alloy.createModel("sample");
+        sample.loadByServerId(serverSample.id) 
+        if ( needsUpdate(serverSample,sample) ) {
             sample.fromCerdiApiJson(serverSample);
-            let sitePhotoPath = `site_download_${serverSample.id}`;
-            return Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath)
-                .then( photo => {
-                    sample.set("serverSitePhotoId", photo.id);
-                    sample.set("updatedAt",moment().valueOf());
-                });
+            sample.set("downloadedAt",moment().valueOf());
+            sample.save();
+            if ( serverSample.photos.length > 0 ) {
+                let sitePhotoPath = `site_download_${serverSample.id}`;
+                return Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath)
+                    .then( photo => {
+                        sample.set("serverSitePhotoId", photo.id);
+                        sample.save();
+                    });
+            } else {
+                return Promise.resolve();
+            }
+            
         } else {
             return Promise.resolve();
         }
@@ -215,7 +224,7 @@ function downloadSamples() {
         let updateAllSamples = Promise.resolve();
         _(samples).forEach( serverSample => {
             updateAllSamples = updateAllSamples.then(
-                () => updateSample(serverSample) );
+                () => updateIncomingSample(serverSample) );
         });
         return updateAllSamples;
     }
