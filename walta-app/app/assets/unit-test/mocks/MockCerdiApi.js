@@ -1,14 +1,13 @@
+var simple = require("unit-test/lib/simple-mock");
 function createCerdiApi( serverUrl, client_secret  ) {
-    var cerdiApi = {
-        retrieveUserToken() {
-        },
-    
-        storeUserToken( accessToken ) {
+    var cerdiApi = {};
+
+   /*     storeUserToken( accessToken ) {
            
         },
     
         obtainServerAccessToken() {
-            
+            return Promise.resolve("token");
         },
     
         retrieveUserToken() {
@@ -30,7 +29,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
         },
     
         submitSample( sample ) {
-           
+           return Promise.resolve();
         },
 
         submitCreaturePhoto(sampleId, taxonId, photoPath ) {
@@ -50,15 +49,47 @@ function createCerdiApi( serverUrl, client_secret  ) {
             return Promise.resolve(this.sampleData);
         },
 
-        retrievePhoto(sampleId,) {
-            return photos[`id_${id}`];
+        retrievePhotoMetadata(photoId) {
+            return Promise.resolve();
+        },
+
+        retrieveSitePhoto(serverSampleId,photoPath) {
+            return Promise.resolve();
+        },
+
+        retrieveCreaturePhoto( serverSampleId,creatureId,photoPath ) {
+            return Promise.resolve();
         },
 
         forgotPassword( email ) {
             
         }
     
-    }
+    }*/
+    simple.mock(cerdiApi,"storeUserToken")
+        .resolveWith();
+    simple.mock(cerdiApi,"obtainServerAccessToken")
+        .resolveWith("token");
+    simple.mock(cerdiApi,"retrieveUserToken")
+        .resolveWith("token");
+    simple.mock(cerdiApi,"registerUser")
+        .rejectWith({
+            message: "The given data was invalid",
+            errors: [ { valid: ["incorrect user credentials"] } ] 
+        });
+    simple.mock(cerdiApi,"loginUser")
+        .rejectWith({
+            message: "Unknown user"
+        });
+    simple.mock(cerdiApi,"submitSample").resolveWith();
+    simple.mock(cerdiApi,"retrieveSamples").resolveWith();
+    simple.mock(cerdiApi,"submitSitePhoto").resolveWith();
+    simple.mock(cerdiApi,"submitCreaturePhoto").resolveWith();
+    simple.mock(cerdiApi,"retrieveSitePhoto").resolveWith();
+    simple.mock(cerdiApi,"retrieveCreaturePhoto").resolveWith();
+    simple.mock(cerdiApi,"retrievePhotoMetadata").resolveWith();
+    simple.mock(cerdiApi,"forgotPassword").resolveWith();
+
     return cerdiApi;
 }
 

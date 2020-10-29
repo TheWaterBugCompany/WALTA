@@ -25,6 +25,7 @@ exports.definition = {
 			"aquaticPlants": "INTEGER",
 			"openWater": "INTEGER",
 			"edgePlants": "INTEGER",
+			"serverSitePhotoId": "INTEGER", // null if not on server
 			"sitePhotoPath": "VARCHAR(255)",
 			"uploaded": "INTEGER", // timestamp of last upload (or 1 for legacy code)
 			"updatedAt": "INTEGER" // timestamp of the last update (or NULL for legacy)
