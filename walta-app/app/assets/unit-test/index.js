@@ -32,7 +32,7 @@ function runTests() {
       "TaxonDetails",
       "SiteDetails",
       "ViewUtils",
-      "CerdiApi",
+      //"CerdiApi", see node based integration tests
       //"LeafletMap",
       //"MayflyEmergenceMap",
       //"MayflyMusterSelect",
