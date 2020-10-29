@@ -88,10 +88,16 @@ function retrievePhoto( serverUrl, photoUrl, accessToken, photoPath ) {
         savePhoto(blob,photoPath);
         return photoPath;
     }
+    let photoMeta = null;
     return makeJsonGetRequest(`${serverUrl}/${photoUrl}`, accessToken )
         .then(findLatestPhoto)
+        .then( meta => {
+            photoMeta = meta;
+            return meta; 
+        }) 
         .then(downloadPhoto)
-        .then(saveRetrievedPhoto);
+        .then(saveRetrievedPhoto)
+        .then( () => photoMeta ); // return the id so the caller can save it
 }
 
 
@@ -168,6 +174,10 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
                 return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/creatures/${creatureId}/photos`, photoBlob, accessToken );
+            },
+
+            retrievePhotoMetadata(photoId) {
+                return makeJsonGetRequest(`${this.serverUrl}/photos/${photoId}`, accessToken )
             },
 
             retrieveSitePhoto( serverSampleId,photoPath ) {

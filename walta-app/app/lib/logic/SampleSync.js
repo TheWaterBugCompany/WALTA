@@ -117,7 +117,7 @@ function setServerSampleId( sample ) {
 
 function markSampleComplete( sample ) {
     log(`Sample ${sample.get("serverSampleId")} and photos successfully uploaded setting uploaded flag.`);
-    sample.set("uploaded", 1);
+    sample.set("uploaded", moment().valueOf());
     sample.save();
     Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("id") } );
     return sample;
@@ -186,20 +186,38 @@ function startUpload() {
 function downloadSamples() {
     debug("Retrieving samples from server...");
     let sample = Alloy.Models.instance("sample");
+    // only update if updated after it was last uploaded - this allows user changes
+    // to not be overwritten. If the data on the server changes and the user makes a
+    // change then this will always preference the server change since we always
+    // call downloadSamples() before calling uploadSamples()
+    function needsUpdate(sample) {
+        if ( ! sample ) {
+            return true;
+        } else {
+            return moment(serverSample.updated_at).isAfter( sample.get("uploaded") )
+                    && moment(serverSample.updated_at).isAfter( sample.get("updatedAt") );
+        }
+    }
+    function updateSample(serverSample) {
+        if ( needsUpdate( sample.loadByServerId(serverSample.id) ) ) {
+            sample.fromCerdiApiJson(serverSample);
+            let sitePhotoPath = `site_download_${serverSample.id}`;
+            return Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath)
+                .then( photo => {
+                    sample.set("serverSitePhotoId", photo.id);
+                    sample.set("updatedAt",moment().valueOf());
+                });
+        } else {
+            return Promise.resolve();
+        }
+    }
     function saveNewSamples( samples ) {
+        let updateAllSamples = Promise.resolve();
         _(samples).forEach( serverSample => {
-            if ( sample.loadByServerId(serverSample.id) ) {
-                // only update if updated after it was last uploaded - this allows user changes
-                // to not be overwritten. If the data on the server changes and the user makes a
-                // change then this will always preference the server change since we always
-                // call downloadSamples() before calling uploadSamples()
-                if ( moment(serverSample.updated_at).isAfter( sample.get("uploaded") ) ) {
-                    sample.fromCerdiApiJson(serverSample)
-                }
-            } else {
-                sample.fromCerdiApiJson(serverSample);
-            }
+            updateAllSamples = updateAllSamples.then(
+                () => updateSample(serverSample) );
         });
+        return updateAllSamples;
     }
     Alloy.Globals.CerdiApi.retrieveSamples()
         .then( saveNewSamples );
