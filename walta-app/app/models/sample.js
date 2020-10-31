@@ -67,12 +67,12 @@ exports.definition = {
 				this.set('accuracy', coords.accuracy);
 			},
 
-			setSitePhoto: function(file) {
+			setSitePhoto: function(...file) {
 				var newPhotoName = `sitePhoto_${this.get("sampleId")}_${moment().unix()}.jpg`;
 				log(`updating photo ${file} to ${newPhotoName}`);
 				removeFilesBeginningWith(`sitePhoto_${this.get("sampleId")}_`);
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
-				Ti.Filesystem.getFile(file).move(sitePhotoPath.nativePath);
+				Ti.Filesystem.getFile(...file).move(sitePhotoPath.nativePath);
 				this.set( "sitePhotoPath", sitePhotoPath.nativePath );
 			},
 

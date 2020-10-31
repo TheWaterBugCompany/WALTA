@@ -9,7 +9,8 @@ exports.definition = {
 		    "abundance": "VARCHAR(6)",
 			"sampleId": "INTEGER", // Foreign key to sample database
 			"taxonId": "INTEGER", // Foreign "key" to taxon in key
-			"taxonPhotoPath": "VARCHAR(255)"
+			"taxonPhotoPath": "VARCHAR(255)",
+			"serverCreaturePhotoId": "INTEGER" // server side photo id
 		},
 		adapter: {
 			type: "sql",

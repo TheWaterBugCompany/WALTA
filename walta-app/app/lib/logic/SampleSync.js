@@ -210,6 +210,7 @@ function downloadSamples() {
                 return Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath)
                     .then( photo => {
                         sample.set("serverSitePhotoId", photo.id);
+                        sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
                         sample.save();
                     });
             } else {
