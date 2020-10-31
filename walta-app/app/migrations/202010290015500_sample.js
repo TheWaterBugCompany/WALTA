@@ -3,5 +3,5 @@ migration.up = function(migrator) {
 };
 
 migration.down = function(migrator) {
-    
+    throw new Error("Migration down() not supported");
 };
