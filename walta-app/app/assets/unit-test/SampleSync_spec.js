@@ -272,10 +272,13 @@ describe.only("SampleSync", function () {
 
         });
         it.only('should download site photos if they are new', async function() {
+            let siteMock =  Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/unit-test/resources/site-mock.jpg");
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith(makeMockSampleData([{"id": 1948}]));
-            simple.mock(Alloy.Globals.CerdiApi,"retrieveSitePhoto")
-                .resolveWith({"id": 1948});                              
+            Alloy.Globals.CerdiApi.retrieveSitePhoto = function(serverSampleId,photoPath){
+                siteMock.copy( Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
+                return Promise.resolve({"id": 1948});
+            };                             
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
             await SampleSync.downloadSamples();
@@ -283,8 +286,33 @@ describe.only("SampleSync", function () {
             sample.loadByServerId(473);
             // checking the site photo id proves the code was run
             expect(sample.get("serverSitePhotoId")).to.equal(1948);
+            // check the photo path contans the correct photo - we compare file sizes 
+            let sampleSitePhoto = Ti.Filesystem.getFile(sample.getSitePhoto());
+            let siteMockBlob = siteMock.read();
+            let photoBlob = sampleSitePhoto.read();
+            console.log(`site = ${siteMockBlob.length} photo = ${photoBlob.length}`)
+            expect(siteMockBlob.length).to.equal(photoBlob.length);
+
         });
-        it('should download taxa photos if they are new');
+
+        it('should download taxa photos if they are new',async function() {
+            // TODO: Make sure the temporary photo is filed into the correct
+            // place.
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+            .resolveWith(makeMockSampleData());
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveCreaturePhoto")
+                .resolveWith({"id": 1948})
+                .resolveWith({"id": 2600});                              
+            let samples = Alloy.Collections.instance("sample");
+            let taxa = Alloy.Collections.instance("taxa");
+            await SampleSync.downloadSamples();
+            let sample = Alloy.Models.instance("sample");
+            sample.loadByServerId(473);
+            // checking the site photo id proves the code was run
+            expect(taxa.at(0).get("serverCreaturePhotoId")).to.equal(1948);
+            expect(taxa.at(1).get("serverCreaturePhotoId")).to.equal(2600);
+
+        });
         it('should download more than one sample');
         it('should update site photo if changed on server');
         it('should update creature photos if changed on server');
