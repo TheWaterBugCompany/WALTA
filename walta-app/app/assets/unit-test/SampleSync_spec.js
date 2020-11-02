@@ -168,7 +168,7 @@ describe.only("SampleSync", function () {
         this.beforeEach(function () {
             clearMockSampleData();
         });
-        it.only('should download new samples from the server', async function () {
+        it('should download new samples from the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith(makeMockSampleData());
             let samples = Alloy.Collections.instance("sample");
@@ -271,7 +271,7 @@ describe.only("SampleSync", function () {
             expect(sample.get("waterbodyName")).to.equal("test waterbody name");
 
         });
-        it.only('should download site photos if they are new', async function() {
+        it('should download site photos if they are new', async function() {
             let siteMock =  Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/unit-test/resources/site-mock.jpg");
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith(makeMockSampleData([{"id": 1948}]));
@@ -290,31 +290,56 @@ describe.only("SampleSync", function () {
             let sampleSitePhoto = Ti.Filesystem.getFile(sample.getSitePhoto());
             let siteMockBlob = siteMock.read();
             let photoBlob = sampleSitePhoto.read();
-            console.log(`site = ${siteMockBlob.length} photo = ${photoBlob.length}`)
             expect(siteMockBlob.length).to.equal(photoBlob.length);
 
         });
 
-        it('should download taxa photos if they are new',async function() {
+        it.only('should download taxa photos if they are new',async function() {
             // TODO: Make sure the temporary photo is filed into the correct
             // place.
+            let creatureMocks = [
+                {
+                    id: 1948,
+                    photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_01.jpg"),
+                },{
+                    id: 2600,
+                    photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg")
+                }];
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-            .resolveWith(makeMockSampleData());
-            simple.mock(Alloy.Globals.CerdiApi,"retrieveCreaturePhoto")
-                .resolveWith({"id": 1948})
-                .resolveWith({"id": 2600});                              
-            let samples = Alloy.Collections.instance("sample");
-            let taxa = Alloy.Collections.instance("taxa");
+                .resolveWith(makeMockSampleData());
+            Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId,creatureId,photoPath ) {
+                console.log(`mock retrieveCreaturePhoto ${creatureId}`);
+                let mockCreature = creatureMocks[creatureId-1];
+                mockCreature.photo.copy( Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
+                return Promise.resolve(mockCreature);
+            };                                
+            
             await SampleSync.downloadSamples();
             let sample = Alloy.Models.instance("sample");
             sample.loadByServerId(473);
+            let taxa  = sample.loadTaxa();
+            console.log(`taxa = ${JSON.stringify(taxa)}`)
+            function verifyTaxon(i) {
+                let taxon = taxa.at(i);
+                expect(taxon.get("serverCreaturePhotoId")).to.equal(creatureMocks[i].id);
+                let creaturePhoto = Ti.Filesystem.getFile(taxon.getPhoto());
+                let expectedBlob = creatureMocks[i].photo.read();
+                let actualBlob = creaturePhoto.read();
+                expect(expectedBlob.length).to.equal(actualBlob.length);
+            }
             // checking the site photo id proves the code was run
-            expect(taxa.at(0).get("serverCreaturePhotoId")).to.equal(1948);
-            expect(taxa.at(1).get("serverCreaturePhotoId")).to.equal(2600);
+            verifyTaxon(0);
+            verifyTaxon(1);
 
         });
         it('should download more than one sample');
+        
+    });
+    context('updating existing samples', function() {
         it('should update site photo if changed on server');
         it('should update creature photos if changed on server');
-    });
+        it('should upload new photo if taxon photo is changed');
+        it('should upload new photo if site photo is changed');
+        it('should upload new sample if site photo is changed');
+    })
 });

@@ -200,32 +200,61 @@ function downloadSamples() {
     }
     function updateIncomingSample(serverSample) {
         let sample = Alloy.createModel("sample");
+        debug(`updateIncomingSample( serveSample.id = ${JSON.stringify(serverSample.id)})`)
         sample.loadByServerId(serverSample.id) 
         if ( needsUpdate(serverSample,sample) ) {
             sample.fromCerdiApiJson(serverSample);
             sample.set("downloadedAt",moment().valueOf());
             sample.save();
-            if ( serverSample.photos.length > 0 ) {
-                let sitePhotoPath = `site_download_${serverSample.id}`;
-                return Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath)
-                    .then( photo => {
-                        sample.set("serverSitePhotoId", photo.id);
-                        sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
-                        sample.save();
-                    });
-            } else {
-                return Promise.resolve();
-            }
-            
+            return Promise.resolve([sample,serverSample]);
         } else {
-            return Promise.resolve();
+            return Promise.resolve([sample,serverSample]);
         }
+    }
+    function downloadSitePhoto([sample,serverSample]) {
+        if ( serverSample.photos.length > 0 ) {
+            let sitePhotoPath = `site_download_${serverSample.id}`;
+            return Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath)
+                .then( photo => {
+                    sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
+                    sample.set("serverSitePhotoId", photo.id);
+                    sample.save();
+                    return [sample,serverSample];
+                });
+        } else {
+            return Promise.resolve([sample,serverSample]);
+        }
+        
+    }
+    function downloadCreaturePhotos([sample,serverSample]) {
+        let downloadAllCreatures = Promise.resolve();
+        let taxa = sample.loadTaxa();
+        taxa.forEach( taxon => {
+            debug(`processing taxon ${taxon.get("taxonId")}`)
+            if ( ! taxon.get("serverCreaturePhotoId") ) {
+                let taxonId = taxon.get("taxonId");
+                let taxonPhotoPath = `taxon_download_${taxonId}`;
+                downloadAllCreatures
+                    .then( () => Alloy.Globals.CerdiApi.retrieveCreaturePhoto(serverSample.id,taxonId,taxonPhotoPath) )
+                    .then( photo => {
+                        debug(`downloaded photo ${photo.id}`);
+                        taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
+                        taxon.set("serverCreaturePhotoId",photo.id);
+                        taxon.save();
+                    })
+            }
+        });
+
+        return downloadAllCreatures;
     }
     function saveNewSamples( samples ) {
         let updateAllSamples = Promise.resolve();
-        _(samples).forEach( serverSample => {
-            updateAllSamples = updateAllSamples.then(
-                () => updateIncomingSample(serverSample) );
+        samples.forEach( serverSample => {
+            updateAllSamples = updateAllSamples
+                .then( () => serverSample )
+                .then( updateIncomingSample )
+                .then( downloadSitePhoto )
+                .then( downloadCreaturePhotos );
         });
         return updateAllSamples;
     }
