@@ -61,7 +61,7 @@ exports.definition = {
 				}
 			},
 
-			setPhoto(file) {
+			setPhoto(...file) {
 				var newPhotoName;	
 				if ( ! this.get("sampleId") ) {
 					newPhotoName = `taxon_temporary_${this.get("taxonId")}.jpg`;
@@ -75,7 +75,7 @@ exports.definition = {
 				
 				log(`updating photo from ${file} to ${newPhotoName}`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
-				Ti.Filesystem.getFile(file).move(taxonPhotoPath.nativePath);
+				Ti.Filesystem.getFile(...file).move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
 				
 			},
