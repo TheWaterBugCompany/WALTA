@@ -8,6 +8,7 @@ Scenario: Edit sample
     When I activate the sample edit mode
     Then I can add or remove new species
 
+@only
 Scenario: Synchronise edited samples
    Given I have updated already complete samples
     When the server becomes reachable
