@@ -1,7 +1,7 @@
 'use strict';
 const { After, Before } = require('cucumber');
 const mockServer = require('node-mock-server');
-const serverConfig = require('../../mock-server/config');
+const serverConfig = require('../../mock-server/index');
 
 var server = null;
 

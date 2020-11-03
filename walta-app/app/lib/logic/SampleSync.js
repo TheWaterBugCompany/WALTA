@@ -17,7 +17,7 @@ function networkChanged( e ) {
         clearUploadTimer();
     } else {
         debug("Network connection up.");
-        startUpload();
+        startSynchronise();
     }
 }
 
@@ -31,13 +31,13 @@ function clearUploadTimer() {
 function init() {
     debug("Initialising SampleSync...");
     Ti.Network.addEventListener( "change", networkChanged );
-    Topics.subscribe( Topics.LOGGEDIN, startUpload );
-    startUpload();
+    Topics.subscribe( Topics.LOGGEDIN, startSynchronise );
+    startSynchronise();
 }
 
 function forceUpload() {
     clearUploadTimer();
-    return startUpload();
+    return startSynchronise();
 }
 
 function uploadRemainingSamples(samples) {
@@ -155,32 +155,44 @@ function uploadNextSample(samples) {
             .catch( errorHandler( sample ) );
 }
 
-function startUpload() {
+function startSynchronise() {
     debug("Starting sample syncronisation process...");
-    if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
-        debug("No network available, sleeping until network becomes avaiable.");
-        return Promise.resolve(false);
+    function checkNetwork() {
+        if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
+            debug("No network available, sleeping until network becomes avaiable.");
+            throw new Error("No network avaialble for synchronise");
+        }
+        return Promise.resolve();
+    }
+    function rescheduleSync() {
+        timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
+        return Promise.resolve();
     }
 
-    var samples = Alloy.createCollection("sample");
-    samples.loadUploadQueue();
-    if ( samples.length >= 1 ) {
-        if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
-            return uploadRemainingSamples(samples)
-                .then( () => timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL ) )
-                .catch( (error) => { 
-                    debug(`Rescheduling upload...`);
-                    timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
-                });
-        } else {
-            debug("Not logged in so can not upload!");
-            timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
+    function checkLoggedIn() {
+        if ( ! Alloy.Globals.CerdiApi.retrieveUserToken() )  {
+            debug("Not logged in, sleeping.");
+            throw new Error("Not logged in for synchronise");
         }
-    } else {
-        debug("Nothing to do");
-        timeoutHandler = setTimeout( startUpload, SYNC_INTERVAL );
+        return Promise.resolve();
+    }  
+
+    function loadSamples() {
+        var samples = Alloy.createCollection("sample");
+        samples.loadUploadQueue();
+        if ( samples.length === 0 )
+            debug("Nothing to do - no samples to upload");
+        return samples;
     }
-    return Promise.resolve(false);
+
+    return Promise.resolve()
+        .then(checkLoggedIn) 
+        .then(checkNetwork)
+        .then(downloadSamples)
+        .then(loadSamples)
+        .then(uploadRemainingSamples)
+        .catch( () => debug(`Error synchronising rescheduling upload...`))
+        .finally( rescheduleSync )
 }
 
 function downloadSamples() {

@@ -244,9 +244,12 @@ module.exports = function(grunt) {
           },
 
           clean_dist: {
-            command: 'rm ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa,aab}',
+            command: 'rm -v ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa,aab}',
             exitCode: [ 0, 1 ],
-            stdout: "inherit", stderr: "inherit"
+            stdout: "inherit", stderr: "false",
+            options: {
+              shell: "/bin/bash"
+            }
           },
 
           install_android: {
@@ -262,7 +265,8 @@ module.exports = function(grunt) {
           },
 
           uninstall_android: {
-            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID}`,
+            // see https://stackoverflow.com/questions/4709137/solution-to-install-failed-insufficient-storage-error-on-android
+            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID} && ${process.env.ANDROID_HOME}/platform-tools/adb shell "rm -rf /data/app/${APP_ID}-*"`,
             exitCode: [ 0, 1, 255 ]
           },
 
@@ -272,7 +276,7 @@ module.exports = function(grunt) {
 
           acceptance_test: {
             command: function(platform,option) {
-              return `VERSION=${grunt.option('kobiton-version')} cucumber-js --tags "not @skip"`;
+              return `VERSION=${grunt.option('kobiton-version')} cucumber-js --tags "@only"`;
             },
             options: {
               env: envVars()
@@ -486,14 +490,17 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify');
   
 
-    grunt.registerTask('test', function (platform) {
+    grunt.registerTask('test', function () {
+      var platform = grunt.option('platform');
       grunt.task.run(`unit-test:${platform}`);
       grunt.task.run(`newer:test_${platform}`);
       grunt.task.run(`exec:end_to_end_test:${platform}`);
       grunt.task.run(`exec:acceptance_test:${platform}`);
     });
 
-    grunt.registerTask('end-to-end-test', function (platform) {
+
+    grunt.registerTask('end-to-end-test', function () {
+      var platform = grunt.option('platform');
       grunt.task.run(`newer:test_${platform}`);
       grunt.task.run(`exec:end_to_end_test:${platform}`);
     });
@@ -523,6 +530,14 @@ module.exports = function(grunt) {
     grunt.registerTask('acceptance-test', function () {
       var platform = grunt.option('platform');
       grunt.task.run(`newer:test_${platform}`);
+      if ( ! grunt.option('kobiton') ) {
+        if ( grunt.option('liveview') ) {
+          grunt.task.run("exec:stop_live_view");
+          grunt.task.run(`run:live_view_${platform}`);
+          
+        }
+        grunt.task.run(`launch:${platform}:test`);
+      }
       grunt.task.run(`exec:acceptance_test:${platform}`);
     });
 
