@@ -64,6 +64,11 @@ function makeJsonPostRequest( serverUrl, data, accessToken = null) {
                 (client) => client.send( JSON.stringify( data ) ) );
 }
 
+function makeJsonPutRequest( serverUrl, data, accessToken = null) {
+    return createHttpClient("PUT", serverUrl, "application/json", "application/json",accessToken, 
+                (client) => client.send( JSON.stringify( data ) ) );
+}
+
 function makeImagePostRequest( serverUrl, imageData, accessToken = null ) {
     return createHttpClient("POST", serverUrl, "multipart/form-data", "application/json", accessToken, 
                 (client) => client.send( { "photo": imageData } ) );
@@ -204,6 +209,20 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
                 return makeJsonPostRequest( this.serverUrl + '/samples', sample, accessToken );
+            },
+
+            retrieveSampleById(serverSampleId) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeJsonGetRequest( `${this.serverUrl}/samples/${serverSampleId}`, accessToken );
+            },
+
+            updateSampleById(serverSampleId,sample) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeJsonPutRequest( `${this.serverUrl}/samples/${serverSampleId}`, sample, accessToken );
             },
 
             retrieveSamples() {
