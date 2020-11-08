@@ -379,8 +379,8 @@ describe('CerdiApi', function() {
         function submitCreaturePhoto(serverSampleId,creatureId) {
             return cerdi.submitCreaturePhoto(serverSampleId,creatureId,creaturePhotoPath)
         }
-        function submitTestSample(sampleDate) {
-            return cerdi.submitSample( {
+        function makeTestSample(sampleDate) {
+            return {
                 "sample_date": sampleDate,
                 "lat": "-37.5622",
                 "lng": "143.87503",
@@ -407,9 +407,12 @@ describe('CerdiApi', function() {
                     "photos_count": 0
                     }
                 ],
-            })
+            }
         }
-        it.only("should retrieve site photo", function() {
+        function submitTestSample(sampleDate) {
+            return cerdi.submitSample( makeTestSample(sampleDate) );
+        }
+        it("should retrieve site photo", function() {
             let serverSampleId,sitePhotoId;
             function rescaleImage(filePath,width) {
                 let img = fs.readFileSync(filePath);
@@ -427,7 +430,7 @@ describe('CerdiApi', function() {
                 .then( () => cerdi.retrieveSitePhoto(serverSampleId,"testsitephoto.jpg"))
                 .then( photoPath => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/${photoPath}`));
         });
-        it.only("should retrieve creature photo", function() {
+        it("should retrieve creature photo", function() {
             let serverSampleId,sitePhotoId,creaturePhotoId;
             return cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
@@ -438,6 +441,131 @@ describe('CerdiApi', function() {
                 .then( () => cerdi.retrieveCreaturePhoto(serverSampleId,1,"testcreaturephoto.jpg"))
                 .then( photoPath => assertLooksSame(creaturePhotoPath,`/tmp/waterbugtest/applicationData/${photoPath}`));
 
+        });
+
+        it.only("should update existing smaple", function(){
+            let serverId = null, createdAt = null, updatedAt = null, sampleDate = moment().format(),
+                sampleData = makeTestSample(sampleDate);
+
+            function stripSample(sample) {
+                delete sample.id;
+                delete sample.user_id;
+                _(sample.sampled_creatures).forEach( c => {
+                    delete c.id;
+                    delete c.sample_id;
+                });
+                delete sample.habitat.id;
+                delete sample.habitat.sample_id;
+                return sample;
+            }
+            return cerdi
+                .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
+                .then( () => cerdi.submitSample(sampleData) )
+                .then( result => {
+                    serverId = result.id;
+                    sampleDate = result.sample_date;
+                    createdAt = result.created_at;
+                    updatedAt = result.updated_at;
+                })
+                .then( () => cerdi.retrieveSampleById(serverId) )
+                .then( result => {
+                    expect(stripSample(result))
+                        .deep.equal(
+                        {
+                            "sample_date": sampleDate,
+                            "lat": "-37.5622000",
+                            "lng": "143.8750300",
+                            "scoring_method": "alt",
+                            "created_at": createdAt,
+                            "updated_at": updatedAt,
+                            "survey_type": "detailed",
+                            "waterbody_type": "wetland",
+                            "waterbody_name": "test water body",
+                            "nearby_feature": "test nearby feature",
+                            "notes": "test sample",
+                            "reviewed": 0,
+                            "corrected": 0,
+                            "complete": null,
+                            "score": 0,
+                            "weighted_score": null,
+                            "sampled_creatures": [
+                                {
+                                    "creature_id": 1,
+                                    "count": 10,
+                                    "photos_count": 0
+                                }
+                            ],
+                            "habitat": {
+                                "boulder": 5,
+                                "gravel": 5,
+                                "sand_or_silt": 5,
+                                "leaf_packs": 5,
+                                "wood": 5,
+                                "aquatic_plants": 5,
+                                "open_water": 5,
+                                "edge_plants": 5
+                            },
+                            "photos": []
+                        }
+                    ); 
+                })
+                .then( () => {
+                    sampleData.waterbody_name = "updated water body name";
+                    sampleData.creatures.push({
+                        creature_id: 2,
+                        count: 1,
+                        photos_count: 0
+                    });
+                    return cerdi.updateSampleById(serverId,sampleData);
+                })
+                .then( () => cerdi.retrieveSampleById(serverId) )
+                .then( result => {
+                    updatedAt = result.updated_at;
+                    expect(stripSample(result))
+                        .deep.equal(
+                        {
+                            "sample_date": sampleDate,
+                            "lat": "-37.5622000",
+                            "lng": "143.8750300",
+                            "scoring_method": "alt",
+                            "created_at": createdAt,
+                            "updated_at": updatedAt,
+                            "survey_type": "detailed",
+                            "waterbody_type": "wetland",
+                            "waterbody_name": "updated water body name",
+                            "nearby_feature": "test nearby feature",
+                            "notes": "test sample",
+                            "reviewed": 0,
+                            "corrected": 0,
+                            "complete": null,
+                            "score": 0,
+                            "weighted_score": null,
+                            "sampled_creatures": [
+                                {
+                                    "creature_id": 1,
+                                    "count": 10,
+                                    "photos_count": 0
+                                },
+                                {
+                                    "creature_id": 2,
+                                    "count": 1,
+                                    "photos_count": 0
+                                }
+                            ],
+                            "habitat": {
+                                "boulder": 5,
+                                "gravel": 5,
+                                "sand_or_silt": 5,
+                                "leaf_packs": 5,
+                                "wood": 5,
+                                "aquatic_plants": 5,
+                                "open_water": 5,
+                                "edge_plants": 5
+                            },
+                            "photos": []
+                        }
+                    ); 
+                })
         });
         
         it("should retrieve samples", function() {
