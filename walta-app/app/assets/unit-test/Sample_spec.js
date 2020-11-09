@@ -300,7 +300,7 @@ describe("Sample collection, model including taxa", function() {
       expect( json.habitat.edge_plants ).to.equal(10);
     });
 
-    it('should serilaize taxa correctly', function() {
+    it('should serialize taxa correctly', function() {
       var json = Alloy.Models.sample.toCerdiApiJson();
       expect( json ).to.be.ok;
       var taxa = json.creatures;
@@ -311,18 +311,41 @@ describe("Sample collection, model including taxa", function() {
         });
     });
 
-    it('should serilaize server id correctly correctly', function() {
+    it('should serialize server id correctly correctly', function() {
       Alloy.Models.sample.set('serverSampleId', 99 );
       var json = Alloy.Models.sample.toCerdiApiJson();
       expect( json ).to.be.ok;
       expect( json.sampleId ).to.equal(99);
     });
 
-    it('should set the updatedAt field to the lastest date afer a field is set', function() {
-      let timestamp = moment();
-      let sample = Alloy.Models.sample;
-      sample.set('waterbodyName', 'test update name');
-      expect(sample.get('updatedAt')).to.be.above(timestamp.valueOf());
+    context("set updatedAt", function() { 
+    [
+      "dateCompleted",
+      "lat",
+      "lng",
+      "accuracy",
+      "surveyType",
+      "waterbodyType",
+      "waterbodyName",
+      "nearbyFeature",
+      "boulder",
+      "gravel",
+      "sandOrSilt",
+      "leafPacks",
+      "wood",
+      "aquaticPlants",
+      "openWater",
+      "edgePlants",
+      "sitePhotoPath"
+    ].forEach( field => 
+      it(`should set the updatedAt field to the lastest date afer ${field} field is set`, async function() {
+        
+        let sample = Alloy.Models.sample;
+        let oldUpdatedAt = sample.get('updatedAt');
+        sample.set(field, 'updated');
+        expect(sample.get('updatedAt')).to.be.above(oldUpdatedAt);
+      }) 
+    );
     });
   });
 });
