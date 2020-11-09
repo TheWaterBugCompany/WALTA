@@ -100,7 +100,7 @@ describe('#retrieveSamples', function () {
     }
     
 
-    it.only("should retrieve site photo", function () {
+    it("should retrieve site photo", function () {
         this.timeout(5000);
         let serverSampleId, sitePhotoId, creaturePhotoId;
         return cerdi

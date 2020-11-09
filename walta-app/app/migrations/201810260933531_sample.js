@@ -1,9 +1,11 @@
 migration.up = function(migrator) {
-    migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN uploaded BOOLEAN;');
+    Ti.API.info("migration 201810260933531_sample up()");
+    migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN uploaded INTEGER;');
     migrator.db.execute('UPDATE ' + migrator.table + ' SET uploaded = 1 WHERE dateCompleted IS NOT NULL;');
 };
 
 migration.down = function(migrator) {
+    Ti.API.info("migration 201810260933531_sample down()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute('CREATE TEMPORARY TABLE samples_backup(serverSampleId,lastError,sampleId,dateCompleted,lat,lng,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants,sitePhotoPath);');

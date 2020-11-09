@@ -1,8 +1,10 @@
 migration.up = function(migrator) {
+    Ti.API.info("migration 201810260735769_taxa up()");
     migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN taxonPhotoPath VARCHAR(255);');
 };
 
 migration.down = function(migrator) {
+    Ti.API.info("migration 201810260735769_taxa down()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute('CREATE TEMPORARY TABLE taxa_backup(abundance,sampleId,taxonId);');

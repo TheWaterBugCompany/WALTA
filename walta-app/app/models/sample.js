@@ -27,9 +27,8 @@ exports.definition = {
 			"edgePlants": "INTEGER",
 			"serverSitePhotoId": "INTEGER", // null if not on server
 			"sitePhotoPath": "VARCHAR(255)",
-			"uploaded": "INTEGER", // timestamp of last upload (or 1 for legacy code)
+			"serverSyncTime": "INTEGER", // timestamp of last upload or download (or 1 for legacy code)
 			"updatedAt": "INTEGER", // timestamp of the last update (or NULL for legacy)
-			"downloadedAt": "INTEGER", // timestamp last downloaded from server
 		},
 		adapter: {
 			type: "sql",
@@ -340,7 +339,7 @@ exports.definition = {
 			},
 
 			loadUploadQueue: function() {
-				this.fetch( { query: "SELECT * FROM sample WHERE (dateCompleted IS NOT NULL) AND (uploaded IS NULL) ORDER BY dateCompleted DESC"});
+				this.fetch( { query: "SELECT * FROM sample WHERE (dateCompleted IS NOT NULL) AND ((serverSyncTime IS NULL) OR (serverSyncTime < updatedAt)) ORDER BY dateCompleted DESC"});
 			}
 		});
 

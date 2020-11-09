@@ -1,4 +1,5 @@
 migration.up = function(migrator) {
+	Ti.API.info("migration 201808010000000_sample up()");
     migrator.createTable({
         columns: {
             "serverSampleId": "INTEGER",
@@ -24,5 +25,6 @@ migration.up = function(migrator) {
 };
 
 migration.down = function(migrator) {
-       migrator.dropTable();
+	Ti.API.info("migration 201808010000000_sample down()");
+    migrator.dropTable();
 };

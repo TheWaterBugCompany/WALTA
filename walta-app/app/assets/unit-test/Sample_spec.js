@@ -106,7 +106,7 @@ describe("Sample collection, model including taxa", function() {
     Alloy.Models.sample.set("openWater", 11 );
     Alloy.Models.sample.set("edgePlants", 10 );
     Alloy.Models.sample.set("sitePhotoPath", "/photo/path" );
-    Alloy.Models.sample.set("uploaded", true );
+    Alloy.Models.sample.set("serverSyncTime", moment().valueOf() );
     Alloy.Models.sample.save(); // set the autoincremented sampleId
     initialSampleId = Alloy.Models.sample.get("sampleId");
     
