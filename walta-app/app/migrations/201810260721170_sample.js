@@ -1,8 +1,10 @@
 migration.up = function(migrator) {
+	Ti.API.info("migration 201810260721170_sample up()");
     migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN sitePhotoPath VARCHAR(255);');
 };
 
 migration.down = function(migrator) {
+	Ti.API.info("migration 201810260721170_sample down()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute('CREATE TEMPORARY TABLE samples_backup(serverSampleId,lastError,sampleId,dateCompleted,lat,lng,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants);');
