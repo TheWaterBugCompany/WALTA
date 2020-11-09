@@ -141,18 +141,32 @@ function uploadNextSample(samples) {
 
     if ( !serverSampleId ) {
         debug(`Uploading new sample record...`);
-        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() );
+        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
+            .then( markSampleComplete );
     } else {
-        debug(`Attempting re-upload of ${serverSampleId} photo records...`);
-        uploadIfNeeded = Promise.resolve( { id: serverSampleId }); 
+        debug(`Updating existing sample = ${serverSampleId} record...`); 
+        uploadIfNeeded = Alloy.Globals.CerdiApi.updateSampleById( serverSampleId, sample.toCerdiApiJson() ); 
     }
 
     return uploadIfNeeded
             .then( setServerSampleId( sample ) )
             .then( uploadSitePhoto )
             .then( uploadTaxaPhotos )
-            .then( markSampleComplete )
             .catch( errorHandler( sample ) );
+}
+
+function uploadSamples() {
+    debug("Uploading samples to server...");
+    function loadSamples() {
+        var samples = Alloy.createCollection("sample");
+        samples.loadUploadQueue();
+        if ( samples.length === 0 )
+            debug("Nothing to do - no samples to upload");
+        return samples;
+    }
+    return Promise.resolve()
+        .then(loadSamples)
+        .then(uploadRemainingSamples);
 }
 
 function startSynchronise() {
@@ -177,20 +191,13 @@ function startSynchronise() {
         return Promise.resolve();
     }  
 
-    function loadSamples() {
-        var samples = Alloy.createCollection("sample");
-        samples.loadUploadQueue();
-        if ( samples.length === 0 )
-            debug("Nothing to do - no samples to upload");
-        return samples;
-    }
+   
 
     return Promise.resolve()
         .then(checkLoggedIn) 
         .then(checkNetwork)
         .then(downloadSamples)
-        .then(loadSamples)
-        .then(uploadRemainingSamples)
+        .then(uploadSamples)
         .catch( () => debug(`Error synchronising rescheduling upload...`))
         .finally( rescheduleSync )
 }
@@ -216,7 +223,7 @@ function downloadSamples() {
         sample.loadByServerId(serverSample.id) 
         if ( needsUpdate(serverSample,sample) ) {
             sample.fromCerdiApiJson(serverSample);
-            sample.set("downloadedAt",moment().valueOf());
+            sample.set("serverSyncTime",moment().valueOf());
             sample.save();
             return Promise.resolve([sample,serverSample]);
         } else {
@@ -275,6 +282,7 @@ function downloadSamples() {
 
 }
 
+exports.uploadSamples = uploadSamples;
 exports.uploadNextSample = uploadNextSample;
 exports.downloadSamples = downloadSamples;
 exports.forceUpload = forceUpload;

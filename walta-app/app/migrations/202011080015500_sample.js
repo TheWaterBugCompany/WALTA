@@ -1,13 +1,8 @@
 migration.up = function(migrator) {
-    Ti.API.info("migration 202010300015500_sample up()");
-    migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN downloadedAt INTEGER;');
-};
-
-migration.down = function(migrator) {
-    Ti.API.info("migration 202010300015500_sample down()");
+    Ti.API.info("migration 202011080015500_sample up()");
     var db = migrator.db;
     var table = migrator.table;
-    db.execute('CREATE TEMPORARY TABLE samples_backup(serverSampleId,lastError,sampleId,dateCompleted,lat,lng,accuracy,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants,sitePhotoPath,uploaded,updatedAt,serverSitePhotoId);');
+    db.execute('CREATE TEMPORARY TABLE samples_backup(serverSampleId,lastError,sampleId,dateCompleted,lat,lng,accuracy,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants,sitePhotoPath,serverSyncTime,updatedAt,serverSitePhotoId);');
     db.execute('INSERT INTO samples_backup SELECT serverSampleId,lastError,sampleId,dateCompleted,lat,lng,accuracy,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants,sitePhotoPath,uploaded,updatedAt,serverSitePhotoId FROM ' + table + ';');
     migrator.dropTable();
     migrator.createTable({
@@ -18,7 +13,7 @@ migration.down = function(migrator) {
             "dateCompleted": "VARCHAR(255)",
             "lat": "DECIMAL(3,5)",
             "lng": "DECIMAL(3,5)",
-            "accuracy":  "DECIMAL(3,5)",
+            "accuracy": "DECIMAL(3,5)",
             "surveyType": "INTEGER",
             "waterbodyType": "INTEGER",
             "waterbodyName": "VARCHAR(255)",
@@ -32,11 +27,17 @@ migration.down = function(migrator) {
             "openWater": "INTEGER",
             "edgePlants": "INTEGER",
             "sitePhotoPath": "VARCHAR(255)",
-            "uploaded": "INTEGER",
+            "serverSyncTime": "INTEGER",
             "updatedAt": "INTEGER",
             "serverSitePhotoId": "INTEGER"
         }
     });
-    db.execute('INSERT INTO ' + table + ' SELECT serverSampleId,lastError,sampleId,dateCompleted,lat,lng,accuracy,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants,sitePhotoPath,uploaded,updatedAt,serverSitePhotoId FROM samples_backup;');
+    db.execute('INSERT INTO ' + table + ' SELECT serverSampleId,lastError,sampleId,dateCompleted,lat,lng,accuracy,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants,sitePhotoPath,serverSyncTime,updatedAt,serverSitePhotoId FROM samples_backup;');
     db.execute('DROP TABLE samples_backup;');
+
+};
+
+migration.down = function(migrator) {
+    Ti.API.info("migration 202011080015500_sample down()");
+    migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN downloadedAt INTEGER;');
 };

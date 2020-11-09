@@ -81,6 +81,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
         .rejectWith({
             message: "Unknown user"
         });
+    simple.mock(cerdiApi,"updateSampleById").resolveWith();
     simple.mock(cerdiApi,"submitSample").resolveWith();
     simple.mock(cerdiApi,"retrieveSamples").resolveWith();
     simple.mock(cerdiApi,"submitSitePhoto").resolveWith();

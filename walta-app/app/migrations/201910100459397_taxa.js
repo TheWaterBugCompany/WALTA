@@ -1,4 +1,5 @@
 migration.up = function(migrator) {
+    Ti.API.info("migration 201910100459397_taxa up()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute(`ALTER TABLE ${table} RENAME TO ${table}_old;`);
@@ -15,10 +16,11 @@ migration.up = function(migrator) {
     db.execute(`DROP TABLE ${table}_old`);
 };
 
-// realluy don't want to do this, as data is lost!!!
+// Really don't want to do this in production, as data is lost!!!
+// However, the database migration tests need to run the up() and down() migrations in order
+// test migration correctly so we have this code here.
 migration.down = function(migrator) {
-    throw new Error("Migration down() not supported");
-    /*
+    Ti.API.info("migration 201910100459397_taxa down()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute(`ALTER TABLE ${table} RENAME TO ${table}_old;`);
@@ -31,6 +33,5 @@ migration.down = function(migrator) {
         }
     });
     db.execute(`INSERT INTO ${table} SELECT abundance,sampleId,taxonId,taxonPhotoPath FROM ${table}_old;`);
-    db.execute('DROP TABLE ${table}_old;');
-    */
+    db.execute(`DROP TABLE ${table}_old;`);
 };

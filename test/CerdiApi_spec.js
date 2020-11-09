@@ -443,7 +443,7 @@ describe('CerdiApi', function() {
 
         });
 
-        it.only("should update existing smaple", function(){
+        it("should update existing sample", function(){
             let serverId = null, createdAt = null, updatedAt = null, sampleDate = moment().format(),
                 sampleData = makeTestSample(sampleDate);
 
