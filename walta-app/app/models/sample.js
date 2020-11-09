@@ -43,7 +43,28 @@ exports.definition = {
 			
 			initialize: function() {
 				this.on('change', function(a,event) {
-					if ( ! ( event.changes.length === 1 && event.changes.updatedAt ) ) {
+					// The list of fields that trigger setting updateAt
+					// we don't want setting metadata to do this
+					let dataFields = [
+						"dateCompleted",
+						"lat",
+						"lng",
+						"accuracy",
+						"surveyType",
+						"waterbodyType",
+						"waterbodyName",
+						"nearbyFeature",
+						"boulder",
+						"gravel",
+						"sandOrSilt",
+						"leafPacks",
+						"wood",
+						"aquaticPlants",
+						"openWater",
+						"edgePlants",
+						"sitePhotoPath"
+					]
+					if (_.intersection(_.keys(event.changes),dataFields).length > 0) {
 						this.set('updatedAt', moment().valueOf());
 						_.defer(() => this.save());
 					}
