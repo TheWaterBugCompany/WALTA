@@ -1,4 +1,4 @@
-const debug = require('debug')('thecodesharman:buildconfig'),
+const debug = require('debug')('thecodesharman:appconfig'),
 	path = require('path'),
 	join = path.join,
 	fs = require('fs')
@@ -14,7 +14,7 @@ exports.init = function (logger, config, cli) {
 		debug(JSON.stringify(r,null,4));
 		
 		r.flags || (r.flags = {});
-		r.options["build-config"] = {
+		r.options["app-config"] = {
 			desc: "which build configuration to use",
 			default: "test",
 			values: [
@@ -29,13 +29,13 @@ exports.init = function (logger, config, cli) {
 
 	function copyBuildConfig(data, finished) {
 		debug("entering copyBuildConfig ");
-		let buildConfigFile = join(tempdir(),`buildconfig.${cli.argv["build-config"]}.json`);
+		let buildConfigFile = join(tempdir(),`app-config.${cli.argv["build-config"]}.json`);
 		debug(JSON.stringify(Object.keys(data),null,4));
 		if ( fs.existsSync(buildConfigFile) ) {
 			debug(`file ${buildConfigFile} exists!`);
 			fs.copyFileSync(
 					buildConfigFile,
-					join(tempdir(), 'buildconfig.json')
+					join(tempdir(), 'app-config.json')
 				);
 		} else {
 			debug(`file ${buildConfigFile} NOT found`);
