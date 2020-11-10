@@ -6,13 +6,11 @@ const debug = require('debug')('thecodesharman:appconfig'),
 exports.cliVersion = '>=5.2';
 
 exports.init = function (logger, config, cli) {
-
+	debug("Initializing appconfig...")
 
 	function doConfig(data, finished) {
 		debug('Running build.config hook');
-		const r = data.result[1];
-		debug(JSON.stringify(r,null,4));
-		
+		const r = data.result[1];		
 		r.flags || (r.flags = {});
 		r.options["app-config"] = {
 			desc: "which build configuration to use",
@@ -29,13 +27,12 @@ exports.init = function (logger, config, cli) {
 
 	function copyBuildConfig(data, finished) {
 		debug("entering copyBuildConfig ");
-		let buildConfigFile = join(tempdir(),`app-config.${cli.argv["build-config"]}.json`);
-		debug(JSON.stringify(Object.keys(data),null,4));
+		let buildConfigFile = join(data.projectDir, "app",`app-config.${cli.argv["app-config"]}.json`);
 		if ( fs.existsSync(buildConfigFile) ) {
 			debug(`file ${buildConfigFile} exists!`);
 			fs.copyFileSync(
 					buildConfigFile,
-					join(tempdir(), 'app-config.json')
+					join(data.projectDir, "Resources", "app-config.json")
 				);
 		} else {
 			debug(`file ${buildConfigFile} NOT found`);
