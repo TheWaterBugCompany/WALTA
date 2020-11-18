@@ -42,30 +42,39 @@ exports.definition = {
 			
 			initialize: function() {
 				this.on('change', function(a,event) {
-					// The list of fields that trigger setting updateAt
-					// we don't want setting metadata to do this
-					let dataFields = [
-						"dateCompleted",
-						"lat",
-						"lng",
-						"accuracy",
-						"surveyType",
-						"waterbodyType",
-						"waterbodyName",
-						"nearbyFeature",
-						"boulder",
-						"gravel",
-						"sandOrSilt",
-						"leafPacks",
-						"wood",
-						"aquaticPlants",
-						"openWater",
-						"edgePlants",
-						"sitePhotoPath"
-					]
-					if (_.intersection(_.keys(event.changes),dataFields).length > 0) {
-						this.set('updatedAt', moment().valueOf());
-						_.defer(() => this.save());
+					
+					if ( event && !event.ignore ) {
+						Ti.API.info(`change ${_.keys(event.changes)}`);
+						// The list of fields that trigger setting updateAt
+						// we don't want setting metadata to do this
+						let dataFields = [
+							"dateCompleted",
+							"lat",
+							"lng",
+							"accuracy",
+							"surveyType",
+							"waterbodyType",
+							"waterbodyName",
+							"nearbyFeature",
+							"boulder",
+							"gravel",
+							"sandOrSilt",
+							"leafPacks",
+							"wood",
+							"aquaticPlants",
+							"openWater",
+							"edgePlants",
+							"sitePhotoPath"
+						]
+						if (_.intersection(_.keys(event.changes),dataFields).length > 0) {
+							
+								
+							_.defer(() => {
+								Ti.API.info("setting updatedAt")
+								this.set('updatedAt', moment().valueOf(), {ignore:true});
+								this.save(); 
+							});
+						}
 					}
 				});
 			},
@@ -101,8 +110,9 @@ exports.definition = {
 			},
 			
 			saveCurrentSample: function() {
-				var taxa = Alloy.Collections.taxa;
+				Ti.API.info("entering saveCurrentSample")
 				this.set("dateCompleted", moment().format() );
+				Ti.API.info("calling save()")
 				this.save();
 			},
 

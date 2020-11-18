@@ -57,7 +57,10 @@ function updateLocation( lat, lng, accuracy ) {
 
 function locateClick() {
     getCurrentPosition( function(e) {
-        updateLocation( e.coords.latitude, e.coords.longitude, e.coords.accuracy );
+        // if there hasn't been a GPS lock yet e will be null
+        if ( e && e.coords ) {
+            updateLocation( e.coords.latitude, e.coords.longitude, e.coords.accuracy );
+        }
     });
 }
 
