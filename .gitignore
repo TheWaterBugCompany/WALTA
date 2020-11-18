@@ -27,3 +27,5 @@ appium.log
 builds/**/*.log
 builds/**/*.plist
 mock-server/rest/*/*/*/mock/response.txt
+walta-app/app/app-config.production.json
+walta-app/app/app-config.test.json

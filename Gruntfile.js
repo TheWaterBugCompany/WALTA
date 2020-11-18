@@ -15,7 +15,7 @@ module.exports = function(grunt) {
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
-    const PROFILE = process.env.PROFILE || "7081d6f7-618b-4c10-b5bb-e48e63085767";
+    const PROFILE = process.env.PROFILE || "20804088-396a-4aae-b7e3-5d6f56510a6a";
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "810ab12c-fd91-41f7-a2c0-91bff72afe05";
     
     const WATERBUG_APPID = {
