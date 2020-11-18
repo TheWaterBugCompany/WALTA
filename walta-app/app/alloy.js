@@ -24,6 +24,10 @@ const Crashlytics = require('util/Crashlytics');
 var log = Crashlytics.log;
 var debug = m => Ti.API.info(m);
 
+const appConfig = Ti.Filesystem.getFile("app-config.json").read();
+_.extend(Alloy.CFG, JSON.parse(appConfig));
+
+
 Crashlytics.configure();
 Crashlytics.setCustomKey("deployType", Ti.App.deployType );
 
