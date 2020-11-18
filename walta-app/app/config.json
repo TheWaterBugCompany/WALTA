@@ -1,0 +1,6 @@
+{
+  "autoStyle": true,
+  "dependencies": {
+    "com.skypanther.segmentedcontrol": "*"
+  }
+}
