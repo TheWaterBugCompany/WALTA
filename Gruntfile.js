@@ -127,6 +127,17 @@ module.exports = function(grunt) {
         throw new Error("please specify platform!");
       }
 
+      // allow the application configuration to be overridden at 
+      // build time.
+      var overrideAppConfig = grunt.option('override-app-config');
+      if ( overrideAppConfig ) {
+        args.push(`--app-config=${overrideAppConfig}`);
+      } else {
+        if ( build_type === "release") {
+          args.push("--app-config=production");
+        }
+      }
+      
       switch( build_type ) {
         case "debug":
           test();

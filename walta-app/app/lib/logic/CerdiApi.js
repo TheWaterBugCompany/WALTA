@@ -109,6 +109,7 @@ function retrievePhoto( serverUrl, photoUrl, accessToken, photoPath ) {
 
 
 function createCerdiApi( serverUrl, client_secret  ) {
+        info(`Using CERDI API server ${serverUrl}` );
         var cerdiApi = {
             retrieveUserToken() {
                 return Ti.App.Properties.getObject('userAccessTokenLive');

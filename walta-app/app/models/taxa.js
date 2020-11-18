@@ -62,10 +62,11 @@ exports.definition = {
 			},
 
 			setPhoto(...file) {
+				var photoFile = Ti.Filesystem.getFile(...file);
 				var newPhotoName;	
 				if ( ! this.get("sampleId") ) {
 					newPhotoName = `taxon_temporary_${this.get("taxonId")}.jpg`;
-					if ( file.endsWith(newPhotoName) )
+					if ( photoFile.nativePath.endsWith(newPhotoName) )
 						return;
 					removeFilesBeginningWith(newPhotoName);
 				} else {
@@ -75,7 +76,7 @@ exports.definition = {
 				
 				log(`updating photo from ${file} to ${newPhotoName}`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
-				Ti.Filesystem.getFile(...file).move(taxonPhotoPath.nativePath);
+				photoFile.move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
 				
 			},
