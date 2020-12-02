@@ -52,7 +52,7 @@ if ( relHeight > relWidth ) {
   debug(`Ugh we got portrait sized dimensions width = ${relWidth} height = ${relHeight} :-( swapping...`)
     var tmp = relHeight;
     relHeight = relWidth;
-    relWidth = relHeight;    
+    relWidth = tmp;    
     // we are reporting protrait mode
 }
 

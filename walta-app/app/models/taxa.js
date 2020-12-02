@@ -27,6 +27,7 @@ exports.definition = {
 					let photoPath = this.get("taxonPhotoPath");
 					if ( photoPath ) this.setPhoto(photoPath);
 				});
+				/*
 				this.on('change', function() {
 					let sampleId = this.get('sampleId');
 					if ( sampleId ) {
@@ -36,16 +37,20 @@ exports.definition = {
 						sample.save();
 					}
 					
-				});
+				});*/
 			},
 			getTaxonId() {
 				return this.get("taxonId");
 			},
 			getAbundance() {
 				var abundance = this.get("abundance");
-				if ( abundance.startsWith(">")) return 30;
-				let [ min, max ] = abundance.split("-").map((a) => parseInt(a) );
-				return Math.round((min+max)/2);
+				if ( abundance ) {
+					if ( abundance.startsWith(">")) return 30;
+					let [ min, max ] = abundance.split("-").map((a) => parseInt(a) );
+					return Math.round((min+max)/2);
+				} else {
+					return undefined;
+				}
 			},
 			convertCountToAbundance(count) {
 				if ( count >= 1 && count < 3 ) {

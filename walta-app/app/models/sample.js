@@ -44,7 +44,7 @@ exports.definition = {
 				this.on('change', function(a,event) {
 					
 					if ( event && !event.ignore ) {
-						Ti.API.info(`change ${_.keys(event.changes)}`);
+						//Ti.API.info(`change ${_.keys(event.changes)}`);
 						// The list of fields that trigger setting updateAt
 						// we don't want setting metadata to do this
 						let dataFields = [
@@ -70,7 +70,7 @@ exports.definition = {
 							
 								
 							_.defer(() => {
-								Ti.API.info("setting updatedAt")
+								//Ti.API.info("setting updatedAt")
 								this.set('updatedAt', moment().valueOf(), {ignore:true});
 								this.save(); 
 							});
@@ -110,9 +110,9 @@ exports.definition = {
 			},
 			
 			saveCurrentSample: function() {
-				Ti.API.info("entering saveCurrentSample")
+				//Ti.API.info("entering saveCurrentSample")
 				this.set("dateCompleted", moment().format() );
-				Ti.API.info("calling save()")
+				//Ti.API.info("calling save()")
 				this.save();
 			},
 
@@ -269,15 +269,30 @@ exports.definition = {
 				this.set("waterbodyType", toWaterbodyType(sample.waterbody_type));
 				this.set("waterbodyName", sample.waterbody_name);
 				this.set("nearbyFeature", sample.nearby_feature);
-				
 				this.set("boulder", sample.habitat.boulder);
 				this.set("gravel", sample.habitat.gravel);
-				this.set("sandOrSilt", sample.habitat.sand_or_silt);
-				this.set("leafPacks", sample.habitat.leaf_packs);
+				// In order to fix corrupted data - if the server has a null set
+				// then do not overwrite existing data. (Only needed for attrbiutes with two words)
+				if ( sample.habitat.sand_or_silt ) {
+					this.set("sandOrSilt", sample.habitat.sand_or_silt);
+				}
+				if ( sample.habitat.leaf_packs ) {
+					this.set("leafPacks", sample.habitat.leaf_packs);
+				}
+			
 				this.set("wood", sample.habitat.wood);
-				this.set("aquaticPlants", sample.habitat.aquatic_plants);
-				this.set("openWater", sample.habitat.open_water);
-				this.set("edgePlants", sample.habitat.edge_plants);
+
+				if ( sample.habitat.aquatic_plants ) {
+					this.set("aquaticPlants", sample.habitat.aquatic_plants);
+				}
+
+				if ( sample.habitat.open_water ) {
+					this.set("openWater", sample.habitat.open_water);
+				}
+				
+				if ( sample.habitat.edge_plants ) {
+					this.set("edgePlants", sample.habitat.edge_plants);
+				}
 				// needs a sampleId before added taxa
 				this.save(); 
 				taxa.fromCerdiApiJson(sample.sampled_creatures, this.get("sampleId"));
@@ -286,6 +301,7 @@ exports.definition = {
 
 			toCerdiApiJson: function() {
 				var taxa = this.loadTaxa();
+				
 				var attrs = {
 					"sample_date": this.get("dateCompleted"),
 					"lat": parseFloat(this.get("lat")).toFixed(5),
@@ -307,6 +323,7 @@ exports.definition = {
 						"edge_plants": this.get("edgePlants")
 					 } 
 				};
+				
 				if (this.get("serverSampleId") ) {
 					attrs["sampleId"] = this.get("serverSampleId");
 				}
