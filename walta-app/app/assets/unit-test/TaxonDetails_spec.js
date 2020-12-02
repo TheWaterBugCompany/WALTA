@@ -79,7 +79,7 @@ describe('TaxonDetails controller', function() {
 		});
 
 		it('the scientific name field should be correct', function() {
-			const labels = tv.scientificClassification.getChildren();
+			const labels = tv.scientificClassification.children;
 			expect(labels[0].text).to.equal("phylum: Arthropoda");
 			expect(labels[1].text).to.equal("subphylum: Crustacea");
 			expect(labels[2].text).to.equal("class: Decapoda");

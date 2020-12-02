@@ -40,7 +40,6 @@ describe('Speedbug controller', function() {
 	it('should link to correct taxon node when a speed bug is selected', function(done) {
 		SpeedBug.on("rendered", function() {
 			var tiles = SpeedBug.getSpeedbugTiles().tiles;
-			console.log(tiles);
 			actionFiresTopicTest( tiles[0].SpeedbugTile, 'click', Topics.JUMPTO, function(data) {
 				 expect( data.id ).to.equal('aeshnidae_telephleb');
 				 done();
