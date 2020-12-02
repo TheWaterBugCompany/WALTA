@@ -75,43 +75,43 @@ describe( 'SampleTray controller', function() {
   }
 
   function findLeftMost(arr,i=0) {
-    var sorted = arr.slice(0).sort( (a,b) => a.getRect().x - b.getRect().x );
+    var sorted = arr.slice(0).sort( (a,b) => a.rect.x - b.rect.x );
     return sorted[i];
   }
 
   function findRightMost(arr,i=0) {
-    var sorted = arr.slice(0).sort( (a,b) => b.getRect().x - a.getRect().x );
+    var sorted = arr.slice(0).sort( (a,b) => b.rect.x - a.rect.x );
     return sorted[i];
   }
 
   function assertSample( taxon, image, abundance ) {
-    var unwrapped = taxon.getChildren()[0].getChildren()[0];
-    var [ icon, label ] = unwrapped.getChildren();
+    var unwrapped = taxon.children[0].children[0];
+    var [ icon, label ] = unwrapped.children;
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
     expect( label.text, `Expected the abundance label to be ${abundance}` ).to.equal( abundance );
   }
 
   function clickPlus( square ) {
-    var unwrapped = square.getChildren()[0];
+    var unwrapped = square.children[0];
     unwrapped.fireEvent('click');
   }
 
   function assertPlus( square ) {
-    var unwraped = square.getChildren()[0];
+    var unwraped = square.children[0];
     expect( unwraped.backgroundImage ).to.include('images/plus-icon.png');
   }
     
 
   function assertSampleBlank( taxon ) {
-    expect( taxon.getChildren()  ).to.be.empty;
+    expect( taxon.children  ).to.be.empty;
   }
 
   function assertTaxaBackground( tile, image ) {
-    expect( tile.getChildren()[0].image ).to.include(image);
+    expect( tile.children[0].image ).to.include(image);
   }
 
   function getTaxaIcons( tile ) {
-    return tile.getChildren()[1].getChildren();
+    return tile.children[1].children;
   }
 
   context( 'event handling', function(){
@@ -142,7 +142,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           expect( tiles.length ).to.be.at.least(4); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
@@ -160,7 +160,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           expect( tiles.length ).to.be.at.least(4); // check that extra blank tiles are added
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
@@ -179,7 +179,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[1] );
           expect( tiles.length ).to.be.at.least(4); 
           assertPlus( sampleTaxa[0] );
@@ -198,7 +198,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           expect( tiles.length ).to.be.at.least(4); 
 
           var sampleTaxa = getTaxaIcons( tiles[1] );
@@ -220,7 +220,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[1] );
           expect( tiles.length ).to.be.at.least(4); 
           assertPlus( sampleTaxa[1] );
@@ -241,7 +241,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[1] );
           expect( tiles.length ).to.be.at.least(4); 
           assertPlus( sampleTaxa[3] );
@@ -271,7 +271,7 @@ describe( 'SampleTray controller', function() {
           })
           .then( openSampleTray )
           .then( function() {
-              var tiles = SampleTray.tray.getChildren();
+              var tiles = SampleTray.tray.children;
               expect( tiles.length ).to.be.at.least(4); 
               // assert end cap
               assertTaxaBackground( tiles[0], "images/endcap_320.png" );
@@ -367,7 +367,7 @@ describe( 'SampleTray controller', function() {
           .then( (width) => scrollSampleTray(width)() )
           //.then( updateSampleTrayOnce )
           .then( function() {
-            var tiles = SampleTray.tray.getChildren();
+            var tiles = SampleTray.tray.children;
            
             // assert last tile
             var tile = findRightMost( tiles );
@@ -375,9 +375,9 @@ describe( 'SampleTray controller', function() {
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            //sampleTaxa[0].getChildren()[0].children[0].children[0].backgroundColor = "red";
-            //console.log(`name = ${sampleTaxa[0].getChildren()[0].children[0].children}`);
-            //console.log(`backgroundImage = ${sampleTaxa[0].getChildren()[0].backgroundDisabledImage}`);
+            //sampleTaxa[0].children[0].children[0].children[0].backgroundColor = "red";
+            //console.log(`name = ${sampleTaxa[0].children[0].children[0].children}`);
+            //console.log(`backgroundImage = ${sampleTaxa[0].children[0].backgroundDisabledImage}`);
             assertPlus( sampleTaxa[0] );
           });
 
@@ -389,7 +389,7 @@ describe( 'SampleTray controller', function() {
           .then( scrollSampleTray(209*4) )
           .then( scrollSampleTray(0) )
           .then( function() {
-            var tiles = SampleTray.tray.getChildren();
+            var tiles = SampleTray.tray.children;
             expect( tiles ).to.have.lengthOf(4);
 
             tiles.shift(); // discard end cap since that is always static
@@ -412,7 +412,7 @@ describe( 'SampleTray controller', function() {
           .then( openSampleTray )
           .then( waitForScrollEnd )
           .then( () => {
-            var tiles = SampleTray.tray.getChildren();
+            var tiles = SampleTray.tray.children;
             tiles.shift();
             var tile = findRightMost( tiles );
             var sampleTaxa = getTaxaIcons( tile );
@@ -453,7 +453,7 @@ describe( 'SampleTray controller', function() {
            })
           .then( waitForScrollEnd )
           .then( () => {
-            var tiles = SampleTray.tray.getChildren();
+            var tiles = SampleTray.tray.children;
             tiles.shift();
             var tile = findRightMost( tiles );
             var sampleTaxa = getTaxaIcons( tile );
@@ -490,7 +490,7 @@ describe( 'SampleTray controller', function() {
            })
           .then( waitForScrollEnd )
           .then( () => {
-            var tiles = SampleTray.tray.getChildren();
+            var tiles = SampleTray.tray.children;
             tiles.shift();
             var tile = findRightMost( tiles );
             var sampleTaxa = getTaxaIcons( tile );
@@ -509,7 +509,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( resolve => {
@@ -531,7 +531,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( resolve => {
@@ -553,7 +553,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( resolve => {
@@ -574,7 +574,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
@@ -583,7 +583,7 @@ describe( 'SampleTray controller', function() {
           });
         })
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertSample( sampleTaxa[0], "/aeshnidae_telephleb_b.png", "3-5" );
@@ -603,7 +603,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
@@ -612,7 +612,7 @@ describe( 'SampleTray controller', function() {
           });
         })
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[1] );
           expect( sampleTaxa ).to.have.lengthOf(4);
           assertSample( sampleTaxa[2], "/anostraca_b.png", "3-5" );
@@ -631,7 +631,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
@@ -640,7 +640,7 @@ describe( 'SampleTray controller', function() {
           });
         })
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertPlus( sampleTaxa[1] );
@@ -660,7 +660,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
@@ -669,7 +669,7 @@ describe( 'SampleTray controller', function() {
           });
         })
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[1] );
           expect( sampleTaxa ).to.have.lengthOf(4);
           assertPlus( sampleTaxa[2] );
@@ -711,7 +711,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
@@ -720,7 +720,7 @@ describe( 'SampleTray controller', function() {
           });
         })
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           assertSample( sampleTaxa[1], "/atalophlebia_b.png", "3-5" );
@@ -738,7 +738,7 @@ describe( 'SampleTray controller', function() {
         })
         .then( openSampleTray )
         .then( function() {
-          var tiles = SampleTray.tray.getChildren();
+          var tiles = SampleTray.tray.children;
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( function(resolve) {
@@ -831,7 +831,7 @@ describe( 'SampleTray controller', function() {
 
     it('should display an empty tray', async function() {
       await openSampleTrayToEdit(1);
-      var tiles = SampleTray.tray.getChildren();
+      var tiles = SampleTray.tray.children;
       var sampleTaxa = getTaxaIcons( tiles[0] );
       expect( sampleTaxa ).to.have.lengthOf(2);
       assertPlus( sampleTaxa[0] );

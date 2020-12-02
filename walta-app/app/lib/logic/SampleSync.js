@@ -106,21 +106,15 @@ function uploadTaxaPhotos(sample) {
         
 }
 
-function setServerSampleId( sample ) {
-    return (r) => {
-        debug(`success, server returned id = ${r.id}`);
-        sample.set("serverSampleId", r.id );
-        sample.save();
-        return sample;
-    }
-}
-
 function markSampleComplete( sample ) {
-    log(`Sample ${sample.get("serverSampleId")} and photos successfully uploaded setting uploaded flag.`);
-    sample.set("uploaded", moment().valueOf());
-    sample.save();
-    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("id") } );
-    return sample;
+    return (res) => {
+        log(`Sample ${sample.get("serverSampleId")} successfully uploaded setting uploaded flag.`);
+        sample.set("serverSampleId", res.id );
+        sample.set("serverSyncTime", moment().valueOf());
+        sample.save();
+        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
+        return sample;
+    };
 }
 
 function errorHandler( sample ) {
@@ -141,15 +135,14 @@ function uploadNextSample(samples) {
 
     if ( !serverSampleId ) {
         debug(`Uploading new sample record...`);
-        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
-            .then( markSampleComplete );
+        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() );
     } else {
-        debug(`Updating existing sample = ${serverSampleId} record...`); 
+        debug(`Updating existing sample = ${serverSampleId}...`); 
         uploadIfNeeded = Alloy.Globals.CerdiApi.updateSampleById( serverSampleId, sample.toCerdiApiJson() ); 
     }
 
     return uploadIfNeeded
-            .then( setServerSampleId( sample ) )
+            .then( markSampleComplete( sample )  )
             .then( uploadSitePhoto )
             .then( uploadTaxaPhotos )
             .catch( errorHandler( sample ) );
@@ -212,21 +205,31 @@ function downloadSamples() {
     function needsUpdate(serverSample,sample) {
         if ( ! sample.get("sampleId") ) {
             return true;
-        } else {
-            return moment(serverSample.updated_at).isAfter( sample.get("uploaded") )
-                    && moment(serverSample.updated_at).isAfter( sample.get("downloadedAt") );
+        } 
+
+        let serverSyncTime = sample.get("serverSyncTime");
+        if ( _.isUndefined(serverSyncTime) ) {
+            return true;
         }
+
+        if ( moment(serverSample.updated_at).isAfter( moment(serverSyncTime) ) ) {
+           return true;
+        }
+
+        return false; // update not needed
+
     }
     function updateIncomingSample(serverSample) {
         let sample = Alloy.createModel("sample");
-        debug(`updateIncomingSample( serveSample.id = ${JSON.stringify(serverSample.id)})`)
         sample.loadByServerId(serverSample.id) 
         if ( needsUpdate(serverSample,sample) ) {
+            Ti.API.info(`Updating serverSampleId = ${JSON.stringify(serverSample.id)}`);
             sample.fromCerdiApiJson(serverSample);
             sample.set("serverSyncTime",moment().valueOf());
             sample.save();
             return Promise.resolve([sample,serverSample]);
         } else {
+            Ti.API.info(`serverSampleId = ${JSON.stringify(serverSample.id)} doesn't need updating`);
             return Promise.resolve([sample,serverSample]);
         }
     }
@@ -277,7 +280,7 @@ function downloadSamples() {
         });
         return updateAllSamples;
     }
-    Alloy.Globals.CerdiApi.retrieveSamples()
+    return Alloy.Globals.CerdiApi.retrieveSamples()
         .then( saveNewSamples );
 
 }

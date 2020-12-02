@@ -69,7 +69,7 @@ describe("Taxa model", function() {
     taxon = null;
     taxon = Alloy.createModel("taxa");
     taxon.fetch({query: "SELECT * FROM taxa WHERE sampleId = 666 AND taxonId = 1"});
-    console.log(taxon);
+
     expect( taxon.get("sampleId") ).to.equal(666);
     expect( taxon.get("taxonId") ).to.equal(1);
     expect( taxon.get("abundance") ).to.equal("1-2");
@@ -182,6 +182,7 @@ describe("Sample collection, model including taxa", function() {
       resetSample();
       Alloy.Models.sample.loadById(initialSampleId);
     })   
+    
     it('should persist all the fields', function() {
       expect( Alloy.Models.sample.get("serverSampleId") ).to.equal(666);
       expect( Alloy.Models.sample.get("sampleId") ).to.equal(initialSampleId);
@@ -189,7 +190,7 @@ describe("Sample collection, model including taxa", function() {
       expect( Alloy.Models.sample.get("dateCompleted")).to.be.a.dateString();
       expect( parseFloat(Alloy.Models.sample.get("lat")) ).to.equal(-42);
       expect( parseFloat(Alloy.Models.sample.get("lng")) ).to.equal(135);
-      expect( Alloy.Models.sample.get("accuracy") ).to.equal(100.0);
+      expect( Alloy.Models.sample.get("accuracy") ).to.equal('100');
       expect( Alloy.Models.sample.get("surveyType") ).to.equal(Sample.SURVEY_DETAILED);
       expect( Alloy.Models.sample.get("waterbodyType") ).to.equal(Sample.WATERBODY_LAKE);
       expect( Alloy.Models.sample.get("waterbodyName") ).to.equal("Test Waterbody");
@@ -203,7 +204,7 @@ describe("Sample collection, model including taxa", function() {
       expect( Alloy.Models.sample.get("openWater") ).to.equal(11);
       expect( Alloy.Models.sample.get("edgePlants") ).to.equal(10);
       expect( Alloy.Models.sample.get("sitePhotoPath") ).to.equal("/photo/path");
-      expect( Alloy.Models.sample.get("uploaded") ).to.be.ok;
+      expect( Alloy.Models.sample.get("serverSyncTime") ).to.be.ok;
     });
     it('should persist all the taxons', function() {
       expect( Alloy.Collections.taxa.length ).to.equal(5);
@@ -316,7 +317,7 @@ describe("Sample collection, model including taxa", function() {
       var json = Alloy.Models.sample.toCerdiApiJson();
       expect( json ).to.be.ok;
       expect( json.sampleId ).to.equal(99);
-    });
+    }); 
 
     context("set updatedAt", function() { 
     [
@@ -338,14 +339,17 @@ describe("Sample collection, model including taxa", function() {
       "edgePlants",
       "sitePhotoPath"
     ].forEach( field => 
-      it(`should set the updatedAt field to the lastest date afer ${field} field is set`, async function() {
+      it(`should set the updatedAt field to the lastest date afer ${field} field is set`,function(done) {
         
         let sample = Alloy.Models.sample;
-        let oldUpdatedAt = sample.get('updatedAt');
+        let oldUpdatedAt = 10000;
+        sample.set("updatedAt", oldUpdatedAt);
         sample.set(field, 'updated');
-        expect(sample.get('updatedAt')).to.be.above(oldUpdatedAt);
-      }) 
-    );
+        _.defer(() => {
+            expect(sample.get('updatedAt')).to.be.above(oldUpdatedAt);
+            done();
+        });
+      }));
     });
   });
-});
+})
