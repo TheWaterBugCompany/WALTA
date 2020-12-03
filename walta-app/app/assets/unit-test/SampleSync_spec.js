@@ -78,6 +78,20 @@ function clearMockSampleData() {
     Alloy.Models.taxa = null;
 }
 
+function makeSample() {
+    return Alloy.createModel("sample", { 
+        serverSampleId: null, 
+        lat: "-37.5622000",
+        lng: "143.8750300",
+        dateCompleted: moment().format(),
+        accuracy: 1,
+        surveyType: Sample.SURVEY_DETAILED,
+        waterbodyType: Sample.WATERBODY_RIVER,
+        waterbodyName: "test water body name",
+        serverSyncTime: null
+     });
+}
+
 describe("SampleSync", function () {
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
@@ -130,19 +144,7 @@ describe("SampleSync", function () {
         this.beforeEach(function () {
             clearMockSampleData();
         });
-        function makeSample() {
-            return Alloy.createModel("sample", { 
-                serverSampleId: null, 
-                lat: "-37.5622000",
-                lng: "143.8750300",
-                dateCompleted: moment().format(),
-                accuracy: 1,
-                surveyType: Sample.SURVEY_DETAILED,
-                waterbodyType: Sample.WATERBODY_RIVER,
-                waterbodyName: "test water body name",
-                serverSyncTime: null
-             });
-        }
+        
         it('should upload new samples to server',async function() {
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                 .resolveWith({id:123});
@@ -176,11 +178,7 @@ describe("SampleSync", function () {
                     });
             });
         });
-        it('should ensure server updates should take priority over local updates', async function() {
-            // download given server id gives update time > last server sync
-            // should overwrite any local changes (with exception of habitat details)
-            
-        });
+       
         it('should upload new site photos');
         it('should upload new taxon photos');
         it('should not upload old photos again');
@@ -285,7 +283,50 @@ describe("SampleSync", function () {
             expect(sample.get("waterbodyName")).to.equal("test waterbody name");
 
         });
-        it('should NOT update existing samples if they have been updated on the server but we have already downloaded that update');
+        it('should NOT update existing samples if they have been updated on the server but we have already downloaded that update', async function() {
+            // if updated_at < serverSyncTime then do not overwrite local changes
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith(makeMockSampleData({
+                    updated_at: moment("2020-03-01").format()
+                }));
+            let sample = makeSample({});
+            sample.set("serverSyncTime", moment("2020-04-01").valueOf());
+            sample.set("serverSampleId", 473);
+            sample.set("waterbodyName", "local update");
+            sample.set("updatedAt", moment("2020-05-01").valueOf());
+            sample.save();
+            await SampleSync.downloadSamples();
+
+            // load the updated sample - we are just testing the update is applied here
+            // assuming the same code path is followed for adding a new sample
+            sample = Alloy.Models.instance("sample");
+            sample.loadByServerId(473);
+            expect(sample.get("serverSampleId")).to.equal(473);
+            expect(sample.get("waterbodyName")).to.equal("local update");
+
+        });
+        it('should overwrtie lcoal updates if they have been updated on the server', async function() {
+            // if updated_at < serverSyncTime then do not overwrite local changes
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith(makeMockSampleData({
+                    updated_at: moment("2020-06-01").format()
+                }));
+            let sample = makeSample({});
+            sample.set("serverSyncTime", moment("2020-04-01").valueOf());
+            sample.set("serverSampleId", 473);
+            sample.set("waterbodyName", "local update");
+            sample.set("updatedAt", moment("2020-05-01").valueOf());
+            sample.save();
+            await SampleSync.downloadSamples();
+
+            // load the updated sample - we are just testing the update is applied here
+            // assuming the same code path is followed for adding a new sample
+            sample = Alloy.Models.instance("sample");
+            sample.loadByServerId(473);
+            expect(sample.get("serverSampleId")).to.equal(473);
+            expect(sample.get("waterbodyName")).to.equal("test waterbody name"); // we have server changes not local changes
+
+        });
         it('should NOT update existing samples if the update on the server happened BEFORE our lastest upload', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith(makeMockSampleData());
