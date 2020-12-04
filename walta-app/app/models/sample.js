@@ -103,6 +103,7 @@ exports.definition = {
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(...file).move(sitePhotoPath.nativePath);
 				this.set( "sitePhotoPath", sitePhotoPath.nativePath );
+				this.set( "serverSitePhotoId", null); // indicates this photo hasn't been uploaded yet
 			},
 
 			getSitePhoto: function() {

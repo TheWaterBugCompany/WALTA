@@ -83,6 +83,7 @@ exports.definition = {
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				photoFile.move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
+				this.set( "serverCreaturePhotoId", null); // indicates this photo hasn't been uploaded yet
 				
 			},
 
