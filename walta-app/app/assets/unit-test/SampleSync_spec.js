@@ -92,7 +92,7 @@ function makeSample(attrs) {
      },attrs));
 }
 
-describe.only("SampleSync", function () {
+describe("SampleSync", function () {
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
