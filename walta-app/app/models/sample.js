@@ -366,7 +366,7 @@ exports.definition = {
 			},
 
 			loadUploadQueue: function() {
-				this.fetch( { query: "SELECT * FROM sample WHERE (dateCompleted IS NOT NULL) AND ((serverSyncTime IS NULL) OR (serverSyncTime < updatedAt)) ORDER BY dateCompleted DESC"});
+				this.fetch( { query: "SELECT * FROM sample WHERE (dateCompleted IS NOT NULL)  ORDER BY dateCompleted DESC"});
 			}
 		});
 

@@ -56,27 +56,49 @@ function uploadRemainingSamples(samples) {
     }
 }
 
+/*
+    serverSitePhotoId is used to indicate that the photo has been
+    sucessfully uploaded.
+*/
 function uploadSitePhoto(sample) {
     log("Uploading site photo...");
-    var sitePhoto = sample.getSitePhoto();
-    var sampleId = sample.get("serverSampleId");
-    log(`path = ${sitePhoto}`);
-    if ( sitePhoto ) {
-        let blob = loadPhoto( sitePhoto );
-        if ( needsOptimising(blob) ) {
-            log(`Optimising ${sitePhoto}`);
-            savePhoto( optimisePhoto(blob), sitePhoto );
+    var sitePhotoId = sample.get("serverSitePhotoId");
+    if ( !sitePhotoId ) {
+        var sitePhoto = sample.getSitePhoto();
+        var sampleId = sample.get("serverSampleId");
+        log(`path = ${sitePhoto}`);
+        if ( sitePhoto ) {
+            let blob = loadPhoto( sitePhoto );
+            if ( needsOptimising(blob) ) {
+                log(`Optimising ${sitePhoto}`);
+                savePhoto( optimisePhoto(blob), sitePhoto );
+            } else {
+                log(`Not optimising ${sitePhoto}`);
+            }
+            return Alloy.Globals.CerdiApi.submitSitePhoto( sampleId, sitePhoto )
+                    .then( (res) => {
+                        sample.set("serverSitePhotoId", res.id);
+                        sample.save();
+                        return sample;
+                    })
+                    .catch( (err) => {
+                        log(`Error when attempting to upload site photo: ${err.message}`);
+                        return sample;
+                    });
         } else {
-            log(`Not optimising ${sitePhoto}`);
+            log("No site photo found.");
+            return sample;
         }
-        return Alloy.Globals.CerdiApi.submitSitePhoto( sampleId, sitePhoto )
-                .then( () => sample );
     } else {
-        log("No site photo found.");
+        log("Site photo already uploaded.");
         return sample;
     }
 }
 
+/*
+    serverCreaturePhotoId is used to determine if this taxon photo has
+    already been uploaded to the server. 
+*/
 function uploadTaxaPhotos(sample) {
     
     var taxa = sample.getTaxa();
@@ -86,20 +108,33 @@ function uploadTaxaPhotos(sample) {
             return acc.then( () => {
                 debug(`Uploading ${JSON.stringify(t)}`);
                 var taxonId = t.getTaxonId();
-                var photoPath = t.getPhoto();
-                if ( photoPath ) {
-                    log(`Uploading photo for taxon ${taxonId}`);
-                    let blob = loadPhoto( photoPath );
-                    if ( needsOptimising(blob) ) {
-                        log(`Optimising ${photoPath} = ${blob.width}x${blob.heihgt} size = ${blob.lenght}`);
-                        savePhoto( optimisePhoto( blob ), photoPath );
+                var taxonPhotoId = t.get("serverCreaturePhotoId");
+                if ( ! taxonPhotoId ) {
+                    var photoPath = t.getPhoto();
+                    if ( photoPath ) {
+                        log(`Uploading photo for taxon ${taxonId}`);
+                        let blob = loadPhoto( photoPath );
+                        if ( needsOptimising(blob) ) {
+                            log(`Optimising ${photoPath} = ${blob.width}x${blob.heihgt} size = ${blob.lenght}`);
+                            savePhoto( optimisePhoto( blob ), photoPath );
+                        } else {
+                            log(`Not Optimising ${photoPath}`);
+                        }
+                        return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath )
+                                .then( (res) => {
+                                    t.set("serverCreaturePhotoId", res.id);
+                                    t.save();
+                                })
+                                .catch( (err) => {
+                                    log(`Error when attempting to taxon ${taxonId} photo: ${err.message}`);
+                                });
+                                    
                     } else {
-                        log(`Not Optimising ${photoPath}`);
+                        log(`No photo for taxon ${taxonId}`);
                     }
-                    return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath )
-                                
-                } else {
-                    log(`No photo for taxon ${taxonId}`);
+                }
+                else {
+                    log(`Already uploaded photo for taxon ${taxonId}`);
                 }
             })
         }, Promise.resolve() ).then( () => sample );
@@ -132,17 +167,21 @@ function uploadNextSample(samples) {
     var sample = samples.shift();
     var uploadIfNeeded;
     var serverSampleId = sample.get("serverSampleId");
-
-    if ( !serverSampleId ) {
+    var serverSyncTime = sample.get("serverSyncTime");
+    var updatedAt = sample.get("updatedAt");
+    if ( !serverSyncTime ) {
         debug(`Uploading new sample record...`);
-        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() );
-    } else {
+        uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
+            .then( markSampleComplete( sample )  );
+    } else if ( moment(serverSyncTime).isBefore( moment(updatedAt)) ) {
         debug(`Updating existing sample = ${serverSampleId}...`); 
-        uploadIfNeeded = Alloy.Globals.CerdiApi.updateSampleById( serverSampleId, sample.toCerdiApiJson() ); 
+        uploadIfNeeded = Alloy.Globals.CerdiApi.updateSampleById( serverSampleId, sample.toCerdiApiJson() )
+            .then( markSampleComplete( sample )  );
+    } else {
+        uploadIfNeeded = Promise.resolve(sample);
     }
 
     return uploadIfNeeded
-            .then( markSampleComplete( sample )  )
             .then( uploadSitePhoto )
             .then( uploadTaxaPhotos )
             .catch( errorHandler( sample ) );
