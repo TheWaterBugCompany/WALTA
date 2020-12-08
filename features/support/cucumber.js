@@ -7,7 +7,7 @@ setDefaultTimeout(2000);
 
 BeforeAll( {timeout: 99999*1000}, async function() {
     let platform = process.env.PLATFORM;
-    let caps = getCapabilities( platform, true )
+    let caps = await getCapabilities( platform, true )
     if ( ! platform )
         throw new Error("Please set the PLATFORM enviornment variable");
     let driver =  await startAppiumClient(caps); 
