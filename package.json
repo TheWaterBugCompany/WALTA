@@ -29,6 +29,7 @@
     "grunt-parallel": "^0.5.1",
     "grunt-run": "^0.8.1",
     "grunt-then": "^1.0.0",
+    "hock": "^1.4.1",
     "image-convert": "^0.1.33",
     "image-size": "^0.7.4",
     "images": "^3.2.3",
@@ -59,6 +60,8 @@
   },
   "scripts": {
     "install": "sh install.sh",
+    "acceptance-test-android": "grunt --platform=android acceptance-test",
+    "release": "grunt --platform=android clean release && grunt --platform=ios clean release",
     "test": "grunt test"
   },
   "repository": {

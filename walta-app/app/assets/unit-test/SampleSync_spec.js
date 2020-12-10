@@ -18,6 +18,7 @@
 require("unit-test/lib/ti-mocha");
 var simple = require("unit-test/lib/simple-mock");
 var moment = require("lib/moment");
+var { makeCerdiSampleData } = require("unit-test/fixtures/SampleData_fixture.js");
 
 var { use, expect } = require("unit-test/lib/chai");
 var { makeTestPhoto, removeDatabase, resetSample, clearDatabase } = require("unit-test/util/TestUtils");
@@ -33,42 +34,7 @@ var Sample = require("logic/Sample");
 var Taxon = require("logic/Taxon");
 var SampleSync = require('logic/SampleSync');
 
-function makeMockSampleData(attrs) {
-    return _.extend({
-        "id": 473,
-        "user_id": 38,
-        "sample_date": "2020-09-25T09:41:46+00:00",
-        "lat": "-37.5622000",
-        "lng": "143.8750300",
-        "scoring_method": "alt",
-        "created_at": "2020-09-25T09:41:47+00:00",
-        "updated_at": "2020-09-25T09:41:47+00:00",
-        "survey_type": "detailed",
-        "waterbody_type": "river",
-        "waterbody_name": "test waterbody name",
-        "nearby_feature": "test nearby feature",
-        "notes": "test sample",
-        "reviewed": 0,
-        "corrected": 0,
-        "complete": null,
-        "score": 0,
-        "weighted_score": null,
-        "sampled_creatures": [],
-        "habitat": {
-            "id": 473,
-            "sample_id": 473,
-            "boulder": 5,
-            "gravel": 6,
-            "sand_or_silt": 7,
-            "leaf_packs": 8,
-            "wood": 9,
-            "aquatic_plants": 10,
-            "open_water": 11,
-            "edge_plants": 12
-        },
-        "photos": []
-    },attrs);
-}
+
 
 function clearMockSampleData() {
     clearDatabase();
@@ -341,7 +307,7 @@ describe("SampleSync", function () {
         });
         it('should download new samples from the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData({
+                .resolveWith([makeCerdiSampleData({
                     sampled_creatures: [
                         {
                             "id": 2390,
@@ -396,7 +362,7 @@ describe("SampleSync", function () {
         });
         it('should update existing samples if they have been updated on the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData()]);
+                .resolveWith([makeCerdiSampleData()]);
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
 
@@ -420,7 +386,7 @@ describe("SampleSync", function () {
         it('should NOT update existing samples if they have been updated on the server but we have already downloaded that update', async function() {
             // if updated_at < serverSyncTime then do not overwrite local changes
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData({
+                .resolveWith([makeCerdiSampleData({
                     updated_at: moment("2020-03-01").format()
                 })]);
             let sample = makeSample({});
@@ -442,7 +408,7 @@ describe("SampleSync", function () {
         it('should overwrtie lcoal updates if they have been updated on the server', async function() {
             // if updated_at < serverSyncTime then do not overwrite local changes
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData({
+                .resolveWith([makeCerdiSampleData({
                     updated_at: moment("2020-06-01").format()
                 })]);
             let sample = makeSample({});
@@ -463,7 +429,7 @@ describe("SampleSync", function () {
         });
         it('should NOT update existing samples if the update on the server happened BEFORE our lastest upload', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData()]);
+                .resolveWith([makeCerdiSampleData()]);
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
 
@@ -485,7 +451,7 @@ describe("SampleSync", function () {
         });
         it('should overwrite user changes with server updates if the update occured AFTER the last upload', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData()]);
+                .resolveWith([makeCerdiSampleData()]);
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
 
@@ -510,7 +476,7 @@ describe("SampleSync", function () {
         it('should download site photos if they are new', async function() {
             let siteMock =  Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/unit-test/resources/site-mock.jpg");
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData({
+                .resolveWith([makeCerdiSampleData({
                     photos: [{"id": 1948}]
                 })]);
             Alloy.Globals.CerdiApi.retrieveSitePhoto = function(serverSampleId,photoPath){
@@ -544,7 +510,7 @@ describe("SampleSync", function () {
                     photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg")
                 }];
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData({
+                .resolveWith([makeCerdiSampleData({
                     sampled_creatures: [
                         {
                             "id": 2390,
@@ -593,7 +559,7 @@ describe("SampleSync", function () {
         // on the server, if somehow we download corrupt habitat data, make sure any correct data
         // is merged into the new record and the updatedAt is correctly set to re-trigger an upload.
         it('should not overwrite habitat with blanks', function(done) {
-            let sampleData = makeMockSampleData({
+            let sampleData = makeCerdiSampleData({
                 habitat: {
                     boulder: 5,
                     gravel: 6,
@@ -650,11 +616,11 @@ describe("SampleSync", function () {
         it.only('should update creature photos if changed on server');*/
         it('should download more than one sample',async function() {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeMockSampleData({
+                .resolveWith([makeCerdiSampleData({
                     id:234,
                     waterbody_name: "first test sample"
                 }),
-                makeMockSampleData({
+                makeCerdiSampleData({
                     id:235,
                     waterbody_name: "second test sample"
                 })]);

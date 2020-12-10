@@ -1,22 +1,39 @@
 'use strict';
 const { After, Before } = require('cucumber');
-const mockServer = require('node-mock-server');
-const serverConfig = require('../../mock-server/index');
+const http = require('http')
+const hock = require('hock')
 
+var hockServer = null;
 var server = null;
-
-Before({tags: "@mockserver"}, function() {
+ Before({tags: "@mockserver"},function(testCase, callback) {
     if ( !server ) {
-        server = mockServer(serverConfig);
+        hockServer = hock.createHock();
+        hockServer
+            .post('/token/create/server',{
+                "client_secret":"hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz",
+                "scope":"create-users"
+            })
+            .reply(200, {
+                "access_token": "secretaccesstoken",
+                "expires_in": 31535997,
+                "token_type": "Bearer"
+            });
+        
+
+        server = http.createServer(hockServer.handler);
+        server.listen(9999, callback);
+        
+        global.hockServer = hockServer;
+        global.server = server;
     }
 });
 
 
 After({tags: "@mockserver"}, function() {
     if ( server ) {
-        server.server.close();
+        server.close();
     }
-});
+}); 
 
 /* require 'calabash-android/abase'
 class MockServer
