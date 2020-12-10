@@ -35,6 +35,19 @@
             "runtimeExecutable": "grunt",
             "runtimeArgs": [ "debug:android"],
             "port": 9229
+        },
+        {
+            "name": "Launch via NPM",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "acceptance-test"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
     
     ]

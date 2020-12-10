@@ -6,7 +6,7 @@ class MenuScreen extends BaseScreen {
         this.presenceSelector = this.selector("Waterbug Survey");
     }
     async login( email, password ) {
-        await this.click('Login');
+        await this.click('Log In');
         return this.world.login.login( email, password );
     }
     async selectAbout() {
@@ -24,6 +24,10 @@ class MenuScreen extends BaseScreen {
     async selectWaterbugSurvey() {
         await this.click("Waterbug Survey");
         await this.world.siteDetails.waitFor();
+    }
+    async selectArchive() {
+        await this.click("Archive");
+        await this.world.archive.waitFor();
     }
     async selectGallery() {
       await this.click("Photo Gallery");

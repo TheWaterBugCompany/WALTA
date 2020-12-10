@@ -133,8 +133,14 @@ module.exports = function(grunt) {
       if ( overrideAppConfig ) {
         args.push(`--app-config=${overrideAppConfig}`);
       } else {
-        if ( build_type === "release") {
-          args.push("--app-config=production");
+        switch(build_type) {
+          case "release":
+            args.push("--app-config=production");
+            break;
+          case "test":
+            args.push("--app-config=mock");
+            break;  
+
         }
       }
       
@@ -285,7 +291,7 @@ module.exports = function(grunt) {
             command: `PATH=./node_modules/.bin/:$PATH ios-deploy --uninstall_only --bundle_id ${APP_ID}`
           },
 
-          acceptance_test: {
+        /*  acceptance_test: {
             command: function(platform,option) {
               return `VERSION=${grunt.option('kobiton-version')} cucumber-js --tags "@only"`;
             },
@@ -293,7 +299,7 @@ module.exports = function(grunt) {
               env: envVars()
             },
             exitCode: [0,1]
-          },
+          },*/
 
           end_to_end_test: {
             command: function(platform,option) {
@@ -384,7 +390,7 @@ module.exports = function(grunt) {
     });
 
     // keep track of the current appium session
-    let appium_session = null;
+    global.appium_session = null;
     function startAppium(caps, host = 'local') {
       
       let p;
@@ -396,7 +402,8 @@ module.exports = function(grunt) {
       function setUpSession() {
         return startAppiumClient( caps, host ) 
           .then( (driver) => {
-            appium_session = driver;
+            global.appium_session = driver;
+            global.platform = grunt.option('platform');
             return driver;
           } )
       }
@@ -406,6 +413,19 @@ module.exports = function(grunt) {
     function terminateApp(platform) {
       return () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
     }
+
+    grunt.registerTask("cucumber",function(){
+      const done = this.async();
+      const cucumber = require("cucumber");
+      
+      const cucumberCli = new cucumber.Cli({
+        argv: process.argv.slice(0,2).concat(["--tags", "@only"]),
+        cwd: process.cwd(),
+        stdout: process.stdout
+      });
+      cucumberCli.run()
+        .finally( done );
+    })
 
     grunt.registerTask("install", function(platform,build_type) {
       grunt.task.run(`exec:uninstall_${platform}`);
@@ -547,9 +567,11 @@ module.exports = function(grunt) {
           grunt.task.run(`run:live_view_${platform}`);
           
         }
+        //grunt.task.run('run:appium');
         grunt.task.run(`launch:${platform}:test`);
       }
-      grunt.task.run(`exec:acceptance_test:${platform}`);
+      //grunt.task.run(`exec:acceptance_test:${platform}`);
+      grunt.task.run("cucumber");
     });
 
     

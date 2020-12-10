@@ -222,15 +222,12 @@ function startSynchronise() {
         }
         return Promise.resolve();
     }  
-
-   
-
     return Promise.resolve()
         .then(checkLoggedIn) 
         .then(checkNetwork)
         .then(downloadSamples)
         .then(uploadSamples)
-        .catch( () => debug(`Error synchronising rescheduling upload...`))
+        .catch( (err) => debug(`Error synchronising ${err}`))
         .finally( rescheduleSync )
 }
 

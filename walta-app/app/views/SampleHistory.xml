@@ -8,9 +8,9 @@
 		</View>
 		<TableView id="sampleTable" dataCollection="$.samples" onClick="openSample">
 			<TableViewRow class="row">
-				<Label class="dateCompletedColumn column" text="{dateCompleted}"/>
-				<Label class="waterbodyName column" text="{waterbodyName}"/>
-				<Label class="boolColumn column" text="{uploaded}"/>
+				<Label class="dateCompletedColumn column" text="{dateCompleted}" accessibilityLabel="Date Sample Completed"/>
+				<Label class="waterbodyName column" text="{waterbodyName}" accessibilityLabel="Waterbody Name"/>
+				<Label class="boolColumn column" text="{uploaded}" accessibilityLabel="Has Sample Been Uploaded"/>
 			</TableViewRow>
 		</TableView>
 	</View>

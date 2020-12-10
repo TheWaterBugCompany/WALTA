@@ -2,7 +2,6 @@ Feature: Identify Taxa
 
 Having found a species I would like to identify its taxa.
 
-@only
 Scenario: Add a taxon to the sample
   Given I identify and store a Taxon
    Then the EditTaxon screen is opened

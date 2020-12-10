@@ -15,9 +15,7 @@ Given('one or more samples have been stored but not uploaded', function() {
         .submit_sample()*/
 });
   
-When('the server becomes reachable', function() {
-    /* # its always reachable */
-});
+
 
 Then('all the pending samples are uploaded to the server', function() {
     /* serverReq = JSON.parse( Mirage::Client.new.requests(3).body )

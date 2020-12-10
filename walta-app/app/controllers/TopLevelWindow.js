@@ -105,6 +105,7 @@ function getAnchorBar() {
 
 
 function setErrorMessage( err ) {
+	let msg;
 	if ( err.errors && _(err.errors).keys().length > 0 ) {
 		// concatenate all the error messages together
 		msg = _(err.errors).values().map((e)=> e.join("\n")).join("\n");

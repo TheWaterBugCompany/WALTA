@@ -15,6 +15,7 @@ const CameraScreen = require('./camera-screen.js');
 const AboutScreen = require('./about-screen.js');
 const HelpScreen = require('./help-screen.js');
 const SummaryScreen = require('./summary-screen.js');
+const ArchiveScreen = require('./archive-screen.js');
 
 function setUpWorld(world) {
     world.login = new LoginScreen( world );
@@ -36,6 +37,7 @@ function setUpWorld(world) {
     world.summary = new SummaryScreen( world );
     world.swipeRight = swipeRight;
     world.swipeLeft = swipeLeft;
+    world.archive = new ArchiveScreen( world );
 }
 
 async function swipeRight( world, { start_x=30, end_x=0.95 } = {} ) {
