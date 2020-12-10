@@ -17,7 +17,8 @@ exports.init = function (logger, config, cli) {
 			default: "test",
 			values: [
 				"test",
-				"production"
+				"production",
+				"mock"
 			]
 		};
 		finished(null, data);
