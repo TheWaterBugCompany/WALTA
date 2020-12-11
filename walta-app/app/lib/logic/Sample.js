@@ -38,3 +38,16 @@ exports.surveyTypeToString = function( surveyType ) {
             return "Unknown";
     } 
 }
+
+exports.waterbodyTypeToString = function( waterbodyType ) {
+    switch( waterbodyType ) {
+        case WATERBODY_RIVER:
+            return "River";
+        case WATERBODY_WETLAND:
+            return "Wetland";
+        case WATERBODY_LAKE:
+            return "Lake/Dam";
+        default:
+            return "Unknown";
+    } 
+}

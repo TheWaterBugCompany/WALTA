@@ -1,6 +1,6 @@
 var Crashlytics = require('util/Crashlytics');
 var log = Crashlytics.log;
-
+var Sample = require("logic/Sample");
 exports.baseController  = "TopLevelWindow";
 var Topics = require("ui/Topics");
 var GeoLocationService = require('logic/GeoLocationService');
@@ -95,11 +95,14 @@ function clearTabError( view ) {
 }
 
 function surveyTypeChanged() {
-    if ( typeof( $.surveyLevelSelect.getIndex() ) === "number" ) {
+    let surveyType = $.surveyLevelSelect.getIndex();
+    if ( typeof( surveyType ) === "number" ) {
       clearTabError( $.surveyLevelError );
       surveyTypeValid = true;
-      sample.set( { "surveyType": `${$.surveyLevelSelect.getIndex()}` } );
+      
+      sample.set( { "surveyType": surveyType } );
       sample.save();
+      $.surveyLevelSelect.segCtrlButtonContainer.accessibilityLabel=Sample.surveyTypeToString(surveyType);
     } else {
       setTabError($.surveyLevelError);
       surveyTypeValid = false;
@@ -108,11 +111,13 @@ function surveyTypeChanged() {
 }
 
 function waterbodyTypeChanged() {
-    if ( typeof( $.waterbodyTypeSelect.getIndex() ) === "number" ) {
+    let waterbodyType = $.waterbodyTypeSelect.getIndex();
+    if ( typeof( waterbodyType ) === "number" ) {
       clearTabError( $.waterbodyTypeError );
       waterbodyTypeValid = true;
-      sample.set( { "waterbodyType": `${$.waterbodyTypeSelect.getIndex()}` } );
+      sample.set( { "waterbodyType": waterbodyType } );
       sample.save();
+      $.waterbodyTypeSelect.segCtrlButtonContainer.accessibilityLabel=Sample.waterbodyTypeToString(waterbodyType);
     } else {
       setTabError( $.waterbodyTypeError );
       waterbodyTypeValid = false;
@@ -172,6 +177,9 @@ $.photoSelect.on("photoTaken", function(path) {
 $.TopLevelWindow.title = "Site Details";
 $.surveyLevelSelect.init(["Mayfly","Quick","Detailed"], checkValidity);
 $.waterbodyTypeSelect.init(["River","Wetland","Lake/Dam"], checkValidity);
+$.surveyLevelSelect.segCtrlWrapper.accessibilityLabel="Survey Level";
+$.waterbodyTypeSelect.segCtrlWrapper.accessibilityLabel="Waterbody Type";
+
 loadAttributes();
 
 // Start location services only for this screen

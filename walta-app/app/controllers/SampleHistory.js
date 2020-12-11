@@ -12,7 +12,12 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 function updateSampleList() {
-    $.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
+    try {
+        $.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
+    } catch(e) {
+        // FIXME: for some reason these errors are not being reported if there isn't a catch here
+        Ti.API.info(`Error fetching sample list: ${JSON.stringify(e)}`);
+    }
 }
 $.TopLevelWindow.addEventListener('close', function() {
     $.destroy();

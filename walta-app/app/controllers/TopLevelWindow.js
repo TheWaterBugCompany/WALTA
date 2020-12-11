@@ -20,7 +20,7 @@ var Topics = require('ui/Topics');
 var anchorBar = Alloy.createController("AnchorBar" );
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 function openWindow() {
-	Ti.API.debug(`Opening window "${getName()}"`);
+	Ti.API.info(`Opening window "${getName()}"`);
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.content.top = 0;
