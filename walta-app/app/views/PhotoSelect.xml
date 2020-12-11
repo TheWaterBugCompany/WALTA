@@ -2,7 +2,7 @@
 	<View id="photoSelectBoundary">
 		<View id="photoSelectInner">
 			<View class="shrinkWrap">
-				<ImageView id="photo" />
+				<ImageView id="photo" accessibilityLabel="Photo" />
 				<ActivityIndicator id="activity"/>
 			</View>
 			<Label id="photoSelectLabel" class="photoMessage" text="Please take a photo\nto continue"  visible="false"/>

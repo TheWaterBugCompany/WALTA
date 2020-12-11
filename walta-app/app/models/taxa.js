@@ -27,17 +27,18 @@ exports.definition = {
 					let photoPath = this.get("taxonPhotoPath");
 					if ( photoPath ) this.setPhoto(photoPath);
 				});
-				/*
-				this.on('change', function() {
-					let sampleId = this.get('sampleId');
-					if ( sampleId ) {
-						let sample = Alloy.createModel("sample");
-						sample.loadById(sampleId, false);
-						sample.set({ 'updatedAt': moment().valueOf() }, {silent:true});
-						sample.save();
+				
+				this.on('change', function(a,event) {
+					if ( event && !event.ignore ) {
+						let sampleId = this.get('sampleId');
+						if ( sampleId ) {
+							let sample = Alloy.createModel("sample");
+							sample.loadById(sampleId, false);
+							sample.set({ 'updatedAt': moment().valueOf() }, {silent:true});
+							sample.save();
+						}
 					}
-					
-				});*/
+				});
 			},
 			getTaxonId() {
 				return this.get("taxonId");
@@ -102,8 +103,10 @@ exports.definition = {
 			},
 
 			fromCerdiApiJson(creature) {
-				this.set("taxonId", creature.creature_id );
-				this.set("abundance", this.convertCountToAbundance(creature.count));
+				this.set( {
+					taxonId: creature.creature_id,
+					abundance: this.convertCountToAbundance(creature.count)
+				}, {ignore:true});
 			},
 
 			toCerdiApiJson() {

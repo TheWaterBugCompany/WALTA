@@ -202,10 +202,10 @@ const { TIMEOUT } = require("dns");
 
 var SERVER_URL = null;
 var CLIENT_SECRET = null;
-contents = fs.readFileSync('./walta-app/app/config.json', 'utf8');
+contents = fs.readFileSync('./walta-app/app/app-config.test.json', 'utf8');
 var config = JSON.parse( contents );
-SERVER_URL = "http://office-desktop.internal:8080/v1"; //config["env:test"].cerdiServerUrl;
-CLIENT_SECRET = config["env:test"].cerdiApiSecret;
+SERVER_URL = config.cerdiServerUrl; //"http://office-desktop.internal:8080/v1";
+CLIENT_SECRET = config.cerdiApiSecret;
 
 if ( SERVER_URL === null || CLIENT_SECRET == null ) {
     console.log("Unable to read SERVER_URL or CLIENT_SECRET");
@@ -412,7 +412,7 @@ describe('CerdiApi', function() {
         function submitTestSample(sampleDate) {
             return cerdi.submitSample( makeTestSample(sampleDate) );
         }
-        it("should retrieve site photo", function() {
+        it.only("should retrieve site photo", function() {
             let serverSampleId,sitePhotoId;
             function rescaleImage(filePath,width) {
                 let img = fs.readFileSync(filePath);
@@ -428,9 +428,9 @@ describe('CerdiApi', function() {
                 .then( () => submitSitePhoto( serverSampleId ) )
                 .then( res => sitePhotoId = res.id )
                 .then( () => cerdi.retrieveSitePhoto(serverSampleId,"testsitephoto.jpg"))
-                .then( photoPath => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/${photoPath}`));
+                .then( () => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/testsitephoto.jpg`));
         });
-        it("should retrieve creature photo", function() {
+        it.only("should retrieve creature photo", function() {
             let serverSampleId,sitePhotoId,creaturePhotoId;
             return cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
@@ -439,7 +439,7 @@ describe('CerdiApi', function() {
                 .then( () => submitCreaturePhoto(serverSampleId,1) )
                 .then( res => creaturePhotoId = res.id )
                 .then( () => cerdi.retrieveCreaturePhoto(serverSampleId,1,"testcreaturephoto.jpg"))
-                .then( photoPath => assertLooksSame(creaturePhotoPath,`/tmp/waterbugtest/applicationData/${photoPath}`));
+                .then( () => assertLooksSame(creaturePhotoPath,`/tmp/waterbugtest/applicationData/testcreaturephoto.jpg`) );
 
         });
 

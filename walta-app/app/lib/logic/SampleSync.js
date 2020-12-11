@@ -169,6 +169,7 @@ function uploadNextSample(samples) {
     var serverSampleId = sample.get("serverSampleId");
     var serverSyncTime = sample.get("serverSyncTime");
     var updatedAt = sample.get("updatedAt");
+    debug(`serverSyncTime = ${serverSyncTime}, updatedAt = ${updatedAt}`);
     if ( !serverSyncTime ) {
         debug(`Uploading new sample record...`);
         uploadIfNeeded = Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() )
@@ -227,7 +228,7 @@ function startSynchronise() {
         .then(checkNetwork)
         .then(downloadSamples)
         .then(uploadSamples)
-        .catch( (err) => debug(`Error synchronising ${err}`))
+        .catch( (err) => debug(`Error synchronising ${err.error}`))
         .finally( rescheduleSync )
 }
 

@@ -14,6 +14,12 @@ class BaseScreen {
         return new Promise((resolve) => setTimeout( () => resolve(), ms));
     }
 
+    // FIXME: needs iOS version
+    async getTextFromEditField(el) {
+        let textElement = await el.$("//android.widget.FrameLayout/android.widget.EditText");
+        return textElement.getText();
+    }
+
     async waitForRaw(sel, message) {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );

@@ -26,7 +26,7 @@
 				<View id="bottomRight" layout="absolute">
 					<View id="locationIndicator" class="shrinkWrap" layout="horizontal" onClick="openLocationEntry">
 						<ImageView id="locationIndicatorIcon" />
-						<Label id="locationStatus" class="labelText" text="Location not obtained"/>
+						<Label id="locationStatus" class="labelText" accessibilityLabel="Location" text="Location not obtained"/>
 					</View>
 					
 				</View>

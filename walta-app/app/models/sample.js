@@ -42,7 +42,6 @@ exports.definition = {
 			
 			initialize: function() {
 				this.on('change', function(a,event) {
-					
 					if ( event && !event.ignore ) {
 						//Ti.API.info(`change ${_.keys(event.changes)}`);
 						// The list of fields that trigger setting updateAt
@@ -152,12 +151,20 @@ exports.definition = {
 			},
 
 
+			lookUpSignalScore(t,key) {
+				let taxon = key.findTaxonById( t.getTaxonId()  )
+				if ( taxon ) {
+					return taxon.signalScore;
+				} else {
+					return 0;
+				}
+			},
+
 			calculateSignalScore(taxa,key) {
 				var count = 0;
 				return (taxa.reduce( (acc,t) => {
 						count++;
-						var score = key.findTaxonById( t.getTaxonId()  ).signalScore;
-						return acc+score;
+						return acc+this.lookUpSignalScore(t,key);
 					}, 0)/count).toFixed(1);
 			},
 
@@ -167,8 +174,7 @@ exports.definition = {
 				return (taxa.reduce( (acc,t) => {
 					var n = t.getAbundance();
 					count += n;
-					var score = key.findTaxonById( t.getTaxonId()  ).signalScore;
-					return acc+score*n;
+					return acc+this.lookUpSignalScore(t,key)*n;
 				}, 0)/count).toFixed(1);
 			},
 
@@ -195,7 +201,7 @@ exports.definition = {
 				} else {
 					sampleJson.dateCompleted = moment().format("DD/MMM/YYYY h:mm:ss a");
 				}
-				sampleJson.uploaded = (sampleJson.uploaded > 0 ? "Yes" : "No" );
+				sampleJson.uploaded = (sampleJson.serverSyncTime > 0 ? "Yes" : "No" );
 
 				// Provide textual assessment information
 				function scoreColor(score) {
@@ -262,38 +268,42 @@ exports.definition = {
 					else if ( waterbodyType === "lake")
 						return Sample.WATERBODY_LAKE;
 				}
-				this.set("serverSampleId", sample.id);
-				this.set("dateCompleted", sample.sample_date);
-				this.set("lat", sample.lat);
-				this.set("lng", sample.lng);
-				this.set("surveyType", toSurveyType(sample.survey_type));
-				this.set("waterbodyType", toWaterbodyType(sample.waterbody_type));
-				this.set("waterbodyName", sample.waterbody_name);
-				this.set("nearbyFeature", sample.nearby_feature);
-				this.set("boulder", sample.habitat.boulder);
-				this.set("gravel", sample.habitat.gravel);
+				var updatedFields = {
+					"serverSampleId": sample.id,
+					"dateCompleted": sample.sample_date,
+					"lat": sample.lat,
+					"lng": sample.lng,
+					"surveyType": toSurveyType(sample.survey_type),
+					"waterbodyType": toWaterbodyType(sample.waterbody_type),
+					"waterbodyName": sample.waterbody_name,
+					"nearbyFeature": sample.nearby_feature,
+					"boulder": sample.habitat.boulder,
+					"gravel": sample.habitat.gravel,
+					"wood": sample.habitat.wood
+				};
 				// In order to fix corrupted data - if the server has a null set
 				// then do not overwrite existing data. (Only needed for attrbiutes with two words)
 				if ( sample.habitat.sand_or_silt ) {
-					this.set("sandOrSilt", sample.habitat.sand_or_silt);
+					updatedFields.sandOrSilt = sample.habitat.sand_or_silt;
 				}
 				if ( sample.habitat.leaf_packs ) {
-					this.set("leafPacks", sample.habitat.leaf_packs);
+					updatedFields.leafPacks=sample.habitat.leaf_packs;
 				}
 			
-				this.set("wood", sample.habitat.wood);
-
 				if ( sample.habitat.aquatic_plants ) {
-					this.set("aquaticPlants", sample.habitat.aquatic_plants);
+					updatedFields.aquaticPlants=sample.habitat.aquatic_plants;
 				}
 
 				if ( sample.habitat.open_water ) {
-					this.set("openWater", sample.habitat.open_water);
+					updatedFields.openWater=sample.habitat.open_water;
 				}
 				
 				if ( sample.habitat.edge_plants ) {
-					this.set("edgePlants", sample.habitat.edge_plants);
+					updatedFields.edgePlants=sample.habitat.edge_plants;
 				}
+
+				this.set(updatedFields, {ignore:true});
+				
 				// needs a sampleId before added taxa
 				this.save(); 
 				taxa.fromCerdiApiJson(sample.sampled_creatures, this.get("sampleId"));
