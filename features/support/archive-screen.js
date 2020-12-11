@@ -14,10 +14,29 @@ class ArchiveScreen extends BaseScreen {
         return row.getText();
     }
 
+    async getUploadedElement() {
+        return this.getElement("Has Sample Been Uploaded");
+    }
+
+    async getUploaded() {
+        let row = await this.getUploadedElement();
+        return row.getText();
+    }
+
+    async getDateCompletedElement() {
+        return this.getElement("Date Sample Completed");
+    }
+
+    async getDateCompleted() {
+        let row = await this.getDateCompletedElement();
+        return row.getText();
+    }
+
     // TODO: leaving choosing from multiple rows until its needed...
     async clickRow() {
         let row = await this.getWaterbodyNameElement();
-        return row.click();
+        await row.click();
+        await this.world.siteDetails.waitFor();
     }
 } 
 module.exports = ArchiveScreen;
