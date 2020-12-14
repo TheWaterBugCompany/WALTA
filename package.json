@@ -60,7 +60,7 @@
   },
   "scripts": {
     "install": "sh install.sh",
-    "acceptance-test-android": "grunt --platform=android --liveview acceptance-test",
+    "acceptance-test-android": "grunt --platform=android acceptance-test",
     "release": "grunt --platform=android clean release && grunt --platform=ios clean release",
     "test": "grunt test"
   },

@@ -41,6 +41,14 @@ class EditTaxonScreen extends BaseScreen {
       await this.click("Save");
       await this.world.sample.waitFor();
     }
+    async close() {
+      await this.click("Close");
+      await this.world.sample.waitFor();
+    }
+    async saveTaxonPhoto(filePath) {
+      let taxonPhoto = await this.getElement("Photo");
+      await taxonPhoto.saveScreenshot(filePath);
+  }
 
 } 
 module.exports = EditTaxonScreen

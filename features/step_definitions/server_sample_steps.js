@@ -67,6 +67,8 @@ Given('I have existing samples stored on the server', {timeout: 60000}, async fu
     await this.menu.waitFor();
 });
 
+// FIXME: this test relies on a fixed device resolution (Pixel 2 XL ) - should either
+// scale images to normalised size or record an image on each device resolution.
 Then('the new samples are downloaded to the phone', {timeout: 60000}, async function() {
     
     await this.menu.selectArchive();
@@ -95,7 +97,7 @@ Then('the new samples are downloaded to the phone', {timeout: 60000}, async func
     expect(location).to.equal("37.5622\u00B0S 143.8750\u00B0E");
 
     await this.siteDetails.saveSitePhoto("/tmp/sitePhoto.png");
-    assertLooksSame(path.join(__dirname,'../../test-resources/expected_site_photo.png'),'/tmp/sitePhoto.png');
+    await assertLooksSame(path.join(__dirname,'../../test-resources/expected_site_photo.png'),'/tmp/sitePhoto.png');
 
     await this.siteDetails.goNext();
 
@@ -124,6 +126,18 @@ Then('the new samples are downloaded to the phone', {timeout: 60000}, async func
     expect(openWater).to.equal("12");
 
     await this.habitat.goNext();
+
+    await this.sample.openTaxon(12);
+    await this.editTaxon.saveTaxonPhoto("/tmp/taxon12photo.png");
+    await assertLooksSame(path.join(__dirname,'../../test-resources/expected_taxon12_photo.png'),'/tmp/taxon12photo.png');
+
+    await this.editTaxon.close();
+
+    await this.sample.openTaxon(11);
+    await this.editTaxon.saveTaxonPhoto("/tmp/taxon11photo.png");
+    await assertLooksSame(path.join(__dirname,'../../test-resources/expected_taxon11_photo.png'),'/tmp/taxon11photo.png');
+
+    await this.editTaxon.close();
 
 
 

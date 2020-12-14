@@ -8,8 +8,9 @@ class SampleScreen extends BaseScreen {
         await this.click("Add Sample");
         await this.world.methodSelect.waitFor();
     }
-    async selectEditTaxon( trayNo ) {
-        // TODO
+    async openTaxon( id ) {
+        await this.click(`Taxon ${id}`);
+        await this.world.editTaxon.waitFor();
     }
 
     async goNext() {

@@ -1,6 +1,5 @@
 var Topics = require('ui/Topics');
 var taxon = $.args.taxon;
-var speedbugIndex = $.args.speedbugIndex;
 
 setImage( taxon );
 setAbundance( taxon );
@@ -8,6 +7,7 @@ setAbundance( taxon );
 var lastTaxonId;
 function setImage( taxon ) {
   $.icon.image = taxon.getSilhouette();
+  $.SampleTaxaIcon.accessibilityLabel = `Taxon ${taxon.get("taxonId")}`;
   lastTaxonId = taxon.get("taxonId");
 }
 
