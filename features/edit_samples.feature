@@ -10,6 +10,7 @@ Scenario: Edit sample
 
 Scenario: Synchronise edited samples
    Given I have updated already complete samples
+    When I edit an exist sample
     When the server becomes reachable
     Then the new samples are uploaded and replace the old
 
