@@ -18,7 +18,8 @@ exports.init = function (logger, config, cli) {
 			values: [
 				"test",
 				"production",
-				"mock"
+				"mock",
+				"mitm"
 			]
 		};
 		finished(null, data);
