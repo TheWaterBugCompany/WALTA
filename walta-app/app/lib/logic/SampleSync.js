@@ -222,7 +222,7 @@ function uploadSamples() {
         .then(uploadRemainingSamples);
 }
 
-function startSynchronise(delay=1500) {
+function startSynchronise(delay=2500) {
     debug("Starting sample syncronisation process...");
     isSyncing = true;
     function checkNetwork() {
