@@ -30,12 +30,20 @@ exports.definition = {
 				
 				this.on('change', function(a,event) {
 					if ( event && !event.ignore ) {
-						let sampleId = this.get('sampleId');
-						if ( sampleId ) {
-							let sample = Alloy.createModel("sample");
-							sample.loadById(sampleId, false);
-							sample.set({ 'updatedAt': moment().valueOf() }, {silent:true});
-							sample.save();
+						Ti.API.info(`change ${_.keys(event.changes)}`);
+						let dataFields = [
+							"abundance",
+							"taxonPhotoPath",
+						]
+						if (_.intersection(_.keys(event.changes),dataFields).length > 0) {
+							Ti.API.info("changing!")
+							let sampleId = this.get('sampleId');
+							if ( sampleId ) {
+								let sample = Alloy.createModel("sample");
+								sample.loadById(sampleId, false);
+								sample.set({ 'updatedAt': moment().valueOf() });
+								sample.save();
+							}
 						}
 					}
 				});
@@ -45,6 +53,9 @@ exports.definition = {
 			},
 			getTaxonId() {
 				return this.get("taxonId");
+			},
+			isUploaded() {
+				return this.get("serverCreaturePhotoId") != null;
 			},
 			getAbundance() {
 				var abundance = this.get("abundance");

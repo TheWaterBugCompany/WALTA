@@ -1,11 +1,9 @@
-var moment = require("lib/moment");
 var Topics = require('ui/Topics');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
 
-Topics.subscribe( Topics.LOGGEDIN, updateSampleList );
-
+Topics.subscribe( Topics.UPLOAD_PROGRESS, updateSampleList );
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
     $.off();
@@ -13,6 +11,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 function updateSampleList() {
     try {
+        Ti.API.info("Refreshing sample history view");
         $.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
     } catch(e) {
         // FIXME: for some reason these errors are not being reported if there isn't a catch here

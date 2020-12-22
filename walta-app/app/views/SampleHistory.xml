@@ -2,12 +2,14 @@
 	<Collection src="sample" instance="true" id="samples" />
 	<View id="content" layout="vertical">
 		<View  class="headerRow">
-			<Label class="dateCompletedColumn column" text="Date Completed"/>
+			<Label class="idColumn column" text="Id"/>
+			<Label class="dateCompletedColumn column" text="Date Submitted"/>
 			<Label class="waterbodyName column" text="Waterbody Name"/>
-			<Label class="boolColumn column" text="Uploaded?"/>
+			<Label class="boolColumn column" text="Sync"/>
 		</View>
-		<TableView id="sampleTable" dataCollection="$.samples" onClick="openSample">
+		<TableView id="sampleTable" dataCollection="$.samples" dataFunction="updateSampleTable" onClick="openSample">
 			<TableViewRow class="row">
+				<Label class="idColumn column" text="{id}" accessibilityLabel="Server Identifier"/>
 				<Label class="dateCompletedColumn column" text="{dateCompleted}" accessibilityLabel="Date Sample Completed"/>
 				<Label class="waterbodyName column" text="{waterbodyName}" accessibilityLabel="Waterbody Name"/>
 				<Label class="boolColumn column" text="{uploaded}" accessibilityLabel="Has Sample Been Uploaded"/>

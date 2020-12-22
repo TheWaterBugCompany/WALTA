@@ -170,8 +170,8 @@ describe("Sample collection, model including taxa", function() {
       Alloy.Collections.taxa = null;
 
       // create a new sample
-      Alloy.Collections.instance("sample").load();
-
+      Alloy.Collections.instance("sample").loadCurrent();
+      Alloy.Collections.instance("taxa").loadCurrent();
       expect( Alloy.Collections.sample.length ).to.equal(0);
       expect( Alloy.Collections.taxa.length ).to.equal(0);
   });
