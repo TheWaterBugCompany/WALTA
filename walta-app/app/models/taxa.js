@@ -40,6 +40,9 @@ exports.definition = {
 					}
 				});
 			},
+			getSampleId() {
+				return this.get("sampleId");
+			},
 			getTaxonId() {
 				return this.get("taxonId");
 			},
