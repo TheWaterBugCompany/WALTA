@@ -210,7 +210,7 @@ function uploadNextSample(samples,delay) {
 }
 
 function uploadSamples(delay) {
-    debug("Uploading samples to server... ${delay}");
+    debug(`Uploading samples to server... ${delay}`);
     function loadSamples() {
         var samples = Alloy.createCollection("sample");
         samples.loadUploadQueue();
@@ -351,7 +351,8 @@ function downloadSamples(delay) {
         
     }
 
-    function saveNewSamples( samples ) {        
+    function saveNewSamples( samples ) {  
+        debug(`retrieved samples ${samples}`);      
         return _.reduce( samples, 
             (updateAllSamples, serverSample ) => updateAllSamples
                     .then( () => serverSample )
