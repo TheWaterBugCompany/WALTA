@@ -58,7 +58,7 @@ function makeSample(attrs) {
      },attrs));
 }
 
-describe("SampleSync", function () {
+describe.only("SampleSync", function () {
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
@@ -535,7 +535,6 @@ describe("SampleSync", function () {
             let sample = Alloy.Models.instance("sample");
             sample.loadByServerId(473);
             let taxa  = sample.loadTaxa();
-            console.log(`taxa = ${JSON.stringify(taxa)}`)
             function verifyTaxon(i) {
                 let taxon = taxa.at(i);
                 expect(taxon.get("serverCreaturePhotoId")).to.equal(creatureMocks[i].id);

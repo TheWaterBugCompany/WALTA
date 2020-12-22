@@ -23,7 +23,7 @@ function networkChanged( e ) {
 
 function clearUploadTimer() {
     if ( timeoutHandler ) {
-        clearTimeout( timeoutHandler );
+        clearTimeout( timeoutHandler ); 
         timeoutHandler = null;
     }
 }
@@ -32,23 +32,11 @@ function clearUploadTimer() {
 function delayedPromise( promise, delay=0) {
     return new Promise( (resolve, reject ) => {
         setTimeout(function() {
-
             promise
                 .then(resolve)
                 .catch(reject);
         }, delay);
     })
-}
-
-/* 
-    Takes an array of Promises and runs them in sequence with a fixed
-    delay, this is to meet CERDI's request limits.
-*/
-function runNetworkQueue(ops,delay) {
-    return _.reduce( ops, 
-            (delayedQueue, op) => 
-                delayedQueue.then( delayedPromise( op, delay) ),
-            Promise.resolve());
 }
 
 function init() {
@@ -119,7 +107,6 @@ function uploadSitePhoto(sample,delay) {
 }
 
 function uploadTaxaPhoto(t) {
-    debug(`Uploading ${JSON.stringify(t)}`);
     var taxonId = t.getTaxonId();
     var sampleId = t.getSampleId();
     var taxonPhotoId = t.get("serverCreaturePhotoId");
@@ -160,8 +147,11 @@ function uploadTaxaPhoto(t) {
 function uploadTaxaPhotos(sample,delay) {
     var taxa = sample.getTaxa();
     log(`Uploading ${taxa.length} taxa photos...`);
-    return runNetworkQueue( taxa.map( t => uploadTaxaPhoto(t) ), delay )
-                .then( () => sample );
+    return taxa.reduce(
+                (uploadTaxaPhotos,t) => uploadTaxaPhotos.then( 
+                        () => delayedPromise( uploadTaxaPhoto(t),delay)),
+                Promise.resolve() )
+            .then( () => sample );
         
 }
 
@@ -313,22 +303,28 @@ function downloadSamples(delay) {
     }
     
     function downloadCreaturePhoto(taxon,serverSample) {
-        debug(`processing taxon ${taxon.get("taxonId")}`)
-        let taxonId = taxon.get("taxonId");
-        let taxonPhotoPath = `taxon_download_${taxonId}`;
-        return Alloy.Globals.CerdiApi.retrieveCreaturePhoto(serverSample.id,taxonId,taxonPhotoPath)
-            .then( photo => {
-                debug(`downloaded photo ${photo.id}`);
-                taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
-                taxon.set("serverCreaturePhotoId",photo.id);
-                taxon.save();
-            })
+        return Promise.resolve()
+            .then( () => {
+                debug(`processing taxon ${taxon.get("taxonId")}`)
+                let taxonId = taxon.get("taxonId");
+                let taxonPhotoPath = `taxon_download_${taxonId}`;
+                return Alloy.Globals.CerdiApi.retrieveCreaturePhoto(serverSample.id,taxonId,taxonPhotoPath)
+                    .then( photo => {
+                        debug(`downloaded photo ${photo.id}`);
+                        taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
+                        taxon.set("serverCreaturePhotoId",photo.id);
+                        taxon.save();
+                    })
+                });
     }
 
     function downloadCreaturePhotos([sample,serverSample]) {
         let taxa = sample.loadTaxa();
         let pendingTaxaPhotos = taxa.filter((t) => !t.get("serverCreaturePhotoId") );
-        return runNetworkQueue( _.map( pendingTaxaPhotos, t => downloadCreaturePhoto(t,serverSample) ), delay );
+        return _.reduce( pendingTaxaPhotos,  
+            (queue,t) => queue.then( () => delayedPromise( downloadCreaturePhoto(t,serverSample),delay)),
+            Promise.resolve());
+        
     }
 
     function saveNewSamples( samples ) {        
