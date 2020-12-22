@@ -220,7 +220,6 @@ describe("SampleSync", function () {
             sample.save();
             await SampleSync.uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(0);
-
         });
         it('should upload failed site photos uploads again',function() {
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
@@ -345,14 +344,14 @@ describe("SampleSync", function () {
             expect(sample.get("waterbodyName")).to.equal("test waterbody name");
             expect(sample.get("nearbyFeature")).to.equal("test nearby feature");
             // not notes field in local database
-            expect(sample.get("boulder")).to.equal(5);
-            expect(sample.get("gravel")).to.equal(6);
-            expect(sample.get("sandOrSilt")).to.equal(7);
-            expect(sample.get("leafPacks")).to.equal(8);
-            expect(sample.get("wood")).to.equal(9);
-            expect(sample.get("aquaticPlants")).to.equal(10);
-            expect(sample.get("openWater")).to.equal(11);
-            expect(sample.get("edgePlants")).to.equal(12);
+            expect(sample.get("boulder")).to.equal(17);
+            expect(sample.get("gravel")).to.equal(13);
+            expect(sample.get("sandOrSilt")).to.equal(9);
+            expect(sample.get("leafPacks")).to.equal(16);
+            expect(sample.get("wood")).to.equal(11);
+            expect(sample.get("aquaticPlants")).to.equal(14);
+            expect(sample.get("openWater")).to.equal(12);
+            expect(sample.get("edgePlants")).to.equal(8);
             // check creatures
             expect(taxa.length).to.equal(2);
             expect(taxa.at(0).get("taxonId")).to.equal(1);
@@ -363,11 +362,8 @@ describe("SampleSync", function () {
         it('should update existing samples if they have been updated on the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData()]);
-            let samples = Alloy.Collections.instance("sample");
-            let taxa = Alloy.Collections.instance("taxa");
-
             // create existing sample to update
-            let sample = Alloy.Models.instance("sample");
+            let sample = Alloy.createModel("sample");
             sample.set("serverSampleId", 473);
             sample.set("serverSyncTime", 1); // a long time ago
             sample.set("waterbodyName", "existing waterbody name");
@@ -377,7 +373,7 @@ describe("SampleSync", function () {
 
             // load the updated sample - we are just testing the update is applied here
             // assuming the same code path is followed for adding a new sample
-            sample = Alloy.Models.instance("sample");
+            sample = Alloy.createModel("sample");
             sample.loadByServerId(473);
             expect(sample.get("serverSampleId")).to.equal(473);
             expect(sample.get("waterbodyName")).to.equal("test waterbody name");
