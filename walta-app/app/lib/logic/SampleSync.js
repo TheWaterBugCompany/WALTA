@@ -35,7 +35,8 @@ function clearUploadTimer() {
 }
 
 // wait for a delay then execute the promise
-function delayedPromise( promise, delay=0) {
+function delayedPromise( promise, delay) {
+    Ti.API.info(`delayedPromise ${delay}`)
     return new Promise( (resolve, reject ) => {
         setTimeout(function() {
             promise
@@ -57,13 +58,13 @@ function forceUpload() {
     return startSynchronise();
 }
 
-function uploadRemainingSamples(samples) {
+function uploadRemainingSamples(samples,delay) {
     if ( samples.length > 0 ) {
-        return uploadNextSample(samples)
-            .then( () => uploadRemainingSamples(samples) )
+        return uploadNextSample(samples,delay)
+            .then( () => uploadRemainingSamples(samples,delay) )
             .catch( (err) => {
                 if ( err.message === "The given data was invalid.") {
-                    return uploadRemainingSamples(samples);
+                    return uploadRemainingSamples(samples,delay);
                 } else {
                     return Promise.reject(err);
                 }
@@ -78,7 +79,7 @@ function uploadRemainingSamples(samples) {
     sucessfully uploaded.
 */
 function uploadSitePhoto(sample,delay) {
-    log("Uploading site photo...");
+    log(`Uploading site photo...${delay}`);
     var sitePhotoId = sample.get("serverSitePhotoId");
     if ( !sitePhotoId ) {
         var sitePhoto = sample.getSitePhoto();
@@ -203,13 +204,13 @@ function uploadNextSample(samples,delay) {
     }
 
     return uploadIfNeeded
-            .then( uploadSitePhoto )
-            .then( uploadTaxaPhotos )
+            .then( (sample) => uploadSitePhoto(sample,delay) )
+            .then( (sample) => uploadTaxaPhotos(sample,delay) )
             .catch( errorHandler( sample ) );
 }
 
-function uploadSamples() {
-    debug("Uploading samples to server...");
+function uploadSamples(delay) {
+    debug("Uploading samples to server... ${delay}");
     function loadSamples() {
         var samples = Alloy.createCollection("sample");
         samples.loadUploadQueue();
@@ -219,10 +220,11 @@ function uploadSamples() {
     }
     return Promise.resolve()
         .then(loadSamples)
-        .then(uploadRemainingSamples);
+        .then((samples) => uploadRemainingSamples(samples,delay) );
 }
 
-function startSynchronise(delay=2500) {
+function startSynchronise() {
+    let delay = 2500;
     debug("Starting sample syncronisation process...");
     isSyncing = true;
     function checkNetwork() {
@@ -264,7 +266,7 @@ function startSynchronise(delay=2500) {
 }
 
 function downloadSamples(delay) {
-    debug("Retrieving samples from server...");
+    debug(`Retrieving samples from server... ${delay}`);
     
     // only update if updated after it was last uploaded - this allows user changes
     // to not be overwritten. If the data on the server changes and the user makes a
