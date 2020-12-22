@@ -5,6 +5,12 @@ var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/Pho
 
 var SYNC_INTERVAL = 1000*60*5; // 5 minutes
 
+var isSyncing = false;
+
+function areWeSyncing() {
+    return isSyncing;
+}
+
 var log = Crashlytics.log;
 var debug = m => Ti.API.info(m);
 
@@ -218,6 +224,7 @@ function uploadSamples() {
 
 function startSynchronise(delay=1500) {
     debug("Starting sample syncronisation process...");
+    isSyncing = true;
     function checkNetwork() {
         if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
             debug("No network available, sleeping until network becomes avaiable.");
@@ -226,6 +233,7 @@ function startSynchronise(delay=1500) {
         return Promise.resolve();
     }
     function rescheduleSync() {
+        isSyncing = false;
         timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
         return Promise.resolve();
     }
@@ -237,12 +245,21 @@ function startSynchronise(delay=1500) {
         }
         return Promise.resolve();
     }  
+    function handleError(err) {
+        let message = "<unknown error>";
+        if ( err.error ) {
+            message = err.error;
+        } else if ( err.message ) {
+            message = err.message;
+        }
+        debug(`Error synchronising ${message}`)
+    }
     return Promise.resolve()
         .then(checkLoggedIn) 
         .then(checkNetwork)
         .then(() => downloadSamples(delay) )
         .then(() => uploadSamples(delay) )
-        .catch( (err) => debug(`Error synchronising ${err.error}`))
+        .catch( handleError )
         .finally( rescheduleSync )
 }
 
@@ -275,9 +292,10 @@ function downloadSamples(delay) {
         sample.loadByServerId(serverSample.id) 
         if ( needsUpdate(serverSample,sample) ) {
             Ti.API.info(`Updating serverSampleId = ${JSON.stringify(serverSample.id)}`);
-            sample.fromCerdiApiJson(serverSample);
+            sample.fromCerdiApiJson(serverSample); 
             sample.set("serverSyncTime",moment().valueOf());
             sample.save();
+            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
             return Promise.resolve([sample,serverSample]);
         } else {
             Ti.API.info(`serverSampleId = ${JSON.stringify(serverSample.id)} doesn't need updating`);
@@ -286,14 +304,15 @@ function downloadSamples(delay) {
     }
 
     function downloadSitePhoto([sample,serverSample]) {
-        if ( serverSample.photos.length > 0 ) {
+        if ( serverSample.photos.length > 0 && !sample.get("serverSitePhotoId") ) {
             let sitePhotoPath = `site_download_${serverSample.id}`;
-            
+            debug(`downloading site photo for ${serverSample.id}`);
             return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
                 .then( photo => {
                     sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
                     sample.set("serverSitePhotoId", photo.id);
                     sample.save();
+                    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                     return [sample,serverSample];
                 });
         } else {
@@ -310,10 +329,13 @@ function downloadSamples(delay) {
                 let taxonPhotoPath = `taxon_download_${taxonId}`;
                 return Alloy.Globals.CerdiApi.retrieveCreaturePhoto(serverSample.id,taxonId,taxonPhotoPath)
                     .then( photo => {
-                        debug(`downloaded photo ${photo.id}`);
-                        taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
-                        taxon.set("serverCreaturePhotoId",photo.id);
-                        taxon.save();
+                        if ( photo ) {
+                            debug(`downloaded photo ${photo.id}`);
+                            taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
+                            taxon.set("serverCreaturePhotoId",photo.id);
+                            taxon.save();
+                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
+                        }
                     })
                 });
     }
@@ -345,4 +367,5 @@ exports.uploadSamples = uploadSamples;
 exports.uploadNextSample = uploadNextSample;
 exports.downloadSamples = downloadSamples;
 exports.forceUpload = forceUpload;
+exports.areWeSyncing = areWeSyncing;
 exports.init = init;

@@ -212,7 +212,8 @@ function startApp() {
   } );
 
   Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
-  Alloy.Collections.instance("sample").load();
+  Alloy.Collections.instance("sample").loadCurrent();
+  Alloy.Collections.instance("taxa").loadCurrent();
   SampleSync.init();
   var keyName = "walta";
   var keyPath;
