@@ -93,16 +93,18 @@ function retrievePhoto( serverUrl, photoUrl, accessToken, photoPath ) {
         savePhoto(blob,photoPath);
         return photoPath;
     }
+    function downloadPhotoIfExists(photos) {
+        if ( photos.length > 0 ) {
+            let photo = findLatestPhoto(photos);
+            return downloadPhoto(photo)
+                .then(saveRetrievedPhoto)
+                .then( () => photo ); // return the id so the caller can save it
+        }
+    }
     let photoMeta = null;
     return makeJsonGetRequest(`${serverUrl}/${photoUrl}`, accessToken )
-        .then(findLatestPhoto)
-        .then( meta => {
-            photoMeta = meta;
-            return meta; 
-        }) 
-        .then(downloadPhoto)
-        .then(saveRetrievedPhoto)
-        .then( () => photoMeta ); // return the id so the caller can save it
+        .then( downloadPhotoIfExists );
+        
 }
 
 

@@ -69,8 +69,9 @@ exports.definition = {
 							
 								
 							_.defer(() => {
-								//Ti.API.info("setting updatedAt")
-								this.set('updatedAt', moment().valueOf(), {ignore:true});
+								let updatedAt = moment().valueOf();
+								Ti.API.info(`setting updatedAt = ${updatedAt} id = ${this.get("serverSampleId")} `)
+								this.set('updatedAt', updatedAt, {ignore:true});
 								this.save(); 
 							});
 						}
@@ -116,30 +117,17 @@ exports.definition = {
 				this.save();
 			},
 
-			loadCurrent(alsoLoadTaxon = true) {
+			loadCurrent() {
 				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
-				let sampleId = this.get("sampleId");
-				if ( sampleId && alsoLoadTaxon ) {
-					Alloy.Collections.instance("taxa").load(sampleId);
-				} else {
-					Alloy.Collections.instance("taxa");
-				}
 			},
 
-			loadById(sampleId, alsoLoadTaxon = true) {
+			loadById(sampleId) {
 				this.fetch({ query: `SELECT * FROM sample WHERE sampleId = ${sampleId}` });
-				if ( alsoLoadTaxon) Alloy.Collections.instance("taxa").load(sampleId);
 			},
 			
-			loadByServerId(serverSampleId, alsoLoadTaxon = true) {
+			loadByServerId(serverSampleId ) {
+				Ti.API.info(`loading sample by server id = ${serverSampleId}`)
 				this.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId}` });
-				let sampleId  = this.get("sampleId");
-				if ( sampleId && alsoLoadTaxon) {
-					Alloy.Collections.instance("taxa").load(this.get("sampleId"));
-					return true;
-				} else {
-					return false;
-				}
 			},
 
 			loadTaxa() {
@@ -201,8 +189,28 @@ exports.definition = {
 				} else {
 					sampleJson.dateCompleted = moment().format("DD/MMM/YYYY h:mm:ss a");
 				}
-				sampleJson.uploaded = (sampleJson.serverSyncTime > 0 ? "Yes" : "No" );
 
+				// Calculate progress 
+				let count = 0, uploaded = 0;
+				taxa.forEach( t => {
+					count ++;
+					if ( t.isUploaded() )
+						uploaded++;
+				})
+				let progress, percentagePhotos;
+				if ( count == 0 ) {
+					percentagePhotos = 100
+				} else {
+					percentagePhotos = uploaded*100/count
+				}
+				if ( sampleJson.serverSyncTime >= sampleJson.updatedAt &&  percentagePhotos >= 100) {
+					progress = "Finished";
+				} else {
+					progress = `${percentagePhotos.toFixed()}%`;
+				}
+
+				sampleJson.uploaded = progress;
+				sampleJson.id = this.get("serverSampleId");
 				// Provide textual assessment information
 				function scoreColor(score) {
 					if ( score <= 4.0 ) {
@@ -251,6 +259,7 @@ exports.definition = {
 			},
 
 			fromCerdiApiJson: function(sample) {
+				Ti.API.info(`calling fromCerdiApiJson ${sample.id}`);
 				var taxa = this.loadTaxa();
 				function toSurveyType(surveyType) {
 					if ( surveyType === "detailed")
@@ -371,7 +380,7 @@ exports.definition = {
 				}
 			},
 
-			load: function() {
+			loadCurrent: function() {
 				this.fetch();
 				Alloy.Models.instance("sample").loadCurrent();
 			},
