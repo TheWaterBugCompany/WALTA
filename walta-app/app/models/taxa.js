@@ -30,7 +30,6 @@ exports.definition = {
 				
 				this.on('change', function(a,event) {
 					if ( event && !event.ignore ) {
-						Ti.API.info(`change ${_.keys(event.changes)}`);
 						let dataFields = [
 							"abundance",
 							"taxonPhotoPath",
