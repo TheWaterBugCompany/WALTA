@@ -4,6 +4,11 @@ var sample = Alloy.Models.sample;
 var { getCurrentPosition } = require("logic/GeoLocationService");
 var { disableControl, enableControl } = require("ui/ViewUtils");
 
+var readOnlyMode = $.args.readonly === true;
+
+if ( readOnlyMode ) {
+    disableControl( $.saveButton ); 
+}
 
 // to allow mocking getCurrentPoisition in unit tests
 if ( $.args.getCurrentPosition ) {
@@ -79,20 +84,8 @@ $.mapview.addEventListener( "longclick", function(e) {
     }
     e.cancelBubble = true;
 });
-
-function disable() {
-    $.disabled = true;
-    disableControl( $.saveButton );
-}
-
-function enable() {
-    $.disabled = false;
-    enableControl( $.saveButton );
-}
 let lat = parseFloat(sample.get("lat")),
     lng = parseFloat(sample.get("lng")),
     accuracy = parseFloat(sample.get("accuracy"));
 updateLocation( lat, lng, accuracy );
-exports.disable = disable; 
-exports.enable = enable;
 exports.cleanUp = cleanUp;
