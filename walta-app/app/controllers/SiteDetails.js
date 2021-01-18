@@ -6,6 +6,7 @@ var Topics = require("ui/Topics");
 var GeoLocationService = require('logic/GeoLocationService');
 
 var sample = Alloy.Models.sample;
+var readOnlyMode = $.args.readonly === true;
 
 sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
@@ -61,12 +62,12 @@ function loadAttributes() {
     updateLocation();
     checkValidity();
 
-    if  ( sample.isReadOnly() )  {
+    if  ( readOnlyMode )  {
         $.surveyLevelSelect.disable();
         $.waterbodyTypeSelect.disable();
-        $.waterbodyNameField.setEditable(false);
-        $.nearByFeatureField.setEditable(false);
-        $.photoSelect.disable();
+        $.waterbodyNameField.editable = false;
+        $.nearByFeatureField.editable = false;
+        $.photoSelect.setReadOnlyMode(true);
     } 
 }
 
@@ -152,10 +153,7 @@ function validateSubmit() {
 }
 
 function openLocationEntry() {
-    $.locationEntry = Alloy.createController("LocationEntry");
-    if ( sample.isReadOnly() )
-        $.locationEntry.disable();
-
+    $.locationEntry = Alloy.createController("LocationEntry", {readonly: readOnlyMode});
     $.TopLevelWindow.add($.locationEntry.getView());
     $.locationEntry.on("close", function handler() {
         $.locationEntry.off("close", handler);

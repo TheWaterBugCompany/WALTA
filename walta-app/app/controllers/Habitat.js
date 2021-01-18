@@ -4,6 +4,18 @@ $.name = "habitat";
 
 var Topics = require("ui/Topics");
 var sample = Alloy.Models.sample;
+var readOnlyMode = $.args.readonly === true;
+
+if ( readOnlyMode ) {
+    $.leaves.editable = false;
+    $.plants.editable = false;
+    $.wood.editable = false;
+    $.edgeplants.editable = false;
+    $.rocks.editable = false;
+    $.gravel.editable = false;
+    $.sandOrSilt.editable = false;
+    $.openwater.editable = false;
+}
 
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.leaves, $.plants, $.wood, $.edgeplants, $.rocks, $.gravel, $.sandOrSilt, $.openwater ] );
@@ -32,6 +44,10 @@ function loadAttributes() {
 }
 
 function validateSum() {
+    if ( readOnlyMode ) {
+        $.nextButton.enable();
+        return;
+    }
     var sum = [ $.leaves, $.plants, $.wood, $.sandOrSilt,
         $.edgeplants, $.rocks, $.gravel, $.openwater ]
             .reduce( (a,v) => {

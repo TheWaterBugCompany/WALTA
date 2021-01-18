@@ -68,7 +68,6 @@ describe("LocationEntry controller", function() {
 
   it('should set the location when the locate button is pressed', function(done) { 
     var removeDupsDone = _.once( done ); 
-    scr.enable();
     windowOpenTest( win, function(){
       sample.on("change:lng change:lat", function() {
         checkTestResult( ()=> {
@@ -89,7 +88,6 @@ describe("LocationEntry controller", function() {
   
   it('should set the location on a map save', function(done) {
     var removeDupsDone = _.once( done ); 
-    scr.enable();
     windowOpenTest( win, function(){
       sample.on("change:lng change:lat", function() {
         checkTestResult( ()=> {
@@ -107,7 +105,6 @@ describe("LocationEntry controller", function() {
 
   it('should NOT set the location on a map cancel', function(done) {
     var removeDupsDone = _.once( done ); 
-    scr.enable();
     windowOpenTest( win, function(){
       sample.on("change:lng change:lat", function() {
         expect.fail("map click changed point when map cancelled!");
@@ -119,7 +116,6 @@ describe("LocationEntry controller", function() {
   });
   
   it('should NOT set the location on a click if disabled', function(done) {
-    scr.disable();
     windowOpenTest( win, function(){
       sample.on("change:lng change:lat", function() {
         expect.fail("map click changed point when control disabled!");

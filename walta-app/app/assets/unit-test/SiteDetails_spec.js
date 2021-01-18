@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
+var moment = require('lib/moment')
 var Topics = require('ui/Topics'); 
 var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("unit-test/lib/chai");
@@ -35,8 +36,6 @@ describe("SiteDetails controller", function() {
         sample.set("lng", "147.671339");
         sample.set("lat", "-42.890748");
         sample.set("surveyType", SURVEY_DETAILED );
-        
-        ctl = Alloy.createController("SiteDetails");
 	});
 	afterEach( function(done) {
         sample.off();
@@ -46,10 +45,12 @@ describe("SiteDetails controller", function() {
     });
     
 	it('should display the SiteDetails view', function(done) {
+        ctl = Alloy.createController("SiteDetails");
 		controllerOpenTest( ctl, done );
     });
 
-    it('should save the survey type field', function(done) {
+    it('should save the survey type field', function(done) {   
+        ctl = Alloy.createController("SiteDetails");
 		controllerOpenTest( ctl, function() {
             ctl.on("updated", () => checkTestResult( () => {
                 expect( parseInt( sample.get("surveyType") ) ).to.equal(SURVEY_ORDER);
@@ -58,7 +59,8 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should save the water body type field', function(done) {
+    it('should save the water body type field', function(done) {    
+        ctl = Alloy.createController("SiteDetails");
 		controllerOpenTest( ctl, function() {
             ctl.on("updated", () => checkTestResult( done, () => {
                 expect( parseInt( sample.get("surveyType") ) ).to.equal(WATERBODY_LAKE);
@@ -67,7 +69,8 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should save the photo field', function(done){
+    it('should save the photo field', function(done){   
+        ctl = Alloy.createController("SiteDetails");
         var doneOnce = _.once(done);
         controllerOpenTest( ctl,  ()=>{
             // set a photo as if taken by the user
@@ -77,9 +80,10 @@ describe("SiteDetails controller", function() {
             }) );
             simulatePhotoCapture( ctl.photoSelect );
         });
-    });
+    }); 
 
-    it('should save waterbody name field', function(done) {
+    it('should save waterbody name field', function(done) { 
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             ctl.waterbodyNameField
                 .addEventListener("change", () => checkTestResult( done, function changeHandler() {
@@ -92,7 +96,8 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should save near by feature field', function(done) {
+    it('should save near by feature field', function(done) {    
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             ctl.nearByFeatureField
                 .addEventListener("change", function changeHandler() {
@@ -107,7 +112,8 @@ describe("SiteDetails controller", function() {
     });
 
     
-    it('should disable the next button if mandatory fields are unset', function(done) {
+    it('should disable the next button if mandatory fields are unset', function(done) {    
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             expect( ctl.nextButton.button.enabled ).to.be.false;
             ctl.on("updated", function changeHandler() {
@@ -125,7 +131,8 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should fire Topics.Habitat if next button pressed', function(done) {
+    it('should fire Topics.Habitat if next button pressed', function(done) {      
+        ctl = Alloy.createController("SiteDetails");
         Topics.subscribe( Topics.HABITAT, function handler() {
             Topics.unsubscribe( Topics.HABITAT, handler );
             // we recieved the signal so pass!
@@ -146,7 +153,8 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should display "unobtained location" with no lock', function(done) {
+    it('should display "unobtained location" with no lock', function(done) {       
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             // unset these here to avoid triggering the geolocation service
             sample.unset("lng");
@@ -156,14 +164,16 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should display location coordinates with a lock', function(done) {
+    it('should display location coordinates with a lock', function(done) {     
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             done();
         } );
     });
 
-    it('should update coordinates when gps lock is obtained', function(done) {
+    it('should update coordinates when gps lock is obtained', function(done) {   
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             sample.unset("lng");
             sample.unset("lat");
@@ -174,7 +184,8 @@ describe("SiteDetails controller", function() {
         } );
     });
     
-    it('should update coordinates when location is changed', function(done) {
+    it('should update coordinates when location is changed', function(done) {        
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             sample.set("lng", "145.671339");
@@ -185,7 +196,8 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should NOT update coordinates when a new gps lock is obtained if location already set', function(done) {
+    it('should NOT update coordinates when a new gps lock is obtained if location already set', function(done) {     
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             Topics.fireTopicEvent(Topics.GPSLOCK, { latitude: 23, longitude: 100, accuracy: 1 });
@@ -196,7 +208,8 @@ describe("SiteDetails controller", function() {
     });
 
 
-    it('should open a map viewer when location icon is clicked', function(done) {
+    it('should open a map viewer when location icon is clicked', function(done) {   
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             ctl.locationIndicator.fireEvent("click");
@@ -206,9 +219,9 @@ describe("SiteDetails controller", function() {
             }, 50 );
         } );
     }); 
-
-   /* it('should have editable fields before 14 days', function(done) {
-        sample.set("dateCompleted", moment().subtract(13, "days").format() );
+    
+    it('should have editable fields', function(done) {   
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.false;
             expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.false;
@@ -217,8 +230,9 @@ describe("SiteDetails controller", function() {
             done();
         } );
     });
- fields after 14 days', function(done) {
-        sample.set("dateCompleted", moment().subtract(16, "days").format() );
+
+    it('should NOT have editable fields in read only mode', function(done) {     
+        ctl = Alloy.createController("SiteDetails", { readonly: true });
         controllerOpenTest( ctl, function() {
             expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;
             expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.true;
@@ -228,19 +242,43 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it("photo shouldn't be selectable afer 14 days", function(done) {
-        sample.set("dateCompleted", moment().subtract(16, "days").format() );
+    it("photo should be selectable", function(done) {
+        ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
-            expect( ctl.photoSelect.disabled ).to.be.true;
+            expect( ctl.photoSelect.camera.visible).to.be.true;
             done();
         } );
     });
 
-    it("location shouldn't be selectable afer 14 days", function(done) {
-        sample.set("dateCompleted", moment().subtract(16, "days").format() );
+    it("photo should NOT be selectable when in read only mode", function(done) {
+        ctl = Alloy.createController("SiteDetails", { readonly: true });
         controllerOpenTest( ctl, function() {
-            expect( ctl.photoSelect.disabled ).to.be.true;
+            expect( ctl.photoSelect.camera.visible).to.be.false;
             done();
+        } );
+    });
+
+    it("location should be selectable", function(done) {
+        ctl = Alloy.createController("SiteDetails");
+        controllerOpenTest( ctl, function() {
+            ctl.locationIndicator.fireEvent("click");
+            setTimeout( function() {
+                expect( ctl.locationEntry.getView().visible ).to.be.true;
+                expect( ctl.locationEntry.args.readonly).to.be.false;
+                done();
+            }, 50 );
         } ); 
-    }); */
+    }); 
+
+    it("location should NOT be selectable when in read only mode", function(done) {
+        ctl = Alloy.createController("SiteDetails", { readonly: true });
+        controllerOpenTest( ctl, function() {
+            ctl.locationIndicator.fireEvent("click");
+            setTimeout( function() {
+                expect( ctl.locationEntry.getView().visible ).to.be.true;
+                expect( ctl.locationEntry.args.readonly).to.be.true;
+                done();
+            }, 50 );
+        } ); 
+    }); 
 });

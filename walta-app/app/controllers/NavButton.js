@@ -40,6 +40,10 @@ function disable() {
     $.button.borderColor = "#5ca1b1";
 }
 
+function isEnabled() {
+    return $.button.touchEnabled;
+}
+
 function cleanUp() {
     $.destroy();
     $.off();
@@ -53,6 +57,7 @@ function clickButton(e) {
 } 
 $.NavButton.addEventListener( 'click', clickButton);
 
+exports.isEnabled = isEnabled;
 exports.cleanUp = cleanUp;
 exports.enable = enable;
 exports.disable = disable;
