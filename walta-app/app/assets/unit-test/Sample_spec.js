@@ -181,6 +181,7 @@ describe("Sample collection, model including taxa", function() {
       Alloy.Models.sample.saveCurrentSample();
       resetSample();
       Alloy.Models.sample.loadById(initialSampleId);
+      Alloy.Models.sample.loadTaxa();
     })   
     
     it('should persist all the fields', function() {

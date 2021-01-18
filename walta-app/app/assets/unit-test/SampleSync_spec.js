@@ -58,7 +58,7 @@ function makeSample(attrs) {
      },attrs));
 }
 
-describe.only("SampleSync", function () {
+describe("SampleSync", function () {
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
@@ -328,12 +328,11 @@ describe.only("SampleSync", function () {
                     Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_01.jpg")
                         .copy( Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
                     return Promise.resolve({id: 1});
-                };  
-            let samples = Alloy.Collections.instance("sample");
-            let taxa = Alloy.Collections.instance("taxa");
+                };              
             await SampleSync.downloadSamples();
             let sample = Alloy.Models.instance("sample");
             sample.loadByServerId(473);
+            let taxa = sample.loadTaxa();
             expect(sample.get("serverSampleId")).to.equal(473);
             expect(sample.get("dateCompleted")).to.equal("2020-09-25T09:41:46+00:00");
             expect(parseFloat(sample.get("lat"))).to.equal(-37.5622);
@@ -353,7 +352,7 @@ describe.only("SampleSync", function () {
             expect(sample.get("openWater")).to.equal(12);
             expect(sample.get("edgePlants")).to.equal(8);
             // check creatures
-            expect(taxa.length).to.equal(2);
+            expect(taxa.length, "taxa.length").to.equal(2);
             expect(taxa.at(0).get("taxonId")).to.equal(1);
             expect(taxa.at(0).get("abundance")).to.equal("1-2");
             expect(taxa.at(1).get("taxonId")).to.equal(2);

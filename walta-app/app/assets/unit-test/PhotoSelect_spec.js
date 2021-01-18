@@ -55,7 +55,49 @@ describe('PhotoSelect controller', function() {
 		]);
 		pv.on("loaded", () => checkTestResult( done, () => {
 			expect( pv.magnify.visible ).to.be.true;
-			//expect( pv.camera.visible ).to.be.false;
+			expect( pv.camera.visible ).to.be.false;
+			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+			expect( pv.photoSelectLabel.visible ).to.be.false;
+			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
+		}) );
+		windowOpenTest( win );
+	});
+
+	it("should dynamically enable readonly mode", function( done ) { 
+		makePhotoSelect( false, [
+			'/unit-test/resources/simpleKey1/media/amphipoda_01.jpg',
+			'/unit-test/resources/simpleKey1/media/amphipoda_02.jpg',
+			'/unit-test/resources/simpleKey1/media/amphipoda_03.jpg'
+		]);
+		pv.on("loaded", () => checkTestResult( done, () => {
+			expect( pv.magnify.visible ).to.be.true;
+			expect( pv.camera.visible ).to.be.true;
+			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+			expect( pv.photoSelectLabel.visible ).to.be.false;
+			pv.setReadOnlyMode(true);
+			expect( pv.magnify.visible ).to.be.true;
+			expect( pv.camera.visible ).to.be.false;
+			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+			expect( pv.photoSelectLabel.visible ).to.be.false;
+			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");
+		}) );
+		windowOpenTest( win );
+	});
+
+	it("should dynamically disable readonly mode", function( done ) { 
+		makePhotoSelect( true, [
+			'/unit-test/resources/simpleKey1/media/amphipoda_01.jpg',
+			'/unit-test/resources/simpleKey1/media/amphipoda_02.jpg',
+			'/unit-test/resources/simpleKey1/media/amphipoda_03.jpg'
+		]);
+		pv.on("loaded", () => checkTestResult( done, () => {
+			expect( pv.magnify.visible ).to.be.true;
+			expect( pv.camera.visible ).to.be.false;
+			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
+			expect( pv.photoSelectLabel.visible ).to.be.false;
+			pv.setReadOnlyMode(false);
+			expect( pv.magnify.visible ).to.be.true;
+			expect( pv.camera.visible ).to.be.true;
 			expect( pv.photoSelectOptionalLabel.visible ).to.be.false;
 			expect( pv.photoSelectLabel.visible ).to.be.false;
 			expect( pv.getThumbnailImageUrl() ).to.include("preview_thumbnail");

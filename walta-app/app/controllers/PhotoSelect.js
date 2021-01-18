@@ -14,11 +14,19 @@ $.photoSelectOptionalLabel.visible = false;
 setImage( $.args.image );
 clearError();
 
-var readOnlyMode = $.args.readonly ;
+var readOnlyMode = false;
+setReadOnlyMode($.args.readonly === true);
 var cropPhoto = $.args.cropPhoto;
-if ( readOnlyMode ) {
-    $.iconHolder.remove( $.camera );
-    $.camera.visible = false;
+
+function setReadOnlyMode(p_readOnlyMode) {
+    readOnlyMode = p_readOnlyMode;
+    if ( readOnlyMode ) {
+        $.iconHolder.remove( $.camera );
+        $.camera.visible = false;
+    } else {
+        $.iconHolder.add( $.camera );
+        $.camera.visible = true;
+    }
 }
 
 function getFullPhotoUrl() {
@@ -269,14 +277,6 @@ function takePhoto(e) {
     )
 } 
 
-function disable() {
-    $.disabled = true;
-}
-
-function enable() {
-    $.disabled = false;
-}
-
 function setError() {
     $.resetClass( $.photoSelectBoundary, "photoError" );
     $.photoSelectLabel.visible = true;
@@ -291,14 +291,13 @@ function clearError() {
     }
 }
 
+exports.setReadOnlyMode = setReadOnlyMode;
 exports.getThumbnailImageUrl = getThumbnailImageUrl;
 exports.getFullPhotoUrl = getFullPhotoUrl;
 exports.openGallery = openGallery; 
 exports.setImage = setImage;
 exports.setError = setError;
 exports.clearError = clearError;
-exports.disable = disable;
-exports.enable = enable;
 exports.photoCapturedHandler = photoCapturedHandler; // for tests
 
 function cleanUp() {
