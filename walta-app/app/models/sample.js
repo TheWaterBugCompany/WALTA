@@ -78,16 +78,12 @@ exports.definition = {
 					}
 				});
 			},
-			isReadOnly: function() {
-				/*var dateCompleted = this.get("dateCompleted");
+			isComplete: function() {
+				var dateCompleted = this.get("dateCompleted");
 				if ( ! dateCompleted )
-					return;
-
-				var expireAt = moment( dateCompleted ).add(14, 'days');
-				var now = moment();
-				var readOnly = expireAt < now;
-				return readOnly;*/
-				return false;
+					return false;
+				else
+					return true;
 			},
 
 			setLocation: function( coords ) {
