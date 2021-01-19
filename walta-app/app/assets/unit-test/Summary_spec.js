@@ -19,15 +19,25 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
 var { createCerdiApi } = require("unit-test/mocks/MockCerdiApi");
+var { createMockTaxon } = require('unit-test/mocks/MockTaxon');
 Alloy.Globals.CerdiApi = createCerdiApi();
 
 var mocx = require("unit-test/lib/mocx");
 
-describe("Summary controller", function() {
+describe.only("Summary controller", function() {
     var ctl;
     
     function doTest( done, assertitions ) {
         ctl = Alloy.createController("Summary");
+        controllerOpenTest( ctl, function() {
+            checkTestResult( done, function() {
+                assertitions(); 
+            });
+        } );
+    }
+
+    function doTestReadOnly( done, assertitions ) {
+        ctl = Alloy.createController("Summary", { readonly: true });
         controllerOpenTest( ctl, function() {
             checkTestResult( done, function() {
                 assertitions(); 
@@ -52,6 +62,12 @@ describe("Summary controller", function() {
 	afterEach( function(done) {
 		closeWindow( ctl.getView(), done );
     });
+    it.only('should disable submit button when in readonly mode', function(done) {
+        doTestReadOnly( done, function() {
+            expect( ctl.nextButton.isEnabled() ).to.be.false;
+        });
+    });
+
     it('should display the SIGNAL scores on the Summary view', function(done) {
         doTest( done, function() {
             expect( ctl.signalScore.text ).to.equal("3.0");
@@ -75,7 +91,7 @@ describe("Summary controller", function() {
             expect( ctl.message.text ).to.include("next step is to register");
             //expect( ctl.latLabel.text ).to.equal('37.42234');
             //expect( ctl.longLabel.text ).to.be.equal('-122.84123');
-            expect( ctl.nextButton.getView().children[0].children[0].text ).to.equal("SUBMIT");
+            expect( ctl.nextButton.getView().children[0].children[0].text ).to.equal("DONE");
             expect( ctl.nextButton.getView().children[0].touchEnabled ).to.be.true;
         });
     });
@@ -87,7 +103,7 @@ describe("Summary controller", function() {
             expect( ctl.message.text ).to.include("survey is complete");
             //expect( ctl.latLabel.text ).to.equal('37.42234');
             //expect( ctl.longLabel.text ).to.equal('-122.84123');
-            expect( ctl.nextButton.getView().children[0].children[0].text  ).to.equal("SUBMIT");
+            expect( ctl.nextButton.getView().children[0].children[0].text  ).to.equal("DONE");
         });
     });
     [
@@ -104,12 +120,12 @@ describe("Summary controller", function() {
                 Alloy.Models.sample.calculateWeightedSignalScore = function() { return (min+max)/2; };
                 Alloy.Models.sample.loadTaxa = function() {
                     return mocx.createCollection("taxa", [
-                        { taxonId: "1", abundance: "3-5" },
-                        { taxonId: "2", abundance: "1-2" },
-                        { taxonId: "3", abundance: "3-5" },
-                        { taxonId: "4", abundance: "1-2" },
-                        { taxonId: "5", abundance: "3-5" },
-                        { taxonId: "6", abundance: "1-2" }
+                        createMockTaxon({ taxonId: "1", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "2", abundance: "1-2"}),
+                        createMockTaxon({ taxonId: "3", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "4", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "5", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "6", abundance: "1-2" })
                     ]);
                 }
                 doTest( done, function() {
@@ -128,12 +144,12 @@ describe("Summary controller", function() {
                 Alloy.Models.sample.calculateWeightedSignalScore = function() { return (min+max)/2 - 3; };
                 Alloy.Models.sample.loadTaxa = function() {
                     return mocx.createCollection("taxa", [
-                        { taxonId: "1", abundance: "3-5" },
-                        { taxonId: "2", abundance: "1-2" },
-                        { taxonId: "3", abundance: "3-5" },
-                        { taxonId: "4", abundance: "1-2" },
-                        { taxonId: "5", abundance: "3-5" },
-                        { taxonId: "6", abundance: "1-2" }
+                        createMockTaxon({ taxonId: "1", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "2", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "3", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "4", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "5", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "6", abundance: "1-2" })
                     ]);
                 };
                 doTest( done, function() {
@@ -152,12 +168,12 @@ describe("Summary controller", function() {
                 Alloy.Models.sample.calculateWeightedSignalScore = function() { return (min+max)/2; };
                 Alloy.Models.sample.loadTaxa = function() {
                     return mocx.createCollection("taxa", [
-                        { taxonId: "1", abundance: "3-5" },
-                        { taxonId: "2", abundance: "1-2" },
-                        { taxonId: "3", abundance: "3-5" },
-                        { taxonId: "4", abundance: "1-2" },
-                        { taxonId: "5", abundance: "3-5" },
-                        { taxonId: "6", abundance: "1-2" }
+                        createMockTaxon({ taxonId: "1", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "2", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "3", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "4", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "5", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "6", abundance: "1-2" })
                     ]);
                 }
                 doTest( done, function() {
@@ -176,8 +192,8 @@ describe("Summary controller", function() {
                 Alloy.Models.sample.calculateWeightedSignalScore = function() { return (min+max)/2; };
                 Alloy.Models.sample.loadTaxa = function() {
                     return mocx.createCollection("taxa", [
-                        { taxonId: "1", abundance: "3-5" },
-                        { taxonId: "3", abundance: "1-2" }
+                        createMockTaxon({ taxonId: "1", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "3", abundance: "1-2" })
                     ]);
                 }
                 doTest( done, function() {
@@ -196,22 +212,22 @@ describe("Summary controller", function() {
                 Alloy.Models.sample.calculateWeightedSignalScore = function() { return (min+max)/2; };
                 Alloy.Models.sample.loadTaxa = function() {
                     return mocx.createCollection("taxa", [
-                        { taxonId: "1", abundance: "3-5" },
-                        { taxonId: "2", abundance: "1-2" },
-                        { taxonId: "3", abundance: "3-5" },
-                        { taxonId: "4", abundance: "1-2" },
-                        { taxonId: "5", abundance: "3-5" },
-                        { taxonId: "6", abundance: "1-2" },
-                        { taxonId: "7", abundance: "3-5" },
-                        { taxonId: "8", abundance: "1-2" },
-                        { taxonId: "9", abundance: "3-5" },
-                        { taxonId: "10", abundance: "1-2" },
-                        { taxonId: "11", abundance: "3-5" },
-                        { taxonId: "12", abundance: "1-2" },
-                        { taxonId: "13", abundance: "3-5" },
-                        { taxonId: "14", abundance: "1-2" },
-                        { taxonId: "15", abundance: "3-5" },
-                        { taxonId: "16", abundance: "1-2" }
+                        createMockTaxon({ taxonId: "1", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "2", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "3", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "4", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "5", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "6", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "7", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "8", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "9", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "10", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "11", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "12", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "13", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "14", abundance: "1-2" }),
+                        createMockTaxon({ taxonId: "15", abundance: "3-5" }),
+                        createMockTaxon({ taxonId: "16", abundance: "1-2" })
                     ]);
                 }
                 doTest( done, function() {
