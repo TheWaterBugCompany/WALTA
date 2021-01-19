@@ -320,7 +320,7 @@ describe("Sample collection, model including taxa", function() {
       expect( json.sampleId ).to.equal(99);
     }); 
 
-    context("set updatedAt", function() { 
+    /*context("set updatedAt", function() { 
     [
       "dateCompleted",
       "lat",
@@ -351,6 +351,6 @@ describe("Sample collection, model including taxa", function() {
             done();
         });
       }));
-    });
+    });*/
   });
 })

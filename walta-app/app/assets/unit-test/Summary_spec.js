@@ -24,7 +24,7 @@ Alloy.Globals.CerdiApi = createCerdiApi();
 
 var mocx = require("unit-test/lib/mocx");
 
-describe.only("Summary controller", function() {
+describe("Summary controller", function() {
     var ctl;
     
     function doTest( done, assertitions ) {
@@ -62,7 +62,7 @@ describe.only("Summary controller", function() {
 	afterEach( function(done) {
 		closeWindow( ctl.getView(), done );
     });
-    it.only('should disable submit button when in readonly mode', function(done) {
+    it('should disable submit button when in readonly mode', function(done) {
         doTestReadOnly( done, function() {
             expect( ctl.nextButton.isEnabled() ).to.be.false;
         });
