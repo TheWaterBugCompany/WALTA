@@ -125,7 +125,7 @@ describe("EditTaxon controller", function() {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
         windowOpenTest( win, () => { 
             checkTestResult(done, () => {
-                expect( ctl.abundance.enabled ).to.be.false;
+                expect( ctl.abundanceValue.enabled ).to.be.false;
             } )
         });
     });

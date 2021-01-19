@@ -71,7 +71,7 @@ function openController(ctl,args) {
   dumpHistory();
 
   
-  debug(`opening controller="${ctl}" with args.slide= ${args.slide}`);
+  debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
   controller = Alloy.createController(ctl,args);
   controller.open();
 

@@ -28,7 +28,7 @@ exports.definition = {
 					if ( photoPath ) this.setPhoto(photoPath);
 				});
 				
-				this.on('change', function(a,event) {
+				/*this.on('change', function(a,event) {
 					if ( event && !event.ignore ) {
 						let dataFields = [
 							"abundance",
@@ -45,7 +45,7 @@ exports.definition = {
 							}
 						}
 					}
-				});
+				});*/
 			},
 			getSampleId() {
 				return this.get("sampleId");

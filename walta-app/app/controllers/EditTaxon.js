@@ -3,11 +3,11 @@ var key = $.args.key;
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 
 var readOnlyMode = $.args.readonly === true;
-
+Ti.API.info(`EditTaxon readOnlyMode = ${readOnlyMode}`);
 $.photoSelect.setReadOnlyMode(readOnlyMode);
 if ( readOnlyMode ) {
     disableControl($.deleteButton);
-    $.abundance.enabled = false;
+    disableControl($.abundanceValue);
    
 }
 

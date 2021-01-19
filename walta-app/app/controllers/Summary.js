@@ -14,7 +14,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY, slide: "left" }  ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY, slide: "left", readonly: readOnlyMode  }  ); 
 $.nextButton = Alloy.createController("NavButton");
 
 $.nextButton.setLabel("Done");
@@ -54,7 +54,9 @@ function checkGpsLock() {
         $.message.text = INCOMPLETE_NO_LOCK;
         $.message.color = "red";
     } else {
-        $.nextButton.enable();
+        if ( !readOnlyMode) {
+            $.nextButton.enable();
+        }
         setMessageText();
         
     }
@@ -71,8 +73,7 @@ function setMessageText() {
     }
 }
 
-if ( !readOnlyMode ) {
-    Alloy.Models.sample.on("change", checkGpsLock );	
-    Alloy.Models.sample.trigger("change");
-}
+
+Alloy.Models.sample.on("change", checkGpsLock );	
+Alloy.Models.sample.trigger("change");
 

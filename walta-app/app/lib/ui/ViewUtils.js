@@ -10,9 +10,12 @@ function disableControl(view) {
 		}
 	}
 	
-	view.backgroundColor = "#c9cacb";
-	view.borderColor = "#c9cacb";
-	view.color = "white";
+	if ( view.backgroundColor ) 
+		view.backgroundColor = "#c9cacb";
+	if ( view.borderColor )
+		view.borderColor = "#c9cacb";
+	if ( view.color )
+		view.color = "white";
 
 }
 
@@ -20,9 +23,12 @@ function enableControl(view) {
 	view.enabled = true;
 	view.touchEnabled = true;
 	if ( view.oldProps ) {
-		view.backgroundColor = view.oldProps.backgroundColor;
-		view.borderColor = view.oldProps.borderColor;
-		view.color = view.oldProps.color;
+		if ( view.backgroundColor ) 
+			view.backgroundColor = view.oldProps.backgroundColor;
+		if ( view.borderColor )
+			view.borderColor = view.oldProps.borderColor;
+		if ( view.color )
+			view.color = view.oldProps.color;
 	} 
 }
 

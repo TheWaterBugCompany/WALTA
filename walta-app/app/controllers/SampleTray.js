@@ -20,10 +20,10 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
-
+var readOnlyMode = $.args.readonly === true;
 var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left" }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE, slide: "right" } ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left", readonly: readOnlyMode }  ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE, slide: "right", readonly: readOnlyMode } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 
@@ -145,16 +145,23 @@ function addTrayIcon( container, index ) {
       return addTaxonTrayIcon( taxon, thumbnail );
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
-    thumbnail.add( createAddIcon() );
+    if ( !readOnlyMode ) {
+      thumbnail.add( createAddIcon() );
+    }
     return {
       view: thumbnail
     }
   } else {
-    thumbnail.addEventListener( "click", startIdentification );
-    return {
-      view: thumbnail,
-      handler: startIdentification
+    if ( !readOnlyMode ) {
+      thumbnail.addEventListener( "click", startIdentification );
+      return {
+        view: thumbnail,
+        handler: startIdentification
+      }
+    } else {
+      return { view: thumbnail }
     }
+    
   }
   
 }
@@ -176,7 +183,7 @@ function updateTrayIcon( icon, index ) {
       }
     }
   } else if ( index === Alloy.Collections["taxa"].length ) {
-    if ( ! icon.plusIcon ) {
+    if ( ! icon.plusIcon &&  !readOnlyMode ) {
       icon.view.removeAllChildren();
       icon.view.add(createAddIcon());
       icon.plusIcon = true;
@@ -238,14 +245,17 @@ function createAddIcon() {
     accessibilityLabel: "Add Sample",
     backgroundImage: "/images/plus-icon.png"
   });
-  addIconCache.addEventListener( "click", startIdentification );
+  if ( !readOnlyMode ) {
+    addIconCache.addEventListener( "click", startIdentification );
+  }
   return addIconCache;
 }
 
 function createTaxaIcon(taxon) {
   var speedbugIcon = Alloy.createController( "SampleTaxaIcon", {
       taxon: taxon,
-      speedbugIndex: speedbugIndex
+      speedbugIndex: speedbugIndex,
+      readonly: readOnlyMode
     } );  
   return speedbugIcon;
 }
@@ -540,7 +550,7 @@ function editTaxon( taxon_id ) {
   }
   var sample = Alloy.Models.sample;
   
-  $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key, readonly: $.args.readonly } );
+  $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key, readonly: readOnlyMode } );
   $.getView().add( $.editTaxon.getView() );
   
   $.editTaxon.on("close", function() {
