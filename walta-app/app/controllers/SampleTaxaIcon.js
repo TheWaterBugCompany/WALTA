@@ -1,6 +1,6 @@
 var Topics = require('ui/Topics');
 var taxon = $.args.taxon;
-
+var readOnlyMode = $.args.readonly === true;
 setImage( taxon );
 setAbundance( taxon );
 
@@ -33,7 +33,7 @@ function update( newTaxon ) {
 }
 
 function fireEditEvent() {
-  Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: taxon.get("taxonId") } );
+  Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: taxon.get("taxonId"), readonly: readOnlyMode } );
 }
 
 function cleanUp() {

@@ -27,8 +27,8 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var acb = $.getAnchorBar();
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SITEDETAILS, slide: "left" }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.SAMPLETRAY, slide: "right" } ); 
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.SITEDETAILS, slide: "left", readonly: readOnlyMode  }  ); 
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.SAMPLETRAY, slide: "right", readonly: readOnlyMode  } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 

@@ -41,7 +41,7 @@ exports.definition = {
 		_.extend(Model.prototype, {
 			
 			initialize: function() {
-				this.on('change', function(a,event) {
+				/*this.on('change', function(a,event) {
 					if ( event && !event.ignore ) {
 						//Ti.API.info(`change ${_.keys(event.changes)}`);
 						// The list of fields that trigger setting updateAt
@@ -76,7 +76,7 @@ exports.definition = {
 							});
 						}
 					}
-				});
+				});*/
 			},
 			isComplete: function() {
 				var dateCompleted = this.get("dateCompleted");
@@ -109,7 +109,9 @@ exports.definition = {
 			saveCurrentSample: function() {
 				//Ti.API.info("entering saveCurrentSample")
 				this.set("dateCompleted", moment().format() );
-				//Ti.API.info("calling save()")
+				let updatedAt = moment().valueOf();
+				Ti.API.info(`setting updatedAt = ${updatedAt} id = ${this.get("serverSampleId")} `)
+				this.set('updatedAt', updatedAt, {ignore:true});
 				this.save();
 			},
 
@@ -307,12 +309,15 @@ exports.definition = {
 					updatedFields.edgePlants=sample.habitat.edge_plants;
 				}
 
-				this.set(updatedFields, {ignore:true});
+				if ( Object.keys(updatedFields).length > 0 ) {
+					this.set("updatedAt", moment().valueOf());
+					this.set(updatedFields, {ignore:true});
+				}
 				
 				// needs a sampleId before added taxa
 				this.save(); 
 				taxa.fromCerdiApiJson(sample.sampled_creatures, this.get("sampleId"));
-
+				
 			},
 
 			toCerdiApiJson: function() {
