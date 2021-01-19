@@ -20,6 +20,7 @@ var cropPhoto = $.args.cropPhoto;
 
 function setReadOnlyMode(p_readOnlyMode) {
     readOnlyMode = p_readOnlyMode;
+    Ti.API.info(`readOnlyMode = ${readOnlyMode}`);
     if ( readOnlyMode ) {
         $.iconHolder.remove( $.camera );
         $.camera.visible = false;
@@ -128,7 +129,7 @@ function setImage( fileOrBlob ) {
 
     $.photoSelectOptionalLabel.visible = false;
     $.magnify.visible = true;
-    $.camera.visible = true;
+    $.camera.visible = !readOnlyMode;
     
 
     function setThumbnail( fileOrBlob) {
