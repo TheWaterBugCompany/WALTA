@@ -26,11 +26,12 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe("EditTaxon controller", function() {
     var ctl,win;
-    function makeEditTaxon( taxon ) {
+    function makeEditTaxon( taxon, readonly ) {
         let txn = createMockTaxon( taxon );
         ctl = Alloy.createController("EditTaxon", { 
             key: keyMock,
-            taxon: txn
+            taxon: txn,
+            readonly: readonly
          });
          
         win = wrapViewInWindow( ctl.getView() );
@@ -118,6 +119,42 @@ describe("EditTaxon controller", function() {
             });
             ctl.setImage("/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png")
         } );
+    });
+
+    it.only('should have slider disabled in readonly mode', function(done){
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
+        windowOpenTest( win, () => { 
+            checkTestResult(done, () => {
+                expect( ctl.abundance.enabled ).to.be.false;
+            } )
+        });
+    });
+
+    it.only('should have PhotoSelect disabled in readonly mode', function(done){
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
+        windowOpenTest( win, () => { 
+            checkTestResult(done, () => {
+                expect( ctl.photoSelect.camera.visible).to.be.false;
+            } )
+        });
+    });
+
+    it.only('should have save button disabled in readonly mode', function(done){
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
+        windowOpenTest( win, () => { 
+            checkTestResult(done, () => {
+                expect( ctl.saveButton.enabled).to.be.false;
+            } )
+        });
+    });
+
+    it.only('should have delete button disabled in readonly mode', function(done){
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
+        windowOpenTest( win, () => { 
+            checkTestResult(done, () => {
+                expect( ctl.deleteButton.enabled).to.be.false;
+            } )
+        });
     });
     
     [ ["1-2", 2],  ["3-5", 4.0], ["6-10", 8.0], ["11-20", 16] ]
