@@ -19,7 +19,7 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var mocx = require("unit-test/lib/mocx");
 var { closeWindow, controllerOpenTest, resetDatabase, clickButton, setManualTests, enterText, checkTestResult } = require("unit-test/util/TestUtils");
-describe.only("Habitat controller", function() {
+describe("Habitat controller", function() {
     var ctl;
     this.timeout(6000);
 	beforeEach( function() {
