@@ -9,7 +9,7 @@ var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-describe( 'SampleTray controller', function() {
+describe.only( 'SampleTray controller', function() {
   this.timeout(10000);
   
   var SampleTray, SampleTrayWin;
@@ -814,6 +814,13 @@ describe( 'SampleTray controller', function() {
       await waitFor( () => SampleTray.editTaxon.photoSelect.getThumbnailImageUrl() );
     }
 
+    async function openSampleTrayReadOnly( taxonId ) {
+      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: taxonId, readonly: true });
+      SampleTrayWin = SampleTray.getView();
+      await openSampleTray();
+      await waitFor( () => SampleTray.editTaxon.photoSelect.getThumbnailImageUrl() );
+    }
+
     async function simulateSaveTaxon() {
       return new Promise( (resolve) => {
         SampleTray.on("taxonSaved", resolve );
@@ -912,6 +919,10 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("> 20");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
       expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.include("preview_thumbnail");
+    });
+    it.only('should pass through the readonlyu falg to the EditTaxon screen', async function() {
+      await openSampleTrayReadOnly(1);
+      expect( SampleTray.editTaxon.args.readonly ).to.be.true;
     });
   });
 });

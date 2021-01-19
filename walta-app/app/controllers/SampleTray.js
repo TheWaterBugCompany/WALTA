@@ -540,7 +540,7 @@ function editTaxon( taxon_id ) {
   }
   var sample = Alloy.Models.sample;
   
-  $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key } );
+  $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key, readonly: $.args.readonly } );
   $.getView().add( $.editTaxon.getView() );
   
   $.editTaxon.on("close", function() {
