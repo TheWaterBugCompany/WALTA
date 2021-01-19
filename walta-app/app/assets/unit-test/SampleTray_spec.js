@@ -9,7 +9,7 @@ var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-describe.only( 'SampleTray controller', function() {
+describe( 'SampleTray controller', function() {
   this.timeout(10000);
   
   var SampleTray, SampleTrayWin;
@@ -920,7 +920,7 @@ describe.only( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
       expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.include("preview_thumbnail");
     });
-    it.only('should pass through the readonlyu falg to the EditTaxon screen', async function() {
+    it('should pass through the readonlyu falg to the EditTaxon screen', async function() {
       await openSampleTrayReadOnly(1);
       expect( SampleTray.editTaxon.args.readonly ).to.be.true;
     });

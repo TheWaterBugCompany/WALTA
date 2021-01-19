@@ -2,6 +2,15 @@ var taxon = $.args.taxon;
 var key = $.args.key;
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 
+var readOnlyMode = $.args.readonly === true;
+
+$.photoSelect.setReadOnlyMode(readOnlyMode);
+if ( readOnlyMode ) {
+    disableControl($.deleteButton);
+    $.abundance.enabled = false;
+   
+}
+
 $.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
 
 function cleanUp() {
@@ -85,6 +94,10 @@ function closeEvent() {
 }
 
 function updateSaveButton() {
+    if ( readOnlyMode) {
+        disableControl($.saveButton);
+        return;
+    }
     if ( realPhoto ) {
         $.photoSelect.clearError();
         enableControl($.saveButton);
