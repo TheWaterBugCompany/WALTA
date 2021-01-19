@@ -5,6 +5,8 @@ exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
 $.name = "summary"; 
 
+var readOnlyMode = $.args.readonly === true;
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
     $.off();
@@ -14,10 +16,17 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 var acb = $.getAnchorBar(); 
 $.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY, slide: "left" }  ); 
 $.nextButton = Alloy.createController("NavButton");
+
 $.nextButton.setLabel("Done");
-$.nextButton.on("click", doneClick ) 
+if ( readOnlyMode ) {
+    $.nextButton.disable();
+} else {
+    $.nextButton.on("click", doneClick );
+}
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
+
+
 
 function doneClick() {
     saveSampleAndUpload();
@@ -34,6 +43,7 @@ var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please e
 var saveSampleAndUpload = function() {
     Ti.API.info("saving current sample");
     Alloy.Models.sample.saveCurrentSample();
+    setMessageText();
     Ti.API.info("forcing upload");
     SampleSync.forceUpload();
 };
@@ -46,20 +56,23 @@ function checkGpsLock() {
     } else {
         $.nextButton.enable();
         setMessageText();
-        $.message.color = "#70Ad47";
+        
     }
 }
 
 function setMessageText() {
-    
-    if ( !Alloy.Globals.CerdiApi.retrieveUserToken() ) {
-        $.message.text = COMPLETE_NOT_REGISTERED
-    } else {
-        $.message.text = COMPLETE
+    if ( Alloy.Models.sample.isComplete() ) {
+        if ( !Alloy.Globals.CerdiApi.retrieveUserToken() ) {
+            $.message.text = COMPLETE_NOT_REGISTERED
+        } else {
+            $.message.text = COMPLETE
+        }
+        $.message.color = "#70Ad47";
     }
-    $.nextButton.setLabel("Submit");
 }
 
-Alloy.Models.sample.on("change", checkGpsLock );	
-Alloy.Models.sample.trigger("change");
+if ( !readOnlyMode ) {
+    Alloy.Models.sample.on("change", checkGpsLock );	
+    Alloy.Models.sample.trigger("change");
+}
 

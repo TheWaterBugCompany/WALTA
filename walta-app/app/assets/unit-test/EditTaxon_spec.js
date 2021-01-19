@@ -121,7 +121,7 @@ describe("EditTaxon controller", function() {
         } );
     });
 
-    it.only('should have slider disabled in readonly mode', function(done){
+    it('should have slider disabled in readonly mode', function(done){
         makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
         windowOpenTest( win, () => { 
             checkTestResult(done, () => {
@@ -130,7 +130,7 @@ describe("EditTaxon controller", function() {
         });
     });
 
-    it.only('should have PhotoSelect disabled in readonly mode', function(done){
+    it('should have PhotoSelect disabled in readonly mode', function(done){
         makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
         windowOpenTest( win, () => { 
             checkTestResult(done, () => {
@@ -139,7 +139,7 @@ describe("EditTaxon controller", function() {
         });
     });
 
-    it.only('should have save button disabled in readonly mode', function(done){
+    it('should have save button disabled in readonly mode', function(done){
         makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
         windowOpenTest( win, () => { 
             checkTestResult(done, () => {
@@ -148,7 +148,7 @@ describe("EditTaxon controller", function() {
         });
     });
 
-    it.only('should have delete button disabled in readonly mode', function(done){
+    it('should have delete button disabled in readonly mode', function(done){
         makeEditTaxon( { taxonId:"1", abundance:"3-5" }, true );
         windowOpenTest( win, () => { 
             checkTestResult(done, () => {
