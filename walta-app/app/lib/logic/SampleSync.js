@@ -118,25 +118,22 @@ function uploadTaxaPhoto(sample,t) {
     if ( ! taxonPhotoId ) {
         var photoPath = t.getPhoto();
         if ( photoPath ) {
-            log(`Uploading taxa photo path = ${photoPath} [sampleId=${sampleId},taxonId=${taxonId}]`);
+            log(`Uploading taxa photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
             let blob = loadPhoto( photoPath );
             if ( needsOptimising(blob) ) {
-                log(`Optimising ${photoPath} = ${blob.width}x${blob.height} size = ${blob.length}`);
                 savePhoto( optimisePhoto( blob ), photoPath );
-            } else {
-                log(`Not Optimising ${photoPath}`);
-            }
+            } 
             return Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath )
                     .then( (res) => {
                         t.set("serverCreaturePhotoId", res.id);
                         t.save();
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to taxon ${taxonId} photo: ${err.message}`);
+                        log(`Error when attempting to taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
                     });
                         
         } else {
-            log(`No photo for taxon ${taxonId}`);
+            log(`No photo for taxon [serverSampleId=${sampleId},taxonId=${taxonId}]`);
         }
     }
     else {
@@ -151,7 +148,7 @@ function uploadTaxaPhoto(sample,t) {
 */
 function uploadTaxaPhotos(sample,delay) {
     var taxa = sample.getTaxa();
-    log(`Uploading ${taxa.length} taxa photos...`);
+    log(`Uploading ${taxa.length} taxa photos [serverSampleId=${sample.get("serverSampleId")}]`);
     return taxa.reduce(
                 (uploadTaxaPhotos,t) => uploadTaxaPhotos.then( 
                         () => delayedPromise( uploadTaxaPhoto(sample,t),delay)),
@@ -190,11 +187,11 @@ function uploadNextSample(samples,delay) {
     var updatedAt = sample.get("updatedAt");
     debug(`serverSyncTime = ${serverSyncTime}, updatedAt = ${updatedAt}`);
     if ( !serverSyncTime ) {
-        debug(`Uploading new sample record...`);
+        debug(`Uploading new sample record [sampleId=${sample.get("sampleId")}]`);
         uploadIfNeeded = delayedPromise( Alloy.Globals.CerdiApi.submitSample( sample.toCerdiApiJson() ), delay )
             .then( markSampleComplete( sample )  );
     } else if ( moment(serverSyncTime).isBefore( moment(updatedAt)) ) {
-        debug(`Updating existing sample = ${serverSampleId}...`); 
+        debug(`Updating existing sample [serverSampleId=${serverSampleId}]`); 
         uploadIfNeeded = Alloy.Globals.CerdiApi.updateSampleById( serverSampleId, sample.toCerdiApiJson() )
             .then( markSampleComplete( sample )  );
     } else {
@@ -264,7 +261,7 @@ function startSynchronise() {
 }
 
 function downloadSamples(delay) {
-    debug(`Retrieving samples from server... ${delay}`);
+    debug(`Retrieving samples from server... `);
     
     // only update if updated after it was last uploaded - this allows user changes
     // to not be overwritten. If the data on the server changes and the user makes a
@@ -291,14 +288,13 @@ function downloadSamples(delay) {
         let sample = Alloy.createModel("sample");
         sample.loadByServerId(serverSample.id) 
         if ( needsUpdate(serverSample,sample) ) {
-            Ti.API.info(`Updating serverSampleId = ${JSON.stringify(serverSample.id)}`);
+            debug(`Updating serverSampleId = ${serverSample.id}`);
             sample.fromCerdiApiJson(serverSample); 
             sample.set("serverSyncTime",moment().valueOf());
             sample.save();
             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
             return Promise.resolve([sample,serverSample]);
         } else {
-            Ti.API.info(`serverSampleId = ${JSON.stringify(serverSample.id)} doesn't need updating`);
             return Promise.resolve([sample,serverSample]);
         }
     }
@@ -306,7 +302,7 @@ function downloadSamples(delay) {
     function downloadSitePhoto([sample,serverSample]) {
         if ( serverSample.photos.length > 0 && !sample.get("serverSitePhotoId") ) {
             let sitePhotoPath = `site_download_${serverSample.id}`;
-            debug(`downloading site photo for ${serverSample.id}`);
+            debug(`Downloading site photo for ${serverSample.id}`);
             return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
                 .then( photo => {
                     sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
@@ -324,33 +320,35 @@ function downloadSamples(delay) {
     function downloadCreaturePhoto(taxon,serverSample) {
         return Promise.resolve()
             .then( () => {
-                debug(`processing taxon ${taxon.get("taxonId")}`)
                 let taxonId = taxon.get("taxonId");
                 let taxonPhotoPath = `taxon_download_${taxonId}`;
+                debug(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                 return Alloy.Globals.CerdiApi.retrieveCreaturePhoto(serverSample.id,taxonId,taxonPhotoPath)
                     .then( photo => {
                         if ( photo ) {
-                            debug(`downloaded photo ${photo.id}`);
                             taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
                             taxon.set("serverCreaturePhotoId",photo.id);
                             taxon.save();
-                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
+                            
+                        } else {
+                            taxon.set("serverCreaturePhotoId",0); // indicates no photo exists on the server
+                            taxon.save();
                         }
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
                     })
                 });
     }
 
     function downloadCreaturePhotos([sample,serverSample]) {
         let taxa = sample.loadTaxa();
-        let pendingTaxaPhotos = taxa.filter((t) => !t.get("serverCreaturePhotoId") );
+        let pendingTaxaPhotos = taxa.filter( t => _.isNull(t.get('serverCreaturePhotoId')) );
         return _.reduce( pendingTaxaPhotos,  
             (queue,t) => queue.then( () => delayedPromise( downloadCreaturePhoto(t,serverSample),delay)),
             Promise.resolve());
         
     }
 
-    function saveNewSamples( samples ) {  
-        debug(`retrieved samples ${samples}`);      
+    function saveNewSamples( samples ) {     
         return _.reduce( samples, 
             (updateAllSamples, serverSample ) => updateAllSamples
                     .then( () => serverSample )
