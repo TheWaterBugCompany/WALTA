@@ -629,5 +629,7 @@ describe("SampleSync", function () {
             expect(sample.get("serverSampleId")).to.equal(235);
             expect(sample.get("waterbodyName")).to.equal("second test sample");
         });
+        it('should not re download any taxon photos that have serverCreaturePhotoId set to 0');
+        it('should not re download any taxon photos that have serverCreaturePhotoId set to NULL');
     }); 
 });

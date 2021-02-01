@@ -11,7 +11,6 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 function updateSampleList() {
     try {
-        Ti.API.info("Refreshing sample history view");
         $.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
     } catch(e) {
         // FIXME: for some reason these errors are not being reported if there isn't a catch here
