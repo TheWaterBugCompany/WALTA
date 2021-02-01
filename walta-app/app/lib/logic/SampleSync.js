@@ -36,7 +36,6 @@ function clearUploadTimer() {
 
 // wait for a delay then execute the promise
 function delayedPromise( promise, delay) {
-    Ti.API.info(`delayedPromise ${delay}`)
     return new Promise( (resolve, reject ) => {
         setTimeout(function() {
             promise
@@ -79,13 +78,13 @@ function uploadRemainingSamples(samples,delay) {
     sucessfully uploaded.
 */
 function uploadSitePhoto(sample,delay) {
-    log(`Uploading site photo...${delay}`);
+    
     var sitePhotoId = sample.get("serverSitePhotoId");
     if ( !sitePhotoId ) {
         var sitePhoto = sample.getSitePhoto();
         var sampleId = sample.get("serverSampleId");
-        log(`path = ${sitePhoto}`);
         if ( sitePhoto ) {
+            log(`Uploading site photo path = ${sitePhoto} [serverSampleId=${sampleId}]`);
             let blob = loadPhoto( sitePhoto );
             if ( needsOptimising(blob) ) {
                 log(`Optimising ${sitePhoto}`);
@@ -108,19 +107,18 @@ function uploadSitePhoto(sample,delay) {
             return sample;
         }
     } else {
-        log("Site photo already uploaded.");
         return sample;
     }
 }
 
-function uploadTaxaPhoto(t) {
+function uploadTaxaPhoto(sample,t) {
     var taxonId = t.getTaxonId();
-    var sampleId = t.getSampleId();
+    var sampleId = sample.get("serverSampleId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
     if ( ! taxonPhotoId ) {
         var photoPath = t.getPhoto();
         if ( photoPath ) {
-            log(`Uploading photo for taxon ${taxonId}`);
+            log(`Uploading taxa photo path = ${photoPath} [sampleId=${sampleId},taxonId=${taxonId}]`);
             let blob = loadPhoto( photoPath );
             if ( needsOptimising(blob) ) {
                 log(`Optimising ${photoPath} = ${blob.width}x${blob.height} size = ${blob.length}`);
@@ -156,7 +154,7 @@ function uploadTaxaPhotos(sample,delay) {
     log(`Uploading ${taxa.length} taxa photos...`);
     return taxa.reduce(
                 (uploadTaxaPhotos,t) => uploadTaxaPhotos.then( 
-                        () => delayedPromise( uploadTaxaPhoto(t),delay)),
+                        () => delayedPromise( uploadTaxaPhoto(sample,t),delay)),
                 Promise.resolve() )
             .then( () => sample );
         
@@ -210,7 +208,7 @@ function uploadNextSample(samples,delay) {
 }
 
 function uploadSamples(delay) {
-    debug(`Uploading samples to server... ${delay}`);
+    debug(`Uploading samples to server...`);
     function loadSamples() {
         var samples = Alloy.createCollection("sample");
         samples.loadUploadQueue();
