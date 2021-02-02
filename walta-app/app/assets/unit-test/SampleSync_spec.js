@@ -629,7 +629,11 @@ describe("SampleSync", function () {
             expect(sample.get("serverSampleId")).to.equal(235);
             expect(sample.get("waterbodyName")).to.equal("second test sample");
         });
-        it('should not re download any taxon photos that have serverCreaturePhotoId set to 0');
-        it('should not re download any taxon photos that have serverCreaturePhotoId set to NULL');
+        
     }); 
+    /* tests that should be implemented */
+    it('should not re download any taxon photos that have serverCreaturePhotoId set to 0');
+    it('should not re download any taxon photos that have serverCreaturePhotoId set to NULL');
+    it('should not re download taxon photos if a photo is updated and no longer has a serverCreaturePhotoId');
+    it('should not re download site photo if a photo is updated and no longer has a serverPhotoId');
 });
