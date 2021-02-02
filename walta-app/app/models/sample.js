@@ -124,7 +124,6 @@ exports.definition = {
 			},
 			
 			loadByServerId(serverSampleId ) {
-				Ti.API.info(`loading sample by server id = ${serverSampleId}`)
 				this.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId}` });
 			},
 
