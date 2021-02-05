@@ -26,6 +26,7 @@ features/support/mock_data/rest/*/*/*/mock/response.txt
 appium.log
 builds/**/*.log
 builds/**/*.plist
+builds/**
 mock-server/rest/*/*/*/mock/response.txt
 walta-app/app/app-config.production.json
 walta-app/app/app-config.test.json

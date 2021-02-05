@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var info = Ti.API.info;
 var { loadPhoto, savePhoto } = require('util/PhotoUtils');
 function createHttpClient(method, url, contentType, acceptType = 'application/json', accessToken, sendDataFunction ) {
     return new Promise( (resolve, reject) => {
@@ -111,7 +110,7 @@ function retrievePhoto( serverUrl, photoUrl, accessToken, photoPath ) {
 
 
 function createCerdiApi( serverUrl, client_secret  ) {
-        info(`Using CERDI API server ${serverUrl}` );
+        Ti.API.info(`Using CERDI API server ${serverUrl}` );
         var cerdiApi = {
             retrieveUserToken() {
                 return Ti.App.Properties.getObject('userAccessTokenLive');

@@ -54,12 +54,12 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
             platformVersion: "12.4",
             deviceName: "The Code Sharman Test iPhone",
             udid: "auto",
-            xcodeOrgId: "ZG6HRCUR8Q",
+            xcodeOrgId: "6RRED3LUUV",
             xcodeSigningId: "iPhone Developer",
             useJSONSource: true,
             realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
             showXcodeLog: true,
-            usePrebuiltWDA: true,
+            usePrebuiltWDA: false,
             noReset: false,
             processArguments: {
                 "args": [
