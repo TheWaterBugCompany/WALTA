@@ -11,3 +11,12 @@ run npm install
 cocoapod for iOS build
 
 run sudo gem install cocoapods
+
+also since appium is looking for the WebDriverAgent in the wrong place you need to:
+
+cd node_modules/appium/node_modules
+ln -s ../../appium-webdriveragent appium-webdriveragent
+
+Some thing to do with how NPM packaging works seem to put the modules in the root directory rather than in the appium/node_modules folder as the appium code expects. 
+FIXME: figure out what is supposed to happen and complain about it??
+

@@ -16,7 +16,8 @@ module.exports = function(grunt) {
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
     const PROFILE = process.env.PROFILE || "20804088-396a-4aae-b7e3-5d6f56510a6a";
-    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "810ab12c-fd91-41f7-a2c0-91bff72afe05";
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "19875388-d751-4d39-9c07-431cf5ac84dd";
+    const PROFILE_DEV = "c1235ca3-08c2-48db-b44c-b318d99f0b06";
     
     const WATERBUG_APPID = {
       "android": 59235,
@@ -158,7 +159,7 @@ module.exports = function(grunt) {
         case "unit-test":
           test();
           args.push("--unit-test");
-          args.push("--output-dir builds/unit-test");
+          args.push("--output-dir builds/unit-test");s
           break;
 
         case "release":
@@ -171,7 +172,7 @@ module.exports = function(grunt) {
           if ( platform === "android" ) {
             post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/preview/Waterbug.apk");
           } else {
-            post_cmds.push( "cp ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/preview/Waterbug.app");
+            post_cmds.push( "cp -r ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/preview/Waterbug.app");
           }
           break;
 
@@ -199,7 +200,7 @@ module.exports = function(grunt) {
 
 
     function build_if_newer_options(platform,build_type) {
-      const ext = (platform === "ios"?"ipa":"apk");
+      const ext = (platform === "ios"? (build_type === "preview"?"app":"ipa"):"apk");
       const tasks = [];
       
       if ( ! grunt.option('skip-build') ) {
@@ -277,7 +278,8 @@ module.exports = function(grunt) {
 
           install_ios: {
             command: function(build_type) { 
-                return `PATH=./node_modules/.bin/:$PATH ios-deploy --bundle ./builds/${build_type}/Waterbug.ipa`;
+              let extension = (build_type==="preview"?"app":"ipa");
+              return `PATH=./node_modules/.bin/:$PATH ios-deploy --bundle ./builds/${build_type}/Waterbug.${extension}`;
             }, stdout: false, stderr: true
           },
 
