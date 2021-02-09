@@ -24,14 +24,14 @@ describe.only("Main controller", function() {
 	var app;
 	it('should display the Main view', async function() {
     app = Alloy.createController("Main");
-    app.startApp();
+    app.startApp({nosync: true});
     expect(app.getHistory()[0].ctl).to.equal("Menu");
   });
   it.only('should allow a sample to be edited', async function() {
     clearDatabase();
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main");
-    app.startApp();
+    app.startApp({nosync: true});
     app.getCurrentController()
       .history.fireEvent("click");
     let archive = app.getCurrentController();
@@ -42,7 +42,7 @@ describe.only("Main controller", function() {
     // a temporary copy instead. This a new sample with the DateSubmitted field blank.
     expect( Alloy.Models.instance("sample").get("serverSampleId")).to.equal(666);
     expect( Alloy.Models.instance("sample").get("dateCompleted")).to.be.null;
-    
+
 
 
   });
