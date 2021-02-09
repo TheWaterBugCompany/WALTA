@@ -159,7 +159,7 @@ function closeApp() {
   PlatformSpecific.appShutdown();
 }
 
-function startApp() {
+function startApp(options) {
   Topics.subscribe( Topics.KEYSEARCH, function(data) {
     var node = ( data.surveyType === Sample.SURVEY_MAYFLY ? key.findNode("mayfly_start_point") : key.getRootNode() );
     key.reset(node);
@@ -222,7 +222,10 @@ function startApp() {
   Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
   Alloy.Collections.instance("sample").loadCurrent();
   Alloy.Collections.instance("taxa").loadCurrent();
-  SampleSync.init();
+
+  if ( options && !options.nosync ) {
+    SampleSync.init();
+  }
   var keyName = "walta";
   var keyPath;
   if ( ! keyPath ) {
