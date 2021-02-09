@@ -127,6 +127,14 @@ function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done 
 }
 
 function actionFiresTopicTest( actionObj, actionEvtName, topicName, done ) {
+	if ( done ) {
+		return actionFiresTopicTestCallback( actionObj, actionEvtName, topicName, done );
+	} else {
+		return new Promise( resolve => actionFiresTopicTestCallback( actionObj, actionEvtName, topicName, resolve ));
+	}
+}
+
+function actionFiresTopicTestCallback( actionObj, actionEvtName, topicName, done ) {
 	var result = {};
 	waitForTopic( topicName, function() {
 		actionObj.fireEvent( actionEvtName, { x:0, y:0 } );
@@ -181,7 +189,34 @@ function checkTestResult( done, f, delay=0 ) {
 	setTimeout( function() { try { f(); done(); } catch( e ) { done( e );} }, delay );
 } 
 
-function controllerOpenTest( ctl, done ) {
+
+/*
+	Use the postlayout event to detect when the controller has been 
+	renderered - some views will have code also in the postlayout but
+	since this event is registered after the control is created the 
+	callback should occur last (?!).
+
+	FIXME: 
+
+	Two API's for this because a lot of code still uses the callback
+	version. It turns out that using mocha's Promise support provides
+	better error reporting when tests fails, so there is a Promise based
+	version that returns a promise to facilitate the transition.
+
+	Prefer Promise based for this reason but it's not worth refactoring
+	all the tests at this point so we have both options available.
+
+	If a done function is supplied the callback version is used.
+*/
+
+function controllerOpenTest( ctl, done) {
+	if ( done )
+		controllerOpenTestCallback(ctl, done); 
+	else
+		return new Promise( (resolve) => controllerOpenTestCallback( ctl, resolve) );
+}
+
+function controllerOpenTestCallback( ctl, done ) {
 	if ( done ) {
 		ctl.getView().addEventListener('postlayout' , function open() {
 			ctl.getView().removeEventListener('postlayout', open);

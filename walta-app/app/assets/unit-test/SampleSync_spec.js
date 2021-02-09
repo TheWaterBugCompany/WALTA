@@ -18,7 +18,7 @@
 require("unit-test/lib/ti-mocha");
 var simple = require("unit-test/lib/simple-mock");
 var moment = require("lib/moment");
-var { makeCerdiSampleData } = require("unit-test/fixtures/SampleData_fixture.js");
+var { makeCerdiSampleData, makeSampleData } = require("unit-test/fixtures/SampleData_fixture.js");
 
 var { use, expect } = require("unit-test/lib/chai");
 var { makeTestPhoto, removeDatabase, resetSample, clearDatabase } = require("unit-test/util/TestUtils");
@@ -42,20 +42,6 @@ function clearMockSampleData() {
     Alloy.Collections.taxa = null;
     Alloy.Models.sample = null;
     Alloy.Models.taxa = null;
-}
-
-function makeSample(attrs) {
-    return Alloy.createModel("sample", _.extend({ 
-        serverSampleId: null, 
-        lat: "-37.5622000",
-        lng: "143.8750300",
-        dateCompleted: moment().format(),
-        accuracy: 1,
-        surveyType: Sample.SURVEY_DETAILED,
-        waterbodyType: Sample.WATERBODY_RIVER,
-        waterbodyName: "test water body name",
-        serverSyncTime: null
-     },attrs));
 }
 
 describe("SampleSync", function () {
@@ -120,7 +106,7 @@ describe("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                 .resolveWith({id:123});
             
-            let sample = makeSample();
+            let sample = makeSampleDataData();
             sample.save(); 
             await SampleSync.uploadSamples();
             sample.clear();
@@ -133,7 +119,7 @@ describe("SampleSync", function () {
         it('should upload modified samples to the server', function(done) {
             simple.mock(Alloy.Globals.CerdiApi,"updateSampleById")
                 .resolveWith({id:123});
-            let sample = makeSample();
+            let sample = makeSampleData();
             sample.set("serverSyncTime", moment("2020-01-01").valueOf());
             sample.set("serverSampleId", 123);
             sample.set("waterbodyName", "updated"); // should set updatedAt field
@@ -150,7 +136,7 @@ describe("SampleSync", function () {
         });
        
         it('should upload new site photos', async function() {
-            let sample = makeSample( { sitePhotoPath: makeTestPhoto("site.jpg") });
+            let sample = makeSampleData( { sitePhotoPath: makeTestPhoto("site.jpg") });
             sample.save(); 
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
@@ -161,7 +147,7 @@ describe("SampleSync", function () {
 
         });
         it('should upload new taxon photos', async function() {
-            let sample = makeSample();
+            let sample = makeSampleData();
             sample.save(); 
             let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
@@ -179,7 +165,7 @@ describe("SampleSync", function () {
 
         });
         it('should NOT upload old site photos again',async function() {
-            let sample = makeSample( { sitePhotoPath: makeTestPhoto("site.jpg") });
+            let sample = makeSampleData( { sitePhotoPath: makeTestPhoto("site.jpg") });
             sample.save(); 
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
@@ -197,7 +183,7 @@ describe("SampleSync", function () {
 
         });
         it('should NOT upload old taxon photos again',async function() {
-            let sample = makeSample();
+            let sample = makeSampleData();
             sample.save(); 
             let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
@@ -224,7 +210,7 @@ describe("SampleSync", function () {
         it('should upload failed site photos uploads again',function() {
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
                 .rejectWith({message:"test error"});
-            let sample = makeSample( { sitePhotoPath: makeTestPhoto("site.jpg") });
+            let sample = makeSampleData( { sitePhotoPath: makeTestPhoto("site.jpg") });
             sample.save(); 
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
@@ -235,7 +221,7 @@ describe("SampleSync", function () {
         });
         it('should upload failed taxon photos uploads again',function() {
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto").rejectWith({message:"test error"});
-            let sample = makeSample();
+            let sample = makeSampleData();
             sample.save(); 
             let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
@@ -252,7 +238,7 @@ describe("SampleSync", function () {
                 .finally( () => expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(4) );
         });
         it('should upload new photo if taxon photo is changed', async function() {
-            let sample = makeSample();
+            let sample = makeSampleData();
             sample.save(); 
             let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
@@ -270,7 +256,7 @@ describe("SampleSync", function () {
 
         });
         it('should upload new photo if site photo is changed', async function() {
-            let sample = makeSample( { sitePhotoPath: makeTestPhoto("site.jpg") });
+            let sample = makeSampleData( { sitePhotoPath: makeTestPhoto("site.jpg") });
             sample.save(); 
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
@@ -384,7 +370,7 @@ describe("SampleSync", function () {
                 .resolveWith([makeCerdiSampleData({
                     updated_at: moment("2020-03-01").format()
                 })]);
-            let sample = makeSample({});
+            let sample = makeSampleData({});
             sample.set("serverSyncTime", moment("2020-04-01").valueOf());
             sample.set("serverSampleId", 473);
             sample.set("waterbodyName", "local update");
@@ -406,7 +392,7 @@ describe("SampleSync", function () {
                 .resolveWith([makeCerdiSampleData({
                     updated_at: moment("2020-06-01").format()
                 })]);
-            let sample = makeSample({});
+            let sample = makeSampleData({});
             sample.set("serverSyncTime", moment("2020-04-01").valueOf());
             sample.set("serverSampleId", 473);
             sample.set("waterbodyName", "local update");

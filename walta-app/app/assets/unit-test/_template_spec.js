@@ -26,7 +26,7 @@ describe.only("<Controller> controller", function() {
 	after( function(done) {
 		closeWindow( ctl.getView(), done );
 	});
-	it('should display the <Controller> view', function(done) {
-		controllerOpenTest( ctl, done );
-    });
+	it('should display the <Controller> view', async function() {
+		await controllerOpenTest( ctl );
+  });
 });

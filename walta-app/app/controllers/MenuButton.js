@@ -1,6 +1,11 @@
 var Topics = require('ui/Topics');
 
-$.icon.image = $.args.icon;
+if ( $.args.icon) {
+  $.icon.image = $.args.icon;
+} else {
+  $.icon.width = "12%";
+}
+
 $.title.text = $.args.title;
 $.description.text = $.args.description;
 if ( $.args.small ) {
