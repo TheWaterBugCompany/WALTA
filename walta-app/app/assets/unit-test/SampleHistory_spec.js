@@ -19,8 +19,7 @@ require("unit-test/lib/ti-mocha");
 var Topics = require('ui/Topics');
 var { expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
-var { clearDatabase } = require("unit-test/util/TestUtils");
-var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("unit-test/util/TestUtils");
+var { clearDatabase, closeWindow, controllerOpenTest, actionFiresTopicTest } = require("unit-test/util/TestUtils");
 describe("SampleHistory controller", function() {
 	var ctl;
 	beforeEach( function() {

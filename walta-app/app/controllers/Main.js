@@ -44,6 +44,14 @@ let controller = null;
 let key = null;
 let history = [];
 
+function getCurrentController() {
+  return controller;
+}
+
+function getHistory() {
+  return history;
+}
+
 function loadKey( keyUrl ) {
   key = KeyLoader.loadKey(keyUrl);
   Alloy.Globals.Key = key;
@@ -238,4 +246,6 @@ function startApp() {
   Topics.fireTopicEvent( Topics.HOME );
 }
 
-startApp();
+exports.getCurrentController = getCurrentController;
+exports.getHistory = getHistory;
+exports.startApp = startApp; 
