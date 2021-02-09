@@ -45,6 +45,7 @@ function runTests() {
       "GoBackButton",
       "GoForwardButton",
       "LocationEntry",
+      "Main",
       "Database" // needs to run last
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
