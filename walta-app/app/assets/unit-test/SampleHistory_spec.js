@@ -21,7 +21,7 @@ var { expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
 var { clearDatabase } = require("unit-test/util/TestUtils");
 var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("unit-test/util/TestUtils");
-describe.only("SampleHistory controller", function() {
+describe("SampleHistory controller", function() {
 	var ctl;
 	beforeEach( function() {
     clearDatabase();
