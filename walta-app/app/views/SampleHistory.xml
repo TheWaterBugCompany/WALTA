@@ -7,7 +7,7 @@
 			<Label class="waterbodyName column" text="Waterbody Name"/>
 			<Label class="boolColumn column" text="Sync"/>
 		</View>
-		<TableView id="sampleTable" dataCollection="$.samples" dataFunction="updateSampleTable" onClick="openSample">
+		<TableView id="sampleTable" dataCollection="$.samples" dataFunction="updateSampleTable" onClick="rowSelected">
 			<TableViewRow class="row">
 				<Label class="idColumn column" text="{id}" accessibilityLabel="Server Identifier"/>
 				<Label class="dateCompletedColumn column" text="{dateCompleted}" accessibilityLabel="Date Sample Completed"/>

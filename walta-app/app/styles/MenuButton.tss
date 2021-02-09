@@ -30,12 +30,12 @@
 }
 
 "#icon" : {
-  width: "30%"
+  width: "20%"
 }
 
 "#text" : {
   top: "1%",
-  width: "66%"
+  width: Ti.UI.FILL
 }
 
 "#text[if=Alloy.Globals.isMedium,Alloy.Globals.isLarge,Alloy.Globals.isXLarge]" : {
@@ -47,8 +47,4 @@
 "#title" : {
   top: "5%",
   color: "#882F61CC"
-}
-
-"#description" : {
- 
 }

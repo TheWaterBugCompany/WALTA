@@ -1,3 +1,5 @@
+var moment = require("lib/moment");
+var Sample = require("logic/Sample");
 function makeCerdiSampleData(attrs) {
     return _.extend({
         "id": 473,
@@ -35,4 +37,19 @@ function makeCerdiSampleData(attrs) {
     },attrs);
 }
 
+function makeSampleData(attrs) {
+    return Alloy.createModel("sample", _.extend({ 
+        serverSampleId: null, 
+        lat: "-37.5622000",
+        lng: "143.8750300",
+        dateCompleted: moment().format(),
+        accuracy: 1,
+        surveyType: Sample.SURVEY_DETAILED,
+        waterbodyType: Sample.WATERBODY_RIVER,
+        waterbodyName: "test water body name",
+        serverSyncTime: null
+     },attrs));
+}
+
 exports.makeCerdiSampleData = makeCerdiSampleData;
+exports.makeSampleData = makeSampleData;

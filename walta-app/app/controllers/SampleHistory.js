@@ -5,6 +5,9 @@ $.TopLevelWindow.title = "Survey History";
 
 Topics.subscribe( Topics.UPLOAD_PROGRESS, updateSampleList );
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+    if ( $.sampleMenu ) {
+        $.sampleMenu.cleanUp();
+    }
     $.destroy();
     $.off();
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
@@ -17,9 +20,7 @@ function updateSampleList() {
         Ti.API.info(`Error fetching sample list: ${JSON.stringify(e)}`);
     }
 }
-$.TopLevelWindow.addEventListener('close', function() {
-    $.destroy();
-});
+
 function openErrorsClick(e) {
     var error = $.samples.at(e.index).get("lastError");
     if ( error ) {
@@ -31,11 +32,17 @@ function openErrorsClick(e) {
         dialog.show();
     }
 }
-function openSample(e) {
+
+function rowSelected(e) {
     var sample = $.samples.at(e.index);
     var sampleId = sample.get("sampleId");
-    Alloy.Models.instance("sample").loadById(sampleId);
-	Alloy.Collections.instance("taxa").load(sampleId);
-    Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right",readonly:true});
+    function closeSelectMethod() {
+          $.TopLevelWindow.remove($.sampleMenu.getView());
+          $.sampleMenu.cleanUp();
+    }
+    $.sampleMenu = Alloy.createController("SampleEditMenu", { sampleId: sampleId });
+    $.TopLevelWindow.add($.sampleMenu.getView());
+    $.sampleMenu.on("close", closeSelectMethod);
 }
+
 updateSampleList();

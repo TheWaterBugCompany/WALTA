@@ -37,6 +37,7 @@ function runTests() {
       //"MayflyEmergenceMap",
       //"MayflyMusterSelect",
       "SampleSync",
+      "SampleHistory",
       "Gallery",
       "PhotoSelect",
       "EditTaxon",
