@@ -220,8 +220,8 @@ function startApp(options) {
   } );
 
   Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
-  Alloy.Collections.instance("sample").loadCurrent();
-  Alloy.Collections.instance("taxa").loadCurrent();
+  Alloy.Models.instance("sample").loadCurrent();
+  Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
 
   if ( options && !options.nosync ) {
     SampleSync.init();

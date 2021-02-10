@@ -172,8 +172,8 @@ describe("Sample collection, model including taxa", function() {
       Alloy.Collections.taxa = null;
 
       // create a new sample
-      Alloy.Collections.instance("sample").loadCurrent();
-      Alloy.Collections.instance("taxa").loadCurrent();
+      Alloy.Models.instance("sample").loadCurrent();
+      Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
       expect( Alloy.Collections.sample.length ).to.equal(0);
       expect( Alloy.Collections.taxa.length ).to.equal(0);
   });
@@ -357,7 +357,7 @@ describe("Sample collection, model including taxa", function() {
       }));
     });*/
   });
-  it('should create a temporary copy correctly', function() {
+  it.only('should create a temporary copy correctly', function() {
     Alloy.Models.sample.set('serverSampleId', 99 );
     let sample = Alloy.Models.sample;
     let tempSample = sample.createTemporaryForEdit();
@@ -381,7 +381,7 @@ describe("Sample collection, model including taxa", function() {
     expect( tempSample.get("openWater") ).to.equal(sample.get("openWater"));
     expect( tempSample.get("edgePlants") ).to.equal(sample.get("edgePlants"));
     expect( tempSample.get("sitePhotoPath") ).to.equal(sample.get("sitePhotoPath"));
-//    expect( tempSample.get("serverSyncTime") ).to.equal(sample.get("serverSyncTime"));
+    expect( tempSample.get("serverSyncTime") ).to.equal(sample.get("serverSyncTime"));
 
     // check all the taxons have been copied too.
     let taxas = tempSample.loadTaxa();
