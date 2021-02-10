@@ -27,7 +27,7 @@ describe("Main controller", function() {
     app.startApp({nosync: true});
     expect(app.getHistory()[0].ctl).to.equal("Menu");
   });
-  it.only('should allow a sample to be edited', async function() {
+  it('should allow a sample to be edited', async function() {
     clearDatabase();
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main");

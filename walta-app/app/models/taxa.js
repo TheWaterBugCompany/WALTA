@@ -155,9 +155,6 @@ exports.definition = {
 			toCerdiApiJson() {
 				return this.map( (taxon) => taxon.toCerdiApiJson() );
 			},
-			loadCurrent() {
-				this.fetch({ query: "SELECT * FROM taxa WHERE sampleId = (SELECT sampleId FROM sample WHERE dateCompleted IS NULL)"} );
-			},
 			removeAllTemporary() {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL`} );
 				this.forEach( (t) => t.destroy() );
