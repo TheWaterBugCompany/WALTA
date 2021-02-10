@@ -14,8 +14,11 @@ $.view.on("click", () => {
 } );
 
 $.edit.on("click", () => {
-    Alloy.Models.instance("sample").loadById($.args.sampleId);
-	  Alloy.Collections.instance("taxa").load($.args.sampleId);
+    let sample = Alloy.Models.instance("sample");
+    sample.loadById($.args.sampleId);
+    let tempSample = sample.createTemporaryForEdit();
+    Alloy.Models.sample = tempSample;
+    Alloy.Collections.taxa = tempSample.loadTaxa();
     Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right",readonly:false});
 }  );
 
