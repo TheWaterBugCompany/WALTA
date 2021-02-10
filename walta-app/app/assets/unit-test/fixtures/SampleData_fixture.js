@@ -47,7 +47,18 @@ function makeSampleData(attrs) {
         surveyType: Sample.SURVEY_DETAILED,
         waterbodyType: Sample.WATERBODY_RIVER,
         waterbodyName: "test water body name",
-        serverSyncTime: null
+        serverSyncTime: null,
+        nearbyFeature: "nearby feature test",
+        boulder: 15,
+        gravel: 14,
+        sandOrSilt: 13,
+        wood: 8,
+        leafPacks: 17,
+        aquaticPlants: 12,
+        openWater: 11,
+        edgePlants: 10,
+        sitePhotoPath: '/unit-test/resources/site-mock.jpg',
+
      },attrs));
 }
 

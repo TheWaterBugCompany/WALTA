@@ -1,1 +1,1 @@
-Alloy.createController("Main").startUp(); 
+Alloy.createController("Main").startApp(); 

@@ -45,6 +45,9 @@ function openWindow() {
 	if ( ! $.TopLevelWindow.useUnSafeArea )
 		$.TopLevelWindow.addEventListener('postlayout', updateSafeArea);
 	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
+	$.TopLevelWindow.addEventListener('postlayout',function() {
+		Topics.fireTopicEvent( Topics.PAGE_OPENED, { name: getName() } );
+	})
 	
 }
 

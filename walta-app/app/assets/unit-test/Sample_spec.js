@@ -115,7 +115,9 @@ describe("Sample collection, model including taxa", function() {
         let taxon = Alloy.createModel("taxa", { 
           sampleId:  Alloy.Models.sample.get("sampleId"),
           taxonId: taxonId, 
-          abundance: ["1-2","3-4","5-9","10-15",">20"][taxonId-1]
+          abundance: ["1-2","3-5","6-10","11-20","> 20"][taxonId-1],
+          taxonPhotoPath: `/taxon/photo/${taxonId-1}`,
+          serverCreaturePhotoId: taxonId+100
           });
         taxon.save();
         Alloy.Collections.taxa.add(taxon);
@@ -240,7 +242,7 @@ describe("Sample collection, model including taxa", function() {
       expect( Alloy.Models.sample.get("openWater") ).to.be.undefined;
       expect( Alloy.Models.sample.get("edgePlants") ).to.be.undefined;
       expect( Alloy.Models.sample.get("sitePhotoPath") ).to.be.undefined;
-      expect( Alloy.Models.sample.get("uploaded") ).to.be.undefined;
+      expect( Alloy.Models.sample.get("serverSyncTime") ).to.be.undefined;
     });
     it('should reset the taxa collection', function() {
       expect( Alloy.Collections.taxa.length ).to.equal(0);
@@ -320,6 +322,8 @@ describe("Sample collection, model including taxa", function() {
       expect( json.sampleId ).to.equal(99);
     }); 
 
+    
+
     /*context("set updatedAt", function() { 
     [
       "dateCompleted",
@@ -352,5 +356,42 @@ describe("Sample collection, model including taxa", function() {
         });
       }));
     });*/
+  });
+  it('should create a temporary copy correctly', function() {
+    Alloy.Models.sample.set('serverSampleId', 99 );
+    let sample = Alloy.Models.sample;
+    let tempSample = sample.createTemporaryForEdit();
+    expect( tempSample.get("serverSampleId")).to.equal(99);
+    expect( tempSample.get("dateCompleted")).to.be.undefined;
+
+    expect( tempSample.get("lastError") ).to.be.undefined;
+    expect( tempSample.get("sampleId") ).not.to.equal(sample.get("sampleId"));
+    expect( tempSample.get("lat") ).to.equal(sample.get("lat"));
+    expect( tempSample.get("lng") ).to.equal(sample.get("lng"));
+    expect( tempSample.get("accuracy") ).to.equal(sample.get("accuracy"));
+    expect( tempSample.get("surveyType") ).to.equal(sample.get("surveyType"));
+    expect( tempSample.get("waterbodyType") ).to.equal(sample.get("waterbodyType"));
+    expect( tempSample.get("waterbodyName") ).to.equal(sample.get("waterbodyName"));
+    expect( tempSample.get("nearbyFeature") ).to.equal(sample.get("nearbyFeature"));
+    expect( tempSample.get("boulder") ).to.equal(sample.get("boulder"));
+    expect( tempSample.get("gravel") ).to.equal(sample.get("gravel"));
+    expect( tempSample.get("sandOrSilt") ).to.equal(sample.get("sandOrSilt"));
+    expect( tempSample.get("wood") ).to.equal(sample.get("wood"));
+    expect( tempSample.get("aquaticPlants") ).to.equal(sample.get("aquaticPlants"));
+    expect( tempSample.get("openWater") ).to.equal(sample.get("openWater"));
+    expect( tempSample.get("edgePlants") ).to.equal(sample.get("edgePlants"));
+    expect( tempSample.get("sitePhotoPath") ).to.equal(sample.get("sitePhotoPath"));
+//    expect( tempSample.get("serverSyncTime") ).to.equal(sample.get("serverSyncTime"));
+
+    // check all the taxons have been copied too.
+    let taxas = tempSample.loadTaxa();
+    [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => { 
+      let taxa = taxas.at(taxonId-1);
+      expect(taxa.get("sampleId")).to.equal(tempSample.get("sampleId"));
+      expect(taxa.get("abundance")).to.equal(["1-2","3-5","6-10","11-20","> 20"][taxonId-1]);
+      expect(taxa.get("taxonId")).to.equal(taxonId);
+      expect(taxa.get("taxonPhotoPath")).to.equal(`/taxon/photo/${taxonId-1}`);
+      expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
+    });
   });
 })
