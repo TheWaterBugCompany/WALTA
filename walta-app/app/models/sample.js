@@ -108,7 +108,17 @@ exports.definition = {
 			},
 			
 			saveCurrentSample: function() {
-				//Ti.API.info("entering saveCurrentSample")
+				// If the serverSampleId has been set then this is an edited sample
+				// and we need to remove the original
+				let serverSampleId = this.get("serverSampleId");
+				if ( serverSampleId ) {
+					let oldSample = Alloy.createModel("sample");
+					oldSample.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId} AND dateCompleted IS NOT NULL`});
+					let oldTaxa = oldSample.loadTaxa();
+					oldTaxa.forEach( t => t.destroy() );
+					oldSample.destroy();
+				}
+
 				this.set("dateCompleted", moment().format() );
 				let updatedAt = moment().valueOf();
 				Ti.API.info(`setting updatedAt = ${updatedAt} id = ${this.get("serverSampleId")} `)
@@ -367,6 +377,10 @@ exports.definition = {
 				// the photo paths aren't stored in the Cerdi JSON
 				dup.set("sitePhotoPath", this.get("sitePhotoPath"));
 
+				// we carry over the serverSyncTime to track when the last
+				// download from the server was.
+				dup.set("serverSyncTime", this.get("serverSyncTime"));
+
 				// add photo related metadata to taxons
 				let taxa = this.loadTaxa();
 				let dupTaxa = dup.loadTaxa();
@@ -411,11 +425,6 @@ exports.definition = {
 					 this.createNewSample();
 					 Alloy.Models.sample.set({"surveyType": type} );
 				}
-			},
-
-			loadCurrent: function() {
-				this.fetch();
-				Alloy.Models.instance("sample").loadCurrent();
 			},
 
 			loadUploadQueue: function() {
