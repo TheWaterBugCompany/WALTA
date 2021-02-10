@@ -160,6 +160,7 @@ function closeApp() {
 }
 
 function startApp(options) {
+
   Topics.subscribe( Topics.KEYSEARCH, function(data) {
     var node = ( data.surveyType === Sample.SURVEY_MAYFLY ? key.findNode("mayfly_start_point") : key.getRootNode() );
     key.reset(node);
@@ -223,7 +224,7 @@ function startApp(options) {
   Alloy.Models.instance("sample").loadCurrent();
   Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
 
-  if ( options && !options.nosync ) {
+  if ( !( options && options.nosync )) {
     SampleSync.init();
   }
   var keyName = "walta";
