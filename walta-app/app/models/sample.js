@@ -3,6 +3,7 @@ var log = Crashlytics.log;
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
+
 exports.definition = {
 	config: {
 		columns: {
@@ -256,7 +257,6 @@ exports.definition = {
 			},
 
 			fromCerdiApiJson: function(sample) {
-				Ti.API.info(`calling fromCerdiApiJson ${sample.id}`);
 				var taxa = this.loadTaxa();
 				function toSurveyType(surveyType) {
 					if ( surveyType === "detailed")
@@ -277,8 +277,8 @@ exports.definition = {
 				var updatedFields = {
 					"serverSampleId": sample.id,
 					"dateCompleted": sample.sample_date,
-					"lat": sample.lat,
-					"lng": sample.lng,
+					"lat": parseFloat(sample.lat),
+					"lng": parseFloat(sample.lng),
 					"surveyType": toSurveyType(sample.survey_type),
 					"waterbodyType": toWaterbodyType(sample.waterbody_type),
 					"waterbodyName": sample.waterbody_name,
@@ -315,7 +315,9 @@ exports.definition = {
 				
 				// needs a sampleId before added taxa
 				this.save(); 
-				taxa.fromCerdiApiJson(sample.sampled_creatures, this.get("sampleId"));
+				// payload on read is sampled_creatures but on create is creatures
+				let creatures = (sample.creatures?sample.creatures:sample.sampled_creatures);
+				taxa.fromCerdiApiJson(creatures, this.get("sampleId"));
 				
 			},
 
@@ -345,9 +347,40 @@ exports.definition = {
 				};
 				
 				if (this.get("serverSampleId") ) {
-					attrs["sampleId"] = this.get("serverSampleId");
+					attrs["id"] = this.get("serverSampleId");
 				}
-				return attrs;
+				return attrs; 
+			},
+
+			createTemporaryForEdit: function() {
+				// Reuse the serialisation code to create 
+				// a duplicate without the dateCompleted set.
+				let json = this.toCerdiApiJson();
+				delete json.sample_date;
+
+				let dup = Alloy.createModel("sample");
+				dup.fromCerdiApiJson(json);
+
+				// accuracy isn't in the CERDI JSON currently
+				dup.set("accuracy", this.get("accuracy"));
+
+				// the photo paths aren't stored in the Cerdi JSON
+				dup.set("sitePhotoPath", this.get("sitePhotoPath"));
+
+				// add photo related metadata to taxons
+				let taxa = this.loadTaxa();
+				let dupTaxa = dup.loadTaxa();
+			
+				dupTaxa.forEach( newTaxon => {
+					let newTaxonId = newTaxon.get("taxonId");
+					let oldTaxon = taxa.find( t => t.get("taxonId") === newTaxonId );
+					newTaxon.set("taxonPhotoPath", oldTaxon.get("taxonPhotoPath"));
+					newTaxon.set("serverCreaturePhotoId", oldTaxon.get("serverCreaturePhotoId"));
+					newTaxon.save();
+				});
+
+				dup.save();
+				return dup;
 			},
 
 			getTaxa: function() {

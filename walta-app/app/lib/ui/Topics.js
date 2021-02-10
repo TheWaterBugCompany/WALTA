@@ -81,6 +81,9 @@ var topics = {
 
 	UPLOAD_PROGRESS: 'uploadprogress',
 
+	// used to trap when a page is opened
+	PAGE_OPENED: 'page_opened',
+
 	unsubscribe: function( topic, callback ) {
 		Alloy.Events.off( 'waterbug:' + topic, callback );
 	},
