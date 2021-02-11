@@ -100,7 +100,8 @@ function uploadSamples(delay) {
 
             function updateExistingSampleData( sample ) {
                 log(`Updating existing sample [serverSampleId=${serverSampleId}]`); 
-                return () => Alloy.Globals.CerdiApi.updateSampleById( sample.get("serverSampleId"), sample.toCerdiApiJson() );
+                return Promise.resolve()
+                .then( () => Alloy.Globals.CerdiApi.updateSampleById( sample.get("serverSampleId"), sample.toCerdiApiJson() ) );
             }
 
             var sample = samples.shift();

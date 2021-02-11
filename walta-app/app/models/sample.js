@@ -113,9 +113,11 @@ exports.definition = {
 				let serverSampleId = this.get("serverSampleId");
 				if ( serverSampleId ) {
 					let oldSample = Alloy.createModel("sample");
-					oldSample.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId} AND dateCompleted IS NOT NULL`});
+					oldSample.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId} AND (dateCompleted IS NOT NULL)`});
+					Ti.API.info(`oldSample = ${JSON.stringify(oldSample)}`);
 					let oldTaxa = oldSample.loadTaxa();
-					oldTaxa.forEach( t => t.destroy() );
+					Ti.API.info(`oldTaxa = ${JSON.stringify(oldTaxa.toCerdiApiJson())}`);
+					oldTaxa.removeAll();
 					oldSample.destroy();
 				}
 
