@@ -204,19 +204,19 @@ function startApp(options) {
 
   Topics.subscribe( Topics.MAYFLY, function(data) {
     if ( !data ) data = {};
-    Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_MAYFLY);
+    Alloy.Collections.instance("sample").startNewSurveyIfComplete(Sample.SURVEY_MAYFLY);
     Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
   Topics.subscribe( Topics.ORDER, function(data) {
     if ( !data ) data = {};
-    Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_ORDER);
+    Alloy.Collections.instance("sample").startNewSurveyIfComplete(Sample.SURVEY_ORDER);
     Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
   Topics.subscribe( Topics.DETAILED, function(data) {
     if ( !data ) data = {};
-    Alloy.Collections.sample.startNewSurveyIfComplete(Sample.SURVEY_DETAILED);
+    Alloy.Collections.instance("sample").startNewSurveyIfComplete(Sample.SURVEY_DETAILED);
     Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
