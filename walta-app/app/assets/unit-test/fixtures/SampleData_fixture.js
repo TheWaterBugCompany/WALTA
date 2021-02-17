@@ -1,5 +1,3 @@
-var moment = require("lib/moment");
-var Sample = require("logic/Sample");
 function makeCerdiSampleData(attrs) {
     return _.extend({
         "id": 473,
@@ -38,6 +36,8 @@ function makeCerdiSampleData(attrs) {
 }
 
 function makeSampleData(attrs) {
+    var moment = require("lib/moment");
+    var Sample = require("logic/Sample");
     return Alloy.createModel("sample", _.extend({ 
         serverSampleId: null, 
         lat: "-37.5622000",
