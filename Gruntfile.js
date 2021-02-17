@@ -7,6 +7,7 @@ module.exports = function(grunt) {
     const fs = require('fs');
     const CircularJSON = require("circular-json");
     const KeyLoader = require("./walta-app/app/lib/logic/KeyLoaderInk");
+    const { createMockCerdiServer } = require('./features/support/mock-cerdi-server');
 
 
     const APP_ID = "net.thewaterbug.waterbug";
@@ -78,6 +79,7 @@ module.exports = function(grunt) {
     } 
     
     function build_app(platform,build_type) {
+      
       let args = [ "--project-dir walta-app"];
       let post_cmds = [];
 
@@ -159,7 +161,7 @@ module.exports = function(grunt) {
         case "unit-test":
           test();
           args.push("--unit-test");
-          args.push("--output-dir builds/unit-test");s
+          args.push("--output-dir builds/unit-test");
           break;
 
         case "release":
@@ -180,19 +182,13 @@ module.exports = function(grunt) {
           emulator();
           break;
 
-        case "preview-unit-test":
-          test();
-          args.push("--unit-test");
-          args.push("--output-dir builds/preview-unit-test");
-          break;
-
         default:
           throw new Error(`Unknown build "${build_type}" type!`)
       }
       if ( grunt.option('liveview') ) {
         args.push("--liveview");
       }
-
+      
       var cmd = `./node_modules/.bin/titanium build ${args.join(" ")}`;
       post_cmds.forEach( c => cmd += " && " + c);
       return cmd;
@@ -262,7 +258,7 @@ module.exports = function(grunt) {
           },
 
           clean_dist: {
-            command: 'rm -v ./builds/{release,debug,test,unit-test,preview,preview-unit-test}/*.{apk,ipa,aab}',
+            command: 'rm -v ./builds/{release,debug,test,unit-test,preview}/*.{apk,ipa,aab}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "false",
             options: {
@@ -384,10 +380,7 @@ module.exports = function(grunt) {
           release_ios: build_if_newer_options("ios", "release"),
 
           preview_android: build_if_newer_options("android", "preview"),
-          preview_ios: build_if_newer_options("ios", "preview"),
-
-          preview_unit_test_android: build_if_newer_options("android", "preview-unit-test"),
-          preview_unit_test_ios: build_if_newer_options("ios", "preview-unit-test"),
+          preview_ios: build_if_newer_options("ios", "preview")
         }
     });
 
@@ -578,12 +571,18 @@ module.exports = function(grunt) {
 
     
     grunt.registerTask('unit-test', function( ) {
-      var platform = grunt.option('platform');
-      //grunt.task.run('run:appium');
+      var platform = grunt.option('platform'); 
       grunt.task.run(`newer:unit_test_${platform}`);
       grunt.task.run(`install:${platform}:unit-test`);
+      if ( grunt.option('liveview') ) {
+        grunt.task.run("exec:stop_live_view");
+        grunt.task.run(`run:live_view_${platform}`);
+      } 
+      let mockServer = createMockCerdiServer();
+      mockServer.makeMockSample();
       grunt.task.run(`launch:${platform}:unit-test`);
-      grunt.task.run(`output-logs:${platform}`);
+      grunt.task.run(`output-logs:${platform}:${grunt.option('preview')?"preview":""}`);
+      mockServer.shutdown();
 
     } );
 
@@ -612,17 +611,6 @@ module.exports = function(grunt) {
       grunt.task.run(`output-logs:${platform}:preview`);
     } );
 
-    grunt.registerTask('preview-unit-test', function() {
-      var platform = grunt.option('platform');
-      grunt.task.run(`newer:preview_unit_test_${platform}`);
-      if ( grunt.option('liveview') ) {
-        grunt.task.run("exec:stop_live_view");
-        grunt.task.run(`run:live_view_${platform}`);
-      }
-      grunt.task.run(`launch:${platform}:preview-unit-test`);
-      grunt.task.run(`output-logs:${platform}:preview`);
-    } );
-  
     grunt.registerTask('release', function() {
       var platform = grunt.option('platform');
       grunt.task.run(`newer:release_${platform}`); 
