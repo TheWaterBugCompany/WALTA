@@ -18,7 +18,8 @@
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
-var { clearDatabase, actionFiresTopicTest } = require("unit-test/util/TestUtils");
+var { clearDatabase, actionFiresTopicTest, waitFor } = require("unit-test/util/TestUtils");
+var { areWeSyncing } = require("logic/SampleSync");
 var Topics = require('ui/Topics');
 describe("Main controller", function() {
 	var app;
@@ -29,9 +30,67 @@ describe("Main controller", function() {
   });
   it('should allow a sample to be edited', async function() {
     clearDatabase();
+
+    // FIXME: Needs to have taxons to proeprly exercise edit code
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main");
     app.startApp({nosync: true});
+    app.getCurrentController()
+      .history.fireEvent("click");
+    let archive = app.getCurrentController();
+    archive.sampleTable.fireEvent("click", { index: 0 });
+    await actionFiresTopicTest( archive.sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
+
+    // At this point the global sample SHOULD NOT be the original record but 
+    // a temporary copy instead. This a new sample with the DateSubmitted field blank.
+    expect( Alloy.Models.instance("sample").get("serverSampleId")).to.equal(666);
+    expect( Alloy.Models.instance("sample").get("dateCompleted")).to.be.undefined;
+
+    let siteDetails = app.getCurrentController();
+
+    siteDetails.waterbodyNameField.value = "changed by test edit";
+    siteDetails.waterbodyNameField.fireEvent("change"); // simulate user entering text
+   
+    await actionFiresTopicTest( siteDetails.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+
+    let habitat = app.getCurrentController();
+   
+    await actionFiresTopicTest( habitat.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+
+    let sampleTray = app.getCurrentController();
+    await actionFiresTopicTest( sampleTray.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+
+    let summary = app.getCurrentController();
+    await actionFiresTopicTest( summary.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+
+    
+    
+    // load original row from archive (should only list submitted surveys)
+    let login = app.getCurrentController();
+    await actionFiresTopicTest( login.getAnchorBar().home, "click", Topics.PAGE_OPENED );
+    app.getCurrentController().history.fireEvent("click");
+    
+
+    archive = app.getCurrentController();
+    expect( archive.sampleTable.data[0].rows.length, "there should only be one row" ).to.equal(1);
+
+    archive.sampleTable.fireEvent("click", { index: 0 });
+    
+    await actionFiresTopicTest( archive.sampleMenu.view.getView(), "click", Topics.PAGE_OPENED );
+
+    // verify change has been persisted
+    siteDetails = app.getCurrentController();
+    expect( siteDetails.waterbodyNameField.value ).to.equal("changed by test edit");
+
+  });
+
+  it.only('should allow a sample to be edited whilst syncing', async function() {
+    clearDatabase();
+
+    app = Alloy.createController("Main");
+    app.startApp({nosync: false});
+    await waitFor(() => !areWeSyncing() );
+
     app.getCurrentController()
       .history.fireEvent("click");
     let archive = app.getCurrentController();

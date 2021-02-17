@@ -1,37 +1,17 @@
 'use strict';
 const { After, Before } = require('cucumber');
-const http = require('http')
-const hock = require('hock')
+var { createMockCerdiServer } = require('mock-cerdi-server');
 
-var hockServer = null;
-var server = null;
- Before({tags: "@mockserver"},function(testCase, callback) {
-    if ( !server ) {
-        hockServer = hock.createHock();
-        hockServer
-            .post('/token/create/server',{
-                "client_secret":"hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz",
-                "scope":"create-users"
-            })
-            .reply(200, {
-                "access_token": "secretaccesstoken",
-                "expires_in": 31535997,
-                "token_type": "Bearer"
-            });
-        
-
-        server = http.createServer(hockServer.handler);
-        server.listen(9999, callback);
-        
-        global.hockServer = hockServer;
-        global.server = server;
+Before({tags: "@mockserver"},function(testCase, callback) {
+    if ( !global.mockCerdiServer ) {
+        global.mockCerdiServer = createMockCerdiServer(callback);
     }
 });
 
 
 After({tags: "@mockserver"}, function() {
-    if ( server ) {
-        server.close();
+    if ( global.mockCerdiServer ) {
+        global.mockCerdiServer.shutDown();
     }
 }); 
 

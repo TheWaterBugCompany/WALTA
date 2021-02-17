@@ -357,7 +357,7 @@ describe("Sample collection, model including taxa", function() {
       }));
     });*/
   });
-  it.only('should create a temporary copy correctly', function() {
+  it('should create a temporary copy correctly', function() {
     Alloy.Models.sample.set('serverSampleId', 99 );
     let sample = Alloy.Models.sample;
     let tempSample = sample.createTemporaryForEdit();
