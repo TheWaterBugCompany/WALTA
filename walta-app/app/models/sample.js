@@ -129,7 +129,7 @@ exports.definition = {
 			},
 
 			loadCurrent() {
-				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL"});
+				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL"});
 			},
 
 			loadById(sampleId) {
@@ -137,7 +137,12 @@ exports.definition = {
 			},
 			
 			loadByServerId(serverSampleId ) {
-				this.fetch({ query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId}` });
+				return new Promise( (resolve,reject) => 
+					this.fetch({ 
+						query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId}  AND (dateCompleted IS NOT NULL) `, 
+						success: resolve, 
+						error: reject })
+				);
 			},
 
 			loadTaxa() {

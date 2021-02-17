@@ -1,4 +1,4 @@
 {
-	"cerdiServerUrl": "http://office-desktop:8080/v1",
+	"cerdiServerUrl": "http://192.168.0.108:8080/v1",
 	"cerdiApiSecret": "hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz"
 }
