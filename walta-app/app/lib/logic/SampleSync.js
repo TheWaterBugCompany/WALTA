@@ -290,7 +290,7 @@ function downloadSamples(delay) {
     // change then this will always preference the server change since we always
     // call downloadSamples() before calling uploadSamples()
     function needsUpdate(serverSample,sample) {
-        if ( ! sample.get("sampleId") ) {
+        if ( ! sample.get("serverSampleId") ) {
             return true;
         } 
 
@@ -308,17 +308,19 @@ function downloadSamples(delay) {
     }
     function updateIncomingSample(serverSample) {
         let sample = Alloy.createModel("sample");
-        sample.loadByServerId(serverSample.id) 
-        if ( needsUpdate(serverSample,sample) ) {
-            debug(`Updating serverSampleId = ${serverSample.id}`);
-            sample.fromCerdiApiJson(serverSample); 
-            sample.set("serverSyncTime",moment().valueOf());
-            sample.save();
-            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
-            return Promise.resolve([sample,serverSample]);
-        } else {
-            return Promise.resolve([sample,serverSample]);
-        }
+        return sample.loadByServerId(serverSample.id) 
+            .then( () => {
+                if ( needsUpdate(serverSample,sample) ) {
+                    debug(`Updating serverSampleId = ${serverSample.id}`);
+                    sample.fromCerdiApiJson(serverSample); 
+                    sample.set("serverSyncTime",moment().valueOf());
+                    sample.save();
+                    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
+                    return Promise.resolve([sample,serverSample]);
+                } else {
+                    return Promise.resolve([sample,serverSample]);
+                }
+            });
     }
 
     function downloadSitePhoto([sample,serverSample]) {
