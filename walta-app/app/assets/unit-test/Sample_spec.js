@@ -18,6 +18,8 @@
 var moment = require("lib/moment");
 require("unit-test/lib/ti-mocha");
 var { use, expect } = require("unit-test/lib/chai");
+var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
+
 var { makeTestPhoto, removeDatabase, resetSample, clearDatabase  } = require("unit-test/util/TestUtils");
 use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
@@ -88,25 +90,20 @@ describe("Sample collection, model including taxa", function() {
     resetSample();
 
     // set initial sample fields
-    Alloy.Models.sample.set("serverSampleId", 666);
-    Alloy.Models.sample.set("lastError", "Test error");
-    Alloy.Models.sample.set("lat", -42.0 );
-    Alloy.Models.sample.set("lng", 135.0 );
-    Alloy.Models.sample.set("accuracy", 100.0 );
-    Alloy.Models.sample.set("surveyType", Sample.SURVEY_DETAILED);
-    Alloy.Models.sample.set("waterbodyType", Sample.WATERBODY_LAKE);
-    Alloy.Models.sample.set("waterbodyName","Test Waterbody");
-    Alloy.Models.sample.set("nearbyFeature", "near the office intersection cupboard");
-    Alloy.Models.sample.set("boulder", 15 );
-    Alloy.Models.sample.set("gravel", 14 );
-    Alloy.Models.sample.set("sandOrSilt", 13 );
-    Alloy.Models.sample.set("wood", 8 );
-    Alloy.Models.sample.set("leafPacks", 17 );
-    Alloy.Models.sample.set("aquaticPlants", 12 );
-    Alloy.Models.sample.set("openWater", 11 );
-    Alloy.Models.sample.set("edgePlants", 10 );
-    Alloy.Models.sample.set("sitePhotoPath", "/photo/path" );
-    Alloy.Models.sample.set("serverSyncTime", moment().valueOf() );
+    Alloy.Models.sample = makeSampleData({
+      serverSampleId: 666,
+      lastError: "Test error",
+      lat: -42.0,
+      lng: 135.0,
+      accuracy: 100.0,
+      surveyType: Sample.SURVEY_DETAILED,
+      waterbodyType: Sample.WATERBODY_LAKE,
+      waterbodyName: "Test Waterbody",
+      nearbyFeature: "near the office intersection cupboard",
+      sitePhotoPath: "/photo/path",
+      serverSyncTime: moment().valueOf() 
+    });
+   
     Alloy.Models.sample.save(); // set the autoincremented sampleId
     initialSampleId = Alloy.Models.sample.get("sampleId");
     
@@ -157,6 +154,18 @@ describe("Sample collection, model including taxa", function() {
   it('should the calculate the correct weighted SIGNAL score with >20 ', function() {
     var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "> 20" ) ];
 		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.7"); 
+  });
+
+  it.only('should not load any temporary rows when loading by serverSampleId', function() {
+    // since we use retrieve by serverSampleId to load the latest record
+    // this needs to exclude any records that are currently temporary and must not
+    // be treated as a submitted sample.
+    var tempModel = Alloy.Models.sample.createTemporaryForEdit();
+    tempModel.set("waterbodyName","temporary waterbody");
+    tempModel.save();
+    var model = Alloy.createModel("sample");
+    model.loadByServerId(666);
+    expect( model.get("waterbodyName"), "should load old model not temporary").to.equal("Test Waterbody");
   });
 
   it('should load a blank sample when database is empty and load() is called', function() {
