@@ -134,8 +134,12 @@ function downloadSamples(delay) {
             .then( () => {
                 if ( needsUpdate(serverSample,sample) ) {
                     debug(`Updating serverSampleId = ${serverSample.id}`);
-                    sample.fromCerdiApiJson(serverSample); 
+                    // must set the serverSyncTime here so that if updatedAt
+                    // is set to be a few milliseconds later - this can happen if
+                    // habitat blanks are filled in, and we need to signal a re-upload.
                     sample.set("serverSyncTime",moment().valueOf());
+                    sample.fromCerdiApiJson(serverSample); 
+                    
                     sample.save();
                     Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                     return Promise.resolve([sample,serverSample]);
