@@ -38,6 +38,7 @@ function makeCerdiSampleData(attrs) {
 function makeSampleData(attrs) {
     var moment = require("lib/moment");
     var Sample = require("logic/Sample");
+    var { makeTestPhoto } = require("unit-test/util/TestUtils");
     return Alloy.createModel("sample", _.extend({ 
         serverSampleId: null, 
         lat: "-37.5622000",
@@ -57,8 +58,7 @@ function makeSampleData(attrs) {
         aquaticPlants: 12,
         openWater: 11,
         edgePlants: 10,
-        sitePhotoPath: '/unit-test/resources/site-mock.jpg',
-
+        sitePhotoPath: makeTestPhoto("sitephoto.jpg")
      },attrs));
 }
 
