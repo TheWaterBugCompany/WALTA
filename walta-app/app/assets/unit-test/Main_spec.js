@@ -31,7 +31,6 @@ describe("Main controller", function() {
   it('should allow a sample to be edited', async function() {
     clearDatabase();
 
-    // FIXME: Needs to have taxons to proeprly exercise edit code
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main");
     app.startApp({nosync: true});
