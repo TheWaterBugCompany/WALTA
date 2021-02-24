@@ -264,14 +264,18 @@ function startSynchronise() {
         }
         return Promise.resolve();
     }  
-    function handleError(err) {
+    function formatError(err) {
         let message = "<unknown error>";
         if ( err.error ) {
             message = err.error;
         } else if ( err.message ) {
             message = err.message;
         }
-        debug(`Error synchronising ${message}`)
+        return message;
+    }
+
+    function handleError(err) {
+        debug(`Error synchronising ${formatError(err)}`)
     }
     return Promise.resolve()
         .then(checkLoggedIn) 
@@ -334,7 +338,8 @@ function downloadSamples(delay) {
                     sample.save();
                     Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                     return [sample,serverSample];
-                });
+                })
+                .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`));
         } else {
             return Promise.resolve([sample,serverSample]);
         }
@@ -360,6 +365,7 @@ function downloadSamples(delay) {
                         }
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
                     })
+                    .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`));
                 });
     }
 

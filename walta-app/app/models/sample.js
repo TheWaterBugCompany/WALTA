@@ -110,8 +110,9 @@ exports.definition = {
 			saveCurrentSample: function() {
 				// If the serverSampleId has been set then this is an edited sample
 				// and we need to remove the original
+				let dateCompleted = this.get("dateCompleted");
 				let serverSampleId = this.get("serverSampleId");
-				if ( serverSampleId ) {
+				if ( !dateCompleted && serverSampleId ) {
 					let oldSample = Alloy.createModel("sample");
 					oldSample.loadByServerId(serverSampleId);
 					let oldTaxa = oldSample.loadTaxa();
@@ -121,22 +122,31 @@ exports.definition = {
 
 				this.set("dateCompleted", moment().format() );
 				let updatedAt = moment().valueOf();
-				Ti.API.info(`setting updatedAt = ${updatedAt} id = ${this.get("serverSampleId")} `)
 				this.set('updatedAt', updatedAt, {ignore:true});
 				this.save();
 			},
 
 			loadCurrent() {
-				this.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL"});
+				return new Promise( (resolve,reject) =>
+					this.fetch({ 
+						query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL",
+						success: resolve, 
+						error: reject
+					}));
 			},
 
 			loadById(sampleId) {
-				this.fetch({ query: `SELECT * FROM sample WHERE sampleId = ${sampleId}` });
+				return new Promise( (resolve,reject) =>
+					this.fetch({ 
+						query: `SELECT * FROM sample WHERE sampleId = ${sampleId}`,
+						success: resolve, 
+						error: reject
+					}));
 			},
 			
 			// only excludes loading any temporary edit that have not yet been persisted
 			loadByServerId(serverSampleId ) {
-				return new Promise( (resolve,reject) => 
+				return new Promise( (resolve,reject) =>
 					this.fetch({ 
 						query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId} AND (dateCompleted IS NOT NULL)`, 
 						success: resolve, 
@@ -416,7 +426,7 @@ exports.definition = {
 		_.extend(Collection.prototype, { 
 			// Note sets the singleton sample (FIXME?)
 			createNewSample: function() {
-				log("Creating new sample..");
+				log("Creating new sample...");
 				Alloy.Models.sample = Alloy.createModel("sample");
 				this.add(Alloy.Models.sample);
 				Alloy.Models.sample.save();

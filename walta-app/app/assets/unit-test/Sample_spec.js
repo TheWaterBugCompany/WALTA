@@ -20,7 +20,7 @@ require("unit-test/lib/ti-mocha");
 var { use, expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
 
-var { makeTestPhoto, removeDatabase, resetSample, clearDatabase  } = require("unit-test/util/TestUtils");
+var { makeTestPhoto, removeDatabase, resetSample, clearDatabase, waitForTick  } = require("unit-test/util/TestUtils");
 use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
@@ -84,10 +84,23 @@ describe("Taxa model", function() {
     expect( taxon.get("taxonPhotoPath") ).to.include("taxon_667_1");
   });
 });
-describe("Sample collection, model including taxa", function() {
+describe.only("Sample collection, model including taxa", function() {
   var initialSampleId;
+
+  function verifyTaxa(taxas,sampleId) {
+    expect( taxas.length ).to.equal(5);
+    [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => { 
+      let taxa = taxas.at(taxonId-1);
+      expect(taxa.get("sampleId")).to.equal(sampleId);
+      expect(taxa.get("abundance")).to.equal(["1-2","3-5","6-10","11-20","> 20"][taxonId-1]);
+      expect(taxa.get("taxonId")).to.equal(taxonId);
+      expect(taxa.get("taxonPhotoPath")).to.equal(`/taxon/photo/${taxonId-1}`);
+      expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
+    });
+  }
+
 	beforeEach( function() {
-    resetSample();
+    clearDatabase();
 
     // set initial sample fields
     Alloy.Models.sample = makeSampleData({
@@ -156,7 +169,7 @@ describe("Sample collection, model including taxa", function() {
 		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.7"); 
   });
 
-  it.only('should not load any temporary rows when loading by serverSampleId', function() {
+  it('should not load any temporary rows when loading by serverSampleId', function() {
     // since we use retrieve by serverSampleId to load the latest record
     // this needs to exclude any records that are currently temporary and must not
     // be treated as a submitted sample.
@@ -168,60 +181,51 @@ describe("Sample collection, model including taxa", function() {
     expect( model.get("waterbodyName"), "should load old model not temporary").to.equal("Test Waterbody");
   });
 
-  it('should load a blank sample when database is empty and load() is called', function() {
-      // ensure database is empty
-      let samples = Ti.Database.open("samples");
-      samples.execute("DELETE FROM sample");
-      samples.execute("DELETE FROM taxa");
-
-      // reset global instances
-      Alloy.Models.sample = null;
-      Alloy.Models.taxa = null;
-      Alloy.Collections.sample = null;
-      Alloy.Collections.taxa = null;
-
-      // create a new sample
-      Alloy.Models.instance("sample").loadCurrent();
+  it('should load a blank sample when database is empty and load() is called', async function() {
+      clearDatabase();
+      await Alloy.Models.instance("sample").loadCurrent();
       Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
       expect( Alloy.Collections.sample.length ).to.equal(0);
       expect( Alloy.Collections.taxa.length ).to.equal(0);
+
   });
 
   context('should correctly persist sample', function() {
+    let taxa;
+    let sample;
     beforeEach(function() {
-      Alloy.Models.sample.saveCurrentSample();
-      resetSample();
-      Alloy.Models.sample.loadById(initialSampleId);
-      Alloy.Models.sample.loadTaxa();
+      sample = Alloy.createModel("sample");
+      sample.loadById(initialSampleId);
+      taxa = sample.loadTaxa();
     })   
     
     it('should persist all the fields', function() {
-      expect( Alloy.Models.sample.get("serverSampleId") ).to.equal(666);
-      expect( Alloy.Models.sample.get("sampleId") ).to.equal(initialSampleId);
-      expect( Alloy.Models.sample.get("lastError") ).to.equal("Test error");
-      expect( Alloy.Models.sample.get("dateCompleted")).to.be.a.dateString();
-      expect( parseFloat(Alloy.Models.sample.get("lat")) ).to.equal(-42);
-      expect( parseFloat(Alloy.Models.sample.get("lng")) ).to.equal(135);
-      expect( Alloy.Models.sample.get("accuracy") ).to.equal('100');
-      expect( Alloy.Models.sample.get("surveyType") ).to.equal(Sample.SURVEY_DETAILED);
-      expect( Alloy.Models.sample.get("waterbodyType") ).to.equal(Sample.WATERBODY_LAKE);
-      expect( Alloy.Models.sample.get("waterbodyName") ).to.equal("Test Waterbody");
-      expect( Alloy.Models.sample.get("nearbyFeature") ).to.equal("near the office intersection cupboard");
-      expect( Alloy.Models.sample.get("boulder") ).to.equal(15);
-      expect( Alloy.Models.sample.get("gravel") ).to.equal(14);
-      expect( Alloy.Models.sample.get("sandOrSilt") ).to.equal(13);
-      expect( Alloy.Models.sample.get("wood") ).to.equal(8);
-      expect( Alloy.Models.sample.get("leafPacks") ).to.equal(17);
-      expect( Alloy.Models.sample.get("aquaticPlants") ).to.equal(12);
-      expect( Alloy.Models.sample.get("openWater") ).to.equal(11);
-      expect( Alloy.Models.sample.get("edgePlants") ).to.equal(10);
-      expect( Alloy.Models.sample.get("sitePhotoPath") ).to.equal("/photo/path");
-      expect( Alloy.Models.sample.get("serverSyncTime") ).to.be.ok;
+      expect( sample.get("serverSampleId") ).to.equal(666);
+      expect( sample.get("sampleId") ).to.equal(initialSampleId);
+      expect( sample.get("lastError") ).to.equal("Test error");
+      expect( sample.get("dateCompleted")).to.be.a.dateString();
+      expect( parseFloat(sample.get("lat")) ).to.equal(-42);
+      expect( parseFloat(sample.get("lng")) ).to.equal(135);
+      expect( sample.get("accuracy") ).to.equal('100');
+      expect( sample.get("surveyType") ).to.equal(Sample.SURVEY_DETAILED);
+      expect( sample.get("waterbodyType") ).to.equal(Sample.WATERBODY_LAKE);
+      expect( sample.get("waterbodyName") ).to.equal("Test Waterbody");
+      expect( sample.get("nearbyFeature") ).to.equal("near the office intersection cupboard");
+      expect( sample.get("boulder") ).to.equal(15);
+      expect( sample.get("gravel") ).to.equal(14);
+      expect( sample.get("sandOrSilt") ).to.equal(13);
+      expect( sample.get("wood") ).to.equal(8);
+      expect( sample.get("leafPacks") ).to.equal(17);
+      expect( sample.get("aquaticPlants") ).to.equal(12);
+      expect( sample.get("openWater") ).to.equal(11);
+      expect( sample.get("edgePlants") ).to.equal(10);
+      expect( sample.get("sitePhotoPath") ).to.equal("/photo/path");
+      expect( sample.get("serverSyncTime") ).to.be.ok;
     });
     it('should persist all the taxons', function() {
-      expect( Alloy.Collections.taxa.length ).to.equal(5);
+      expect( taxa.length ).to.equal(5);
       [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => {
-        let taxon = Alloy.Collections.taxa.at(taxonId-1);
+        let taxon = taxa.at(taxonId-1);
         expect( taxon.get("taxonId") ).to.equal(taxonId); 
       }); 
     });
@@ -317,7 +321,7 @@ describe("Sample collection, model including taxa", function() {
       var json = Alloy.Models.sample.toCerdiApiJson();
       expect( json ).to.be.ok;
       var taxa = json.creatures;
-      [[1,2],[2,4],[3,7],[4,13],[5,30]]
+      [[1,2],[2,4],[3,8],[4,16],[5,30]]
         .forEach( ([taxonId,abundance]) => {
           expect(taxa[taxonId-1].creature_id, "creature id").to.equal(taxonId);
           expect(taxa[taxonId-1].count, "count").to.equal(abundance);
@@ -328,9 +332,10 @@ describe("Sample collection, model including taxa", function() {
       Alloy.Models.sample.set('serverSampleId', 99 );
       var json = Alloy.Models.sample.toCerdiApiJson();
       expect( json ).to.be.ok;
-      expect( json.sampleId ).to.equal(99);
+      expect( json.id ).to.equal(99);
     }); 
 
+    
     
 
     /*context("set updatedAt", function() { 
@@ -366,6 +371,8 @@ describe("Sample collection, model including taxa", function() {
       }));
     });*/
   });
+ 
+
   it('should create a temporary copy correctly', function() {
     Alloy.Models.sample.set('serverSampleId', 99 );
     let sample = Alloy.Models.sample;
@@ -393,14 +400,82 @@ describe("Sample collection, model including taxa", function() {
     expect( tempSample.get("serverSyncTime") ).to.equal(sample.get("serverSyncTime"));
 
     // check all the taxons have been copied too.
-    let taxas = tempSample.loadTaxa();
-    [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => { 
-      let taxa = taxas.at(taxonId-1);
-      expect(taxa.get("sampleId")).to.equal(tempSample.get("sampleId"));
-      expect(taxa.get("abundance")).to.equal(["1-2","3-5","6-10","11-20","> 20"][taxonId-1]);
-      expect(taxa.get("taxonId")).to.equal(taxonId);
+    verifyTaxa( tempSample.loadTaxa(), tempSample.get("sampleId") );
+  });
+
+  it('saveCurrentSample should overwrite existing record with temporary record', async function() {
+
+    function rowCount() {
+      coll = Alloy.createCollection("sample");
+      coll.fetch({query:"SELECT * FROM sample WHERE serverSampleId = 99"});
+      return coll.length;
+    }
+
+    Alloy.Models.sample.set('serverSampleId', 99 );
+    
+    // need to set dateCompleted to ensure duplicate is created.
+    // in actual usage 
+    let sample = Alloy.Models.sample;
+    sample.set("dateCompleted", moment.valueOf());
+    sample.save();
+
+    let tempSample = sample.createTemporaryForEdit();
+    let tempTaxa = tempSample.loadTaxa();
+    tempSample.set("waterbodyName", "edited");
+
+    // remove old taxon
+    tempTaxa.at(0).destroy(); 
+
+    // add new taxons
+    Alloy.createModel("taxa",{ 
+      sampleId:  tempSample.get("sampleId"),
+      taxonId: 99, 
+      abundance: "> 20",
+      taxonPhotoPath: `/taxon/photo/98`
+      }).save();
+
+    Alloy.createModel("taxa",{ 
+      sampleId:  tempSample.get("sampleId"),
+      taxonId: 66, 
+      abundance: "1-2",
+      taxonPhotoPath: `/taxon/photo/65`
+      }).save();
+
+    tempSample.save();
+
+    expect(rowCount(),"there should be 2 rows, the orginal, and the copy").to.equal(2);
+
+    // check old row still exists
+    let oldSample = Alloy.createModel("sample");
+    oldSample.loadByServerId(99);
+    expect(oldSample.get("waterbodyName")).to.equal("Test Waterbody");
+    verifyTaxa(oldSample.loadTaxa(), oldSample.get("sampleId"));
+   
+    tempSample.saveCurrentSample();
+
+    // should be updated
+    sample = Alloy.createModel("sample");
+    sample.loadByServerId(99);
+    expect( sample.get("waterbodyName")).to.equal("edited"); 
+
+    // verify updated mixture of taxons
+    let sampleId = sample.get('sampleId');
+    let taxas = sample.loadTaxa();
+    expect( taxas.length ).to.equal(6);
+    let index = 0;
+    [ 2, 3, 4, 5, 99, 66 ].forEach( (taxonId) => { 
+      let taxa = taxas.at(index);
+      expect(taxa.get("sampleId")).to.equal(sampleId);
+      expect(taxa.get("abundance")).to.equal(["3-5","6-10","11-20","> 20","> 20","1-2"][index]);
+      expect(taxa.get("taxonId"),"taxonId").to.equal(taxonId);
       expect(taxa.get("taxonPhotoPath")).to.equal(`/taxon/photo/${taxonId-1}`);
-      expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
+      if ( taxonId !== 66 && taxonId !== 99 ) {
+        expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
+      }
+      index++;
     });
+
+    expect(rowCount(),"the old copy should be removed").to.equal(1);
+
   });
 })
