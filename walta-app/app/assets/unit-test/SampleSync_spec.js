@@ -46,7 +46,7 @@ function clearMockSampleData() {
 }
 
 describe.only("SampleSync", function () {
-    it.only("should resize photos if they are too large", async function () {
+    it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
         let samples = Alloy.Collections.instance("sample");
@@ -69,7 +69,7 @@ describe.only("SampleSync", function () {
             .resolveWith({id:2})
             .resolveWith({id:3});
 
-        await createSampleUploader(0).uploadNextSample(samples);
+        await createSampleUploader().uploadNextSample(samples);
         expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(1);
         expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(1);
         function expectPhotoOptimised(path) {
@@ -106,10 +106,12 @@ describe.only("SampleSync", function () {
         it('should upload new samples to server',async function() {
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                 .resolveWith({id:123});
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+                .resolveWith({id:1});
             
-            let sample = makeSampleDataData();
+            let sample = makeSampleData();
             sample.save(); 
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             sample.clear();
             sample.loadByServerId(123);
             expect(sample).to.be.ok;
@@ -127,7 +129,7 @@ describe.only("SampleSync", function () {
             // updated on next tick do we need to call _.defer
             _.defer( () => {
                 sample.save();
-                SampleSync.uploadSamples()
+                createSampleUploader().uploadSamples()
                     .then( () => {
                         expect(Alloy.Globals.CerdiApi.updateSampleById.callCount).to.equal(1);
                         expect(Alloy.Globals.CerdiApi.updateSampleById.calls[0].args[1].waterbody_name).to.equal("updated");
@@ -142,7 +144,7 @@ describe.only("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(1);
             expect(Alloy.Globals.CerdiApi.submitSitePhoto.calls[0].args[1]).to.contain("site.jpg");
 
@@ -159,7 +161,7 @@ describe.only("SampleSync", function () {
                 .resolveWith({id:2});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(2);
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.calls[0].args[2]).to.contain("taxon.jpg");
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.calls[1].args[2]).to.contain("taxon2.jpg");
@@ -171,7 +173,7 @@ describe.only("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             sample.loadByServerId(666);
             sample.set("updatedAt", moment().add(1, "days").valueOf());
             sample.save();
@@ -179,7 +181,7 @@ describe.only("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"updateSampleById")
                 .resolveWith({id:666});
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(0);
 
         });
@@ -195,7 +197,7 @@ describe.only("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
                    .resolveWith({id:1})
                    .resolveWith({id:2});
-            await SampleSync.uploadSamples();    
+            await createSampleUploader().uploadSamples();    
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(2);
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
                 .resolveWith({id:1})
@@ -205,7 +207,7 @@ describe.only("SampleSync", function () {
             sample.loadByServerId(666);
             sample.set("updatedAt", moment().add(1, "days").valueOf());
             sample.save();
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(0);
         });
         it('should upload failed site photos uploads again',function() {
@@ -215,9 +217,9 @@ describe.only("SampleSync", function () {
             sample.save(); 
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
-            return SampleSync.uploadSamples()
+            return createSampleUploader().uploadSamples()
                 .finally( () => expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(1) )
-                .finally( () => SampleSync.uploadSamples() )
+                .finally( () => createSampleUploader().uploadSamples() )
                 .finally( () => expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(2) );
         });
         it('should upload failed taxon photos uploads again',function() {
@@ -233,9 +235,9 @@ describe.only("SampleSync", function () {
             
             // FIXME: currently fails on the the first photo attempt doesn't try again -
             // better to try each photo or sample individually and keep trying in a round robin fashion
-            return SampleSync.uploadSamples()
+            return createSampleUploader().uploadSamples()
                 .finally( () => expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(2) )
-                .finally( () => SampleSync.uploadSamples() )
+                .finally( () => createSampleUploader().uploadSamples() )
                 .finally( () => expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(4) );
         });
         it('should upload new photo if taxon photo is changed', async function() {
@@ -248,11 +250,11 @@ describe.only("SampleSync", function () {
                 .resolveWith({id:2});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(1);
             taxon.setPhoto(makeTestPhoto("taxon.jpg"));
             taxon.save();
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(2);
 
         });
@@ -262,11 +264,11 @@ describe.only("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             // change photo
             sample.setSitePhoto(makeTestPhoto("site.jpg"));
             sample.save();
-            await SampleSync.uploadSamples();
+            await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(2);
         });
     });
