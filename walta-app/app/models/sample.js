@@ -315,28 +315,29 @@ exports.definition = {
 				};
 				// In order to fix corrupted data - if the server has a null set
 				// then do not overwrite existing data. (Only needed for attrbiutes with two words)
-				if ( sample.habitat.sand_or_silt ) {
-					updatedFields.sandOrSilt = sample.habitat.sand_or_silt;
-				}
-				if ( sample.habitat.leaf_packs ) {
-					updatedFields.leafPacks=sample.habitat.leaf_packs;
-				}
-			
-				if ( sample.habitat.aquatic_plants ) {
-					updatedFields.aquaticPlants=sample.habitat.aquatic_plants;
-				}
-
-				if ( sample.habitat.open_water ) {
-					updatedFields.openWater=sample.habitat.open_water;
-				}
-				
-				if ( sample.habitat.edge_plants ) {
-					updatedFields.edgePlants=sample.habitat.edge_plants;
+				let needToReupload = false;
+				[ ["sand_or_silt", "sandOrSilt"], 
+				  ["leaf_packs", "leafPacks"], 
+				  ["aquatic_plants", "aquaticPlants"], 
+				  ["open_water", "openWater"], 
+				  ["edge_plants", "edgePlants"] ]
+					.forEach( ([cerdiField, waltaField]) => {
+						let value = sample.habitat[cerdiField];
+						if ( _.isNull(value) ) {
+							needToReupload = true;
+						} else {
+							updatedFields[waltaField] = value;
+						}
+					});
+				if ( needToReupload ) {
+					// plus 1 to avoid serverSyncTime ever equalling
+					// updatedAt; this ensures an upload will be
+					// scheduled.
+					this.set("updatedAt", moment().valueOf() + 1);
 				}
 
 				if ( Object.keys(updatedFields).length > 0 ) {
-					this.set("updatedAt", moment().valueOf());
-					this.set(updatedFields, {ignore:true});
+					this.set(updatedFields);
 				}
 				
 				// needs a sampleId before added taxa

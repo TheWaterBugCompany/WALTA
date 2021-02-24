@@ -119,23 +119,20 @@ describe.only("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.submitSample.callCount).to.equal(1);
             expect(Alloy.Globals.CerdiApi.submitSample.calls[0].args[0].waterbody_name).to.equal("test water body name");
         });
-        it('should upload modified samples to the server', function(done) {
+        it('should upload modified samples to the server', async function() {
             simple.mock(Alloy.Globals.CerdiApi,"updateSampleById")
                 .resolveWith({id:123});
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+                .resolveWith({id:1});
             let sample = makeSampleData();
             sample.set("serverSyncTime", moment("2020-01-01").valueOf());
             sample.set("serverSampleId", 123);
-            sample.set("waterbodyName", "updated"); // should set updatedAt field
-            // updated on next tick do we need to call _.defer
-            _.defer( () => {
-                sample.save();
-                createSampleUploader().uploadSamples()
-                    .then( () => {
-                        expect(Alloy.Globals.CerdiApi.updateSampleById.callCount).to.equal(1);
-                        expect(Alloy.Globals.CerdiApi.updateSampleById.calls[0].args[1].waterbody_name).to.equal("updated");
-                        done();
-                    });
-            });
+            sample.set("waterbodyName", "updated"); 
+            sample.set("updatedAt", moment().valueOf());
+            sample.save();
+            await  createSampleUploader().uploadSamples();
+            expect(Alloy.Globals.CerdiApi.updateSampleById.callCount).to.equal(1);
+            expect(Alloy.Globals.CerdiApi.updateSampleById.calls[0].args[1].waterbody_name).to.equal("updated");
         });
        
         it('should upload new site photos', async function() {
@@ -245,6 +242,8 @@ describe.only("SampleSync", function () {
             sample.save(); 
             let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+                .resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
                 .resolveWith({id:1})
                 .resolveWith({id:2});
@@ -254,6 +253,7 @@ describe.only("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(1);
             taxon.setPhoto(makeTestPhoto("taxon.jpg"));
             taxon.save();
+            sample.set("updatedAt",moment().valueOf());
             await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(2);
 
@@ -414,14 +414,13 @@ describe.only("SampleSync", function () {
         it('should NOT update existing samples if the update on the server happened BEFORE our lastest upload', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData()]);
-            let samples = Alloy.Collections.instance("sample");
-            let taxa = Alloy.Collections.instance("taxa");
 
             // create existing sample to update
-            let sample = Alloy.Models.instance("sample");
-            sample.set("serverSampleId", 473);
-            sample.set("serverSyncTime", moment().add(1, "days").valueOf()); // in the future 
-            sample.set("waterbodyName", "existing waterbody name");
+            let sample = makeSampleData({
+                serverSampleId: 473,
+                serverSyncTime: moment().add(1, "days").valueOf(), // in the future 
+                waterbodyName: "existing waterbody name"
+            })
             sample.save();
 
             await SampleSync.downloadSamples();
@@ -541,7 +540,7 @@ describe.only("SampleSync", function () {
         // Due to protocol error early on it is possible for habitat data to be incorrectly blank
         // on the server, if somehow we download corrupt habitat data, make sure any correct data
         // is merged into the new record and the updatedAt is correctly set to re-trigger an upload.
-        it('should not overwrite habitat with blanks', function(done) {
+        it('should not overwrite habitat with blanks', async function() {
             let sampleData = makeCerdiSampleData({
                 habitat: {
                     boulder: 5,
@@ -557,42 +556,39 @@ describe.only("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([sampleData]);
             // create existing sample to update
-            let sample = Alloy.Models.instance("sample");
-            sample.set("serverSampleId", 473);
-            sample.set("serverSyncTime", 1); // a long time ago
-            sample.set("waterbodyName", "existing waterbody name");
-            sample.set("sandOrSilt", 7);
-            sample.set("leafPacks", 8);
-            sample.set("aquaticPlants", 10);
-            sample.set("openWater", 11);
-            sample.set("edgePlants", 12);
-            sample.set("updatedAt", moment().valueOf()); // updated but NOT uploaded....
+            let sample = makeSampleData({
+                serverSampleId:  473,
+                serverSyncTime:  1, // a long time ago
+                waterbodyName:  "existing waterbody name",
+                sandOrSilt:  7,
+                leafPacks:  8,
+                aquaticPlants:  10,
+                openWater:  11,
+                edgePlants:  12,
+                updatedAt:  moment().valueOf(), // updated but NOT uploaded....
+            });
             sample.save();
 
-            SampleSync.downloadSamples()
-                .then( () => {
+            await SampleSync.downloadSamples();
 
-                    // load the updated sample - we are just testing the update is applied here
-                    // assuming the same code path is followed for adding a new sample
-                    sample = Alloy.Models.instance("sample");
-                    sample.loadByServerId(473);
-                    expect(sample.get("serverSampleId")).to.equal(473);
-                    expect(sample.get("waterbodyName")).to.equal("test waterbody name");
-                    expect(sample.get("boulder")).to.equal(5);
-                    expect(sample.get("gravel")).to.equal(6);
-                    expect(sample.get("sandOrSilt")).to.equal(7);
-                    expect(sample.get("leafPacks")).to.equal(8);
-                    expect(sample.get("wood")).to.equal(9);
-                    expect(sample.get("aquaticPlants")).to.equal(10);
-                    expect(sample.get("openWater")).to.equal(11);
-                    expect(sample.get("edgePlants")).to.equal(12);
-                    // updatedAt is set with a defer so we need to test for it
-                    // afterwards
-                    _.defer( () => {
-                        expect(sample.get("updatedAt")).to.be.above(sample.get("serverSyncTime"));
-                        done();
-                    });
-                });
+            // load the updated sample - we are just testing the update is applied here
+            // assuming the same code path is followed for adding a new sample
+            sample = Alloy.createModel("sample");
+            sample.loadByServerId(473);
+            expect(sample.get("serverSampleId")).to.equal(473);
+            expect(sample.get("waterbodyName")).to.equal("test waterbody name");
+            expect(sample.get("boulder")).to.equal(5);
+            expect(sample.get("gravel")).to.equal(6);
+            expect(sample.get("sandOrSilt")).to.equal(7);
+            expect(sample.get("leafPacks")).to.equal(8);
+            expect(sample.get("wood")).to.equal(9);
+            expect(sample.get("aquaticPlants")).to.equal(10);
+            expect(sample.get("openWater")).to.equal(11);
+            expect(sample.get("edgePlants")).to.equal(12);
+
+            // This should be true to indicate data needs to be reuploaded
+            // after the blanks have been filled in.
+            expect(sample.get("updatedAt")).to.be.above(sample.get("serverSyncTime"));
         });
         /* not possible photos to change on server currently.. 
         it.only('should update site photo if changed on server');
