@@ -84,7 +84,7 @@ describe("Taxa model", function() {
     expect( taxon.get("taxonPhotoPath") ).to.include("taxon_667_1");
   });
 });
-describe.only("Sample collection, model including taxa", function() {
+describe("Sample collection, model including taxa", function() {
   var initialSampleId;
 
   function verifyTaxa(taxas,sampleId) {

@@ -24,6 +24,7 @@ var { use, expect } = require("unit-test/lib/chai");
 var { makeTestPhoto, removeDatabase, resetSample, clearDatabase } = require("unit-test/util/TestUtils");
 var { loadPhoto, needsOptimising } = require('util/PhotoUtils');
 var { createCerdiApi } = require("unit-test/mocks/MockCerdiApi");
+var { createSampleUploader } = require("logic/SampleUploader");
 
 use(require('unit-test/lib/chai-date-string'));
 
@@ -44,8 +45,8 @@ function clearMockSampleData() {
     Alloy.Models.taxa = null;
 }
 
-describe("SampleSync", function () {
-    it("should resize photos if they are too large", async function () {
+describe.only("SampleSync", function () {
+    it.only("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
         let samples = Alloy.Collections.instance("sample");
@@ -68,7 +69,7 @@ describe("SampleSync", function () {
             .resolveWith({id:2})
             .resolveWith({id:3});
 
-        await SampleSync.uploadNextSample(samples);
+        await createSampleUploader(0).uploadNextSample(samples);
         expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(1);
         expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(1);
         function expectPhotoOptimised(path) {
