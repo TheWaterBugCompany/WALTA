@@ -2,6 +2,7 @@ var Crashlytics = require('util/Crashlytics');
 var Topics = require('ui/Topics');
 var moment = require("lib/moment");
 var { delayedPromise } = require("util/PromiseUtils");
+var { errorHandler, formatError } = require("util/ErrorUtils");
 
 var { createSampleUploader } = require("logic/SampleUploader");
 var SYNC_INTERVAL = 1000*60*5; // 5 minutes
@@ -82,15 +83,7 @@ function startSynchronise() {
         }
         return Promise.resolve();
     }  
-    function formatError(err) {
-        let message = "<unknown error>";
-        if ( err.error ) {
-            message = err.error;
-        } else if ( err.message ) {
-            message = err.message;
-        }
-        return message;
-    }
+   
 
     function handleError(err) {
         debug(`Error synchronising ${formatError(err)}`)
@@ -113,7 +106,7 @@ function downloadSamples(delay) {
     // call downloadSamples() before calling uploadSamples()
     function needsUpdate(serverSample,sample) {
         if ( ! sample.get("serverSampleId") ) {
-            return true;
+            return false;
         } 
 
         let serverSyncTime = sample.get("serverSyncTime");
@@ -169,12 +162,12 @@ function downloadSamples(delay) {
     }
     
     function downloadCreaturePhoto(taxon,serverSample) {
+        let taxonId = taxon.get("taxonId");
+        let taxonPhotoPath = `taxon_download_${taxonId}`;
+        debug(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
         return Promise.resolve()
-            .then( () => {
-                let taxonId = taxon.get("taxonId");
-                let taxonPhotoPath = `taxon_download_${taxonId}`;
-                debug(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
-                return Alloy.Globals.CerdiApi.retrieveCreaturePhoto(serverSample.id,taxonId,taxonPhotoPath)
+            .then( () =>  
+                Alloy.Globals.CerdiApi.retrieveCreaturePhoto(serverSample.id,taxonId,taxonPhotoPath)
                     .then( photo => {
                         if ( photo ) {
                             taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
@@ -186,13 +179,25 @@ function downloadSamples(delay) {
                             taxon.save();
                         }
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
-                    })
-                    .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`));
-                });
+                    }))
+                .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`));
     }
 
     function downloadCreaturePhotos([sample,serverSample]) {
         let taxa = sample.loadTaxa();
+
+        // FIXME: This assumes all taxa without a serverCreaturePhotoId are
+        // uploaded photos - this isn't always the case, if a sample has been edited
+        // then any new taxons will have blank server ids, this causes an
+        // unecessary request, which is catch by the catch() so in practice it
+        // isn't problem but it would save some API calls if these weren't attempted.
+
+        // one possiblity would be to only attempt photo downloads if a sample needs an update
+        // but don't do this because it is posibile for photo's not to be downloaded due to errors
+        // and the serverSyncTime is updated before downloading photos anyway.
+
+        // maybe we need to a taxon uploadStatus field to indicate if the taxon is pending photo
+        // download or has been not been uploaded yet?
         let pendingTaxaPhotos = taxa.filter( t => _.isNull(t.get('serverCreaturePhotoId')) );
         return _.reduce( pendingTaxaPhotos,  
             (queue,t) => queue.then( () => delayedPromise( downloadCreaturePhoto(t,serverSample),delay)),
