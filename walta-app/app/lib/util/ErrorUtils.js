@@ -1,7 +1,15 @@
 var Crashlytics = require('util/Crashlytics');
 var log = Crashlytics.log;
 var debug = m => Ti.API.info(m);
-
+function formatError(err) {
+    let message = "<unknown error>";
+    if ( err.error ) {
+        message = err.error;
+    } else if ( err.message ) {
+        message = err.message;
+    }
+    return message;
+}
 function errorHandler( sample ) {
     return (err) => {
         if ( err.message === "The given data was invalid.") {
@@ -13,3 +21,4 @@ function errorHandler( sample ) {
     };
 }
 exports.errorHandler = errorHandler;
+exports.formatError = formatError;
