@@ -106,7 +106,7 @@ function downloadSamples(delay) {
     // call downloadSamples() before calling uploadSamples()
     function needsUpdate(serverSample,sample) {
         if ( ! sample.get("serverSampleId") ) {
-            return false;
+            return true;
         } 
 
         let serverSyncTime = sample.get("serverSyncTime");
