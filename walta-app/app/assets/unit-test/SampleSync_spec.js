@@ -617,6 +617,7 @@ describe("SampleSync", function () {
         
     }); 
     /* tests that should be implemented */
+    it('should download preview sample history from server into empty database');
     it('should not re download any taxon photos that have serverCreaturePhotoId set to 0');
     it('should not re download any taxon photos that have serverCreaturePhotoId set to NULL');
     it('should not re download taxon photos if a photo is updated and no longer has a serverCreaturePhotoId');
