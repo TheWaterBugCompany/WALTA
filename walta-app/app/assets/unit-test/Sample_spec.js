@@ -94,7 +94,7 @@ describe("Sample collection, model including taxa", function() {
       expect(taxa.get("sampleId")).to.equal(sampleId);
       expect(taxa.get("abundance")).to.equal(["1-2","3-5","6-10","11-20","> 20"][taxonId-1]);
       expect(taxa.get("taxonId")).to.equal(taxonId);
-      expect(taxa.get("taxonPhotoPath")).to.equal(`/taxon/photo/${taxonId-1}`);
+      expect(taxa.get("taxonPhotoPath")).to.include(`taxon-${taxonId-1}.jpg`);
       expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
     });
   }
@@ -108,12 +108,11 @@ describe("Sample collection, model including taxa", function() {
       lastError: "Test error",
       lat: -42.0,
       lng: 135.0,
-      accuracy: 100.0,
+      accuracy: "100.0",
       surveyType: Sample.SURVEY_DETAILED,
       waterbodyType: Sample.WATERBODY_LAKE,
       waterbodyName: "Test Waterbody",
       nearbyFeature: "near the office intersection cupboard",
-      sitePhotoPath: "/photo/path",
       serverSyncTime: moment().valueOf() 
     });
    
@@ -126,7 +125,7 @@ describe("Sample collection, model including taxa", function() {
           sampleId:  Alloy.Models.sample.get("sampleId"),
           taxonId: taxonId, 
           abundance: ["1-2","3-5","6-10","11-20","> 20"][taxonId-1],
-          taxonPhotoPath: `/taxon/photo/${taxonId-1}`,
+          taxonPhotoPath: makeTestPhoto(`taxon-${taxonId-1}.jpg`),
           serverCreaturePhotoId: taxonId+100
           });
         taxon.save();
@@ -206,7 +205,7 @@ describe("Sample collection, model including taxa", function() {
       expect( sample.get("dateCompleted")).to.be.a.dateString();
       expect( parseFloat(sample.get("lat")) ).to.equal(-42);
       expect( parseFloat(sample.get("lng")) ).to.equal(135);
-      expect( sample.get("accuracy") ).to.equal('100');
+      expect( sample.get("accuracy") ).to.equal('100.0');
       expect( sample.get("surveyType") ).to.equal(Sample.SURVEY_DETAILED);
       expect( sample.get("waterbodyType") ).to.equal(Sample.WATERBODY_LAKE);
       expect( sample.get("waterbodyName") ).to.equal("Test Waterbody");
@@ -219,7 +218,7 @@ describe("Sample collection, model including taxa", function() {
       expect( sample.get("aquaticPlants") ).to.equal(12);
       expect( sample.get("openWater") ).to.equal(11);
       expect( sample.get("edgePlants") ).to.equal(10);
-      expect( sample.get("sitePhotoPath") ).to.equal("/photo/path");
+      expect( sample.get("sitePhotoPath") ).to.include("sitephoto.jpg");
       expect( sample.get("serverSyncTime") ).to.be.ok;
     });
     it('should persist all the taxons', function() {
@@ -410,16 +409,14 @@ describe("Sample collection, model including taxa", function() {
       coll.fetch({query:"SELECT * FROM sample WHERE serverSampleId = 99"});
       return coll.length;
     }
-
     Alloy.Models.sample.set('serverSampleId', 99 );
-    
+  
     // need to set dateCompleted to ensure duplicate is created.
     // in actual usage 
-    let sample = Alloy.Models.sample;
-    sample.set("dateCompleted", moment.valueOf());
-    sample.save();
-
-    let tempSample = sample.createTemporaryForEdit();
+    Alloy.Models.sample.set("dateCompleted", moment().valueOf());
+    Alloy.Models.sample.save();
+    
+    let tempSample = Alloy.Models.sample.createTemporaryForEdit();
     let tempTaxa = tempSample.loadTaxa();
     tempSample.set("waterbodyName", "edited");
 
@@ -431,14 +428,14 @@ describe("Sample collection, model including taxa", function() {
       sampleId:  tempSample.get("sampleId"),
       taxonId: 99, 
       abundance: "> 20",
-      taxonPhotoPath: `/taxon/photo/98`
+      taxonPhotoPath: makeTestPhoto(`taxon-98.jpg`)
       }).save();
 
     Alloy.createModel("taxa",{ 
       sampleId:  tempSample.get("sampleId"),
       taxonId: 66, 
       abundance: "1-2",
-      taxonPhotoPath: `/taxon/photo/65`
+      taxonPhotoPath: makeTestPhoto(`taxon-65.jpg`)
       }).save();
 
     tempSample.save();
@@ -468,7 +465,7 @@ describe("Sample collection, model including taxa", function() {
       expect(taxa.get("sampleId")).to.equal(sampleId);
       expect(taxa.get("abundance")).to.equal(["3-5","6-10","11-20","> 20","> 20","1-2"][index]);
       expect(taxa.get("taxonId"),"taxonId").to.equal(taxonId);
-      expect(taxa.get("taxonPhotoPath")).to.equal(`/taxon/photo/${taxonId-1}`);
+      expect(taxa.get("taxonPhotoPath")).to.include(`taxon-${taxonId-1}.jpg`);
       if ( taxonId !== 66 && taxonId !== 99 ) {
         expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
       }

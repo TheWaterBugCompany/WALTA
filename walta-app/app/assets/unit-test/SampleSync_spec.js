@@ -622,7 +622,8 @@ describe("SampleSync", function () {
     it('should not re download any taxon photos that have serverCreaturePhotoId set to NULL');
     it('should not re download taxon photos if a photo is updated and no longer has a serverCreaturePhotoId');
     it('should not re download site photo if a photo is updated and no longer has a serverPhotoId');
-    it.only('should not attempt to download photos that do not exist on the server', async function() {
+    it('should not attempt to download photos that do not exist on the server', async function() {
+        this.timeout(20000);
         // example exists and has been uploaded
         // sample is edited, a taxon has been added 
         // samples are then uploaded - this triggers a download
@@ -685,12 +686,12 @@ describe("SampleSync", function () {
             sampleId:  tempSample.get("sampleId"),
             taxonId: 99, 
             abundance: "> 20",
-            taxonPhotoPath: `/taxon/photo/98`
+            taxonPhotoPath: makeTestPhoto("taxon-98.jpg")
             }).save();
 
         // sample is submitted
         tempSample.saveCurrentSample();
-        await SampleSync.forceUpload();
+        await SampleSync.forceUpload({noschedule:true});
 
         // should upload sample and new photo
         expect(Alloy.Globals.CerdiApi.updateSampleById.callCount).to.equal(1);

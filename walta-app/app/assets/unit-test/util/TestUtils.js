@@ -239,11 +239,14 @@ function clickButton( button ) {
 function makeTestPhoto(name) {
 	let photo = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, name);
 	let mockPhoto = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/unit-test/resources/site-mock.jpg");
+
 	if ( ! mockPhoto.exists() ) {
 		throw new Error(`${mockPhoto.nativePath} doesn't exist!`);
 	}
 	else {
-
+		if ( photo.exists() ) {
+			photo.deleteFile();
+		}
 		if ( ! mockPhoto.copy(photo.nativePath) ) {
 			console.log(`error copying file to: ${photo.nativePath}`);
 		} else if ( ! photo.exists() ) {
