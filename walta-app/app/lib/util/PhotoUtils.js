@@ -1,5 +1,5 @@
 var Crashlytics = require('util/Crashlytics');
-var info = Ti.API.info;
+var info = function(mess) { Ti.API.info(mess); }
 var log = Crashlytics.log;
 function absolutePath(path) {
     if ( path.startsWith("file:///") ) {

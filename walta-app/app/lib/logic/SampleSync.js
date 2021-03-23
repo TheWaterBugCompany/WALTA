@@ -58,7 +58,7 @@ function forceUpload() {
 
 
 
-function startSynchronise() {
+function startSynchronise(options) {
     let delay = 2500;
     let sampleUploader = createSampleUploader(delay);
     debug("Starting sample syncronisation process...");
@@ -72,7 +72,11 @@ function startSynchronise() {
     }
     function rescheduleSync() {
         isSyncing = false;
-        timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
+        if ( options && options.noschedule ) {
+            // skip scheduleing (primarily for tests)
+        } else {
+            timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
+        }
         return Promise.resolve();
     }
 

@@ -3,7 +3,7 @@ const debug = require('debug')('thecodesharman:unittest'),
 	join = path.join,
 	fs = require('fs')
 
-exports.cliVersion = '>=5.2';
+exports.cliVersion = '>=3.2';
 
 exports.init = function (logger, config, cli) {
 
@@ -19,9 +19,9 @@ exports.init = function (logger, config, cli) {
 		finished(null, data);
 	}
 
-	cli.addHook('build.android.config', doConfig);
-	cli.addHook('build.ios.config', doConfig);
-	cli.addHook('build.windows.config', doConfig);
+	cli.on('build.android.config', doConfig);
+	cli.on('build.ios.config', doConfig);
+	cli.on('build.windows.config', doConfig);
 
 	function patchLiveViewJs(build, finished) {
 		if (cli.argv.liveview) {
@@ -50,10 +50,9 @@ exports.init = function (logger, config, cli) {
 		}
 		finished(null, data);
 	}
-
-	cli.addHook('build.ios.copyResource', { pre: copyResource, priority: 5000 });
-	cli.addHook('build.android.copyResource', { pre: copyResource, priority: 5000  });
-	cli.addHook('build.windows.copyResource', { pre: copyResource , priority: 5000 });
-	cli.addHook('build.pre.compile', { post: patchLiveViewJs, priority: 5000 });
+	cli.on('build.ios.copyResource', { pre: copyResource, priority: 5000 });
+	cli.on('build.android.copyResource', { pre: copyResource, priority: 5000  });
+	cli.on('build.windows.copyResource', { pre: copyResource , priority: 5000 });
+	cli.on('build.pre.compile', { post: patchLiveViewJs, priority: 5000 });
 
 };

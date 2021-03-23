@@ -112,14 +112,25 @@ describe("Habitat controller", function() {
   it('should enable all the edit fields', function(done) {
     ctl = Alloy.createController("Habitat");
     controllerOpenTest( ctl, () => checkTestResult( done, function() {
-      expect( ctl.leaves.editable ).to.be.undefined;
-      expect( ctl.plants.editable ).to.be.undefined;
-      expect( ctl.wood.editable ).to.be.undefined;
-      expect( ctl.edgeplants.editable ).to.be.undefined;
-      expect( ctl.rocks.editable ).to.be.undefined;
-      expect( ctl.gravel.editable ).to.be.undefined;
-      expect( ctl.sandOrSilt.editable ).to.be.undefined;
-      expect( ctl.openwater.editable ).to.be.undefined;
+      if ( Ti.Platform.osname === 'android') {
+        expect( ctl.leaves.editable ).to.be.undefined;
+        expect( ctl.plants.editable ).to.be.undefined;
+        expect( ctl.wood.editable ).to.be.undefined;
+        expect( ctl.edgeplants.editable ).to.be.undefined;
+        expect( ctl.rocks.editable ).to.be.undefined;
+        expect( ctl.gravel.editable ).to.be.undefined;
+        expect( ctl.sandOrSilt.editable ).to.be.undefined;
+        expect( ctl.openwater.editable ).to.be.undefined;
+      } else {
+        expect( ctl.leaves.editable ).to.be.true;
+        expect( ctl.plants.editable ).to.be.true;
+        expect( ctl.wood.editable ).to.be.true;
+        expect( ctl.edgeplants.editable ).to.be.true;
+        expect( ctl.rocks.editable ).to.be.true;
+        expect( ctl.gravel.editable ).to.be.true;
+        expect( ctl.sandOrSilt.editable ).to.be.true;
+        expect( ctl.openwater.editable ).to.be.true;
+      }
     } ) );
   });
   it('should disable all the edit fields in readonly mode', function(done) {
