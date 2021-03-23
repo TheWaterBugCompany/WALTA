@@ -13,11 +13,11 @@ if [ ! -d $ASSET_DIR ]; then
 fi
 cp ./node_modules/chai/chai.js $SPECS_LIB_DIR/chai.js
 cp ./node_modules/chai-date-string/lib/chai-date-string.js $SPECS_LIB_DIR/chai-date-string.js
-cp ./node_modules/mocha/mocha.js $SPECS_LIB_DIR/mocha.js
-cp ./node_modules/simple-mock/index.js $SPECS_LIB_DIR/simple-mock.js
+cp ./node_modules/simple-mock/index.js $SPECS_LIB_DIR/simple-mock.jss
 cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
 cp -rf ./node_modules/leaflet/dist/* $ASSET_DIR/leaflet
 PATH=./node_modules/.bin:$PATH
 ti config -a paths.hooks ./plugins/unittest/1.0/hooks
 # not needed in 8 GA: liveview install clihook
 alloy install plugin walta-app
+npx webpack

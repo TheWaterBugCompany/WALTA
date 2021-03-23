@@ -1,7 +1,14 @@
 {
-    "folders": [
-        {
-            "path": "."
-        }
-    ]
+	"folders": [
+		{
+			"path": "walta-app"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../promise-test/promisetest"
+		}
+	],
+	"settings": {}
 }
