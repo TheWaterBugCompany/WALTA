@@ -38,7 +38,7 @@
     "images": "^3.2.3",
     "leaflet": "^1.5.1",
     "liveview": "^1.4.5",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "looks-same": "^7.2.3",
     "mocha": "^8.3.1",
     "moment": "^2.22.2",
