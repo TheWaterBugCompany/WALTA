@@ -76,6 +76,23 @@ process.listeners = function(e) {
   return [];
 };
 
+/* This is a god awful hack to fix an error where
+   run() is undefined error occurs.... exploiting the fact
+   that Titanium js runtimes function are all global !!
+   
+   I presume that somewhere in Mocha the global variable
+   named "run" is being set to undefined as this is causing
+   breakage.
+
+   Oddly it only causes an error on iOS.
+   Perhaps because Android js functions don't use a global "run" function.
+   */
+   var runFunction = global.run;
+   global.runner = function (id) {
+     return function () {
+       runFunction(id);
+     };
+   };
 
 /**
  * Expose the process shim.

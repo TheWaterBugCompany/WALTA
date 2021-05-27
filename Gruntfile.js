@@ -19,6 +19,7 @@ module.exports = function(grunt) {
     const PROFILE = process.env.PROFILE || "20804088-396a-4aae-b7e3-5d6f56510a6a";
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "19875388-d751-4d39-9c07-431cf5ac84dd";
     const PROFILE_DEV = "c1235ca3-08c2-48db-b44c-b318d99f0b06";
+    const DEVICE_ID="a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
     
     const WATERBUG_APPID = {
       "android": 59235,
@@ -97,7 +98,7 @@ module.exports = function(grunt) {
         if ( platform === "android" ) {
           args.push( "--build-only","--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
         } else if ( platform === "ios" ){
-          args.push( "--build-only","--deploy-type production", "--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+          args.push( "--build-only","--deploy-type production", `--device-id ${DEVICE_ID}`,"--target dist-adhoc", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }
@@ -258,7 +259,7 @@ module.exports = function(grunt) {
           },
 
           clean_dist: {
-            command: 'rm -v ./builds/{release,debug,test,unit-test,preview}/*.{apk,ipa,aab}',
+            command: 'rm -r ./builds/{release,debug,test,unit-test,preview}/*.{apk,ipa,aab,app}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "false",
             options: {

@@ -28,5 +28,4 @@ builds/**/*.log
 builds/**/*.plist
 builds/**
 mock-server/rest/*/*/*/mock/response.txt
-walta-app/app/app-config.production.json
-walta-app/app/app-config.test.json
+walta-app/app/app-config*
