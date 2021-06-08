@@ -220,26 +220,27 @@ describe("SiteDetails controller", function() {
         } );
     }); 
     
-    it('should have editable fields', function(done) {   
+    it('should have editable fields', async function() {   
         ctl = Alloy.createController("SiteDetails");
-        controllerOpenTest( ctl, function() {
-            expect( ctl.surveyLevelSelect.isDisabled() ).to.be.false;
-            expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.false;
+        await controllerOpenTest( ctl );
+        expect( ctl.surveyLevelSelect.isDisabled() ).to.be.false;
+        expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.false;
+        if (OS_ANDROID) {
             expect( ctl.waterbodyNameField.editable ).to.be.undefined;
             expect( ctl.nearByFeatureField.editable ).to.be.undefined;
-            done();
-        } );
+        } else {
+            expect( ctl.waterbodyNameField.editable ).to.be.true;
+            expect( ctl.nearByFeatureField.editable ).to.be.true;
+        }
     });
 
-    it('should NOT have editable fields in read only mode', function(done) {     
+    it('should NOT have editable fields in read only mode', async function() {     
         ctl = Alloy.createController("SiteDetails", { readonly: true });
-        controllerOpenTest( ctl, function() {
-            expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;
-            expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.true;
-            expect( ctl.waterbodyNameField.editable ).to.be.false;
-            expect( ctl.nearByFeatureField.editable ).to.be.false;
-            done();
-        } );
+        await controllerOpenTest( ctl );
+        expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;
+        expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.true;
+        expect( ctl.waterbodyNameField.editable ).to.be.false;
+        expect( ctl.nearByFeatureField.editable ).to.be.false;
     });
 
     it("photo should be selectable", function(done) {

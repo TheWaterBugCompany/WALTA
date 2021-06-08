@@ -62,12 +62,17 @@ function uploadTaxaPhoto(sample,t,delay) {
     function submitCreaturePhoto( sampleId, taxonId, photoPath ) {
         log(`Uploading taxa photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
         return Promise.resolve()
-                .then( () => Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath ) );
+                .then( () => Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath ) )
+                .then( (res) => {
+                    Ti.API.info(`returning from submitCreaturePhoto ${JSON.stringify(res)}`);
+                    return res;
+                });
     }
 
     var taxonId = t.getTaxonId();
     var sampleId = sample.get("serverSampleId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
+    Ti.API.info(`taxonPhotoId = ${taxonPhotoId}`)
     if ( ! taxonPhotoId ) {
         var photoPath = t.getPhoto();
         if ( photoPath ) {
@@ -78,8 +83,8 @@ function uploadTaxaPhoto(sample,t,delay) {
             } 
             return delayedPromise( submitCreaturePhoto(sampleId, taxonId, photoPath ), delay )
                     .then( (res) => {
-                        t.set("serverCreaturePhotoId", res.id);
-                        t.save();
+                        Ti.API.info(`setting serverCreaturePhotoId = ${res.id}`);
+                        t.save({"serverCreaturePhotoId": res.id});
                     })
                     .catch( (err) => {
                         log(`Error when attempting to taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);

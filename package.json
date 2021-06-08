@@ -44,7 +44,7 @@
     "moment": "^2.22.2",
     "nock": "^9.4.0",
     "node-extend": "^0.2.0",
-    "node-ios-device": "^1.9.1",
+    "node-ios-device": "git+https://github.com/appcelerator/node-ios-device.git",
     "node-mock-server": "^0.25.4",
     "npm": "^6.14.6",
     "request": "^2.88.2",
