@@ -12,8 +12,8 @@ function _unitTestGetSource() {
     }
 }
 Module.prototype._getSource = _unitTestGetSource;
-globalScope.__hacked_live_view = true;
-globalScope.__remove_module_from_preview_cache = function(id) {
+global.__hacked_live_view = true;
+global.__remove_module_from_preview_cache = function(id) {
     if ( Module.getCached(id) ) {
         delete Module._cache[id];
     } 

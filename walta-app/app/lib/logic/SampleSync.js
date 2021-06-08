@@ -45,9 +45,9 @@ function init() {
     startSynchronise();
 }
 
-function forceUpload() {
+function forceUpload(options) {
     clearUploadTimer();
-    return startSynchronise();
+    return startSynchronise(options);
 }
 
 
@@ -59,9 +59,9 @@ function forceUpload() {
 
 
 function startSynchronise(options) {
-    let delay = 2500;
+    let delay = (options && !_.isUndefined(options.delay)?options.delay:2500);
     let sampleUploader = createSampleUploader(delay);
-    debug("Starting sample syncronisation process...");
+    debug(`Starting sample syncronisation process... (delay=${delay})`);
     isSyncing = true;
     function checkNetwork() {
         if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
@@ -72,10 +72,10 @@ function startSynchronise(options) {
     }
     function rescheduleSync() {
         isSyncing = false;
-        if ( options && options.noschedule ) {
-            // skip scheduleing (primarily for tests)
+        if ( options && !_.isUndefined(options.noschedule) ) {
+            debug("Not rescheduling sync");
         } else {
-            timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
+           timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
         }
         return Promise.resolve();
     }

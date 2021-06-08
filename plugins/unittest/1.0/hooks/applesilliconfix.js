@@ -8,8 +8,7 @@ exports.cliVersion = '>=3.2';
 exports.init = function (logger, config, cli) {
 	debug("Initializing applesilliconfix...")
 	async function fixBuildParams(data, callback) {
-		debug(`fixBuildParams ${JSON.stringify(data.args[1])}`);
-		data.args[1].push("-destination", "platform=iOS,name=The Code Sharman Test iPhone");
+		data.args[1].push("-destination", "generic/platform=iOS");
 		callback(null, data);
 	}
 
