@@ -405,7 +405,7 @@ describe("Sample collection, model including taxa", function() {
   it('saveCurrentSample should overwrite existing record with temporary record', async function() {
 
     function rowCount() {
-      coll = Alloy.createCollection("sample");
+      var coll = Alloy.createCollection("sample");
       coll.fetch({query:"SELECT * FROM sample WHERE serverSampleId = 99"});
       return coll.length;
     }
@@ -451,7 +451,7 @@ describe("Sample collection, model including taxa", function() {
     tempSample.saveCurrentSample();
 
     // should be updated
-    sample = Alloy.createModel("sample");
+    var sample = Alloy.createModel("sample");
     sample.loadByServerId(99);
     expect( sample.get("waterbodyName")).to.equal("edited"); 
 

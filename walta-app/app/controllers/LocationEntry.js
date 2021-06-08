@@ -57,7 +57,7 @@ function updateLocation( lat, lng, accuracy ) {
         newRegion.latitudeDelta = 0.05;
         newRegion.longitudeDelta = 0.05;
     } 
-    $.mapview.setRegion(newRegion);
+    $.mapview.region = newRegion;
 }
 
 function locateClick() {

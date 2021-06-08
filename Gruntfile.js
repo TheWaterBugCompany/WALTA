@@ -573,16 +573,19 @@ module.exports = function(grunt) {
     
     grunt.registerTask('unit-test', function( ) {
       var platform = grunt.option('platform'); 
+      var preview = grunt.option('preview');
       grunt.task.run(`newer:unit_test_${platform}`);
       grunt.task.run(`install:${platform}:unit-test`);
       if ( grunt.option('liveview') ) {
         grunt.task.run("exec:stop_live_view");
         grunt.task.run(`run:live_view_${platform}`);
+        preview=true;
       } 
+
       let mockServer = createMockCerdiServer();
       mockServer.makeMockSample();
       grunt.task.run(`launch:${platform}:unit-test`);
-      grunt.task.run(`output-logs:${platform}:${grunt.option('preview')?"preview":""}`);
+      grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
       mockServer.shutdown();
 
     } );

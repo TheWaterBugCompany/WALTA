@@ -21,7 +21,7 @@ var moment = require("lib/moment");
 var { makeCerdiSampleData, makeSampleData } = require("unit-test/fixtures/SampleData_fixture.js");
 
 var { use, expect } = require("unit-test/lib/chai");
-var { makeTestPhoto, removeDatabase, resetSample, clearDatabase } = require("unit-test/util/TestUtils");
+var { makeTestPhoto, waitForTick, removeDatabase, resetSample, clearDatabase } = require("unit-test/util/TestUtils");
 var { loadPhoto, needsOptimising } = require('util/PhotoUtils');
 var { createCerdiApi } = require("unit-test/mocks/MockCerdiApi");
 var { createSampleUploader } = require("logic/SampleUploader");
@@ -102,6 +102,9 @@ describe("SampleSync", function () {
         this.beforeEach(function () {
             clearMockSampleData();
         });
+        this.afterEach(function() {
+            simple.restore();
+        })
         
         it('should upload new samples to server',async function() {
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
@@ -189,12 +192,20 @@ describe("SampleSync", function () {
             taxon.save();
             let taxon2 = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
             taxon2.save();
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+                .resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
-                   .resolveWith({id:1})
-                   .resolveWith({id:2});
-            await createSampleUploader().uploadSamples();    
+                .resolveWith({id:1})
+                .resolveWith({id:2});
+            await createSampleUploader().uploadSamples(); 
+            // database saves happen asyncronously this introduces a race condition
+            // so we need to wait for a few millseconds for the database to be saved
+            // otherwise the final serverCreaturePhotoId may not be set yet.
+            // FIXME: Is there a way to recieve an event when the database operations
+            // are complete - waiting for a fixed time is not ideal here.
+            await waitForTick(10)();   
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(2);
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
                 .resolveWith({id:1})
@@ -204,6 +215,7 @@ describe("SampleSync", function () {
             sample.loadByServerId(666);
             sample.set("updatedAt", moment().add(1, "days").valueOf());
             sample.save();
+            Ti.API.info(`Uploading after setting uodatedAt to ${sample.get("updatedAt")}`)
             await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(0);
         });
@@ -623,13 +635,13 @@ describe("SampleSync", function () {
     it('should not re download taxon photos if a photo is updated and no longer has a serverCreaturePhotoId');
     it('should not re download site photo if a photo is updated and no longer has a serverPhotoId');
     it('should not attempt to download photos that do not exist on the server', async function() {
-        this.timeout(20000);
+        clearMockSampleData();
         // example exists and has been uploaded
         // sample is edited, a taxon has been added 
         // samples are then uploaded - this triggers a download
         // the download attempts to find server photos 
         // for new taxons but fails due to these taxons have never been uploaded
-        // worse the error handling freezes the download/upload due to this
+        // this test check tests that the download fialure doesn't freeze the process 
         let creatureMocks = [
             {
                 id: 1948,
@@ -675,7 +687,7 @@ describe("SampleSync", function () {
             .resolveWith({id:2})
             .resolveWith({id:3});
         
-        await SampleSync.downloadSamples();
+        await SampleSync.downloadSamples();   
 
         // at this point we should have a sample in the database
         // simulate adding a new taxon
@@ -688,14 +700,19 @@ describe("SampleSync", function () {
             abundance: "> 20",
             taxonPhotoPath: makeTestPhoto("taxon-98.jpg")
             }).save();
-
         // sample is submitted
         tempSample.saveCurrentSample();
-        await SampleSync.forceUpload({noschedule:true});
+       
+        await waitForTick(10)();
+        // need to fake being logged in or else sync operation fails
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
+               .resolveWith(true);
+        await SampleSync.forceUpload({delay:0, noschedule:true});
+        
 
         // should upload sample and new photo
-        expect(Alloy.Globals.CerdiApi.updateSampleById.callCount).to.equal(1);
-        expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(1);
+        expect(Alloy.Globals.CerdiApi.updateSampleById.callCount,"updateSampleById").to.equal(1);
+        expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount,"submitCreaturePhoto").to.equal(1);
         expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.calls[0].args[1]).to.equal(99);
 
 

@@ -34,7 +34,7 @@ exports.init = function (logger, config, cli) {
 			fs.writeFileSync(liveviewJS,
 				fs.readFileSync(liveviewJS)
 					.toString()
-					.replace(/Module\.patch\(globalScope,/g, fs.readFileSync(payloadJs).toString() + "\n$&" ));
+					.replace(/Module\.patch\(global/g, fs.readFileSync(payloadJs).toString() + "\n$&" ));
 		}
 		finished();
 	}
