@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
+var simple = require("unit-test/lib/simple-mock");
 var Topics = require('ui/Topics');
 var { expect } = require('unit-test/lib/chai');
-var { closeWindow, controllerOpenTest, enterText, clickButton, checkTestResult } = require('unit-test/util/TestUtils');
+var { closeWindow, controllerOpenTest, enterText, clickButton, checkTestResult, waitForTick } = require('unit-test/util/TestUtils');
 var CerdiApi = require("unit-test/mocks/MockCerdiApi");
 
-describe('LogIn controller', function() {
+describe.only('LogIn controller', function() {
 	var login;
 	beforeEach( function() {
         Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
@@ -56,22 +57,18 @@ describe('LogIn controller', function() {
         } );
     });
     
-    it('it should send a change password request to Cerdi Api', function(done) {
-        Alloy.Globals.CerdiApi.forgotPassword = function( email ) {
-            checkTestResult( done, function() {
-                expect( email ).to.equal("test@example.com");
-            });
-            return Promise.resolve();
-        }
+    it.only('it should send a change password request to Cerdi Api', async function() {
+        simple.mock(Alloy.Globals.CerdiApi,"forgotPassword").resolveWith();
         expect( login.forgotPasswordButton.enabled, "reset password should be disabled" ).to.be.false;
-		controllerOpenTest( login, function() {
-            enterText( login.emailTextField, "test@example.com" );
-            enterText( login.passwordTextField, "" );
-            setTimeout( function() {
-                expect( login.forgotPasswordButton.enabled, "reset password should be enabled" ).to.be.true;
-                clickButton( login.forgotPasswordButton );
-            }, 10)
-        } );
+		await controllerOpenTest( login );
+        enterText( login.emailTextField, "test@example.com" );
+        enterText( login.passwordTextField, "" );
+        await waitForTick(10)();
+        expect( login.forgotPasswordButton.enabled, "reset password should be enabled" ).to.be.true;
+        clickButton( login.forgotPasswordButton );
+        await waitForTick(10)();
+        expect(Alloy.Globals.CerdiApi.forgotPassword.callCount).to.equal(1);
+        expect(Alloy.Globals.CerdiApi.forgotPassword.calls[0].args[0]).to.contain("test@example.com");
     });
     
     it('should fire LOGGEDIN event when login is a success', function(done) {
