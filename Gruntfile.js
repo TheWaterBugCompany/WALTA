@@ -269,7 +269,7 @@ module.exports = function(grunt) {
 
           install_android: {
             command: function(build_type) { 
-              return `${process.env.ANDROID_HOME}/platform-tools/adb install ./builds/${build_type}/Waterbug.apk`;
+              return `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb install ./builds/${build_type}/Waterbug.apk`;
             }
           },
 
@@ -282,7 +282,7 @@ module.exports = function(grunt) {
 
           uninstall_android: {
             // see https://stackoverflow.com/questions/4709137/solution-to-install-failed-insufficient-storage-error-on-android
-            command: `${process.env.ANDROID_HOME}/platform-tools/adb uninstall ${APP_ID} && ${process.env.ANDROID_HOME}/platform-tools/adb shell "rm -rf /data/app/${APP_ID}-*"`,
+            command: `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb uninstall ${APP_ID} && ${process.env.ANDROID_SDK_ROOT}/platform-tools/adb shell "rm -rf /data/app/${APP_ID}-*"`,
             exitCode: [ 0, 1, 255 ]
           },
 

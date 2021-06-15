@@ -4,7 +4,7 @@
         <item name="buttonTint">#26849c</item>
     </style>
     <style name="Theme.WaterbugApp" parent="Theme.AppCompat.Light">
-
+        <item name="colorSurface">#FFFFFF</item>
         <item name="android:windowFullscreen">true</item>
 
         <item name="checkboxStyle">@style/Theme.WaterbugApp.Checkbox</item>
