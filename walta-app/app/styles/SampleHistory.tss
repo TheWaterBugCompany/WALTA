@@ -28,7 +28,7 @@
     zIndex: 1
 }
 ".dateCompletedColumn": {
-    width: "160dp",
+    width: "180dp",
     height: Ti.UI.SIZE 
 }
 ".idColumn": {

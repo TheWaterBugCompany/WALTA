@@ -47,6 +47,7 @@ function uploadSitePhoto(sample,delay) {
                     .then( (res) => {
                         sample.set("serverSitePhotoId", res.id);
                         sample.save();
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                         return sample;
                     })
                     .catch( (err) => {
@@ -86,6 +87,7 @@ function uploadTaxaPhoto(sample,t,delay) {
                     .then( (res) => {
                         Ti.API.info(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                     })
                     .catch( (err) => {
                         log(`Error when attempting to taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
@@ -177,7 +179,7 @@ function createSampleUploader(delay) {
             return uploadIfNeeded
                     .then( (sample) => uploadSitePhoto(sample,delay) )
                     .then( (sample) => uploadTaxaPhotos(sample,delay) )
-                    .catch( errorHandler( sample ) );
+                    .catch( errorHandler( sample ) );           
         }
 
     }
