@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 var moment = require("lib/moment");
+
 require("unit-test/lib/ti-mocha");
 var { use, expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
@@ -151,8 +152,7 @@ describe("Sample collection, model including taxa", function() {
       return obj;
     }
   }
-
-	
+  
 	it('should the calculate the correct SIGNAL score ', function() {
     var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "11-20" ) ];
     expect( Alloy.Models.sample.calculateSignalScore(taxa,key) ).to.equal("7.5");
@@ -259,6 +259,7 @@ describe("Sample collection, model including taxa", function() {
     it('should reset the taxa collection', function() {
       expect( Alloy.Collections.taxa.length ).to.equal(0);
     });
+   
     
   });
   context('should serialise correctly', function() {
@@ -475,4 +476,70 @@ describe("Sample collection, model including taxa", function() {
     expect(rowCount(),"the old copy should be removed").to.equal(1);
 
   });
-})
+
+  context("user filtering of sample records", function() {
+    it('should filter out any records not belonging to the current user from upload queue', function() {
+      makeSampleData({ serverUserId: 123, serverSampleId: 666}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 667}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 668}).save();
+      var coll = Alloy.createCollection("sample");
+      coll.loadUploadQueue(224);
+      expect(coll.size()).to.equal(2);
+
+    });
+
+    it('should NOT filter out records that have no user but also not uploaded yet from upload queue', function() {
+      makeSampleData({ serverUserId: 123, serverSampleId: 666}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 667}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 668}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: null}).save();
+      var coll = Alloy.createCollection("sample");
+      coll.loadUploadQueue(224);
+      expect(coll.size()).to.equal(3);
+    });
+
+    it('should filter records to NULL user ids from upload queue', function() {
+      makeSampleData({ serverUserId: 123, serverSampleId: 666}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 667}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 668}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: 669}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: 670}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: 671}).save();
+      var coll = Alloy.createCollection("sample");
+      coll.loadUploadQueue(null);
+      expect(coll.size()).to.equal(4); // including beforeEach added sample
+    });
+
+    it('should filter out any records not belonging to the current user', function() {
+      makeSampleData({ serverUserId: 123, serverSampleId: 666}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 667}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 668}).save();
+      var coll = Alloy.createCollection("sample");
+      coll.loadSampleHistory(224);
+      expect(coll.size()).to.equal(2);
+
+    });
+
+    it('should NOT filter out records that have no user but also not uploaded yet', function() {
+      makeSampleData({ serverUserId: 123, serverSampleId: 666}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 667}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 668}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: null}).save();
+      var coll = Alloy.createCollection("sample");
+      coll.loadSampleHistory(224);
+      expect(coll.size()).to.equal(3);
+    });
+
+    it('should filter records to NULL user ids ', function() {
+      makeSampleData({ serverUserId: 123, serverSampleId: 666}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 667}).save();
+      makeSampleData({ serverUserId: 224, serverSampleId: 668}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: 669}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: 670}).save();
+      makeSampleData({ serverUserId: null, serverSampleId: 671}).save();
+      var coll = Alloy.createCollection("sample");
+      coll.loadSampleHistory(null);
+      expect(coll.size()).to.equal(4); // including beforeEach added sample
+    });
+  });
+});

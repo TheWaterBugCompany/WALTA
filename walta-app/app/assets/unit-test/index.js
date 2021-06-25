@@ -35,7 +35,7 @@ function runTests() {
       //"CerdiApi", see node based integration tests
       //"LeafletMap",
       //"MayflyEmergenceMap",
-      //"MayflyMusterSelect",
+      "MayflyMusterSelect",
       "SampleSync",
       "SampleHistory",
       "Gallery",
@@ -60,7 +60,7 @@ function runTests() {
 var infinteLoopMode = false; 
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
-setManualTests( false );
+setManualTests( true );
 
 // Create a blank window: for some reason closing the last window hangs 
 // the test suite.

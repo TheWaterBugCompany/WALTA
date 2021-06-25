@@ -10,7 +10,12 @@ var readOnlyMode = $.args.readonly === true;
 
 sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
-
+$.TopLevelWindow.addEventListener('postlayout', function() {
+    Ti.API.info(`updating rect with ${$.content.rect.width}`);
+    let actualWidth = $.content.rect.width - $.content.left - $.content.right;
+    Ti.API.info(`updating actualwidth  ${actualWidth}`);
+    $.container.width = actualWidth;
+})
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.TopLevelWindow.removeEventListener('close', cleanUp );
     $.photoSelect.cleanUp();

@@ -22,7 +22,7 @@ var { expect } = require('unit-test/lib/chai');
 var { closeWindow, controllerOpenTest, enterText, clickButton, checkTestResult, waitForTick } = require('unit-test/util/TestUtils');
 var CerdiApi = require("unit-test/mocks/MockCerdiApi");
 
-describe.only('LogIn controller', function() {
+describe('LogIn controller', function() {
 	var login;
 	beforeEach( function() {
         Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
@@ -57,7 +57,7 @@ describe.only('LogIn controller', function() {
         } );
     });
     
-    it.only('it should send a change password request to Cerdi Api', async function() {
+    it('it should send a change password request to Cerdi Api', async function() {
         simple.mock(Alloy.Globals.CerdiApi,"forgotPassword").resolveWith();
         expect( login.forgotPasswordButton.enabled, "reset password should be disabled" ).to.be.false;
 		await controllerOpenTest( login );

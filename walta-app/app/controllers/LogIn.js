@@ -19,15 +19,17 @@ var passwordValid = false;
 applyKeyboardTweaks( $, [ $.emailTextField, $.passwordTextField ]);
 
 function emailChanged() {
+  if ( $.emailTextField.value.endsWith(" "))
     $.emailTextField.value = $.emailTextField.value.trim();
-    if ( emailValidity($.emailTextField.value) ) {
-        $.clearError( $.emailTextField );
-        emailValid = true;
-    } else {
-        $.setError( $.emailTextField );
-        emailValid = false;
-    }
-    validateSubmit();
+    
+  if ( emailValidity($.emailTextField.value) ) {
+      $.clearError( $.emailTextField );
+      emailValid = true;
+  } else {
+      $.setError( $.emailTextField );
+      emailValid = false;
+  }
+  validateSubmit();
 }
 
 function passwordChanged() {

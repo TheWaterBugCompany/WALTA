@@ -14,6 +14,7 @@ function markSampleComplete( sample ) {
         log(`Sample [serverSampleId=${res.id}] successfully uploaded setting uploaded flag.`);
         sample.set("serverSampleId", res.id );
         sample.set("serverSyncTime", moment().valueOf());
+        sample.set("serverUserId", res.user_id);
         sample.save();
         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
         return sample;
@@ -112,7 +113,7 @@ function uploadTaxaPhotos(sample,delay) {
 
 function loadSamples() {
     var samples = Alloy.createCollection("sample");
-    samples.loadUploadQueue();
+    samples.loadUploadQueue(Alloy.Globals.CerdiApi.retrieveUserId());
     if ( samples.length === 0 )
         debug("Nothing to do - no samples to upload");
     return samples;

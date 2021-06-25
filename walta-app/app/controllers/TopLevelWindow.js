@@ -59,7 +59,9 @@ function backEvent(e) {
 
 function updateSafeArea() {
     // Update the safe-area view's dimensions after every 'postlayout' event.
-    $.content.applyProperties($.TopLevelWindow.safeAreaPadding);
+	let padding = $.TopLevelWindow.safeAreaPadding;
+	Ti.API.info(`safeAreaPadding = ${JSON.stringify(padding)}`)
+    $.content.applyProperties(padding);
 }
 
 
