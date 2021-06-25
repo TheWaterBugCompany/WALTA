@@ -21,13 +21,15 @@ var Topics = require('ui/Topics');
 var { expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
 var { clearDatabase, closeWindow, controllerOpenTest, actionFiresTopicTest } = require("unit-test/util/TestUtils");
+var moment = require("lib/moment");
+
 describe("SampleHistory controller", function() {
 	var ctl;
 	beforeEach( function() {
     clearDatabase(); 
-    makeSampleData({ serverSampleId: 666 }).save();
-    makeSampleData({ serverSampleId: 667 }).save();
-    makeSampleData({ serverSampleId: 668 }).save();
+    makeSampleData({ serverSampleId: 666, dateCompleted: moment("2021-06-21T20:23").format() }).save();
+    makeSampleData({ serverSampleId: 667, dateCompleted: moment("2021-06-21T22:23").format() }).save();
+    makeSampleData({ serverSampleId: 668, dateCompleted: moment("2021-06-21T23:23").format() }).save();
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
       .returnWith(38);
 		ctl = Alloy.createController("SampleHistory");
