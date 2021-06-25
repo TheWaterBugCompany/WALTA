@@ -129,11 +129,19 @@ exports.definition = {
 				};
 			},
 
-			destroy: function() {
-				if ( this.get("taxonPhotoPath") ) {
+			destroy: function(options) {
+				let keepFiles = true;
+				if ( options && options.keepFiles) {
+					keepFiles = options.keepFiles;
+				}
+				if ( this.get("taxonPhotoPath") && !keepFiles ) {
+					
 					var taxonPhotoPath = Ti.Filesystem.getFile(this.get("taxonPhotoPath"));
+					
 					if ( taxonPhotoPath.deleteFile() === false )
 						log(`Unable to delete file ${taxonPhotoPath.nativePath}`);
+					else 
+						log(`deleted taxon file ${taxonPhotoPath.nativePath}`)
 				}
 				Backbone.Model.prototype.destroy.apply(this, arguments);
 			}
@@ -155,12 +163,12 @@ exports.definition = {
 			toCerdiApiJson() {
 				return this.map( (taxon) => taxon.toCerdiApiJson() );
 			},
-			removeAll() {
-				this.models.forEach( (t) => t.destroy() );
+			removeAll(options) {
+				this.models.forEach( (t) => t.destroy(options) );
 			},
-			removeAllTemporary() {
+			removeAllTemporary(options) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL`} );
-				this.models.forEach( (t) => t.destroy() );
+				this.models.forEach( (t) => t.destroy(options) );
 			},
 			loadTemporary(taxonId) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL AND taxonId = ${taxonId}`} );
