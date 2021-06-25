@@ -117,7 +117,7 @@ exports.definition = {
 
 			fromCerdiApiJson(creature) {
 				this.set( {
-					taxonId: creature.creature_id,
+					taxonId: parseInt(creature.creature_id),
 					abundance: this.convertCountToAbundance(creature.count)
 				}, {ignore:true});
 			},
