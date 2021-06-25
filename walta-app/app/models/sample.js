@@ -125,7 +125,7 @@ exports.definition = {
 					let oldSample = Alloy.createModel("sample");
 					oldSample.loadByServerId(serverSampleId);
 					let oldTaxa = oldSample.loadTaxa();
-					oldTaxa.removeAll();
+					oldTaxa.removeAll({keepFiles:true});
 					oldSample.destroy();
 				}
 
@@ -417,7 +417,7 @@ exports.definition = {
 			
 				dupTaxa.forEach( newTaxon => {
 					let newTaxonId = newTaxon.get("taxonId");
-					let oldTaxon = taxa.find( t => t.get("taxonId") === newTaxonId );
+					let oldTaxon = taxa.find( t => t.get("taxonId") == newTaxonId );
 					newTaxon.set("taxonPhotoPath", oldTaxon.get("taxonPhotoPath"));
 					newTaxon.set("serverCreaturePhotoId", oldTaxon.get("serverCreaturePhotoId"));
 					newTaxon.save();
@@ -446,7 +446,7 @@ exports.definition = {
 				Alloy.Models.sample.set("serverUserId",serverUserId);
 				Alloy.Models.sample.save();
 				
-				Alloy.Collections.instance("taxa").removeAllTemporary();
+				Alloy.Collections.instance("taxa").removeAllTemporary({keepFiles:true});
 				Alloy.Collections.instance("taxa").reset();
 			},
 
