@@ -108,7 +108,7 @@ describe("SampleSync", function () {
         
         it('should upload new samples to server',async function() {
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
-                .resolveWith({id:123});
+                .resolveWith({id:123, user_id:38});
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
                 .resolveWith({id:1});
             
@@ -119,6 +119,7 @@ describe("SampleSync", function () {
             sample.loadByServerId(123);
             expect(sample).to.be.ok;
             expect(sample.get("serverSampleId")).to.equal(123);
+            expect(sample.get("serverUserId")).to.equal(38);
             expect(Alloy.Globals.CerdiApi.submitSample.callCount).to.equal(1);
             expect(Alloy.Globals.CerdiApi.submitSample.calls[0].args[0].waterbody_name).to.equal("test water body name");
         });
@@ -308,6 +309,7 @@ describe("SampleSync", function () {
         it('should download new samples from the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({
+                    user_id: 38,
                     sampled_creatures: [
                         {
                             "id": 2390,
@@ -358,10 +360,11 @@ describe("SampleSync", function () {
             expect(taxa.at(0).get("abundance")).to.equal("1-2");
             expect(taxa.at(1).get("taxonId")).to.equal(2);
             expect(taxa.at(1).get("abundance")).to.equal("6-10");
+            expect(sample.get("serverUserId")).to.equal(38);
         });
         it('should update existing samples if they have been updated on the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
-                .resolveWith([makeCerdiSampleData()]);
+                .resolveWith([makeCerdiSampleData({user_id:38})]);
             // create existing sample to update
             let sample = Alloy.createModel("sample");
             sample.set("serverSampleId", 473);
@@ -377,6 +380,7 @@ describe("SampleSync", function () {
             sample.loadByServerId(473);
             expect(sample.get("serverSampleId")).to.equal(473);
             expect(sample.get("waterbodyName")).to.equal("test waterbody name");
+            expect(sample.get("serverUserId")).to.equal(38);
 
         });
         it('should NOT update existing samples if they have been updated on the server but we have already downloaded that update', async function() {

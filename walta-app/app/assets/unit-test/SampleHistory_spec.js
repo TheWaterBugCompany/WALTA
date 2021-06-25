@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
+var simple = require("unit-test/lib/simple-mock");
 var Topics = require('ui/Topics');
 var { expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
@@ -23,14 +24,20 @@ var { clearDatabase, closeWindow, controllerOpenTest, actionFiresTopicTest } = r
 describe("SampleHistory controller", function() {
 	var ctl;
 	beforeEach( function() {
-    clearDatabase();
+    clearDatabase(); 
     makeSampleData({ serverSampleId: 666 }).save();
+    makeSampleData({ serverSampleId: 667 }).save();
+    makeSampleData({ serverSampleId: 668 }).save();
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+      .returnWith(38);
 		ctl = Alloy.createController("SampleHistory");
+    
 	});
 	afterEach( function(done) {
     closeWindow( ctl.getView(), done );
 	});
-	it('should display the SampleHistory view', async function() {
+	it.only('should display the SampleHistory view', async function() {
+    
 		await controllerOpenTest( ctl );
   });
   it('selecting row should open menu', async function() {
@@ -51,4 +58,5 @@ describe("SampleHistory controller", function() {
     let result = await actionFiresTopicTest( ctl.sampleMenu.edit.getView(), "click", Topics.SITEDETAILS );
     expect( result.readonly ).to.be.false;
   });
+
 });

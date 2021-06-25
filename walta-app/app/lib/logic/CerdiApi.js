@@ -115,8 +115,17 @@ function createCerdiApi( serverUrl, client_secret  ) {
             retrieveUserToken() {
                 return Ti.App.Properties.getObject('userAccessTokenLive');
             },
+
+            retrieveUserId() {
+                let token = this.retrieveUserToken();
+                if ( token ) {
+                    Ti.API.info(`userId = ${token.id}`)
+                    return token.id;
+                }
+            },
         
             storeUserToken( email, accessToken ) {
+                Ti.API.info(`accessToken = ${JSON.stringify(accessToken)}`)
                 Ti.App.Properties.setObject("userAccessUsername", email );
                 Ti.App.Properties.setObject('userAccessTokenLive', accessToken );
             },
