@@ -14,6 +14,9 @@
 		},
 		{
 			"path": "../../Library/Application Support/Titanium/modules/iphone/hyperloop/7.0.1"
+		},
+		{
+			"path": "../test/build"
 		}
 	],
 	"settings": {}

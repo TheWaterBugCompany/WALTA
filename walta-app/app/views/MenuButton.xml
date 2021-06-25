@@ -1,6 +1,6 @@
 <Alloy>
 	<View id="button" class="large">
-		<View layout="horizontal" > <!-- inserting another View seems to workaround layout bugs -->
+		<View layout="horizontal" horizontalWrap="false" > <!-- inserting another View seems to workaround layout bugs -->
 			<ImageView id="icon" />
 			<View id="text">
 				<View  layout="vertical"> <!-- inserting another View seems to workaround layout bugs -->

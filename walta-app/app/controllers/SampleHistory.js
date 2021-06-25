@@ -14,7 +14,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 function updateSampleList() {
     try {
-        $.samples.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NOT NULL ORDER BY dateCompleted DESC" } );
+        $.samples.loadSampleHistory(Alloy.Globals.CerdiApi.retrieveUserId());
     } catch(e) {
         // FIXME: for some reason these errors are not being reported if there isn't a catch here
         Ti.API.info(`Error fetching sample list: ${JSON.stringify(e)}`);

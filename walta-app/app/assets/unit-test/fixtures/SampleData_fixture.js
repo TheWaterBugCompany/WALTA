@@ -41,6 +41,7 @@ function makeSampleData(attrs) {
     var { makeTestPhoto } = require("unit-test/util/TestUtils");
     return Alloy.createModel("sample", _.extend({ 
         serverSampleId: null, 
+        serverUserId: 38,
         lat: "-37.5622000",
         lng: "143.8750300",
         dateCompleted: moment().format(),

@@ -4,6 +4,14 @@ var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 
+function makeUserFilter(serverUserId) {
+	if ( serverUserId ) {
+		return `= ${serverUserId}`;
+	} else {
+		return`IS NULL`;
+	}
+}
+
 exports.definition = {
 	config: {
 		columns: {
@@ -30,6 +38,7 @@ exports.definition = {
 			"sitePhotoPath": "VARCHAR(255)",
 			"serverSyncTime": "INTEGER", // timestamp of last upload or download (or 1 for legacy code)
 			"updatedAt": "INTEGER", // timestamp of the last update (or NULL for legacy)
+			"serverUserId": "INTEGER", // user_id field from CERDI server
 		},
 		adapter: {
 			type: "sql",
@@ -301,6 +310,7 @@ exports.definition = {
 						return Sample.WATERBODY_LAKE;
 				}
 				var updatedFields = {
+					"serverUserId": sample.user_id,
 					"serverSampleId": sample.id,
 					"dateCompleted": sample.sample_date,
 					"lat": parseFloat(sample.lat),
@@ -376,6 +386,9 @@ exports.definition = {
 				if (this.get("serverSampleId") ) {
 					attrs["id"] = this.get("serverSampleId");
 				}
+				if ( this.get("serverUserId") ) {
+					attrs["user_id"] = this.get("serverUserId");
+				}
 				return attrs; 
 			},
 
@@ -426,26 +439,32 @@ exports.definition = {
 	extendCollection: function(Collection) {
 		_.extend(Collection.prototype, { 
 			// Note sets the singleton sample (FIXME?)
-			createNewSample: function() {
+			createNewSample: function(serverUserId) {
 				log("Creating new sample...");
 				Alloy.Models.sample = Alloy.createModel("sample");
 				this.add(Alloy.Models.sample);
+				Alloy.Models.sample.set("serverUserId",serverUserId);
 				Alloy.Models.sample.save();
 				
 				Alloy.Collections.instance("taxa").removeAllTemporary();
 				Alloy.Collections.instance("taxa").reset();
 			},
 
-			startNewSurveyIfComplete: function(type) {
+			startNewSurveyIfComplete: function(type,serverUserId) {
 				if (    Alloy.Models.sample.get("dateCompleted") 
 					 || !Alloy.Models.sample.get("sampleId") )  {
-					 this.createNewSample();
+					 this.createNewSample(serverUserId);
 					 Alloy.Models.sample.set({"surveyType": type} );
 				}
 			},
 
-			loadUploadQueue: function() {
-				this.fetch( { query: "SELECT * FROM sample WHERE (dateCompleted IS NOT NULL)  ORDER BY dateCompleted DESC"});
+			loadUploadQueue: function(serverUserId) {
+				this.fetch( { query: `SELECT * FROM sample WHERE (dateCompleted IS NOT NULL) AND (serverUserId ${makeUserFilter(serverUserId)} OR serverSampleId IS NULL) ORDER BY dateCompleted DESC`});
+			},
+
+			loadSampleHistory: function(serverUserId) {
+				
+				this.fetch({ query: `SELECT * FROM sample WHERE dateCompleted IS NOT NULL AND (serverUserId ${makeUserFilter(serverUserId)} OR serverSampleId IS NULL) ORDER BY dateCompleted DESC` } );
 			}
 		});
 

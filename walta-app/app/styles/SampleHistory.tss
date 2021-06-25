@@ -4,10 +4,10 @@
     separatorColor: "#26849c"
 }
 ".column": {
-    right:"3%",
-    width: "27%",
-    height: "30dp",
-    textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+    left: "1%",
+    right:"1%",
+    height: "45dp",
+    textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
     font: {
         fontFamily: "Tahoma",
         fontWeight: "bold",
@@ -15,28 +15,29 @@
     }
 }
 ".row": {
+    layout: "horizontal",
+    horizontalWrap: false
 }
 ".headerRow": {
+    layout: "horizontal",
+    horizontalWrap: false,
     backgroundColor: "white",
     borderColor: "#26849c",
     borderWidth: "2dp",
-    height: Ti.UI.SIZE,
+    height: "30dp",
     zIndex: 1
 }
 ".dateCompletedColumn": {
-    left: "5%",
-    width: "33%",
+    width: "160dp",
     height: Ti.UI.SIZE 
 }
 ".idColumn": {
-    left: 0,
-    width: "5%"
+    width: "40dp"
 }
 ".boolColumn": {
-    left: "63%",
-    width: "40%"
+    width: "60dp"
 }
 ".waterbodyName": {
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-    left: "36%" 
+    width: "35%"
 }
