@@ -18,6 +18,15 @@
   zIndex: "1"
 }
 
+"#appVersion": {
+  top:"10dp",
+  left: "25dp",
+  font: {
+    fontSize: "12dp"
+  },
+  color: "#26849c"
+}
+
 "#logInLabel": {
   height: Ti.UI.SIZE,
   width: Ti.UI.SIZE,
