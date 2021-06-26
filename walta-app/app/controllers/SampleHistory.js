@@ -1,4 +1,5 @@
 var Topics = require('ui/Topics');
+var SampleSync = require('logic/SampleSync');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
@@ -46,3 +47,4 @@ function rowSelected(e) {
 }
 
 updateSampleList();
+SampleSync.forceUpload();
