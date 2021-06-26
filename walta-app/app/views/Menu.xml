@@ -1,6 +1,7 @@
 <Alloy> 
 	<View id="content" class="container">
 			<View id="bigOptions">
+				<Label id="appVersion"/>
 				<View id="logInOrRegister" onClick="logInClick">
 					<Label id="logInLabel" class="smallMenuText" text="Log In"  accessibilityLabel="Log In"  />
 				</View>
