@@ -75,6 +75,7 @@ function startSynchronise(options) {
         if ( options && !_.isUndefined(options.noschedule) ) {
             debug("Not rescheduling sync");
         } else {
+            debug("Rescheduling sync");
            timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
         }
         return Promise.resolve();
