@@ -90,7 +90,7 @@ function uploadTaxaPhoto(sample,t,delay) {
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
+                        log(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
                     });
                         
         }
