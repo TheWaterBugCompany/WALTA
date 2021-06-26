@@ -2,7 +2,7 @@ var Topics = require('ui/Topics');
 
 exports.baseController  = "TopLevelWindow";
 $.name = "home";
-
+$.appVersion.text = `v${Ti.App.version}`;
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();
   $.off();
