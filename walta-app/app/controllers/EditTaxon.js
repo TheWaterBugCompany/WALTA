@@ -23,7 +23,7 @@ function isDefaultPhoto() {
     return !realPhoto; 
 }
 setAbundance( taxon.get("abundance") );
-setImage( taxon.getPhoto() );
+setImage( taxon.getPhoto());
 updateSaveButton();
 
 
@@ -39,11 +39,14 @@ function persistPhoto() {
 function setImage( photo ) {
     if ( photo ) {
         realPhoto = true;
+        /* Not sure why this is needed? Causes photos to be reuploaded
+           when the PhotoSelect is opened and the photo not changed.
+        
         function loadHandler() {
             $.photoSelect.off("loaded", loadHandler );
             persistPhoto();
         };
-        $.photoSelect.on("loaded", loadHandler );
+        $.photoSelect.on("loaded", loadHandler );*/
         $.photoSelect.setImage( photo );
     } else {
         realPhoto = false;
