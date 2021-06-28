@@ -50,26 +50,12 @@ function forceUpload(options) {
     return startSynchronise(options);
 }
 
-
-
-
-
-
-
-
-
 function startSynchronise(options) {
     let delay = (options && !_.isUndefined(options.delay)?options.delay:2500);
     let sampleUploader = createSampleUploader(delay);
     debug(`Starting sample syncronisation process... (delay=${delay})`);
-    isSyncing = true;
-    function checkNetwork() {
-        if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
-            debug("No network available, sleeping until network becomes avaiable.");
-            throw new Error("No network avaialble for synchronise");
-        }
-        return Promise.resolve();
-    }
+    
+    
     function rescheduleSync() {
         isSyncing = false;
         if ( options && !_.isUndefined(options.noschedule) ) {
@@ -80,22 +66,32 @@ function startSynchronise(options) {
         }
         return Promise.resolve();
     }
-
-    function checkLoggedIn() {
-        if ( ! Alloy.Globals.CerdiApi.retrieveUserToken() )  {
-            debug("Not logged in, sleeping.");
-            throw new Error("Not logged in for synchronise");
-        }
-        return Promise.resolve();
-    }  
    
 
     function handleError(err) {
-        debug(`Error synchronising ${formatError(err)}`)
+        log(`Error synchronising ${formatError(err)}`);
+        errorHandler(err);
     }
+    if (isSyncing) {
+        debug("Already syncing, aborting");
+        return;
+    }
+    
+    if ( ! Alloy.Globals.CerdiApi.retrieveUserToken() )  {
+        debug("Not logged in, sleeping.");
+        rescheduleSync();
+        return;
+    }
+
+    if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
+        debug("No network available, sleeping until network becomes avaiable.");
+        reschuleSync();
+        return;
+    }
+
+    // flag that were are already syncing - to avoid reentrant calls
+    isSyncing = true;
     return Promise.resolve()
-        .then(checkLoggedIn) 
-        .then(checkNetwork)
         .then(() => downloadSamples(delay) )
         .then(() => sampleUploader.uploadSamples() )
         .catch( handleError )

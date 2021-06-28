@@ -119,7 +119,6 @@ function createCerdiApi( serverUrl, client_secret  ) {
             retrieveUserId() {
                 let token = this.retrieveUserToken();
                 if ( token ) {
-                    Ti.API.info(`userId = ${token.id}`)
                     return token.id;
                 }
             },
