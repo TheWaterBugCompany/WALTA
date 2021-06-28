@@ -74,7 +74,6 @@ function uploadTaxaPhoto(sample,t,delay) {
     var taxonId = t.getTaxonId();
     var sampleId = sample.get("serverSampleId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
-    Ti.API.info(`taxonPhotoId = ${taxonPhotoId}`)
     if ( ! taxonPhotoId ) {
         var photoPath = t.getPhoto();
         if ( photoPath ) {
@@ -179,7 +178,7 @@ function createSampleUploader(delay) {
             return uploadIfNeeded
                     .then( (sample) => uploadSitePhoto(sample,delay) )
                     .then( (sample) => uploadTaxaPhotos(sample,delay) )
-                    .catch( errorHandler( sample ) );           
+                    .catch( errorHandler );           
         }
 
     }
