@@ -45,7 +45,7 @@ var saveSampleAndUpload = function() {
     Alloy.Models.sample.saveCurrentSample();
     setMessageText();
     Ti.API.info("forcing upload");
-    SampleSync.forceUpload();
+    Topics.fireTopicEvent(Topics.FORCE_UPLOAD);
 };
 
 function checkGpsLock() {

@@ -507,7 +507,7 @@ describe("Sample collection, model including taxa", function() {
       makeSampleData({ serverUserId: null, serverSampleId: 671}).save();
       var coll = Alloy.createCollection("sample");
       coll.loadUploadQueue(null);
-      expect(coll.size()).to.equal(4); // including beforeEach added sample
+      expect(coll.size()).to.equal(3);
     });
 
     it('should filter out any records not belonging to the current user', function() {
@@ -539,7 +539,7 @@ describe("Sample collection, model including taxa", function() {
       makeSampleData({ serverUserId: null, serverSampleId: 671}).save();
       var coll = Alloy.createCollection("sample");
       coll.loadSampleHistory(null);
-      expect(coll.size()).to.equal(4); // including beforeEach added sample
+      expect(coll.size()).to.equal(3);
     });
   });
 });
