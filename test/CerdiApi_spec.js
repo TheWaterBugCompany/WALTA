@@ -412,7 +412,7 @@ describe('CerdiApi', function() {
         function submitTestSample(sampleDate) {
             return cerdi.submitSample( makeTestSample(sampleDate) );
         }
-        it.only("should retrieve site photo", function() {
+        it("should retrieve site photo", function() {
             let serverSampleId,sitePhotoId;
             function rescaleImage(filePath,width) {
                 let img = fs.readFileSync(filePath);
@@ -430,7 +430,7 @@ describe('CerdiApi', function() {
                 .then( () => cerdi.retrieveSitePhoto(serverSampleId,"testsitephoto.jpg"))
                 .then( () => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/testsitephoto.jpg`));
         });
-        it.only("should retrieve creature photo", function() {
+        it("should retrieve creature photo", function() {
             let serverSampleId,sitePhotoId,creaturePhotoId;
             return cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
