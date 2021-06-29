@@ -47,4 +47,4 @@ function rowSelected(e) {
 }
 
 updateSampleList();
-SampleSync.forceUpload();
+Topics.fireTopicEvent(Topics.FORCE_UPLOAD);

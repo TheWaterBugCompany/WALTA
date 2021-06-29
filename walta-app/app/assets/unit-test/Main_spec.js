@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
+var simple = require("unit-test/lib/simple-mock");
 var { expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
 var { clearDatabase, actionFiresTopicTest, waitFor } = require("unit-test/util/TestUtils");
@@ -30,7 +31,8 @@ describe("Main controller", function() {
   });
   it('should allow a sample to be edited', async function() {
     clearDatabase();
-
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+      .returnWith(38);
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main");
     app.startApp({nosync: true});

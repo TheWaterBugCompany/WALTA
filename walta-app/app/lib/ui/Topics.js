@@ -79,6 +79,8 @@ var topics = {
 
 	GPSLOCK: 'gpslock',
 
+	FORCE_UPLOAD: 'forceupload',
+
 	UPLOAD_PROGRESS: 'uploadprogress',
 
 	// used to trap when a page is opened

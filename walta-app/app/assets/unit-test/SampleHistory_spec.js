@@ -37,8 +37,9 @@ describe("SampleHistory controller", function() {
 	});
 	afterEach( function(done) {
     closeWindow( ctl.getView(), done );
+    simple.restore();
 	});
-	it.only('should display the SampleHistory view', async function() {
+	it('should display the SampleHistory view', async function() {
     
 		await controllerOpenTest( ctl );
   });

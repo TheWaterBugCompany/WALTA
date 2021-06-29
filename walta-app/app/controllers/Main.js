@@ -192,7 +192,12 @@ function startApp(options) {
   Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: key.url }) ) );
   Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: key.url }) ) );
-
+  Topics.subscribe( Topics.FOREC_UPLOAD, () => {
+    if ( !( options && options.nosync )) {
+      debug("forcing synchronise");
+      SampleSync.forceUpload();
+    }
+  })
   Topics.subscribe( Topics.JUMPTO, function( data ) {
     if ( ! _.isUndefined( data.id ) ) {
       key.setCurrentNode(data.id);
@@ -221,7 +226,7 @@ function startApp(options) {
     Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
-  Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
+ 
   Alloy.Models.instance("sample").loadCurrent();
   Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
 
