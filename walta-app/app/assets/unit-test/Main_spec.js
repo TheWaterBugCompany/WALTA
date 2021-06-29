@@ -31,6 +31,8 @@ describe("Main controller", function() {
   });
   it('should allow a sample to be edited', async function() {
     clearDatabase();
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
+      .returnWith({accessToken:"accessToken"});
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
       .returnWith(38);
     makeSampleData({ serverSampleId: 666 }).save();
