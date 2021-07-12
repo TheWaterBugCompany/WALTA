@@ -85,7 +85,7 @@ function startSynchronise(options) {
 
     if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
         debug("No network available, sleeping until network becomes avaiable.");
-        reschuleSync();
+        rescheduleSync();
         return;
     }
 
@@ -155,7 +155,7 @@ function downloadSamples(delay) {
                     Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                     return [sample,serverSample];
                 })
-                .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`));
+                .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id}]: ${formatError(err)}`));
         } else {
             return Promise.resolve([sample,serverSample]);
         }

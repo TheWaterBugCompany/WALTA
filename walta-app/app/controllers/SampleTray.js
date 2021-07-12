@@ -533,7 +533,7 @@ function closeEditScreen() {
 
 function editTaxon( taxon_id ) {
   Ti.API.info(`editing taxon_id = ${taxon_id}`);
-  var taxon = Alloy.Collections["taxa"].find( (t) => t.get("taxonId") == taxon_id);
+  var taxon = Alloy.Collections["taxa"].findTaxon(taxon_id);
   if (!taxon ) {
     var taxons = Alloy.createCollection("taxa"); 
     taxons.loadTemporary(taxon_id); 

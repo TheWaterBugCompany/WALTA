@@ -25,6 +25,10 @@ var Topics = require('ui/Topics');
 describe("Main controller", function() {
 	var app;
 	it('should display the Main view', async function() {
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
+      .returnWith({accessToken:"accessToken"});
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+      .returnWith(38);
     app = Alloy.createController("Main");
     app.startApp({nosync: true});
     expect(app.getHistory()[0].ctl).to.equal("Menu");
