@@ -62,7 +62,6 @@ function updateAbundance() {
 }
 
 function saveEvent() {
-    persistPhoto();
     $.trigger("save", taxon );
 }
 

@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, setManualTests, wrapViewInWindow, windowOpenTest, checkTestResult } = require("unit-test/util/TestUtils");
+var { closeWindow, setManualTests, wrapViewInWindow, windowOpenTest, checkTestResult, waitForTick } = require("unit-test/util/TestUtils");
 
 var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { createMockTaxon } = require('unit-test/mocks/MockTaxon');
@@ -112,7 +112,8 @@ describe("EditTaxon controller", function() {
                 ctl.on("save", function handler(txn) { 
                     ctl.off("save", handler);
                     checkTestResult(done, () => {
-                        expect( txn.getPhoto() ).to.include("preview");
+                        // wait for database to persist changes
+                        waitForTick(1)().then( () => expect( txn.getPhoto() ).to.include("preview") );
                     } );
                 });
                 ctl.saveButton.fireEvent("click");

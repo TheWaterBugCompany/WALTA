@@ -153,8 +153,11 @@ exports.definition = {
 		_.extend(Collection.prototype, {
 			fromCerdiApiJson(creatures,sampleId) {
 				_(creatures).forEach( creature => {
-					let taxon = Alloy.createModel("taxa");
-					taxon.set("sampleId", sampleId);
+					let taxon = this.findTaxon(creature.creature_id);
+					if ( !taxon ) {
+						taxon = Alloy.createModel("taxa");
+						taxon.set("sampleId", sampleId);
+					}
 					taxon.fromCerdiApiJson(creature);
 					taxon.save();
 					this.add(taxon);
@@ -170,6 +173,12 @@ exports.definition = {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL`} );
 				this.models.forEach( (t) => t.destroy(options) );
 			},
+			findTaxon(taxon_id) {
+				return this.find( (t) => t.get("taxonId") == taxon_id);
+			},
+			/*loadTaxonForSample(taxonId, sampleId) {
+				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId = ${sampleId} AND taxonId = ${taxonId}`} );
+			},*/
 			loadTemporary(taxonId) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL AND taxonId = ${taxonId}`} );
 			},

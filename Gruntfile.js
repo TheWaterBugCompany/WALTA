@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
     const PROFILE = process.env.PROFILE || "20804088-396a-4aae-b7e3-5d6f56510a6a";
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "19875388-d751-4d39-9c07-431cf5ac84dd";
-    const PROFILE_DEV = "c1235ca3-08c2-48db-b44c-b318d99f0b06";
+    const PROFILE_DEV = "bc07f9c5-b99f-464d-8470-abb8daf0149f";
     const DEVICE_ID="a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
     
     const WATERBUG_APPID = {
@@ -108,7 +108,7 @@ module.exports = function(grunt) {
         if ( platform === "android" ) {
           args.push( "--build-only","--deploy-type development", "--target device" );
         } else if ( platform === "ios" ){
-          args.push( "--build-only","--deploy-type development", "--target device");
+          args.push( "--build-only","--deploy-type development", "--target device", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_DEV}\"`);
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }

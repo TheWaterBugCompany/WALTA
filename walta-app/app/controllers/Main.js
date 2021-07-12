@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var CerdiApi = require("logic/CerdiApi");
 var SampleSync = require("logic/SampleSync");
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
@@ -192,7 +191,7 @@ function startApp(options) {
   Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: key.url }) ) );
   Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: key.url }) ) );
-  Topics.subscribe( Topics.FOREC_UPLOAD, () => {
+  Topics.subscribe( Topics.FORCE_UPLOAD, () => {
     if ( !( options && options.nosync )) {
       debug("forcing synchronise");
       SampleSync.forceUpload();

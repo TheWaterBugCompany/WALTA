@@ -42,15 +42,28 @@ function savePhoto( blob, filename  ) {
 }
 
 function needsOptimising( photo ) {
-    let res = ( photo.length > 4*1024*1024 || photo.width > 1600 || photo.height > 1600 );
+    /* resizing on iOS seems trigger an intermittant image corruptiojn so we only resize if
+       the image size is to large to pass the CERDI API requirements. */
+    let res = ( photo.length > 4*1024*1024 /*|| photo.width > 1600 || photo.height > 1600 */);
     return res;
 }
 
 function optimisePhoto( fullPhoto ) {
     var aspectRatio = (fullPhoto.height/fullPhoto.width);
+
+    // on iOS we get large PNG files so we convert to JPEG before trying to resize the image
+    // this hopefully reduces the memory requirements for this process.
+    if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
+        log(`got a PNG: converting photo into JPEG...`);
+        fullPhoto = fullPhoto.imageAsCompressed(0.9);
+        if ( ! fullPhoto ) {
+            log(`Error converting photo: ${fileOrBlob}`);
+            throw new Error("Unable to convert photo into JPEG");
+        }
+    }
+
     if ( needsOptimising(fullPhoto) ) {
         log(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}, resizing and compressing photo...`);
-        //if ( aspectRatio < )
         fullPhoto = fullPhoto.imageAsResized(1600, 1600*aspectRatio);
         info( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
         if ( ! fullPhoto ) {
@@ -60,14 +73,7 @@ function optimisePhoto( fullPhoto ) {
         log(`compressed size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}`);
     }
 
-    if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
-        log(`got a PNG: converting photo into JPEG...`);
-        fullPhoto = fullPhoto.imageAsCompressed(0.9);
-        if ( ! fullPhoto ) {
-            log(`Error converting photo: ${fileOrBlob}`);
-            throw new Error("Unable to convert photo into JPEG");
-        }
-    }
+    
     return fullPhoto;
 }
 
