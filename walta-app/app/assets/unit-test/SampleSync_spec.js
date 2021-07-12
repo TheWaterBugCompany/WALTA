@@ -656,6 +656,92 @@ describe("SampleSync", function () {
     it('should not re download any taxon photos that have serverCreaturePhotoId set to NULL');
     it('should not re download taxon photos if a photo is updated and no longer has a serverCreaturePhotoId');
     it('should not re download site photo if a photo is updated and no longer has a serverPhotoId');
+
+    it('should not duplicate taxons when taxons are downloaded after an update', async function() {
+        clearMockSampleData();
+        // server sample gets downloaded
+        // server sample is changed to add a new taxon
+        // server sample is redownloaded
+        // verify there are not duplicate taxons
+        let creatureMocks = [
+            {
+                id: 1948,
+                photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_01.jpg"),
+            },{
+                id: 2600,
+                photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg")
+            }];
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+            .resolveWith([makeCerdiSampleData({
+                sampled_creatures: [
+                    {
+                        "id": 2390,
+                        "sample_id": 473,
+                        "creature_id": 1,
+                        "count": 2,
+                        "photos_count": 0
+                    },
+                    {
+                        "id": 2391,
+                        "sample_id": 473,
+                        "creature_id": 2,
+                        "count": 6,
+                        "photos_count": 0
+                    }
+                ]
+            })]);
+        Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId,creatureId,photoPath ) {
+            console.log(`mock retrieveCreaturePhoto ${creatureId}`);
+            if ( creatureId > creatureMocks.length ) {
+                throw new Error("mock download error - no such model");
+            }
+            let mockCreature = creatureMocks[creatureId-1];
+            mockCreature.photo.copy( Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
+            return Promise.resolve(mockCreature);
+        };    
+
+        // need to fake being logged in or else sync operation fails
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
+            .resolveWith(true);
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+            .returnWith(38);
+        
+        await SampleSync.downloadSamples();   
+
+        let sample = Alloy.createModel("sample");
+        sample.loadByServerId(473);
+        sample.set("serverSyncTime", moment("2020-01-01").valueOf());
+        sample.save();
+
+        // simulate an edit in the server
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+            .resolveWith([makeCerdiSampleData({
+                updated_at: moment("2020-01-02").valueOf(),
+                sampled_creatures: [
+                    {
+                        "id": 2390,
+                        "sample_id": 473,
+                        "creature_id": 1,
+                        "count": 2,
+                        "photos_count": 0
+                    },
+                    {
+                        "id": 2391,
+                        "sample_id": 473,
+                        "creature_id": 2,
+                        "count": 6,
+                        "photos_count": 0
+                    }
+                ]
+            })]);
+        await SampleSync.downloadSamples(); 
+
+        let taxa = sample.loadTaxa();
+        expect(taxa.size()).to.equal(2);
+        
+
+    });
+
     it('should not attempt to download photos that do not exist on the server', async function() {
         clearMockSampleData();
         // example exists and has been uploaded

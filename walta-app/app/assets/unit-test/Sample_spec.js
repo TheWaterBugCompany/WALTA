@@ -25,10 +25,39 @@ var { makeTestPhoto, removeDatabase, resetSample, clearDatabase, waitForTick  } 
 use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
+describe("Taxa collection", function() {
+  it('should not duplicate taxa when updated with fromCerdiApiJson', function() {
+    var taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("abundance", "> 20");
+    taxon.set("taxonId", 1 );
+    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo.jpg"));
+    taxon.save();
+    var taxa = Alloy.createCollection("taxa");
+    taxa.load(666);
+    expect( taxa.size() ).to.equal(1);
+
+    taxa.fromCerdiApiJson([{
+      creature_id: 1,
+      count: 15
+    }],666);
+
+    // should update existing taxon rather than create a new record
+    taxa.load(666);
+    expect( taxa.size() ).to.equal(1);
+
+
+
+  
+  })
+});
+
 describe("Taxa model", function() {
   beforeEach( function() {
     clearDatabase();
   })
+  
+
   it('should persist a taxon', function() {
     // create taxa model
     var taxon = Alloy.createModel("taxa");
@@ -327,6 +356,8 @@ describe("Sample collection, model including taxa", function() {
           expect(taxa[taxonId-1].count, "count").to.equal(abundance);
         });
     });
+
+    
 
     it('should serialize server id correctly correctly', function() {
       Alloy.Models.sample.set('serverSampleId', 99 );

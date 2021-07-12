@@ -91,7 +91,7 @@
 }
 
 "#locationStatus": {
-    horizontalWrap: "false",
+    horizontalWrap: false,
     top: "2dp",
     left: "2dp"
 }
