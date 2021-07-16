@@ -37,7 +37,7 @@ describe('PhotoSelect controller', function() {
 		closeWindow( win, done );
 	});
 
-	it("should resize image", function(done) { 
+	/*it("should resize image", function(done) { 
 		makePhotoSelect( true, '/unit-test/resources/site-mock.jpg' );
 		pv.on("loaded", () => checkTestResult( done, () => {
 			var photo = Ti.Filesystem.getFile(pv.photo.image).read();
@@ -45,7 +45,7 @@ describe('PhotoSelect controller', function() {
             expect( photo.height ).to.be.at.most( 1200 );
 		}) );
 		windowOpenTest( win );
-	});
+	});*/
 
 	it("should display readonly view", function( done ) { 
 		makePhotoSelect( true, [
