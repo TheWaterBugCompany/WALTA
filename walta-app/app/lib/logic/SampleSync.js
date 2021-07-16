@@ -115,7 +115,10 @@ function downloadSamples(delay) {
             return true;
         }
 
-        if ( moment(serverSample.updated_at).isAfter( moment(serverSyncTime) ) ) {
+        let serverUpdateTimeM = moment(serverSample.updated_at);
+        let serverSyncTimeM = moment(serverSyncTime);
+        debug(`checking sample for update: serverSampleId=${sample.get("serverSampleId")} server.updatedAt = ${serverUpdateTimeM.valueOf()} serverSyncTime = ${serverSyncTimeM.valueOf()}`);
+        if ( serverUpdateTimeM.isAfter(serverSyncTimeM) ) {
            return true;
         }
 
