@@ -119,11 +119,10 @@ exports.definition = {
 			saveCurrentSample: function() {
 				// If the serverSampleId has been set then this is an edited sample
 				// and we need to remove the original
-				let dateCompleted = this.get("dateCompleted");
-				let serverSampleId = this.get("serverSampleId");
-				if ( !dateCompleted && serverSampleId ) {
+				let originalSampleId = this.get("originalSampleId");
+				if ( originalSampleId ) {
 					let oldSample = Alloy.createModel("sample");
-					oldSample.loadByServerId(serverSampleId);
+					oldSample.loadById(originalSampleId);
 					let oldTaxa = oldSample.loadTaxa();
 					oldTaxa.removeAll({keepFiles:true});
 					oldSample.destroy();
@@ -132,6 +131,7 @@ exports.definition = {
 				this.set("dateCompleted", moment().format() );
 				let updatedAt = moment().valueOf();
 				this.set('updatedAt', updatedAt, {ignore:true});
+				this.set('originalSampleId', null);
 				this.save();
 			},
 
@@ -400,6 +400,8 @@ exports.definition = {
 
 				let dup = Alloy.createModel("sample");
 				dup.fromCerdiApiJson(json);
+
+				dup.set("originalSampleId",this.get("sampleId"));
 
 				// accuracy isn't in the CERDI JSON currently
 				dup.set("accuracy", this.get("accuracy"));

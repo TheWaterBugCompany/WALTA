@@ -1,0 +1,130 @@
+PUT /v1/samples/778 HTTP/1.1
+Host: api-wbb.till.cerdi.edu.au
+Content-Type: application/json
+X-Requested-With: XMLHttpRequest
+Accept-Language: en-au
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Accept: application/json
+User-Agent: Appcelerator Titanium/0.0.0 (iPhone/12.5.4; iOS; en_AU;)
+Content-Length: 473
+X-Titanium-Id: 00f1520c-6f32-4bad-8898-466d580b47c2
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiYzQ2MGMwOTVhZDlkNTViNGIwMGJlZjM3ZDczNjU4YzUyNzllMmM2OTVjMTQwYjFjODgxNDgxNGJmNTE4Y2FlMzEwNjJhNTdlYmM3ODY0NjgiLCJpYXQiOiIxNjI2MDcwOTI0LjgwMDUxMyIsIm5iZiI6IjE2MjYwNzA5MjQuODAwNTMwIiwiZXhwIjoiMTY1NzYwNjkyNC43MzgyODYiLCJzdWIiOiIyNTAiLCJzY29wZXMiOltdfQ.M1_OCJIdgYJYxuPDIOcqsDzRmnT5HVyrLCNaxMSv8Iiy3g2W_9cys_-nbPFFFUq73FGcHcWmpI2wF1qM-ds7bfKutXBaGatUGQWcujwaJyNxWdF35wrEE1Xp1mY3ALMuu-dzEpqXE9C_fw13Wp8RaDjnUfI6zwcukAyc3nTliWsTGcVgxY8-_wJvwqtxc9bx2D8VSfkLyCmLnPqS7jutQOF4-j3cIsYKt1RZThStt1Q46l1Xjqc0htfi7G2wRXVm8wCosdhwWCuojBKnt9S5mjYwJIgzhIOkkz6Bo-Aixt8a5Nzy8HnrXK44RG633Qk3ocMP9Oja94Po2uWGMIDHlMsLNVjULuW_BXgWZPKaOm8CiUvIckoVeuRERFkc13TemtrXWcM1EEiOvV4HhxlsLBhF3HW_iiEzeU7VpA1943cgSswgJvXYaA1LvQYJWUv1L4UvdHZE3P-i3aMQ_hxEbHUiALQ-sFeJBp-4FY2nNGme8LSHVo76fV_48g9WKim75dfAKStUckbxxVfi5s_doUsrGeXrTzfME937ZqFbEybaV8YSIuklHClR3B-UlVgvJmnkRA8a32i7U_jT2TcQr3rfJ3FgiqZqAmNt-3WGwbe9lnqofYd4n0luvsZAuoFpKjfTA5CQ8hST5CrTcCTOZL94Hmo84phY5N2VDqiHXsQ
+
+{
+  "sample_date": "2021-07-12T17:09:07+10:00",
+  "lat": "-17.04589",
+  "lng": "150.14238",
+  "scoring_method": "alt",
+  "survey_type": "detailed",
+  "waterbody_type": "river",
+  "waterbody_name": "5s edittest jgwifi",
+  "nearby_feature": "Edited",
+  "creatures": [
+    {
+      "count": 2,
+      "creature_id": 179
+    },
+    {
+      "count": 16,
+      "creature_id": 198
+    },
+    {
+      "count": 16,
+      "creature_id": 189
+    }
+  ],
+  "habitat": {
+    "boulder": 100,
+    "gravel": 0,
+    "sand_or_silt": 0,
+    "leaf_packs": 0,
+    "wood": 0,
+    "aquatic_plants": 0,
+    "open_water": 0,
+    "edge_plants": 0
+  },
+  "id": 778,
+  "user_id": 250
+}
+
+HTTP/1.1 200 OK
+Date: Mon, 12 Jul 2021 07:09:14 GMT
+Server: Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips PHP/7.1.33
+X-Powered-By: PHP/7.4.6
+Cache-Control: no-cache, private
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 56
+phpdebugbar-id: Xad363519d587fa1855b58d2e621fe711
+Vary: Authorization,Accept-Encoding
+Content-Length: 1003
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: application/json
+
+{
+  "id": 778,
+  "user_id": 250,
+  "sample_date": "2021-07-12T06:24:00+00:00",
+  "lat": "-17.0458900",
+  "lng": "150.1423800",
+  "scoring_method": "alt",
+  "created_at": "2021-07-12T06:24:07+00:00",
+  "updated_at": "2021-07-12T07:09:14+00:00",
+  "survey_type": "detailed",
+  "waterbody_type": "river",
+  "waterbody_name": "5s edittest jgwifi",
+  "nearby_feature": "Edited",
+  "notes": null,
+  "reviewed": 0,
+  "corrected": 0,
+  "complete": null,
+  "score": 0,
+  "weighted_score": null,
+  "sampled_creatures": [
+    {
+      "id": 2975,
+      "sample_id": 778,
+      "creature_id": 179,
+      "count": 2,
+      "photos_count": 1
+    },
+    {
+      "id": 2976,
+      "sample_id": 778,
+      "creature_id": 198,
+      "count": 16,
+      "photos_count": 1
+    },
+    {
+      "id": 2977,
+      "sample_id": 778,
+      "creature_id": 189,
+      "count": 16,
+      "photos_count": 1
+    }
+  ],
+  "habitat": {
+    "id": 778,
+    "sample_id": 778,
+    "boulder": 100,
+    "gravel": 0,
+    "sand_or_silt": 0,
+    "leaf_packs": 0,
+    "wood": 0,
+    "aquatic_plants": 0,
+    "open_water": 0,
+    "edge_plants": 0
+  },
+  "photos": [
+    {
+      "id": 4060,
+      "original_filename": "sitePhoto_3_1626070992.jpg",
+      "extension": "jpg",
+      "mimetype": "image/jpeg",
+      "filesize": 1722906,
+      "filename": "ee79356303562635bffe527097e6ea0c",
+      "user_id": 250
+    }
+  ]
+}
