@@ -123,11 +123,15 @@ exports.definition = {
 				if ( originalSampleId ) {
 					let oldSample = Alloy.createModel("sample");
 					oldSample.loadById(originalSampleId);
+					// copy across serverSampleId - this may not have been present
+					// when temporary record was created
+					this.set("serverSampleId", oldSample.get("serverSampleId"));
 					let oldTaxa = oldSample.loadTaxa();
 					oldTaxa.removeAll({keepFiles:true});
 					oldSample.destroy();
 				}
 
+				
 				this.set("dateCompleted", moment().format() );
 				let updatedAt = moment().valueOf();
 				this.set('updatedAt', updatedAt, {ignore:true});
