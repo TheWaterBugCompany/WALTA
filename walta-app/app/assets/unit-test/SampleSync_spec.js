@@ -651,7 +651,7 @@ describe("SampleSync", function () {
         
     }); 
 
-    it('should not duplicate record if editted whilst uploading', async function() {
+    it('should not duplicate record if edited whilst uploading', async function() {
         clearMockSampleData();
         let sample = makeSampleData( { 
             sitePhotoPath: makeTestPhoto("site.jpg"),
@@ -679,6 +679,8 @@ describe("SampleSync", function () {
             query: 'SELECT * FROM sample'
         });
         expect(samples.length).equals(1);
+        expect(samples.at(0).get("waterbodyName")).equals("edited");
+        expect(samples.at(0).get("serverSampleId")).equals(666);
        
     });
 
