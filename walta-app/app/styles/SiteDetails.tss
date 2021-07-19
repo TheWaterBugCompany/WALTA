@@ -86,6 +86,7 @@
 }
 
 "#locationIndicator": {
+    horizontalWrap: false,
     height: "50%",
     width: "75%"
 }
