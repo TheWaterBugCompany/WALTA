@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var SampleSync = require("logic/SampleSync");
+
 var Topics = require('ui/Topics');
-var KeyLoader = require('logic/KeyLoaderJson');
-var PlatformSpecific = require('ui/PlatformSpecific');
 var Sample = require('logic/Sample');
-var GeoLocationService = require('logic/GeoLocationService'); 
-var Crashlytics = require('util/Crashlytics');
 var debug = m => Ti.API.info(m);
-var log = Crashlytics.log;
-Topics.init();
+
+var System = $.args.System;
+var Key = $.args.Key;
+var View = $.args.View;
+var Survey = $.args.Survey;
+
 
 function questionToString( args ) {
   if ( !args || !args.node || !args.node.questions )
@@ -51,14 +51,6 @@ function getHistory() {
   return history;
 }
 
-function loadKey( keyUrl ) {
-  key = KeyLoader.loadKey(keyUrl);
-  Alloy.Globals.Key = key;
-  if ( ! key ) {
-    throw "Failed to load the key: " + keyUrl;
-  }
-}
-
 function openController(ctl,args) {
   if ( !args ) args = {};
   if ( !args.slide ) args.slide = "none";
@@ -77,10 +69,7 @@ function openController(ctl,args) {
   history.push(page);
   dumpHistory();
 
-  
-  debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
-  controller = Alloy.createController(ctl,args);
-  controller.open();
+  View.openView( ctl, args )
 
   // search for a version of this page 
   function isPageEquivalent( a , b ) {
@@ -101,7 +90,7 @@ function goBack(args) {
   if ( ! args ) args = {};
   var currentArgs = history.pop().args;
   if ( history.length === 0 ) {
-    closeApp();
+    SystemFacade.closeApp();
   } else {
     var cargs = history[history.length-1];
     var ctl = cargs.ctl;
@@ -122,47 +111,39 @@ function goBack(args) {
 }
 
 function siteDetailsWindow(args) {
-  if ( OS_ANDROID ) {
-    debug('Asking for permissions...');
-    Ti.Android.requestPermissions(
-      [ 'android.permission.ACCESS_FINE_LOCATION','android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE' ], 
-      function(e) {
-        if (e.success) {
-          openController("SiteDetails",args);
-        } else {
-          alert("You need to enable access to location, the camera, and photos on external storage, in order to perform a survey!");
-        }
-      });
-  } else {
-    openController("SiteDetails",args);
-  }
+  System.requestPermission([ 'android.permission.ACCESS_FINE_LOCATION','android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE' ],
+    function(e) {
+      if (e.success) {
+        openController("SiteDetails",args);
+      } else {
+        alert("You need to enable access to location, the camera, and photos on external storage, in order to perform a survey!");
+      }
+    });
 }
 
 function updateDecisionWindow( args ) {
   var node = args.node;
   if ( ! node ) {
-    node = key.getRootNode();
+    node = Key.getRootNode();
     args.node = node;
   }
   if ( ! args )
     args = {};
   args.key = key;
-  if ( key.isNode( node ) ) {
+  if ( Key.isNode( node ) ) {
     openController("KeySearch", args );
   } else {
     openController("TaxonDetails", args );
   }
 }
 
-function closeApp() {
-  PlatformSpecific.appShutdown();
-}
+
 
 function startApp(options) {
 
   Topics.subscribe( Topics.KEYSEARCH, function(data) {
-    var node = ( data.surveyType === Sample.SURVEY_MAYFLY ? key.findNode("mayfly_start_point") : key.getRootNode() );
-    key.reset(node);
+    var node = ( data.surveyType === Sample.SURVEY_MAYFLY ? Key.findNode("mayfly_start_point") : Key.getRootNode() );
+    Key.reset(node);
     updateDecisionWindow(_(data).extend({ slide: 'right' }));
   });
 
@@ -189,69 +170,35 @@ function startApp(options) {
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
   Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
   Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
-  Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: key.url }) ) );
-  Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: key.url }) ) );
-  Topics.subscribe( Topics.FORCE_UPLOAD, () => {
-    if ( !( options && options.nosync )) {
-      debug("forcing synchronise");
-      SampleSync.forceUpload();
-    }
-  })
+  Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: Key.url }) ) );
+  Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: Key.url }) ) );
+  Topics.subscribe( Topics.FORCE_UPLOAD, () => Survey.forceUpload() )
   Topics.subscribe( Topics.JUMPTO, function( data ) {
     if ( ! _.isUndefined( data.id ) ) {
-      key.setCurrentNode(data.id);
-      updateDecisionWindow(_(data).extend({ node: key.getCurrentNode()}));
+      Key.setCurrentNode(data.id);
+      updateDecisionWindow(_(data).extend({ node: Key.getCurrentNode()}));
     } else {
       debug("Topics.JUMPTO undefined node!");
     }
   });
 
   Topics.subscribe( Topics.MAYFLY, function(data) {
-    
     if ( !data ) data = {};
-    Alloy.Collections.instance("sample").startNewSurveyIfComplete(Sample.SURVEY_MAYFLY, Alloy.Globals.CerdiApi.retrieveUserId());
+    Survey.startSurvey(Sample.SURVEY_MAYFLY);
     Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
   Topics.subscribe( Topics.ORDER, function(data) {
     if ( !data ) data = {};
-    Alloy.Collections.instance("sample").startNewSurveyIfComplete(Sample.SURVEY_ORDER, Alloy.Globals.CerdiApi.retrieveUserId());
+    Survey.startSurvey(Sample.SURVEY_ORDER);
     Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
 
   Topics.subscribe( Topics.DETAILED, function(data) {
     if ( !data ) data = {};
-    Alloy.Collections.instance("sample").startNewSurveyIfComplete(Sample.SURVEY_DETAILED, Alloy.Globals.CerdiApi.retrieveUserId());
+    Survey.startSurvey(Sample.SURVEY_DETAILED);
     Topics.fireTopicEvent( Topics.SITEDETAILS, _(data).extend({slide:"right"}) );
   } );
-
- 
-  Alloy.Models.instance("sample").loadCurrent();
-  Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
-
-  if ( !( options && options.nosync )) {
-    SampleSync.init();
-  }
-  var keyName = "walta";
-  var keyPath;
-  if ( ! keyPath ) {
-    keyPath = Ti.Filesystem.resourcesDirectory + "taxonomy/";
-  }
-  var keyUrl = keyPath + keyName + '/';
-  loadKey( keyUrl );
-  PlatformSpecific.appStartUp();
-  GeoLocationService.init();
-  
-  // Report user name to Crashlytics when logged in
-  if ( Crashlytics.isAvailable() ) {
-    function setUserId() { 
-      Crashlytics.setUserId( Ti.App.Properties.getObject('userAccessUsername') ); 
-    }
-    Topics.subscribe( Topics.LOGGEDIN, (data) => setUserId() );
-    if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
-      setUserId();
-    }
-  }
   Topics.fireTopicEvent( Topics.HOME );
 }
 
