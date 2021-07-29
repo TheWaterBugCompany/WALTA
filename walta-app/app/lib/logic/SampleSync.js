@@ -5,8 +5,7 @@ var { delayedPromise } = require("util/PromiseUtils");
 var { errorHandler, formatError } = require("util/ErrorUtils");
 
 var { createSampleUploader } = require("logic/SampleUploader");
-var SYNC_INTERVAL = 1000*60*5; // 5 minutes
-
+var SYNC_INTERVAL = 1000*60*30; // 30 minutes
 var isSyncing = false;
 
 function areWeSyncing() {
@@ -59,10 +58,10 @@ function startSynchronise(options) {
     function rescheduleSync() {
         isSyncing = false;
         if ( options && !_.isUndefined(options.noschedule) ) {
-            debug("Not rescheduling sync");
+           debug("Not rescheduling sync");
         } else {
-            debug("Rescheduling sync");
-           timeoutHandler = setTimeout( startSynchronise, SYNC_INTERVAL );
+           debug("Rescheduling sync");
+           timeoutHandler = setTimeout( () => startSynchronise(options), SYNC_INTERVAL );
         }
         return Promise.resolve();
     }
@@ -92,7 +91,7 @@ function startSynchronise(options) {
     // flag that were are already syncing - to avoid reentrant calls
     isSyncing = true;
     return Promise.resolve()
-        .then(() => downloadSamples(delay) )
+        .then(  () => downloadSamples(delay) )
         .then(() => sampleUploader.uploadSamples() )
         .catch( handleError )
         .finally( rescheduleSync )
