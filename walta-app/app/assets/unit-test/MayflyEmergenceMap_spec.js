@@ -17,22 +17,36 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, windowOpenTest, wrapViewInWindow } = require("unit-test/util/TestUtils");
+var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton, checkTestResult} = require("unit-test/util/TestUtils");
 describe("MayflyEmergenceMap controller", function() {
-	var ctl,win;
+	var scr,view,win;
+    function createMap() {
+        scr = Alloy.createController("MayflyEmergenceMap", { 
+          getCurrentPosition: function( callback ) {
+            callback( { 
+              coords: {
+                accuracy: 100,
+                latitude: -42.890734,
+                longitude: 147.671216
+              }
+            });
+          }
+        });
+        view = scr.getView();
+        win = wrapViewInWindow( view );
+        win.addEventListener( "close", function handler() { 
+          win.removeEventListener("close", handler);
+          scr.cleanUp();
+        }) 
+      }
 	before( function() {
-        ctl = Alloy.createController("MayflyEmergenceMap");
-        win = wrapViewInWindow( ctl.getView() );
-        win.addEventListener("close", function cleanUp() {
-            win.removeEventListener("close", cleanUp );
-            ctl.cleanUp();
-        })
 	});
 	after( function(done) {
-		closeWindow( win, done );
+		closeWindow( view, done );
 	});
 	it('should display the MayflyEmergenceMap view', function(done) {
-		windowOpenTest( win, done );
+		createMap();
+        windowOpenTest( win, done );
     });
     it('should send event for legend click'); // How to implement selecting a webview element
 });

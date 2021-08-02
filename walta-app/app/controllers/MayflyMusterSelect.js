@@ -7,7 +7,7 @@ $.survey = menuEntry( $.content, "/images/mayfly-muster-icon.png", "Start Survey
   "Perform a mayfly survey.", false, true, "45%"  );
 
 $.explore.on("click", function() {
-  Topics.fireTopicEvent( Topics.MAYFLY_EMERGENCE );
+  $.trigger("mayfly_emergence");
 });
 
 function closeEvent() {
