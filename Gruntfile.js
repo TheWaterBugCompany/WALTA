@@ -17,7 +17,7 @@ module.exports = function(grunt) {
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
     const PROFILE = process.env.PROFILE || "20804088-396a-4aae-b7e3-5d6f56510a6a";
-    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "19875388-d751-4d39-9c07-431cf5ac84dd";
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "0267451f-f305-434b-9fca-af7353b164f2";
     const PROFILE_DEV = "bc07f9c5-b99f-464d-8470-abb8daf0149f";
     const DEVICE_ID="a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
     

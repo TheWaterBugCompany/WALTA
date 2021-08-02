@@ -72,15 +72,3 @@
   left: "5%",
   width: Ti.UI.SIZE
 }
-
-"#mapview": {
-    mapType: Alloy.Globals.Map.HYBRID_TYPE,
-    indoorEnabled: false,
-    mapToolbarEnabled: false,
-    region: {
-        latitude: -27.507653,
-        longitude: 133.611655,
-        latitudeDelta: 33.0,
-        longitudeDelta: 33.0
-    }
-}
