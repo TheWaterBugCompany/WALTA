@@ -202,7 +202,7 @@
                 format: 'image/png', 
                 transparent: true,
                 SLD_BODY: SLD,
-                minZoom: 7,
+                minZoom: 8,
                 maxZoom: 17
             }).addTo(map);
 
@@ -269,37 +269,35 @@
                 const fireLongPressEvent = originalEvent => {
                     clearLongPressTimer();
 
-                    const el = originalEvent.target
-                    , x = originalEvent.touches[0].clientX
-                    , y = originalEvent.touches[0].clientY
+                    const el = originalEvent.target;
 
                     // This will emulate contextmenu mouse event
                     const event = new MouseEvent('contextmenu', {
                                                 bubbles: true,
                                                 cancelable: true,
-                                                clientX: x,
-                                                clientY: y
+                                                clientX: startPos.x,
+                                                clientY: startPos.y
                                             })
 
 
                     // fire the long-press event
-                    if ( distance({x: x, y: y},startPos) < 15 ) {
-                        const suppressClickEvent = el.dispatchEvent.call(el,event);
+                    const suppressClickEvent = el.dispatchEvent.call(el,event);
 
-                        if (suppressClickEvent) {
+                    if (suppressClickEvent) {
 
-                            // temporarily intercept and clear the next click
-                            mapEl.addEventListener('touchend', function clearMouseUp(e) {
-                                mapEl.removeEventListener('touchend', clearMouseUp, true);
-                                cancelEvent(e);
-                            }, true);
-                        }
+                        // temporarily intercept and clear the next click
+                        mapEl.addEventListener('touchend', function clearMouseUp(e) {
+                            mapEl.removeEventListener('touchend', clearMouseUp, true);
+                            cancelEvent(e);
+                        }, true);
                     }
+                    
                 }
 
                 const startLongPressTimer = e => {
-                    startPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                    console.log("startLongPressTimer");
                     clearLongPressTimer(e);
+                    startPos = { x: e.touches[0].clientX, y: e.touches[0].clientY }
                     timer = setTimeout( fireLongPressEvent.bind(null,e), 500 );
                 }
 
@@ -320,7 +318,15 @@
                 // hook events that clear a pending long press event
                 mapEl.addEventListener('touchcancel', clearLongPressTimer, true);
                 mapEl.addEventListener('touchend', clearLongPressTimer, true);
-                //mapEl.addEventListener('touchmove', clearLongPressTimer, true);
+                mapEl.addEventListener('touchmove', function(e) {
+                    if ( distance( 
+                            { x: e.touches[0].clientX,
+                              y: e.touches[0].clientY },
+                              startPos) > 15 ) {
+                                  console.log("moved too far for long press");
+                                  clearLongPressTimer();
+                              }
+                }, true);
 
                 // hook events that can trigger a long press event
                 mapEl.addEventListener('touchstart', startLongPressTimer, true); // <- start

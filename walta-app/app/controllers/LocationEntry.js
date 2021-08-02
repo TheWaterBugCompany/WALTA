@@ -21,6 +21,7 @@ function cleanUp() {
 }
 
 function updateLocation( lat, lng, accuracy ) {
+    mapPoint = { lat: lat, lng: lng, accuracy: accuracy };
    $.mapView.setLocation( lat, lng, accuracy );
 }
 

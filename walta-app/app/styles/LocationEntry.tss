@@ -8,23 +8,9 @@
   horizontalWrap: false,
   bottom: "1%",
   right: 0,
-  width: "30%",
-  height: "15%"
+  width: "250dp",
+  height: "50dp"
 }
-
-"#buttonBar[if=Alloy.Globals.isHighRes]": {
-  width: "40%"
-}
-
-"#buttonBar[if=Alloy.Globals.isXHighRes]": {
-  width: "35%",
-  height: "13%"
-}
-
-"#buttonBar[platform=android]": {
-  width: "50%"
-}
-
 
 "#closeButton": {
   top: 0,
@@ -34,41 +20,29 @@
 }
 
 "#locateButton": {
+  borderColor: "transparent",
+  borderWidth: 0, 
+  backgroundColor: "transparent",
   width: Ti.UI.SIZE,
   height: Ti.UI.SIZE
 }
 
-
-"#locateButtonIcon[platform=android]": {
-  width: "16%",
-  height: "70%"
-
-}
-
-"#locateButtonIcon[platform=android if=Alloy.Globals.isHighRes]": {
-  width: "16%",
-  height: "75%"
-}
-
-"#locateButtonIcon[platform=android if=Alloy.Globals.isXHighRes]": {
-  width: "16%",
-  height: "74%"
-}
 
 "#locateButtonIcon": {
+  backgroundColor: "transparent",
   image: "/images/locate-icon.png",
-  width: Ti.UI.SIZE,
-  height: Ti.UI.SIZE
+  width: "30dp",
+  height: "30dp"
 }
 
 "#cancelButton": {
   backgroundColor: "#ef8b8b",
   left: "5%",
-  width: Ti.UI.SIZE
+  width: "80dp"
 }
 
 "#saveButton": {
   backgroundColor: "#92d050",
   left: "5%",
-  width: Ti.UI.SIZE
+  width: "80dp"
 }
