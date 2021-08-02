@@ -19,13 +19,10 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton, checkTestResult } = require("unit-test/util/TestUtils");
 describe("LocationEntry controller", function() {
-  this.timeout(10000);
+  //this.timeout(10000);
 	var win, scr, view;
   var sample= Alloy.Models.sample;
-  beforeEach( function() {
-    sample = Alloy.Models.instance("sample");
-    sample.off();
-    sample.clear();
+  function createMap() {
     scr = Alloy.createController("LocationEntry", { 
       getCurrentPosition: function( callback ) {
         callback( { 
@@ -43,17 +40,24 @@ describe("LocationEntry controller", function() {
       win.removeEventListener("close", handler);
       scr.cleanUp();
     }) 
+  }
+  beforeEach( function() {
+    sample = Alloy.Models.instance("sample");
+    sample.off();
+    sample.clear();
   });
 
   afterEach( function(done) {
     closeWindow( win, done );
   });
 
-  it('should display overlay', function(done) {
+  it.only('should display overlay', function(done) {
+    createMap();
     windowOpenTest( win, done );
 	});
 
   it('should fire cancel event', function(done) {
+    createMap();
     windowOpenTest( win, function () { 
       scr.on("close", () => done() );
       scr.cancelButton.fireEvent("click");
@@ -63,11 +67,14 @@ describe("LocationEntry controller", function() {
   it('should display existing location', function(done) {
     sample.set("lat","-42.888381");
     sample.set("lng","147.665715");
+    sample.save();
+    createMap();
     windowOpenTest( win, done );
   });
 
   it('should set the location when the locate button is pressed', function(done) { 
     var removeDupsDone = _.once( done ); 
+    createMap();
     windowOpenTest( win, function(){
       sample.on("change:lng change:lat", function() {
         checkTestResult( ()=> {

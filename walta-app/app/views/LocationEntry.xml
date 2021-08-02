@@ -9,7 +9,7 @@
 						</View>
 					</View>
 					<View id="content" layout="vertical">
-						<Module module="ti.map" id="mapview"></Module>
+						<Require type="view" src="LeafletMap" id="mapView" />
 					</View> 
 				</View>
 				<View id="buttonBar" layout="horizontal">

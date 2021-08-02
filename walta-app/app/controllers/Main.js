@@ -169,7 +169,7 @@ function startApp(options) {
   Topics.subscribe( Topics.HISTORY, (data) => openController("SampleHistory",data) );
   Topics.subscribe( Topics.SPEEDBUG, (data) => openController("Speedbug",data) );
   Topics.subscribe( Topics.GALLERY, (data) => openController("Gallery",data) );
-  Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
+ // Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: Key.url }) ) );
   Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: Key.url }) ) );
   Topics.subscribe( Topics.FORCE_UPLOAD, () => Survey.forceUpload() )

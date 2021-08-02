@@ -41,7 +41,16 @@ function mayflyClick() {
   $.selectMethod.on("close", function() {
     closeSelectMethod();
   });
-  //Topics.fireTopicEvent( Topics.MAYFLY, null );
+  $.selectMethod.on("mayfly_emergence", function() {
+    $.mayflyMap = Alloy.createController("MayflyEmergenceMap");
+    $.TopLevelWindow.add($.mayflyMap.getView());
+    $.mayflyMap.on("close", function handler() {
+        $.mayflyMap.off("close", handler);
+        $.TopLevelWindow.remove($.mayflyMap.getView());
+        $.mayflyMap.cleanUp();
+        $.mayflyMap = null;
+    });
+  })
 }
 
 function detailedClick() {

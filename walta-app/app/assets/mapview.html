@@ -24,7 +24,12 @@
         html, body { 
             background-color: white; 
         }
-        
+
+        .ios13 {
+            -webkit-user-select: none; 
+            -webkit-touch-callout: none;
+        }
+
         #map {
           position: fixed;
           top: 0;
@@ -148,58 +153,207 @@
     var map = L.map('map',{
         zoomControl: false,
         attributionControl: false,
-    }).setView([-42.110449, 146.527405], 8);
+        tap: false
+    }).setView([-29.190532, 134.077148], 3);
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoidGhlY29kZXNoYXJtYW4iLCJhIjoiY2p4NXpvenEyMDdlczN5bzR4MWF0aDVoMiJ9.Tolm7-mPxWoXKH2D5zaF1g',
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+        maxZoom: 17,
         updateWhenIdle: false
     }).addTo(map);
 
-    L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', { 
-        layers: 'wwew:tas_creatures',
-        styles: 'inline_style', 
-        format: 'image/png', 
-        transparent: true,
-        SLD_BODY: SLD
-    }).addTo(map);
-
-    
-    L.Control.Legend = L.Control.extend({
-        _showLegend: function() {
-            if ( L.DomUtil.hasClass(this.legend, "open") ) {
-                L.DomUtil.removeClass(this.legend,"open");
-            } else {
-                L.DomUtil.addClass(this.legend,"open");
-            }
-        },
-        onAdd: function() {
-            var container = L.DomUtil.create('div');
-            var menu = L.DomUtil.create('div', 'menu');
-            menu.innerHTML += "<div></div><div></div><div></div>";
-            var legend = L.DomUtil.create('dl', 'info legend');
-            MAYFLY_LEGEND.forEach(
-                ({ name, code, color, ref }) => {
-                    let div = L.DomUtil.create('div','item',legend);
-                    let title = L.DomUtil.create('dt','title',div);
-                    title.innerHTML = name;
-                    let icon = L.DomUtil.create('dd','icon',div);
-                    icon.style["background-color"] = color;
-                    L.DomEvent.on( div, 'click', () => Titanium.App.fireEvent( "waterbug",{ event: "jumpto", id: ref } ) );
-                });
-            L.DomEvent.on( menu, 'click', this._showLegend, this);
-            container.appendChild(menu);
-            container.appendChild(legend);
-            this.legend = legend;
-            return container;
-        },
-        onRemove: function() {
-            L.DomEvent.off( div, 'click', this._showLegend, this);;
+    var surveyMarker = null;
+    var accuracyRing = null;
+    function addSurveyPoint(lat, lng, accuracy) {
+        if ( accuracyRing != null ) {
+            accuracyRing.remove();
         }
-    });
-    new L.Control.Legend({position: 'topleft'}).addTo(map);
+        if ( accuracy > 0 ) {
+            accuracyRing = L.circle([lat,lng],{
+                radius: accuracy,
+                weight: 4,
+                color: "#aa26849c",
+                fillColor: "#6626849c"
+            });
+            accuracyRing.addTo(map);
+        }
+        
+        
+        if ( surveyMarker != null ) {
+            surveyMarker.remove();
+        }
+        surveyMarker = L.marker([lat,lng]);
+        surveyMarker.addTo(map);
+
+        if ( map.getZoom() > 13 ) {
+            map.panTo([lat,lng]);
+        } else {
+            map.setView([lat,lng],13);
+        }
+        
+    }
+
+    var mayflyLayerEnabled = false;
+    function addMayflyLayer() {
+        if ( !mayflyLayerEnabled ) {
+            L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', { 
+                layers: 'wwew:tas_creatures',
+                styles: 'inline_style', 
+                format: 'image/png', 
+                transparent: true,
+                SLD_BODY: SLD,
+                minZoom: 7,
+                maxZoom: 17
+            }).addTo(map);
+
+            
+            L.Control.Legend = L.Control.extend({
+                _showLegend: function() {
+                    if ( L.DomUtil.hasClass(this.legend, "open") ) {
+                        L.DomUtil.removeClass(this.legend,"open");
+                    } else {
+                        L.DomUtil.addClass(this.legend,"open");
+                    }
+                },
+                onAdd: function() {
+                    var container = L.DomUtil.create('div');
+                    var menu = L.DomUtil.create('div', 'menu');
+                    menu.innerHTML += "<div></div><div></div><div></div>";
+                    var legend = L.DomUtil.create('dl', 'info legend');
+                    MAYFLY_LEGEND.forEach(
+                        ({ name, code, color, ref }) => {
+                            let div = L.DomUtil.create('div','item',legend);
+                            let title = L.DomUtil.create('dt','title',div);
+                            title.innerHTML = name;
+                            let icon = L.DomUtil.create('dd','icon',div);
+                            icon.style["background-color"] = color;
+                            L.DomEvent.on( div, 'click', () => Titanium.App.fireEvent( "waterbug",{ event: "jumpto", id: ref } ) );
+                        });
+                    L.DomEvent.on( menu, 'click', this._showLegend, this);
+                    container.appendChild(menu);
+                    container.appendChild(legend);
+                    this.legend = legend;
+                    return container;
+                },
+                onRemove: function() {
+                    L.DomEvent.off( div, 'click', this._showLegend, this);;
+                }
+            });
+            new L.Control.Legend({position: 'topleft'}).addTo(map);
+            map.setView([-42.110449, 146.527405], 6);
+            mayflyLayerEnabled = true;
+        }
+    };
+
+    var longPressEnabled = false;
+    function enableLongPress() {
+        if ( !longPressEnabled ) {
+
+            function distance(a,b) {
+                var x = b.x - a.x,
+                    y = b.y - a.y;
+
+                return Math.sqrt(x * x + y * y);
+            }
+
+            function userAgentContains(str) {
+                return navigator.userAgent.toLowerCase().indexOf(str) >= 0;
+            }
+            /* install hacks to make long press work on iOS - the 
+               prebaked tap option fails for ios >= 13 */
+            if ( userAgentContains("safari") ) {
+                document.body.classList.add('ios13')
+                const mapEl = map.getContainer();
+                let timer = null;
+                let startPos = null;
+                const fireLongPressEvent = originalEvent => {
+                    clearLongPressTimer();
+
+                    const el = originalEvent.target
+                    , x = originalEvent.touches[0].clientX
+                    , y = originalEvent.touches[0].clientY
+
+                    // This will emulate contextmenu mouse event
+                    const event = new MouseEvent('contextmenu', {
+                                                bubbles: true,
+                                                cancelable: true,
+                                                clientX: x,
+                                                clientY: y
+                                            })
+
+
+                    // fire the long-press event
+                    if ( distance({x: x, y: y},startPos) < 15 ) {
+                        const suppressClickEvent = el.dispatchEvent.call(el,event);
+
+                        if (suppressClickEvent) {
+
+                            // temporarily intercept and clear the next click
+                            mapEl.addEventListener('touchend', function clearMouseUp(e) {
+                                mapEl.removeEventListener('touchend', clearMouseUp, true);
+                                cancelEvent(e);
+                            }, true);
+                        }
+                    }
+                }
+
+                const startLongPressTimer = e => {
+                    startPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                    clearLongPressTimer(e);
+                    timer = setTimeout( fireLongPressEvent.bind(null,e), 500 );
+                }
+
+                const clearLongPressTimer = () => {
+                    console.log('clearLongPressTimer');
+                    if(timer) {
+                        clearTimeout(timer);
+                        timer = null;
+                    }
+                }
+
+                const cancelEvent = e => {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                // hook events that clear a pending long press event
+                mapEl.addEventListener('touchcancel', clearLongPressTimer, true);
+                mapEl.addEventListener('touchend', clearLongPressTimer, true);
+                //mapEl.addEventListener('touchmove', clearLongPressTimer, true);
+
+                // hook events that can trigger a long press event
+                mapEl.addEventListener('touchstart', startLongPressTimer, true); // <- start
+
+            }
+
+            map.on("contextmenu", function(data) {
+                console.log(`long press: ${JSON.stringify(data.latlng)}`);
+                try {
+                    Ti.App.fireEvent("waterbug-map:longpress", data.latlng);
+                } catch(e) {
+                    
+                }
+            });
+            longPressEnabled = true;
+        }
+    }
+
+    try {
+        Ti.App.addEventListener("waterbug-map:addmayflylayer", function() {
+            addMayflyLayer();
+        });
+        Ti.App.addEventListener("waterbug-map:enablelongpress", function() {
+            enableLongPress();
+        });
+        Ti.App.addEventListener("waterbug-map:setlocation", function(data) {
+            console.log(`got waterbug:setlocation: ${JSON.stringify(data)}`);
+            addSurveyPoint(data.lat, data.lng, data.accuracy);
+        });
+        Ti.App.fireEvent("waterbug-map:opened");
+    } catch(e) {
+        // stop errors when not in a titanium WebView
+    }
     </script>
 </body>
 

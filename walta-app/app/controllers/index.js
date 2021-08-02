@@ -1,4 +1,6 @@
-
+Ti.API.info("Unit Test Build Initializing...");
+require("unit-test/index");
+/*
 var CerdiApi = require("logic/CerdiApi");
 var KeyLoader = require('logic/KeyLoaderJson');
 var GeoLocationService = require('logic/GeoLocationService'); 
@@ -6,10 +8,10 @@ var Crashlytics = require('util/Crashlytics');
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
 var PlatformSpecific = require("ui/PlatformSpecific");
-
+var debug = m => Ti.API.info(m);
 Topics.init();
 
-/* FIXME: deprecate using globals */
+// FIXME: deprecate using globals
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 SampleSync.init();
 // Report user name to Crashlytics when logged in
@@ -57,7 +59,7 @@ Alloy.createController("Main", {
     View: {
         openView: function(ctl,args) {
             debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
-            controller = Alloy.createController(ctl,args);
+            var controller = Alloy.createController(ctl,args);
             controller.open();
         }
     },
@@ -72,4 +74,4 @@ Alloy.createController("Main", {
         }
     }
 
-}).startApp(); 
+}).startApp(); */
