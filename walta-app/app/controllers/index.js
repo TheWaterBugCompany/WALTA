@@ -1,6 +1,3 @@
-Ti.API.info("Unit Test Build Initializing...");
-require("unit-test/index");
-/*
 var CerdiApi = require("logic/CerdiApi");
 var KeyLoader = require('logic/KeyLoaderJson');
 var GeoLocationService = require('logic/GeoLocationService'); 
@@ -74,4 +71,4 @@ Alloy.createController("Main", {
         }
     }
 
-}).startApp(); */
+}).startApp(); 
