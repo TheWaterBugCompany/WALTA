@@ -261,7 +261,7 @@
             }
             /* install hacks to make long press work on iOS - the 
                prebaked tap option fails for ios >= 13 */
-            if ( userAgentContains("safari") ) {
+            if ( userAgentContains("iphone") ) {
                 document.body.classList.add('ios13')
                 const mapEl = map.getContainer();
                 let timer = null;
