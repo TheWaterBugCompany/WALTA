@@ -18,7 +18,7 @@
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton, checkTestResult } = require("unit-test/util/TestUtils");
-describe("LocationEntry controller", function() {
+describe.only("LocationEntry controller", function() {
   //this.timeout(10000);
 	var win, scr, view;
   var sample= Alloy.Models.sample;
@@ -51,10 +51,10 @@ describe("LocationEntry controller", function() {
     closeWindow( win, done );
   });
 
-  it.only('should display overlay', function(done) {
+  it('should display overlay', function(done) {
     createMap();
     windowOpenTest( win, done );
-	});
+	}); 
 
   it('should fire cancel event', function(done) {
     createMap();
@@ -105,7 +105,7 @@ describe("LocationEntry controller", function() {
           removeDupsDone();
         });
       } );
-      scr.mapview.fireEvent("longclick", { latitude: -42.888, longitude: 147.665});
+      Ti.App.fireEvent("waterbug-map:longpress", { lat: -42.888, lng: 147.665});
       clickButton( scr.saveButton );
     } );
   });
@@ -116,7 +116,7 @@ describe("LocationEntry controller", function() {
       sample.on("change:lng change:lat", function() {
         expect.fail("map click changed point when map cancelled!");
       } );
-      scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
+      Ti.App.fireEvent("waterbug-map:longpress", { lat: -42.888, lng: 147.665});
       clickButton( scr.cancelButton );
       setTimeout( done, 100 ); // 100 ms is enough to catch event if is going to happen
     } );
@@ -127,7 +127,7 @@ describe("LocationEntry controller", function() {
       sample.on("change:lng change:lat", function() {
         expect.fail("map click changed point when control disabled!");
       } ); 
-      scr.mapview.fireEvent("mapclick", { latitude: -42.888, longitude: 147.665});
+      Ti.App.fireEvent("waterbug-map:longpress", { lat: -42.888, lng: 147.665});
       setTimeout( done, 100 ); // 100 ms is enough to catch event if is going to happen
     } );
   });
