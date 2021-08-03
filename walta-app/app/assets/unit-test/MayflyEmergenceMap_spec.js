@@ -42,7 +42,7 @@ describe("MayflyEmergenceMap controller", function() {
 	before( function() {
 	});
 	after( function(done) {
-		closeWindow( view, done );
+		closeWindow( win, done );
 	});
 	it('should display the MayflyEmergenceMap view', function(done) {
 		createMap();
