@@ -3,7 +3,7 @@
 		<View class="window">
 			<View layout="vertical"> 
 				<View class="titlebar">
-					<Label class="titleText">Zoom in to see mayfly emergence</Label>
+					<Label class="titleText">Zoom in to see mayfly distribution</Label>
 					<View id="closeButton" onClick="cancelClick">
 						<ImageView class="close_button_image"></ImageView>
 					</View>
