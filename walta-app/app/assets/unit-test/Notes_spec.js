@@ -26,7 +26,7 @@ describe.only("Notes controller", function() {
 	afterEach( function(done) {
 		closeWindow( ctl.getView(), done );
 	});
-	it('should display the Notes view', async function() {
+	it.only('should display the Notes view', async function() {
 		await controllerOpenTest( ctl );
   });
   it('should bind the partial summision checkbox to the partial field in the sample');

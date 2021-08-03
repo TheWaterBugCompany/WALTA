@@ -1,0 +1,15 @@
+<Alloy>
+	<Model src="sample" />
+	<ScrollView id="content">
+		<View id="innerContent">
+			<View id="partial">
+				<Switch id="partialToggle" class="checkbox" accessibilityLabel="Partial Submission" value="{sample.partial}"/>
+				<Label class="labelText optionLabel" text="This survey is complete and ready for verfication by an expert."/>
+			</View>
+			<View id="notes">
+				<Label class="labelText" text="Notes:"/>
+				<TextArea id="notesTextField" text="{sample.notes}"/>
+			</View>
+		</View>
+	</ScrollView>
+</Alloy>

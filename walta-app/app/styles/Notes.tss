@@ -1,0 +1,32 @@
+
+"#content": {
+    scrollType: "horizontal"
+}
+
+"#innerContent": {
+    top: "5%",
+    left: "2%",
+    layout:"vertical"
+}
+"#partial": {
+    layout:"horizontal",
+    height:Ti.UI.SIZE
+}
+"#notes": {
+    top: "5%",
+    layout: "vertical",
+    borderColor: 
+}
+".labelText": {
+    height: Ti.UI.SIZE,
+    width: Ti.UI.FILL
+}
+".checkbox": {
+    tintColor: "#b4d2d9",
+    left: 0
+}
+
+"#nextButton": {
+    right: "1%",
+    bottom: "18%"
+}
