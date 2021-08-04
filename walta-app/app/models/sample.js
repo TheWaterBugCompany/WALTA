@@ -39,6 +39,8 @@ exports.definition = {
 			"serverSyncTime": "INTEGER", // timestamp of last upload or download (or 1 for legacy code)
 			"updatedAt": "INTEGER", // timestamp of the last update (or NULL for legacy)
 			"serverUserId": "INTEGER", // user_id field from CERDI server
+			"complete": "INTEGER", // boolean actually
+			"notes": "TEXT"
 		},
 		adapter: {
 			type: "sql",
@@ -317,6 +319,8 @@ exports.definition = {
 					"serverUserId": sample.user_id,
 					"serverSampleId": sample.id,
 					"dateCompleted": sample.sample_date,
+					"complete": sample.complete,
+					"notes": sample.notes,
 					"lat": parseFloat(sample.lat),
 					"lng": parseFloat(sample.lng),
 					"surveyType": toSurveyType(sample.survey_type),
@@ -375,6 +379,8 @@ exports.definition = {
 					"waterbody_name": this.get("waterbodyName"),
 					"nearby_feature": this.get("nearbyFeature"),
 					"creatures": taxa.toCerdiApiJson(),
+					"complete": this.get("complete"),
+					"notes": this.get("notes"),
 					"habitat": {
 						"boulder": this.get("boulder"),
 						"gravel": this.get("gravel"),

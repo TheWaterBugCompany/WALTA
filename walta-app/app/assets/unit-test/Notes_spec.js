@@ -17,20 +17,96 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
-describe.only("Notes controller", function() {
-	var ctl;
-	beforeEach( function() {
-		ctl = Alloy.createController("Notes");
-	});
-	afterEach( function(done) {
-		closeWindow( ctl.getView(), done );
-	});
-	it.only('should display the Notes view', async function() {
-		await controllerOpenTest( ctl );
+var { closeWindow, controllerOpenTest, waitForTick } = require("unit-test/util/TestUtils");
+describe("Notes controller", function() {
+  context("view test", function() {
+    var ctl;
+    beforeEach( function() {
+      ctl = Alloy.createController("Notes");
+    });
+    afterEach( function(done) {
+      closeWindow( ctl.getView(), done );
+    });
+    it('should display the Notes view', async function() {
+      await controllerOpenTest( ctl );
+    });
+    it('should bind the partial summision checkbox to the partial field in the sample', async function() {
+      Alloy.Models.sample.set("partial", true);
+      await controllerOpenTest( ctl );
+      expect( ctl.partialToggle.value).to.equal(true);
+      ctl.partialToggle.value = false;
+      await waitForTick(10)();
+      expect( Alloy.Models.sample.get("partial") ).to.equal(false);
+    });
+    it('should bind the notes field to the notes field in the sample model', async function() {
+      Alloy.Models.sample.set("notes", "test notes");
+      await controllerOpenTest( ctl );
+      expect( ctl.notesTextField.value).to.equal("test notes");
+      ctl.notesTextField.value = "edit";
+      // no way to simulate actual entering keypresses but
+      // assuming the change event is fired this tests the
+      // setting of the notes field.
+      ctl.notesTextField.fireEvent("change", { value: "edit" } );
+      await waitForTick(10)();
+      let notes = Alloy.Models.sample.get("notes");
+      expect(notes).to.equal("edit");
+    });
   });
-  it('should bind the partial summision checkbox to the partial field in the sample');
-  it('should bind the notes field to the notes field in the sample model');
-  it('should move from the sample tray to the notes screen');
-  it('should move from the notes screen to the summary screen');
+  context("main integration", function() {
+    let currentController = null;
+    let mockKey = { getSpeedbugIndex: function() {} };
+    function createMockMain() {
+          // FIXME: Sampletray needs global taxa collection
+          Alloy.Collections.instance("taxa");
+          return Alloy.createController("Main", {
+              System: {
+                  requestPermission: function() {},
+                  closeApp: function() {},
+              },
+              View: {
+                  openView: function(ctl,args) {
+                      debug(`opening controller="${ctl}" with args= ${JSON.stringify(args)}`);
+                      var controller = Alloy.createController(ctl,args);
+                      controller.open();
+                      currentController = controller;
+                  }
+              },
+              Key: mockKey,
+              Survey: {
+                  forceUpload: function() {},
+                  startSurvey: function() {}
+              }
+          });
+      }
+      afterEach(function() {
+        currentController.TopLevelWindow.close();
+      })
+      it('should move from the sample tray to the notes screen', async function() {
+        main = createMockMain();
+        main.startApp();
+        main.openController( "SampleTray", {});
+        await waitForTick(10)();
+        expect(currentController.name).to.equal("sampletray");
+        currentController.nextButton.NavButton.fireEvent("click");
+        await waitForTick(10)();
+        expect(currentController.name).to.equal("notes");
+        currentController.backButton.NavButton.fireEvent("click");
+        await waitForTick(10)();
+        expect(currentController.name).to.equal("sampletray");
+
+      });
+      it('should move from the notes screen to the summary screen', async function() {
+        main = createMockMain();
+        main.startApp();
+        main.openController( "Notes", {});
+        await waitForTick(10)();
+        expect(currentController.name).to.equal("notes");
+        currentController.nextButton.NavButton.fireEvent("click");
+        await waitForTick(10)();
+        expect(currentController.name).to.equal("summary");
+        currentController.backButton.NavButton.fireEvent("click");
+        await waitForTick(10)();
+        expect(currentController.name).to.equal("notes");
+      });
+  });
 });

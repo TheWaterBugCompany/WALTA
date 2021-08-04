@@ -162,52 +162,7 @@
         updateWhenIdle: false
     }).addTo(map);
 
-    var surveyMarker = null;
-    var accuracyRing = null;
-    function addSurveyPoint(lat, lng, accuracy) {
-        if ( accuracyRing != null ) {
-            accuracyRing.remove();
-        }
-        if ( accuracy > 0 ) {
-            accuracyRing = L.circle([lat,lng],{
-                radius: accuracy,
-                weight: 4,
-                color: "#aa26849c",
-                fillColor: "#6626849c"
-            });
-            accuracyRing.addTo(map);
-        }
-        
-        
-        if ( surveyMarker != null ) {
-            surveyMarker.remove();
-        }
-        surveyMarker = L.marker([lat,lng]);
-        surveyMarker.addTo(map);
-
-        if ( map.getZoom() > 13 ) {
-            map.panTo([lat,lng]);
-        } else {
-            map.setView([lat,lng],13);
-        }
-        
-    }
-
-    var mayflyLayerEnabled = false;
-    function addMayflyLayer() {
-        if ( !mayflyLayerEnabled ) {
-            L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', { 
-                layers: 'wwew:tas_creatures',
-                styles: 'inline_style', 
-                format: 'image/png', 
-                transparent: true,
-                SLD_BODY: SLD,
-                minZoom: 8,
-                maxZoom: 17
-            }).addTo(map);
-
-            
-            L.Control.Legend = L.Control.extend({
+    L.Control.Legend = L.Control.extend({
                 _showLegend: function() {
                     if ( L.DomUtil.hasClass(this.legend, "open") ) {
                         L.DomUtil.removeClass(this.legend,"open");
@@ -239,10 +194,66 @@
                     L.DomEvent.off( div, 'click', this._showLegend, this);;
                 }
             });
-            new L.Control.Legend({position: 'topleft'}).addTo(map);
-            map.setView([-42.110449, 146.527405], 6);
-            mayflyLayerEnabled = true;
+
+    var surveyMarker = null;
+    var accuracyRing = null;
+    function addSurveyPoint(lat, lng, accuracy) {
+        if ( accuracyRing != null ) {
+            accuracyRing.remove();
         }
+        if ( accuracy > 0 ) {
+            accuracyRing = L.circle([lat,lng],{
+                radius: accuracy,
+                weight: 4,
+                color: "#aa26849c",
+                fillColor: "#6626849c"
+            });
+            accuracyRing.addTo(map);
+        }
+        
+        
+        if ( surveyMarker != null ) {
+            surveyMarker.remove();
+        }
+        surveyMarker = L.marker([lat,lng]);
+        surveyMarker.addTo(map);
+
+        if ( map.getZoom() > 13 ) {
+            map.panTo([lat,lng]);
+        } else {
+            map.setView([lat,lng],13);
+        }
+        
+    }
+
+    var mayflyLayer = null;
+    var mayflyLegend = null;
+    function removeMayflyLayer() {
+        if ( mayflyLayer ) {
+            mayflyLayer.remove(map);
+        }
+        if ( mayflyLegend ) {
+            mayflyLegend.remove(map);
+        }
+    } 
+    function addMayflyLayer() {
+        if ( !mayflyLayer ) {
+            mayflyLayer = L.tileLayer.wms('http://geo.cerdi.com.au/geoserver/wwew/wms', { 
+                layers: 'wwew:tas_creatures',
+                styles: 'inline_style', 
+                format: 'image/png', 
+                transparent: true,
+                SLD_BODY: SLD,
+                minZoom: 8,
+                maxZoom: 17
+            });
+        }
+        if ( !mayflyLegend ) {
+            mayflyLegend = new L.Control.Legend({position: 'topleft'})
+        }
+        mayflyLayer.addTo(map);
+        mayflyLegend.addTo(map);
+        map.setView([-42.110449, 146.527405], 6);
     };
 
     var longPressEnabled = false;
@@ -261,7 +272,7 @@
             }
             /* install hacks to make long press work on iOS - the 
                prebaked tap option fails for ios >= 13 */
-            if ( userAgentContains("iphone") ) {
+            if ( userAgentContains("applewebkit") ) {
                 document.body.classList.add('ios13')
                 const mapEl = map.getContainer();
                 let timer = null;
@@ -348,6 +359,9 @@
     try {
         Ti.App.addEventListener("waterbug-map:addmayflylayer", function() {
             addMayflyLayer();
+        });
+        Ti.App.addEventListener("waterbug-map:removemayflylayer", function() {
+            removeMayflyLayer();
         });
         Ti.App.addEventListener("waterbug-map:enablelongpress", function() {
             enableLongPress();

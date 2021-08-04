@@ -4,19 +4,40 @@
 }
 
 "#innerContent": {
-    top: "5%",
-    left: "2%",
+    top: "10dp",
+    left: "10dp",
     layout:"vertical"
 }
 "#partial": {
-    layout:"horizontal",
-    height:Ti.UI.SIZE
+    layout:"horizontal"
 }
 "#notes": {
-    top: "5%",
+    top: "10dp",
     layout: "vertical",
-    borderColor: 
+    height: "10%"
 }
+"#notesTextField": {
+    borderColor: "#26849c",
+    color: "#26849c",
+    top: "10dp",
+    font: {
+        fontFamily: "Tahoma",
+        fontSize: "16dp"
+    },
+    hintTextColor: "#c9cacb"
+}
+"#notesTextField[if=Alloy.Globals.isHighRes]": {
+   font: {
+    fontSize: "18dp"
+  }
+}
+
+"#notesTextField[if=Alloy.Globals.isXHighRes]": {
+   font: {
+    fontSize: "32dp"
+  }
+}
+
 ".labelText": {
     height: Ti.UI.SIZE,
     width: Ti.UI.FILL

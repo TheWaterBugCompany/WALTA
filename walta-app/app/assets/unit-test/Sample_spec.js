@@ -138,6 +138,8 @@ describe("Sample collection, model including taxa", function() {
       lastError: "Test error",
       lat: -42.0,
       lng: 135.0,
+      complete: true,
+      notes: "test notes",
       accuracy: "100.0",
       surveyType: Sample.SURVEY_DETAILED,
       waterbodyType: Sample.WATERBODY_LAKE,
@@ -228,6 +230,8 @@ describe("Sample collection, model including taxa", function() {
     })   
     
     it('should persist all the fields', function() {
+      expect( sample.get("complete"), "complete field" ).to.equal(1);
+      expect( sample.get("notes"), "notes field").to.equal("test notes");
       expect( sample.get("serverSampleId") ).to.equal(666);
       expect( sample.get("sampleId") ).to.equal(initialSampleId);
       expect( sample.get("lastError") ).to.equal("Test error");
@@ -324,6 +328,19 @@ describe("Sample collection, model including taxa", function() {
       Alloy.Models.sample.set("waterbodyType", Sample.WATERBODY_LAKE);
       expect( Alloy.Models.sample.toCerdiApiJson().waterbody_type ).to.equal("lake");
       
+    });
+    it('should serialize notes correctly', function() {
+      Alloy.Models.sample.set("notes", "test notes");
+      var json = Alloy.Models.sample.toCerdiApiJson();
+      expect( json.notes ).to.equal("test notes");
+    });
+    it('should serialize partial correctly', function() {
+      Alloy.Models.sample.set("complete", true);
+      var json = Alloy.Models.sample.toCerdiApiJson();
+      expect( json.complete ).to.equal(true);
+      Alloy.Models.sample.set("complete", false);
+      var json = Alloy.Models.sample.toCerdiApiJson();
+      expect( json.complete ).to.equal(false);
     });
     it('should serilaize attributes correctly', function() {
       var json = Alloy.Models.sample.toCerdiApiJson();
