@@ -40,12 +40,7 @@ function dumpHistory() {
 }
 
 let controller = null;
-let key = null;
 let history = [];
-
-function getCurrentController() {
-  return controller;
-}
 
 function getHistory() {
   return history;
@@ -54,7 +49,7 @@ function getHistory() {
 function openController(ctl,args) {
   if ( !args ) args = {};
   if ( !args.slide ) args.slide = "none";
-  if ( !args.key ) args.key = key;
+  if ( !args.key ) args.key = Key;
 
   // find the previous instance of an equivalent screen and truncate
   // the history to avoid the ability to create long loops as this
@@ -129,7 +124,7 @@ function updateDecisionWindow( args ) {
   }
   if ( ! args )
     args = {};
-  args.key = key;
+  args.key = Key;
   if ( Key.isNode( node ) ) {
     openController("KeySearch", args );
   } else {
@@ -172,7 +167,8 @@ function startApp(options) {
  // Topics.subscribe( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   Topics.subscribe( Topics.HELP, (data) => openController("Help", extend(data,{ keyUrl: Key.url }) ) );
   Topics.subscribe( Topics.ABOUT, (data) => openController("About", extend(data,{ keyUrl: Key.url }) ) );
-  Topics.subscribe( Topics.FORCE_UPLOAD, () => Survey.forceUpload() )
+  Topics.subscribe( Topics.FORCE_UPLOAD, () => Survey.forceUpload() );
+  Topics.subscribe( Topics.NOTES, (data) => openController("Notes",data));
   Topics.subscribe( Topics.JUMPTO, function( data ) {
     if ( ! _.isUndefined( data.id ) ) {
       Key.setCurrentNode(data.id);
@@ -202,6 +198,6 @@ function startApp(options) {
   Topics.fireTopicEvent( Topics.HOME );
 }
 
-exports.getCurrentController = getCurrentController;
+exports.openController = openController;
 exports.getHistory = getHistory;
 exports.startApp = startApp; 

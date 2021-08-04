@@ -69,6 +69,14 @@ function fireAddMayflyLayer() {
     Ti.App.fireEvent("waterbug-map:addmayflylayer");
 }
 
+function fireRemoveMayflyLayer() {
+    Ti.App.fireEvent("waterbug-map:removemayflylayer");
+}
+
+function removeMayflyLayer() {
+    onReadyHandlers.push(fireRemoveMayflyLayer);
+}
+
 function onLongPress(callback) {
     removeLongPressHandler();
     setLongPressHandler(callback);
@@ -80,6 +88,7 @@ function addMayflyLayer() {
 }
 
 exports.addMayflyLayer = addMayflyLayer;
+exports.removeMayflyLayer = removeMayflyLayer;
 exports.onLongPress = onLongPress;
 exports.setLocation = setLocation;
 exports.cleanUp = cleanUp;

@@ -48,6 +48,7 @@ $.mapView.onLongPress( function(data) {
         updateLocation( data.lat, data.lng );
     }
 });
+$.mapView.removeMayflyLayer();
 
 let lat = parseFloat(sample.get("lat")),
     lng = parseFloat(sample.get("lng")),

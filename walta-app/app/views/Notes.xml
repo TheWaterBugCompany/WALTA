@@ -3,12 +3,12 @@
 	<ScrollView id="content">
 		<View id="innerContent">
 			<View id="partial">
-				<Switch id="partialToggle" class="checkbox" accessibilityLabel="Partial Submission" value="{sample.partial}"/>
+				<Switch id="partialToggle" class="checkbox" accessibilityLabel="Partial Submission" value="{sample.complete}" onChange="onPartialChange"/>
 				<Label class="labelText optionLabel" text="This survey is complete and ready for verfication by an expert."/>
 			</View>
 			<View id="notes">
-				<Label class="labelText" text="Notes:"/>
-				<TextArea id="notesTextField" text="{sample.notes}"/>
+				<Label id="notesLabel" class="labelText" text="Enter any notes relating to this survey:"/>
+				<TextArea id="notesTextField" value="{sample.notes}" onChange="onNotesChange"/>
 			</View>
 		</View>
 	</ScrollView>
