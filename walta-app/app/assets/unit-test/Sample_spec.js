@@ -138,7 +138,7 @@ describe("Sample collection, model including taxa", function() {
       lastError: "Test error",
       lat: -42.0,
       lng: 135.0,
-      complete: true,
+      complete: 1,
       notes: "test notes",
       accuracy: "100.0",
       surveyType: Sample.SURVEY_DETAILED,
