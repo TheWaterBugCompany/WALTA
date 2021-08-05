@@ -112,6 +112,7 @@ function siteDetailsWindow(args) {
         openController("SiteDetails",args);
       } else {
         alert("You need to enable access to location, the camera, and photos on external storage, in order to perform a survey!");
+        openController("SiteDetails",args);
       }
     });
 }

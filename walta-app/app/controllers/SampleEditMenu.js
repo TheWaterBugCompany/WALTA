@@ -14,6 +14,7 @@ $.view.on("click", () => {
 } );
 
 $.edit.on("click", () => {
+  
     let sample = Alloy.Models.instance("sample");
     sample.loadById($.args.sampleId);
     let tempSample = sample.createTemporaryForEdit();

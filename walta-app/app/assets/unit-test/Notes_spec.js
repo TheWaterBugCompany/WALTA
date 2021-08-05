@@ -31,12 +31,12 @@ describe("Notes controller", function() {
       await controllerOpenTest( ctl );
     });
     it('should bind the partial summision checkbox to the partial field in the sample', async function() {
-      Alloy.Models.sample.set("partial", true);
+      Alloy.Models.sample.set("complete", true);
       await controllerOpenTest( ctl );
       expect( ctl.partialToggle.value).to.equal(true);
       ctl.partialToggle.value = false;
       await waitForTick(10)();
-      expect( Alloy.Models.sample.get("partial") ).to.equal(false);
+      expect( Alloy.Models.sample.get("complete") ).to.equal(false);
     });
     it('should bind the notes field to the notes field in the sample model', async function() {
       Alloy.Models.sample.set("notes", "test notes");
@@ -80,7 +80,8 @@ describe("Notes controller", function() {
       }
       afterEach(function() {
         currentController.TopLevelWindow.close();
-      })
+        Alloy.Events.off(); // remove global events handlers
+      });
       it('should move from the sample tray to the notes screen', async function() {
         main = createMockMain();
         main.startApp();
