@@ -127,8 +127,8 @@ describe( 'SampleTray controller', function() {
 
     afterEach(cleanupSampleTray);
 
-    it('should fire the COMPLETE topic', function(done) {
-      actionFiresTopicTest( SampleTray.nextButton.NavButton, 'click', Topics.COMPLETE, () => done() );
+    it('should fire the NOTES topic', function(done) {
+      actionFiresTopicTest( SampleTray.nextButton.NavButton, 'click', Topics.NOTES, () => done() );
     });
   });
 

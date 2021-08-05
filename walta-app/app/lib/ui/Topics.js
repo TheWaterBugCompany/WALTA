@@ -83,6 +83,8 @@ var topics = {
 
 	UPLOAD_PROGRESS: 'uploadprogress',
 
+	NOTES: 'notes',
+
 	// used to trap when a page is opened
 	PAGE_OPENED: 'page_opened',
 
@@ -95,7 +97,11 @@ var topics = {
 	},
 
 	fireTopicEvent: function( topic, data ) {
-		Alloy.Events.trigger( 'waterbug:' + topic, data );
+		if ( topic ) {
+			Alloy.Events.trigger( 'waterbug:' + topic, data );
+		} else {
+			throw new Error("undefined topic");
+		}
 	}, 
 
 	init: function() {

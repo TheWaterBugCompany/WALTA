@@ -22,15 +22,46 @@ var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
 var { clearDatabase, actionFiresTopicTest, waitFor } = require("unit-test/util/TestUtils");
 var { areWeSyncing } = require("logic/SampleSync");
 var Topics = require('ui/Topics');
+var KeyLoader = require('logic/KeyLoaderJson');
 describe("Main controller", function() {
 	var app;
+  let currentController = null;
+    function createMockMain() {
+          // FIXME: Sampletray needs global taxa collection
+          Alloy.Collections.instance("taxa");
+          var keyUrl = Ti.Filesystem.resourcesDirectory + "taxonomy/walta/";
+          var key = KeyLoader.loadKey(keyUrl);
+          return Alloy.createController("Main", {
+              System: {
+                  requestPermission: function(p,cb) { cb({success:true})},
+                  closeApp: function() {},
+              },
+              View: {
+                  openView: function(ctl,args) {
+                    Ti.API.info(`openView ${ctl}`);
+                      var controller = Alloy.createController(ctl,args);
+                      controller.open();
+                      currentController = controller;
+                  }
+              },
+              Key: key,
+              Survey: {
+                  forceUpload: function() {},
+                  startSurvey: function() {}
+              }
+          });
+      }
+      afterEach(function() {
+        currentController.TopLevelWindow.close();
+        Alloy.Events.off(); // remove global events handlers
+      });
 	it('should display the Main view', async function() {
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
       .returnWith({accessToken:"accessToken"});
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
       .returnWith(38);
-    app = Alloy.createController("Main");
-    app.startApp({nosync: true});
+    app = createMockMain();
+    app.startApp();
     expect(app.getHistory()[0].ctl).to.equal("Menu");
   });
   it('should allow a sample to be edited', async function() {
@@ -40,54 +71,44 @@ describe("Main controller", function() {
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
       .returnWith(38);
     makeSampleData({ serverSampleId: 666 }).save();
-    app = Alloy.createController("Main");
-    app.startApp({nosync: true});
-    app.getCurrentController()
-      .history.fireEvent("click");
-    let archive = app.getCurrentController();
-    archive.sampleTable.fireEvent("click", { index: 0 });
-    await actionFiresTopicTest( archive.sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
+    app = createMockMain();
+    app.startApp();
+    currentController.history.fireEvent("click");
+    currentController.sampleTable.fireEvent("click", { index: 0 });
+    await actionFiresTopicTest( currentController.sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
 
     // At this point the global sample SHOULD NOT be the original record but 
     // a temporary copy instead. This a new sample with the DateSubmitted field blank.
     expect( Alloy.Models.instance("sample").get("serverSampleId")).to.equal(666);
     expect( Alloy.Models.instance("sample").get("dateCompleted")).to.be.undefined;
 
-    let siteDetails = app.getCurrentController();
-
-    siteDetails.waterbodyNameField.value = "changed by test edit";
-    siteDetails.waterbodyNameField.fireEvent("change"); // simulate user entering text
+    currentController.waterbodyNameField.value = "changed by test edit";
+    currentController.waterbodyNameField.fireEvent("change"); // simulate user entering text
    
-    await actionFiresTopicTest( siteDetails.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+  
+    await actionFiresTopicTest( currentController.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+    expect(currentController.name).to.equal("habitat")
+    await actionFiresTopicTest( currentController.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+    expect(currentController.name).to.equal("sampletray")
+    await actionFiresTopicTest( currentController.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+    expect(currentController.name).to.equal("notes")
+    await actionFiresTopicTest( currentController.nextButton.NavButton, "click", Topics.PAGE_OPENED );
+    expect(currentController.name).to.equal("summary")
+    await actionFiresTopicTest( currentController.nextButton.NavButton, "click", Topics.PAGE_OPENED );
 
-    let habitat = app.getCurrentController();
-   
-    await actionFiresTopicTest( habitat.nextButton.NavButton, "click", Topics.PAGE_OPENED );
-
-    let sampleTray = app.getCurrentController();
-    await actionFiresTopicTest( sampleTray.nextButton.NavButton, "click", Topics.PAGE_OPENED );
-
-    let summary = app.getCurrentController();
-    await actionFiresTopicTest( summary.nextButton.NavButton, "click", Topics.PAGE_OPENED );
-
-    
-    
     // load original row from archive (should only list submitted surveys)
-    let login = app.getCurrentController();
-    await actionFiresTopicTest( login.getAnchorBar().home, "click", Topics.PAGE_OPENED );
-    app.getCurrentController().history.fireEvent("click");
+    await actionFiresTopicTest( currentController.getAnchorBar().home, "click", Topics.PAGE_OPENED );
+    currentController.history.fireEvent("click");
     
+    expect( currentController.sampleTable.data[0].rows.length, "there should only be one row" ).to.equal(1);
 
-    archive = app.getCurrentController();
-    expect( archive.sampleTable.data[0].rows.length, "there should only be one row" ).to.equal(1);
+    currentController.sampleTable.fireEvent("click", { index: 0 });
 
-    archive.sampleTable.fireEvent("click", { index: 0 });
     
-    await actionFiresTopicTest( archive.sampleMenu.view.getView(), "click", Topics.PAGE_OPENED );
+    await actionFiresTopicTest( currentController.sampleMenu.view.getView(), "click", Topics.PAGE_OPENED );
 
     // verify change has been persisted
-    siteDetails = app.getCurrentController();
-    expect( siteDetails.waterbodyNameField.value ).to.equal("changed by test edit");
+    expect( currentController.waterbodyNameField.value ).to.equal("changed by test edit");
 
   });
 

@@ -37,7 +37,7 @@ Ti.App.addEventListener( "uncaughtException", function(e) {
   }
 });
 
-Alloy.Globals.Map = require('ti.map');
+//Alloy.Globals.Map = require('ti.map');
 
 Alloy.Events = _.clone(Backbone.Events);
 Alloy.Globals.Key = null;
