@@ -9,7 +9,7 @@
     layout:"vertical"
 }
 "#partial": {
-    layout:"horizontal"
+    height: "50dp"
 }
 "#notes": {
     top: "10dp",
@@ -17,9 +17,11 @@
     height: "10%"
 }
 "#notesTextField": {
+    backgroundColor: "transparent",
     borderColor: "#26849c",
     color: "#26849c",
     top: "10dp",
+    borderWidth: "1dp",
     font: {
         fontFamily: "Tahoma",
         fontSize: "16dp"
@@ -38,9 +40,10 @@
   }
 }
 
-".labelText": {
+"#partialLabel": {
+    left: "10%",
     height: Ti.UI.SIZE,
-    width: Ti.UI.FILL
+    width: "90%"
 }
 ".checkbox": {
     tintColor: "#b4d2d9",

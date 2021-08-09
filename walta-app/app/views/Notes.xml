@@ -4,7 +4,7 @@
 		<View id="innerContent">
 			<View id="partial">
 				<Switch id="partialToggle" class="checkbox" accessibilityLabel="Partial Submission" value="{sample.complete}" onChange="onPartialChange"/>
-				<Label class="labelText optionLabel" text="This survey is complete and ready for verfication by an expert."/>
+				<Label id="partialLabel" class="labelText optionLabel" text="This survey is complete river health assessment (leave unselected if this just for your personal waterbug collection)."/>
 			</View>
 			<View id="notes">
 				<Label id="notesLabel" class="labelText" text="Enter any notes relating to this survey:"/>

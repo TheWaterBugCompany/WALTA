@@ -26,14 +26,38 @@ function fixUpNotesView() {
 }
 function fixUpScrollview() {
     let acb = $.getAnchorBar().getView();
+    let ten = $.innerContent.rect.y;
     let height = $.TopLevelWindow.size.height - acb.size.height;
-    let partialHeight = $.partialToggle.size.height;
-    $.partial.height = partialHeight;
+    let width = $.innerContent.size.width;
+    let toggleWidth = $.partialToggle.size.width;
+
+    let partialHeight = $.partial.size.height;
+    $.partial.height = partialHeight; 
     $.content.height = height;
-    $.notes.height = height - partialHeight- 20;
+    
+    $.partialLabel.left = toggleWidth + ten; 
+    $.partialLabel.width = width - (toggleWidth + ten);
+
+  //  Ti.API.info(`win = ${$.TopLevelWindow.size.height}`);
+  //  Ti.API.info(`acb = ${acb.size.height}`);
+  //  Ti.API.info(`partial = ${$.partial.size.height}`);
+   // Ti.API.info(`ten = ${ten}`)
+
+    let notesWidth = $.TopLevelWindow.size.width - ten*3;
+
+  //  Ti.API.info(`notesTextField y = ${$.notesTextField.rect.y}`)
+    let notesHeight = height - partialHeight - ten*2;
+    let notesLabelHeight = $.notesLabel.size.height;
+
+  //  Ti.API.info(`notesWidth = ${notesWidth}`);
+  //  Ti.API.info(`notesHeight = ${notesHeight}`);
+  //  Ti.API.info(`notesLabelHeight = ${notesLabelHeight}`);
+ 
+    $.notes.height = notesHeight;
+    $.notesTextField.width = notesWidth;
+    $.notesTextField.height = notesHeight - $.notesTextField.rect.y- ten;
 }
 $.TopLevelWindow.addEventListener('postlayout', fixUpScrollview);
-$.notes.addEventListener('postlayout', fixUpNotesView);
 
 function onPartialChange( data ) {
     sample.set("complete", data.value );
