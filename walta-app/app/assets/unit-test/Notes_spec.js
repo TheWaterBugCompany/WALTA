@@ -19,27 +19,32 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest, waitForTick } = require("unit-test/util/TestUtils");
 describe("Notes controller", function() {
-  context("view test", function() {
+  context.only("view test", function() {
     var ctl;
     beforeEach( function() {
+      Alloy.Models.instance("sample").clear();
+      Alloy.Models.instance("sample").set("complete", true);
+      Alloy.Models.sample.set("notes", "test notes");
       ctl = Alloy.createController("Notes");
     });
     afterEach( function(done) {
       closeWindow( ctl.getView(), done );
     });
-    it.only('should display the Notes view', async function() {
+    it('should display the Notes view', async function() {
       await controllerOpenTest( ctl );
+      expect( ctl.partialToggle.enabled ).to.be.true;
+      expect( ctl.notesTextField.editable ).to.be.true;
     });
     it('should bind the partial summision checkbox to the partial field in the sample', async function() {
-      Alloy.Models.sample.set("complete", true);
+      
       await controllerOpenTest( ctl );
       expect( ctl.partialToggle.value).to.equal(true);
       ctl.partialToggle.value = false;
       await waitForTick(10)();
-      expect( Alloy.Models.sample.get("complete") ).to.equal(false);
+      expect( Alloy.Models.instance("sample").get("complete") ).to.equal(false);
     });
     it('should bind the notes field to the notes field in the sample model', async function() {
-      Alloy.Models.sample.set("notes", "test notes");
+      
       await controllerOpenTest( ctl );
       expect( ctl.notesTextField.value).to.equal("test notes");
       ctl.notesTextField.value = "edit";
@@ -50,6 +55,12 @@ describe("Notes controller", function() {
       await waitForTick(10)();
       let notes = Alloy.Models.sample.get("notes");
       expect(notes).to.equal("edit");
+    });
+    it('should not be able to edit partial or notes in read only mode',async function() {
+      ctl = Alloy.createController("Notes", {readonly:true});
+      await controllerOpenTest( ctl );
+      expect( ctl.partialToggle.enabled ).to.be.false;
+      expect( ctl.notesTextField.editable ).to.be.false;
     });
   });
   context("main integration", function() {
