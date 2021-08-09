@@ -379,7 +379,7 @@ exports.definition = {
 					"waterbody_name": this.get("waterbodyName"),
 					"nearby_feature": this.get("nearbyFeature"),
 					"creatures": taxa.toCerdiApiJson(),
-					"complete": this.get("complete"),
+					"complete": !!this.get("complete"), 
 					"notes": this.get("notes"),
 					"habitat": {
 						"boulder": this.get("boulder"),

@@ -1,14 +1,13 @@
 <Alloy>
-	<Model src="sample" />
 	<ScrollView id="content">
 		<View id="innerContent">
 			<View id="partial">
-				<Switch id="partialToggle" class="checkbox" accessibilityLabel="Partial Submission" value="{sample.complete}" onChange="onPartialChange"/>
+				<Switch id="partialToggle" class="checkbox" accessibilityLabel="Partial Submission" onChange="onPartialChange"/>
 				<Label id="partialLabel" class="labelText optionLabel" text="This survey is complete river health assessment (leave unselected if this just for your personal waterbug collection)."/>
 			</View>
 			<View id="notes">
 				<Label id="notesLabel" class="labelText" text="Enter any notes relating to this survey:"/>
-				<TextArea id="notesTextField" value="{sample.notes}" onChange="onNotesChange"/>
+				<TextArea id="notesTextField" onChange="onNotesChange"/>
 			</View>
 		</View>
 	</ScrollView>

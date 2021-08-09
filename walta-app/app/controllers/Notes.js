@@ -6,8 +6,9 @@ var Topics = require("ui/Topics");
 var sample = Alloy.Models.sample;
 var readOnlyMode = $.args.readonly === true;
 
-if ( readOnlyMode ) {
-    //$.leaves.editable = false;
+if ( readOnlyMode ) { 
+    $.partialToggle.enabled = false;
+    $.notesTextField.editable = false;
 
 }
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
@@ -55,9 +56,14 @@ function fixUpScrollview() {
  
     $.notes.height = notesHeight;
     $.notesTextField.width = notesWidth;
-    $.notesTextField.height = notesHeight - $.notesTextField.rect.y- ten;
+    $.notesTextField.height = notesHeight - $.notesTextField.rect.y - ten;
 }
 $.TopLevelWindow.addEventListener('postlayout', fixUpScrollview);
+
+function updateFields() {
+    $.partialToggle.value = Boolean(sample.get("complete"));
+    $.notesTextField.value = sample.get("notes");
+}
 
 function onPartialChange( data ) {
     sample.set("complete", data.value );
@@ -72,4 +78,5 @@ $.backButton = Alloy.createController("GoBackButton", { topic: Topics.SAMPLETRAY
 $.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLETE, slide: "right", readonly: readOnlyMode  } ); 
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
+updateFields();
 
