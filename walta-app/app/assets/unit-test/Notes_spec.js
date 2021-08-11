@@ -19,7 +19,7 @@ require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest, waitForTick } = require("unit-test/util/TestUtils");
 describe("Notes controller", function() {
-  context.only("view test", function() {
+  context("view test", function() {
     var ctl;
     beforeEach( function() {
       Alloy.Models.instance("sample").clear();
@@ -29,7 +29,7 @@ describe("Notes controller", function() {
     });
     afterEach( function(done) {
       closeWindow( ctl.getView(), done );
-    });
+    }); 
     it('should display the Notes view', async function() {
       await controllerOpenTest( ctl );
       expect( ctl.partialToggle.enabled ).to.be.true;
@@ -76,7 +76,6 @@ describe("Notes controller", function() {
               },
               View: {
                   openView: function(ctl,args) {
-                      debug(`opening controller="${ctl}" with args= ${JSON.stringify(args)}`);
                       var controller = Alloy.createController(ctl,args);
                       controller.open();
                       currentController = controller;
@@ -94,7 +93,7 @@ describe("Notes controller", function() {
         Alloy.Events.off(); // remove global events handlers
       });
       it('should move from the sample tray to the notes screen', async function() {
-        main = createMockMain();
+        let main = createMockMain();
         main.startApp();
         main.openController( "SampleTray", {});
         await waitForTick(10)();
@@ -108,7 +107,7 @@ describe("Notes controller", function() {
 
       });
       it('should move from the notes screen to the summary screen', async function() {
-        main = createMockMain();
+        let main = createMockMain();
         main.startApp();
         main.openController( "Notes", {});
         await waitForTick(10)();

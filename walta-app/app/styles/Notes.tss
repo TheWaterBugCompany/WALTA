@@ -17,6 +17,7 @@
     height: "10%"
 }
 "#notesTextField": {
+    fullscreen: false,
     backgroundColor: "transparent",
     borderColor: "#26849c",
     color: "#26849c",

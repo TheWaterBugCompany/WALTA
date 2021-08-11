@@ -24,6 +24,9 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 */
+"Window[platform=android]": {
+  windowSoftInputMode: Ti.UI.Android.SOFT_INPUT_ADJUST_PAN
+}
 "ActivityIndicator": {
   style: Ti.UI.ActivityIndicatorStyle.BIG,
   width: Ti.UI.SIZE,

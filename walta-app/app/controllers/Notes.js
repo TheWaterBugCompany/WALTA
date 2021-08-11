@@ -11,6 +11,10 @@ if ( readOnlyMode ) {
     $.notesTextField.editable = false;
 
 }
+
+var { applyKeyboardTweaks } = require("ui/Layout");
+applyKeyboardTweaks( $, [ $.notesTextField ] );
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.TopLevelWindow.removeEventListener('close', cleanUp );
     $.notes.removeEventListener('postlayout', fixUpNotesView );
