@@ -856,9 +856,9 @@ describe("SampleSync", function () {
     })
 
     describe("Unknown bugs", function() {
-        it.only("should upload unknown bugs with a new record");
-        it.only("should download any unknown bugs");
-        it.only("should upload any added unknown bugs");
-        it.only("should remove any removed unknown bugs");
+        it("should upload unknown bugs with a new record");
+        it("should download any unknown bugs");
+        it("should upload any added unknown bugs");
+        it("should remove any removed unknown bugs");
     })
 });

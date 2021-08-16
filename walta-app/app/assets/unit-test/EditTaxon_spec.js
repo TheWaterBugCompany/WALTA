@@ -172,5 +172,5 @@ describe("EditTaxon controller", function() {
             });
         });
 
-    it.only("should display an unknown bug");
+    it("should display an unknown bug");
 });

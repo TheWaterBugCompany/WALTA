@@ -261,6 +261,7 @@ describe("Sample collection, model including taxa", function() {
         expect( taxon.get("taxonId") ).to.equal(taxonId); 
       }); 
     });
+    it('should persist multiple unkown bug taxons');
   });
 
   context('should reset sample when new sample is created', function() {
