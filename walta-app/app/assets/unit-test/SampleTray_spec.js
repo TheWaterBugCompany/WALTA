@@ -925,4 +925,8 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.args.readonly ).to.be.true;
     });
   });
+  describe("Unkown bugs", function() {
+    it.only("should display a question mark for unknown bugs");
+    it.only("should allow multiple unknown bugs");
+  })
 });
