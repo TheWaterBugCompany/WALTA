@@ -57,4 +57,6 @@ describe('MethodSelect', function() {
 		mnu.browselist.trigger("click");
 	});
 
+	it.only('should add an unknown bug');
+
 });
