@@ -106,12 +106,18 @@ exports.definition = {
 			},
 
 			getSilhouette: function() {
-				var taxon = Alloy.Globals.Key.findTaxonById( this.getTaxonId() );
-				var bluebug = taxon.bluebug;
-				if ( bluebug !== undefined ) {
-				  return bluebug[0];
+				let taxonId = this.getTaxonId();
+				if ( taxonId ) {
+					var taxon = Alloy.Globals.Key.findTaxonById( taxonId );
+					var bluebug = taxon.bluebug;
+					if ( bluebug !== undefined ) {
+					return bluebug[0];
+					} else {
+					log(`Warning: missing bluebug on ${this.getTaxonId()}`);
+					}
 				} else {
-				  log(`Warning: missing bluebug on ${this.getTaxonId()}`);
+					// Unknown bug since there is no taxonId assigned
+					return "/images/unknown-bug-icon.png";
 				}
 			},
 
