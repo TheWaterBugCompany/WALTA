@@ -924,9 +924,22 @@ describe( 'SampleTray controller', function() {
       await openSampleTrayReadOnly(1);
       expect( SampleTray.editTaxon.args.readonly ).to.be.true;
     });
+
+    
   });
   describe("Unkown bugs", function() {
-    it.only("should display a question mark for unknown bugs");
-    it.only("should allow multiple unknown bugs");
+    it.only("should display multiple unknown bugs", async function() {
+      Alloy.Collections.taxa = Alloy.createCollection("taxa", [
+        Alloy.createModel( "taxa", { taxonId: null, abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: null, abundance: "1-2" })
+      ]);
+      setupSampleTray();
+      await openSampleTray();
+      var tiles = SampleTray.tray.children;
+      var sampleTaxa = getTaxaIcons( tiles[0] );
+      expect( sampleTaxa ).to.have.lengthOf(2);
+      assertSample( sampleTaxa[0], "/images/unknown-bug-icon.png", "3-5" );
+      assertSample( sampleTaxa[1], "/images/unknown-bug-icon.png", "1-2" );
+    });
   })
 });
