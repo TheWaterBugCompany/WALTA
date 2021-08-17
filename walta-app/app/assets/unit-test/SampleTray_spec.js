@@ -761,7 +761,7 @@ describe( 'SampleTray controller', function() {
     });
   });
 
-  context.only('editing taxon and model persistence',function() { 
+  context('editing taxon and model persistence',function() { 
 
     function simulateUserEdit(value, photoPath ) {
       console.log(`simulateUserEdit: ${photoPath}`);

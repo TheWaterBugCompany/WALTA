@@ -9,7 +9,7 @@ if ( readOnlyMode ) {
     disableControl($.deleteButton);
     disableControl($.abundanceValue);
 }
-
+Ti.API.info(`traxonId = ${taxonId}`);
 if ( taxonId ) {
     $.taxonName.text = key.findTaxonById(taxonId).commonName;
 } else {
@@ -34,11 +34,7 @@ if (!taxon ) {
 }
 
 
-function cleanUp() {
-    $.photoSelect.cleanUp();
-    $.destroy();
-    $.off();
-}
+
 var realPhoto = false;
 function isDefaultPhoto() {
     return !realPhoto; 
@@ -142,6 +138,24 @@ $.photoSelect.on("photoTaken", () => {
     persistPhoto(); 
     updateSaveButton(); 
 } );
+
+function fixupLayout() {
+    let eight = $.closeButton.size.height;
+    $.photoSelectWrapper.height = $.window.size.height 
+            - $.header.size.height 
+            - $.howMany.size.height 
+            - $.buttons.size.height- eight/2;
+
+}
+
+$.window.addEventListener("postlayout", fixupLayout );
+
+function cleanUp() {
+    $.window.removeEventListener("postlayout", fixupLayout );
+    $.photoSelect.cleanUp();
+    $.destroy();
+    $.off();
+}
 
 exports.cleanUp = cleanUp;
 exports.setImage = setImage;

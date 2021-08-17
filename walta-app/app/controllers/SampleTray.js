@@ -422,6 +422,12 @@ function startIdentification(e) {
     Topics.fireTopicEvent( Topics.BROWSE, { allowAddToSample: true, surveyType: surveyType  }  );
   });
 
+  $.selectMethod.on("unknownbug", function() {
+    closeSelectMethod();
+    Ti.API.info("firing identify")
+    Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: null }  );
+  });
+
   $.TopLevelWindow.add($.selectMethod.getView());
 
   e.cancelBubble = true;
@@ -548,7 +554,7 @@ function openWindow() {
   editTaxon( $.args.taxonId );
 }
 
-if ( $.args.taxonId ) {
+if ( ! _.isUndefined( $.args.taxonId ) ) {
   $.TopLevelWindow.addEventListener("open", openWindow );
   $.TopLevelWindow.addEventListener("close", function closeWindow() {
     $.TopLevelWindow.removeEventListener("open", openWindow );
