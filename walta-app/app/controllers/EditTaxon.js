@@ -1,17 +1,38 @@
-var taxon = $.args.taxon;
-var key = $.args.key;
-var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
+let taxonId = $.args.taxonId;
+let key = $.args.key;
+let { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 
-var readOnlyMode = $.args.readonly === true;
+let readOnlyMode = $.args.readonly === true;
 Ti.API.info(`EditTaxon readOnlyMode = ${readOnlyMode}`);
 $.photoSelect.setReadOnlyMode(readOnlyMode);
 if ( readOnlyMode ) {
     disableControl($.deleteButton);
     disableControl($.abundanceValue);
-   
 }
 
-$.taxonName.text = key.findTaxonById( taxon.get("taxonId") ).commonName;
+if ( taxonId ) {
+    $.taxonName.text = key.findTaxonById(taxonId).commonName;
+} else {
+    $.taxonName.text = "Unknown Bug";
+}
+let sample = Alloy.Models.sample;
+let taxon = Alloy.Collections["taxa"].findTaxon(taxonId);
+if (!taxon ) {
+    var taxons = Alloy.createCollection("taxa"); 
+    taxons.loadTemporary(taxonId); 
+    taxon = taxons.first();
+    if ( !taxon ) {
+        // creates a taxa but leaves it unlinked from sample until save event recieved
+        Ti.API.info("creating new taxon as temporary taxon")
+        taxon = Alloy.createModel( 'taxa', { taxonId: taxonId, abundance: "1-2" } );
+        taxon.save();
+    } else {
+        Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
+    }
+} else {
+    Ti.API.info(`existing persisted taxon ${JSON.stringify(taxon)}`);
+}
+
 
 function cleanUp() {
     $.photoSelect.cleanUp();
@@ -26,6 +47,12 @@ setAbundance( taxon.get("abundance") );
 setImage( taxon.getPhoto());
 updateSaveButton();
 
+function persistTaxon() {
+    taxon.save();
+    $.trigger("persist", taxon );
+}
+
+
 
 function persistPhoto() {
     taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
@@ -33,7 +60,7 @@ function persistPhoto() {
     // CODE SMELL: this breaks encapsulation, long term fix would be to rewrite to
     // use events on taxon model to propagate changes.
     $.photoSelect.photoUrls = [taxon.getPhoto()]; 
-    $.trigger("persist", taxon );
+    persistTaxon();
 }
 
 function setImage( photo ) {
@@ -49,7 +76,7 @@ function setImage( photo ) {
 function setAbundance( binValue  ) {
     taxon.set("abundance", binValue);
     $.abundanceValue.value = taxon.getAbundance();
-    $.trigger("persist", taxon );
+    persistTaxon();
 }
 
 function updateAbundance() {
@@ -62,10 +89,17 @@ function updateAbundance() {
 }
 
 function saveEvent() {
+    taxon.set("sampleId", sample.get("sampleId"));
+    Alloy.Collections.taxa.add( taxon );
+    taxon.save();
     $.trigger("save", taxon );
+    closeEvent();
 }
 
 function doDelete() {
+    Alloy.Collections.taxa.remove( taxon );
+    taxon.destroy();
+    closeEvent();
     $.trigger("delete", taxon );
 }
 
