@@ -761,7 +761,7 @@ describe( 'SampleTray controller', function() {
     });
   });
 
-  context('editing taxon and model persistence',function() { 
+  context.only('editing taxon and model persistence',function() { 
 
     function simulateUserEdit(value, photoPath ) {
       console.log(`simulateUserEdit: ${photoPath}`);
@@ -822,6 +822,7 @@ describe( 'SampleTray controller', function() {
     }
 
     async function simulateSaveTaxon() {
+      
       return new Promise( (resolve) => {
         SampleTray.on("taxonSaved", resolve );
         SampleTray.editTaxon.saveButton.fireEvent("click");
@@ -920,7 +921,7 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.false;
       expect( SampleTray.editTaxon.photoSelect.getThumbnailImageUrl()).to.include("preview_thumbnail");
     });
-    it('should pass through the readonlyu falg to the EditTaxon screen', async function() {
+    it('should pass through the readonly flag to the EditTaxon screen', async function() {
       await openSampleTrayReadOnly(1);
       expect( SampleTray.editTaxon.args.readonly ).to.be.true;
     });
