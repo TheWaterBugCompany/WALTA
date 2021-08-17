@@ -928,7 +928,7 @@ describe( 'SampleTray controller', function() {
     
   });
   describe("Unkown bugs", function() {
-    it.only("should display multiple unknown bugs", async function() {
+    it("should display multiple unknown bugs", async function() {
       Alloy.Collections.taxa = Alloy.createCollection("taxa", [
         Alloy.createModel( "taxa", { taxonId: null, abundance: "3-5" }),
         Alloy.createModel( "taxa", { taxonId: null, abundance: "1-2" })

@@ -57,6 +57,12 @@ describe('MethodSelect', function() {
 		mnu.browselist.trigger("click");
 	});
 
-	it('should add an unknown bug');
+	it.only('should add an unknown bug', function(done) {
+		mnu.on("unknownbug", function event() {
+			mnu.off("unknownbug",event);
+			done();
+		});
+		mnu.unknownbug.trigger("click");
+	});
 
 });
