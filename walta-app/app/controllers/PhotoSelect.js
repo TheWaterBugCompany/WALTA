@@ -301,8 +301,28 @@ exports.setError = setError;
 exports.clearError = clearError;
 exports.photoCapturedHandler = photoCapturedHandler; // for tests
 
+/*
+ Workaround an appacelerator layout bug - when images are resized and they
+ are laid out using layout: "horizontal" then they are spaced by their original
+ size - this creates way too much space inbetween the magnify and camera icons.
+
+ So in order to fix this we manually do the layout based. 
+ 
+ (using size.width recreates the bug)
+*/
+function layoutChildrenHorizontallyFromTheRight(data) {
+    let right = 0;
+    data.source.children.forEach( c => {
+        c.right = right;
+        right += c.width;
+    });
+}
+
+$.iconHolder.addEventListener("postlayout", layoutChildrenHorizontallyFromTheRight);
+
 function cleanUp() {
     info("cleaning up PhotoSelect");
+    $.iconHolder.removeEventListener("postlayout", layoutChildrenHorizontallyFromTheRight);
     $.destroy();
     $.off();
 }
