@@ -172,5 +172,13 @@ describe("EditTaxon controller", function() {
             });
         });
 
-    it("should display an unknown bug");
+    it("should display an unknown bug", function() {
+        makeEditTaxon( { taxonId:null, abundance:"1-2"} );
+        windowOpenTest( win, function() {
+            checkTestResult( done, 
+                function() {
+                    expect( ctl.taxonName.text ).to.equal("Unknown Bug");
+                } );
+            });
+    });
 });

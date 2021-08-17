@@ -533,49 +533,14 @@ function closeEditScreen() {
 
 function editTaxon( taxon_id ) {
   Ti.API.info(`editing taxon_id = ${taxon_id}`);
-  var taxon = Alloy.Collections["taxa"].findTaxon(taxon_id);
-  if (!taxon ) {
-    var taxons = Alloy.createCollection("taxa"); 
-    taxons.loadTemporary(taxon_id); 
-    taxon = taxons.first();
-    if ( !taxon ) {
-      // creates a taxa but leaves it unlinked from sample until save event recieved
-      Ti.API.info("creating new taxon as temporary taxon")
-      taxon = Alloy.createModel( 'taxa', { taxonId: taxon_id, abundance: "1-2" } );
-      taxon.save();
-    } else {
-      Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
-    }
-  } else {
-    Ti.API.info(`existing persisted taxon ${JSON.stringify(taxon)}`);
-  }
-  var sample = Alloy.Models.sample;
-  
-  $.editTaxon = Alloy.createController("EditTaxon", { taxon: taxon, key: key, readonly: readOnlyMode } );
+  $.editTaxon = Alloy.createController("EditTaxon", { taxonId: taxon_id, key: key, readonly: readOnlyMode } );
   $.getView().add( $.editTaxon.getView() );
-  
   $.editTaxon.on("close", function() {
     // closes but leaves temporary state untouched
     closeEditScreen();
   });
-
-  $.editTaxon.on("delete", function(taxon) {
-    Alloy.Collections.taxa.remove( taxon );
-    taxon.destroy();
-    closeEditScreen();
-  });
-
-  // called to persist temporarily
-  $.editTaxon.on("persist", function(taxon) {
-    taxon.save();
-  });
-
-  $.editTaxon.on("save", function(taxon) {
-    taxon.set("sampleId", sample.get("sampleId"));
-    Alloy.Collections.taxa.add( taxon );
-    taxon.save();
-    closeEditScreen();
-    $.trigger("taxonSaved"); 
+  $.editTaxon.on("save", function() {
+    $.trigger("taxonSaved"); // redudant use it tests?
   });
 }
 
