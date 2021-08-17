@@ -62,7 +62,7 @@
 }
 
 "#iconHolder": {
-    layout: "horizontal",
+    width: Ti.UI.FILL,
     bottom: 0,
     right: 0
 }

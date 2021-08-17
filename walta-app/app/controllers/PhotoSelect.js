@@ -5,6 +5,10 @@ var { removeFilesBeginningWith } = require('logic/FileUtils');
 var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 var Topics = require("ui/Topics");
 
+var readOnlyMode = false;
+setReadOnlyMode( $.args.readonly === true );
+
+
 if ( $.args.left ) $.photoSelectInner.left = $.args.left;
 if ( $.args.right ) $.photoSelectInner.right = $.args.right;
 if ( $.args.top ) $.photoSelectInner.top = $.args.top;
@@ -14,18 +18,15 @@ $.photoSelectOptionalLabel.visible = false;
 setImage( $.args.image );
 clearError();
 
-var readOnlyMode = false;
-setReadOnlyMode($.args.readonly === true);
+
 var cropPhoto = $.args.cropPhoto;
 
 function setReadOnlyMode(p_readOnlyMode) {
     readOnlyMode = p_readOnlyMode;
     Ti.API.info(`readOnlyMode = ${readOnlyMode}`);
     if ( readOnlyMode ) {
-        $.iconHolder.remove( $.camera );
         $.camera.visible = false;
     } else {
-        $.iconHolder.add( $.camera );
         $.camera.visible = true;
     }
 }
@@ -301,20 +302,13 @@ exports.setError = setError;
 exports.clearError = clearError;
 exports.photoCapturedHandler = photoCapturedHandler; // for tests
 
-/*
- Workaround an appacelerator layout bug - when images are resized and they
- are laid out using layout: "horizontal" then they are spaced by their original
- size - this creates way too much space inbetween the magnify and camera icons.
-
- So in order to fix this we manually do the layout based. 
- 
- (using size.width recreates the bug)
-*/
 function layoutChildrenHorizontallyFromTheRight(data) {
     let right = 0;
-    data.source.children.forEach( c => {
-        c.right = right;
-        right += c.width;
+    data.source.children.slice().reverse().forEach( c => {
+        if ( c.visible ) {
+            c.right = right;
+            right += c.size.width;
+        }
     });
 }
 

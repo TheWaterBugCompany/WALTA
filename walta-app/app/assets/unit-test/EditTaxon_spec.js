@@ -28,13 +28,17 @@ describe("EditTaxon controller", function() {
     var ctl,win;
     function makeEditTaxon( taxon, readonly ) {
         let txn = createMockTaxon( taxon );
+        Alloy.Collections.taxa = Alloy.createCollection("taxa", [ txn ] )
+        
+
         ctl = Alloy.createController("EditTaxon", { 
             key: keyMock,
-            taxon: txn,
+            taxonId: taxon.taxonId,
             readonly: readonly
          });
          
         win = wrapViewInWindow( ctl.getView() );
+
         win.addEventListener( "close", function cleanUp() {
             win.removeEventListener("close", cleanUp);
             ctl.cleanUp();
@@ -172,8 +176,8 @@ describe("EditTaxon controller", function() {
             });
         });
 
-    it("should display an unknown bug", function() {
-        makeEditTaxon( { taxonId:null, abundance:"1-2"} );
+    it.only("should display an unknown bug", function(done) {
+        makeEditTaxon( { taxonId:null, abundance:"1-2", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg"} );
         windowOpenTest( win, function() {
             checkTestResult( done, 
                 function() {
@@ -181,4 +185,19 @@ describe("EditTaxon controller", function() {
                 } );
             });
     });
+    /* OK the issue here is that we are identifying the bug by it's taxonId 
+       instead we need to identify it by its sampleTaxonId - but then this
+       causes a problem because the controller no longer know whether or not
+       to create a new taxon or load the existing one. 
+       
+        Which raises the question is the controller in charge of creating
+        data objects or should it be only viewing editing code.   
+
+        The logic should be:
+            - if sampleTaxonId is passed look up that preexisting taxon
+            - if taxonId is passed then look up existing taxonId
+            - if taxonId is null always create a new taxon
+    */
+    it("should allow multiple unknown bugs");
+
 });
