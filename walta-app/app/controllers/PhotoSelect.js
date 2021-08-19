@@ -151,6 +151,7 @@ function setImage( fileOrBlob ) {
             $.photo.image = fileOrBlob;
             $.photoUrls = [fileOrBlob];
         }
+        
     }
 
     function processPhoto( fileOrBlob ) {
@@ -158,10 +159,13 @@ function setImage( fileOrBlob ) {
         $.photoSelectOptionalLabel.visible = false;
         $.activity.show();
         $.photo.visible = false;
+        
+        $.iconHolder.fireEvent("postlayout");
         $.trigger("loading");
 
         // allow some time to update the display
         setTimeout( function() {
+                
                 // If an array, then it must contain URL paths to many photos, the first is displayed 
                 // in the thumbnail view
                 if ( Array.isArray(fileOrBlob) ) {
@@ -311,15 +315,16 @@ exports.clearError = clearError;
 exports.photoCapturedHandler = photoCapturedHandler; // for tests
 
 function layoutChildrenHorizontallyFromTheRight(data) {
+    Ti.API.info("layout children")
     let right = 0;
     data.source.children.slice().reverse().forEach( c => {
-        Ti.API.info(`c = ${JSON.stringify(c)}`)
         if ( c.visible ) {
             c.right = right;
             right += c.size.width;
         }
     });
 }
+
 
 $.iconHolder.addEventListener("postlayout", layoutChildrenHorizontallyFromTheRight);
 
