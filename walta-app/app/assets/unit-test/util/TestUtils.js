@@ -75,7 +75,14 @@ function wrapViewInWindow( view ) {
 	return win;
 }
 
-function windowOpenTest( win, done ) {
+function windowOpenTest( win, done) {
+	if ( done )
+		windowOpenTestCallback(win, done); 
+	else
+		return new Promise( (resolve) => windowOpenTestCallback( win, resolve) );
+}
+
+function windowOpenTestCallback( win, done ) {
 	if ( done ) {
 		win.addEventListener('open' , function open() {
 			win.removeEventListener('open', open);

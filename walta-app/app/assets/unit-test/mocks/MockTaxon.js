@@ -10,6 +10,7 @@ function createMockTaxon( taxon ) {
     model.getSilhouette = function() {
         return "/unit-test/resources/simpleKey1/media/speedbug/amphipoda_b.png";
     }
+    model.save();
     return model;
 }
 exports.createMockTaxon = createMockTaxon;

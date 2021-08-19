@@ -33,7 +33,7 @@ function update( newTaxon ) {
 }
 
 function fireEditEvent() {
-  Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: taxon.get("taxonId"), readonly: readOnlyMode } );
+  Topics.fireTopicEvent( Topics.IDENTIFY, { sampleTaxonId: taxon.get("sampleTaxonId"), readonly: readOnlyMode } );
 }
 
 function cleanUp() {
