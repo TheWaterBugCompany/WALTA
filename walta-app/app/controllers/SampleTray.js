@@ -537,9 +537,8 @@ function closeEditScreen() {
   }
 }
 
-function editTaxon( taxon_id ) {
-  Ti.API.info(`editing taxon_id = ${taxon_id}`);
-  $.editTaxon = Alloy.createController("EditTaxon", { taxonId: taxon_id, key: key, readonly: readOnlyMode } );
+function editTaxon() {
+  $.editTaxon = Alloy.createController("EditTaxon", $.args);
   $.getView().add( $.editTaxon.getView() );
   $.editTaxon.on("close", function() {
     // closes but leaves temporary state untouched
@@ -550,14 +549,10 @@ function editTaxon( taxon_id ) {
   });
 }
 
-function openWindow() {
-  editTaxon( $.args.taxonId );
-}
-
-if ( ! _.isUndefined( $.args.taxonId ) ) {
-  $.TopLevelWindow.addEventListener("open", openWindow );
+if ( ! _.isUndefined( $.args.taxonId ) || ! _.isUndefined( $.args.sampleTaxonId ) ) {
+  $.TopLevelWindow.addEventListener("open", editTaxon );
   $.TopLevelWindow.addEventListener("close", function closeWindow() {
-    $.TopLevelWindow.removeEventListener("open", openWindow );
+    $.TopLevelWindow.removeEventListener("open", editTaxon );
     $.TopLevelWindow.removeEventListener("close", closeWindow );
   })
 }

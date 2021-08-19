@@ -6,6 +6,7 @@ var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 var Topics = require("ui/Topics");
 
 var readOnlyMode = false;
+var originalPhotoUrl = null;
 setReadOnlyMode( $.args.readonly === true );
 
 
@@ -119,8 +120,14 @@ function generateThumbnail( fileOrBlob ) {
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
+function getOriginalPhotoUrl() {
+    return originalPhotoUrl;
+}
+
 function setImage( fileOrBlob ) {
     info(`setImage ${fileOrBlob}`)
+    if ( typeof fileOrBlob === "string")
+        originalPhotoUrl = fileOrBlob;
     if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
@@ -296,6 +303,7 @@ function clearError() {
 exports.setReadOnlyMode = setReadOnlyMode;
 exports.getThumbnailImageUrl = getThumbnailImageUrl;
 exports.getFullPhotoUrl = getFullPhotoUrl;
+exports.getOriginalPhotoUrl = getOriginalPhotoUrl
 exports.openGallery = openGallery; 
 exports.setImage = setImage;
 exports.setError = setError;
@@ -305,6 +313,7 @@ exports.photoCapturedHandler = photoCapturedHandler; // for tests
 function layoutChildrenHorizontallyFromTheRight(data) {
     let right = 0;
     data.source.children.slice().reverse().forEach( c => {
+        Ti.API.info(`c = ${JSON.stringify(c)}`)
         if ( c.visible ) {
             c.right = right;
             right += c.size.width;

@@ -81,16 +81,28 @@ exports.definition = {
 			},
 
 			setPhoto(...file) {
-				var photoFile = Ti.Filesystem.getFile(...file);
-				var newPhotoName;	
+				let photoFile = Ti.Filesystem.getFile(...file);
+				let newPhotoName;	
+				let taxonName;
+				let taxonId = this.get("taxonId");
+				// unknown bug gets a unique name for each photo
+				// it would make sense to just use sampleTaxonId for every photo
+				// but this would break the old photos stored under the original naming
+				// scheme - so it is important to keep the old scheme when not an unknown bug.
+				if ( taxonId == null ) 
+				{
+					taxonName = `unknown_${this.get("sampleTaxonId")}`;
+				} else {
+					taxonName = `${taxonId}`;
+				}
 				if ( ! this.get("sampleId") ) {
-					newPhotoName = `taxon_temporary_${this.get("taxonId")}.jpg`;
+					newPhotoName = `taxon_temporary_${taxonName}.jpg`;
 					if ( photoFile.nativePath.endsWith(newPhotoName) )
 						return;
 					removeFilesBeginningWith(newPhotoName);
 				} else {
-					newPhotoName = `taxon_${this.get("sampleId")}_${this.get("taxonId")}_${moment().unix()}.jpg`;
-					removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${this.get("taxonId")}_`);
+					newPhotoName = `taxon_${this.get("sampleId")}_${taxonName}_${moment().unix()}.jpg`;
+					removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${taxonName}_`);
 				}
 				
 				log(`updating photo from ${file} to ${newPhotoName}`);
@@ -179,8 +191,13 @@ exports.definition = {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL`} );
 				this.models.forEach( (t) => t.destroy(options) );
 			},
+			// finds the first taxon with the given id
 			findTaxon(taxon_id) {
 				return this.find( (t) => t.get("taxonId") == taxon_id);
+			},
+			// used for unknown bug so we can distinguish between two difference unknown bug taxons
+			findSpecificTaxon(sampleTaxonId) {
+				return this.find( (t) => t.get("sampleTaxonId") == sampleTaxonId);
 			},
 			/*loadTaxonForSample(taxonId, sampleId) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId = ${sampleId} AND taxonId = ${taxonId}`} );
