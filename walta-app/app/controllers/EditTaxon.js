@@ -1,3 +1,4 @@
+let sampleTaxonId = $.args.sampleTaxonId;
 let taxonId = $.args.taxonId;
 let key = $.args.key;
 let { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
@@ -9,14 +10,29 @@ if ( readOnlyMode ) {
     disableControl($.deleteButton);
     disableControl($.abundanceValue);
 }
-Ti.API.info(`traxonId = ${taxonId}`);
+
+
+
+let sample = Alloy.Models.sample;
+let taxon = null;
+
+/* if we a referencing an existing taxon load the specific one by sampletaxonid */
+if (sampleTaxonId) {
+    Ti.API.info(`calling with sampleTaxonId = ${sampleTaxonId}`)
+    taxon = Alloy.Collections["taxa"].findSpecificTaxon(sampleTaxonId);
+    taxonId = taxon.get("taxonId");
+} else if ( taxonId != null )  {
+    Ti.API.info("not calling with sampleTaxonId")
+    taxon = Alloy.Collections["taxa"].findTaxon(taxonId);
+}
+
+Ti.API.info(`taxonId = ${taxonId}`);
 if ( taxonId ) {
     $.taxonName.text = key.findTaxonById(taxonId).commonName;
 } else {
     $.taxonName.text = "Unknown Bug";
 }
-let sample = Alloy.Models.sample;
-let taxon = Alloy.Collections["taxa"].findTaxon(taxonId);
+
 if (!taxon ) {
     var taxons = Alloy.createCollection("taxa"); 
     taxons.loadTemporary(taxonId); 
@@ -141,14 +157,17 @@ $.photoSelect.on("photoTaken", () => {
 
 function fixupLayout() {
     let eight = $.closeButton.size.height;
+  /*  Ti.API.info(`EditTaxon.size.height = ${$.window.size.height}`);
+    Ti.API.info(`header.size.height = ${$.header.size.height}`);
+    Ti.API.info(`howMany.size.height = ${$.howMany.size.height}`);
+    Ti.API.info(`buttons.size.height = ${$.buttons.size.height}`); */
     $.photoSelectWrapper.height = $.window.size.height 
             - $.header.size.height 
             - $.howMany.size.height 
             - $.buttons.size.height- eight/2;
-
 }
 
-$.window.addEventListener("postlayout", fixupLayout );
+$.photoSelectWrapper.addEventListener("postlayout", fixupLayout );
 
 function cleanUp() {
     $.window.removeEventListener("postlayout", fixupLayout );

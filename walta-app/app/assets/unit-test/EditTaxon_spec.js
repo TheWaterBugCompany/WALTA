@@ -26,24 +26,27 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe("EditTaxon controller", function() {
     var ctl,win;
+
+    function makeTaxonController(args) {
+        ctl = Alloy.createController("EditTaxon", _.extend(args,{ 
+            key: keyMock
+         }));
+         win = wrapViewInWindow( ctl.getView() );
+
+         win.addEventListener( "close", function cleanUp() {
+             win.removeEventListener("close", cleanUp);
+             ctl.cleanUp();
+          });
+    }
     function makeEditTaxon( taxon, readonly ) {
         let txn = createMockTaxon( taxon );
         Alloy.Collections.taxa = Alloy.createCollection("taxa", [ txn ] )
         
-
-        ctl = Alloy.createController("EditTaxon", { 
-            key: keyMock,
+        makeTaxonController({
             taxonId: taxon.taxonId,
             readonly: readonly
-         });
-         
-        win = wrapViewInWindow( ctl.getView() );
-
-        win.addEventListener( "close", function cleanUp() {
-            win.removeEventListener("close", cleanUp);
-            ctl.cleanUp();
-         });
-         return txn;
+        });
+        return txn;
     }
 
     afterEach( function(done ) {
@@ -109,6 +112,7 @@ describe("EditTaxon controller", function() {
     });
 
     it('should call the save event when save is selected', function(done) {  
+        Alloy.Models.sample = Alloy.createModel("sample", { sampleId: 666 });
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         windowOpenTest( win, () => {
             ctl.photoSelect.on("loaded",function handler() {
@@ -176,7 +180,7 @@ describe("EditTaxon controller", function() {
             });
         });
 
-    it.only("should display an unknown bug", function(done) {
+    it("should display an unknown bug", function(done) {
         makeEditTaxon( { taxonId:null, abundance:"1-2", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg"} );
         windowOpenTest( win, function() {
             checkTestResult( done, 
@@ -185,19 +189,25 @@ describe("EditTaxon controller", function() {
                 } );
             });
     });
-    /* OK the issue here is that we are identifying the bug by it's taxonId 
-       instead we need to identify it by its sampleTaxonId - but then this
-       causes a problem because the controller no longer know whether or not
-       to create a new taxon or load the existing one. 
-       
-        Which raises the question is the controller in charge of creating
-        data objects or should it be only viewing editing code.   
+ 
+    it("should allow multiple unknown bugs", async function() {
+        let taxons = [ 
+            createMockTaxon( {taxonId:null, abundance:"1-2", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg"} ),
+            createMockTaxon( {taxonId:null, abundance:"6-10", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/parastacide_01.jpg"} ),
+        ]
+        Alloy.Collections.taxa = Alloy.createCollection("taxa", taxons );
+        makeTaxonController( { sampleTaxonId: taxons[0].get("sampleTaxonId") } );
+        await windowOpenTest( win );
+        expect( ctl.abundanceLabel.text ).to.equal("1-2");
+        expect( ctl.photoSelect.getOriginalPhotoUrl() ).to.include("amphipoda");
+        win.close();
+        await waitForTick(10)();
+        makeTaxonController( { sampleTaxonId: taxons[1].get("sampleTaxonId") } );
+        await windowOpenTest( win );
 
-        The logic should be:
-            - if sampleTaxonId is passed look up that preexisting taxon
-            - if taxonId is passed then look up existing taxonId
-            - if taxonId is null always create a new taxon
-    */
-    it("should allow multiple unknown bugs");
+        expect( ctl.abundanceLabel.text ).to.equal("6-10");
+        expect( ctl.photoSelect.getOriginalPhotoUrl() ).to.include("parastacide");
+
+    });
 
 });

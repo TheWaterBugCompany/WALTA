@@ -9,7 +9,7 @@ var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-describe( 'SampleTray controller', function() {
+describec( 'SampleTray controller', function() {
   this.timeout(10000);
   
   var SampleTray, SampleTrayWin;
@@ -112,6 +112,17 @@ describe( 'SampleTray controller', function() {
 
   function getTaxaIcons( tile ) {
     return tile.children[1].children;
+  }
+
+  async function simulateEditTaxonEvent() {
+    return new Promise( (resolve) => {
+      var tileIndex = SampleTray.getTileIndex();
+      Topics.subscribe( Topics.IDENTIFY, function handler(data) {
+        Topics.unsubscribe(Topics.IDENTIFY,handler);
+        resolve(data);
+      });
+      tileIndex.firstTwoTiles.icons[0].view.fireEvent("click");
+    });
   }
 
   context( 'event handling', function(){
@@ -676,28 +687,17 @@ describe( 'SampleTray controller', function() {
         });
     });
 
-    it('should fire the IDENTIFY event if a taxon is clicked', function() {
-      return Promise.resolve()
-        .then( function() {
-          Alloy.Collections.taxa = Alloy.createCollection("taxa", [
-            Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" })
-          ]);
-          setupSampleTray();
-        })
-        .then( openSampleTray )
-        .then( function() {
-          return new Promise( (resolve) => {  
-            Topics.subscribe( Topics.IDENTIFY, function handler(data) {
-              Topics.unsubscribe(Topics.IDENTIFY,handler);
-              checkTestResult(resolve, function() {
-                expect( data.taxonId).to.equal(1);
-              });
-
-            });
-            var tileIndex = SampleTray.getTileIndex();
-            tileIndex.firstTwoTiles.icons[0].view.fireEvent("click");
-          });
-        });
+    // FIXME: This could be scoped at the SampleTaxaIcon level
+    it('should fire the IDENTIFY event if a taxon is clicked', async function() {
+      let taxa = [
+        Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" })
+      ];
+      taxa[0].save();
+      Alloy.Collections.taxa = Alloy.createCollection("taxa", taxa);
+      setupSampleTray();
+      await openSampleTray(); 
+      let data = await simulateEditTaxonEvent();
+      expect( data.sampleTaxonId ).to.equal(taxa[0].get("sampleTaxonId"));
     });
 
     it('should update when a taxon abundance is changed', function() {
@@ -796,16 +796,7 @@ describe( 'SampleTray controller', function() {
       SampleTrayWin.close();
     }
 
-    async function simulateEditTaxonEvent() {
-      return new Promise( (resolve) => {
-        var tileIndex = SampleTray.getTileIndex();
-        Topics.subscribe( Topics.IDENTIFY, function handler(data) {
-          Topics.unsubscribe(Topics.IDENTIFY,handler);
-          resolve(data);
-        });
-        tileIndex.firstTwoTiles.icons[0].view.fireEvent("click");
-      });
-    }
+    
 
     async function openSampleTrayToEdit( taxonId ) {
       SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: taxonId });
@@ -912,8 +903,7 @@ describe( 'SampleTray controller', function() {
       await openSampleTrayToEdit(1);
       await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
       await simulateSaveTaxon();
-      var data = await simulateEditTaxonEvent();
-      expect( data.taxonId ).to.equal(1);
+      await simulateEditTaxonEvent();
       await closeSampleTray();
       await openSampleTrayToEdit(1);
       expect( SampleTray.editTaxon.taxonName.text).to.equal("Aeshnidae Telephleb");
@@ -928,7 +918,7 @@ describe( 'SampleTray controller', function() {
 
     
   });
-  describe("Unkown bugs", function() {
+  describe("Unknown bugs", function() {
     it("should display multiple unknown bugs", async function() {
       Alloy.Collections.taxa = Alloy.createCollection("taxa", [
         Alloy.createModel( "taxa", { taxonId: null, abundance: "3-5" }),
