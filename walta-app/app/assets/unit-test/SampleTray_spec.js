@@ -9,7 +9,7 @@ var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-describec( 'SampleTray controller', function() {
+describe( 'SampleTray controller', function() {
   this.timeout(10000);
   
   var SampleTray, SampleTrayWin;
