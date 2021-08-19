@@ -50,7 +50,7 @@ describe('TaxonDetails controller', function() {
 			closeWindow( tv.getView(), done );
 		});
 
-		it('the description text should be visible', function() {
+		it.only('the description text should be visible', function() {
 			expect(tv.description.text).to.contain("Random text at the end");
 		});
 

@@ -141,13 +141,13 @@ function setImage( fileOrBlob ) {
     
 
     function setThumbnail( fileOrBlob) {
-        info("setThumbnail")
+        info(`setThumbnail ${fileOrBlob}`)
         if ( cropPhoto || typeof fileOrBlob === "object") {
             var { thumbnail, photo } = generateThumbnail( fileOrBlob );
             $.photo.image = thumbnail;
             $.photoUrls = [photo];
         } else {
-            info("not calling generateThumbnail")
+            info(`not calling generateThumbnail fileOrBlob = ${fileOrBlob}`)
             $.photo.image = fileOrBlob;
             $.photoUrls = [fileOrBlob];
         }
@@ -179,7 +179,7 @@ function setImage( fileOrBlob ) {
                     setThumbnail( blob );
                 } 
                 // Otherwise it can be a URL path to a single photo
-                else {
+                else if ( ! _.isUndefined(fileOrBlob) ) {
                     var file = fileOrBlob;
                     setThumbnail( file );
                 }
