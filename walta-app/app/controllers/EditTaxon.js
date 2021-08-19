@@ -157,7 +157,7 @@ $.photoSelect.on("photoTaken", () => {
 
 function fixupLayout() {
     let eight = $.closeButton.size.height;
-  /*  Ti.API.info(`EditTaxon.size.height = ${$.window.size.height}`);
+  /*  Ti.API.info(`EditTaxon.size.height = ${$.window.size.height}`); 
     Ti.API.info(`header.size.height = ${$.header.size.height}`);
     Ti.API.info(`howMany.size.height = ${$.howMany.size.height}`);
     Ti.API.info(`buttons.size.height = ${$.buttons.size.height}`); */
@@ -167,6 +167,8 @@ function fixupLayout() {
             - $.buttons.size.height- eight/2;
 }
 
+/* need to trap photoSelectWrapper in order to make sure the other children elements
+   have stablised their size before we use them to size the photoSelect control */
 $.photoSelectWrapper.addEventListener("postlayout", fixupLayout );
 
 function cleanUp() {
