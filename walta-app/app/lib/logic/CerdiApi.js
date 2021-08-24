@@ -58,6 +58,12 @@ function makeJsonGetRequest( serverUrl, accessToken = null) {
                 (client) => client.send() );
 }
 
+function makeJsonDeleteRequest( serverUrl, accessToken = null) {
+    //info(`get request to ${serverUrl}`);
+    return createHttpClient("DELETE", serverUrl, null, "application/json", accessToken, 
+                (client) => client.send() );
+}
+
 function makeJsonPostRequest( serverUrl, data, accessToken = null) {
     return createHttpClient("POST", serverUrl, "application/json", "application/json",accessToken, 
                 (client) => client.send( JSON.stringify( data ) ) );
@@ -68,9 +74,16 @@ function makeJsonPutRequest( serverUrl, data, accessToken = null) {
                 (client) => client.send( JSON.stringify( data ) ) );
 }
 
-function makeImagePostRequest( serverUrl, imageData, accessToken = null ) {
+function makeImagePostRequest( serverUrl, imageData, data, accessToken = null ) {
+    data.photo = imageData;
     return createHttpClient("POST", serverUrl, "multipart/form-data", "application/json", accessToken, 
-                (client) => client.send( { "photo": imageData } ) );
+                (client) => client.send( data ) );
+}
+
+function makeImagePutRequest( serverUrl, imageData, data, accessToken = null ) {
+    data.photo = imageData;
+    return createHttpClient("PUT", serverUrl, "multipart/form-data", "application/json", accessToken, 
+                (client) => client.send( data ) );
 }
 
 function makeImageGetRequest( serverUrl, accessToken = null ) {
@@ -124,7 +137,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
             },
         
             storeUserToken( email, accessToken ) {
-                Ti.API.info(`accessToken = ${JSON.stringify(accessToken)}`)
+                //Ti.API.info(`accessToken = ${JSON.stringify(accessToken)}`)
                 Ti.App.Properties.setObject("userAccessUsername", email );
                 Ti.App.Properties.setObject('userAccessTokenLive', accessToken );
             },
@@ -180,7 +193,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
-                return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/photos`, photoBlob, accessToken );
+                return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/photos`, photoBlob, {}, accessToken );
             },
 
             submitCreaturePhoto( serverSampleId, creatureId, photoPath ) {
@@ -188,7 +201,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 let accessToken = this.retrieveUserToken().accessToken;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
-                return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/creatures/${creatureId}/photos`, photoBlob, accessToken );
+                return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/creatures/${creatureId}/photos`, photoBlob, {}, accessToken );
             },
 
             retrievePhotoMetadata(photoId) {
@@ -234,6 +247,39 @@ function createCerdiApi( serverUrl, client_secret  ) {
                     throw new Error("Not logged in - cannot submit sample");
                 return makeJsonPutRequest( `${this.serverUrl}/samples/${serverSampleId}`, sample, accessToken );
             },
+            
+            updateUnknownCreature(unknownCreatureId,count,photoPath) {
+                var photoBlob = loadPhoto(photoPath);
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeImagePutRequest( `${this.serverUrl}/unknownSampledCreatures/${unknownCreatureId}`, photoBlob, { count: count }, accessToken );
+        
+            },
+
+            submitUnknownCreature(serverSampleId,count,photoPath) {
+                var photoBlob = loadPhoto(photoPath);
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/unknownCreatures`, photoBlob, { count: count }, accessToken );
+            },
+
+            deleteUnknownCreature(unknownCreatureId) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeJsonDeleteRequest( `${this.serverUrl}/unknownSampledCreatures/${unknownCreatureId}`, accessToken );
+            
+            },
+
+            retrieveUnknownCreatures(serverSampleId) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return makeJsonGetRequest( `${this.serverUrl}/samples/${serverSampleId}/unknownCreatures`, accessToken );
+            },
+
 
             retrieveSamples() {
                 let accessToken = this.retrieveUserToken().accessToken;
