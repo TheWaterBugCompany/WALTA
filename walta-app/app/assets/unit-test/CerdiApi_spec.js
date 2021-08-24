@@ -20,11 +20,14 @@ var moment = require("lib/moment");
 var { use, expect } = require("unit-test/lib/chai");
 var { makeTestPhoto, removeDatabase, resetSample, clearDatabase } = require("unit-test/util/TestUtils");
 var { loadPhoto, needsOptimising } = require('util/PhotoUtils');
+global._ = require("underscore");
 var { createCerdiApi } = require("logic/CerdiApi");
  
 use(require('unit-test/lib/chai-date-string'));
-const SERVER_URL = "http://office-desktop.internal:8080/v1"; //"https://api-wbb.till.cerdi.edu.au/v1";
+const SERVER_URL = "http://192.168.6.137:8080/v1"; //"https://api-wbb.till.cerdi.edu.au/v1";
 const CLIENT_SECRET = "hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz";
+
+
 
 function createTestLogin() {
     Ti.API.info("creating test user = ", SERVER_URL ); 
@@ -79,7 +82,7 @@ var MOCK_SAMPLE_DATA = {
     }, 
     "photos": []
 };
-describe('#retrieveSamples', function () {
+describe.only('#retrieveSamples', function () {
     let cerdi;
     before(createTestLogin);
 
@@ -115,5 +118,13 @@ describe('#retrieveSamples', function () {
                     throw JSON.stringify(err);
             });
 
+    });
+
+    it.only("should upload unknown creatures", async function() {
+        let serverSampleId;
+        await cerdi.loginUser( 'testlogin@example.com', 'tstPassw0rd!' );
+        let res = await submitTestSample(moment().format());
+        serverSampleId = res.id;
+        await cerdi.submitUnknownCreature(serverSampleId,6,creaturePhotoPath);
     });
 });
