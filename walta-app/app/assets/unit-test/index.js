@@ -33,7 +33,6 @@ function runTests() {
       "TaxonDetails",
       "SiteDetails",
       "ViewUtils",
-      //"CerdiApi", see node based integration tests
       //"LeafletMap",
       "MayflyEmergenceMap",
       "MayflyMusterSelect",
@@ -46,8 +45,8 @@ function runTests() {
       "GoBackButton",
       "GoForwardButton",
       "LocationEntry",
-      "Main",
-      "Database" // needs to run last
+      "Main"
+      //"Database"  - needs to run last, migrations are run in all database using test anyway
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;
       try { __remove_module_from_preview_cache(specPath);} catch(e) {}
@@ -61,7 +60,7 @@ function runTests() {
 var infinteLoopMode = false; 
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
-setManualTests( true );
+setManualTests( false );
 
 // Create a blank window: for some reason closing the last window hangs 
 // the test suite.

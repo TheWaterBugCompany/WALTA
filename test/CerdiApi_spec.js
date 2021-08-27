@@ -332,7 +332,7 @@ describe('CerdiApi', function() {
     });
 
     describe( '#submitSample', function() {
-        it("should submit a sample", function() {
+        it.only("should submit a sample", function() {
             return expect( 
                 cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
@@ -358,6 +358,7 @@ describe('CerdiApi', function() {
                                 },
                                 "creatures": [
                                     {
+                                    "sampleTaxonId": 99,
                                     "creature_id": 1,
                                     "count": 2,
                                     "photos_count": 0

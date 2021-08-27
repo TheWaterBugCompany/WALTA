@@ -26,6 +26,9 @@ use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
 describe("Taxa collection", function() {
+  beforeEach( function() {
+    clearDatabase();
+  });
   it('should not duplicate taxa when updated with fromCerdiApiJson', function() {
     var taxon = Alloy.createModel("taxa");
     taxon.set("sampleId", 666 );
@@ -45,11 +48,49 @@ describe("Taxa collection", function() {
     // should update existing taxon rather than create a new record
     taxa.load(666);
     expect( taxa.size() ).to.equal(1);
+  });
 
+  it('should not duplicate unknown taxa when updated with fromCerdiApiJson', function() {
+    let taxon1, taxon2;
+    
+    taxon1 = Alloy.createModel("taxa");
 
+    taxon1.set("sampleId", 666 );
+    taxon1.set("abundance", "> 20");
+    taxon1.set("taxonId", null );
+    taxon1.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown.jpg"));
+    taxon1.save();
 
-  
-  })
+    taxon2 = Alloy.createModel("taxa");
+    taxon2.set("sampleId", 666 );
+    taxon2.set("abundance", "1-2");
+    taxon2.set("taxonId", null );
+    taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
+    taxon2.save();
+    var taxa = Alloy.createCollection("taxa");
+    taxa.load(666);
+
+    taxa.fromCerdiApiJson([{
+      _sampleTaxonId: taxon1.get("sampleTaxonId"),
+      creature_id: null,
+      count: 15
+    }, {
+      _sampleTaxonId: taxon2.get("sampleTaxonId"),
+      creature_id: null,
+      count: 8
+    }],666);
+
+    // should update existing taxon rather than create a new record
+    taxa.load(666);
+    expect( taxa.size(), "size of taxa collection" ).to.equal(2);
+    expect( taxa.at(0).get("abundance")).to.equal("11-20");
+    
+    expect( taxa.at(1).get("abundance")).to.equal("6-10");
+
+    expect( taxa.at(0).get("taxonPhotoPath")).to.include("test-photo-unknown.jpg");
+    expect( taxa.at(1).get("taxonPhotoPath")).to.include("test-photo-unknown-2.jpg");
+    let json = taxa.toCerdiApiJson();
+  });
 });
 
 describe("Taxa model", function() {
@@ -118,7 +159,8 @@ describe("Sample collection, model including taxa", function() {
   var initialSampleId;
 
   function verifyTaxa(taxas,sampleId) {
-    expect( taxas.length ).to.equal(5);
+    expect( taxas.length, "size of taxons collection" ).to.equal(7);
+    
     [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => { 
       let taxa = taxas.at(taxonId-1);
       expect(taxa.get("sampleId")).to.equal(sampleId);
@@ -126,6 +168,14 @@ describe("Sample collection, model including taxa", function() {
       expect(taxa.get("taxonId")).to.equal(taxonId);
       expect(taxa.get("taxonPhotoPath")).to.include(`taxon-${taxonId-1}.jpg`);
       expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
+    });
+    [ 6,7 ].forEach( (unknownTaxa) => { 
+      let taxa = taxas.at(unknownTaxa-1);
+      expect(taxa.get("sampleId")).to.equal(sampleId);
+      expect(taxa.get("abundance"),`abdundance unknownTaxa = ${unknownTaxa}`).to.equal(["1-2","3-5"][unknownTaxa-6]);
+      expect(taxa.get("taxonId")).to.be.null;
+      expect(taxa.get("taxonPhotoPath")).to.include(`taxon-unknown-${unknownTaxa-1}.jpg`);
+      expect(taxa.get("serverCreaturePhotoId")).to.equal(unknownTaxa+100);
     });
   }
 
@@ -162,6 +212,19 @@ describe("Sample collection, model including taxa", function() {
           });
         taxon.save();
         Alloy.Collections.taxa.add(taxon);
+    });
+
+    // add some unknown taxons
+    [ 6, 7 ].forEach( (unkownTaxa) => {
+      let taxon = Alloy.createModel("taxa", { 
+        sampleId:  Alloy.Models.sample.get("sampleId"),
+        taxonId: null, 
+        abundance: ["1-2","3-5"][unkownTaxa-6],
+        taxonPhotoPath: makeTestPhoto(`taxon-unknown-${unkownTaxa-1}.jpg`),
+        serverCreaturePhotoId: unkownTaxa+100
+        });
+      taxon.save();
+      Alloy.Collections.taxa.add(taxon);
     });
 
     // add the sample to the sample collection
@@ -382,45 +445,9 @@ describe("Sample collection, model including taxa", function() {
       var json = Alloy.Models.sample.toCerdiApiJson();
       expect( json ).to.be.ok;
       expect( json.id ).to.equal(99);
-    }); 
-
-    
-    
-
-    /*context("set updatedAt", function() { 
-    [
-      "dateCompleted",
-      "lat",
-      "lng",
-      "accuracy",
-      "surveyType",
-      "waterbodyType",
-      "waterbodyName",
-      "nearbyFeature",
-      "boulder",
-      "gravel",
-      "sandOrSilt",
-      "leafPacks",
-      "wood",
-      "aquaticPlants",
-      "openWater",
-      "edgePlants",
-      "sitePhotoPath"
-    ].forEach( field => 
-      it(`should set the updatedAt field to the lastest date afer ${field} field is set`,function(done) {
-        
-        let sample = Alloy.Models.sample;
-        let oldUpdatedAt = 10000;
-        sample.set("updatedAt", oldUpdatedAt);
-        sample.set(field, 'updated');
-        _.defer(() => {
-            expect(sample.get('updatedAt')).to.be.above(oldUpdatedAt);
-            done();
-        });
-      }));
-    });*/
+    });    
   });
- 
+  
 
   it('should create a temporary copy correctly', function() {
     Alloy.Models.sample.set('serverSampleId', 99 );
