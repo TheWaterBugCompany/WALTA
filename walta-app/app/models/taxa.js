@@ -10,7 +10,10 @@ exports.definition = {
 			"sampleId": "INTEGER", // Foreign key to sample database
 			"taxonId": "INTEGER", // Foreign "key" to taxon in key
 			"taxonPhotoPath": "VARCHAR(255)",
-			"serverCreaturePhotoId": "INTEGER" // server side photo id
+			"serverCreaturePhotoId": "INTEGER" 
+				// server side photo id
+				// for unknown bugs this is the id of the unknown bug rather than
+				// the photo id itself.
 		},
 		adapter: {
 			type: "sql",
@@ -133,15 +136,30 @@ exports.definition = {
 				}
 			},
 
+			// Underscore prefixed attributes are not actually part of the Cerdi API
+			// but unknown attributres are ignored so it is harmless to send them.
+			// Any creatures that have a taxonId of null will need to be filter out
+			// and submitted via individual POST requests the unkownCreatures API end point.
+			// In order to simplify serialization code here we include them - which does
+			// mena this is no longer strictly Cerdi Api JSON - perhaps the methods should be renamed.
 			fromCerdiApiJson(creature) {
-				this.set( {
+				let fields = {
 					taxonId: parseInt(creature.creature_id),
 					abundance: this.convertCountToAbundance(creature.count)
-				}, {ignore:true});
+				};
+				if ( !_.isUndefined(creature._taxonPhotoPath) ) {
+					fields.taxonPhotoPath = creature._taxonPhotoPath;
+				}
+				if ( !_.isUndefined(creature._serverCreaturePhotoId) ) {
+					fields.serverCreaturePhotoId = parseInt(creature._serverCreaturePhotoId);
+				}
+				this.set( fields, {ignore:true});
 			},
 
 			toCerdiApiJson() {
 				return {
+					"_taxonPhotoPath": this.get("taxonPhotoPath"),
+					"_serverCreaturePhotoId": this.get("serverCreaturePhotoId"),
 					"count": this.getAbundance(),
 					"creature_id": this.getTaxonId()
 				};
@@ -171,7 +189,19 @@ exports.definition = {
 		_.extend(Collection.prototype, {
 			fromCerdiApiJson(creatures,sampleId) {
 				_(creatures).forEach( creature => {
-					let taxon = this.findTaxon(creature.creature_id);
+					let taxon;
+					// if we have been given a sampleTaxonId use this
+					// otherwise search based on the creature_id, this
+					// fails for unknown bugs which have a null creature_id
+					// so it is up to the caller to find the correct
+					// sampleTaxonId by some other method in this case.
+					if ( creature._sampleTaxonId ) {
+						taxon = this.findSpecificTaxon(creature._sampleTaxonId);
+					} else if ( creature.creature_id ) {
+						taxon = this.findTaxon(creature.creature_id);
+					} 
+					// any taxons that can't be load are created as
+					// new taxon records.
 					if ( !taxon ) {
 						taxon = Alloy.createModel("taxa");
 						taxon.set("sampleId", sampleId);
