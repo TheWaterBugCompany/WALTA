@@ -1,7 +1,5 @@
 var Crashlytics = require('util/Crashlytics');
 var Topics = require('ui/Topics');
-var moment = require("lib/moment");
-var { delayedPromise } = require("util/PromiseUtils");
 var { errorHandler, formatError } = require("util/ErrorUtils");
 
 var { createSampleUploader } = require("logic/SampleUploader");

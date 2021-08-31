@@ -25,7 +25,7 @@ var { makeTestPhoto, waitForTick, removeDatabase, resetSample, clearDatabase } =
 var { loadPhoto, needsOptimising } = require('util/PhotoUtils');
 var { createCerdiApi } = require("unit-test/mocks/MockCerdiApi");
 var { createSampleUploader } = require("logic/SampleUploader");
-
+var { createSampleDownloader } = require("logic/SampleDownloader");
 use(require('unit-test/lib/chai-date-string'));
 
 
@@ -45,7 +45,7 @@ function clearMockSampleData() {
     Alloy.Models.taxa = null;
 }
 
-describe("SampleSync", function () {
+describe.only("SampleSync", function () {
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
@@ -55,7 +55,7 @@ describe("SampleSync", function () {
         let sample = Alloy.createModel("sample", { sitePhotoPath: makeTestPhoto("site.jpg") });
         sample.save();
 
-        let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+        let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
         taxa.add(taxon);
 
         taxon.save();
@@ -70,8 +70,8 @@ describe("SampleSync", function () {
             .resolveWith({id:3});
 
         await createSampleUploader().uploadNextSample(samples);
-        expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(1);
-        expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(1);
+        expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount, "submitSitePhoto").to.equal(1);
+        expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount, "submitCreaturePhoto").to.equal(1);
         function expectPhotoOptimised(path) {
             var photo = loadPhoto(path);
             expect(needsOptimising(photo)).to.be.false;
@@ -157,9 +157,9 @@ describe("SampleSync", function () {
         it('should upload new taxon photos', async function() {
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
             taxon2.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -197,9 +197,9 @@ describe("SampleSync", function () {
         it('should NOT upload old taxon photos again',async function() {
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
             taxon2.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -248,9 +248,9 @@ describe("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto").rejectWith({message:"test error"});
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
             taxon2.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -267,7 +267,7 @@ describe("SampleSync", function () {
         it('should upload new photo if taxon photo is changed', async function() {
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
             taxon.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -350,7 +350,7 @@ describe("SampleSync", function () {
                         .copy( Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
                     return Promise.resolve({id: 1});
                 };              
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
             let sample = Alloy.Models.instance("sample");
             sample.loadByServerId(473);
             let taxa = sample.loadTaxa();
@@ -390,7 +390,7 @@ describe("SampleSync", function () {
             sample.set("waterbodyName", "existing waterbody name");
             sample.save();
 
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
 
             // load the updated sample - we are just testing the update is applied here
             // assuming the same code path is followed for adding a new sample
@@ -413,7 +413,7 @@ describe("SampleSync", function () {
             sample.set("waterbodyName", "local update");
             sample.set("updatedAt", moment("2020-05-01").valueOf());
             sample.save();
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
 
             // load the updated sample - we are just testing the update is applied here
             // assuming the same code path is followed for adding a new sample
@@ -435,7 +435,7 @@ describe("SampleSync", function () {
             sample.set("waterbodyName", "local update");
             sample.set("updatedAt", moment("2020-05-01").valueOf());
             sample.save();
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
 
             // load the updated sample - we are just testing the update is applied here
             // assuming the same code path is followed for adding a new sample
@@ -457,7 +457,7 @@ describe("SampleSync", function () {
             })
             sample.save();
 
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
 
             // load the updated sample - we are just testing the update is applied here
             // assuming the same code path is followed for adding a new sample
@@ -480,7 +480,7 @@ describe("SampleSync", function () {
             sample.set("updatedAt", moment().valueOf()); // updated but NOT uploaded....
             sample.save();
 
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
 
             // load the updated sample - we are just testing the update is applied here
             // assuming the same code path is followed for adding a new sample
@@ -502,7 +502,7 @@ describe("SampleSync", function () {
             };                             
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
             let sample = Alloy.Models.instance("sample");
             sample.loadByServerId(473);
             // checking the site photo id proves the code was run
@@ -552,7 +552,7 @@ describe("SampleSync", function () {
                 return Promise.resolve(mockCreature);
             };                                
             
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
             let sample = Alloy.Models.instance("sample");
             sample.loadByServerId(473);
             let taxa  = sample.loadTaxa();
@@ -603,7 +603,7 @@ describe("SampleSync", function () {
             });
             sample.save();
 
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
 
             // load the updated sample - we are just testing the update is applied here
             // assuming the same code path is followed for adding a new sample
@@ -637,7 +637,7 @@ describe("SampleSync", function () {
                     id:235,
                     waterbody_name: "second test sample"
                 })]);
-            await SampleSync.downloadSamples();
+            await createSampleDownloader().downloadSamples();
             let samples = Alloy.Collections.instance("sample");
             let taxa = Alloy.Collections.instance("taxa");
             let sample = Alloy.Models.instance("sample");
@@ -733,7 +733,7 @@ describe("SampleSync", function () {
         simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
             .returnWith(38);
         
-        await SampleSync.downloadSamples();   
+        await createSampleDownloader().downloadSamples();   
 
         let sample = Alloy.createModel("sample");
         sample.loadByServerId(473);
@@ -761,7 +761,7 @@ describe("SampleSync", function () {
                     }
                 ]
             })]);
-        await SampleSync.downloadSamples(); 
+        await createSampleDownloader().downloadSamples(); 
 
         let taxa = sample.loadTaxa();
         expect(taxa.size()).to.equal(2);
@@ -823,7 +823,7 @@ describe("SampleSync", function () {
             .resolveWith({id:2})
             .resolveWith({id:3});
         
-        await SampleSync.downloadSamples();   
+        await createSampleDownloader().downloadSamples();   
 
         // at this point we should have a sample in the database
         // simulate adding a new taxon
@@ -856,7 +856,7 @@ describe("SampleSync", function () {
     })
 
     describe("Unknown bugs", function() {
-        it.only("should upload unknown bugs with a new record", async function() {
+        it("should upload unknown bugs with a new record", async function() {
             clearMockSampleData();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -887,7 +887,43 @@ describe("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.calls[0].args[2],"submitUnknownCreature[0] photoPath").to.include("taxon.jpg");
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.calls[1].args[2],"submitUnknownCreature[1] photoPath").to.include("taxon2.jpg");
         });
-        it("should download any unknown bugs");
+        it("should download any unknown bugs", async function() {
+            clearMockSampleData();
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+                .returnWith(38);
+
+                let unknownCreatureMockPhoto = 
+                    {
+                        id: 4146,
+                        photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_01.jpg"),
+                    };
+                simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                    .resolveWith([makeCerdiSampleData({
+                        sampled_creatures: []
+                    })]);
+
+                simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                    .resolveWith(
+                        [
+                            {
+                                "count": 6,
+                                "creature_id": null,
+                                "id": 3113,
+                                "photos": [
+                                    {
+                                        "id": 4146
+                                    }
+                                ]
+                            }
+                        ]
+                    );
+                simple.mock(Alloy.Globals.CerdiApi,"retrievePhoto")
+                  .resolveWith(unknownCreatureMockPhoto.photo);
+                await createSampleDownloader().downloadSamples();
+                expect(Alloy.Globals.CerdiApi.retrieveUnknownCreatures.callCount, "should call retrieveUnknownCreatures").to.equal(1);
+                expect(Alloy.Globals.CerdiApi.retrievePhoto.callCount,"should call retrievePhoto").to.equal(1);
+                expect(Alloy.Globals.CerdiApi.retrievePhoto.calls[0].args[0],"retrievePhoto[0] photoId").to.equal(4146);
+        });
         it("should upload any added unknown bugs");
         it("should upload any edited existing unknown bugs");
         it("should remove any removed unknown bugs");

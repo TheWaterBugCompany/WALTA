@@ -1,3 +1,6 @@
+var moment = require("lib/moment");
+var Topics = require('ui/Topics');
+var { errorHandler, formatError } = require("util/ErrorUtils");
 var { delayedPromise } = require("util/PromiseUtils");
 
 function createSampleDownloader(delay) {
@@ -148,6 +151,6 @@ function createSampleDownloader(delay) {
 
         }
     }
-});
+};
 
 exports.createSampleDownloader = createSampleDownloader;
