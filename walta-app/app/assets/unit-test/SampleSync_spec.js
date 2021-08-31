@@ -46,6 +46,9 @@ function clearMockSampleData() {
 }
 
 describe.only("SampleSync", function () {
+    this.afterEach( function() {
+        simple.restore();
+    })
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
@@ -107,6 +110,8 @@ describe.only("SampleSync", function () {
         })
         
         it('should upload new samples to server',async function() {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+                .returnWith(38);
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                 .resolveWith({id:123, user_id:38});
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
@@ -325,6 +330,8 @@ describe.only("SampleSync", function () {
             clearMockSampleData();
         });
         it('should download new samples from the server', async function () {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({
                     user_id: 38,
@@ -381,6 +388,8 @@ describe.only("SampleSync", function () {
             expect(sample.get("serverUserId")).to.equal(38);
         });
         it('should update existing samples if they have been updated on the server', async function () {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({user_id:38})]);
             // create existing sample to update
@@ -402,6 +411,8 @@ describe.only("SampleSync", function () {
 
         });
         it('should NOT update existing samples if they have been updated on the server but we have already downloaded that update', async function() {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             // if updated_at < serverSyncTime then do not overwrite local changes
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({
@@ -424,6 +435,8 @@ describe.only("SampleSync", function () {
 
         });
         it('should overwrtie lcoal updates if they have been updated on the server', async function() {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             // if updated_at < serverSyncTime then do not overwrite local changes
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({
@@ -446,6 +459,8 @@ describe.only("SampleSync", function () {
 
         });
         it('should NOT update existing samples if the update on the server happened BEFORE our lastest upload', async function () {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData()]);
 
@@ -467,6 +482,8 @@ describe.only("SampleSync", function () {
             expect(sample.get("waterbodyName")).to.equal("existing waterbody name");
         });
         it('should overwrite user changes with server updates if the update occured AFTER the last upload', async function () {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData()]);
             let samples = Alloy.Collections.instance("sample");
@@ -492,6 +509,8 @@ describe.only("SampleSync", function () {
         });
         it('should download site photos if they are new', async function() {
             let siteMock =  Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/unit-test/resources/site-mock.jpg");
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({
                     photos: [{"id": 1948}]
@@ -526,6 +545,8 @@ describe.only("SampleSync", function () {
                     id: 2600,
                     photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg")
                 }];
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({
                     sampled_creatures: [
@@ -587,6 +608,8 @@ describe.only("SampleSync", function () {
                     edge_plants: null
                 }
             });
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([sampleData]);
             // create existing sample to update
@@ -628,6 +651,8 @@ describe.only("SampleSync", function () {
         it('should update site photo if changed on server');
         it('should update creature photos if changed on server');*/
         it('should download more than one sample',async function() {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
             simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
                 .resolveWith([makeCerdiSampleData({
                     id:234,
@@ -698,6 +723,7 @@ describe.only("SampleSync", function () {
                 id: 2600,
                 photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg")
             }];
+            
         simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
             .resolveWith([makeCerdiSampleData({
                 sampled_creatures: [
@@ -717,6 +743,8 @@ describe.only("SampleSync", function () {
                     }
                 ]
             })]);
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+            .resolveWith([]);
         Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId,creatureId,photoPath ) {
             console.log(`mock retrieveCreaturePhoto ${creatureId}`);
             if ( creatureId > creatureMocks.length ) {
@@ -785,6 +813,8 @@ describe.only("SampleSync", function () {
                 id: 2600,
                 photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_02.jpg")
             }];
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+            .resolveWith([]);
         simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
             .resolveWith([makeCerdiSampleData({
                 sampled_creatures: [

@@ -332,7 +332,7 @@ describe('CerdiApi', function() {
     });
 
     describe( '#submitSample', function() {
-        it.only("should submit a sample", function() {
+        it("should submit a sample", function() {
             return expect( 
                 cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
@@ -378,6 +378,9 @@ describe('CerdiApi', function() {
         }
         function submitCreaturePhoto(serverSampleId,creatureId) {
             return cerdi.submitCreaturePhoto(serverSampleId,creatureId,creaturePhotoPath)
+        }
+        function submitUnknownCreature(serverSampleId,count,unknownCreaturePhotoPath) {
+            return cerdi.submitUnknownCreature(serverSampleId,count,unknownCreaturePhotoPath);
         }
         function makeTestSample(sampleDate) {
             return {
@@ -458,19 +461,36 @@ describe('CerdiApi', function() {
 
         });
 
-        context.skip("iamge comparision tests", function() {
-            if ( false ) {
+        context("image comparision tests", function() {
+            /* FIXME: need to build images and related modules on Mac OS Arm 64 for the following
+               to work. For now just disabled them. */
+            /*
                 const { assertLooksSame, diffImages } = require('../features/support/image-test');
                 const images = require('images');
+                
+            */
+            function assertLooksSame() { throw Error("assertLooksSame unimplemented") }
+            function rescaleImage(filePath,width) {
+                let img = fs.readFileSync(filePath);
+                /*if ( img === undefined ) 
+                        throw new Error(`Unable to read file ${filePath}`);
+                return images(img).size(width).encode("png");*/
+                return img;
             }
+            it("should retrieve unknown creature photo", function() {
+                let serverSampleId,sitePhotoId;
+                return cerdi
+                    .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
+                    .then( () => submitTestSample(moment().format()) )
+                    .then( res => serverSampleId = res.id )
+                    .then( () => submitUnknownCreature( serverSampleId, 1, creaturePhotoPath ) )
+                    .then( res => unknownCreaturePhotoId = res.photos[0].id )
+                    .then( () => cerdi.retrievePhoto(unknownCreaturePhotoId,"testsitephoto.jpg"))
+                    .then( () => assertLooksSame(creaturePhotoPath,`/tmp/waterbugtest/applicationData/testsitephoto.jpg`));
+            });
             it("should retrieve site photo", function() {
                 let serverSampleId,sitePhotoId;
-                function rescaleImage(filePath,width) {
-                    let img = fs.readFileSync(filePath);
-                    if ( img === undefined ) 
-                            throw new Error(`Unable to read file ${filePath}`);
-                    return images(img).size(width).encode("png");
-                }
+                
                 let siteImageRescaled = rescaleImage(sitePhotoPath,1280);
                 return cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
