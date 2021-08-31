@@ -434,7 +434,7 @@ describe.only("SampleSync", function () {
             expect(sample.get("waterbodyName")).to.equal("local update");
 
         });
-        it('should overwrtie lcoal updates if they have been updated on the server', async function() {
+        it('should overwrite local updates if they have been updated on the server', async function() {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
                 .resolveWith([]);
             // if updated_at < serverSyncTime then do not overwrite local changes
@@ -948,13 +948,71 @@ describe.only("SampleSync", function () {
                         ]
                     );
                 simple.mock(Alloy.Globals.CerdiApi,"retrievePhoto")
-                  .resolveWith(unknownCreatureMockPhoto.photo);
+                  .resolveWith({ id: unknownCreatureMockPhoto.id });
                 await createSampleDownloader().downloadSamples();
                 expect(Alloy.Globals.CerdiApi.retrieveUnknownCreatures.callCount, "should call retrieveUnknownCreatures").to.equal(1);
                 expect(Alloy.Globals.CerdiApi.retrievePhoto.callCount,"should call retrievePhoto").to.equal(1);
                 expect(Alloy.Globals.CerdiApi.retrievePhoto.calls[0].args[0],"retrievePhoto[0] photoId").to.equal(4146);
+
+                let sample = Alloy.Models.instance("sample");
+                sample.loadByServerId(473);
+                let taxa  = sample.loadTaxa();
+                
+                expect( taxa.size()).to.equal(1);
+                let unknownTaxon = taxa.at(0);
+
+                expect(unknownTaxon.get("taxonId")).to.be.null;
+                expect(unknownTaxon.get("serverCreaturePhotoId")).to.be.equal(4146);
+                expect(unknownTaxon.get("taxonPhotoPath")).to.include("unknown");
+                expect(unknownTaxon.get("abundance")).to.be.equal("6-10");
         });
-        it("should upload any added unknown bugs");
+        it.only("should upload any added unknown bugs", async function() {
+            clearMockSampleData();
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+                .returnWith(38);
+            simple.mock(Alloy.Globals.CerdiApi,"submitSample")
+                .resolveWith({id:123, user_id:38});
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+                .resolveWith({id:1});
+            simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
+            simple.mock(Alloy.Globals.CerdiApi,"submitUnknownCreature")
+                .resolveWith({id:1})
+                .resolveWith({id:2});
+            
+            let sample = makeSampleData();
+            sample.save(); 
+            let taxon = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            taxon.save();
+            let taxon2 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            taxon2.save();
+            
+            await createSampleUploader().uploadSamples();
+            await waitForTick(10)();  
+            expect(Alloy.Globals.CerdiApi.submitUnknownCreature.callCount, "should call retrieveUnknownCreatures").to.equal(2);
+            
+
+            simple.mock(Alloy.Globals.CerdiApi,"submitUnknownCreature")
+                .resolveWith({id:1})
+                .resolveWith({id:2});
+            let taxon3 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon3.jpg"), abundance: "6-10" });
+            taxon3.save();
+
+            // force a re-upload
+            sample.set("serverSyncTime", moment("2020-01-01").valueOf()); 
+            sample.set("updatedAt", moment().valueOf());
+
+            await createSampleUploader().uploadSamples();
+            await waitForTick(10)();  
+
+            expect(Alloy.Globals.CerdiApi.submitSample.callCount).to.equal(1);
+            let creatures = Alloy.Globals.CerdiApi.submitSample.calls[0].args[0].creatures;
+            expect(creatures, "no unknown creatures included in creatures").to.be.empty;
+            expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount, "should not call submitCreaturePhoto for unknown creatures").to.equal(0);
+            expect(Alloy.Globals.CerdiApi.submitUnknownCreature.callCount,"submitUnknownCreature").to.equal(1);
+            
+            Ti.API.info(`calls = ${JSON.stringify(Alloy.Globals.CerdiApi.submitUnknownCreature.calls)}`);
+            expect(Alloy.Globals.CerdiApi.submitUnknownCreature.calls[0].args[1],"submitUnknownCreature[0] count").to.equal(8);
+         });
         it("should upload any edited existing unknown bugs");
         it("should remove any removed unknown bugs");
     })
