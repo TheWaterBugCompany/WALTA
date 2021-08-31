@@ -115,6 +115,7 @@ function createSampleDownloader(delay) {
                 return Promise.resolve()
                         .then( retrievePhoto)
                         .then( photo => {
+                            Ti.API.info(`photo = ${JSON.stringify(photo)}`)
                             if ( photo ) {
                                 taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
                                 taxon.set("serverCreaturePhotoId",photo.id);
