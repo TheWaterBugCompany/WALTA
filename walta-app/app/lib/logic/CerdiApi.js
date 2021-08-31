@@ -91,25 +91,29 @@ function makeImageGetRequest( serverUrl, accessToken = null ) {
                 (client) => client.send() );
 }
 
-function retrievePhoto( serverUrl, photoUrl, accessToken, photoPath ) {
+function retrievePhoto(photoId,serverUrl,accessToken,photoPath) {
+    function saveRetrievedPhoto(blob) {
+        savePhoto(blob,photoPath);
+        return photoPath;
+    }
+    return makeImageGetRequest(`${serverUrl}/photos/${photoId}/view`, accessToken)
+        .then(saveRetrievedPhoto);
+}
 
+function retrievePhotoFromMeta( serverUrl, photoUrl, accessToken, photoPath ) {
     function findLatestPhoto(photos) {
         //info("find latest photos: " + JSON.stringify(photos));
         return photos[photos.length-1];
     }
     function downloadPhoto(photo) {
         //info("downloadPhoto photo: " + JSON.stringify(photo));
-        return makeImageGetRequest(`${serverUrl}/photos/${photo.id}/view`, accessToken);
+        return retrievePhoto(photo.id,serverUrl,accessToken,photoPath)
     }
-    function saveRetrievedPhoto(blob) {
-        savePhoto(blob,photoPath);
-        return photoPath;
-    }
+   
     function downloadPhotoIfExists(photos) {
         if ( photos.length > 0 ) {
             let photo = findLatestPhoto(photos);
             return downloadPhoto(photo)
-                .then(saveRetrievedPhoto)
                 .then( () => photo ); // return the id so the caller can save it
         }
     }
@@ -204,7 +208,15 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 return makeImagePostRequest( `${this.serverUrl}/samples/${serverSampleId}/creatures/${creatureId}/photos`, photoBlob, {}, accessToken );
             },
 
+            retrievePhoto(photoId,photoPath) {
+                let accessToken = this.retrieveUserToken().accessToken;
+                if ( accessToken == undefined )
+                    throw new Error("Not logged in - cannot submit sample");
+                return retrievePhoto(photoId,this.serverUrl,accessToken,photoPath)
+            },
+
             retrievePhotoMetadata(photoId) {
+                let accessToken = this.retrieveUserToken().accessToken;
                 return makeJsonGetRequest(`${this.serverUrl}/photos/${photoId}`, accessToken )
             },
 
@@ -213,7 +225,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 let serverUrl = this.serverUrl;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
-                return retrievePhoto(serverUrl,`samples/${serverSampleId}/photos`, 
+                return retrievePhotoFromMeta(serverUrl,`samples/${serverSampleId}/photos`, 
                             accessToken, photoPath);
 
             },
@@ -223,7 +235,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 let serverUrl = this.serverUrl;
                 if ( accessToken == undefined )
                     throw new Error("Not logged in - cannot submit sample");
-                return retrievePhoto(serverUrl,`samples/${serverSampleId}/creatures/${creatureId}/photos`,
+                return retrievePhotoFromMeta(serverUrl,`samples/${serverSampleId}/creatures/${creatureId}/photos`,
                             accessToken, photoPath);
             },
 
