@@ -94,7 +94,7 @@ function makeImageGetRequest( serverUrl, accessToken = null ) {
 function retrievePhoto(photoId,serverUrl,accessToken,photoPath) {
     function saveRetrievedPhoto(blob) {
         savePhoto(blob,photoPath);
-        return photoPath;
+        return { id: photoId, photoPath: photoPath};
     }
     return makeImageGetRequest(`${serverUrl}/photos/${photoId}/view`, accessToken)
         .then(saveRetrievedPhoto);
