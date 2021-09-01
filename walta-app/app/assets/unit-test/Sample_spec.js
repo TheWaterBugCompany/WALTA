@@ -37,7 +37,7 @@ describe("Taxa collection", function() {
     taxon.set("willDelete", willDelete);
     taxon.save();
   }
-  it.only('should filter out any taxons marked for deletion when loaded', function() {
+  it('should filter out any taxons marked for deletion when loaded', function() {
     createMockTaxon(1,null);
     createMockTaxon(2,false);
     createMockTaxon(3,true);
@@ -47,7 +47,7 @@ describe("Taxa collection", function() {
     expect( taxa.at(0).get("taxonId")).to.equal(1);
     expect( taxa.at(1).get("taxonId")).to.equal(2);
   });
-  it.only('loadDeleted() should load all taxons flagged for deletion', function() {
+  it('loadDeleted() should load all taxons flagged for deletion', function() {
     createMockTaxon(1,null);
     createMockTaxon(2,false);
     createMockTaxon(3,true);
@@ -118,7 +118,7 @@ describe("Taxa collection", function() {
     expect( taxa.at(1).get("taxonPhotoPath")).to.include("test-photo-unknown-2.jpg");
   });
 
-  it.only('should not duplicate unknown taxa when updated with fromCerdiApiJson when serverCreatureId is present', async function() {
+  it('should not duplicate unknown taxa when updated with fromCerdiApiJson when serverCreatureId is present', async function() {
     clearDatabase();
     let taxon1, taxon2;
     
