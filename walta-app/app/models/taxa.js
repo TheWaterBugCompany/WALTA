@@ -10,10 +10,9 @@ exports.definition = {
 			"sampleId": "INTEGER", // Foreign key to sample database
 			"taxonId": "INTEGER", // Foreign "key" to taxon in key
 			"taxonPhotoPath": "VARCHAR(255)",
-			"serverCreaturePhotoId": "INTEGER" 
-				// server side photo id
-				// for unknown bugs this is the id of the unknown bug rather than
-				// the photo id itself.
+			"serverCreaturePhotoId": "INTEGER",
+			"serverCreatureId": "INTEGER",
+			"willDelete": "INTEGER" // if 1 then delete this taxon on next upload
 		},
 		adapter: {
 			type: "sql",
@@ -153,6 +152,9 @@ exports.definition = {
 				if ( !_.isUndefined(creature._serverCreaturePhotoId) ) {
 					fields.serverCreaturePhotoId = parseInt(creature._serverCreaturePhotoId);
 				}
+				if ( !_.isUndefined(creature.id) ) {
+					fields.serverCreatureId = parseInt(creature.id);
+				}
 				this.set( fields, {ignore:true});
 			},
 
@@ -161,8 +163,14 @@ exports.definition = {
 					"_taxonPhotoPath": this.get("taxonPhotoPath"),
 					"_serverCreaturePhotoId": this.get("serverCreaturePhotoId"),
 					"count": this.getAbundance(),
-					"creature_id": this.getTaxonId()
+					"creature_id": this.getTaxonId(),
+					"id": this.get("serverCreatureId")
 				};
+			},
+
+			flagForDeletion() {
+				this.set("willDelete",true);
+				this.save();
 			},
 
 			destroy: function(options) {
@@ -190,17 +198,21 @@ exports.definition = {
 			fromCerdiApiJson(creatures,sampleId) {
 				_(creatures).forEach( creature => {
 					let taxon;
-					// if we have been given a sampleTaxonId use this
-					// otherwise search based on the creature_id, this
-					// fails for unknown bugs which have a null creature_id
-					// so it is up to the caller to find the correct
-					// sampleTaxonId by some other method in this case.
+					// If there is either a local id or a remote
+					// id then merge with the existing taxon.
 					if ( creature._sampleTaxonId ) {
-						taxon = this.findSpecificTaxon(creature._sampleTaxonId);
-					} else if ( creature.creature_id ) {
+						taxon = this.findTaxonBySampleTaxonId(creature._sampleTaxonId);
+					} else if ( creature.id ) {
+						taxon = this.findTaxonByServerCreatureId(creature.id)
+					}
+					
+					// If there is a creature_id then merge with any existing
+					// taxon.
+					if ( _.isUndefined(taxon) && creature.creature_id ) {
 						taxon = this.findTaxon(creature.creature_id);
 					} 
-					// any taxons that can't be load are created as
+
+					// Any taxons that can't be load are created as
 					// new taxon records.
 					if ( !taxon ) {
 						taxon = Alloy.createModel("taxa");
@@ -226,8 +238,12 @@ exports.definition = {
 				return this.find( (t) => t.get("taxonId") == taxon_id);
 			},
 			// used for unknown bug so we can distinguish between two difference unknown bug taxons
-			findSpecificTaxon(sampleTaxonId) {
+			findTaxonBySampleTaxonId(sampleTaxonId) {
 				return this.find( (t) => t.get("sampleTaxonId") == sampleTaxonId);
+			},
+
+			findTaxonByServerCreatureId(serverCreatureId) {
+				return this.find( (t) => t.get("serverCreatureId") == serverCreatureId);
 			},
 			/*loadTaxonForSample(taxonId, sampleId) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId = ${sampleId} AND taxonId = ${taxonId}`} );
@@ -236,7 +252,10 @@ exports.definition = {
 				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL AND taxonId = ${taxonId}`} );
 			},
 			load( sampleId ) {
-				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId})`} );
+				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId}) AND (willDelete IS NULL OR willDelete = 0)`} );
+			},
+			loadPendingDelete( sampleId ) {
+				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId}) AND willDelete > 0`} );
 			}
 		});
 

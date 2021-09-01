@@ -896,8 +896,8 @@ describe.only("SampleSync", function () {
                 .resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
             simple.mock(Alloy.Globals.CerdiApi,"submitUnknownCreature")
-                .resolveWith({id:1})
-                .resolveWith({id:2});
+                .resolveWith({id:1,photos:[{id:99}]})
+                .resolveWith({id:2,photos:[{id:100}]});
             
             let sample = makeSampleData();
             sample.save(); 
@@ -917,7 +917,7 @@ describe.only("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.calls[0].args[2],"submitUnknownCreature[0] photoPath").to.include("taxon.jpg");
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.calls[1].args[2],"submitUnknownCreature[1] photoPath").to.include("taxon2.jpg");
         });
-        it("should download any unknown bugs", async function() {
+        it.only("should download any unknown bugs", async function() {
             clearMockSampleData();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -965,8 +965,9 @@ describe.only("SampleSync", function () {
                 expect(unknownTaxon.get("serverCreaturePhotoId")).to.be.equal(4146);
                 expect(unknownTaxon.get("taxonPhotoPath")).to.include("unknown");
                 expect(unknownTaxon.get("abundance")).to.be.equal("6-10");
+                expect(unknownTaxon.get("serverCreatureId")).to.be.equal(3113);
         });
-        it.only("should upload any added unknown bugs", async function() {
+        it("should upload any added unknown bugs", async function() {
             clearMockSampleData();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -976,8 +977,8 @@ describe.only("SampleSync", function () {
                 .resolveWith({id:1});
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
             simple.mock(Alloy.Globals.CerdiApi,"submitUnknownCreature")
-                .resolveWith({id:1})
-                .resolveWith({id:2});
+                .resolveWith({id:1,photos:[{id:99}]})
+                .resolveWith({id:2,photos:[{id:100}]});
             
             let sample = makeSampleData();
             sample.save(); 
@@ -992,8 +993,8 @@ describe.only("SampleSync", function () {
             
 
             simple.mock(Alloy.Globals.CerdiApi,"submitUnknownCreature")
-                .resolveWith({id:1})
-                .resolveWith({id:2});
+                .resolveWith({id:1,photos:[{id:99}]})
+                .resolveWith({id:2,photos:[{id:100}]});
             let taxon3 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon3.jpg"), abundance: "6-10" });
             taxon3.save();
 
@@ -1013,7 +1014,67 @@ describe.only("SampleSync", function () {
             Ti.API.info(`calls = ${JSON.stringify(Alloy.Globals.CerdiApi.submitUnknownCreature.calls)}`);
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.calls[0].args[1],"submitUnknownCreature[0] count").to.equal(8);
          });
-        it("should upload any edited existing unknown bugs");
-        it("should remove any removed unknown bugs");
+        // pending CERDI fixing the PUT endpoint
+        it.only("should upload any edited existing unknown bugs");
+
+        // Needs to send DELETE requests for any unknown bugs that have been
+        // removed. 
+        
+        // One possible strategy to implement this is to download
+        // the existng list of unknown bugs and find any that no longer exist
+        // except this won't work if downloadSamples is called then the removed unknown bugs
+        // would be re-added to the sample first.
+        
+        // Another strategy would be to not actually delete the taxon but
+        // to simply mark it deleted with a flag. That way if deleted == true
+        // then we call DELETE on the unknown then actually remove the taxon.
+
+        // This would require the sample tray to be filtered to show only
+        // taxons with the deleted flag false. And also only upload those
+        // taxons with the deleted flag false. The load taxon functions could
+        // filter for deleted, and the upload code can load bugs marked for
+        // deletion, call the appropriate API then actaully delete them.
+        it.only("should remove any removed unknown bugs", async function() {
+
+            clearMockSampleData();
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+                .returnWith(38);
+            simple.mock(Alloy.Globals.CerdiApi,"submitSample")
+                .resolveWith({id:123, user_id:38});
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+                .resolveWith({id:1});
+            simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
+            simple.mock(Alloy.Globals.CerdiApi,"submitUnknownCreature")
+                .resolveWith({id:1,photos:[{id:99}]})
+                .resolveWith({id:2,photos:[{id:100}]});
+            simple.mock(Alloy.Globals.CerdiApi,"deleteUnknownCreature")
+                .resolveWith();
+            
+            let sample = makeSampleData();
+            sample.save(); 
+            let taxon = Alloy.createModel("taxa", { serverCreatureId: 1, taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            taxon.save();
+            let taxon2 = Alloy.createModel("taxa", { serverCreatureId: 2, taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            taxon2.save();
+            
+            await createSampleUploader().uploadSamples();
+            await waitForTick(10)();  
+            expect(Alloy.Globals.CerdiApi.submitUnknownCreature.callCount, "should call retrieveUnknownCreatures").to.equal(2);
+            
+            // delete the taxon
+            taxon2.flagForDeletion();
+            await createSampleUploader().uploadSamples();
+            await waitForTick(10)(); 
+
+            expect(Alloy.Globals.CerdiApi.deleteUnknownCreature.callCount, "should call deleteUnknownCreature").to.equal(1);
+            expect(Alloy.Globals.CerdiApi.deleteUnknownCreature.calls[0].args[0], "unknownCreatureId").to.equal(2);
+
+            // check that the taxon has actaully been removed
+            sample.loadByServerId(473);
+            let taxa  = sample.loadTaxa();
+            expect(taxa.size()).to.equal(1); 
+
+
+        });
     })
 });

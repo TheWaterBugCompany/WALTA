@@ -210,4 +210,14 @@ describe("EditTaxon controller", function() {
 
     });
 
+    it.skip('should mark taxon for deletion when delete pressed', async function() {
+        let taxon1 = makeEditTaxon( { taxonId:null, abundance:"1-2", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg"} );
+        await windowOpenTest( win );
+        ctl.deleteButton.fireEvent("click");
+        // no way to prgorammatically trigger the dialog !
+        //await waitForTick(1000)();
+        //ctl.dialog.fireEvent("click",{index:0});
+        expect( taxon1.get("willDelete") ).to.equal(true);
+    });
+
 });

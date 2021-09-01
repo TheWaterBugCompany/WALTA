@@ -29,6 +29,33 @@ describe("Taxa collection", function() {
   beforeEach( function() {
     clearDatabase();
   });
+  function createMockTaxon(taxonId,willDelete) {
+    var taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("abundance", "> 20");
+    taxon.set("taxonId", taxonId );
+    taxon.set("willDelete", willDelete);
+    taxon.save();
+  }
+  it.only('should filter out any taxons marked for deletion when loaded', function() {
+    createMockTaxon(1,null);
+    createMockTaxon(2,false);
+    createMockTaxon(3,true);
+    let taxa = Alloy.createCollection("taxa");
+    taxa.load(666);
+    expect( taxa.size() ).to.equal(2);
+    expect( taxa.at(0).get("taxonId")).to.equal(1);
+    expect( taxa.at(1).get("taxonId")).to.equal(2);
+  });
+  it.only('loadDeleted() should load all taxons flagged for deletion', function() {
+    createMockTaxon(1,null);
+    createMockTaxon(2,false);
+    createMockTaxon(3,true);
+    let taxa = Alloy.createCollection("taxa");
+    taxa.loadPendingDelete(666);
+    expect( taxa.size() ).to.equal(1);
+    expect( taxa.at(0).get("taxonId")).to.equal(3);
+  });
   it('should not duplicate taxa when updated with fromCerdiApiJson', function() {
     var taxon = Alloy.createModel("taxa");
     taxon.set("sampleId", 666 );
@@ -50,7 +77,7 @@ describe("Taxa collection", function() {
     expect( taxa.size() ).to.equal(1);
   });
 
-  it('should not duplicate unknown taxa when updated with fromCerdiApiJson', function() {
+  it('should not duplicate unknown taxa when updated with fromCerdiApiJson when _sampleTaxonId is present', function() {
     let taxon1, taxon2;
     
     taxon1 = Alloy.createModel("taxa");
@@ -89,7 +116,55 @@ describe("Taxa collection", function() {
 
     expect( taxa.at(0).get("taxonPhotoPath")).to.include("test-photo-unknown.jpg");
     expect( taxa.at(1).get("taxonPhotoPath")).to.include("test-photo-unknown-2.jpg");
+  });
+
+  it.only('should not duplicate unknown taxa when updated with fromCerdiApiJson when serverCreatureId is present', async function() {
+    clearDatabase();
+    let taxon1, taxon2;
+    
+    taxon1 = Alloy.createModel("taxa");
+
+    taxon1.set("sampleId", 666 );
+    taxon1.set("abundance", "> 20");
+    taxon1.set("taxonId", null );
+    taxon1.set("serverCreatureId", 1);
+    taxon1.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown.jpg"));
+    taxon1.save();
+
+    taxon2 = Alloy.createModel("taxa");
+    taxon2.set("sampleId", 666 );
+    taxon2.set("abundance", "1-2");
+    taxon2.set("taxonId", null );
+    taxon2.set("serverCreatureId", 2);
+    taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
+    taxon2.save();
+    var taxa = Alloy.createCollection("taxa");
+    taxa.load(666);
+
+    taxa.fromCerdiApiJson([{
+      id: 1,
+      creature_id: null,
+      count: 15
+    }, {
+      id: 2,
+      creature_id: null,
+      count: 8
+    }],666);
+
+    
+
+    // should update existing taxon rather than create a new record
+    taxa.load(666);
     let json = taxa.toCerdiApiJson();
+    Ti.API.info(`json = ${JSON.stringify(json)}`)
+    expect( taxa.size(), "size of taxa collection" ).to.equal(2);
+    expect( taxa.at(0).get("abundance")).to.equal("11-20");
+    
+    expect( taxa.at(1).get("abundance")).to.equal("6-10");
+
+    expect( taxa.at(0).get("taxonPhotoPath")).to.include("test-photo-unknown.jpg");
+    expect( taxa.at(1).get("taxonPhotoPath")).to.include("test-photo-unknown-2.jpg");
+    
   });
 });
 
