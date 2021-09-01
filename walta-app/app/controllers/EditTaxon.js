@@ -19,7 +19,7 @@ let taxon = null;
 /* if we a referencing an existing taxon load the specific one by sampletaxonid */
 if (sampleTaxonId) {
     Ti.API.info(`calling with sampleTaxonId = ${sampleTaxonId}`)
-    taxon = Alloy.Collections["taxa"].findSpecificTaxon(sampleTaxonId);
+    taxon = Alloy.Collections["taxa"].findTaxonBySampleTaxonId(sampleTaxonId);
     taxonId = taxon.get("taxonId");
 } else if ( taxonId != null )  {
     Ti.API.info("not calling with sampleTaxonId")
@@ -110,13 +110,13 @@ function saveEvent() {
 
 function doDelete() {
     Alloy.Collections.taxa.remove( taxon );
-    taxon.destroy();
+    taxon.flagForDeletion();
     closeEvent();
     $.trigger("delete", taxon );
 }
 
 function deleteEvent() {
-    var dialog = Ti.UI.createAlertDialog({
+    let dialog = Ti.UI.createAlertDialog({
         message: 'Are you sure you want to delete this taxon?',
         cancel: 1,
         buttonNames: [ 'Delete', 'Cancel' ],

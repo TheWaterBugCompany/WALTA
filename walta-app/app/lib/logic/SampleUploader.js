@@ -138,14 +138,15 @@ function uploadUnknownCreature(sample,t,delay) {
             if ( needsOptimising(blob) ) {
                 savePhoto( optimisePhoto( blob ), photoPath );
             } 
-            return delayedPromise( submitUnknownCreaturePhoto(sampleId, count, photoPath ), delay )
+            return delayedPromise( Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath ), delay )
                     .then( (res) => {
                         Ti.API.info(`setting serverCreaturePhotoId = ${res.id}`);
-                        t.save({"serverCreaturePhotoId": res.id});
+                        t.save("serverCreatureId", res.id)
+                        t.save({"serverCreaturePhotoId": res.photos[0].id});
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
+                        log(`Error when attempting to upload unkown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
                     });
                         
         }
@@ -158,6 +159,35 @@ function uploadUnknownCreatures(sample,delay) {
     return taxa.reduce( 
         (uploadUnknown,t) => 
             uploadUnknown.then( uploadUnknownCreature(sample,t,delay)),
+                Promise.resolve() )
+        .then( () => sample );
+}
+
+function deletePendingUnknownCreatures(sample,delay) {
+    function deleteUnknownCreature(sample,t) {
+        let creatureId = t.get("serverCreatureId");
+        let sampleId = sample.get("sampleId");
+        let taxonId = sample.get("taxonId");
+        
+        if ( !creatureId || taxonId ) {
+            t.destroy();
+            return Promise.resolve();
+        }
+
+        log(`Deleting unknown creature: id = ${creatureId} [serverSampleId=${sampleId}]`);
+        return delayedPromise( Alloy.Globals.CerdiApi.deleteUnknownCreature(creatureId), delay )
+            .then( (res) => {
+                t.destroy();
+            })
+            .catch( (err) => {
+                log(`Error when attempting to delete unknown creature [serverSampleId=${sampleId},id=${creatureId}]: ${err.message}`);
+            });
+    }
+    let taxa = Alloy.createCollection("taxa");
+    taxa.loadPendingDelete( sample.get("sampleId") );
+    return taxa.reduce( 
+        (deleteUnkown,t) => 
+            deleteUnkown.then( deleteUnknownCreature(sample,t)),
                 Promise.resolve() )
         .then( () => sample );
 }
@@ -239,6 +269,7 @@ function createSampleUploader(delay) {
                     .then( (sample) => uploadSitePhoto(sample,delay) )
                     .then( (sample) => uploadTaxaPhotos(sample,delay) )
                     .then( (sample) => uploadUnknownCreatures(sample,delay))
+                    .then( (sample) => deletePendingUnknownCreatures(sample,delay))
                     .catch( errorHandler );           
         }
 
