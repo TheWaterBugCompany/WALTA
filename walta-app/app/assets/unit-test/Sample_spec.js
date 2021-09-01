@@ -393,13 +393,14 @@ describe("Sample collection, model including taxa", function() {
       expect( sample.get("serverSyncTime") ).to.be.ok;
     });
     it('should persist all the taxons', function() {
-      expect( taxa.length ).to.equal(5);
+      expect( taxa.length ).to.equal(7);
       [ 1, 2, 3, 4, 5 ].forEach( (taxonId) => {
         let taxon = taxa.at(taxonId-1);
-        expect( taxon.get("taxonId") ).to.equal(taxonId); 
+        expect( taxon.get("taxonId") ).to.equal(taxonId);
       }); 
+      expect(taxa.at(5).get("taxonId")).to.be.null;
+      expect(taxa.at(6).get("taxonId")).to.be.null;
     });
-    it('should persist multiple unkown bug taxons');
   });
 
   context('should reset sample when new sample is created', function() {
@@ -553,9 +554,8 @@ describe("Sample collection, model including taxa", function() {
     // check all the taxons have been copied too.
     verifyTaxa( tempSample.loadTaxa(), tempSample.get("sampleId") );
   });
-
+ 
   it('saveCurrentSample should overwrite existing record with temporary record', async function() {
-
     function rowCount() {
       var coll = Alloy.createCollection("sample");
       coll.fetch({query:"SELECT * FROM sample WHERE serverSampleId = 99"});
@@ -610,16 +610,20 @@ describe("Sample collection, model including taxa", function() {
     // verify updated mixture of taxons
     let sampleId = sample.get('sampleId');
     let taxas = sample.loadTaxa();
-    expect( taxas.length ).to.equal(6);
+    expect( taxas.length ).to.equal(8);
     let index = 0;
-    [ 2, 3, 4, 5, 99, 66 ].forEach( (taxonId) => { 
+    [ 2, 3, 4, 5, null, null, 99, 66 ].forEach( (taxonId) => { 
       let taxa = taxas.at(index);
-      expect(taxa.get("sampleId")).to.equal(sampleId);
-      expect(taxa.get("abundance")).to.equal(["3-5","6-10","11-20","> 20","> 20","1-2"][index]);
+      expect(taxa.get("sampleId"),"sampleId").to.equal(sampleId);
+      expect(taxa.get("abundance"),`abundance taxonId=${taxonId}`).to.equal(["3-5","6-10","11-20","> 20","1-2","3-5","> 20","1-2"][index]);
       expect(taxa.get("taxonId"),"taxonId").to.equal(taxonId);
-      expect(taxa.get("taxonPhotoPath")).to.include(`taxon-${taxonId-1}.jpg`);
-      if ( taxonId !== 66 && taxonId !== 99 ) {
-        expect(taxa.get("serverCreaturePhotoId")).to.equal(taxonId+100);
+      if ( taxonId ) {
+        expect(taxa.get("taxonPhotoPath"),"taxonPhotoPath").to.include(`taxon-${taxonId-1}.jpg`);
+      } else {
+        expect(taxa.get("taxonPhotoPath"),"taxonPhotoPath").to.include(`unknown`);
+      }
+      if ( taxonId !== 66 && taxonId !== 99 && taxonId != null ) {
+        expect(taxa.get("serverCreaturePhotoId"),"serverCreaturePhotoId").to.equal(taxonId+100);
       }
       index++;
     });
