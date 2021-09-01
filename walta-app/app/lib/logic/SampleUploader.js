@@ -116,20 +116,12 @@ function uploadTaxaPhotos(sample,delay) {
 function uploadUnknownCreature(sample,t,delay) {
     var taxonId = t.getTaxonId();
     var sampleId = sample.get("serverSampleId");
+    var serverCreatureId = t.get("serverCreatureId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
 
-    function submitUnknownCreaturePhoto( sampleId, count, photoPath ) {
-        log(`Uploading unknown creature: count = ${count} photo path = ${photoPath} [serverSampleId=${sampleId}]`);
-        return Promise.resolve()
-                .then( () => Alloy.Globals.CerdiApi.submitUnknownCreature( sampleId, count, photoPath ) )
-                .then( (res) => {
-                    Ti.API.info(`returning from submitUnknownCreature ${JSON.stringify(res)}`);
-                    return res;
-                });
-    }
     // skip known creatures and any unknown cfreatures that have had
     // their serverCreaturePhotoId set.
-    if ( ! taxonPhotoId && (taxonId == null) ) {
+    if ( taxonId == null ) {
         let photoPath = t.getPhoto();
         let count = t.getAbundance();
         if ( photoPath ) {
@@ -138,16 +130,23 @@ function uploadUnknownCreature(sample,t,delay) {
             if ( needsOptimising(blob) ) {
                 savePhoto( optimisePhoto( blob ), photoPath );
             } 
-            return delayedPromise( Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath ), delay )
-                    .then( (res) => {
-                        Ti.API.info(`setting serverCreaturePhotoId = ${res.id}`);
-                        t.save("serverCreatureId", res.id)
-                        t.save({"serverCreaturePhotoId": res.photos[0].id});
-                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
-                    })
-                    .catch( (err) => {
-                        log(`Error when attempting to upload unkown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
-                    });
+            let actions;
+            
+            if ( !serverCreatureId ) { 
+                actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath ) ), delay );
+            } else {
+                actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.updateUnknownCreature(serverCreatureId,count,photoPath) ), delay);
+            }
+            return actions.then( (res) => {
+                            Ti.API.info(`setting serverCreatureId = ${res.id}`);
+                            t.save("serverCreatureId", res.id)
+                            t.save({"serverCreaturePhotoId": res.photos[0].id});
+                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
+                        })
+                        .catch( (err) => {
+                            log(`Error when attempting to upload unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
+                        });
+                    
                         
         }
     }
@@ -168,14 +167,14 @@ function deletePendingUnknownCreatures(sample,delay) {
         let creatureId = t.get("serverCreatureId");
         let sampleId = sample.get("sampleId");
         let taxonId = sample.get("taxonId");
-        
+
         if ( !creatureId || taxonId ) {
             t.destroy();
             return Promise.resolve();
         }
 
         log(`Deleting unknown creature: id = ${creatureId} [serverSampleId=${sampleId}]`);
-        return delayedPromise( Alloy.Globals.CerdiApi.deleteUnknownCreature(creatureId), delay )
+        return delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.deleteUnknownCreature(creatureId) ), delay )
             .then( (res) => {
                 t.destroy();
             })
