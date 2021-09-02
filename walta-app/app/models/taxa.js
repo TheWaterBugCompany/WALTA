@@ -143,9 +143,15 @@ exports.definition = {
 			// mena this is no longer strictly Cerdi Api JSON - perhaps the methods should be renamed.
 			fromCerdiApiJson(creature) {
 				let fields = {
-					taxonId: parseInt(creature.creature_id),
 					abundance: this.convertCountToAbundance(creature.count)
 				};
+				// Ensure null creature ids are correct stored, on Android
+				// parseInt(null) returns NaN instead.
+				if ( creature.creature_id ) {
+					fields.taxonId = parseInt(creature.creature_id);
+				} else {
+					fields.taxonId = null;
+				}
 				if ( !_.isUndefined(creature._taxonPhotoPath) ) {
 					fields.taxonPhotoPath = creature._taxonPhotoPath;
 				}
@@ -169,7 +175,7 @@ exports.definition = {
 			},
 
 			flagForDeletion() {
-				this.set("willDelete",true);
+				this.set("willDelete",1);
 				this.save();
 			},
 
