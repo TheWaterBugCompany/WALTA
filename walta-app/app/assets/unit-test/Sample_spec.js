@@ -39,18 +39,18 @@ describe("Taxa collection", function() {
   }
   it('should filter out any taxons marked for deletion when loaded', function() {
     createMockTaxon(1,null);
-    createMockTaxon(2,false);
-    createMockTaxon(3,true);
+    createMockTaxon(2,0);
+    createMockTaxon(3,1);
     let taxa = Alloy.createCollection("taxa");
     taxa.load(666);
-    expect( taxa.size() ).to.equal(2);
+    expect( taxa.size(), "collection size" ).to.equal(2);
     expect( taxa.at(0).get("taxonId")).to.equal(1);
     expect( taxa.at(1).get("taxonId")).to.equal(2);
   });
   it('loadDeleted() should load all taxons flagged for deletion', function() {
     createMockTaxon(1,null);
-    createMockTaxon(2,false);
-    createMockTaxon(3,true);
+    createMockTaxon(2,0);
+    createMockTaxon(3,1);
     let taxa = Alloy.createCollection("taxa");
     taxa.loadPendingDelete(666);
     expect( taxa.size() ).to.equal(1);
@@ -248,7 +248,7 @@ describe("Sample collection, model including taxa", function() {
       let taxa = taxas.at(unknownTaxa-1);
       expect(taxa.get("sampleId")).to.equal(sampleId);
       expect(taxa.get("abundance"),`abdundance unknownTaxa = ${unknownTaxa}`).to.equal(["1-2","3-5"][unknownTaxa-6]);
-      expect(taxa.get("taxonId")).to.be.null;
+      expect(taxa.get("taxonId"),"taxonId").to.be.null;
       expect(taxa.get("taxonPhotoPath")).to.include(`taxon-unknown-${unknownTaxa-1}.jpg`);
       expect(taxa.get("serverCreaturePhotoId")).to.equal(unknownTaxa+100);
     });
