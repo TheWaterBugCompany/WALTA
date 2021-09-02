@@ -948,7 +948,11 @@ describe("SampleSync", function () {
                         ]
                     );
                 simple.mock(Alloy.Globals.CerdiApi,"retrievePhoto")
-                  .resolveWith({ id: unknownCreatureMockPhoto.id });
+                  .callFn(function(photoId,photoPath ) {
+                    Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"/unit-test/resources/simpleKey1/media/amphipoda_01.jpg")
+                        .copy( Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
+                    return Promise.resolve({id: photoId});
+                });
                 await createSampleDownloader().downloadSamples();
                 expect(Alloy.Globals.CerdiApi.retrieveUnknownCreatures.callCount, "should call retrieveUnknownCreatures").to.equal(1);
                 expect(Alloy.Globals.CerdiApi.retrievePhoto.callCount,"should call retrievePhoto").to.equal(1);
@@ -960,10 +964,10 @@ describe("SampleSync", function () {
                 
                 expect( taxa.size()).to.equal(1);
                 let unknownTaxon = taxa.at(0);
-
-                expect(unknownTaxon.get("taxonId")).to.be.null;
+                
+                expect(unknownTaxon.get("taxonId"),"taxonId").to.be.null;
                 expect(unknownTaxon.get("serverCreaturePhotoId")).to.be.equal(4146);
-                expect(unknownTaxon.get("taxonPhotoPath")).to.include("unknown");
+                expect(unknownTaxon.get("taxonPhotoPath"),"taxonPhotoPath").to.include("unknown");
                 expect(unknownTaxon.get("abundance")).to.be.equal("6-10");
                 expect(unknownTaxon.get("serverCreatureId")).to.be.equal(3113);
         });
