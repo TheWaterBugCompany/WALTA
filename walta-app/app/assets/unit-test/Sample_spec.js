@@ -18,6 +18,7 @@
 var moment = require("lib/moment");
 
 require("unit-test/lib/ti-mocha");
+var simple = require("unit-test/lib/simple-mock");
 var { use, expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
 
@@ -25,7 +26,7 @@ var { makeTestPhoto, removeDatabase, resetSample, clearDatabase, waitForTick  } 
 use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
-describe.only("Taxa collection", function() {
+describe("Taxa collection", function() {
   beforeEach( function() {
     clearDatabase();
   });
@@ -156,7 +157,6 @@ describe.only("Taxa collection", function() {
     // should update existing taxon rather than create a new record
     taxa.load(666);
     let json = taxa.toCerdiApiJson();
-    Ti.API.info(`json = ${JSON.stringify(json)}`)
     expect( taxa.size(), "size of taxa collection" ).to.equal(2);
     expect( taxa.at(0).get("abundance")).to.equal("11-20");
     
@@ -167,9 +167,9 @@ describe.only("Taxa collection", function() {
     
   });
 
-  it.only('should return taxons pending upload', function() {
+  it('should return taxons pending upload', function() {
     clearDatabase();
-    let taxon1, taxon2;
+    let taxon1, taxon2,taxon3;
     
     taxon1 = Alloy.createModel("taxa");
 
@@ -187,24 +187,25 @@ describe.only("Taxa collection", function() {
     taxon2.set("sampleId", 666 );
     taxon2.set("abundance", "1-2");
     taxon2.set("taxonId", null );
-    taxon2.set("serverCreatureId", 2);
-    taxon1.set("serverCreaturePhotoId", 0);
+    taxon2.set("serverCreatureId", 2); 
+    taxon2.set("serverCreaturePhotoId", 0);
     taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
     taxon2.save();
 
-    taxon2 = Alloy.createModel("taxa");
-    taxon2.set("sampleId", 666 );
-    taxon2.set("abundance", "1-2");
-    taxon2.set("taxonId", null );
-    taxon2.set("serverCreatureId", 2);
-    taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
-    taxon2.save();
+    taxon3 = Alloy.createModel("taxa");
+    taxon3.set("sampleId", 666 );
+    taxon3.set("abundance", "1-2");
+    taxon3.set("taxonId", null );
+    taxon3.set("serverCreatureId", 3);
+    taxon3.set("serverCreaturePhotoId", null);
+    taxon3.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-3.jpg"));
+    taxon3.save();
 
-    var taxa = Alloy.createCollection("taxa");
+    let taxa = Alloy.createCollection("taxa");
     taxa.load(666);
-    var pendingUploads = taxa.findPendingUploads();
-    expect( pendingUploads.length ).to.equal(1);
-    expect( pendingUploads[0].get("serverCreatureId")).to.equal(2);
+    let pendingUploads = taxa.findPendingUploads();
+    expect( pendingUploads.length, "pendingUploads.length" ).to.equal(1);
+    expect( pendingUploads[0].get("serverCreatureId"),"serverCreatureId").to.equal(3);
 
 
   });
@@ -363,6 +364,35 @@ describe("Sample collection, model including taxa", function() {
       return obj;
     }
   }
+
+  it('should report pending uploads when serverSitePhotoId is not set', function(){
+    sample = Alloy.createModel("sample");
+    sample.set("serverSyncTime", moment().valueOf() );
+    sample.set("updatedAt", moment().valueOf() - 100 );
+    expect( sample.hasPendingUploads() ).to.be.true;
+  });
+
+  it('should report pending uploads when serverSyncTime < updatedAt', function(){
+    sample = Alloy.createModel("sample");
+    sample.set("serverSitePhotoId",1);
+    sample.set("serverSyncTime", moment().valueOf() );
+    sample.set("updatedAt", moment().valueOf() + 100 );
+    expect( sample.hasPendingUploads() ).to.be.true;
+    sample.set("serverSyncTime", moment().valueOf() );
+    sample.set("updatedAt", moment().valueOf() - 100 );
+    expect( sample.hasPendingUploads() ).to.be.false;
+  });
+
+  it('should report pending uploads when taxons have pending upload', function(){
+    sample = Alloy.createModel("sample");
+    let taxaMock = {};
+    simple.mock(taxaMock,"findPendingUploads").returnWith( [{},{}] );
+    simple.mock(sample,"loadTaxa").returnWith( taxaMock );
+    sample.set("serverSitePhotoId",1);
+    sample.set("serverSyncTime", moment().valueOf() );
+    sample.set("updatedAt", moment().valueOf() - 100 );
+    expect( sample.hasPendingUploads() ).to.be.true;
+  });
   
 	it('should the calculate the correct SIGNAL score ', function() {
     var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "11-20" ) ];
