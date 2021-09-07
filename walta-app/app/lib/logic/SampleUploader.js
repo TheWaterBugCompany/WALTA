@@ -9,17 +9,7 @@ var { delayedPromise } = require("util/PromiseUtils");
 var { errorHandler } = require("util/ErrorUtils");
 var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 
-function markSampleComplete( sample ) {
-    return (res) => {
-        log(`Sample [serverSampleId=${res.id}] successfully uploaded setting uploaded flag.`);
-        sample.set("serverSampleId", res.id );
-        sample.set("serverSyncTime", moment().valueOf());
-        sample.set("serverUserId", res.user_id);
-        sample.save();
-        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
-        return sample;
-    };
-}
+
 
 /*
     serverSitePhotoId is used to indicate that the photo has been
@@ -226,11 +216,11 @@ function createSampleUploader(delay) {
 
         uploadNextSample(samples) {
             var sample = samples.shift();
-            var uploadIfNeeded;
+            var uploadOrUpdate;
             var serverSampleId = sample.get("serverSampleId");
             var serverSyncTime = sample.get("serverSyncTime");
-            var updatedAt = sample.get("updatedAt");
 
+            // strip out any unknown creatures before sending them to server; they use a different API
             let sampleCerdiJson = sample.toCerdiApiJson();
             let [ identifiedCreatures,
                 unknownCreatures ] = _.partition(sampleCerdiJson.creatures, (c)=>(c.creature_id!=null))
@@ -240,7 +230,6 @@ function createSampleUploader(delay) {
            
             function uploadSampleData( sample ) {
                 log(`Uploading new sample record [sampleId=${sample.get("sampleId")}]`);
-                // unknown creatures use a different API so we need to extract them here
                return Promise.resolve()
                         .then( () => Alloy.Globals.CerdiApi.submitSample( sampleCerdiJson ) );
             }
@@ -248,28 +237,45 @@ function createSampleUploader(delay) {
             function updateExistingSampleData( sample ) {
                 log(`Updating existing sample [serverSampleId=${serverSampleId}]`); 
                 return Promise.resolve()
-                .then( () => Alloy.Globals.CerdiApi.updateSampleById( sample.get("serverSampleId"), sampleCerdiJson ) );
+                    .then( () => Alloy.Globals.CerdiApi.updateSampleById( sample.get("serverSampleId"), sampleCerdiJson ) );
             }
-        
-            
+
+            function updateSample(res) {
+                log(`Sample [serverSampleId=${res.id}] successfully uploaded setting uploaded flag.`);
+                sample.set("serverSampleId", res.id );
+                sample.set("serverUserId", res.user_id);
+                sample.save();
+                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
+            }
+
+            function markSampleComplete() {
+                log("Upload successful.")
+                sample.set("serverSyncTime", moment().valueOf());
+                sample.save();
+            }
+
             //debug(`serverSyncTime = ${serverSyncTime}, updatedAt = ${updatedAt}`);
             if ( !serverSyncTime ) {
-                
-                uploadIfNeeded = delayedPromise( uploadSampleData(sample), delay )
-                    .then( markSampleComplete( sample )  );
-            } else if ( moment(serverSyncTime).isBefore( moment(updatedAt)) ) {
-                uploadIfNeeded = delayedPromise( updateExistingSampleData( sample ), delay )
-                    .then( markSampleComplete( sample )  );
+                uploadOrUpdate = delayedPromise( uploadSampleData(sample), delay );
+            } else if ( sample.hasPendingUploads() ) {
+                uploadOrUpdate = delayedPromise( updateExistingSampleData( sample ), delay );
+            } 
+
+            if ( uploadOrUpdate ) {
+                return uploadOrUpdate
+                        .then( updateSample )
+                        .then( () => sample  )
+                        .then( (sample) => uploadSitePhoto(sample,delay) )
+                        .then( (sample) => uploadTaxaPhotos(sample,delay) )
+                        .then( (sample) => uploadUnknownCreatures(sample,delay))
+                        .then( (sample) => deletePendingUnknownCreatures(sample,delay))
+                        .then( markSampleComplete )
+                        .catch( errorHandler );
             } else {
-                uploadIfNeeded = Promise.resolve(sample);
+                return Promise.resolve(sample);
             }
         
-            return uploadIfNeeded
-                    .then( (sample) => uploadSitePhoto(sample,delay) )
-                    .then( (sample) => uploadTaxaPhotos(sample,delay) )
-                    .then( (sample) => uploadUnknownCreatures(sample,delay))
-                    .then( (sample) => deletePendingUnknownCreatures(sample,delay))
-                    .catch( errorHandler );           
+                     
         }
 
     }

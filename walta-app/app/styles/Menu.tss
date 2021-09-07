@@ -125,7 +125,7 @@
 
 "#smallOptions": {
   height: "100dp",
-  width: "500dp",
+  width: Ti.UI.SIZE,
   bottom: "8dp"
 }
 
