@@ -366,7 +366,7 @@ describe("Sample collection, model including taxa", function() {
   }
 
   it('should report pending uploads when serverSitePhotoId is not set', function(){
-    sample = Alloy.createModel("sample");
+    let sample = Alloy.createModel("sample");
     sample.set("serverSitePhotoId",null);
     sample.set("serverSyncTime", moment().valueOf() );
     sample.set("updatedAt", moment().valueOf() - 100 );
@@ -374,7 +374,7 @@ describe("Sample collection, model including taxa", function() {
   });
 
   it('should report pending uploads when serverSyncTime < updatedAt', function(){
-    sample = Alloy.createModel("sample");
+    let sample = Alloy.createModel("sample");
     sample.set("serverSitePhotoId",1);
     sample.set("serverSyncTime", moment().valueOf() );
     sample.set("updatedAt", moment().valueOf() + 100 );
@@ -385,7 +385,7 @@ describe("Sample collection, model including taxa", function() {
   });
 
   it('should report pending uploads when taxons have pending upload', function(){
-    sample = Alloy.createModel("sample");
+    let sample = Alloy.createModel("sample");
     let taxaMock = {};
     simple.mock(taxaMock,"findPendingUploads").returnWith( [{},{}] );
     simple.mock(sample,"loadTaxa").returnWith( taxaMock );
