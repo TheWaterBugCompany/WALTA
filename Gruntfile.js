@@ -86,9 +86,9 @@ module.exports = function(grunt) {
 
       function production() {
         if ( platform === "android" ) {
-          args.push( "--build-only", "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
+          args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
         } else if ( platform === "ios" ){
-          args.push( "--build-only","--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
+          args.push( "--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }
