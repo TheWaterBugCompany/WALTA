@@ -25,7 +25,7 @@ var { makeTestPhoto, removeDatabase, resetSample, clearDatabase, waitForTick  } 
 use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
-describe("Taxa collection", function() {
+describe.only("Taxa collection", function() {
   beforeEach( function() {
     clearDatabase();
   });
@@ -165,6 +165,48 @@ describe("Taxa collection", function() {
     expect( taxa.at(0).get("taxonPhotoPath")).to.include("test-photo-unknown.jpg");
     expect( taxa.at(1).get("taxonPhotoPath")).to.include("test-photo-unknown-2.jpg");
     
+  });
+
+  it.only('should return taxons pending upload', function() {
+    clearDatabase();
+    let taxon1, taxon2;
+    
+    taxon1 = Alloy.createModel("taxa");
+
+    taxon1.set("sampleId", 666 );
+    taxon1.set("abundance", "> 20");
+    taxon1.set("taxonId", null );
+    taxon1.set("serverCreatureId", 1);
+    taxon1.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown.jpg"));
+    taxon1.set("serverCreaturePhotoId", 99);
+    taxon1.save();
+
+    // serverCreaturePhotoId == 0 means the server didn't supply a photo
+    // but the record has been uploaded.
+    taxon2 = Alloy.createModel("taxa");
+    taxon2.set("sampleId", 666 );
+    taxon2.set("abundance", "1-2");
+    taxon2.set("taxonId", null );
+    taxon2.set("serverCreatureId", 2);
+    taxon1.set("serverCreaturePhotoId", 0);
+    taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
+    taxon2.save();
+
+    taxon2 = Alloy.createModel("taxa");
+    taxon2.set("sampleId", 666 );
+    taxon2.set("abundance", "1-2");
+    taxon2.set("taxonId", null );
+    taxon2.set("serverCreatureId", 2);
+    taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
+    taxon2.save();
+
+    var taxa = Alloy.createCollection("taxa");
+    taxa.load(666);
+    var pendingUploads = taxa.findPendingUploads();
+    expect( pendingUploads.length ).to.equal(1);
+    expect( pendingUploads[0].get("serverCreatureId")).to.equal(2);
+
+
   });
 });
 

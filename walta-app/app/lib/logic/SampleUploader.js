@@ -222,11 +222,8 @@ function createSampleUploader(delay) {
 
             // strip out any unknown creatures before sending them to server; they use a different API
             let sampleCerdiJson = sample.toCerdiApiJson();
-            let [ identifiedCreatures,
-                unknownCreatures ] = _.partition(sampleCerdiJson.creatures, (c)=>(c.creature_id!=null))
+            let [ identifiedCreatures, unknownCreatures ] = _.partition(sampleCerdiJson.creatures, (c)=>(c.creature_id!=null))
             sampleCerdiJson.creatures = identifiedCreatures;
-            Ti.API.info(`identified creatures are ${JSON.stringify(identifiedCreatures)}`);
-            Ti.API.info(`unknown creatures are ${JSON.stringify(unknownCreatures)}`);
            
             function uploadSampleData( sample ) {
                 log(`Uploading new sample record [sampleId=${sample.get("sampleId")}]`);

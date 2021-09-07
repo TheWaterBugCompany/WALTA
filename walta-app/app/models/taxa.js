@@ -249,7 +249,7 @@ exports.definition = {
 			},
 
 			findPendingUploads() {
-				return this.filter( (t) => !t.get("serverCreaturePhotoId"));
+				return this.filter( (t) => _.isUndefined( t.get("serverCreaturePhotoId") ));
 			},
 
 			findTaxonByServerCreatureId(serverCreatureId) {
