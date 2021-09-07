@@ -189,7 +189,7 @@ exports.definition = {
 				
 				// if there have been errors in uploading photos then we
 				// to keep trying to upload them.
-				if ( !this.get("serverSitePhotoId")) {
+				if ( _.isUndefined(this.get("serverSitePhotoId"))) {
 					return true;
 				}
 
