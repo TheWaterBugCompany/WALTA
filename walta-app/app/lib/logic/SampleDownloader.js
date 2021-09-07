@@ -26,9 +26,8 @@ function createSampleDownloader(delay) {
 
                 let serverUpdateTimeM = moment(serverSample.updated_at);
                 let serverSyncTimeM = moment(serverSyncTime);
-                debug(`checking sample for update: serverSampleId=${sample.get("serverSampleId")} server.updatedAt = ${serverUpdateTimeM.valueOf()} serverSyncTime = ${serverSyncTimeM.valueOf()}`);
                 if ( serverUpdateTimeM.isAfter(serverSyncTimeM) ) {
-                return true;
+                    return true;
                 }
 
                 return false; // update not needed
@@ -133,13 +132,15 @@ function createSampleDownloader(delay) {
                 return Promise.resolve()
                         .then( retrievePhoto )
                         .then( photo => {
-                            Ti.API.info(`photo = ${JSON.stringify(photo)}`)
                             if ( photo ) {
                                 taxon.setPhoto( Ti.Filesystem.applicationDataDirectory, taxonPhotoPath );
                                 taxon.set("serverCreaturePhotoId",photo.id);
                                 taxon.save();
                             } else {
-                                taxon.set("serverCreaturePhotoId",0); // indicates no photo exists on the server
+                                debug(`Missing photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                                // indicates no photo exists on the server - but is not null to prevent future
+                                // uploads from trying to upload 
+                                taxon.set("serverCreaturePhotoId",0); 
                                 taxon.save();
                             }
                             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
