@@ -44,6 +44,7 @@ function savePhoto( blob, filename  ) {
 function needsOptimising( photo ) {
     /* resizing on iOS seems trigger an intermittant image corruptiojn so we only resize if
        the image size is to large to pass the CERDI API requirements. */
+    Ti.API.info(`needsOptimisng photo.length = ${photo.length}`)
     let res = ( photo.length > 4*1024*1024 /*|| photo.width > 1600 || photo.height > 1600 */);
     return res;
 }
@@ -53,9 +54,9 @@ function optimisePhoto( fullPhoto ) {
 
     // on iOS we get large PNG files so we convert to JPEG before trying to resize the image
     // this hopefully reduces the memory requirements for this process.
-    if ( ( fullPhoto.mimeType === "image/png" ) && ( Ti.Platform.osname !== "android") ) {
+    if ( ( fullPhoto.mimeType === "image/png" ) ) {
         log(`got a PNG: converting photo into JPEG...`);
-        fullPhoto = fullPhoto.imageAsCompressed(0.9);
+        fullPhoto = fullPhoto.imageAsCompressed(0.7);
         if ( ! fullPhoto ) {
             log(`Error converting photo: ${fileOrBlob}`);
             throw new Error("Unable to convert photo into JPEG");

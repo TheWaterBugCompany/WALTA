@@ -39,6 +39,7 @@ exports.definition = {
 			"serverSyncTime": "INTEGER", // timestamp of last upload or download (or 1 for legacy code)
 			"updatedAt": "INTEGER", // timestamp of the last update (or NULL for legacy)
 			"serverUserId": "INTEGER", // user_id field from CERDI server
+			"originalSampleId": "INTEGER", 
 			"complete": "INTEGER", // boolean actually
 			"notes": "TEXT"
 		},
@@ -118,13 +119,13 @@ exports.definition = {
 				return this.get("sitePhotoPath");
 			},
 			
-			saveCurrentSample: function() {
+			saveCurrentSample: async function() {
 				// If the serverSampleId has been set then this is an edited sample
 				// and we need to remove the original
 				let originalSampleId = this.get("originalSampleId");
 				if ( originalSampleId ) {
 					let oldSample = Alloy.createModel("sample");
-					oldSample.loadById(originalSampleId);
+					await oldSample.loadById(originalSampleId);
 					// copy across serverSampleId - this may not have been present
 					// when temporary record was created
 					this.set("serverSampleId", oldSample.get("serverSampleId"));
@@ -176,6 +177,29 @@ exports.definition = {
 					taxa.load( sampleId );
 				return taxa;
 			},
+
+			hasPendingUploads() {
+				let serverSyncTime = this.get("serverSyncTime");
+				let updatedAt = this.get("updatedAt");
+				
+				// if the updatedAt has changed this flags an upload is needed
+				if ( moment(serverSyncTime).isBefore( moment(updatedAt) ) ) {
+					return true;
+				}
+				
+				// if there have been errors in uploading photos then we
+				// to keep trying to upload them.
+				if ( !this.get("serverSitePhotoId")) {
+					return true;
+				}
+
+				// check for any taxns that don't have a serverTaxonID
+				let taxa = this.loadTaxa();
+				return taxa.findPendingUploads().length > 0;
+
+			},
+
+			
 
 
 			lookUpSignalScore(t,key) {

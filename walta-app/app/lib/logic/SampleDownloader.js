@@ -1,8 +1,10 @@
+var Crashlytics = require('util/Crashlytics');
 var moment = require("lib/moment");
 var Topics = require('ui/Topics');
 var { errorHandler, formatError } = require("util/ErrorUtils");
 var { delayedPromise } = require("util/PromiseUtils");
-
+var log = Crashlytics.log;
+var debug = m => Ti.API.info(m);
 function createSampleDownloader(delay) {
     return {
         downloadSamples() {
@@ -34,6 +36,10 @@ function createSampleDownloader(delay) {
             }
             function updateIncomingSample(serverSample) {
                 let sample = Alloy.createModel("sample");
+                // The sync time is set to when we started the download process
+                // so that if the habitat update code sets the updatedAt field
+                // it is guarenteeed to be sooner than the eventual serverSyncTime.
+                let syncedAt = moment().valueOf();
 
                 // since unknown creatures are not included in the sample_creatures field
                 // we add the data structure, this way we can rely on the fromCerdiApiJson
@@ -51,11 +57,17 @@ function createSampleDownloader(delay) {
                 }
 
                 function persistSample(sampleJson) {
-                    sample.set("serverSyncTime",moment().valueOf());
                     sample.fromCerdiApiJson(sampleJson); 
                     sample.save();
                     Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
              
+                }
+                function setTimestamp(){
+                    sample.set("serverSyncTime",syncedAt);
+                    sample.save();
+                }
+                function retrieveUnknownCreatures() {
+                    return delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.retrieveUnknownCreatures(serverSample.id) ), delay )
                 }
                 return sample.loadByServerId(serverSample.id) 
                     .then( () => {
@@ -64,16 +76,22 @@ function createSampleDownloader(delay) {
                             // must set the serverSyncTime here so that if updatedAt
                             // is set to be a few milliseconds later - this can happen if
                             // habitat blanks are filled in, and we need to signal a re-upload.
-                            return delayedPromise( Alloy.Globals.CerdiApi.retrieveUnknownCreatures(serverSample.id), delay )
+                            return Promise.resolve()
+                                .then( retrieveUnknownCreatures )
                                 .then( processUnknownCreatures )
-                                .then( persistSample );
+                                .then( persistSample )
+                                .then( () => [sample,serverSample] )
+                                .then( downloadSitePhoto )
+                                .then( downloadCreaturePhotos )
+                                
+                                .then( setTimestamp );
                         } 
                     })
                     .then( () => [sample,serverSample]);
             }
 
             function downloadSitePhoto([sample,serverSample]) {
-                if ( serverSample.photos.length > 0 && !sample.get("serverSitePhotoId") ) {
+                if ( serverSample.photos.length > 0  ) {
                     let sitePhotoPath = `site_download_${serverSample.id}`;
                     debug(`Downloading site photo for ${serverSample.id}`);
                     return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
@@ -136,10 +154,11 @@ function createSampleDownloader(delay) {
                 // this means photos are only ever downloaded from the server when they
                 // do not exist on the client - this is a fair assumption since the photo
                 // can not be changed on the server.
-                let pendingTaxaPhotos = taxa.filter( t => _.isNull(t.get('taxonPhotoPath')) );
+                let pendingTaxaPhotos = taxa.filter( t => true );
                 return _.reduce( pendingTaxaPhotos,  
                     (queue,t) => queue.then( () => delayedPromise( downloadCreaturePhoto(t,serverSample),delay)),
-                    Promise.resolve([sample,serverSample]));
+                    Promise.resolve())
+                    .then(()=>[sample,serverSample])
                 
             }
 
@@ -147,10 +166,7 @@ function createSampleDownloader(delay) {
                 return _.reduce( samples, 
                     (updateAllSamples, serverSample ) => updateAllSamples
                             .then( () => serverSample )
-                            .then( updateIncomingSample )
-                            .then( downloadSitePhoto )
-                            .then( downloadCreaturePhotos ),
-                    Promise.resolve() );
+                            .then( updateIncomingSample ),Promise.resolve() );
             }
             return delayedPromise( Alloy.Globals.CerdiApi.retrieveSamples(), delay )
                 .then( saveNewSamples );
