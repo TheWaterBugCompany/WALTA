@@ -436,8 +436,8 @@ describe("Sample collection, model including taxa", function() {
     
   });
   context('should serialise correctly', function() {
-    beforeEach(function() {
-      Alloy.Models.sample.saveCurrentSample();
+    beforeEach(async function() {
+      await Alloy.Models.sample.saveCurrentSample();
     });
     it('should serialize mayfly survey type correctly', function() {
       Alloy.Models.sample.set("surveyType", Sample.SURVEY_MAYFLY);
@@ -600,7 +600,7 @@ describe("Sample collection, model including taxa", function() {
     expect(oldSample.get("waterbodyName")).to.equal("Test Waterbody");
     verifyTaxa(oldSample.loadTaxa(), oldSample.get("sampleId"));
    
-    tempSample.saveCurrentSample();
+    await tempSample.saveCurrentSample();
 
     // should be updated
     var sample = Alloy.createModel("sample");

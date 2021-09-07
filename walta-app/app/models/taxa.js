@@ -248,6 +248,10 @@ exports.definition = {
 				return this.find( (t) => t.get("sampleTaxonId") == sampleTaxonId);
 			},
 
+			findPendingUploads() {
+				return this.filter( (t) => !t.get("serverCreaturePhotoId"));
+			},
+
 			findTaxonByServerCreatureId(serverCreatureId) {
 				return this.find( (t) => t.get("serverCreatureId") == serverCreatureId);
 			},
