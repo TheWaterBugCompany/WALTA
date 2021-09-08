@@ -42,10 +42,12 @@ var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please e
 
 var saveSampleAndUpload = function() {
     Ti.API.info("saving current sample");
-    Alloy.Models.sample.saveCurrentSample();
-    setMessageText();
-    Ti.API.info("forcing upload");
-    Topics.fireTopicEvent(Topics.FORCE_UPLOAD);
+    Alloy.Models.sample.saveCurrentSample()
+     .then( () => {
+        setMessageText();
+        Ti.API.info("forcing upload");
+        Topics.fireTopicEvent(Topics.FORCE_UPLOAD);
+     });
 };
 
 function checkGpsLock() {
