@@ -719,6 +719,47 @@ describe("SampleSync", function () {
         expect(samples.length,"samples.length").equals(1);
         expect(samples.at(0).get("waterbodyName")).equals("edited");
         expect(samples.at(0).get("serverSampleId")).equals(666);
+    }),
+
+    it('should not duplicate record when download is available after an edit', async function() {
+        clearMockSampleData();
+        let sample = makeSampleData( { 
+            sitePhotoPath: makeTestPhoto("site.jpg"),
+            dateCompleted:  moment("2020-01-01").valueOf(),
+            serverSampleId: 666,
+            serverSyncTime: moment("2020-01-01").valueOf()
+        });
+        sample.save(); 
+
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+            .returnWith(38);
+        simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+            .resolveWith({id:1});
+        simple.mock(Alloy.Globals.CerdiApi,"submitSample")
+                .resolveWith({id:666});    
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+            .resolveWith([makeCerdiSampleData({id: 666, updated_at: "2020-01-02"})]);
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+            .resolveWith([]);
+ 
+            expect(sample.get("serverSampleId"),"smaple.serverSampleId").to.equal(666)
+        let tempSample = sample.createTemporaryForEdit();
+        tempSample.set("waterbodyName", "edited");
+        
+        expect(tempSample.get("dateCompleted")).to.be.undefined;
+        expect(tempSample.get("serverSampleId")).to.equal(666); 
+        
+       
+        // save the edited copy
+        await Promise.all([tempSample.saveCurrentSample(), createSampleDownloader().downloadSamples()]); 
+        //await createSampleDownloader().downloadSamples();
+        // see if the original still exists
+        let samples = Alloy.createCollection("sample");
+        samples.fetch({
+            query: 'SELECT * FROM sample'
+        });
+        expect(samples.length,"samples.length").equals(1);
+        
        
     });
 
