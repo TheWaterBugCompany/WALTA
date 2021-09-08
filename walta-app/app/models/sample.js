@@ -137,7 +137,7 @@ exports.definition = {
 				
 				this.set("dateCompleted", moment().format() );
 				let updatedAt = moment().valueOf();
-				this.set('updatedAt', updatedAt, {ignore:true});
+				this.set('updatedAt', updatedAt);
 				this.set('originalSampleId', null);
 				this.save();
 			},
@@ -164,7 +164,7 @@ exports.definition = {
 			loadByServerId(serverSampleId ) {
 				return new Promise( (resolve,reject) =>
 					this.fetch({ 
-						query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId} AND (dateCompleted IS NOT NULL)`, 
+						query: `SELECT * FROM sample WHERE serverSampleId = ${serverSampleId} AND (dateCompleted IS NOT NULL) LIMIT 1`, 
 						success: resolve, 
 						error: reject })
 				);
