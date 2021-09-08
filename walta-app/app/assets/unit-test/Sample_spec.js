@@ -410,6 +410,39 @@ describe("Sample collection, model including taxa", function() {
 		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.7"); 
   });
 
+
+  // Occasionally, probably due to a hard to replicate race condition, loadByServerId()
+  // was failing to load the record, which results in a new sample record being populated,
+  // which causes additional duplicates. We don't want duplicates so we test that
+  // when there is more than one record meeting the criteria that at least one of them
+  // is loaded. 
+  it('should load by server id even if there is a duplicate', async function() {
+    clearDatabase();
+    let sample = makeSampleData( { 
+        sitePhotoPath: makeTestPhoto("site.jpg"),
+        dateCompleted:  moment("2020-01-01").valueOf(),
+        serverSampleId: 666,
+        serverSyncTime: moment("2020-01-01").valueOf()
+    });
+    sample.save(); 
+
+
+    // this SHOULD (but doesn't) create a duplicate????????
+    sample2 = makeSampleData( { 
+        sitePhotoPath: makeTestPhoto("site.jpg"),
+        dateCompleted:  moment("2020-01-01"),
+        serverSampleId: 666,
+        serverSyncTime: moment("2020-01-01")
+    });
+    sample2.save();
+
+    var model = Alloy.createModel("sample");
+    await model.loadByServerId(666);
+
+    expect( model.get("serverSampleId") ).to.equal(666);
+     
+
+  });
   it('should not load any temporary rows when loading by serverSampleId', function() {
     // since we use retrieve by serverSampleId to load the latest record
     // this needs to exclude any records that are currently temporary and must not
