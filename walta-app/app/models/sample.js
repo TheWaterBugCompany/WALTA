@@ -189,7 +189,7 @@ exports.definition = {
 				
 				// if there have been errors in uploading photos then we
 				// to keep trying to upload them.
-				if ( _.isNull(this.get("serverSitePhotoId"))) {
+				if ( this.get("sitePhotoPath") && _.isNull(this.get("serverSitePhotoId"))) {
 					return true;
 				}
 
