@@ -69,36 +69,8 @@
   }
 }
 
-"#mayfly": {
-  top: "10%",
-  left: "1%",
-  width: "50%",
-  height: "60%"
-}
-
-"#mayflyIconWrapper": {
-  left: "5%",
-  top: "1%",
-  height: "95%",
-  width: "65%"
-}
-
-"#mayflyIcon": {
-  backgroundColor: "transparent",
-  image: "/images/mayfly-muster-icon.png",
-  height: Ti.UI.FILL,
-  width: Ti.UI.FILL,
-  left: 0
-}
-
-"#mayflyLabel": {
-  bottom: "32%",
-  left: "62%"
-}
-
 "#detailed": {
-  top: "8%",
-  left: "56%",
+  top: "14%",
   width: "35%",
   height: "50%"
 }
@@ -119,8 +91,8 @@
 }
 
 "#detailedLabel": {
-  bottom: "0dp",
-  left: "1%"
+  bottom: "2%",
+  left: "0%"
 }
 
 "#smallOptions": {
@@ -190,6 +162,18 @@
 "#helpIcon" : {
   backgroundColor: "transparent",
   image: "/images/help-icon.png",
+}
+
+"#mayflyIcon": {
+  backgroundColor: "transparent",
+  image: "/images/mayfly-muster-icon.png",
+  width: "65%",
+  height: "65%",
+  top: "8%"
+}
+
+"#mayflyLabel": {
+  top: "-9%"
 }
 
 "#identifyIcon" : {

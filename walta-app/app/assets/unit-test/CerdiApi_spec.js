@@ -82,7 +82,7 @@ var MOCK_SAMPLE_DATA = {
     }, 
     "photos": []
 };
-describe.only('#retrieveSamples', function () {
+describe('#retrieveSamples', function () {
     let cerdi;
     before(createTestLogin);
 
@@ -120,7 +120,7 @@ describe.only('#retrieveSamples', function () {
 
     });
 
-    it.only("should upload unknown creatures", async function() {
+    it("should upload unknown creatures", async function() {
         let serverSampleId;
         await cerdi.loginUser( 'testlogin@example.com', 'tstPassw0rd!' );
         let res = await submitTestSample(moment().format());

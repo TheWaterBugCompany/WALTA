@@ -36,21 +36,14 @@ function logInClick() {
 }
 
 function mayflyClick() {
-  $.selectMethod = Alloy.createController("MayflyMusterSelect");
-  $.TopLevelWindow.add($.selectMethod.getView());
-  $.selectMethod.on("close", function() {
-    closeSelectMethod();
+  $.mayflyMap = Alloy.createController("MayflyEmergenceMap");
+  $.TopLevelWindow.add($.mayflyMap.getView());
+  $.mayflyMap.on("close", function handler() {
+      $.mayflyMap.off("close", handler);
+      $.TopLevelWindow.remove($.mayflyMap.getView());
+      $.mayflyMap.cleanUp();
+      $.mayflyMap = null;
   });
-  $.selectMethod.on("mayfly_emergence", function() {
-    $.mayflyMap = Alloy.createController("MayflyEmergenceMap");
-    $.TopLevelWindow.add($.mayflyMap.getView());
-    $.mayflyMap.on("close", function handler() {
-        $.mayflyMap.off("close", handler);
-        $.TopLevelWindow.remove($.mayflyMap.getView());
-        $.mayflyMap.cleanUp();
-        $.mayflyMap = null;
-    });
-  })
 }
 
 function detailedClick() {

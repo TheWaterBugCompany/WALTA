@@ -1128,21 +1128,10 @@ describe("SampleSync", function () {
 
         // Needs to send DELETE requests for any unknown bugs that have been
         // removed. 
-        
-        // One possible strategy to implement this is to download
-        // the existng list of unknown bugs and find any that no longer exist
-        // except this won't work if downloadSamples is called then the removed unknown bugs
-        // would be re-added to the sample first.
-        
-        // Another strategy would be to not actually delete the taxon but
-        // to simply mark it deleted with a flag. That way if deleted == true
-        // then we call DELETE on the unknown then actually remove the taxon.
-
-        // This would require the sample tray to be filtered to show only
-        // taxons with the deleted flag false. And also only upload those
-        // taxons with the deleted flag false. The load taxon functions could
-        // filter for deleted, and the upload code can load bugs marked for
-        // deletion, call the appropriate API then actaully delete them.
+    
+        // We don't actually delete the taxon but simply mark it deleted with a flag. 
+        // That way if willDelete == true then we call DELETE on the unknown then actually 
+        // remove the taxon during upload.
         it("should remove any removed unknown bugs", async function() {
 
             clearMockSampleData();
