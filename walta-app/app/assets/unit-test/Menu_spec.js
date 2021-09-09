@@ -39,9 +39,9 @@ describe('Menu controller', function() {
 		actionFiresTopicTest( mnu.detailed, 'click', Topics.DETAILED, () => done() );
 	});
 
-	it('should fire the HELP topic', function(done) {
+	/*it('should fire the HELP topic', function(done) {
 		actionFiresTopicTest( mnu.help, 'click', Topics.HELP, () => done() );
-	});
+	});*/
 
 	it('should fire the GALLERY topic', function(done) {
 		actionFiresTopicTest( mnu.gallery, 'click', Topics.GALLERY, () => done() );
