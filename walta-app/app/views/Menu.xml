@@ -6,12 +6,7 @@
 					<Label id="logInLabel" class="smallMenuText" text="Log In"  accessibilityLabel="Log In"  />
 				</View>
 				<View>
-					<View  id="mayfly" onClick="mayflyClick">
-						<View id="mayflyIconWrapper">
-							<ImageView id="mayflyIcon" />
-						</View>
-						<Label id="mayflyLabel" class="bigMenuText" text="Mayfly\nMuster"  accessibilityLabel="Mayfly Muster"/>
-					</View>
+					
 				</View>
 				<View id="detailed" onClick="detailedClick">
 					<View id="detailedIconWrapper">
@@ -21,10 +16,11 @@
 				</View>
 			</View>
 			<View id="smallOptions" layout="horizontal">
-				<View id="help" class="smallButton" onClick="helpClick">
-					<ImageView id="helpIcon" class="smallButtonIcon" />
-					<Label id="helpLabel" class="smallMenuText" text="Help and Info" accessibilityLabel="Help and Info" />	
+				<View  id="mayfly" class="smallButton" onClick="mayflyClick">
+						<ImageView id="mayflyIcon" class="smallButtonIcon" />
+						<Label id="mayflyLabel" class="smallMenuText" text="Mayfly Map"  accessibilityLabel="Mayfly Map"/>
 				</View>
+				
 				<View id="identify" class="smallButton" onClick="identifyClick">
 					<ImageView id="identifyIcon" class="smallButtonIcon"  />
 					<Label id="identifyLabel" class="smallMenuText" text="Identify" accessibilityLabel="Identify" />
