@@ -26,6 +26,7 @@ function fixUpNotesView() {
     let notesWidth = $.notes.size.width;
     let notesHeight = $.notes.size.height;
     let notesLabelHeight = $.notesLabel.size.height;
+    
     $.notesTextField.width = notesWidth - 20;
     $.notesTextField.height = notesHeight - notesLabelHeight - 20;
 }
@@ -39,7 +40,6 @@ function fixUpScrollview() {
     let partialHeight = $.partial.size.height;
     $.partial.height = partialHeight; 
     $.content.height = height;
-    
     $.partialLabel.left = toggleWidth + ten; 
     $.partialLabel.width = width - (toggleWidth + ten);
 
@@ -62,7 +62,7 @@ function fixUpScrollview() {
     $.notesTextField.width = notesWidth;
     $.notesTextField.height = notesHeight - $.notesTextField.rect.y - ten;
 }
-$.TopLevelWindow.addEventListener('postlayout', fixUpScrollview);
+$.notesTextField.addEventListener('postlayout', fixUpScrollview);
 
 function updateFields() {
     $.partialToggle.value = Boolean(sample.get("complete"));
