@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require('unit-test/lib/chai');
-var { wrapViewInWindow, closeWindow, windowOpenTest, checkTestResult } = require('unit-test/util/TestUtils');
+var { wrapViewInWindow, waitForTick, waitForEvent, closeWindow, windowOpenTest, checkTestResult } = require('unit-test/util/TestUtils');
 var { simulatePhotoCapture } = require("unit-test/mocks/MockCamera");
 
 describe('PhotoSelect controller', function() { 
@@ -175,36 +175,40 @@ describe('PhotoSelect controller', function() {
 		pv.on("loaded", testPhotoCapture);
 		windowOpenTest( win );
 	});
-
-	it('should display loading indicator', function(done) {
-		this.timeout(10000);
-		function doneOnError(e) {
-			if ( e ) {
-				done(e);
-			}
-		}
+	// flakey test
+	it.skip('should display loading indicator', async function() {
 		makePhotoSelect( false, '/unit-test/resources/simpleKey1/media/beetlelarvae.gif' );
-		function testPhotoCapture() {
-			pv.off("loaded", testPhotoCapture );
-			pv.on("loading", function handler() { 
-				pv.off("loading", handler );
-				checkTestResult( doneOnError, () => {
-					expect( pv.activity.visible, "activity should be visible" ).to.be.true;
-					expect( pv.photo.visible, "photo should not be visible" ).to.be.false;
-					
-				})
-			});
-			pv.on("loaded", function handler() {
-				pv.off("loaded", handler );
-				checkTestResult( done, () => {
-					expect( pv.activity.visible, "activity should not be visible"  ).to.be.false;
-					expect( pv.photo.visible, "photo should be visible" ).to.be.true;
-				} ) 
-			});
-			setTimeout( () => simulatePhotoCapture( pv ), 500 );
-		} 
-		pv.on("loaded", testPhotoCapture);
-		windowOpenTest( win );
+
+		let openWindow = new Promise( (resolve) => {
+			pv.on("loaded", function e() { pv.off("loaded",e); resolve(); } );
+			windowOpenTest( win );
+		});
+
+		await openWindow;
+
+		let testLoadingPhoto = new Promise( (resolve) => {
+			pv.on("loading", function e() { pv.off("loading",e); resolve(); } );
+			simulatePhotoCapture( pv )
+		});
+
+		await testLoadingPhoto;
+
+		await waitForTick(10)();
+
+		expect( pv.activity.visible, "activity should be visible" ).to.be.true;
+		expect( pv.photo.visible, "photo should not be visible" ).to.be.false;
+			
+		let testLoadedPhoto = new Promise( (resolve) => {
+			pv.on("loaded", function e() { pv.off("loaded",e); resolve(); } );
+		
+		}); 
+
+		await testLoadedPhoto;
+
+		await waitForTick(10)();
+
+		expect( pv.activity.visible, "activity should not be visible"  ).to.be.false;
+		expect( pv.photo.visible, "photo should be visible" ).to.be.true;
 	});
 
 });

@@ -47,6 +47,7 @@ function getThumbnailImageUrl() {
 function generateThumbnail( fileOrBlob ) {
     info(`generating thumbnail... fileOrBlob = ${fileOrBlob}`);
     var fullPhoto = null;
+    
     if ( typeof fileOrBlob === "string") {
         fullPhoto = loadPhoto( fileOrBlob );
     } else {
@@ -154,44 +155,47 @@ function setImage( fileOrBlob ) {
         
     }
 
-    function processPhoto( fileOrBlob ) {
+    async function processPhoto( fileOrBlob ) {
         info("processPhoto");
         $.photoSelectOptionalLabel.visible = false;
-        $.activity.show();
+        
         $.photo.visible = false;
         
-        $.iconHolder.fireEvent("postlayout");
+        await new Promise( (resolve) => {
+            $.iconHolder.addEventListener("postlayout",
+                function e() {
+                    $.iconHolder.removeEventListener("postlayout",e);
+                    resolve();
+                })
+            $.iconHolder.fireEvent("postlayout");
+        });
+        
+        $.activity.show();
         $.trigger("loading");
-
-        // allow some time to update the display
-        setTimeout( function() {
-                
-                // If an array, then it must contain URL paths to many photos, the first is displayed 
-                // in the thumbnail view
-                if ( Array.isArray(fileOrBlob) ) {
-                    setThumbnail( fileOrBlob[0] );
-                    $.photoUrls = fileOrBlob; // overwrite photoUrls with the complete array of URLs
-                } 
-                // When an object is passed it must be a TiBlob containing image data
-                else if ( typeof(fileOrBlob) === "object" ) {
-                    var blob = fileOrBlob.media;
-                    fileOrBlob.media = null;
-                    setThumbnail( blob );
-                } 
-                // Otherwise it can be a URL path to a single photo
-                else if ( ! _.isUndefined(fileOrBlob) ) {
-                    var file = fileOrBlob;
-                    setThumbnail( file );
-                }
-                
-                info("triggering loaded event")
-                $.activity.hide();
-                $.photo.visible = true;
-                $.trigger("loaded");
-        }, 1);
-
+        // If an array, then it must contain URL paths to many photos, the first is displayed 
+        // in the thumbnail view
+        if ( Array.isArray(fileOrBlob) ) {
+            setThumbnail( fileOrBlob[0] );
+            $.photoUrls = fileOrBlob; // overwrite photoUrls with the complete array of URLs
+        } 
+        // When an object is passed it must be a TiBlob containing image data
+        else if ( typeof(fileOrBlob) === "object" ) {
+            var blob = fileOrBlob.media;
+            fileOrBlob.media = null;
+            setThumbnail( blob );
+        } 
+        // Otherwise it can be a URL path to a single photo
+        else if ( ! _.isUndefined(fileOrBlob) ) {
+            var file = fileOrBlob;
+            setThumbnail( file );
+        }
         
-        
+        setTimeout( () => { 
+            $.activity.hide();
+            $.photo.visible = true;
+            info("triggering loaded event")
+            $.trigger("loaded");
+        },1); 
     }
 
     // When the view first opens then we need to postpone the thumbnail creation
@@ -315,7 +319,7 @@ exports.clearError = clearError;
 exports.photoCapturedHandler = photoCapturedHandler; // for tests
 
 function layoutChildrenHorizontallyFromTheRight(data) {
-    Ti.API.info("layout children")
+    //Ti.API.info("layout children")
     let right = 0;
     data.source.children.slice().reverse().forEach( c => {
         if ( c.visible ) {
