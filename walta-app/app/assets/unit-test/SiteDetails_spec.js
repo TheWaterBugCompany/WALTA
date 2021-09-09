@@ -68,14 +68,14 @@ describe("SiteDetails controller", function() {
             fireTabClick( ctl.waterbodyTypeSelect, WATERBODY_LAKE );
         } );
     });
-
+ 
     it('should save the photo field', function(done){   
         ctl = Alloy.createController("SiteDetails");
         var doneOnce = _.once(done);
         controllerOpenTest( ctl,  ()=>{
             // set a photo as if taken by the user
             ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
-                expect( ctl.photoSelect.getThumbnailImageUrl() ).to.include("preview_thumbnail");
+                expect( ctl.photoSelect.getThumbnailImageUrl() ).to.include("sitePhoto");
                 expect( Ti.Filesystem.getFile( ctl.photoSelect.getThumbnailImageUrl() ).exists() ).to.be.ok;
             }) );
             simulatePhotoCapture( ctl.photoSelect );
