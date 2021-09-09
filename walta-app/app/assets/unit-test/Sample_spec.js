@@ -365,8 +365,17 @@ describe("Sample collection, model including taxa", function() {
     }
   }
 
+  it('should NOT report pending uploads when sitePhotoPath is not set and serverSitePhotoId is not set', function(){
+    let sample = Alloy.createModel("sample");
+    sample.set("serverSitePhotoId",null);
+    sample.set("serverSyncTime", moment().valueOf() );
+    sample.set("updatedAt", moment().valueOf() - 100 );
+    expect( sample.hasPendingUploads() ).to.be.false;
+  });
+
   it('should report pending uploads when serverSitePhotoId is not set', function(){
     let sample = Alloy.createModel("sample");
+    sample.set("sitePhotoPath","somesummyvalue");
     sample.set("serverSitePhotoId",null);
     sample.set("serverSyncTime", moment().valueOf() );
     sample.set("updatedAt", moment().valueOf() - 100 );
