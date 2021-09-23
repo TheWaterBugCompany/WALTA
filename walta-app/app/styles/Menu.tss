@@ -70,16 +70,16 @@
 }
 
 "#detailed": {
-  top: "18%",
+  top: "15%",
   width: "55%",
   height: "50%"
 }
 
 "#detailedIconWrapper": {
-  top: 0,
-  left: "20%",
-  width: "80%",
-  height: "110%"
+  top: "-15%",
+  left: "12%",
+  width: "100%",
+  height: "130%"
 }
 
 "#detailedIcon": {
@@ -87,13 +87,13 @@
   image: "/images/waterbug-survey-icon-alt.png",
   height: Ti.UI.FILL,
   width: Ti.UI.FILL,
-  left: "20%",
-  top: "10%"
+  left: "5%",
+  top: "0%"
 }
 
 "#detailedLabel": {
-  top: "23%",
-  left: "10%"
+  top: "22%",
+  left: "5%"
 }
 
 "#smallOptions": {
