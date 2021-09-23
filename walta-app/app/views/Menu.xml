@@ -12,7 +12,7 @@
 					<View id="detailedIconWrapper">
 						<ImageView id="detailedIcon" />
 					</View> 
-					<Label id="detailedLabel" class="bigMenuText" text="Waterbug\nSurvey"  accessibilityLabel="Waterbug Survey"/>
+					<Label id="detailedLabel" class="bigMenuText" text="Start\nWaterbug\nSurvey"  accessibilityLabel="Waterbug Survey"/>
 				</View>
 			</View>
 			<View id="smallOptions" layout="horizontal">
