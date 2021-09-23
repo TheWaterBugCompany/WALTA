@@ -70,29 +70,30 @@
 }
 
 "#detailed": {
-  top: "14%",
-  width: "35%",
+  top: "18%",
+  width: "55%",
   height: "50%"
 }
 
 "#detailedIconWrapper": {
   top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%"
+  left: "20%",
+  width: "80%",
+  height: "110%"
 }
 
 "#detailedIcon": {
   backgroundColor: "transparent",
-  image: "/images/waterbug-survey-icon.png",
+  image: "/images/waterbug-survey-icon-alt.png",
   height: Ti.UI.FILL,
   width: Ti.UI.FILL,
-  left: "0dp"
+  left: "20%",
+  top: "10%"
 }
 
 "#detailedLabel": {
-  bottom: "2%",
-  left: "0%"
+  top: "23%",
+  left: "10%"
 }
 
 "#smallOptions": {
