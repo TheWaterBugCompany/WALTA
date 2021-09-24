@@ -62,8 +62,8 @@ log(`relWidth=${relWidth}, relHeight=${relHeight}, aspectRatio=${aspectRatio}`);
 
 Alloy.Globals.isSquare = aspectRatio < 1.5;
 
-Alloy.Globals.isLowRes = relHeight < 420; 
-Alloy.Globals.isHighRes = (relHeight >= 420) && (relHeight < 500);
+Alloy.Globals.isLowRes = relHeight < 300; 
+Alloy.Globals.isHighRes = (relHeight >= 300) && (relHeight < 500);
 Alloy.Globals.isXHighRes=  relHeight >= 500;
 
 log(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);
