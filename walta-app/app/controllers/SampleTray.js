@@ -395,7 +395,7 @@ function drawIcecubeTray() {
 
 function startIdentification(e) {
 
-  $.selectMethod = Alloy.createController("MethodSelect");
+  $.selectMethod = Alloy.createController("MethodSelect", {unknownBug: true});
   function closeSelectMethod() {
     $.TopLevelWindow.remove($.selectMethod.getView());
   }

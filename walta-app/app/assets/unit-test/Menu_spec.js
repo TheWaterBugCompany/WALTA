@@ -24,7 +24,7 @@ Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Allo
 describe('Menu controller', function() {
 	var mnu;
 	beforeEach( function( done ) {
-		mnu = Alloy.createController("Menu");
+		mnu = Alloy.createController("Menu", {unknown_bug:true});
 		controllerOpenTest( mnu, done );
 	});
 	afterEach( function(done) {
