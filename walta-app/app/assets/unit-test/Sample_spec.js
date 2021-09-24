@@ -437,7 +437,7 @@ describe("Sample collection, model including taxa", function() {
 
 
     // this SHOULD (but doesn't) create a duplicate????????
-    sample2 = makeSampleData( { 
+    let sample2 = makeSampleData( { 
         sitePhotoPath: makeTestPhoto("site.jpg"),
         dateCompleted:  moment("2020-01-01").valueOf(),
         serverSampleId: 666,
