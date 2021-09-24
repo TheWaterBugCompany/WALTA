@@ -577,6 +577,28 @@ describe( 'SampleTray controller', function() {
         });
     });
 
+    it('should fire the Topics.IDENTIFY when the plus icon is clicked and unkown bug is selected', function() {
+      // now opens MethodSelect open
+      return Promise.resolve()
+        .then( function() {
+          Alloy.Collections.taxa = Alloy.createCollection("taxa");
+          setupSampleTray();
+        })
+        .then( openSampleTray )
+        .then( function() {
+          var tiles = SampleTray.tray.children;
+          var sampleTaxa = getTaxaIcons( tiles[0] );
+          expect( sampleTaxa ).to.have.lengthOf(2);
+          return new Promise( resolve => {
+            Topics.subscribe( Topics.IDENTIFY, resolve );
+            clickPlus( sampleTaxa[0] );
+            setTimeout( function() {
+              SampleTray.selectMethod.unknownbug.getView().fireEvent('click');
+            }, 100);
+          });
+        });
+    });
+
     it('should update when a taxon is added in first two holes', function() {
       return Promise.resolve()
         .then( function() {
