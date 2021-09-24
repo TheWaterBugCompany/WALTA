@@ -31,7 +31,7 @@ describe('Menu controller', function() {
 		closeWindow( mnu.getView(), done );
 	}); 
 
-	it('should fire the MAYFLY topic', function(done) {
+	it.only('should fire the MAYFLY topic', function(done) {
 		done();
 	});
 

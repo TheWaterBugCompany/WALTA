@@ -129,24 +129,22 @@
 }
 
 "#smallOptions[if=Alloy.Globals.isHighRes]": {
-  height: "150dp",
-  width: "750dp"
+  height: "125dp"
 }
 
 ".smallButton[if=Alloy.Globals.isHighRes]": {
-  height: "150dp",
-  width: "150dp" 
+  height: "125dp",
+  width: "125dp" 
 }
 
 ".smallMenuText[if=Alloy.Globals.isHighRes]": {
    font: {
-    fontSize: "20dp"
+    fontSize: "18dp"
   }
 }
 
 "#smallOptions[if=Alloy.Globals.isXHighRes]": {
-  height: "200dp",
-  width: "1000dp"
+  height: "200dp"
 }
 
 ".smallButton[if=Alloy.Globals.isXHighRes]": {
