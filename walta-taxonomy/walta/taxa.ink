@@ -362,7 +362,7 @@
 # movement: "Ambling swim."
 # confusedWith: "Dytiscids"
 # taxonomicLevel: "alt"
-# mediaUrls: ["/taxonomy/walta/media/water_scavenger_beetle_adult_01.jpg","/taxonomy/walta/media/water_scavenger_beetle_adult_02.jpg","/taxonomy/walta/media/hydrophilidae_m1.mp4"]
+# mediaUrls: ["/taxonomy/walta/media/water_scavenger_beetle_adult_02.jpg","/taxonomy/walta/media/water_scavenger_beetle_adult_01.jpg","/taxonomy/walta/media/hydrophilidae_m1.mp4"]
 # description: "very variable size, can be as small as 2mm"
 # bluebug: ["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
 -> DONE
