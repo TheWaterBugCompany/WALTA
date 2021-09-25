@@ -324,7 +324,7 @@ module.exports = function(grunt) {
           },
 
           build_key_ink: {
-            command: "mono ./ink/inklecate/bin/Debug/netcoreapp2.1/inklecate.dll -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
+            command: "mono ./ink/inklecate/bin/Debug/netcoreapp3.1/inklecate.dll -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
           },
 
           build: {
