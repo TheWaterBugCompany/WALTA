@@ -1,32 +1,208 @@
 
-    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 4938ms
-    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 7507ms
-    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 6560ms
-    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 17010ms
-    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 28568ms
-    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 8629ms
-    Visual regression tests about and help pages help page should render:   ✓ Visual regression tests about and help pages help page should render: 12800ms
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+  2) Visual regression tests about and help pages "before all" hook
   - Visual regression tests survey work flow (empty tray) site details should look correct
   - Visual regression tests survey work flow (empty tray) habitat should look correct
   - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
   - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
 
-  7 passing (5m)
+  0 passing (15s)
   4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
 
 
-    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 3751ms
-    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 5900ms
-    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 4762ms
-    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 9795ms
-    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 12521ms
-    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 6734ms
-    Visual regression tests about and help pages help page should render:   ✓ Visual regression tests about and help pages help page should render: 7312ms
+
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+  2) Visual regression tests about and help pages "before all" hook
   - Visual regression tests survey work flow (empty tray) site details should look correct
   - Visual regression tests survey work flow (empty tray) habitat should look correct
   - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
   - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
 
-  7 passing (4m)
+  0 passing (17s)
   4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+
+
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+  2) Visual regression tests about and help pages "before all" hook
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  0 passing (17s)
+  4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+
+
+
+Visual regression test suite 1536x2048
+Running on device: iPad Mini (5th generation Wi-Fi) (ios)
+
+
+Visual regression test suite 1536x2048
+Running on device: iPad Air 2 (Wi-Fi) (ios)
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+Visual regression test suite 1536x2048
+Running on device: iPad Air 2 (Wi-Fi) (ios)
+
+  2) Visual regression tests about and help pages "before all" hook
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  0 passing (10s)
+  4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+
+
+
+Visual regression test suite 1536x2048
+Running on device: iPad (6th generation) (ios)
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+Visual regression test suite 1536x2048
+Running on device: iPad (6th generation) (ios)
+
+  2) Visual regression tests about and help pages "before all" hook
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  0 passing (10s)
+  4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+
+
+
+Visual regression test suite 1536x2048
+Running on device: iPad mini 2G (Wi-Fi) (ios)
+
+    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 2540ms
+    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 7228ms
+    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 8493ms
+    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 13309ms
+    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 8894ms
+    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 10421ms
+    Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:   1) Visual regression tests about and help pages help page should render
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  6 passing (3m)
+  4 pending
+  1 failing
+
+  1) Visual regression tests
+       about and help pages
+         help page should render:
+     Error: Can't call click on element with selector "~Home" because element wasn't found
+      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:22:13)
+
+
+
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+  2) Visual regression tests about and help pages "before all" hook
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  0 passing (16s)
+  4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Unable to find device for 1536x2048 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+
 

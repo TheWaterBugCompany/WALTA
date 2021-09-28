@@ -11,7 +11,7 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
             // The generated session will be visible to you only. 
             sessionName:        'Automation test session',
             sessionDescription: '',
-            deviceOrientation:  'landscape',
+            //deviceOrientation:  'landscape',
             captureScreenshots: true,
             browserName:        'chrome',
             deviceGroup:        'KOBITON',

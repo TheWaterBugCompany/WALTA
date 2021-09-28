@@ -1,7 +1,132 @@
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_1792x828_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_identify_1792x828_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/speedbug_1792x828_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/taxon_detail_screen_1792x828_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/gallery_screen_1792x828_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/about_page_should_render_1792x828_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/help_page_should_render_1792x828_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_identify_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/speedbug_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/taxon_detail_screen_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/gallery_screen_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Terminated
+2021-09-27T10:23:45.824Z ERROR webdriver: Request failed due to session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T10:23:45.827Z ERROR webdriver: session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T10:23:50.522Z ERROR webdriver: Request failed due to session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T10:23:50.522Z ERROR webdriver: session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T10:37:48.992Z ERROR webdriver: Request failed due to session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T10:37:48.995Z ERROR webdriver: session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T10:37:53.530Z ERROR webdriver: Request failed due to session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T10:37:53.530Z ERROR webdriver: session is not created: Run out of session public minutes.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_identify_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/speedbug_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/taxon_detail_screen_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/gallery_screen_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/about_page_should_render_828x1792_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.

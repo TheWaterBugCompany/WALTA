@@ -1,5 +1,104 @@
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_identify_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/speedbug_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/taxon_detail_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/gallery_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+2021-09-27T09:49:30.903Z ERROR webdriver: Request failed due to session is not created: No device matching the desired capabilities
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T09:49:30.905Z ERROR webdriver: session is not created: No device matching the desired capabilities
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T09:52:36.565Z ERROR webdriver: Request failed due to session is not created: No device matching the desired capabilities
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T09:52:36.566Z ERROR webdriver: session is not created: No device matching the desired capabilities
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/about_page_should_render_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+2021-09-27T10:07:17.211Z ERROR webdriver: Request failed due to unknown error: The session b308e71f-de4e-4fd3-bb66-0cf0d0a7e5de is not running on Kobiton and device. Please rerun your test script again to start new session.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_identify_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/speedbug_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/taxon_detail_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/gallery_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/about_page_should_render_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_identify_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/speedbug_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/taxon_detail_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/gallery_screen_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/about_page_should_render_2340x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+2021-09-28T02:30:17.779Z ERROR webdriver: Request failed due to unknown error: The session 0d3906f6-2ded-402d-8f5e-d64020107270 is not running on Kobiton and device. Please rerun your test script again to start new session.
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)

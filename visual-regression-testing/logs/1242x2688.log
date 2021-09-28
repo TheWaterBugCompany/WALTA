@@ -1,49 +1,108 @@
 
-    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 4267ms
-    Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct: 2020-05-26T10:21:12.654Z DEBUG webdriverio: command click was called on an element ("~Identify") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow menu screen identify should look correct: 2020-05-26T10:21:16.512Z DEBUG webdriverio: command click was called on an element ("~Identify") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow menu screen identify should look correct: 2020-05-26T10:21:20.453Z DEBUG webdriverio: command click was called on an element ("~Identify") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow menu screen identify should look correct: 2020-05-26T10:21:23.882Z DEBUG webdriverio: command click was called on an element ("~Identify") that wasn't found, waiting for it...
-  1) Visual regression tests identify via speedbug workflow menu screen identify should look correct
-    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 6754ms
-    Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct: 2020-05-26T10:22:34.660Z DEBUG webdriverio: command click was called on an element ("~Speedbug hyriidae") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow taxon screen should look correct: 2020-05-26T10:22:38.749Z DEBUG webdriverio: command click was called on an element ("~Speedbug hyriidae") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow taxon screen should look correct: 2020-05-26T10:22:42.530Z DEBUG webdriverio: command click was called on an element ("~Speedbug hyriidae") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow taxon screen should look correct: 2020-05-26T10:22:46.028Z DEBUG webdriverio: command click was called on an element ("~Speedbug hyriidae") that wasn't found, waiting for it...
-  2) Visual regression tests identify via speedbug workflow taxon screen should look correct
-    Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct: 2020-05-26T10:23:50.236Z DEBUG webdriverio: command click was called on an element ("~Photo gallery") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow gallery screen should look correct: 2020-05-26T10:23:53.611Z DEBUG webdriverio: command click was called on an element ("~Photo gallery") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow gallery screen should look correct: 2020-05-26T10:23:56.954Z DEBUG webdriverio: command click was called on an element ("~Photo gallery") that wasn't found, waiting for it...
-    Visual regression tests identify via speedbug workflow gallery screen should look correct: 2020-05-26T10:24:00.343Z DEBUG webdriverio: command click was called on an element ("~Photo gallery") that wasn't found, waiting for it...
-  3) Visual regression tests identify via speedbug workflow gallery screen should look correct
-    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 6720ms
-    Visual regression tests about and help pages help page should render:   ✓ Visual regression tests about and help pages help page should render: 9499ms
+Visual regression test suite 1242x2688
+Running on device: iPhone XS Max (ios)
+
+    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 2161ms
+    Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:   1) Visual regression tests identify via speedbug workflow menu screen identify should look correct
+    Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:   2) Visual regression tests identify via speedbug workflow speedbug should look correct
+    Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:   3) Visual regression tests identify via speedbug workflow taxon screen should look correct
+    Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct: 
+Visual regression test suite 1242x2688
+Running on device: iPhone 11 Pro Max (ios)
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+Visual regression test suite 1242x2688
+Running on device: iPhone 11 Pro Max (ios)
+
+  2) Visual regression tests about and help pages "before all" hook
   - Visual regression tests survey work flow (empty tray) site details should look correct
   - Visual regression tests survey work flow (empty tray) habitat should look correct
   - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
   - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
 
-  4 passing (7m)
+  0 passing (9s)
   4 pending
-  3 failing
+  2 failing
 
   1) Visual regression tests
        identify via speedbug workflow
-         menu screen identify should look correct:
-     Error: Can't call click on element with selector "~Identify" because element wasn't found
-      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:34:13)
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
 
   2) Visual regression tests
-       identify via speedbug workflow
-         taxon screen should look correct:
-     Error: Can't call click on element with selector "~Speedbug hyriidae" because element wasn't found
-      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:34:13)
+       about and help pages
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
 
-  3) Visual regression tests
+
+
+
+Visual regression test suite 1242x2688
+Running on device: iPhone 11 Pro Max (ios)
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+Visual regression test suite 1242x2688
+Running on device: iPhone 11 Pro Max (ios)
+
+  2) Visual regression tests about and help pages "before all" hook
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  0 passing (9s)
+  4 pending
+  2 failing
+
+  1) Visual regression tests
        identify via speedbug workflow
-         gallery screen should look correct:
-     Error: Can't call click on element with selector "~Photo gallery" because element wasn't found
-      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:34:13)
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Failed to create session.
+Run out of session public minutes.
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+
+
+
+Visual regression test suite 1242x2688
+Running on device: iPhone XS Max (ios)
+
+    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 2652ms
+    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 10203ms
+    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 7098ms
+    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 10835ms
+    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 7287ms
+    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 7685ms
+    Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:   1) Visual regression tests about and help pages help page should render
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  6 passing (3m)
+  4 pending
+  1 failing
+
+  1) Visual regression tests
+       about and help pages
+         help page should render:
+     Error: Can't call click on element with selector "~Home" because element wasn't found
+      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:22:13)
 
 
 

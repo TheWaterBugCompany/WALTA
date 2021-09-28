@@ -1,16 +1,141 @@
 
-    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 4272ms
-    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 5554ms
-    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 5047ms
-    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 12566ms
-    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 13389ms
-    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 7038ms
-    Visual regression tests about and help pages help page should render:   ✓ Visual regression tests about and help pages help page should render: 7259ms
+Visual regression test suite 1440x3120
+Running on device: LG V50 ThinQ (android)
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+  2) Visual regression tests about and help pages "before all" hook
   - Visual regression tests survey work flow (empty tray) site details should look correct
   - Visual regression tests survey work flow (empty tray) habitat should look correct
   - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
   - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
 
-  7 passing (3m)
+  0 passing (1m)
   4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Failed to create session.
+No device matching the desired capabilities
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Unable to find device for 1440x3120 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+
+
+
+Visual regression test suite 1440x3120
+Running on device: LG V50 ThinQ (android)
+
+    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 5961ms
+    Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:     Visual regression tests identify via speedbug workflow menu screen identify should look correct:   1) Visual regression tests identify via speedbug workflow menu screen identify should look correct
+    Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:     Visual regression tests identify via speedbug workflow speedbug should look correct:   2) Visual regression tests identify via speedbug workflow speedbug should look correct
+    Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:     Visual regression tests identify via speedbug workflow taxon screen should look correct:   3) Visual regression tests identify via speedbug workflow taxon screen should look correct
+    Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct:     Visual regression tests identify via speedbug workflow gallery screen should look correct:   4) Visual regression tests identify via speedbug workflow gallery screen should look correct
+    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 8514ms
+    Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:   5) Visual regression tests about and help pages help page should render
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  2 passing (4m)
+  4 pending
+  5 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         menu screen identify should look correct:
+     ReferenceError: looksSame is not defined
+      at verifyScreenShot (visual-regression-testing/visual-regression-test.js:34:13)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  2) Visual regression tests
+       identify via speedbug workflow
+         speedbug should look correct:
+     ReferenceError: looksSame is not defined
+      at verifyScreenShot (visual-regression-testing/visual-regression-test.js:34:13)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  3) Visual regression tests
+       identify via speedbug workflow
+         taxon screen should look correct:
+     Error: Can't call click on element with selector "~Speedbug hyriidae." because element wasn't found
+      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:22:13)
+
+  4) Visual regression tests
+       identify via speedbug workflow
+         gallery screen should look correct:
+     Error: Can't call click on element with selector "~Photo gallery." because element wasn't found
+      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:22:13)
+
+  5) Visual regression tests
+       about and help pages
+         help page should render:
+     Error: Can't call click on element with selector "~Home." because element wasn't found
+      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:22:13)
+
+
+
+
+Visual regression test suite 1440x3120
+Running on device: LG V50 ThinQ (android)
+
+    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 5753ms
+    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 6151ms
+    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 9852ms
+    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 10756ms
+    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 9558ms
+    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 6253ms
+    Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:   1) Visual regression tests about and help pages help page should render
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  6 passing (2m)
+  4 pending
+  1 failing
+
+  1) Visual regression tests
+       about and help pages
+         help page should render:
+     Error: Can't call click on element with selector "~Home." because element wasn't found
+      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:22:13)
+
+
+
+
+Visual regression test suite 1440x3120
+Running on device: LG V50 ThinQ (android)
+
+    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 3112ms
+    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 6347ms
+    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 5003ms
+    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 12166ms
+    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 10617ms
+    Visual regression tests about and help pages about page should render:   ✓ Visual regression tests about and help pages about page should render: 8422ms
+    Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:     Visual regression tests about and help pages help page should render:   1) Visual regression tests about and help pages help page should render
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  6 passing (2m)
+  4 pending
+  1 failing
+
+  1) Visual regression tests
+       about and help pages
+         help page should render:
+     Error: Can't call click on element with selector "~Home." because element wasn't found
+      at implicitWait (node_modules/webdriverio/build/utils/implicitWait.js:22:13)
+
+
 
