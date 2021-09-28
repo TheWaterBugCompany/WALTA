@@ -88,12 +88,14 @@ describe('Visual regression tests', function() {
             return verifyScreenShot( this.test.title );
         });
 
-        it('help page should render',async function() {
+       /* 
+        help page was remvoed from home screen
+       it('help page should render',async function() {
             await world.about.click("Home")
             await world.menu.waitFor();
             await world.menu.selectHelp();
             await verifyScreenShot( this.test.title );
-        });
+        });*/
     });
 
     describe.skip('survey work flow (empty tray)', async function() {

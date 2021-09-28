@@ -1,7 +1,66 @@
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_3040x1440_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/menu_screen_identify_3040x1440_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/speedbug_3040x1440_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/taxon_detail_screen_3040x1440_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/gallery_screen_3040x1440_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/about_page_should_render_3040x1440_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
-Generated base line image: /Users/msharman/Source/WALTA/visual-regression-testing/baseline-images/help_page_should_render_3040x1440_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+2021-09-27T09:50:49.116Z ERROR webdriver: Request failed due to session is not created: No device matching the desired capabilities
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T09:50:49.119Z ERROR webdriver: session is not created: No device matching the desired capabilities
+    at getErrorFromResponseBody (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/utils.js:121:10)
+    at Request._callback (/home/msharman/Projects/walta/node_modules/webdriverio/node_modules/webdriver/build/request.js:121:64)
+    at Request.self.callback (/home/msharman/Projects/walta/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at Request.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1154:10)
+    at Request.emit (events.js:314:20)
+    at Request.EventEmitter.emit (domain.js:483:12)
+    at IncomingMessage.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:1076:12)
+    at Object.onceWrapper (events.js:420:28)
+    at IncomingMessage.emit (events.js:326:22)
+    at IncomingMessage.EventEmitter.emit (domain.js:483:12)
+    at endReadableNT (_stream_readable.js:1241:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21)
+2021-09-27T09:56:54.604Z ERROR webdriver: Request failed due to Error: ESOCKETTIMEDOUT
+    at ClientRequest.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:816:19)
+    at Object.onceWrapper (events.js:420:28)
+    at ClientRequest.emit (events.js:314:20)
+    at ClientRequest.EventEmitter.emit (domain.js:483:12)
+    at TLSSocket.emitRequestTimeout (_http_client.js:715:9)
+    at Object.onceWrapper (events.js:420:28)
+    at TLSSocket.emit (events.js:326:22)
+    at TLSSocket.EventEmitter.emit (domain.js:483:12)
+    at TLSSocket.Socket._onTimeout (net.js:483:8)
+    at listOnTimeout (internal/timers.js:554:17)
+    at processTimers (internal/timers.js:497:7)
+2021-09-27T09:56:54.605Z ERROR webdriver: Error: ESOCKETTIMEDOUT
+    at ClientRequest.<anonymous> (/home/msharman/Projects/walta/node_modules/request/request.js:816:19)
+    at Object.onceWrapper (events.js:420:28)
+    at ClientRequest.emit (events.js:314:20)
+    at ClientRequest.EventEmitter.emit (domain.js:483:12)
+    at TLSSocket.emitRequestTimeout (_http_client.js:715:9)
+    at Object.onceWrapper (events.js:420:28)
+    at TLSSocket.emit (events.js:326:22)
+    at TLSSocket.EventEmitter.emit (domain.js:483:12)
+    at TLSSocket.Socket._onTimeout (net.js:483:8)
+    at listOnTimeout (internal/timers.js:554:17)
+    at processTimers (internal/timers.js:497:7)
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_identify_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/speedbug_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/taxon_detail_screen_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/gallery_screen_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/about_page_should_render_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_identify_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/speedbug_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/taxon_detail_screen_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/gallery_screen_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/about_page_should_render_2280x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
