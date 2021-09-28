@@ -22,8 +22,8 @@ module.exports = function(grunt) {
     const DEVICE_ID="a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
     
     const WATERBUG_APPID = {
-      "android": 59235,
-      "ios": 59244
+      "android": 257222,
+      "ios": 257224
     }
 
     const SOURCES = [  
@@ -549,9 +549,13 @@ module.exports = function(grunt) {
       if ( grunt.option('kobiton') ) {
         grunt.task.run('get-kobiton-version');
       }
-      /*var res = AVAILABLE_SCREEN_SIZES[platform][0];
-      grunt.task.run(`exec:visual_regression_test:${res.width}:${res.height}`);*/
-      grunt.task.run('parallel:visual_regression_test');
+      if ( grunt.option("all-sizes") ) {
+        grunt.task.run('parallel:visual_regression_test');
+      } else {
+        var res = AVAILABLE_SCREEN_SIZES[platform][0];
+        grunt.task.run(`exec:visual_regression_test:${res.width}:${res.height}`);
+      }
+      
     });
 
     grunt.registerTask('acceptance-test', function () {
