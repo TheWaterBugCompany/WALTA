@@ -106,3 +106,31 @@ Running on device: Pixel C (android)
 
 
 
+
+Visual regression test suite 2560x1800
+Running on device: Pixel C (android)
+
+    Visual regression tests identify via speedbug workflow menu screen should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen should look correct: 4154ms
+    Visual regression tests identify via speedbug workflow menu screen identify should look correct:   ✓ Visual regression tests identify via speedbug workflow menu screen identify should look correct: 6747ms
+    Visual regression tests identify via speedbug workflow speedbug should look correct:   ✓ Visual regression tests identify via speedbug workflow speedbug should look correct: 9117ms
+    Visual regression tests identify via speedbug workflow taxon screen should look correct:   ✓ Visual regression tests identify via speedbug workflow taxon screen should look correct: 16007ms
+    Visual regression tests identify via speedbug workflow gallery screen should look correct:   ✓ Visual regression tests identify via speedbug workflow gallery screen should look correct: 17171ms
+    Visual regression tests about and help pages about page should render:     Visual regression tests about and help pages about page should render:     Visual regression tests about and help pages about page should render:     Visual regression tests about and help pages about page should render:     Visual regression tests about and help pages about page should render:   1) Visual regression tests about and help pages about page should render
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  5 passing (3m)
+  4 pending
+  1 failing
+
+  1) Visual regression tests
+       about and help pages
+         about page should render:
+     ReferenceError: looksSame is not defined
+      at verifyScreenShot (visual-regression-testing/visual-regression-test.js:34:13)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+
+
