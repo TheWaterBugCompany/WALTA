@@ -72,3 +72,4 @@ Generated base line image: /home/msharman/Projects/walta/visual-regression-testi
 Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/taxon_detail_screen_2220x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
 Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/gallery_screen_2220x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
 Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/about_page_should_render_2220x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.
+Generated base line image: /home/msharman/Projects/walta/visual-regression-testing/baseline-images/menu_screen_2220x1080_baseline.png. Manually verify image and remove the "_baseline" from the string to accept.

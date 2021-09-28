@@ -122,3 +122,34 @@ No device matching the desired capabilities
 
 
 
+
+Visual regression test suite 1440x2880
+Running on device: V30 (android)
+
+  1) Visual regression tests identify via speedbug workflow "before all" hook
+  2) Visual regression tests about and help pages "before all" hook
+  - Visual regression tests survey work flow (empty tray) site details should look correct
+  - Visual regression tests survey work flow (empty tray) habitat should look correct
+  - Visual regression tests survey work flow (empty tray) empty sample tray should look correct
+  - Visual regression tests survey work flow (empty tray) zero bug summary should look correct
+
+  0 passing (2m)
+  4 pending
+  2 failing
+
+  1) Visual regression tests
+       identify via speedbug workflow
+         "before all" hook:
+     Error: Failed to create session.
+No device matching the desired capabilities
+      at startWebDriverSession (node_modules/webdriverio/node_modules/webdriver/build/utils.js:45:11)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  2) Visual regression tests
+       about and help pages
+         "before all" hook:
+     Error: Unable to find device for 1440x2880 resolution
+      at Context.global.startAppium (visual-regression-testing/appium.js:32:19)
+
+
+

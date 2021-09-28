@@ -553,7 +553,17 @@ module.exports = function(grunt) {
         grunt.task.run('parallel:visual_regression_test');
       } else {
         var res = AVAILABLE_SCREEN_SIZES[platform][0];
-        grunt.task.run(`exec:visual_regression_test:${res.width}:${res.height}`);
+        var width = res.width;
+        var height = res.height;
+
+        if ( grunt.option("select-size") ) {
+          var sizeParts = grunt.option("select-size").split("x");
+          width = sizeParts[0];
+          height = sizeParts[1];
+
+        }
+
+        grunt.task.run(`exec:visual_regression_test:${width}:${height}`);
       }
       
     });
