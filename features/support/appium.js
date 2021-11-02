@@ -105,7 +105,8 @@ async function startAppiumClient( caps, host = 'local' ) {
             port: 443,
             hostname: 'api.kobiton.com',
             user: 'thecodesharman',
-            key: 'acbea4cd-f259-42bc-9f75-ad25f9cfec5c',
+            /* TODO: read key from non published file*/
+            key: '<<<SECRET>>>',
             capabilities: caps,
             logLevel: 'error'
         });
