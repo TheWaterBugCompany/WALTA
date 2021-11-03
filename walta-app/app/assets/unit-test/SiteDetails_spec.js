@@ -153,72 +153,7 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should display "unobtained location" with no lock', function(done) {       
-        ctl = Alloy.createController("SiteDetails");
-        controllerOpenTest( ctl, function() {
-            // unset these here to avoid triggering the geolocation service
-            sample.unset("lng");
-            sample.unset("lat");
-            expect( ctl.locationStatus.text ).to.equal("Location unobtained");
-            done();
-        } );
-    });
-
-    it('should display location coordinates with a lock', function(done) {     
-        ctl = Alloy.createController("SiteDetails");
-        controllerOpenTest( ctl, function() {
-            expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
-            done();
-        } );
-    });
-
-    it('should update coordinates when gps lock is obtained', function(done) {   
-        ctl = Alloy.createController("SiteDetails");
-        controllerOpenTest( ctl, function() {
-            sample.unset("lng");
-            sample.unset("lat");
-            Topics.fireTopicEvent(Topics.GPSLOCK, { latitude: -41.8907, longitude: 145.6713, accuracy: 1 });
-            setTimeout( () => checkTestResult( done, () => {
-                expect( ctl.locationStatus.text ).to.equal("41.8907°S 145.6713°E");
-            }), 50 );
-        } );
-    });
     
-    it('should update coordinates when location is changed', function(done) {        
-        ctl = Alloy.createController("SiteDetails");
-        controllerOpenTest( ctl, function() {
-            expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
-            sample.set("lng", "145.671339");
-            sample.set("lat", "-41.890748");
-            setTimeout( () => checkTestResult( done, () => {
-                expect( ctl.locationStatus.text ).to.equal("41.8907°S 145.6713°E");
-            }), 50 );
-        } );
-    });
-
-    it('should NOT update coordinates when a new gps lock is obtained if location already set', function(done) {     
-        ctl = Alloy.createController("SiteDetails");
-        controllerOpenTest( ctl, function() {
-            expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
-            Topics.fireTopicEvent(Topics.GPSLOCK, { latitude: 23, longitude: 100, accuracy: 1 });
-            setTimeout( () => checkTestResult( done, () =>  {
-                expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
-            }), 50 );
-        } );
-    });
-
-
-    it('should open a map viewer when location icon is clicked', function(done) {   
-        ctl = Alloy.createController("SiteDetails");
-        controllerOpenTest( ctl, function() {
-            expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
-            ctl.locationIndicator.fireEvent("click");
-            setTimeout( function() {
-                expect( ctl.locationEntry.getView().visible ).to.be.true;
-                done();
-            }, 50 );
-        } );
-    }); 
     
     it('should have editable fields', async function() {   
         ctl = Alloy.createController("SiteDetails");
