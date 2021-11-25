@@ -39,6 +39,7 @@ overrode the settings with other TSS, XML, or JS settings:
 
 "TextField": {
     height: "16dp",
+    backgroundColor: "white",
     font: {
         fontFamily: "Tahoma",
         fontSize: "16dp"
