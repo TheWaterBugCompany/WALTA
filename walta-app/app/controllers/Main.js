@@ -22,6 +22,14 @@ var Sample = require('logic/Sample');
 var { Navigation } = require('logic/Navigation');
 var debug = m => Ti.API.info(m);
 
+
+// FIXME: The point of having System, Key, View, Survey etc
+// are to decouple the hard to unit test functionality to 
+// make it easier to write tests involving this class.
+
+// I'm a bit uncomfortable with this, I think it would be
+// more natural to have methods that are stubbed in the test
+// code rather add complexity to the rest of the code.
 var System = $.args.System;
 var Key = $.args.Key;
 var View = $.args.View;
