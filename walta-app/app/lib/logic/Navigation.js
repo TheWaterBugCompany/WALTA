@@ -7,6 +7,7 @@ function questionToString(args) {
 }
 
 function dumpHistory(history) {
+    Ti.API.info("\ndump history:\n");
     history.forEach((obj, i) => {
         Ti.API.info(`${i}: ${obj.ctl} ${obj.args.slide} ${(obj.args.node && obj.args.node.id) ? obj.args.node.id : "(no id)"} ${questionToString(obj.args)}`)
     });
@@ -28,12 +29,11 @@ Navigation.prototype.getHistory = function () {
 Navigation.prototype.onDiscardEdits = function () {
     return Promise.resolve();
 }
-  
 
 Navigation.prototype.garbageCollectControllers = async function (page) {
     // search for a version of this page 
     function isPageEquivalent(a, b) {
-        if (a.ctl === b.ctl) {
+         if (a.ctl === b.ctl) {
             if (a.args.node && b.args.node) {
                 return (a.args.node.id && b.args.node.id && (a.args.node.id === b.args.node.id));
             } else {
@@ -46,10 +46,13 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
     // find the previous instance of an equivalent screen and truncate
     // the history to avoid the ability to create long loops as this
     // is annoying to the user.
+
+    // this now is used to detect when an in progress edit should be
+    // discarded and alert the user.
     
     var index = _(this.history).findIndex((h) => isPageEquivalent(h, page));
     if (index >= 0) {
-        let unloadingPages = this.history.slice(index);
+        let unloadingPages = this.history.slice(index+1);
         if (_.contains(_.pluck(unloadingPages,"ctl"), "SiteDetails")) {
             await this.onDiscardEdits();
         }
