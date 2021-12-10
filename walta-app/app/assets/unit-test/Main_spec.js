@@ -19,7 +19,7 @@ require("unit-test/lib/ti-mocha");
 var simple = require("unit-test/lib/simple-mock");
 var { expect } = require("unit-test/lib/chai");
 var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
-var { clearDatabase, actionFiresTopicTest, waitFor } = require("unit-test/util/TestUtils");
+var { clearDatabase, actionFiresTopicTest, waitForTick, isManualTests } = require("unit-test/util/TestUtils");
 var { areWeSyncing } = require("logic/SampleSync");
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
@@ -52,7 +52,9 @@ describe("Main controller", function() {
           });
       }
       afterEach(function() {
-        currentController.TopLevelWindow.close();
+        if ( ! isManualTests() ) {
+          currentController.TopLevelWindow.close();
+        }
         Alloy.Events.off(); // remove global events handlers
       });
 	it('should display the Main view', async function() {
@@ -63,6 +65,32 @@ describe("Main controller", function() {
     app = createMockMain();
     app.startApp();
     expect(app.getHistory()[0].ctl).to.equal("Menu");
+  });
+  // impossible to code this test because alertDialog is blocking??
+  it.only('should display discard/save notification when leaving unsaved sample', async function() {
+    clearDatabase();
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
+      .returnWith({accessToken:"accessToken"});
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+      .returnWith(38);
+    makeSampleData({ serverSampleId: 666 }).save();
+    app = createMockMain();
+    app.startApp();
+    await waitForTick(10)();
+    currentController.history.fireEvent("click");
+    currentController.sampleTable.fireEvent("click", { index: 0 });
+    await actionFiresTopicTest( currentController.sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
+    currentController.waterbodyNameField.value = "changed by test edit";
+    currentController.waterbodyNameField.fireEvent("change"); // simulate user entering text
+    // simulate leaving edit wizard
+    await actionFiresTopicTest( currentController.getAnchorBar().home, "click", Topics.DISCARD_OR_SAVE );
+    // dialogue should be open
+    expect(app.saveOrDiscard).to.be.ok;
+    // select the discard buttion
+    app.saveOrDiscard.fireEvent('click',{index:0});
+    expect(currentController.name).to.equal("home");
+
+
   });
   it('should allow a sample to be edited', async function() {
     clearDatabase();

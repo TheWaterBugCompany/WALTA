@@ -88,6 +88,11 @@ var topics = {
 	// used to trap when a page is opened
 	PAGE_OPENED: 'page_opened',
 
+	// used to trap when pages are unloaded from the history
+	PAGES_UNLOADED: 'page_unloaded',
+
+	DISCARD_OR_SAVE: 'discard_or_save',
+
 	unsubscribe: function( topic, callback ) {
 		Alloy.Events.off( 'waterbug:' + topic, callback );
 	},
