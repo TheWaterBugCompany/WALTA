@@ -45,7 +45,8 @@ function runTests() {
       "GoBackButton",
       "GoForwardButton",
       "LocationEntry",
-      "Main"
+      "Main",
+      "Navigation",
       //"Database"  - needs to run last, migrations are run in all database using test anyway
     ].forEach( (f) => {
       let specPath = `unit-test/${f}_spec`;

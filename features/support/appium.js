@@ -48,7 +48,7 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
         _(caps).extend({
             automationName: "XCUITest",
             platformName: "iOS",
-            autoAcceptAlerts: true,
+            autoAcceptAlerts: false,
             waitForQuiescence: false,
             skipLogCapture: true,
             platformVersion: "12.4",

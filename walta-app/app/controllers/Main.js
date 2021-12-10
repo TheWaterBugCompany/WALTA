@@ -32,6 +32,7 @@ var nav = new Navigation({ View: View, System: System, Key: Key });
 nav.onDiscardEdits = function () {
   return new Promise(function (resolve, reject) {
     $.saveOrDiscard = Ti.UI.createAlertDialog({
+      persistent: true,
       cancel: 1,
       message: "The current sample has unsaved edits, are you sure you want to discard these changes?",
       title: "Unsaved Changes",
@@ -145,6 +146,6 @@ function startApp(options) {
 
 }
 
-exports.openController = function() { return nav.openController( arguments ) };
+exports.openController = function() { return nav.openController.apply( nav, arguments ) };
 exports.getHistory = function () { return nav.getHistory(); };
 exports.startApp = startApp;

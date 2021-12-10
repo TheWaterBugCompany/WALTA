@@ -67,7 +67,7 @@ describe("Main controller", function() {
     expect(app.getHistory()[0].ctl).to.equal("Menu");
   });
   // impossible to code this test because alertDialog is blocking??
-  it.only('should display discard/save notification when leaving unsaved sample', async function() {
+  it('should display discard/save notification when leaving unsaved sample', async function() {
     clearDatabase();
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
       .returnWith({accessToken:"accessToken"});
