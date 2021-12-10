@@ -23,7 +23,7 @@ var { clearDatabase, actionFiresTopicTest, waitForTick, isManualTests } = requir
 var { areWeSyncing } = require("logic/SampleSync");
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
-describe("Main controller", function() {
+describe.only("Main controller", function() {
 	var app;
   let currentController = null;
     function createMockMain() {
@@ -57,7 +57,7 @@ describe("Main controller", function() {
         }
         Alloy.Events.off(); // remove global events handlers
       });
-	it('should display the Main view', async function() {
+	it.only('should display the Main view', async function() {
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
       .returnWith({accessToken:"accessToken"});
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")

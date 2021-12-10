@@ -13,10 +13,7 @@ function dumpHistory(history) {
     });
 }
 
-function Navigation(args) {
-    this.SystemFacade = args.System;
-    this.ViewFacade = args.View;
-    this.Key = args.Key;
+function Navigation() {
     this.history = [];
     this.controller = null;
 }
@@ -24,6 +21,13 @@ function Navigation(args) {
 Navigation.prototype.getHistory = function () {
     return this.history;
 }
+
+
+// implement to open view
+Navigation.prototype.onOpenView = function() {}
+
+// implement to exit app
+Navigation.prototype.onCloseApp = function() {}
 
 // implement me to open user dialogue
 Navigation.prototype.onDiscardEdits = function () {
@@ -65,20 +69,18 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
 Navigation.prototype.openController = async function (ctl, args) {
     if (!args) args = {};
     if (!args.slide) args.slide = "none";    
-    if (!args.key) args.key = this.Key;
-
     let page = { ctl: ctl, args: args };
     await this.garbageCollectControllers(page);
     this.history.push(page);
     dumpHistory(this.history);
-    this.ViewFacade.openView(ctl, args);
+    this.onOpenView(ctl, args);
 }
 
 Navigation.prototype.goBack = async function (args) {
     if (!args) args = {};
     var currentArgs = this.history.pop().args;
     if (this.history.length === 0) {
-        this.SystemFacade.closeApp();
+        this.onCloseApp();
     } else {
         var cargs = this.history[this.history.length - 1];
         var ctl = cargs.ctl;

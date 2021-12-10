@@ -27,7 +27,16 @@ var Key = $.args.Key;
 var View = $.args.View;
 var Survey = $.args.Survey;
 
-var nav = new Navigation({ View: View, System: System, Key: Key });
+var nav = new Navigation();
+
+nav.onOpenView = function(ctl,args) {
+  _.extend(args, {key: Key});
+  View.openView(ctl,args);
+}
+
+nav.onCloseApp = function() {
+  System.closeApp();
+}
 
 nav.onDiscardEdits = function () {
   return new Promise(function (resolve, reject) {
