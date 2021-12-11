@@ -38,6 +38,49 @@ describe("Taxa collection", function() {
     taxon.set("willDelete", willDelete);
     taxon.save();
   }
+  it('should comapre two taxa collection', function() {
+    let taxa1 = Alloy.createCollection("taxa");
+    let taxa2 = Alloy.createCoellection("taxa");
+
+    expect( taxa1.equals(taxa2), "empty taxa" ).to.be.true;
+
+    let taxon1a = Alloy.createModel("taxa", {
+      sampleId: 666,
+      abundance: "1-2",
+      taxonId: 1,
+      taxonPhotoPath: "photo1"
+    });
+    let taxon2a = Alloy.createModel("taxa", {
+      sampleId: 123,
+      abundance: "1-2",
+      taxonId: 1,
+      taxonPhotoPath: "photo1"
+    });
+    taxa1.push(taxon1a);
+    taxa2.push(taxon2a);
+
+    expect( taxa1.equals(taxa2), "with one taxon" ).to.be.true;
+
+    let taxon1b = Alloy.createModel("taxa", {
+      sampleId: 666,
+      abundance: "> 20",
+      taxonId: 1,
+      taxonPhotoPath: "photo1"
+    });
+    let taxon2b = Alloy.createModel("taxa", {
+      sampleId: 123,
+      abundance: "> 20",
+      taxonId: 1,
+      taxonPhotoPath: "photo1"
+    });
+    taxa1.unshift(taxon1b);
+    taxa2.push(taxon2b);
+
+    expect( taxa1.equals(taxa2), "with two taxa in differing orders" ).to.be.true;
+
+    taxon2b.set("taxonId", 99 );
+    expect( taxa1.equals(taxa2), "one different taxon" ).to.be.false;
+  }),
   it('should filter out any taxons marked for deletion when loaded', function() {
     createMockTaxon(1,null);
     createMockTaxon(2,0);
@@ -211,11 +254,49 @@ describe("Taxa collection", function() {
   });
 });
 
+
+
+
 describe("Taxa model", function() {
   beforeEach( function() {
     clearDatabase();
   })
-  
+
+  it.only("should compare two taxons", function() {
+    let taxon = Alloy.createModel("taxa", {
+      sampleId: 666,
+      abundance: "> 20",
+      taxonId: 1,
+      taxonPhotoPath: "path1"
+    });
+
+    let taxon2 = Alloy.createModel("taxa", {
+      sampleId: 666,
+      abundance: "> 20",
+      taxonId: 1,
+      taxonPhotoPath: "path1"
+    });
+
+    expect( taxon.equals(taxon2), "objects have same data fields" ).to.be.true;
+
+    // ids do not change the taxon for the purposes of equals()
+    taxon.set("sampleId", 123);
+    expect( taxon.equals(taxon2), "objects have same data fields by different sampleId" ).to.be.true;
+
+    taxon.set("abundance", "1-2");
+    expect( taxon.equals(taxon2), "objects have different abudance" ).to.be.false;
+
+    taxon.set("abundance", "> 20");
+    taxon.set("taxonId", 2);
+    expect( taxon.equals(taxon2), "objects have different taxonId" ).to.be.false;
+
+    taxon.set("taxonId", 1);
+    taxon.set("taxonPhotoPath", "path2");
+    expect( taxon.equals(taxon2), "objects have different taxonPhotoPath" ).to.be.false;
+
+
+
+  });
 
   it('should persist a taxon', function() {
     // create taxa model

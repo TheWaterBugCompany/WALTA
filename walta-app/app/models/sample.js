@@ -159,6 +159,40 @@ exports.definition = {
 						error: reject
 					}));
 			},
+
+			isUnsaved() {
+				// when dateCompleted IS NULL this indicates record
+				// hasn't been saved.
+				return this.get("dateCompleted") == null;
+			},
+
+			equals(otherSample) {
+				let dataFields = [ "lat", "lng", "accuracy", "surveyType",
+					"waterbodyType", "waterbodyName", "nearbyFeature", "boulder",
+					"gravel", "sandOrSilt", "leafPacks", "wood", "aquaticPlants",
+					"openWater", "edgePlants", "serverSitePhotoId", "sitePhotoPath",
+					"complete", "notes" ];
+				let taxa = this.loadTaxa();
+				let otherTaxa = otherTaxa.loadTaxa();
+
+				return _.every(dataFields, f => this.get(f) == otherSample(f))
+					&& taxa.isEqual(otherTaxa);
+
+			},
+
+
+			async hasUnsavedChanges() {
+				if ( !this.isUnsaved() ) {
+					return false;
+				}
+
+				let origId = this.get("originalSampleId");
+				let oldSample = Alloy.createModel("sample");
+				await oldSample.loadById(origId);
+
+
+
+			},
 			
 			// only excludes loading any temporary edit that have not yet been persisted
 			loadByServerId(serverSampleId ) {
