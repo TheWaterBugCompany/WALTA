@@ -174,6 +174,11 @@ exports.definition = {
 				};
 			},
 
+			equals(otherTaxon) {
+				let dataFields = [ "abundance", "taxonId", "taxonPhotoPath", "willDelete" ];
+				return _.every(dataFields, f => this.get(f) && otherTaxon(f));
+			},
+
 			flagForDeletion() {
 				this.set("willDelete",1);
 				this.save();
@@ -266,6 +271,18 @@ exports.definition = {
 			},
 			loadPendingDelete( sampleId ) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId}) AND willDelete > 0`} );
+			},
+			equals(otherTaxa) {
+				if ( this.length != otherTaxa.length )
+					return false;
+				// search for a taxon that doesn't exist in the other
+				// colection .. 
+				this.forEach( t => {
+					if ( _.isUndefined( otherTaxa.find( taxon => taxon.equals(t) ) ) )
+						return false;
+				});
+				// must be equivalent...
+				return true;
 			}
 		});
 
