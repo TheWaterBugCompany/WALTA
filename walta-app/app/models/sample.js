@@ -448,18 +448,6 @@ exports.definition = {
 				// download from the server was.
 				dup.set("serverSyncTime", this.get("serverSyncTime"));
 
-				// add photo related metadata to taxons
-			/*	let taxa = this.loadTaxa();
-				let dupTaxa = dup.loadTaxa();
-			
-				dupTaxa.forEach( newTaxon => {
-					let newTaxonId = newTaxon.get("taxonId");
-					let oldTaxon = taxa.find( t => t.get("taxonId") == newTaxonId );
-					newTaxon.set("taxonPhotoPath", oldTaxon.get("taxonPhotoPath"));
-					newTaxon.set("serverCreaturePhotoId", oldTaxon.get("serverCreaturePhotoId"));
-					newTaxon.save();
-				});*/
-
 				dup.save();
 				return dup;
 			},
