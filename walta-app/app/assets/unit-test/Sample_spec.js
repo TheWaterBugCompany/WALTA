@@ -80,6 +80,19 @@ describe("Taxa collection", function() {
 
     taxon2b.set("taxonId", 99 );
     expect( taxa1.equals(taxa2), "one different taxon" ).to.be.false;
+
+    taxon2b.set("taxonId", 1);
+
+    let taxon2c = Alloy.createModel("taxa", {
+      sampleId: 123,
+      abundance: "> 20",
+      taxonId: 55,
+      taxonPhotoPath: "photo1"
+    });
+    taxa2.push(taxon2c); // differing lengths
+    expect( taxa1.equals(taxa2), "different lengths" ).to.be.false;
+
+
   }),
   it('should filter out any taxons marked for deletion when loaded', function() {
     createMockTaxon(1,null);
@@ -262,7 +275,7 @@ describe("Taxa model", function() {
     clearDatabase();
   })
 
-  it.only("should compare two taxons", function() {
+  it("should compare two taxons", function() {
     let taxon = Alloy.createModel("taxa", {
       sampleId: 666,
       abundance: "> 20",
@@ -352,6 +365,70 @@ describe("Taxa model", function() {
     expect( taxon.get("taxonPhotoPath") ).to.include("taxon_667_1");
   });
 });
+
+describe("Sample collection", function() {
+  beforeEach( function() {
+    clearDatabase();
+  });
+  it.only("should compare two sample records", function() {
+      let sample1 = makeSampleData({ sampleId: 123});
+      let sample2 = makeSampleData({ sampleId: 456});
+
+      sample1.save();
+      sample2.save();
+
+      let taxon1 = Alloy.createModel("taxa");
+      taxon1.set("sampleId", 123 );
+      taxon1.set("abundance", "> 20");
+      taxon1.set("taxonId", 1 );
+      taxon1.save();
+
+      let taxon2 = Alloy.createModel("taxa");
+      taxon2.set("sampleId", 456 );
+      taxon2.set("abundance", "> 20");
+      taxon2.set("taxonId", 1 );
+      taxon2.save();
+
+      expect( sample1.equals(sample2), "compare two identical samples").to.be.true;
+
+      let dataFields = [ 
+            ["lat", 23 ], 
+            ["lng", -56 ],
+            ["accuracy", 6 ], 
+            ["surveyType", Sample.SURVEY_ORDER],
+					  ["waterbodyType", Sample.WATERBODY_WETLAND], 
+            ["waterbodyName", "different test name"], 
+            ["nearbyFeature", "different nearby feature"],
+            ["boulder", 20 ],
+					  ["gravel", 20 ],
+            ["sandOrSilt", 20],
+            ["leafPacks", 20],
+            ["wood", 20], 
+            ["aquaticPlants", 20],
+            ["openWater", 20], 
+            ["edgePlants", 20],
+            ["serverSitePhotoId", 123],
+            ["sitePhotoPath", "testpath"],
+            ["complete", 1], 
+            ["notes", "test notes" ] ];
+      dataFields.forEach( ([ f, v ]) => {
+        sample2.set(f,v);
+        expect( sample1.equals(sample2), `differing ${f}`).to.be.false;
+        sample2.set(f, sample1.get(f));
+      });
+
+      // make taxa collections differ
+      let taxon3 = Alloy.createModel("taxa");
+      taxon3.set("sampleId", 456 );
+      taxon3.set("abundance", "> 20");
+      taxon3.set("taxonId", 1 );
+      taxon3.save();
+      expect( sample1.equals(sample2), `differing taxa collection`).to.be.false;
+    
+
+  })
+});
+
 describe("Sample collection, model including taxa", function() {
   var initialSampleId;
 
@@ -443,6 +520,8 @@ describe("Sample collection, model including taxa", function() {
       return obj;
     }
   }
+
+  
 
   it('should NOT report pending uploads when sitePhotoPath is not set and serverSitePhotoId is not set', function(){
     let sample = Alloy.createModel("sample");
