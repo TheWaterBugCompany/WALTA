@@ -176,7 +176,7 @@ exports.definition = {
 
 			equals(otherTaxon) {
 				let dataFields = [ "abundance", "taxonId", "taxonPhotoPath", "willDelete" ];
-				return _.every(dataFields, f => this.get(f) && otherTaxon(f));
+				return _.every(dataFields, f => this.get(f) == otherTaxon.get(f));
 			},
 
 			flagForDeletion() {
@@ -277,12 +277,10 @@ exports.definition = {
 					return false;
 				// search for a taxon that doesn't exist in the other
 				// colection .. 
-				this.forEach( t => {
-					if ( _.isUndefined( otherTaxa.find( taxon => taxon.equals(t) ) ) )
-						return false;
-				});
-				// must be equivalent...
-				return true;
+				function taxonMissing(t) {
+					return _.isUndefined( otherTaxa.find( t2 => t2.equals(t) ) );
+				}
+				return !this.some( taxonMissing );
 			}
 		});
 

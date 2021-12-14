@@ -38,9 +38,9 @@ describe("Taxa collection", function() {
     taxon.set("willDelete", willDelete);
     taxon.save();
   }
-  it('should comapre two taxa collection', function() {
+  it.only('should compare two taxa collection', function() {
     let taxa1 = Alloy.createCollection("taxa");
-    let taxa2 = Alloy.createCoellection("taxa");
+    let taxa2 = Alloy.createCollection("taxa");
 
     expect( taxa1.equals(taxa2), "empty taxa" ).to.be.true;
 
@@ -267,21 +267,19 @@ describe("Taxa model", function() {
       sampleId: 666,
       abundance: "> 20",
       taxonId: 1,
-      taxonPhotoPath: "path1"
+      taxonPhotoPath: "path1",
+      willDelete: null,
     });
 
     let taxon2 = Alloy.createModel("taxa", {
-      sampleId: 666,
+      sampleId: 123, // sampleId is ignored for equals()
       abundance: "> 20",
       taxonId: 1,
-      taxonPhotoPath: "path1"
+      taxonPhotoPath: "path1",
+      willDelete: null
     });
 
     expect( taxon.equals(taxon2), "objects have same data fields" ).to.be.true;
-
-    // ids do not change the taxon for the purposes of equals()
-    taxon.set("sampleId", 123);
-    expect( taxon.equals(taxon2), "objects have same data fields by different sampleId" ).to.be.true;
 
     taxon.set("abundance", "1-2");
     expect( taxon.equals(taxon2), "objects have different abudance" ).to.be.false;
