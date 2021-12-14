@@ -173,10 +173,9 @@ exports.definition = {
 					"openWater", "edgePlants", "serverSitePhotoId", "sitePhotoPath",
 					"complete", "notes" ];
 				let taxa = this.loadTaxa();
-				let otherTaxa = otherTaxa.loadTaxa();
-
-				return _.every(dataFields, f => this.get(f) == otherSample(f))
-					&& taxa.isEqual(otherTaxa);
+				let otherTaxa = otherSample.loadTaxa();
+				return _.every(dataFields, f => this.get(f) == otherSample.get(f))
+					&& taxa.equals(otherTaxa);
 
 			},
 
