@@ -21,9 +21,18 @@ var simple = require("unit-test/lib/simple-mock");
 var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
 var { Navigation } = require('logic/Navigation');
 describe("logic/Navigation service", function() {
-
+  let services = {
+    Key: {},
+    View: {
+      openView: function(){},
+      askDiscardEdits: function(){}
+    },
+    System: {
+      closeApp: function() {}
+    }
+  }
   it('should not ask to discard when tranistion to SiteDetails',async function() {
-    let nav = new Navigation();
+    let nav = new Navigation(services);
     simple.mock(nav, "onDiscardEdits").resolveWith();
     await nav.openController("Menu");
     await nav.openController("SiteDetails");
@@ -36,7 +45,7 @@ describe("logic/Navigation service", function() {
   });
 
   it('should not ask to discard when not transitioning to a historical screen',async function() {
-    let nav = new Navigation();
+    let nav = new Navigation(services);
     simple.mock(nav, "onDiscardEdits").resolveWith();
     await nav.openController("Menu");
     await nav.openController("SiteDetails");
@@ -49,7 +58,7 @@ describe("logic/Navigation service", function() {
   });
 
 	it('should call ask user to discard edits if SiteDetails is removed from history', async function() {
-    let nav = new Navigation();
+    let nav = new Navigation(services);
     simple.mock(nav, "onDiscardEdits")
       .resolveWith();
     await nav.openController("Menu");

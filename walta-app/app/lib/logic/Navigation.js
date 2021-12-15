@@ -13,25 +13,28 @@ function dumpHistory(history) {
     });
 }
 
-function Navigation() {
+function Navigation(services) {
     this.history = [];
     this.controller = null;
+    this.services = services;
 }
 
 Navigation.prototype.getHistory = function () {
     return this.history;
 }
 
+Navigation.prototype.onOpenView = function(ctl,args) {
+    _.extend(args, {key: this.services.Key});
+    return this.services.View.openView(ctl,args);
+}
 
-// implement to open view
-Navigation.prototype.onOpenView = function() {}
-
-// implement to exit app
-Navigation.prototype.onCloseApp = function() {}
+Navigation.prototype.onCloseApp = function() {
+    this.services.System.closeApp();
+}
 
 // implement me to open user dialogue
-Navigation.prototype.onDiscardEdits = function () {
-    return Promise.resolve();
+Navigation.prototype.onDiscardEdits = async function () {
+    await this.services.View.askDiscardEdits();
 }
 
 Navigation.prototype.garbageCollectControllers = async function (page) {
@@ -56,6 +59,7 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
     
     var index = _(this.history).findIndex((h) => isPageEquivalent(h, page));
     if (index >= 0) {
+        
         let unloadingPages = this.history.slice(index+1);
         if (_.contains(_.pluck(unloadingPages,"ctl"), "SiteDetails")) {
             await this.onDiscardEdits();
@@ -70,10 +74,11 @@ Navigation.prototype.openController = async function (ctl, args) {
     if (!args) args = {};
     if (!args.slide) args.slide = "none";    
     let page = { ctl: ctl, args: args };
+    
     await this.garbageCollectControllers(page);
     this.history.push(page);
     dumpHistory(this.history);
-    this.onOpenView(ctl, args);
+    await this.onOpenView(ctl, args);
 }
 
 Navigation.prototype.goBack = async function (args) {
@@ -99,7 +104,6 @@ Navigation.prototype.goBack = async function (args) {
 
     }
 }
-
 exports.Navigation = Navigation;
 
 

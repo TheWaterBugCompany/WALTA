@@ -45,6 +45,7 @@ function openWindow() {
 		$.TopLevelWindow.addEventListener('postlayout', updateSafeArea);
 	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
 	$.TopLevelWindow.addEventListener('postlayout',function() {
+		$.trigger("window-opened");
 		Topics.fireTopicEvent( Topics.PAGE_OPENED, { name: getName() } );
 	})
 	

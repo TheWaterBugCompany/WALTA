@@ -179,18 +179,14 @@ exports.definition = {
 
 			},
 
-
 			async hasUnsavedChanges() {
 				if ( !this.isUnsaved() ) {
 					return false;
 				}
-
 				let origId = this.get("originalSampleId");
 				let oldSample = Alloy.createModel("sample");
 				await oldSample.loadById(origId);
-
-
-
+				return !this.equals(oldSample);
 			},
 			
 			// only excludes loading any temporary edit that have not yet been persisted

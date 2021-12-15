@@ -5,6 +5,10 @@ var Crashlytics = require('util/Crashlytics');
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
 var PlatformSpecific = require("ui/PlatformSpecific");
+var { System } = require("logic/System");
+var { View } = require("logic/View");
+var { Survey } = require("logic/Survey");
+var { Navigation } = require('logic/Navigation');
 var debug = m => Ti.API.info(m);
 Topics.init();
 
@@ -35,40 +39,13 @@ GeoLocationService.init();
 
 Alloy.Models.instance("sample").loadCurrent();
 Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
-
+let services ={
+  System: System,
+  View: View,
+  Key: Alloy.Globals.Key,
+  Survey: Survey
+}
+services.Navigation = new Navigation(services);
 // glue the Main controller to the various
 // objects that perform the logic
-Alloy.createController("Main", {
-    System: {
-        requestPermission: function( permissions, done ) {
-            if ( OS_ANDROID ) {
-                debug('Asking for permissions...');
-                Ti.Android.requestPermissions(permissions, done );
-            } else {
-                done({ success: true });
-            }
-        },
-
-        closeApp: function() {
-            PlatformSpecific.appShutdown();
-        }
-    },
-    View: {
-        openView: function(ctl,args) {
-            debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
-            var controller = Alloy.createController(ctl,args);
-            controller.open();
-        }
-    },
-    Key: Alloy.Globals.Key,
-    Survey: {
-        forceUpload: function() {
-            debug("forcing synchronise");
-            SampleSync.forceUpload();
-        },
-        startSurvey: function( surveyType ) {
-            Alloy.Collections.instance("sample").startNewSurveyIfComplete(surveyType, Alloy.Globals.CerdiApi.retrieveUserId());
-        }
-    }
-
-}).startApp(); 
+Alloy.createController("Main",services).startApp(); 
