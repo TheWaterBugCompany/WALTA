@@ -38,7 +38,7 @@ describe("Taxa collection", function() {
     taxon.set("willDelete", willDelete);
     taxon.save();
   }
-  it.only('should compare two taxa collection', function() {
+  it('should compare two taxa collection', function() {
     let taxa1 = Alloy.createCollection("taxa");
     let taxa2 = Alloy.createCollection("taxa");
 
@@ -370,7 +370,7 @@ describe("Sample collection", function() {
   beforeEach( function() {
     clearDatabase();
   });
-  it.only("should compare two sample records", function() {
+  it("should compare two sample records", function() {
       let sample1 = makeSampleData({ sampleId: 123});
       let sample2 = makeSampleData({ sampleId: 456});
 
