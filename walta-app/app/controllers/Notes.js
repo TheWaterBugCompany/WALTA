@@ -9,7 +9,6 @@ var readOnlyMode = $.args.readonly === true;
 if ( readOnlyMode ) { 
     $.partialToggle.enabled = false;
     $.notesTextField.editable = false;
-
 }
 
 var { applyKeyboardTweaks } = require("ui/Layout");
@@ -83,4 +82,3 @@ $.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.COMPLET
 acb.addTool( $.backButton.getView() ); 
 acb.addTool( $.nextButton.getView() );
 updateFields();
-

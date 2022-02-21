@@ -55,18 +55,35 @@ function waitForMeldEvent( obj, evtName, fireEvent, done ) {
 }
 
 function waitForBackboneEvent( obj, evtName, fireEvent, done ) {
+	if ( done )
+		waitForBackboneEventCallback(obj, evtName, fireEvent, done); 
+	else
+		return new Promise( (resolve) => waitForBackboneEventCallback( obj, evtName, fireEvent, resolve) );
+	
+}
+
+function waitForBackboneEventCallback( obj, evtName, fireEvent, done ) {
 	obj.on( evtName, function() { done() } );
 	fireEvent();
 }
 
+function waitForTopicCallback( topicName, fireEvent, done, result ) {
+	Topics.subscribe( topicName, function cb( data ) {
+		if ( result ) {
+			result.data = data;
+		}
+		Topics.unsubscribe(topicName, cb);
+		done(data);
+	} );
+	fireEvent();
+}
 
 function waitForTopic( topicName, fireEvent, done, result ) {
-		Topics.subscribe( topicName, function cb( data ) {
-			result.data = data;
-			Topics.unsubscribe(topicName, cb);
-			done(data);
-		} );
-		fireEvent();
+	if ( done )
+		waitForTopicCallback(topicName, fireEvent, done, result); 
+	else
+		return new Promise( (resolve) => waitForTopicCallback(topicName, fireEvent, resolve, result) );
+
 }
 // END TODO: convert to promises
 function wrapViewInWindow( view ) {
@@ -326,6 +343,7 @@ exports.wrapViewInWindow = wrapViewInWindow;
 exports.waitForTopic = waitForTopic;
 exports.waitForMeldEvent = waitForMeldEvent;
 exports.waitForDomEvent = waitForDomEvent;
+exports.waitForBackboneEvent = waitForBackboneEvent;
 exports.isManualTests = isManualTests;
 exports.setManualTests = setManualTests;
 exports.makeTestPhoto = makeTestPhoto;

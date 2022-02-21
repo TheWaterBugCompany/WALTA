@@ -51,6 +51,7 @@ exports.definition = {
 		}
 	},
 	extendModel: function(Model) {
+		let modelDestroy = Model.prototype.destroy;
 		_.extend(Model.prototype, {
 			
 			initialize: function() {
@@ -118,6 +119,12 @@ exports.definition = {
 			getSitePhoto: function() {
 				return this.get("sitePhotoPath");
 			},
+
+			destroy: function() {
+				let taxa = this.loadTaxa();
+				taxa.removeAll({keepFiles:true});
+				modelDestroy.apply(this);	
+			},
 			
 			saveCurrentSample: async function() {
 				// If the serverSampleId has been set then this is an edited sample
@@ -129,17 +136,15 @@ exports.definition = {
 					// copy across serverSampleId - this may not have been present
 					// when temporary record was created
 					this.set("serverSampleId", oldSample.get("serverSampleId"));
-					let oldTaxa = oldSample.loadTaxa();
-					oldTaxa.removeAll({keepFiles:true});
 					oldSample.destroy();
 				}
 
-				
-				this.set("dateCompleted", moment().format() );
 				let updatedAt = moment().valueOf();
-				this.set('updatedAt', updatedAt);
-				this.set('originalSampleId', null);
-				this.save();
+				this.save({
+					'originalSampleId': null,
+					'updatedAt': updatedAt,
+					'dateCompleted': moment().format()
+				});
 			},
 
 			loadCurrent() {
@@ -180,10 +185,23 @@ exports.definition = {
 			},
 
 			async hasUnsavedChanges() {
+				//Ti.API.info("hasUnsavedChanges");
 				if ( !this.isUnsaved() ) {
 					return false;
 				}
+				
+				// if there is no originalSampleId then the
+				// record is not a edited copy so also has
+				// no unsaved changes....
+				Ti.API.info(`hasUnsavedChanges sampleId= ${this.get('sampleId')} originalSampleId = ${this.get('originalSampleId')}`);
+		
 				let origId = this.get("originalSampleId");
+				if ( !origId ) {
+					return false;
+				}
+				
+				// Load the old sample and see if any of the fields
+				// are different.
 				let oldSample = Alloy.createModel("sample");
 				await oldSample.loadById(origId);
 				return !this.equals(oldSample);
