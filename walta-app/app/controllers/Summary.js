@@ -29,11 +29,13 @@ acb.addTool( $.nextButton.getView() );
 
 
 function doneClick() {
-    saveSampleAndUpload();
-    if ( Alloy.Globals.CerdiApi.retrieveUserToken() )
-        Topics.fireTopicEvent( Topics.HOME, null );
-    else
-        Topics.fireTopicEvent( Topics.LOGIN, null );
+    saveSampleAndUpload()
+     .then(() => {
+        if ( Alloy.Globals.CerdiApi.retrieveUserToken() )
+            Topics.fireTopicEvent( Topics.HOME, null );
+        else
+            Topics.fireTopicEvent( Topics.LOGIN, null );
+     });
 }
 
 var COMPLETE = "The survey is complete and will be uploaded in the background when internet access becomes available.";
@@ -42,7 +44,7 @@ var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please e
 
 var saveSampleAndUpload = function() {
     Ti.API.info("saving current sample");
-    Alloy.Models.sample.saveCurrentSample()
+    return Alloy.Models.instance("sample").saveCurrentSample()
      .then( () => {
         setMessageText();
         Ti.API.info("forcing upload");
