@@ -34,7 +34,9 @@ Navigation.prototype.onCloseApp = function() {
 
 // implement me to open user dialogue
 Navigation.prototype.onDiscardEdits = async function () {
+    // will reject if the user cancels
     await this.services.View.askDiscardEdits();
+    this.services.Survey.discardSurvey();
 }
 
 Navigation.prototype.garbageCollectControllers = async function (page) {
@@ -59,10 +61,12 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
     
     var index = _(this.history).findIndex((h) => isPageEquivalent(h, page));
     if (index >= 0) {
-        
         let unloadingPages = this.history.slice(index+1);
         if (_.contains(_.pluck(unloadingPages,"ctl"), "SiteDetails")) {
-            await this.onDiscardEdits();
+            let hasUnsavedChanges =  await this.services.Survey.hasUnsavedChanges();
+            if (hasUnsavedChanges) {
+                await this.onDiscardEdits();
+            }
         }
         this.history = this.history.slice(0, index);
         Topics.fireTopicEvent(Topics.PAGES_UNLOADED, { pages: unloadingPages });
@@ -71,13 +75,17 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
 }
 
 Navigation.prototype.openController = async function (ctl, args) {
+    
     if (!args) args = {};
     if (!args.slide) args.slide = "none";    
     let page = { ctl: ctl, args: args };
     
+    
     await this.garbageCollectControllers(page);
+    
     this.history.push(page);
     dumpHistory(this.history);
+    
     await this.onOpenView(ctl, args);
 }
 

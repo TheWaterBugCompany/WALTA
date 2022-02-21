@@ -29,11 +29,23 @@ describe("logic/Navigation service", function() {
     },
     System: {
       closeApp: function() {}
+    },
+    Survey: {
+      hasUnsavedChanges: function() {
+        return true;
+      },
+      discardSurvey: function() {
+
+      }
     }
   }
+  beforeEach( function() {
+    simple.restore();
+    simple.mock(services.View, "askDiscardEdits").resolveWith();
+  });
   it('should not ask to discard when tranistion to SiteDetails',async function() {
     let nav = new Navigation(services);
-    simple.mock(nav, "onDiscardEdits").resolveWith();
+    
     await nav.openController("Menu");
     await nav.openController("SiteDetails");
     await nav.openController("Habitat");
@@ -41,12 +53,11 @@ describe("logic/Navigation service", function() {
     await nav.openController("OtherScreen2");
     await nav.openController("Habitat");
     await nav.openController("SiteDetails");
-    expect(nav.onDiscardEdits.callCount).to.equal(0);
+    expect(services.View.askDiscardEdits.callCount).to.equal(0);
   });
 
   it('should not ask to discard when not transitioning to a historical screen',async function() {
     let nav = new Navigation(services);
-    simple.mock(nav, "onDiscardEdits").resolveWith();
     await nav.openController("Menu");
     await nav.openController("SiteDetails");
     await nav.openController("Habitat");
@@ -54,17 +65,35 @@ describe("logic/Navigation service", function() {
     await nav.openController("OtherScreen");
     await nav.openController("OtherScreen2");
     await nav.openController("Habitat");
-    expect(nav.onDiscardEdits.callCount).to.equal(0);
+    expect(services.View.askDiscardEdits.callCount).to.equal(0);
   });
 
 	it('should call ask user to discard edits if SiteDetails is removed from history', async function() {
     let nav = new Navigation(services);
-    simple.mock(nav, "onDiscardEdits")
-      .resolveWith();
     await nav.openController("Menu");
     await nav.openController("SiteDetails");
     await nav.openController("Habitat");
     await nav.openController("Menu");
-    expect(nav.onDiscardEdits.callCount).to.equal(1);
+    expect(services.View.askDiscardEdits.callCount).to.equal(1);
   });
+
+  it('should not ask user to discard edits if sample is saved', async function() {
+    simple.mock(services.Survey, "hasUnsavedChanges").returnWith(false);
+    let nav = new Navigation(services);
+    await nav.openController("Menu");
+    await nav.openController("SiteDetails");
+    await nav.openController("Habitat");
+    await nav.openController("Menu");
+    expect(services.View.askDiscardEdits.callCount).to.equal(0);
+  })
+
+  it('should call discard when user discards record',async function() {
+    simple.mock(services.Survey, "discardSurvey");
+    let nav = new Navigation(services);
+    await nav.openController("Menu");
+    await nav.openController("SiteDetails");
+    await nav.openController("Habitat");
+    await nav.openController("Menu");
+    expect(services.Survey.discardSurvey.callCount).to.equal(1);
+  })
 });

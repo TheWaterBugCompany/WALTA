@@ -22,10 +22,11 @@ var { makeSampleData } = require("unit-test/fixtures/SampleData_fixture");
 var { clearDatabase, actionFiresTopicTest, waitForTick, isManualTests } = require("unit-test/util/TestUtils");
 var { areWeSyncing } = require("logic/SampleSync");
 var { Navigation } = require('logic/Navigation');
+var { Survey } = require('logic/Survey');
 var { View } = require('logic/View');
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
-describe.only("Main controller", function() {
+describe("Main controller", function() {
 	let app;
   Alloy.Collections.instance("taxa");
   let keyUrl = Ti.Filesystem.resourcesDirectory + "taxonomy/walta/";
@@ -37,11 +38,12 @@ describe.only("Main controller", function() {
       },
       View: View,
       Key: key,
-      Survey: {
-          forceUpload: function() {},
-          startSurvey: function() {}
-      }
+      Survey: Survey
   }
+  services.Survey.forceUpload = function() {};
+  beforeEach(function() {
+    simple.mock(services.Survey.forceUpload).returnWith();
+  })
   services.Navigation = new Navigation(services);
   function currentController() { 
     return services.View.getCurrentController();
@@ -51,6 +53,7 @@ describe.only("Main controller", function() {
       currentController().TopLevelWindow.close();
     }
     Alloy.Events.off(); // remove global events handlers
+    simple.restore();
   });
 	it('should display the Main view', async function() {
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
@@ -70,23 +73,29 @@ describe.only("Main controller", function() {
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main", services);
     await app.startApp();
-    currentController().history.fireEvent("click");
+    await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED );
     currentController().sampleTable.fireEvent("click", { index: 0 });
+
+    await waitForTick(10)();
     await actionFiresTopicTest( currentController().sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
     currentController().waterbodyNameField.value = "changed by test edit";
     currentController().waterbodyNameField.fireEvent("change"); // simulate user entering text
+
     // simulate leaving edit wizard
     await actionFiresTopicTest( currentController().getAnchorBar().home, "click", Topics.DISCARD_OR_SAVE );
+   
+    
     // dialogue should be open
     let discardDialog = services.View.getSaveOrDiscard();
     expect(discardDialog).to.be.ok;
     // select the discard buttion
     discardDialog.fireEvent('click',{index:0});
+    await waitForTick(10)();
     expect(currentController().name).to.equal("home");
 
 
   });
-  it.only('should allow a sample to be edited', async function() {
+  it('should allow a sample to be edited', async function() {
     clearDatabase();
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
       .returnWith({accessToken:"accessToken"});
@@ -95,6 +104,7 @@ describe.only("Main controller", function() {
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main", services);
     await app.startApp();
+    
     currentController().history.fireEvent("click");
     currentController().sampleTable.fireEvent("click", { index: 0 });
     await actionFiresTopicTest( currentController().sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
@@ -106,7 +116,9 @@ describe.only("Main controller", function() {
 
     currentController().waterbodyNameField.value = "changed by test edit";
     currentController().waterbodyNameField.fireEvent("change"); // simulate user entering text
-   
+    Alloy.Models.instance("sample").on("change", (d) => {
+      Ti.API.info(`sample changed = ${JSON.stringify(d)}`);
+    });
   
     await actionFiresTopicTest( currentController().nextButton.NavButton, "click", Topics.PAGE_OPENED );
     expect(currentController().name).to.equal("habitat")
@@ -116,10 +128,11 @@ describe.only("Main controller", function() {
     expect(currentController().name).to.equal("notes")
     await actionFiresTopicTest( currentController().nextButton.NavButton, "click", Topics.PAGE_OPENED );
     expect(currentController().name).to.equal("summary")
-    await actionFiresTopicTest( currentController().nextButton.NavButton, "click", Topics.PAGE_OPENED );
-
-    // load original row from archive (should only list submitted surveys)
+    await actionFiresTopicTest( currentController().nextButton.NavButton, "click", Topics.FORCE_UPLOAD );
+     // load original row from archive (should only list submitted surveys)
     await actionFiresTopicTest( currentController().getAnchorBar().home, "click", Topics.PAGE_OPENED );
+    Ti.API.info(`originalSampleId = ${Alloy.Models.instance("sample").get("originalSampleId")}`);
+    
     currentController().history.fireEvent("click");
     
     expect( currentController().sampleTable.data[0].rows.length, "there should only be one row" ).to.equal(1);
