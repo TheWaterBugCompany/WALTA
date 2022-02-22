@@ -11,4 +11,13 @@ function delayedPromise( promise, delay) {
 
 }
 
+function checkForErrors(promise) {
+    promise 
+      .catch( (err) => {
+        setTimeout(() => { throw err });
+      })
+  }
+
+
 exports.delayedPromise = delayedPromise;
+exports.checkForErrors = checkForErrors;

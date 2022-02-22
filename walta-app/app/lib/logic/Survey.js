@@ -1,7 +1,7 @@
 var SampleSync = require("logic/SampleSync");
 exports.Survey = {
     forceUpload: function() {
-        debug("forcing synchronise");
+        debugAFRT("forcing synchronise");
         SampleSync.forceUpload();
     },
     startSurvey: function( surveyType ) {

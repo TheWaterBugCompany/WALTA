@@ -85,7 +85,6 @@ Navigation.prototype.openController = async function (ctl, args) {
     
     this.history.push(page);
     dumpHistory(this.history);
-    
     await this.onOpenView(ctl, args);
 }
 

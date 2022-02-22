@@ -76,7 +76,7 @@ describe("Notes controller", function () {
     let mockKey = { getSpeedbugIndex: function () { } };
     let services = {
       System: {
-        requestPermission: function () { },
+        requestPermission: function () { return Promise.resolve({success:true}) },
         closeApp: function () { },
       },
       View: View,
