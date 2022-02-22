@@ -9,6 +9,7 @@ var { System } = require("logic/System");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
+var { checkForErrors } = require('util/PromiseUtils');
 var debug = m => Ti.API.info(m);
 Topics.init();
 
@@ -48,4 +49,4 @@ let services ={
 services.Navigation = new Navigation(services);
 // glue the Main controller to the various
 // objects that perform the logic
-Alloy.createController("Main",services).startApp(); 
+checkForErrors( Alloy.createController("Main",services).startApp() ); 

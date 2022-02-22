@@ -33,7 +33,7 @@ describe("Main controller", function() {
   let key = KeyLoader.loadKey(keyUrl);
   let services = {
       System: {
-          requestPermission: function(p,cb) { cb({success:true})},
+          requestPermission: function(p) { return Promise.resolve({success:true})},
           closeApp: function() {},
       },
       View: View,
