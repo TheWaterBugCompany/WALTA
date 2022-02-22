@@ -104,8 +104,8 @@ describe("Main controller", function() {
     makeSampleData({ serverSampleId: 666 }).save();
     app = Alloy.createController("Main", services);
     await app.startApp();
-    
-    currentController().history.fireEvent("click");
+   
+    await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED);
     currentController().sampleTable.fireEvent("click", { index: 0 });
     await actionFiresTopicTest( currentController().sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
 
@@ -116,9 +116,6 @@ describe("Main controller", function() {
 
     currentController().waterbodyNameField.value = "changed by test edit";
     currentController().waterbodyNameField.fireEvent("change"); // simulate user entering text
-    Alloy.Models.instance("sample").on("change", (d) => {
-      Ti.API.info(`sample changed = ${JSON.stringify(d)}`);
-    });
   
     await actionFiresTopicTest( currentController().nextButton.NavButton, "click", Topics.PAGE_OPENED );
     expect(currentController().name).to.equal("habitat")
@@ -131,9 +128,8 @@ describe("Main controller", function() {
     await actionFiresTopicTest( currentController().nextButton.NavButton, "click", Topics.FORCE_UPLOAD );
      // load original row from archive (should only list submitted surveys)
     await actionFiresTopicTest( currentController().getAnchorBar().home, "click", Topics.PAGE_OPENED );
-    Ti.API.info(`originalSampleId = ${Alloy.Models.instance("sample").get("originalSampleId")}`);
     
-    currentController().history.fireEvent("click");
+    await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED);
     
     expect( currentController().sampleTable.data[0].rows.length, "there should only be one row" ).to.equal(1);
 
