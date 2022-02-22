@@ -1,7 +1,8 @@
 var SampleSync = require("logic/SampleSync");
+var debug = m => Ti.API.info(m);
 exports.Survey = {
     forceUpload: function() {
-        debugAFRT("forcing synchronise");
+        debug("forcing synchronise");
         SampleSync.forceUpload();
     },
     startSurvey: function( surveyType ) {

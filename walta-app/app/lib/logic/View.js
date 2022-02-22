@@ -1,6 +1,6 @@
 
 var Topics = require('ui/Topics');
-
+var debug = m => Ti.API.info(m);
 let currentController = null;
 let saveOrDiscard = null;
 exports.View = {
@@ -8,7 +8,7 @@ exports.View = {
     getCurrentController: function() { return currentController; },
     openView: function(ctl,args) {
         return new Promise( (resolve) => {
-          Ti.API.info(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
+          debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
           currentController = Alloy.createController(ctl,args);
           currentController.on("window-opened", resolve);
           currentController.open();
@@ -27,7 +27,6 @@ exports.View = {
           Topics.fireTopicEvent(Topics.DISCARD_OR_SAVE);
           saveOrDiscard.addEventListener('click', function (e) {
             saveOrDiscard.hide();
-            Ti.API.info(`index = ${e.index}`)
             if (e.index == 0) {
               resolve();
             } else {
