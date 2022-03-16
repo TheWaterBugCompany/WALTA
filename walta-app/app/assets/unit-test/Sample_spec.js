@@ -429,7 +429,7 @@ describe("Sample collection", function() {
   })
 });
 
-describe("Sample collection, model including taxa", function() {
+describe("Sample model", function() {
   var initialSampleId;
 
   function verifyTaxa(taxas,sampleId) {
@@ -673,6 +673,21 @@ describe("Sample collection, model including taxa", function() {
       }); 
       expect(taxa.at(5).get("taxonId")).to.be.null;
       expect(taxa.at(6).get("taxonId")).to.be.null;
+    });
+  });
+  context('should destroy a sample correctly', function() {
+    this.beforeEach(function() {
+      sample = Alloy.createModel("sample");
+      sample.loadById(initialSampleId);
+      sample.destroy();
+    });
+    it('should clear the data from memory on destroy', function() {
+      expect( sample.get("sampleId")).to.be.undefined;
+    });
+    it('should remove data from database', function() {
+      sample = Alloy.createModel("sample");
+      sample.loadById(initialSampleId);
+      expect( sample.get("sampleId")).to.be.undefined;
     });
   });
 
