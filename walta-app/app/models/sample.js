@@ -1,5 +1,6 @@
 var Crashlytics = require('util/Crashlytics');
 var log = Crashlytics.log;
+var debug = m => Ti.API.info(m);
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
@@ -121,9 +122,11 @@ exports.definition = {
 			},
 
 			destroy: function() {
+				debug(`destroying sample ${this.get("sampleId")}`)
 				let taxa = this.loadTaxa();
 				taxa.removeAll({keepFiles:true});
 				modelDestroy.apply(this);	
+				this.clear(); // need to clear in memory version
 			},
 			
 			saveCurrentSample: async function() {
@@ -148,6 +151,7 @@ exports.definition = {
 			},
 
 			loadCurrent() {
+				debug("loadCurrent");
 				return new Promise( (resolve,reject) =>
 					this.fetch({ 
 						query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL",
@@ -527,6 +531,8 @@ exports.definition = {
 					 || !Alloy.Models.sample.get("sampleId") )  {
 					 this.createNewSample(serverUserId);
 					 Alloy.Models.sample.set({"surveyType": type} );
+				} else {
+					debug("found existing survey - opening")
 				}
 			},
 
