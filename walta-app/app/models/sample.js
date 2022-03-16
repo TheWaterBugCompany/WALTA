@@ -189,19 +189,21 @@ exports.definition = {
 			},
 
 			async hasUnsavedChanges() {
-				//Ti.API.info("hasUnsavedChanges");
+				Ti.API.info(`hasUnsavedChanges sampleId= ${this.get('sampleId')} originalSampleId = ${this.get('originalSampleId')}`);
 				if ( !this.isUnsaved() ) {
 					return false;
 				}
 				
-				// if there is no originalSampleId then the
-				// record is not a edited copy so also has
-				// no unsaved changes....
-				Ti.API.info(`hasUnsavedChanges sampleId= ${this.get('sampleId')} originalSampleId = ${this.get('originalSampleId')}`);
-		
+				// If this is not being edited due to no originalSampleId 
 				let origId = this.get("originalSampleId");
 				if ( !origId ) {
-					return false;
+					if ( ! this.get("serverSampleId") ) {
+						// a new survey so yes has unsaved changes....
+						return true;
+					} else {
+						// a survey in view only mode since it has a serverSampleId....
+						return false;
+					}
 				}
 				
 				// Load the old sample and see if any of the fields
