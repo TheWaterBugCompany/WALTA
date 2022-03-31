@@ -169,6 +169,10 @@ exports.definition = {
 					}));
 			},
 
+			isNewSurvey() {
+				return !this.get("originalSampleId") && !this.get("serverSampleId");
+			},
+
 			isUnsaved() {
 				// when dateCompleted IS NULL this indicates record
 				// hasn't been saved.

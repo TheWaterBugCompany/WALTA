@@ -42,10 +42,10 @@ Alloy.Models.instance("sample").loadCurrent();
 Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
 let services ={
   System: System,
-  View: View,
-  Key: Alloy.Globals.Key,
+  Key: Alloy.Globals.Key, 
   Survey: Survey
 }
+services.View = new View(services);
 services.Navigation = new Navigation(services);
 // glue the Main controller to the various
 // objects that perform the logic
