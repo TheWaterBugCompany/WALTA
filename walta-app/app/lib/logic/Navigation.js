@@ -1,4 +1,5 @@
-var Topics = require('ui/Topics');
+var Topics = require("ui/Topics");
+var { DialogCancelled } = require("logic/View");
 
 function questionToString(args) {
     if (!args || !args.node || !args.node.questions)
@@ -24,7 +25,7 @@ Navigation.prototype.getHistory = function () {
 }
 
 Navigation.prototype.onOpenView = function(ctl,args) {
-    _.extend(args, {key: this.services.Key});
+    _.extend(args, {key: this.services.Key, Survey: this.services.Survey});
     return this.services.View.openView(ctl,args);
 }
 
@@ -35,8 +36,11 @@ Navigation.prototype.onCloseApp = function() {
 // implement me to open user dialogue
 Navigation.prototype.onDiscardEdits = async function () {
     // will reject if the user cancels
-    await this.services.View.askDiscardEdits();
-    this.services.Survey.discardSurvey();
+    let result = await this.services.View.askDiscardEdits();
+    if ( result == "submit")
+        this.services.Survey.submitSurvey();
+    else if ( result == "discard")
+        this.services.Survey.discardSurvey();
 }
 
 Navigation.prototype.garbageCollectControllers = async function (page) {
@@ -75,17 +79,21 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
 }
 
 Navigation.prototype.openController = async function (ctl, args) {
-    
-    if (!args) args = {};
-    if (!args.slide) args.slide = "none";    
-    let page = { ctl: ctl, args: args };
-    
-    
-    await this.garbageCollectControllers(page);
-    
-    this.history.push(page);
-    dumpHistory(this.history);
-    await this.onOpenView(ctl, args);
+        if (!args) args = {};
+        if (!args.slide) args.slide = "none";    
+        let page = { ctl: ctl, args: args };
+        
+        try {
+            await this.garbageCollectControllers(page);
+            
+            this.history.push(page);
+            dumpHistory(this.history);
+            await this.onOpenView(ctl, args);
+        } catch( err ) {
+            // do nothing if dialog is aborted
+            if ( ! (err instanceof DialogCancelled) )
+                throw err;
+        }
 }
 
 Navigation.prototype.goBack = async function (args) {
