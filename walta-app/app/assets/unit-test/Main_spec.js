@@ -55,6 +55,7 @@ describe("Main controller", function() {
     Alloy.Events.off(); // remove global events handlers
     simple.restore();
   });
+
 	it('should display the Main view', async function() {
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
       .returnWith({accessToken:"accessToken"});
@@ -64,6 +65,7 @@ describe("Main controller", function() {
     await app.startApp();
     expect(services.Navigation.getHistory()[0].ctl).to.equal("Menu");
   });
+
   it('should display discard/save notification when leaving unsaved sample', async function() {
     clearDatabase();
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
@@ -86,15 +88,17 @@ describe("Main controller", function() {
    
     
     // dialogue should be open
+   
     let discardDialog = services.View.getSaveOrDiscard();
     expect(discardDialog).to.be.ok;
     // select the discard buttion
-    discardDialog.fireEvent('click',{index:0});
-    await waitForTick(10)();
+    discardDialog.fireEvent('click',{index:1});
+    await waitForTick(10)(); 
     expect(currentController().name).to.equal("home");
 
 
   });
+
   it('should allow a sample to be edited', async function() {
     clearDatabase();
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")

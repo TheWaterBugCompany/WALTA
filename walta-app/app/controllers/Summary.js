@@ -1,11 +1,11 @@
 var Topics = require('ui/Topics');
-var SampleSync = require('logic/SampleSync');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Summary";
 $.name = "summary"; 
 
 var readOnlyMode = $.args.readonly === true;
+var Survey = $.args.Survey;
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
@@ -43,13 +43,8 @@ var COMPLETE_NOT_REGISTERED = "The survey is complete. The next step is to regis
 var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please ensure you have location enabled and move to out into the open to allow the coordinates to be collected.";
 
 var saveSampleAndUpload = function() {
-    Ti.API.info("saving current sample");
-    return Alloy.Models.instance("sample").saveCurrentSample()
-     .then( () => {
-        setMessageText();
-        Ti.API.info("forcing upload");
-        Topics.fireTopicEvent(Topics.FORCE_UPLOAD);
-     });
+    return Survey.submitSurvey()
+        .then( setMessageText );
 };
 
 function checkGpsLock() {

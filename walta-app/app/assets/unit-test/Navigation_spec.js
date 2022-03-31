@@ -36,12 +36,15 @@ describe("logic/Navigation service", function() {
       },
       discardSurvey: function() {
 
+      },
+      submitSurvey: function() {
+
       }
     }
   }
   beforeEach( function() {
     simple.restore();
-    simple.mock(services.View, "askDiscardEdits").resolveWith();
+    simple.mock(services.View, "askDiscardEdits").resolveWith("discard");
   });
   it('should not ask to discard when tranistion to SiteDetails',async function() {
     let nav = new Navigation(services);
@@ -95,5 +98,16 @@ describe("logic/Navigation service", function() {
     await nav.openController("Habitat");
     await nav.openController("Menu");
     expect(services.Survey.discardSurvey.callCount).to.equal(1);
+  })
+
+  it('should submit record if user selects submit',async function() {
+    simple.mock(services.Survey, "submitSurvey");
+    simple.mock(services.View,"askDiscardEdits").resolveWith('submit');
+    let nav = new Navigation(services);
+    await nav.openController("Menu");
+    await nav.openController("SiteDetails");
+    await nav.openController("Habitat");
+    await nav.openController("Menu");
+    expect(services.Survey.submitSurvey.callCount).to.equal(1);
   })
 });
