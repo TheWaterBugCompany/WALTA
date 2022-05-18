@@ -4,7 +4,7 @@
   color: "#fff",
   backgroundColor: "#f00",
   borderColor: "#f00",
-  width: "28dp",
+  width: "35dp",
   height: "16dp",
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   borderRadius: "8dp",
@@ -13,7 +13,7 @@
 
 "#abundance[if=Alloy.Globals.isHighRes]": {
   font: { fontSize: "12dp" },
-  width: "30dp",
+  width: "32dp",
   height: "18dp"
 }
 

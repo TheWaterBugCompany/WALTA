@@ -80,6 +80,16 @@ describe("logic/Navigation service", function() {
     expect(services.View.askDiscardEdits.callCount).to.equal(1);
   });
 
+  it('should call ask user to discard edits if SiteDetails is removed from history via goBack()', async function() {
+    let nav = new Navigation(services);
+    await nav.openController("Menu");
+    await nav.openController("SiteDetails");
+    await nav.openController("Habitat");
+    await nav.goBack();
+    await nav.goBack();
+    expect(services.View.askDiscardEdits.callCount).to.equal(1);
+  });
+
   it('should not ask user to discard edits if sample is saved', async function() {
     simple.mock(services.Survey, "hasUnsavedChanges").returnWith(false);
     let nav = new Navigation(services);
@@ -110,4 +120,5 @@ describe("logic/Navigation service", function() {
     await nav.openController("Menu");
     expect(services.Survey.submitSurvey.callCount).to.equal(1);
   })
+  
 });

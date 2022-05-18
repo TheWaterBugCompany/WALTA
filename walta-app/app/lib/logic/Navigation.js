@@ -98,11 +98,11 @@ Navigation.prototype.openController = async function (ctl, args) {
 
 Navigation.prototype.goBack = async function (args) {
     if (!args) args = {};
-    var currentArgs = this.history.pop().args;
-    if (this.history.length === 0) {
+    var currentArgs = this.history[this.history.length-1].args;
+    if (this.history.length === 1) {
         this.onCloseApp();
     } else {
-        var cargs = this.history[this.history.length - 1];
+        var cargs = this.history[this.history.length - 2];
         var ctl = cargs.ctl;
         var newargs = cargs.args;
         if (args.slide) {

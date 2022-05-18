@@ -1,5 +1,5 @@
 require('unit-test/lib/ti-mocha');
-var PlatformSpecific = require('ui/PlatformSpecific');
+var PlatformSpecific = require('logic/PlatformSpecific');
 var { expect } = require('unit-test/lib/chai');
 var { closeWindow, checkTestResult, actionFiresTopicTest, setManualTests, resetDatabase, waitFor } = require('unit-test/util/TestUtils');
 
@@ -259,7 +259,7 @@ describe( 'SampleTray controller', function() {
         } );
     });
  
-    it('should display the correct sample entry for each tray position displayed', function() {
+    it.only('should display the correct sample entry for each tray position displayed', function() {
         return Promise.resolve()
           .then( function() {
             Alloy.Collections.taxa = Alloy.createCollection("taxa",  [

@@ -13,6 +13,12 @@ function makeUserFilter(serverUserId) {
 	}
 }
 
+let DATA_FIELDS = [ "lat", "lng", "accuracy", "surveyType",
+					"waterbodyType", "waterbodyName", "nearbyFeature", "boulder",
+					"gravel", "sandOrSilt", "leafPacks", "wood", "aquaticPlants",
+					"openWater", "edgePlants", "serverSitePhotoId", "sitePhotoPath",
+					"complete", "notes" ];
+
 exports.definition = {
 	config: {
 		columns: {
@@ -180,16 +186,19 @@ exports.definition = {
 			},
 
 			equals(otherSample) {
-				let dataFields = [ "lat", "lng", "accuracy", "surveyType",
-					"waterbodyType", "waterbodyName", "nearbyFeature", "boulder",
-					"gravel", "sandOrSilt", "leafPacks", "wood", "aquaticPlants",
-					"openWater", "edgePlants", "serverSitePhotoId", "sitePhotoPath",
-					"complete", "notes" ];
 				let taxa = this.loadTaxa();
 				let otherTaxa = otherSample.loadTaxa();
-				return _.every(dataFields, f => this.get(f) == otherSample.get(f))
+				return _.every(DATA_FIELDS, f => this.get(f) == otherSample.get(f))
 					&& taxa.equals(otherTaxa);
 
+			},
+
+			isBlank() {
+				let taxa = this.loadTaxa();
+				return _.every(DATA_FIELDS, f=> {
+					value = this.get(f);
+					return _.isEmpty(value) || _.isEmpty(value.trim());
+				}) && taxa.length == 0;
 			},
 
 			async hasUnsavedChanges() {
@@ -203,7 +212,8 @@ exports.definition = {
 				if ( !origId ) {
 					if ( ! this.get("serverSampleId") ) {
 						// a new survey so yes has unsaved changes....
-						return true;
+						
+						return !this.isBlank();
 					} else {
 						// a survey in view only mode since it has a serverSampleId....
 						return false;

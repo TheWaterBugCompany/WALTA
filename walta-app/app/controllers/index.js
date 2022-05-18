@@ -4,7 +4,7 @@ var GeoLocationService = require('logic/GeoLocationService');
 var Crashlytics = require('util/Crashlytics');
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
-var PlatformSpecific = require("ui/PlatformSpecific");
+var PlatformSpecific = require("logic/PlatformSpecific");
 var { System } = require("logic/System");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
@@ -45,6 +45,7 @@ let services ={
   Key: Alloy.Globals.Key, 
   Survey: Survey
 }
+
 services.View = new View(services);
 services.Navigation = new Navigation(services);
 // glue the Main controller to the various

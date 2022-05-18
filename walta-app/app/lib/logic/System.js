@@ -1,3 +1,4 @@
+var PlatformSpecific = require("logic/PlatformSpecific");
 var debug = m => Ti.API.info(m);
 exports.System = {
     requestPermission: function( permissions ) {
