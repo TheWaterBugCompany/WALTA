@@ -70,10 +70,12 @@ function updateFields() {
 
 function onPartialChange( data ) {
     sample.set("complete", data.value );
+    sample.save();
 }
 
 function onNotesChange( data ) {
     sample.set("notes", data.value );
+    sample.save();
 }
 
 var acb = $.getAnchorBar();

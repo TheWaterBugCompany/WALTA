@@ -23,7 +23,7 @@
  *
  */
 var Topics = require('ui/Topics');
-var PlatformSpecific = require('ui/PlatformSpecific'); 
+var PlatformSpecific = require('logic/PlatformSpecific'); 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Details";
 $.name = "decision";
