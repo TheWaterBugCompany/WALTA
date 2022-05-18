@@ -188,15 +188,26 @@ exports.definition = {
 			equals(otherSample) {
 				let taxa = this.loadTaxa();
 				let otherTaxa = otherSample.loadTaxa();
-				return _.every(DATA_FIELDS, f => this.get(f) == otherSample.get(f))
-					&& taxa.equals(otherTaxa);
+				function isNullLike(v) {
+					return _.isUndefined(v) || _.isNull(v);
+				}
+				return _.every(DATA_FIELDS, f => {
+					// sometimes the data is numeric but after it is persisted
+					// the types are lost so we need to compare by first converting
+					// to a string.
+					var f1 = this.get(f);
+					var f2 = otherSample.get(f);
+					if (!isNullLike(f1)) f1 = f1.toString();
+					if (!isNullLike(f2)) f2 = f2.toString();
+					return f1 == f2;
+				}) && taxa.equals(otherTaxa);
 
 			},
 
 			isBlank() {
 				let taxa = this.loadTaxa();
 				return _.every(DATA_FIELDS, f=> {
-					value = this.get(f);
+					let value = this.get(f);
 					return _.isEmpty(value) || _.isEmpty(value.trim());
 				}) && taxa.length == 0;
 			},
@@ -224,6 +235,7 @@ exports.definition = {
 				// are different.
 				let oldSample = Alloy.createModel("sample");
 				await oldSample.loadById(origId);
+				
 				return !this.equals(oldSample);
 			},
 			
