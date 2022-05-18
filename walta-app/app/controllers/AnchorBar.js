@@ -25,7 +25,7 @@
  *
  */
 var Topics = require('ui/Topics');
-var { convertSystemToDip } = require("ui/PlatformSpecific");
+var { convertSystemToDip } = require("logic/PlatformSpecific");
 
 var eventHandlers = [];
 function cleanUp() {

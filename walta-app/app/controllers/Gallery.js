@@ -28,7 +28,7 @@ exports.baseController  = "TopLevelWindow";
 $.name = "gallery";
 var Topics = require('ui/Topics');
 var Layout = require('ui/Layout');
-var { urlToLocalAsset } = require("ui/PlatformSpecific");
+var { urlToLocalAsset } = require("logic/PlatformSpecific");
 
 $.TopLevelWindow.useUnSafeArea = true;
 $.TopLevelWindow.addEventListener('close', function cleanUp() {

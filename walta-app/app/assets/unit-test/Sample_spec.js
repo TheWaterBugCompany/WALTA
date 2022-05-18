@@ -428,6 +428,35 @@ describe("Sample collection", function() {
 
   })
 });
+describe("Sample model isBlank", function() {
+  it('should return true if blank survey', function() {
+    Alloy.Collections.instance("sample")
+      .createNewSample();
+    expect(Alloy.Models.sample.isBlank()).to.equal(true);
+  });
+  it('should return false if not blank survey', function() {
+    Alloy.Models.sample = makeSampleData({dateCompleted: null});
+    expect(Alloy.Models.sample.isBlank()).to.equal(false);
+  });
+})
+describe("Sample model hasUnsavedChanges()", function() {
+  beforeEach( clearDatabase );
+
+  it('should return false if a new blank survey', async function() {
+    Alloy.Collections.instance("sample")
+      .createNewSample();
+    let unsaved = await Alloy.Models.sample.hasUnsavedChanges();
+    expect(unsaved).to.equal(false);
+  });
+  it('should return false if is already saved');
+  it('should return true if not blank new survey', async function() {
+    Alloy.Models.sample = makeSampleData({dateCompleted: null});
+    let unsaved = await Alloy.Models.sample.hasUnsavedChanges();
+    expect(unsaved).to.equal(true);
+  });
+  it('should return true if edited survey is different to original');
+  it('should return false if edited survey is same as original');
+});
 
 describe("Sample model", function() {
   var initialSampleId;
@@ -521,6 +550,7 @@ describe("Sample model", function() {
     }
   }
 
+  
   
 
   it('should NOT report pending uploads when sitePhotoPath is not set and serverSitePhotoId is not set', function(){

@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var PlatformSpecific = require('ui/PlatformSpecific');
+var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
 var anchorBar = Alloy.createController("AnchorBar" );
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");

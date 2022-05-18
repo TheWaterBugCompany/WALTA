@@ -1,7 +1,7 @@
 var key = $.args.key;
 var speedbugIndex = $.args.key.getSpeedbugIndex();
 
-var PlatformSpecific = require('ui/PlatformSpecific');
+var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
 
 var DEBUG = false; // WARNING turning this on breaks unit tests

@@ -48,6 +48,7 @@ function updateLocation() {
         $.locationStatus.text = "Location unobtained";
         $.locationStatus.color = "#ffc000";
     }
+    sample.save();
 }
 
 function loadAttributes() {
@@ -170,6 +171,7 @@ $.photoSelect.on("photoTaken", function(path) {
     log(`photo taken updating site with ${path}`)
     sample.setSitePhoto(path);
     $.photoSelect.setImage( sample.getSitePhoto() ); // update image to new path
+    sample.save();
 });
 
 $.TopLevelWindow.title = "Site Details";
