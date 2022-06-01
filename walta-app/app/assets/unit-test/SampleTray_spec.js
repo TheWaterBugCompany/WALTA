@@ -259,7 +259,7 @@ describe( 'SampleTray controller', function() {
         } );
     });
  
-    it.only('should display the correct sample entry for each tray position displayed', function() {
+    it('should display the correct sample entry for each tray position displayed', function() {
         return Promise.resolve()
           .then( function() {
             Alloy.Collections.taxa = Alloy.createCollection("taxa",  [

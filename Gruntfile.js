@@ -17,8 +17,8 @@ module.exports = function(grunt) {
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
     const PROFILE = process.env.PROFILE || "50397711-b746-48e7-b149-8b4362a37e3a";
-    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "b8c9dde8-b528-400b-86e0-3dc330ac44c4";
-    const PROFILE_DEV = "bc07f9c5-b99f-464d-8470-abb8daf0149f";
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "ab203b33-3042-46e6-9897-b880003b9941";
+    const PROFILE_DEV = "ab203b33-3042-46e6-9897-b880003b9941";
     const DEVICE_ID="a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
     
     const WATERBUG_APPID = {
@@ -188,6 +188,7 @@ module.exports = function(grunt) {
       }
       if ( grunt.option('liveview') ) {
         args.push("--liveview");
+        args.push("--liveview-host 192.168.88.237")
       }
       
       var cmd = `./node_modules/.bin/titanium build ${args.join(" ")}`;

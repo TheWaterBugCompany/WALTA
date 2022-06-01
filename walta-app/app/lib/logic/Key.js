@@ -167,7 +167,13 @@ function createKey( args ) {
 			if ( ! prp ) prp = 'mediaUrls';
 			_.each( (taxonsOnly? this.findAllTaxons() : this.findAllQuestionsOrTaxons() ), function( t ) { 
 				if ( t[prp] ) {
-					media = media.concat( t[prp] );
+					var urls = t[prp];
+					urls.forEach( url => {
+						media.push({
+							url: url,
+							taxon: t
+						})
+					})
 				} 
 			});
 			return media;
