@@ -8,6 +8,7 @@
 }
 
 "#scrollView": {
+    cacheSize: 3,
     height: Ti.UI.FILL,
     width: Ti.UI.FILL
 }

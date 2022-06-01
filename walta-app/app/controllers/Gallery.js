@@ -24,67 +24,133 @@ var log = Crashlytics.log;
  * opens a modal view displaying a gallery of all the images.
  *
  */
+var Topics = require('ui/Topics');
 exports.baseController  = "TopLevelWindow";
 $.name = "gallery";
 var Topics = require('ui/Topics');
 var Layout = require('ui/Layout');
-var { urlToLocalAsset } = require("logic/PlatformSpecific");
 
 $.TopLevelWindow.useUnSafeArea = true;
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-    $.views.forEach( (v) => {
-        if ( OS_ANDROID ) { 
-            v.release() 
-        } 
-    });
     $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
 var key = $.args.key;
 var photos = $.args.photos;
 var showPager = $.args.showPager;
+var startPhotoIndex = 0;
+var allPhotos;
 if ( _.isUndefined( showPager ) ) showPager = true;
 
 log(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
 if ( !photos && key ) {
-    photos = _.first( _.shuffle( key.findAllMedia('photoUrls') ), 20 );
+    allPhotos = _.shuffle( key.findAllMedia('photoUrls') );
+    photos = allPhotos.slice(0,5);
 }
 
-$.views = _(photos).map( (url) => {
-        if ( OS_ANDROID ) { 
-            // NOTE: ScrollView; iPhone has zoom, Android doesn't, another inconsistency in Titanium API.
-            // we cheat by using a WebView.
-            var params = {
-                setScalesPageToFit: false,
-                disableBounce: true,
-                enableZoomControls: true,
-                backgroundColor: 'transparent',
-                width : Ti.UI.FILL,
-                height : Ti.UI.FILL,
-                html: '<html><head><meta name="viewport" content="initial-scale=1.0, user-scalable=yes, maximum-scale=10.0, minimum-scale=1.0, width=device-width, height=device-height, target-densitydpi=device-dpi"></meta><style>html,body { margin: 0; } ::-webkit-scrollbar { display: none;} img { display: block; width:100%; }</style></head><body><img src="' + urlToLocalAsset(url) + '"></body></html>'
-            };
-            if ( OS_ANDROID ) 
-                params.cacheMode = Ti.UI.Android.WEBVIEW_LOAD_NO_CACHE;
-            if ( OS_IOS )
-                params.cachePolicy = Ti.UI.iOS.CACHE_POLICY_IGNORING_LOCAL_CACHE_DATA;
-            return Ti.UI.createWebView(params);
-        } else {
-            console.log(`creating tile for url = ${url}`);
-            var imageView = Ti.UI.createImageView({ image: url, width: Ti.UI.SIZE, height: Ti.UI.SIZE } );
-            var zoomable = Ti.UI.createScrollView( { disableBounce: true, maxZoomScale: 10.0, minZoomScale: 1.0, width: Ti.UI.FILL, height: Ti.UI.FILL });
-            zoomable.add( imageView );
-            zoomable.addEventListener("postlayout", function setInitialZoom() {
-                zoomable.removeEventListener("postlayout", setInitialZoom);
-                var fullScale = zoomable.rect.width / imageView.rect.width;
-                zoomable.minZoomScale = fullScale;
-                zoomable.zoomScale = fullScale;
-            
-            });
-            return zoomable;
-        }
-    });
 
-$.views.forEach( (v) => $.scrollView.addView(v) );
+function buildPhotoView(urlObj) {
+    /* urlObj can be a string or an object with the shape:
+]   {
+        url: "...." # url string
+        taxon: "...." # taxon or question object
+
+    }*/
+    var imageUrl;
+    if ( typeof(urlObj) == "object" ) {
+        Ti.API.info(`taxon = ${urlObj.taxon.taxonId}`)
+        imageUrl=urlObj.url;
+
+    } else {
+        imageUrl=urlObj;
+    }
+    console.log(`creating tile for url = ${imageUrl}`);
+    var needsPostLayout = !$.scrollView.size.height;
+    var container = Ti.UI.createView({
+        width: Ti.UI.FILL,
+        height: Ti.UI.SIZE
+    });
+    var imageView = Ti.UI.createImageView({ 
+        enableZoomControls: true, 
+        image: imageUrl, 
+        height: Ti.UI.FILL
+    } );
+    container.add(imageView);
+
+    if ( typeof(urlObj) == "object") {
+        
+        var label = Ti.UI.createLabel({ 
+                color: "white",
+                font: { fontSize:"20dp" },
+                shadowColor: '#000',
+                shadowOffset: {x:"5", y:"5"},
+                shadowRadius: "3dp",
+                text: urlObj.taxon.name, 
+                width: Ti.UI.SIZE, 
+                height: Ti.UI.SIZE,
+                top: "50dp"
+            });
+        label.addEventListener("click", function() {
+            Topics.fireTopicEvent(Topics.JUMPTO,{id: urlObj.taxon.id});
+        });
+        
+        
+        container.add(label);
+    } 
+   
+    imageView.addEventListener("postlayout", function setSize() {
+        imageView.height = $.scrollView.size.height;
+    });
+    container.addEventListener("close", function cleanUpImageView() {
+        imageView.removeEventListener("postlayout", setSize);
+        imageView.removeEventListener("close", cleanUpImageView);
+    });
+    if ( OS_IOS ) {
+        var zoomable = Ti.UI.createScrollView( { disableBounce: true, maxZoomScale: 10.0, minZoomScale: 1.0, width: Ti.UI.FILL, height: Ti.UI.FILL });
+        zoomable.add( container );
+        return zoomable;
+    } else {
+        return container;
+    }
+}
+
+function updatePhotoView() {
+    const LIMIT_VIEWS_SIZE_TO=20;
+    var page = $.scrollView.currentPage;
+    var total = $.scrollView.views.length;
+    
+    Ti.API.info(`scroll page = ${page} total = ${total}`)
+    if ( page+1 == total && (startPhotoIndex+$.scrollView.views.length) < (allPhotos.length - 5)) {
+        startPhotoIndex=startPhotoIndex+5;
+        var newViews = allPhotos.slice(startPhotoIndex+$.scrollView.views.length, startPhotoIndex+$.scrollView.views.length+5)
+            .map( p => buildPhotoView(p) ) 
+        $.scrollView.insertViewsAt(total,newViews);
+        if ( $.scrollView.views.length > LIMIT_VIEWS_SIZE_TO) {
+            var extra = $.scrollView.views.length-LIMIT_VIEWS_SIZE_TO;
+            for(var i = 0; i<extra; i++)
+                $.scrollView.removeView($.scrollView.views[0]);
+            $.scrollView.currentPage = page - extra;
+        }
+    } else if ( page == 0 && startPhotoIndex > 5) {
+        startPhotoIndex=startPhotoIndex-5;
+        var newViews = allPhotos.slice(startPhotoIndex, startPhotoIndex+5)
+            .map( p => buildPhotoView(p) )
+        $.scrollView.insertViewsAt(0,newViews);
+        if ( $.scrollView.views.length > LIMIT_VIEWS_SIZE_TO) {
+            var extra = $.scrollView.views.length-LIMIT_VIEWS_SIZE_TO;
+            for(var i = 0; i<extra; i++) {
+                $.scrollView.removeView($.scrollView.views[$.scrollView.views.length-1]);
+            }
+        }
+        $.scrollView.currentPage = page + newViews.length;
+    }
+    
+}
+photos.forEach( (url => {
+    var view = buildPhotoView(url)
+    $.scrollView.addView(view);
+}));
+
 $.scrollView.bottom = ( showPager && photos.length > 1 ? Layout.PAGER_HEIGHT : 0 );
 
 // Create a dot view
@@ -108,6 +174,8 @@ function updateCurrentPage( dots, selPage ) {
 	}
 }
 function scrollEvent(e) {
+    if (allPhotos)
+        updatePhotoView();
     if ( e.currentPage !== lastPage && dots ) {
         updateCurrentPage( dots, e.currentPage );
         lastPage = e.currentPage;
