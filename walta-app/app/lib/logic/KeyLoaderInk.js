@@ -495,7 +495,7 @@ function parseInk( inkJson, key ) {
 }
 
 function loadKey( root ) {
-	var fileText = fs.readFileSync( root + "key.ink.json", { encoding: "UTF-8" }).slice(1);
+	var fileText = fs.readFileSync( root + "key.ink.json", { encoding: "UTF-8" });
 	var inkJson = JSON.parse( fileText );
 	console.log("Creating key...");
 	var key = Key.createKey( { url: root });
