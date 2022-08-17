@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Build key",
+            "program": "${workspaceFolder}/node_modules/.bin/grunt",
+            "request": "launch",
+            "args": [ "build-key" ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Mocha Tests",
