@@ -261,7 +261,7 @@ INCLUDE taxa.ink
 /* Question Nodes */
 
 === root ===
-* Animal with a shell -> k_mollusca # mediaUrls: ["/taxonomy/walta/media/withshell.gif"]
+* Animal with a shell (snails and mussels) -> k_mollusca # mediaUrls: ["/taxonomy/walta/media/withshell.gif"]
 * Animal without a shell -> node_1 # mediaUrls: ["/taxonomy/walta/media/withoutshell.gif"]
 
 === k_mollusca ===
@@ -365,12 +365,12 @@ INCLUDE taxa.ink
 * found on the surface of the water, or if underneath, it is covered in a silvery bubble of air. -> pisauridae_and_lycosidae # mediaUrls: []
 
 === k_hexapoda ===
-* with wing covers -> node_14 # mediaUrls: ["/taxonomy/walta/media/wingcovers.gif"]
+* with wing covers (beetles and bugs) -> node_14 # mediaUrls: ["/taxonomy/walta/media/wingcovers.gif"]
 * with no wing covers, possibly with wing buds -> node_15 # mediaUrls: ["/taxonomy/walta/media/nowingcovers.gif"]
 
 === node_14 ===
-* hard wingcovers, symmetrical -> order_coleoptera # mediaUrls: ["/taxonomy/walta/media/hardwingcovers.gif"]
-* leathery wingcovers, asymmetrical -> order_hemiptera # mediaUrls: ["/taxonomy/walta/media/leatherywingcovers.gif"]
+* hard wingcovers, symmetrical, animal rounded on top (beetles) -> order_coleoptera # mediaUrls: ["/taxonomy/walta/media/hardwingcovers.gif"]
+* leathery wingcovers, asymmetrical, animal flattened on top (true bugs) -> order_hemiptera # mediaUrls: ["/taxonomy/walta/media/leatherywingcovers.gif"]
 
 === order_coleoptera ===
 * Order level ID Coleoptera (beetles) -> coleoptera
@@ -441,7 +441,7 @@ INCLUDE taxa.ink
 * Not as above, may crawl on the underside of the water surface. -> node_30 # mediaUrls: []
 
 === node_30 ===
-* Small to tiny, elongate, often metallic beetles. Rare -> hydraenidae_and_hydrochidae # mediaUrls: []
+* Small to tiny, elongate, often metallic beetles. -> hydraenidae_and_hydrochidae # mediaUrls: []
 * Larger dull coloured beetles sometimes with prominent yellow egg sac. -> helochares # mediaUrls: []
 
 === order_hemiptera ===
@@ -493,7 +493,7 @@ INCLUDE taxa.ink
 * Larger bugs (up to 30mm) without checks. Flattened body, narrower heads.  -> diplonychus # mediaUrls: []
 
 === k_corixidae ===
-* Head with 'nostrils' (Ocelli, they are more like eyes - see photo). Usually distinctly orange or yellow coloured head and underneath. -> diaprepocoris_barycephala # mediaUrls: ["/taxonomy/walta/media/diaprepocoris_01.jpg"]
+* Small boatmen (<4mm), mottled or brindle wing covers (see photo). By far the commonest corixid. -> micronecta # mediaUrls: ["/taxonomy/walta/media/micronecta_01.jpg"]
 * Not as above. -> node_38 # mediaUrls: []
 
 === node_38 ===
@@ -501,12 +501,12 @@ INCLUDE taxa.ink
 * Not as above. -> node_39 # mediaUrls: []
 
 === node_39 ===
-* Small boatmen (<4mm), mottled or brindle wing covers (see photo). By far the commonest corixid. -> micronecta # mediaUrls: ["/taxonomy/walta/media/micronecta_01.jpg"]
+* Head with 'nostrils' (Ocelli, they are more like eyes - see photo). Usually distinctly orange or yellow coloured head and underneath. -> diaprepocoris_barycephala # mediaUrls: ["/taxonomy/walta/media/diaprepocoris_01.jpg"]
 * Large boatmen (>4mm) brown /yellow /grey, markings are not distinctive, looks a lot like television static (pre-digital telly). Unlike all of the above. Rare. -> agraptocorixa # mediaUrls: []
 
 === node_15 ===
 * no obvious tails -> node_40 # mediaUrls: ["/taxonomy/walta/media/notails.gif"]
-* with obvious tails -> node_41 # mediaUrls: ["/taxonomy/walta/media/withtails.gif"]
+* with obvious tails. Check they are not abdominal pro-legs (like a pair of hooks on short prolegs at the end of the abdomen) -> node_41 # mediaUrls: ["/taxonomy/walta/media/withtails.gif"]
 
 === node_40 ===
 * with a case. Sometimes the case may be lost. Look for small, terminal, lateral hooks on the abdomen or ventral pro-legs on the abdomen. -> node_42 # mediaUrls: ["/taxonomy/walta/media/withcase.gif"]
@@ -522,7 +522,7 @@ INCLUDE taxa.ink
 
 === k_trichoptera ===
 * Caddis living in a portable case. Most crawl slowly, some swim by head-thrashing or arm-waving; if out of case, body blunt ending with tiny prolegs and hooks. -> k_cased # mediaUrls: []
-* Free-living caddis, body, long abdominal pro-legs with prominent claws. -> node_44 # mediaUrls: []
+* Free-living caddis, body with abdominal pro-legs (like a pair of hooks on short prolegs at the end of the abdomen, these may look like tails without magnification). -> k_freeliving # mediaUrls: []
 
 === k_cased ===
 * Tiny larvae <5mm long. Abdomen yellow, swollen, thicker than thorax. Purse shaped case of translucent silk, sometimes with sand or algae. Slow moving, hard to see. -> hydroptilidae # mediaUrls: []
@@ -584,12 +584,12 @@ INCLUDE taxa.ink
 * Case made from a variety of materials, may be arranged spirally (but not always). When disturbed animal flails its body in a head-banging motion. -> notalina # mediaUrls: []
 * Not as above. Generally a mix of caddis with long hind legs and mixed messy cases -> leptocerids # mediaUrls: []
 
-=== node_44 ===
+=== k_freeliving ===
 * Order level ID Trichoptera (caddisflies) ->  trichoptera
 * Identify further. ->  node_44b
 
 === node_44b ===
-* All three thoracic segments hard or sclerotised, they appear darker or different in colour to the soft abdomen. -> node_58 # mediaUrls: []
+* All three thoracic segments (leg-bearing segments after the head) hard or sclerotised, they appear darker or different in colour to the soft unsclerotised abdomen. -> node_58 # mediaUrls: []
 * Only the first thoracic segment sclerotised. -> node_59 # mediaUrls: []
 
 === node_58 ===
@@ -597,7 +597,7 @@ INCLUDE taxa.ink
 * Abdominal gills absent, often with a pattern on the head like a bandits mask. -> ecnomus # mediaUrls: []
 
 === node_59 ===
-* Larvae often green when alive. Forelegs modified into a pincer, or broad with a large spine. Larvae hunt from side to side with the forelegs. -> hydrobiosidae # mediaUrls: []
+* Larvae can be green when alive. Forelegs modified into a pincer, scissors, or broad with a large spine. Larvae hunt from side to side with the forelegs. -> hydrobiosidae # mediaUrls: []
 * Larvae without pincers, body not green. Often pale, head brown or yellow. Don't tend to hunt actively. -> philopotamidae_polycentropodidae_and_ecnomidae # mediaUrls: []
 
 === node_43 ===
@@ -609,8 +609,8 @@ INCLUDE taxa.ink
 * Identify further. -> k_odonata  # mediaUrls: []
 
 === k_odonata ===
-* Slender larvae, with 3 terminal gills. Swim by undulating (snake-like). -> k_prezygoptera # mediaUrls: []
-* Robust larvae, without terminal gills. Swim by jetting water out of their bums. -> k_preepiproctophora # mediaUrls: []
+* Slender larvae, with 3 long tails (terminal gills). These can break off. Swim by undulating (snake-like). -> k_prezygoptera # mediaUrls: []
+* Robust larvae, without tails. Swim by jetting water out of their bums. -> k_preepiproctophora # mediaUrls: []
 
 === k_prezygoptera ===
 * sub order ID Zygoptera (damselfly nymphs) -> zygoptera  # mediaUrls: []
@@ -657,7 +657,7 @@ INCLUDE taxa.ink
 * animals without a single row of projections (may have a mess of gills)  -> node_44c # mediaUrls: []
 
 === node_44c ===
-* animals with robust posterior prolegs (like a pair of hooks on short prolegs at the end of the abdomen) -> node_44 # mediaUrls: []
+* animals with robust posterior prolegs (like a pair of hooks on short prolegs at the end of the abdomen) -> k_freeliving # mediaUrls: []
 * animals without robust posterior prolegs -> k_coleoptera_larvae # mediaUrls: []
 
 === node_65 ===
