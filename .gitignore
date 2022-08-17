@@ -29,3 +29,4 @@ builds/**/*.plist
 builds/**
 mock-server/rest/*/*/*/mock/response.txt
 walta-app/app/app-config*
+.DS_Store
