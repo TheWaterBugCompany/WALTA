@@ -120,7 +120,7 @@
         <Name>wwew:tas_creatures</Name>
         <UserStyle>
             <Name>inline_style</Name>
-            <FeatureTypeStyle>\
+            <FeatureTypeStyle>
                 <Rule> 
                     <Name>Species Distribution</Name>
                     <PointSymbolizer> 
@@ -191,7 +191,7 @@
                     return container;
                 },
                 onRemove: function() {
-                    L.DomEvent.off( div, 'click', this._showLegend, this);;
+                    L.DomEvent.off( this.legend, 'click', this._showLegend, this);;
                 }
             });
 
