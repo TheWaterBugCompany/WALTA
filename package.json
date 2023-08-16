@@ -46,7 +46,7 @@
     "node-extend": "^0.2.0",
     "node-ios-device": "git+https://github.com/appcelerator/node-ios-device.git",
     "node-mock-server": "^0.25.4",
-    "npm": "^6.14.6",
+    "npm": "^9.6.4",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "request-promise-native": "^1.0.8",
