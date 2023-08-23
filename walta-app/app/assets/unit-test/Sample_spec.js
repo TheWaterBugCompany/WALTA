@@ -706,6 +706,7 @@ describe("Sample model", function() {
     });
   });
   context('should destroy a sample correctly', function() {
+    let sample;
     this.beforeEach(function() {
       sample = Alloy.createModel("sample");
       sample.loadById(initialSampleId);

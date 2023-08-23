@@ -70,8 +70,6 @@ describe("Notes controller", function () {
     });
   });
 
-  // This is way too flakey, not sure why
-  // works in real life.... 
   context("main integration", function () {
     let mockKey = { getSpeedbugIndex: function () { } };
     let services = {
@@ -79,13 +77,13 @@ describe("Notes controller", function () {
         requestPermission: function () { return Promise.resolve({success:true}) },
         closeApp: function () { },
       },
-      View: View,
       Key: mockKey,
       Survey: {
         forceUpload: function () { },
         startSurvey: function () { }
       }
     }
+    services.View = new View(services);
     Alloy.Collections.instance("taxa");
     services.Navigation = new Navigation(services);
     function currentController() {
