@@ -36,10 +36,10 @@ describe("Main controller", function() {
           requestPermission: function(p) { return Promise.resolve({success:true})},
           closeApp: function() {},
       },
-      View: View,
       Key: key,
       Survey: Survey
   }
+  services.View = new View(services);
   services.Survey.forceUpload = function() {};
   beforeEach(function() {
     simple.mock(services.Survey.forceUpload).returnWith();
