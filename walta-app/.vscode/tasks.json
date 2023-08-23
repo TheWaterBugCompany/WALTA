@@ -3,6 +3,22 @@
 	"tasks": [
 		{
 			"type": "titanium-build",
+			"label": "walta-unit-test",
+			"titaniumBuild": {
+				"platform": "android",
+				"target": "device",
+				"deviceId": "710KPRW0304710",
+				"extraArguments": ["--unit-test"],
+				"debugPort": 9000,
+				"debug": true
+			},
+			"problemMatcher": [
+				"$ti-app-launch"
+			],
+			"isBackground": true
+		},
+		{
+			"type": "titanium-build",
 			"titaniumBuild": {
 				"platform": "ios",
 				"projectType": "app",

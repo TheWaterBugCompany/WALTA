@@ -5,10 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch on Android",
+            "name": "Launch Unit Test Debug on Android",
             "type": "titanium",
             "request": "launch",
-            "platform": "android"
+            "platform": "android",
+            "preLaunchTask": "walta-unit-test",
+            // Use JavaScript source maps (if they exist).
+            "sourceMaps": true,
+            // If JavaScript source maps are enabled, the generated code is expected in this directory.
+            "outDir": "${workspaceRoot}/walta-app/build/android/assets"
         },
         {
             "name": "Launch on iOS",
