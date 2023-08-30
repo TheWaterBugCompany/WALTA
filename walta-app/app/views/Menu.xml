@@ -16,8 +16,6 @@
 				</View>
 			</View>
 			<View id="smallOptions" layout="horizontal">
-				
-				
 				<View id="identify" class="smallButton" onClick="identifyClick">
 					<ImageView id="identifyIcon" class="smallButtonIcon"  />
 					<Label id="identifyLabel" class="smallMenuText" text="Identify" accessibilityLabel="Identify" />
