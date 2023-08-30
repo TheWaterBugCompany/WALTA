@@ -22,26 +22,40 @@ var Topics = require('ui/Topics');
 
 describe('AnchorBar controller', function() {
 	var acb, win, vw;
-
-	before( function() {
-		acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
+	function openAnchorBar(data) {
+		acb = Alloy.createController( "AnchorBar", data);
 		vw = acb.getView();
 		vw.bottom = 0;
 		vw.height = "10%";
 		win = wrapViewInWindow(vw);
-	});
-
- 	after( function(done) {
+	}
+	after( function(done) {
 		if ( win )
 			closeWindow( win, done );
 	});
 
-	it('should display an anchor bar', function(done) {
-		windowOpenTest( win, done );
-	});
+	describe('with default Tools', function() {
+		before( function(done) {
+			openAnchorBar({ title: "Anchor Bar"});
+			windowOpenTest( win, done );
+		});
 
-	it('should fire the HOME event when the home button is clicked', function(done) {
-		actionFiresTopicTest( acb.home, 'click', Topics.HOME, done );
+		it('should display an anchor bar', function() {
+			
+		});
+
+		it('should fire the HOME event when the home button is clicked', function(done) {
+			actionFiresTopicTest( acb.home, 'click', Topics.HOME, done );
+		});
+	})
+    describe('without default tools', function() {
+		before( function(done) {
+			openAnchorBar({ title: "Anchor Bar", noDefaultTools: true});
+			windowOpenTest( win, done );
+		})
+		it('should remove the default tools when noDefaultTools is true', function() {
+			expect(acb.leftTools.children.length).to.equal(0) 
+		});
 	});
 
 });

@@ -100,9 +100,12 @@ function setTitle( title ) {
 }
 
 setTitle( $.args.title );
-$.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME, undefined, undefined, "Home" );
-$.leftTools.add( $.home );
-$.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HELP ) );
+
+if ( !$.args.noDefaultTools ) {
+	$.home = createToolBarButton( '/images/icon-home-white.png', Topics.HOME, undefined, undefined, "Home" );
+	$.leftTools.add( $.home );
+	$.leftTools.add( createToolBarButton( '/images/icon-about-white.png', Topics.HELP ) );
+}
 
 exports.createToolBarButton = createToolBarButton;
 
