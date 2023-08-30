@@ -20,13 +20,10 @@ var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
 describe("About controller", function() {
 	var ctl;
-	beforeEach( function() {
+	beforeEach( async () => {
 		ctl = Alloy.createController("About", { keyUrl: Ti.Filesystem.resourcesDirectory + "taxonomy/walta/" });
-	});
-	afterEach( function(done) {
-		closeWindow( ctl.getView(), done );
-	});
-	it('should display the About view', async function() {
-		await controllerOpenTest( ctl );
+    await controllerOpenTest( ctl );
   });
+  afterEach( async () => await closeWindow( ctl.getView() ) );
+	it('should display the About view', () => {});
 });
