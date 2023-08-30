@@ -16,10 +16,7 @@
 				</View>
 			</View>
 			<View id="smallOptions" layout="horizontal">
-				<View  id="mayfly" class="smallButton" onClick="mayflyClick">
-						<ImageView id="mayflyIcon" class="smallButtonIcon" />
-						<Label id="mayflyLabel" class="smallMenuText" text="Mayfly Map"  accessibilityLabel="Mayfly Map"/>
-				</View>
+				
 				
 				<View id="identify" class="smallButton" onClick="identifyClick">
 					<ImageView id="identifyIcon" class="smallButtonIcon"  />
