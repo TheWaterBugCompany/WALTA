@@ -17,16 +17,18 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
-describe.only("Help controller", function() {
+var Topics = require("ui/Topics");
+var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("unit-test/util/TestUtils");
+describe("Help controller", function() {
 	var ctl;
-	beforeEach( function() {
+	beforeEach( async () => {
 		ctl = Alloy.createController("Help", { keyUrl: Ti.Filesystem.resourcesDirectory + "taxonomy/walta/" });
-	});
-	afterEach( function(done) {
-		closeWindow( ctl.getView(), done );
-	});
-	it('should display the Help view', async function() {
-		await controllerOpenTest( ctl );
+    await controllerOpenTest( ctl );
   });
+	afterEach( async () => await closeWindow( ctl.getView() ) );
+	it('should display the Help view', () => {});
+  it('should fire the BACK event when the close button is clicked',  
+    async () =>
+      await actionFiresTopicTest( ctl.closeButton, 'click', Topics.BACK ) 
+  );
 });

@@ -20,13 +20,10 @@ var { expect } = require("unit-test/lib/chai");
 var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
 describe.only("<Controller> controller", function() {
 	var ctl;
-	beforeEach( function() {
+	beforeEach( async () => {
 		ctl = Alloy.createController("<Controller>");
+    await controllerOpenTest( ctl );
 	});
-	afterEach( function(done) {
-		closeWindow( ctl.getView(), done );
-	});
-	it('should display the <Controller> view', async function() {
-		await controllerOpenTest( ctl );
-  });
+	afterEach( async () => await closeWindow( ctl.getView() ) );
+	it('should display the <Controller> view',() => {});
 });
