@@ -16,13 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 var HtmlView = require('ui/HtmlView');
+var Topics = require("ui/Topics");
 exports.baseController  = "TopLevelWindow";
-$.TopLevelWindow.title = "Help";
+$.TopLevelWindow.useUnSafeArea = true;
 $.name = "help";
-$.content = HtmlView.createHtmlView( $.args.keyUrl + 'help/help.html' ).view; 
+$.htmlView = HtmlView.createHtmlView( $.args.keyUrl + 'help/help.html' ).view;
+$.content.add($.htmlView); 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-    if ( Ti.Platform.osname === 'android') { $.content.release(); }
+    if ( Ti.Platform.osname === 'android') { $.htmlView.release(); }
     $.destroy();
     $.off();
     $.TopLevelWindow.removeEventListener('close', cleanUp );
   });
+
+function closeEvent(e) {
+    Topics.fireTopicEvent( Topics.BACK );
+    e.cancelBubble = true;
+}
