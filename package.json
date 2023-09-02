@@ -55,7 +55,7 @@
     "sinon": "^6.0.1",
     "tar": "^4.4.18",
     "ti-mocha": "^0.2.0",
-    "titanium": "^5.2.1",
+    "titanium": "^6.1.1",
     "uglify-js": "^3.4.9",
     "underscore": "^1.12.1",
     "utf8": "^3.0.0",
