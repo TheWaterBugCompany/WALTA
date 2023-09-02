@@ -60,7 +60,7 @@
     "underscore": "^1.12.1",
     "utf8": "^3.0.0",
     "webdriverio": "^8.16",
-    "xmldom": "^0.1.27",
+    "xmldom": "^0.6.0",
     "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
