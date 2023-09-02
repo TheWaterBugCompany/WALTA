@@ -6,6 +6,10 @@ This repository contains the source code for both the iOS and the Android versio
 
 TODO: Add brew file?
 1. brew install node@20
+2. brew install ios-deploy
+3. npm install
+4. npx appium driver install xcuitest
+5. npx appium driver install uiautomator2
 
 
 ## Seeing logs on device

@@ -46,22 +46,21 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
         }
      } else if ( platform === "ios" ) {
         _(caps).extend({
-            automationName: "XCUITest",
-            platformName: "iOS",
-            autoAcceptAlerts: false,
-            waitForQuiescence: false,
-            skipLogCapture: true,
-            platformVersion: "12.4",
-            deviceName: "The Code Sharman Test iPhone",
-            udid: "auto",
-            //xcodeOrgId: "6RRED3LUUV",
-            //xcodeSigningId: "Apple Developer",
-            useJSONSource: true,
-            realDeviceLogger: `./node_modules/deviceconsole/deviceconsole`,
-            showXcodeLog: true,
-            usePrebuiltWDA: false,
-            noReset: false,
-            processArguments: {
+            "appium:automationName": "XCUITest",
+            "appium:platformName": "iOS",
+            "appium:autoAcceptAlerts": false,
+            "appium:waitForQuiescence": false,
+            "appium:platformVersion": "12.4",
+            "appium:deviceName": "The Code Sharman Test iPhone",
+            "appium:udid": "auto",
+            "appium:xcodeOrgId": "6RRED3LUUV",
+            "appium:xcodeSigningId": "Apple Development",
+            "appium:useJSONSource": true,
+            //"appium:realDeviceLogger": `./node_modules/deviceconsole/deviceconsole`,
+            "appium:showXcodeLog": true,
+            "appium:usePrebuiltWDA": false,
+            "appium:noReset": false,
+            "appium:processArguments": {
                 "args": [
                     "-FIRDebugEnabled"
                 ]
@@ -71,27 +70,27 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
             caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');
         } else {
             _(caps).extend({
-                bundleId: "net.thewaterbug.waterbug"
+                "appium:bundleId": "net.thewaterbug.waterbug"
             });
         }
      } else if ( platform === "android") {
         _(caps).extend({
-            automationName: "uiautomator2",
-            platformName: "Android",
-            autoGrantPermissions: true,
-            deviceName: "device",
-            appActivity: ".WaterbugActivity",
+            "appium:automationName": "uiautomator2",
+            "appium:platformName": "Android",
+            "appium:autoGrantPermissions": true,
+            "appium: deviceName": "device",
+            "appium:appActivity": ".WaterbugActivity",
             //appWaitActivity: ".WaterbugActivity",
-            newCommandTimeout: 0
+            "appium:newCommandTimeout": 0
         });
         if ( !quick ) {
             caps.app = join(process.cwd(), './builds/test/Waterbug.apk');
         } else {
             _(caps).extend({
-                appPackage: "net.thewaterbug.waterbug",
-                skipDeviceInitialization: false,
-                skipServerInstallation: false,
-                ignoreUnimportantViews: true
+                "appium:appPackage": "net.thewaterbug.waterbug",
+                "appium:skipDeviceInitialization": false,
+                "appium:skipServerInstallation": false,
+                "appium:ignoreUnimportantViews": true
             });
         }
     } 

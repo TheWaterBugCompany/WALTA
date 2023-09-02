@@ -18,8 +18,8 @@ module.exports = function(grunt) {
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
     const PROFILE = process.env.PROFILE || "50397711-b746-48e7-b149-8b4362a37e3a";
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "ab203b33-3042-46e6-9897-b880003b9941";
-    const PROFILE_DEV = "ab203b33-3042-46e6-9897-b880003b9941";
-    const DEVICE_ID="a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
+    const PROFILE_DEV = process.env.PROFILE_DEV || "ab203b33-3042-46e6-9897-b880003b9941";
+    const DEVICE_ID=process.env.DEVCIDE_UDID || "a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
     
     const WATERBUG_APPID = {
       "android": 257222,
@@ -445,7 +445,6 @@ module.exports = function(grunt) {
       const done = this.async();
       getCapabilities(platform,true)
         .then( caps => {
-            caps.skipLogCapture = false;
             return startAppium(caps) 
               .catch( (err) => {
                 var attempts = parseInt(grunt.option('appium-retry-attempts'));
