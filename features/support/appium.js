@@ -47,7 +47,7 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
      } else if ( platform === "ios" ) {
         _(caps).extend({
             "appium:automationName": "XCUITest",
-            "appium:platformName": "iOS",
+            "platformName": "iOS",
             "appium:autoAcceptAlerts": false,
             "appium:waitForQuiescence": false,
             "appium:platformVersion": "12.4",
@@ -76,9 +76,8 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
      } else if ( platform === "android") {
         _(caps).extend({
             "appium:automationName": "uiautomator2",
-            "appium:platformName": "Android",
+            "platformName": "Android",
             "appium:autoGrantPermissions": true,
-            "appium: deviceName": "device",
             "appium:appActivity": ".WaterbugActivity",
             //appWaitActivity: ".WaterbugActivity",
             "appium:newCommandTimeout": 0
@@ -90,7 +89,6 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
                 "appium:appPackage": "net.thewaterbug.waterbug",
                 "appium:skipDeviceInitialization": false,
                 "appium:skipServerInstallation": false,
-                "appium:ignoreUnimportantViews": true
             });
         }
     } 
