@@ -1,11 +1,7 @@
-
 "#content": {
-    scrollType: "horizontal"
-}
-
-"#innerContent": {
     top: "10dp",
     left: "10dp",
+    right: "10dp",
     layout:"vertical"
 }
 "#partial": {
@@ -14,7 +10,7 @@
 "#notes": {
     top: "10dp",
     layout: "vertical",
-    height: "10%"
+    height: Ti.UI.FILL
 }
 "#notesTextField": {
     fullscreen: false,
@@ -23,6 +19,11 @@
     color: "#26849c",
     top: "10dp",
     borderWidth: "1dp",
+    left: "16dp",
+    right: "16dp",
+    bottom: "16dp",
+    height: Ti.UI.FILL,
+    width: Ti.UI.FILL,
     font: {
         fontFamily: "Tahoma",
         fontSize: "16dp"
