@@ -29,7 +29,7 @@ describe("Gallery controller", function() {
 	after( function(done) {
 		closeWindow( ctl.getView(), done );
 	});
-	it.only('should display the Gallery view', function(done) {
+	it('should display the Gallery view', function(done) {
 		controllerOpenTest( ctl, done );
     });
   it('should fire the BACK event when the close button is clicked',  
