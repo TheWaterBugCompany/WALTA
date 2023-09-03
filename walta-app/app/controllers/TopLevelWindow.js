@@ -22,7 +22,6 @@ var { disableControl, enableControl, setError, clearError } = require("ui/ViewUt
 function openWindow() {
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
-		$.content.top = 0;
 		$.content.width = Ti.UI.FILL;
 		
 		if ( Alloy.Globals.isSquare ) {
