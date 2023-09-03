@@ -1,0 +1,7 @@
+"#closeButton": {
+  top: "12dp",
+  height: Ti.UI.SIZE,
+  width: "30dp",
+  right: "12dp",
+  zIndex: 999
+}

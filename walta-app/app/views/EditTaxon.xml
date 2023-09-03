@@ -3,9 +3,7 @@
 		<View id="window" class="window" layout="vertical">
 			<View id="header" class="shrinkWrap">
 				<Label id="taxonName" class="headingText" accessibilityLabel="Species Name" text="Taxonomic Identification"/>
-				<View id="closeButton" onClick="closeEvent">
-					<ImageView class="close_button_image" accessibilityLabel="Close"></ImageView>
-				</View>
+				<Require id="closeButton" src="CloseButton"/>
 			</View>
 			<View id="howMany" layout="vertical">
 				<Label id="howManyLabel" class="labelText" text="How many did you see?"/>

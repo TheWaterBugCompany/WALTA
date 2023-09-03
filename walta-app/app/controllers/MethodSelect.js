@@ -23,9 +23,7 @@ if ( $.args.unknownBug ) {
   $.unknownbug.on("click", () => $.trigger("unknownbug") );
 }
 
-function closeEvent() {
-  $.trigger("close");
-}
+$.closeButton.on("close", () => $.trigger("close") );
 
 function cleanUp() {
   $.destroy();

@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 require("unit-test/lib/ti-mocha");
-var { expect } = require("unit-test/lib/chai");
 var Topics = require("ui/Topics");
 var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("unit-test/util/TestUtils");
 describe("Help controller", function() {
@@ -28,7 +27,6 @@ describe("Help controller", function() {
 	afterEach( async () => await closeWindow( ctl.getView() ) );
 	it('should display the Help view', () => {});
   it('should fire the BACK event when the close button is clicked',  
-    async () =>
-      await actionFiresTopicTest( ctl.closeButton, 'click', Topics.BACK ) 
+    async () => actionFiresTopicTest( ctl.closeButton.closeButton, 'click', Topics.BACK )
   );
 });
