@@ -1,8 +1,4 @@
-
 "#content": {
-    scrollType: "horizontal"
-}
-"wrapper": {
     width: Ti.UI.FILL,
     height: Ti.UI.FILL
 }
