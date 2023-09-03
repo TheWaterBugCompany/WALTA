@@ -3,7 +3,7 @@ var SampleSync = require('logic/SampleSync');
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
-
+$.TopLevelWindow.useUnSafeArea = true;
 Topics.subscribe( Topics.UPLOAD_PROGRESS, updateSampleList );
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     if ( $.sampleMenu ) {
