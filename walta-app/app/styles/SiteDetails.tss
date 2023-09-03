@@ -1,10 +1,10 @@
 
-"#container": {
+"#content": {
     horizontalWrap: false,
-    width: Ti.UI.FILL,
-    height: Ti.UI.FILL,
     left: "1%",
-    top: "5%"
+    top: "5%",
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL
 }
 
 "#right" : {
