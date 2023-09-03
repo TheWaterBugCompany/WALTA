@@ -109,12 +109,25 @@ function applyKeyboardTweaks( ctlr, blurFields ) {
         fixScrollContentsSize(ctlr);
     }
     ctlr.TopLevelWindow.addEventListener("touchstart",hideKeyboardCallback );
-    ctlr.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSizeCallback );
+    
     ctlr.TopLevelWindow.addEventListener("close", function closeEvent() {
         ctlr.TopLevelWindow.removeEventListener("touchstart", hideKeyboardCallback );
-        ctlr.TopLevelWindow.removeEventListener("postlayout", fixScrollContentsSizeCallback );
         ctlr.TopLevelWindow.removeEventListener("close", closeEvent );
+        if (OS_IOS) {
+            ctlr.TopLevelWindow.removeEventListener("postlayout", fixScrollContentsSizeCallback );
+        }
+
     });
+
+    // On iOS in order to get the screen to scroll out of the way of the keyboard
+    // we need to wrap the content inside of a ScrollView - we don't do this on android
+    // because it isn't needed and creates layout issues.
+    if (OS_IOS) {
+        let scrollView = Ti.UI.createScrollView({top:0})
+        scrollView.add( ctlr.content )
+        ctlr.content = scrollView
+        ctlr.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSizeCallback );
+    }
 
 }
 

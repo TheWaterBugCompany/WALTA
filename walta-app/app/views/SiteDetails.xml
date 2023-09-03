@@ -1,36 +1,34 @@
 <Alloy>
-	<ScrollView id="content">
-		<View id="container" layout="horizontal">
-			<View id="left" layout="vertical">
-				<Label id="surveyLevelLabel" class="labelText" text="Survey level:"/>
-				<View id="surveyLevelError" class="errorWrap shrinkWrap">
-					<Widget id="surveyLevelSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol"/>
-				</View>
-				<Label id="waterbodyTypeLabel" class="labelText" text="Waterbody type:"/>
-				<View id="waterbodyTypeError" class="errorWrap shrinkWrap">
-					<Widget id="waterbodyTypeSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol"/>
-				</View>
-				<View id="waterbodyName" layout="vertical" class="shrinkWrap">
-					<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
-					<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody Name" onChange="checkValidity" />
-				</View>
-				<View id="nearByFeature" layout="vertical" class="shrinkWrap">
-					<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
-					<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near By Feature" onChange="checkValidity"/>
-				</View>
+	<View id="content" layout="horizontal">
+		<View id="left" layout="vertical">
+			<Label id="surveyLevelLabel" class="labelText" text="Survey level:"/>
+			<View id="surveyLevelError" class="errorWrap shrinkWrap">
+				<Widget id="surveyLevelSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol"/>
 			</View>
-			<View id="right" layout="vertical">
-				<View id="photoSelectWrapper"> 
-					<Require id="photoSelect" type="view" src="PhotoSelect"/>
-				</View>
-				<View id="bottomRight" layout="absolute">
-					<View id="locationIndicator" class="shrinkWrap" layout="horizontal" onClick="openLocationEntry">
-						<ImageView id="locationIndicatorIcon" />
-						<Label id="locationStatus" class="labelText" accessibilityLabel="Location" text="Location not obtained"/>
-					</View>
-					
-				</View>
+			<Label id="waterbodyTypeLabel" class="labelText" text="Waterbody type:"/>
+			<View id="waterbodyTypeError" class="errorWrap shrinkWrap">
+				<Widget id="waterbodyTypeSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol"/>
+			</View>
+			<View id="waterbodyName" layout="vertical" class="shrinkWrap">
+				<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
+				<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody Name" onChange="checkValidity" />
+			</View>
+			<View id="nearByFeature" layout="vertical" class="shrinkWrap">
+				<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
+				<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near By Feature" onChange="checkValidity"/>
 			</View>
 		</View>
-	</ScrollView>
+		<View id="right" layout="vertical">
+			<View id="photoSelectWrapper"> 
+				<Require id="photoSelect" type="view" src="PhotoSelect"/>
+			</View>
+			<View id="bottomRight" layout="absolute">
+				<View id="locationIndicator" class="shrinkWrap" layout="horizontal" onClick="openLocationEntry">
+					<ImageView id="locationIndicatorIcon" />
+					<Label id="locationStatus" class="labelText" accessibilityLabel="Location" text="Location not obtained"/>
+				</View>
+				
+			</View>
+		</View>
+	</View>
 </Alloy>
