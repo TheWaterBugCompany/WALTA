@@ -34,24 +34,11 @@
   height: "58%"
 }
 
-"#closeButton": {
-  top: 0,
-  height: "8dp",
-  width: "8%",
-  right: "4dp"
-}
-
 "#window": {
   width: "50%",
   height: "98%"
 }
 
-"#closeButton": {
-  top: 0,
-  height: Ti.UI.SIZE,
-  width: "10%",
-  right: 0
-}
 "#window[if=Alloy.Globals.isSquare]": { 
   width: "70%",
   height: "98%"

@@ -204,7 +204,4 @@ if ( showPager && photos.length > 1 ) {
     updateCurrentPage( dots, lastPage );
 }
 
-function closeEvent(e) {
-    Topics.fireTopicEvent( Topics.BACK );
-    e.cancelBubble = true;
-}
+$.closeButton.on("close", () => Topics.fireTopicEvent( Topics.BACK ) );

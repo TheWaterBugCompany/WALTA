@@ -1,8 +1,6 @@
 <Alloy>
 	<View id="content">
-		<View id="closeButton" onClick="closeEvent" accessibilityLabel="Close" >
-			<ImageView class="close_button_image"></ImageView>
-		</View>
+		<Require id="closeButton" src="CloseButton"/>
 		<View id="playButton" onClick="playVideo" accessibilityLabel="Play" >
 			<ImageView class="play_button_image"></ImageView>
 		</View>

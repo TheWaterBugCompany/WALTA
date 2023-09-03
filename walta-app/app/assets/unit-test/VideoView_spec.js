@@ -49,7 +49,7 @@ describe('VideoView', function() {
         }
         Topics.subscribe(Topics.BACK, success);
         controllerOpenTest( ctl, function() {
-            ctl.closeButton.fireEvent("click");
+            ctl.closeButton.closeButton.fireEvent("click");
         } );
     });
 

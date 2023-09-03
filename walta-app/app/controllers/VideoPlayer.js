@@ -38,10 +38,7 @@ $.TopLevelWindow.addEventListener('open', function open() {
     playVideo();
 });
 
-function closeEvent(e) {
-    Topics.fireTopicEvent( Topics.BACK );
-    e.cancelBubble = true;
-}
+$.closeButton.on("close", () => Topics.fireTopicEvent( Topics.BACK ) );
 
 function playVideo() {
     $.videoPlayer.currentPlaybackTIme = 0;
