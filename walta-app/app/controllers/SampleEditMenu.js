@@ -23,9 +23,7 @@ $.edit.on("click", () => {
     Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right",readonly:false});
 }  );
 
-function closeEvent() {
-  $.trigger("close");
-}
+$.closeButton.on("close", () => $.trigger("close") );
 
 function cleanUp() {
   $.destroy();

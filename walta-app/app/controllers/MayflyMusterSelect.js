@@ -10,9 +10,7 @@ $.explore.on("click", function() {
   $.trigger("mayfly_emergence");
 });
 
-function closeEvent() {
-  $.trigger("close");
-}
+$.closeButton.on("close", () => $.trigger("close") );
 
 function cleanUp() {
   $.destroy();
