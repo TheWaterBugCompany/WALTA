@@ -5,7 +5,7 @@ $.name = "notes";
 var Topics = require("ui/Topics");
 var sample = Alloy.Models.sample;
 var readOnlyMode = $.args.readonly === true;
-$.TopLevelWindow.useUnSafeArea = true;
+
 if ( readOnlyMode ) { 
     $.partialToggle.enabled = false;
     $.notesTextField.editable = false; 
