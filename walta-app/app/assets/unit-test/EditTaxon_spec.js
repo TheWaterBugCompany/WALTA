@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, setManualTests, wrapViewInWindow, windowOpenTest, checkTestResult, waitForTick } = require("unit-test/util/TestUtils");
+var { closeWindow, actionFiresEventTest, wrapViewInWindow, windowOpenTest, checkTestResult, waitForTick } = require("unit-test/util/TestUtils");
 
 var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { createMockTaxon } = require('unit-test/mocks/MockTaxon');
@@ -60,8 +60,14 @@ describe("EditTaxon controller", function() {
                 function() {
                     expect( ctl.taxonName.text ).to.equal( "Aeshnidae Telephleb" );
                     expect( ctl.abundanceLabel.text ).to.equal("3-5");
-                } ); 
+                } );
         } );
+    });
+
+    it('should trigger close event when close button clicked', async () => {
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
+        await windowOpenTest( win ); 
+        await actionFiresEventTest( ctl.closeButton.closeButton, 'click', ctl, 'close' )
     });
 
     it('save should be disabled if the photo is blank', function(done) {
