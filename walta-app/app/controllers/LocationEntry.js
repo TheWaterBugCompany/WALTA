@@ -43,6 +43,8 @@ function cancelClick() {
     $.trigger("close");
 }
 
+$.closeButton.on("close", () => $.trigger("close") );
+
 $.mapView.onLongPress( function(data) {
     if ( ! $.disabled ) {
         updateLocation( data.lat, data.lng );
