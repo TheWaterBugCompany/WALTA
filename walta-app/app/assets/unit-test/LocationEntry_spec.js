@@ -17,7 +17,7 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton, checkTestResult } = require("unit-test/util/TestUtils");
+var { closeWindow, windowOpenTest, wrapViewInWindow, clickButton, checkTestResult, actionFiresEventTest } = require("unit-test/util/TestUtils");
 describe("LocationEntry controller", function() {
   //this.timeout(10000);
 	var win, scr, view;
@@ -131,5 +131,11 @@ describe("LocationEntry controller", function() {
       setTimeout( done, 100 ); // 100 ms is enough to catch event if is going to happen
     } );
   });
+
+  it('should trigger close event when close button clicked', async () => {
+    createMap();
+    await windowOpenTest( win ); 
+    await actionFiresEventTest( scr.closeButton.closeButton, 'click', scr, 'close' )
+});
 
 });
