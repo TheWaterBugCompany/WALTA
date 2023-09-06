@@ -8,8 +8,6 @@ var GeoLocationService = require('logic/GeoLocationService');
 var sample = Alloy.Models.sample;
 var readOnlyMode = $.args.readonly === true;
 
-$.TopLevelWindow.useUnSafeArea = true
-
 sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
 
