@@ -8,9 +8,8 @@ describe("CloseButton controller", function() {
 		win = wrapViewInWindow( ctl.getView() );
         await windowOpenTest( win );
 	});
-	afterEach( async () => await closeWindow( ctl.getView() ) );
-	/*it('should fire the close event when the close button is clicked',  
-        // FiXME: Why does this test always passed ??
+	afterEach( async () => await closeWindow( win ) );
+	it('should fire the close event when the close button is clicked',  
         async () => actionFiresEventTest( ctl.closeButton, 'click', ctl, 'close' )
-    );*/
+    );
 });
