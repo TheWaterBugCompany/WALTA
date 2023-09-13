@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+const Logger = require('util/Logger');
 var { loadPhoto, savePhoto } = require('util/PhotoUtils');
 function createHttpClient(method, url, contentType, acceptType = 'application/json', accessToken, sendDataFunction ) {
     return new Promise( (resolve, reject) => {
@@ -127,7 +128,7 @@ function retrievePhotoFromMeta( serverUrl, photoUrl, accessToken, photoPath ) {
 
 
 function createCerdiApi( serverUrl, client_secret  ) {
-        Ti.API.info(`Using CERDI API server ${serverUrl}` );
+        Logger.log(`Using CERDI API server ${serverUrl}` );
         var cerdiApi = {
             retrieveUserToken() {
                 return Ti.App.Properties.getObject('userAccessTokenLive');
@@ -150,10 +151,15 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 return Promise.resolve(Ti.App.Properties.getObject('appAccessTokenLive'))
                     .then( (cachedAppAccessToken) => {
                         if ( cachedAppAccessToken ) {
+                            Logger.log(`Got existing access token retrieved_at = ${cachedAppAccessToken.retrieved_at} expires_in = ${cachedAppAccessToken.expires_in}`);
                             let tokenAge = Date.now() - cachedAppAccessToken.retrieved_at;
                             if ( tokenAge < cachedAppAccessToken.expires_in*1000 )
                                 return cachedAppAccessToken;
                         }
+                            Logger.log("Expired token"); 
+                        } 
+                        
+                        Logger.log("Requesting a new token");
                         return makeJsonPostRequest( this.serverUrl + '/token/create/server',
                             {
                                 "client_secret": this.client_secret,

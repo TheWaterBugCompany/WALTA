@@ -1,5 +1,5 @@
-var Crashlytics = require('util/Crashlytics');
-var info = Crashlytics.log;
+var Logger = require('util/Logger');
+var info = Logger.log;
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
@@ -24,7 +24,7 @@ var cropPhoto = $.args.cropPhoto;
 
 function setReadOnlyMode(p_readOnlyMode) {
     readOnlyMode = p_readOnlyMode;
-    Ti.API.info(`readOnlyMode = ${readOnlyMode}`);
+    Logger.log(`readOnlyMode = ${readOnlyMode}`);
     if ( readOnlyMode ) {
         $.camera.visible = false;
     } else {

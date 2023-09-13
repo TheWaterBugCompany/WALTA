@@ -2,7 +2,8 @@
 "#content" : {
   disableBounce: true,
   canCancelEvents: true,
-  backgroundColor: "#aaa"
+  backgroundColor: "#aaa",
+  top: 0
 }
 
 "tray": {

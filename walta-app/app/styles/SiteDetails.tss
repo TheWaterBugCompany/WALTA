@@ -1,20 +1,21 @@
 
-"#container": {
+"#content": {
     horizontalWrap: false,
     width: Ti.UI.FILL,
-    height: Ti.UI.FILL,
-    left: "1%",
-    top: "5%"
+    height: Ti.UI.FILL
 }
 
 "#right" : {
     left: "2%",
     width: "40%",
-    right: "2%"
+    right: "2%",
+    top: "5%"
 }
 
 "#left" : {
-    width: "55%"
+    left: "2%",
+    width: "55%",
+    top: "5%"
 }
 
 "#right[if=Alloy.Globals.isHighRes]" : {

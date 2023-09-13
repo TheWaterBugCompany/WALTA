@@ -59,7 +59,6 @@ function waitForBackboneEvent( obj, evtName, fireEvent, done ) {
 		waitForBackboneEventCallback(obj, evtName, fireEvent, done); 
 	else
 		return new Promise( (resolve) => waitForBackboneEventCallback( obj, evtName, fireEvent, resolve) );
-	
 }
 
 function waitForBackboneEventCallback( obj, evtName, fireEvent, done ) {
@@ -145,7 +144,7 @@ function waitForTick( timeout ) {
 }
 
 function actionFiresEventTest( actionObj, actionEvtName,  evtObj, evtName, done ) {
-	waitForBackboneEvent( evtObj, evtName, function() {
+	return waitForBackboneEvent( evtObj, evtName, function() {
 		actionObj.fireEvent( actionEvtName );
 	}, done);
 }

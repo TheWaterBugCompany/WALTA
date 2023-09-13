@@ -1,5 +1,5 @@
-var Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+var Logger = require('util/Logger');
+var log = Logger.log;
 var Sample = require("logic/Sample");
 exports.baseController  = "TopLevelWindow";
 var Topics = require("ui/Topics");
@@ -10,16 +10,9 @@ var readOnlyMode = $.args.readonly === true;
 
 sample.on("change:lng change:lat", updateLocation );
 sample.on("change:dateCompleted", loadAttributes );
-function fixLayout() {
-    //Ti.API.info(`updating rect with ${$.content.rect.width}`);
-    let actualWidth = $.content.rect.width - $.content.left - $.content.right;
-    //Ti.API.info(`updating actualwidth  ${actualWidth}`);
-    $.container.width = actualWidth;
-}
-$.TopLevelWindow.addEventListener('postlayout', fixLayout);
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.TopLevelWindow.removeEventListener('close', cleanUp );
-    $.TopLevelWindow.removeEventListener('postlayout', fixLayout );
     $.photoSelect.cleanUp();
     $.destroy();
     $.off();
