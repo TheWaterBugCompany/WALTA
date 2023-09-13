@@ -1,5 +1,5 @@
-var Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+var Logger = require('util/Logger');
+var log = Logger.log;
 var moment = require("lib/moment");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 exports.definition = {

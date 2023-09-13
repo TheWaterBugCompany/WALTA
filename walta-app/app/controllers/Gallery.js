@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+var Logger = require('util/Logger');
+var log = Logger.log;
 /*
  * Controller: Gallery
  *
@@ -58,7 +58,7 @@ function buildPhotoView(urlObj) {
     }*/
     var imageUrl;
     if ( typeof(urlObj) == "object" ) {
-        Ti.API.info(`taxon = ${urlObj.taxon.taxonId}`)
+        Logger.log(`taxon = ${urlObj.taxon.taxonId}`)
         imageUrl=urlObj.url;
 
     } else {
@@ -119,7 +119,7 @@ function updatePhotoView() {
     var page = $.scrollView.currentPage;
     var total = $.scrollView.views.length;
     
-    Ti.API.info(`scroll page = ${page} total = ${total}`)
+    Logger.log(`scroll page = ${page} total = ${total}`)
     if ( page+1 == total && (startPhotoIndex+$.scrollView.views.length) < (allPhotos.length - 5)) {
         startPhotoIndex=startPhotoIndex+5;
         var newViews = allPhotos.slice(startPhotoIndex+$.scrollView.views.length, startPhotoIndex+$.scrollView.views.length+5)

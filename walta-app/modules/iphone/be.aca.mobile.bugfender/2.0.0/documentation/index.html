@@ -1,0 +1,129 @@
+<h1>Documentation</h1>
+
+<p>In this documentation, you can find the <strong>complete API</strong> of the module and the instructions on how to use the <strong>default user feedback screen</strong>.</p>
+
+<p>For more samples, please check the native SDK samples:
+<em> iOS: https://github.com/bugfender/BugfenderSDK-iOS
+</em> Android: https://github.com/bugfender/BugfenderSDK-android-sample</p>
+
+<h2>API</h2>
+
+<h3>Methods</h3>
+
+<ul><li><code>d(args);</code><ul><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>disableReflection(disable);</code> <strong>(Android only)</strong><ul><li><code>disable</code> (Boolean)</li></ul></li><li><code>e(args);</code><ul><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>enableCrashReporting();</code></li><li><code>enableLogcatLogging();</code> <strong>(Android only)</strong></li><li><code>enableUIEventLogging();</code></li><li><code>f(args);</code><ul><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>forceSendOnce();</code></li><li><code>getDeviceUrl();</code> <strong>(Android only)</strong> - See <em>properties</em> for iOS/Android property</li><li><code>getSessionUrl();</code> <strong>(Android only)</strong> - See <em>properties</em> for iOS/Android property</li><li><code>getUserFeedbackActivityIntent(args);</code> -&gt; <code>Ti.Android.Intent</code> <strong>(Android only)</strong> <em>iOS alternative: showUserFeedbackViewController(args);</em><ul><li><code>title</code> (String)</li><li><code>hint</code> (String)</li><li><code>subjectHint</code> (String)</li><li><code>messageHint</code> (String)</li><li><code>sendButtonText</code> (String)</li><li><code>customActionBarColors</code> (Boolean)</li><li><code>customScreenColors</code> (Boolean)</li><li><code>customInputColors</code> (Boolean)</li></ul></li><li><code>i(args);</code><ul><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>init(args);</code><ul><li><code>applicationToken</code> (String) <strong>(Required)</strong>,</li><li><code>debug</code> (Boolean) <strong>(Android only)</strong></li></ul></li><li><code>logDefault(args);</code><ul><li><code>lineNumber</code> (Integer),</li><li><code>method</code> (String)</li><li><code>file</code> (String)</li><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>logWarning(args);</code><ul><li><code>lineNumber</code> (Integer),</li><li><code>method</code> (String)</li><li><code>file</code> (String)</li><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>logError(args);</code><ul><li><code>lineNumber</code> (Integer),</li><li><code>method</code> (String)</li><li><code>file</code> (String)</li><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>removeDeviceKey(key);</code><ul><li><code>key</code> (String)</li></ul></li><li><code>sendCrash();</code> -&gt; <code>String</code><ul><li><code>title</code> (String)</li><li><code>text</code> (String)</li></ul></li><li><code>sendIssue();</code> -&gt; <code>String</code><ul><li><code>title</code> (String)</li><li><code>text</code> (String)</li></ul></li><li><code>sendUserFeedback(args);</code> -&gt; <code>String</code> <ul><li><code>title</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>setApiUrl(url);</code> <ul><li><code>url</code> (String)</li></ul></li><li><code>setBaseUrl(url);</code> <ul><li><code>url</code> (String)</li></ul></li><li><code>setDeviceBoolean(args);</code><ul><li><code>key</code> (String)</li><li><code>value</code> (Boolean)</li></ul></li><li><code>setDeviceDouble(args);</code><ul><li><code>key</code> (String)</li><li><code>value</code> (Double)</li></ul></li><li><code>setDeviceInteger(args);</code><ul><li><code>key</code> (String)</li><li><code>value</code> (Integer)</li></ul></li><li><code>setDeviceString(args});</code><ul><li><code>key</code> (String)</li><li><code>value</code> (String)</li></ul></li><li><code>setForceEnabled(forceEnabled);</code><ul><li><code>forceEnabled</code> (Boolean)</li></ul></li><li><code>setMaximumLocalStorageSize(maximumLocalStorageSize);</code><ul><li><code>maximumLocalStorageSize</code> (Integer)</li></ul></li><li><code>setPrintToConsole(printToConsole);</code> <strong>(iOS only)</strong><ul><li><code>printToConsole</code> (Boolean)</li></ul></li><li><code>showUserFeedbackViewController(args);</code> <strong>(iOS only)</strong> <em>Android alternative: getUserFeedbackActivityIntent(args);</em><ul><li><code>title</code></li><li><code>hint</code></li><li><code>subjectHint</code></li><li><code>messageHint</code></li><li><code>sendButtonText</code></li><li><code>cancelButtonText</code></li><li><code>feedbackSentCallback</code> (Function)</li><li><code>styling</code> (Object)<ul><li><code>mainStyling</code> (Object)<ul><li><code>mainBackgroundColor</code> (String)</li><li><code>secondaryBackgroundColor</code> (String)</li></ul></li><li><code>hintStyling</code> (Object)<ul><li><code>hintFont</code> (String)</li><li><code>hintFontSize</code> (Integer)</li><li><code>hintFontColor</code> (String)</li></ul></li><li><code>subjectStyling</code> (Object)<ul><li><code>subjectFont</code> (String)</li><li><code>subjectFontSize</code> (Integer)</li><li><code>subjectFontColor</code> (String)</li><li><code>subjectPlaceholderFontColor</code> (String)</li></ul></li><li><code>messageStyling</code> (Object)<ul><li><code>messageFont</code> (String)</li><li><code>messageFontSize</code> (Integer)</li><li><code>messageFontColor</code> (String)</li><li><code>messagePlaceholderFontColor</code> (String)</li></ul></li></ul></li></ul></li><li><code>t(args);</code><ul><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li><li><code>w(args);</code><ul><li><code>tag</code> (String)</li><li><code>message</code> (String)</li></ul></li></ul>
+
+<h3>Properties (read-only)</h3>
+
+<ul><li><code>appKey</code> (String) <strong>(iOS only)</strong></li><li><code>deviceUrl</code> (String)</li><li><code>sessionUrl</code> (String)</li><li><code>forceEnabled</code> (Boolean) <strong>(iOS only)</strong></li><li><code>maximumLocalStorageSize</code> (Integer) <strong>(iOS only)</strong></li><li><code>printToConsole</code> (Boolean) <strong>(iOS only)</strong></li></ul>
+
+<h2>Using default feedback screen</h2>
+
+<h3>Android</h3>
+
+<p>Use following code snippet to create a UserFeedbackActivityIntent, open the activity and fetch the result.</p>
+
+<p>If you want to override the action bar-, screen- or input colors, you need to set the corresponding flag on <code>true</code>. </p>
+
+<p><strong>You need to define following color resources in the <code>platform/android/res/values/styles.xml</code> file.</strong> <em>Continue reading after the snippet.</em></p>
+
+<p><code></code>`javascript
+var intent = Bugfender.getUserFeedbackActivityIntent({
+     title: &quot;Title&quot;,
+     hint: &quot;Hint&quot;,
+     subjectHint: &quot;Subject&quot;,
+     messageHint: &quot;Message&quot;,
+     sendButtonText: &quot;Send&quot;,
+     customActionBarColors: false,
+     customScreenColors: false,
+     customInputColors: false
+ });</p>
+
+<p>Ti.Android.currentActivity.startActivityForResult(intent, function (e) {
+    if (<em>.isEqual(e.resultCode, Ti.Android.RESULT</em>OK)) {
+        console.log(&quot;Feedback sent&quot;);
+    } else {
+        console.log(&quot;Feedback cancelled&quot;);
+    }
+});
+<code></code>`</p>
+
+<p>If you&#39;ve set a custom colors flag to <code>true</code>, you need to define a color for <em>all</em> the keys. When you don&#39;t set <em>all</em> the colors, none of the colors will be applied and will result in a <code>TiRHelper$ResourceNotFoundException</code>.</p>
+
+<p>For example: if you only want to set the <code>feedbackAppBarBackgroundColor</code>, you also need to set the other three properties (<code>feedbackAppBarTitleColor</code>, <code>feedbackAppBarCloseButtonColor</code> and <code>feedbackAppBarActionButtonColor</code>) as well.</p>
+
+<h3><code>customActionBarColors</code></h3>
+
+<p><code>xml
+&lt;color name=&quot;feedbackAppBarBackgroundColor&quot;&gt;#2A5246&lt;/color&gt;
+&lt;color name=&quot;feedbackAppBarTitleColor&quot;&gt;#FFFFFF&lt;/color&gt;
+&lt;color name=&quot;feedbackAppBarCloseButtonColor&quot;&gt;#FFFFFF&lt;/color&gt;
+&lt;color name=&quot;feedbackAppBarActionButtonColor&quot;&gt;#FFFFFF&lt;/color&gt;
+</code></p>
+
+<h3><code>customScreenColors</code></h3>
+
+<p><code>xml
+&lt;color name=&quot;feedbackScreenBackgroundColor&quot;&gt;#2A5246&lt;/color&gt;
+&lt;color name=&quot;feedbackScreenTextColor&quot;&gt;#FFFFFF&lt;/color&gt;
+</code></p>
+
+<h3><code>customInputColors</code></h3>
+
+<p><code>xml      
+&lt;color name=&quot;feedbackInputBackgroundColor&quot;&gt;#BFCBC7&lt;/color&gt;
+&lt;color name=&quot;feedbackInputTextColor&quot;&gt;#000000&lt;/color&gt;
+&lt;color name=&quot;feedbackInputHintColor&quot;&gt;#FFFFFF&lt;/color&gt;
+</code></p>
+
+<h3>iOS</h3>
+
+<p>Use following code snippet to open the UserFeedbackViewController:</p>
+
+<p><code>javascript
+Bugfender.showUserFeedbackViewController({
+    title: &quot;Title&quot;,
+    hint: &quot;Hint&quot;,
+    subjectHint: &quot;Subject&quot;,
+    messageHint: &quot;Message&quot;,
+    sendButtonText: &quot;Send&quot;,
+    cancelButtonText: &quot;Cancel&quot;,
+    feedbackSentCallback: function(e) {
+        if (e.feedbackSent) {
+            console.log(&quot;Feedback sent&quot;);
+        } else {
+            console.log(&quot;Feedback not sent&quot;);
+        }
+    },
+    styling: {
+        mainStyling: {
+            mainBackgroundColor: &quot;#2A5246&quot;,
+            secondaryBackgroundColor: &quot;#BFCBC7&quot;
+        },
+        hintStyling: {
+            hintFont: &quot;Chalkduster&quot;,
+            hintFontSize: 30,
+            hintFontColor: &quot;#FFFFFF&quot;
+        },
+        subjectStyling: {
+            subjectFont: &quot;Copperplate&quot;,
+            subjectFontSize: 15,
+            subjectFontColor: &quot;#000000&quot;,
+            subjectPlaceholderFontColor: &quot;#FFFFFF&quot;
+        },
+        messageStyling: {
+            messageFont: &quot;Courier New&quot;,
+            messageFontSize: 15,
+            messageFontColor: &quot;#000000&quot;,
+            messagePlaceholderFontColor: &quot;#FFFFFF&quot;
+        }
+    }
+});
+</code></p>
+
+<p>The <code>styling</code> property and it&#39;s children properties are optional. If you want to set a <code>font</code> or <code>fontSize</code>, you always have to define them both.</p>
+
+<p>For example: if you only want to set the <code>messageFont</code>, you also need to set <code>messageFontSize</code> (and vice versa) as well. Otherwise the property won&#39;t be applied.</p>
+
+<h3>Crossplatform sample</h3>
+
+<p>Take a look at the <a href="example/example.js">sample</a> for a crossplatform sample.</p>

@@ -1,4 +1,5 @@
 var Topics = require("ui/Topics");
+const Logger = require('util/Logger');
 
 var lastGpsPointEvent;
 
@@ -32,7 +33,7 @@ function init() {
 }
 
 function cleanup() {
-    Ti.API.info("Stopping geolocation service...");
+    Logger.log("Stopping geolocation service...");
     activityDestroyed();
     if (Titanium.Platform.name == 'android')
     {
@@ -44,7 +45,7 @@ function cleanup() {
 
 function gotLocation(e) {
     if ( e.success && e.coords ) {
-        Ti.API.info(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`);
+        Logger.log(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`);
         lastGpsPointEvent = e;
         Topics.fireTopicEvent(Topics.GPSLOCK, e.coords);
     } else {
@@ -53,7 +54,7 @@ function gotLocation(e) {
 }
 
 function startListening() {
-    Ti.API.info("start listening for GPS events")
+    Logger.log("start listening for GPS events")
     Ti.Geolocation.addEventListener('location', gotLocation );
     Alloy.Globals.GeoLocationState = "listening";
 }
@@ -65,19 +66,19 @@ function stopListening( state = "stopped" ) {
 
 function start() {
     if ( Alloy.Globals.GeoLocationState === "stopped" ) {
-        Ti.API.info("Starting geolocation service...");
+        Logger.log("Starting geolocation service...");
         Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_HIGH;
         Ti.Geolocation.distanceFilter = 10;
         if (Ti.Geolocation.hasLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE)) {
-            Ti.API.info("Got permissions");
+            Logger.log("Got permissions");
             startListening();
         } else {
             Ti.Geolocation.requestLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE, (e) => {
                 if ( e.success ) {
-                    Ti.API.info("Got permissions");
+                    Logger.log("Got permissions");
                     startListening();
                 } else {
-                    Ti.API.info("Unable to get geolcation permissions");
+                    Logger.log("Unable to get geolcation permissions");
                 }
             });
         };
@@ -86,7 +87,7 @@ function start() {
 
 function stop() {
     if ( Alloy.Globals.GeoLocationState !== "stopped" ) {
-        Ti.API.info("Stopping geolocation service...");
+        Logger.log("Stopping geolocation service...");
         stopListening();
     }
 }

@@ -1,9 +1,9 @@
-var Crashlytics = require('util/Crashlytics');
+var Logger = require('util/Logger');
 var moment = require("lib/moment");
 var Topics = require('ui/Topics');
 var { errorHandler, formatError } = require("util/ErrorUtils");
 var { delayedPromise } = require("util/PromiseUtils");
-var log = Crashlytics.log;
+var log = Logger.log;
 var debug = m => Ti.API.info(m);
 function createSampleDownloader(delay) {
     return {
