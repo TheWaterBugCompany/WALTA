@@ -429,7 +429,6 @@ describe('CerdiApi', function() {
             serverSampleId = res.id;
             let res2 = await cerdi.submitUnknownCreature(serverSampleId,6,creaturePhotoPath);
             let res3 = await cerdi.retrieveUnknownCreatures(serverSampleId);
-            Ti.API.info(`res3= ${JSON.stringify(res3)}`)
             expect(res3 ).to.have.lengthOf(1);
             expect(res3[0].photos).to.have.lengthOf(1);
             expect(res3[0].count).to.equal(6);
