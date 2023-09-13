@@ -1,6 +1,8 @@
 
 var Topics = require('ui/Topics');
-var debug = m => Ti.API.info(m);
+const Logger = require("util/Logger");
+
+var debug = Logger.log;
 let currentController = null;
 let saveOrDiscard = null;
 

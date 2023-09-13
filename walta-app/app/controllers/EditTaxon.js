@@ -1,10 +1,11 @@
+const Logger = require("utils/Logger")
 let sampleTaxonId = $.args.sampleTaxonId;
 let taxonId = $.args.taxonId;
 let key = $.args.key;
 let { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 
 let readOnlyMode = $.args.readonly === true;
-Ti.API.info(`EditTaxon readOnlyMode = ${readOnlyMode}`);
+Logger.log(`EditTaxon readOnlyMode = ${readOnlyMode}`);
 $.photoSelect.setReadOnlyMode(readOnlyMode);
 if ( readOnlyMode ) {
     disableControl($.deleteButton);
@@ -18,15 +19,15 @@ let taxon = null;
 
 /* if we a referencing an existing taxon load the specific one by sampletaxonid */
 if (sampleTaxonId) {
-    Ti.API.info(`calling with sampleTaxonId = ${sampleTaxonId}`)
+    Logger.log(`calling with sampleTaxonId = ${sampleTaxonId}`)
     taxon = Alloy.Collections["taxa"].findTaxonBySampleTaxonId(sampleTaxonId);
     taxonId = taxon.get("taxonId");
 } else if ( taxonId != null )  {
-    Ti.API.info("not calling with sampleTaxonId")
+    Logger.log("not calling with sampleTaxonId")
     taxon = Alloy.Collections["taxa"].findTaxon(taxonId);
 }
 
-Ti.API.info(`taxonId = ${taxonId}`);
+Logger.log(`taxonId = ${taxonId}`);
 if ( taxonId ) {
     $.taxonName.text = key.findTaxonById(taxonId).commonName;
 } else {
@@ -39,14 +40,14 @@ if (!taxon ) {
     taxon = taxons.first();
     if ( !taxon ) {
         // creates a taxa but leaves it unlinked from sample until save event recieved
-        Ti.API.info("creating new taxon as temporary taxon")
+        Logger.log("creating new taxon as temporary taxon")
         taxon = Alloy.createModel( 'taxa', { taxonId: taxonId, abundance: "1-2" } );
         taxon.save();
     } else {
-        Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
+        Logger.log(`existing temporary taxon ${JSON.stringify(taxon)}`);
     }
 } else {
-    Ti.API.info(`existing persisted taxon ${JSON.stringify(taxon)}`);
+    Logger.log(`existing persisted taxon ${JSON.stringify(taxon)}`);
 }
 
 
