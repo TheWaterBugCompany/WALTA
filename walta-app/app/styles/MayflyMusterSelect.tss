@@ -10,10 +10,3 @@
     fontSize: "16dp"
   }
 }
-
-"#closeButton": {
-  top: 0,
-  height: Ti.UI.FILL,
-  width: "10%",
-  right: 0
-}

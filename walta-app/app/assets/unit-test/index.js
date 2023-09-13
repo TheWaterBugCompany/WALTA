@@ -15,6 +15,7 @@ function runTests() {
     [ 
       "About",
       "Help",
+      "CloseButton",
       "VideoView",
       "AnchorBar", 
       "TaxonList",

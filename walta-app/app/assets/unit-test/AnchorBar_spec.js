@@ -29,13 +29,10 @@ describe('AnchorBar controller', function() {
 		vw.height = "10%";
 		win = wrapViewInWindow(vw);
 	}
-	after( function(done) {
-		if ( win )
-			closeWindow( win, done );
-	});
+	afterEach( async () => closeWindow( win ) );
 
 	describe('with default Tools', function() {
-		before( function(done) {
+		beforeEach( function(done) {
 			openAnchorBar({ title: "Anchor Bar"});
 			windowOpenTest( win, done );
 		});
@@ -49,7 +46,7 @@ describe('AnchorBar controller', function() {
 		});
 	})
     describe('without default tools', function() {
-		before( function(done) {
+		beforeEach( function(done) {
 			openAnchorBar({ title: "Anchor Bar", noDefaultTools: true});
 			windowOpenTest( win, done );
 		})

@@ -1,5 +1,5 @@
-var Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+var Logger = require('util/Logger');
+var log = Logger.log;
 var debug = m => Ti.API.info(m);
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");

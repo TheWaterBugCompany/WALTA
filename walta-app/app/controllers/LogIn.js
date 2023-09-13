@@ -1,5 +1,6 @@
-var Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+var Logger = require('util/Logger');
+var log = Logger.log;
+var error = Logger.recordException;
 var Topics = require('ui/Topics');
 var { applyKeyboardTweaks } = require("ui/Layout");
 var { emailValidity } = require("util/EmailUtils");
@@ -61,16 +62,17 @@ function validateSubmit() {
 function loginClick() {
   $.activity.show();
   $.logInButton.visible = false;
+  log(`Logging in user ${$.emailTextField.value}`);
   Alloy.Globals.CerdiApi.loginUser( $.emailTextField.value, $.passwordTextField.value )
       .then( (response ) => {
     $.activity.hide();
     $.logInButton.visible = true;
-    log(`Logged in user ${$.emailTextField.value}`);
+    
     Topics.fireTopicEvent( Topics.LOGGEDIN, null );
   }).catch( (err) => {
       $.activity.hide();
       $.logInButton.visible = true;
-      Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
+      error(err);
       $.setError( $.emailTextField );
       $.setError( $.passwordTextField );
       $.setErrorMessage( err );
@@ -78,12 +80,13 @@ function loginClick() {
 }
 
 function forgotPassword() {
+  log(`Password reset for user ${$.emailTextField.value}`);
   Alloy.Globals.CerdiApi.forgotPassword( $.emailTextField.value)
         .then( (response ) => {
-      log(`Sent password reset for user ${$.emailTextField.value}`);
-      alert(`A password reset request email has been sent to "${$.emailTextField.value}" check your email to continue password reset process, then come back here and log in with the new password.`)
-;    }).catch( (err) => {
-        Ti.API.error(`Unexpected error: ${JSON.stringify( err)}`);
+      log(`Password reset request success`);
+      alert(`A password reset request email has been sent to "${$.emailTextField.value}" check your email to continue password reset process, then come back here and log in with the new password.`);
+    }).catch( (err) => {
+        error(err);
         $.setError( $.emailTextField );
         $.setError( $.passwordTextField );
         $.setErrorMessage( err );

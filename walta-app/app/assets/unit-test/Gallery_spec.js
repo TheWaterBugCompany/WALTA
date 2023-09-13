@@ -17,7 +17,8 @@
 */
 require("unit-test/lib/ti-mocha");
 var { expect } = require("unit-test/lib/chai");
-var { closeWindow, controllerOpenTest } = require("unit-test/util/TestUtils");
+var Topics = require("ui/Topics");
+var { closeWindow, controllerOpenTest, actionFiresTopicTest } = require("unit-test/util/TestUtils");
 var { keyMock } = require('unit-test/mocks/MockKey');
 var mediaResource = "unit-test/resources/simpleKey1/media/";
 describe("Gallery controller", function() {
@@ -31,4 +32,7 @@ describe("Gallery controller", function() {
 	it('should display the Gallery view', function(done) {
 		controllerOpenTest( ctl, done );
     });
+  it('should fire the BACK event when the close button is clicked',  
+    async () => actionFiresTopicTest( ctl.closeButton.closeButton, 'click', Topics.BACK )
+  );
 });

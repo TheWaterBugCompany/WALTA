@@ -3,9 +3,7 @@
 			<View class="window" layout="vertical">
 				<View class="titlebar">
 					<Label class="titleText"></Label>
-					<View id="closeButton" onClick="closeEvent">
-							<ImageView class="close_button_image"></ImageView>
-					</View>
+					<Require id="closeButton" src="CloseButton"/>
 				</View>
 				<View id="content" layout="vertical">
 

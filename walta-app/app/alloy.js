@@ -20,20 +20,20 @@
  * Bootstrap the application
  */
 
-const Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+const Logger = require('util/Logger');
+var log = Logger.log;
 var debug = m => Ti.API.info(m);
 
 const appConfig = Ti.Filesystem.getFile("app-config.json").read();
 _.extend(Alloy.CFG, JSON.parse(appConfig));
 
 
-Crashlytics.configure();
-Crashlytics.setCustomKey("deployType", Ti.App.deployType );
+Logger.configure();
+Logger.setCustomKey("deployType", Ti.App.deployType );
 
 Ti.App.addEventListener( "uncaughtException", function(e) {
-  if ( Crashlytics.isAvailable() ) {
-    Crashlytics.recordException( e );
+  if ( Logger.isAvailable() ) {
+    Logger.recordException( e );
   }
 });
 

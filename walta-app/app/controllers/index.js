@@ -1,7 +1,7 @@
 var CerdiApi = require("logic/CerdiApi");
 var KeyLoader = require('logic/KeyLoaderJson');
 var GeoLocationService = require('logic/GeoLocationService'); 
-var Crashlytics = require('util/Crashlytics');
+var Logger = require('util/Logger');
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
 var PlatformSpecific = require("logic/PlatformSpecific");
@@ -10,16 +10,16 @@ var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
 var { checkForErrors } = require('util/PromiseUtils');
-var debug = m => Ti.API.info(m);
+var debug = Logger.debug
 Topics.init();
 
 // FIXME: deprecate using globals
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 SampleSync.init();
-// Report user name to Crashlytics when logged in
-if ( Crashlytics.isAvailable() ) {
+// Report user name to Logger when logged in
+if ( Logger.isAvailable() ) {
     function setUserId() { 
-      Crashlytics.setUserId( Ti.App.Properties.getObject('userAccessUsername') ); 
+      Logger.setUserId( Ti.App.Properties.getObject('userAccessUsername') ); 
     }
     Topics.subscribe( Topics.LOGGEDIN, (data) => setUserId() );
     if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
