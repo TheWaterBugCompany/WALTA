@@ -1,5 +1,5 @@
-var Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+var Logger = require('util/Logger');
+var log = Logger.log;
 var debug = m => Ti.API.info(m);
 function formatError(err) {
     let message = "<unknown error>";
@@ -7,6 +7,9 @@ function formatError(err) {
         message = err.error;
     } else if ( err.message ) {
         message = err.message;
+    }
+    if ( err.source ) {
+        message = `${message} Details: ${JSON.stringify(err.source)}` 
     }
     if ( err.stack ) {
         message = `${message} ${err.stack}` 
@@ -18,7 +21,7 @@ function errorHandler( err ) {
         var errors = _(err.errors).values().map((e)=> e.join("\n")).join("\n");
         log(`Data was invalid continuing: ${errors}`);
     } 
-    Crashlytics.recordException( err );
+    Logger.recordException( err );
     return Promise.reject(err);
 }
 exports.errorHandler = errorHandler;

@@ -1,4 +1,4 @@
-var Crashlytics = require('util/Crashlytics');
+var Logger = require('util/Logger');
 var Topics = require('ui/Topics');
 var { errorHandler, formatError } = require("util/ErrorUtils");
 
@@ -12,7 +12,7 @@ function areWeSyncing() {
     return isSyncing;
 }
 
-var log = Crashlytics.log;
+var log = Logger.log;
 var debug = m => Ti.API.info(m);
 
 let timeoutHandler = null;
@@ -20,10 +20,10 @@ let timeoutHandler = null;
 function networkChanged( e ) {
     if ( e.networkType === Ti.Network.NETWORK_NONE ) {
         // don't bother trying to upload (saves battery)
-        debug("Lost network connection, sleeping.");
+        log("Lost network connection, sleeping.");
         clearUploadTimer();
     } else {
-        debug("Network connection up.");
+        log("Network connection up.");
         startSynchronise();
     }
 }
@@ -38,7 +38,7 @@ function clearUploadTimer() {
 
 
 function init() {
-    debug("Initialising SampleSync...");
+    log("Initialising SampleSync...");
     Ti.Network.addEventListener( "change", networkChanged );
     Topics.subscribe( Topics.LOGGEDIN, startSynchronise );
     startSynchronise();
@@ -69,7 +69,7 @@ function startSynchronise(options) {
    
 
     function handleError(err) {
-        log(`Error synchronising ${formatError(err)}`);
+        Logger.error(err);
         errorHandler(err);
     }
     if (isSyncing) {
