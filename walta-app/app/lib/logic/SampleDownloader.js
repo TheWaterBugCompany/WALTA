@@ -8,7 +8,7 @@ var debug = m => Ti.API.info(m);
 function createSampleDownloader(delay) {
     return {
         downloadSamples() {
-            debug(`Queuing sample retrieval from server... `);
+            log(`Queuing sample retrieval from server... `);
             
             // only update if updated after it was last uploaded - this allows user changes
             // to not be overwritten. If the data on the server changes and the user makes a
@@ -71,7 +71,7 @@ function createSampleDownloader(delay) {
                 return sample.loadByServerId(serverSample.id) 
                     .then( () => {
                         if ( needsUpdate(serverSample,sample) ) {
-                            debug(`Updating serverSampleId = ${serverSample.id}`);
+                            log(`Updating serverSampleId = ${serverSample.id}`);
                             // must set the serverSyncTime here so that if updatedAt
                             // is set to be a few milliseconds later - this can happen if
                             // habitat blanks are filled in, and we need to signal a re-upload.
@@ -92,7 +92,7 @@ function createSampleDownloader(delay) {
             function downloadSitePhoto([sample,serverSample]) {
                 if ( serverSample.photos.length > 0  ) {
                     let sitePhotoPath = `site_download_${serverSample.id}`;
-                    debug(`Downloading site photo for ${serverSample.id}`);
+                    log(`Downloading site photo for ${serverSample.id}`);
                     return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
                         .then( photo => {
                             sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
@@ -101,7 +101,10 @@ function createSampleDownloader(delay) {
                             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                             return [sample,serverSample];
                         })
-                        .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id}]: ${formatError(err)}`));
+                        .catch( err => {
+                            log(`Failed to download photo for [serverSampleId=${serverSample.id}]: ${formatError(err)}`)
+                            Logger.recordException(err)
+                        });
                 } else {
                     return Promise.resolve([sample,serverSample]);
                 }
@@ -113,7 +116,7 @@ function createSampleDownloader(delay) {
                 let serverCreaturePhotoId = taxon.get("serverCreaturePhotoId");
                 let taxonPhotoPath;
                 let retrievePhoto;
-                debug(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                log(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                 
                 // In the case of unknown creatures the photo id is already known so we can
                 // directly retrieve the photo via this id, otherwise we need to look up the
@@ -137,7 +140,7 @@ function createSampleDownloader(delay) {
                                 taxon.set("serverCreaturePhotoId",photo.id);
                                 taxon.save();
                             } else {
-                                debug(`Missing photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                                log(`Missing photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                                 // indicates no photo exists on the server - but is not null to prevent future
                                 // uploads from trying to upload 
                                 taxon.set("serverCreaturePhotoId",0); 
@@ -145,7 +148,10 @@ function createSampleDownloader(delay) {
                             }
                             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
                         })
-                        .catch( err => debug(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`));
+                        .catch( err => {
+                            log(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`);
+                            Logger.recordException(err)
+                        });
             }
 
             function downloadCreaturePhotos([sample,serverSample]) {
