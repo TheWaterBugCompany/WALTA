@@ -155,7 +155,6 @@ function createCerdiApi( serverUrl, client_secret  ) {
                             let tokenAge = Date.now() - cachedAppAccessToken.retrieved_at;
                             if ( tokenAge < cachedAppAccessToken.expires_in*1000 )
                                 return cachedAppAccessToken;
-                        }
                             Logger.log("Expired token"); 
                         } 
                         
