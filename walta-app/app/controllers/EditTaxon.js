@@ -131,7 +131,11 @@ function deleteEvent() {
       dialog.show();
 }
 
-$.closeButton.on("close", () => $.trigger("close") );
+$.closeButton.on("close", closeEvent );
+
+function closeEvent() {
+    $.trigger("close") 
+}
 
 function updateSaveButton() {
     if ( readOnlyMode) {
