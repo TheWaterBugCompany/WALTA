@@ -1,6 +1,6 @@
 
-var Crashlytics = require('util/Crashlytics');
-var log = Crashlytics.log;
+var Logger = require('util/Logger');
+var log = Logger.log;
 var debug = m => Ti.API.info(m);
 
 var Topics = require('ui/Topics');
@@ -80,7 +80,8 @@ function uploadTaxaPhoto(sample,t,delay) {
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
+                        Logger.log(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
+                        Logger.recordException(err)
                     });
                         
         }

@@ -28,8 +28,4 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.off();
     $.TopLevelWindow.removeEventListener('close', cleanUp );
   });
-
-function closeEvent(e) {
-    Topics.fireTopicEvent( Topics.BACK );
-    e.cancelBubble = true;
-}
+  $.closeButton.on("close", () => Topics.fireTopicEvent( Topics.BACK ) );

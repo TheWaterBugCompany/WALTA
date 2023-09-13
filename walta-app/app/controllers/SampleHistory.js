@@ -1,3 +1,4 @@
+const Logger = require('util/Logger');
 var Topics = require('ui/Topics');
 var SampleSync = require('logic/SampleSync');
 
@@ -18,7 +19,7 @@ function updateSampleList() {
         $.samples.loadSampleHistory(Alloy.Globals.CerdiApi.retrieveUserId());
     } catch(e) {
         // FIXME: for some reason these errors are not being reported if there isn't a catch here
-        Ti.API.info(`Error fetching sample list: ${JSON.stringify(e)}`);
+        Logger.log(`Error fetching sample list: ${JSON.stringify(e)}`);
     }
 }
 

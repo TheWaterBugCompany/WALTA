@@ -41,7 +41,7 @@ describe("Notes controller", function () {
       expect(ctl.partialToggle.enabled).to.be.true;
       expect(ctl.notesTextField.editable).to.be.true;
     });
-    it('should bind the partial summision checkbox to the partial field in the sample', async function () {
+    it('should bind the partial submission checkbox to the partial field in the sample', async function () {
 
       await controllerOpenTest(ctl);
       expect(ctl.partialToggle.value).to.equal(true);

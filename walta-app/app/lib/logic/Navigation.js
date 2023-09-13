@@ -1,5 +1,6 @@
 var Topics = require("ui/Topics");
 var { DialogCancelled } = require("logic/View");
+const Logger = require('util/Logger');
 
 function questionToString(args) {
     if (!args || !args.node || !args.node.questions)
@@ -114,7 +115,7 @@ Navigation.prototype.goBack = async function (args) {
                 newargs.slide = "left";
             }
         }
-        Ti.API.info(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
+        Logger.log(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
         await this.openController(ctl, newargs);
 
     }

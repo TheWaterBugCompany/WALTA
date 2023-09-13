@@ -1,10 +1,11 @@
+const Logger = require("utils/Logger")
 let sampleTaxonId = $.args.sampleTaxonId;
 let taxonId = $.args.taxonId;
 let key = $.args.key;
 let { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 
 let readOnlyMode = $.args.readonly === true;
-Ti.API.info(`EditTaxon readOnlyMode = ${readOnlyMode}`);
+Logger.log(`EditTaxon readOnlyMode = ${readOnlyMode}`);
 $.photoSelect.setReadOnlyMode(readOnlyMode);
 if ( readOnlyMode ) {
     disableControl($.deleteButton);
@@ -18,15 +19,15 @@ let taxon = null;
 
 /* if we a referencing an existing taxon load the specific one by sampletaxonid */
 if (sampleTaxonId) {
-    Ti.API.info(`calling with sampleTaxonId = ${sampleTaxonId}`)
+    Logger.log(`calling with sampleTaxonId = ${sampleTaxonId}`)
     taxon = Alloy.Collections["taxa"].findTaxonBySampleTaxonId(sampleTaxonId);
     taxonId = taxon.get("taxonId");
 } else if ( taxonId != null )  {
-    Ti.API.info("not calling with sampleTaxonId")
+    Logger.log("not calling with sampleTaxonId")
     taxon = Alloy.Collections["taxa"].findTaxon(taxonId);
 }
 
-Ti.API.info(`taxonId = ${taxonId}`);
+Logger.log(`taxonId = ${taxonId}`);
 if ( taxonId ) {
     $.taxonName.text = key.findTaxonById(taxonId).commonName;
 } else {
@@ -39,14 +40,14 @@ if (!taxon ) {
     taxon = taxons.first();
     if ( !taxon ) {
         // creates a taxa but leaves it unlinked from sample until save event recieved
-        Ti.API.info("creating new taxon as temporary taxon")
+        Logger.log("creating new taxon as temporary taxon")
         taxon = Alloy.createModel( 'taxa', { taxonId: taxonId, abundance: "1-2" } );
         taxon.save();
     } else {
-        Ti.API.info(`existing temporary taxon ${JSON.stringify(taxon)}`);
+        Logger.log(`existing temporary taxon ${JSON.stringify(taxon)}`);
     }
 } else {
-    Ti.API.info(`existing persisted taxon ${JSON.stringify(taxon)}`);
+    Logger.log(`existing persisted taxon ${JSON.stringify(taxon)}`);
 }
 
 
@@ -130,9 +131,7 @@ function deleteEvent() {
       dialog.show();
 }
 
-function closeEvent() {
-    $.trigger("close");
-}
+$.closeButton.on("close", () => $.trigger("close") );
 
 function updateSaveButton() {
     if ( readOnlyMode) {
@@ -156,15 +155,14 @@ $.photoSelect.on("photoTaken", () => {
 } );
 
 function fixupLayout() {
-    let eight = $.closeButton.size.height;
-  /*  Ti.API.info(`EditTaxon.size.height = ${$.window.size.height}`); 
-    Ti.API.info(`header.size.height = ${$.header.size.height}`);
-    Ti.API.info(`howMany.size.height = ${$.howMany.size.height}`);
-    Ti.API.info(`buttons.size.height = ${$.buttons.size.height}`); */
-    $.photoSelectWrapper.height = $.window.size.height 
+     $.photoSelectWrapper.height = $.window.size.height 
             - $.header.size.height 
             - $.howMany.size.height 
-            - $.buttons.size.height- eight/2;
+            - $.buttons.size.height 
+            - 80; /*  We need this extra padding or else after the photoSelectWrapper 
+                      size is set the buttons get pushed off the bottom which forces 
+                      them to be squashed vertically which causes the wrapper to be 
+                      set to a larger size thus causes positive a feedback loop! */
 }
 
 /* need to trap photoSelectWrapper in order to make sure the other children elements
@@ -172,7 +170,7 @@ function fixupLayout() {
 $.photoSelectWrapper.addEventListener("postlayout", fixupLayout );
 
 function cleanUp() {
-    $.window.removeEventListener("postlayout", fixupLayout );
+    $.photoSelectWrapper.removeEventListener("postlayout", fixupLayout );
     $.photoSelect.cleanUp();
     $.destroy();
     $.off();
