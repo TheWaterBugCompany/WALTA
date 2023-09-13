@@ -1,5 +1,5 @@
-const Logger = require("utils/Logger")
-let sampleTaxonId = $.args.sampleTaxonId;
+const Logger = require("util/Logger")
+let sampleTaxonId = $.args.sampleTaxonId; 
 let taxonId = $.args.taxonId;
 let key = $.args.key;
 let { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
