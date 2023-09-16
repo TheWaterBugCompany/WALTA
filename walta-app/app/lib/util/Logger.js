@@ -22,10 +22,8 @@ exports.configure = function() {
     Bugfender.setForceEnabled(true);
     Bugfender.setMaximumLocalStorageSize(1024*1024);
 }
-
-exports.isAvailable = function() { true }
 exports.setCustomKey = function(name, value) {
-    Bugfender.setDeviceString(name, value);
+    Bugfender.setDeviceString({ key: name, value: value});
 }
 exports.recordException = function(err) { 
     errorFormatted = ErrorUtils.formatError(err);
@@ -36,7 +34,7 @@ exports.recordException = function(err) {
     Ti.API.error(`Unexpected error: ${errorFormatted}`)
 }
 exports.setUserId = function(userId) {
-    Bugfender.setDeviceString("user.email", userId);
+    Bugfender.setDeviceString({ key: "user.email", value: userId });
 }
 exports.log = function( message, tag = "trace" ) { 
     Bugfender.t({
