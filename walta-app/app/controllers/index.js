@@ -10,25 +10,23 @@ var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
 var { checkForErrors } = require('util/PromiseUtils');
-var debug = Logger.debug
 Topics.init();
 
 // FIXME: deprecate using globals
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 SampleSync.init();
+
 // Report user name to Logger when logged in
-if ( Logger.isAvailable() ) {
-    function setUserId() { 
-      Logger.setUserId( Ti.App.Properties.getObject('userAccessUsername') ); 
-    }
-    Topics.subscribe( Topics.LOGGEDIN, (data) => setUserId() );
-    if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
-      setUserId();
-    }
-  }
+function setUserId() { 
+  Logger.setUserId( Ti.App.Properties.getObject('userAccessUsername') ); 
+}
+Topics.subscribe( Topics.LOGGEDIN, (data) => setUserId() );
+if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
+  setUserId();
+}
+
 
 var keyUrl = Ti.Filesystem.resourcesDirectory + "taxonomy/walta/";
-
 
 Alloy.Globals.Key = KeyLoader.loadKey(keyUrl);
 if ( ! Alloy.Globals.Key  ) {
