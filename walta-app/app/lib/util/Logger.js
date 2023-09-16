@@ -24,7 +24,9 @@ exports.configure = function() {
 }
 
 exports.isAvailable = function() { true }
-exports.setCustomKey = function(name, value) {}
+exports.setCustomKey = function(name, value) {
+    Bugfender.setDeviceString(name, value);
+}
 exports.recordException = function(err) { 
     errorFormatted = ErrorUtils.formatError(err);
     Bugfender.e({        
@@ -33,7 +35,9 @@ exports.recordException = function(err) {
     });
     Ti.API.error(`Unexpected error: ${errorFormatted}`)
 }
-exports.setUserId = function(userId) {}
+exports.setUserId = function(userId) {
+    Bugfender.setDeviceString("user.email", userId);
+}
 exports.log = function( message, tag = "trace" ) { 
     Bugfender.t({
         tag: tag,
