@@ -29,15 +29,11 @@ _.extend(Alloy.CFG, JSON.parse(appConfig));
 
 
 Logger.configure();
-Logger.setCustomKey("deployType", Ti.App.deployType );
+Logger.setCustomKey("deploy.type", Ti.App.deployType );
 
 Ti.App.addEventListener( "uncaughtException", function(e) {
-  if ( Logger.isAvailable() ) {
     Logger.recordException( e );
-  }
 });
-
-//Alloy.Globals.Map = require('ti.map');
 
 Alloy.Events = _.clone(Backbone.Events);
 Alloy.Globals.Key = null;
