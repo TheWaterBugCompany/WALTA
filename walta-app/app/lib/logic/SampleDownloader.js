@@ -11,9 +11,7 @@ function createSampleDownloader(delay) {
             log(`Queuing sample retrieval from server... `);
             
             // only update if updated after it was last uploaded - this allows user changes
-            // to not be overwritten. If the data on the server changes and the user makes a
-            // change then this will always preference the server change since we always
-            // call downloadSamples() before calling uploadSamples()
+            // to not be overwritten.
             function needsUpdate(serverSample,sample) {
                 if ( ! sample.get("serverSampleId") ) {
                     return true;
@@ -23,10 +21,13 @@ function createSampleDownloader(delay) {
                 if ( _.isUndefined(serverSyncTime) ) {
                     return true;
                 }
-
+                
                 let serverUpdateTimeM = moment(serverSample.updated_at);
-                let serverSyncTimeM = moment(serverSyncTime);
-                if ( serverUpdateTimeM.isAfter(serverSyncTimeM) ) {
+                let serverSyncTimeM = moment(serverSyncTime); 
+
+                // We need to subtract a small window to account for upload delay; otherwise
+                // a download will be intitiated every time an upload occurs.
+                if ( serverUpdateTimeM.subtract(10,"s").isAfter(serverSyncTimeM) ) {
                     return true;
                 }
 
