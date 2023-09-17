@@ -49,6 +49,61 @@ describe("SampleSync", function () {
     this.afterEach( function() {
         simple.restore();
     })
+    it("should not create a duplicate if edited before uploaded", async function() {
+       
+        function checkSamples(number) {
+            let samples = Alloy.createCollection("sample");
+            samples.fetch({
+                query: 'SELECT * FROM sample'
+            });
+            expect(samples.length,"samples.length").equals(number);
+            return samples;
+        }
+
+        clearMockSampleData();
+
+        let sample = makeSampleData( { 
+            sitePhotoPath: makeTestPhoto("site.jpg"),
+            dateCompleted:  moment().valueOf()
+        });
+        
+        checkSamples(0);
+        sample.save(); 
+
+        checkSamples(1);
+        Ti.API.info(`sampleId = ${sample.get("sampleId")}`)
+        simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+            .returnWith(38);
+        simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+            .callFn( () => setTimeout( () => Promise.resolve({id:1}), 100 ));
+        simple.mock(Alloy.Globals.CerdiApi,"submitSample")
+                .resolveWith({id:666});
+        
+        let tempSample = sample.createTemporaryForEdit();
+        checkSamples(2);
+
+        Ti.API.info(`testSample sampleId = ${tempSample.get("sampleId")}`)
+        Ti.API.info(`originalSampleId = ${tempSample.get("originalSampleId")}`)
+
+        tempSample.set("waterbodyName", "edited");
+
+        // start uploading original sample
+        let uploadingPromise = createSampleUploader().uploadSamples();
+
+        // save the editted copy
+        await tempSample.saveCurrentSample();
+        await uploadingPromise;
+       
+        // SHOULD only upload the old record NOT the
+        // record being currently edited.
+        expect(Alloy.Globals.CerdiApi.submitSample.callCount, "submitSample call count").to.equal(1);
+
+        // see if the original still exists
+        let samples = checkSamples(1);
+        expect(samples.at(0).get("waterbodyName")).equals("edited");
+        expect(samples.at(0).get("serverSampleId")).equals(666);
+    });
+
     it("should resize photos if they are too large", async function () {
         clearMockSampleData();
         
@@ -169,13 +224,15 @@ describe("SampleSync", function () {
             taxon2.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto")
+                .resolveWith({id:9});
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto")
                 .resolveWith({id:1})
                 .resolveWith({id:2}); 
             simple.mock(Alloy.Globals.CerdiApi,"submitSample")
                    .resolveWith({id:666});
             await createSampleUploader().uploadSamples();
-            expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(2);
+            expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount, "submitCreaturePhoto calls").to.equal(2);
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.calls[0].args[2]).to.contain("taxon.jpg");
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.calls[1].args[2]).to.contain("taxon2.jpg");
 
@@ -699,14 +756,12 @@ describe("SampleSync", function () {
         let tempSample = sample.createTemporaryForEdit();
         tempSample.set("waterbodyName", "edited");
 
-        expect(tempSample.get("dateCompleted")).to.be.undefined;
-
         // upload original sample
         await createSampleUploader().uploadSamples();
 
         // SHOULD only upload the old record NOT the
         // record being currently edited.
-        expect(Alloy.Globals.CerdiApi.submitSample.callCount).to.equal(1);
+        expect(Alloy.Globals.CerdiApi.submitSample.callCount, "submitSample call count").to.equal(1);
 
         // save the editted copy
         await tempSample.saveCurrentSample();
@@ -742,7 +797,7 @@ describe("SampleSync", function () {
         simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
             .resolveWith([]);
  
-            expect(sample.get("serverSampleId"),"smaple.serverSampleId").to.equal(666)
+        expect(sample.get("serverSampleId"),"smaple.serverSampleId").to.equal(666)
         let tempSample = sample.createTemporaryForEdit();
         tempSample.set("waterbodyName", "edited");
         

@@ -23,6 +23,7 @@ function uploadSitePhoto(sample,delay) {
                 .then(() => Alloy.Globals.CerdiApi.submitSitePhoto( sampleId, photoPath ));
     }
 
+    log(`Checking to see if we need to upload site photo`)
     var sitePhotoId = sample.get("serverSitePhotoId");
     if ( !sitePhotoId ) {
         var sitePhoto = sample.getSitePhoto();
@@ -232,7 +233,7 @@ function createSampleUploader(delay) {
             function uploadSampleData( sample ) {
                 log(`Uploading new sample record [sampleId=${sample.get("sampleId")}]`);
                return Promise.resolve()
-                        .then( () => Alloy.Globals.CerdiApi.submitSample( sampleCerdiJson ) );
+                        .then( () => Alloy.Globals.CerdiApi.submitSample( sampleCerdiJson ) )
             }
         
             function updateExistingSampleData( sample ) {
@@ -241,16 +242,37 @@ function createSampleUploader(delay) {
                     .then( () => Alloy.Globals.CerdiApi.updateSampleById( sample.get("serverSampleId"), sampleCerdiJson ) );
             }
 
+            // If an edited sample has been saved during the upload process then
+            // we need make sure we don't rewrite the old record to the database,
+            // instead we need to record the serverSampleId in the new record.
+            function loadCorrectSampleToUpdate() {
+                let sampleId =sample.get("sampleId");
+                sample.clear();
+
+                 // attempt to reload
+                sample.loadById(sampleId);
+
+                // if the sample has been deleted load the temporary version instead
+                if ( ! sample.get("sampleId") ) { 
+                    sample.loadByOriginalId(sampleId);
+                }
+            }
+
             function updateSample(res) {
                 log(`Sample [serverSampleId=${res.id}] successfully uploaded setting uploaded flag.`);
-                sample.set("serverSampleId", res.id );
-                sample.set("serverUserId", res.user_id);
-                sample.save();
+                loadCorrectSampleToUpdate();
+                sample.save({
+                    "serverSampleId": res.id,
+                    "serverUserId": res.user_id
+                });
                 Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
+    
+
             }
 
             function markSampleComplete() {
-                log("Upload successful.")
+                log("Upload successful.");
+                loadCorrectSampleToUpdate();
                 sample.set("serverSyncTime", moment().valueOf());
                 sample.save();
             }
