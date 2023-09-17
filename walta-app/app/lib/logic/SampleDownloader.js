@@ -13,23 +13,34 @@ function createSampleDownloader(delay) {
             // only update if updated after it was last uploaded - this allows user changes
             // to not be overwritten.
             function needsUpdate(serverSample,sample) {
+
+                log(`Checking if sampleId=${sample.get("sampleId")} needs downloading `);
+                // This can be true if the sample wasn't reviously on the device sibce a new 
+                // record as been created and this will be blank.
                 if ( ! sample.get("serverSampleId") ) {
+                    log(`Yes there is no serverSampleId yet.`);
                     return true;
                 } 
 
                 let serverSyncTime = sample.get("serverSyncTime");
                 if ( _.isUndefined(serverSyncTime) ) {
+                    log(`Yes there is no serverSyncTime yet.`);
                     return true;
                 }
                 
                 let serverUpdateTimeM = moment(serverSample.updated_at);
                 let serverSyncTimeM = moment(serverSyncTime); 
 
+                log(`serverUpdateTimeM=${serverSyncTimeM.valueOf()} serverSyncTimeM=${serverSyncTimeM.valueOf()}`);
+
                 // We need to subtract a small window to account for upload delay; otherwise
                 // a download will be intitiated every time an upload occurs.
                 if ( serverUpdateTimeM.subtract(10,"s").isAfter(serverSyncTimeM) ) {
+                    log(`Yes the sample was updated on the server after the sync.`);
                     return true;
                 }
+
+                log(`No download needed.`);
 
                 return false; // update not needed
 
@@ -63,6 +74,7 @@ function createSampleDownloader(delay) {
              
                 }
                 function setTimestamp(){
+                    log(`Setting serverSyncTime [sampleId=${sample.get("sampleId")}] ${syncedAt}`)
                     sample.set("serverSyncTime",syncedAt);
                     sample.save();
                 }
@@ -162,7 +174,7 @@ function createSampleDownloader(delay) {
                 // this means photos are only ever downloaded from the server when they
                 // do not exist on the client - this is a fair assumption since the photo
                 // can not be changed on the server.
-                let pendingTaxaPhotos = taxa.filter( t => true );
+                let pendingTaxaPhotos = taxa.filter( t => _.isNull(t.get("taxonPhotoPath")));
                 return _.reduce( pendingTaxaPhotos,  
                     (queue,t) => queue.then( () => delayedPromise( downloadCreaturePhoto(t,serverSample),delay)),
                     Promise.resolve())
