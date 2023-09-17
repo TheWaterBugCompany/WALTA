@@ -111,7 +111,7 @@ function uploadUnknownCreature(sample,t,delay) {
     var serverCreatureId = t.get("serverCreatureId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
 
-    // skip known creatures and any unknown cfreatures that have had
+    // skip known creatures and any unknown creatures that have had
     // their serverCreaturePhotoId set.
     if ( taxonId == null ) {
         let photoPath = t.getPhoto();
@@ -196,7 +196,7 @@ function loadSamples() {
 function createSampleUploader(delay) {
     return {
         uploadSamples() {
-            debug(`Queuing uploading samples to server...`);
+            log(`Queuing uploading samples to server...`);
             return Promise.resolve()
                 .then(loadSamples)
                 .then((samples) => this.uploadRemainingSamples(samples) );

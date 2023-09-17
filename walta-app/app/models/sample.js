@@ -260,21 +260,30 @@ exports.definition = {
 			hasPendingUploads() {
 				let serverSyncTime = this.get("serverSyncTime");
 				let updatedAt = this.get("updatedAt");
-				
+				log(`Checking if sampleId=${this.get("sampleId")} needs uploading serverSyncTime=${serverSyncTime} updatedAt=${updateAt}`);
 				// if the updatedAt has changed this flags an upload is needed
 				if ( moment(serverSyncTime).isBefore( moment(updatedAt) ) ) {
+					log(`Yes because serverSyncTime < updatedAt`);
 					return true;
 				}
 				
 				// if there have been errors in uploading photos then we
 				// to keep trying to upload them.
 				if ( this.get("sitePhotoPath") && _.isNull(this.get("serverSitePhotoId"))) {
+					log(`Yes because a site photo exist but there is no serverSitePhotoId`);
 					return true;
 				}
 
-				// check for any taxns that don't have a serverTaxonID
+				// check for any taxons that don't have a serverTaxonID
 				let taxa = this.loadTaxa();
-				return taxa.findPendingUploads().length > 0;
+				let photosPending = taxa.findPendingUploads().length;
+				if ( photosPending > 0 ) {
+					log(`Yes because there are ${photosPending} to upload`);
+					return true;
+				}
+
+				log(`Not uploading.`);
+				return false
 
 			},
 
@@ -451,10 +460,10 @@ exports.definition = {
 						}
 					});
 				if ( needToReupload ) {
-					// plus 1 to avoid serverSyncTime ever equalling
+					// plus 1s to avoid serverSyncTime ever equalling
 					// updatedAt; this ensures an upload will be
 					// scheduled.
-					this.set("updatedAt", moment().valueOf() + 1);
+					this.set("updatedAt", moment().add(1,"s").valueOf());
 				}
 
 				if ( Object.keys(updatedFields).length > 0 ) {
