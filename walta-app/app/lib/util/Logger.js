@@ -26,7 +26,7 @@ exports.setCustomKey = function(name, value) {
     Bugfender.setDeviceString({ key: name, value: value});
 }
 exports.recordException = function(err) { 
-    errorFormatted = ErrorUtils.formatError(err);
+    let errorFormatted = ErrorUtils.formatError(err);
     Bugfender.e({        
         tag: "error",
         message: errorFormatted
