@@ -11,6 +11,22 @@ var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/Pho
 
 
 
+/* If an edited sample has been saved during the upload process then
+   we need make sure we don't rewrite the old record to the database,
+   instead we need to record the serverSampleId in the new record. */
+function loadCorrectSampleToUpdate(sample) {
+    let sampleId =sample.get("sampleId");
+    sample.clear();
+
+    // attempt to reload
+    sample.loadById(sampleId);
+
+    // if the sample has been deleted load the temporary version instead
+    if ( ! sample.get("sampleId") ) { 
+        Ti.API.info("reloading")
+        sample.loadByOriginalId(sampleId);
+    }
+}
 /*
     serverSitePhotoId is used to indicate that the photo has been
     sucessfully uploaded.
@@ -36,13 +52,15 @@ function uploadSitePhoto(sample,delay) {
             } 
             return delayedPromise( submitSitePhoto( sampleId, sitePhoto ), delay)
                     .then( (res) => {
-                        sample.set("serverSitePhotoId", res.id);
-                        sample.save();
+                        loadCorrectSampleToUpdate(sample);
+                        sample.save({
+                            "serverSitePhotoId": res.id
+                        });
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                         return sample;
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to upload site photo: ${formatError(message)}`);
+                        log(`Error when attempting to upload site photo: ${formatError(err)}`);
                         Logger.recordException(err);
                         return sample;
                     })
@@ -66,6 +84,7 @@ function uploadTaxaPhoto(sample,t,delay) {
     var taxonId = t.getTaxonId();
     var sampleId = sample.get("serverSampleId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
+
     // don't upload photos for unknown bugs here
     if ( ! taxonPhotoId && (taxonId != null) ) {
         var photoPath = t.getPhoto();
@@ -131,17 +150,16 @@ function uploadUnknownCreature(sample,t,delay) {
                 actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.updateUnknownCreature(serverCreatureId,count,photoPath) ), delay);
             }
             return actions.then( (res) => {
-                            Ti.API.info(`setting serverCreatureId = ${res.id}`);
-                            t.save("serverCreatureId", res.id)
-                            t.save({"serverCreaturePhotoId": res.photos[0].id});
-                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
-                        })
-                        .catch( (err) => {
-                            log(`Error when attempting to upload unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${formatError(err)}`);
-                            Logger.recordException(err);
-                        });
-                    
-                        
+                t.save({
+                    "serverCreatureId": res.id,
+                    "serverCreaturePhotoId": res.photos[0].id
+                });
+                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
+            })
+            .catch( (err) => {
+                log(`Error when attempting to upload unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${formatError(err)}`);
+                Logger.recordException(err);
+            });             
         }
     }
     return Promise.resolve();
@@ -242,25 +260,11 @@ function createSampleUploader(delay) {
                     .then( () => Alloy.Globals.CerdiApi.updateSampleById( sample.get("serverSampleId"), sampleCerdiJson ) );
             }
 
-            // If an edited sample has been saved during the upload process then
-            // we need make sure we don't rewrite the old record to the database,
-            // instead we need to record the serverSampleId in the new record.
-            function loadCorrectSampleToUpdate() {
-                let sampleId =sample.get("sampleId");
-                sample.clear();
-
-                 // attempt to reload
-                sample.loadById(sampleId);
-
-                // if the sample has been deleted load the temporary version instead
-                if ( ! sample.get("sampleId") ) { 
-                    sample.loadByOriginalId(sampleId);
-                }
-            }
+            
 
             function updateSample(res) {
                 log(`Sample [serverSampleId=${res.id}] successfully uploaded setting uploaded flag.`);
-                loadCorrectSampleToUpdate();
+                loadCorrectSampleToUpdate(sample);
                 sample.save({
                     "serverSampleId": res.id,
                     "serverUserId": res.user_id
@@ -270,11 +274,16 @@ function createSampleUploader(delay) {
 
             }
 
-            function markSampleComplete() {
-                log("Upload successful.");
-                loadCorrectSampleToUpdate();
-                sample.set("serverSyncTime", moment().valueOf());
-                sample.save();
+            function markSampleComplete(sample, delay) {
+                
+                return delayedPromise(
+                    Promise.resolve()
+                        .then( () => {
+                            log("Upload successful.");
+                            loadCorrectSampleToUpdate(sample);
+                            sample.set("serverSyncTime", moment().valueOf());
+                            sample.save();
+                        }), delay)
             }
 
             //debug(`serverSyncTime = ${serverSyncTime}, updatedAt = ${updatedAt}`);
@@ -292,7 +301,7 @@ function createSampleUploader(delay) {
                         .then( (sample) => uploadTaxaPhotos(sample,delay) )
                         .then( (sample) => uploadUnknownCreatures(sample,delay))
                         .then( (sample) => deletePendingUnknownCreatures(sample,delay))
-                        .then( markSampleComplete )
+                        .then( (sample) => markSampleComplete(sample,delay) )
                         .catch( errorHandler );
             } else {
                 return Promise.resolve(sample);
