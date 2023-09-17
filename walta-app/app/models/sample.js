@@ -136,7 +136,7 @@ exports.definition = {
 			},
 			
 			saveCurrentSample: async function() {
-				// If the serverSampleId has been set then this is an edited sample
+				// If the originalSampleId has been set then this is an edited sample
 				// and we need to remove the original
 				let originalSampleId = this.get("originalSampleId");
 				if ( originalSampleId ) {
@@ -150,7 +150,6 @@ exports.definition = {
 
 				let updatedAt = moment().valueOf();
 				this.save({
-					'originalSampleId': null,
 					'updatedAt': updatedAt,
 					'dateCompleted': moment().format()
 				});
@@ -173,6 +172,15 @@ exports.definition = {
 						success: resolve, 
 						error: reject
 					}));
+			},
+
+			loadByOriginalId(originalSampleId) {
+				return new Promise( (resolve,reject) =>
+				this.fetch({ 
+					query: `SELECT * FROM sample WHERE originalSampleId = ${originalSampleId}`,
+					success: resolve, 
+					error: reject
+				}));
 			},
 
 			isNewSurvey() {
@@ -239,7 +247,8 @@ exports.definition = {
 				return !this.equals(oldSample);
 			},
 			
-			// only excludes loading any temporary edit that have not yet been persisted
+			// Excludes loading any temporary edit that have not yet been persisted by 
+			// indicated by originalSampleId IS NULL
 			loadByServerId(serverSampleId ) {
 				return new Promise( (resolve,reject) =>
 					this.fetch({ 
@@ -260,7 +269,7 @@ exports.definition = {
 			hasPendingUploads() {
 				let serverSyncTime = this.get("serverSyncTime");
 				let updatedAt = this.get("updatedAt");
-				log(`Checking if sampleId=${this.get("sampleId")} needs uploading serverSyncTime=${serverSyncTime} updatedAt=${updateAt}`);
+				log(`Checking if sampleId=${this.get("sampleId")} needs uploading serverSyncTime=${serverSyncTime} updatedAt=${updatedAt}`);
 				// if the updatedAt has changed this flags an upload is needed
 				if ( moment(serverSyncTime).isBefore( moment(updatedAt) ) ) {
 					log(`Yes because serverSyncTime < updatedAt`);
@@ -518,9 +527,8 @@ exports.definition = {
 				// Reuse the serialisation code to create 
 				// a duplicate without the dateCompleted set.
 				let json = this.toCerdiApiJson();
-				
 				delete json.sample_date;
-
+				
 				let dup = Alloy.createModel("sample");
 				dup.fromCerdiApiJson(json);
 
