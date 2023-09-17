@@ -20,6 +20,7 @@ function updateSampleList() {
     } catch(e) {
         // FIXME: for some reason these errors are not being reported if there isn't a catch here
         Logger.log(`Error fetching sample list: ${JSON.stringify(e)}`);
+        Logger.recordException(err);
     }
 }
 
