@@ -6,7 +6,7 @@ var debug = m => Ti.API.info(m);
 var Topics = require('ui/Topics');
 var moment = require("lib/moment");
 var { delayedPromise } = require("util/PromiseUtils");
-var { errorHandler } = require("util/ErrorUtils");
+var { errorHandler, formatError } = require("util/ErrorUtils");
 var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 
 
@@ -41,7 +41,8 @@ function uploadSitePhoto(sample,delay) {
                         return sample;
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to upload site photo: ${err.message}`);
+                        log(`Error when attempting to upload site photo: ${formatError(message)}`);
+                        Logger.recordException(err);
                         return sample;
                     })
         } 
@@ -135,7 +136,8 @@ function uploadUnknownCreature(sample,t,delay) {
                             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                         })
                         .catch( (err) => {
-                            log(`Error when attempting to upload unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${err.message}`);
+                            log(`Error when attempting to upload unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${formatError(err)}`);
+                            Logger.recordException(err);
                         });
                     
                         
@@ -170,7 +172,8 @@ function deletePendingUnknownCreatures(sample,delay) {
                 t.destroy();
             })
             .catch( (err) => {
-                log(`Error when attempting to delete unknown creature [serverSampleId=${sampleId},id=${creatureId}]: ${err.message}`);
+                log(`Error when attempting to delete unknown creature [serverSampleId=${sampleId},id=${creatureId}]: ${formatError(err)}`);
+                Logger.recordException(err);
             });
     }
     let taxa = Alloy.createCollection("taxa");
