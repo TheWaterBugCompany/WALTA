@@ -1102,7 +1102,6 @@ describe("SampleSync", function () {
             taxon2.save();
             
             await createSampleUploader().uploadSamples();
-            await waitForTick(10)();  
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.callCount, "should call retrieveUnknownCreatures").to.equal(2);
             
 
@@ -1113,17 +1112,16 @@ describe("SampleSync", function () {
             taxon3.save();
 
             // force a re-upload
-            sample.set("serverSyncTime", moment("2020-01-01").valueOf()); 
-            sample.set("updatedAt", moment().valueOf());
+            sample.loadById( sample.get("sampleId"))
             sample.save();
 
             Alloy.Globals.CerdiApi.updateSampleById.callCount = 0;
             Alloy.Globals.CerdiApi.submitUnknownCreature.callCount = 0;
 
+            Ti.API.info(`serverSampleId = ${sample.get("serverSampleId")}`)
             await createSampleUploader().uploadSamples();
-            await waitForTick(10)();  
 
-            expect(Alloy.Globals.CerdiApi.updateSampleById.callCount).to.equal(1);
+            expect(Alloy.Globals.CerdiApi.updateSampleById.callCount, "updateSampleId call count").to.equal(1);
             let creatures = Alloy.Globals.CerdiApi.updateSampleById.calls[0].args[1].creatures;
             expect(creatures, "no unknown creatures included in creatures").to.be.empty;
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount, "should not call submitCreaturePhoto for unknown creatures").to.equal(0);
@@ -1160,18 +1158,18 @@ describe("SampleSync", function () {
             let taxon2 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
             taxon2.save();
             
-            await createSampleUploader().uploadSamples();
-            await waitForTick(10)();  
+            await createSampleUploader().uploadSamples();  
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.callCount, "should call retrieveUnknownCreatures").to.equal(2);
 
             Alloy.Globals.CerdiApi.submitUnknownCreature.callCount = 0;
+
             // force a re-upload
+            sample.loadById( sample.get("sampleId") )
             sample.set("serverSyncTime", moment("2020-01-01").valueOf()); 
             sample.set("updatedAt", moment().valueOf());
             sample.save();
 
-            await createSampleUploader().uploadSamples();
-            await waitForTick(10)();  
+            await createSampleUploader().uploadSamples();  
 
             expect(Alloy.Globals.CerdiApi.updateSampleById.callCount,"updateSampleById should be called").to.equal(1);
             let creatures = Alloy.Globals.CerdiApi.updateSampleById.calls[0].args[1].creatures;

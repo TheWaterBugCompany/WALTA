@@ -278,7 +278,7 @@ function createSampleUploader(delay) {
             }
 
             //debug(`serverSyncTime = ${serverSyncTime}, updatedAt = ${updatedAt}`);
-            if ( !serverSyncTime ) {
+            if ( !serverSampleId ) {
                 uploadOrUpdate = delayedPromise( uploadSampleData(sample), delay );
             } else if ( sample.hasPendingUploads() ) {
                 uploadOrUpdate = delayedPromise( updateExistingSampleData( sample ), delay );
