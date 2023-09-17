@@ -24,11 +24,12 @@ exports.definition = {
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
 			initialize() {
-				this.on("change:sampleId", function() {
+				/*this.on("change:sampleId", function() {
+					
 					// move from temporary to permanent storage
 					let photoPath = this.get("taxonPhotoPath");
 					if ( photoPath ) this.setPhoto(photoPath);
-				});
+				});*/
 				
 				/*this.on('change', function(a,event) {
 					if ( event && !event.ignore ) {
@@ -142,24 +143,25 @@ exports.definition = {
 			// In order to simplify serialization code here we include them - which does
 			// mena this is no longer strictly Cerdi Api JSON - perhaps the methods should be renamed.
 			fromCerdiApiJson(creature) {
+				// Ensure null creature ids are correct stored, on Android
+				// parseInt(null) returns NaN instead.
+				function parseIntOrNull(value) {
+					if ( _.isNull(value) 
+					  || _.isUndefined(value)
+					  || _.isNaN(value) ) 
+						return null;
+					return parseInt(value);
+				}
 				let fields = {
 					abundance: this.convertCountToAbundance(creature.count)
 				};
-				// Ensure null creature ids are correct stored, on Android
-				// parseInt(null) returns NaN instead.
-				if ( creature.creature_id ) {
-					fields.taxonId = parseInt(creature.creature_id);
-				} else {
-					fields.taxonId = null;
-				}
+				
+				fields.serverCreaturePhotoId = parseIntOrNull(creature._serverCreaturePhotoId);
+				fields.serverCreatureId = parseIntOrNull(creature.id);
+				fields.taxonId = parseIntOrNull(creature.creature_id);
+
 				if ( !_.isUndefined(creature._taxonPhotoPath) ) {
 					fields.taxonPhotoPath = creature._taxonPhotoPath;
-				}
-				if ( !_.isUndefined(creature._serverCreaturePhotoId) ) {
-					fields.serverCreaturePhotoId = parseInt(creature._serverCreaturePhotoId);
-				}
-				if ( !_.isUndefined(creature.id) ) {
-					fields.serverCreatureId = parseInt(creature.id);
 				}
 				this.set( fields, {ignore:true});
 			},
