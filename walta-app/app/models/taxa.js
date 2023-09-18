@@ -24,12 +24,12 @@ exports.definition = {
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
 			initialize() {
-				/*this.on("change:sampleId", function() {
+				this.on("change:sampleId", function() {
 					
 					// move from temporary to permanent storage
 					let photoPath = this.get("taxonPhotoPath");
 					if ( photoPath ) this.setPhoto(photoPath);
-				});*/
+				});
 				
 				/*this.on('change', function(a,event) {
 					if ( event && !event.ignore ) {
