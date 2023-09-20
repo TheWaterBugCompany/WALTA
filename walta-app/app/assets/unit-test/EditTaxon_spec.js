@@ -73,7 +73,7 @@ describe("EditTaxon controller", function() {
     });
 
     it('should trigger close event when save button clicked', async () => {
-        makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
+        makeEditTaxon( { taxonId:"1", abundance:"3-5", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg" } );
         await windowOpenTest( win ); 
         await actionFiresEventTest( ctl.saveButton, 'click', ctl, 'close' )
     });
