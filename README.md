@@ -16,6 +16,10 @@ TODO: Add brew file?
 
 `adb logcat -s "TiAPI:*"`
 
+`adb shell setprop log.tag.SQLiteStatements VERBOSE`
+`adb logcat -s "TiAPI:*,SQLiteStatements:*"`
+
+
 ## Testing
 
 To run the unit test suite on a device:

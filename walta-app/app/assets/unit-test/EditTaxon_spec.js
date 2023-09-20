@@ -40,7 +40,9 @@ describe("EditTaxon controller", function() {
     }
     function makeEditTaxon( taxon, readonly ) {
         let txn = createMockTaxon( taxon );
-        Alloy.Collections.taxa = Alloy.createCollection("taxa", [ txn ] )
+        Alloy.Collections.taxa = Alloy.createCollection("taxa", [ txn ] );
+        Alloy.Models.sample = Alloy.createModel("sample");
+        Alloy.Models.sample.save();
         
         makeTaxonController({
             taxonId: taxon.taxonId,
@@ -50,7 +52,7 @@ describe("EditTaxon controller", function() {
     }
 
     afterEach( function(done ) {
-        closeWindow( win, done ); 
+        if (win) closeWindow( win, done );  
     });
 
 	it('should display the taxon edit view', function(done) {  
@@ -68,6 +70,12 @@ describe("EditTaxon controller", function() {
         makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
         await windowOpenTest( win ); 
         await actionFiresEventTest( ctl.closeButton.closeButton, 'click', ctl, 'close' )
+    });
+
+    it('should trigger close event when save button clicked', async () => {
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
+        await windowOpenTest( win ); 
+        await actionFiresEventTest( ctl.saveButton, 'click', ctl, 'close' )
     });
 
     it('save should be disabled if the photo is blank', function(done) {
@@ -224,6 +232,13 @@ describe("EditTaxon controller", function() {
         //await waitForTick(1000)();
         //ctl.dialog.fireEvent("click",{index:0});
         expect( taxon1.get("willDelete") ).to.equal(true);
+    });
+
+    it("should set the serverCreaturePhotoId to null if the photo is updated", async () => {
+        let taxon1 = makeEditTaxon( { sampleId: 666, serverCreaturePhotoId: 616, taxonId:1, abundance:"1-2", taxonPhotoPath: "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg", } );
+        await windowOpenTest( win );
+        ctl.photoSelect.trigger("photoTaken");
+        expect( taxon1.get("serverCreaturePhotoId") ).not.to.exist;;
     });
 
 });

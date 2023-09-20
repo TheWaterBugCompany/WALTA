@@ -1,5 +1,8 @@
 
-function createMockTaxon( taxon ) {
+function createMockTaxon( taxon, saved = true ) {
+    // if ( saved ) {
+    //     taxon.updatedAt = 1000000;
+    // }
     let model = Alloy.createModel("taxa", taxon);
     model.setPhoto = function(path) {
         this.set("taxonPhotoPath", path)
