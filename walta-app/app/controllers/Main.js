@@ -25,12 +25,7 @@ var debug = m => Ti.API.info(m);
 
 var { System, Key, Survey, Navigation } = $.args;
 async function siteDetailsWindow(args) {
-  let result = await System.requestPermission(['android.permission.ACCESS_FINE_LOCATION', 'android.permission.CAMERA', 'android.permission.READ_EXTERNAL_STORAGE']);
-  if (result.success) {
     await Navigation.openController("SiteDetails", args);
-  } else {
-    alert("You need to enable access to location, the camera, and photos on external storage, in order to perform a survey!");
-  }
 }
 
 async function updateDecisionWindow(args) {
