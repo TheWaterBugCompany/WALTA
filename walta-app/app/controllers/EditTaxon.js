@@ -13,8 +13,7 @@ if ( readOnlyMode ) {
     disableControl($.abundanceValue);
 }
 
-let sample = Alloy.Models.sample;
-Ti.API.info(sample)
+let sample = Alloy.Models.instance("sample");
 let sampleId = sample.get("sampleId");
 let taxon = null;
 
