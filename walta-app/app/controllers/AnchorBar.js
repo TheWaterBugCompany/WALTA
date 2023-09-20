@@ -32,6 +32,8 @@ function cleanUp() {
 	$.destroy();
 	$.off();
 	
+	$.AnchorBar.removeEventListener("postlayout", updateTitleWidth);
+
 	eventHandlers.forEach( function(d) {
 		d.btn.removeEventListener( 'click', d.handler );
 	});
@@ -39,7 +41,7 @@ function cleanUp() {
 }
 
 function updateTitleWidth() {
-	$.AnchorBar.removeEventListener("postlayout", updateTitleWidth);
+
 	if ( $.rightTools.size.width > 0 ) {
 		var width = ($.AnchorBar.size.width);
 		var titleWidth = ($.title.size.width);
@@ -48,8 +50,7 @@ function updateTitleWidth() {
 		$.title.left = left + (width-left-right-titleWidth)/2;
 	}
 }
-
-$.AnchorBar.addEventListener("postlayout", updateTitleWidth)
+$.AnchorBar.addEventListener("postlayout", updateTitleWidth);
 
 function createToolBarButton( image, topic, title, eventData, label ) {
 	var btn;
