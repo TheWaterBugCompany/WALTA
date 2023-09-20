@@ -145,6 +145,7 @@ describe("Taxa collection", function() {
     taxon1.set("abundance", "> 20");
     taxon1.set("taxonId", null );
     taxon1.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown.jpg"));
+    taxon1.set("updatedAt", 0);
     taxon1.save();
 
     taxon2 = Alloy.createModel("taxa");
@@ -152,6 +153,7 @@ describe("Taxa collection", function() {
     taxon2.set("abundance", "1-2");
     taxon2.set("taxonId", null );
     taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
+    taxon2.set("updatedAt", 0);
     taxon2.save();
     var taxa = Alloy.createCollection("taxa");
     taxa.load(666);
@@ -188,6 +190,7 @@ describe("Taxa collection", function() {
     taxon1.set("taxonId", null );
     taxon1.set("serverCreatureId", 1);
     taxon1.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown.jpg"));
+    taxon1.set("updatedAt", 0);
     taxon1.save();
 
     taxon2 = Alloy.createModel("taxa");
@@ -196,6 +199,7 @@ describe("Taxa collection", function() {
     taxon2.set("taxonId", null );
     taxon2.set("serverCreatureId", 2);
     taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
+    taxon2.set("updatedAt", 0);
     taxon2.save();
     var taxa = Alloy.createCollection("taxa");
     taxa.load(666);
@@ -237,6 +241,7 @@ describe("Taxa collection", function() {
     taxon1.set("serverCreatureId", 1);
     taxon1.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown.jpg"));
     taxon1.set("serverCreaturePhotoId", 99);
+    taxon1.set("updatedAt", 0);
     taxon1.save();
 
     // serverCreaturePhotoId == 0 means the server didn't supply a photo
@@ -248,6 +253,7 @@ describe("Taxa collection", function() {
     taxon2.set("serverCreatureId", 2); 
     taxon2.set("serverCreaturePhotoId", 0);
     taxon2.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-2.jpg"));
+    taxon2.set("updatedAt", 0);
     taxon2.save();
 
     taxon3 = Alloy.createModel("taxa");
@@ -257,6 +263,7 @@ describe("Taxa collection", function() {
     taxon3.set("serverCreatureId", 3);
     taxon3.set("serverCreaturePhotoId", null);
     taxon3.set("taxonPhotoPath", makeTestPhoto("test-photo-unknown-3.jpg"));
+    taxon3.set("updatedAt", 0);
     taxon3.save();
 
     let taxa = Alloy.createCollection("taxa");
@@ -427,12 +434,14 @@ describe("Sample collection", function() {
       taxon1.set("sampleId", 123 );
       taxon1.set("abundance", "> 20");
       taxon1.set("taxonId", 1 );
+      taxon1.set("updatedAt", 0);
       taxon1.save();
 
       let taxon2 = Alloy.createModel("taxa");
       taxon2.set("sampleId", 456 );
       taxon2.set("abundance", "> 20");
       taxon2.set("taxonId", 1 );
+      taxon2.set("updatedAt", 0);
       taxon2.save();
 
       expect( sample1.equals(sample2), "compare two identical samples").to.be.true;
@@ -468,6 +477,7 @@ describe("Sample collection", function() {
       taxon3.set("sampleId", 456 );
       taxon3.set("abundance", "> 20");
       taxon3.set("taxonId", 1 );
+      taxon3.set("updatedAt", 0 );
       taxon3.save();
       expect( sample1.equals(sample2), `differing taxa collection`).to.be.false;
     
