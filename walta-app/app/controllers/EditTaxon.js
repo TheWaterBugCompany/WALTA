@@ -1,8 +1,9 @@
-const Logger = require("util/Logger")
+const Logger = require("util/Logger");
+var moment = require("lib/moment");
 let sampleTaxonId = $.args.sampleTaxonId; 
 let taxonId = $.args.taxonId;
 let key = $.args.key;
-let { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
+let { disableControl, enableControl } = require("ui/ViewUtils");
 
 let readOnlyMode = $.args.readonly === true;
 Logger.log(`EditTaxon readOnlyMode = ${readOnlyMode}`);
@@ -12,9 +13,9 @@ if ( readOnlyMode ) {
     disableControl($.abundanceValue);
 }
 
-
-
 let sample = Alloy.Models.sample;
+Ti.API.info(sample)
+let sampleId = sample.get("sampleId");
 let taxon = null;
 
 /* if we a referencing an existing taxon load the specific one by sampletaxonid */
@@ -36,12 +37,11 @@ if ( taxonId ) {
 
 if (!taxon ) {
     var taxons = Alloy.createCollection("taxa"); 
-    taxons.loadTemporary(taxonId); 
+    taxons.loadTemporary(sampleId, taxonId); 
     taxon = taxons.first();
     if ( !taxon ) {
-        // creates a taxa but leaves it unlinked from sample until save event recieved
-        Logger.log("creating new taxon as temporary taxon")
-        taxon = Alloy.createModel( 'taxa', { taxonId: taxonId, abundance: "1-2" } );
+        Logger.log(`creating new taxon as temporary taxon for sampleId = ${sampleId}`)
+        taxon = Alloy.createModel( 'taxa', { sampleId: sampleId, taxonId: taxonId, abundance: "1-2" } );
         taxon.save();
     } else {
         Logger.log(`existing temporary taxon ${JSON.stringify(taxon)}`);
@@ -49,8 +49,6 @@ if (!taxon ) {
 } else {
     Logger.log(`existing persisted taxon ${JSON.stringify(taxon)}`);
 }
-
-
 
 var realPhoto = false;
 function isDefaultPhoto() {
@@ -65,14 +63,10 @@ function persistTaxon() {
     $.trigger("persist", taxon );
 }
 
-
-
 function persistPhoto() {
-    taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
-    // necessary because setPhoto as a side effect changes the photo url.
-    // CODE SMELL: this breaks encapsulation, long term fix would be to rewrite to
-    // use events on taxon model to propagate changes.
-    $.photoSelect.photoUrls = [taxon.getPhoto()]; 
+    let photoUrl = taxon.setPhoto( $.photoSelect.getFullPhotoUrl() );
+    taxon.set("serverCreaturePhotoId", undefined);
+    $.photoSelect.photoUrls = [photoUrl]; 
     persistTaxon();
 }
 
@@ -102,9 +96,8 @@ function updateAbundance() {
 }
 
 function saveEvent() {
-    taxon.set("sampleId", sample.get("sampleId"));
     Alloy.Collections.taxa.add( taxon );
-    taxon.save();
+    taxon.save({ "updatedAt": moment().valueOf() });
     $.trigger("save", taxon );
     closeEvent();
 }

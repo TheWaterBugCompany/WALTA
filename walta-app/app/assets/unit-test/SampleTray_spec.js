@@ -887,10 +887,8 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
       
-      
       await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
       await closeSampleTray();
-
 
       await openSampleTrayToEdit(2);
 
@@ -898,11 +896,12 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.abundanceLabel.text ).to.equal("1-2");
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
     });
+
     it('should open the gallery with the correct temporary image url', async function() { 
       await openSampleTrayToEdit(1);
       await simulateUserEdit(21, "/unit-test/resources/simpleKey1/media/amphipoda_01.jpg");
       var photoUrl = await openGallery();
-      expect(photoUrl).to.include("taxon_temporary"); // make sure the correct photo url is sent
+      expect(photoUrl).to.include("_1"); // make sure the correct photo url is sent
     });
 
     it('should persist a saved taxon to the new sample', async function() {
@@ -919,6 +918,7 @@ describe( 'SampleTray controller', function() {
       expect( taxon.get("abundance") ).to.equal("> 20");
       expect( taxon.get("taxonId") ).to.equal(1);
       expect( taxon.get("taxonPhotoPath") ).to.include(`taxon_${sampleId}`);
+      expect( taxon.get("serverCreaturePhotoId") ).to.equal(undefined);
 
     });
     it('should load the persisted data when editing taxon', async function() {

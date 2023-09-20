@@ -27,7 +27,7 @@ use( require('unit-test/lib/chai-date-string') );
 var Sample = require('logic/Sample');
 
 describe("Taxa collection", function() {
-  beforeEach( function() {
+  beforeEach( function() { 
     clearDatabase();
   });
   function createMockTaxon(taxonId,willDelete) {
@@ -36,6 +36,7 @@ describe("Taxa collection", function() {
     taxon.set("abundance", "> 20");
     taxon.set("taxonId", taxonId );
     taxon.set("willDelete", willDelete);
+    taxon.set("updatedAt", 0);
     taxon.save();
   }
   it('should compare two taxa collection', function() {
@@ -119,6 +120,7 @@ describe("Taxa collection", function() {
     taxon.set("abundance", "> 20");
     taxon.set("taxonId", 1 );
     taxon.set("taxonPhotoPath", makeTestPhoto("test-photo.jpg"));
+    taxon.set("updatedAt",0 );
     taxon.save();
     var taxa = Alloy.createCollection("taxa");
     taxa.load(666);
@@ -265,6 +267,48 @@ describe("Taxa collection", function() {
 
 
   });
+
+  it("should not include the temporary taxon in the taxons list", () => {
+    var taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("taxonId", 1 );
+    taxon.set("abundance", "1-2");
+    taxon.set("updatedAt", 100000);
+    taxon.save();
+
+    taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("taxonId", 2 );
+    taxon.set("abundance", "3-4");
+    taxon.save();
+
+    let taxa = Alloy.createCollection("taxa");
+    taxa.load(666);
+    expect( taxa.size() ).to.equal(1);
+    expect( taxa.first().get("taxonId") ).to.equal(1);
+  });
+
+  it("should filter out saved taxons from loadTemporary", () => {
+    var taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("taxonId", 2 );
+    taxon.set("abundance", "1-2");
+    taxon.set("updatedAt", 100000);
+    taxon.save();
+
+    taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666 );
+    taxon.set("taxonId", 2 );
+    taxon.set("abundance", "3-4");
+    taxon.save();
+
+    let taxa = Alloy.createCollection("taxa");
+    taxa.loadTemporary(666,2);
+    expect( taxa.size() ).to.equal(1);
+    expect( taxa.first().get("updatedAt") ).not.to.exist;
+  });
+
+
 });
 
 
@@ -315,7 +359,7 @@ describe("Taxa model", function() {
     taxon.set("sampleId", 666 );
     taxon.set("abundance", "> 20");
     taxon.set("taxonId", 1 );
-    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo.jpg"));
+    taxon.setPhoto(makeTestPhoto("test-photo.jpg"));
     taxon.save();
 
     // clear out of memory the taxa and fetch from database
@@ -330,20 +374,21 @@ describe("Taxa model", function() {
     // should rename photo path to correct name
     expect( taxon.get("taxonPhotoPath")).to.include("taxon_666_1");
   });
+
   it('should persist a taxon with the same id into two different sample ids', function() {
     // create taxa model
     var taxon = Alloy.createModel("taxa");
     taxon.set("sampleId", 666 );
     taxon.set("taxonId", 1 );
     taxon.set("abundance", "1-2");
-    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo-666.jpg"));
+    taxon.setPhoto(makeTestPhoto("test-photo-666.jpg"));
     taxon.save();
 
     taxon = Alloy.createModel("taxa");
     taxon.set("sampleId", 667 );
     taxon.set("taxonId", 1 );
     taxon.set("abundance", "3-4");
-    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo-667.jpg"));
+    taxon.setPhoto(makeTestPhoto("test-photo-667.jpg"));
     taxon.save();
 
     // clear out of memory the taxa and fetch from database
@@ -364,6 +409,7 @@ describe("Taxa model", function() {
     expect( taxon.get("abundance") ).to.equal("3-4");
     expect( taxon.get("taxonPhotoPath") ).to.include("taxon_667_1");
   });
+
 });
 
 describe("Sample collection", function() {
@@ -458,7 +504,7 @@ describe("Sample model hasUnsavedChanges()", function() {
   it('should return false if edited survey is same as original');
 });
 
-describe("Sample model", function() {
+describe("Sample model", function() { 
   var initialSampleId;
 
   function verifyTaxa(taxas,sampleId) {
@@ -511,7 +557,8 @@ describe("Sample model", function() {
           taxonId: taxonId, 
           abundance: ["1-2","3-5","6-10","11-20","> 20"][taxonId-1],
           taxonPhotoPath: makeTestPhoto(`taxon-${taxonId-1}.jpg`),
-          serverCreaturePhotoId: taxonId+100
+          serverCreaturePhotoId: taxonId+100,
+          updatedAt: 0 
           });
         taxon.save();
         Alloy.Collections.taxa.add(taxon);
@@ -524,7 +571,8 @@ describe("Sample model", function() {
         taxonId: null, 
         abundance: ["1-2","3-5"][unkownTaxa-6],
         taxonPhotoPath: makeTestPhoto(`taxon-unknown-${unkownTaxa-1}.jpg`),
-        serverCreaturePhotoId: unkownTaxa+100
+        serverCreaturePhotoId: unkownTaxa+100,
+        updatedAt: 0
         });
       taxon.save();
       Alloy.Collections.taxa.add(taxon);
@@ -899,14 +947,16 @@ describe("Sample model", function() {
       sampleId:  tempSample.get("sampleId"),
       taxonId: 99, 
       abundance: "> 20",
-      taxonPhotoPath: makeTestPhoto(`taxon-98.jpg`)
+      taxonPhotoPath: makeTestPhoto(`taxon-98.jpg`),
+      updatedAt: 0
       }).save();
 
     Alloy.createModel("taxa",{ 
       sampleId:  tempSample.get("sampleId"),
       taxonId: 66, 
       abundance: "1-2",
-      taxonPhotoPath: makeTestPhoto(`taxon-65.jpg`)
+      taxonPhotoPath: makeTestPhoto(`taxon-65.jpg`),
+      updatedAt: 0
       }).save();
 
     tempSample.save();

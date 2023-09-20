@@ -30,7 +30,6 @@ async function siteDetailsWindow(args) {
     await Navigation.openController("SiteDetails", args);
   } else {
     alert("You need to enable access to location, the camera, and photos on external storage, in order to perform a survey!");
-    await Navigation.openController("SiteDetails", args);
   }
 }
 

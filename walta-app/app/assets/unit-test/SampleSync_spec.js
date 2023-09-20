@@ -72,9 +72,18 @@ describe("SampleSync", function () {
         checkSamples(0);
         sample.save(); 
 
-        let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+        let taxon = Alloy.createModel("taxa", { 
+            taxonId: 1, sampleId: sample.get("sampleId"), 
+            taxonPhotoPath: makeTestPhoto("taxon.jpg"), 
+            abundance: "1-2", 
+            updatedAt: 0 
+        });
         taxon.save();
-        let taxon2 = Alloy.createModel("taxa", { taxonId: 2, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+        let taxon2 = Alloy.createModel("taxa", { 
+            taxonId: 2, sampleId: sample.get("sampleId"), 
+            taxonPhotoPath: makeTestPhoto("taxon2.jpg"), 
+            abundance: "3-5", updatedAt: 0
+         });
         taxon2.save();
 
         checkSamples(1);
@@ -154,7 +163,11 @@ describe("SampleSync", function () {
         let sample = Alloy.createModel("sample", { sitePhotoPath: makeTestPhoto("site.jpg") });
         sample.save();
 
-        let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+        let taxon = Alloy.createModel("taxa", { 
+            taxonId: 1, sampleId: sample.get("sampleId"),
+            taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2", 
+            updatedAt: 0 
+        });
         taxa.add(taxon);
 
         taxon.save();
@@ -259,9 +272,17 @@ describe("SampleSync", function () {
         it('should upload new taxon photos', async function() {
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                taxonId: 1, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon.jpg"), 
+                abundance: "1-2", updatedAt: 0 
+            });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { 
+                taxonId: 1, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon2.jpg"), 
+                abundance: "3-5", updatedAt: 0
+             });
             taxon2.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -301,9 +322,17 @@ describe("SampleSync", function () {
         it('should NOT upload old taxon photos again',async function() {
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                taxonId: 1, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon.jpg"), 
+                abundance: "1-2", updatedAt: 0
+             });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { 
+                taxonId: 1, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon2.jpg"), 
+                abundance: "3-5", updatedAt: 0
+             });
             taxon2.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -356,9 +385,17 @@ describe("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto").rejectWith({message:"test error"});
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                taxonId: 1, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon.jpg"), 
+                abundance: "1-2", updatedAt: 0
+             });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { 
+                taxonId: 1, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon2.jpg"), 
+                abundance: "3-5", updatedAt: 0
+             });
             taxon2.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -376,7 +413,11 @@ describe("SampleSync", function () {
                 .resolveWith({id:666});
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { taxonId: 1, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                taxonId: 1, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon.jpg"), 
+                abundance: "1-2", updatedAt: 0
+             });
             taxon.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -1010,7 +1051,8 @@ describe("SampleSync", function () {
             sampleId:  tempSample.get("sampleId"),
             taxonId: 99, 
             abundance: "> 20",
-            taxonPhotoPath: makeTestPhoto("taxon-98.jpg")
+            taxonPhotoPath: makeTestPhoto("taxon-98.jpg"),
+            updatedAt: 0
             }).save();
         // sample is submitted
         tempSample.saveCurrentSample();
@@ -1047,9 +1089,17 @@ describe("SampleSync", function () {
             
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                taxonId: null, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon.jpg"), 
+                abundance: "1-2", updatedAt: 0
+            });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { 
+                taxonId: null, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon2.jpg"), 
+                abundance: "3-5", updatedAt: 0 
+            });
             taxon2.save();
             
             await createSampleUploader().uploadSamples();
@@ -1137,9 +1187,17 @@ describe("SampleSync", function () {
             
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                taxonId: null, sampleId: sample.get("sampleId"),
+                taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2", 
+                updatedAt: 0 
+            });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { 
+                taxonId: null, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5",
+                updatedAt: 0 
+            });
             taxon2.save();
             
             await createSampleUploader().uploadSamples();
@@ -1149,7 +1207,11 @@ describe("SampleSync", function () {
             simple.mock(Alloy.Globals.CerdiApi,"submitUnknownCreature")
                 .resolveWith({id:1,photos:[{id:99}]})
                 .resolveWith({id:2,photos:[{id:100}]});
-            let taxon3 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon3.jpg"), abundance: "6-10" });
+            let taxon3 = Alloy.createModel("taxa", { 
+                taxonId: null, sampleId: sample.get("sampleId"),
+                 taxonPhotoPath: makeTestPhoto("taxon3.jpg"), abundance: "6-10",
+                 updatedAt: 0 
+            });
             taxon3.save();
 
             // force a re-upload
@@ -1194,9 +1256,15 @@ describe("SampleSync", function () {
             
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                taxonId: null, sampleId: sample.get("sampleId"),
+                 taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2", 
+                 updatedAt: 0 });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { 
+                taxonId: null, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5",
+                updatedAt: 0 });
             taxon2.save();
             
             await createSampleUploader().uploadSamples();  
@@ -1243,9 +1311,17 @@ describe("SampleSync", function () {
             
             let sample = makeSampleData();
             sample.save(); 
-            let taxon = Alloy.createModel("taxa", { serverCreatureId: 1, taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2" });
+            let taxon = Alloy.createModel("taxa", { 
+                serverCreatureId: 1, taxonId: null, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2",
+                updatedAt: 0 
+            });
             taxon.save();
-            let taxon2 = Alloy.createModel("taxa", { serverCreatureId: 2, taxonId: null, sampleId: sample.get("sampleId"), taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5" });
+            let taxon2 = Alloy.createModel("taxa", { 
+                serverCreatureId: 2, taxonId: null, sampleId: sample.get("sampleId"), 
+                taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5",
+                updatedAt: 0 
+            });
             taxon2.save();
             
             // delete the taxon

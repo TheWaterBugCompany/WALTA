@@ -38,8 +38,7 @@ function createHttpClient(method, url, contentType, acceptType = 'application/js
                     } else {
                         reject(err);
                     }
-                },
-                timeout: 30000 
+                }
             });
         client.open(method, url);
         client.setRequestHeader('Accept',acceptType) ;
