@@ -1,19 +1,21 @@
 <Alloy>
 	<View class="overlay">
 		<View id="window" class="window" layout="vertical">
-			<View id="header" class="shrinkWrap">
-				<Label id="taxonName" class="headingText" accessibilityLabel="Species Name" text="Taxonomic Identification"/>
-				<Require id="closeButton" src="CloseButton"/>
-			</View>
-			<View id="howMany" layout="vertical">
-				<Label id="howManyLabel" class="labelText" text="How many did you see?"/>
-				<View id="abundance" class="shrinkWrap" layout="horizontal">
-					<Slider id="abundanceValue" accessibilityLabel="Abundance" min="1" max="21" value="1" onChange="updateAbundance"/>
-					<Label id="abundanceLabel" text="1-2" class="labelText"/>
+			<View id="topContainer" layout="vertical">
+				<View id="header" class="shrinkWrap">
+					<Label id="taxonName" class="headingText" accessibilityLabel="Species Name" text="Taxonomic Identification"/>
+					<Require id="closeButton" src="CloseButton"/>
 				</View>
-			</View>
-			<View id="photoSelectWrapper">
-				<Require type="view" src="PhotoSelect" cropPhoto=true id="photoSelect" />
+				<View id="howMany" layout="vertical">
+					<Label id="howManyLabel" class="labelText" text="How many did you see?"/>
+					<View id="abundance" class="shrinkWrap" layout="horizontal">
+						<Slider id="abundanceValue" accessibilityLabel="Abundance" min="1" max="21" value="1" onChange="updateAbundance"/>
+						<Label id="abundanceLabel" text="1-2" class="labelText"/>
+					</View>
+				</View>
+				<View id="photoSelectWrapper">
+					<Require type="view" src="PhotoSelect" cropPhoto=true id="photoSelect" />
+				</View>
 			</View>
 			<View id="buttons" layout="horizontal">
 				<Button id="deleteButton" class="actionButton" title="Delete" accessibilityLabel="Delete" onClick="deleteEvent" />
