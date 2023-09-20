@@ -12,7 +12,9 @@ exports.definition = {
 			"taxonPhotoPath": "VARCHAR(255)",
 			"serverCreaturePhotoId": "INTEGER",
 			"serverCreatureId": "INTEGER",
-			"willDelete": "INTEGER" // if 1 then delete this taxon on next upload
+			"willDelete": "INTEGER", // if 1 then delete this taxon on next upload
+			"updatedAt": "INETGER"  // the last time this taxon was updated 
+									// or null if it hasn't been saved yet
 		},
 		adapter: {
 			type: "sql",
@@ -23,33 +25,6 @@ exports.definition = {
 	},
 	extendModel: function(Model) {
 		_.extend(Model.prototype, {
-			initialize() {
-				this.on("change:sampleId", function() {
-					
-					// move from temporary to permanent storage
-					let photoPath = this.get("taxonPhotoPath");
-					if ( photoPath ) this.setPhoto(photoPath);
-				});
-				
-				/*this.on('change', function(a,event) {
-					if ( event && !event.ignore ) {
-						let dataFields = [
-							"abundance",
-							"taxonPhotoPath",
-						]
-						if (_.intersection(_.keys(event.changes),dataFields).length > 0) {
-							Ti.API.info("changing!")
-							let sampleId = this.get('sampleId');
-							if ( sampleId ) {
-								let sample = Alloy.createModel("sample");
-								sample.loadById(sampleId, false);
-								sample.set({ 'updatedAt': moment().valueOf() });
-								sample.save();
-							}
-						}
-					}
-				});*/
-			},
 			getSampleId() {
 				return this.get("sampleId");
 			},
@@ -84,6 +59,10 @@ exports.definition = {
 			},
 
 			setPhoto(...file) {
+				if ( ! this.get("sampleId") ) {
+					throw new Error("taxon must have a sampleId");
+				}
+
 				let photoFile = Ti.Filesystem.getFile(...file);
 				let newPhotoName;	
 				let taxonName;
@@ -98,22 +77,15 @@ exports.definition = {
 				} else {
 					taxonName = `${taxonId}`;
 				}
-				if ( ! this.get("sampleId") ) {
-					newPhotoName = `taxon_temporary_${taxonName}.jpg`;
-					if ( photoFile.nativePath.endsWith(newPhotoName) )
-						return;
-					removeFilesBeginningWith(newPhotoName);
-				} else {
-					newPhotoName = `taxon_${this.get("sampleId")}_${taxonName}_${moment().unix()}.jpg`;
-					removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${taxonName}_`);
-				}
+				
+				newPhotoName = `taxon_${this.get("sampleId")}_${taxonName}_${moment().unix()}.jpg`;
+				removeFilesBeginningWith(`taxon_${this.get("sampleId")}_${taxonName}_`);
 				
 				log(`updating photo from ${file} to ${newPhotoName}`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				photoFile.move(taxonPhotoPath.nativePath);
 				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
-				this.set( "serverCreaturePhotoId", null); // indicates this photo hasn't been uploaded yet
-				
+				return this.get("taxonPhotoPath");	
 			},
 
 			getPhoto() {
@@ -163,6 +135,13 @@ exports.definition = {
 				if ( !_.isUndefined(creature._taxonPhotoPath) ) {
 					fields.taxonPhotoPath = creature._taxonPhotoPath;
 				}
+
+				if ( !_.isUndefined(creature._updatedAt) ) {
+					fields.updatedAt = creature._updatedAt;
+				} else {
+					fields.updatedAt = moment().valueOf();
+				}
+
 				this.set( fields, {ignore:true});
 			},
 
@@ -170,6 +149,7 @@ exports.definition = {
 				return {
 					"_taxonPhotoPath": this.get("taxonPhotoPath"),
 					"_serverCreaturePhotoId": this.get("serverCreaturePhotoId"),
+					"_updatedAt": this.get("updatedAt"),
 					"count": this.getAbundance(),
 					"creature_id": this.getTaxonId(),
 					"id": this.get("serverCreatureId")
@@ -262,14 +242,11 @@ exports.definition = {
 			findTaxonByServerCreatureId(serverCreatureId) {
 				return this.find( (t) => t.get("serverCreatureId") == serverCreatureId);
 			},
-			/*loadTaxonForSample(taxonId, sampleId) {
-				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId = ${sampleId} AND taxonId = ${taxonId}`} );
-			},*/
-			loadTemporary(taxonId) {
-				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS NULL AND taxonId = ${taxonId}`} );
+			loadTemporary(sampleId, taxonId) {
+				this.fetch({ query: `SELECT * FROM taxa WHERE sampleId IS ${sampleId} AND taxonId = ${taxonId} AND updatedAt IS NULL`} );
 			},
 			load( sampleId ) {
-				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId}) AND (willDelete IS NULL OR willDelete = 0)`} );
+				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId}) AND (willDelete IS NULL OR willDelete = 0) AND updatedAt IS NOT NULL`} );
 			},
 			loadPendingDelete( sampleId ) {
 				this.fetch({ query: `SELECT * FROM taxa WHERE (sampleId = ${sampleId}) AND willDelete > 0`} );
