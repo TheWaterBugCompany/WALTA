@@ -150,23 +150,7 @@ $.photoSelect.on("photoTaken", () => {
     updateSaveButton(); 
 } );
 
-function fixupLayout() {
-     $.photoSelectWrapper.height = $.window.size.height 
-            - $.header.size.height 
-            - $.howMany.size.height 
-            - $.buttons.size.height 
-            - 80; /*  We need this extra padding or else after the photoSelectWrapper 
-                      size is set the buttons get pushed off the bottom which forces 
-                      them to be squashed vertically which causes the wrapper to be 
-                      set to a larger size thus causes positive a feedback loop! */
-}
-
-/* need to trap photoSelectWrapper in order to make sure the other children elements
-   have stablised their size before we use them to size the photoSelect control */
-$.photoSelectWrapper.addEventListener("postlayout", fixupLayout );
-
 function cleanUp() {
-    $.photoSelectWrapper.removeEventListener("postlayout", fixupLayout );
     $.photoSelect.cleanUp();
     $.destroy();
     $.off();
