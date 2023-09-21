@@ -4,43 +4,43 @@ var Topics = require('ui/Topics');
 var { errorHandler, formatError } = require("util/ErrorUtils");
 var { delayedPromise } = require("util/PromiseUtils");
 var log = Logger.log;
-var debug = m => Ti.API.info(m);
+var debug = Logger.debug;
 function createSampleDownloader(delay) {
     return {
         downloadSamples() {
-            log(`Queuing sample retrieval from server... `);
+            debug(`Queuing sample retrieval from server... `);
             
             // only update if updated after it was last uploaded - this allows user changes
             // to not be overwritten.
             function needsUpdate(serverSample,sample) {
 
-                log(`Checking if sampleId=${sample.get("sampleId")} needs downloading `);
+                debug(`Checking if sampleId=${sample.get("sampleId")} needs downloading `);
                 // This can be true if the sample wasn't reviously on the device sibce a new 
                 // record as been created and this will be blank.
                 if ( ! sample.get("serverSampleId") ) {
-                    log(`Yes there is no serverSampleId yet.`);
+                    debug(`Yes there is no serverSampleId yet.`);
                     return true;
                 } 
 
                 let serverSyncTime = sample.get("serverSyncTime");
                 if ( _.isUndefined(serverSyncTime) ) {
-                    log(`Yes there is no serverSyncTime yet.`);
+                    debug(`Yes there is no serverSyncTime yet.`);
                     return true;
                 }
                 
                 let serverUpdateTimeM = moment(serverSample.updated_at);
                 let serverSyncTimeM = moment(serverSyncTime); 
 
-                log(`serverUpdateTimeM=${serverSyncTimeM.valueOf()} serverSyncTimeM=${serverSyncTimeM.valueOf()}`);
+                debug(`serverUpdateTimeM=${serverSyncTimeM.valueOf()} serverSyncTimeM=${serverSyncTimeM.valueOf()}`);
 
                 // We need to subtract a small window to account for upload delay; otherwise
                 // a download will be intitiated every time an upload occurs.
                 if ( serverUpdateTimeM.subtract(10,"s").isAfter(serverSyncTimeM) ) {
-                    log(`Yes the sample was updated on the server after the sync.`);
+                    debug(`Yes the sample was updated on the server after the sync.`);
                     return true;
                 }
 
-                log(`No download needed.`);
+                debug(`No download needed.`);
 
                 return false; // update not needed
 

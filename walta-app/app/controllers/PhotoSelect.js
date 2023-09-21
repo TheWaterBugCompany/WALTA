@@ -1,5 +1,6 @@
 var Logger = require('util/Logger');
 var info = Logger.log;
+var debug = Logger.debug;
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
@@ -45,7 +46,7 @@ function getThumbnailImageUrl() {
 
 
 function generateThumbnail( fileOrBlob ) {
-    info(`generating thumbnail... fileOrBlob = ${fileOrBlob}`);
+    debug(`generating thumbnail... fileOrBlob = ${fileOrBlob}`);
     var fullPhoto = null;
     
     if ( typeof fileOrBlob === "string") {
@@ -61,20 +62,20 @@ function generateThumbnail( fileOrBlob ) {
 
     // We need to save the photo thumbnail to a file path so that the photo gallery 
     // can read it via a URL
-    info("removing old preview files...");
+    debug("removing old preview files...");
     removeFilesBeginningWith("preview_");
 
     // we downscale for high resolution, otherwise the crop will fail due to out of memory errors.
     fullPhoto = optimisePhoto(fullPhoto);
     
-    info("saving full size photo..");
+    debug("saving full size photo..");
 
     var fullPhotoPath = savePhoto( fullPhoto, `preview_full_${moment().valueOf()}.jpg`);
     fullPhoto = null; // release memory - fingers crossed
 
     fullPhoto = loadPhoto( fullPhotoPath );
     
-    info(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
+    debug(`image width = ${fullPhoto.width} image height = ${fullPhoto.height}`);
     var pxWidth = $.photoSelectInner.size.width;
     var pxHeight = $.photoSelectInner.size.height;
 
@@ -106,7 +107,7 @@ function generateThumbnail( fileOrBlob ) {
     }
 
     if ( newHeight != fullPhoto.height || newWidth != fullPhoto.width ) {
-        info(`cropping image to view aspect new width = ${newWidth} new height = ${newHeight}`);
+        debug(`cropping image to view aspect new width = ${newWidth} new height = ${newHeight}`);
         var cropY = (fullPhoto.height-newHeight)/2;
         var thumbnail = fullPhoto.imageAsCropped( { width: newWidth, height: newHeight, x:cropX, y:cropY });
         if ( ! thumbnail ) {
@@ -114,9 +115,9 @@ function generateThumbnail( fileOrBlob ) {
             throw new Error("Unable to crop photo");
         }
     }
-    info(`ratio after crop ${thumbnail.width/thumbnail.height} - view ratio ${viewRatio}`)
+    debug(`ratio after crop ${thumbnail.width/thumbnail.height} - view ratio ${viewRatio}`)
 
-    info(`saving thumbnail...`);
+    debug(`saving thumbnail...`);
     var thumbnailPath = savePhoto( thumbnail, `preview_thumbnail_${moment().valueOf()}.jpg`);
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
@@ -148,7 +149,7 @@ function setImage( fileOrBlob ) {
             $.photo.image = thumbnail;
             $.photoUrls = [photo];
         } else {
-            info(`not calling generateThumbnail fileOrBlob = ${fileOrBlob}`)
+            debug(`not calling generateThumbnail fileOrBlob = ${fileOrBlob}`)
             $.photo.image = fileOrBlob;
             $.photoUrls = [fileOrBlob];
         }
@@ -156,7 +157,7 @@ function setImage( fileOrBlob ) {
     }
 
     async function processPhoto( fileOrBlob ) {
-        info("processPhoto");
+        debug("processPhoto");
         $.photoSelectOptionalLabel.visible = false;
         
         $.photo.visible = false;
@@ -333,7 +334,7 @@ function layoutChildrenHorizontallyFromTheRight(data) {
 $.iconHolder.addEventListener("postlayout", layoutChildrenHorizontallyFromTheRight);
 
 function cleanUp() {
-    info("cleaning up PhotoSelect");
+    debug("cleaning up PhotoSelect");
     $.iconHolder.removeEventListener("postlayout", layoutChildrenHorizontallyFromTheRight);
     $.destroy();
     $.off();
