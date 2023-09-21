@@ -9,11 +9,7 @@
             "type": "titanium",
             "request": "launch",
             "platform": "android",
-            "preLaunchTask": "walta-unit-test",
-            // Use JavaScript source maps (if they exist).
-            "sourceMaps": true,
-            // If JavaScript source maps are enabled, the generated code is expected in this directory.
-            "outDir": "${workspaceRoot}/walta-app/build/android/assets"
+            "preLaunchTask": "walta-unit-test"
         },
         {
             "name": "Launch on iOS",

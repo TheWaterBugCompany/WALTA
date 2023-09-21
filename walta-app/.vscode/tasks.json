@@ -7,8 +7,8 @@
 			"titaniumBuild": {
 				"platform": "android",
 				"target": "device",
-				"deviceId": "710KPRW0304710",
-				"extraArguments": ["--unit-test"],
+				//"deviceId": "710KPRW0304710",
+				"extraArguments": ["--unit-test", "--device-id 710KPRW0304710"],
 				"debugPort": 9000,
 				"debug": true
 			},
