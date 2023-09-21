@@ -43,8 +43,7 @@
             "name": "Launch Debug Android",
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "grunt",
-            "runtimeArgs": [ "debug:android"],
-            "port": 9229
+            "runtimeArgs": [ "debug:android"]
         },
         {
             "name": "Launch via NPM",
@@ -57,7 +56,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "type": "pwa-node"
+            "type": "node"
         }
     
     ]
