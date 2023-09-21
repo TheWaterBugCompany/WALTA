@@ -9,7 +9,6 @@ exports.configure = function() {
     });
 
     Bugfender.enableCrashReporting();
-    Bugfender.enableUIEventLogging();
 
     if (OS_ANDROID) {
         //Bugfender.enableLogcatLogging();
@@ -17,10 +16,7 @@ exports.configure = function() {
     } else {
         Bugfender.setPrintToConsole(true);
     }
-
-    Bugfender.forceSendOnce();
-    Bugfender.setForceEnabled(true);
-    Bugfender.setMaximumLocalStorageSize(1024*1024);
+    Bugfender.setMaximumLocalStorageSize(2*1024*1024);
 }
 exports.setCustomKey = function(name, value) {
     Bugfender.setDeviceString({ key: name, value: value});
@@ -36,6 +32,9 @@ exports.recordException = function(err) {
 exports.setUserId = function(userId) {
     Bugfender.setDeviceString({ key: "user.email", value: userId });
 }
+
+exports.debug = m => Ti.API.info(m);
+
 exports.log = function( message, tag = "trace" ) { 
     Bugfender.t({
         tag: tag,

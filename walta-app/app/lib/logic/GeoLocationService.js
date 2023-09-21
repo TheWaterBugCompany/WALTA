@@ -45,7 +45,7 @@ function cleanup() {
 
 function gotLocation(e) {
     if ( e.success && e.coords ) {
-        Logger.log(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`);
+        Logger.debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`);
         lastGpsPointEvent = e;
         Topics.fireTopicEvent(Topics.GPSLOCK, e.coords);
     } else {
@@ -54,7 +54,7 @@ function gotLocation(e) {
 }
 
 function startListening() {
-    Logger.log("start listening for GPS events")
+    Logger.debug("start listening for GPS events")
     Ti.Geolocation.addEventListener('location', gotLocation );
     Alloy.Globals.GeoLocationState = "listening";
 }
@@ -66,19 +66,19 @@ function stopListening( state = "stopped" ) {
 
 function start() {
     if ( Alloy.Globals.GeoLocationState === "stopped" ) {
-        Logger.log("Starting geolocation service...");
+        Logger.debug("Starting geolocation service...");
         Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_HIGH;
         Ti.Geolocation.distanceFilter = 10;
         if (Ti.Geolocation.hasLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE)) {
-            Logger.log("Got permissions");
+            Logger.debug("Got permissions");
             startListening();
         } else {
             Ti.Geolocation.requestLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE, (e) => {
                 if ( e.success ) {
-                    Logger.log("Got permissions");
+                    Logger.debug("Got permissions");
                     startListening();
                 } else {
-                    Logger.log("Unable to get geolcation permissions");
+                    Logger.debug("Unable to get geolcation permissions");
                 }
             });
         };
@@ -87,7 +87,7 @@ function start() {
 
 function stop() {
     if ( Alloy.Globals.GeoLocationState !== "stopped" ) {
-        Logger.log("Stopping geolocation service...");
+        Logger.debug("Stopping geolocation service...");
         stopListening();
     }
 }

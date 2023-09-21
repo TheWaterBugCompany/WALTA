@@ -215,7 +215,7 @@ function loadSamples() {
 function createSampleUploader(delay) {
     return {
         uploadSamples() {
-            log(`Queuing uploading samples to server...`);
+            debug(`Queuing uploading samples to server...`);
             return Promise.resolve()
                 .then(loadSamples)
                 .then((samples) => this.uploadRemainingSamples(samples) );

@@ -1,6 +1,6 @@
 var Logger = require('util/Logger');
 var log = Logger.log;
-var debug = m => Ti.API.info(m);
+var debug = Logger.debug;
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
@@ -115,7 +115,7 @@ exports.definition = {
 
 			setSitePhoto: function(...file) {
 				var newPhotoName = `sitePhoto_${this.get("sampleId")}_${moment().unix()}.jpg`;
-				log(`updating photo ${file} to ${newPhotoName}`);
+				debug(`updating photo ${file} to ${newPhotoName}`);
 				removeFilesBeginningWith(`sitePhoto_${this.get("sampleId")}_`);
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(...file).move(sitePhotoPath.nativePath);
@@ -269,17 +269,17 @@ exports.definition = {
 			hasPendingUploads() {
 				let serverSyncTime = this.get("serverSyncTime");
 				let updatedAt = this.get("updatedAt");
-				log(`Checking if sampleId=${this.get("sampleId")} needs uploading serverSyncTime=${serverSyncTime} updatedAt=${updatedAt}`);
+				debug(`Checking if sampleId=${this.get("sampleId")} needs uploading serverSyncTime=${serverSyncTime} updatedAt=${updatedAt}`);
 				// if the updatedAt has changed this flags an upload is needed
 				if ( moment(serverSyncTime).isBefore( moment(updatedAt) ) ) {
-					log(`Yes because serverSyncTime < updatedAt`);
+					debug(`Yes because serverSyncTime < updatedAt`);
 					return true;
 				}
 				
 				// if there have been errors in uploading photos then we
 				// to keep trying to upload them.
 				if ( this.get("sitePhotoPath") && _.isNull(this.get("serverSitePhotoId"))) {
-					log(`Yes because a site photo exist but there is no serverSitePhotoId`);
+					debug(`Yes because a site photo exist but there is no serverSitePhotoId`);
 					return true;
 				}
 
@@ -287,11 +287,11 @@ exports.definition = {
 				let taxa = this.loadTaxa();
 				let photosPending = taxa.findPendingUploads().length;
 				if ( photosPending > 0 ) {
-					log(`Yes because there are ${photosPending} to upload`);
+					debug(`Yes because there are ${photosPending} to upload`);
 					return true;
 				}
 
-				log(`Not uploading.`);
+				debug(`Not uploading.`);
 				return false
 
 			},
@@ -561,7 +561,7 @@ exports.definition = {
 		_.extend(Collection.prototype, { 
 			// Note sets the singleton sample (FIXME?)
 			createNewSample: function(serverUserId) {
-				log("Creating new sample...");
+				debug("Creating new sample...");
 				Alloy.Models.sample = Alloy.createModel("sample");
 				this.add(Alloy.Models.sample);
 				Alloy.Models.sample.set("serverUserId",serverUserId);
