@@ -1,0 +1,1538 @@
+openapi: 3.0.0
+info:
+  title: Waterbugs API
+  version: 0.3.2
+servers:
+- url: api.waterbugblitz.org.au/v1
+paths:
+  /samples:
+    get:
+      tags:
+      - Samples
+      summary: Get a list of samples for authenticated user
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SampleData'
+    post:
+      tags:
+      - Samples
+      summary: Submit a sample
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/SampleCreateData'
+
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /samples/{sample}:
+    get:
+      tags:
+      - Samples
+      summary: Get a sample by id for authenticated user
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - $ref: '#/components/parameters/SampleID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+    put:
+      tags:
+      - Samples
+      summary: Update a sample belong to authenticated user
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - $ref: '#/components/parameters/SampleID'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/SampleUpdateData'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+  /samples/{sample}/creatures:
+    get:
+      tags:
+      - Samples
+      - Creatures
+      summary: Get a list of creatures attached to a given sample
+      parameters:
+        - $ref: '#/components/parameters/UserAuthHeader'
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/SampleID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreatureData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+  /samples/{sample}/creatures/{creature}/photos:
+    get:
+      tags:
+      - Creatures
+      - Samples
+      - Photos
+      summary: Get a list of photos attached to a given sample and creature
+      parameters:
+        - $ref: '#/components/parameters/UserAuthHeader'
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/SampleID'
+        - $ref: '#/components/parameters/CreatureID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhotoData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+    post:
+      tags:
+      - Creatures
+      - Samples
+      - Photos
+      summary: Submit a photo for a sampled creature
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - $ref: '#/components/parameters/SampleID'
+      - $ref: '#/components/parameters/CreatureID'
+      requestBody:
+        content:
+          'multipart/form-data':
+            schema:
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+  /samples/{sample}/photos:
+    get:
+      tags:
+      - Samples
+      - Photos
+      summary: Get a list of photos attached to a given sample
+      parameters:
+        - $ref: '#/components/parameters/UserAuthHeader'
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/SampleID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhotoData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+    post:
+      tags:
+      - Samples
+      - Photos
+      summary: Submit a photo for a sample
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - $ref: '#/components/parameters/SampleID'
+      requestBody:
+        content:
+          'multipart/form-data':
+            schema:
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /samples/{sample}/unknownCreatures:
+    get:
+      tags:
+        - Photos
+        - Samples
+        - UnknownSampledCreatures
+      summary: Get a list unknownSampledCreatures attached to a given sample
+      parameters:
+        - $ref: '#/components/parameters/UserAuthHeader'
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/SampleID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UnknownSampledCreatureData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+    post:
+      tags:
+        - Photos
+        - Samples
+        - UnknownSampledCreatures
+      summary: Submit an unknown sampled creature for a sample.
+      description: >
+        This is intended to allow users to submit a photo of a creature with a sample without being able to identify the creature.
+        Assumption is that an administrator would periodically review unknownSampledCreatures and identify
+      parameters:
+        - $ref: '#/components/parameters/UserAuthHeader'
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/SampleID'
+      requestBody:
+        content:
+          'multipart/form-data':
+            schema:
+              $ref: '#/components/schemas/UnknownSampledCreatureCreateData'
+      responses:
+        '201':
+          description: 'Created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownSampledCreatureData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /unknownSampledCreatures/{unknownSampledCreature}:
+    put:
+      tags:
+        - UnknownSampledCreatures
+      summary: Update an unknown sampled creature for a sample
+      parameters:
+        - $ref: '#/components/parameters/UserAuthHeader'
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/UnknownSampledCreatureID'
+      requestBody:
+        content:
+          'multipart/form-data':
+            schema:
+              $ref: '#/components/schemas/UnknownSampledCreatureUpdateData'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownSampledCreatureData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+    delete:
+      tags:
+        - UnknownSampledCreatures
+      summary: Remove an unknown sampled creature for a sample
+      parameters:
+        - $ref: '#/components/parameters/UserAuthHeader'
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/UnknownSampledCreatureID'
+      responses:
+        '200':
+          description: 'OK'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'Not found'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+
+
+  /creatures:
+    get:
+      tags:
+      - Creatures
+      summary: Gets a list of all creatures
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatureDataList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /creatures/{creature}:
+    get:
+      tags:
+      - Creatures
+      summary: Gets a creature by id
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - $ref: '#/components/parameters/CreatureID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatureData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: 'ID not found'
+  /creatures/riverdetectives:
+    get:
+      tags:
+      - Creatures
+      summary: Get a list of creatures in river detectives
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatureDataList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /creatures/search:
+    get:
+      tags:
+      - Creatures
+      summary: Search creatures by keyword
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - name: query
+        in: query
+        description: search phrase
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatureDataList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /scores/{scoring_method}:
+    get:
+      tags:
+      - Score
+      summary:
+      - Get list of scores for specified scoring method
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - $ref: '#/components/parameters/ScoreScoringMethod'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScoreData'
+  /scores/{score}:
+    get:
+      tags:
+      - Score
+      summary:
+      - Get score by id
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      - $ref: '#/components/parameters/ScoreID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreData'
+
+  /password/email:
+    post:
+      tags:
+        - Password
+      summary: Submit password reset on behalf of user
+      parameters:
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/AppAuthHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: Email address associated with account to be reset
+                  example: test@mcface.test
+                  type: string
+              required:
+                - email
+      responses:
+        '201':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: 'Reset link sent to your email'
+                    type: string
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Unauthorized'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: 'Unable to send reset link'
+                    type: string
+                  success:
+                    type: boolean
+                    example: false
+
+
+
+  /user:
+    get:
+      tags:
+      - User
+      summary: Get info for authenticated user
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+    put:
+      tags:
+      - User
+      summary: Update authenticated user
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: User's first and last name
+                  type: string
+                  example: Testy McTestface
+                group:
+                  description: Is the account shared by a group?
+                  type: boolean
+                  default: false
+                  enum: [false, true, 0, 1, '"0"', '"1"']
+                survey_consent:
+                  description: Does the user consent to participating in future surveys?
+                  type: boolean
+                  enum: [false, true, 0, 1, '"0"', '"1"']
+                share_name_consent:
+                  description: Does the user consent to having their name associated with shared data?
+                  type: boolean
+                  default: false
+                  enum: [false, true, 0, 1, '"0"', '"1"']
+
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /user/create:
+    post:
+      tags:
+      - User creation
+      summary: Create user with email / password credentials
+      parameters:
+      - $ref: '#/components/parameters/AppAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/LocalUserData'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/UserTokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /user/create/social:
+    post:
+      tags:
+      - User creation
+      summary: Create user with email / social network credentials
+      parameters:
+      - $ref: '#/components/parameters/AppAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/SocialUserData'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/UserTokenResponse'
+        '401':
+          $ref: '#/components/responses/TokenInvalidCredentialsResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /user/password:
+    put:
+      tags:
+      - User
+      - Password
+      summary: Update local user password
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  description: Password must be at least 6 characters
+                  type: string
+                  required: true
+                password_confirmation:
+                  type: string
+                  required: true
+      responses:
+        '200':
+          description: 'OK'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /token/create:
+    post:
+      tags:
+      - Token creation
+      summary: Request access_token for existing local user
+      parameters:
+      - $ref: '#/components/parameters/AppAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/LocalUserTokenData'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /token/create/social:
+    post:
+      tags:
+      - Token creation
+      summary: Request access_token for existing social user
+      parameters:
+      - $ref: '#/components/parameters/AppAuthHeader'
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/SocialUserTokenData'
+      responses:
+        '200':
+          $ref: '#/components/responses/TokenResponse'
+        '401':
+          $ref: '#/components/responses/TokenInvalidCredentialsResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /token/create/server:
+    post:
+      tags:
+      - Token creation
+      summary: Request access_token for app
+      parameters:
+      - $ref: '#/components/parameters/AcceptHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                client_id:
+                  type: integer
+                  example: 3
+                client_secret:
+                  type: string
+                scope:
+                  type: string
+                  example: create-users
+              required:
+              - client_secret
+              - scope
+      responses:
+        '200':
+          $ref: '#/components/responses/TokenResponse'
+        '401':
+          description: 'Client authentication failed'
+          content:
+            'application/json':
+              schema:
+                properties:
+                  'error':
+                    type: string
+                    example: 'invalid_client'
+                  'message':
+                    type: string
+                    example: 'Client authentication failed'
+  /photos/{photo}:
+    get:
+      tags:
+      - Photos
+      summary:
+      - View photo data
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/PhotoID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoData'
+        '404':
+          description: 'Not found'
+  /photos/{photo}/view:
+    get:
+      tags:
+      - Photos
+      summary:
+      - View photo
+      parameters:
+      - $ref: '#/components/parameters/UserAuthHeader'
+      - $ref: '#/components/parameters/PhotoID'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: 'Not found'
+components:
+  schemas:
+    ScoreData:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        creature_id:
+          type: integer
+          example: 1
+        score:
+          type: integer
+          example: 1
+        type:
+          type: string
+          example: alt
+      required:
+      - id
+      - creature_id
+      - score
+      - type
+    SampleCreateData:
+      type: object
+      properties:
+        sample_date:
+          type: string
+          description: Date sample collected in ISO-8601 format with timezone. Times will be converted to UTC for storage.
+          example: '2018-12-24T23:59:59+10:00'
+        lat:
+          description: Decimal latitude up to 7 decimal places
+          type: string
+          example: '-37.5622'
+        lng:
+          description: Decimal longitude up to 7 decimal places
+          type: string
+          example: '143.8503'
+        scoring_method:
+          type: string
+          description: scoring method used
+          enum: [alt, order, riverdetectives]
+          example: "alt"
+        survey_type:
+          type: string
+          description: Type of sample conducted
+          enum: [mayfly, quick, detailed]
+          example: "detailed"
+        waterbody_type:
+          type: string
+          description: Sampled waterbody type
+          enum: [river, wetland, lake]
+          example: "river"
+        waterbody_name:
+          type: string
+          description: Name of waterbody
+        nearby_feature:
+          type: string
+          description: Nearest feature to help identify location
+        notes:
+          type: string
+          description: Any observations / comments regarding the sample
+        complete:
+          type: boolean
+          description: Is the submitted sample considered complete?
+          nullable: true
+          enum: [0, 1]
+        habitat:
+          description: 0-100 percentage representation of various habitat metrics. To record no occurrence of a property supply a value of 0.
+          type: object
+          properties:
+            boulder:
+              type: integer
+            gravel:
+              type: integer
+            sand_or_silt:
+              type: integer
+            leaf_packs:
+              type: integer
+            wood:
+              type: integer
+            aquatic_plants:
+              type: integer
+            open_water:
+              type: integer
+            edge_plants:
+              type: integer
+        creatures:
+          description: Array of creatures and their occurrences
+          type: array
+          items:
+            type: object
+            properties:
+              count:
+                type: integer
+                example: 1
+              creature_id:
+                type: integer
+                description: 'creature_id as returned by /creatures endpoint'
+                example: 1
+      required:
+      - sample_date
+      - lat
+      - lng
+      - scoring_method
+      - habitat
+      - survey_type
+      - waterbody_type
+      - waterbody_name
+      - complete
+    SampleUpdateData:
+      type: object
+      properties:
+        survey_type:
+          type: string
+          description: Type of sample conducted
+          enum: [mayfly, quick, detailed]
+          example: "detailed"
+        waterbody_type:
+          type: string
+          description: Sampled waterbody type
+          enum: [river, wetland, lake]
+          example: "river"
+        waterbody_name:
+          type: string
+          description: Name of waterbody
+        nearby_feature:
+          type: string
+          description: Nearest feature to help identify location
+          nullable: true
+        notes:
+          type: string
+          description: Any observations / comments regarding the sample
+          nullable: true
+        complete:
+          type: boolean
+          description: Is the submitted sample considered complete?
+          nullable: true
+          enum: [0, 1]
+        habitat:
+          description: 0-100 percentage representation of various habitat metrics. Will overwrite any existing habitat values for this sample. To record no occurrence of a property supply a value of 0. To indicate data not collected supply a value of null or omit the property.
+          type: object
+          properties:
+            boulder:
+              type: integer
+            gravel:
+              type: integer
+            sand_or_silt:
+              type: integer
+            leaf_packs:
+              type: integer
+            wood:
+              type: integer
+            aquatic_plants:
+              type: integer
+            open_water:
+              type: integer
+            edge_plants:
+              type: integer
+        creatures:
+          description: Array of creatures and their occurrence in a sample.
+          type: array
+          items:
+            type: object
+            properties:
+              count:
+                type: integer
+                description: Number of occurrences of creature in sample. Submit count of 0 to remove an existing sampled creature record
+                example: 1
+              creature_id:
+                type: integer
+                description: creature_id as returned by /creatures endpoint
+                example: 1
+      required:
+      - id
+    UnknownSampledCreatureBaseData:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Number of occurrences of creature in sample. Submit count of 0 to remove an existing sampled creature record
+          example: 5
+        photo:
+          type: string
+          format: binary
+          description: Best identifying photo of unknown creature
+
+    UnknownSampledCreatureCreateData:
+      allOf:
+        - $ref: '#/components/schemas/UnknownSampledCreatureBaseData'
+        - type: object
+          count:
+            required: true
+          photo:
+            required: true
+
+    UnknownSampledCreatureUpdateData:
+      allOf:
+        - $ref: '#/components/schemas/UnknownSampledCreatureBaseData'
+        - type: object
+          properties:
+            creature_id:
+              type: integer
+              description: creature_id as returned by /creatures endpoint.
+              example: 1
+
+    UnknownSampledCreatureData:
+      allOf:
+        - $ref: '#/components/schemas/SampledCreatureData'
+        - type: object
+          properties:
+            creature_id:
+              type: integer
+              nullable: true
+              example: null
+              description: Creature ID. Always null
+
+    SampleData:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        sample_date:
+          type: string
+          description: ISO-8601 formatted date string. Times are returned in UTC
+          example: "2018-12-24T23:59:59+00:00"
+        lat:
+          type: string
+          description: Decimal latitude to 7 decimal places
+          example: "-37.5622"
+        lng:
+          type: string
+          description: Decimal longitude to 7 decimal places
+          example: "143.87503"
+        scoring_method:
+          type: string
+          description: scoring method used
+          enum: [alt, order, riverdetectives]
+          example: "alt"
+        created_at:
+          type: string
+          description: ISO-8601 formatted date string
+          example: "2018-12-24T23:59:59+10:00"
+        updated_at:
+          type: string
+          description: ISO-8601 formatted date string
+          example: "2018-12-24T23:59:59+10:00"
+        survey_type:
+          type: string
+          description: Type of sample conducted
+          enum: [mayfly, quick, detailed]
+          example: "detailed"
+        waterbody_type:
+          type: string
+          description: Sampled waterbody type
+          enum: [river, wetland, lake]
+          example: "river"
+        waterbody_name:
+          type: string
+          description: Name of waterbody
+        nearby_feature:
+          type: string
+          description: Nearest feature to help identify location
+          nullable: true
+        notes:
+          type: string
+          description: Any observations / comments regarding the sample
+          nullable: true
+        complete:
+          type: boolean
+          description: Is the submitted sample considered complete? Null values should be considered unknown
+          nullable: true
+        score:
+          type: number
+          format: float
+          description: Average score for recorded creatures within specified scoring_method. Null if no creatures have been submitted with sample.
+          example: 5.1
+          nullable: true
+        weighted_score:
+          type: number
+          format: float
+          description: Weighted score for recorded creatures within specified scoring_method. Only applicable is scoring_method is alt and creatures have been submitted with sample
+          example: 6.3
+          nullable: true
+        sampled_creatures:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/SampledCreatureData'
+        habitat:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            sample_id:
+              type: integer
+              example: 1
+            boulder:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+            gravel:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+            sand_or_silt:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+            leaf_packs:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+            wood:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+            aquatic_plants:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+            open_water:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+            edge_plants:
+              description: Measure of habitat condition as a percentage
+              type: integer
+              nullable: true
+              example: 5
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhotoData'
+
+    SampledCreatureData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        sample_id:
+          type: integer
+          format: int32
+        creature_id:
+          type: integer
+          format: int32
+        count:
+          description: Count of given creature seen in this sample
+          type: integer
+          format: int32
+          example: 5
+        photos_count:
+          description: Number of photos available of this creature in this sample
+          type: integer
+          format: int32
+    CreatureData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        phylum:
+          type: string
+        subphylum:
+          type: string
+        class:
+          type: string
+        order:
+          type: string
+        family:
+          type: string
+        genus:
+          type: string
+        species:
+          type: string
+        parent_id:
+          type: integer
+        alt_name:
+          type: string
+        alt_section:
+          type: string
+        common_name:
+          type: string
+        taxonomic_level:
+          type: string
+        ala_name:
+          type: string
+          description: Scientific name as described in ALA where alt_name doesn't match
+        rd_name:
+          type: string
+          description: Name of creature in RiverDetectives
+        ala_guid:
+          type: string
+          description: Matched ALA identifier
+        epa_code:
+          type: string
+          description: EPA code for creature
+        photos:
+          type: array
+          description: Array of sample creature photos or null if creature accessed directly
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PhotoData'
+        sampled_creature:
+          type: object
+          properties:
+            sample_id:
+              type: integer
+              format: int32
+            creature_id:
+              type: integer
+              format: int32
+            count:
+              type: integer
+              description: Count of given creature seen in this sample
+              format: int32
+      required:
+      - id
+      - phylum
+      - subphylum
+      - class
+      - order
+      - family
+      - genus
+      - species
+      - parent_id
+      - alt_name
+      - alt_section
+      - common_name
+      - taxonomic_level
+      - ala_name
+      - rd_name
+      - ala_guid
+      - epa_code
+      - photos
+    CreatureDataList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          alt_name:
+            type: string
+            description: ALT name of creature
+          common_name:
+            type: string
+            description: ALT common name of creature
+          taxonomic_level:
+            type: string
+            enum: [kingdom, phylum, subphylum, class, order, family, genus, species, informal, alt]
+    PhotoData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+        original_filename:
+          type: string
+          example: "image.jpg"
+        extension:
+          type: string
+          example: "jpeg"
+        mimetime:
+          type: string
+          example: "image/jpeg"
+        filesize:
+          type: integer
+          format: int32
+          example: 123456
+        filename:
+          type: string
+          description: Internal md5 filename
+        user_id:
+          type: integer
+          format: int32
+          example: 1
+
+    BaseTokenData:
+      type: object
+      properties:
+        scope:
+          description: Requested token scope
+          type: string
+          default: ''
+
+    LocalUserTokenData:
+      allOf:
+      - $ref: '#/components/schemas/BaseTokenData'
+      - type: object
+        required:
+        - email
+        - password
+        properties:
+          password:
+            description: User's password
+            type: string
+          email:
+            description: User's email address
+            type: string
+
+    SocialUserTokenData:
+      allOf:
+      - $ref: '#/components/schemas/BaseTokenData'
+      - type: object
+        required:
+        - oauth_token
+        - oauth_network
+        properties:
+          oauth_token:
+            description: Current oauth_token from oauth_network used by the API to confirm user has been authenticated and retrieve basic info
+            type: string
+          oauth_network:
+            description: OAuth provider issuing oauth_token
+            type: string
+            enum: [facebook, google, twitter]
+          oauth_secret:
+            description: Current oauth_secret from oauth_network used with the oauth_token by the API to confirm user has been authenticated. Required with OAuth1 protocols (Twitter)
+            type: string
+
+    BaseUserData:
+      type: object
+      required:
+      - email
+      - group
+      - survey_consent
+      - share_name_consent
+      properties:
+        email:
+          description: User's email address
+          type: string
+          example: testy@mcface.test
+        group:
+          description: Is the account shared by a group?
+          type: boolean
+          default: false,
+          enum: [false, true, 0, 1, '"0"', '"1"']
+        survey_consent:
+          description: Does the user consent to participating in future surveys?
+          type: boolean
+          enum: [false, true, 0, 1, '"0"', '"1"']
+        share_name_consent:
+          description: Does the user consent to having their name associated with shared data?
+          type: boolean
+          default: false
+          enum: [false, true, 0, 1, '"0"', '"1"']
+    SocialUserData:
+      allOf:
+      - $ref: '#/components/schemas/BaseUserData'
+      - type: object
+        required:
+        - oauth_token
+        - oauth_network
+        properties:
+          oauth_token:
+            description: Current oauth_token from oauth_network used by the API to confirm user has been authenticated and retrieve basic info
+            type: string
+          oauth_network:
+            description: OAuth provider issuing oauth_token
+            type: string
+            enum: [facebook, google, twitter]
+            default: ''
+          oauth_secret:
+            description: Current oauth_secret from oauth_network used with the oauth_token by the API to confirm user has been authenticated. Required with OAuth1 protocols (Twitter)
+            type: string
+    LocalUserData:
+      allOf:
+      - $ref: '#/components/schemas/BaseUserData'
+      - type: object
+        required:
+        - password
+        properties:
+          name:
+            description: User's first and last name
+            type: string
+            example: Testy McTestface
+          password:
+            description: Password must be at least 6 characters
+            type: string
+
+    UserResponseModel:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The user name
+          example: Testy McTestface
+        email:
+          type: string
+          description: The user email
+          example: testy@mcface.test
+        group:
+          type: boolean
+          description: Is the account shared by a group?
+          enum: [0, 1]
+        survey_consent:
+          description: Does the user consent to participating in future surveys?
+          type: boolean
+          enum: [0, 1]
+        share_name_consent:
+          description: Does the user consent to having their name associated with shared data?
+          type: boolean
+          enum: [0, 1]
+        id:
+          type: integer
+          description: The user id
+          example: 1
+        created_at:
+          type: string
+          description: Date user created
+        updated_at:
+          type: string
+          description: Date user modified
+    UserTokenResponseModel:
+      allOf:
+      - $ref: '#/components/schemas/UserResponseModel'
+      - type: object
+        properties:
+          accessToken:
+            type: string
+            description: OAuth token for API interaction
+
+  parameters:
+    PhotoID:
+      name: photo
+      in: path
+      schema:
+        type: integer
+        format: int32
+      required: true
+      description: Photo ID
+    ScoreScoringMethod:
+      name: scoring_method
+      in: path
+      schema:
+        type: string
+        enum: [alt, order, riverdetectives]
+      required: true
+      description: Scoring method to filter scores on
+    ScoreID:
+      name: score
+      in: path
+      schema:
+        type: integer
+        format: int32
+      required: true
+      description: Score ID
+    SampleID:
+      name: sample
+      in: path
+      schema:
+        type: integer
+        format: int32
+      required: true
+      description: Sample ID
+    UnknownSampledCreatureID:
+      name: unknownSampledCreature
+      in: path
+      schema:
+        type: integer
+        format: int32
+      required: true
+      description: Unknown Sampled Creature ID
+    CreatureID:
+      name: creature
+      in: path
+      schema:
+        type: integer
+        format: int32
+      required: true
+      description: Creature ID
+    UserAuthHeader:
+      name: Authorization
+      in: header
+      schema:
+        type: string
+      required: true
+      description: User bearer token. Obtained after creating/authenticating user
+    AppAuthHeader:
+      name: Authorization
+      in: header
+      schema:
+        type: string
+      required: true
+      description: App bearer token requested by sending client_secret to /token/create/server. Client secret is provided to authorised users
+    AcceptHeader:
+      name: Accept
+      in: header
+      schema:
+        type: string
+      required: true
+      description: application/json
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+                example: "Unauthenticated"
+
+    UnprocessableEntity:
+      description: Unprocessable entity
+      content:
+        'application/json':
+          schema:
+            properties:
+              message:
+                type: string
+                example: 'Summary of errors'
+              errors:
+                type: object
+                properties:
+                  param:
+                    type: array
+                    items:
+                      type: string
+                      example: 'Param specific error'
+    TokenResponse:
+      description: 'OK'
+      content:
+        'application/json':
+          schema:
+            properties:
+              'token_type':
+                type: string
+                default: 'Bearer'
+              'expires_in':
+                type: integer
+                description: Seconds until token expiry
+              'access_token':
+                type: string
+                description: OAuth token for API interaction
+              'refresh_token':
+                type: string
+                description: OAuth refresh token
+
+    TokenInvalidCredentialsResponse:
+      description: 'Invalid Credentials'
+      content:
+        'application/json':
+          schema:
+            properties:
+              'error':
+                type: object
+                properties:
+                  'errors':
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        'domain':
+                          type: string
+                          example: 'global'
+                        'reason':
+                          type: string
+                          example: 'authError'
+                        'message':
+                          type: string
+                          example: 'Invalid Credentials'
+                        'locationType':
+                          type: string
+                          example: 'header'
+                        'location':
+                          type: string
+                          example: 'Authorization'
+                  'code':
+                    type: integer
+                    example: 401
+                  'message':
+                    type: string
+                    example: 'Invalid Credentials'
+    UserResponse:
+      description: 'OK'
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/UserResponseModel'
+
+    UserTokenResponse:
+      description: 'OK'
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/UserTokenResponseModel'

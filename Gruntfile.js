@@ -268,6 +268,15 @@ module.exports = function(grunt) {
             }
           },
 
+          launch_android: {
+            command: `adb shell am start -n ${APP_ID}/${APP_ACTIVITY}`
+          },
+
+          launch_ios: {
+            command: `ios-deploy -m --bundle_id ${APP_ID}`
+          },
+
+
           install_android: {
             command: function(build_type) { 
               return `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb install ./builds/${build_type}/Waterbug.apk`;
@@ -443,6 +452,7 @@ module.exports = function(grunt) {
     grunt.option('appium-retry-attempts', 2 );
     grunt.registerTask("launch", function(platform,build_type) {
       const done = this.async();
+
       getCapabilities(platform,true)
         .then( caps => {
             return startAppium(caps) 
@@ -499,9 +509,9 @@ module.exports = function(grunt) {
           await delay(100);
         }
       }
-      (function() { if ( ! appium_session ) {
-        const caps = getCapabilities(platform,true);
-        caps.autoLaunch = false;
+      (async function() { if ( ! appium_session ) {
+        const caps = await getCapabilities(platform,true); 
+        caps["appium:autoLaunch"] = false;
         return startAppium(caps);
       } else {
         return Promise.resolve();
