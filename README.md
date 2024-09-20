@@ -70,7 +70,7 @@ following command:
 `npx grunt --platform=android clean release && npx grunt --platform=ios release`
 
 This will build both the Android adb and iOS ipa and place them in the folder
-`walta-app/dist/Waterbug.{apk,aab,ipa}`
+`builds/release/Waterbug.{apk,aab,ipa}`
 
 ## Making a release
 
