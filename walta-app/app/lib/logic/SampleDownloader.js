@@ -1,7 +1,6 @@
 var Logger = require('util/Logger');
 var moment = require("lib/moment");
 var Topics = require('ui/Topics');
-var { errorHandler, formatError } = require("util/ErrorUtils");
 var { delayedPromise } = require("util/PromiseUtils");
 var log = Logger.log;
 var debug = Logger.debug;
@@ -115,7 +114,7 @@ function createSampleDownloader(delay) {
                             return [sample,serverSample];
                         })
                         .catch( err => {
-                            log(`Failed to download photo for [serverSampleId=${serverSample.id}]: ${formatError(err)}`)
+                            log(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
                             Logger.recordException(err)
                         });
                 } else {
@@ -162,7 +161,7 @@ function createSampleDownloader(delay) {
                             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
                         })
                         .catch( err => {
-                            log(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]: ${formatError(err)}`);
+                            log(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                             Logger.recordException(err)
                         });
             }
