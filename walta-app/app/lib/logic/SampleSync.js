@@ -1,6 +1,5 @@
 var Logger = require('util/Logger');
 var Topics = require('ui/Topics');
-var { errorHandler, formatError } = require("util/ErrorUtils");
 
 var { createSampleUploader } = require("logic/SampleUploader");
 var { createSampleDownloader } = require("logic/SampleDownloader");
@@ -67,11 +66,6 @@ function startSynchronise(options) {
         return Promise.resolve();
     }
    
-
-    function handleError(err) {
-        Logger.error(err);
-        errorHandler(err);
-    }
     if (isSyncing) {
         debug("Already syncing, aborting");
         return;
@@ -94,7 +88,7 @@ function startSynchronise(options) {
     return Promise.resolve()
         .then(() => sampleDownloader.downloadSamples() )
         .then(() => sampleUploader.uploadSamples() )
-        .catch( handleError )
+        .catch( Logger.recordException )
         .finally( rescheduleSync )
 }
 

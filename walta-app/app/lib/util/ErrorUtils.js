@@ -1,6 +1,4 @@
 var Logger = require('util/Logger');
-var log = Logger.log;
-var debug = m => Ti.API.info(m);
 function formatError(err) {
     let message = "<unknown error>";
 
@@ -11,18 +9,10 @@ function formatError(err) {
     } else if ( err.message ) {
         message = err.message
     }
-
-    if ( err.source ) {
-        message = `${message} Details: ${JSON.stringify(err.source)}`;
-    }
-    if ( err.stack ) {
-        message = `${message} ${err.stack}`;
-    }
-    return message;
+    return `${message} Details: ${JSON.stringify(err)}`;
 }
 function errorHandler( err ) {
     Logger.recordException( err );
-    //return Promise.reject(err);
 }
 exports.errorHandler = errorHandler;
 exports.formatError = formatError;

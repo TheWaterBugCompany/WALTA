@@ -50,6 +50,7 @@ function uploadSitePhoto(sample,delay) {
                 log(`Optimising ${sitePhoto}`);
                 savePhoto( optimisePhoto(blob), sitePhoto );
             } 
+            log(`Uploading site photo: ${sitePhoto}`);
             return delayedPromise( submitSitePhoto( sampleId, sitePhoto ), delay)
                     .then( (res) => {
                         loadCorrectSampleToUpdate(sample);
@@ -60,7 +61,6 @@ function uploadSitePhoto(sample,delay) {
                         return sample;
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to upload site photo: ${formatError(err)}`);
                         Logger.recordException(err);
                         return sample;
                     })
@@ -134,6 +134,7 @@ function uploadUnknownCreature(sample,t,delay) {
     // skip known creatures and any unknown creatures that have had
     // their serverCreaturePhotoId set.
     if ( taxonId == null ) {
+        log(`Uploadin unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]`);
         let photoPath = t.getPhoto();
         let count = t.getAbundance();
         if ( photoPath ) {
@@ -143,7 +144,7 @@ function uploadUnknownCreature(sample,t,delay) {
                 savePhoto( optimisePhoto( blob ), photoPath );
             } 
             let actions;
-            
+             
             if ( !serverCreatureId ) { 
                 actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath ) ), delay );
             } else {
@@ -157,8 +158,7 @@ function uploadUnknownCreature(sample,t,delay) {
                 Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
             })
             .catch( (err) => {
-                log(`Error when attempting to upload unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]: ${formatError(err)}`);
-                Logger.recordException(err);
+                  Logger.recordException(err);
             });             
         }
     }
@@ -190,10 +190,7 @@ function deletePendingUnknownCreatures(sample,delay) {
             .then( (res) => {
                 t.destroy();
             })
-            .catch( (err) => {
-                log(`Error when attempting to delete unknown creature [serverSampleId=${sampleId},id=${creatureId}]: ${formatError(err)}`);
-                Logger.recordException(err);
-            });
+            .catch( Logger.recordException );
     }
     let taxa = Alloy.createCollection("taxa");
     taxa.loadPendingDelete( sample.get("sampleId") );
@@ -302,7 +299,7 @@ function createSampleUploader(delay) {
                         .then( (sample) => uploadUnknownCreatures(sample,delay))
                         .then( (sample) => deletePendingUnknownCreatures(sample,delay))
                         .then( (sample) => markSampleComplete(sample,delay) )
-                        .catch( errorHandler );
+                        .catch( Logger.recordException );
             } else {
                 return Promise.resolve(sample);
             }
