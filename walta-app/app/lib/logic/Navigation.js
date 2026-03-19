@@ -44,8 +44,28 @@ Navigation.prototype.onDiscardEdits = async function () {
         this.services.Survey.discardSurvey();
 }
 
+/*
+ * garbageCollectControllers — loop detection and history truncation.
+ *
+ * The user navigates the dichotomous key by opening screens, and can also
+ * navigate backwards. Without truncation, tapping the same key node twice
+ * would append a duplicate entry and create an ever-growing history loop.
+ *
+ * Algorithm:
+ *   1. Check if the target page is already in history (same controller + same node id).
+ *   2. If found at index N, slice history to [0..N), discarding everything after it.
+ *   3. Fire PAGES_UNLOADED so discarded controllers can clean up (e.g. close windows).
+ *   4. Special case: if a SiteDetails screen is being discarded AND has unsaved changes,
+ *      prompt the user to submit or discard before proceeding. This is the only place
+ *      where navigation is async-blocked waiting for user input.
+ *
+ * Example: history = [Home, QuestionA, SiteDetails, QuestionA']
+ *   Opening QuestionA again → index=1, unloading=[SiteDetails, QuestionA']
+ *   SiteDetails check fires → user prompted if unsaved edits exist.
+ */
 Navigation.prototype.garbageCollectControllers = async function (page) {
-    // search for a version of this page 
+    // Two screens are "equivalent" if they show the same controller for the same key node.
+    // Controllers without a node (e.g. Home) match purely on controller name.
     function isPageEquivalent(a, b) {
          if (a.ctl === b.ctl) {
             if (a.args.node && b.args.node) {
@@ -57,13 +77,6 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
         return false;
     }
 
-    // find the previous instance of an equivalent screen and truncate
-    // the history to avoid the ability to create long loops as this
-    // is annoying to the user.
-
-    // this now is used to detect when an in progress edit should be
-    // discarded and alert the user.
-    
     var index = _(this.history).findIndex((h) => isPageEquivalent(h, page));
     if (index >= 0) {
         let unloadingPages = this.history.slice(index+1);
@@ -75,8 +88,8 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
         }
         this.history = this.history.slice(0, index);
         Topics.fireTopicEvent(Topics.PAGES_UNLOADED, { pages: unloadingPages });
-    } 
-    
+    }
+
 }
 
 Navigation.prototype.openController = async function (ctl, args) {

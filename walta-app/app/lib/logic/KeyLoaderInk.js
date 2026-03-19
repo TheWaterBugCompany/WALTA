@@ -32,6 +32,21 @@ var SpeedbugIndex = require('./SpeedbugIndex');
 	Ink JSON compiled format is dcoumented here: https://github.com/inkle/ink/blob/master/Documentation/ink_JSON_runtime_format.md
 */
 
+/*
+	Ink JSON runtime format overview (relevant subset):
+	  A container is an array where:
+	    - all elements except the last are sequential "evals" (instructions/sub-containers)
+	    - the last element is an attribute dictionary (or null), which may include:
+	        "#n": named label for this container
+	        "->": divert (jump) target path
+	        "*": choice point
+	        "#": tag (used for taxon/question attributes like "taxonId:42")
+	  Paths are dot-separated strings, e.g. "myKnot.myStitch" or ".2.myStitch" (leading dot = relative).
+	  "^" in a path means "go up to parent container".
+
+	The container() factory wraps a raw Ink array node and provides path resolution via
+	lookUpPath / lookUpPathRel so that processContainer() can navigate the graph.
+*/
 function container( { root, parent, node } ) {
 	var obj = {
 		makeChildContainer( n ) {
@@ -40,13 +55,20 @@ function container( { root, parent, node } ) {
 
 		parent: parent,
 
-		// recurse dictionary attributes (which are always the last item in the array), wrapping
-		// them with container objects when needed.
+		// The attribute dictionary is always the last element of an Ink container array.
 		attrs: (node ? node.slice(-1)[0] : null ),
 
-		// list of sequential items to evaluate, also wrapping them
+		// Sequential instructions/sub-containers are everything except the last element.
 		evals: (node ? node.slice(0,-1) : null ),
 
+		/*
+		 * lookUpPathRel resolves a dot-split path relative to this container.
+		 * Resolution rules (applied to the first path segment, then recurse):
+		 *   - numeric string  → index into this.evals
+		 *   - "^"             → go to parent container
+		 *   - named string    → look up in namedNodeToIndex (sub-containers labelled with "#n")
+		 *                       or, if present in attrs, look up as a named attribute
+		 */
 		lookUpPathRel( parts ) {
 			//console.debug( "lookUpPathRel()", parts );
 			//console.debug("context", this );
@@ -93,6 +115,10 @@ function container( { root, parent, node } ) {
 			return  cnt.lookUpPathRel( parts );
 		},
 
+		/*
+		 * lookUpPath resolves an absolute or relative Ink path string.
+		 * A leading "." means relative to this container; otherwise resolves from root.
+		 */
 		lookUpPath( path ) {
 			var parts = path.split(".");
 			if ( parts.length > 1 && parts[0].length === 0 ) {
