@@ -41,9 +41,23 @@ function savePhoto( blob, filename  ) {
     return photoPath.nativePath;
 }
 
+/*
+ * needsOptimising / optimisePhoto — photo size reduction before upload.
+ *
+ * The CERDI API enforces a maximum upload size. Photos from modern phone cameras
+ * can easily exceed this, so we optimise before uploading.
+ *
+ * Size threshold: 4 MB. Dimension cap: 1600px wide (maintaining aspect ratio).
+ *
+ * iOS-specific: the camera produces PNG blobs which are much larger than equivalent
+ * JPEGs. A resize operation on a large PNG can trigger intermittent memory corruption
+ * in the Titanium runtime on iOS, so we convert PNG→JPEG first (at 0.7 quality) to
+ * reduce working memory, then check if a resize is still needed.
+ *
+ * Android produces JPEG directly from the camera, so the PNG conversion branch is
+ * not reached in practice on Android.
+ */
 function needsOptimising( photo ) {
-    /* resizing on iOS seems trigger an intermittant image corruptiojn so we only resize if
-       the image size is to large to pass the CERDI API requirements. */
     Ti.API.info(`needsOptimisng photo.length = ${photo.length}`)
     let res = ( photo.length > 4*1024*1024 /*|| photo.width > 1600 || photo.height > 1600 */);
     return res;
@@ -52,8 +66,7 @@ function needsOptimising( photo ) {
 function optimisePhoto( fullPhoto ) {
     var aspectRatio = (fullPhoto.height/fullPhoto.width);
 
-    // on iOS we get large PNG files so we convert to JPEG before trying to resize the image
-    // this hopefully reduces the memory requirements for this process.
+    // iOS camera returns PNG; convert to JPEG before resizing to avoid memory corruption.
     if ( ( fullPhoto.mimeType === "image/png" ) ) {
         log(`got a PNG: converting photo into JPEG...`);
         fullPhoto = fullPhoto.imageAsCompressed(0.7);
