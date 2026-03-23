@@ -1,10 +1,14 @@
 module.exports = function(grunt) {
     const { getCapabilities, startAppiumClient, stopAppiumClient } = require("./features/support/appium")
     const { decodeSyslog } = require('./features/support/ios-colors');
-    const _ = require("lodash");
     const KobitonAPI = require("./features/support/kobiton");
 
     const fs = require('fs');
+    const path = require('path');
+    const Module = require('module');
+    // Make Titanium-style module paths (e.g. 'util/Logger') resolvable in Node.js
+    process.env.NODE_PATH = (process.env.NODE_PATH ? process.env.NODE_PATH + ':' : '') + path.resolve(__dirname, 'walta-app/app/lib');
+    Module._initPaths();
     const CircularJSON = require("circular-json");
     const KeyLoader = require("./walta-app/app/lib/logic/KeyLoaderInk");
     const { createMockCerdiServer } = require('./features/support/mock-cerdi-server');
@@ -116,9 +120,9 @@ module.exports = function(grunt) {
 
       function emulator() {
         if ( platform === "android" ) {
-          args.push( "--deploy-type development", "--target emulator", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`, '-C "Default"'); 
+          args.push( "--build-only", "--deploy-type development", "--target emulator", '-C "Medium_Phone_API_36.1"');
         } else if ( platform === "ios" ){
-          args.push( "--deploy-type development", "--target simulator", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_ADHOC}\"`);
+          args.push( "--build-only", "--deploy-type development", "--target simulator" );
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }
@@ -165,6 +169,12 @@ module.exports = function(grunt) {
           args.push("--output-dir builds/unit-test");
           break;
 
+        case "unit-test-sim":
+          emulator();
+          args.push("--unit-test");
+          args.push("--output-dir builds/unit-test");
+          break;
+
         case "release":
           production();
           args.push("--output-dir builds/release");
@@ -198,7 +208,8 @@ module.exports = function(grunt) {
 
 
     function build_if_newer_options(platform,build_type) {
-      const ext = (platform === "ios"? (build_type === "preview"?"app":"ipa"):"apk");
+      const isSimBuild = build_type.includes("sim");
+      const ext = (platform === "ios"? (build_type === "preview" || isSimBuild ?"app":"ipa"):"apk");
       const tasks = [];
       
       if ( ! grunt.option('skip-build') ) {
@@ -206,7 +217,7 @@ module.exports = function(grunt) {
         if ( grunt.option('kobiton') ) {
           tasks.push(`upload:${platform}:${build_type}`);
         } else {
-          if ( build_type !== "release" ) {
+          if ( build_type !== "release" && !build_type.includes("sim") ) {
             tasks.push(`install:${platform}:${build_type}`);
           }
         }
@@ -255,7 +266,7 @@ module.exports = function(grunt) {
           },
 
           clean: {
-            command: './node_modules/.bin/titanium clean --project-dir ./walta-app',
+            command: './node_modules/.bin/titanium clean --project-dir ./walta-app && rm -rf ./walta-app/build/android/assets ./walta-app/build/android/app/build/intermediates/merged_assets',
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -378,6 +389,9 @@ module.exports = function(grunt) {
           unit_test_android: build_if_newer_options("android", "unit-test"),
           unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
+          unit_test_sim_android: build_if_newer_options("android", "unit-test-sim"),
+          unit_test_sim_ios: build_if_newer_options("ios", "unit-test-sim"),
+
           test_android: build_if_newer_options("android", "test"),
           test_ios: build_if_newer_options("ios", "test"),
 
@@ -397,6 +411,8 @@ module.exports = function(grunt) {
 
     // keep track of the current appium session
     global.appium_session = null;
+    // keep track of the adb logcat process for Android simulator
+    global.adb_logcat_proc = null;
     function startAppium(caps, host = 'local') {
       
       let p;
@@ -452,8 +468,24 @@ module.exports = function(grunt) {
     grunt.option('appium-retry-attempts', 2 );
     grunt.registerTask("launch", function(platform,build_type) {
       const done = this.async();
+      const isSimulator = grunt.option('simulator') || false;
 
-      getCapabilities(platform,true)
+      if ( platform === "android" && isSimulator ) {
+        const { spawn, spawnSync } = require('child_process');
+        const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
+        spawnSync(adb, ['logcat', '-c']);
+        // Write to a temp file — avoids pipe block-buffering so output appears immediately
+        const os = require('os');
+        global.adb_logcat_file = path.join(os.tmpdir(), 'walta-logcat.log');
+        fs.writeFileSync(global.adb_logcat_file, '');
+        global.adb_logcat_proc = spawn(adb, ['logcat', '-s', 'TiAPI:I'], {
+          stdio: ['ignore', fs.openSync(global.adb_logcat_file, 'w'), 'ignore']
+        });
+        process.once('SIGINT', () => { if (global.adb_logcat_proc) global.adb_logcat_proc.kill(); });
+        process.once('exit', () => { if (global.adb_logcat_proc) global.adb_logcat_proc.kill(); });
+      }
+
+      getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator)
         .then( caps => {
             return startAppium(caps) 
               .catch( (err) => {
@@ -482,35 +514,75 @@ module.exports = function(grunt) {
 
     grunt.registerTask("output-logs", function(platform,option) {
       let done = this.async();
+
+      if ( platform === "android" ) {
+        const proc = global.adb_logcat_proc;
+        const logFile = global.adb_logcat_file;
+        if ( !proc || !logFile ) {
+          grunt.fail.fatal('adb logcat not started — launch task must run before output-logs');
+          return;
+        }
+        let filePos = 0;
+        let remainder = '';
+        function processLine(line) {
+          if ( />>>>> UNIT TESTS: (.*)/.test(line) ) {
+            if ( option !== "preview" ) {
+              clearInterval(interval);
+              proc.kill();
+              done();
+            }
+          } else {
+            const match = line.match(/TiAPI\s*:\s+(.*)/);
+            if ( match ) {
+              const msg = match[1];
+              if ( /^Waterbug \d|^ti\.playservices:/.test(msg) ) return;
+              grunt.log.writeln(msg);
+            }
+          }
+        }
+        const interval = setInterval(() => {
+          const stat = fs.statSync(logFile);
+          if ( stat.size <= filePos ) return;
+          const buf = Buffer.alloc(stat.size - filePos);
+          const fd = fs.openSync(logFile, 'r');
+          fs.readSync(fd, buf, 0, buf.length, filePos);
+          fs.closeSync(fd);
+          filePos = stat.size;
+          const lines = (remainder + buf.toString()).split('\n');
+          remainder = lines.pop();
+          lines.forEach(processLine);
+        }, 100);
+        return;
+      }
+
+      // iOS: use Appium syslog
       const levels = [ "ERROR", "WARN", "INFO" ];
       if ( process.env.DEBUG )
         levels.push("DEBUG");
-      
-      const retain = (platform === "android"? new RegExp(`(${_.map(levels, (l) => l.charAt(0)).join("|")}) +Ti\\w+ *: +`,"m"): new RegExp(`\\[(${levels.join("|")})\\]`,"m") );
+      const retain = new RegExp(`\\[(${levels.join("|")})\\]`,"m");
       function delay(t) {
-        return new Promise( resolve => setTimeout(resolve, t) ); 
+        return new Promise( resolve => setTimeout(resolve, t) );
       }
-      const logFilter = (platform === "android"? /Ti\w+/ : /Waterbug\(TitaniumKit\)/);
       async function processLogs() {
         let stop = false;
         while( !stop || option === "preview") {
-          let logs = await appium_session.getLogs(platform==="android"?"logcat":"syslog");
+          let logs = await appium_session.getLogs("syslog");
           logs.forEach( (line) => {
-            
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
-            } else if ( logFilter.test(line.message) && retain.test(line.message)) {
+            } else if ( /Waterbug\(TitaniumKit\)/.test(line.message) && retain.test(line.message)) {
               let parts = line.message.split(retain);
               if ( parts.length >= 1 ) {
                 grunt.log.writeln(decodeSyslog(parts[2]));
-              } 
-            } 
+              }
+            }
           });
           await delay(100);
         }
       }
       (async function() { if ( ! appium_session ) {
-        const caps = await getCapabilities(platform,true); 
+        const isSimulator = grunt.option('simulator') || false;
+        const caps = await getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator);
         caps["appium:autoLaunch"] = false;
         return startAppium(caps);
       } else {
@@ -596,10 +668,16 @@ module.exports = function(grunt) {
 
     
     grunt.registerTask('unit-test', function( ) {
-      var platform = grunt.option('platform'); 
+      var platform = grunt.option('platform');
+      var isSimulator = grunt.option('simulator');
       var preview = grunt.option('preview');
-      grunt.task.run(`newer:unit_test_${platform}`);
-      grunt.task.run(`install:${platform}:unit-test`);
+      grunt.task.run('clean');
+      if ( isSimulator ) {
+        grunt.task.run(`newer:unit_test_sim_${platform}`);
+      } else {
+        grunt.task.run(`newer:unit_test_${platform}`);
+        grunt.task.run(`install:${platform}:unit-test`);
+      }
       if ( grunt.option('liveview') ) {
         grunt.task.run("exec:stop_live_view");
         grunt.task.run(`run:live_view_${platform}`);
