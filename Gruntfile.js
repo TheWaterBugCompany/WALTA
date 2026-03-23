@@ -473,6 +473,9 @@ module.exports = function(grunt) {
       if ( platform === "android" && isSimulator ) {
         const { spawn, spawnSync } = require('child_process');
         const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
+        spawnSync(adb, ['shell', 'am', 'force-stop', APP_ID]);
+        spawnSync(adb, ['uninstall', 'io.appium.uiautomator2.server']);
+        spawnSync(adb, ['uninstall', 'io.appium.uiautomator2.server.test']);
         spawnSync(adb, ['logcat', '-c']);
         // Write to a temp file — avoids pipe block-buffering so output appears immediately
         const os = require('os');
@@ -481,26 +484,48 @@ module.exports = function(grunt) {
         global.adb_logcat_proc = spawn(adb, ['logcat', '-s', 'TiAPI:I'], {
           stdio: ['ignore', fs.openSync(global.adb_logcat_file, 'w'), 'ignore']
         });
-        process.once('SIGINT', () => { if (global.adb_logcat_proc) global.adb_logcat_proc.kill(); });
+        process.once('SIGINT', () => {
+          if (global.adb_logcat_proc) global.adb_logcat_proc.kill();
+          if (global.appium_session) global.appium_session.deleteSession().catch(() => {}).finally(() => process.exit(0));
+          else process.exit(0);
+        });
         process.once('exit', () => { if (global.adb_logcat_proc) global.adb_logcat_proc.kill(); });
       }
 
-      getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator)
-        .then( caps => {
-            return startAppium(caps) 
-              .catch( (err) => {
-                var attempts = parseInt(grunt.option('appium-retry-attempts'));
-                if (  attempts > 0 ) {
-                  grunt.option('appium-retry-attempts', attempts - 1);
-                  grunt.log.writeln("Attempting to start appium server");
-                  grunt.task.run('run:appium');
-                  grunt.task.run(`launch:${platform}:${build_type}`);
-                } else {
-                  throw err;
-                }
-                })
-              .then( done );
+      const http = require('http');
+      function waitForAppium(retries = 20) {
+        return new Promise((resolve, reject) => {
+          http.get('http://localhost:4723/status', (res) => resolve())
+            .on('error', () => {
+              if (retries <= 0) return reject(new Error('Appium did not start in time'));
+              setTimeout(() => waitForAppium(retries - 1).then(resolve, reject), 500);
+            });
         });
+      }
+
+      const { spawnSync: killSync, spawn: spawnAppium } = require('child_process');
+
+      function waitForAppiumDead(retries = 20) {
+        return new Promise((resolve) => {
+          http.get('http://localhost:4723/status', () => {
+            if (retries <= 0) return resolve();
+            setTimeout(() => waitForAppiumDead(retries - 1).then(resolve), 500);
+          }).on('error', () => resolve());
+        });
+      }
+
+      killSync('pkill', ['-f', 'node.*appium']);
+
+      getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator)
+        .then( caps => waitForAppiumDead()
+          .then(() => {
+            const appiumProc = spawnAppium('node_modules/.bin/appium', ['--log', './appium.log', '--log-level', 'info:error'], { stdio: 'ignore', detached: true });
+            appiumProc.unref();
+            return waitForAppium();
+          })
+          .then(() => startAppium(caps)) )
+        .then( done )
+        .catch( err => { grunt.fail.fatal(err); done(); } );
     });
 
     grunt.registerTask("terminate", function(platform,build_type) {
