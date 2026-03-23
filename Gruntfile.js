@@ -408,16 +408,17 @@ module.exports = function(grunt) {
         }
     });
 
-    let appiumSession = null;
-
-    function connectToAppium(caps, host = 'local') {
-      if (appiumSession) return Promise.resolve(appiumSession);
-      return startAppium(caps, host)
-        .then((driver) => {
-          appiumSession = driver;
-          return driver;
-        });
-    }
+    const appiumSession = (() => {
+      let appiumSession = null;
+      return (caps, host = 'local') => {
+        if (appiumSession) return Promise.resolve(appiumSession);
+        return startAppium(caps, host)
+          .then((driver) => {
+            appiumSession = driver;
+            return driver;
+          });
+      };
+    })();
 
     function terminateApp(driver, platform) {
       return () => driver.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
@@ -464,7 +465,7 @@ module.exports = function(grunt) {
       }
 
       getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator)
-        .then(caps => connectToAppium(caps))
+        .then(caps => appiumSession(caps))
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
     });
@@ -473,7 +474,7 @@ module.exports = function(grunt) {
       const done = this.async();
       const caps = getCapabilities(platform,true);
       caps.autoLaunch = false;
-      connectToAppium(caps)
+      appiumSession(caps)
         .then( driver => terminateApp(driver, platform)() )
         .then( done );
     });
@@ -536,7 +537,7 @@ module.exports = function(grunt) {
       async function processLogs() {
         let stop = false;
         while( !stop || option === "preview") {
-          let logs = await appiumSession.getLogs("syslog");
+          let logs = await appiumSession().getLogs("syslog");
           logs.forEach( (line) => {
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
@@ -554,7 +555,7 @@ module.exports = function(grunt) {
         const isSimulator = grunt.option('simulator') || false;
         const caps = await getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator);
         caps["appium:autoLaunch"] = false;
-        return connectToAppium(caps);
+        return appiumSession(caps);
       })().then( processLogs )
           .then( done );
     });
