@@ -408,17 +408,19 @@ module.exports = function(grunt) {
         }
     });
 
+    let appiumSession = null;
+
     function connectToAppium(caps, host = 'local') {
+      if (appiumSession) return Promise.resolve(appiumSession);
       return startAppium(caps, host)
         .then((driver) => {
-          global.appium_session = driver;
-          global.platform = grunt.option('platform');
+          appiumSession = driver;
           return driver;
         });
     }
 
-    function terminateApp(platform) {
-      return () => appium_session.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
+    function terminateApp(driver, platform) {
+      return () => driver.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
     }
 
     grunt.registerTask("cucumber",function(){
@@ -472,7 +474,7 @@ module.exports = function(grunt) {
       const caps = getCapabilities(platform,true);
       caps.autoLaunch = false;
       connectToAppium(caps)
-        .then( terminateApp(platform) )
+        .then( driver => terminateApp(driver, platform)() )
         .then( done );
     });
 
@@ -534,7 +536,7 @@ module.exports = function(grunt) {
       async function processLogs() {
         let stop = false;
         while( !stop || option === "preview") {
-          let logs = await appium_session.getLogs("syslog");
+          let logs = await appiumSession.getLogs("syslog");
           logs.forEach( (line) => {
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
@@ -548,14 +550,12 @@ module.exports = function(grunt) {
           await delay(100);
         }
       }
-      (async function() { if ( ! appium_session ) {
+      (async function() {
         const isSimulator = grunt.option('simulator') || false;
         const caps = await getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator);
         caps["appium:autoLaunch"] = false;
         return connectToAppium(caps);
-      } else {
-        return Promise.resolve();
-      }})().then( processLogs )
+      })().then( processLogs )
           .then( done );
     });
     
