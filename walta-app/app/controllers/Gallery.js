@@ -64,7 +64,7 @@ function buildPhotoView(urlObj) {
     } else {
         imageUrl=urlObj;
     }
-    console.log(`creating tile for url = ${imageUrl}`);
+    Logger.debug(`creating tile for url = ${imageUrl}`);
     var needsPostLayout = !$.scrollView.size.height;
     var container = Ti.UI.createView({
         width: Ti.UI.FILL,

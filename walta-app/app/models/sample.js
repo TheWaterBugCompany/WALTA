@@ -91,7 +91,7 @@ exports.definition = {
 								
 							_.defer(() => {
 								let updatedAt = moment().valueOf();
-								Ti.API.info(`setting updatedAt = ${updatedAt} id = ${this.get("serverSampleId")} `)
+								Ti.API.debug(`setting updatedAt = ${updatedAt} id = ${this.get("serverSampleId")} `)
 								this.set('updatedAt', updatedAt, {ignore:true});
 								this.save(); 
 							});
@@ -221,7 +221,7 @@ exports.definition = {
 			},
 
 			async hasUnsavedChanges() {
-				Ti.API.info(`hasUnsavedChanges sampleId= ${this.get('sampleId')} originalSampleId = ${this.get('originalSampleId')}`);
+				debug(`hasUnsavedChanges sampleId= ${this.get('sampleId')} originalSampleId = ${this.get('originalSampleId')}`);
 				if ( !this.isUnsaved() ) {
 					return false;
 				}

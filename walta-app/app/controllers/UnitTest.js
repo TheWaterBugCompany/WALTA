@@ -1,2 +1,3 @@
-Ti.API.info("Unit Test Build Initializing...");
+var Logger = require('util/Logger');
+Logger.debug("Unit Test Build Initializing...");
 require("unit-test/index");
