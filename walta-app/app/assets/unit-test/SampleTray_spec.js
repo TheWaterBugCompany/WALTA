@@ -786,7 +786,7 @@ describe( 'SampleTray controller', function() {
   context('editing taxon and model persistence',function() { 
 
     function simulateUserEdit(value, photoPath ) {
-      console.log(`simulateUserEdit: ${photoPath}`);
+      Ti.API.debug(`simulateUserEdit: ${photoPath}`);
       return new Promise( (resolve) => {
         SampleTray.editTaxon.photoSelect.on("photoTaken", function handler() {
           SampleTray.editTaxon.photoSelect.off("photoTaken", handler);
@@ -798,7 +798,7 @@ describe( 'SampleTray controller', function() {
           SampleTray.editTaxon.photoSelect.off("loaded", handler);
           SampleTray.editTaxon.photoSelect.trigger("photoTaken", SampleTray.editTaxon.photoSelect.getFullPhotoUrl() );
         });
-        console.log(`setImage in simulate: ${photoPath}`);
+        Ti.API.debug(`setImage in simulate: ${photoPath}`);
         SampleTray.editTaxon.photoSelect.setImage(photoPath);
       });
     }
