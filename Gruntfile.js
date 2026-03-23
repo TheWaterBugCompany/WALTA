@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-    const { getCapabilities, startAppiumClient, stopAppiumClient } = require("./features/support/appium")
+    const { getCapabilities, startAppium } = require("./features/support/appium")
     const { decodeSyslog } = require('./features/support/ios-colors');
     const KobitonAPI = require("./features/support/kobiton");
 
@@ -264,7 +264,6 @@ module.exports = function(grunt) {
             command: 'node mock-server',
             stdout: "inherit", stderr: "inherit"
           },
-
           clean: {
             command: './node_modules/.bin/titanium clean --project-dir ./walta-app && rm -rf ./walta-app/build/android/assets ./walta-app/build/android/app/build/intermediates/merged_assets',
             stdout: "inherit", stderr: "inherit"
@@ -409,27 +408,13 @@ module.exports = function(grunt) {
         }
     });
 
-    // keep track of the current appium session
-    global.appium_session = null;
-    // keep track of the adb logcat process for Android simulator
-    global.adb_logcat_proc = null;
-    function startAppium(caps, host = 'local') {
-      
-      let p;
-      if ( appium_session ) {
-        p = stopAppiumClient(appium_session);
-      } else {
-        p = Promise.resolve();
-      }
-      function setUpSession() {
-        return startAppiumClient( caps, host ) 
-          .then( (driver) => {
-            global.appium_session = driver;
-            global.platform = grunt.option('platform');
-            return driver;
-          } )
-      }
-      return  p.then( setUpSession );
+    function connectToAppium(caps, host = 'local') {
+      return startAppium(caps, host)
+        .then((driver) => {
+          global.appium_session = driver;
+          global.platform = grunt.option('platform');
+          return driver;
+        });
     }
 
     function terminateApp(platform) {
@@ -454,6 +439,7 @@ module.exports = function(grunt) {
       grunt.task.run(`exec:install_${platform}:${build_type}`);
     });
 
+
     grunt.registerTask("upload",function(platform,build_type) {
       const done = this.async();
       var ext = { "android": "apk", "ios": "ipa" }[platform];
@@ -465,74 +451,27 @@ module.exports = function(grunt) {
         .then(done);
     });
 
-    grunt.option('appium-retry-attempts', 2 );
-    grunt.registerTask("launch", function(platform,build_type) {
+    grunt.registerTask("launch", function(platform) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
 
       if ( platform === "android" && isSimulator ) {
-        const { spawn, spawnSync } = require('child_process');
+        const { spawnSync } = require('child_process');
         const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
-        spawnSync(adb, ['shell', 'am', 'force-stop', APP_ID]);
-        spawnSync(adb, ['uninstall', 'io.appium.uiautomator2.server']);
-        spawnSync(adb, ['uninstall', 'io.appium.uiautomator2.server.test']);
         spawnSync(adb, ['logcat', '-c']);
-        // Write to a temp file — avoids pipe block-buffering so output appears immediately
-        const os = require('os');
-        global.adb_logcat_file = path.join(os.tmpdir(), 'walta-logcat.log');
-        fs.writeFileSync(global.adb_logcat_file, '');
-        global.adb_logcat_proc = spawn(adb, ['logcat', '-s', 'TiAPI:I'], {
-          stdio: ['ignore', fs.openSync(global.adb_logcat_file, 'w'), 'ignore']
-        });
-        process.once('SIGINT', () => {
-          if (global.adb_logcat_proc) global.adb_logcat_proc.kill();
-          if (global.appium_session) global.appium_session.deleteSession().catch(() => {}).finally(() => process.exit(0));
-          else process.exit(0);
-        });
-        process.once('exit', () => { if (global.adb_logcat_proc) global.adb_logcat_proc.kill(); });
       }
-
-      const http = require('http');
-      function waitForAppium(retries = 20) {
-        return new Promise((resolve, reject) => {
-          http.get('http://localhost:4723/status', (res) => resolve())
-            .on('error', () => {
-              if (retries <= 0) return reject(new Error('Appium did not start in time'));
-              setTimeout(() => waitForAppium(retries - 1).then(resolve, reject), 500);
-            });
-        });
-      }
-
-      const { spawnSync: killSync, spawn: spawnAppium } = require('child_process');
-
-      function waitForAppiumDead(retries = 20) {
-        return new Promise((resolve) => {
-          http.get('http://localhost:4723/status', () => {
-            if (retries <= 0) return resolve();
-            setTimeout(() => waitForAppiumDead(retries - 1).then(resolve), 500);
-          }).on('error', () => resolve());
-        });
-      }
-
-      killSync('pkill', ['-f', 'node.*appium']);
 
       getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator)
-        .then( caps => waitForAppiumDead()
-          .then(() => {
-            const appiumProc = spawnAppium('node_modules/.bin/appium', ['--log', './appium.log', '--log-level', 'info:error'], { stdio: 'ignore', detached: true });
-            appiumProc.unref();
-            return waitForAppium();
-          })
-          .then(() => startAppium(caps)) )
-        .then( done )
-        .catch( err => { grunt.fail.fatal(err); done(); } );
+        .then(caps => connectToAppium(caps))
+        .then(done)
+        .catch(err => { grunt.fail.fatal(err); done(); });
     });
 
     grunt.registerTask("terminate", function(platform,build_type) {
       const done = this.async();
       const caps = getCapabilities(platform,true);
       caps.autoLaunch = false;
-      startAppium(caps)
+      connectToAppium(caps)
         .then( terminateApp(platform) )
         .then( done );
     });
@@ -541,12 +480,16 @@ module.exports = function(grunt) {
       let done = this.async();
 
       if ( platform === "android" ) {
-        const proc = global.adb_logcat_proc;
-        const logFile = global.adb_logcat_file;
-        if ( !proc || !logFile ) {
-          grunt.fail.fatal('adb logcat not started — launch task must run before output-logs');
-          return;
-        }
+        const { spawn, spawnSync } = require('child_process');
+        const os = require('os');
+        const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
+        spawnSync('pkill', ['-f', 'adb logcat -s TiAPI']);
+        const logFile = path.join(os.tmpdir(), 'walta-logcat.log');
+        fs.writeFileSync(logFile, '');
+        const proc = spawn(adb, ['logcat', '-s', 'TiAPI:I'], {
+          stdio: ['ignore', fs.openSync(logFile, 'w'), 'ignore']
+        });
+        process.once('exit', () => proc.kill());
         let filePos = 0;
         let remainder = '';
         function processLine(line) {
@@ -609,7 +552,7 @@ module.exports = function(grunt) {
         const isSimulator = grunt.option('simulator') || false;
         const caps = await getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator);
         caps["appium:autoLaunch"] = false;
-        return startAppium(caps);
+        return connectToAppium(caps);
       } else {
         return Promise.resolve();
       }})().then( processLogs )
@@ -684,8 +627,9 @@ module.exports = function(grunt) {
           grunt.task.run(`run:live_view_${platform}`);
           
         }
-        //grunt.task.run('run:appium');
-        grunt.task.run(`launch:${platform}:test`);
+        grunt.task.run('stop:appium');
+  
+        grunt.task.run(`launch:${platform}`);
       }
       //grunt.task.run(`exec:acceptance_test:${platform}`);
       grunt.task.run("cucumber");
@@ -711,7 +655,8 @@ module.exports = function(grunt) {
 
       let mockServer = createMockCerdiServer();
       mockServer.makeMockSample();
-      grunt.task.run(`launch:${platform}:unit-test`);
+
+      grunt.task.run(`launch:${platform}`);
       grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
       mockServer.shutdown();
 
@@ -735,7 +680,8 @@ module.exports = function(grunt) {
         grunt.task.run("exec:stop_live_view");
         grunt.task.run(`run:live_view_${platform}`);
       }
-      grunt.task.run(`launch:${platform}:preview`);
+
+      grunt.task.run(`launch:${platform}`);
 
       // the preview option here enters an infinite loop so that the log output
       // continues as changes are made during development
@@ -751,7 +697,8 @@ module.exports = function(grunt) {
       var platform = grunt.option('platform');
       grunt.task.run(`newer:debug_${platform}`); 
       grunt.task.run(`install:${platform}:debug`);
-      grunt.task.run(`launch:${platform}:debug`);
+
+      grunt.task.run(`launch:${platform}`);
       grunt.task.run(`output-logs:${platform}:preview`);
     });
 
