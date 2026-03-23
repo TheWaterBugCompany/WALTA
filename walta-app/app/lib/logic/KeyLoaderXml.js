@@ -18,6 +18,7 @@
 
 var _ = require('underscore');
 var XmlUtils = require('../util/XmlUtils');
+var Logger = require('util/Logger');
 var WALTA_KEY_NS = 'http://thewaterbug.net/taxonomy';
 
 // A list of nodes that haven't been seen yet and need to be linked
@@ -142,7 +143,7 @@ function parseQuestion( key, nd, parentLink ) {
 
 	// Create the question node
 	if ( !foundOutcome ) {
-		Ti.API.debug("Unable to find outcome for question.text = '" + text + "'");
+		Logger.debug("Unable to find outcome for question.text = '" + text + "'");
 	}
 	var qn = Question.createQuestion({
 		text: text,

@@ -55,8 +55,8 @@ function generateThumbnail( fileOrBlob ) {
         fullPhoto = fileOrBlob;
     }
 
-    if ( ! fullPhoto ) { 
-        Ti.API.error(`Error loading photo: ${fileOrBlob}`);
+    if ( ! fullPhoto ) {
+        Logger.error(`Error loading photo: ${fileOrBlob}`);
         throw new Error("Unable to load photo");
     }
 
@@ -111,7 +111,7 @@ function generateThumbnail( fileOrBlob ) {
         var cropY = (fullPhoto.height-newHeight)/2;
         var thumbnail = fullPhoto.imageAsCropped( { width: newWidth, height: newHeight, x:cropX, y:cropY });
         if ( ! thumbnail ) {
-            Ti.API.error(`Error cropping to create thumbnail: ${fullPhotoPath}`);
+            Logger.error(`Error cropping to create thumbnail: ${fullPhotoPath}`);
             throw new Error("Unable to crop photo");
         }
     }
