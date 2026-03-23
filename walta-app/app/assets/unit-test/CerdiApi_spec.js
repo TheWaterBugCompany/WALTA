@@ -30,7 +30,7 @@ const CLIENT_SECRET = "hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz";
 
 
 function createTestLogin() {
-    Ti.API.info("creating test user = ", SERVER_URL ); 
+    Ti.API.debug("creating test user = ", SERVER_URL ); 
     // make sure our test user is registered for tests that
     // require it.
     return createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
