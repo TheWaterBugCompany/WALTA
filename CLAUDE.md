@@ -64,9 +64,13 @@ npx grunt --platform=android preview   # Live development with fast iteration
 # Node.js unit tests (fastest)
 npx grunt unit-test-node
 
-# Device unit tests (requires connected device/emulator)
+# Device unit tests (requires connected device)
 npx grunt --platform=android unit-test
 npx grunt --platform=ios unit-test
+
+# Simulator/emulator unit tests (no physical device required)
+npx grunt --platform=android --simulator unit-test
+npx grunt --platform=ios --simulator unit-test
 
 # End-to-end and acceptance tests
 npx grunt --platform=android end-to-end-test
