@@ -108,17 +108,12 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
         if ( simulator ) {
             _(caps).extend({
                 "appium:avdName": "Medium_Phone_API_36.1",
-                "appium:fullReset": true,
+                "appium:noReset": true,
+                "appium:autoLaunch": false,
+                "appium:appPackage": "net.thewaterbug.waterbug",
+                "appium:skipDeviceInitialization": false,
+                "appium:skipServerInstallation": false,
             });
-            if ( !quick ) {
-                _(caps).extend({ "appium:app": join(process.cwd(), './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk') });
-            } else {
-                _(caps).extend({
-                    "appium:appPackage": "net.thewaterbug.waterbug",
-                    "appium:skipDeviceInitialization": false,
-                    "appium:skipServerInstallation": false,
-                });
-            }
         } else {
             if ( !quick ) {
                 _(caps).extend({ "appium:app": join(process.cwd(), './builds/test/Waterbug.apk') });
