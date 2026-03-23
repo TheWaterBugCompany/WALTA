@@ -9,7 +9,7 @@ var { speedBugIndexMock } = require('unit-test/mocks/MockSpeedbug');
 var { keyMock } = require('unit-test/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
-describe( 'SampleTray controller', function() {
+describe.only( 'SampleTray controller', function() {
   this.timeout(10000);
   
   var SampleTray, SampleTrayWin;
@@ -50,22 +50,27 @@ describe( 'SampleTray controller', function() {
   }
 
   function waitForScrollEnd() {
-    return new Promise( (resolve) => {
-      SampleTray.on("scrollrightend", () => resolve() );
-    })
+    return SampleTray.getScrollRightPromise();
   }
 
   function scrollSampleTray( x ) {
     return function() {
       return new Promise( function( resolve ) {
+          var targetPx = PlatformSpecific.convertDipToSystem(x);
+          var contentOffset = SampleTray.content.contentOffset;
+          var currentPx = contentOffset ? (contentOffset.x || 0) : 0;
+          if ( Math.abs( currentPx - targetPx ) < 2.0 ) {
+            setTimeout( resolve, 5 );
+            return;
+          }
           function isAtScrollX(e) {
-            if ( Math.abs(e.x - PlatformSpecific.convertDipToSystem(x)) < 1.0 ) {
+            if ( Math.abs(e.x - targetPx) < 2.0 ) {
               SampleTray.content.removeEventListener("scroll",isAtScrollX);
               setTimeout( resolve, 5 );
             }
-          } 
+          }
           SampleTray.content.addEventListener("scroll", isAtScrollX );
-          SampleTray.content.scrollTo( PlatformSpecific.convertDipToSystem(x), 0, { animate: true } );
+          SampleTray.content.scrollTo( targetPx, 0, { animate: true } );
         });
     }
   }
@@ -321,7 +326,7 @@ describe( 'SampleTray controller', function() {
       });
   });
 
-  context.skip('scrolling a long tray', function() {
+  context('scrolling a long tray', function() {
     beforeEach(function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
@@ -374,21 +379,16 @@ describe( 'SampleTray controller', function() {
     it('when scrolled to the right it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
+          .then( waitForScrollEnd )              // wait for auto-scroll to complete
+          .then( scrollSampleTray(0) )           // scroll back to left
           .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
           .then( (width) => scrollSampleTray(width)() )
-          //.then( updateSampleTrayOnce )
           .then( function() {
             var tiles = SampleTray.tray.children;
-           
-            // assert last tile
             var tile = findRightMost( tiles );
-            tile.borderColor = "red";
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            //sampleTaxa[0].children[0].children[0].children[0].backgroundColor = "red";
-            //console.log(`name = ${sampleTaxa[0].children[0].children[0].children}`);
-            //console.log(`backgroundImage = ${sampleTaxa[0].children[0].backgroundDisabledImage}`);
             assertPlus( sampleTaxa[0] );
           });
 
@@ -397,7 +397,9 @@ describe( 'SampleTray controller', function() {
     it('when scrolled to the left it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
-          .then( scrollSampleTray(209*4) )
+          .then( waitForScrollEnd )
+          .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
+          .then( (maxX) => scrollSampleTray(maxX)() )
           .then( scrollSampleTray(0) )
           .then( function() {
             var tiles = SampleTray.tray.children;
@@ -438,7 +440,7 @@ describe( 'SampleTray controller', function() {
   context('adding and removing taxa', function() {
 
     afterEach(cleanupSampleTray);
-    it.skip('should scroll to the far right after adding 10th taxon', function() {
+    it('should scroll to the far right after adding 10th taxon', function() {
       
       return Promise.resolve()
           .then( function() {
@@ -474,7 +476,7 @@ describe( 'SampleTray controller', function() {
           });
     });
 
-    it.skip('should scroll to the far right after adding 11th taxon', function() {
+    it('should scroll to the far right after adding 11th taxon', function() {
       
       return Promise.resolve()
           .then( function() {
