@@ -4,7 +4,7 @@ const _ = require('underscore');
 const KobitonAPI = require("./kobiton");
 
 
-async function  getCapabilities( platform, quick, host = 'local', kobitonVersion = null, deviceResolution = null ) {
+async function  getCapabilities( platform, quick, host = 'local', kobitonVersion = null, deviceResolution = null, simulator = false ) {
     let caps = {};
      if ( host === "kobiton") {
         _(caps).extend({
@@ -50,13 +50,7 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
             "platformName": "iOS",
             "appium:autoAcceptAlerts": false,
             "appium:waitForQuiescence": false,
-            "appium:platformVersion": "12.4",
-            "appium:deviceName": "The Code Sharman Test iPhone",
-            "appium:udid": "auto",
-            "appium:xcodeOrgId": "6RRED3LUUV",
-            "appium:xcodeSigningId": "Apple Development",
             "appium:useJSONSource": true,
-            //"appium:realDeviceLogger": `./node_modules/deviceconsole/deviceconsole`,
             "appium:showXcodeLog": true,
             "appium:usePrebuiltWDA": false,
             "appium:noReset": false,
@@ -66,12 +60,33 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
                 ]
             }
         });
-        if ( !quick ) {
-            caps.app = join(process.cwd(), './builds/test/Waterbug.ipa');
+        if ( simulator ) {
+            _(caps).extend({
+                "appium:deviceName": "iPhone 17 Pro",
+                "appium:udid": "8A665EBC-2A48-4965-A1B6-E52A289C9744",
+            });
+            if ( !quick ) {
+                _(caps).extend({ "appium:app": join(process.cwd(), './builds/unit-test/Waterbug.app') });
+            } else {
+                _(caps).extend({
+                    "appium:bundleId": "net.thewaterbug.waterbug"
+                });
+            }
         } else {
             _(caps).extend({
-                "appium:bundleId": "net.thewaterbug.waterbug"
+                "appium:platformVersion": "12.4",
+                "appium:deviceName": "The Code Sharman Test iPhone",
+                "appium:udid": "auto",
+                "appium:xcodeOrgId": "6RRED3LUUV",
+                "appium:xcodeSigningId": "Apple Development",
             });
+            if ( !quick ) {
+                _(caps).extend({ "appium:app": join(process.cwd(), './builds/test/Waterbug.ipa') });
+            } else {
+                _(caps).extend({
+                    "appium:bundleId": "net.thewaterbug.waterbug"
+                });
+            }
         }
      } else if ( platform === "android") {
         _(caps).extend({
@@ -79,19 +94,35 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
             "platformName": "Android",
             "appium:autoGrantPermissions": true,
             "appium:appActivity": ".WaterbugActivity",
-            //appWaitActivity: ".WaterbugActivity",
+            "appium:appWaitActivity": ".WaterbugActivity",
             "appium:newCommandTimeout": 0
         });
-        if ( !quick ) {
-            caps.app = join(process.cwd(), './builds/test/Waterbug.apk');
-        } else {
+        if ( simulator ) {
             _(caps).extend({
-                "appium:appPackage": "net.thewaterbug.waterbug",
-                "appium:skipDeviceInitialization": false,
-                "appium:skipServerInstallation": false,
+                "appium:avdName": "Medium_Phone_API_36.1",
+                "appium:noReset": false,
             });
+            if ( !quick ) {
+                _(caps).extend({ "appium:app": join(process.cwd(), './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk') });
+            } else {
+                _(caps).extend({
+                    "appium:appPackage": "net.thewaterbug.waterbug",
+                    "appium:skipDeviceInitialization": false,
+                    "appium:skipServerInstallation": false,
+                });
+            }
+        } else {
+            if ( !quick ) {
+                _(caps).extend({ "appium:app": join(process.cwd(), './builds/test/Waterbug.apk') });
+            } else {
+                _(caps).extend({
+                    "appium:appPackage": "net.thewaterbug.waterbug",
+                    "appium:skipDeviceInitialization": false,
+                    "appium:skipServerInstallation": false,
+                });
+            }
         }
-    } 
+    }
     return caps;
 }
 
