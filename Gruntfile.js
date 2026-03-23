@@ -173,6 +173,8 @@ module.exports = function(grunt) {
           emulator();
           args.push("--unit-test");
           args.push("--output-dir builds/unit-test");
+          post_cmds.push("mkdir -p ./builds/unit-test");
+          post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/unit-test/Waterbug.apk");
           break;
 
         case "release":
@@ -265,12 +267,12 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
           clean: {
-            command: './node_modules/.bin/titanium clean --project-dir ./walta-app && rm -rf ./walta-app/build/android/assets ./walta-app/build/android/app/build/intermediates/merged_assets',
+            command: './node_modules/.bin/titanium clean --project-dir ./walta-app && rm -rf ./walta-app/build/android/assets ./walta-app/build/android/app/build/intermediates/merged_assets ./walta-app/build/android/app/build/outputs',
             stdout: "inherit", stderr: "inherit"
           },
 
           clean_dist: {
-            command: 'rm -r ./builds/{release,debug,test,unit-test,preview}/*.{apk,ipa,aab,app}',
+            command: 'rm -r ./builds/{release,debug,test,unit-test,unit-test-sim,preview}/*.{apk,ipa,aab,app}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "false",
             options: {
@@ -388,8 +390,8 @@ module.exports = function(grunt) {
           unit_test_android: build_if_newer_options("android", "unit-test"),
           unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
-          unit_test_sim_android: build_if_newer_options("android", "unit-test-sim"),
-          unit_test_sim_ios: build_if_newer_options("ios", "unit-test-sim"),
+          unit_test_android_sim: build_if_newer_options("android", "unit-test-sim"),
+          unit_test_ios_sim: build_if_newer_options("ios", "unit-test-sim"),
 
           test_android: build_if_newer_options("android", "test"),
           test_ios: build_if_newer_options("ios", "test"),
@@ -437,9 +439,19 @@ module.exports = function(grunt) {
         .finally( done );
     })
 
-    grunt.registerTask("install", function(platform,build_type) {
-      grunt.task.run(`exec:uninstall_${platform}`);
-      grunt.task.run(`exec:install_${platform}:${build_type}`);
+    grunt.registerTask("install", function(platform, build_type) {
+      const done = this.async();
+      const isSimulator = grunt.option('simulator') || false;
+
+      // We get an appium session here because in the case of a simulator build
+      // we need the emulator up and running.
+      getCapabilities(platform, false, 'local', null, null, isSimulator)
+          .then(caps => appiumSession(caps))
+          .then(() => {
+        grunt.task.run(`exec:uninstall_${platform}`);
+        grunt.task.run(`exec:install_${platform}:${build_type}`);
+        done();
+          })
     });
 
 
@@ -458,7 +470,7 @@ module.exports = function(grunt) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
 
-      if ( platform === "android" && isSimulator ) {
+      if ( platform === "android" ) {
         const { spawnSync } = require('child_process');
         const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
         spawnSync(adb, ['logcat', '-c']);
@@ -551,12 +563,7 @@ module.exports = function(grunt) {
           await delay(100);
         }
       }
-      (async function() {
-        const isSimulator = grunt.option('simulator') || false;
-        const caps = await getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator);
-        caps["appium:autoLaunch"] = false;
-        return appiumSession(caps);
-      })().then( processLogs )
+      processLogs()
           .then( done );
     });
     
@@ -642,12 +649,8 @@ module.exports = function(grunt) {
       var isSimulator = grunt.option('simulator');
       var preview = grunt.option('preview');
       grunt.task.run('clean');
-      if ( isSimulator ) {
-        grunt.task.run(`newer:unit_test_sim_${platform}`);
-      } else {
-        grunt.task.run(`newer:unit_test_${platform}`);
-        grunt.task.run(`install:${platform}:unit-test`);
-      }
+      grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
+      grunt.task.run(`install:${platform}:unit-test`);
       if ( grunt.option('liveview') ) {
         grunt.task.run("exec:stop_live_view");
         grunt.task.run(`run:live_view_${platform}`);
