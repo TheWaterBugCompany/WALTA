@@ -6,6 +6,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 WALTA (Waterbug App) is a cross-platform mobile app for iOS and Android that enables dichotomous key-based insect identification for water quality monitoring. It is built on the Titanium/Alloy MVC framework.
 
+## Methodology
+
+Folloing as test driven development philsophy, as Kent Beck intended, here is the breakdown:
+
+1. Break up the changes into small increments, strongly prefer small commits that focus on one small change at a time.
+
+2. Find an appropriate type of test to write that covers the change, for example if this is adding a new feature and write a cucumber test, if this change is better tested at a unit test level, then add a unit test. (Be pragmatic about writing tests).
+
+3. Write a test to verify the new code, this shouldn't test the entire feature comphrensively upfront, but it should be a minimal failing test that tests just the incremental chagne we are adding. (RED)
+
+4. Write the minimal amount of code to get the tests to pass. (GREEN)
+
+5. Once the tests are passing take a step back and do refactoring phase: refactoring should be small steps to tidy the code, again make this pragmatic the code doesn't have to be perfect, but this is important to stop tech debt accruing. (REFACTOR)
+
+6. Don't forget to refactor tests if they need it.
+
+7. Once everything is green we can begin the next micro iteration: beginning from step 3 (RED) and adding a new failing test.
+
+8. Continue the RED/GREEN/REFACTOR until the feature is complete.
+
+### Rationale
+
+The intention is to encourage the following:
+
+ - Meaningful tests: the goal is not code coverage metrics but test quality. A good test tells you *what* broke and *where* — not just that something failed. Ask: if this test fails in 6 months, will it point me directly at the problem? Coverage is a byproduct of good tests, not a target in itself.
+
+ - Meaningful code: by writing the code to implement the tests, we are avoiding writing code that isn't strictly necessary, and also this gives us an opportunity to be pragmatic about refactoring rather than speculative.
+
+ - Keeping technical debt in check: by keeping to this rhythm we use our test cases to drive the design of the code and we take the opportunity at every incremental step to refactor.
+
 ## Commands
 
 ### Setup
