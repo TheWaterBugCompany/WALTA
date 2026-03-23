@@ -1,7 +1,15 @@
 const { remote } = require('webdriverio');
 const { join } = require('path');
+const http = require('http');
 const _ = require('underscore');
 const KobitonAPI = require("./kobiton");
+
+function isAppiumRunning() {
+    return new Promise((resolve) => {
+        http.get('http://localhost:4723/status', () => resolve(true))
+            .on('error', () => resolve(false));
+    });
+}
 
 
 async function  getCapabilities( platform, quick, host = 'local', kobitonVersion = null, deviceResolution = null, simulator = false ) {
@@ -100,7 +108,7 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
         if ( simulator ) {
             _(caps).extend({
                 "appium:avdName": "Medium_Phone_API_36.1",
-                "appium:noReset": false,
+                "appium:fullReset": true,
             });
             if ( !quick ) {
                 _(caps).extend({ "appium:app": join(process.cwd(), './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk') });
@@ -126,9 +134,10 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
     return caps;
 }
 
-async function startAppiumClient( caps, host = 'local' ) {
+async function startAppium( caps, host = 'local' ) {
+    let driver;
     if ( host === 'kobiton' ) {
-        return await remote({
+        driver = await remote({
             protocol: 'https',
             port: 443,
             hostname: 'api.kobiton.com',
@@ -139,19 +148,24 @@ async function startAppiumClient( caps, host = 'local' ) {
             logLevel: 'error'
         });
     } else {
-        return await remote({
+        driver = await remote({
             logLevel: 'error',
             hostname: 'localhost',
-            port: 4723, 
+            port: 4723,
             capabilities: caps
         });
     }
+    process.once('SIGINT', () => {
+        driver.deleteSession().catch(() => {}).finally(() => process.exit(0));
+    });
+    return driver;
 }
 
 async function stopAppiumClient(driver) {
     await driver.deleteSession()
 }
 
+module.exports.isAppiumRunning = isAppiumRunning;
 module.exports.getCapabilities = getCapabilities;
-module.exports.startAppiumClient = startAppiumClient;
+module.exports.startAppium = startAppium;
 module.exports.stopAppiumClient = stopAppiumClient;
