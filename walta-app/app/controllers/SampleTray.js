@@ -459,16 +459,27 @@ function drawEndcapTile() {
 
 function scrollToRightEdge() {
   var rightEdge = PlatformSpecific.convertDipToSystem( getTrayWidth() - getViewWidth() );
-  return new Promise( function( resolve ) {
+  scrollRightPromise = new Promise( function( resolve ) {
+        if ( rightEdge <= 0 ) {
+          setTimeout( resolve, 5 );
+          return;
+        }
+        var fallback;
         function isAtScrollX(e) {
-          if ( Math.abs(e.x - rightEdge) < 1.0 ) {
+          if ( Math.abs(e.x - rightEdge) < 2.0 ) {
+            clearTimeout( fallback );
             $.content.removeEventListener("scroll",isAtScrollX);
             setTimeout( resolve, 5 );
           }
-        } 
+        }
         $.content.addEventListener("scroll", isAtScrollX );
+        fallback = setTimeout(function() {
+          $.content.removeEventListener("scroll", isAtScrollX);
+          resolve();
+        }, 2000);
         setTimeout(() => $.content.scrollTo( rightEdge, 0, { animate: true }), 0  );
-      }).then( () => $.trigger("scrollrightend") ); 
+      }).then( () => $.trigger("scrollrightend") );
+  return scrollRightPromise;
 }
 
 
@@ -479,6 +490,7 @@ function initializeTray() {
   drawIcecubeTray();
 }
 
+let scrollRightPromise = Promise.resolve();
 let timeoutHandler = null;
 
 function timeoutOnDrag() {
@@ -567,3 +579,4 @@ exports.getTileIndex = getTileIndex;
 exports.editTaxon = editTaxon;
 exports.getTrayWidth = getTrayWidth;
 exports.getViewWidth = getViewWidth;
+exports.getScrollRightPromise = function() { return scrollRightPromise; };
