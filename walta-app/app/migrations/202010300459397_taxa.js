@@ -1,10 +1,10 @@
 migration.up = function(migrator) {
-    Ti.API.info("migration 202010300459397_taxa up()");
+    Ti.API.debug("migration 202010300459397_taxa up()");
     migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN serverCreaturePhotoId INTEGER;');
 
 };
 migration.down = function(migrator) {
-    Ti.API.info("migration 202010300459397_taxa down()");
+    Ti.API.debug("migration 202010300459397_taxa down()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute('CREATE TEMPORARY TABLE taxa_backup(sampleTaxonId,abundance,sampleId,taxonId,taxonPhotoPath);');

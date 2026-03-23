@@ -12,7 +12,7 @@ function areWeSyncing() {
 }
 
 var log = Logger.log;
-var debug = m => Ti.API.info(m);
+var debug = m => Logger.debug(m);
 
 let timeoutHandler = null;
 

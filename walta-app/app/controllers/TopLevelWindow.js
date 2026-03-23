@@ -17,6 +17,7 @@
 */
 var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
+var Logger = require('util/Logger');
 var anchorBar = Alloy.createController("AnchorBar" );
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 function openWindow() {
@@ -93,7 +94,7 @@ function addSwipeBack() {
 //addSwipeBack();
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-	Ti.API.debug(`cleaning up window...`); 
+	Logger.debug(`cleaning up window...`);
 	$.destroy();
 	$.off();
 	anchorBar.cleanUp();
