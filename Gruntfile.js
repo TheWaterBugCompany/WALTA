@@ -17,9 +17,9 @@ module.exports = function(grunt) {
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
     const PROFILE = process.env.PROFILE || "50397711-b746-48e7-b149-8b4362a37e3a";
-    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "ab203b33-3042-46e6-9897-b880003b9941";
-    const PROFILE_DEV = process.env.PROFILE_DEV || "ab203b33-3042-46e6-9897-b880003b9941";
-    const DEVICE_ID=process.env.DEVCIDE_UDID || "a3151f2d4d22037b5379a4e37ffc20ed34ba71d4";
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "c728e413-3cff-49da-91df-cd2fcec80048";
+    const PROFILE_DEV = process.env.PROFILE_DEV || "c728e413-3cff-49da-91df-cd2fcec80048";
+    const DEVICE_ID=process.env.DEVCIDE_UDID || "00008030-000A68E63CE3802E";
     
     const WATERBUG_APPID = {
       "android": 257222,

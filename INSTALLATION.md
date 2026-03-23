@@ -111,8 +111,66 @@ Install Xcode from the Mac App Store, then install command line tools:
 xcode-select --install
 ```
 
-### Signing (release/ad-hoc builds only)
-Set the following environment variables:
+Then install the iOS platform SDK matching your test device's OS version: **Xcode → Settings → Components → iOS** and download the required version. Without this, builds will fail with "iOS x.x is not installed".
+
+### Apple WWDR Intermediate Certificate
+
+The Apple Worldwide Developer Relations (WWDR) intermediate certificate must be installed for iOS builds. The version bundled with macOS expires in 2023, so you need to install the current one manually.
+
+```bash
+curl -O https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+open AppleWWDRCAG3.cer
+```
+
+This opens Keychain Access. When prompted, add the certificate to the **System** keychain (not iCloud).
+
+### Signing Certificates and Provisioning Profiles
+
+iOS signing requires two things: a **distribution certificate** and **provisioning profiles**. Both expire (certificates after ~1 year, profiles after 1 year) and must be renewed when setting up on a new machine or after expiry.
+
+#### Distribution Certificate
+
+1. Open Xcode → **Settings → Accounts** → select your Apple ID
+2. Click **Manage Certificates → + → Apple Distribution**
+3. Xcode will create and install the certificate automatically
+
+#### Provisioning Profiles
+
+First, register any test devices (see Device Registration below). Then create the Ad Hoc profile:
+
+1. Go to [developer.apple.com/account/resources/profiles](https://developer.apple.com/account/resources/profiles) → **+**
+2. Select **Ad Hoc** under Distribution (not App Store or Development)
+3. Select the explicit Waterbug App ID (not the wildcard)
+4. Select your new distribution certificate
+5. Select the devices to include
+6. Name it (e.g. `Waterbug Ad Hoc`) and download it
+7. In Xcode → **Settings → Accounts → Download Manual Profiles** to install it
+
+> **Note:** Double-clicking the `.mobileprovision` file does not reliably install it on newer macOS — use Xcode's Download Manual Profiles instead.
+
+After installing, note the profile UUID and update `PROFILE_ADHOC` and `PROFILE_DEV` in [Gruntfile.js](Gruntfile.js) (lines 20–21), or set them as environment variables.
+
+Titanium CLI looks for profiles in `~/Library/MobileDevice/Provisioning Profiles` but newer Xcode stores them in a different path. Configure Titanium to use the correct location:
+
+```bash
+npx titanium config ios.profileDir "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+```
+
+#### Device Registration
+
+To include a test device in an Ad Hoc profile you need its UDID. With the device connected via USB:
+
+```bash
+xcrun xctrace list devices
+```
+
+Then register the UDID at [developer.apple.com/account/resources/devices](https://developer.apple.com/account/resources/devices) before creating the profile.
+
+When connecting a device for the first time, iOS will prompt **"Trust This Computer?"** — tap Trust and enter your device PIN.
+
+#### Environment Variables (release/ad-hoc builds only)
+
+Once profiles are created, set the following in `~/.zshrc`:
 
 ```bash
 export DEVELOPER="Your Name (TEAMID)"       # Common Name from your signing certificate
@@ -120,6 +178,8 @@ export PROFILE="<app-store-profile-uuid>"
 export PROFILE_ADHOC="<adhoc-profile-uuid>"
 export PROFILE_DEV="<dev-profile-uuid>"
 ```
+
+Profile UUIDs are visible in the developer portal or in Xcode → Settings → Accounts → Manage Certificates.
 
 Debug builds use Xcode's automatic signing and do not require these.
 
