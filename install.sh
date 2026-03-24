@@ -11,7 +11,6 @@ fi
 if [ ! -d $ASSET_DIR ]; then
   mkdir $ASSET_DIR
 fi
-cp ./node_modules/chai/chai.js $SPECS_LIB_DIR/chai.js
 cp ./node_modules/chai-date-string/lib/chai-date-string.js $SPECS_LIB_DIR/chai-date-string.js
 cp ./node_modules/simple-mock/index.js $SPECS_LIB_DIR/simple-mock.jss
 cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
