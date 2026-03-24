@@ -7,6 +7,7 @@ on:
 jobs:
   attach-trello:
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     steps:
       - uses: delivered/attach-to-trello-card-action@master
         with:
