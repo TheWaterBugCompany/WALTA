@@ -19,7 +19,7 @@ require("mocha");
 const sinon = require("sinon");
 const { use, expect } = require("chai");
 const chaiAsPromised = require("chai-as-promised");
-use(chaiAsPromised);
+use(chaiAsPromised.default ?? chaiAsPromised);
 
 const nock = require('nock');
 const request = require('request');
