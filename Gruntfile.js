@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-    const { getCapabilities, startAppium } = require("./features/support/appium")
+    const AppiumLauncher = require("./build-utils/AppiumLauncher")
     const { decodeSyslog } = require('./features/support/ios-colors');
     const KobitonAPI = require("./features/support/kobiton");
 
@@ -410,20 +410,12 @@ module.exports = function(grunt) {
         }
     });
 
-    const appiumSession = (() => {
-      let appiumSession = null;
-      return (caps, host = 'local') => {
-        if (appiumSession) return Promise.resolve(appiumSession);
-        return startAppium(caps, host)
-          .then((driver) => {
-            appiumSession = driver;
-            return driver;
-          });
-      };
-    })();
-
-    function terminateApp(driver, platform) {
-      return () => driver.terminateApp(platform === "android"?APP_ID:undefined,platform === "ios"?APP_ID:undefined);
+    let _launcher = null;
+    function getLauncher(platform, isSimulator) {
+      if (!_launcher) {
+        _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
+      }
+      return _launcher;
     }
 
     grunt.registerTask("cucumber",function(){
@@ -445,8 +437,7 @@ module.exports = function(grunt) {
 
       // We get an appium session here because in the case of a simulator build
       // we need the emulator up and running.
-      getCapabilities(platform, false, 'local', null, null, isSimulator)
-          .then(caps => appiumSession(caps))
+      getLauncher(platform, isSimulator).connect(false)
           .then(() => {
         grunt.task.run(`exec:uninstall_${platform}`);
         grunt.task.run(`exec:install_${platform}:${build_type}`);
@@ -476,19 +467,16 @@ module.exports = function(grunt) {
         spawnSync(adb, ['logcat', '-c']);
       }
 
-      getCapabilities(platform, !isSimulator, 'local', null, null, isSimulator)
-        .then(caps => appiumSession(caps))
+      getLauncher(platform, isSimulator).launch(APP_ID)
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
     });
 
-    grunt.registerTask("terminate", function(platform,build_type) {
+    grunt.registerTask("terminate", function(platform) {
       const done = this.async();
-      const caps = getCapabilities(platform,true);
-      caps.autoLaunch = false;
-      appiumSession(caps)
-        .then( driver => terminateApp(driver, platform)() )
-        .then( done );
+      const isSimulator = grunt.option('simulator') || false;
+      getLauncher(platform, isSimulator).terminate(APP_ID)
+        .then(done);
     });
 
     grunt.registerTask("output-logs", function(platform,option) {
@@ -549,7 +537,7 @@ module.exports = function(grunt) {
       async function processLogs() {
         let stop = false;
         while( !stop || option === "preview") {
-          let logs = await appiumSession().getLogs("syslog");
+          let logs = await getLauncher(platform).getDriver().getLogs("syslog");
           logs.forEach( (line) => {
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
