@@ -1,0 +1,14 @@
+name: Attach PR to Trello Card
+
+on:
+  pull_request:
+    types: [opened, reopened, edited]
+
+jobs:
+  attach-trello:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: delivered/attach-to-trello-card-action@master
+        with:
+          trello-key: ${{ secrets.TRELLO_KEY }}
+          trello-token: ${{ secrets.TRELLO_TOKEN }}
