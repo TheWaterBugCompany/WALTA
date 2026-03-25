@@ -345,7 +345,7 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
-          build_test_node: {
+          build_test: {
             command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/*.js"`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
@@ -685,8 +685,8 @@ module.exports = function(grunt) {
       grunt.task.run(`exec:unit_test_node`);
     } );
 
-    grunt.registerTask('build-test-node', function() {
-      grunt.task.run(`exec:build_test_node`);
+    grunt.registerTask('build-test', function() {
+      grunt.task.run(`exec:build_test`);
     } );
 
     grunt.registerTask('build-integration-test', function() {
