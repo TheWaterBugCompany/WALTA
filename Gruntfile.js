@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
     const AppiumLauncher = require("./build-utils/AppiumLauncher")
+    const AndroidLauncher = require("./build-utils/AndroidLauncher")
     const { decodeSyslog } = require('./features/support/ios-colors');
     const KobitonAPI = require("./features/support/kobiton");
 
@@ -219,7 +220,8 @@ module.exports = function(grunt) {
         if ( grunt.option('kobiton') ) {
           tasks.push(`upload:${platform}:${build_type}`);
         } else {
-          if ( build_type !== "release" && !build_type.includes("sim") ) {
+          const isSimulator = grunt.option('simulator');
+          if ( build_type !== "release" && !build_type.includes("sim") && !(platform === "android" && !isSimulator) ) {
             tasks.push(`install:${platform}:${build_type}`);
           }
         }
@@ -425,7 +427,11 @@ module.exports = function(grunt) {
     let _launcher = null;
     function getLauncher(platform, isSimulator) {
       if (!_launcher) {
-        _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
+        if (platform === "android" && !isSimulator) {
+          _launcher = new AndroidLauncher({ activity: APP_ACTIVITY });
+        } else {
+          _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
+        }
       }
       return _launcher;
     }
@@ -469,7 +475,7 @@ module.exports = function(grunt) {
         .then(done);
     });
 
-    grunt.registerTask("launch", function(platform) {
+    grunt.registerTask("launch", function(platform, buildType) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
 
@@ -479,7 +485,11 @@ module.exports = function(grunt) {
         spawnSync(adb, ['logcat', '-c']);
       }
 
-      getLauncher(platform, isSimulator).launch(APP_ID)
+      const apkPath = (platform === "android" && !isSimulator && buildType)
+        ? `./builds/${buildType}/Waterbug.apk`
+        : null;
+
+      getLauncher(platform, isSimulator).launch(APP_ID, apkPath)
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
     });
@@ -650,7 +660,9 @@ module.exports = function(grunt) {
       var preview = grunt.option('preview');
       grunt.task.run('clean');
       grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
-      grunt.task.run(`install:${platform}:unit-test`);
+      if (!(platform === "android" && !isSimulator)) {
+        grunt.task.run(`install:${platform}:unit-test`);
+      }
       if ( grunt.option('liveview') ) {
         grunt.task.run("exec:stop_live_view");
         grunt.task.run(`run:live_view_${platform}`);
@@ -660,7 +672,7 @@ module.exports = function(grunt) {
       let mockServer = createMockCerdiServer();
       mockServer.makeMockSample();
 
-      grunt.task.run(`launch:${platform}`);
+      grunt.task.run(`launch:${platform}:unit-test`);
       grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
       mockServer.shutdown();
 
@@ -705,10 +717,12 @@ module.exports = function(grunt) {
 
     grunt.registerTask('debug', function() {
       var platform = grunt.option('platform');
-      grunt.task.run(`newer:debug_${platform}`); 
-      grunt.task.run(`install:${platform}:debug`);
-
-      grunt.task.run(`launch:${platform}`);
+      var isSimulator = grunt.option('simulator');
+      grunt.task.run(`newer:debug_${platform}`);
+      if (!(platform === "android" && !isSimulator)) {
+        grunt.task.run(`install:${platform}:debug`);
+      }
+      grunt.task.run(`launch:${platform}:debug`);
       grunt.task.run(`output-logs:${platform}:preview`);
     });
 
