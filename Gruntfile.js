@@ -345,6 +345,18 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
+          build_test_node: {
+            command: `PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/*.js"`,
+            exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_integration_test: {
+            command: `PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/*.js"`,
+            exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
+          },
+
           build_key_ink: {
             command: "./ink/inklecate/bin/Release/netcoreapp3.1/osx-x64/inklecate -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
           },
@@ -656,8 +668,14 @@ module.exports = function(grunt) {
 
     grunt.registerTask('unit-test-node', function( platform ) {
       grunt.task.run(`exec:unit_test_node`);
+    } );
 
+    grunt.registerTask('build-test-node', function() {
+      grunt.task.run(`exec:build_test_node`);
+    } );
 
+    grunt.registerTask('build-integration-test', function() {
+      grunt.task.run(`exec:build_integration_test`);
     } );
 
     grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );

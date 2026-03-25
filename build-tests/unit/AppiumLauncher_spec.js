@@ -2,7 +2,7 @@ require("mocha");
 const sinon = require("sinon");
 const { expect } = require("chai");
 
-const AppiumLauncher = require("../build-utils/AppiumLauncher");
+const AppiumLauncher = require("../../build-utils/AppiumLauncher");
 
 describe("AppiumLauncher", function() {
   let fakeDriver;

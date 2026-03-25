@@ -10,6 +10,7 @@ walta-app/app/assets/browserify/**
 .metadata
 *.aab
 *.apk
+!build-tests/integration/hello.apk
 *.ipa
 **/*.lock
 release/**
