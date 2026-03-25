@@ -9,7 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
     steps:
-      - uses: delivered/attach-to-trello-card-action@master
+      - uses: rematocorp/trello-integration-action@v9
         with:
-          trello-key: ${{ secrets.TRELLO_KEY }}
-          trello-token: ${{ secrets.TRELLO_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          trello-api-key: ${{ secrets.TRELLO_KEY }}
+          trello-auth-token: ${{ secrets.TRELLO_TOKEN }}
+          trello-add-members-to-cards: false
+          trello-add-labels-to-cards: false
