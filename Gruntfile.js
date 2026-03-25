@@ -1,6 +1,4 @@
 module.exports = function(grunt) {
-    const AppiumLauncher = require("./build-utils/AppiumLauncher")
-    const AndroidLauncher = require("./build-utils/AndroidLauncher")
     const { decodeSyslog } = require('./features/support/ios-colors');
     const KobitonAPI = require("./features/support/kobiton");
 
@@ -348,13 +346,13 @@ module.exports = function(grunt) {
           },
 
           build_test_node: {
-            command: `PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/*.js"`,
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/*.js"`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
 
           build_integration_test: {
-            command: `PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/*.js"`,
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/*.js"`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
@@ -425,11 +423,13 @@ module.exports = function(grunt) {
     });
 
     let _launcher = null;
-    function getLauncher(platform, isSimulator) {
+    async function getLauncher(platform, isSimulator) {
       if (!_launcher) {
         if (platform === "android" && !isSimulator) {
+          const { default: AndroidLauncher } = await import("./build-utils/AndroidLauncher.js");
           _launcher = new AndroidLauncher({ activity: APP_ACTIVITY });
         } else {
+          const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
           _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
         }
       }
@@ -455,12 +455,13 @@ module.exports = function(grunt) {
 
       // We get an appium session here because in the case of a simulator build
       // we need the emulator up and running.
-      getLauncher(platform, isSimulator).connect(false)
-          .then(() => {
-        grunt.task.run(`exec:uninstall_${platform}`);
-        grunt.task.run(`exec:install_${platform}:${build_type}`);
-        done();
-          })
+      getLauncher(platform, isSimulator)
+        .then(launcher => launcher.connect(false))
+        .then(() => {
+          grunt.task.run(`exec:uninstall_${platform}`);
+          grunt.task.run(`exec:install_${platform}:${build_type}`);
+          done();
+        })
     });
 
 
@@ -489,7 +490,8 @@ module.exports = function(grunt) {
         ? `./builds/${buildType}/Waterbug.apk`
         : null;
 
-      getLauncher(platform, isSimulator).launch(APP_ID, apkPath)
+      getLauncher(platform, isSimulator)
+        .then(launcher => launcher.launch(APP_ID, apkPath))
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
     });
@@ -497,7 +499,8 @@ module.exports = function(grunt) {
     grunt.registerTask("terminate", function(platform) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
-      getLauncher(platform, isSimulator).terminate(APP_ID)
+      getLauncher(platform, isSimulator)
+        .then(launcher => launcher.terminate(APP_ID))
         .then(done);
     });
 
@@ -559,7 +562,7 @@ module.exports = function(grunt) {
       async function processLogs() {
         let stop = false;
         while( !stop || option === "preview") {
-          let logs = await getLauncher(platform).getDriver().getLogs("syslog");
+          let logs = await (await getLauncher(platform)).getDriver().getLogs("syslog");
           logs.forEach( (line) => {
             if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
               stop = true;
