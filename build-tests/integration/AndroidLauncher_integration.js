@@ -1,9 +1,10 @@
-require("mocha");
-const path = require("path");
-const { execFile } = require("child_process");
-const { expect } = require("chai");
+import { execFile } from "child_process";
+import path from "path";
+import { fileURLToPath } from "url";
+import { expect } from "chai";
+import AndroidLauncher from "../../build-utils/AndroidLauncher.js";
 
-const AndroidLauncher = require("../../build-utils/AndroidLauncher");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const HELLO_APK = path.join(__dirname, "hello.apk");
 const HELLO_APP_ID = "com.example.helloworld";
@@ -18,15 +19,18 @@ function adb(...args) {
   });
 }
 
-function isInstalled(appId) {
-  return adb("shell", "pm", "list", "packages", appId)
-    .then(out => out.trim().includes(`package:${appId}`));
+async function isInstalled(appId) {
+  const out = await adb("shell", "pm", "list", "packages", appId);
+  return out.trim().includes(`package:${appId}`);
 }
 
-function isRunning(appId) {
-  return adb("shell", "pidof", appId)
-    .then(out => out.trim().length > 0)
-    .catch(() => false);
+async function isRunning(appId) {
+  try {
+    const out = await adb("shell", "pidof", appId);
+    return out.trim().length > 0;
+  } catch {
+    return false;
+  }
 }
 
 describe("AndroidLauncher (integration)", function() {
@@ -34,15 +38,17 @@ describe("AndroidLauncher (integration)", function() {
 
   let launcher;
 
-  before(function() {
+  before(async function() {
     launcher = new AndroidLauncher({ activity: HELLO_ACTIVITY });
-    return launcher.connect().catch(() => {
+    try {
+      await launcher.connect();
+    } catch {
       this.skip();
-    });
+    }
   });
 
-  after(function() {
-    return adb("uninstall", HELLO_APP_ID).catch(() => {});
+  after(async function() {
+    await adb("uninstall", HELLO_APP_ID).catch(() => {});
   });
 
   describe("connect()", function() {
@@ -52,21 +58,17 @@ describe("AndroidLauncher (integration)", function() {
   });
 
   describe("launch() with install", function() {
-    it("installs and starts the hello world app", function() {
-      return launcher.launch(HELLO_APP_ID, HELLO_APK)
-        .then(() => Promise.all([isInstalled(HELLO_APP_ID), isRunning(HELLO_APP_ID)]))
-        .then(([installed, running]) => {
-          expect(installed, "app should be installed").to.be.true;
-          expect(running, "app should be running").to.be.true;
-        });
+    it("installs and starts the hello world app", async function() {
+      await launcher.launch(HELLO_APP_ID, HELLO_APK);
+      expect(await isInstalled(HELLO_APP_ID), "app should be installed").to.be.true;
+      expect(await isRunning(HELLO_APP_ID), "app should be running").to.be.true;
     });
   });
 
   describe("terminate()", function() {
-    it("force-stops the running app", function() {
-      return launcher.terminate(HELLO_APP_ID)
-        .then(() => isRunning(HELLO_APP_ID))
-        .then(running => expect(running, "app should not be running").to.be.false);
+    it("force-stops the running app", async function() {
+      await launcher.terminate(HELLO_APP_ID);
+      expect(await isRunning(HELLO_APP_ID), "app should not be running").to.be.false;
     });
   });
 });

@@ -1,4 +1,4 @@
-const { getCapabilities, startAppium: defaultStartAppium } = require("../features/support/appium");
+import { getCapabilities, startAppium as defaultStartAppium } from "../features/support/appium.js";
 
 class AppiumLauncher {
   constructor(platform, { isSimulator = false, startAppium = defaultStartAppium } = {}) {
@@ -8,24 +8,24 @@ class AppiumLauncher {
     this._driver = null;
   }
 
-  connect(quick = false) {
-    if (this._driver) return Promise.resolve(this._driver);
-    return getCapabilities(this.platform, quick, 'local', null, null, this.isSimulator)
-      .then(caps => this._startAppium(caps))
-      .then(driver => { this._driver = driver; return driver; });
+  async connect(quick = false) {
+    if (this._driver) return this._driver;
+    const caps = await getCapabilities(this.platform, quick, 'local', null, null, this.isSimulator);
+    this._driver = await this._startAppium(caps);
+    return this._driver;
   }
 
-  launch(appId) {
-    return this.connect(!this.isSimulator)
-      .then(driver => driver.activateApp(appId));
+  async launch(appId) {
+    const driver = await this.connect(!this.isSimulator);
+    await driver.activateApp(appId);
   }
 
-  terminate(appId) {
-    return this.connect(true)
-      .then(driver => driver.terminateApp(
-        this.platform === "android" ? appId : undefined,
-        this.platform === "ios" ? appId : undefined
-      ));
+  async terminate(appId) {
+    const driver = await this.connect(true);
+    await driver.terminateApp(
+      this.platform === "android" ? appId : undefined,
+      this.platform === "ios" ? appId : undefined
+    );
   }
 
   getDriver() {
@@ -33,4 +33,4 @@ class AppiumLauncher {
   }
 }
 
-module.exports = AppiumLauncher;
+export default AppiumLauncher;
