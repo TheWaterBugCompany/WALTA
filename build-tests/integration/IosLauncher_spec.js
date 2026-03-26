@@ -62,8 +62,15 @@ describe("IosLauncher (integration)", function() {
   let launcher;
 
   before(async function() {
+    this.timeout(15000);
     launcher = new IosLauncher();
     await launcher.connect();
+    // Verify the device is actively connected, not just a cached paired entry
+    const out = await devicectl("list", "devices");
+    const line = out.split("\n").find(l => l.includes(launcher._deviceId));
+    if (!line || !line.includes("connected")) {
+      throw new Error(`Device ${launcher._deviceId} is not connected (WiFi or USB required)`);
+    }
   });
 
   describe("connect()", function() {
@@ -90,6 +97,7 @@ describe("IosLauncher (integration)", function() {
 
   describe("terminate()", function() {
     it("terminates the running app", async function() {
+      if (!launcher._pid) throw new Error("launch() must have succeeded before terminate() can be tested");
       const pid = launcher._pid;
       await launcher.terminate(HELLO_APP_ID);
       expect(await isRunning(launcher._deviceId, pid), "app should not be running").to.be.false;
