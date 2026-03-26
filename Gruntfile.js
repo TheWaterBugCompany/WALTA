@@ -1,6 +1,5 @@
 module.exports = function(grunt) {
-    const { decodeSyslog } = require('./features/support/ios-colors');
-    const KobitonAPI = require("./features/support/kobiton");
+const KobitonAPI = require("./features/support/kobiton");
 
     const fs = require('fs');
     const path = require('path');
@@ -511,87 +510,23 @@ module.exports = function(grunt) {
         .then(done);
     });
 
-    grunt.registerTask("output-logs", function(platform,option) {
-      let done = this.async();
+    grunt.registerTask("output-logs", function(platform, option) {
+      const done = this.async();
+      const isSimulator = grunt.option('simulator') || false;
 
-      if ( platform === "android" ) {
-        const { spawn, spawnSync } = require('child_process');
-        const os = require('os');
-        const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
-        spawnSync('pkill', ['-f', 'adb logcat -s TiAPI']);
-        const logFile = path.join(os.tmpdir(), 'walta-logcat.log');
-        fs.writeFileSync(logFile, '');
-        const proc = spawn(adb, ['logcat', '-s', 'TiAPI:I'], {
-          stdio: ['ignore', fs.openSync(logFile, 'w'), 'ignore']
-        });
-        process.once('exit', () => proc.kill());
-        let filePos = 0;
-        let remainder = '';
-        function processLine(line) {
-          if ( />>>>> UNIT TESTS: (.*)/.test(line) ) {
-            if ( option !== "preview" ) {
-              clearInterval(interval);
-              proc.kill();
+      getLauncher(platform, isSimulator).then(launcher => {
+        let stop;
+        stop = launcher.streamLogs(line => {
+          if (/>>>>> UNIT TESTS:/.test(line)) {
+            if (option !== "preview") {
+              stop();
               done();
             }
           } else {
-            const match = line.match(/TiAPI\s*:\s+(.*)/);
-            if ( match ) {
-              const msg = match[1];
-              if ( /^Waterbug \d|^ti\.playservices:/.test(msg) ) return;
-              grunt.log.writeln(msg);
-            }
+            grunt.log.writeln(line);
           }
-        }
-        const interval = setInterval(() => {
-          const stat = fs.statSync(logFile);
-          if ( stat.size <= filePos ) return;
-          const buf = Buffer.alloc(stat.size - filePos);
-          const fd = fs.openSync(logFile, 'r');
-          fs.readSync(fd, buf, 0, buf.length, filePos);
-          fs.closeSync(fd);
-          filePos = stat.size;
-          const lines = (remainder + buf.toString()).split('\n');
-          remainder = lines.pop();
-          lines.forEach(processLine);
-        }, 100);
-        return;
-      }
-
-      // iOS real device: log capture not yet implemented (IosLauncher has no Appium driver)
-      if (!grunt.option('simulator')) {
-        grunt.log.writeln("iOS real device log output not yet implemented — skipping");
-        done();
-        return;
-      }
-
-      // iOS simulator: use Appium syslog
-      const levels = [ "ERROR", "WARN", "INFO" ];
-      if ( process.env.DEBUG )
-        levels.push("DEBUG");
-      const retain = new RegExp(`\\[(${levels.join("|")})\\]`,"m");
-      function delay(t) {
-        return new Promise( resolve => setTimeout(resolve, t) );
-      }
-      async function processLogs() {
-        let stop = false;
-        while( !stop || option === "preview") {
-          let logs = await (await getLauncher(platform)).getDriver().getLogs("syslog");
-          logs.forEach( (line) => {
-            if ( />>>>> UNIT TESTS: (.*)/.test(line.message) ) {
-              stop = true;
-            } else if ( /Waterbug\(TitaniumKit\)/.test(line.message) && retain.test(line.message)) {
-              let parts = line.message.split(retain);
-              if ( parts.length >= 1 ) {
-                grunt.log.writeln(decodeSyslog(parts[2]));
-              }
-            }
-          });
-          await delay(100);
-        }
-      }
-      processLogs()
-          .then( done );
+        });
+      });
     });
     
     grunt.loadNpmTasks("grunt-exec");

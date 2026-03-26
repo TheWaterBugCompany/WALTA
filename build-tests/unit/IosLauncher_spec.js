@@ -1,6 +1,13 @@
 import sinon from "sinon";
 import { expect } from "chai";
+import { EventEmitter } from "events";
 import IosLauncher from "../../build-utils/IosLauncher.js";
+
+function makeSpawn() {
+  const stdout = new EventEmitter();
+  const proc = { stdout, kill: sinon.stub() };
+  return { stub: sinon.stub().returns(proc), proc };
+}
 
 const DEVICE_ID = "AE7AD959-E617-53D3-920C-678B0F75B77A";
 const APP_ID = "net.thewaterbug.waterbug";
@@ -117,6 +124,47 @@ describe("IosLauncher", function() {
       const launcher = new IosLauncher({ execFile: fakeExecFile });
       await launcher.connect();
       await launcher.terminate(APP_ID); // should not throw
+    });
+  });
+
+  describe("streamLogs()", function() {
+    it("spawns idevicesyslog and emits Waterbug(TitaniumKit) message content", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", `Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: hello world\n`);
+      expect(fakeSpawn.firstCall.args[0]).to.equal("idevicesyslog");
+      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["-u", DEVICE_ID]);
+      expect(lines).to.deep.equal(["hello world"]);
+    });
+
+    it("ignores lines not from Waterbug(TitaniumKit)", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", "Mar 26 21:00:00 iPhone SpringBoard[456] <Notice>: irrelevant\n");
+      proc.stdout.emit("data", `Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: keep this\n`);
+      expect(lines).to.deep.equal(["keep this"]);
+    });
+
+    it("handles data arriving mid-line", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", "Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: hel");
+      proc.stdout.emit("data", `lo\nMar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: world\n`);
+      expect(lines).to.deep.equal(["hello", "world"]);
+    });
+
+    it("returns a stop function that kills the process", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID });
+      const stop = launcher.streamLogs(() => {});
+      stop();
+      expect(proc.kill.calledOnce).to.be.true;
     });
   });
 });
