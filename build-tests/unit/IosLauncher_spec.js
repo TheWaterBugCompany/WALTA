@@ -22,13 +22,18 @@ const LAUNCH_OUTPUT = JSON.stringify({ result: { process: { processIdentifier: 4
 function makeExecFile(responses) {
   return sinon.stub().callsFake((cmd, args, callback) => {
     const key = args.join(" ");
-    const response = responses[key];
+    const response = responses[key] ??
+      Object.entries(responses).find(([k]) => key.startsWith(k))?.[1];
     if (response instanceof Error) {
       callback(response, "", response.message);
     } else {
       callback(null, response || "", "");
     }
   });
+}
+
+function makeReadFile(content) {
+  return sinon.stub().resolves(content);
 }
 
 describe("IosLauncher", function() {
@@ -62,25 +67,25 @@ describe("IosLauncher", function() {
 
   describe("launch()", function() {
     it("launches the app and stores the PID", async function() {
-      const key = `devicectl device process launch --json-output /dev/stdout --device ${DEVICE_ID} ${APP_ID}`;
       const fakeExecFile = makeExecFile({
         "devicectl list devices": DEVICES_OUTPUT,
-        [key]: LAUNCH_OUTPUT,
+        "devicectl device process launch": "",
       });
-      const launcher = new IosLauncher({ execFile: fakeExecFile });
+      const fakeReadFile = makeReadFile(LAUNCH_OUTPUT);
+      const launcher = new IosLauncher({ execFile: fakeExecFile, readFile: fakeReadFile });
       await launcher.launch(APP_ID);
       expect(launcher._pid).to.equal(4242);
     });
 
     it("installs the app before launching when an appPath is given", async function() {
       const installKey = `devicectl device install app --device ${DEVICE_ID} ${APP_PATH}`;
-      const launchKey = `devicectl device process launch --json-output /dev/stdout --device ${DEVICE_ID} ${APP_ID}`;
       const fakeExecFile = makeExecFile({
         "devicectl list devices": DEVICES_OUTPUT,
         [installKey]: "",
-        [launchKey]: LAUNCH_OUTPUT,
+        "devicectl device process launch": "",
       });
-      const launcher = new IosLauncher({ execFile: fakeExecFile });
+      const fakeReadFile = makeReadFile(LAUNCH_OUTPUT);
+      const launcher = new IosLauncher({ execFile: fakeExecFile, readFile: fakeReadFile });
       await launcher.launch(APP_ID, APP_PATH);
       const installCall = fakeExecFile.secondCall;
       expect(installCall.args[1]).to.deep.equal([
@@ -91,14 +96,14 @@ describe("IosLauncher", function() {
 
   describe("terminate()", function() {
     it("terminates the app using the stored PID", async function() {
-      const launchKey = `devicectl device process launch --json-output /dev/stdout --device ${DEVICE_ID} ${APP_ID}`;
       const terminateKey = `devicectl device process terminate --device ${DEVICE_ID} --pid 4242`;
       const fakeExecFile = makeExecFile({
         "devicectl list devices": DEVICES_OUTPUT,
-        [launchKey]: LAUNCH_OUTPUT,
+        "devicectl device process launch": "",
         [terminateKey]: "",
       });
-      const launcher = new IosLauncher({ execFile: fakeExecFile });
+      const fakeReadFile = makeReadFile(LAUNCH_OUTPUT);
+      const launcher = new IosLauncher({ execFile: fakeExecFile, readFile: fakeReadFile });
       await launcher.launch(APP_ID);
       await launcher.terminate(APP_ID);
       const terminateCall = fakeExecFile.lastCall;
