@@ -5,7 +5,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-DEST="$SCRIPT_DIR/../../hello.apk"
+DEST="$SCRIPT_DIR/hello.apk"
 BUILD="$SCRIPT_DIR/build"
 
 if [ -z "$ANDROID_HOME" ]; then

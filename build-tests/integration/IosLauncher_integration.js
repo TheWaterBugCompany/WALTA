@@ -6,7 +6,7 @@ import IosLauncher from "../../build-utils/IosLauncher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const HELLO_APP = path.join(__dirname, "HelloWorld.app");
+const HELLO_APP = path.join(__dirname, "fixtures/HelloWorld-ios/HelloWorld.app");
 const HELLO_APP_ID = "com.example.helloworld";
 
 // Integration tests — these run real devicectl commands and require a connected iOS device.

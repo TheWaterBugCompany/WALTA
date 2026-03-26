@@ -6,7 +6,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-DEST="$SCRIPT_DIR/../../HelloWorld.app"
+DEST="$SCRIPT_DIR/HelloWorld.app"
 BUILD="$SCRIPT_DIR/build"
 
 xcodebuild \
