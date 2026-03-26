@@ -1,12 +1,13 @@
-import { execFile as defaultExecFile } from "child_process";
+import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_process";
 import { mkdtemp, readFile as defaultReadFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, deviceId = null } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, deviceId = null } = {}) {
     this._execFile = execFile;
     this._readFile = readFile;
+    this._spawn = spawn;
     this._deviceId = deviceId;
     this._pid = null;
   }
@@ -59,6 +60,20 @@ class IosLauncher {
       "--pid", String(this._pid)
     ]);
     this._pid = null;
+  }
+
+  streamLogs(onLine) {
+    const proc = this._spawn("idevicesyslog", ["-u", this._deviceId]);
+    let buffer = "";
+    proc.stdout.on("data", data => {
+      const lines = (buffer + data.toString()).split("\n");
+      buffer = lines.pop();
+      lines.forEach(line => {
+        const match = line.match(/Waterbug\(TitaniumKit\).*?:\s+(.*)/);
+        if (match) onLine(match[1]);
+      });
+    });
+    return () => proc.kill();
   }
 
   getDriver() {

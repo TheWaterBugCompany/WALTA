@@ -1,4 +1,4 @@
-import { execFile as defaultExecFile } from "child_process";
+import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_process";
 import path from "path";
 
 function defaultAdb() {
@@ -15,9 +15,10 @@ function exec(execFile, adb, args) {
 }
 
 class AndroidLauncher {
-  constructor({ adb = defaultAdb(), execFile = defaultExecFile, activity = null } = {}) {
+  constructor({ adb = defaultAdb(), execFile = defaultExecFile, spawn = defaultSpawn, activity = null } = {}) {
     this._adb = adb;
     this._execFile = execFile;
+    this._spawn = spawn;
     this._activity = activity;
     this._connected = false;
   }
@@ -51,6 +52,22 @@ class AndroidLauncher {
   async terminate(appId) {
     await this.connect();
     await this._exec(["shell", "am", "force-stop", appId]);
+  }
+
+  streamLogs(onLine) {
+    const proc = this._spawn(this._adb, ["logcat", "-s", "TiAPI:I"]);
+    let buffer = "";
+    proc.stdout.on("data", data => {
+      const lines = (buffer + data.toString()).split("\n");
+      buffer = lines.pop();
+      lines.forEach(line => {
+        const match = line.match(/TiAPI\s*:\s+(.*)/);
+        if (match && !/^Waterbug \d|^ti\.playservices:/.test(match[1])) {
+          onLine(match[1]);
+        }
+      });
+    });
+    return () => proc.kill();
   }
 
   getDriver() {

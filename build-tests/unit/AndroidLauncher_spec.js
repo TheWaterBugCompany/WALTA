@@ -1,6 +1,13 @@
 import sinon from "sinon";
 import { expect } from "chai";
+import { EventEmitter } from "events";
 import AndroidLauncher from "../../build-utils/AndroidLauncher.js";
+
+function makeSpawn() {
+  const stdout = new EventEmitter();
+  const proc = { stdout, kill: sinon.stub() };
+  return { stub: sinon.stub().returns(proc), proc };
+}
 
 function makeExecFile(responses) {
   return sinon.stub().callsFake((cmd, args, callback) => {
@@ -103,6 +110,52 @@ describe("AndroidLauncher", function() {
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", "./builds/unit-test/Waterbug.apk");
+    });
+  });
+
+  describe("streamLogs()", function() {
+    it("spawns adb logcat and emits extracted TiAPI message content", function() {
+      const fakeExecFile = makeExecFile({ "devices": DEVICES_OUTPUT });
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new AndroidLauncher({ execFile: fakeExecFile, spawn: fakeSpawn });
+      launcher._connected = true;
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", "03-26 21:00:00 I TiAPI   : hello world\n");
+      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["logcat", "-s", "TiAPI:I"]);
+      expect(lines).to.deep.equal(["hello world"]);
+    });
+
+    it("filters out noisy startup lines", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new AndroidLauncher({ spawn: fakeSpawn });
+      launcher._connected = true;
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", "03-26 21:00:00 I TiAPI   : Waterbug 1 | startup\n");
+      proc.stdout.emit("data", "03-26 21:00:00 I TiAPI   : ti.playservices: something\n");
+      proc.stdout.emit("data", "03-26 21:00:00 I TiAPI   : real log message\n");
+      expect(lines).to.deep.equal(["real log message"]);
+    });
+
+    it("handles data arriving mid-line", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new AndroidLauncher({ spawn: fakeSpawn });
+      launcher._connected = true;
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", "I TiAPI   : hel");
+      proc.stdout.emit("data", "lo\nI TiAPI   : world\n");
+      expect(lines).to.deep.equal(["hello", "world"]);
+    });
+
+    it("returns a stop function that kills the process", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new AndroidLauncher({ spawn: fakeSpawn });
+      launcher._connected = true;
+      const stop = launcher.streamLogs(() => {});
+      stop();
+      expect(proc.kill.calledOnce).to.be.true;
     });
   });
 
