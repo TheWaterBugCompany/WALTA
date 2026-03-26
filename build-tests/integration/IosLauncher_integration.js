@@ -6,7 +6,8 @@ import IosLauncher from "../../build-utils/IosLauncher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const HELLO_APP = path.join(__dirname, "fixtures/HelloWorld-ios/HelloWorld.app");
+const HELLO_APP_V1 = path.join(__dirname, "fixtures/HelloWorld-ios/v1/HelloWorld.app");
+const HELLO_APP_V2 = path.join(__dirname, "fixtures/HelloWorld-ios/v2/HelloWorld.app");
 const HELLO_APP_ID = "com.example.helloworld";
 
 // Integration tests — these run real devicectl commands and require a connected iOS device.
@@ -43,6 +44,18 @@ async function isRunning(deviceId, pid) {
   }
 }
 
+async function installedBundleVersion(deviceId, appId) {
+  const out = await devicectl("device", "info", "apps",
+    "--device", deviceId,
+    "--filter", `bundleID == "${appId}"`
+  );
+  // Output columns: Name  Bundle Identifier  Version  Bundle Version
+  const line = out.split("\n").find(l => l.includes(appId));
+  if (!line) return null;
+  const parts = line.trim().split(/\s+/);
+  return parseInt(parts[parts.length - 1], 10);
+}
+
 describe("IosLauncher (integration)", function() {
   this.timeout(60000);
 
@@ -67,9 +80,15 @@ describe("IosLauncher (integration)", function() {
 
   describe("launch() with install", function() {
     it("installs and launches the hello world app", async function() {
-      await launcher.launch(HELLO_APP_ID, HELLO_APP);
+      await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
       expect(await isInstalled(launcher._deviceId, HELLO_APP_ID), "app should be installed").to.be.true;
       expect(launcher._pid, "PID should be stored").to.be.a("number");
+    });
+
+    it("installs the updated app when a newer build is launched", async function() {
+      await launcher.launch(HELLO_APP_ID, HELLO_APP_V2);
+      expect(await installedBundleVersion(launcher._deviceId, HELLO_APP_ID), "bundle version should be updated to 2").to.equal(2);
+      expect(await isRunning(launcher._deviceId, launcher._pid), "updated app should be running").to.be.true;
     });
   });
 
