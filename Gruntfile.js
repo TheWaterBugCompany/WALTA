@@ -219,7 +219,7 @@ module.exports = function(grunt) {
           tasks.push(`upload:${platform}:${build_type}`);
         } else {
           const isSimulator = grunt.option('simulator');
-          if ( build_type !== "release" && !build_type.includes("sim") && !(platform === "android" && !isSimulator) ) {
+          if ( build_type !== "release" && !build_type.includes("sim") && !launcherHandlesInstall(platform, isSimulator) ) {
             tasks.push(`install:${platform}:${build_type}`);
           }
         }
@@ -428,12 +428,19 @@ module.exports = function(grunt) {
         if (platform === "android" && !isSimulator) {
           const { default: AndroidLauncher } = await import("./build-utils/AndroidLauncher.js");
           _launcher = new AndroidLauncher({ activity: APP_ACTIVITY });
+        } else if (platform === "ios" && !isSimulator) {
+          const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
+          _launcher = new IosLauncher();
         } else {
           const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
           _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
         }
       }
       return _launcher;
+    }
+
+    function launcherHandlesInstall(platform, isSimulator) {
+      return !isSimulator && (platform === "android" || platform === "ios");
     }
 
     grunt.registerTask("cucumber",function(){
@@ -486,12 +493,12 @@ module.exports = function(grunt) {
         spawnSync(adb, ['logcat', '-c']);
       }
 
-      const apkPath = (platform === "android" && !isSimulator && buildType)
-        ? `./builds/${buildType}/Waterbug.apk`
+      const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
+        ? `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : "ipa"}`
         : null;
 
       getLauncher(platform, isSimulator)
-        .then(launcher => launcher.launch(APP_ID, apkPath))
+        .then(launcher => launcher.launch(APP_ID, appPath))
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
     });
@@ -551,7 +558,14 @@ module.exports = function(grunt) {
         return;
       }
 
-      // iOS: use Appium syslog
+      // iOS real device: log capture not yet implemented (IosLauncher has no Appium driver)
+      if (!grunt.option('simulator')) {
+        grunt.log.writeln("iOS real device log output not yet implemented — skipping");
+        done();
+        return;
+      }
+
+      // iOS simulator: use Appium syslog
       const levels = [ "ERROR", "WARN", "INFO" ];
       if ( process.env.DEBUG )
         levels.push("DEBUG");
@@ -663,7 +677,7 @@ module.exports = function(grunt) {
       var preview = grunt.option('preview');
       grunt.task.run('clean');
       grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
-      if (!(platform === "android" && !isSimulator)) {
+      if (!launcherHandlesInstall(platform, isSimulator)) {
         grunt.task.run(`install:${platform}:unit-test`);
       }
       if ( grunt.option('liveview') ) {
@@ -722,7 +736,7 @@ module.exports = function(grunt) {
       var platform = grunt.option('platform');
       var isSimulator = grunt.option('simulator');
       grunt.task.run(`newer:debug_${platform}`);
-      if (!(platform === "android" && !isSimulator)) {
+      if (!launcherHandlesInstall(platform, isSimulator)) {
         grunt.task.run(`install:${platform}:debug`);
       }
       grunt.task.run(`launch:${platform}:debug`);
