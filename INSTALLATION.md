@@ -37,6 +37,11 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 17)
 brew install ios-deploy
 ```
 
+### libimobiledevice (required for iOS device log streaming)
+```bash
+brew install libimobiledevice
+```
+
 ---
 
 ## Clone and Install
