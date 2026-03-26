@@ -1,8 +1,12 @@
 import { execFile as defaultExecFile } from "child_process";
+import { mkdtemp, readFile as defaultReadFile, rm } from "fs/promises";
+import { tmpdir } from "os";
+import { join } from "path";
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, deviceId = null } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, deviceId = null } = {}) {
     this._execFile = execFile;
+    this._readFile = readFile;
     this._deviceId = deviceId;
     this._pid = null;
   }
@@ -16,8 +20,9 @@ class IosLauncher {
   async connect() {
     if (this._deviceId) return this;
     const output = await this._exec(["devicectl", "list", "devices"]);
-    const line = output.split("\n").find(l => l.includes("available"));
-    if (!line) throw new Error("No iOS device connected");
+    const lines = output.split("\n").filter(l => l.includes("available") || l.includes("connected"));
+    if (lines.length === 0) throw new Error("No iOS device connected");
+    const line = lines.find(l => l.includes("connected")) || lines[0];
     const match = line.match(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i);
     if (!match) throw new Error("No iOS device connected");
     this._deviceId = match[0];
@@ -29,13 +34,20 @@ class IosLauncher {
     if (appPath) {
       await this._exec(["devicectl", "device", "install", "app", "--device", this._deviceId, appPath]);
     }
-    const output = await this._exec([
-      "devicectl", "device", "process", "launch",
-      "--json-output", "/dev/stdout",
-      "--device", this._deviceId,
-      appId
-    ]);
-    this._pid = JSON.parse(output).result.process.processIdentifier;
+    const tmpDir = await mkdtemp(join(tmpdir(), "devicectl-"));
+    const jsonOut = join(tmpDir, "launch.json");
+    try {
+      await this._exec([
+        "devicectl", "device", "process", "launch",
+        "--json-output", jsonOut,
+        "--device", this._deviceId,
+        appId
+      ]);
+      const json = JSON.parse(await this._readFile(jsonOut, "utf-8"));
+      this._pid = json.result.process.processIdentifier;
+    } finally {
+      await rm(tmpDir, { recursive: true, force: true });
+    }
   }
 
   async terminate(appId) {
