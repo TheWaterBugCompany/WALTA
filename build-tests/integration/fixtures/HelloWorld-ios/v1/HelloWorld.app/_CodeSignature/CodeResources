@@ -4,10 +4,6 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>HelloWorld.debug.dylib</key>
-		<data>
-		3RgxLuBCUf87S2t3yQKuZSttYkA=
-		</data>
 		<key>Info.plist</key>
 		<data>
 		z3fnlzpOsT4h1dbd80gZ0mOzs6U=
@@ -16,10 +12,6 @@
 		<data>
 		n57qDP4tZfLD1rCS43W0B4LQjzE=
 		</data>
-		<key>__preview.dylib</key>
-		<data>
-		MgxUnP13tJrfvkA+go6rg5hwCao=
-		</data>
 		<key>embedded.mobileprovision</key>
 		<data>
 		C6Eiz/7fgWkIf12SYo5GbEW87hU=
@@ -27,20 +19,6 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>HelloWorld.debug.dylib</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			SYa7CIHVKIAQBJV8wZZlb0aOs53dsADdo4AmuzauAEk=
-			</data>
-		</dict>
-		<key>__preview.dylib</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			exgYIlr/Lr7B8Ub6ddRujOXXh4MXDB6XAMzbT9cxBkE=
-			</data>
-		</dict>
 		<key>embedded.mobileprovision</key>
 		<dict>
 			<key>hash2</key>
