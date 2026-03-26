@@ -1,11 +1,10 @@
 #!/bin/bash
-# Builds hello.apk for use as an integration test fixture.
+# Builds hello-v1.apk and hello-v2.apk for use as integration test fixtures.
 # Requires: Android SDK (ANDROID_HOME set), Java (javac), debug keystore.
-# Run from any directory — output is written to build-tests/integration/hello.apk.
+# Run from any directory — outputs are written alongside this script.
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-DEST="$SCRIPT_DIR/hello.apk"
 BUILD="$SCRIPT_DIR/build"
 
 if [ -z "$ANDROID_HOME" ]; then
@@ -20,36 +19,7 @@ ANDROID_JAR="$PLATFORM/android.jar"
 echo "Using build-tools: $BUILD_TOOLS"
 echo "Using platform:    $PLATFORM"
 
-rm -rf "$BUILD" && mkdir -p "$BUILD/classes"
-
-# Link manifest into a bare APK (no resources)
-"$BUILD_TOOLS/aapt2" link \
-  --manifest "$SCRIPT_DIR/AndroidManifest.xml" \
-  -I "$ANDROID_JAR" \
-  -o "$BUILD/hello_unaligned.apk" \
-  --min-sdk-version 26 \
-  --target-sdk-version 36
-
-# Compile Java source
-javac \
-  -source 8 -target 8 \
-  -classpath "$ANDROID_JAR" \
-  -d "$BUILD/classes" \
-  "$SCRIPT_DIR/src/com/example/helloworld/MainActivity.java"
-
-# Convert class files to DEX
-"$BUILD_TOOLS/d8" \
-  --min-api 26 \
-  --output "$BUILD" \
-  "$BUILD/classes/com/example/helloworld/MainActivity.class"
-
-# Add DEX to the APK
-(cd "$BUILD" && zip -j hello_unaligned.apk classes.dex)
-
-# Align (must happen before signing)
-"$BUILD_TOOLS/zipalign" -f -p 4 "$BUILD/hello_unaligned.apk" "$BUILD/hello_aligned.apk"
-
-# Sign with debug keystore
+# Sign with debug keystore (create it if missing)
 DEBUG_KEYSTORE="$HOME/.android/debug.keystore"
 if [ ! -f "$DEBUG_KEYSTORE" ]; then
   keytool -genkeypair -v \
@@ -61,12 +31,51 @@ if [ ! -f "$DEBUG_KEYSTORE" ]; then
     -dname "CN=Android Debug,O=Android,C=US"
 fi
 
-"$BUILD_TOOLS/apksigner" sign \
-  --ks "$DEBUG_KEYSTORE" \
-  --ks-key-alias androiddebugkey \
-  --ks-pass pass:android \
-  --key-pass pass:android \
-  --out "$DEST" \
-  "$BUILD/hello_aligned.apk"
+build_apk() {
+  local VERSION_CODE=$1
+  local DEST="$SCRIPT_DIR/hello-v${VERSION_CODE}.apk"
+  local WORK="$BUILD/v${VERSION_CODE}"
 
-echo "Built: $DEST"
+  rm -rf "$WORK" && mkdir -p "$WORK/classes"
+
+  # Link manifest into a bare APK (no resources)
+  "$BUILD_TOOLS/aapt2" link \
+    --manifest "$SCRIPT_DIR/AndroidManifest.xml" \
+    -I "$ANDROID_JAR" \
+    -o "$WORK/hello_unaligned.apk" \
+    --version-code "$VERSION_CODE" \
+    --min-sdk-version 26 \
+    --target-sdk-version 36
+
+  # Compile Java source
+  javac \
+    -source 8 -target 8 \
+    -classpath "$ANDROID_JAR" \
+    -d "$WORK/classes" \
+    "$SCRIPT_DIR/src/com/example/helloworld/MainActivity.java"
+
+  # Convert class files to DEX
+  "$BUILD_TOOLS/d8" \
+    --min-api 26 \
+    --output "$WORK" \
+    "$WORK/classes/com/example/helloworld/MainActivity.class"
+
+  # Add DEX to the APK
+  (cd "$WORK" && zip -j hello_unaligned.apk classes.dex)
+
+  # Align (must happen before signing)
+  "$BUILD_TOOLS/zipalign" -f -p 4 "$WORK/hello_unaligned.apk" "$WORK/hello_aligned.apk"
+
+  "$BUILD_TOOLS/apksigner" sign \
+    --ks "$DEBUG_KEYSTORE" \
+    --ks-key-alias androiddebugkey \
+    --ks-pass pass:android \
+    --key-pass pass:android \
+    --out "$DEST" \
+    "$WORK/hello_aligned.apk"
+
+  echo "Built: $DEST"
+}
+
+build_apk 1
+build_apk 2
