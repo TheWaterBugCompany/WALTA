@@ -63,11 +63,7 @@ describe("IosLauncher (integration)", function() {
 
   before(async function() {
     launcher = new IosLauncher();
-    try {
-      await launcher.connect();
-    } catch {
-      this.skip();
-    }
+    await launcher.connect();
   });
 
   describe("connect()", function() {
