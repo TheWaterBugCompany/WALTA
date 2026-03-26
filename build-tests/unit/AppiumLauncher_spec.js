@@ -7,7 +7,11 @@ describe("AppiumLauncher", function() {
   let fakeStartAppium;
 
   beforeEach(function() {
-    fakeDriver = { activateApp: sinon.stub().resolves(), terminateApp: sinon.stub().resolves() };
+    fakeDriver = {
+      activateApp: sinon.stub().resolves(),
+      terminateApp: sinon.stub().resolves(),
+      getLogs: sinon.stub().resolves([])
+    };
     fakeStartAppium = sinon.stub().resolves(fakeDriver);
   });
 
@@ -48,6 +52,30 @@ describe("AppiumLauncher", function() {
       const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium });
       await launcher.terminate("net.thewaterbug.waterbug");
       expect(fakeDriver.terminateApp.calledWith(undefined, "net.thewaterbug.waterbug")).to.be.true;
+    });
+  });
+
+  describe("streamLogs()", function() {
+    it("polls driver.getLogs and emits each message", async function() {
+      fakeDriver.getLogs.resolves([{ message: "log line 1" }, { message: "log line 2" }]);
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, logPollInterval: 0 });
+      await launcher.connect();
+      const lines = [];
+      const stop = launcher.streamLogs(line => lines.push(line));
+      await new Promise(r => setTimeout(r, 10));
+      stop();
+      expect(lines).to.include("log line 1");
+      expect(lines).to.include("log line 2");
+    });
+
+    it("returns a stop function that halts polling", async function() {
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, logPollInterval: 0 });
+      await launcher.connect();
+      const stop = launcher.streamLogs(() => {});
+      stop();
+      const callCount = fakeDriver.getLogs.callCount;
+      await new Promise(r => setTimeout(r, 20));
+      expect(fakeDriver.getLogs.callCount).to.equal(callCount);
     });
   });
 });
