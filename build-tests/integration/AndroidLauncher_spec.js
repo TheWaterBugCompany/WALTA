@@ -47,11 +47,7 @@ describe("AndroidLauncher (integration)", function() {
 
   before(async function() {
     launcher = new AndroidLauncher({ activity: HELLO_ACTIVITY });
-    try {
-      await launcher.connect();
-    } catch {
-      this.skip();
-    }
+    await launcher.connect();
   });
 
   after(async function() {
