@@ -43,6 +43,7 @@ The intention is to encourage the following:
 ```bash
 brew install node@20
 brew install ios-deploy
+brew install libimobiledevice
 npm install
 npx appium driver install xcuitest
 npx appium driver install uiautomator2
