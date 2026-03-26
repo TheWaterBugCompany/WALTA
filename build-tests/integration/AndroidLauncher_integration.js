@@ -6,7 +6,7 @@ import AndroidLauncher from "../../build-utils/AndroidLauncher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const HELLO_APK = path.join(__dirname, "hello.apk");
+const HELLO_APK = path.join(__dirname, "fixtures/HelloWorld-android/hello.apk");
 const HELLO_APP_ID = "com.example.helloworld";
 const HELLO_ACTIVITY = ".MainActivity";
 
