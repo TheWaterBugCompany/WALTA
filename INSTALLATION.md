@@ -89,8 +89,11 @@ Download and install [Android Studio](https://developer .android.com/studio), th
 Then add to `~/.zshrc`:
 ```bash
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+export ANDROID_HOME="$HOME/Library/Android/sdk"
 export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"  # for adb
 ```
+
+> **Note:** Both `ANDROID_SDK_ROOT` (used by Titanium/Gradle) and `ANDROID_HOME` (used by the integration test build scripts) point to the same location.
 
 ### Keystore (required for all Android builds)
 
@@ -226,7 +229,8 @@ npx grunt --platform=ios debug
 | Variable | Required for | Example |
 |---|---|---|
 | `JAVA_HOME` | Android builds | `/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home` |
-| `ANDROID_SDK_ROOT` | Android builds | `$HOME/Library/Android/sdk` |
+| `ANDROID_SDK_ROOT` | Android builds (Titanium/Gradle) | `$HOME/Library/Android/sdk` |
+| `ANDROID_HOME` | Android build scripts | `$HOME/Library/Android/sdk` |
 | `KEYSTORE` | All Android builds | `/path/to/your.keystore` |
 | `KEYSTORE_PASSWORD` | All Android builds | — |
 | `KEYSTORE_SUBKEY` | All Android builds | key alias |
