@@ -176,20 +176,24 @@ Then register the UDID at [developer.apple.com/account/resources/devices](https:
 
 When connecting a device for the first time, iOS will prompt **"Trust This Computer?"** — tap Trust and enter your device PIN.
 
-#### Environment Variables (release/ad-hoc builds only)
+#### Environment Variables
 
-Once profiles are created, set the following in `~/.zshrc`:
+Set the following in `~/.zshrc`:
 
 ```bash
 export DEVELOPER="Your Name (TEAMID)"       # Common Name from your signing certificate
-export PROFILE="<app-store-profile-uuid>"
+export PROFILE_DIST="<app-store-profile-uuid>"
 export PROFILE_ADHOC="<adhoc-profile-uuid>"
 export PROFILE_DEV="<dev-profile-uuid>"
+export DEVICE_UDID="<device-udid>"          # Run: idevice_id -l
 ```
 
-Profile UUIDs are visible in the developer portal or in Xcode → Settings → Accounts → Manage Certificates.
+Profile UUIDs are visible in the developer portal. To find your device UDID:
+```bash
+idevice_id -l
+```
 
-Debug builds use Xcode's automatic signing and do not require these.
+> **Note:** These variables have no defaults — builds will fail with a clear error if they are not set.
 
 ---
 
@@ -234,10 +238,11 @@ npx grunt --platform=ios debug
 | `KEYSTORE` | All Android builds | `/path/to/your.keystore` |
 | `KEYSTORE_PASSWORD` | All Android builds | — |
 | `KEYSTORE_SUBKEY` | All Android builds | key alias |
-| `DEVELOPER` | iOS release builds | `Name (TEAMID)` |
-| `PROFILE` | iOS App Store builds | UUID |
+| `DEVELOPER` | iOS builds | `Name (TEAMID)` |
+| `PROFILE_DIST` | iOS App Store builds | UUID |
 | `PROFILE_ADHOC` | iOS ad-hoc builds | UUID |
-| `PROFILE_DEV` | iOS dev builds | UUID |
+| `PROFILE_DEV` | iOS dev/debug builds | UUID |
+| `DEVICE_UDID` | iOS ad-hoc builds | from `idevice_id -l` |
 | `NODE_PATH` | Node.js unit tests | `./walta-app/app/lib/` |
 
 ---
