@@ -359,7 +359,7 @@ describe("SampleSync", function () {
             sample.loadByServerId(666);
             sample.set("updatedAt", moment().add(1, "days").valueOf());
             sample.save();
-            Ti.API.info(`Uploading after setting uodatedAt to ${sample.get("updatedAt")}`)
+            Ti.API.debug(`Uploading after setting uodatedAt to ${sample.get("updatedAt")}`)
             await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount).to.equal(0);
         });
@@ -712,7 +712,6 @@ describe("SampleSync", function () {
                     ]
                 })]);
             Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId,creatureId,photoPath ) {
-                console.log(`mock retrieveCreaturePhoto ${creatureId}`);
                 let mockCreature = creatureMocks[creatureId-1];
                 mockCreature.photo.copy( Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
                 return Promise.resolve(mockCreature);
@@ -933,7 +932,6 @@ describe("SampleSync", function () {
         simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
             .resolveWith([]);
         Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId,creatureId,photoPath ) {
-            console.log(`mock retrieveCreaturePhoto ${creatureId}`);
             if ( creatureId > creatureMocks.length ) {
                 throw new Error("mock download error - no such model");
             }
@@ -1022,7 +1020,6 @@ describe("SampleSync", function () {
                 ]
             })]);
         Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId,creatureId,photoPath ) {
-            console.log(`mock retrieveCreaturePhoto ${creatureId}`);
             if ( creatureId > creatureMocks.length ) {
                 throw new Error("mock download error - no such model");
             }
@@ -1221,7 +1218,6 @@ describe("SampleSync", function () {
             Alloy.Globals.CerdiApi.updateSampleById.callCount = 0;
             Alloy.Globals.CerdiApi.submitUnknownCreature.callCount = 0;
 
-            Ti.API.info(`serverSampleId = ${sample.get("serverSampleId")}`)
             await createSampleUploader().uploadSamples();
 
             expect(Alloy.Globals.CerdiApi.updateSampleById.callCount, "updateSampleId call count").to.equal(1);
@@ -1230,7 +1226,6 @@ describe("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.submitCreaturePhoto.callCount, "should not call submitCreaturePhoto for unknown creatures").to.equal(0);
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.callCount,"submitUnknownCreature").to.equal(1);
             
-            Ti.API.info(`calls = ${JSON.stringify(Alloy.Globals.CerdiApi.submitUnknownCreature.calls)}`);
             expect(Alloy.Globals.CerdiApi.submitUnknownCreature.calls[0].args[1],"submitUnknownCreature[0] count").to.equal(8);
          });
 

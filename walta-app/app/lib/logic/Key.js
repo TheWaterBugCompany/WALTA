@@ -25,6 +25,7 @@
  *  Key, KeyNode, Question and Taxon constitute the data model describing a key
  */
 if ( typeof(_) == "undefined") _ = require('underscore')._;
+var Logger = require('util/Logger');
 
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
@@ -71,12 +72,12 @@ function createKey( args ) {
 			if ( this.isNode( this.currentDecision ) ) {
 				var nd = this.currentDecision.questions[i].outcome;
 				if ( _.isUndefined(nd) || _.isNull( nd ) )
-					Ti.API.error( "Outcome for " + i + " is not defined!" );
+					Logger.error( "Outcome for " + i + " is not defined!" );
 
 				this.currentDecision = nd;
 			} else {
 				if ( Ti ) {
-					Ti.API.error("choose() called on non key node!");
+					Logger.error("choose() called on non key node!");
 				}
 			}
 		},
@@ -124,7 +125,7 @@ function createKey( args ) {
 				}
 			}
 			if ( _.isUndefined( node ) ) {
-				Ti.API.error( "Unable to find key node '" + refId +"'" );
+				Logger.error( "Unable to find key node '" + refId +"'" );
 			}
 
 			this.currentDecision = node;

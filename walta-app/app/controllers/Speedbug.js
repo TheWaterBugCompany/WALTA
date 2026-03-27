@@ -21,12 +21,13 @@
 var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 var Sample = require('logic/Sample');
+var Logger = require('util/Logger');
 
 var key = $.args.key;
 var surveyType = $.args.surveyType;
 var speedbugName = Sample.getSpeedbugIndexName( surveyType );
 
-Ti.API.debug(`Speedbug name = ${speedbugName}`);
+Logger.debug(`Speedbug name = ${speedbugName}`);
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Speedbug";

@@ -1,5 +1,5 @@
 migration.up = function(migrator) {
-    Ti.API.info("migration 201808010000000_taxa up()");
+    Ti.API.debug("migration 201808010000000_taxa up()");
     migrator.createTable({
         columns: {
             "abundance": "VARCHAR(6)",
@@ -10,7 +10,7 @@ migration.up = function(migrator) {
 };
 
 migration.down = function(migrator) {
-    Ti.API.info("migration 201808010000000_taxa down()");
+    Ti.API.debug("migration 201808010000000_taxa down()");
     migrator.dropTable();
 };
 

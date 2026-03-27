@@ -1,5 +1,5 @@
 migration.up = function(migrator) {
-    Ti.API.info("migration 201910100459397_taxa up()");
+    Ti.API.debug("migration 201910100459397_taxa up()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute(`ALTER TABLE ${table} RENAME TO ${table}_old;`);
@@ -20,7 +20,7 @@ migration.up = function(migrator) {
 // However, the database migration tests need to run the up() and down() migrations in order
 // test migration correctly so we have this code here.
 migration.down = function(migrator) {
-    Ti.API.info("migration 201910100459397_taxa down()");
+    Ti.API.debug("migration 201910100459397_taxa down()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute(`ALTER TABLE ${table} RENAME TO ${table}_old;`);

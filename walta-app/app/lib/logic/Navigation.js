@@ -9,9 +9,9 @@ function questionToString(args) {
 }
 
 function dumpHistory(history) {
-    Ti.API.info("\ndump history:\n");
+    Logger.debug("\ndump history:\n");
     history.forEach((obj, i) => {
-        Ti.API.info(`${i}: ${obj.ctl} ${obj.args.slide} ${(obj.args.node && obj.args.node.id) ? obj.args.node.id : "(no id)"} ${questionToString(obj.args)}`)
+        Logger.debug(`${i}: ${obj.ctl} ${obj.args.slide} ${(obj.args.node && obj.args.node.id) ? obj.args.node.id : "(no id)"} ${questionToString(obj.args)}`)
     });
 }
 

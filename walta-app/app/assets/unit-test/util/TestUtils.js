@@ -271,9 +271,9 @@ function makeTestPhoto(name) {
 			photo.deleteFile();
 		}
 		if ( ! mockPhoto.copy(photo.nativePath) ) {
-			console.log(`error copying file to: ${photo.nativePath}`);
+			Ti.API.debug(`error copying file to: ${photo.nativePath}`);
 		} else if ( ! photo.exists() ) {
-			console.log(`copying file to: ${photo.nativePath} succeeded but the file still doesn't exist?`);
+			Ti.API.debug(`copying file to: ${photo.nativePath} succeeded but the file still doesn't exist?`);
 		}
 	}
 	
