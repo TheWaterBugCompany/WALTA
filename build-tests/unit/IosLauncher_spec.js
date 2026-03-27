@@ -9,6 +9,7 @@ function makeSpawn() {
   return { stub: sinon.stub().returns(proc), proc };
 }
 
+
 const UDID = "00008150-00056CC22186401C";
 const APP_ID = "net.thewaterbug.waterbug";
 const APP_PATH = "./builds/unit-test/Waterbug.app";
