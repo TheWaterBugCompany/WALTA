@@ -426,10 +426,10 @@ const KobitonAPI = require("./features/support/kobiton");
       if (!_launcher) {
         if (platform === "android" && !isSimulator) {
           const { default: AndroidLauncher } = await import("./build-utils/AndroidLauncher.js");
-          _launcher = new AndroidLauncher({ activity: APP_ACTIVITY });
+          _launcher = new AndroidLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
-          _launcher = new IosLauncher();
+          _launcher = new IosLauncher({ logProcessName: "Waterbug(TitaniumKit)" });
         } else {
           const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
           _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });

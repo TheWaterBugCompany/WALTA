@@ -95,8 +95,28 @@ describe("IosLauncher (integration)", function() {
     });
   });
 
+  describe("streamLogs()", function() {
+    it("connects to idevicesyslog and receives device log output", async function() {
+      this.timeout(20000);
+      // Use a broad pattern to match any syslog process — iOS 14+ restricts user app NSLog
+      // visibility in the old syslog stream. Filter logic is covered by unit tests.
+      const logLauncher = new IosLauncher({ logProcessName: ".+", deviceId: launcher._deviceId, udid: launcher._udid });
+      const lines = await new Promise((resolve, reject) => {
+        let settled = false;
+        const collected = [];
+        const stop = logLauncher.streamLogs(line => {
+          collected.push(line);
+          if (collected.length >= 1 && !settled) { settled = true; stop(); resolve(collected); }
+        });
+        setTimeout(() => { if (!settled) { settled = true; stop(); reject(new Error("No log lines received within timeout")); } }, 15000);
+      });
+      expect(lines.length).to.be.greaterThan(0);
+    });
+  });
+
   describe("terminate()", function() {
     it("terminates the running app", async function() {
+      await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
       if (!launcher._pid) throw new Error("launch() must have succeeded before terminate() can be tested");
       const pid = launcher._pid;
       await launcher.terminate(HELLO_APP_ID);

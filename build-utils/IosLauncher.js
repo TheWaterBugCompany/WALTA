@@ -4,11 +4,13 @@ import { tmpdir } from "os";
 import { join } from "path";
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, deviceId = null } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, deviceId = null, udid = null, logProcessName = "Waterbug(TitaniumKit)" } = {}) {
     this._execFile = execFile;
     this._readFile = readFile;
     this._spawn = spawn;
     this._deviceId = deviceId;
+    this._udid = udid;
+    this._logProcessName = logProcessName;
     this._pid = null;
   }
 
@@ -27,6 +29,11 @@ class IosLauncher {
     const match = line.match(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i);
     if (!match) throw new Error("No iOS device connected");
     this._deviceId = match[0];
+    this._udid = await new Promise((resolve) => {
+      this._execFile("idevice_id", ["-l"], (err, stdout) =>
+        resolve(err ? null : stdout.trim().split("\n").find(l => l.trim()) || null)
+      );
+    });
     return this;
   }
 
@@ -63,13 +70,15 @@ class IosLauncher {
   }
 
   streamLogs(onLine) {
-    const proc = this._spawn("idevicesyslog", ["-u", this._deviceId]);
+    const args = this._udid ? ["-u", this._udid] : [];
+    const proc = this._spawn("idevicesyslog", args);
+    const logPattern = new RegExp(`${this._logProcessName.replace(/[()]/g, "\\$&")}.*?:\\s+(.*)`);
     let buffer = "";
     proc.stdout.on("data", data => {
       const lines = (buffer + data.toString()).split("\n");
       buffer = lines.pop();
       lines.forEach(line => {
-        const match = line.match(/Waterbug\(TitaniumKit\).*?:\s+(.*)/);
+        const match = line.match(logPattern);
         if (match) onLine(match[1]);
       });
     });
