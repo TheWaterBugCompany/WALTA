@@ -8,7 +8,10 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUILD="$SCRIPT_DIR/build"
 
 if [ -z "$ANDROID_HOME" ]; then
-  echo "Error: ANDROID_HOME is not set" >&2
+  ANDROID_HOME="$ANDROID_SDK_ROOT"
+fi
+if [ -z "$ANDROID_HOME" ]; then
+  echo "Error: ANDROID_HOME or ANDROID_SDK_ROOT must be set" >&2
   exit 1
 fi
 
