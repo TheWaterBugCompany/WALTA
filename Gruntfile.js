@@ -449,6 +449,9 @@ const KobitonAPI = require("./features/support/kobiton");
         } else if (platform === "android" && isSimulator) {
           const { default: AndroidEmulatorLauncher } = await import("./build-utils/AndroidEmulatorLauncher.js");
           _launcher = new AndroidEmulatorLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
+        } else if (platform === "ios" && isSimulator) {
+          const { default: IosSimulatorLauncher } = await import("./build-utils/IosSimulatorLauncher.js");
+          _launcher = new IosSimulatorLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: SIM_UDID });
         } else {
           // AppiumLauncher kept for acceptance-test and visual-regression-test
           const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
