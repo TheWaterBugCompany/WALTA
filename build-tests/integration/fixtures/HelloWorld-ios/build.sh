@@ -1,6 +1,7 @@
 #!/bin/bash
-# Builds v1/HelloWorld.app and v2/HelloWorld.app for use as iOS integration test fixtures.
-# Requires: Xcode with a valid Apple Developer account (automatic signing).
+# Builds device and simulator HelloWorld.app fixtures for iOS integration tests.
+# - v1/ and v2/         — device builds (iphoneos, requires Apple Developer account)
+# - sim-v1/ and sim-v2/ — simulator builds (iphonesimulator, no signing needed)
 # The DEVELOPMENT_TEAM in project.pbxproj is set to 6RRED3LUUV — update if needed.
 # Run from any directory — outputs are written alongside this script.
 set -e
@@ -8,7 +9,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUILD="$SCRIPT_DIR/build"
 
-build_app() {
+build_device() {
   local VERSION=$1
   local DEST="$SCRIPT_DIR/v${VERSION}/HelloWorld.app"
 
@@ -28,5 +29,27 @@ build_app() {
   echo "Built: $DEST"
 }
 
-build_app 1
-build_app 2
+build_simulator() {
+  local VERSION=$1
+  local DEST="$SCRIPT_DIR/sim-v${VERSION}/HelloWorld.app"
+
+  xcodebuild \
+    -project "$SCRIPT_DIR/HelloWorld.xcodeproj" \
+    -scheme HelloWorld \
+    -configuration Debug \
+    -sdk iphonesimulator \
+    -derivedDataPath "$BUILD/sim-derived-v${VERSION}" \
+    CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
+    CURRENT_PROJECT_VERSION="$VERSION" \
+    build
+
+  rm -rf "$DEST"
+  mkdir -p "$SCRIPT_DIR/sim-v${VERSION}"
+  cp -r "$BUILD/sim-derived-v${VERSION}/Build/Products/Debug-iphonesimulator/HelloWorld.app" "$DEST"
+  echo "Built: $DEST"
+}
+
+build_device 1
+build_device 2
+build_simulator 1
+build_simulator 2

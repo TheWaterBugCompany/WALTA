@@ -34,4 +34,6 @@ walta-app/app/app-config*
 *.p12
 *.cer
 # Also ignore any property files containing the passwords
-keystore.propertiesbuild-utils/*.mobileconfig
+keystore.properties
+build-utils/*.mobileconfig
+build-tests/integration/fixtures/HelloWorld-ios/build/
