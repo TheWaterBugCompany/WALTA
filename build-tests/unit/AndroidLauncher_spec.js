@@ -157,6 +157,28 @@ describe("AndroidLauncher", function() {
       stop();
       expect(proc.kill.calledOnce).to.be.true;
     });
+
+    it("uses custom logTag when provided", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new AndroidLauncher({ spawn: fakeSpawn, logTag: "MyApp" });
+      launcher._connected = true;
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", "03-26 21:00:00 I MyApp   : custom tag message\n");
+      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["logcat", "-s", "MyApp:I"]);
+      expect(lines).to.deep.equal(["custom tag message"]);
+    });
+
+    it("uses custom logNoisePattern when provided", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new AndroidLauncher({ spawn: fakeSpawn, logNoisePattern: /^NOISE:/ });
+      launcher._connected = true;
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", "I TiAPI   : NOISE: skip this\n");
+      proc.stdout.emit("data", "I TiAPI   : keep this\n");
+      expect(lines).to.deep.equal(["keep this"]);
+    });
   });
 
   describe("terminate()", function() {
