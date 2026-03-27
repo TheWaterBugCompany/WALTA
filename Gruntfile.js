@@ -22,7 +22,7 @@ const KobitonAPI = require("./features/support/kobiton");
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC;
     const PROFILE_DEV = process.env.PROFILE_DEV;
     const DEVICE_ID = process.env.DEVICE_UDID;
-    const SIM_UDID = process.env.SIM_UDID || "8A665EBC-2A48-4965-A1B6-E52A289C9744";
+    const SIM_UDID = process.env.SIM_UDID;
 
     const WATERBUG_APPID = {
       "android": 257222,
