@@ -509,12 +509,6 @@ const KobitonAPI = require("./features/support/kobiton");
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
 
-      if ( platform === "android" ) {
-        const { spawnSync } = require('child_process');
-        const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
-        spawnSync(adb, ['logcat', '-c']);
-      }
-
       const iosExt = (buildType === "preview" || buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
       const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
         ? `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
