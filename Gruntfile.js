@@ -22,7 +22,8 @@ const KobitonAPI = require("./features/support/kobiton");
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC;
     const PROFILE_DEV = process.env.PROFILE_DEV;
     const DEVICE_ID = process.env.DEVICE_UDID;
-    
+    const SIM_UDID = process.env.SIM_UDID;
+
     const WATERBUG_APPID = {
       "android": 257222,
       "ios": 257224
@@ -120,7 +121,7 @@ const KobitonAPI = require("./features/support/kobiton");
         if ( platform === "android" ) {
           args.push( "--build-only", "--deploy-type development", "--target emulator", '-C "Medium_Phone_API_36.1"');
         } else if ( platform === "ios" ){
-          args.push( "--build-only", "--deploy-type development", "--target simulator" );
+          args.push( "--build-only", "--deploy-type development", "--target simulator", `-C ${SIM_UDID}` );
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }
@@ -181,9 +182,13 @@ const KobitonAPI = require("./features/support/kobiton");
         case "unit-test-sim":
           emulator();
           args.push("--unit-test");
-          args.push("--output-dir builds/unit-test");
           post_cmds.push("mkdir -p ./builds/unit-test");
-          post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/unit-test/Waterbug.apk");
+          if ( platform === "android" ) {
+            args.push("--output-dir builds/unit-test");
+            post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/unit-test/Waterbug.apk");
+          } else if ( platform === "ios" ) {
+            post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/unit-test/Waterbug.app");
+          }
           break;
 
         case "release":
@@ -367,6 +372,11 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
+          build_integration_fixtures: {
+            command: `bash build-tests/integration/fixtures/HelloWorld-android/build.sh && bash build-tests/integration/fixtures/HelloWorld-ios/build.sh`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
           build_key_ink: {
             command: "./ink/inklecate/bin/Release/netcoreapp3.1/osx-x64/inklecate -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
           },
@@ -441,7 +451,14 @@ const KobitonAPI = require("./features/support/kobiton");
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
           _launcher = new IosLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: DEVICE_ID });
+        } else if (platform === "android" && isSimulator) {
+          const { default: AndroidEmulatorLauncher } = await import("./build-utils/AndroidEmulatorLauncher.js");
+          _launcher = new AndroidEmulatorLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
+        } else if (platform === "ios" && isSimulator) {
+          const { default: IosSimulatorLauncher } = await import("./build-utils/IosSimulatorLauncher.js");
+          _launcher = new IosSimulatorLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: SIM_UDID });
         } else {
+          // AppiumLauncher kept for acceptance-test and visual-regression-test
           const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
           _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
         }
@@ -449,8 +466,8 @@ const KobitonAPI = require("./features/support/kobiton");
       return _launcher;
     }
 
-    function launcherHandlesInstall(platform, isSimulator) {
-      return !isSimulator && (platform === "android" || platform === "ios");
+    function launcherHandlesInstall(platform, _isSimulator) {
+      return platform === "android" || platform === "ios";
     }
 
     grunt.registerTask("cucumber",function(){
@@ -496,12 +513,6 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask("launch", function(platform, buildType) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
-
-      if ( platform === "android" ) {
-        const { spawnSync } = require('child_process');
-        const adb = `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`;
-        spawnSync(adb, ['logcat', '-c']);
-      }
 
       const iosExt = (buildType === "preview" || buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
       const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
@@ -651,7 +662,25 @@ const KobitonAPI = require("./features/support/kobiton");
     } );
 
     grunt.registerTask('build-integration-test', function() {
+      const fixtures = [
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-android/hello-v1.apk',    source: 'build-tests/integration/fixtures/HelloWorld-android/build.sh' },
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-android/hello-v2.apk',    source: 'build-tests/integration/fixtures/HelloWorld-android/build.sh' },
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-ios/sim-v1/HelloWorld.app/HelloWorld', source: 'build-tests/integration/fixtures/HelloWorld-ios/build.sh' },
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-ios/sim-v2/HelloWorld.app/HelloWorld', source: 'build-tests/integration/fixtures/HelloWorld-ios/build.sh' },
+      ];
+      const needsBuild = fixtures.some(({ artifact, source }) => {
+        if (!fs.existsSync(artifact)) return true;
+        return fs.statSync(artifact).mtimeMs < fs.statSync(source).mtimeMs;
+      });
+      if (needsBuild) {
+        grunt.log.writeln('Integration fixtures missing or out of date — rebuilding...');
+        grunt.task.run('exec:build_integration_fixtures');
+      }
       grunt.task.run(`exec:build_integration_test`);
+    } );
+
+    grunt.registerTask('build-integration-fixtures', function() {
+      grunt.task.run(`exec:build_integration_fixtures`);
     } );
 
     grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );

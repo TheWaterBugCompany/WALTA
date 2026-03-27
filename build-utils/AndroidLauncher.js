@@ -23,17 +23,22 @@ class AndroidLauncher {
     this._logTag = logTag;
     this._logNoisePattern = logNoisePattern;
     this._connected = false;
+    this._serial = null;
   }
 
   _exec(args) {
-    return exec(this._execFile, this._adb, args);
+    const fullArgs = this._serial ? ["-s", this._serial, ...args] : args;
+    return exec(this._execFile, this._adb, fullArgs);
   }
 
   async connect() {
     if (this._connected) return this;
-    const output = await this._exec(["devices"]);
-    const devices = output.split("\n").slice(1).filter(l => l.includes("\tdevice"));
-    if (devices.length === 0) throw new Error("No Android device connected");
+    if (!this._serial) {
+      const output = await exec(this._execFile, this._adb, ["devices"]);
+      const devices = output.split("\n").slice(1).filter(l => l.includes("\tdevice"));
+      if (devices.length === 0) throw new Error("No Android device connected");
+      this._serial = devices[0].split("\t")[0].trim();
+    }
     this._connected = true;
     return this;
   }
@@ -44,6 +49,7 @@ class AndroidLauncher {
       await this._exec(["uninstall", appId]).catch(() => {});
       await this._exec(["install", "-r", apkPath]);
     }
+    await this._exec(["logcat", "-c"]);
     if (this._activity) {
       await this._exec(["shell", "am", "start", "-n", `${appId}/${this._activity}`]);
     } else {
@@ -57,7 +63,8 @@ class AndroidLauncher {
   }
 
   streamLogs(onLine) {
-    const proc = this._spawn(this._adb, ["logcat", "-s", `${this._logTag}:I`]);
+    const serialArgs = this._serial ? ["-s", this._serial] : [];
+    const proc = this._spawn(this._adb, [...serialArgs, "logcat", "-s", `${this._logTag}:I`]);
     const logPattern = new RegExp(`${this._logTag}\\s*:\\s+(.*)`);
     let buffer = "";
     proc.stdout.on("data", data => {
