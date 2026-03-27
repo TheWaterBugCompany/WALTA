@@ -372,6 +372,11 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
+          build_integration_fixtures: {
+            command: `bash build-tests/integration/fixtures/HelloWorld-android/build.sh && bash build-tests/integration/fixtures/HelloWorld-ios/build.sh`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
           build_key_ink: {
             command: "./ink/inklecate/bin/Release/netcoreapp3.1/osx-x64/inklecate -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
           },
@@ -658,6 +663,10 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('build-integration-test', function() {
       grunt.task.run(`exec:build_integration_test`);
+    } );
+
+    grunt.registerTask('build-integration-fixtures', function() {
+      grunt.task.run(`exec:build_integration_fixtures`);
     } );
 
     grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );
