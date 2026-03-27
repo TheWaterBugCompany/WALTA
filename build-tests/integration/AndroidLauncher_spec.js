@@ -74,6 +74,25 @@ describe("AndroidLauncher (integration)", function() {
     });
   });
 
+  describe("streamLogs()", function() {
+    it("receives log lines emitted by the running app", async function() {
+      this.timeout(15000);
+      const logLauncher = new AndroidLauncher({ activity: HELLO_ACTIVITY, logTag: "HelloWorld", logNoisePattern: /(?!)/ });
+      await logLauncher.launch(HELLO_APP_ID, HELLO_APK_V1);
+      const lines = await new Promise((resolve, reject) => {
+        let settled = false;
+        const collected = [];
+        const stop = logLauncher.streamLogs(line => {
+          collected.push(line);
+          if (collected.length >= 1 && !settled) { settled = true; stop(); resolve(collected); }
+        });
+        setTimeout(() => { if (!settled) { settled = true; stop(); reject(new Error("No log lines received within timeout")); } }, 10000);
+      });
+      expect(lines[0]).to.include("App started");
+      await logLauncher.terminate(HELLO_APP_ID);
+    });
+  });
+
   describe("terminate()", function() {
     it("force-stops the running app", async function() {
       await launcher.terminate(HELLO_APP_ID);
