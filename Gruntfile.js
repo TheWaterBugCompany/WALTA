@@ -22,7 +22,8 @@ const KobitonAPI = require("./features/support/kobiton");
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC;
     const PROFILE_DEV = process.env.PROFILE_DEV;
     const DEVICE_ID = process.env.DEVICE_UDID;
-    
+    const SIM_UDID = process.env.SIM_UDID || "8A665EBC-2A48-4965-A1B6-E52A289C9744";
+
     const WATERBUG_APPID = {
       "android": 257222,
       "ios": 257224
@@ -181,9 +182,13 @@ const KobitonAPI = require("./features/support/kobiton");
         case "unit-test-sim":
           emulator();
           args.push("--unit-test");
-          args.push("--output-dir builds/unit-test");
           post_cmds.push("mkdir -p ./builds/unit-test");
-          post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/unit-test/Waterbug.apk");
+          if ( platform === "android" ) {
+            args.push("--output-dir builds/unit-test");
+            post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/unit-test/Waterbug.apk");
+          } else if ( platform === "ios" ) {
+            post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/unit-test/Waterbug.app");
+          }
           break;
 
         case "release":
@@ -441,7 +446,11 @@ const KobitonAPI = require("./features/support/kobiton");
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
           _launcher = new IosLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: DEVICE_ID });
+        } else if (platform === "android" && isSimulator) {
+          const { default: AndroidEmulatorLauncher } = await import("./build-utils/AndroidEmulatorLauncher.js");
+          _launcher = new AndroidEmulatorLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
         } else {
+          // AppiumLauncher kept for acceptance-test and visual-regression-test
           const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
           _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
         }
@@ -449,8 +458,8 @@ const KobitonAPI = require("./features/support/kobiton");
       return _launcher;
     }
 
-    function launcherHandlesInstall(platform, isSimulator) {
-      return !isSimulator && (platform === "android" || platform === "ios");
+    function launcherHandlesInstall(platform, _isSimulator) {
+      return platform === "android" || platform === "ios";
     }
 
     grunt.registerTask("cucumber",function(){
