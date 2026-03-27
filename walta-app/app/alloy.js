@@ -22,7 +22,7 @@
 
 const Logger = require('util/Logger');
 var log = Logger.log;
-var debug = m => Ti.API.info(m);
+var debug = m => Logger.debug(m);
 
 const appConfig = Ti.Filesystem.getFile("app-config.json").read();
 _.extend(Alloy.CFG, JSON.parse(appConfig));

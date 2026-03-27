@@ -1,11 +1,11 @@
 migration.up = function(migrator) {
-    Ti.API.info("migration 202309201007901_taxa up()");
+    Ti.API.debug("migration 202309201007901_taxa up()");
     migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN updatedAt INTEGER;');
     migrator.db.execute('UPDATE ' + migrator.table + ' SET updatedAt=0 WHERE sampleId IS NOT NULL');
 };
 
 migration.down = function(migrator) {
-    Ti.API.info("migration 202309201007901_taxa down()");
+    Ti.API.debug("migration 202309201007901_taxa down()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute('CREATE TEMPORARY TABLE taxa_backup(sampleTaxonId,abundance,sampleId,taxonId,taxonPhotoPath,serverCreaturePhotoId,serverCreatureId,willDelete);');

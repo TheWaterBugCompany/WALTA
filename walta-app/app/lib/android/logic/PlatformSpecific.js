@@ -16,12 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+var Logger = require('util/Logger');
+
 function appStartUp() {
 	// Not needed any more
 }
 
 function appShutdown( ) {
-	Ti.API.debug("Application shutdown");
+	Logger.debug("Application shutdown");
 	Alloy.Globals.lastWindow.forEach( (w) => w.close() );
 	Ti.Android.currentActivity.finish();
 }
@@ -51,11 +53,11 @@ function transitionWindows( win, effect ) {
 	}
 
 	Alloy.Globals.lastWindow.push( win );
-	Ti.API.debug(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>getWindowName(w))}`);
+	Logger.debug(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>getWindowName(w))}`);
 	win.open( args );
 	if ( Alloy.Globals.lastWindow.length > 1 ) {
 		var oldWindow = Alloy.Globals.lastWindow.shift();
-		Ti.API.debug(`oldWindow = ${getWindowName(oldWindow)} `);
+		Logger.debug(`oldWindow = ${getWindowName(oldWindow)} `);
 		oldWindow.close();
 	};
 }

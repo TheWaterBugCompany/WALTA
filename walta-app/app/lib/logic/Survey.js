@@ -2,7 +2,8 @@ var SampleSync = require("logic/SampleSync");
 
 var Topics = require('ui/Topics');
 
-var debug = m => Ti.API.info(m);
+var Logger = require('util/Logger');
+var debug = m => Logger.debug(m);
 exports.Survey = {
     forceUpload: function() {
         debug("forcing synchronise");
@@ -28,7 +29,7 @@ exports.Survey = {
     submitSurvey: function() {
         return Alloy.Models.instance("sample").saveCurrentSample()
             .then( () => {
-                Ti.API.info("forcing upload");
+                debug("forcing upload");
                 Topics.fireTopicEvent(Topics.FORCE_UPLOAD);
             });
     }

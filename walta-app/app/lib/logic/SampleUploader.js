@@ -1,7 +1,7 @@
 
 var Logger = require('util/Logger');
 var log = Logger.log;
-var debug = m => Ti.API.info(m);
+var debug = m => Logger.debug(m);
 
 var Topics = require('ui/Topics');
 var moment = require("lib/moment");
@@ -22,8 +22,8 @@ function loadCorrectSampleToUpdate(sample) {
     sample.loadById(sampleId);
 
     // if the sample has been deleted load the temporary version instead
-    if ( ! sample.get("sampleId") ) { 
-        Ti.API.info("reloading")
+    if ( ! sample.get("sampleId") ) {
+        debug("reloading")
         sample.loadByOriginalId(sampleId);
     }
 }
@@ -76,7 +76,7 @@ function uploadTaxaPhoto(sample,t,delay) {
         return Promise.resolve()
                 .then( () => Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath ) )
                 .then( (res) => {
-                    Ti.API.info(`returning from submitCreaturePhoto ${JSON.stringify(res)}`);
+                    debug(`returning from submitCreaturePhoto ${JSON.stringify(res)}`);
                     return res;
                 });
     }
@@ -96,7 +96,7 @@ function uploadTaxaPhoto(sample,t,delay) {
             } 
             return delayedPromise( submitCreaturePhoto(sampleId, taxonId, photoPath ), delay )
                     .then( (res) => {
-                        Ti.API.info(`setting serverCreaturePhotoId = ${res.id}`);
+                        debug(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
                     })
