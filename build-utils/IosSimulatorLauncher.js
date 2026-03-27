@@ -48,8 +48,9 @@ class IosSimulatorLauncher {
 
   streamLogs(onLine) {
     const proc = this._spawn("xcrun", ["simctl", "spawn", this._udid, "log", "stream", "--style", "syslog"]);
-    const escapedName = this._logProcessName.replace(/[()[\]]/g, "\\$&");
-    const logPattern = new RegExp(`${escapedName}(?:\\[\\d+:[\\w]+\\])?:\\s+(.*)`);
+    const escapedName = this._logProcessName.replace(/[()]/g, "\\$&");
+    const logPattern = new RegExp(`${escapedName}.*?:\\s+(.*)`);
+
     let buffer = "";
     proc.stdout.on("data", data => {
       const lines = (buffer + data.toString()).split("\n");
