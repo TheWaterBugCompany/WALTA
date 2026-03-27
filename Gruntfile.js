@@ -662,6 +662,20 @@ const KobitonAPI = require("./features/support/kobiton");
     } );
 
     grunt.registerTask('build-integration-test', function() {
+      const fixtures = [
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-android/hello-v1.apk',    source: 'build-tests/integration/fixtures/HelloWorld-android/build.sh' },
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-android/hello-v2.apk',    source: 'build-tests/integration/fixtures/HelloWorld-android/build.sh' },
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-ios/sim-v1/HelloWorld.app/HelloWorld', source: 'build-tests/integration/fixtures/HelloWorld-ios/build.sh' },
+        { artifact: 'build-tests/integration/fixtures/HelloWorld-ios/sim-v2/HelloWorld.app/HelloWorld', source: 'build-tests/integration/fixtures/HelloWorld-ios/build.sh' },
+      ];
+      const needsBuild = fixtures.some(({ artifact, source }) => {
+        if (!fs.existsSync(artifact)) return true;
+        return fs.statSync(artifact).mtimeMs < fs.statSync(source).mtimeMs;
+      });
+      if (needsBuild) {
+        grunt.log.writeln('Integration fixtures missing or out of date — rebuilding...');
+        grunt.task.run('exec:build_integration_fixtures');
+      }
       grunt.task.run(`exec:build_integration_test`);
     } );
 
