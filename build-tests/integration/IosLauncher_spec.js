@@ -87,10 +87,27 @@ describe("IosLauncher (integration)", function() {
     });
   });
 
-  // streamLogs() is not integration-tested on real devices: idevicesyslog captures the legacy
-  // BSD syslog stream, but iOS 14+ routes user app logs (including Titanium's TiAPI output)
-  // through the unified logging system which idevicesyslog cannot access. The log parsing
-  // logic is covered by unit tests.
+  describe("streamLogs()", function() {
+    // idevicesyslog captures the legacy BSD syslog stream, but iOS 14+ routes user app
+    // NSLog output through the unified logging system, which idevicesyslog cannot access.
+    // macOS 26 Tahoe removed `log stream --device` with no CLI replacement.
+    // Unskip this test when a working device log streaming mechanism is available.
+    it.skip("captures NSLog output from the running app", async function() {
+      this.timeout(20000);
+      await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
+      const lines = await new Promise((resolve, reject) => {
+        let settled = false;
+        const collected = [];
+        const logLauncher = new IosLauncher({ logProcessName: "HelloWorld", udid: launcher._udid });
+        const stop = logLauncher.streamLogs(line => {
+          collected.push(line);
+          if (!settled) { settled = true; stop(); resolve(collected); }
+        });
+        setTimeout(() => { if (!settled) { settled = true; stop(); reject(new Error("No log lines received within timeout")); } }, 15000);
+      });
+      expect(lines.some(l => l.includes("App started"))).to.be.true;
+    });
+  });
 
   describe("terminate()", function() {
     it("terminates the running app", async function() {
