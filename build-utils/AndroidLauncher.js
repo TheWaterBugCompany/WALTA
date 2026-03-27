@@ -49,6 +49,7 @@ class AndroidLauncher {
       await this._exec(["uninstall", appId]).catch(() => {});
       await this._exec(["install", "-r", apkPath]);
     }
+    await this._exec(["logcat", "-c"]);
     if (this._activity) {
       await this._exec(["shell", "am", "start", "-n", `${appId}/${this._activity}`]);
     } else {

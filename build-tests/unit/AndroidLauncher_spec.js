@@ -62,14 +62,27 @@ describe("AndroidLauncher", function() {
   });
 
   describe("launch()", function() {
-    it("starts the app using am start with intent when no activity given", async function() {
+    it("clears logcat before starting the app", async function() {
       const fakeExecFile = makeExecFile({
         "devices": DEVICES_OUTPUT,
+        "-s emulator-5554 logcat -c": "",
         "-s emulator-5554 shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
-      expect(fakeExecFile.secondCall.args[1]).to.deep.equal([
+      const allArgs = fakeExecFile.getCalls().map(c => c.args[1]);
+      expect(allArgs).to.deep.include(["-s", "emulator-5554", "logcat", "-c"]);
+    });
+
+    it("starts the app using am start with intent when no activity given", async function() {
+      const fakeExecFile = makeExecFile({
+        "devices": DEVICES_OUTPUT,
+        "-s emulator-5554 logcat -c": "",
+        "-s emulator-5554 shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
+      });
+      const launcher = new AndroidLauncher({ execFile: fakeExecFile });
+      await launcher.launch("net.thewaterbug.waterbug");
+      expect(fakeExecFile.thirdCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start",
         "-a", "android.intent.action.MAIN",
@@ -81,11 +94,12 @@ describe("AndroidLauncher", function() {
     it("starts the app using am start -n when an activity is given", async function() {
       const fakeExecFile = makeExecFile({
         "devices": DEVICES_OUTPUT,
+        "-s emulator-5554 logcat -c": "",
         "-s emulator-5554 shell am start -n net.thewaterbug.waterbug/.WaterbugActivity": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
-      expect(fakeExecFile.secondCall.args[1]).to.deep.equal([
+      expect(fakeExecFile.thirdCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start", "-n", "net.thewaterbug.waterbug/.WaterbugActivity"
       ]);
@@ -96,13 +110,15 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         "-s emulator-5554 uninstall net.thewaterbug.waterbug": "",
         "-s emulator-5554 install -r ./builds/unit-test/Waterbug.apk": "",
+        "-s emulator-5554 logcat -c": "",
         "-s emulator-5554 shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", "./builds/unit-test/Waterbug.apk");
       expect(fakeExecFile.secondCall.args[1]).to.deep.equal(["-s", "emulator-5554", "uninstall", "net.thewaterbug.waterbug"]);
       expect(fakeExecFile.thirdCall.args[1]).to.deep.equal(["-s", "emulator-5554", "install", "-r", "./builds/unit-test/Waterbug.apk"]);
-      expect(fakeExecFile.getCall(3).args[1]).to.deep.equal([
+      expect(fakeExecFile.getCall(3).args[1]).to.deep.equal(["-s", "emulator-5554", "logcat", "-c"]);
+      expect(fakeExecFile.getCall(4).args[1]).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start",
         "-a", "android.intent.action.MAIN",
