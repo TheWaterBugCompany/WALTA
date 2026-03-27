@@ -10,6 +10,8 @@ walta-app/app/assets/browserify/**
 .metadata
 *.aab
 *.apk
+!build-tests/integration/fixtures/HelloWorld-android/hello-v1.apk
+!build-tests/integration/fixtures/HelloWorld-android/hello-v2.apk
 *.ipa
 **/*.lock
 release/**
@@ -32,4 +34,4 @@ walta-app/app/app-config*
 *.p12
 *.cer
 # Also ignore any property files containing the passwords
-keystore.properties
+keystore.propertiesbuild-utils/*.mobileconfig

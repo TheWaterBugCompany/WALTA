@@ -1,5 +1,5 @@
 migration.up = function(migrator) {
-    Ti.API.info("migration 202011080015500_sample up()");
+    Ti.API.debug("migration 202011080015500_sample up()");
     var db = migrator.db;
     var table = migrator.table;
     db.execute('CREATE TEMPORARY TABLE samples_backup(serverSampleId,lastError,sampleId,dateCompleted,lat,lng,accuracy,surveyType,waterbodyType,waterbodyName,nearbyFeature,boulder,gravel,sandOrSilt,leafPacks,wood,aquaticPlants,openWater,edgePlants,sitePhotoPath,serverSyncTime,updatedAt,serverSitePhotoId);');
@@ -38,6 +38,6 @@ migration.up = function(migrator) {
 };
 
 migration.down = function(migrator) {
-    Ti.API.info("migration 202011080015500_sample down()");
+    Ti.API.debug("migration 202011080015500_sample down()");
     migrator.db.execute('ALTER TABLE ' + migrator.table + ' ADD COLUMN downloadedAt INTEGER;');
 };

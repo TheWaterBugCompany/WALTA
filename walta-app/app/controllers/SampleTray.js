@@ -3,6 +3,7 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 
 var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
+var Logger = require('util/Logger');
 
 var DEBUG = false; // WARNING turning this on breaks unit tests
 
@@ -319,7 +320,7 @@ function updateSampleTrayTile( tileNum ) {
 
 function releaseTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Ti.API.info(`releaseTiles(${start_n},${end_n})`);
+    Logger.debug(`releaseTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 ) {
@@ -335,7 +336,7 @@ function releaseTiles( start_n, end_n ) {
 
 function addTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Ti.API.info(`addTiles(${start_n},${end_n})`);
+    Logger.debug(`addTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
    if ( i >=  0 ) {
@@ -365,7 +366,7 @@ function updateVisibleTiles( scrollx) {
   var rightEdge = roundToTile( scrollx + viewWidth + middleWidth - 1 );
   var leftEdge = roundToTile( scrollx );
   if ( DEBUG ) {
-    Ti.API.info(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}, leftEdge=${leftEdge}, rightEdge=${rightEdge}`);
+    Logger.debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}, leftEdge=${leftEdge}, rightEdge=${rightEdge}`);
   }
   addTiles(leftEdge,rightEdge - 1);
   releaseTiles( 0, leftEdge-1 );
@@ -377,14 +378,14 @@ function drawIcecubeTray() {
      since you can see the tray behind the edit screen. But this cancels the redraw if the controller hasn't yet set its size values */
   if ( $.content.size.height === 0 ) {
     if ( DEBUG ) {
-      Ti.API.info("view not yet initialised skipping redraw!")
+      Logger.debug("view not yet initialised skipping redraw!")
     }
     return;
   }
 
   // froce the contentWidth to update - on iOS this doesn't seem to be automatic
   if ( DEBUG ) {
-    Ti.API.info(`trayWidth=${getTrayWidth()}, viewWidth=${getViewWidth()}, scrollOffset=${getScrollOffset()}`);
+    Logger.debug(`trayWidth=${getTrayWidth()}, viewWidth=${getViewWidth()}, scrollOffset=${getScrollOffset()}`);
   }
   $.tray.width = `${getTrayWidth()}dp`;
   $.contentWidth = `${getTrayWidth()}dp`;
@@ -424,7 +425,7 @@ function startIdentification(e) {
 
   $.selectMethod.on("unknownbug", function() {
     closeSelectMethod();
-    Ti.API.info("firing identify")
+    Logger.debug("firing identify")
     Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: null }  );
   });
 

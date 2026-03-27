@@ -1,5 +1,6 @@
 var PlatformSpecific = require("logic/PlatformSpecific");
-var debug = m => Ti.API.info(m);
+var Logger = require('util/Logger');
+var debug = m => Logger.debug(m);
 exports.System = {
     requestPermission: function( permissions ) {
         if ( OS_ANDROID ) {
