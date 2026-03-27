@@ -9,26 +9,14 @@ function makeSpawn() {
   return { stub: sinon.stub().returns(proc), proc };
 }
 
-const DEVICE_ID = "AE7AD959-E617-53D3-920C-678B0F75B77A";
 const UDID = "00008150-00056CC22186401C";
 const APP_ID = "net.thewaterbug.waterbug";
 const APP_PATH = "./builds/unit-test/Waterbug.app";
 
-const DEVICES_OUTPUT = [
-  "Name               Hostname                           Identifier                             State                Model",
-  "----------------   --------------------------------   ------------------------------------   ------------------   ----------------------",
-  `Michael's iPhone   Michaels-iPhone.coredevice.local   ${DEVICE_ID}   available (paired)   iPhone SE`,
-].join("\n");
-
-const NO_DEVICES_OUTPUT = [
-  "Name               Hostname                           Identifier                             State                Model",
-  "----------------   --------------------------------   ------------------------------------   ------------------   ----------------------",
-].join("\n");
-
 const LAUNCH_OUTPUT = JSON.stringify({ result: { process: { processIdentifier: 4242 } } });
 
 function makeExecFile(responses) {
-  return sinon.stub().callsFake((cmd, args, callback) => {
+  return sinon.stub().callsFake((_cmd, args, callback) => {
     const key = args.join(" ");
     const response = responses[key] ??
       Object.entries(responses).find(([k]) => key.startsWith(k))?.[1];
@@ -46,15 +34,26 @@ function makeReadFile(content) {
 
 describe("IosLauncher", function() {
   describe("connect()", function() {
-    it("finds a connected iOS device via devicectl list devices", async function() {
-      const fakeExecFile = makeExecFile({ "devicectl list devices": DEVICES_OUTPUT });
+    it("finds a connected iOS device via idevice_id", async function() {
+      const fakeExecFile = makeExecFile({ "-l": `${UDID}\n` });
       const launcher = new IosLauncher({ execFile: fakeExecFile });
       await launcher.connect();
-      expect(launcher._deviceId).to.equal(DEVICE_ID);
+      expect(launcher._udid).to.equal(UDID);
     });
 
     it("rejects when no device is connected", async function() {
-      const fakeExecFile = makeExecFile({ "devicectl list devices": NO_DEVICES_OUTPUT });
+      const fakeExecFile = makeExecFile({ "-l": new Error("no device") });
+      const launcher = new IosLauncher({ execFile: fakeExecFile });
+      try {
+        await launcher.connect();
+        throw new Error("should have rejected");
+      } catch(err) {
+        expect(err.message).to.match(/No iOS device/);
+      }
+    });
+
+    it("rejects when idevice_id returns empty output", async function() {
+      const fakeExecFile = makeExecFile({ "-l": "" });
       const launcher = new IosLauncher({ execFile: fakeExecFile });
       try {
         await launcher.connect();
@@ -65,39 +64,19 @@ describe("IosLauncher", function() {
     });
 
     it("reuses the connection on subsequent calls", async function() {
-      const fakeExecFile = makeExecFile({ "devicectl list devices": DEVICES_OUTPUT });
+      const fakeExecFile = makeExecFile({ "-l": `${UDID}\n` });
       const launcher = new IosLauncher({ execFile: fakeExecFile });
       await launcher.connect();
       const callCount = fakeExecFile.callCount;
       await launcher.connect();
-      expect(fakeExecFile.callCount).to.equal(callCount); // no extra calls on second connect()
-    });
-
-    it("resolves the libimobiledevice UDID for log streaming", async function() {
-      const fakeExecFile = makeExecFile({
-        "devicectl list devices": DEVICES_OUTPUT,
-        "-l": `${UDID}\n`
-      });
-      const launcher = new IosLauncher({ execFile: fakeExecFile });
-      await launcher.connect();
-      expect(launcher._udid).to.equal(UDID);
-    });
-
-    it("sets _udid to null if idevice_id is not available", async function() {
-      const fakeExecFile = makeExecFile({
-        "devicectl list devices": DEVICES_OUTPUT,
-        "-l": new Error("idevice_id not found")
-      });
-      const launcher = new IosLauncher({ execFile: fakeExecFile });
-      await launcher.connect();
-      expect(launcher._udid).to.be.null;
+      expect(fakeExecFile.callCount).to.equal(callCount);
     });
   });
 
   describe("launch()", function() {
     it("launches the app and stores the PID", async function() {
       const fakeExecFile = makeExecFile({
-        "devicectl list devices": DEVICES_OUTPUT,
+        "-l": `${UDID}\n`,
         "devicectl device process launch": "",
       });
       const fakeReadFile = makeReadFile(LAUNCH_OUTPUT);
@@ -107,9 +86,9 @@ describe("IosLauncher", function() {
     });
 
     it("installs the app before launching when an appPath is given", async function() {
-      const installKey = `devicectl device install app --device ${DEVICE_ID} ${APP_PATH}`;
+      const installKey = `devicectl device install app --device ${UDID} ${APP_PATH}`;
       const fakeExecFile = makeExecFile({
-        "devicectl list devices": DEVICES_OUTPUT,
+        "-l": `${UDID}\n`,
         [installKey]: "",
         "devicectl device process launch": "",
       });
@@ -118,16 +97,16 @@ describe("IosLauncher", function() {
       await launcher.launch(APP_ID, APP_PATH);
       const installCall = fakeExecFile.getCalls().find(c => c.args[1]?.[0] === "devicectl" && c.args[1]?.[2] === "install");
       expect(installCall.args[1]).to.deep.equal([
-        "devicectl", "device", "install", "app", "--device", DEVICE_ID, APP_PATH
+        "devicectl", "device", "install", "app", "--device", UDID, APP_PATH
       ]);
     });
   });
 
   describe("terminate()", function() {
     it("terminates the app using the stored PID", async function() {
-      const terminateKey = `devicectl device process terminate --device ${DEVICE_ID} --pid 4242`;
+      const terminateKey = `devicectl device process terminate --device ${UDID} --pid 4242`;
       const fakeExecFile = makeExecFile({
-        "devicectl list devices": DEVICES_OUTPUT,
+        "-l": `${UDID}\n`,
         "devicectl device process launch": "",
         [terminateKey]: "",
       });
@@ -137,12 +116,12 @@ describe("IosLauncher", function() {
       await launcher.terminate(APP_ID);
       const terminateCall = fakeExecFile.lastCall;
       expect(terminateCall.args[1]).to.deep.equal([
-        "devicectl", "device", "process", "terminate", "--device", DEVICE_ID, "--pid", "4242"
+        "devicectl", "device", "process", "terminate", "--device", UDID, "--pid", "4242"
       ]);
     });
 
     it("does nothing if the app was not launched", async function() {
-      const fakeExecFile = makeExecFile({ "devicectl list devices": DEVICES_OUTPUT });
+      const fakeExecFile = makeExecFile({ "-l": `${UDID}\n` });
       const launcher = new IosLauncher({ execFile: fakeExecFile });
       await launcher.connect();
       await launcher.terminate(APP_ID); // should not throw
@@ -150,9 +129,9 @@ describe("IosLauncher", function() {
   });
 
   describe("streamLogs()", function() {
-    it("spawns idevicesyslog with the libimobiledevice UDID and emits filtered messages", function() {
+    it("spawns idevicesyslog with the UDID and emits filtered messages", function() {
       const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID, udid: UDID });
+      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
       const lines = [];
       launcher.streamLogs(line => lines.push(line));
       proc.stdout.emit("data", `Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: hello world\n`);
@@ -161,16 +140,9 @@ describe("IosLauncher", function() {
       expect(lines).to.deep.equal(["hello world"]);
     });
 
-    it("spawns idevicesyslog without -u when UDID is unavailable", function() {
-      const { stub: fakeSpawn } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID, udid: null });
-      launcher.streamLogs(() => {});
-      expect(fakeSpawn.firstCall.args[1]).to.deep.equal([]);
-    });
-
     it("ignores lines not from Waterbug(TitaniumKit)", function() {
       const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID, udid: UDID });
+      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
       const lines = [];
       launcher.streamLogs(line => lines.push(line));
       proc.stdout.emit("data", "Mar 26 21:00:00 iPhone SpringBoard[456] <Notice>: irrelevant\n");
@@ -180,7 +152,7 @@ describe("IosLauncher", function() {
 
     it("handles data arriving mid-line", function() {
       const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID, udid: UDID });
+      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
       const lines = [];
       launcher.streamLogs(line => lines.push(line));
       proc.stdout.emit("data", "Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: hel");
@@ -190,7 +162,7 @@ describe("IosLauncher", function() {
 
     it("returns a stop function that kills the process", function() {
       const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID, udid: UDID });
+      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
       const stop = launcher.streamLogs(() => {});
       stop();
       expect(proc.kill.calledOnce).to.be.true;
@@ -198,7 +170,7 @@ describe("IosLauncher", function() {
 
     it("uses custom logProcessName when provided", function() {
       const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, deviceId: DEVICE_ID, udid: UDID, logProcessName: "MyApp(MyFramework)" });
+      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID, logProcessName: "MyApp(MyFramework)" });
       const lines = [];
       launcher.streamLogs(line => lines.push(line));
       proc.stdout.emit("data", "Mar 26 21:00:00 iPhone MyApp(MyFramework)[123] <Notice>: custom message\n");

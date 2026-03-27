@@ -18,10 +18,10 @@ const KobitonAPI = require("./features/support/kobiton");
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
-    const PROFILE = process.env.PROFILE || "50397711-b746-48e7-b149-8b4362a37e3a";
-    const PROFILE_ADHOC = process.env.PROFILE_ADHOC || "c728e413-3cff-49da-91df-cd2fcec80048";
-    const PROFILE_DEV = process.env.PROFILE_DEV || "c728e413-3cff-49da-91df-cd2fcec80048";
-    const DEVICE_ID=process.env.DEVCIDE_UDID || "00008030-000A68E63CE3802E";
+    const PROFILE_DIST = process.env.PROFILE_DIST;
+    const PROFILE_ADHOC = process.env.PROFILE_ADHOC;
+    const PROFILE_DEV = process.env.PROFILE_DEV;
+    const DEVICE_ID = process.env.DEVICE_UDID;
     
     const WATERBUG_APPID = {
       "android": 257222,
@@ -90,7 +90,7 @@ const KobitonAPI = require("./features/support/kobiton");
         if ( platform === "android" ) {
           args.push( "--deploy-type production", "--target dist-playstore", `--keystore ${KEYSTORE}`, `--store-password ${KEYSTORE_PASSWORD}`, `--alias ${KEYSTORE_SUBKEY}`); 
         } else if ( platform === "ios" ){
-          args.push( "--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE}\"`);
+          args.push( "--deploy-type production", "--target dist-appstore", `-R  \"${DEVELOPER}\"`, `-P \"${PROFILE_DIST}\"`);
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }
@@ -429,7 +429,7 @@ const KobitonAPI = require("./features/support/kobiton");
           _launcher = new AndroidLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
-          _launcher = new IosLauncher({ logProcessName: "Waterbug(TitaniumKit)" });
+          _launcher = new IosLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: DEVICE_ID });
         } else {
           const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
           _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
