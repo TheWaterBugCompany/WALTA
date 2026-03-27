@@ -51,9 +51,11 @@ class AndroidEmulatorLauncher {
   async connect() {
     if (this._connected) return this;
     const output = await exec(this._execFile, this._adb, ["devices"]);
-    const emulatorRunning = output.split("\n").some(l => /emulator-\d+\tdevice/.test(l));
-    if (!emulatorRunning) {
+    const emulatorLine = output.split("\n").find(l => /emulator-\d+\tdevice/.test(l));
+    if (!emulatorLine) {
       await this._bootEmulator();
+    } else {
+      this._inner._serial = emulatorLine.split("\t")[0].trim();
     }
     await this._inner.connect();
     this._connected = true;
@@ -64,6 +66,9 @@ class AndroidEmulatorLauncher {
     this._emulatorProc = this._spawn(this._emulatorBin, ["-avd", this._avdName, "-no-boot-anim", "-no-audio"]);
     await exec(this._execFile, this._adb, ["wait-for-device"]);
     await this._waitForBoot();
+    const output = await exec(this._execFile, this._adb, ["devices"]);
+    const emulatorLine = output.split("\n").find(l => /emulator-\d+\tdevice/.test(l));
+    if (emulatorLine) this._inner._serial = emulatorLine.split("\t")[0].trim();
   }
 
   _waitForBoot() {
