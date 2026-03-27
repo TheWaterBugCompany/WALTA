@@ -153,10 +153,10 @@ const KobitonAPI = require("./features/support/kobiton");
       switch( build_type ) {
         case "debug":
           dev();
+          post_cmds.push("mkdir -p ./builds/debug");
           if ( platform === "android" ) {
-            args.push("--output-dir builds/debug");
+            post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/debug/Waterbug.apk");
           } else {
-            post_cmds.push("mkdir -p ./builds/debug");
             post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/debug/Waterbug.app");
           }
           break;
