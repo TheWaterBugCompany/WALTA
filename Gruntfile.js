@@ -121,7 +121,7 @@ const KobitonAPI = require("./features/support/kobiton");
         if ( platform === "android" ) {
           args.push( "--build-only", "--deploy-type development", "--target emulator", '-C "Medium_Phone_API_36.1"');
         } else if ( platform === "ios" ){
-          args.push( "--build-only", "--deploy-type development", "--target simulator", `--sim-udid ${SIM_UDID}` );
+          args.push( "--build-only", "--deploy-type development", "--target simulator", `-C ${SIM_UDID}` );
         } else {
           throw new Error(`Unknown platform "${platform}"`);
         }
