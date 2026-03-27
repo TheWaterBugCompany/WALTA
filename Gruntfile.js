@@ -167,9 +167,15 @@ const KobitonAPI = require("./features/support/kobiton");
           break;
 
         case "unit-test":
-          test();
+          if ( platform === "ios" ) {
+            dev();
+            post_cmds.push("mkdir -p ./builds/unit-test");
+            post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/unit-test/Waterbug.app");
+          } else {
+            test();
+            args.push("--output-dir builds/unit-test");
+          }
           args.push("--unit-test");
-          args.push("--output-dir builds/unit-test");
           break;
 
         case "unit-test-sim":
@@ -214,7 +220,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     function build_if_newer_options(platform,build_type) {
       const isSimBuild = build_type.includes("sim");
-      const ext = (platform === "ios"? (build_type === "preview" || build_type === "debug" || isSimBuild ?"app":"ipa"):"apk");
+      const ext = (platform === "ios"? (build_type === "preview" || build_type === "debug" || build_type === "unit-test" || isSimBuild ?"app":"ipa"):"apk");
       const tasks = [];
       
       if ( ! grunt.option('skip-build') ) {
@@ -497,7 +503,7 @@ const KobitonAPI = require("./features/support/kobiton");
         spawnSync(adb, ['logcat', '-c']);
       }
 
-      const iosExt = (buildType === "preview" || buildType === "debug") ? "app" : "ipa";
+      const iosExt = (buildType === "preview" || buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
       const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
         ? `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
         : null;
