@@ -1,0 +1,71 @@
+import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_process";
+
+class IosSimulatorLauncher {
+  constructor({ execFile = defaultExecFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)" } = {}) {
+    this._execFile = execFile;
+    this._spawn = spawn;
+    this._udid = udid;
+    this._logProcessName = logProcessName;
+    this._booted = false;
+    this._pid = null;
+  }
+
+  _exec(args) {
+    return new Promise((resolve, reject) => {
+      this._execFile("xcrun", args, (err, stdout) => err ? reject(err) : resolve(stdout));
+    });
+  }
+
+  async connect() {
+    if (this._booted) return this;
+    if (!this._udid) throw new Error("IosSimulatorLauncher requires a udid");
+    try {
+      await this._exec(["simctl", "boot", this._udid]);
+    } catch (err) {
+      if (!/Unable to boot device in current state/.test(err.message)) throw err;
+    }
+    this._booted = true;
+    return this;
+  }
+
+  async launch(appId, appPath) {
+    await this.connect();
+    if (appPath) {
+      await this._exec(["simctl", "install", this._udid, appPath]);
+    }
+    const stdout = await this._exec(["simctl", "launch", this._udid, appId]);
+    const match = stdout.match(/:\s*(\d+)/);
+    this._pid = match ? parseInt(match[1], 10) : null;
+  }
+
+  async terminate(appId) {
+    try {
+      await this._exec(["simctl", "terminate", this._udid, appId]);
+    } catch (_err) {
+      // App may not be running — swallow
+    }
+  }
+
+  streamLogs(onLine) {
+    const proc = this._spawn("xcrun", ["simctl", "spawn", this._udid, "log", "stream", "--style", "syslog"]);
+    const escapedName = this._logProcessName.replace(/[()]/g, "\\$&");
+    const logPattern = new RegExp(`${escapedName}.*?:\\s+(.*)`);
+
+    let buffer = "";
+    proc.stdout.on("data", data => {
+      const lines = (buffer + data.toString()).split("\n");
+      buffer = lines.pop();
+      lines.forEach(line => {
+        const match = line.match(logPattern);
+        if (match) onLine(match[1]);
+      });
+    });
+    return () => proc.kill();
+  }
+
+  getDriver() {
+    return null;
+  }
+}
+
+export default IosSimulatorLauncher;

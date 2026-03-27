@@ -2,7 +2,7 @@ import { execFile } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 import { expect } from "chai";
-import AndroidLauncher from "../../build-utils/AndroidLauncher.js";
+import AndroidEmulatorLauncher from "../../build-utils/AndroidEmulatorLauncher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -11,7 +11,7 @@ const HELLO_APK_V2 = path.join(__dirname, "fixtures/HelloWorld-android/hello-v2.
 const HELLO_APP_ID = "com.example.helloworld";
 const HELLO_ACTIVITY = ".MainActivity";
 
-// Integration tests — these run real adb commands and require a connected device.
+// Integration tests — these require an AVD to be configured (or an emulator already running).
 // Run with: npx grunt build-integration-test
 
 function adb(serial, ...args) {
@@ -25,13 +25,15 @@ async function isInstalled(serial, appId) {
   return out.trim().includes(`package:${appId}`);
 }
 
-async function isRunning(serial, appId) {
-  try {
-    const out = await adb(serial, "shell", "pidof", appId);
-    return out.trim().length > 0;
-  } catch {
-    return false;
+async function isRunning(serial, appId, { retries = 5, intervalMs = 500 } = {}) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const out = await adb(serial, "shell", "pidof", appId);
+      if (out.trim().length > 0) return true;
+    } catch { /* not running yet */ }
+    if (i < retries - 1) await new Promise(r => setTimeout(r, intervalMs));
   }
+  return false;
 }
 
 async function installedVersionCode(serial, appId) {
@@ -40,15 +42,17 @@ async function installedVersionCode(serial, appId) {
   return match ? parseInt(match[1], 10) : null;
 }
 
-describe("AndroidLauncher (integration)", function() {
-  this.timeout(30000);
+describe("AndroidEmulatorLauncher (integration)", function() {
+  this.timeout(180000);
 
   let launcher, serial;
 
   before(async function() {
-    launcher = new AndroidLauncher({ activity: HELLO_ACTIVITY });
+    this.timeout(120000);
+    launcher = new AndroidEmulatorLauncher({ activity: HELLO_ACTIVITY });
     await launcher.connect();
-    serial = launcher._serial;
+    serial = launcher._inner._serial;
+    await adb(serial, "uninstall", HELLO_APP_ID).catch(() => {});
   });
 
   after(async function() {
@@ -56,7 +60,7 @@ describe("AndroidLauncher (integration)", function() {
   });
 
   describe("connect()", function() {
-    it("finds a connected Android device via adb devices", function() {
+    it("connects to a running emulator (starting one if needed)", function() {
       expect(launcher._connected).to.be.true;
     });
   });
@@ -78,7 +82,8 @@ describe("AndroidLauncher (integration)", function() {
   describe("streamLogs()", function() {
     it("receives log lines emitted by the running app", async function() {
       this.timeout(15000);
-      const logLauncher = new AndroidLauncher({ activity: HELLO_ACTIVITY, logTag: "HelloWorld", logNoisePattern: /(?!)/ });
+      const logLauncher = new AndroidEmulatorLauncher({ activity: HELLO_ACTIVITY, logTag: "HelloWorld", logNoisePattern: /(?!)/ });
+      await logLauncher.connect();
       await logLauncher.launch(HELLO_APP_ID, HELLO_APK_V1);
       const lines = await new Promise((resolve, reject) => {
         let settled = false;
