@@ -34,4 +34,4 @@ walta-app/app/app-config*
 *.p12
 *.cer
 # Also ignore any property files containing the passwords
-keystore.properties
+keystore.propertiesbuild-utils/*.mobileconfig
