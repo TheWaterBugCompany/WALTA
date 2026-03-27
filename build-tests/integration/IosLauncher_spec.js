@@ -19,10 +19,10 @@ function devicectl(...args) {
   });
 }
 
-async function isInstalled(deviceId, appId) {
+async function isInstalled(udid, appId) {
   try {
     const out = await devicectl("device", "info", "apps",
-      "--device", deviceId,
+      "--device", udid,
       "--filter", `bundleID == "${appId}"`
     );
     return out.includes(appId);
@@ -31,10 +31,10 @@ async function isInstalled(deviceId, appId) {
   }
 }
 
-async function isRunning(deviceId, pid) {
+async function isRunning(udid, pid) {
   try {
     const out = await devicectl("device", "info", "processes",
-      "--device", deviceId,
+      "--device", udid,
       "--filter", `processIdentifier == ${pid}`
     );
     const tableLines = out.trim().split("\n").filter(l => !/^\d+:\d+:\d+/.test(l));
@@ -44,9 +44,9 @@ async function isRunning(deviceId, pid) {
   }
 }
 
-async function installedBundleVersion(deviceId, appId) {
+async function installedBundleVersion(udid, appId) {
   const out = await devicectl("device", "info", "apps",
-    "--device", deviceId,
+    "--device", udid,
     "--filter", `bundleID == "${appId}"`
   );
   // Output columns: Name  Bundle Identifier  Version  Bundle Version
@@ -65,33 +65,25 @@ describe("IosLauncher (integration)", function() {
     this.timeout(15000);
     launcher = new IosLauncher();
     await launcher.connect();
-    // Verify the device is actively connected, not just a cached paired entry
-    const out = await devicectl("list", "devices");
-    const line = out.split("\n").find(l => l.includes(launcher._deviceId));
-    if (!line || !line.includes("connected")) {
-      throw new Error(`Device ${launcher._deviceId} is not connected (WiFi or USB required)`);
-    }
   });
 
   describe("connect()", function() {
-    it("finds a connected iOS device via devicectl", function() {
-      expect(launcher._deviceId).to.be.a("string").and.match(
-        /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i
-      );
+    it("finds a connected iOS device via idevice_id", function() {
+      expect(launcher._udid).to.be.a("string").and.have.length.greaterThan(0);
     });
   });
 
   describe("launch() with install", function() {
     it("installs and launches the hello world app", async function() {
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
-      expect(await isInstalled(launcher._deviceId, HELLO_APP_ID), "app should be installed").to.be.true;
+      expect(await isInstalled(launcher._udid, HELLO_APP_ID), "app should be installed").to.be.true;
       expect(launcher._pid, "PID should be stored").to.be.a("number");
     });
 
     it("installs the updated app when a newer build is launched", async function() {
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V2);
-      expect(await installedBundleVersion(launcher._deviceId, HELLO_APP_ID), "bundle version should be updated to 2").to.equal(2);
-      expect(await isRunning(launcher._deviceId, launcher._pid), "updated app should be running").to.be.true;
+      expect(await installedBundleVersion(launcher._udid, HELLO_APP_ID), "bundle version should be updated to 2").to.equal(2);
+      expect(await isRunning(launcher._udid, launcher._pid), "updated app should be running").to.be.true;
     });
   });
 
@@ -100,7 +92,7 @@ describe("IosLauncher (integration)", function() {
       this.timeout(20000);
       // Use a broad pattern to match any syslog process — iOS 14+ restricts user app NSLog
       // visibility in the old syslog stream. Filter logic is covered by unit tests.
-      const logLauncher = new IosLauncher({ logProcessName: ".+", deviceId: launcher._deviceId, udid: launcher._udid });
+      const logLauncher = new IosLauncher({ logProcessName: ".+", udid: launcher._udid });
       const lines = await new Promise((resolve, reject) => {
         let settled = false;
         const collected = [];
@@ -120,7 +112,7 @@ describe("IosLauncher (integration)", function() {
       if (!launcher._pid) throw new Error("launch() must have succeeded before terminate() can be tested");
       const pid = launcher._pid;
       await launcher.terminate(HELLO_APP_ID);
-      expect(await isRunning(launcher._deviceId, pid), "app should not be running").to.be.false;
+      expect(await isRunning(launcher._udid, pid), "app should not be running").to.be.false;
     });
   });
 });

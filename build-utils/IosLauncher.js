@@ -4,11 +4,10 @@ import { tmpdir } from "os";
 import { join } from "path";
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, deviceId = null, udid = null, logProcessName = "Waterbug(TitaniumKit)" } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)" } = {}) {
     this._execFile = execFile;
     this._readFile = readFile;
     this._spawn = spawn;
-    this._deviceId = deviceId;
     this._udid = udid;
     this._logProcessName = logProcessName;
     this._pid = null;
@@ -21,26 +20,22 @@ class IosLauncher {
   }
 
   async connect() {
-    if (this._deviceId) return this;
-    const output = await this._exec(["devicectl", "list", "devices"]);
-    const lines = output.split("\n").filter(l => l.includes("available") || l.includes("connected"));
-    if (lines.length === 0) throw new Error("No iOS device connected");
-    const line = lines.find(l => l.includes("connected")) || lines[0];
-    const match = line.match(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i);
-    if (!match) throw new Error("No iOS device connected");
-    this._deviceId = match[0];
-    this._udid = await new Promise((resolve) => {
-      this._execFile("idevice_id", ["-l"], (err, stdout) =>
-        resolve(err ? null : stdout.trim().split("\n").find(l => l.trim()) || null)
-      );
+    if (this._udid) return this;
+    const udid = await new Promise((resolve, reject) => {
+      this._execFile("idevice_id", ["-l"], (err, stdout) => {
+        if (err) return reject(new Error("No iOS device connected"));
+        resolve(stdout.trim().split("\n").find(l => l.trim()) || null);
+      });
     });
+    if (!udid) throw new Error("No iOS device connected");
+    this._udid = udid;
     return this;
   }
 
   async launch(appId, appPath) {
     await this.connect();
     if (appPath) {
-      await this._exec(["devicectl", "device", "install", "app", "--device", this._deviceId, appPath]);
+      await this._exec(["devicectl", "device", "install", "app", "--device", this._udid, appPath]);
     }
     const tmpDir = await mkdtemp(join(tmpdir(), "devicectl-"));
     const jsonOut = join(tmpDir, "launch.json");
@@ -48,7 +43,7 @@ class IosLauncher {
       await this._exec([
         "devicectl", "device", "process", "launch",
         "--json-output", jsonOut,
-        "--device", this._deviceId,
+        "--device", this._udid,
         appId
       ]);
       const json = JSON.parse(await this._readFile(jsonOut, "utf-8"));
@@ -58,12 +53,12 @@ class IosLauncher {
     }
   }
 
-  async terminate(appId) {
+  async terminate(_appId) {
     if (!this._pid) return;
     await this.connect();
     await this._exec([
       "devicectl", "device", "process", "terminate",
-      "--device", this._deviceId,
+      "--device", this._udid,
       "--pid", String(this._pid)
     ]);
     this._pid = null;
