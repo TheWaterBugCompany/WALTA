@@ -355,7 +355,13 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           unit_test_node: {
-            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit`,
+            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "test/*_spec.js"`,
+            exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          contract_test: {
+            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "contract-tests/*_spec.js"`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
@@ -664,12 +670,40 @@ const KobitonAPI = require("./features/support/kobiton");
     });
 
     
+    grunt.registerTask('patch-tiapp-for-sim', function() {
+      const fs = require('fs');
+      const tiappPath = './walta-app/tiapp.xml';
+      const content = fs.readFileSync(tiappPath, 'utf8');
+      fs.writeFileSync(tiappPath + '.bak', content);
+      // bugfender has no arm64 simulator slice — exclude it from simulator builds
+      const patched = content.replace(/\s*<module platform="iphone">be\.aca\.mobile\.bugfender<\/module>/g, '');
+      fs.writeFileSync(tiappPath, patched);
+      grunt.log.ok('Removed bugfender from tiapp.xml for simulator build');
+    });
+
+    grunt.registerTask('restore-tiapp', function() {
+      const fs = require('fs');
+      const tiappPath = './walta-app/tiapp.xml';
+      const bakPath = tiappPath + '.bak';
+      if (fs.existsSync(bakPath)) {
+        fs.copyFileSync(bakPath, tiappPath);
+        fs.unlinkSync(bakPath);
+        grunt.log.ok('Restored tiapp.xml');
+      }
+    });
+
     grunt.registerTask('unit-test', function( ) {
       var platform = grunt.option('platform');
       var isSimulator = grunt.option('simulator');
       var preview = grunt.option('preview');
       grunt.task.run('clean');
+      if (platform === 'ios' && isSimulator) {
+        grunt.task.run('patch-tiapp-for-sim');
+      }
       grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
+      if (platform === 'ios' && isSimulator) {
+        grunt.task.run('restore-tiapp');
+      }
       if (!launcherHandlesInstall(platform, isSimulator)) {
         grunt.task.run(`install:${platform}:unit-test`);
       }
@@ -690,6 +724,10 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('unit-test-node', function( platform ) {
       grunt.task.run(`exec:unit_test_node`);
+    } );
+
+    grunt.registerTask('contract-test', function() {
+      grunt.task.run(`exec:contract_test`);
     } );
 
     grunt.registerTask('build-test', function() {
