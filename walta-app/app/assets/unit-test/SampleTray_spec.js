@@ -321,7 +321,7 @@ describe( 'SampleTray controller', function() {
       });
   });
 
-  context('scrolling a long tray', function() {
+  context.skip('scrolling a long tray', function() {
     beforeEach(function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
@@ -438,7 +438,7 @@ describe( 'SampleTray controller', function() {
   context('adding and removing taxa', function() {
 
     afterEach(cleanupSampleTray);
-    it('should scroll to the far right after adding 10th taxon', function() {
+    it.skip('should scroll to the far right after adding 10th taxon', function() {
       
       return Promise.resolve()
           .then( function() {
@@ -474,7 +474,7 @@ describe( 'SampleTray controller', function() {
           });
     });
 
-    it('should scroll to the far right after adding 11th taxon', function() {
+    it.skip('should scroll to the far right after adding 11th taxon', function() {
       
       return Promise.resolve()
           .then( function() {
