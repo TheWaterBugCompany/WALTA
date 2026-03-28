@@ -125,6 +125,15 @@ describe("IosSimulatorLauncher", function() {
       expect(lines).to.deep.equal(["[INFO] hello world"]);
     });
 
+    it("handles new iOS syslog format where library appears after the colon", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosSimulatorLauncher({ spawn: fakeSpawn, udid: UDID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", `2026-03-28 19:00:00.000+1100  localhost Waterbug[1234]: (TitaniumKit) [com.apple.titanium] [INFO] hello world\n`);
+      expect(lines).to.deep.equal(["[INFO] hello world"]);
+    });
+
     it("ignores lines not from Waterbug(TitaniumKit)", function() {
       const { stub: fakeSpawn, proc } = makeSpawn();
       const launcher = new IosSimulatorLauncher({ spawn: fakeSpawn, udid: UDID });
@@ -133,6 +142,15 @@ describe("IosSimulatorLauncher", function() {
       proc.stdout.emit("data", "Apr  1 10:00:00 iPhone SpringBoard[456] <Notice>: irrelevant\n");
       proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: keep this\n`);
       expect(lines).to.deep.equal(["keep this"]);
+    });
+
+    it("decodes syslog-escaped ANSI sequences (^[ -> ESC)", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosSimulatorLauncher({ spawn: fakeSpawn, udid: UDID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: \\^[[32m pass \\^[[0m\n`);
+      expect(lines).to.deep.equal(["\x1b[32m pass \x1b[0m"]);
     });
 
     it("handles data arriving mid-line", function() {

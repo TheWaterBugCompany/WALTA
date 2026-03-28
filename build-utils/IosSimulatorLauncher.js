@@ -49,15 +49,22 @@ class IosSimulatorLauncher {
   streamLogs(onLine) {
     const proc = this._spawn("xcrun", ["simctl", "spawn", this._udid, "log", "stream", "--style", "syslog"]);
     const escapedName = this._logProcessName.replace(/[()]/g, "\\$&");
-    const logPattern = new RegExp(`${escapedName}.*?:\\s+(.*)`);
+    // Old format: "Name(Lib)[PID] <Level>: message"
+    const oldPattern = new RegExp(`${escapedName}[^:]*:\\s+(.*)`);
+    // New format (iOS 17+): "Name[PID]: (Lib) [subsystem] message"
+    const baseName = this._logProcessName.split("(")[0];
+    const libMatch = this._logProcessName.match(/\(([^)]+)\)/);
+    const newPattern = libMatch
+      ? new RegExp(`${baseName}\\[\\d+\\]:\\s+\\(${libMatch[1]}\\)(?:\\s+\\[[^\\]]+\\])?\\s+(.*)`)
+      : new RegExp(`${baseName}\\[\\d+\\]:\\s+(.*)`);
 
     let buffer = "";
     proc.stdout.on("data", data => {
       const lines = (buffer + data.toString()).split("\n");
       buffer = lines.pop();
       lines.forEach(line => {
-        const match = line.match(logPattern);
-        if (match) onLine(match[1]);
+        const match = line.match(oldPattern) || line.match(newPattern);
+        if (match) onLine(match[1].replace(/\\\^\[/g, "\x1b"));
       });
     });
     return () => proc.kill();
