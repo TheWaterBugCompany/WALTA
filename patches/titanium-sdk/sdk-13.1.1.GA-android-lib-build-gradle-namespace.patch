@@ -1,0 +1,12 @@
+diff --git a/tmp/lib.build.orig.gradle b/tmp/lib.build.patched.gradle
+index 0c3199dc..83154c73 100644
+--- a/tmp/lib.build.orig.gradle
++++ b/tmp/lib.build.patched.gradle
+@@ -2,6 +2,7 @@
+ apply plugin: 'com.android.library'
+ 
+ android {
++	namespace '<%- moduleId %>'
+ 	compileSdkVersion <%- compileSdkVersion %>
+ 	defaultConfig {
+ 		minSdkVersion <%- minSdkVersion %>
