@@ -372,11 +372,25 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
-          build_integration_fixtures: {
-            command: `bash build-tests/integration/fixtures/HelloWorld-android/build.sh && bash build-tests/integration/fixtures/HelloWorld-ios/build.sh`,
+          clean_integration_fixtures_android: {
+            command: `rm -rf build-tests/integration/fixtures/HelloWorld-android/build build-tests/integration/fixtures/HelloWorld-android/*.apk`,
             stdout: "inherit", stderr: "inherit"
           },
 
+          clean_integration_fixtures_ios: {
+            command: `rm -rf build-tests/integration/fixtures/HelloWorld-ios/build build-tests/integration/fixtures/HelloWorld-ios/sim-v* build-tests/integration/fixtures/HelloWorld-ios/v*`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_integration_fixtures_android: {
+            command: `bash build-tests/integration/fixtures/HelloWorld-android/build.sh`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_integration_fixtures_ios: {
+            command: `bash build-tests/integration/fixtures/HelloWorld-ios/build.sh`,
+            stdout: "inherit", stderr: "inherit"
+          },
           build_key_ink: {
             command: "./ink/inklecate/bin/Release/netcoreapp3.1/osx-x64/inklecate -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
           },
@@ -438,7 +452,28 @@ const KobitonAPI = require("./features/support/kobiton");
           release_ios: build_if_newer_options("ios", "release"),
 
           preview_android: build_if_newer_options("android", "preview"),
-          preview_ios: build_if_newer_options("ios", "preview")
+          preview_ios: build_if_newer_options("ios", "preview"),
+
+          build_integration_fixtures_android: {
+            src: [
+              'build-tests/integration/fixtures/HelloWorld-android/build.sh',
+              'build-tests/integration/fixtures/HelloWorld-android/AndroidManifest.xml',
+              'build-tests/integration/fixtures/HelloWorld-android/src/com/example/helloworld/MainActivity.java',
+            ],
+            dest: 'build-tests/integration/fixtures/HelloWorld-android/hello-v1.apk',
+            options: { tasks: ['exec:build_integration_fixtures_android'] }
+          },
+
+          build_integration_fixtures_ios: {
+            src: [
+              'build-tests/integration/fixtures/HelloWorld-ios/build.sh',
+              'build-tests/integration/fixtures/HelloWorld-ios/HelloWorld.xcodeproj/project.pbxproj',
+              'build-tests/integration/fixtures/HelloWorld-ios/HelloWorld/AppDelegate.swift',
+              'build-tests/integration/fixtures/HelloWorld-ios/HelloWorld/Info.plist',
+            ],
+            dest: 'build-tests/integration/fixtures/HelloWorld-ios/sim-v1/HelloWorld.app/HelloWorld',
+            options: { tasks: ['exec:build_integration_fixtures_ios'] }
+          }
         }
     });
 
@@ -662,27 +697,17 @@ const KobitonAPI = require("./features/support/kobiton");
     } );
 
     grunt.registerTask('build-integration-test', function() {
-      const fixtures = [
-        { artifact: 'build-tests/integration/fixtures/HelloWorld-android/hello-v1.apk',    source: 'build-tests/integration/fixtures/HelloWorld-android/build.sh' },
-        { artifact: 'build-tests/integration/fixtures/HelloWorld-android/hello-v2.apk',    source: 'build-tests/integration/fixtures/HelloWorld-android/build.sh' },
-        { artifact: 'build-tests/integration/fixtures/HelloWorld-ios/sim-v1/HelloWorld.app/HelloWorld', source: 'build-tests/integration/fixtures/HelloWorld-ios/build.sh' },
-        { artifact: 'build-tests/integration/fixtures/HelloWorld-ios/sim-v2/HelloWorld.app/HelloWorld', source: 'build-tests/integration/fixtures/HelloWorld-ios/build.sh' },
-      ];
-      const needsBuild = fixtures.some(({ artifact, source }) => {
-        if (!fs.existsSync(artifact)) return true;
-        return fs.statSync(artifact).mtimeMs < fs.statSync(source).mtimeMs;
-      });
-      if (needsBuild) {
-        grunt.log.writeln('Integration fixtures missing or out of date — rebuilding...');
-        grunt.task.run('exec:build_integration_fixtures');
-      }
+      grunt.task.run('newer:build_integration_fixtures_android');
+      grunt.task.run('newer:build_integration_fixtures_ios');
       grunt.task.run(`exec:build_integration_test`);
     } );
 
     grunt.registerTask('build-integration-fixtures', function() {
-      grunt.task.run(`exec:build_integration_fixtures`);
+      grunt.task.run(`exec:build_integration_fixtures_android`);
+      grunt.task.run(`exec:build_integration_fixtures_ios`);
     } );
 
+    grunt.registerTask('clean-integration-fixtures', ['exec:clean_integration_fixtures_android', 'exec:clean_integration_fixtures_ios']);
     grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );
     grunt.registerTask('preview', function() {
       var platform = grunt.option('platform');
