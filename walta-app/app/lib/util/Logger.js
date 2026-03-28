@@ -12,6 +12,7 @@ function getBugfender() {
 
 exports.configure = function() {
     const Bugfender = getBugfender();
+    if (!Bugfender) return;
     Bugfender.init({
         applicationToken: "KyWNoMFRIZsT0P3WZtH9XvNNNc3Juhrv",
         debug: true
