@@ -17,12 +17,21 @@ module.exports = {
         alias: {
             "./browser-entry.js": path.resolve(__dirname,'mocha-bootstrap.js'),
             "stream": false
+        },
+        fallback: {
+            "events": require.resolve('events'),
+            "util": require.resolve('util/'),
+            "path": false,
+            "fs": false
         }
     },
     plugins: [
         new webpack.ProvidePlugin({
             process: 'process/browser',
-          })
+          }),
+        new webpack.NormalModuleReplacementPlugin(/^node:/, (resource) => {
+            resource.request = resource.request.replace(/^node:/, '');
+        })
     ]
 
   };
