@@ -58,11 +58,11 @@ npm install
 
 ## Titanium SDK
 
-The app requires Titanium SDK **12.1.2.GA**. Install it and set it as the default:
+The app requires Titanium SDK **13.1.1.GA**. Install it and set it as the default:
 
 ```bash
-npx titanium sdk install 12.1.2.GA
-npx titanium sdk select 12.1.2.GA
+npx titanium sdk install 13.1.1.GA
+npx titanium sdk select 13.1.1.GA
 ```
 
 Verify:
@@ -70,7 +70,20 @@ Verify:
 npx titanium sdk list
 ```
 
-> **Note:** If a newer SDK (e.g. 13.x) is installed and selected as default, builds will fail with an ESM/CommonJS error. Always ensure 12.1.2.GA is the selected default.
+### SDK Patches
+
+The SDK requires patches to fix an ioslib provisioning crash and Android namespace issues. Apply them after installing the SDK:
+
+```bash
+npm run patch-sdk
+```
+
+To reverse (e.g. before upgrading the SDK):
+```bash
+npm run unpatch-sdk
+```
+
+The patches live in `patches/titanium-sdk/` and are safe to re-apply — the script skips any that are already applied.
 
 ---
 
