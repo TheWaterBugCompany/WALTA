@@ -355,7 +355,13 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           unit_test_node: {
-            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit`,
+            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "test/*_spec.js"`,
+            exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          contract_test: {
+            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "contract-tests/*_spec.js"`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
@@ -670,6 +676,7 @@ const KobitonAPI = require("./features/support/kobiton");
       var preview = grunt.option('preview');
       grunt.task.run('clean');
       grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
+
       if (!launcherHandlesInstall(platform, isSimulator)) {
         grunt.task.run(`install:${platform}:unit-test`);
       }
@@ -690,6 +697,10 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('unit-test-node', function( platform ) {
       grunt.task.run(`exec:unit_test_node`);
+    } );
+
+    grunt.registerTask('contract-test', function() {
+      grunt.task.run(`exec:contract_test`);
     } );
 
     grunt.registerTask('build-test', function() {

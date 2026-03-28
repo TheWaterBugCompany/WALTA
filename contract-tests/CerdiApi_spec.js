@@ -203,7 +203,7 @@ var SERVER_URL = null;
 var CLIENT_SECRET = null;
 contents = fs.readFileSync('./walta-app/app/app-config.test.json', 'utf8');
 var config = JSON.parse( contents );
-SERVER_URL = "http://localhost:8080/v1"; // config.cerdiServerUrl
+SERVER_URL = config.cerdiServerUrl
 CLIENT_SECRET = config.cerdiApiSecret;
 
 if ( SERVER_URL === null || CLIENT_SECRET == null ) {
@@ -704,7 +704,7 @@ describe('CerdiApi', function() {
     });
 
     describe( '#forgotPassword', function() {
-        it.only("should sucessfully send request forget password link" , function() {
+        it("should sucessfully send request forget password link" , function() {
             return expect( 
                 cerdi.forgotPassword('michael@thecodesharman.com.au')
             ).to.eventually.have.property("success");

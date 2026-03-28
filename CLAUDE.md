@@ -36,6 +36,19 @@ The intention is to encourage the following:
 
  - Keeping technical debt in check: by keeping to this rhythm we use our test cases to drive the design of the code and we take the opportunity at every incremental step to refactor.
 
+## Workflow
+
+### Starting a Trello task
+
+When the user asks to start work on a Trello card (e.g. "let's start work on WB-3"):
+
+1. Look up the card details from Trello to understand the requirements.
+2. Create a new branch named `task/wb-<N>-<short-slug>`.
+3. Once the first commits are ready, create a **draft PR** with:
+   - Title: `WB-<N>: <card title>`
+   - A link to the Trello card in the PR description
+   - A test plan checklist
+
 ## Commands
 
 ### Setup
