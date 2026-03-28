@@ -1,0 +1,13 @@
+diff --git a/tmp/provisioning.orig.js b/tmp/provisioning.patched.js
+index 41c00112..d1c75242 100644
+--- a/tmp/provisioning.orig.js
++++ b/tmp/provisioning.patched.js
+@@ -170,7 +170,7 @@ function detect(options, callback) {
+ 		}
+ 
+ 		function removeProfile(file) {
+-			var r = results[files[file]],
++			var r = results.provisioning[files[file]],
+ 				i = 0,
+ 				l = r.length;
+ 			for (; i < l; i++) {

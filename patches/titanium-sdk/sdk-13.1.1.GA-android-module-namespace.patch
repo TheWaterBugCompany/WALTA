@@ -1,0 +1,12 @@
+diff --git a/tmp/_build.orig.js b/tmp/_build.patched.js
+index 3451cb59..0fe14b1f 100644
+--- a/tmp/_build.orig.js
++++ b/tmp/_build.patched.js
+@@ -2138,6 +2138,7 @@ class AndroidBuilder extends Builder {
+ 		// Note: Google does not support setting "maxSdkVersion" via Gradle script.
+ 		let buildGradleContent = await fs.readFile(path.join(this.templatesDir, 'lib.build.gradle'));
+ 		buildGradleContent = ejs.render(buildGradleContent.toString(), {
++			moduleId: moduleInfo.manifest.moduleid,
+ 			compileSdkVersion: this.compileSdkVersion,
+ 			minSdkVersion: this.minSDK,
+ 			targetSdkVersion: this.targetSDK
