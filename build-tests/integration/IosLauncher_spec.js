@@ -9,6 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const HELLO_APP_V1 = path.join(__dirname, "fixtures/HelloWorld-ios/v1/HelloWorld.app");
 const HELLO_APP_V2 = path.join(__dirname, "fixtures/HelloWorld-ios/v2/HelloWorld.app");
 const HELLO_APP_ID = "com.example.helloworld";
+const DEVICE_UDID = process.env.DEVICE_UDID || null;
 
 // Integration tests — these run real devicectl commands and require a connected iOS device.
 // Run with: npx grunt build-integration-test
@@ -63,7 +64,7 @@ describe("IosLauncher (integration)", function() {
 
   before(async function() {
     this.timeout(15000);
-    launcher = new IosLauncher();
+    launcher = new IosLauncher({ udid: DEVICE_UDID });
     await launcher.connect();
   });
 
