@@ -151,7 +151,7 @@ adb logcat -s "TiAPI:*"   # Android
 
 There are four levels of tests:
 1. **Node.js unit tests** (`test/*_spec.js`) — run with Mocha directly, fastest; use these for logic in `lib/logic/` and `lib/util/`
-2. **Device unit tests** (`walta-app/app/assets/unit-test/`) — run on device via Titanium; required when code uses `Ti.*` APIs that cannot be mocked
+2. **Device unit tests** (`walta-app/app/spec/`) — run on device via Titanium; required when code uses `Ti.*` APIs that cannot be mocked
 3. **End-to-end tests** (`end-to-end-testing/`) — Appium-driven
 4. **Acceptance/BDD tests** (`features/`) — Cucumber + WebdriverIO (Appium), uses `@only` tag to filter
 

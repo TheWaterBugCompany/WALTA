@@ -370,9 +370,9 @@ describe('CerdiApi', function() {
     });
 
     describe( '#retrieveSamples', function() {
-        const sitePhotoPath = "./walta-app/app/assets/unit-test/resources/site-mock.jpg";
-        const creaturePhotoPath = "./walta-app/app/assets/unit-test/resources/simpleKey1/media/amphipoda_01.jpg";
-        const creaturePhotoPath2 = "./walta-app/app/assets/unit-test/resources/simpleKey1/media/amphipoda_02.jpg";
+        const sitePhotoPath = "./walta-app/app/spec/resources/site-mock.jpg";
+        const creaturePhotoPath = "./walta-app/app/spec/resources/simpleKey1/media/amphipoda_01.jpg";
+        const creaturePhotoPath2 = "./walta-app/app/spec/resources/simpleKey1/media/amphipoda_02.jpg";
         function submitSitePhoto(serverSampleId) {
             return cerdi.submitSitePhoto(serverSampleId,sitePhotoPath)
         }
