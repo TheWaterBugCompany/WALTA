@@ -30,7 +30,7 @@ describe("transpilefix hook", function () {
             sinon.stub(fsExtra, "writeFile").resolves();
 
             const data = {
-                args: [{ contents: "/* mocha */" }, "unit-test/lib/mocha.js", "/build/mocha.js"],
+                args: [{ contents: "/* mocha */" }, "spec/lib/mocha.js", "/build/mocha.js"],
                 fn: () => {}
             };
             await compileJsFile(data);
@@ -42,7 +42,7 @@ describe("transpilefix hook", function () {
             const writeStub = sinon.stub(fsExtra, "writeFile").resolves();
 
             const data = {
-                args: [{ contents: "/* mocha */" }, "unit-test/lib/mocha.js", "/build/mocha.js"],
+                args: [{ contents: "/* mocha */" }, "spec/lib/mocha.js", "/build/mocha.js"],
                 fn: () => {}
             };
             await compileJsFile(data);

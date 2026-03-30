@@ -5,7 +5,7 @@ module.exports = {
     devtool: 'source-map',
     entry: './node_modules/mocha/index.js',
     output: {
-        path: path.resolve(__dirname,'walta-app/app/assets/unit-test/lib'),
+        path: path.resolve(__dirname,'walta-app/app/lib/spec/lib'),
         library: {
             name: 'Mocha',
             type: 'commonjs2'
