@@ -9,7 +9,7 @@ exports.init = function (logger, config, cli) {
 	debug("Initializing transpilefix...")
 	async function compileJsFile(data) {
 		let [ r, from, to ] = data.args;
-		if ( /unit-test\/lib\/mocha\.js/.test(from) ) {
+		if ( /spec\/lib\/mocha\.js/.test(from) ) {
 			logger.info(`Not transpiling file: ${from}`);
 			delete data.fn; 
 			const dir = path.dirname(to);
