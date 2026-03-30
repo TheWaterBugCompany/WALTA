@@ -1,7 +1,7 @@
 const http = require('http');
 const hock = require('hock');
 const path = require("path");
-const { makeCerdiSampleData } = require('../../walta-app/app/assets/unit-test/fixtures/SampleData_fixture.js');
+const { makeCerdiSampleData } = require('../../walta-app/app/spec/fixtures/SampleData_fixture.js');
 
 function createMockCerdiServer(callback) {
     let hockServer = hock.createHock();
@@ -71,7 +71,7 @@ function createMockCerdiServer(callback) {
                 .reply(200,[{id:1}]);
             this.hockServer
                 .get('/photos/1/view')
-                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/assets/unit-test/resources/site-mock.jpg'));
+                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/site-mock.jpg'));
             this.hockServer
                 .get(`/samples/${sampleData.id}/creatures/12/photos`)
                 .reply(200,[{id:2}]);
@@ -80,10 +80,10 @@ function createMockCerdiServer(callback) {
                 .reply(200,[{id:3}]);    
             this.hockServer
                 .get('/photos/2/view')
-                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/assets/unit-test/resources/simpleKey1/media/amphipoda_01.jpg'));
+                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/simpleKey1/media/amphipoda_01.jpg'));
             this.hockServer
                 .get('/photos/3/view')
-                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/assets/unit-test/resources/simpleKey1/media/phreatoicidae.jpg'));
+                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/simpleKey1/media/phreatoicidae.jpg'));
         }
     };
 }

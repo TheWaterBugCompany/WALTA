@@ -23,6 +23,18 @@ exports.init = function (logger, config, cli) {
 	cli.on('build.ios.config', doConfig);
 	cli.on('build.windows.config', doConfig);
 
+	function createSpecSymlink(build, finished) {
+		const specSymlink = join(cli.argv['project-dir'], 'app', 'lib', 'spec');
+		try { fs.unlinkSync(specSymlink); } catch(e) {}
+		if (cli.argv["unit-test"]) {
+			debug('Creating app/lib/spec symlink for unit-test build');
+			fs.symlinkSync('../spec', specSymlink);
+		}
+		finished();
+	}
+
+	cli.on('build.pre.compile', { pre: createSpecSymlink, priority: 5000 });
+
 	function patchLiveViewJs(build, finished) {
 		if (cli.argv.liveview) {
 			debug('Running pre:compile to modify live view code');
