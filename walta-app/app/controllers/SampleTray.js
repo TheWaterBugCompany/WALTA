@@ -459,7 +459,7 @@ function drawEndcapTile() {
 
 function scrollToRightEdge() {
   var rightEdge = PlatformSpecific.convertDipToSystem( getTrayWidth() - getViewWidth() );
-  scrollRightPromise = new Promise( function( resolve ) {
+  return new Promise( function( resolve ) {
         if ( rightEdge <= 0 ) {
           setTimeout( resolve, 5 );
           return;
@@ -479,7 +479,6 @@ function scrollToRightEdge() {
         }, 2000);
         setTimeout(() => $.content.scrollTo( rightEdge, 0, { animate: true }), 0  );
       }).then( () => $.trigger("scrollrightend") );
-  return scrollRightPromise;
 }
 
 
@@ -490,7 +489,6 @@ function initializeTray() {
   drawIcecubeTray();
 }
 
-let scrollRightPromise = Promise.resolve();
 let timeoutHandler = null;
 
 function timeoutOnDrag() {
@@ -579,4 +577,3 @@ exports.getTileIndex = getTileIndex;
 exports.editTaxon = editTaxon;
 exports.getTrayWidth = getTrayWidth;
 exports.getViewWidth = getViewWidth;
-exports.getScrollRightPromise = function() { return scrollRightPromise; };
