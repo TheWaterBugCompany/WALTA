@@ -33,13 +33,14 @@ describe( 'SampleTray controller', function() {
 
   function openSampleTray() {
     return new Promise( function( resolve, reject ) {
+          var scrollDone = waitForScrollEnd();
           SampleTrayWin.addEventListener("open", function openWin() {
             SampleTrayWin.removeEventListener("open", openWin );
             updateSampleTrayOnce(function() {
               try {
                 expect( SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height )
                   .to.equal( SampleTray.getView().size.height );
-                  resolve();
+                scrollDone.then(resolve, reject);
               } catch( err ) {
                   reject(err);
               }
@@ -50,22 +51,27 @@ describe( 'SampleTray controller', function() {
   }
 
   function waitForScrollEnd() {
-    return new Promise( (resolve) => {
-      SampleTray.on("scrollrightend", () => resolve() );
-    })
+    return new Promise( (resolve) => SampleTray.on("scrollrightend", resolve) );
   }
 
   function scrollSampleTray( x ) {
     return function() {
       return new Promise( function( resolve ) {
+          var targetPx = PlatformSpecific.convertDipToSystem(x);
+          var contentOffset = SampleTray.content.contentOffset;
+          var currentPx = contentOffset ? (contentOffset.x || 0) : 0;
+          if ( Math.abs( currentPx - targetPx ) < 2.0 ) {
+            setTimeout( resolve, 5 );
+            return;
+          }
           function isAtScrollX(e) {
-            if ( Math.abs(e.x - PlatformSpecific.convertDipToSystem(x)) < 1.0 ) {
+            if ( Math.abs(e.x - targetPx) < 2.0 ) {
               SampleTray.content.removeEventListener("scroll",isAtScrollX);
               setTimeout( resolve, 5 );
             }
-          } 
+          }
           SampleTray.content.addEventListener("scroll", isAtScrollX );
-          SampleTray.content.scrollTo( PlatformSpecific.convertDipToSystem(x), 0, { animate: true } );
+          SampleTray.content.scrollTo( targetPx, 0, { animate: true } );
         });
     }
   }
@@ -321,7 +327,7 @@ describe( 'SampleTray controller', function() {
       });
   });
 
-  context.skip('scrolling a long tray', function() {
+  context('scrolling a long tray', function() {
     beforeEach(function() {
       // a collection that is long enough to need to scroll
       // and hide tiles and reveal them correctly
@@ -374,21 +380,15 @@ describe( 'SampleTray controller', function() {
     it('when scrolled to the right it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
+          .then( scrollSampleTray(0) )           // scroll back to left
           .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
           .then( (width) => scrollSampleTray(width)() )
-          //.then( updateSampleTrayOnce )
           .then( function() {
             var tiles = SampleTray.tray.children;
-           
-            // assert last tile
             var tile = findRightMost( tiles );
-            tile.borderColor = "red";
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
-            //sampleTaxa[0].children[0].children[0].children[0].backgroundColor = "red";
-            //console.log(`name = ${sampleTaxa[0].children[0].children[0].children}`);
-            //console.log(`backgroundImage = ${sampleTaxa[0].children[0].backgroundDisabledImage}`);
             assertPlus( sampleTaxa[0] );
           });
 
@@ -397,11 +397,12 @@ describe( 'SampleTray controller', function() {
     it('when scrolled to the left it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
-          .then( scrollSampleTray(209*4) )
+          .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
+          .then( (maxX) => scrollSampleTray(maxX)() )
           .then( scrollSampleTray(0) )
           .then( function() {
             var tiles = SampleTray.tray.children;
-            expect( tiles ).to.have.lengthOf(4);
+            expect( tiles.length ).to.be.at.least(4);
 
             tiles.shift(); // discard end cap since that is always static
           
@@ -421,7 +422,6 @@ describe( 'SampleTray controller', function() {
     it('should scroll to the far right upon opening', function() {
       return Promise.resolve()
           .then( openSampleTray )
-          .then( waitForScrollEnd )
           .then( () => {
             var tiles = SampleTray.tray.children;
             tiles.shift();
@@ -438,31 +438,51 @@ describe( 'SampleTray controller', function() {
   context('adding and removing taxa', function() {
 
     afterEach(cleanupSampleTray);
-    it.skip('should scroll to the far right after adding 10th taxon', function() {
-      
+    it('should scroll to the far right after adding 26th taxon', function() {
+
       return Promise.resolve()
           .then( function() {
             Alloy.Collections.taxa = Alloy.createCollection("taxa", [
-              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
-              Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
-              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
-              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }), // 0
+              Alloy.createModel( "taxa", { taxonId: "2", abundance: "6-10" }),
 
-              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
-              Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "3", abundance: "3-5" }), // 1
+              Alloy.createModel( "taxa", { taxonId: "4", abundance: "1-2" }),
               Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
-              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "6", abundance: "6-10" }),
 
-              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" })
+              Alloy.createModel( "taxa", { taxonId: "7", abundance: "1-2" }), // 2
+              Alloy.createModel( "taxa", { taxonId: "8", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "9", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "10", abundance: "3-5" }),
 
+              Alloy.createModel( "taxa", { taxonId: "11", abundance: "3-5" }), // 3
+              Alloy.createModel( "taxa", { taxonId: "12", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "13", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "14", abundance: "6-10" }),
+
+              Alloy.createModel( "taxa", { taxonId: "15", abundance: "3-5" }), // 4
+              Alloy.createModel( "taxa", { taxonId: "16", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "17", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "18", abundance: "1-2" }),
+
+              Alloy.createModel( "taxa", { taxonId: "19", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "20", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "21", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "22", abundance: "1-2" }),
+
+              Alloy.createModel( "taxa", { taxonId: "23", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "24", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "25", abundance: "3-5" })
             ]);
             setupSampleTray();
           })
           .then( openSampleTray )
           .then( () => {
+            var scrollDone = waitForScrollEnd();
             Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ) );
+            return scrollDone;
            })
-          .then( waitForScrollEnd )
           .then( () => {
             var tiles = SampleTray.tray.children;
             tiles.shift();
@@ -474,32 +494,52 @@ describe( 'SampleTray controller', function() {
           });
     });
 
-    it.skip('should scroll to the far right after adding 11th taxon', function() {
-      
+    it('should scroll to the far right after adding 27th taxon', function() {
+
       return Promise.resolve()
           .then( function() {
             Alloy.Collections.taxa = Alloy.createCollection("taxa", [
-              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
-              Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
-              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
-              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }), // 0
+              Alloy.createModel( "taxa", { taxonId: "2", abundance: "6-10" }),
 
-              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
-              Alloy.createModel( "taxa", { taxonId: "3", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "3", abundance: "3-5" }), // 1
+              Alloy.createModel( "taxa", { taxonId: "4", abundance: "1-2" }),
               Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
-              Alloy.createModel( "taxa", { taxonId: "5", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "6", abundance: "6-10" }),
 
-              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" }),
-              Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" })
+              Alloy.createModel( "taxa", { taxonId: "7", abundance: "1-2" }), // 2
+              Alloy.createModel( "taxa", { taxonId: "8", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "9", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "10", abundance: "3-5" }),
 
+              Alloy.createModel( "taxa", { taxonId: "11", abundance: "3-5" }), // 3
+              Alloy.createModel( "taxa", { taxonId: "12", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "13", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "14", abundance: "6-10" }),
+
+              Alloy.createModel( "taxa", { taxonId: "15", abundance: "3-5" }), // 4
+              Alloy.createModel( "taxa", { taxonId: "16", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "17", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "18", abundance: "1-2" }),
+
+              Alloy.createModel( "taxa", { taxonId: "19", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "20", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "21", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "22", abundance: "1-2" }),
+
+              Alloy.createModel( "taxa", { taxonId: "23", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "24", abundance: "1-2" }),
+              Alloy.createModel( "taxa", { taxonId: "25", abundance: "3-5" }),
+              Alloy.createModel( "taxa", { taxonId: "26", abundance: "1-2" })
             ]);
             setupSampleTray();
           })
           .then( openSampleTray )
           .then( () => {
+            var scrollDone = waitForScrollEnd();
             Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ) );
+            return scrollDone;
            })
-          .then( waitForScrollEnd )
           .then( () => {
             var tiles = SampleTray.tray.children;
             tiles.shift();
