@@ -58,7 +58,7 @@
     "image-size": "^2.0.2",
     "images": "^3.2.4",
     "leaflet": "^1.9.4",
-    "liveview": "^1.5.6",
+    "liveview": "TheCodeSharman/liveview#next",
     "lodash": "^4.17.23",
     "looks-same": "^10.0.1",
     "mocha": "^11.7.5",
