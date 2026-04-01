@@ -94,7 +94,7 @@ jobs:
   # Runs on ubuntu-latest (x86_64) with an x86 emulator image.
   # - x86_64 ubuntu: KVM supports x86 guests natively ✓
   # - x86 arch: bundled Titanium modules ship x86 libs ✓
-  # - API 32: last Android API level with default x86 system images ✓
+  # - API 29: last Android API level with default x86 system images ✓
   # - ubuntu-latest: cheapest runner option ✓
   # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
   android-emulator-tests:
@@ -151,14 +151,14 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-32
-          key: avd-32-x86
+            /usr/local/lib/android/sdk/system-images/android-29
+          key: avd-29-x86
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 32
+          api-level: 29
           target: default
           arch: x86
           avd-name: Medium_Phone_API_36.1
@@ -169,7 +169,7 @@ jobs:
       - name: Run Android emulator unit tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 32
+          api-level: 29
           target: default
           arch: x86
           avd-name: Medium_Phone_API_36.1
