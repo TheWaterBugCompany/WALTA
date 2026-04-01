@@ -429,6 +429,11 @@ const KobitonAPI = require("./features/support/kobiton");
             exitCode: [0, 1]
           },
 
+          stop_live_view_android: {
+            command: "lsof -ti:8323 | xargs kill -9 2>/dev/null || true",
+            exitCode: [0, 1]
+          },
+
         },
 
         run: {
@@ -445,8 +450,8 @@ const KobitonAPI = require("./features/support/kobiton");
             exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app -C ${SIM_UDID} --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
           },
           live_view_android: {
-            options: { wait: false, ready: "Event Server Started" },
-            exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform android"
+            options: { wait: false, ready: /\[LiveView\] Server ready/ },
+            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app -C "Medium_Phone_API_36.1" --target emulator --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
           }
         },
 
@@ -570,7 +575,9 @@ const KobitonAPI = require("./features/support/kobiton");
       const iosExt = (buildType === "preview" || buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
       const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
         ? buildType === 'unit-test-liveview'
-          ? './walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app'
+          ? platform === 'android'
+            ? './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk'
+            : './walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app'
           : `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
         : null;
 
@@ -689,9 +696,9 @@ const KobitonAPI = require("./features/support/kobiton");
       var isSimulator = grunt.option('simulator');
       var preview = grunt.option('preview');
 
-      if ( grunt.option('liveview') && isSimulator && platform === 'ios' ) {
-        grunt.task.run('exec:stop_live_view_ios');
-        grunt.task.run('run:live_view_ios');
+      if ( grunt.option('liveview') && isSimulator ) {
+        grunt.task.run(`exec:stop_live_view_${platform}`);
+        grunt.task.run(`run:live_view_${platform}`);
         preview = true;
       } else {
         grunt.task.run('clean');
@@ -710,7 +717,7 @@ const KobitonAPI = require("./features/support/kobiton");
       let mockServer = createMockCerdiServer();
       mockServer.makeMockSample();
 
-      const buildType = ( grunt.option('liveview') && isSimulator && platform === 'ios' ) ? 'unit-test-liveview' : 'unit-test';
+      const buildType = ( grunt.option('liveview') && isSimulator ) ? 'unit-test-liveview' : 'unit-test';
       grunt.task.run(`launch:${platform}:${buildType}`);
       grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
       mockServer.shutdown();
