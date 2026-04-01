@@ -91,14 +91,15 @@ jobs:
         run: npx grunt --platform=ios --simulator unit-test
 
   # ── 3. Android emulator unit tests ────────────────────────────────────────
-  # Runs on macos-latest (Apple Silicon) so the arm64-v8a emulator gets
-  # hardware acceleration. The bundled Titanium modules only ship arm64-v8a,
-  # armeabi-v7a and x86 — there are no x86_64 native libs, so an x86_64
-  # emulator on ubuntu would fail with INSTALL_FAILED_NO_MATCHING_ABIS.
+  # Runs on macos-13 (Intel x86_64) with an x86 emulator image.
+  # - arm64-v8a on macos-latest (Apple Silicon) fails: HVF not exposed in runners
+  # - x86_64 on ubuntu fails: bundled modules have no x86_64 native libs
+  # - x86 on macos-13 (Intel): HVF works for x86, modules ship x86 libs, API 32
+  #   is the last API level with x86 default system images available.
   # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
   android-emulator-tests:
     name: Android emulator unit tests
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
 
@@ -125,7 +126,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
-          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx-android
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx-x86
 
       - name: Install Titanium SDK
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
@@ -144,15 +145,15 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-36-arm64-v8a
+          key: avd-32-x86
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 36
+          api-level: 32
           target: default
-          arch: arm64-v8a
+          arch: x86
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -161,9 +162,9 @@ jobs:
       - name: Run Android emulator unit tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 36
+          api-level: 32
           target: default
-          arch: arm64-v8a
+          arch: x86
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
