@@ -400,7 +400,6 @@ const KobitonAPI = require("./features/support/kobiton");
 
           build_test: {
             command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/*.js"`,
-            exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
 

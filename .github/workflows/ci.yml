@@ -23,6 +23,9 @@ jobs:
       - name: Run Node.js unit tests
         run: npx grunt unit-test-node
 
+      - name: Run build unit tests
+        run: npx grunt build-test
+
   # ── 2. iOS simulator unit tests ───────────────────────────────────────────
   ios-simulator-tests:
     name: iOS simulator unit tests
