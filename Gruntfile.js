@@ -452,7 +452,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
           live_view_ios_device: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
-            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app -C ${DEVICE_ID} --target device --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
+            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app ${DEVICE_ID ? `-C ${DEVICE_ID}` : ''} --target device --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
           },
           live_view_android: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
