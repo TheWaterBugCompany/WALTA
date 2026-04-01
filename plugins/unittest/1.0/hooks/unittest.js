@@ -5,7 +5,7 @@ const debug = require('debug')('thecodesharman:unittest'),
 
 exports.cliVersion = '>=3.2';
 
-exports.init = function (logger, config, cli) {
+exports.init = function (_logger, _config, cli) {
 
 
 	function doConfig(data, finished) {
@@ -23,48 +23,28 @@ exports.init = function (logger, config, cli) {
 	cli.on('build.ios.config', doConfig);
 	cli.on('build.windows.config', doConfig);
 
-	function createSpecSymlink(build, finished) {
+	function createSpecSymlink(_build, finished) {
+		// cli.argv["unit-test"] is undefined in `titanium serve` context because the plugin's
+		// init() runs after CLI argv parsing. Fall back to process.argv as a reliable source.
+		const isUnitTest = cli.argv["unit-test"] || process.argv.includes('--unit-test');
+		debug(`createSpecSymlink: isUnitTest=${isUnitTest}`);
+
 		const specSymlink = join(cli.argv['project-dir'], 'app', 'lib', 'spec');
 		try { fs.unlinkSync(specSymlink); } catch(e) {}
-		if (cli.argv["unit-test"]) {
+		if (isUnitTest) {
 			debug('Creating app/lib/spec symlink for unit-test build');
 			fs.symlinkSync('../spec', specSymlink);
 		}
+
+		const indexSymlink = join(cli.argv['project-dir'], 'app', 'controllers', 'index.js');
+		try { fs.unlinkSync(indexSymlink); } catch(e) {}
+		const target = isUnitTest ? 'UnitTest.js' : 'index-app.js';
+		debug(`Symlinking app/controllers/index.js -> ${target}`);
+		fs.symlinkSync(target, indexSymlink);
+
 		finished();
 	}
 
 	cli.on('build.pre.compile', { pre: createSpecSymlink, priority: 5000 });
-
-	function patchLiveViewJs(build, finished) {
-		if (cli.argv.liveview) {
-			debug('Running pre:compile to modify live view code');
-			logger.info(`Patching liveview.js`);
-
-			// load livepatch code and add our own
-			let liveviewJS = join(tempdir(), 'liveview.js');
-			let payloadJs= join(__dirname, "../build/payload.js");
-			fs.writeFileSync(liveviewJS,
-				fs.readFileSync(liveviewJS)
-					.toString()
-					.replace(/Module\.patch\(global/g, fs.readFileSync(payloadJs).toString() + "\n$&" ));
-		}
-		finished();
-	}
-
-	function copyResource(data, finished) {
-		if (cli.argv["unit-test"]) {
-			const RESOURCES_DIR = join(this.projectDir, 'Resources');
-			const srcFile = data.args[0];
-			if (new RegExp('^' + RESOURCES_DIR.replace(/\\/g, '/') + '(/(android|ipad|ios|iphone|windows|blackberry|tizen))?/alloy/controllers/index.js$').test(srcFile.replace(/\\/g, '/'))) {
-				logger.info(`Replacing controllers/index.js with controllers/UnitTest.js`);
-				data.args[0] = data.args[0].replace(/\/index\.js$/g, "/UnitTest.js");
-			}
-		}
-		finished(null, data);
-	}
-	cli.on('build.ios.copyResource', { pre: copyResource, priority: 5000 });
-	cli.on('build.android.copyResource', { pre: copyResource, priority: 5000  });
-	cli.on('build.windows.copyResource', { pre: copyResource , priority: 5000 });
-	cli.on('build.pre.compile', { post: patchLiveViewJs, priority: 5000 });
 
 };
