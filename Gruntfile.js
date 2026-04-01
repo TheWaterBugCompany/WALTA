@@ -3,6 +3,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     const fs = require('fs');
     const path = require('path');
+    const os = require('os');
     const Module = require('module');
     // Make Titanium-style module paths (e.g. 'util/Logger') resolvable in Node.js
     process.env.NODE_PATH = (process.env.NODE_PATH ? process.env.NODE_PATH + ':' : '') + path.resolve(__dirname, 'walta-app/app/lib');
@@ -29,14 +30,26 @@ const KobitonAPI = require("./features/support/kobiton");
       "ios": 257224
     }
 
-    const SOURCES = [  
-      './walta-app/tiapp.xml',  
+    const SOURCES = [
+      './walta-app/tiapp.xml',
       './walt-app/app/assets/**/*',
-      './walta-app/app/**/*.js', 
-      './walta-app/app/**/*.xml', 
+      './walta-app/app/**/*.js',
+      './walta-app/app/**/*.xml',
       './walta-app/app/**/*.css',
-      './walta-app/app/**/*.tss' 
-    ]; 
+      './walta-app/app/**/*.tss'
+    ];
+
+    function getLocalIP() {
+      const interfaces = os.networkInterfaces();
+      for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+          if (iface.family === 'IPv4' && !iface.internal) {
+            return iface.address;
+          }
+        }
+      }
+      return '127.0.0.1';
+    }
 
     const Kobiton = new KobitonAPI("thecodesharman","acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
 
@@ -212,9 +225,9 @@ const KobitonAPI = require("./features/support/kobiton");
         default:
           throw new Error(`Unknown build "${build_type}" type!`)
       }
-      if ( grunt.option('liveview') ) {
+      if ( grunt.option('liveview') && !build_type.includes('liveview') ) {
         args.push("--liveview");
-        args.push("--liveview-host 192.168.88.237")
+        args.push(`--liveview-host ${getLocalIP()}`);
       }
       
       var cmd = `./node_modules/.bin/titanium build ${args.join(" ")}`;
@@ -403,7 +416,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
           build: {
             command: build_app,
-            options: { 
+            options: {
                 env: Object.assign({}, process.env, {
                   "ALLOY_PATH": "./node_modules/.bin/alloy"
                 })
@@ -411,12 +424,11 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
-          stop_live_view: {
-            command: "./node_modules/.bin/liveview server stop",
-            exitCode: [ 0, 1 ],
-            stdout: "inherit", stderr: "inherit"
+          stop_live_view_ios: {
+            command: "lsof -ti:8323 | xargs kill -9 2>/dev/null || true",
+            exitCode: [0, 1]
           },
-              
+
         },
 
         run: {
@@ -429,8 +441,8 @@ const KobitonAPI = require("./features/support/kobiton");
             exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:error",
           },
           live_view_ios: {
-            options: { wait: false, ready: "Event Server Started"  },
-            exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform ios"
+            options: { wait: false, ready: /\[LiveView\] Server ready/ },
+            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app -C ${SIM_UDID} --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
           },
           live_view_android: {
             options: { wait: false, ready: "Event Server Started" },
@@ -557,7 +569,9 @@ const KobitonAPI = require("./features/support/kobiton");
 
       const iosExt = (buildType === "preview" || buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
       const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
-        ? `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
+        ? buildType === 'unit-test-liveview'
+          ? './walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app'
+          : `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
         : null;
 
       getLauncher(platform, isSimulator)
@@ -657,7 +671,7 @@ const KobitonAPI = require("./features/support/kobiton");
       grunt.task.run(`newer:test_${platform}`);
       if ( ! grunt.option('kobiton') ) {
         if ( grunt.option('liveview') ) {
-          grunt.task.run("exec:stop_live_view");
+          grunt.task.run(`exec:stop_live_view_${platform}`);
           grunt.task.run(`run:live_view_${platform}`);
           
         }
@@ -674,22 +688,30 @@ const KobitonAPI = require("./features/support/kobiton");
       var platform = grunt.option('platform');
       var isSimulator = grunt.option('simulator');
       var preview = grunt.option('preview');
-      grunt.task.run('clean');
-      grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
 
-      if (!launcherHandlesInstall(platform, isSimulator)) {
-        grunt.task.run(`install:${platform}:unit-test`);
+      if ( grunt.option('liveview') && isSimulator && platform === 'ios' ) {
+        grunt.task.run('exec:stop_live_view_ios');
+        grunt.task.run('run:live_view_ios');
+        preview = true;
+      } else {
+        grunt.task.run('clean');
+        grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
+
+        if (!launcherHandlesInstall(platform, isSimulator)) {
+          grunt.task.run(`install:${platform}:unit-test`);
+        }
+        if ( grunt.option('liveview') ) {
+          grunt.task.run(`exec:stop_live_view_${platform}`);
+          grunt.task.run(`run:live_view_${platform}`);
+          preview=true;
+        }
       }
-      if ( grunt.option('liveview') ) {
-        grunt.task.run("exec:stop_live_view");
-        grunt.task.run(`run:live_view_${platform}`);
-        preview=true;
-      } 
 
       let mockServer = createMockCerdiServer();
       mockServer.makeMockSample();
 
-      grunt.task.run(`launch:${platform}:unit-test`);
+      const buildType = ( grunt.option('liveview') && isSimulator && platform === 'ios' ) ? 'unit-test-liveview' : 'unit-test';
+      grunt.task.run(`launch:${platform}:${buildType}`);
       grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
       mockServer.shutdown();
 
@@ -728,7 +750,7 @@ const KobitonAPI = require("./features/support/kobiton");
       
       grunt.task.run(`newer:preview_${platform}`);
       if ( grunt.option('liveview') ) {
-        grunt.task.run("exec:stop_live_view");
+        grunt.task.run(`exec:stop_live_view_${platform}`);
         grunt.task.run(`run:live_view_${platform}`);
       }
 
@@ -757,8 +779,6 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('emulate', function() {
       var platform = grunt.option('platform');
-     // grunt.task.run("exec:stop_live_view");
-     // grunt.task.run(`run:live_view_${platform}`);
       grunt.task.run(`exec:build:${platform}:emulate`); 
       grunt.task.run(`output-logs:${platform}:preview`);
     });
