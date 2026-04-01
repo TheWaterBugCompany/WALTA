@@ -389,7 +389,6 @@ const KobitonAPI = require("./features/support/kobiton");
 
           unit_test_node: {
             command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "test/*_spec.js"`,
-            exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
 
