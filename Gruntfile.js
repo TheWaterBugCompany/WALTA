@@ -22,7 +22,8 @@ const KobitonAPI = require("./features/support/kobiton");
     const PROFILE_DIST = process.env.PROFILE_DIST;
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC;
     const PROFILE_DEV = process.env.PROFILE_DEV;
-    const DEVICE_ID = process.env.DEVICE_UDID;
+    const DEVICE_ID = process.env.IOS_DEVICE_UDID;
+    const ANDROID_DEVICE_SERIAL = process.env.ANDROID_DEVICE_SERIAL;
     const SIM_UDID = process.env.SIM_UDID;
 
     const WATERBUG_APPID = {
@@ -459,7 +460,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
           live_view_android_device: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
-            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app --target device --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
+            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app ${ANDROID_DEVICE_SERIAL ? `-C ${ANDROID_DEVICE_SERIAL}` : ''} --target device --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
           }
         },
 
