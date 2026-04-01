@@ -1,0 +1,136 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'task/**', 'spike/**']
+  pull_request:
+
+jobs:
+  # ── 1. Node.js unit tests ─────────────────────────────────────────────────
+  node-tests:
+    name: Node.js unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm install
+
+      - name: Run Node.js unit tests
+        run: npx grunt unit-test-node
+
+  # ── 2. iOS simulator unit tests ───────────────────────────────────────────
+  ios-simulator-tests:
+    name: iOS simulator unit tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm install
+
+      - name: Read Titanium SDK version
+        id: ti-version
+        run: |
+          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
+          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Titanium SDK
+        id: ti-sdk-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
+
+      - name: Install Titanium SDK
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Apply SDK patches
+        run: npm run patch-sdk
+
+      - name: Install app dependencies
+        run: sh install.sh
+
+      - name: Select iOS simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          for runtime in sorted(data['devices'].keys(), reverse=True):
+              if 'iOS' not in runtime:
+                  continue
+              for d in data['devices'][runtime]:
+                  if 'iPhone' in d.get('name', '') and d.get('isAvailable', False):
+                      print(d['udid'])
+                      sys.exit(0)
+          sys.exit(1)
+          ")
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Selected simulator: $UDID"
+
+      - name: Run iOS simulator unit tests
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt --platform=ios --simulator unit-test
+
+  # ── 3. Android emulator unit tests ────────────────────────────────────────
+  # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
+  android-emulator-tests:
+    name: Android emulator unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - run: npm install
+
+      - name: Read Titanium SDK version
+        id: ti-version
+        run: |
+          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
+          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Titanium SDK
+        id: ti-sdk-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
+
+      - name: Install Titanium SDK
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Apply SDK patches
+        run: npm run patch-sdk
+
+      - name: Install app dependencies
+        run: sh install.sh
+
+      - name: Run Android emulator unit tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: default
+          arch: x86_64
+          avd-name: Medium_Phone_API_36.1
+          script: npx grunt --platform=android --simulator unit-test
