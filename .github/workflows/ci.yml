@@ -139,6 +139,28 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      - name: Cache Android system image and AVD
+        id: avd-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-36
+          key: avd-36-x86_64
+
+      - name: Pre-warm AVD snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: default
+          arch: x86_64
+          avd-name: Medium_Phone_API_36.1
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: echo "AVD snapshot ready for caching"
+
       - name: Run Android emulator unit tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -146,4 +168,6 @@ jobs:
           target: default
           arch: x86_64
           avd-name: Medium_Phone_API_36.1
-          script: npx grunt --platform=android --simulator unit-test
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: npx grunt --platform=android --simulator --ci unit-test
