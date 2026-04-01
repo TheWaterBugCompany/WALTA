@@ -19,6 +19,7 @@ const KobitonAPI = require("./features/support/kobiton");
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
+    const DEVELOPER_DEV = process.env.DEVELOPER_DEV || "Apple Development: Michael Sharman (ZG6HRCUR8Q)";
     const PROFILE_DIST = process.env.PROFILE_DIST;
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC;
     const PROFILE_DEV = process.env.PROFILE_DEV;
@@ -452,7 +453,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
           live_view_ios_device: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
-            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app ${DEVICE_ID ? `-C ${DEVICE_ID}` : ''} --target device --deploy-type development -R "${DEVELOPER}" -P "${PROFILE_DEV}" --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
+            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app ${DEVICE_ID ? `-C ${DEVICE_ID}` : ''} --target device --deploy-type development -R "${DEVELOPER_DEV}" -P "${PROFILE_DEV}" --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
           },
           live_view_android: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
