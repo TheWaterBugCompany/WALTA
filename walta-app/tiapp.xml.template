@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ti:app 
+<ti:app
   xmlns:ti="http://ti.appcelerator.org">
   <id>net.thewaterbug.waterbug</id>
   <name>Waterbug</name>
@@ -60,19 +60,19 @@
       </dict>
     </plist>
   </ios>
-  <android 
+  <android
     xmlns:android="http://schemas.android.com/apk/res/android">
     <manifest android:versionCode="2000040014" android:versionName="2.0.4.14">
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34"/>
     <application android:debuggable="false" android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
-      <meta-data android:name="com.google.android.geo.API_KEY" android:value="GOOGLE_MAPS_API_KEY_REDACTED" />
+      <meta-data android:name="com.google.android.geo.API_KEY" android:value="GOOGLE_MAPS_API_KEY_PLACEHOLDER" />
       <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape">
         <intent-filter>
           <action android:name="android.intent.action.MAIN"/>
           <category android:name="android.intent.category.LAUNCHER"/>
         </intent-filter>
       </activity>
-     
+
       <activity android:name="org.appcelerator.titanium.TiActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape"/>
       <activity android:name="org.appcelerator.titanium.TiTranslucentActivity" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:theme="@style/Theme.Titanium.Translucent" android:screenOrientation="sensorLandscape"/>
       <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:configChanges="screenSize|density" android:screenOrientation="sensorLandscape"/>
