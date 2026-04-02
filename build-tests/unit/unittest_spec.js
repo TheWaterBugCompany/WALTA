@@ -8,7 +8,6 @@ const hook = require("../../plugins/unittest/1.0/hooks/unittest");
 
 describe("unittest hook", function () {
     let doConfig;
-    let copyResource;
     let preCompile;
     let cli;
 
@@ -17,7 +16,6 @@ describe("unittest hook", function () {
             argv: {},
             on: (event, options) => {
                 if (event === 'build.ios.config') doConfig = options;
-                if (event === 'build.ios.copyResource') copyResource = options.pre;
                 if (event === 'build.pre.compile' && options.pre) preCompile = options.pre;
             }
         };
@@ -47,42 +45,6 @@ describe("unittest hook", function () {
         });
     });
 
-    describe("build.*.copyResource hook", function () {
-        const projectDir = "/project";
-
-        it("should replace index.js with UnitTest.js when --unit-test is set", function (done) {
-            cli.argv["unit-test"] = true;
-            const resourcesDir = `${projectDir}/Resources`;
-            const data = { args: [`${resourcesDir}/alloy/controllers/index.js`] };
-            copyResource.call({ projectDir }, data, function () {
-                expect(data.args[0]).to.match(/UnitTest\.js$/);
-                done();
-            });
-        });
-
-        it("should leave the file path unchanged when --unit-test is not set", function (done) {
-            cli.argv["unit-test"] = false;
-            const resourcesDir = `${projectDir}/Resources`;
-            const original = `${resourcesDir}/alloy/controllers/index.js`;
-            const data = { args: [original] };
-            copyResource.call({ projectDir }, data, function () {
-                expect(data.args[0]).to.equal(original);
-                done();
-            });
-        });
-
-        it("should leave non-index files unchanged even when --unit-test is set", function (done) {
-            cli.argv["unit-test"] = true;
-            const resourcesDir = `${projectDir}/Resources`;
-            const original = `${resourcesDir}/alloy/controllers/Main.js`;
-            const data = { args: [original] };
-            copyResource.call({ projectDir }, data, function () {
-                expect(data.args[0]).to.equal(original);
-                done();
-            });
-        });
-    });
-
     describe("build.pre.compile hook", function () {
         const projectDir = "/project";
 
@@ -100,10 +62,10 @@ describe("unittest hook", function () {
             });
         });
 
-        it("should not create symlink when --unit-test is not set", function (done) {
+        it("should symlink index.js to index-app.js when --unit-test is not set", function (done) {
             cli.argv["unit-test"] = false;
             preCompile({}, function () {
-                expect(fs.symlinkSync.called).to.be.false;
+                expect(fs.symlinkSync.calledWith('index-app.js', `${projectDir}/app/controllers/index.js`)).to.be.true;
                 done();
             });
         });
