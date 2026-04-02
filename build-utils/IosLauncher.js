@@ -3,7 +3,7 @@ import { mkdtemp, readFile as defaultReadFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { createHash } from "crypto";
-import iosDevice from "node-ios-device";
+import defaultIosDevice from "node-ios-device";
 
 function computeLogPort(appId) {
   const sha1 = createHash('sha1').update(appId).digest('hex');
@@ -11,10 +11,11 @@ function computeLogPort(appId) {
 }
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, udid = null, appId = null } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, iosDevice = defaultIosDevice, udid = null, appId = null } = {}) {
     this._execFile = execFile;
     this._readFile = readFile;
     this._spawn = spawn;
+    this._iosDevice = iosDevice;
     this._udid = udid;
     this._logPort = appId ? computeLogPort(appId) : null;
     this._pid = null;
@@ -71,14 +72,19 @@ class IosLauncher {
     this._pid = null;
   }
 
-  streamLogs(onLine) {
+  streamLogs(onLine, { logLevel = 'info' } = {}) {
+    const suppressedPrefixes = logLevel === 'trace' ? []
+      : logLevel === 'debug' ? ['[TRACE]']
+      : ['[TRACE]', '[DEBUG]']; // 'info' and above
+
     let handle = null;
 
     const tryConnect = () => {
       try {
-        handle = iosDevice.forward(this._udid, this._logPort)
+        handle = this._iosDevice.forward(this._udid, this._logPort)
           .on('data', msg => {
             if (msg.startsWith('{"appId"')) return; // skip JSON header
+            if (suppressedPrefixes.some(p => msg.startsWith(p))) return;
             onLine(msg);
           });
       } catch (_err) {

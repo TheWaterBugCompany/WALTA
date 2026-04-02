@@ -46,7 +46,11 @@ class IosSimulatorLauncher {
     }
   }
 
-  streamLogs(onLine) {
+  streamLogs(onLine, { logLevel = 'info' } = {}) {
+    const suppressedPrefixes = logLevel === 'trace' ? []
+      : logLevel === 'debug' ? ['[TRACE]']
+      : ['[TRACE]', '[DEBUG]']; // 'info' and above
+
     const proc = this._spawn("xcrun", ["simctl", "spawn", this._udid, "log", "stream", "--style", "syslog"]);
     const escapedName = this._logProcessName.replace(/[()]/g, "\\$&");
     // Old format: "Name(Lib)[PID] <Level>: message"
@@ -64,7 +68,10 @@ class IosSimulatorLauncher {
       buffer = lines.pop();
       lines.forEach(line => {
         const match = line.match(oldPattern) || line.match(newPattern);
-        if (match) onLine(match[1].replace(/\\\^\[/g, "\x1b"));
+        if (!match) return;
+        const msg = match[1].replace(/\\\^\[/g, "\x1b");
+        if (suppressedPrefixes.some(p => msg.startsWith(p))) return;
+        onLine(msg);
       });
     });
     return () => proc.kill();
