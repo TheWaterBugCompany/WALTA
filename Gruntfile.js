@@ -598,7 +598,7 @@ const KobitonAPI = require("./features/support/kobiton");
         let stop;
         const logLevel = grunt.option('log-level') || 'info';
         stop = launcher.streamLogs(line => {
-          if (/>>>>> UNIT TESTS:/.test(line)) {
+          if (/UNIT_TESTS_(PASSED|FAILED)/.test(line)) {
             if (option !== "preview") {
               stop();
               done();
@@ -704,7 +704,6 @@ const KobitonAPI = require("./features/support/kobiton");
         const liveViewTask = isSimulator ? `live_view_${platform}` : `live_view_${platform}_device`;
         grunt.task.run(`exec:stop_live_view_${platform}`);
         grunt.task.run(`run:${liveViewTask}`);
-        preview = true;
       } else {
         grunt.task.run('clean');
         grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
@@ -716,6 +715,8 @@ const KobitonAPI = require("./features/support/kobiton");
       const buildType = grunt.option('liveview') ? 'unit-test-liveview' : 'unit-test';
       grunt.task.run(`launch:${platform}:${buildType}`);
       grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
+      grunt.task.run(`terminate:${platform}`);
+      grunt.task.run(`exec:stop_live_view_${platform}`);
       mockServer.shutdown();
 
     } );
