@@ -211,18 +211,6 @@ const KobitonAPI = require("./features/support/kobiton");
           args.push("--output-dir builds/release");
           break;
 
-        case "preview":
-          dev();
-          if ( platform === "android" ) {
-            post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/preview/Waterbug.apk");
-          } else {
-            post_cmds.push( "cp -r ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/preview/Waterbug.app");
-          }
-          break;
-
-        case "emulate":
-          emulator();
-          break;
 
         default:
           throw new Error(`Unknown build "${build_type}" type!`)
@@ -240,18 +228,13 @@ const KobitonAPI = require("./features/support/kobiton");
 
     function build_if_newer_options(platform,build_type) {
       const isSimBuild = build_type.includes("sim");
-      const ext = (platform === "ios"? (build_type === "preview" || build_type === "debug" || build_type === "unit-test" || isSimBuild ?"app":"ipa"):"apk");
+      const ext = (platform === "ios"? (build_type === "debug" || build_type === "unit-test" || isSimBuild ?"app":"ipa"):"apk");
       const tasks = [];
       
       if ( ! grunt.option('skip-build') ) {
         tasks.push(`exec:build:${platform}:${build_type}`);
         if ( grunt.option('kobiton') ) {
           tasks.push(`upload:${platform}:${build_type}`);
-        } else {
-          const isSimulator = grunt.option('simulator');
-          if ( build_type !== "release" && !build_type.includes("sim") && !launcherHandlesInstall(platform, isSimulator) ) {
-            tasks.push(`install:${platform}:${build_type}`);
-          }
         }
       }
       return {
@@ -302,7 +285,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           clean_dist: {
-            command: 'rm -r ./builds/{release,debug,test,unit-test,unit-test-sim,preview}/*.{apk,ipa,aab,app}',
+            command: 'rm -r ./builds/{release,debug,test,unit-test,unit-test-sim}/*.{apk,ipa,aab,app}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "false",
             options: {
@@ -327,7 +310,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
           install_ios: {
             command: function(build_type) { 
-              let extension = (build_type==="preview"?"app":"ipa");
+              let extension = "ipa";
               return `PATH=./node_modules/.bin/:$PATH ios-deploy --bundle ./builds/${build_type}/Waterbug.${extension}`;
             }, stdout: false, stderr: true
           },
@@ -353,7 +336,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },*/
 
           end_to_end_test: {
-            command: function(platform,option) {
+            command: function() {
               return `VERSION=${grunt.option('kobiton-version')}  mocha --timeout 60000 "./end-to-end-testing/*.js"`;
             },
             options: {
@@ -436,6 +419,13 @@ const KobitonAPI = require("./features/support/kobiton");
             exitCode: [0, 1]
           },
 
+          // Wipe Xcode's derived data for iphone so a device build doesn't
+          // pick up stale simulator objects (e.g. missing Bugfender lib dir).
+          clean_ios_device_build: {
+            command: "rm -rf ./walta-app/build/iphone/build",
+            exitCode: [0]
+          },
+
         },
 
         run: {
@@ -449,19 +439,27 @@ const KobitonAPI = require("./features/support/kobiton");
           },
           live_view_ios: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
-            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app -C ${SIM_UDID} --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
+            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app -C ${SIM_UDID} --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --build-only --no-prompt`
           },
           live_view_ios_device: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
-            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app ${DEVICE_ID ? `-C ${DEVICE_ID}` : ''} --target device --deploy-type development -R "${DEVELOPER_DEV}" -P "${PROFILE_DEV}" --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
+            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app ${DEVICE_ID ? `-C ${DEVICE_ID}` : ''} --target device --deploy-type development -R "${DEVELOPER_DEV}" -P "${PROFILE_DEV}" --liveview-ip ${getLocalIP()} --unit-test --build-only --no-prompt`
           },
           live_view_android: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
-            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app -C "Medium_Phone_API_36.1" --target emulator --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
+            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app -C "Medium_Phone_API_36.1" --target emulator --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --build-only --no-prompt`
           },
           live_view_android_device: {
             options: { wait: false, ready: /\[LiveView\] Server ready/ },
-            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app ${ANDROID_DEVICE_SERIAL ? `-C ${ANDROID_DEVICE_SERIAL}` : ''} --target device --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --skip-launch --no-prompt`
+            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app ${ANDROID_DEVICE_SERIAL ? `-C ${ANDROID_DEVICE_SERIAL}` : ''} --target device --deploy-type development --liveview-ip ${getLocalIP()} --unit-test --build-only --no-prompt`
+          },
+          live_view_ios_debug_device: {
+            options: { wait: false, ready: /\[LiveView\] Server ready/ },
+            exec: `./node_modules/.bin/titanium serve -p ios -d ./walta-app ${DEVICE_ID ? `-C ${DEVICE_ID}` : ''} --target device --deploy-type development -R "${DEVELOPER_DEV}" -P "${PROFILE_DEV}" --liveview-ip ${getLocalIP()} --build-only --no-prompt`
+          },
+          live_view_android_debug_device: {
+            options: { wait: false, ready: /\[LiveView\] Server ready/ },
+            exec: `./node_modules/.bin/titanium serve -p android -d ./walta-app ${ANDROID_DEVICE_SERIAL ? `-C ${ANDROID_DEVICE_SERIAL}` : ''} --target device --deploy-type development --liveview-ip ${getLocalIP()} --build-only --no-prompt`
           }
         },
 
@@ -478,14 +476,10 @@ const KobitonAPI = require("./features/support/kobiton");
           debug_android: build_if_newer_options("android", "debug"),
           debug_ios: build_if_newer_options("ios", "debug"),
 
-          emulate_android: build_if_newer_options("android", "emulate"),
-          emulate_ios: build_if_newer_options("ios", "emulate"),
 
           release_android: build_if_newer_options("android", "release"),
           release_ios: build_if_newer_options("ios", "release"),
 
-          preview_android: build_if_newer_options("android", "preview"),
-          preview_ios: build_if_newer_options("ios", "preview"),
 
           build_integration_fixtures_android: {
             src: [
@@ -518,7 +512,7 @@ const KobitonAPI = require("./features/support/kobiton");
           _launcher = new AndroidLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
-          _launcher = new IosLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: DEVICE_ID });
+          _launcher = new IosLauncher({ appId: APP_ID, udid: DEVICE_ID });
         } else if (platform === "android" && isSimulator) {
           const { default: AndroidEmulatorLauncher } = await import("./build-utils/AndroidEmulatorLauncher.js");
           _launcher = new AndroidEmulatorLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
@@ -534,9 +528,6 @@ const KobitonAPI = require("./features/support/kobiton");
       return _launcher;
     }
 
-    function launcherHandlesInstall(platform, _isSimulator) {
-      return platform === "android" || platform === "ios";
-    }
 
     grunt.registerTask("cucumber",function(){
       const done = this.async();
@@ -582,8 +573,8 @@ const KobitonAPI = require("./features/support/kobiton");
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
 
-      const iosExt = (buildType === "preview" || buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
-      const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
+      const iosExt = (buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
+      const appPath = buildType
         ? buildType === 'unit-test-liveview'
           ? platform === 'android'
             ? './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk'
@@ -597,14 +588,6 @@ const KobitonAPI = require("./features/support/kobiton");
         .then(launcher => launcher.launch(APP_ID, appPath))
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
-    });
-
-    grunt.registerTask("terminate", function(platform) {
-      const done = this.async();
-      const isSimulator = grunt.option('simulator') || false;
-      getLauncher(platform, isSimulator)
-        .then(launcher => launcher.terminate(APP_ID))
-        .then(done);
     });
 
     grunt.registerTask("output-logs", function(platform, option) {
@@ -625,7 +608,15 @@ const KobitonAPI = require("./features/support/kobiton");
         });
       });
     });
-    
+
+    grunt.registerTask("terminate", function(platform) {
+      const done = this.async();
+      const isSimulator = grunt.option('simulator') || false;
+      getLauncher(platform, isSimulator)
+        .then(launcher => launcher.terminate(APP_ID))
+        .then(done);
+    });
+
     grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
@@ -716,10 +707,6 @@ const KobitonAPI = require("./features/support/kobiton");
       } else {
         grunt.task.run('clean');
         grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
-
-        if (!launcherHandlesInstall(platform, isSimulator)) {
-          grunt.task.run(`install:${platform}:unit-test`);
-        }
       }
 
       let mockServer = createMockCerdiServer();
@@ -732,7 +719,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     } );
 
-    grunt.registerTask('unit-test-node', function( platform ) {
+    grunt.registerTask('unit-test-node', function() {
       grunt.task.run(`exec:unit_test_node`);
     } );
 
@@ -757,24 +744,6 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('clean-integration-fixtures', ['exec:clean_integration_fixtures_android', 'exec:clean_integration_fixtures_ios']);
     grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );
-    grunt.registerTask('preview', function() {
-      var platform = grunt.option('platform');
-      //grunt.task.run("run:appium");
-      // It's often possible to get away without do a rebuild and relying on the file server 
-      // to copy changes to the device. The quick option enables that.
-      
-      grunt.task.run(`newer:preview_${platform}`);
-      if ( grunt.option('liveview') ) {
-        grunt.task.run(`exec:stop_live_view_${platform}`);
-        grunt.task.run(`run:live_view_${platform}`);
-      }
-
-      grunt.task.run(`launch:${platform}`);
-
-      // the preview option here enters an infinite loop so that the log output
-      // continues as changes are made during development
-      grunt.task.run(`output-logs:${platform}:preview`);
-    } );
 
     grunt.registerTask('release', function() {
       var platform = grunt.option('platform');
@@ -783,20 +752,19 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('debug', function() {
       var platform = grunt.option('platform');
-      var isSimulator = grunt.option('simulator');
-      grunt.task.run(`newer:debug_${platform}`);
-      if (!launcherHandlesInstall(platform, isSimulator)) {
-        grunt.task.run(`install:${platform}:debug`);
+      const isSimulator = grunt.option('simulator') || false;
+      if (grunt.option('liveview')) {
+        grunt.task.run(`exec:stop_live_view_${platform}`);
+        const liveViewTask = isSimulator ? `live_view_${platform}` : `live_view_${platform}_debug_device`;
+        grunt.task.run(`run:${liveViewTask}`);
+        grunt.task.run(`launch:${platform}:unit-test-liveview`);
+      } else {
+        grunt.task.run(`newer:debug_${platform}`);
+        grunt.task.run(`launch:${platform}:debug`);
       }
-      grunt.task.run(`launch:${platform}:debug`);
       grunt.task.run(`output-logs:${platform}:preview`);
     });
 
-    grunt.registerTask('emulate', function() {
-      var platform = grunt.option('platform');
-      grunt.task.run(`exec:build:${platform}:emulate`); 
-      grunt.task.run(`output-logs:${platform}:preview`);
-    });
 
     grunt.registerTask('build-key-from-ink-json', function() {
       const key = KeyLoader.loadKey( './walta-app/app/assets/taxonomy/walta/', '/taxonomy/walta' );

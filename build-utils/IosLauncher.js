@@ -2,14 +2,21 @@ import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_proces
 import { mkdtemp, readFile as defaultReadFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
+import { createHash } from "crypto";
+import iosDevice from "node-ios-device";
+
+function computeLogPort(appId) {
+  const sha1 = createHash('sha1').update(appId).digest('hex');
+  return parseInt(sha1, 16) % 50000 + 10000;
+}
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)" } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, udid = null, appId = null } = {}) {
     this._execFile = execFile;
     this._readFile = readFile;
     this._spawn = spawn;
     this._udid = udid;
-    this._logProcessName = logProcessName;
+    this._logPort = appId ? computeLogPort(appId) : null;
     this._pid = null;
   }
 
@@ -65,19 +72,22 @@ class IosLauncher {
   }
 
   streamLogs(onLine) {
-    const args = this._udid ? ["-u", this._udid] : [];
-    const proc = this._spawn("idevicesyslog", args);
-    const logPattern = new RegExp(`${this._logProcessName.replace(/[()]/g, "\\$&")}.*?:\\s+(.*)`);
-    let buffer = "";
-    proc.stdout.on("data", data => {
-      const lines = (buffer + data.toString()).split("\n");
-      buffer = lines.pop();
-      lines.forEach(line => {
-        const match = line.match(logPattern);
-        if (match) onLine(match[1]);
-      });
-    });
-    return () => proc.kill();
+    let handle = null;
+
+    const tryConnect = () => {
+      try {
+        handle = iosDevice.forward(this._udid, this._logPort)
+          .on('data', msg => {
+            if (msg.startsWith('{"appId"')) return; // skip JSON header
+            onLine(msg);
+          });
+      } catch (_err) {
+        setTimeout(tryConnect, 1000);
+      }
+    };
+
+    tryConnect();
+    return () => handle && handle.stop();
   }
 
   getDriver() {
