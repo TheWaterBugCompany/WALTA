@@ -13,3 +13,4 @@ tmp
 Thumbs.db
 app/lib/spec
 app/controllers/index.js
+tiapp.xml

@@ -15,6 +15,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     const APP_ID = "net.thewaterbug.waterbug";
     const APP_ACTIVITY = ".WaterbugActivity";
+    const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
     const KEYSTORE = process.env.KEYSTORE || '/home/msharman/Documents/Business/thecodesharman.keystore';
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
@@ -779,14 +780,26 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask('clean-integration-fixtures', ['exec:clean_integration_fixtures_android', 'exec:clean_integration_fixtures_ios']);
     grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );
 
+    grunt.registerTask('inject-secrets', function() {
+      if (!GOOGLE_MAPS_API_KEY) {
+        grunt.fail.fatal('GOOGLE_MAPS_API_KEY environment variable is not set. Cannot build without it.');
+      }
+      const template = fs.readFileSync('./walta-app/tiapp.xml.template', 'utf8');
+      const output = template.replace('GOOGLE_MAPS_API_KEY_PLACEHOLDER', GOOGLE_MAPS_API_KEY);
+      fs.writeFileSync('./walta-app/tiapp.xml', output);
+      grunt.log.ok('tiapp.xml generated from template.');
+    });
+
     grunt.registerTask('release', function() {
       var platform = grunt.option('platform');
-      grunt.task.run(`newer:release_${platform}`); 
+      grunt.task.run('inject-secrets');
+      grunt.task.run(`newer:release_${platform}`);
     });
 
     grunt.registerTask('debug', function() {
       var platform = grunt.option('platform');
       const isSimulator = grunt.option('simulator') || false;
+      grunt.task.run('inject-secrets');
       if (grunt.option('liveview')) {
         const done = this.async();
         const reuseServer = grunt.option('reuse-server');

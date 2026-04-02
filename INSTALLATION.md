@@ -120,6 +120,15 @@ export KEYSTORE_PASSWORD="your-keystore-password"
 export KEYSTORE_SUBKEY="thecodesharman"
 ```
 
+### Google Maps API Key (required for all builds)
+
+The Android Maps API key is stored in 1Password under **"The Waterbug App - Google Maps API Key"**. It is injected into `tiapp.xml` at build time — `tiapp.xml` is not committed to the repo.
+
+Add to `~/.zshrc`:
+```bash
+export GOOGLE_MAPS_API_KEY="your-api-key"
+```
+
 Then run `source ~/.zshrc`.
 
 ---
@@ -248,6 +257,7 @@ npx grunt --platform=ios debug
 | `JAVA_HOME` | Android builds | `/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home` |
 | `ANDROID_SDK_ROOT` | Android builds (Titanium/Gradle) | `$HOME/Library/Android/sdk` |
 | `ANDROID_HOME` | Android build scripts | `$HOME/Library/Android/sdk` |
+| `GOOGLE_MAPS_API_KEY` | All builds | injected into `tiapp.xml` from `tiapp.xml.template` |
 | `KEYSTORE` | All Android builds | `/path/to/your.keystore` |
 | `KEYSTORE_PASSWORD` | All Android builds | — |
 | `KEYSTORE_SUBKEY` | All Android builds | key alias |
