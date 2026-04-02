@@ -596,6 +596,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
       getLauncher(platform, isSimulator).then(launcher => {
         let stop;
+        const logLevel = grunt.option('log-level') || 'info';
         stop = launcher.streamLogs(line => {
           if (/>>>>> UNIT TESTS:/.test(line)) {
             if (option !== "preview") {
@@ -605,7 +606,7 @@ const KobitonAPI = require("./features/support/kobiton");
           } else {
             grunt.log.writeln(line);
           }
-        });
+        }, { logLevel });
       });
     });
 

@@ -163,6 +163,45 @@ describe("IosSimulatorLauncher", function() {
       expect(lines).to.deep.equal(["hello", "world"]);
     });
 
+    it("filters out [DEBUG] and [TRACE] lines at default info level", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosSimulatorLauncher({ spawn: fakeSpawn, udid: UDID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line));
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [INFO] test passed\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [DEBUG] debug msg\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [TRACE] trace msg\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [WARN] a warning\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [ERROR] an error\n`);
+      expect(lines).to.deep.equal([
+        '[INFO] test passed',
+        '[WARN] a warning',
+        '[ERROR] an error',
+      ]);
+    });
+
+    it("shows [DEBUG] lines when logLevel is debug", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosSimulatorLauncher({ spawn: fakeSpawn, udid: UDID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line), { logLevel: 'debug' });
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [INFO] info\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [DEBUG] debug\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [TRACE] trace\n`);
+      expect(lines).to.deep.equal(['[INFO] info', '[DEBUG] debug']);
+    });
+
+    it("shows all lines when logLevel is trace", function() {
+      const { stub: fakeSpawn, proc } = makeSpawn();
+      const launcher = new IosSimulatorLauncher({ spawn: fakeSpawn, udid: UDID });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line), { logLevel: 'trace' });
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [INFO] info\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [DEBUG] debug\n`);
+      proc.stdout.emit("data", `Apr  1 10:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: [TRACE] trace\n`);
+      expect(lines).to.deep.equal(['[INFO] info', '[DEBUG] debug', '[TRACE] trace']);
+    });
+
     it("returns a stop function that kills the process", function() {
       const { stub: fakeSpawn, proc } = makeSpawn();
       const launcher = new IosSimulatorLauncher({ spawn: fakeSpawn, udid: UDID });

@@ -3,13 +3,6 @@ import { expect } from "chai";
 import { EventEmitter } from "events";
 import IosLauncher from "../../build-utils/IosLauncher.js";
 
-function makeSpawn() {
-  const stdout = new EventEmitter();
-  const proc = { stdout, kill: sinon.stub() };
-  return { stub: sinon.stub().returns(proc), proc };
-}
-
-
 const UDID = "00008150-00056CC22186401C";
 const APP_ID = "net.thewaterbug.waterbug";
 const APP_PATH = "./builds/unit-test/Waterbug.app";
@@ -31,6 +24,15 @@ function makeExecFile(responses) {
 
 function makeReadFile(content) {
   return sinon.stub().resolves(content);
+}
+
+function makeFakeIosDevice() {
+  const handle = new EventEmitter();
+  handle.stop = sinon.stub();
+  return {
+    forward: sinon.stub().returns(handle),
+    handle,
+  };
 }
 
 describe("IosLauncher", function() {
@@ -130,53 +132,75 @@ describe("IosLauncher", function() {
   });
 
   describe("streamLogs()", function() {
-    it("spawns idevicesyslog with the UDID and emits filtered messages", function() {
-      const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
+    it("uses node-ios-device port forwarding and emits messages", function() {
+      const fakeDevice = makeFakeIosDevice();
+      const launcher = new IosLauncher({ udid: UDID, appId: APP_ID, iosDevice: fakeDevice });
       const lines = [];
       launcher.streamLogs(line => lines.push(line));
-      proc.stdout.emit("data", `Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: hello world\n`);
-      expect(fakeSpawn.firstCall.args[0]).to.equal("idevicesyslog");
-      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["-u", UDID]);
-      expect(lines).to.deep.equal(["hello world"]);
+      expect(fakeDevice.forward.calledOnce).to.be.true;
+      expect(fakeDevice.forward.firstCall.args[0]).to.equal(UDID);
+      fakeDevice.handle.emit('data', '[INFO] hello world');
+      expect(lines).to.deep.equal(['[INFO] hello world']);
     });
 
-    it("ignores lines not from Waterbug(TitaniumKit)", function() {
-      const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
+    it("skips JSON header messages", function() {
+      const fakeDevice = makeFakeIosDevice();
+      const launcher = new IosLauncher({ udid: UDID, appId: APP_ID, iosDevice: fakeDevice });
       const lines = [];
       launcher.streamLogs(line => lines.push(line));
-      proc.stdout.emit("data", "Mar 26 21:00:00 iPhone SpringBoard[456] <Notice>: irrelevant\n");
-      proc.stdout.emit("data", `Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: keep this\n`);
-      expect(lines).to.deep.equal(["keep this"]);
+      fakeDevice.handle.emit('data', '{"appId":"net.thewaterbug.waterbug"}');
+      fakeDevice.handle.emit('data', '[INFO] real message');
+      expect(lines).to.deep.equal(['[INFO] real message']);
     });
 
-    it("handles data arriving mid-line", function() {
-      const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
+    it("filters out [DEBUG] and [TRACE] lines at default info level", function() {
+      const fakeDevice = makeFakeIosDevice();
+      const launcher = new IosLauncher({ udid: UDID, appId: APP_ID, iosDevice: fakeDevice });
       const lines = [];
       launcher.streamLogs(line => lines.push(line));
-      proc.stdout.emit("data", "Mar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: hel");
-      proc.stdout.emit("data", `lo\nMar 26 21:00:00 iPhone Waterbug(TitaniumKit)[123] <Notice>: world\n`);
-      expect(lines).to.deep.equal(["hello", "world"]);
+      fakeDevice.handle.emit('data', '[INFO] test passed');
+      fakeDevice.handle.emit('data', '[DEBUG] 0: Menu none (no id)');
+      fakeDevice.handle.emit('data', '[TRACE] some trace');
+      fakeDevice.handle.emit('data', '[WARN] a warning');
+      fakeDevice.handle.emit('data', '[ERROR] an error');
+      expect(lines).to.deep.equal([
+        '[INFO] test passed',
+        '[WARN] a warning',
+        '[ERROR] an error',
+      ]);
     });
 
-    it("returns a stop function that kills the process", function() {
-      const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID });
+    it("shows [DEBUG] lines when logLevel is debug", function() {
+      const fakeDevice = makeFakeIosDevice();
+      const launcher = new IosLauncher({ udid: UDID, appId: APP_ID, iosDevice: fakeDevice });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line), { logLevel: 'debug' });
+      fakeDevice.handle.emit('data', '[INFO] test passed');
+      fakeDevice.handle.emit('data', '[DEBUG] debug msg');
+      fakeDevice.handle.emit('data', '[TRACE] trace msg');
+      expect(lines).to.deep.equal([
+        '[INFO] test passed',
+        '[DEBUG] debug msg',
+      ]);
+    });
+
+    it("shows all lines when logLevel is trace", function() {
+      const fakeDevice = makeFakeIosDevice();
+      const launcher = new IosLauncher({ udid: UDID, appId: APP_ID, iosDevice: fakeDevice });
+      const lines = [];
+      launcher.streamLogs(line => lines.push(line), { logLevel: 'trace' });
+      fakeDevice.handle.emit('data', '[INFO] info');
+      fakeDevice.handle.emit('data', '[DEBUG] debug');
+      fakeDevice.handle.emit('data', '[TRACE] trace');
+      expect(lines).to.deep.equal(['[INFO] info', '[DEBUG] debug', '[TRACE] trace']);
+    });
+
+    it("returns a stop function that stops the handle", function() {
+      const fakeDevice = makeFakeIosDevice();
+      const launcher = new IosLauncher({ udid: UDID, appId: APP_ID, iosDevice: fakeDevice });
       const stop = launcher.streamLogs(() => {});
       stop();
-      expect(proc.kill.calledOnce).to.be.true;
-    });
-
-    it("uses custom logProcessName when provided", function() {
-      const { stub: fakeSpawn, proc } = makeSpawn();
-      const launcher = new IosLauncher({ spawn: fakeSpawn, udid: UDID, logProcessName: "MyApp(MyFramework)" });
-      const lines = [];
-      launcher.streamLogs(line => lines.push(line));
-      proc.stdout.emit("data", "Mar 26 21:00:00 iPhone MyApp(MyFramework)[123] <Notice>: custom message\n");
-      proc.stdout.emit("data", "Mar 26 21:00:00 iPhone OtherApp[456] <Notice>: ignored\n");
-      expect(lines).to.deep.equal(["custom message"]);
+      expect(fakeDevice.handle.stop.calledOnce).to.be.true;
     });
   });
 });
