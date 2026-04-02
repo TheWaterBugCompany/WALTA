@@ -37,16 +37,57 @@ function specModuleIdUrls(specDir) {
     .map(f => `/@id/spec/${f.replace(/\.js$/, '')}`);
 }
 
+// Collect all .js files under a directory tree as URL paths relative to the
+// app root.  These are fetched via HTTP to warm liveview's transform cache
+// so the device never blocks on a cold transform.
+function collectJsUrls(baseDir, urlPrefix) {
+  const { readdirSync: rd, statSync } = require('fs');
+  const urls = [];
+  function walk(dir, rel) {
+    let entries;
+    try { entries = rd(dir); } catch { return; }
+    for (const e of entries) {
+      const full = join(dir, e);
+      const relPath = rel ? `${rel}/${e}` : e;
+      try {
+        if (statSync(full).isDirectory()) {
+          walk(full, relPath);
+        } else if (e.endsWith('.js')) {
+          urls.push(`/${urlPrefix}/${relPath}`);
+        }
+      } catch { /* skip unreadable */ }
+    }
+  }
+  walk(baseDir, '');
+  return urls;
+}
+
 // Fetch a URL from the local vite server via HTTP — this goes through the
 // full middleware stack including liveview's resolve plugin.
-function fetchLocal(port, urlPath) {
+const WARMUP_HEADER = 'x-vite-warmup';
+function fetchLocal(host, port, urlPath) {
   return new Promise((resolve) => {
-    const req = http.get(`http://127.0.0.1:${port}${urlPath}`, (res) => {
+    const req = http.get({
+      hostname: host,
+      port,
+      path: urlPath,
+      headers: { [WARMUP_HEADER]: '1' },
+    }, (res) => {
+      if (res.statusCode !== 200) {
+        console.log(`[vite] Warmup HTTP ${res.statusCode}: ${urlPath}`);
+      }
       res.resume();
       res.on('end', resolve);
     });
-    req.on('error', resolve); // swallow errors, best-effort warmup
-    req.setTimeout(10000, () => { req.destroy(); resolve(); });
+    req.on('error', (err) => {
+      console.log(`[vite] Warmup fetch error: ${urlPath} - ${err.message}`);
+      resolve();
+    });
+    req.setTimeout(10000, () => {
+      console.log(`[vite] Warmup fetch timeout: ${urlPath}`);
+      req.destroy();
+      resolve();
+    });
   });
 }
 
@@ -68,34 +109,50 @@ module.exports = defineConfig({
         let warmupDone = false;
 
         server.httpServer?.once('listening', async () => {
+          // Small delay to ensure the server is actually accepting connections
+          await new Promise(r => setTimeout(r, 500));
+
           const addr = server.httpServer.address();
+          const host = typeof addr === 'object' ? (addr.address === '::' || addr.address === '0.0.0.0' ? '127.0.0.1' : addr.address) : '127.0.0.1';
           const port = typeof addr === 'object' ? addr.port : addr;
           const appDir = join(__dirname, 'app');
           const alloyUrls = alloyVirtualUrls(appDir);
           const specUrls = specModuleIdUrls(join(appDir, 'spec'));
-          const allUrls = [...alloyUrls, ...specUrls];
+          const libUrls = collectJsUrls(join(appDir, 'lib'), 'lib')
+            .filter(u => !u.includes('/lib/spec/')); // skip spec symlink
+          const specHelperUrls = [
+            ...collectJsUrls(join(appDir, 'spec', 'mocks'), 'spec/mocks'),
+            ...collectJsUrls(join(appDir, 'spec', 'util'), 'spec/util'),
+            ...collectJsUrls(join(appDir, 'spec', 'fixtures'), 'spec/fixtures'),
+            ...collectJsUrls(join(appDir, 'spec', 'lib'), 'spec/lib'),
+          ];
+          const httpUrls = [...alloyUrls, ...specUrls, ...libUrls, ...specHelperUrls];
 
-          console.log(`[vite] Pre-warming ${allUrls.length} modules (${alloyUrls.length} alloy + ${specUrls.length} spec)...`);
+          console.log(`[vite] Pre-warming ${httpUrls.length} modules via HTTP at ${host}:${port} (${alloyUrls.length} alloy, ${specUrls.length} spec, ${libUrls.length} lib, ${specHelperUrls.length} helpers)...`);
 
-          // Warm alloy virtual modules via transformRequest (these work)
-          const alloyWarmup = Promise.all(alloyUrls.map(url =>
-            server.transformRequest(url).catch(err => {
-              console.log(`[vite] Alloy warmup failed: ${url} - ${err.message}`);
-            })
-          ));
+          // Warm everything via HTTP in batches — too many concurrent
+          // requests can overwhelm the server and cause silent failures.
+          const BATCH_SIZE = 20;
+          const httpWarmup = (async () => {
+            for (let i = 0; i < httpUrls.length; i += BATCH_SIZE) {
+              const batch = httpUrls.slice(i, i + BATCH_SIZE);
+              await Promise.all(batch.map(url =>
+                fetchLocal(host, port, url).catch(() => {})
+              ));
+            }
+          })();
 
-          // Warm spec /@id/ modules via HTTP (goes through liveview middleware)
-          const specWarmup = Promise.all(specUrls.map(url =>
-            fetchLocal(port, url).catch(() => {})
-          ));
-
-          const timeout = new Promise(resolve => setTimeout(() => {
-            console.log('[vite] Warmup timed out after 30s, proceeding');
-            resolve();
-          }, 30000));
+          let timer;
+          const timeout = new Promise(resolve => {
+            timer = setTimeout(() => {
+              console.log('[vite] Warmup timed out after 30s, proceeding');
+              resolve();
+            }, 30000);
+          });
 
           await Promise.race([
-            Promise.all([alloyWarmup, specWarmup]).then(() => {
+            httpWarmup.then(() => {
+              clearTimeout(timer);
               console.log('[vite] Warmup complete');
             }),
             timeout
@@ -108,8 +165,8 @@ module.exports = defineConfig({
         // device never blocks on a cold transform (which would stall the
         // main thread long enough to trigger the iOS 0x8BADF00D watchdog).
         server.middlewares.use((req, _res, next) => {
-          // Don't block our own warmup fetches (from 127.0.0.1)
-          if (warmupDone || (req.socket.remoteAddress === '127.0.0.1' || req.socket.remoteAddress === '::1')) {
+          // Don't block our own warmup fetches (tagged with custom header)
+          if (warmupDone || req.headers[WARMUP_HEADER]) {
             next();
           } else {
             const check = setInterval(() => {
