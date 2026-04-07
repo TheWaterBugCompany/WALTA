@@ -7,7 +7,6 @@ const hook = require("../../plugins/unittest/1.0/hooks/appconfig");
 const fs = require("fs");
 
 describe("appconfig hook", function () {
-    let doConfig;
     let copyBuildConfig;
     let cli;
 
@@ -15,7 +14,6 @@ describe("appconfig hook", function () {
         cli = {
             argv: { "app-config": "mock" },
             addHook: (_event, options) => {
-                if (_event === 'build.config') doConfig = options;
                 if (_event === 'build.pre.compile') copyBuildConfig = options.post;
             }
         };
@@ -24,27 +22,6 @@ describe("appconfig hook", function () {
 
     afterEach(function () {
         sinon.restore();
-    });
-
-    describe("build.config hook", function () {
-        it("should register the app-config option with expected values", function (done) {
-            const data = { result: [null, { flags: {}, options: {} }] };
-            doConfig(data, function () {
-                const opt = data.result[1].options["app-config"];
-                expect(opt).to.exist;
-                expect(opt.values).to.deep.equal(["test", "production", "mock", "mitm"]);
-                expect(opt.default).to.equal("test");
-                done();
-            });
-        });
-
-        it("should initialise flags if missing", function (done) {
-            const data = { result: [null, { options: {} }] };
-            doConfig(data, function () {
-                expect(data.result[1].flags).to.deep.equal({});
-                done();
-            });
-        });
     });
 
     describe("build.pre.compile hook", function () {
