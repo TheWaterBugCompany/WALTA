@@ -3,6 +3,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     const fs = require('fs');
     const path = require('path');
+    const os = require('os');
     const Module = require('module');
     // Make Titanium-style module paths (e.g. 'util/Logger') resolvable in Node.js
     process.env.NODE_PATH = (process.env.NODE_PATH ? process.env.NODE_PATH + ':' : '') + path.resolve(__dirname, 'walta-app/app/lib');
@@ -18,10 +19,12 @@ const KobitonAPI = require("./features/support/kobiton");
     const KEYSTORE_PASSWORD = process.env.KEYSTORE_PASSWORD || 'password';
     const KEYSTORE_SUBKEY = process.env.KEYSTORE_SUBKEY || 'thecodesharman';
     const DEVELOPER = process.env.DEVELOPER || "Michael Sharman (6RRED3LUUV)";
+    const DEVELOPER_DEV = process.env.DEVELOPER_DEV || "Apple Development: Michael Sharman (ZG6HRCUR8Q)";
     const PROFILE_DIST = process.env.PROFILE_DIST;
     const PROFILE_ADHOC = process.env.PROFILE_ADHOC;
     const PROFILE_DEV = process.env.PROFILE_DEV;
-    const DEVICE_ID = process.env.DEVICE_UDID;
+    const DEVICE_ID = process.env.IOS_DEVICE_UDID;
+    const ANDROID_DEVICE_SERIAL = process.env.ANDROID_DEVICE_SERIAL;
     const SIM_UDID = process.env.SIM_UDID;
 
     const WATERBUG_APPID = {
@@ -29,14 +32,51 @@ const KobitonAPI = require("./features/support/kobiton");
       "ios": 257224
     }
 
-    const SOURCES = [  
-      './walta-app/tiapp.xml',  
+    const SOURCES = [
+      './walta-app/tiapp.xml',
       './walt-app/app/assets/**/*',
-      './walta-app/app/**/*.js', 
-      './walta-app/app/**/*.xml', 
+      './walta-app/app/**/*.js',
+      './walta-app/app/**/*.xml',
       './walta-app/app/**/*.css',
-      './walta-app/app/**/*.tss' 
-    ]; 
+      './walta-app/app/**/*.tss'
+    ];
+
+    function getLocalIP() {
+      const interfaces = os.networkInterfaces();
+      for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+          if (iface.family === 'IPv4' && !iface.internal) {
+            return iface.address;
+          }
+        }
+      }
+      return '127.0.0.1';
+    }
+
+    function createLiveViewLauncher(platform, { isSimulator = false, target, unitTest = false, buildOnly = true, noPrompt = true } = {}) {
+      const args = ["serve", "-p", platform, "-d", "./walta-app", "--deploy-type", "development", "--liveview-ip", getLocalIP()];
+      if (target) {
+        args.push("--target", target);
+      }
+      if (platform === "ios" && !isSimulator) {
+        if (DEVICE_ID) args.push("-C", DEVICE_ID);
+        args.push("--target", "device", "-R", DEVELOPER_DEV, "-P", PROFILE_DEV);
+      } else if (platform === "ios" && isSimulator) {
+        if (SIM_UDID) args.push("-C", SIM_UDID);
+      } else if (platform === "android" && isSimulator) {
+        args.push("-C", "Medium_Phone_API_36.1", "--target", "emulator");
+      } else if (platform === "android" && !isSimulator) {
+        if (ANDROID_DEVICE_SERIAL) args.push("-C", ANDROID_DEVICE_SERIAL);
+        args.push("--target", "device");
+      }
+      if (unitTest) args.push("--unit-test");
+      if (buildOnly) args.push("--build-only");
+      if (noPrompt) args.push("--no-prompt");
+      // Dynamic import for ESM module
+      return import("./build-utils/LiveViewLauncher.js").then(({ default: LiveViewLauncher }) =>
+        new LiveViewLauncher({ command: "./node_modules/.bin/titanium", args, env: { ALLOY_PATH: "./node_modules/.bin/alloy" } })
+      );
+    }
 
     const Kobiton = new KobitonAPI("thecodesharman","acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
 
@@ -196,25 +236,13 @@ const KobitonAPI = require("./features/support/kobiton");
           args.push("--output-dir builds/release");
           break;
 
-        case "preview":
-          dev();
-          if ( platform === "android" ) {
-            post_cmds.push( "cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/preview/Waterbug.apk");
-          } else {
-            post_cmds.push( "cp -r ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/preview/Waterbug.app");
-          }
-          break;
-
-        case "emulate":
-          emulator();
-          break;
 
         default:
           throw new Error(`Unknown build "${build_type}" type!`)
       }
-      if ( grunt.option('liveview') ) {
+      if ( grunt.option('liveview') && !build_type.includes('liveview') ) {
         args.push("--liveview");
-        args.push("--liveview-host 192.168.88.237")
+        args.push(`--liveview-host ${getLocalIP()}`);
       }
       
       var cmd = `./node_modules/.bin/titanium build ${args.join(" ")}`;
@@ -225,18 +253,13 @@ const KobitonAPI = require("./features/support/kobiton");
 
     function build_if_newer_options(platform,build_type) {
       const isSimBuild = build_type.includes("sim");
-      const ext = (platform === "ios"? (build_type === "preview" || build_type === "debug" || build_type === "unit-test" || isSimBuild ?"app":"ipa"):"apk");
+      const ext = (platform === "ios"? (build_type === "debug" || build_type === "unit-test" || isSimBuild ?"app":"ipa"):"apk");
       const tasks = [];
       
       if ( ! grunt.option('skip-build') ) {
         tasks.push(`exec:build:${platform}:${build_type}`);
         if ( grunt.option('kobiton') ) {
           tasks.push(`upload:${platform}:${build_type}`);
-        } else {
-          const isSimulator = grunt.option('simulator');
-          if ( build_type !== "release" && !build_type.includes("sim") && !launcherHandlesInstall(platform, isSimulator) ) {
-            tasks.push(`install:${platform}:${build_type}`);
-          }
         }
       }
       return {
@@ -287,7 +310,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           clean_dist: {
-            command: 'rm -r ./builds/{release,debug,test,unit-test,unit-test-sim,preview}/*.{apk,ipa,aab,app}',
+            command: 'rm -r ./builds/{release,debug,test,unit-test,unit-test-sim}/*.{apk,ipa,aab,app}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "false",
             options: {
@@ -312,7 +335,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
           install_ios: {
             command: function(build_type) { 
-              let extension = (build_type==="preview"?"app":"ipa");
+              let extension = "ipa";
               return `PATH=./node_modules/.bin/:$PATH ios-deploy --bundle ./builds/${build_type}/Waterbug.${extension}`;
             }, stdout: false, stderr: true
           },
@@ -338,7 +361,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },*/
 
           end_to_end_test: {
-            command: function(platform,option) {
+            command: function() {
               return `VERSION=${grunt.option('kobiton-version')}  mocha --timeout 60000 "./end-to-end-testing/*.js"`;
             },
             options: {
@@ -403,7 +426,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
           build: {
             command: build_app,
-            options: { 
+            options: {
                 env: Object.assign({}, process.env, {
                   "ALLOY_PATH": "./node_modules/.bin/alloy"
                 })
@@ -411,12 +434,13 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
-          stop_live_view: {
-            command: "./node_modules/.bin/liveview server stop",
-            exitCode: [ 0, 1 ],
-            stdout: "inherit", stderr: "inherit"
+          // Wipe Xcode's derived data for iphone so a device build doesn't
+          // pick up stale simulator objects (e.g. missing Bugfender lib dir).
+          clean_ios_device_build: {
+            command: "rm -rf ./walta-app/build/iphone/build",
+            exitCode: [0]
           },
-              
+
         },
 
         run: {
@@ -428,14 +452,6 @@ const KobitonAPI = require("./features/support/kobiton");
             },
             exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:error",
           },
-          live_view_ios: {
-            options: { wait: false, ready: "Event Server Started"  },
-            exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform ios"
-          },
-          live_view_android: {
-            options: { wait: false, ready: "Event Server Started" },
-            exec: "PATH=./node_modules/.bin/:$PATH liveview server start -p walta-app --platform android"
-          }
         },
 
         newer: {
@@ -451,14 +467,10 @@ const KobitonAPI = require("./features/support/kobiton");
           debug_android: build_if_newer_options("android", "debug"),
           debug_ios: build_if_newer_options("ios", "debug"),
 
-          emulate_android: build_if_newer_options("android", "emulate"),
-          emulate_ios: build_if_newer_options("ios", "emulate"),
 
           release_android: build_if_newer_options("android", "release"),
           release_ios: build_if_newer_options("ios", "release"),
 
-          preview_android: build_if_newer_options("android", "preview"),
-          preview_ios: build_if_newer_options("ios", "preview"),
 
           build_integration_fixtures_android: {
             src: [
@@ -491,7 +503,7 @@ const KobitonAPI = require("./features/support/kobiton");
           _launcher = new AndroidLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
-          _launcher = new IosLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: DEVICE_ID });
+          _launcher = new IosLauncher({ appId: APP_ID, udid: DEVICE_ID });
         } else if (platform === "android" && isSimulator) {
           const { default: AndroidEmulatorLauncher } = await import("./build-utils/AndroidEmulatorLauncher.js");
           _launcher = new AndroidEmulatorLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
@@ -507,9 +519,6 @@ const KobitonAPI = require("./features/support/kobiton");
       return _launcher;
     }
 
-    function launcherHandlesInstall(platform, _isSimulator) {
-      return platform === "android" || platform === "ios";
-    }
 
     grunt.registerTask("cucumber",function(){
       const done = this.async();
@@ -555,15 +564,50 @@ const KobitonAPI = require("./features/support/kobiton");
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
 
-      const iosExt = (buildType === "preview" || buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
-      const appPath = (launcherHandlesInstall(platform, isSimulator) && buildType)
-        ? `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
-        : null;
+      // When reusing an existing liveview server, skip reinstall — just launch the app
+      const skipInstall = grunt.option('liveview-reuse') && buildType === 'unit-test-liveview';
+
+      const iosExt = (buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
+      const appPath = skipInstall
+        ? null
+        : buildType
+          ? buildType === 'unit-test-liveview'
+            ? platform === 'android'
+              ? './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk'
+              : isSimulator
+                ? './walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app'
+                : './walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app'
+            : `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
+          : null;
+
+      if (skipInstall) {
+        grunt.log.writeln('Skipping install, launching existing app');
+      }
 
       getLauncher(platform, isSimulator)
         .then(launcher => launcher.launch(APP_ID, appPath))
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
+    });
+
+    grunt.registerTask("output-logs", function(platform, option) {
+      const done = this.async();
+      const isSimulator = grunt.option('simulator') || false;
+
+      getLauncher(platform, isSimulator).then(launcher => {
+        let stop;
+        const logLevel = grunt.option('log-level') || 'info';
+        stop = launcher.streamLogs(line => {
+          if (/UNIT_TESTS_(PASSED|FAILED)/.test(line)) {
+            if (option !== "preview") {
+              stop();
+              done();
+            }
+          } else {
+            grunt.log.writeln(line);
+          }
+        }, { logLevel });
+      });
     });
 
     grunt.registerTask("terminate", function(platform) {
@@ -574,25 +618,6 @@ const KobitonAPI = require("./features/support/kobiton");
         .then(done);
     });
 
-    grunt.registerTask("output-logs", function(platform, option) {
-      const done = this.async();
-      const isSimulator = grunt.option('simulator') || false;
-
-      getLauncher(platform, isSimulator).then(launcher => {
-        let stop;
-        stop = launcher.streamLogs(line => {
-          if (/>>>>> UNIT TESTS:/.test(line)) {
-            if (option !== "preview") {
-              stop();
-              done();
-            }
-          } else {
-            grunt.log.writeln(line);
-          }
-        });
-      });
-    });
-    
     grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
@@ -654,18 +679,33 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('acceptance-test', function () {
       var platform = grunt.option('platform');
+      const isSimulator = grunt.option('simulator') || false;
       grunt.task.run(`newer:test_${platform}`);
       if ( ! grunt.option('kobiton') ) {
         if ( grunt.option('liveview') ) {
-          grunt.task.run("exec:stop_live_view");
-          grunt.task.run(`run:live_view_${platform}`);
-          
+          const done = this.async();
+          const reuseServer = grunt.option('reuse-server');
+          createLiveViewLauncher(platform, { isSimulator }).then(async (liveview) => {
+            if (reuseServer) {
+              const reused = await liveview.ensureRunning();
+              if (reused) {
+                grunt.log.writeln('LiveView server already running, reusing existing session');
+              }
+            } else {
+              await liveview.stop();
+              await liveview.start();
+            }
+            grunt.task.run('stop:appium');
+            grunt.task.run(`launch:${platform}`);
+            grunt.task.run("cucumber");
+            done();
+          }).catch(err => { grunt.fail.fatal(err); done(); });
+          return;
         }
         grunt.task.run('stop:appium');
-  
+
         grunt.task.run(`launch:${platform}`);
       }
-      //grunt.task.run(`exec:acceptance_test:${platform}`);
       grunt.task.run("cucumber");
     });
 
@@ -674,28 +714,46 @@ const KobitonAPI = require("./features/support/kobiton");
       var platform = grunt.option('platform');
       var isSimulator = grunt.option('simulator');
       var preview = grunt.option('preview');
-      grunt.task.run('clean');
-      grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
 
-      if (!launcherHandlesInstall(platform, isSimulator)) {
-        grunt.task.run(`install:${platform}:unit-test`);
-      }
       if ( grunt.option('liveview') ) {
-        grunt.task.run("exec:stop_live_view");
-        grunt.task.run(`run:live_view_${platform}`);
-        preview=true;
-      } 
+        const done = this.async();
+        const reuseServer = grunt.option('reuse-server');
+        createLiveViewLauncher(platform, { isSimulator, unitTest: true }).then(async (liveview) => {
+          if (reuseServer) {
+            const reused = await liveview.ensureRunning();
+            if (reused) {
+              grunt.log.writeln('LiveView server already running, reusing existing session');
+              grunt.option('liveview-reuse', true);
+            }
+          } else {
+            await liveview.stop();
+            await liveview.start();
+          }
 
-      let mockServer = createMockCerdiServer();
-      mockServer.makeMockSample();
+          let mockServer = createMockCerdiServer();
+          mockServer.makeMockSample();
 
-      grunt.task.run(`launch:${platform}:unit-test`);
-      grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
-      mockServer.shutdown();
+          grunt.task.run(`launch:${platform}:unit-test-liveview`);
+          grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
+          grunt.task.run(`terminate:${platform}`);
+          mockServer.shutdown();
+          done();
+        }).catch(err => { grunt.fail.fatal(err); done(); });
+      } else {
+        grunt.task.run('clean');
+        grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
 
+        let mockServer = createMockCerdiServer();
+        mockServer.makeMockSample();
+
+        grunt.task.run(`launch:${platform}:unit-test`);
+        grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
+        grunt.task.run(`terminate:${platform}`);
+        mockServer.shutdown();
+      }
     } );
 
-    grunt.registerTask('unit-test-node', function( platform ) {
+    grunt.registerTask('unit-test-node', function() {
       grunt.task.run(`exec:unit_test_node`);
     } );
 
@@ -720,24 +778,6 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('clean-integration-fixtures', ['exec:clean_integration_fixtures_android', 'exec:clean_integration_fixtures_ios']);
     grunt.registerTask('clean', ['exec:clean_dist','exec:clean'] );
-    grunt.registerTask('preview', function() {
-      var platform = grunt.option('platform');
-      //grunt.task.run("run:appium");
-      // It's often possible to get away without do a rebuild and relying on the file server 
-      // to copy changes to the device. The quick option enables that.
-      
-      grunt.task.run(`newer:preview_${platform}`);
-      if ( grunt.option('liveview') ) {
-        grunt.task.run("exec:stop_live_view");
-        grunt.task.run(`run:live_view_${platform}`);
-      }
-
-      grunt.task.run(`launch:${platform}`);
-
-      // the preview option here enters an infinite loop so that the log output
-      // continues as changes are made during development
-      grunt.task.run(`output-logs:${platform}:preview`);
-    } );
 
     grunt.registerTask('release', function() {
       var platform = grunt.option('platform');
@@ -746,22 +786,32 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('debug', function() {
       var platform = grunt.option('platform');
-      var isSimulator = grunt.option('simulator');
-      grunt.task.run(`newer:debug_${platform}`);
-      if (!launcherHandlesInstall(platform, isSimulator)) {
-        grunt.task.run(`install:${platform}:debug`);
+      const isSimulator = grunt.option('simulator') || false;
+      if (grunt.option('liveview')) {
+        const done = this.async();
+        const reuseServer = grunt.option('reuse-server');
+        createLiveViewLauncher(platform, { isSimulator }).then(async (liveview) => {
+          if (reuseServer) {
+            const reused = await liveview.ensureRunning();
+            if (reused) {
+              grunt.log.writeln('LiveView server already running, reusing existing session');
+              grunt.option('liveview-reuse', true);
+            }
+          } else {
+            await liveview.stop();
+            await liveview.start();
+          }
+          grunt.task.run(`launch:${platform}:unit-test-liveview`);
+          grunt.task.run(`output-logs:${platform}:preview`);
+          done();
+        }).catch(err => { grunt.fail.fatal(err); done(); });
+      } else {
+        grunt.task.run(`newer:debug_${platform}`);
+        grunt.task.run(`launch:${platform}:debug`);
+        grunt.task.run(`output-logs:${platform}:preview`);
       }
-      grunt.task.run(`launch:${platform}:debug`);
-      grunt.task.run(`output-logs:${platform}:preview`);
     });
 
-    grunt.registerTask('emulate', function() {
-      var platform = grunt.option('platform');
-     // grunt.task.run("exec:stop_live_view");
-     // grunt.task.run(`run:live_view_${platform}`);
-      grunt.task.run(`exec:build:${platform}:emulate`); 
-      grunt.task.run(`output-logs:${platform}:preview`);
-    });
 
     grunt.registerTask('build-key-from-ink-json', function() {
       const key = KeyLoader.loadKey( './walta-app/app/assets/taxonomy/walta/', '/taxonomy/walta' );
