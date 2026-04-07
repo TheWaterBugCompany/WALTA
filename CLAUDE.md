@@ -62,6 +62,17 @@ npx appium driver install xcuitest
 npx appium driver install uiautomator2
 ```
 
+The following environment variables must be set before building (add to your shell profile):
+
+```bash
+export GOOGLE_MAPS_API_KEY="<android maps api key>"   # Required for all builds — injected into tiapp.xml from tiapp.xml.template
+export KEYSTORE="<path to keystore>"                  # Required for Android release builds
+export KEYSTORE_PASSWORD="<keystore password>"
+export KEYSTORE_SUBKEY="<keystore alias>"
+```
+
+> `tiapp.xml` is not committed — it is generated at build time by `injectSecrets()` in the Gruntfile from `tiapp.xml.template`.
+
 ### Build
 
 ```bash
