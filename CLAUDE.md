@@ -71,7 +71,7 @@ export KEYSTORE_PASSWORD="<keystore password>"
 export KEYSTORE_SUBKEY="<keystore alias>"
 ```
 
-> `tiapp.xml` is not committed — it is generated at build time by the `inject-secrets` Grunt task from `tiapp.xml.template`.
+> `tiapp.xml` is not committed — it is generated at build time by `injectSecrets()` in the Gruntfile from `tiapp.xml.template`.
 
 ### Build
 
