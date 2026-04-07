@@ -45,6 +45,9 @@ class AndroidLauncher {
 
   async launch(appId, apkPath) {
     await this.connect();
+    // Keep screen on while USB-connected to prevent lock-mode test failures
+    await this._exec(["shell", "svc", "power", "stayon", "usb"]).catch(() => {});
+    await this._exec(["shell", "input", "keyevent", "KEYCODE_WAKEUP"]).catch(() => {});
     if (apkPath) {
       await this._exec(["uninstall", appId]).catch(() => {});
       await this._exec(["install", "-r", apkPath]);
