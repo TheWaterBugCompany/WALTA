@@ -125,7 +125,11 @@ function TiSpec(runner) {
 			list(failures);
 		}
 
-		Ti.API.info(`>>>>> UNIT TESTS: ${stats.failures?"FAILED":"PASSED"}`);
+		if (stats.failures) {
+			log("UNIT_TESTS_FAILED");
+		} else {
+			log("UNIT_TESTS_PASSED");
+		}
 	} );
 }
 

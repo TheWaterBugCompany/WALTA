@@ -12,3 +12,4 @@ tmp
 .settings
 Thumbs.db
 app/lib/spec
+app/controllers/index.js
