@@ -60,7 +60,7 @@ const KobitonAPI = require("./features/support/kobiton");
       }
       if (platform === "ios" && !isSimulator) {
         if (DEVICE_ID) args.push("-C", DEVICE_ID);
-        args.push("-R", DEVELOPER_DEV, "-P", PROFILE_DEV);
+        args.push("--target", "device", "-R", DEVELOPER_DEV, "-P", PROFILE_DEV);
       } else if (platform === "ios" && isSimulator) {
         if (SIM_UDID) args.push("-C", SIM_UDID);
       } else if (platform === "android" && isSimulator) {
@@ -74,7 +74,7 @@ const KobitonAPI = require("./features/support/kobiton");
       if (noPrompt) args.push("--no-prompt");
       // Dynamic import for ESM module
       return import("./build-utils/LiveViewLauncher.js").then(({ default: LiveViewLauncher }) =>
-        new LiveViewLauncher({ command: "./node_modules/.bin/titanium", args })
+        new LiveViewLauncher({ command: "./node_modules/.bin/titanium", args, env: { ALLOY_PATH: "./node_modules/.bin/alloy" } })
       );
     }
 
