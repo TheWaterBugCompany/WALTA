@@ -4,12 +4,13 @@ const DEFAULT_PORT = 8323;
 const READY_PATTERN = /\[LiveView\] Server ready/;
 
 class LiveViewLauncher {
-  constructor({ port = DEFAULT_PORT, spawn = defaultSpawn, execFile = defaultExecFile, command = "./node_modules/.bin/titanium", args = [] } = {}) {
+  constructor({ port = DEFAULT_PORT, spawn = defaultSpawn, execFile = defaultExecFile, command = "./node_modules/.bin/titanium", args = [], env = {} } = {}) {
     this._port = port;
     this._spawn = spawn;
     this._execFile = execFile;
     this._command = command;
     this._args = args;
+    this._env = env;
   }
 
   isRunning() {
@@ -25,6 +26,7 @@ class LiveViewLauncher {
       const proc = this._spawn(this._command, this._args, {
         detached: true,
         stdio: ["ignore", "pipe", "pipe"],
+        env: { ...process.env, ...this._env },
       });
 
       proc.unref();
