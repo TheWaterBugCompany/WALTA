@@ -30,12 +30,12 @@ async function isInstalled(udid, appId) {
 }
 
 describe("IosSimulatorLauncher (integration)", function() {
-  this.timeout(120000);
+  this.timeout(30000);
 
   let launcher;
 
   before(async function() {
-    this.timeout(60000);
+    this.timeout(30000);
     launcher = new IosSimulatorLauncher({ udid: SIM_UDID });
     await launcher.connect();
     // Ensure the app is uninstalled before tests run

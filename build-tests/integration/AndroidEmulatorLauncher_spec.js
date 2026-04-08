@@ -43,12 +43,12 @@ async function installedVersionCode(serial, appId) {
 }
 
 describe("AndroidEmulatorLauncher (integration)", function() {
-  this.timeout(180000);
+  this.timeout(30000);
 
   let launcher, serial;
 
   before(async function() {
-    this.timeout(120000);
+    this.timeout(30000);
     launcher = new AndroidEmulatorLauncher({ activity: HELLO_ACTIVITY });
     await launcher.connect();
     serial = launcher._inner._serial;
