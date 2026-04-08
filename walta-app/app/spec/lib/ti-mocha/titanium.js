@@ -3,7 +3,7 @@ process.browser = true;
 
 
 
-var { Mocha } = require('spec/lib/mocha');
+var { mocha: Mocha } = require('spec/lib/mocha');
 const {
 	EVENT_FILE_PRE_REQUIRE,
 	EVENT_FILE_POST_REQUIRE,
