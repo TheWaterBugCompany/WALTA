@@ -49,7 +49,13 @@ build_simulator() {
   echo "Built: $DEST"
 }
 
-build_device 1
-build_device 2
+# Device builds require a provisioning profile — skip in CI or when --simulator-only is passed
+if [ "${1:-}" = "--simulator-only" ]; then
+  echo "Skipping device builds (--simulator-only)"
+else
+  build_device 1
+  build_device 2
+fi
+
 build_simulator 1
 build_simulator 2
