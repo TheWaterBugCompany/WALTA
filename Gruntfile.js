@@ -389,7 +389,17 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           build_test: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/*.js"`,
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_test_ios: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/IosLauncher_spec.js" "build-tests/unit/IosSimulatorLauncher_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_test_android: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/AndroidLauncher_spec.js" "build-tests/unit/AndroidEmulatorLauncher_spec.js"`,
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -761,6 +771,14 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('build-test', function() {
       grunt.task.run(`exec:build_test`);
+    } );
+
+    grunt.registerTask('build-test-ios', function() {
+      grunt.task.run(`exec:build_test_ios`);
+    } );
+
+    grunt.registerTask('build-test-android', function() {
+      grunt.task.run(`exec:build_test_android`);
     } );
 
     grunt.registerTask('build-integration-test', function() {

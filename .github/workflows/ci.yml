@@ -30,7 +30,7 @@ jobs:
       - name: Run Node.js unit tests
         run: npx grunt unit-test-node
 
-      - name: Run build unit tests
+      - name: Run cross-platform build tests
         run: npx grunt build-test
 
   # ── 2. iOS simulator unit tests ───────────────────────────────────────────
@@ -85,6 +85,9 @@ jobs:
           ")
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
           echo "Selected simulator: $UDID"
+
+      - name: Run iOS build tests
+        run: npx grunt build-test-ios
 
       - name: Run iOS simulator unit tests
         env:
@@ -164,6 +167,9 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: echo "AVD snapshot ready for caching"
+
+      - name: Run Android build tests
+        run: npx grunt build-test-android
 
       - name: Run Android emulator unit tests
         uses: reactivecircus/android-emulator-runner@v2
