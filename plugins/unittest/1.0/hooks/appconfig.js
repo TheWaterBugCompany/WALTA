@@ -22,7 +22,8 @@ exports.init = function (logger, config, cli) {
 					join(data.projectDir, "Resources", "app-config.json")
 				);
 		} else {
-			debug(`file ${buildConfigFile} NOT found`);
+			finished(new Error(`App config file not found: ${buildConfigFile}\nRun install.sh or create the file manually.`));
+			return;
 		}
 		finished();
 	}
