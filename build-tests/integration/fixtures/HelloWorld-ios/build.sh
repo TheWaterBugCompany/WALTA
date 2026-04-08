@@ -33,11 +33,17 @@ build_simulator() {
   local VERSION=$1
   local DEST="$SCRIPT_DIR/sim-v${VERSION}/HelloWorld.app"
 
+  local DEST_FLAG=()
+  if [ -n "${SIM_UDID:-}" ]; then
+    DEST_FLAG=(-destination "id=$SIM_UDID")
+  fi
+
   xcodebuild \
     -project "$SCRIPT_DIR/HelloWorld.xcodeproj" \
     -scheme HelloWorld \
     -configuration Debug \
     -sdk iphonesimulator \
+    "${DEST_FLAG[@]}" \
     -derivedDataPath "$BUILD/sim-derived-v${VERSION}" \
     CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
     CURRENT_PROJECT_VERSION="$VERSION" \
