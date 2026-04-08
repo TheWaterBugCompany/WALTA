@@ -4,8 +4,7 @@
   "description": "The Waterbug App parent project",
   "main": "index.js",
   "optionalDependencies": {
-    "carthage": "^1.0.6",
-    "ios-deploy": "^1.12.0"
+    "liveview": "github:TheCodeSharman/liveview#fix/android-emulator-unit-test-support"
   },
   "scripts": {
     "install": "sh install.sh",
@@ -55,7 +54,6 @@
     "image-size": "^2.0.2",
     "images": "^3.2.4",
     "leaflet": "^1.9.4",
-    "liveview": "github:TheCodeSharman/liveview#fix/android-emulator-unit-test-support",
     "lodash": "^4.17.23",
     "looks-same": "^10.0.1",
     "mocha": "^11.7.5",
