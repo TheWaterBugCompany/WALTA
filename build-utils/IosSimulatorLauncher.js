@@ -32,6 +32,8 @@ class IosSimulatorLauncher {
 
   async launch(appId, appPath) {
     await this.connect();
+    // Pre-grant location permission to avoid dialog blocking the app
+    await this._exec(["simctl", "privacy", this._udid, "grant", "location", appId]).catch(() => {});
     if (appPath) {
       await this._exec(["simctl", "install", this._udid, appPath]);
     }
