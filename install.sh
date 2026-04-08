@@ -11,6 +11,12 @@ sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
   walta-app/tiapp.xml.template > walta-app/tiapp.xml
 echo "tiapp.xml generated from template."
 
+# Create default index.js symlink if missing (build plugin overwrites for unit-test builds)
+if [ ! -e walta-app/app/controllers/index.js ]; then
+  ln -s index-app.js walta-app/app/controllers/index.js
+  echo "Symlinked controllers/index.js -> index-app.js"
+fi
+
 SPECS_LIB_DIR=walta-app/app/spec/lib
 LIB_DIR=walta-app/app/lib/lib
 ASSET_DIR=walta-app/app/assets
