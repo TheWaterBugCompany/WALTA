@@ -1,4 +1,16 @@
 #! /bin/sh
+set -e
+
+# Generate tiapp.xml from template
+if [ -z "$GOOGLE_MAPS_API_KEY" ]; then
+  echo "ERROR: GOOGLE_MAPS_API_KEY environment variable is not set." >&2
+  echo "See CLAUDE.md for required environment variables." >&2
+  exit 1
+fi
+sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
+  walta-app/tiapp.xml.template > walta-app/tiapp.xml
+echo "tiapp.xml generated from template."
+
 SPECS_LIB_DIR=walta-app/app/spec/lib
 LIB_DIR=walta-app/app/lib/lib
 ASSET_DIR=walta-app/app/assets

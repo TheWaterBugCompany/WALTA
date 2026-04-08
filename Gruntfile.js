@@ -32,16 +32,6 @@ const KobitonAPI = require("./features/support/kobiton");
       "ios": 257224
     }
 
-    // Generate tiapp.xml from template if the API key is available.
-    // Build tasks will fail later if tiapp.xml is missing.
-    const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-    if (GOOGLE_MAPS_API_KEY) {
-      const template = fs.readFileSync('./walta-app/tiapp.xml.template', 'utf8');
-      const output = template.replace('GOOGLE_MAPS_API_KEY_PLACEHOLDER', GOOGLE_MAPS_API_KEY);
-      fs.writeFileSync('./walta-app/tiapp.xml', output);
-      grunt.log.ok('tiapp.xml generated from template.');
-    }
-
     const SOURCES = [
       './walta-app/tiapp.xml',
       './walt-app/app/assets/**/*',
