@@ -37,3 +37,13 @@ walta-app/app/app-config*
 keystore.properties
 build-utils/*.mobileconfig
 build-tests/integration/fixtures/HelloWorld-ios/build/
+
+# Generated test libs (webpack + install.sh)
+walta-app/app/spec/lib/chai.js
+walta-app/app/spec/lib/chai.js.map
+walta-app/app/spec/lib/chai-date-string.js
+walta-app/app/spec/lib/mocha.js
+walta-app/app/spec/lib/mocha.js.map
+walta-app/app/spec/lib/mocha.js.LICENSE.txt
+walta-app/app/spec/lib/simple-mock.js
+walta-app/app/spec/lib/simple-mock.jss
