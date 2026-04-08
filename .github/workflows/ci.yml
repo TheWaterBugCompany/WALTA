@@ -54,9 +54,9 @@ jobs:
           TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
           echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
 
-      - name: Cache Titanium SDK
+      - name: Restore Titanium SDK cache
         id: ti-sdk-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
           key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
@@ -64,6 +64,13 @@ jobs:
       - name: Install Titanium SDK
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
         run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Save Titanium SDK cache
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
 
       - name: Configure Titanium
         run: npx titanium config cli.logLevel info
@@ -159,9 +166,9 @@ jobs:
           TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
           echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
 
-      - name: Cache Titanium SDK
+      - name: Restore Titanium SDK cache
         id: ti-sdk-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
           key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
@@ -169,6 +176,13 @@ jobs:
       - name: Install Titanium SDK
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
         run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Save Titanium SDK cache
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
 
       - name: Configure Titanium
         run: npx titanium config cli.logLevel info
@@ -182,9 +196,9 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Cache Android system image and AVD
+      - name: Restore Android AVD cache
         id: avd-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.android/avd/*
@@ -203,6 +217,16 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: echo "AVD snapshot ready for caching"
+
+      - name: Save Android AVD cache
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-30
+          key: avd-30-google_apis-x86
 
       - name: Run Android build tests
         run: npx grunt build-test-android
