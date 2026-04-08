@@ -17,6 +17,17 @@ if [ ! -e walta-app/app/controllers/index.js ]; then
   echo "Symlinked controllers/index.js -> index-app.js"
 fi
 
+# Generate mock app-config if missing (gitignored, needed for non-release builds)
+if [ ! -f walta-app/app/app-config.mock.json ]; then
+  cat > walta-app/app/app-config.mock.json << 'APPCONFIG'
+{
+	"cerdiServerUrl": "http://localhost:9999",
+	"cerdiApiSecret": "test-secret"
+}
+APPCONFIG
+  echo "Generated app-config.mock.json"
+fi
+
 SPECS_LIB_DIR=walta-app/app/spec/lib
 LIB_DIR=walta-app/app/lib/lib
 ASSET_DIR=walta-app/app/assets
