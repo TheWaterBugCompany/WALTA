@@ -35,8 +35,6 @@ class IosSimulatorLauncher {
     if (appPath) {
       await this._exec(["simctl", "install", this._udid, appPath]);
     }
-    // Pre-grant location permission to avoid dialog blocking the app (requires app to be installed)
-    await this._exec(["simctl", "privacy", this._udid, "grant", "location", appId]).catch(() => {});
     const stdout = await this._exec(["simctl", "launch", this._udid, appId]);
     const match = stdout.match(/:\s*(\d+)/);
     this._pid = match ? parseInt(match[1], 10) : null;
