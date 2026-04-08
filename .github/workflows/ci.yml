@@ -112,10 +112,12 @@ jobs:
         run: |
           echo "=== Simulator screenshot ==="
           xcrun simctl io ${{ steps.sim.outputs.udid }} screenshot /tmp/sim-screenshot.png || true
-          echo "=== Last 100 lines of simulator syslog (Waterbug + TitaniumKit) ==="
-          xcrun simctl spawn ${{ steps.sim.outputs.udid }} log show --last 5m --style syslog --predicate 'process == "Waterbug" OR library == "TitaniumKit"' 2>&1 | tail -100 || true
+          echo "=== Last 200 lines of ALL simulator syslog ==="
+          xcrun simctl spawn ${{ steps.sim.outputs.udid }} log show --last 5m --style syslog 2>&1 | grep -i "waterbug\|titanium\|TiAPI\|TiLog\|Unit Test\|mocha\|spec" | tail -200 || true
           echo "=== Check if Waterbug process is still running ==="
           xcrun simctl spawn ${{ steps.sim.outputs.udid }} launchctl list 2>&1 | grep -i waterbug || echo "Waterbug not in launchctl"
+          echo "=== Check for crash reports ==="
+          find ~/Library/Logs/DiagnosticReports -name "*Waterbug*" -newer /tmp/sim-screenshot.png 2>/dev/null | head -5 || echo "No crash reports found"
 
       - name: Upload simulator screenshot
         if: failure()
