@@ -222,6 +222,7 @@ const KobitonAPI = require("./features/support/kobiton");
         case "unit-test-sim":
           emulator();
           args.push("--unit-test");
+          args.push("--app-config=mock");
           post_cmds.push("mkdir -p ./builds/unit-test");
           if ( platform === "android" ) {
             args.push("--output-dir builds/unit-test");
