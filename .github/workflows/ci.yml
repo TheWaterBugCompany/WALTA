@@ -86,6 +86,12 @@ jobs:
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
           echo "Selected simulator: $UDID"
 
+      - name: Boot iOS simulator
+        run: |
+          xcrun simctl boot ${{ steps.sim.outputs.udid }} || true
+          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
+          echo "Simulator booted"
+
       - name: Run iOS build tests
         run: npx grunt build-test-ios
 
