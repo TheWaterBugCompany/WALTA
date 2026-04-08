@@ -65,6 +65,9 @@ jobs:
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
         run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
 
+      - name: Configure Titanium
+        run: npx titanium config loglevel info
+
       - name: Apply SDK patches
         run: npm run patch-sdk
 
@@ -147,6 +150,9 @@ jobs:
       - name: Install Titanium SDK
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
         run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Configure Titanium
+        run: npx titanium config loglevel info
 
       - name: Apply SDK patches
         run: npm run patch-sdk
