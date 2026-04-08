@@ -35,7 +35,7 @@ build_simulator() {
 
   local DEST_FLAG=()
   if [ -n "${SIM_UDID:-}" ]; then
-    DEST_FLAG=(-destination "id=$SIM_UDID")
+    DEST_FLAG=(-destination "id=$SIM_UDID,arch=$(uname -m)")
   fi
 
   xcodebuild \

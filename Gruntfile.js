@@ -182,10 +182,10 @@ const KobitonAPI = require("./features/support/kobiton");
       } else {
         switch(build_type) {
           case "release":
-            args.push("--app-config=production");
+            args.push("--app-config", "production");
             break;
           default:
-            args.push("--app-config=mock");
+            args.push("--app-config", "mock");
             break;
         }
       }
