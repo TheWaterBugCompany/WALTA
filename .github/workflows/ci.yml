@@ -89,6 +89,11 @@ jobs:
       - name: Run iOS build tests
         run: npx grunt build-test-ios
 
+      - name: Run iOS simulator integration tests
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt build-integration-test-ios-simulator
+
       - name: Run iOS simulator unit tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
@@ -170,6 +175,17 @@ jobs:
 
       - name: Run Android build tests
         run: npx grunt build-test-android
+
+      - name: Run Android emulator integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86
+          avd-name: Medium_Phone_API_36.1
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: npx grunt build-integration-test-android-emulator
 
       - name: Run Android emulator unit tests
         uses: reactivecircus/android-emulator-runner@v2
