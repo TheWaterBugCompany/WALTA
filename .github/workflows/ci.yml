@@ -90,9 +90,6 @@ jobs:
           xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
           echo "Simulator booted"
 
-      - name: Pre-grant location permission for Waterbug
-        run: xcrun simctl privacy ${{ steps.sim.outputs.udid }} grant location net.thewaterbug.waterbug || true
-
       - name: Run iOS build tests
         run: npx grunt build-test-ios
 
