@@ -616,12 +616,20 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask("output-logs", function(platform, option) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
+      const timeoutMs = 5 * 60 * 1000; // 5 minutes
 
       getLauncher(platform, isSimulator).then(launcher => {
         let stop;
         const logLevel = grunt.option('log-level') || 'info';
+        const timer = setTimeout(() => {
+          if (stop) stop();
+          grunt.fail.fatal(`output-logs timed out after ${timeoutMs / 1000}s — no UNIT_TESTS_PASSED/FAILED received`);
+          done();
+        }, timeoutMs);
+
         stop = launcher.streamLogs(line => {
           if (/UNIT_TESTS_(PASSED|FAILED)/.test(line)) {
+            clearTimeout(timer);
             if (option !== "preview") {
               stop();
               done();
