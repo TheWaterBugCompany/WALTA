@@ -28,23 +28,31 @@ APPCONFIG
   echo "Generated app-config.mock.json"
 fi
 
-# Install Titanium modules from npm into walta-app/modules/
-# (Titanium 13.1.1 doesn't auto-detect modules in node_modules)
-install_ti_module() {
-  local src_platform=$1
-  local dest_platform=$2
-  local src="node_modules/@titanium-sdk/ti.map/$src_platform"
-  if [ -d "$src" ]; then
-    local version=$(grep '^version:' "$src/manifest" | awk '{print $2}')
-    local dest="walta-app/modules/$dest_platform/ti.map/$version"
-    rm -rf "walta-app/modules/$dest_platform/ti.map"
-    mkdir -p "$dest"
-    cp -r "$src"/* "$dest/"
-    echo "Installed ti.map $dest_platform v$version"
+# Install ti.map from official GitHub releases (npm @titanium-sdk/ti.map is stale)
+# https://github.com/appcelerator-modules/ti.map/releases
+TIMAP_IOS_VERSION="7.3.1"
+TIMAP_ANDROID_VERSION="5.7.0"
+install_ti_map() {
+  local platform=$1     # iphone or android
+  local version=$2
+  local dest="walta-app/modules/$platform/ti.map/$version"
+  if [ -d "$dest" ]; then
+    echo "ti.map $platform v$version already installed"
+    return
   fi
+  local url="https://github.com/appcelerator-modules/ti.map/releases/download/v$version-$([ "$platform" = "iphone" ] && echo ios || echo android)/ti.map-$platform-$version.zip"
+  local tmp=$(mktemp -d)
+  echo "Downloading ti.map $platform v$version..."
+  curl -sL "$url" -o "$tmp/ti.map.zip"
+  unzip -q "$tmp/ti.map.zip" -d "$tmp"
+  rm -rf "walta-app/modules/$platform/ti.map"
+  mkdir -p "walta-app/modules/$platform/ti.map"
+  mv "$tmp/modules/$platform/ti.map/$version" "$dest"
+  rm -rf "$tmp"
+  echo "Installed ti.map $platform v$version"
 }
-install_ti_module iphone iphone
-install_ti_module android android
+install_ti_map iphone "$TIMAP_IOS_VERSION"
+install_ti_map android "$TIMAP_ANDROID_VERSION"
 
 SPECS_LIB_DIR=walta-app/app/spec/lib
 LIB_DIR=walta-app/app/lib/lib
