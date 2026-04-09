@@ -29,6 +29,8 @@
     "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
+    "@titanium-sdk/ti.map": "^7.1.1",
+    "@xmldom/xmldom": "^0.9.0",
     "alloy": "^3.0.0",
     "appium": "^3.2.2",
     "appium-uiautomator2-driver": "^7.1.0",
@@ -80,7 +82,6 @@
     "webdriverio": "^9.27.0",
     "webpack": "^5.105.4",
     "webpack-cli": "^7.0.2",
-    "@xmldom/xmldom": "^0.9.0",
     "xmlhttprequest": "^1.8.0"
   }
 }
