@@ -5,6 +5,14 @@ acknowledges those who have contributed code, content, design, testing, and
 funding. Copyright in the source code is held collectively by *The Waterbug App
 Contributors*.
 
+The project is dual-licensed:
+
+- **Source code** — [GNU AGPL-3.0](LICENSE)
+- **Media assets** (photographs, illustrations, audio, video, taxonomy
+  multimedia under `walta-app/app/assets/` and `walta-taxonomy/`) —
+  [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International
+  (CC BY-NC-ND 4.0)](LICENSE-MEDIA)
+
 ## Project team
 
 - **John Gooderham** — Design, content, problems
