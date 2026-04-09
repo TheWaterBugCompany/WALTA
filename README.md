@@ -2,6 +2,15 @@
 
 This repository contains the source code for both the iOS and the Android versions of the Waterbug App.
 
+## Licensing
+
+The Waterbug App is dual-licensed:
+
+- **Source code** is licensed under the [GNU Affero General Public License v3.0](LICENSE).
+- **Media assets** — including photographs, illustrations, audio, video, and the taxonomy multimedia under `walta-app/app/assets/` and `walta-taxonomy/` — are licensed under [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](LICENSE-MEDIA).
+
+See [CONTRIBUTORS.md](CONTRIBUTORS.md) for the people and organisations behind the project.
+
 ## Local development set up
 
 TODO: Add brew file?
