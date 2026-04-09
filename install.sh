@@ -28,31 +28,35 @@ APPCONFIG
   echo "Generated app-config.mock.json"
 fi
 
-# Install ti.map from official GitHub releases (npm @titanium-sdk/ti.map is stale)
-# https://github.com/appcelerator-modules/ti.map/releases
-TIMAP_IOS_VERSION="7.3.1"
-TIMAP_ANDROID_VERSION="5.7.0"
-install_ti_map() {
-  local platform=$1     # iphone or android
-  local version=$2
-  local dest="walta-app/modules/$platform/ti.map/$version"
+# Install Titanium native modules from official GitHub releases
+# at https://github.com/appcelerator-modules/<module>/releases.
+# Each release tag is either v<ver>-ios, v<ver>-android, or v<ver> for
+# both-platform releases (e.g. ti.playservices). The asset name is
+# <module>-<platform>-<ver>.zip.
+install_ti_module() {
+  local module=$1       # e.g. ti.map
+  local platform=$2     # iphone or android
+  local version=$3
+  local tag_suffix=$4   # "-ios", "-android", or empty
+  local dest="walta-app/modules/$platform/$module/$version"
   if [ -d "$dest" ]; then
-    echo "ti.map $platform v$version already installed"
+    echo "$module $platform v$version already installed"
     return
   fi
-  local url="https://github.com/appcelerator-modules/ti.map/releases/download/v$version-$([ "$platform" = "iphone" ] && echo ios || echo android)/ti.map-$platform-$version.zip"
+  local url="https://github.com/appcelerator-modules/$module/releases/download/v$version$tag_suffix/$module-$platform-$version.zip"
   local tmp=$(mktemp -d)
-  echo "Downloading ti.map $platform v$version..."
-  curl -sL "$url" -o "$tmp/ti.map.zip"
-  unzip -q "$tmp/ti.map.zip" -d "$tmp"
-  rm -rf "walta-app/modules/$platform/ti.map"
-  mkdir -p "walta-app/modules/$platform/ti.map"
-  mv "$tmp/modules/$platform/ti.map/$version" "$dest"
+  echo "Downloading $module $platform v$version..."
+  curl -sL "$url" -o "$tmp/module.zip"
+  unzip -q "$tmp/module.zip" -d "$tmp"
+  rm -rf "walta-app/modules/$platform/$module"
+  mkdir -p "walta-app/modules/$platform/$module"
+  mv "$tmp/modules/$platform/$module/$version" "$dest"
   rm -rf "$tmp"
-  echo "Installed ti.map $platform v$version"
+  echo "Installed $module $platform v$version"
 }
-install_ti_map iphone "$TIMAP_IOS_VERSION"
-install_ti_map android "$TIMAP_ANDROID_VERSION"
+install_ti_module ti.map iphone 7.3.1 -ios
+install_ti_module ti.map android 5.7.0 -android
+install_ti_module ti.playservices android 18.6.0 ""
 
 SPECS_LIB_DIR=walta-app/app/spec/lib
 LIB_DIR=walta-app/app/lib/lib

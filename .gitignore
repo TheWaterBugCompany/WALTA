@@ -38,9 +38,10 @@ keystore.properties
 build-utils/*.mobileconfig
 build-tests/integration/fixtures/HelloWorld-ios/build/
 
-# Titanium modules installed from npm (see install.sh)
+# Titanium native modules downloaded from GitHub releases by install.sh
 walta-app/modules/iphone/ti.map
 walta-app/modules/android/ti.map
+walta-app/modules/android/ti.playservices
 
 # Generated symlink (created by install.sh, overwritten by unittest plugin at build time)
 walta-app/app/controllers/index.js
