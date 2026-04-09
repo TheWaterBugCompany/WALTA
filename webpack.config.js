@@ -10,7 +10,6 @@ module.exports = {
     output: {
         path: path.resolve(__dirname,'walta-app/app/spec/lib'),
         library: {
-            name: '[name]',
             type: 'commonjs2'
         },
         filename: '[name].js'

@@ -1,5 +1,5 @@
 // Create a titanium compatible reporter based on spec
-var { mocha: Mocha } = require('spec/lib/mocha');
+var Mocha = require('spec/lib/mocha');
 var util = require('../util');
 /**
  * Module dependencies.
