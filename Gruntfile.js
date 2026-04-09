@@ -32,16 +32,6 @@ const KobitonAPI = require("./features/support/kobiton");
       "ios": 257224
     }
 
-    // Generate tiapp.xml from template if the API key is available.
-    // Build tasks will fail later if tiapp.xml is missing.
-    const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-    if (GOOGLE_MAPS_API_KEY) {
-      const template = fs.readFileSync('./walta-app/tiapp.xml.template', 'utf8');
-      const output = template.replace('GOOGLE_MAPS_API_KEY_PLACEHOLDER', GOOGLE_MAPS_API_KEY);
-      fs.writeFileSync('./walta-app/tiapp.xml', output);
-      grunt.log.ok('tiapp.xml generated from template.');
-    }
-
     const SOURCES = [
       './walta-app/tiapp.xml',
       './walt-app/app/assets/**/*',
@@ -192,12 +182,11 @@ const KobitonAPI = require("./features/support/kobiton");
       } else {
         switch(build_type) {
           case "release":
-            args.push("--app-config=production");
+            args.push("--app-config", "production");
             break;
-          case "test":
-            args.push("--app-config=mock");
-            break;  
-
+          default:
+            args.push("--app-config", "mock");
+            break;
         }
       }
       
@@ -389,7 +378,6 @@ const KobitonAPI = require("./features/support/kobiton");
 
           unit_test_node: {
             command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "test/*_spec.js"`,
-            exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -400,14 +388,33 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           build_test: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/*.js"`,
-            exitCode: [0,1],
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_test_ios: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/IosLauncher_spec.js" "build-tests/unit/IosSimulatorLauncher_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_test_android: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/AndroidLauncher_spec.js" "build-tests/unit/AndroidEmulatorLauncher_spec.js"`,
             stdout: "inherit", stderr: "inherit"
           },
 
           build_integration_test: {
             command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/*.js"`,
             exitCode: [0,1],
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_integration_test_ios_simulator: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/IosSimulatorLauncher_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_integration_test_android_emulator: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/AndroidEmulatorLauncher_spec.js"`,
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -428,6 +435,11 @@ const KobitonAPI = require("./features/support/kobiton");
 
           build_integration_fixtures_ios: {
             command: `bash build-tests/integration/fixtures/HelloWorld-ios/build.sh`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          build_integration_fixtures_ios_simulator: {
+            command: `bash build-tests/integration/fixtures/HelloWorld-ios/build.sh --simulator-only`,
             stdout: "inherit", stderr: "inherit"
           },
           build_key_ink: {
@@ -603,12 +615,26 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask("output-logs", function(platform, option) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
+      const idleTimeoutMs = 5 * 60 * 1000; // fail if no output for 5 minutes
 
       getLauncher(platform, isSimulator).then(launcher => {
         let stop;
         const logLevel = grunt.option('log-level') || 'info';
+        let timer;
+        const resetTimer = () => {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => {
+            if (stop) stop();
+            grunt.fail.fatal(`output-logs idle for ${idleTimeoutMs / 1000}s — no log activity, assuming hang`);
+            done();
+          }, idleTimeoutMs);
+        };
+        resetTimer();
+
         stop = launcher.streamLogs(line => {
+          resetTimer();
           if (/UNIT_TESTS_(PASSED|FAILED)/.test(line)) {
+            clearTimeout(timer);
             if (option !== "preview") {
               stop();
               done();
@@ -773,6 +799,24 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('build-test', function() {
       grunt.task.run(`exec:build_test`);
+    } );
+
+    grunt.registerTask('build-test-ios', function() {
+      grunt.task.run(`exec:build_test_ios`);
+    } );
+
+    grunt.registerTask('build-test-android', function() {
+      grunt.task.run(`exec:build_test_android`);
+    } );
+
+    grunt.registerTask('build-integration-test-ios-simulator', function() {
+      grunt.task.run('exec:build_integration_fixtures_ios_simulator');
+      grunt.task.run(`exec:build_integration_test_ios_simulator`);
+    } );
+
+    grunt.registerTask('build-integration-test-android-emulator', function() {
+      grunt.task.run('newer:build_integration_fixtures_android');
+      grunt.task.run(`exec:build_integration_test_android_emulator`);
     } );
 
     grunt.registerTask('build-integration-test', function() {

@@ -33,11 +33,17 @@ build_simulator() {
   local VERSION=$1
   local DEST="$SCRIPT_DIR/sim-v${VERSION}/HelloWorld.app"
 
+  local DEST_FLAG=()
+  if [ -n "${SIM_UDID:-}" ]; then
+    DEST_FLAG=(-destination "id=$SIM_UDID,arch=$(uname -m)")
+  fi
+
   xcodebuild \
     -project "$SCRIPT_DIR/HelloWorld.xcodeproj" \
     -scheme HelloWorld \
     -configuration Debug \
     -sdk iphonesimulator \
+    "${DEST_FLAG[@]}" \
     -derivedDataPath "$BUILD/sim-derived-v${VERSION}" \
     CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
     CURRENT_PROJECT_VERSION="$VERSION" \
@@ -49,7 +55,13 @@ build_simulator() {
   echo "Built: $DEST"
 }
 
-build_device 1
-build_device 2
+# Device builds require a provisioning profile — skip in CI or when --simulator-only is passed
+if [ "${1:-}" = "--simulator-only" ]; then
+  echo "Skipping device builds (--simulator-only)"
+else
+  build_device 1
+  build_device 2
+fi
+
 build_simulator 1
 build_simulator 2

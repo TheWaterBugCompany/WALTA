@@ -30,12 +30,12 @@ async function isInstalled(udid, appId) {
 }
 
 describe("IosSimulatorLauncher (integration)", function() {
-  this.timeout(120000);
+  this.timeout(30000);
 
   let launcher;
 
   before(async function() {
-    this.timeout(60000);
+    this.timeout(30000);
     launcher = new IosSimulatorLauncher({ udid: SIM_UDID });
     await launcher.connect();
     // Ensure the app is uninstalled before tests run
@@ -55,6 +55,7 @@ describe("IosSimulatorLauncher (integration)", function() {
 
   describe("launch() with install", function() {
     it("installs and launches the hello world app", async function() {
+      this.timeout(120000); // first install on CI can be very slow
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
       expect(await isInstalled(SIM_UDID, HELLO_APP_ID), "app should be installed").to.be.true;
       expect(launcher._pid, "PID should be stored").to.be.a("number");

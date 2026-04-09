@@ -13,7 +13,7 @@ exports.init = function (logger, config, cli) {
 		const argIdx = process.argv.indexOf('--app-config');
 		const appConfig = (argIdx !== -1 && process.argv[argIdx + 1])
 			? process.argv[argIdx + 1]
-			: (cli.argv["app-config"] || 'test');
+			: (cli.argv["app-config"] || 'mock');
 		let buildConfigFile = join(data.projectDir, "app",`app-config.${appConfig}.json`);
 		if ( fs.existsSync(buildConfigFile) ) {
 			debug(`file ${buildConfigFile} exists!`);
@@ -22,7 +22,8 @@ exports.init = function (logger, config, cli) {
 					join(data.projectDir, "Resources", "app-config.json")
 				);
 		} else {
-			debug(`file ${buildConfigFile} NOT found`);
+			finished(new Error(`App config file not found: ${buildConfigFile}\nRun install.sh or create the file manually.`));
+			return;
 		}
 		finished();
 	}

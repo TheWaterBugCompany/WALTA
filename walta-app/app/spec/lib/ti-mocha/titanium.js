@@ -3,7 +3,7 @@ process.browser = true;
 
 
 
-var { Mocha } = require('spec/lib/mocha');
+var Mocha = require('spec/lib/mocha');
 const {
 	EVENT_FILE_PRE_REQUIRE,
 	EVENT_FILE_POST_REQUIRE,
@@ -16,7 +16,6 @@ require('./reporters/ti-spec');
 Mocha.prototype.loadFiles = function(fn) {
 	var self = this;
 	var suite = this.suite;
-	
 	this.files.forEach(function(file) {
 	  suite.emit(EVENT_FILE_PRE_REQUIRE, global, file, self);
 	  suite.emit(EVENT_FILE_REQUIRE, require(file), file, self);

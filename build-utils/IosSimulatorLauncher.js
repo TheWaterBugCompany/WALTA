@@ -10,9 +10,9 @@ class IosSimulatorLauncher {
     this._pid = null;
   }
 
-  _exec(args) {
+  _exec(args, { timeout = 60000 } = {}) {
     return new Promise((resolve, reject) => {
-      this._execFile("xcrun", args, (err, stdout) => err ? reject(err) : resolve(stdout));
+      this._execFile("xcrun", args, { timeout }, (err, stdout) => err ? reject(err) : resolve(stdout));
     });
   }
 

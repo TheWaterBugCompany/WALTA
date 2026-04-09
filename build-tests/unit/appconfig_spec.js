@@ -38,13 +38,15 @@ describe("appconfig hook", function () {
             });
         });
 
-        it("should skip the copy when the config file does not exist", function (done) {
+        it("should fail with an error when the config file does not exist", function (done) {
             sinon.stub(fs, "existsSync").returns(false);
             const copyStub = sinon.stub(fs, "copyFileSync");
 
             const data = { projectDir: "/project" };
-            copyBuildConfig(data, function () {
+            copyBuildConfig(data, function (err) {
                 expect(copyStub.called).to.be.false;
+                expect(err).to.be.an.instanceOf(Error);
+                expect(err.message).to.include("app-config.mock.json");
                 done();
             });
         });

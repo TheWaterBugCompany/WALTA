@@ -9,7 +9,7 @@
 var _ = require('underscore')._;
 
 function loadXml( path ) {
-	var DOMParser = require('xmldom').DOMParser;
+	var DOMParser = require('@xmldom/xmldom').DOMParser;
 	var fs = require('fs');
 	var keyXml = fs.readFileSync( path, { encoding: 'utf8' } );
 	var doc = new DOMParser();

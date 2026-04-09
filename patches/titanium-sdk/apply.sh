@@ -15,7 +15,12 @@ for arg in "$@"; do
 done
 
 SDK_VERSION="13.1.1.GA"
-SDK_BASE="$HOME/Library/Application Support/Titanium/mobilesdk/osx/$SDK_VERSION"
+
+case "$(uname -s)" in
+  Darwin) SDK_BASE="$HOME/Library/Application Support/Titanium/mobilesdk/osx/$SDK_VERSION" ;;
+  Linux)  SDK_BASE="$HOME/.titanium/mobilesdk/linux/$SDK_VERSION" ;;
+  *)      echo "Unsupported platform: $(uname -s)"; exit 1 ;;
+esac
 
 if [ ! -d "$SDK_BASE" ]; then
   echo "Titanium SDK $SDK_VERSION not found at: $SDK_BASE"

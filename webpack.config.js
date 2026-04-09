@@ -3,14 +3,16 @@ const webpack = require('webpack');
 module.exports = {
     mode: 'development',
     devtool: 'source-map',
-    entry: './node_modules/mocha/index.js',
+    entry: {
+        mocha: './node_modules/mocha/index.js',
+        chai: './node_modules/chai/index.js',
+    },
     output: {
         path: path.resolve(__dirname,'walta-app/app/spec/lib'),
         library: {
-            name: 'Mocha',
             type: 'commonjs2'
         },
-        filename: 'mocha.js'
+        filename: '[name].js'
     },
     resolve: {
         descriptionFiles:["package.json"],

@@ -12,7 +12,7 @@ function makeSpawn() {
 const UDID = "8A665EBC-2A48-4965-A1B6-E52A289C9744";
 
 function makeExecFile(responses) {
-  return sinon.stub().callsFake((_cmd, args, callback) => {
+  return sinon.stub().callsFake((_cmd, args, _opts, callback) => {
     const key = args.join(" ");
     const response = responses[key] ??
       Object.entries(responses).find(([k]) => key.startsWith(k))?.[1];
@@ -27,7 +27,9 @@ function makeExecFile(responses) {
 describe("IosSimulatorLauncher", function() {
   describe("connect()", function() {
     it("boots the simulator via xcrun simctl boot", async function() {
-      const fakeExecFile = makeExecFile({ [`simctl boot ${UDID}`]: "" });
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+      });
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
       await launcher.connect();
       const call = fakeExecFile.firstCall;
@@ -37,17 +39,21 @@ describe("IosSimulatorLauncher", function() {
 
     it("tolerates 'already booted' error from simctl boot", async function() {
       const err = new Error("Unable to boot device in current state: Booted");
-      const fakeExecFile = makeExecFile({ [`simctl boot ${UDID}`]: err });
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: err,
+      });
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
       await launcher.connect(); // should not throw
     });
 
     it("is idempotent — only boots once on repeated connect() calls", async function() {
-      const fakeExecFile = makeExecFile({ [`simctl boot ${UDID}`]: "" });
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+      });
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
       await launcher.connect();
       await launcher.connect();
-      expect(fakeExecFile.callCount).to.equal(1);
+      expect(fakeExecFile.callCount).to.equal(1); // boot once, then idempotent
     });
 
     it("throws immediately when udid is not provided", async function() {
@@ -66,6 +72,7 @@ describe("IosSimulatorLauncher", function() {
       const APP_PATH = "./builds/unit-test/Waterbug.app";
       const fakeExecFile = makeExecFile({
         [`simctl boot ${UDID}`]: "",
+
         [`simctl install ${UDID} ${APP_PATH}`]: "",
         [`simctl launch ${UDID} net.thewaterbug.waterbug`]: "net.thewaterbug.waterbug: 1234\n",
       });
@@ -80,6 +87,7 @@ describe("IosSimulatorLauncher", function() {
     it("launches without installing when no appPath is given", async function() {
       const fakeExecFile = makeExecFile({
         [`simctl boot ${UDID}`]: "",
+
         [`simctl launch ${UDID} net.thewaterbug.waterbug`]: "net.thewaterbug.waterbug: 5678\n",
       });
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
@@ -93,6 +101,7 @@ describe("IosSimulatorLauncher", function() {
     it("terminates the app", async function() {
       const fakeExecFile = makeExecFile({
         [`simctl boot ${UDID}`]: "",
+
         [`simctl terminate ${UDID} net.thewaterbug.waterbug`]: "",
       });
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
@@ -105,6 +114,7 @@ describe("IosSimulatorLauncher", function() {
     it("does not throw when the app is not running", async function() {
       const fakeExecFile = makeExecFile({
         [`simctl boot ${UDID}`]: "",
+
         [`simctl terminate ${UDID} net.thewaterbug.waterbug`]: new Error("not running"),
       });
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });

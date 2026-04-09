@@ -1,4 +1,63 @@
 #! /bin/sh
+set -e
+
+# Generate tiapp.xml from template
+if [ -z "$GOOGLE_MAPS_API_KEY" ]; then
+  echo "ERROR: GOOGLE_MAPS_API_KEY environment variable is not set." >&2
+  echo "See CLAUDE.md for required environment variables." >&2
+  exit 1
+fi
+sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
+  walta-app/tiapp.xml.template > walta-app/tiapp.xml
+echo "tiapp.xml generated from template."
+
+# Create default index.js symlink if missing (build plugin overwrites for unit-test builds)
+if [ ! -e walta-app/app/controllers/index.js ]; then
+  ln -s index-app.js walta-app/app/controllers/index.js
+  echo "Symlinked controllers/index.js -> index-app.js"
+fi
+
+# Generate mock app-config if missing (gitignored, needed for non-release builds)
+if [ ! -f walta-app/app/app-config.mock.json ]; then
+  cat > walta-app/app/app-config.mock.json << 'APPCONFIG'
+{
+	"cerdiServerUrl": "http://localhost:9999",
+	"cerdiApiSecret": "test-secret"
+}
+APPCONFIG
+  echo "Generated app-config.mock.json"
+fi
+
+# Install Titanium native modules from official GitHub releases
+# at https://github.com/appcelerator-modules/<module>/releases.
+# Each release tag is either v<ver>-ios, v<ver>-android, or v<ver> for
+# both-platform releases (e.g. ti.playservices). The asset name is
+# <module>-<platform>-<ver>.zip.
+install_ti_module() {
+  local module=$1       # e.g. ti.map
+  local platform=$2     # iphone or android
+  local version=$3
+  local tag_suffix=$4   # "-ios", "-android", or empty
+  local dest="walta-app/modules/$platform/$module/$version"
+  if [ -d "$dest" ]; then
+    echo "$module $platform v$version already installed"
+    return
+  fi
+  local url="https://github.com/appcelerator-modules/$module/releases/download/v$version$tag_suffix/$module-$platform-$version.zip"
+  local tmp=$(mktemp -d)
+  echo "Downloading $module $platform v$version..."
+  curl -sL "$url" -o "$tmp/module.zip"
+  unzip -q "$tmp/module.zip" -d "$tmp"
+  rm -rf "walta-app/modules/$platform/$module"
+  mkdir -p "walta-app/modules/$platform/$module"
+  mv "$tmp/modules/$platform/$module/$version" "$dest"
+  rm -rf "$tmp"
+  echo "Installed $module $platform v$version"
+}
+install_ti_module ti.map iphone 7.3.1 -ios
+install_ti_module ti.map android 5.7.0 -android
+install_ti_module ti.playservices android 18.6.0 ""
+
 SPECS_LIB_DIR=walta-app/app/spec/lib
 LIB_DIR=walta-app/app/lib/lib
 ASSET_DIR=walta-app/app/assets
@@ -11,9 +70,8 @@ fi
 if [ ! -d $ASSET_DIR ]; then
   mkdir $ASSET_DIR
 fi
-cp ./node_modules/chai/chai.js $SPECS_LIB_DIR/chai.js
 cp ./node_modules/chai-date-string/lib/chai-date-string.js $SPECS_LIB_DIR/chai-date-string.js
-cp ./node_modules/simple-mock/index.js $SPECS_LIB_DIR/simple-mock.jss
+cp ./node_modules/simple-mock/index.js $SPECS_LIB_DIR/simple-mock.js
 cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
 cp -rf ./node_modules/leaflet/dist/* $ASSET_DIR/leaflet
 PATH=./node_modules/.bin:$PATH
