@@ -28,6 +28,24 @@ APPCONFIG
   echo "Generated app-config.mock.json"
 fi
 
+# Install Titanium modules from npm into walta-app/modules/
+# (Titanium 13.1.1 doesn't auto-detect modules in node_modules)
+install_ti_module() {
+  local src_platform=$1
+  local dest_platform=$2
+  local src="node_modules/@titanium-sdk/ti.map/$src_platform"
+  if [ -d "$src" ]; then
+    local version=$(grep '^version:' "$src/manifest" | awk '{print $2}')
+    local dest="walta-app/modules/$dest_platform/ti.map/$version"
+    rm -rf "walta-app/modules/$dest_platform/ti.map"
+    mkdir -p "$dest"
+    cp -r "$src"/* "$dest/"
+    echo "Installed ti.map $dest_platform v$version"
+  fi
+}
+install_ti_module iphone iphone
+install_ti_module android android
+
 SPECS_LIB_DIR=walta-app/app/spec/lib
 LIB_DIR=walta-app/app/lib/lib
 ASSET_DIR=walta-app/app/assets
