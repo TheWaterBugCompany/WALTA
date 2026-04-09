@@ -72,11 +72,8 @@ setManualTests( false );
 // iOS classifies the app as background and the watchdog kills it within 10s.
 Ti.App.idleTimerDisabled = true;
 
-console.log("[CI-DEBUG] Creating background window...");
 var backgroundWindow = Ti.UI.createWindow( { backgroundColor: "black" } );
-console.log("[CI-DEBUG] Adding open event listener...");
 backgroundWindow.addEventListener('open' , function() {
-    console.log("[CI-DEBUG] Window opened, starting tests...");
     let i = 0;
    function forever(first, fn) {
       console.log(`\n\n${++i} ===========================================\n`)
@@ -88,6 +85,4 @@ backgroundWindow.addEventListener('open' , function() {
    else
       runTests();
 } );
-console.log("[CI-DEBUG] Calling backgroundWindow.open()...");
 backgroundWindow.open();
-console.log("[CI-DEBUG] backgroundWindow.open() returned");
