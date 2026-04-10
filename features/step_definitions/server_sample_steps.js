@@ -1,4 +1,4 @@
-const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 const { assertLooksSame, diffImages } = require('../support/image-test');
 
 const { expect } = require("chai");

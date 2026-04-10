@@ -1,8 +1,7 @@
 'use strict';
-const { AfterAll, BeforeAll, Before } = require('cucumber');
+const { AfterAll, BeforeAll, Before, setDefaultTimeout } = require('@cucumber/cucumber');
 const { startAppiumClient, stopAppiumClient, getCapabilities } = require('./appium');
 const { setUpWorld } = require('./all-screens');
-const {setDefaultTimeout} = require('cucumber');
 setDefaultTimeout(2000);
 
 BeforeAll( async function() {

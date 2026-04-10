@@ -26,6 +26,7 @@
   "homepage": "https://github.com/TheWaterBugCompany/WALTA#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.0.0",
+    "@cucumber/cucumber": "^12.7.0",
     "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
@@ -42,7 +43,6 @@
     "chai-exclude": "^3.0.1",
     "circular-json": "^0.5.1",
     "coffeescript": "^2.7.0",
-    "cucumber": "^6.0.7",
     "grunt": "^1.6.1",
     "grunt-browserify": "^6.0.0",
     "grunt-exec": "^3.0.0",

@@ -542,18 +542,22 @@ const KobitonAPI = require("./features/support/kobiton");
     }
 
 
-    grunt.registerTask("cucumber",function(){
+    grunt.registerTask("cucumber", function () {
       const done = this.async();
-      const cucumber = require("cucumber");
-      
-      const cucumberCli = new cucumber.Cli({
-        argv: process.argv.slice(0,2).concat(["--tags", "@only"]),
-        cwd: process.cwd(),
-        stdout: process.stdout
+      const { spawn } = require('child_process');
+      const tags = grunt.option('cucumber-tags') || '@only';
+      const child = spawn(
+        'npx',
+        ['cucumber-js', '--tags', tags],
+        { stdio: 'inherit', env: { ...process.env, ...envVars() } }
+      );
+      child.on('exit', (code) => {
+        if (code !== 0) {
+          grunt.log.warn(`cucumber-js exited with code ${code}`);
+        }
+        done();
       });
-      cucumberCli.run()
-        .finally( done );
-    })
+    });
 
     grunt.registerTask("install", function(platform, build_type) {
       const done = this.async();

@@ -1,5 +1,5 @@
 'use strict';
-const { After, Before } = require('cucumber');
+const { After, Before } = require('@cucumber/cucumber');
 var { createMockCerdiServer } = require('./mock-cerdi-server');
 
 Before({tags: "@mockserver"},function(testCase, callback) {

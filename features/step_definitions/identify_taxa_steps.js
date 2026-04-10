@@ -1,4 +1,4 @@
-const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 const { startSurvey, addTaxonViaSpeedBug }  = require('../support/sample-driver');
 
 Given('I have found a species to identify', function(){
