@@ -162,6 +162,11 @@ jobs:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
         run: npx grunt --platform=ios --simulator unit-test
 
+      - name: Run iOS acceptance tests
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt --platform=ios --simulator acceptance-test
+
       - name: Capture simulator diagnostics on failure
         if: failure()
         run: |
@@ -310,3 +315,4 @@ jobs:
             echo "Emulator booted"
             npx grunt build-integration-test-android-emulator
             npx grunt --platform=android --simulator unit-test
+            npx grunt --platform=android --simulator acceptance-test
