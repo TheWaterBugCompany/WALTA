@@ -22,7 +22,11 @@ Before(async function () {
     this.platform = global.platform;
     setUpWorld(this);
     if (!global.first) {
-        await this.driver.reset();
+        // driver.reset() was removed in webdriverio v9 — restart the app
+        // to get a clean state between scenarios.
+        const appId = global.launcher.appId;
+        await this.driver.terminateApp(appId);
+        await this.driver.activateApp(appId);
     } else {
         global.first = false;
     }
