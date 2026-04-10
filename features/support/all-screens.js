@@ -42,19 +42,29 @@ function setUpWorld(world) {
 
 async function swipeRight( world, { start_x=30, end_x=0.95 } = {} ) {
     let size = await world.driver.getWindowSize();
-    await world.driver.touchAction([ 
-        {action: 'press', x: start_x, y: size.height/2},
-        {action: 'wait',  ms: 1000  },
-        {action: 'moveTo', x: size.width*end_x, y: size.height/2},
-        'release']);
+    await world.driver.performActions([{
+        type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
+        actions: [
+            { type: 'pointerMove', duration: 0, x: start_x, y: Math.round(size.height / 2) },
+            { type: 'pointerDown', button: 0 },
+            { type: 'pause', duration: 1000 },
+            { type: 'pointerMove', duration: 300, x: Math.round(size.width * end_x), y: Math.round(size.height / 2) },
+            { type: 'pointerUp', button: 0 },
+        ],
+    }]);
 }
 async function swipeLeft(world) {
     let size = await world.driver.getWindowSize();
-    await world.driver.touchPerform([ 
-        {action: 'press', x: size.width*0.60, y: size.height/2},
-        {action: 'wait',  ms: 1000 },
-        {action: 'moveTo', x: 4, y: size.height/2},
-        {action:'release'}]);
+    await world.driver.performActions([{
+        type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
+        actions: [
+            { type: 'pointerMove', duration: 0, x: Math.round(size.width * 0.60), y: Math.round(size.height / 2) },
+            { type: 'pointerDown', button: 0 },
+            { type: 'pause', duration: 1000 },
+            { type: 'pointerMove', duration: 300, x: 4, y: Math.round(size.height / 2) },
+            { type: 'pointerUp', button: 0 },
+        ],
+    }]);
 }
 
 exports.setUpWorld = setUpWorld;
