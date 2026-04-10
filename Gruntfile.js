@@ -222,7 +222,7 @@ const KobitonAPI = require("./features/support/kobiton");
           emulator();
           post_cmds.push("mkdir -p ./builds/test-sim");
           if ( platform === "android" ) {
-            args.push("--output-dir builds/test-sim");
+            post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/test-sim/Waterbug.apk");
           } else if ( platform === "ios" ) {
             post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/test-sim/Waterbug.app");
           }
