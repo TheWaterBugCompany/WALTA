@@ -9,7 +9,6 @@ Scenario: Add a taxon to the sample
     And I save the taxon
    Then the taxon displays "3-5" for the abundance
 
-@only
 Scenario: Identify taxa via ALT key
   Given I have found a species to identify
    When I select the ALT key function
@@ -25,6 +24,7 @@ Scenario: Taxon node is selected
   When I select the store operation
   Then selected identification is stored into the current sample tray
 
+@only
 Scenario: Backwards navigation up the tree
   Given a node from the ALT key is displayed
     And I don't think this is the correct place in the key

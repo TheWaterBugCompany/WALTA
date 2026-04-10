@@ -69,6 +69,7 @@ Then('the taxon displays {string} for the abundance', {timeout: 60000}, async fu
 });
 
 Given('a node from the ALT key is displayed', async function(){
+  await this.menu.waitFor();
   await this.menu.selectIdentify();
   await this.methodSelect.viaKey();
   await this.keySearch.choose("Animal with a shell");

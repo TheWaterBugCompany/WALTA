@@ -24,7 +24,7 @@ class BaseScreen {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, 60000, message);
+        }, { timeout: 60000, timeoutMsg: message });
     }
 
     async waitFor() {
@@ -44,10 +44,8 @@ class BaseScreen {
     }
 
     selector( sel ) {
-        let res = "~"+sel;
-        if ( this.isAndroid() )
-            res += "."; // accessibility labels get periods
-        return res;
+        // Titanium appends a period to accessibility identifiers on both platforms
+        return "~" + sel + ".";
     }
 
     async getElement( sel ) {
@@ -95,7 +93,7 @@ class BaseScreen {
 
     async clickByText( text ) {
         if ( this.isIos() ) {
-            await this.click(text);
+            await this.clickRaw(`-ios predicate string:label CONTAINS '${text}'`);
         } else {
             await this.clickRaw(`//android.widget.TextView[contains(@text,"${text}")]`);
         }
