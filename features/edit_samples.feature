@@ -14,7 +14,6 @@ Scenario: Synchronise edited samples
     When the server becomes reachable
     Then the new samples are uploaded and replace the old
 
-@only
 Scenario: Download samples from server
    Given I have existing samples stored on the server
     When the server becomes reachable

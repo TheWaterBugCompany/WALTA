@@ -1,32 +1,37 @@
 'use strict';
-const { AfterAll, BeforeAll, Before } = require('cucumber');
-const { startAppiumClient, stopAppiumClient, getCapabilities } = require('./appium');
+const { AfterAll, BeforeAll, Before, setDefaultTimeout } = require('@cucumber/cucumber');
 const { setUpWorld } = require('./all-screens');
-const {setDefaultTimeout} = require('cucumber');
-setDefaultTimeout(2000);
 
-BeforeAll( async function() {
-    /*let platform = process.env.PLATFORM;
-    let caps = await getCapabilities( platform, true )
-    if ( ! platform )
-        throw new Error("Please set the PLATFORM enviornment variable");
-    let driver =  await startAppiumClient(caps); 
-    global.driver = driver;
-    global.platform = platform;*/
+// Device interactions are slow — 60s per step is the working baseline.
+setDefaultTimeout(60 * 1000);
+
+BeforeAll(async function () {
+    const opts = JSON.parse(process.env.APPIUM_OPTIONS || '{}');
+    if (!opts.platform) {
+        throw new Error("APPIUM_OPTIONS must include 'platform'");
+    }
+    const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
+    global.launcher = new AppiumLauncher(opts.platform, opts);
+    global.driver = await global.launcher.connect();
+    global.platform = opts.platform;
     global.first = true;
 });
 
-Before( async function() {
-    this.driver = global.appium_session;
+Before(async function () {
+    this.driver = global.driver;
     this.platform = global.platform;
-    setUpWorld( this );
-    if ( !global.first ) {
-        await this.driver.reset();
+    setUpWorld(this);
+    if (!global.first) {
+        // driver.reset() was removed in webdriverio v9 — restart the app
+        // to get a clean state between scenarios.
+        const appId = global.launcher.appId;
+        await this.driver.terminateApp(appId);
+        await this.driver.activateApp(appId);
     } else {
         global.first = false;
     }
 });
 
-AfterAll( async function() {
-    //if ( global.driver ) await stopAppiumClient( global.driver );
+AfterAll(async function () {
+    if (global.launcher) await global.launcher.stop();
 });

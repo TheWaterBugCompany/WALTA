@@ -3,6 +3,9 @@ package com.example.helloworld;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -12,8 +15,26 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "App started");
-        TextView tv = new TextView(this);
-        tv.setText("Hello World");
-        setContentView(tv);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setGravity(Gravity.CENTER);
+
+        TextView label = new TextView(this);
+        label.setText("Hello World");
+        label.setContentDescription("greeting");
+        label.setGravity(Gravity.CENTER);
+        layout.addView(label);
+
+        Button button = new Button(this);
+        button.setText("Tap Me");
+        button.setContentDescription("tapButton");
+        button.setOnClickListener(v -> {
+            label.setText("Tapped!");
+            Log.i(TAG, "Button tapped");
+        });
+        layout.addView(button);
+
+        setContentView(layout);
     }
 }

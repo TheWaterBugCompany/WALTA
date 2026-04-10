@@ -218,6 +218,16 @@ const KobitonAPI = require("./features/support/kobiton");
           args.push("--unit-test");
           break;
 
+        case "test-sim":
+          emulator();
+          post_cmds.push("mkdir -p ./builds/test-sim");
+          if ( platform === "android" ) {
+            args.push("--output-dir builds/test-sim");
+          } else if ( platform === "ios" ) {
+            post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/test-sim/Waterbug.app");
+          }
+          break;
+
         case "unit-test-sim":
           emulator();
           args.push("--unit-test");
@@ -272,7 +282,8 @@ const KobitonAPI = require("./features/support/kobiton");
       return {
         "PATH": `./node_modules/.bin/:${process.env.PATH}`,
         "PLATFORM": grunt.option('platform'),
-        "HOST": (grunt.option('kobiton') ? "kobiton":null)
+        "HOST": grunt.option('kobiton') ? "kobiton" : "local",
+        "SIMULATOR": grunt.option('simulator') ? "true" : "false"
       }
     }
 
@@ -388,7 +399,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           build_test: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js"`,
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js" "build-tests/unit/CucumberLauncher_spec.js"`,
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -486,6 +497,9 @@ const KobitonAPI = require("./features/support/kobiton");
           test_android: build_if_newer_options("android", "test"),
           test_ios: build_if_newer_options("ios", "test"),
 
+          test_sim_android: build_if_newer_options("android", "test-sim"),
+          test_sim_ios: build_if_newer_options("ios", "test-sim"),
+
           debug_android: build_if_newer_options("android", "debug"),
           debug_ios: build_if_newer_options("ios", "debug"),
 
@@ -542,18 +556,22 @@ const KobitonAPI = require("./features/support/kobiton");
     }
 
 
-    grunt.registerTask("cucumber",function(){
+    grunt.registerTask("cucumber", function () {
       const done = this.async();
-      const cucumber = require("cucumber");
-      
-      const cucumberCli = new cucumber.Cli({
-        argv: process.argv.slice(0,2).concat(["--tags", "@only"]),
-        cwd: process.cwd(),
-        stdout: process.stdout
-      });
-      cucumberCli.run()
-        .finally( done );
-    })
+      const tags = grunt.option('cucumber-tags') || '@only';
+      const appiumOptions = {
+        platform: grunt.option('platform'),
+        isSimulator: !!grunt.option('simulator'),
+        host: grunt.option('kobiton') ? 'kobiton' : 'local',
+      };
+      import("./build-utils/CucumberLauncher.js")
+        .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, appiumOptions }).run())
+        .then((code) => {
+          if (code !== 0) grunt.log.warn(`cucumber-js exited with code ${code}`);
+          done();
+        })
+        .catch((err) => { grunt.fail.fatal(err); done(); });
+    });
 
     grunt.registerTask("install", function(platform, build_type) {
       const done = this.async();
@@ -582,28 +600,31 @@ const KobitonAPI = require("./features/support/kobiton");
         .then(done);
     });
 
+    function resolveAppPath(platform, buildType, isSimulator) {
+      if (!buildType) return null;
+      if (grunt.option('liveview-reuse') && buildType === 'unit-test-liveview') return null;
+
+      // LiveView builds come from the Titanium build dir, not builds/
+      if (buildType === 'unit-test-liveview') {
+        if (platform === 'android') return './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk';
+        if (isSimulator) return './walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app';
+        return './walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app';
+      }
+
+      // Everything else is packaged into builds/<buildType>/
+      const ext = platform === 'android' ? 'apk'
+        : ['debug', 'unit-test', 'test-sim'].includes(buildType) ? 'app'
+        : 'ipa';
+      return `./builds/${buildType}/Waterbug.${ext}`;
+    }
+
     grunt.registerTask("launch", function(platform, buildType) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
+      const appPath = resolveAppPath(platform, buildType, isSimulator);
 
-      // When reusing an existing liveview server, skip reinstall — just launch the app
-      const skipInstall = grunt.option('liveview-reuse') && buildType === 'unit-test-liveview';
-
-      const iosExt = (buildType === "debug" || buildType === "unit-test") ? "app" : "ipa";
-      const appPath = skipInstall
-        ? null
-        : buildType
-          ? buildType === 'unit-test-liveview'
-            ? platform === 'android'
-              ? './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk'
-              : isSimulator
-                ? './walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app'
-                : './walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app'
-            : `./builds/${buildType}/Waterbug.${platform === "android" ? "apk" : iosExt}`
-          : null;
-
-      if (skipInstall) {
-        grunt.log.writeln('Skipping install, launching existing app');
+      if (!appPath) {
+        grunt.log.writeln('No app path — launching existing installed app');
       }
 
       getLauncher(platform, isSimulator)
@@ -716,7 +737,9 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask('acceptance-test', function () {
       var platform = grunt.option('platform');
       const isSimulator = grunt.option('simulator') || false;
-      grunt.task.run(`newer:test_${platform}`);
+      const launchBuildType = isSimulator ? 'test-sim' : 'test';
+      const newerTarget = isSimulator ? `test_sim_${platform}` : `test_${platform}`;
+      grunt.task.run(`newer:${newerTarget}`);
       if ( ! grunt.option('kobiton') ) {
         if ( grunt.option('liveview') ) {
           const done = this.async();
@@ -731,16 +754,14 @@ const KobitonAPI = require("./features/support/kobiton");
               await liveview.stop();
               await liveview.start();
             }
-            grunt.task.run('stop:appium');
-            grunt.task.run(`launch:${platform}`);
+            grunt.task.run(`launch:${platform}:${launchBuildType}`);
             grunt.task.run("cucumber");
             done();
           }).catch(err => { grunt.fail.fatal(err); done(); });
           return;
         }
-        grunt.task.run('stop:appium');
 
-        grunt.task.run(`launch:${platform}`);
+        grunt.task.run(`launch:${platform}:${launchBuildType}`);
       }
       grunt.task.run("cucumber");
     });

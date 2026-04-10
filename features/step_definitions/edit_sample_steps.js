@@ -1,5 +1,5 @@
 
-const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 
 Given('I have already completed a sample', function () {
     return this.menu.login( "test", "password" )

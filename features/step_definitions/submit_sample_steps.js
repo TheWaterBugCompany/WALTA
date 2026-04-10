@@ -1,5 +1,5 @@
 'use strict';
-const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 Given('one or more samples have been stored but not uploaded', function() {
   /*  MockServer.create_sample_upload()
     set_gps_coordinates( -122.084, 37.422 )

@@ -1,5 +1,5 @@
 'use strict';
-const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 Given('I am not logged in', function() {
 /*     @current_page = page(MenuScreen).await
     if @current_page.loggedIn?

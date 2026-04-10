@@ -1,4 +1,4 @@
-const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 When('I select the random gallery', async function () {
     await this.menu.selectGallery();
   });
