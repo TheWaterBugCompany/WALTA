@@ -1,9 +1,11 @@
 import { getCapabilities, startAppium as defaultStartAppium } from "../features/support/appium.js";
 
 class AppiumLauncher {
-  constructor(platform, { isSimulator = false, startAppium = defaultStartAppium, logPollInterval = 100 } = {}) {
+  constructor(platform, { isSimulator = false, host = 'local', kobitonVersion = null, startAppium = defaultStartAppium, logPollInterval = 100 } = {}) {
     this.platform = platform;
     this.isSimulator = isSimulator;
+    this.host = host;
+    this.kobitonVersion = kobitonVersion;
     this._startAppium = startAppium;
     this._logPollInterval = logPollInterval;
     this._driver = null;
@@ -11,8 +13,8 @@ class AppiumLauncher {
 
   async connect(quick = false) {
     if (this._driver) return this._driver;
-    const caps = await getCapabilities(this.platform, quick, 'local', null, null, this.isSimulator);
-    this._driver = await this._startAppium(caps);
+    const caps = await getCapabilities(this.platform, quick, this.host, this.kobitonVersion, null, this.isSimulator);
+    this._driver = await this._startAppium(caps, this.host);
     return this._driver;
   }
 
