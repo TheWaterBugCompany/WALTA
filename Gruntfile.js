@@ -272,7 +272,8 @@ const KobitonAPI = require("./features/support/kobiton");
       return {
         "PATH": `./node_modules/.bin/:${process.env.PATH}`,
         "PLATFORM": grunt.option('platform'),
-        "HOST": (grunt.option('kobiton') ? "kobiton":null)
+        "HOST": (grunt.option('kobiton') ? "kobiton":null),
+        "SIMULATOR": grunt.option('simulator') ? "true" : "false"
       }
     }
 
