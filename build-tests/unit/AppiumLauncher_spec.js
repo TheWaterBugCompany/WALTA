@@ -5,6 +5,10 @@ import AppiumLauncher from "../../build-utils/AppiumLauncher.js";
 describe("AppiumLauncher", function() {
   let fakeDriver;
   let fakeStartAppium;
+  const originalMaxListeners = process.getMaxListeners();
+
+  before(function() { process.setMaxListeners(20); });
+  after(function() { process.setMaxListeners(originalMaxListeners); });
 
   beforeEach(function() {
     fakeDriver = {
@@ -64,6 +68,30 @@ describe("AppiumLauncher", function() {
       const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium });
       await launcher.terminate("net.thewaterbug.waterbug");
       expect(fakeDriver.terminateApp.calledWith(undefined, "net.thewaterbug.waterbug")).to.be.true;
+    });
+  });
+
+  describe("stop()", function() {
+    it("calls deleteSession on the driver", async function() {
+      fakeDriver.deleteSession = sinon.stub().resolves();
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      await launcher.connect();
+      await launcher.stop();
+      expect(fakeDriver.deleteSession.calledOnce).to.be.true;
+    });
+
+    it("allows connect() to create a new session after stop()", async function() {
+      fakeDriver.deleteSession = sinon.stub().resolves();
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      await launcher.connect();
+      await launcher.stop();
+      await launcher.connect();
+      expect(fakeStartAppium.calledTwice).to.be.true;
+    });
+
+    it("is a no-op when no session exists", async function() {
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      await launcher.stop(); // should not throw
     });
   });
 

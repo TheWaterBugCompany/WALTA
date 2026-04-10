@@ -1,6 +1,5 @@
 'use strict';
 const { AfterAll, BeforeAll, Before, setDefaultTimeout } = require('@cucumber/cucumber');
-const { startAppium, stopAppiumClient, getCapabilities } = require('./appium');
 const { setUpWorld } = require('./all-screens');
 
 // Device interactions are slow — 60s per step is the working baseline.
@@ -13,8 +12,9 @@ BeforeAll(async function () {
     }
     const isSimulator = process.env.SIMULATOR === 'true';
     const host = process.env.HOST || 'local';
-    const caps = await getCapabilities(platform, host, null, null, isSimulator);
-    global.driver = await startAppium(caps, host);
+    const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
+    global.launcher = new AppiumLauncher(platform, { isSimulator, host });
+    global.driver = await global.launcher.connect();
     global.platform = platform;
     global.first = true;
 });
@@ -31,5 +31,5 @@ Before(async function () {
 });
 
 AfterAll(async function () {
-    if (global.driver) await stopAppiumClient(global.driver);
+    if (global.launcher) await global.launcher.stop();
 });
