@@ -1,5 +1,4 @@
 const { remote } = require('webdriverio');
-const { join } = require('path');
 const http = require('http');
 const _ = require('underscore');
 const KobitonAPI = require("./kobiton");
@@ -11,48 +10,42 @@ function isAppiumRunning() {
     });
 }
 
-
-async function  getCapabilities( platform, quick, host = 'local', kobitonVersion = null, deviceResolution = null, simulator = false ) {
+// All callers run against an app that the platform-specific launcher
+// (IosSimulatorLauncher / AndroidEmulatorLauncher / IosLauncher / AndroidLauncher)
+// has already installed and launched. Appium attaches to it via bundleId/appPackage —
+// it never installs the app itself, hence noReset:true and autoLaunch:false everywhere.
+async function getCapabilities(platform, host = 'local', kobitonVersion = null, deviceResolution = null, simulator = false) {
     let caps = {};
-     if ( host === "kobiton") {
+
+    if (host === "kobiton") {
         _(caps).extend({
-            // The generated session will be visible to you only. 
             sessionName:        'Automation test session',
             sessionDescription: '',
-            //deviceOrientation:  'landscape',
             captureScreenshots: true,
             browserName:        'chrome',
             deviceGroup:        'KOBITON',
             app: `kobiton-store:v${kobitonVersion}`
-          });
+        });
 
-          if ( platform === "android" ) {
-            _(caps).extend({
-                autoGrantPermissions: true,
-                platformName:       'Android'
-            });
-          } else if ( platform === "ios" ) {
-            _(caps).extend({
-                platformName:       'iOS'
-            });
+        if (platform === "android") {
+            _(caps).extend({ autoGrantPermissions: true, platformName: 'Android' });
+        } else if (platform === "ios") {
+            _(caps).extend({ platformName: 'iOS' });
         }
 
-        if ( deviceResolution ) {
-            var kb = new KobitonAPI("thecodesharman","acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
-            var devices = await kb.getAvailableDevicesByResolution(platform,deviceResolution.width,deviceResolution.height);
-            if ( devices.length > 0 ) {
-                _(caps).extend({
-                    platformVersion: '*',
-                    deviceName: devices[0].deviceName
-                });
+        if (deviceResolution) {
+            const kb = new KobitonAPI("thecodesharman", "acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
+            const devices = await kb.getAvailableDevicesByResolution(platform, deviceResolution.width, deviceResolution.height);
+            if (devices.length > 0) {
+                _(caps).extend({ platformVersion: '*', deviceName: devices[0].deviceName });
             }
         } else {
-            _(caps).extend({
-                platformVersion: '*',
-                deviceName: '*'
-            })
+            _(caps).extend({ platformVersion: '*', deviceName: '*' });
         }
-     } else if ( platform === "ios" ) {
+        return caps;
+    }
+
+    if (platform === "ios") {
         _(caps).extend({
             "appium:automationName": "XCUITest",
             "platformName": "iOS",
@@ -61,25 +54,21 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
             "appium:useJSONSource": true,
             "appium:showXcodeLog": true,
             "appium:usePrebuiltWDA": false,
-            "appium:noReset": false,
-            "appium:processArguments": {
-                "args": [
-                    "-FIRDebugEnabled"
-                ]
-            }
+            "appium:bundleId": "net.thewaterbug.waterbug",
+            "appium:noReset": true,
+            "appium:autoLaunch": false,
+            "appium:processArguments": { "args": ["-FIRDebugEnabled"] }
         });
-        if ( simulator ) {
-            _(caps).extend({
-                "appium:deviceName": "iPhone 17 Pro",
-                "appium:udid": "8A665EBC-2A48-4965-A1B6-E52A289C9744",
-            });
-            if ( !quick ) {
-                _(caps).extend({ "appium:app": join(process.cwd(), './builds/unit-test/Waterbug.app') });
-            } else {
-                _(caps).extend({
-                    "appium:bundleId": "net.thewaterbug.waterbug"
-                });
+        if (simulator) {
+            // SIM_UDID identifies the simulator that IosSimulatorLauncher booted;
+            // appium must attach to the same instance.
+            if (!process.env.SIM_UDID) {
+                throw new Error("SIM_UDID environment variable must be set for iOS simulator runs");
             }
+            _(caps).extend({
+                "appium:deviceName": "iPhone Simulator",
+                "appium:udid": process.env.SIM_UDID,
+            });
         } else {
             _(caps).extend({
                 "appium:platformVersion": "12.4",
@@ -88,42 +77,23 @@ async function  getCapabilities( platform, quick, host = 'local', kobitonVersion
                 "appium:xcodeOrgId": "6RRED3LUUV",
                 "appium:xcodeSigningId": "Apple Development",
             });
-            if ( !quick ) {
-                _(caps).extend({ "appium:app": join(process.cwd(), './builds/test/Waterbug.ipa') });
-            } else {
-                _(caps).extend({
-                    "appium:bundleId": "net.thewaterbug.waterbug"
-                });
-            }
         }
-     } else if ( platform === "android") {
+    } else if (platform === "android") {
         _(caps).extend({
             "appium:automationName": "uiautomator2",
             "platformName": "Android",
             "appium:autoGrantPermissions": true,
             "appium:appActivity": ".WaterbugActivity",
             "appium:appWaitActivity": ".WaterbugActivity",
-            "appium:newCommandTimeout": 0
+            "appium:newCommandTimeout": 0,
+            "appium:appPackage": "net.thewaterbug.waterbug",
+            "appium:noReset": true,
+            "appium:autoLaunch": false,
+            "appium:skipDeviceInitialization": false,
+            "appium:skipServerInstallation": false,
         });
-        if ( simulator ) {
-            _(caps).extend({
-                "appium:avdName": "Medium_Phone_API_36.1",
-                "appium:noReset": true,
-                "appium:autoLaunch": false,
-                "appium:appPackage": "net.thewaterbug.waterbug",
-                "appium:skipDeviceInitialization": false,
-                "appium:skipServerInstallation": false,
-            });
-        } else {
-            if ( !quick ) {
-                _(caps).extend({ "appium:app": join(process.cwd(), './builds/test/Waterbug.apk') });
-            } else {
-                _(caps).extend({
-                    "appium:appPackage": "net.thewaterbug.waterbug",
-                    "appium:skipDeviceInitialization": false,
-                    "appium:skipServerInstallation": false,
-                });
-            }
+        if (simulator) {
+            _(caps).extend({ "appium:avdName": "Medium_Phone_API_36.1" });
         }
     }
     return caps;

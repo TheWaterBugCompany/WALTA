@@ -25,9 +25,7 @@ global.startAppium = async function() {
     const kobitonVersion = process.env.VERSION || null;
     const { default: AppiumLauncher } = await import('../build-utils/AppiumLauncher.js');
     launcher = new AppiumLauncher(platform, { isSimulator, host, kobitonVersion });
-    // quick=true: connect to the already-installed app via bundleId — the
-    // grunt end-to-end-test task installs+launches the app first.
-    world.driver = await launcher.connect(true);
+    world.driver = await launcher.connect();
     world.platform = platform;
     setUpWorld(world);
 };

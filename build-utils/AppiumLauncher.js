@@ -11,20 +11,20 @@ class AppiumLauncher {
     this._driver = null;
   }
 
-  async connect(quick = false) {
+  async connect() {
     if (this._driver) return this._driver;
-    const caps = await getCapabilities(this.platform, quick, this.host, this.kobitonVersion, null, this.isSimulator);
+    const caps = await getCapabilities(this.platform, this.host, this.kobitonVersion, null, this.isSimulator);
     this._driver = await this._startAppium(caps, this.host);
     return this._driver;
   }
 
   async launch(appId) {
-    const driver = await this.connect(!this.isSimulator);
+    const driver = await this.connect();
     await driver.activateApp(appId);
   }
 
   async terminate(appId) {
-    const driver = await this.connect(true);
+    const driver = await this.connect();
     await driver.terminateApp(
       this.platform === "android" ? appId : undefined,
       this.platform === "ios" ? appId : undefined

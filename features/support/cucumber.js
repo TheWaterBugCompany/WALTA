@@ -13,10 +13,7 @@ BeforeAll(async function () {
     }
     const isSimulator = process.env.SIMULATOR === 'true';
     const host = process.env.HOST || 'local';
-    // quick=true: connect to the already-installed app via bundleId rather
-    // than reinstalling — the grunt acceptance-test task installs+launches
-    // the app before invoking cucumber.
-    const caps = await getCapabilities(platform, true, host, null, null, isSimulator);
+    const caps = await getCapabilities(platform, host, null, null, isSimulator);
     global.driver = await startAppium(caps, host);
     global.platform = platform;
     global.first = true;
