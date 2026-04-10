@@ -272,7 +272,7 @@ const KobitonAPI = require("./features/support/kobiton");
       return {
         "PATH": `./node_modules/.bin/:${process.env.PATH}`,
         "PLATFORM": grunt.option('platform'),
-        "HOST": (grunt.option('kobiton') ? "kobiton":null),
+        "HOST": grunt.option('kobiton') ? "kobiton" : "local",
         "SIMULATOR": grunt.option('simulator') ? "true" : "false"
       }
     }
@@ -546,8 +546,13 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask("cucumber", function () {
       const done = this.async();
       const tags = grunt.option('cucumber-tags') || '@only';
+      const appiumOptions = {
+        platform: grunt.option('platform'),
+        isSimulator: !!grunt.option('simulator'),
+        host: grunt.option('kobiton') ? 'kobiton' : 'local',
+      };
       import("./build-utils/CucumberLauncher.js")
-        .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, env: envVars() }).run())
+        .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, appiumOptions }).run())
         .then((code) => {
           if (code !== 0) grunt.log.warn(`cucumber-js exited with code ${code}`);
           done();

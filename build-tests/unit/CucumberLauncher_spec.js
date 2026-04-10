@@ -41,12 +41,24 @@ describe("CucumberLauncher", function() {
       expect(opts.stdio).to.equal("inherit");
     });
 
-    it("merges supplied env vars on top of process.env", function() {
-      const launcher = new CucumberLauncher({ spawn: fakeSpawn, env: { FOO: "bar" } });
+    it("serializes appiumOptions as APPIUM_OPTIONS env var", function() {
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn,
+        appiumOptions: { platform: "ios", isSimulator: true, host: "local" },
+      });
       launcher.run();
       const opts = fakeSpawn.firstCall.args[2];
-      expect(opts.env.FOO).to.equal("bar");
-      expect(opts.env.PATH).to.equal(process.env.PATH);
+      const parsed = JSON.parse(opts.env.APPIUM_OPTIONS);
+      expect(parsed.platform).to.equal("ios");
+      expect(parsed.isSimulator).to.be.true;
+      expect(parsed.host).to.equal("local");
+    });
+
+    it("prepends node_modules/.bin to PATH", function() {
+      const launcher = new CucumberLauncher({ spawn: fakeSpawn });
+      launcher.run();
+      const opts = fakeSpawn.firstCall.args[2];
+      expect(opts.env.PATH).to.match(/^\.\/node_modules\/.bin\//);
     });
 
     it("resolves with exit code 0 when cucumber-js exits successfully", async function() {

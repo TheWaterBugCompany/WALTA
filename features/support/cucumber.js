@@ -6,16 +6,14 @@ const { setUpWorld } = require('./all-screens');
 setDefaultTimeout(60 * 1000);
 
 BeforeAll(async function () {
-    const platform = process.env.PLATFORM;
-    if (!platform) {
-        throw new Error("Please set the PLATFORM environment variable");
+    const opts = JSON.parse(process.env.APPIUM_OPTIONS || '{}');
+    if (!opts.platform) {
+        throw new Error("APPIUM_OPTIONS must include 'platform'");
     }
-    const isSimulator = process.env.SIMULATOR === 'true';
-    const host = process.env.HOST || 'local';
     const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
-    global.launcher = new AppiumLauncher(platform, { isSimulator, host });
+    global.launcher = new AppiumLauncher(opts.platform, opts);
     global.driver = await global.launcher.connect();
-    global.platform = platform;
+    global.platform = opts.platform;
     global.first = true;
 });
 
