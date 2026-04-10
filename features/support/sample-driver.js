@@ -1,6 +1,7 @@
 
- 
-   
+
+
+
 async function startSurvey(world) {
     await world.menu.waitFor();
     await world.menu.selectWaterbugSurvey();
@@ -18,7 +19,6 @@ async function addTaxonViaSpeedBug( world, refId ) {
     await world.methodSelect.viaSpeedbug();
     await world.speedbug.chooseSpeedbug(refId);
     await world.taxon.selectAddToSample();
-
 }
 
 async function submitSample(world) {

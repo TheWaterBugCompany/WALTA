@@ -100,7 +100,7 @@ function surveyTypeChanged() {
       
       sample.set( { "surveyType": surveyType } );
       sample.save();
-      $.surveyLevelSelect.segCtrlButtonContainer.accessibilityLabel=Sample.surveyTypeToString(surveyType);
+      // Don't set accessibilityLabel on the container — see comment at bottom of file.
     } else {
       setTabError($.surveyLevelError);
       surveyTypeValid = false;
@@ -115,7 +115,7 @@ function waterbodyTypeChanged() {
       waterbodyTypeValid = true;
       sample.set( { "waterbodyType": waterbodyType } );
       sample.save();
-      $.waterbodyTypeSelect.segCtrlButtonContainer.accessibilityLabel=Sample.waterbodyTypeToString(waterbodyType);
+      // Don't set accessibilityLabel on the container — see comment at bottom of file.
     } else {
       setTabError( $.waterbodyTypeError );
       waterbodyTypeValid = false;
@@ -170,8 +170,9 @@ $.photoSelect.on("photoTaken", function(path) {
 $.TopLevelWindow.title = "Site Details";
 $.surveyLevelSelect.init(["Mayfly","Quick","Detailed"], checkValidity);
 $.waterbodyTypeSelect.init(["River","Wetland","Lake/Dam"], checkValidity);
-$.surveyLevelSelect.segCtrlWrapper.accessibilityLabel="Survey Level";
-$.waterbodyTypeSelect.segCtrlWrapper.accessibilityLabel="Waterbody Type";
+// Don't set accessibilityLabel on the wrapper — it makes iOS treat the
+// container as a single accessible element, hiding the individual buttons.
+// The buttons themselves have accessibilityLabel set by the widget.
 
 loadAttributes();
 

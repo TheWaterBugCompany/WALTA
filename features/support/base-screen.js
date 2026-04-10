@@ -89,7 +89,18 @@ class BaseScreen {
         }
         await el.setValue(text);
         if ( this.isIos() ) {
-            await this.driver.touchAction({ action: "tap", x: 0, y: 0  });
+            // Titanium text fields don't expose a standard keyboard dismiss
+            // button, so hideKeyboard() fails. Tap above the keyboard to
+            // blur the text field and dismiss it.
+            var size = await this.driver.getWindowSize();
+            await this.driver.performActions([{
+                type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
+                actions: [
+                    { type: 'pointerMove', duration: 0, x: Math.round(size.width / 2), y: 20 },
+                    { type: 'pointerDown', button: 0 },
+                    { type: 'pointerUp', button: 0 },
+                ],
+            }]);
         } else {
             await this.driver.hideKeyboard();
         }
@@ -105,6 +116,7 @@ class BaseScreen {
 
     async clickRaw( sel ) {
         var el = await this.driver.$( sel );
+        await el.waitForDisplayed({ timeout: 10000 });
         await el.click();
     }
 

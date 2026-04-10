@@ -61,27 +61,27 @@ class SiteDetailsScreen extends BaseScreen {
     }
 
     async selectMayfly() {
-        await this.clickByText("Mayfly");
+        await this.click("Mayfly");
     }
 
     async selectQuick() {
-        await this.clickByText("Quick");
+        await this.click("Quick");
     }
 
     async selectDetailed() {
-        await this.clickByText("Detailed");
+        await this.click("Detailed");
     }
 
     async selectRiver() {
-        await this.clickByText("River");
+        await this.click("River");
     }
 
     async selectWetland() {
-        await this.clickByText("Wetland");
+        await this.click("Wetland");
     }
 
     async selectLake() {
-        await this.clickByText("Lake/Dam");
+        await this.click("Lake/Dam");
     }
 
     async setWaterbodyName( text ) {

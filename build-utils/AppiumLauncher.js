@@ -69,7 +69,7 @@ class AppiumLauncher {
       Object.assign(caps, {
         "appium:automationName": "XCUITest",
         "platformName": "iOS",
-        "appium:autoAcceptAlerts": false,
+        "appium:autoAcceptAlerts": true,
         "appium:waitForQuiescence": false,
         "appium:useJSONSource": true,
         "appium:showXcodeLog": true,

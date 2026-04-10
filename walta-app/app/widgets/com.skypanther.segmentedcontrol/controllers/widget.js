@@ -88,6 +88,7 @@ exports.init = function (labels, cb, opts) {
 		}
 		var btn = Widget.createController('button', { // jshint ignore:line
 			text: labels[i],
+			accessibilityLabel: labels[i],
 			width: btnWidth,
 			height: Ti.UI.FILL,
 			left: 0,
