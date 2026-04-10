@@ -388,7 +388,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           build_test: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js"`,
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js" "build-tests/unit/CucumberLauncher_spec.js"`,
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -544,19 +544,14 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask("cucumber", function () {
       const done = this.async();
-      const { spawn } = require('child_process');
       const tags = grunt.option('cucumber-tags') || '@only';
-      const child = spawn(
-        'npx',
-        ['cucumber-js', '--tags', tags],
-        { stdio: 'inherit', env: { ...process.env, ...envVars() } }
-      );
-      child.on('exit', (code) => {
-        if (code !== 0) {
-          grunt.log.warn(`cucumber-js exited with code ${code}`);
-        }
-        done();
-      });
+      import("./build-utils/CucumberLauncher.js")
+        .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, env: envVars() }).run())
+        .then((code) => {
+          if (code !== 0) grunt.log.warn(`cucumber-js exited with code ${code}`);
+          done();
+        })
+        .catch((err) => { grunt.fail.fatal(err); done(); });
     });
 
     grunt.registerTask("install", function(platform, build_type) {
