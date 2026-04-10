@@ -1,5 +1,6 @@
 import sinon from "sinon";
 import { expect } from "chai";
+import { EventEmitter } from "events";
 import AppiumLauncher from "../../build-utils/AppiumLauncher.js";
 
 describe("AppiumLauncher", function() {
@@ -20,6 +21,39 @@ describe("AppiumLauncher", function() {
   });
 
   describe("connect()", function() {
+    it("starts the appium server if it is not already running", async function() {
+      const fakeChild = Object.assign(new EventEmitter(), { unref: sinon.stub() });
+      const fakeSpawn = sinon.stub().returns(fakeChild);
+      const fakeIsRunning = sinon.stub();
+      // First call: not running, second call (after spawn): running
+      fakeIsRunning.onFirstCall().resolves(false);
+      fakeIsRunning.onSecondCall().resolves(true);
+
+      const launcher = new AppiumLauncher("android", {
+        startAppium: fakeStartAppium,
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      await launcher.connect();
+      expect(fakeSpawn.calledOnce).to.be.true;
+      const [cmd, args] = fakeSpawn.firstCall.args;
+      expect(cmd).to.equal("npx");
+      expect(args).to.include("appium");
+    });
+
+    it("does not start the server if it is already running", async function() {
+      const fakeSpawn = sinon.stub();
+      const fakeIsRunning = sinon.stub().resolves(true);
+
+      const launcher = new AppiumLauncher("android", {
+        startAppium: fakeStartAppium,
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      await launcher.connect();
+      expect(fakeSpawn.called).to.be.false;
+    });
+
     it("starts an Appium session with Android capabilities", async function() {
       const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
       await launcher.connect();
@@ -92,6 +126,27 @@ describe("AppiumLauncher", function() {
     it("is a no-op when no session exists", async function() {
       const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
       await launcher.stop(); // should not throw
+    });
+
+    it("kills the appium server if we started it", async function() {
+      fakeDriver.deleteSession = sinon.stub().resolves();
+      const fakeChild = Object.assign(new EventEmitter(), { unref: sinon.stub(), pid: 12345 });
+      const fakeSpawn = sinon.stub().returns(fakeChild);
+      const fakeIsRunning = sinon.stub();
+      fakeIsRunning.onFirstCall().resolves(false);
+      fakeIsRunning.onSecondCall().resolves(true);
+      const fakeKill = sinon.stub();
+
+      const launcher = new AppiumLauncher("android", {
+        startAppium: fakeStartAppium,
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+        killProcess: fakeKill,
+      });
+      await launcher.connect();
+      await launcher.stop();
+      expect(fakeKill.calledOnce).to.be.true;
+      expect(fakeKill.firstCall.args[0]).to.equal(12345);
     });
   });
 

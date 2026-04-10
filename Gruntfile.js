@@ -731,14 +731,14 @@ const KobitonAPI = require("./features/support/kobiton");
               await liveview.stop();
               await liveview.start();
             }
-            grunt.task.run('stop:appium');
+            // appium server lifecycle is managed by AppiumLauncher.connect()
             grunt.task.run(`launch:${platform}`);
             grunt.task.run("cucumber");
             done();
           }).catch(err => { grunt.fail.fatal(err); done(); });
           return;
         }
-        grunt.task.run('stop:appium');
+        // appium server lifecycle is managed by AppiumLauncher.connect()
 
         grunt.task.run(`launch:${platform}`);
       }

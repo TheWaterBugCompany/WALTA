@@ -9,6 +9,7 @@ Scenario: Add a taxon to the sample
     And I save the taxon
    Then the taxon displays "3-5" for the abundance
 
+@only
 Scenario: Identify taxa via ALT key
   Given I have found a species to identify
    When I select the ALT key function

@@ -1,26 +1,45 @@
 import { remote as defaultRemote } from "webdriverio";
+import { spawn as defaultSpawn } from "child_process";
 import http from "http";
 import _ from "underscore";
 
-function isAppiumRunning() {
+function defaultIsAppiumRunning() {
   return new Promise((resolve) => {
     http.get('http://localhost:4723/status', () => resolve(true))
       .on('error', () => resolve(false));
   });
 }
 
+function defaultKillProcess(pid) {
+  // Negative pid kills the entire process group (needed because _ensureServer
+  // spawns appium with detached:true, giving it its own process group).
+  try { process.kill(-pid, 'SIGTERM'); } catch (e) { /* already gone */ }
+}
+
 class AppiumLauncher {
-  constructor(platform, { isSimulator = false, host = 'local', kobitonVersion = null, startAppium = null, remote = defaultRemote, logPollInterval = 100 } = {}) {
+  constructor(platform, {
+    isSimulator = false, host = 'local', kobitonVersion = null,
+    appId = 'net.thewaterbug.waterbug', appActivity = '.WaterbugActivity',
+    startAppium = null, remote = defaultRemote, logPollInterval = 100,
+    spawn = defaultSpawn, isAppiumRunning = defaultIsAppiumRunning,
+    killProcess = defaultKillProcess,
+  } = {}) {
     this.platform = platform;
     this.isSimulator = isSimulator;
     this.host = host;
     this.kobitonVersion = kobitonVersion;
+    this.appId = appId;
+    this.appActivity = appActivity;
     this._remote = remote;
     // Legacy injection point — if startAppium is provided, use it instead
     // of the built-in _createSession. Allows tests to inject a fake.
     this._startAppium = startAppium;
     this._logPollInterval = logPollInterval;
+    this._spawn = spawn;
+    this._isAppiumRunning = isAppiumRunning;
+    this._killProcess = killProcess;
     this._driver = null;
+    this._serverPid = null;
   }
 
   _buildCapabilities() {
@@ -55,7 +74,7 @@ class AppiumLauncher {
         "appium:useJSONSource": true,
         "appium:showXcodeLog": true,
         "appium:usePrebuiltWDA": false,
-        "appium:bundleId": "net.thewaterbug.waterbug",
+        "appium:bundleId": this.appId,
         "appium:noReset": true,
         "appium:autoLaunch": false,
         "appium:processArguments": { "args": ["-FIRDebugEnabled"] }
@@ -82,10 +101,10 @@ class AppiumLauncher {
         "appium:automationName": "uiautomator2",
         "platformName": "Android",
         "appium:autoGrantPermissions": true,
-        "appium:appActivity": ".WaterbugActivity",
-        "appium:appWaitActivity": ".WaterbugActivity",
+        "appium:appActivity": this.appActivity,
+        "appium:appWaitActivity": this.appActivity,
         "appium:newCommandTimeout": 0,
-        "appium:appPackage": "net.thewaterbug.waterbug",
+        "appium:appPackage": this.appId,
         "appium:noReset": true,
         "appium:autoLaunch": false,
         "appium:skipDeviceInitialization": false,
@@ -118,8 +137,29 @@ class AppiumLauncher {
     });
   }
 
+  async _ensureServer() {
+    if (this.host !== 'local') return;
+    const running = await this._isAppiumRunning();
+    if (running) return;
+
+    const child = this._spawn('npx', ['appium'], {
+      stdio: 'ignore',
+      detached: true,
+    });
+    child.unref();
+    this._serverPid = child.pid;
+
+    // Poll until the server responds (up to 30s)
+    for (let i = 0; i < 60; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      if (await this._isAppiumRunning()) return;
+    }
+    throw new Error('Appium server failed to start within 30s');
+  }
+
   async connect() {
     if (this._driver) return this._driver;
+    await this._ensureServer();
     const caps = this._buildCapabilities();
     this._driver = this._startAppium
       ? await this._startAppium(caps, this.host)
@@ -131,9 +171,14 @@ class AppiumLauncher {
   }
 
   async stop() {
-    if (!this._driver) return;
-    await this._driver.deleteSession();
-    this._driver = null;
+    if (this._driver) {
+      await this._driver.deleteSession();
+      this._driver = null;
+    }
+    if (this._serverPid) {
+      this._killProcess(this._serverPid);
+      this._serverPid = null;
+    }
   }
 
   async launch(appId) {
@@ -167,5 +212,5 @@ class AppiumLauncher {
   }
 }
 
-export { isAppiumRunning };
+export { defaultIsAppiumRunning as isAppiumRunning };
 export default AppiumLauncher;
