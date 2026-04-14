@@ -404,11 +404,19 @@ jobs:
           # times out. Boot via Simulator.app directly so the UI is up front.
           open -a Simulator --args -CurrentDeviceUDID ${{ steps.sim.outputs.udid }}
           xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
-          echo "=== Simulator.app process check ==="
-          pgrep -lf 'Simulator.app' || echo "WARN: Simulator.app NOT in process list"
-          echo "=== Booted devices ==="
-          xcrun simctl list devices booted
           echo "Simulator boot step complete"
+
+      # WebDriverAgent is built from source the first time XCUITest creates a
+      # session (~2-3 min). Cache the DerivedData so subsequent runs skip the
+      # full build. Keyed on package-lock.json so the cache invalidates when
+      # appium-xcuitest-driver (and therefore WDA's source) changes.
+      - name: Cache WebDriverAgent DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: wda-derived-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            wda-derived-${{ runner.os }}-
 
       - name: Acceptance preflight (Appium launcher integration test)
         env:
