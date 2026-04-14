@@ -37,10 +37,13 @@ class IosSimulatorLauncher {
 
   async launch(appId, appPath) {
     await this.connect();
+    // Generous timeouts: on a cold CI runner the first install/launch can take
+    // 60-90s while CoreSimulator's lazy services (installd, FrontBoard, etc.)
+    // warm up. The default 60s _exec timeout was killing simctl mid-launch.
     if (appPath) {
-      await this._exec(["simctl", "install", this._udid, appPath]);
+      await this._exec(["simctl", "install", this._udid, appPath], { timeout: 180000 });
     }
-    const stdout = await this._exec(["simctl", "launch", this._udid, appId]);
+    const stdout = await this._exec(["simctl", "launch", this._udid, appId], { timeout: 180000 });
     const match = stdout.match(/:\s*(\d+)/);
     this._pid = match ? parseInt(match[1], 10) : null;
   }
