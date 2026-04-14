@@ -142,8 +142,9 @@ class AppiumLauncher {
     const running = await this._isAppiumRunning();
     if (running) return;
 
+    // DIAGNOSTIC: pipe appium stdio so its logs surface in CI output.
     const child = this._spawn('npx', ['appium'], {
-      stdio: 'ignore',
+      stdio: 'inherit',
       detached: true,
     });
     child.unref();

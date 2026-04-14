@@ -404,7 +404,11 @@ jobs:
           # times out. Boot via Simulator.app directly so the UI is up front.
           open -a Simulator --args -CurrentDeviceUDID ${{ steps.sim.outputs.udid }}
           xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
-          echo "Simulator booted with UI"
+          echo "=== Simulator.app process check ==="
+          pgrep -lf 'Simulator.app' || echo "WARN: Simulator.app NOT in process list"
+          echo "=== Booted devices ==="
+          xcrun simctl list devices booted
+          echo "Simulator boot step complete"
 
       - name: Acceptance preflight (Appium launcher integration test)
         env:
