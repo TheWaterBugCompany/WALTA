@@ -437,6 +437,16 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
+          acceptance_preflight_test_ios_simulator: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 120000 --exit "build-tests/integration/AppiumLauncherIos_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          acceptance_preflight_test_android_emulator: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 120000 --exit "build-tests/integration/AppiumLauncherAndroid_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
           clean_integration_fixtures_android: {
             command: `rm -rf build-tests/integration/fixtures/HelloWorld-android/build build-tests/integration/fixtures/HelloWorld-android/*.apk`,
             stdout: "inherit", stderr: "inherit"
@@ -861,6 +871,16 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask('build-integration-test-android-emulator', function() {
       grunt.task.run('newer:build_integration_fixtures_android');
       grunt.task.run(`exec:build_integration_test_android_emulator`);
+    } );
+
+    grunt.registerTask('acceptance-preflight-test-ios-simulator', function() {
+      grunt.task.run('exec:build_integration_fixtures_ios_simulator');
+      grunt.task.run('exec:acceptance_preflight_test_ios_simulator');
+    } );
+
+    grunt.registerTask('acceptance-preflight-test-android-emulator', function() {
+      grunt.task.run('newer:build_integration_fixtures_android');
+      grunt.task.run('exec:acceptance_preflight_test_android_emulator');
     } );
 
     grunt.registerTask('build-integration-test', function() {

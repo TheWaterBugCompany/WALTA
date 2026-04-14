@@ -403,6 +403,11 @@ jobs:
           xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
           echo "Simulator booted"
 
+      - name: Acceptance preflight (Appium launcher integration test)
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt acceptance-preflight-test-ios-simulator
+
       - name: Run iOS acceptance tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
@@ -541,4 +546,5 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             echo "Emulator booted"
+            npx grunt acceptance-preflight-test-android-emulator
             npx grunt --platform=android --simulator acceptance-test
