@@ -303,7 +303,6 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             echo "Emulator booted"
-            npx grunt build-integration-test-android-emulator
             npx grunt --platform=android --simulator unit-test
 
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
