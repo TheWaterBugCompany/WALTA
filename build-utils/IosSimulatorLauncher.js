@@ -12,7 +12,14 @@ class IosSimulatorLauncher {
 
   _exec(args, { timeout = 60000 } = {}) {
     return new Promise((resolve, reject) => {
-      this._execFile("xcrun", args, { timeout }, (err, stdout) => err ? reject(err) : resolve(stdout));
+      this._execFile("xcrun", args, { timeout }, (err, stdout, stderr) => {
+        if (err) {
+          if (stderr) err.message += `\nstderr: ${stderr.trim()}`;
+          reject(err);
+        } else {
+          resolve(stdout);
+        }
+      });
     });
   }
 
