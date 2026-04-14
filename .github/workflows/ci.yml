@@ -397,11 +397,14 @@ jobs:
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
           echo "Selected: $NAME ($UDID)"
 
-      - name: Boot iOS simulator
+      - name: Boot iOS simulator with Simulator.app UI
         run: |
-          xcrun simctl boot ${{ steps.sim.outputs.udid }} || true
+          # XCUITest driver refuses to drive a simulator booted headlessly
+          # via simctl — it tries to relaunch with the GUI visible and then
+          # times out. Boot via Simulator.app directly so the UI is up front.
+          open -a Simulator --args -CurrentDeviceUDID ${{ steps.sim.outputs.udid }}
           xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
-          echo "Simulator booted"
+          echo "Simulator booted with UI"
 
       - name: Acceptance preflight (Appium launcher integration test)
         env:
