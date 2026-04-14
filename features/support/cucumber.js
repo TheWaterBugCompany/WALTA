@@ -5,7 +5,9 @@ const { setUpWorld } = require('./all-screens');
 // Device interactions are slow — 60s per step is the working baseline.
 setDefaultTimeout(60 * 1000);
 
-BeforeAll(async function () {
+// AppiumLauncher.connect() can take several minutes on iOS when WebDriverAgent
+// is built from source on a cold runner — give the hook generous headroom.
+BeforeAll({ timeout: 600 * 1000 }, async function () {
     const opts = JSON.parse(process.env.APPIUM_OPTIONS || '{}');
     if (!opts.platform) {
         throw new Error("APPIUM_OPTIONS must include 'platform'");

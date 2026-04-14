@@ -69,11 +69,15 @@ class AppiumLauncher {
       Object.assign(caps, {
         "appium:automationName": "XCUITest",
         "platformName": "iOS",
-        "appium:autoAcceptAlerts": false,
+        "appium:autoAcceptAlerts": true,
         "appium:waitForQuiescence": false,
         "appium:useJSONSource": true,
         "appium:showXcodeLog": true,
         "appium:usePrebuiltWDA": false,
+        // WDA is built from source on the first run (~2-3 min on CI),
+        // so override the 60s default WDA launch/connection timeouts.
+        "appium:wdaLaunchTimeout": 300000,
+        "appium:wdaConnectionTimeout": 300000,
         "appium:bundleId": this.appId,
         "appium:noReset": true,
         "appium:autoLaunch": false,
@@ -133,6 +137,11 @@ class AppiumLauncher {
       logLevel: 'error',
       hostname: 'localhost',
       port: 4723,
+      // Allow plenty of time for cold WDA builds on CI runners — the
+      // default connectionRetryTimeout of 120s expires while xcodebuild
+      // is still compiling WebDriverAgent on the first run.
+      connectionRetryTimeout: 600000,
+      connectionRetryCount: 1,
       capabilities: caps
     });
   }
@@ -142,8 +151,9 @@ class AppiumLauncher {
     const running = await this._isAppiumRunning();
     if (running) return;
 
+    // DIAGNOSTIC: pipe appium stdio so its logs surface in CI output.
     const child = this._spawn('npx', ['appium'], {
-      stdio: 'ignore',
+      stdio: 'inherit',
       detached: true,
     });
     child.unref();

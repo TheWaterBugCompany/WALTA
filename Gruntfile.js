@@ -34,7 +34,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     const SOURCES = [
       './walta-app/tiapp.xml',
-      './walt-app/app/assets/**/*',
+      './walta-app/app/assets/**/*',
       './walta-app/app/**/*.js',
       './walta-app/app/**/*.xml',
       './walta-app/app/**/*.css',
@@ -222,7 +222,7 @@ const KobitonAPI = require("./features/support/kobiton");
           emulator();
           post_cmds.push("mkdir -p ./builds/test-sim");
           if ( platform === "android" ) {
-            args.push("--output-dir builds/test-sim");
+            post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/test-sim/Waterbug.apk");
           } else if ( platform === "ios" ) {
             post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/test-sim/Waterbug.app");
           }
@@ -262,10 +262,18 @@ const KobitonAPI = require("./features/support/kobiton");
 
     function build_if_newer_options(platform,build_type) {
       const isSimBuild = build_type.includes("sim");
-      const ext = (platform === "ios"? (build_type === "debug" || build_type === "unit-test" || isSimBuild ?"app":"ipa"):"apk");
+      const ext = platform === "android" ? "apk"
+        : (build_type === "debug" || build_type === "unit-test" || isSimBuild) ? "app" : "ipa";
+      // For .app bundles (directories), use Info.plist as the sentinel file
+      // for mtime comparison — grunt-newer-explicit can't stat directories reliably.
+      const dest = ext === "app"
+        ? `./builds/${build_type}/Waterbug.app/Info.plist`
+        : `./builds/${build_type}/Waterbug.${ext}`;
       const tasks = [];
-      
+
       if ( ! grunt.option('skip-build') ) {
+        // Regenerate tiapp.xml from template if it changed
+        tasks.push('newer:tiapp');
         tasks.push(`exec:build:${platform}:${build_type}`);
         if ( grunt.option('kobiton') ) {
           tasks.push(`upload:${platform}:${build_type}`);
@@ -273,8 +281,8 @@ const KobitonAPI = require("./features/support/kobiton");
       }
       return {
         src: SOURCES,
-        dest: `./builds/${build_type}/Waterbug.${ext}`,
-        options: { tasks: tasks }  
+        dest: dest,
+        options: { tasks: tasks }
       }
     }
 
@@ -429,8 +437,23 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
+          acceptance_preflight_test_ios_simulator: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 120000 --exit "build-tests/integration/AppiumLauncherIos_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          acceptance_preflight_test_android_emulator: {
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 120000 --exit "build-tests/integration/AppiumLauncherAndroid_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
           clean_integration_fixtures_android: {
             command: `rm -rf build-tests/integration/fixtures/HelloWorld-android/build build-tests/integration/fixtures/HelloWorld-android/*.apk`,
+            stdout: "inherit", stderr: "inherit"
+          },
+
+          generate_tiapp: {
+            command: 'sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" walta-app/tiapp.xml.template > walta-app/tiapp.xml',
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -488,6 +511,12 @@ const KobitonAPI = require("./features/support/kobiton");
         },
 
         newer: {
+          tiapp: {
+            src: ['./walta-app/tiapp.xml.template'],
+            dest: './walta-app/tiapp.xml',
+            options: { tasks: ['exec:generate_tiapp'] }
+          },
+
           unit_test_android: build_if_newer_options("android", "unit-test"),
           unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
@@ -567,10 +596,14 @@ const KobitonAPI = require("./features/support/kobiton");
       import("./build-utils/CucumberLauncher.js")
         .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, appiumOptions }).run())
         .then((code) => {
-          if (code !== 0) grunt.log.warn(`cucumber-js exited with code ${code}`);
+          if (code !== 0) {
+            grunt.log.error(`cucumber-js exited with code ${code}`);
+            done(false);
+            return;
+          }
           done();
         })
-        .catch((err) => { grunt.fail.fatal(err); done(); });
+        .catch((err) => { grunt.fail.fatal(err); done(false); });
     });
 
     grunt.registerTask("install", function(platform, build_type) {
@@ -838,6 +871,16 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask('build-integration-test-android-emulator', function() {
       grunt.task.run('newer:build_integration_fixtures_android');
       grunt.task.run(`exec:build_integration_test_android_emulator`);
+    } );
+
+    grunt.registerTask('acceptance-preflight-test-ios-simulator', function() {
+      grunt.task.run('exec:build_integration_fixtures_ios_simulator');
+      grunt.task.run('exec:acceptance_preflight_test_ios_simulator');
+    } );
+
+    grunt.registerTask('acceptance-preflight-test-android-emulator', function() {
+      grunt.task.run('newer:build_integration_fixtures_android');
+      grunt.task.run('exec:acceptance_preflight_test_android_emulator');
     } );
 
     grunt.registerTask('build-integration-test', function() {

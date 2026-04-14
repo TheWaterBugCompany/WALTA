@@ -24,7 +24,7 @@ class BaseScreen {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, 60000, message);
+        }, { timeout: 60000, timeoutMsg: message });
     }
 
     async waitFor() {
@@ -44,10 +44,8 @@ class BaseScreen {
     }
 
     selector( sel ) {
-        let res = "~"+sel;
-        if ( this.isAndroid() )
-            res += "."; // accessibility labels get periods
-        return res;
+        // Titanium appends a period to accessibility identifiers on both platforms
+        return "~" + sel + ".";
     }
 
     async getElement( sel ) {
@@ -58,25 +56,29 @@ class BaseScreen {
     async setSliderPercent( selector, percent ) {
         var el = await this.driver.$(selector);
         var size = await el.getSize();
-        var dist = size.width*percent/100;
+        var location = await el.getLocation();
+        var dist = Math.round(size.width * percent / 100);
         if ( this.isIos() ) {
             let xpos = await el.getValue();
-            // $("XCUIElementTypeSlider").then( (el) => el.elementId )
-            // driver.execute("mobile: dragFromToForDuration", { duration: 0.5, fromX: 11, fromY: 16, toX:40, toY: 16, element: "1B030000-0000-0000-F106-000000000000" })
             await this.driver.execute("mobile: dragFromToForDuration", {
                 duration: 0.5,
-                fromX: size.width*parseInt(xpos)/100,
-                fromY: size.height/2,
+                fromX: size.width * parseInt(xpos) / 100,
+                fromY: size.height / 2,
                 toX: dist,
-                toY: size.height/2,
+                toY: size.height / 2,
                 element: el.elementId
             });
         } else {
-            await el.touchAction([ 
-                {action: 'press', x: 0, y: size.height/2},
-                {action: 'wait',  ms: 500  },
-                {action: 'moveTo', x: dist, y: size.height/2},
-                'release']);
+            await this.driver.performActions([{
+                type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
+                actions: [
+                    { type: 'pointerMove', duration: 0, x: location.x, y: Math.round(location.y + size.height / 2) },
+                    { type: 'pointerDown', button: 0 },
+                    { type: 'pause', duration: 500 },
+                    { type: 'pointerMove', duration: 300, x: location.x + dist, y: Math.round(location.y + size.height / 2) },
+                    { type: 'pointerUp', button: 0 },
+                ],
+            }]);
         }
     }
 
@@ -87,7 +89,18 @@ class BaseScreen {
         }
         await el.setValue(text);
         if ( this.isIos() ) {
-            await this.driver.touchAction({ action: "tap", x: 0, y: 0  });
+            // Titanium text fields don't expose a standard keyboard dismiss
+            // button, so hideKeyboard() fails. Tap above the keyboard to
+            // blur the text field and dismiss it.
+            var size = await this.driver.getWindowSize();
+            await this.driver.performActions([{
+                type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
+                actions: [
+                    { type: 'pointerMove', duration: 0, x: Math.round(size.width / 2), y: 20 },
+                    { type: 'pointerDown', button: 0 },
+                    { type: 'pointerUp', button: 0 },
+                ],
+            }]);
         } else {
             await this.driver.hideKeyboard();
         }
@@ -95,7 +108,7 @@ class BaseScreen {
 
     async clickByText( text ) {
         if ( this.isIos() ) {
-            await this.click(text);
+            await this.clickRaw(`-ios predicate string:label CONTAINS '${text}'`);
         } else {
             await this.clickRaw(`//android.widget.TextView[contains(@text,"${text}")]`);
         }
@@ -103,6 +116,7 @@ class BaseScreen {
 
     async clickRaw( sel ) {
         var el = await this.driver.$( sel );
+        await el.waitForDisplayed({ timeout: 10000 });
         await el.click();
     }
 

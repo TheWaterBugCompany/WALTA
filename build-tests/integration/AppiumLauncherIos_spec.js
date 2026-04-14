@@ -17,7 +17,9 @@ const SIM_UDID = process.env.SIM_UDID || "8A665EBC-2A48-4965-A1B6-E52A289C9744";
 // Run with: SIM_UDID=<udid> npx grunt exec:build_integration_test_ios
 
 describe("AppiumLauncher (integration — iOS simulator)", function () {
-  this.timeout(120000);
+  // WebDriverAgent is built from scratch on first run via xcodebuild, which
+  // takes 2-3 minutes on a cold CI runner. Allow generous headroom.
+  this.timeout(600000);
 
   let simulator, launcher;
 

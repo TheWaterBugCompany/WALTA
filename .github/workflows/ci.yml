@@ -30,6 +30,8 @@ jobs:
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
 
       - name: Install dependencies
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
@@ -77,6 +79,8 @@ jobs:
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
 
       - name: Install dependencies
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
@@ -148,11 +152,6 @@ jobs:
       - name: Run iOS build tests
         run: npx grunt build-test-ios
 
-      - name: Run iOS simulator integration tests
-        env:
-          SIM_UDID: ${{ steps.sim.outputs.udid }}
-        run: npx grunt build-integration-test-ios-simulator
-
       - name: Sample simulator log format
         run: |
           xcrun simctl spawn ${{ steps.sim.outputs.udid }} log stream --style syslog 2>&1 | head -20 || true
@@ -211,6 +210,8 @@ jobs:
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
 
       - name: Install dependencies
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
@@ -308,5 +309,261 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             echo "Emulator booted"
-            npx grunt build-integration-test-android-emulator
             npx grunt --platform=android --simulator unit-test
+
+  # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
+  ios-simulator-acceptance-tests:
+    name: iOS simulator acceptance tests
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest Xcode
+        run: |
+          LATEST_XCODE=$(ls /Applications | grep -E '^Xcode_[0-9]+\.[0-9]+(\.[0-9]+)?\.app$' | sort -V | tail -1)
+          echo "Selecting $LATEST_XCODE"
+          sudo xcode-select -s "/Applications/$LATEST_XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Save node_modules cache
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Run install.sh
+        run: sh install.sh
+
+      - name: Read Titanium SDK version
+        id: ti-version
+        run: |
+          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
+          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Titanium SDK cache
+        id: ti-sdk-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
+
+      - name: Install Titanium SDK
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Save Titanium SDK cache
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
+
+      - name: Configure Titanium
+        run: npx titanium config cli.logLevel info
+
+      - name: Apply SDK patches
+        run: npm run patch-sdk
+
+      - name: Select iOS simulator
+        id: sim
+        run: |
+          SELECTED=$(xcrun simctl list devices available -j | jq -r '
+            [.devices | to_entries[]
+             | select(.key | test("iOS-[0-9]"))
+             | {runtime: (.key | capture("iOS-(?<v>[0-9-]+)").v),
+                devices: [.value[] | select(.name | contains("iPhone")) | select(.isAvailable)]}]
+            | sort_by(.runtime | split("-") | map(tonumber)) | reverse
+            | .[0]
+            | .devices[0] | "\(.udid) \(.name)"')
+          UDID=$(echo "$SELECTED" | cut -d" " -f1)
+          NAME=$(echo "$SELECTED" | cut -d" " -f2-)
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Selected: $NAME ($UDID)"
+
+      - name: Boot iOS simulator with Simulator.app UI
+        run: |
+          # XCUITest driver refuses to drive a simulator booted headlessly
+          # via simctl — it tries to relaunch with the GUI visible and then
+          # times out. Boot via Simulator.app directly so the UI is up front.
+          open -a Simulator --args -CurrentDeviceUDID ${{ steps.sim.outputs.udid }}
+          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
+          echo "Simulator boot step complete"
+
+      # WebDriverAgent is built from source the first time XCUITest creates a
+      # session (~2-3 min). Cache the DerivedData so subsequent runs skip the
+      # full build. Keyed on package-lock.json so the cache invalidates when
+      # appium-xcuitest-driver (and therefore WDA's source) changes.
+      - name: Cache WebDriverAgent DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: wda-derived-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            wda-derived-${{ runner.os }}-
+
+      - name: Acceptance preflight (Appium launcher integration test)
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt acceptance-preflight-test-ios-simulator
+
+      - name: Run iOS acceptance tests
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt --platform=ios --simulator acceptance-test
+
+      - name: Capture simulator diagnostics on failure
+        if: failure()
+        run: |
+          echo "=== Simulator screenshot ==="
+          xcrun simctl io ${{ steps.sim.outputs.udid }} screenshot /tmp/sim-screenshot.png || true
+          echo "=== Last 200 lines of ALL simulator syslog ==="
+          xcrun simctl spawn ${{ steps.sim.outputs.udid }} log show --last 5m --style syslog 2>&1 | grep -i "waterbug\|titanium\|TiAPI\|TiLog\|appium\|cucumber" | tail -200 || true
+
+      - name: Upload simulator screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-acceptance-screenshot
+          path: /tmp/sim-screenshot.png
+          if-no-files-found: ignore
+
+  # ── 5. Android emulator acceptance tests ──────────────────────────────────
+  android-emulator-acceptance-tests:
+    name: Android emulator acceptance tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Save node_modules cache
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Run install.sh
+        run: sh install.sh
+
+      - name: Read Titanium SDK version
+        id: ti-version
+        run: |
+          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
+          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Titanium SDK cache
+        id: ti-sdk-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
+
+      - name: Install Titanium SDK
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Save Titanium SDK cache
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
+
+      - name: Configure Titanium
+        run: npx titanium config cli.logLevel info
+
+      - name: Apply SDK patches
+        run: npm run patch-sdk
+
+      - name: Enable KVM for hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Restore Android AVD cache
+        id: avd-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-30
+          key: avd-30-google_apis-x86
+
+      - name: Pre-warm AVD snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86
+          avd-name: Medium_Phone_API_36.1
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: echo "AVD snapshot ready for caching"
+
+      - name: Save Android AVD cache
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-30
+          key: avd-30-google_apis-x86
+
+      - name: Boot Android emulator and run acceptance tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86
+          avd-name: Medium_Phone_API_36.1
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            echo "Emulator booted"
+            npx grunt acceptance-preflight-test-android-emulator
+            npx grunt --platform=android --simulator acceptance-test

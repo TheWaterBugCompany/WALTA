@@ -75,6 +75,25 @@ cp ./node_modules/simple-mock/index.js $SPECS_LIB_DIR/simple-mock.js
 cp ./node_modules/moment/moment.js $LIB_DIR/moment.js
 cp -rf ./node_modules/leaflet/dist/* $ASSET_DIR/leaflet
 PATH=./node_modules/.bin:$PATH
+
+# Install Appium drivers used by the acceptance and integration test suites.
+# `appium driver install` errors if the driver is already installed, so we
+# check first and skip if present.
+install_appium_driver() {
+  local driver=$1
+  # Strip ANSI color codes from appium output before matching
+  if npx appium driver list --installed 2>&1 \
+      | sed 's/\x1b\[[0-9;]*m//g' \
+      | grep -q "${driver}@.*\[installed"; then
+    echo "Appium driver $driver already installed"
+  else
+    echo "Installing Appium driver $driver..."
+    npx appium driver install "$driver"
+  fi
+}
+install_appium_driver xcuitest
+install_appium_driver uiautomator2
+
 ti config -a paths.hooks ./plugins/unittest/1.0/hooks
 # not needed in 8 GA: liveview install clihook
 alloy install plugin walta-app
