@@ -142,8 +142,11 @@ class AppiumLauncher {
     const running = await this._isAppiumRunning();
     if (running) return;
 
+    // DIAGNOSTIC: pipe appium server stdio to the parent so its startup logs
+    // appear in the CI output. Revert to 'ignore' once iOS BeforeAll timeout
+    // is diagnosed.
     const child = this._spawn('npx', ['appium'], {
-      stdio: 'ignore',
+      stdio: 'inherit',
       detached: true,
     });
     child.unref();
