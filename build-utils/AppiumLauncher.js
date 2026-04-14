@@ -137,6 +137,11 @@ class AppiumLauncher {
       logLevel: 'error',
       hostname: 'localhost',
       port: 4723,
+      // Allow plenty of time for cold WDA builds on CI runners — the
+      // default connectionRetryTimeout of 120s expires while xcodebuild
+      // is still compiling WebDriverAgent on the first run.
+      connectionRetryTimeout: 600000,
+      connectionRetryCount: 1,
       capabilities: caps
     });
   }
