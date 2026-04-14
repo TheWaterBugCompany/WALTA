@@ -95,6 +95,23 @@ describe("IosSimulatorLauncher", function() {
       const calls = fakeExecFile.getCalls().map(c => c.args[1]);
       expect(calls.some(a => a[1] === "install")).to.be.false;
     });
+
+    it("uses a generous timeout for install/launch so cold CI runners don't get killed mid-launch", async function() {
+      const APP_PATH = "./builds/unit-test/Waterbug.app";
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl install ${UDID} ${APP_PATH}`]: "",
+        [`simctl launch ${UDID} net.thewaterbug.waterbug`]: "net.thewaterbug.waterbug: 1234\n",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.launch("net.thewaterbug.waterbug", APP_PATH);
+      const installCall = fakeExecFile.getCalls().find(c => c.args[1][1] === "install");
+      const launchCall = fakeExecFile.getCalls().find(c => c.args[1][1] === "launch");
+      // Cold-launch warmup on macOS runners regularly takes 60-90s; default 60s
+      // would kill simctl mid-launch and surface as "Command failed".
+      expect(installCall.args[2].timeout).to.be.at.least(120000);
+      expect(launchCall.args[2].timeout).to.be.at.least(120000);
+    });
   });
 
   describe("terminate()", function() {
