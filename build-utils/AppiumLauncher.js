@@ -74,6 +74,10 @@ class AppiumLauncher {
         "appium:useJSONSource": true,
         "appium:showXcodeLog": true,
         "appium:usePrebuiltWDA": false,
+        // WDA is built from source on the first run (~2-3 min on CI),
+        // so override the 60s default WDA launch/connection timeouts.
+        "appium:wdaLaunchTimeout": 300000,
+        "appium:wdaConnectionTimeout": 300000,
         "appium:bundleId": this.appId,
         "appium:noReset": true,
         "appium:autoLaunch": false,
