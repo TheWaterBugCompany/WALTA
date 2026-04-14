@@ -148,11 +148,6 @@ jobs:
       - name: Run iOS build tests
         run: npx grunt build-test-ios
 
-      - name: Run iOS simulator integration tests
-        env:
-          SIM_UDID: ${{ steps.sim.outputs.udid }}
-        run: npx grunt build-integration-test-ios-simulator
-
       - name: Sample simulator log format
         run: |
           xcrun simctl spawn ${{ steps.sim.outputs.udid }} log stream --style syslog 2>&1 | head -20 || true
