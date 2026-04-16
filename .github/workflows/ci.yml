@@ -227,6 +227,9 @@ jobs:
       - name: Run install.sh
         run: sh install.sh
 
+      - name: Add x86 ABI for emulator builds
+        run: sed -i 's|<abi>arm64-v8a,armeabi-v7a</abi>|<abi>arm64-v8a,armeabi-v7a,x86</abi>|' walta-app/tiapp.xml
+
       - name: Read Titanium SDK version
         id: ti-version
         run: |
@@ -509,6 +512,9 @@ jobs:
 
       - name: Run install.sh
         run: sh install.sh
+
+      - name: Add x86 ABI for emulator builds
+        run: sed -i 's|<abi>arm64-v8a,armeabi-v7a</abi>|<abi>arm64-v8a,armeabi-v7a,x86</abi>|' walta-app/tiapp.xml
 
       - name: Read Titanium SDK version
         id: ti-version
