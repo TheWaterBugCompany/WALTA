@@ -64,7 +64,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <abi>arm64-v8a,armeabi-v7a</abi>
     <manifest android:versionCode="2000040014" android:versionName="2.0.4.14">
-    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34"/>
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35"/>
     <application android:debuggable="false" android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
       <meta-data android:name="com.google.android.geo.API_KEY" android:value="GOOGLE_MAPS_API_KEY_PLACEHOLDER" />
       <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape">
