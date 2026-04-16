@@ -29,6 +29,16 @@ Before(async function () {
         const appId = global.launcher.appId;
         await this.driver.terminateApp(appId);
         await this.driver.activateApp(appId);
+        // Wait until the app is actually in the foreground before
+        // proceeding — activateApp can return before the UI is ready,
+        // especially when WDA was started from a prebuilt cache.
+        if (global.platform === 'ios') {
+            for (let i = 0; i < 30; i++) {
+                const state = await this.driver.execute('mobile: queryAppState', { bundleId: appId });
+                if (state === 4) break;
+                await new Promise(r => setTimeout(r, 500));
+            }
+        }
     } else {
         global.first = false;
     }

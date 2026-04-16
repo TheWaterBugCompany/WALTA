@@ -317,6 +317,11 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     env:
+      # Stable path for the prebuilt WebDriverAgent DerivedData. Cached
+      # across runs and passed to Appium via the derivedDataPath capability
+      # so xcuitest-driver reuses the build instead of recompiling (saves
+      # ~2-3 min per acceptance run).
+      WDA_DERIVED_DATA_PATH: ${{ github.workspace }}/.wda-derived
       # Pinned Xcode version — the DerivedData cache is only reusable when
       # the same Xcode/toolchain built it, and unpinned runners drift
       # between versions. 26.3 is the current App Store submission target.
@@ -418,17 +423,16 @@ jobs:
           echo "Simulator boot step complete"
 
       # WebDriverAgent is built from source the first time XCUITest creates
-      # a session (~2-3 min). Pre-populate the default DerivedData so Appium
-      # finds a warm build without any capability changes. Keyed on the
-      # pinned Xcode version and appium-webdriveragent package version —
-      # not package-lock.json — so unrelated dependency bumps don't
-      # invalidate the cache.
-      - name: Cache WebDriverAgent DerivedData
+      # a session (~2-3 min). Prebuild it into a stable workspace-local
+      # path and cache it. Keyed on the pinned Xcode version and the
+      # appium-webdriveragent package version — not package-lock.json — so
+      # unrelated dependency bumps don't invalidate the cache.
+      - name: Cache prebuilt WebDriverAgent
         id: wda-cache
         uses: actions/cache@v4
         with:
-          path: ~/Library/Developer/Xcode/DerivedData
-          key: wda-derived-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/package.json') }}
+          path: ${{ env.WDA_DERIVED_DATA_PATH }}
+          key: wda-prebuilt-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/package.json') }}
 
       - name: Prebuild WebDriverAgent
         if: steps.wda-cache.outputs.cache-hit != 'true'
