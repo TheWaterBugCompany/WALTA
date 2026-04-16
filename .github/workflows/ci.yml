@@ -316,14 +316,28 @@ jobs:
     name: iOS simulator acceptance tests
     runs-on: macos-latest
     timeout-minutes: 30
+    env:
+      # Stable path for the prebuilt WebDriverAgent DerivedData. Cached
+      # across runs and passed to Appium via the derivedDataPath capability
+      # so xcuitest-driver reuses the build instead of recompiling (saves
+      # ~2-3 min per acceptance run).
+      WDA_DERIVED_DATA_PATH: ${{ github.workspace }}/.wda-derived
+      # Pinned Xcode version — the DerivedData cache is only reusable when
+      # the same Xcode/toolchain built it, and unpinned runners drift
+      # between versions. 26.3 is the current App Store submission target.
+      XCODE_VERSION: "26.3"
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select latest Xcode
+      - name: Select pinned Xcode
         run: |
-          LATEST_XCODE=$(ls /Applications | grep -E '^Xcode_[0-9]+\.[0-9]+(\.[0-9]+)?\.app$' | sort -V | tail -1)
-          echo "Selecting $LATEST_XCODE"
-          sudo xcode-select -s "/Applications/$LATEST_XCODE/Contents/Developer"
+          XCODE_APP="/Applications/Xcode_${XCODE_VERSION}.app"
+          if [ ! -d "$XCODE_APP" ]; then
+            echo "Xcode ${XCODE_VERSION} not installed on this runner. Available:" >&2
+            ls /Applications | grep -E '^Xcode_' >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
           xcodebuild -version
 
       - uses: actions/setup-node@v4
@@ -409,16 +423,21 @@ jobs:
           echo "Simulator boot step complete"
 
       # WebDriverAgent is built from source the first time XCUITest creates a
-      # session (~2-3 min). Cache the DerivedData so subsequent runs skip the
-      # full build. Keyed on package-lock.json so the cache invalidates when
-      # appium-xcuitest-driver (and therefore WDA's source) changes.
-      - name: Cache WebDriverAgent DerivedData
+      # session (~2-3 min). Prebuild it into a stable DerivedData path and
+      # cache that path so subsequent runs reuse it. Keyed on the pinned
+      # Xcode version and the appium-webdriveragent package version — not
+      # package-lock.json — so unrelated dependency bumps do not invalidate
+      # the cache.
+      - name: Cache prebuilt WebDriverAgent
+        id: wda-cache
         uses: actions/cache@v4
         with:
-          path: ~/Library/Developer/Xcode/DerivedData
-          key: wda-derived-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            wda-derived-${{ runner.os }}-
+          path: ${{ env.WDA_DERIVED_DATA_PATH }}
+          key: wda-prebuilt-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/package.json') }}
+
+      - name: Prebuild WebDriverAgent
+        if: steps.wda-cache.outputs.cache-hit != 'true'
+        run: bash build-utils/prebuild-wda.sh
 
       - name: Acceptance preflight (Appium launcher integration test)
         env:
