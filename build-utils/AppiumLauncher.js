@@ -66,7 +66,6 @@ class AppiumLauncher {
     }
 
     if (this.platform === "ios") {
-      const prebuiltWdaPath = process.env.WDA_DERIVED_DATA_PATH;
       Object.assign(caps, {
         "appium:automationName": "XCUITest",
         "platformName": "iOS",
@@ -84,9 +83,6 @@ class AppiumLauncher {
         "appium:autoLaunch": false,
         "appium:processArguments": { "args": ["-FIRDebugEnabled"] }
       });
-      if (prebuiltWdaPath) {
-        caps["appium:derivedDataPath"] = prebuiltWdaPath;
-      }
       if (this.isSimulator) {
         if (!process.env.SIM_UDID) {
           throw new Error("SIM_UDID environment variable must be set for iOS simulator runs");

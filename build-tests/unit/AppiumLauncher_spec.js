@@ -83,42 +83,6 @@ describe("AppiumLauncher", function() {
     });
   });
 
-  describe("iOS simulator capabilities", function() {
-    let originalSimUdid;
-    let originalWdaDerived;
-
-    beforeEach(function() {
-      originalSimUdid = process.env.SIM_UDID;
-      originalWdaDerived = process.env.WDA_DERIVED_DATA_PATH;
-      process.env.SIM_UDID = "ABC123-fake-udid";
-    });
-
-    afterEach(function() {
-      if (originalSimUdid === undefined) delete process.env.SIM_UDID;
-      else process.env.SIM_UDID = originalSimUdid;
-      if (originalWdaDerived === undefined) delete process.env.WDA_DERIVED_DATA_PATH;
-      else process.env.WDA_DERIVED_DATA_PATH = originalWdaDerived;
-    });
-
-    it("defaults usePrebuiltWDA to false and omits derivedDataPath", async function() {
-      delete process.env.WDA_DERIVED_DATA_PATH;
-      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium });
-      await launcher.connect();
-      const caps = fakeStartAppium.firstCall.args[0];
-      expect(caps["appium:usePrebuiltWDA"]).to.equal(false);
-      expect(caps).to.not.have.property("appium:derivedDataPath");
-    });
-
-    it("sets derivedDataPath when WDA_DERIVED_DATA_PATH is set", async function() {
-      process.env.WDA_DERIVED_DATA_PATH = "/tmp/wda-derived";
-      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium });
-      await launcher.connect();
-      const caps = fakeStartAppium.firstCall.args[0];
-      expect(caps["appium:usePrebuiltWDA"]).to.equal(false);
-      expect(caps["appium:derivedDataPath"]).to.equal("/tmp/wda-derived");
-    });
-  });
-
   describe("launch()", function() {
     it("activates the app with the given appId", async function() {
       const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
