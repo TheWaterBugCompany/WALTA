@@ -415,11 +415,17 @@ jobs:
 
       - name: Boot iOS simulator with Simulator.app UI
         run: |
-          # XCUITest driver refuses to drive a simulator booted headlessly
-          # via simctl — it tries to relaunch with the GUI visible and then
-          # times out. Boot via Simulator.app directly so the UI is up front.
-          open -a Simulator --args -CurrentDeviceUDID ${{ steps.sim.outputs.udid }}
-          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
+          SIM_UDID="${{ steps.sim.outputs.udid }}"
+          STATE=$(xcrun simctl list devices -j | jq -r ".devices[][] | select(.udid==\"$SIM_UDID\") | .state")
+          if [ "$STATE" = "Booted" ]; then
+            echo "Simulator already booted — skipping boot"
+          else
+            # XCUITest driver refuses to drive a simulator booted headlessly
+            # via simctl — it tries to relaunch with the GUI visible and then
+            # times out. Boot via Simulator.app directly so the UI is up front.
+            open -a Simulator --args -CurrentDeviceUDID "$SIM_UDID"
+            xcrun simctl bootstatus "$SIM_UDID" -b
+          fi
           echo "Simulator boot step complete"
 
       # WebDriverAgent is built from source the first time XCUITest creates
