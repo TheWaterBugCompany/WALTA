@@ -166,7 +166,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: net.thewaterbug.waterbug
-          releaseFiles: builds/release/Waterbug.*
+          releaseFiles: builds/release/Waterbug.aab
           track: internal
           status: completed
 
