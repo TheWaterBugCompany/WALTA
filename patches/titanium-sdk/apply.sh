@@ -81,6 +81,21 @@ apply_patch \
   "$SDK_BASE/android/templates/build/lib.build.gradle" \
   "Android: add namespace to module lib.build.gradle template"
 
+# Disable SDK-bundled liveview hook — it conflicts with the custom
+# liveview registered via paths.hooks (duplicate --liveview flag).
+LIVEVIEW_HOOK="$SDK_BASE/cli/hooks/liveview.js"
+if [ "$REVERSE" = true ]; then
+  if [ -f "${LIVEVIEW_HOOK}.bak" ]; then
+    mv "${LIVEVIEW_HOOK}.bak" "$LIVEVIEW_HOOK"
+    echo "Restored bundled liveview hook"
+  fi
+else
+  if [ -f "$LIVEVIEW_HOOK" ]; then
+    mv "$LIVEVIEW_HOOK" "${LIVEVIEW_HOOK}.bak"
+    echo "Disabled bundled liveview hook (conflicts with custom liveview)"
+  fi
+fi
+
 echo ""
 if [ "$REVERSE" = true ]; then
   echo "All patches reversed for SDK $SDK_VERSION"
