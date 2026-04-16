@@ -14,7 +14,7 @@ for arg in "$@"; do
   fi
 done
 
-SDK_VERSION="13.1.1.GA"
+SDK_VERSION="13.2.0.GA"
 
 case "$(uname -s)" in
   Darwin) SDK_BASE="$HOME/Library/Application Support/Titanium/mobilesdk/osx/$SDK_VERSION" ;;
@@ -80,6 +80,21 @@ apply_patch \
   "$PATCHES_DIR/sdk-13.1.1.GA-android-lib-build-gradle-namespace.patch" \
   "$SDK_BASE/android/templates/build/lib.build.gradle" \
   "Android: add namespace to module lib.build.gradle template"
+
+# Disable SDK-bundled liveview hook — it conflicts with the custom
+# liveview registered via paths.hooks (duplicate --liveview flag).
+LIVEVIEW_HOOK="$SDK_BASE/cli/hooks/liveview.js"
+if [ "$REVERSE" = true ]; then
+  if [ -f "${LIVEVIEW_HOOK}.bak" ]; then
+    mv "${LIVEVIEW_HOOK}.bak" "$LIVEVIEW_HOOK"
+    echo "Restored bundled liveview hook"
+  fi
+else
+  if [ -f "$LIVEVIEW_HOOK" ]; then
+    mv "$LIVEVIEW_HOOK" "${LIVEVIEW_HOOK}.bak"
+    echo "Disabled bundled liveview hook (conflicts with custom liveview)"
+  fi
+fi
 
 echo ""
 if [ "$REVERSE" = true ]; then

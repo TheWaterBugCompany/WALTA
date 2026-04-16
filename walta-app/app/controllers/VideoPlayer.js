@@ -13,7 +13,8 @@ $.videoPlayer.url = $.args.url;
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.TopLevelWindow.removeEventListener('close', cleanUp );
-    $.videoPlayer.release();
+    // Defer release() to avoid racing with GCD-based Kroll cleanup (13.2.0.GA)
+    setTimeout(function() { $.videoPlayer.release(); }, 100);
 });
 
 $.TopLevelWindow.addEventListener('open', function open() {
