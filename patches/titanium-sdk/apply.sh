@@ -14,7 +14,7 @@ for arg in "$@"; do
   fi
 done
 
-SDK_VERSION="13.1.1.GA"
+SDK_VERSION="13.2.0.GA"
 
 case "$(uname -s)" in
   Darwin) SDK_BASE="$HOME/Library/Application Support/Titanium/mobilesdk/osx/$SDK_VERSION" ;;
