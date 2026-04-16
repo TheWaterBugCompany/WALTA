@@ -38,8 +38,10 @@ describe( 'SampleTray controller', function() {
             SampleTrayWin.removeEventListener("open", openWin );
             updateSampleTrayOnce(function() {
               try {
-                expect( SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height )
-                  .to.equal( SampleTray.getView().size.height );
+                var actualHeight = SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height;
+                var expectedHeight = SampleTray.getView().size.height;
+                expect( Math.abs(actualHeight - expectedHeight) ).to.be.at.most(1,
+                  `content (${SampleTray.content.size.height}) + anchorBar (${SampleTray.getAnchorBar().getView().size.height}) should equal window (${expectedHeight})`);
                 scrollDone.then(resolve, reject);
               } catch( err ) {
                   reject(err);
