@@ -3,20 +3,19 @@ const BaseScreen = require('./base-screen');
 class CameraScreen extends BaseScreen {
     constructor( world ) {
         super(world);
-        if ( this.isIos() ) {
-            // iOS simulator can't drive Ti.Media.showCamera's native picker
-            // (UIImagePickerController runs in a separate system process that
-            // doesn't accept synthesized taps, and newer sim models have no
-            // camera simulation at all). Simulator builds swap in a Ti.UI-based
-            // test camera (lib/ui/Camera-test.js) with a "PhotoCapture" button
-            // we can actually tap — see plugins/unittest/1.0/hooks/unittest.js.
+        // Simulator builds (iOS or Android) swap the real camera for
+        // Ti.UI-based Camera-test.js, which exposes a "PhotoCapture"
+        // button. See plugins/unittest/1.0/hooks/unittest.js. Only on
+        // real Android devices do we fall back to driving the native
+        // camera package.
+        if ( this.isIos() || world.isSimulator ) {
             this.presenceSelector = this.selector("PhotoCapture");
         } else {
             this.presenceSelector = `android=new UiSelector().packageNameMatches("com\.android\.camera|com\.sec\.android\.app\.camera")`;
         }
     }
     async takePhoto() {
-        if ( this.isIos() ) {
+        if ( this.isIos() || this.world.isSimulator ) {
             await this.click("PhotoCapture");
         } else {
             let packageName = await this.driver.getCurrentPackage();

@@ -6,7 +6,7 @@
 		</View>
 		<View id="notes">
 			<Label id="notesLabel" class="labelText" text="Enter any notes relating to this survey:"/>
-			<TextArea id="notesTextField" onChange="onNotesChange"/>
+			<TextArea id="notesTextField" accessibilityLabel="Notes" onChange="onNotesChange"/>
 		</View>
 	</View>
 </Alloy>

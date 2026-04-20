@@ -27,13 +27,14 @@ exports.init = function (_logger, _config, cli) {
 		// cli.argv["unit-test"] is undefined in `titanium serve` context because the plugin's
 		// init() runs after CLI argv parsing. Fall back to process.argv as a reliable source.
 		const isUnitTest = cli.argv["unit-test"] || process.argv.includes('--unit-test');
-		// Simulator builds (acceptance + unit-test + local debug) swap the
-		// Camera module to a Ti.UI-based test implementation because the iOS
-		// simulator's native image picker can't be driven by Appium/WDA and
-		// newer sim models have no camera simulation at all.
+		// Simulator/emulator builds (acceptance + unit-test + local debug)
+		// swap the Camera module to a Ti.UI-based test implementation — the
+		// iOS simulator's native picker can't be driven by Appium/WDA and
+		// the Android emulator's camera is similarly awkward to automate.
+		// Ti CLI uses `simulator` for iOS and `emulator` for Android.
 		const targetArgIdx = process.argv.indexOf('--target');
 		const targetArg = targetArgIdx >= 0 ? process.argv[targetArgIdx + 1] : cli.argv.target;
-		const isSimulator = targetArg === 'simulator';
+		const isSimulator = targetArg === 'simulator' || targetArg === 'emulator';
 		debug(`createSpecSymlink: isUnitTest=${isUnitTest}, isSimulator=${isSimulator}`);
 
 		const specSymlink = join(cli.argv['project-dir'], 'app', 'lib', 'spec');

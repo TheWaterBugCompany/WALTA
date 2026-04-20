@@ -56,7 +56,27 @@ exports.showCamera = function (options) {
         color: '#aaa',
         font: { fontSize: '16dp' }
     }));
-    var captureBtn = Ti.UI.createButton({
+    // Ti.UI.createButton resolves to MaterialButton on Android, which
+    // crashes if the app theme isn't Theme.MaterialComponents — the
+    // test camera is the only place we'd need to bump the base theme,
+    // so use plain Views with accessibilityLabels instead.
+    function tappableBox(opts) {
+        var box = Ti.UI.createView({
+            accessibilityLabel: opts.accessibilityLabel,
+            top: opts.top,
+            width: opts.width,
+            height: opts.height,
+            backgroundColor: opts.backgroundColor,
+            borderRadius: '4dp'
+        });
+        box.add(Ti.UI.createLabel({
+            text: opts.title,
+            color: opts.color,
+            font: { fontSize: '16dp', fontWeight: 'bold' }
+        }));
+        return box;
+    }
+    var captureBtn = tappableBox({
         title: 'Take Picture',
         accessibilityLabel: 'PhotoCapture',
         top: '5%',
@@ -65,7 +85,7 @@ exports.showCamera = function (options) {
         backgroundColor: '#fff',
         color: '#000'
     });
-    var cancelBtn = Ti.UI.createButton({
+    var cancelBtn = tappableBox({
         title: 'Cancel',
         accessibilityLabel: 'DismissImagePickerButton',
         top: '3%',

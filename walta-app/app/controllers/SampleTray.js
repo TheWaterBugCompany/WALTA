@@ -254,10 +254,11 @@ function createAddIcon() {
 
 function createTaxaIcon(taxon) {
   var speedbugIcon = Alloy.createController( "SampleTaxaIcon", {
+      key: key,
       taxon: taxon,
       speedbugIndex: speedbugIndex,
       readonly: readOnlyMode
-    } );  
+    } );
   return speedbugIcon;
 }
 

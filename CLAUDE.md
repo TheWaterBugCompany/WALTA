@@ -138,6 +138,8 @@ adb logcat -s "TiAPI:*"   # Android
 
 **Controller lifecycle:** Controllers receive injected dependencies via `$.args`. Always implement a `cleanUp()` function that unsubscribes Topics listeners and destroys child views — it is called by the navigation system when the screen is unloaded.
 
+**No `Alloy.Globals`:** Don't read or write `Alloy.Globals.*` for shared state — it's a deprecated anti-pattern that makes data flow invisible and tests brittle. Pass shared objects (e.g. the loaded `key` from `walta-taxonomy`) explicitly via `$.args` from parent controllers to children, including sub-controllers created with `Alloy.createController(name, { key, ... })`. The key is threaded from the topmost controller that loads it down through every screen and sub-widget that needs it.
+
 **Photo paths:** Photos taken by users are stored in `Ti.Filesystem.applicationDataDirectory` using relative paths (no leading `/`). Taxonomy reference images are in `Ti.Filesystem.resourcesDirectory` (absolute paths starting `/`). `PhotoUtils.absolutePath()` handles both conventions.
 
 **Ti.App.Properties keys:** Persistent storage uses `Ti.App.Properties.setObject/getObject`. Key names in use: `userAccessTokenLive` (user auth token object), `appAccessTokenLive` (app-level OAuth token object), `userAccessUsername` (logged-in email).

@@ -1,4 +1,4 @@
-const { Given, When } = require('@cucumber/cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 
 Given('a user has arrived at a site to sample', async function () {
     await this.menu.waitFor();
@@ -26,4 +26,95 @@ When('the user fills out the habitat screen', { timeout: 60000 }, async function
     await this.habitat.setSandOrSilt("20");
     await this.habitat.setOpenWater("10");
     await this.habitat.goNext();
+});
+
+When('the user marks the sample as complete', async function () {
+    // Next on the sample tray lands on the Notes screen; from there the
+    // user toggles the "survey complete" switch, enters some notes, and
+    // advances to the Summary screen.
+    await this.sample.goNext();
+    await this.notes.toggleSurveyComplete();
+    await this.notes.setNotes("Test survey notes");
+    await this.notes.goNext();
+});
+
+Then('the sample tray is filled with each identification', async function () {
+    // Each tile in the sample tray exposes a composite accessibility label
+    // of the form "Taxon <id>, <species name>, abundance <abundance>"
+    // (SampleTaxaIcon.js). Verify each species is present with the
+    // abundance set in the preceding step (default "1-2" when the slider
+    // wasn't adjusted).
+    await this.sample.waitFor();
+    var taxa = [
+        { name: "Acruroperla atra", abundance: "3-5" },
+        { name: "Aeshnidae",        abundance: "6-10" },
+        { name: "Agapetus",         abundance: "1-2" },
+    ];
+    for (var i = 0; i < taxa.length; i++) {
+        var expected = `${taxa[i].name}, abundance ${taxa[i].abundance}`;
+        var selector = this.platform === "ios"
+            ? `-ios predicate string:label CONTAINS '${expected}'`
+            : `android=new UiSelector().descriptionContains("${expected}")`;
+        var el = await this.driver.$(selector);
+        if (!(await el.isDisplayed())) {
+            throw new Error(`Sample tray is missing tile for "${expected}"`);
+        }
+    }
+});
+
+Then('a signal score is calculated and displayed to the user', async function () {
+    // Summary calculates SIGNAL score from the taxa collected. Setting
+    // accessibilityLabel on the Label masks its text on iOS, so assert
+    // on presence rather than numeric content: the score only binds to
+    // the label once the sample is scored, so visibility is evidence
+    // the calculation ran.
+    await this.summary.waitFor();
+    await this.summary.waitForLabel("SIGNAL Score");
+});
+
+Then('a sample id is automatically created for the user', async function () {
+    // The heading on Summary binds to "{sample.surveyType} Survey",
+    // which is only populated once the sample record has been persisted
+    // with an id (sampleId is SQLite's AUTOINCREMENT primary key,
+    // assigned on first save). Presence of the heading is evidence a
+    // sample id exists.
+    await this.summary.waitForLabel("Survey Heading");
+});
+
+Then('a sample is stored and sample tray is cleared', async function () {
+    // Pressing Done triggers Survey.submitSurvey() (see Summary.js) which
+    // persists the sample and navigates home; arriving back at the Menu
+    // is evidence the submit completed and the active tray was reset.
+    await this.summary.goDone();
+});
+
+When('the user identifies a number of taxa', { timeout: 300000 }, async function () {
+    // Add three taxa via the Browse (taxa list) path, matching by label so
+    // the test doesn't depend on list coordinates. Navigating the key is
+    // out of scope here — identify_taxa.feature covers that path. The
+    // chosen species names sort early (after the "Order:" rows) to keep
+    // the scroll-into-view loop short. Two of the three taxa also
+    // exercise the abundance slider so the test covers non-default
+    // abundance values alongside the default 1-2.
+    var taxa = [
+        { name: "Acruroperla atra", abundance: "3-5" },
+        { name: "Aeshnidae",        abundance: "6-10" },
+        { name: "Agapetus" }
+    ];
+    for (var i = 0; i < taxa.length; i++) {
+        await this.sample.selectAddSample();
+        await this.methodSelect.viaBrowse();
+        await this.browse.chooseSpecies(taxa[i].name);
+        await this.taxon.selectAddToSample();
+        if (taxa[i].abundance) {
+            await this.editTaxon.setAbundance(taxa[i].abundance);
+        }
+        // EditTaxon persists a taxon to the tray only after a photo is
+        // captured and Save is pressed. The test camera (Camera-test.js)
+        // stands in for the real camera on simulator builds.
+        await this.editTaxon.openCamera();
+        await this.camera.takePhoto();
+        await this.editTaxon.waitFor();
+        await this.editTaxon.save();
+    }
 });

@@ -1,4 +1,3 @@
-@skip
 Feature: Sample A Site
 
 I want to sample a site by doing a survey and identifying all the
@@ -8,7 +7,7 @@ Scenario: Sample collection
   Given a user has arrived at a site to sample
   When the user fills out the site details
    And the user fills out the habitat screen
-   And the user identifies a number of taxa # see identify_taxa.feature
+   And the user identifies a number of taxa
   Then the sample tray is filled with each identification
   When the user marks the sample as complete
   Then a signal score is calculated and displayed to the user
@@ -16,6 +15,7 @@ Scenario: Sample collection
    And a sample id is automatically created for the user
    And a sample is stored and sample tray is cleared
 
+@skip
 Scenario: Cancel sample
   Given the user has identified a number of taxa
     But wants to start again by clearing the tray
