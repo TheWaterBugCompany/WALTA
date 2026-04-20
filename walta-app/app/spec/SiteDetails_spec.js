@@ -250,15 +250,8 @@ describe("SiteDetails controller", function() {
             // all settle before reading rects.
             setTimeout( function() {
                 var right = ctl.right;
-                var content = ctl.content;
                 var win = ctl.TopLevelWindow;
                 var sap = win.safeAreaPadding || {};
-                Ti.API.info(`[WB-28] safeAreaPadding: l=${sap.left} t=${sap.top} r=${sap.right} b=${sap.bottom}`);
-                Ti.API.info(`[WB-28] window rect: x=${win.rect.x} y=${win.rect.y} w=${win.rect.width} h=${win.rect.height}`);
-                Ti.API.info(`[WB-28] content rect: x=${content.rect.x} y=${content.rect.y} w=${content.rect.width} h=${content.rect.height}`);
-                Ti.API.info(`[WB-28] content size: w=${content.size.width} h=${content.size.height}`);
-                Ti.API.info(`[WB-28] left rect: x=${ctl.left.rect.x} y=${ctl.left.rect.y} w=${ctl.left.rect.width} h=${ctl.left.rect.height}`);
-                Ti.API.info(`[WB-28] right rect: x=${right.rect.x} y=${right.rect.y} w=${right.rect.width} h=${right.rect.height}`);
                 // applyKeyboardTweaks wraps the original content view in
                 // a ScrollView — assert right fits within the window's
                 // safe-area-padded region (where the user actually sees
