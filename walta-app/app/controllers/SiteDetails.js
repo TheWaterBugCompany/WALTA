@@ -26,7 +26,7 @@ var { applyKeyboardTweaks } = require("ui/Layout");
 // context that causes #right to overflow on notched iPhones. Keyboard
 // auto-scroll is not critical here because the text fields sit in the top
 // portion of #left and remain visible above the keyboard in landscape.
-applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ], { wrapInScrollView: false } );
+applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
 
 var acb = $.getAnchorBar();  
 $.backButton = Alloy.createController("GoBackButton", { topic: Topics.HOME, slide: "left", readonly: readOnlyMode }  ); 

@@ -84,16 +84,7 @@ function hideKeyboard(blurFields) {
     blurFields.forEach( (v)=> v.blur() );
    }
 }
-function applyKeyboardTweaks( ctlr, blurFields, options ) {
-    options = options || {};
-    // WB-28: opting out of the iOS ScrollView wrap (below) fixes the
-    // SiteDetails layout bug where #right overflows on notched iPhones.
-    // The wrap establishes a measurement context where percentage-width
-    // children resolve against the window width instead of the post-safe-
-    // area content width. Keep wrap enabled by default for screens that
-    // rely on it for keyboard auto-scroll; opt out where a layout fix is
-    // more important than keyboard scroll behaviour.
-    var wrapInScrollView = options.wrapInScrollView !== false;
+function applyKeyboardTweaks( ctlr, blurFields ) {
     function hideKeyboardCallback() {
         hideKeyboard(blurFields);
     }
@@ -102,25 +93,53 @@ function applyKeyboardTweaks( ctlr, blurFields, options ) {
     }
     ctlr.TopLevelWindow.addEventListener("touchstart",hideKeyboardCallback );
 
+    var wrapped = false;
     ctlr.TopLevelWindow.addEventListener("close", function closeEvent() {
         ctlr.TopLevelWindow.removeEventListener("touchstart", hideKeyboardCallback );
         ctlr.TopLevelWindow.removeEventListener("close", closeEvent );
-        if (OS_IOS && wrapInScrollView) {
+        if (OS_IOS && wrapped) {
             ctlr.TopLevelWindow.removeEventListener("postlayout", fixScrollContentsSizeCallback );
         }
-
     });
 
-    // On iOS in order to get the screen to scroll out of the way of the keyboard
-    // we need to wrap the content inside of a ScrollView - we don't do this on android
-    // because it isn't needed and creates layout issues.
-    if (OS_IOS && wrapInScrollView) {
-        let scrollView = Ti.UI.createScrollView({top:0})
-        scrollView.add( ctlr.content )
-        ctlr.content = scrollView
-        ctlr.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSizeCallback );
+    // On iOS we wrap content in a ScrollView so the focused field can
+    // scroll clear of the keyboard. Defer the wrap until TopLevelWindow
+    // has applied its safe-area padding (see WB-28): wrapping before
+    // that point establishes a measurement context where percentage-
+    // width children resolve against the full window width, which on
+    // notched iPhones pushes items off the right edge. Android doesn't
+    // need the wrap — the keyboard resizes the activity automatically.
+    if (OS_IOS) {
+        function wrapInScrollView() {
+            if (wrapped) return;
+            wrapped = true;
+            // Re-parent: remove original content from the window, wrap
+            // it in a ScrollView, then add the ScrollView back in its
+            // place. A plain `scrollView.add(oldContent)` without the
+            // prior remove leaves the old content still parented to
+            // the window, producing an orphaned ScrollView with zero
+            // measured size.
+            var oldContent = ctlr.content;
+            var window = ctlr.TopLevelWindow;
+            var scrollView = Ti.UI.createScrollView({
+                top: oldContent.top || 0,
+                width: Ti.UI.FILL,
+                height: oldContent.height || Ti.UI.FILL
+            });
+            window.remove(oldContent);
+            scrollView.add(oldContent);
+            oldContent.top = 0;
+            oldContent.height = Ti.UI.SIZE;
+            window.add(scrollView);
+            ctlr.content = scrollView;
+            window.addEventListener("postlayout", fixScrollContentsSizeCallback );
+        }
+        if (ctlr.isSafeAreaApplied && ctlr.isSafeAreaApplied()) {
+            wrapInScrollView();
+        } else {
+            ctlr.on("safe-area-applied", wrapInScrollView);
+        }
     }
-
 }
 
 exports.applyKeyboardTweaks = applyKeyboardTweaks;

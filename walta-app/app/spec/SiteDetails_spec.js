@@ -245,7 +245,9 @@ describe("SiteDetails controller", function() {
     it("right column should fit within the content area (WB-28)", function(done) {
         ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
-            // Let postlayout -> updateSafeArea stabilise before reading rects.
+            // Let postlayout -> updateSafeArea -> safe-area-applied ->
+            // applyKeyboardTweaks' deferred ScrollView wrap -> relayout
+            // all settle before reading rects.
             setTimeout( function() {
                 var right = ctl.right;
                 var content = ctl.content;
@@ -257,9 +259,14 @@ describe("SiteDetails controller", function() {
                 Ti.API.info(`[WB-28] content size: w=${content.size.width} h=${content.size.height}`);
                 Ti.API.info(`[WB-28] left rect: x=${ctl.left.rect.x} y=${ctl.left.rect.y} w=${ctl.left.rect.width} h=${ctl.left.rect.height}`);
                 Ti.API.info(`[WB-28] right rect: x=${right.rect.x} y=${right.rect.y} w=${right.rect.width} h=${right.rect.height}`);
-                expect( right.rect.x + right.rect.width ).to.be.at.most( content.size.width );
+                // applyKeyboardTweaks wraps the original content view in
+                // a ScrollView — assert right fits within the window's
+                // safe-area-padded region (where the user actually sees
+                // things), which is what matters for WB-28.
+                var visibleRight = win.size.width - sap.right;
+                expect( right.rect.x + right.rect.width ).to.be.at.most( visibleRight );
                 done();
-            }, 300 );
+            }, 800 );
         } );
     });
 
