@@ -234,6 +234,40 @@ describe("SiteDetails controller", function() {
         } );
     });
 
+    // WB-28: camera icon was rendering off the right edge of the viewport on
+    // notched iPhones. Regression check: ensure the right column (which
+    // contains photoSelect, which contains the camera icon) stays within the
+    // content bounds after layout + safe-area padding has settled.
+    //
+    // Skipped: root cause is Titanium's classic layout engine caching
+    // percentage-width children against the pre-safe-area window width;
+    // children never reflow when updateSafeArea (TopLevelWindow.js) shrinks
+    // $.content to the safe-area-adjusted size. applyKeyboardTweaks also
+    // wraps $.content in a ScrollView on iOS, so the overflow surfaces as
+    // horizontal pan rather than a hard clip. A proper fix requires WB-24
+    // (enable use-autolayout so layout uses NSLayoutConstraints). Un-skip
+    // this test when WB-24 lands.
+    it.skip("right column should fit within the content area (WB-28)", function(done) {
+        ctl = Alloy.createController("SiteDetails");
+        controllerOpenTest( ctl, function() {
+            // Let postlayout -> updateSafeArea stabilise before reading rects.
+            setTimeout( function() {
+                var right = ctl.right;
+                var content = ctl.content;
+                var win = ctl.TopLevelWindow;
+                var sap = win.safeAreaPadding || {};
+                Ti.API.info(`[WB-28] safeAreaPadding: l=${sap.left} t=${sap.top} r=${sap.right} b=${sap.bottom}`);
+                Ti.API.info(`[WB-28] window rect: x=${win.rect.x} y=${win.rect.y} w=${win.rect.width} h=${win.rect.height}`);
+                Ti.API.info(`[WB-28] content rect: x=${content.rect.x} y=${content.rect.y} w=${content.rect.width} h=${content.rect.height}`);
+                Ti.API.info(`[WB-28] content size: w=${content.size.width} h=${content.size.height}`);
+                Ti.API.info(`[WB-28] left rect: x=${ctl.left.rect.x} y=${ctl.left.rect.y} w=${ctl.left.rect.width} h=${ctl.left.rect.height}`);
+                Ti.API.info(`[WB-28] right rect: x=${right.rect.x} y=${right.rect.y} w=${right.rect.width} h=${right.rect.height}`);
+                expect( right.rect.x + right.rect.width ).to.be.at.most( content.size.width );
+                done();
+            }, 300 );
+        } );
+    });
+
     it("photo should NOT be selectable when in read only mode", function(done) {
         ctl = Alloy.createController("SiteDetails", { readonly: true });
         controllerOpenTest( ctl, function() {
