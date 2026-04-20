@@ -235,19 +235,14 @@ describe("SiteDetails controller", function() {
     });
 
     // WB-28: camera icon was rendering off the right edge of the viewport on
-    // notched iPhones. Regression check: ensure the right column (which
-    // contains photoSelect, which contains the camera icon) stays within the
-    // content bounds after layout + safe-area padding has settled.
-    //
-    // Skipped: root cause is Titanium's classic layout engine caching
-    // percentage-width children against the pre-safe-area window width;
-    // children never reflow when updateSafeArea (TopLevelWindow.js) shrinks
-    // $.content to the safe-area-adjusted size. applyKeyboardTweaks also
-    // wraps $.content in a ScrollView on iOS, so the overflow surfaces as
-    // horizontal pan rather than a hard clip. A proper fix requires WB-24
-    // (enable use-autolayout so layout uses NSLayoutConstraints). Un-skip
-    // this test when WB-24 lands.
-    it.skip("right column should fit within the content area (WB-28)", function(done) {
+    // notched iPhones. Root cause was applyKeyboardTweaks wrapping $.content
+    // in a ScrollView on iOS, which caused percentage-width children to be
+    // measured against the window width (874) instead of the safe-area-
+    // adjusted content width (750). SiteDetails now opts out of that wrap
+    // via `{wrapInScrollView: false}`; children resolve percentages against
+    // $.content directly, which reflows when TopLevelWindow.updateSafeArea
+    // applies safeAreaPadding.
+    it("right column should fit within the content area (WB-28)", function(done) {
         ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             // Let postlayout -> updateSafeArea stabilise before reading rects.
