@@ -1,3 +1,4 @@
+@skip
 Feature: Taxanomic index
 
 I already know what my bug is because I'm an expert with insects

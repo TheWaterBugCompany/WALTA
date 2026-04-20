@@ -1,3 +1,4 @@
+@skip
 Feature: Sample A Site
 
 I want to sample a site by doing a survey and identifying all the

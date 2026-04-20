@@ -1,3 +1,4 @@
+@skip
 Feature: SpeedBug
 
 I have a species with a fairly distinct silhouette and I want to jump the

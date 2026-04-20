@@ -1,4 +1,4 @@
-@mockserver
+@mockserver @skip
 Feature: Edit samples
 
 I want to be able to edit samples I have already completed.

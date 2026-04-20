@@ -1,3 +1,4 @@
+@skip
 Feature: Attach Multimedia
 
 I want to be able to record a photo and attach it

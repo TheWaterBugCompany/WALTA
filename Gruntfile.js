@@ -587,7 +587,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask("cucumber", function () {
       const done = this.async();
-      const tags = grunt.option('cucumber-tags') || '@only';
+      const tags = grunt.option('cucumber-tags') || 'not @skip';
       const appiumOptions = {
         platform: grunt.option('platform'),
         isSimulator: !!grunt.option('simulator'),
