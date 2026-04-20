@@ -4,15 +4,20 @@ class CameraScreen extends BaseScreen {
     constructor( world ) {
         super(world);
         if ( this.isIos() ) {
-            this.presenceSelector = this.selector("Viewfinder");
+            // iOS simulator can't drive Ti.Media.showCamera's native picker
+            // (UIImagePickerController runs in a separate system process that
+            // doesn't accept synthesized taps, and newer sim models have no
+            // camera simulation at all). Simulator builds swap in a Ti.UI-based
+            // test camera (lib/ui/Camera-test.js) with a "PhotoCapture" button
+            // we can actually tap — see plugins/unittest/1.0/hooks/unittest.js.
+            this.presenceSelector = this.selector("PhotoCapture");
         } else {
             this.presenceSelector = `android=new UiSelector().packageNameMatches("com\.android\.camera|com\.sec\.android\.app\.camera")`;
         }
     }
     async takePhoto() {
         if ( this.isIos() ) {
-            await this.click("Take Picture");
-            await this.click("Use Photo");
+            await this.click("PhotoCapture");
         } else {
             let packageName = await this.driver.getCurrentPackage();
             if ( packageName === "com.sec.android.app.camera") {

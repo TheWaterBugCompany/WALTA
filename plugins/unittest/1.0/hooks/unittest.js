@@ -27,20 +27,39 @@ exports.init = function (_logger, _config, cli) {
 		// cli.argv["unit-test"] is undefined in `titanium serve` context because the plugin's
 		// init() runs after CLI argv parsing. Fall back to process.argv as a reliable source.
 		const isUnitTest = cli.argv["unit-test"] || process.argv.includes('--unit-test');
-		debug(`createSpecSymlink: isUnitTest=${isUnitTest}`);
+		// Simulator builds (acceptance + unit-test + local debug) swap the
+		// Camera module to a Ti.UI-based test implementation because the iOS
+		// simulator's native image picker can't be driven by Appium/WDA and
+		// newer sim models have no camera simulation at all.
+		const targetArgIdx = process.argv.indexOf('--target');
+		const targetArg = targetArgIdx >= 0 ? process.argv[targetArgIdx + 1] : cli.argv.target;
+		const isSimulator = targetArg === 'simulator';
+		debug(`createSpecSymlink: isUnitTest=${isUnitTest}, isSimulator=${isSimulator}`);
 
 		const specSymlink = join(cli.argv['project-dir'], 'app', 'lib', 'spec');
 		try { fs.unlinkSync(specSymlink); } catch(e) {}
-		if (isUnitTest) {
-			debug('Creating app/lib/spec symlink for unit-test build');
+		// Simulator builds need the spec symlink too — Camera-test.js reads
+		// spec/resources/site-mock.jpg when the shutter is tapped.
+		if (isUnitTest || isSimulator) {
+			debug('Creating app/lib/spec symlink');
 			fs.symlinkSync('../spec', specSymlink);
 		}
 
 		const indexSymlink = join(cli.argv['project-dir'], 'app', 'controllers', 'index.js');
 		try { fs.unlinkSync(indexSymlink); } catch(e) {}
-		const target = isUnitTest ? 'UnitTest.js' : 'index-app.js';
-		debug(`Symlinking app/controllers/index.js -> ${target}`);
-		fs.symlinkSync(target, indexSymlink);
+		const indexTarget = isUnitTest ? 'UnitTest.js' : 'index-app.js';
+		debug(`Symlinking app/controllers/index.js -> ${indexTarget}`);
+		fs.symlinkSync(indexTarget, indexSymlink);
+
+		// Swap the Camera wrapper for simulator builds. Using a file copy
+		// rather than a symlink because Alloy's Resource copy step chokes on
+		// a Camera.js symlink pointing to a sibling file in the same dir
+		// ("Cannot copy X to a subdirectory of itself").
+		const cameraDir = join(cli.argv['project-dir'], 'app', 'lib', 'ui');
+		const cameraDst = join(cameraDir, 'Camera.js');
+		const cameraSrc = join(cameraDir, isSimulator ? 'Camera-test.js' : 'Camera-prod.js');
+		debug(`Copying ${cameraSrc} -> ${cameraDst}`);
+		fs.copyFileSync(cameraSrc, cameraDst);
 
 		finished();
 	}
