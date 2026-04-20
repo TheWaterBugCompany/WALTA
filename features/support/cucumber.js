@@ -62,6 +62,7 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
             console.warn(`[BeforeAll] adb pm clear/grant failed: ${e.message}`);
         }
         await global.driver.activateApp(appId);
+        setAndroidLocation();
     }
     if (opts.platform === 'ios' && opts.isSimulator) {
         const appId = global.launcher.appId;

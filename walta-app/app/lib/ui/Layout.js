@@ -143,10 +143,18 @@ function applyKeyboardTweaks( ctlr, blurFields ) {
             ctlr.content = scrollView;
             window.addEventListener("postlayout", fixScrollContentsSizeCallback );
         }
+        // Defer the wrap out of the current postlayout callback — doing
+        // the re-parent while Ti is mid-layout leaves Classic layout
+        // holding stale measurements for percentage/SIZE-sized children
+        // (visible on the Back → SiteDetails path: text fields render
+        // too short until a property change forces a re-measure).
+        function deferWrap() {
+            setTimeout(wrapInScrollView, 0);
+        }
         if (ctlr.isSafeAreaApplied && ctlr.isSafeAreaApplied()) {
-            wrapInScrollView();
+            deferWrap();
         } else {
-            ctlr.on("safe-area-applied", wrapInScrollView);
+            ctlr.on("safe-area-applied", deferWrap);
         }
     }
 }
