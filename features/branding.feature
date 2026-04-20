@@ -1,3 +1,4 @@
+@skip
 Feature: Branding and help
 
 As a user a want to see the about screen and help screens.

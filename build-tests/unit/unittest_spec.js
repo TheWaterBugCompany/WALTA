@@ -52,6 +52,7 @@ describe("unittest hook", function () {
             cli.argv['project-dir'] = projectDir;
             sinon.stub(fs, 'symlinkSync');
             sinon.stub(fs, 'unlinkSync');
+            sinon.stub(fs, 'copyFileSync');
         });
 
         it("should create app/lib/spec symlink when --unit-test is set", function (done) {

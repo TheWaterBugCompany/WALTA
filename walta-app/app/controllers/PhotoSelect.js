@@ -213,9 +213,11 @@ function setImage( fileOrBlob ) {
    
 }
 
+var Camera = require('ui/Camera');
+
 function requestCameraPermissions( success, failure ) {
-    if (!Ti.Media.hasCameraPermissions()) {
-        Ti.Media.requestCameraPermissions(function (e) {
+    if (!Camera.hasCameraPermissions()) {
+        Camera.requestCameraPermissions(function (e) {
             if (e.success) {
                 success();
             } else {
@@ -255,7 +257,7 @@ function takePhoto(e) {
             let blinds = Ti.UI.createWindow( { backgroundColor: "black", exitOnClose: false } );
            
             function openCamera() {
-                Ti.Media.showCamera({
+                Camera.showCamera({
                     autohide: true,
                     animated: false,
                     autorotate: false,

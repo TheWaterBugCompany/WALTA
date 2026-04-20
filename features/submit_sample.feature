@@ -1,4 +1,4 @@
-@mockserver
+@mockserver @skip
 Feature: Upload Samples
 
 I want submit this sample to the database when internet is available.

@@ -1,3 +1,4 @@
+@skip
 Feature: Allow partial identification
 
 I want to be able to stop at any point in the binary key that matches up with a

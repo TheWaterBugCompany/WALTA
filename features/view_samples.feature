@@ -1,3 +1,4 @@
+@skip
 Feature: View samples
 
 I want to review the history of the samples I have already collected.

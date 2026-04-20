@@ -38,7 +38,8 @@ const KobitonAPI = require("./features/support/kobiton");
       './walta-app/app/**/*.js',
       './walta-app/app/**/*.xml',
       './walta-app/app/**/*.css',
-      './walta-app/app/**/*.tss'
+      './walta-app/app/**/*.tss',
+      './plugins/**/*.js'
     ];
 
     function getLocalIP() {
@@ -197,6 +198,11 @@ const KobitonAPI = require("./features/support/kobiton");
           if ( platform === "android" ) {
             post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/debug/Waterbug.apk");
           } else {
+            // `cp -r src dst` on macOS nests src INSIDE dst when dst already
+            // exists (creating dst/Waterbug.app/Waterbug.app) — leaving the
+            // outer dst/Waterbug.app files stale. Wipe dst first so the
+            // copy fully replaces the previous build.
+            post_cmds.push("rm -rf ./builds/debug/Waterbug.app");
             post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/debug/Waterbug.app");
           }
           break;
@@ -210,6 +216,7 @@ const KobitonAPI = require("./features/support/kobiton");
           if ( platform === "ios" ) {
             dev();
             post_cmds.push("mkdir -p ./builds/unit-test");
+            post_cmds.push("rm -rf ./builds/unit-test/Waterbug.app");
             post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app ./builds/unit-test/Waterbug.app");
           } else {
             test();
@@ -224,6 +231,7 @@ const KobitonAPI = require("./features/support/kobiton");
           if ( platform === "android" ) {
             post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/test-sim/Waterbug.apk");
           } else if ( platform === "ios" ) {
+            post_cmds.push("rm -rf ./builds/test-sim/Waterbug.app");
             post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/test-sim/Waterbug.app");
           }
           break;
@@ -236,6 +244,7 @@ const KobitonAPI = require("./features/support/kobiton");
             args.push("--output-dir builds/unit-test");
             post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/unit-test/Waterbug.apk");
           } else if ( platform === "ios" ) {
+            post_cmds.push("rm -rf ./builds/unit-test/Waterbug.app");
             post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/unit-test/Waterbug.app");
           }
           break;
@@ -587,7 +596,7 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask("cucumber", function () {
       const done = this.async();
-      const tags = grunt.option('cucumber-tags') || '@only';
+      const tags = grunt.option('cucumber-tags') || 'not @skip';
       const appiumOptions = {
         platform: grunt.option('platform'),
         isSimulator: !!grunt.option('simulator'),

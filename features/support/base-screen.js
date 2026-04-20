@@ -58,28 +58,22 @@ class BaseScreen {
         var size = await el.getSize();
         var location = await el.getLocation();
         var dist = Math.round(size.width * percent / 100);
-        if ( this.isIos() ) {
-            let xpos = await el.getValue();
-            await this.driver.execute("mobile: dragFromToForDuration", {
-                duration: 0.5,
-                fromX: size.width * parseInt(xpos) / 100,
-                fromY: size.height / 2,
-                toX: dist,
-                toY: size.height / 2,
-                element: el.elementId
-            });
-        } else {
-            await this.driver.performActions([{
-                type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
-                actions: [
-                    { type: 'pointerMove', duration: 0, x: location.x, y: Math.round(location.y + size.height / 2) },
-                    { type: 'pointerDown', button: 0 },
-                    { type: 'pause', duration: 500 },
-                    { type: 'pointerMove', duration: 300, x: location.x + dist, y: Math.round(location.y + size.height / 2) },
-                    { type: 'pointerUp', button: 0 },
-                ],
-            }]);
-        }
+        var cy = Math.round(location.y + size.height / 2);
+        // iOS slider value at min sits at the left edge; start a few px in
+        // to land on the thumb, then drag to the target offset. Use W3C
+        // actions with an explicit pause — `mobile: dragFromToForDuration`
+        // doesn't reliably fire the Titanium slider's change event on sim.
+        var fromX = this.isIos() ? location.x + 10 : location.x;
+        await this.driver.performActions([{
+            type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
+            actions: [
+                { type: 'pointerMove', duration: 0, x: fromX, y: cy },
+                { type: 'pointerDown', button: 0 },
+                { type: 'pause', duration: 500 },
+                { type: 'pointerMove', duration: 500, x: location.x + dist, y: cy },
+                { type: 'pointerUp', button: 0 },
+            ],
+        }]);
     }
 
     async enter( sel, text ) {
