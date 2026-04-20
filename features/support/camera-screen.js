@@ -3,16 +3,20 @@ const BaseScreen = require('./base-screen');
 class CameraScreen extends BaseScreen {
     constructor( world ) {
         super(world);
-        if ( this.isIos() ) {
-            this.presenceSelector = this.selector("Viewfinder");
+        // Simulator builds (iOS or Android) swap the real camera for
+        // Ti.UI-based Camera-test.js, which exposes a "PhotoCapture"
+        // button. See plugins/unittest/1.0/hooks/unittest.js. Only on
+        // real Android devices do we fall back to driving the native
+        // camera package.
+        if ( this.isIos() || world.isSimulator ) {
+            this.presenceSelector = this.selector("PhotoCapture");
         } else {
             this.presenceSelector = `android=new UiSelector().packageNameMatches("com\.android\.camera|com\.sec\.android\.app\.camera")`;
         }
     }
     async takePhoto() {
-        if ( this.isIos() ) {
-            await this.click("Take Picture");
-            await this.click("Use Photo");
+        if ( this.isIos() || this.world.isSimulator ) {
+            await this.click("PhotoCapture");
         } else {
             let packageName = await this.driver.getCurrentPackage();
             if ( packageName === "com.sec.android.app.camera") {

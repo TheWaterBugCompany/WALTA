@@ -84,34 +84,79 @@ function hideKeyboard(blurFields) {
     blurFields.forEach( (v)=> v.blur() );
    }
 }
-function applyKeyboardTweaks( ctlr, blurFields ) { 
+function applyKeyboardTweaks( ctlr, blurFields ) {
     function hideKeyboardCallback() {
         hideKeyboard(blurFields);
-    } 
+    }
     function fixScrollContentsSizeCallback() {
         fixScrollContentsSize(ctlr);
     }
     ctlr.TopLevelWindow.addEventListener("touchstart",hideKeyboardCallback );
-    
+
+    var wrapped = false;
     ctlr.TopLevelWindow.addEventListener("close", function closeEvent() {
         ctlr.TopLevelWindow.removeEventListener("touchstart", hideKeyboardCallback );
         ctlr.TopLevelWindow.removeEventListener("close", closeEvent );
-        if (OS_IOS) {
+        if (OS_IOS && wrapped) {
             ctlr.TopLevelWindow.removeEventListener("postlayout", fixScrollContentsSizeCallback );
         }
-
     });
 
-    // On iOS in order to get the screen to scroll out of the way of the keyboard
-    // we need to wrap the content inside of a ScrollView - we don't do this on android
-    // because it isn't needed and creates layout issues.
+    // On iOS we wrap content in a ScrollView so the focused field can
+    // scroll clear of the keyboard. Defer the wrap until TopLevelWindow
+    // has applied its safe-area padding (see WB-28): wrapping before
+    // that point establishes a measurement context where percentage-
+    // width children resolve against the full window width, which on
+    // notched iPhones pushes items off the right edge. Android doesn't
+    // need the wrap — the keyboard resizes the activity automatically.
     if (OS_IOS) {
-        let scrollView = Ti.UI.createScrollView({top:0})
-        scrollView.add( ctlr.content )
-        ctlr.content = scrollView
-        ctlr.TopLevelWindow.addEventListener("postlayout",fixScrollContentsSizeCallback );
+        function wrapInScrollView() {
+            if (wrapped) return;
+            wrapped = true;
+            // Lock to vertical-only — the ScrollView exists solely to
+            // slide content out from under the keyboard. Without these,
+            // iOS's rubber-band effect lets the user drag horizontally
+            // even when contentWidth matches the viewport.
+            var scrollView = Ti.UI.createScrollView({
+                top: 0,
+                horizontalBounce: false,
+                showHorizontalScrollIndicator: false
+            });
+            // Explicit re-parent: remove content from the window before
+            // adding to the ScrollView, then add the ScrollView back.
+            // A plain `scrollView.add(content)` leaves content still
+            // parented to the window, orphaning the ScrollView with
+            // zero measured size. Temporarily remove the anchorBar so
+            // it can be re-added last — Ti's view list doubles as
+            // z-order. With scrollView on top, iOS's accessibility
+            // tree marks anything beneath it `visible="false"`, which
+            // breaks Appium lookups of the window title and Back/Next
+            // buttons even though the pixels are still painted.
+            var oldContent = ctlr.content;
+            var window = ctlr.TopLevelWindow;
+            var anchorBarView = ctlr.getAnchorBar && ctlr.getAnchorBar().getView();
+            window.remove(oldContent);
+            if (anchorBarView) window.remove(anchorBarView);
+            scrollView.add(oldContent);
+            window.add(scrollView);
+            if (anchorBarView) window.add(anchorBarView);
+            ctlr.content = scrollView;
+            window.addEventListener("postlayout", fixScrollContentsSizeCallback );
+        }
+        // Defer the wrap out of the current postlayout callback — doing
+        // the re-parent while Ti is mid-layout leaves Classic layout
+        // holding stale measurements for percentage/SIZE-sized children
+        // (visible on the Back → SiteDetails path: text fields render
+        // too short until a property change forces a re-measure).
+        function deferWrap() {
+            setTimeout(wrapInScrollView, 0);
+        }
+        if (ctlr.isSafeAreaApplied && ctlr.isSafeAreaApplied()) {
+            deferWrap();
+        } else {
+            ctlr.on("safe-area-applied", deferWrap);
+        }
     }
-
 }
 
 exports.applyKeyboardTweaks = applyKeyboardTweaks;

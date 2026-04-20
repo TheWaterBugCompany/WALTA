@@ -2,7 +2,7 @@
 	<Model src="sample" />
 	<View id="content" class="container" layout="vertical">
 		<View id="siteInfoPanel" layout="vertical">
-			<Label id="heading" class="headingText" text="{sample.surveyType} Survey"/>
+			<Label id="heading" class="headingText" accessibilityLabel="Survey Heading" text="{sample.surveyType} Survey"/>
 			<Label class="labelText" text="{sample.siteInfo}"/>
 			<Label class="labelText" text="Date: {sample.dateCompleted}"/>
 			<Label id="message" class="labelText"/>
@@ -12,7 +12,7 @@
 				<View class="scoreContainer">
 					<Label class="labelText" text="SIGNAL score"/>
 					<View class="scoreWrapper">
-						<Label id="signalScore" class="labelText score"  backgroundColor="{sample.scoreColor}" text="{sample.score}"/>
+						<Label id="signalScore" class="labelText score" accessibilityLabel="SIGNAL Score" backgroundColor="{sample.scoreColor}" text="{sample.score}"/>
 					</View> 
 				</View>
 				<View class="scoreContainer">

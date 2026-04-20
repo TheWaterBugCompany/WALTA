@@ -14,6 +14,7 @@ const PhotoSelectScreen = require('./photo-select-screen.js');
 const CameraScreen = require('./camera-screen.js');
 const AboutScreen = require('./about-screen.js');
 const HelpScreen = require('./help-screen.js');
+const NotesScreen = require('./notes-screen.js');
 const SummaryScreen = require('./summary-screen.js');
 const ArchiveScreen = require('./archive-screen.js');
 
@@ -34,6 +35,7 @@ function setUpWorld(world) {
     world.camera = new CameraScreen( world );
     world.about = new AboutScreen( world );
     world.help = new HelpScreen( world );
+    world.notes = new NotesScreen( world );
     world.summary = new SummaryScreen( world );
     world.swipeRight = swipeRight;
     world.swipeLeft = swipeLeft;

@@ -15,7 +15,10 @@ class SampleScreen extends BaseScreen {
 
     async goNext() {
         await this.click("Next");
-        await this.world.summary.waitFor();
+        // Between Sample tray and Summary there's a Notes screen
+        // (partial-submission toggle + survey notes). The caller is
+        // responsible for completing it via NotesScreen.goNext().
+        await this.world.notes.waitFor();
     }
 
     async goBack() {

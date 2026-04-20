@@ -426,8 +426,12 @@ jobs:
             # XCUITest driver refuses to drive a simulator booted headlessly
             # via simctl — it tries to relaunch with the GUI visible and then
             # times out. Boot via Simulator.app directly so the UI is up front.
+            # `bootstatus` without `-b` just waits for the in-flight boot
+            # started by `open -a Simulator` to finish; with `-b` it races
+            # to issue a second boot command and fails with SimError 405
+            # once the device has reached "Booted" state.
             open -a Simulator --args -CurrentDeviceUDID "$SIM_UDID"
-            xcrun simctl bootstatus "$SIM_UDID" -b
+            xcrun simctl bootstatus "$SIM_UDID"
           fi
           echo "Simulator boot step complete"
 

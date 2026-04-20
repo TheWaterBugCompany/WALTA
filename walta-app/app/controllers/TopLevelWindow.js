@@ -3,6 +3,13 @@ var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
 var anchorBar = Alloy.createController("AnchorBar" );
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
+
+// Tracks whether the first postlayout has happened and safeAreaPadding
+// (if any) has been applied to $.content. Consumers that subscribe to
+// "safe-area-applied" after this point would miss the event, so they
+// should fall back to checking this flag.
+var safeAreaApplied = false;
+function isSafeAreaApplied() { return safeAreaApplied; }
 function openWindow() {
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
@@ -24,8 +31,18 @@ function openWindow() {
 		$.content.width = Ti.UI.FILL;
 		$.TopLevelWindow.add( $.content );
 	}
-	if ( ! $.TopLevelWindow.useUnSafeArea )
+	if ( $.TopLevelWindow.useUnSafeArea ) {
+		// No safe-area adjustment is coming, but consumers still need
+		// the signal to know layout is settled. Fire once on first
+		// postlayout.
+		$.TopLevelWindow.addEventListener('postlayout', function firstLayout() {
+			$.TopLevelWindow.removeEventListener('postlayout', firstLayout);
+			safeAreaApplied = true;
+			$.trigger("safe-area-applied");
+		});
+	} else {
 		$.TopLevelWindow.addEventListener('postlayout', updateSafeArea);
+	}
 	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
 	$.TopLevelWindow.addEventListener('postlayout',function() {
 		$.trigger("window-opened");
@@ -47,6 +64,14 @@ function updateSafeArea() {
 	anchorBar.leftTools.left = padding.left;
 	anchorBar.rightTools.right = padding.right;
 	$.content.applyProperties(padding);
+	// Signal once, after padding is applied, so consumers (e.g.
+	// applyKeyboardTweaks) can restructure the view tree against the
+	// final content dimensions rather than the pre-safe-area window
+	// width (WB-28).
+	if (!safeAreaApplied) {
+		safeAreaApplied = true;
+		$.trigger("safe-area-applied");
+	}
 }
 
 
@@ -126,6 +151,7 @@ exports.clearError = clearError;
 exports.setErrorMessage = setErrorMessage;
 exports.setErrorMessageString = setErrorMessageString;
 exports.clearErrorMessage = clearErrorMessage;
+exports.isSafeAreaApplied = isSafeAreaApplied;
 exports.open = openWindow;
 exports.getAnchorBar = getAnchorBar;
 exports.noSwipeBack = noSwipeBack;
