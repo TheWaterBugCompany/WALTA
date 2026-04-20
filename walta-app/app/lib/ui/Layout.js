@@ -113,24 +113,33 @@ function applyKeyboardTweaks( ctlr, blurFields ) {
         function wrapInScrollView() {
             if (wrapped) return;
             wrapped = true;
-            // Re-parent: remove original content from the window, wrap
-            // it in a ScrollView, then add the ScrollView back in its
-            // place. A plain `scrollView.add(oldContent)` without the
-            // prior remove leaves the old content still parented to
-            // the window, producing an orphaned ScrollView with zero
-            // measured size.
+            // Lock to vertical-only — the ScrollView exists solely to
+            // slide content out from under the keyboard. Without these,
+            // iOS's rubber-band effect lets the user drag horizontally
+            // even when contentWidth matches the viewport.
+            var scrollView = Ti.UI.createScrollView({
+                top: 0,
+                horizontalBounce: false,
+                showHorizontalScrollIndicator: false
+            });
+            // Explicit re-parent: remove content from the window before
+            // adding to the ScrollView, then add the ScrollView back.
+            // A plain `scrollView.add(content)` leaves content still
+            // parented to the window, orphaning the ScrollView with
+            // zero measured size. Temporarily remove the anchorBar so
+            // it can be re-added last — Ti's view list doubles as
+            // z-order. With scrollView on top, iOS's accessibility
+            // tree marks anything beneath it `visible="false"`, which
+            // breaks Appium lookups of the window title and Back/Next
+            // buttons even though the pixels are still painted.
             var oldContent = ctlr.content;
             var window = ctlr.TopLevelWindow;
-            var scrollView = Ti.UI.createScrollView({
-                top: oldContent.top || 0,
-                width: Ti.UI.FILL,
-                height: oldContent.height || Ti.UI.FILL
-            });
+            var anchorBarView = ctlr.getAnchorBar && ctlr.getAnchorBar().getView();
             window.remove(oldContent);
+            if (anchorBarView) window.remove(anchorBarView);
             scrollView.add(oldContent);
-            oldContent.top = 0;
-            oldContent.height = Ti.UI.SIZE;
             window.add(scrollView);
+            if (anchorBarView) window.add(anchorBarView);
             ctlr.content = scrollView;
             window.addEventListener("postlayout", fixScrollContentsSizeCallback );
         }
