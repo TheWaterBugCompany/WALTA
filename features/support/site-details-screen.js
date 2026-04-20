@@ -106,5 +106,10 @@ class SiteDetailsScreen extends BaseScreen {
         let sitePhoto = await this.getElement("Photo");
         await sitePhoto.saveScreenshot(filePath);
     }
-} 
+
+    async selectSitePhoto() {
+        await this.click("Take Photo");
+        await this.world.camera.waitFor();
+    }
+}
 module.exports = SiteDetailsScreen;

@@ -4,9 +4,11 @@ Feature: Sample A Site
 I want to sample a site by doing a survey and identifying all the
 taxa I've collected.
 
+@only
 Scenario: Sample collection
-  Given a user has arrvied at a site to sample
-  When the user identifies a number of taxa # see identify_taxa.feature
+  Given a user has arrived at a site to sample
+  When the user fills out the site details
+   And the user identifies a number of taxa # see identify_taxa.feature
   Then the sample tray is filled with each identification
   When the user marks the sample as complete
   Then a signal score is calculated and displayed to the user
