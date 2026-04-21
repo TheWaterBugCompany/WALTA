@@ -43,7 +43,17 @@ This produces `builds/release/Waterbug.{apk,aab,ipa}`.
 
 ## Making a release
 
-1. Bump the version numbers in `tiapp.xml.template` for both Android and iOS.
-2. Build the release packages as described above.
-3. Upload the resulting packages to the Google Play Store and Apple App Store.
+Releases are built and published by the **Release** GitHub Action. From the [Actions tab](https://github.com/TheWaterBugCompany/WALTA/actions/workflows/release.yml), click **Run workflow** and choose:
+
+- **Version** — e.g. `2.0.5.1`. Leave empty to auto-increment the build number from the latest `v*` git tag.
+- **Platforms** — `both` (default), `android`, or `ios`.
+
+The workflow will:
+
+1. Build signed release packages for the selected platform(s).
+2. Upload the Android `.aab` to the Google Play **internal** track.
+3. Upload the iOS `.ipa` to **TestFlight**.
+4. Tag the commit with `v<version>` on success.
+
+Promotion from the internal track / TestFlight to production is done manually in the Play Console and App Store Connect.
 

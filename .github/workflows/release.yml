@@ -6,7 +6,7 @@ on:
       version:
         description: >
           Version (e.g. 2.0.5.1). Leave empty to auto-increment the build
-          number from the current version in tiapp.xml.template.
+          number from the latest v* git tag.
         required: false
         type: string
       platforms:
