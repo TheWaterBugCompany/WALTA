@@ -6,6 +6,12 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 10
+    ignore:
+      # liveview is pinned to our fork on a custom branch — we manage it manually
+      - dependency-name: "liveview"
+      # chai 6 is ESM-only and breaks the in-app mocha unit test harness
+      - dependency-name: "chai"
+        versions: [">=5"]
     groups:
       dev-dependencies:
         dependency-type: "development"
