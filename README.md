@@ -1,6 +1,6 @@
 # WALTA
 
-This repository contains the source code for both the iOS and the Android versions of the Waterbug App.
+This repository contains the source code for both the iOS and Android versions of the Waterbug App.
 
 ## Licensing
 
