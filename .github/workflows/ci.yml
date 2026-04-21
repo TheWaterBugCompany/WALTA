@@ -13,9 +13,57 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ── 0. Detect changes ─────────────────────────────────────────────────────
+  # Build/test jobs only run if files relevant to the build or its tests have
+  # changed. Doc/graphics/ruleset-only PRs skip the expensive jobs entirely.
+  # Skipped jobs report a "skipped" status which counts as success for
+  # required-checks branch protection.
+  changes:
+    name: Detect relevant changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      relevant: ${{ steps.filter.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            relevant:
+              # App source & taxonomy
+              - 'walta-app/**'
+              - 'walta-taxonomy/walta/**'
+              # Build configuration
+              - 'Gruntfile.js'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'install.sh'
+              - '.babelrc'
+              - '.npmrc'
+              - 'webpack.config.js'
+              - 'patches/**'
+              - 'plugins/**'
+              # Build utilities
+              - 'build-utils/**'
+              # Test infrastructure
+              - 'build-tests/**'
+              - 'test/**'
+              - 'test-resources/**'
+              - 'features/**'
+              - 'end-to-end-testing/**'
+              - 'mocha-bootstrap.js'
+              - 'wdio.conf.js'
+              # CI workflow itself — any change re-runs everything
+              - '.github/workflows/ci.yml'
+
   # ── 1. Node.js unit tests ─────────────────────────────────────────────────
   node-tests:
     name: Node.js unit tests
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,6 +104,8 @@ jobs:
   # ── 2. iOS simulator unit tests ───────────────────────────────────────────
   ios-simulator-tests:
     name: iOS simulator unit tests
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
     timeout-minutes: 30
     steps:
@@ -193,6 +243,8 @@ jobs:
   # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
   android-emulator-tests:
     name: Android emulator unit tests
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -320,6 +372,8 @@ jobs:
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
   ios-simulator-acceptance-tests:
     name: iOS simulator acceptance tests
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
     timeout-minutes: 30
     env:
@@ -483,6 +537,8 @@ jobs:
   # ── 5. Android emulator acceptance tests ──────────────────────────────────
   android-emulator-acceptance-tests:
     name: Android emulator acceptance tests
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
