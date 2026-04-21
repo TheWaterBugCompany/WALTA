@@ -145,8 +145,11 @@ jobs:
 
       - name: Boot iOS simulator
         run: |
+          # `bootstatus` without `-b` waits for the in-flight boot started
+          # above; with `-b` it races to issue a second boot and fails with
+          # SimError 405 once the device has reached "Booted" state.
           xcrun simctl boot ${{ steps.sim.outputs.udid }} || true
-          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }} -b
+          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }}
           echo "Simulator booted"
 
       - name: Run iOS build tests

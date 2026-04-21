@@ -96,6 +96,76 @@ describe("IosSimulatorLauncher", function() {
       expect(calls.some(a => a[1] === "install")).to.be.false;
     });
 
+    it("retries simctl launch once if it times out, and succeeds on the retry", async function() {
+      // CoreSimulator services (installd / FrontBoard / launchd) sometimes
+      // aren't ready to accept spawn requests even after the device reports
+      // "Booted". simctl launch silently waits, hits our timeout, and dies.
+      // A single retry usually catches up once the services are warm.
+      let launchAttempts = 0;
+      const fakeExecFile = sinon.stub().callsFake((_cmd, args, _opts, callback) => {
+        const key = args.join(" ");
+        if (key === `simctl boot ${UDID}`) {
+          callback(null, "", "");
+        } else if (key === `simctl launch ${UDID} net.thewaterbug.waterbug`) {
+          launchAttempts++;
+          if (launchAttempts === 1) {
+            const err = new Error("Command failed: xcrun simctl launch ...");
+            err.killed = true; // execFile sets this when the timeout kills the process
+            callback(err, "", "");
+          } else {
+            callback(null, "net.thewaterbug.waterbug: 1234\n", "");
+          }
+        } else {
+          callback(null, "", "");
+        }
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.launch("net.thewaterbug.waterbug");
+      expect(launchAttempts).to.equal(2);
+      expect(launcher._pid).to.equal(1234);
+    });
+
+    it("rethrows when simctl launch times out twice", async function() {
+      const err = new Error("Command failed: xcrun simctl launch ...");
+      err.killed = true;
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl launch ${UDID} net.thewaterbug.waterbug`]: err,
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      let caught;
+      try {
+        await launcher.launch("net.thewaterbug.waterbug");
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught, "expected launch to reject after retry exhausted").to.exist;
+      expect(caught.killed).to.be.true;
+      const launchCalls = fakeExecFile.getCalls().filter(c => c.args[1][1] === "launch");
+      expect(launchCalls).to.have.lengthOf(2);
+    });
+
+    it("does not retry simctl launch on non-timeout errors", async function() {
+      // A real launch failure (e.g. app not installed, bad bundle id) should
+      // surface immediately — retrying just delays the diagnostic.
+      const err = new Error("Application not found");
+      // err.killed is left undefined — this is a real failure, not a timeout
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl launch ${UDID} net.thewaterbug.waterbug`]: err,
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      let caught;
+      try {
+        await launcher.launch("net.thewaterbug.waterbug");
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).to.exist;
+      const launchCalls = fakeExecFile.getCalls().filter(c => c.args[1][1] === "launch");
+      expect(launchCalls).to.have.lengthOf(1);
+    });
+
     it("uses a generous timeout for install/launch so cold CI runners don't get killed mid-launch", async function() {
       const APP_PATH = "./builds/unit-test/Waterbug.app";
       const fakeExecFile = makeExecFile({
