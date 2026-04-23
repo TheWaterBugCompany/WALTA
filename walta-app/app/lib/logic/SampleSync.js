@@ -85,10 +85,15 @@ function startSynchronise(options) {
 
     // flag that were are already syncing - to avoid reentrant calls
     isSyncing = true;
+    Topics.fireTopicEvent( Topics.SYNC_STARTED );
     return Promise.resolve()
         .then(() => sampleDownloader.downloadSamples() )
         .then(() => sampleUploader.uploadSamples() )
-        .catch( Logger.recordException )
+        .then(() => Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } ))
+        .catch( error => {
+            Logger.recordException( error );
+            Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: false, error } );
+        })
         .finally( rescheduleSync )
 }
 

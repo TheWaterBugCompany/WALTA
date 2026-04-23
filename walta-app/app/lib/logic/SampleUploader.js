@@ -57,7 +57,7 @@ function uploadSitePhoto(sample,delay) {
                         sample.save({
                             "serverSitePhotoId": res.id
                         });
-                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading site photo" } );
                         return sample;
                     })
                     .catch( (err) => {
@@ -98,7 +98,7 @@ function uploadTaxaPhoto(sample,t,delay) {
                     .then( (res) => {
                         debug(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
-                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: `Uploading taxa ${taxonId} photo` } );
                     })
                     .catch( (err) => {
                         Logger.log(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
@@ -155,7 +155,7 @@ function uploadUnknownCreature(sample,t,delay) {
                     "serverCreatureId": res.id,
                     "serverCreaturePhotoId": res.photos[0].id
                 });
-                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId} );
+                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading unknown creature" } );
             })
             .catch( (err) => {
                   Logger.recordException(err);
@@ -266,7 +266,7 @@ function createSampleUploader(delay) {
                     "serverSampleId": res.id,
                     "serverUserId": res.user_id
                 });
-                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
+                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: `Uploading sample id: ${sample.get("sampleId")}` } );
     
 
             }
