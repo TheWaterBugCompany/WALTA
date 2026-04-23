@@ -1,6 +1,36 @@
 var Mocha = require("spec/lib/ti-mocha");
 var { setManualTests, isManualTests } = require('spec/util/TestUtils');
 
+// Runtime test config passed via launcher args:
+//   Android: intent extras (--es test_grep "…" --ez test_manual true)
+//   iOS:     NSUserDefaults-style argv (-test_grep … -test_manual true)
+// See build-utils/{AndroidLauncher,IosSimulatorLauncher}.js for the
+// producer side; Gruntfile.js `launch` task maps --grep / --manual
+// into the launchArgs payload.
+function readTestConfig() {
+  try {
+    if (Ti.Platform.osname === 'android') {
+      var activity = Ti.Android.currentActivity;
+      var intent = activity && activity.intent;
+      if (!intent) return {};
+      return {
+        grep: intent.getStringExtra("test_grep") || null,
+        manual: intent.getBooleanExtra("test_manual", false),
+      };
+    }
+    var args = Ti.App.arguments || {};
+    return {
+      grep: args.test_grep || null,
+      manual: args.test_manual === 'true' || args.test_manual === true,
+    };
+  } catch (e) {
+    Ti.API.warn("Could not read launch args for test config: " + e);
+    return {};
+  }
+}
+
+var TEST_CONFIG = readTestConfig();
+
 var SPEC_FILES = [
   "About",
   "Help",
@@ -47,6 +77,10 @@ function runTests() {
     ui: 'bdd',
     reporter: 'ti-spec'
   });
+  if ( TEST_CONFIG.grep ) {
+    Ti.API.info(`Running only tests matching /${TEST_CONFIG.grep}/`);
+    mocha.grep(TEST_CONFIG.grep);
+  }
   if ( isManualTests() ) {
     mocha.timeout(0);
   } else {
@@ -66,7 +100,8 @@ function runTests() {
 var infinteLoopMode = false;
 
 // freeze each test to allow manual inspection - on Android use the menu option "Continue" to continue test.
-setManualTests( false );
+// Can be flipped at runtime via `--manual` on `grunt unit-test` (no rebuild needed).
+setManualTests( TEST_CONFIG.manual === true );
 
 // Prevent the screen from locking during test runs — if the device auto-locks
 // iOS classifies the app as background and the watchdog kills it within 10s.

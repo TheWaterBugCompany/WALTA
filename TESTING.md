@@ -103,6 +103,22 @@ When `--reuse-server` is passed:
 
 **When NOT to use it:** When switching platforms (e.g. Android to iOS), when `tiapp.xml` changes, or when native assets change. In those cases, omit `--reuse-server` to get a fresh build.
 
+### Runtime Test Config (`--grep` and `--manual`)
+
+`grunt unit-test` accepts two more options that are forwarded to the on-device spec runner at launch (no rebuild needed):
+
+```bash
+npx grunt --platform=android --simulator --liveview --reuse-server \
+  --grep=SyncFeedback --manual unit-test
+```
+
+- `--grep=<pattern>` — Mocha grep filter on the fully-qualified test name. `--grep=SyncFeedback` runs only tests under `describe("SyncFeedback controller", …)`; `--grep="should render"` runs every `it("should render …")` across the suite.
+- `--manual` — enables manual mode: no test timeout and the window stays open after the test finishes. On Android, tap the "Continue" menu item to dismiss. Useful for poking at a single screen after its setup has run.
+
+**How this works**: the grunt `launch` task maps these options into launcher arguments — Android intent extras (`--es test_grep … --ez test_manual true`) or iOS `simctl launch` argv (`-test_grep … -test_manual true`). `walta-app/app/spec/index.js` reads them on startup via `Ti.Android.currentActivity.intent.getStringExtra(…)` or `Ti.App.arguments` and configures Mocha accordingly.
+
+Combine freely with `--liveview --reuse-server` for sub-30-second iteration on a focused test.
+
 ### LiveView with Other Tasks
 
 ```bash

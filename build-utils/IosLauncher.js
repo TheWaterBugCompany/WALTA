@@ -10,6 +10,20 @@ function computeLogPort(appId) {
   return parseInt(sha1, 16) % 50000 + 10000;
 }
 
+function buildLaunchArgv(launchArgs) {
+  if (!launchArgs) return [];
+  const argv = [];
+  for (const key of Object.keys(launchArgs)) {
+    const value = launchArgs[key];
+    if (typeof value === "boolean") {
+      argv.push(`-${key}`, value ? "true" : "false");
+    } else if (value !== undefined && value !== null) {
+      argv.push(`-${key}`, String(value));
+    }
+  }
+  return argv;
+}
+
 class IosLauncher {
   constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, iosDevice = defaultIosDevice, udid = null, appId = null } = {}) {
     this._execFile = execFile;
@@ -40,19 +54,26 @@ class IosLauncher {
     return this;
   }
 
-  async launch(appId, appPath) {
+  async launch(appId, appPath, launchArgs) {
     await this.connect();
     if (appPath) {
       await this._exec(["devicectl", "device", "install", "app", "--device", this._udid, appPath]);
     }
     const tmpDir = await mkdtemp(join(tmpdir(), "devicectl-"));
     const jsonOut = join(tmpDir, "launch.json");
+    const argv = buildLaunchArgv(launchArgs);
+    // `--terminate-existing` forces a fresh JS runtime when launch args are
+    // present so the spec runner re-evaluates with the new NSUserDefaults
+    // values; otherwise devicectl delivers the args to the existing process.
+    const terminateFlags = argv.length > 0 ? ["--terminate-existing"] : [];
     try {
       await this._exec([
         "devicectl", "device", "process", "launch",
         "--json-output", jsonOut,
+        ...terminateFlags,
         "--device", this._udid,
-        appId
+        appId,
+        ...argv
       ]);
       const json = JSON.parse(await this._readFile(jsonOut, "utf-8"));
       this._pid = json.result.process.processIdentifier;

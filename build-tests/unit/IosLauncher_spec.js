@@ -103,6 +103,24 @@ describe("IosLauncher", function() {
         "devicectl", "device", "install", "app", "--device", UDID, APP_PATH
       ]);
     });
+
+    it("forwards launchArgs as NSUserDefaults-style argv and adds --terminate-existing", async function() {
+      const fakeExecFile = makeExecFile({
+        "-l": `${UDID}\n`,
+        "devicectl device process launch": "",
+      });
+      const fakeReadFile = makeReadFile(LAUNCH_OUTPUT);
+      const launcher = new IosLauncher({ execFile: fakeExecFile, readFile: fakeReadFile });
+      await launcher.launch(APP_ID, null, { test_grep: "About", test_manual: true });
+      const launchCall = fakeExecFile.getCalls().find(c => c.args[1]?.[2] === "process" && c.args[1]?.[3] === "launch");
+      const args = launchCall.args[1];
+      expect(args).to.include("--terminate-existing");
+      expect(args).to.include("-test_grep");
+      expect(args[args.indexOf("-test_grep") + 1]).to.equal("About");
+      expect(args).to.include("-test_manual");
+      expect(args[args.indexOf("-test_manual") + 1]).to.equal("true");
+      expect(args[args.length - 5]).to.equal(APP_ID);
+    });
   });
 
   describe("terminate()", function() {

@@ -14,6 +14,20 @@ function exec(execFile, adb, args) {
   });
 }
 
+function buildIntentExtras(launchArgs) {
+  if (!launchArgs) return [];
+  const flags = [];
+  for (const key of Object.keys(launchArgs)) {
+    const value = launchArgs[key];
+    if (typeof value === "boolean") {
+      flags.push("--ez", key, value ? "true" : "false");
+    } else if (value !== undefined && value !== null) {
+      flags.push("--es", key, String(value));
+    }
+  }
+  return flags;
+}
+
 class AndroidLauncher {
   constructor({ adb = defaultAdb(), execFile = defaultExecFile, spawn = defaultSpawn, activity = null, logTag = "TiAPI", logNoisePattern = /^Waterbug \d|^ti\.playservices:/ } = {}) {
     this._adb = adb;
@@ -43,7 +57,7 @@ class AndroidLauncher {
     return this;
   }
 
-  async launch(appId, apkPath) {
+  async launch(appId, apkPath, launchArgs) {
     await this.connect();
     // Keep screen on while USB-connected to prevent lock-mode test failures
     await this._exec(["shell", "svc", "power", "stayon", "usb"]).catch(() => {});
@@ -53,10 +67,15 @@ class AndroidLauncher {
       await this._exec(["install", "-r", apkPath]);
     }
     await this._exec(["logcat", "-c"]);
+    const extras = buildIntentExtras(launchArgs);
+    // `-S` force-stops the app before starting so JS re-runs and any new
+    // intent extras are picked up at spec-runner init — otherwise `am start`
+    // on a live process only delivers onNewIntent and index.js isn't re-evaluated.
+    const startFlags = extras.length > 0 ? ["-S"] : [];
     if (this._activity) {
-      await this._exec(["shell", "am", "start", "-n", `${appId}/${this._activity}`]);
+      await this._exec(["shell", "am", "start", ...startFlags, "-n", `${appId}/${this._activity}`, ...extras]);
     } else {
-      await this._exec(["shell", "am", "start", "-a", "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER", "-p", appId]);
+      await this._exec(["shell", "am", "start", ...startFlags, "-a", "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER", "-p", appId, ...extras]);
     }
   }
 
