@@ -3,7 +3,9 @@ var { setManualTests, isManualTests } = require('spec/util/TestUtils');
 
 // Runtime test config passed via launcher args:
 //   Android: intent extras (--es test_grep "…" --ez test_manual true)
-//   iOS:     NSUserDefaults-style argv (-test_grep … -test_manual true)
+//   iOS:     NSUserDefaults-style argv (-test_grep … -test_manual true),
+//            which iOS auto-merges into NSUserDefaults — read via
+//            Ti.App.Properties (backed by NSUserDefaults on iOS).
 // See build-utils/{AndroidLauncher,IosSimulatorLauncher}.js for the
 // producer side; Gruntfile.js `launch` task maps --grep / --manual
 // into the launchArgs payload.
@@ -18,11 +20,13 @@ function readTestConfig() {
         manual: intent.getBooleanExtra("test_manual", false),
       };
     }
-    var args = Ti.App.arguments || {};
-    return {
-      grep: args.test_grep || null,
-      manual: args.test_manual === 'true' || args.test_manual === true,
-    };
+    // iOS: argv `-test_grep About -test_manual true` is merged into
+    // NSUserDefaults on launch; Ti.App.Properties is our bridge to it.
+    // Values come back as strings regardless of the original type.
+    var grep = Ti.App.Properties.getString("test_grep") || null;
+    var manualRaw = Ti.App.Properties.getString("test_manual");
+    var manual = manualRaw === "true" || manualRaw === "1";
+    return { grep: grep, manual: manual };
   } catch (e) {
     Ti.API.warn("Could not read launch args for test config: " + e);
     return {};
