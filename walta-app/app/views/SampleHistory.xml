@@ -1,6 +1,9 @@
 <Alloy>
 	<Collection src="sample" instance="true" id="samples" />
 	<View id="content" layout="vertical">
+		<View class="actionRow">
+			<Button id="syncNowButton" class="syncNowButton" onClick="syncNowClicked" accessibilityLabel="Synchronise samples now">Sync Now</Button>
+		</View>
 		<View  class="headerRow">
 			<Label class="idColumn column" text="Id"/>
 			<Label class="dateCompletedColumn column" text="Date Submitted"/>

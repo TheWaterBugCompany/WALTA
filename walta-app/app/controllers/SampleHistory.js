@@ -10,6 +10,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     if ( $.sampleMenu ) {
         $.sampleMenu.cleanUp();
     }
+    closeSyncFeedback();
     $.destroy();
     $.off();
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
@@ -34,6 +35,21 @@ function openErrorsClick(e) {
         });
         dialog.show();
     }
+}
+
+function syncNowClicked() {
+    if ( $.syncFeedback ) return;
+    $.syncFeedback = Alloy.createController("SyncFeedback");
+    $.TopLevelWindow.add( $.syncFeedback.getView() );
+    $.syncFeedback.on("close", closeSyncFeedback);
+    $.syncFeedback.start();
+}
+
+function closeSyncFeedback() {
+    if ( ! $.syncFeedback ) return;
+    $.TopLevelWindow.remove( $.syncFeedback.getView() );
+    $.syncFeedback.cleanUp();
+    $.syncFeedback = null;
 }
 
 function rowSelected(e) {
