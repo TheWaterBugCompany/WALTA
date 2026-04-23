@@ -97,6 +97,12 @@ npx grunt --platform=ios unit-test
 npx grunt --platform=android --simulator unit-test
 npx grunt --platform=ios --simulator unit-test
 
+# Fast on-device iteration: LiveView + reuse-server skips the rebuild
+# step on subsequent runs. Use this for tight feedback loops while
+# editing controllers/specs. See TESTING.md § "LiveView (Fast
+# Iteration)" for the full story (prerequisites, troubleshooting).
+npx grunt --platform=android --simulator --liveview --reuse-server unit-test
+
 # End-to-end and acceptance tests
 npx grunt --platform=android end-to-end-test
 npx grunt --platform=android acceptance-test
