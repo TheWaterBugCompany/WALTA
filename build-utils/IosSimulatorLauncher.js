@@ -44,17 +44,29 @@ class IosSimulatorLauncher {
       await this._exec(["simctl", "install", this._udid, appPath], { timeout: 180000 });
     }
     const launchArgs = ["simctl", "launch", this._udid, appId];
+    const MAX_ATTEMPTS = 3;
     let stdout;
-    try {
-      stdout = await this._exec(launchArgs, { timeout: 180000 });
-    } catch (err) {
-      // Retry once if the timeout killed simctl. CoreSimulator services
-      // sometimes aren't accepting spawn requests yet even after the device
-      // reports "Booted"; a second attempt usually succeeds once they warm up.
-      // Real launch errors (bad bundle id, missing app) surface immediately.
-      if (!err.killed) throw err;
-      stdout = await this._exec(launchArgs, { timeout: 180000 });
+    let lastErr = null;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        stdout = await this._exec(launchArgs, { timeout: 180000 });
+        lastErr = null;
+        break;
+      } catch (err) {
+        lastErr = err;
+        // Real launch errors (bad bundle id, missing app) surface immediately;
+        // only timeouts are worth retrying.
+        if (!err.killed) throw err;
+        if (attempt === MAX_ATTEMPTS) break;
+        // Clean up any half-launched app state before the next attempt —
+        // CoreSimulator's lazy services (installd / FrontBoard / launchd)
+        // sometimes leave the app in a stuck state after a timeout, which
+        // then blocks the next launch. `simctl terminate` is a no-op if
+        // the app isn't running.
+        await this._exec(["simctl", "terminate", this._udid, appId]).catch(() => {});
+      }
     }
+    if (lastErr) throw lastErr;
     const match = stdout.match(/:\s*(\d+)/);
     this._pid = match ? parseInt(match[1], 10) : null;
   }

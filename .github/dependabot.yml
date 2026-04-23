@@ -12,6 +12,10 @@ updates:
       # chai 6 is ESM-only and breaks the in-app mocha unit test harness
       - dependency-name: "chai"
         versions: [">=5"]
+      # vite 5+ is ESM-only; walta-app/vite.config.js uses require('vite')
+      # and Titanium's liveview loads it via CJS — same failure mode as chai.
+      - dependency-name: "vite"
+        versions: [">=5"]
     groups:
       dev-dependencies:
         dependency-type: "development"
