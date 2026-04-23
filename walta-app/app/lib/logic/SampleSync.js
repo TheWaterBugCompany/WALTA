@@ -1,14 +1,24 @@
 var Logger = require('util/Logger');
 var Topics = require('ui/Topics');
+var SyncStore = require('models/SyncStore');
 
 var { createSampleUploader } = require("logic/SampleUploader");
 var { createSampleDownloader } = require("logic/SampleDownloader");
 
 var SYNC_INTERVAL = 1000*60*30; // 30 minutes
 var isSyncing = false;
+var syncStore = new SyncStore();
 
 function areWeSyncing() {
     return isSyncing;
+}
+
+function getState() {
+    return syncStore.getState();
+}
+
+function subscribe(cb) {
+    return syncStore.subscribe(cb);
 }
 
 var log = Logger.log;
@@ -29,17 +39,20 @@ function networkChanged( e ) {
 
 function clearUploadTimer() {
     if ( timeoutHandler ) {
-        clearTimeout( timeoutHandler ); 
+        clearTimeout( timeoutHandler );
         timeoutHandler = null;
     }
 }
 
-
+function handleUploadProgress(data) {
+    syncStore.recordProgress(data && data.message);
+}
 
 function init() {
     log("Initialising SampleSync...");
     Ti.Network.addEventListener( "change", networkChanged );
     Topics.subscribe( Topics.LOGGEDIN, startSynchronise );
+    Topics.subscribe( Topics.UPLOAD_PROGRESS, handleUploadProgress );
     startSynchronise();
 }
 
@@ -53,8 +66,8 @@ function startSynchronise(options) {
     let sampleUploader = createSampleUploader(delay);
     let sampleDownloader = createSampleDownloader(delay);
     debug(`Starting sample syncronisation process... (delay=${delay})`);
-    
-    
+
+
     function rescheduleSync() {
         isSyncing = false;
         if ( options && !_.isUndefined(options.noschedule) ) {
@@ -65,12 +78,12 @@ function startSynchronise(options) {
         }
         return Promise.resolve();
     }
-   
+
     if (isSyncing) {
         debug("Already syncing, aborting");
         return;
     }
-    
+
     if ( ! Alloy.Globals.CerdiApi.retrieveUserToken() )  {
         debug("Not logged in, sleeping.");
         rescheduleSync();
@@ -79,19 +92,25 @@ function startSynchronise(options) {
 
     if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) {
         debug("No network available, sleeping until network becomes avaiable.");
+        syncStore.recordOffline();
         rescheduleSync();
         return;
     }
 
     // flag that were are already syncing - to avoid reentrant calls
     isSyncing = true;
+    syncStore.recordStart();
     Topics.fireTopicEvent( Topics.SYNC_STARTED );
     return Promise.resolve()
         .then(() => sampleDownloader.downloadSamples() )
         .then(() => sampleUploader.uploadSamples() )
-        .then(() => Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } ))
+        .then(() => {
+            syncStore.recordSuccess();
+            Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } );
+        })
         .catch( error => {
             Logger.recordException( error );
+            syncStore.recordError( error );
             Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: false, error } );
         })
         .finally( rescheduleSync )
@@ -99,4 +118,6 @@ function startSynchronise(options) {
 
 exports.forceUpload = forceUpload;
 exports.areWeSyncing = areWeSyncing;
+exports.getState = getState;
+exports.subscribe = subscribe;
 exports.init = init;
