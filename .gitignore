@@ -1,5 +1,13 @@
 
 **/.DS_Store
+
+# IDE / editor workspace files — machine-local, not shared
+**/.idea/
+**/.vscode/
+
+# Python bytecode caches (e.g. build helper scripts)
+**/__pycache__/
+*.pyc
 walta-app/plugins/**
 walta-app/app/assets/unit-test/lib/mocha.js
 walta-app/app/assets/unit-test/lib/chai.js
