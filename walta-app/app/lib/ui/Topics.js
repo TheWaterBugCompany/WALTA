@@ -66,6 +66,10 @@ var topics = {
 
 	UPLOAD_PROGRESS: 'uploadprogress',
 
+	SYNC_STARTED: 'syncstarted',
+
+	SYNC_FINISHED: 'syncfinished', // payload: { success: boolean, error?: Error }
+
 	NOTES: 'notes',
 
 	// used to trap when a page is opened
