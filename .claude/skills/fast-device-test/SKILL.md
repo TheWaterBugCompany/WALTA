@@ -29,6 +29,17 @@ npx grunt --platform=android --simulator --liveview --reuse-server unit-test
 | `--simulator` | Use the Android emulator (`Medium_Phone_API_36.1`) rather than a physical device |
 | `--liveview` | Serve JS over a local Vite dev server on port 8323 instead of baking it into the APK |
 | `--reuse-server` | If a LiveView server is already running on :8323, reuse it instead of a fresh rebuild |
+| `--grep=<pattern>` | (optional) Mocha grep filter — only runs tests whose fully-qualified name matches, e.g. `--grep=SyncFeedback` |
+| `--manual` | (optional) Enables manual mode — mocha.timeout(0), window stays open after the test so you can interact with the screen. On Android tap the "Continue" menu when you're done |
+
+**Typical focused-manual-test invocation:**
+
+```bash
+npx grunt --platform=android --simulator --liveview --reuse-server \
+  --grep=SyncFeedback --manual unit-test
+```
+
+Note: grunt options must use the `--flag=value` form (not `--flag value`) or the value gets parsed as a task name.
 
 **Timing (rough, M-series Mac, emulator already booted):**
 

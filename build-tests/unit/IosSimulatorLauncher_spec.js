@@ -96,6 +96,49 @@ describe("IosSimulatorLauncher", function() {
       expect(calls.some(a => a[1] === "install")).to.be.false;
     });
 
+    it("appends string launchArgs as NSUserDefaults-style argv pairs after the bundle id", async function() {
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl launch --terminate-running-process ${UDID} net.thewaterbug.waterbug -test_grep SyncFeedback`]: "net.thewaterbug.waterbug: 1\n",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.launch("net.thewaterbug.waterbug", null, { test_grep: "SyncFeedback" });
+      const launchCall = fakeExecFile.getCalls().find(c => c.args[1][1] === "launch");
+      expect(launchCall.args[1]).to.deep.equal([
+        "simctl", "launch", "--terminate-running-process", UDID, "net.thewaterbug.waterbug",
+        "-test_grep", "SyncFeedback"
+      ]);
+    });
+
+    it("appends boolean launchArgs as '-key true'/'-key false' pairs", async function() {
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl launch --terminate-running-process ${UDID} net.thewaterbug.waterbug -test_manual true`]: "net.thewaterbug.waterbug: 1\n",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.launch("net.thewaterbug.waterbug", null, { test_manual: true });
+      const launchCall = fakeExecFile.getCalls().find(c => c.args[1][1] === "launch");
+      expect(launchCall.args[1]).to.deep.equal([
+        "simctl", "launch", "--terminate-running-process", UDID, "net.thewaterbug.waterbug",
+        "-test_manual", "true"
+      ]);
+    });
+
+    it("combines multiple launchArgs on the same simctl launch call", async function() {
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl launch --terminate-running-process ${UDID} net.thewaterbug.waterbug -test_grep SyncFeedback -test_manual true`]: "net.thewaterbug.waterbug: 1\n",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.launch("net.thewaterbug.waterbug", null, { test_grep: "SyncFeedback", test_manual: true });
+      const launchCall = fakeExecFile.getCalls().find(c => c.args[1][1] === "launch");
+      expect(launchCall.args[1]).to.deep.equal([
+        "simctl", "launch", "--terminate-running-process", UDID, "net.thewaterbug.waterbug",
+        "-test_grep", "SyncFeedback",
+        "-test_manual", "true"
+      ]);
+    });
+
     it("retries simctl launch if it times out, and succeeds on the retry", async function() {
       // CoreSimulator services (installd / FrontBoard / launchd) sometimes
       // aren't ready to accept spawn requests even after the device reports

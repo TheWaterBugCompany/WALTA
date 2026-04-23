@@ -108,6 +108,15 @@ describe("AndroidEmulatorLauncher", function() {
       expect(fakeLauncher.launch.calledWith("com.example.app", "/path/to/app.apk")).to.be.true;
     });
 
+    it("forwards launchArgs to the inner launcher when provided", async function() {
+      await launcher.launch("com.example.app", null, { test_grep: "About", test_manual: true });
+      expect(fakeLauncher.launch.calledWith(
+        "com.example.app",
+        null,
+        { test_grep: "About", test_manual: true }
+      )).to.be.true;
+    });
+
     it("calls connect() before delegating launch() so the emulator serial is set", async function() {
       const freshLauncher = new AndroidEmulatorLauncher({
         execFile: makeExecFile({ "devices": EMULATOR_DEVICES }),

@@ -1,5 +1,19 @@
 import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_process";
 
+function buildLaunchArgv(launchArgs) {
+  if (!launchArgs) return [];
+  const argv = [];
+  for (const key of Object.keys(launchArgs)) {
+    const value = launchArgs[key];
+    if (typeof value === "boolean") {
+      argv.push(`-${key}`, value ? "true" : "false");
+    } else if (value !== undefined && value !== null) {
+      argv.push(`-${key}`, String(value));
+    }
+  }
+  return argv;
+}
+
 class IosSimulatorLauncher {
   constructor({ execFile = defaultExecFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)" } = {}) {
     this._execFile = execFile;
@@ -35,7 +49,7 @@ class IosSimulatorLauncher {
     return this;
   }
 
-  async launch(appId, appPath) {
+  async launch(appId, appPath, launchArgs) {
     await this.connect();
     // Generous timeouts: on a cold CI runner the first install/launch can take
     // 60-90s while CoreSimulator's lazy services (installd, FrontBoard, etc.)
@@ -43,13 +57,19 @@ class IosSimulatorLauncher {
     if (appPath) {
       await this._exec(["simctl", "install", this._udid, appPath], { timeout: 180000 });
     }
-    const launchArgs = ["simctl", "launch", this._udid, appId];
+    const argv = buildLaunchArgv(launchArgs);
+    // Match the Android `-S` behaviour — when launch args are present we
+    // want a fresh JS runtime so the spec runner re-evaluates with the new
+    // arguments rather than handing them to the running process's onNewIntent
+    // equivalent.
+    const terminateFlags = argv.length > 0 ? ["--terminate-running-process"] : [];
+    const simctlArgs = ["simctl", "launch", ...terminateFlags, this._udid, appId, ...argv];
     const MAX_ATTEMPTS = 3;
     let stdout;
     let lastErr = null;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       try {
-        stdout = await this._exec(launchArgs, { timeout: 180000 });
+        stdout = await this._exec(simctlArgs, { timeout: 180000 });
         lastErr = null;
         break;
       } catch (err) {

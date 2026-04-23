@@ -669,8 +669,20 @@ const KobitonAPI = require("./features/support/kobiton");
         grunt.log.writeln('No app path — launching existing installed app');
       }
 
+      // Optional runtime test config forwarded to the on-device spec runner.
+      // Android: intent extras via `am start --es/--ez`.
+      // iOS: NSUserDefaults-style argv via `simctl launch`.
+      const launchArgs = {};
+      const grep = grunt.option('grep');
+      if (grep) launchArgs.test_grep = grep;
+      if (grunt.option('manual')) launchArgs.test_manual = true;
+      const hasLaunchArgs = Object.keys(launchArgs).length > 0;
+      if (hasLaunchArgs) {
+        grunt.log.writeln(`Forwarding launch args to test runner: ${JSON.stringify(launchArgs)}`);
+      }
+
       getLauncher(platform, isSimulator)
-        .then(launcher => launcher.launch(APP_ID, appPath))
+        .then(launcher => launcher.launch(APP_ID, appPath, hasLaunchArgs ? launchArgs : undefined))
         .then(done)
         .catch(err => { grunt.fail.fatal(err); done(); });
     });
@@ -834,7 +846,11 @@ const KobitonAPI = require("./features/support/kobiton");
 
           grunt.task.run(`launch:${platform}:unit-test-liveview`);
           grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
-          grunt.task.run(`terminate:${platform}`);
+          // Skip teardown in --manual mode so the screen-under-test stays
+          // visible on the device after the spec finishes.
+          if (!grunt.option('manual')) {
+            grunt.task.run(`terminate:${platform}`);
+          }
           mockServer.shutdown();
           done();
         }).catch(err => { grunt.fail.fatal(err); done(); });
@@ -847,7 +863,11 @@ const KobitonAPI = require("./features/support/kobiton");
 
         grunt.task.run(`launch:${platform}:unit-test`);
         grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
-        grunt.task.run(`terminate:${platform}`);
+        // Skip teardown in --manual mode so the screen-under-test stays
+        // visible on the device after the spec finishes.
+        if (!grunt.option('manual')) {
+          grunt.task.run(`terminate:${platform}`);
+        }
         mockServer.shutdown();
       }
     } );
