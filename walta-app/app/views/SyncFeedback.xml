@@ -1,0 +1,25 @@
+<Alloy>
+    <View class="overlay">
+        <View id="window" class="window" layout="vertical">
+            <View class="titlebar">
+                <Label class="titleText" accessibilityLabel="Synchronise Data">Synchronise Data</Label>
+                <Require id="closeButton" src="CloseButton"/>
+            </View>
+            <Label id="offlineMessage" class="offlineMessage" visible="false">The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.</Label>
+            <View id="progressBar" class="progressBar">
+                <View id="progressFill" class="progressFill"/>
+                <Label id="progressText" class="progressText">0%</Label>
+            </View>
+            <View id="logPane" class="logPane" visible="false">
+                <ScrollView id="logScroll" class="logScroll">
+                    <Label id="logText" class="logText"/>
+                </ScrollView>
+            </View>
+            <View id="buttonRow" class="buttonRow" layout="horizontal">
+                <Button id="diagnosticsButton" class="actionButton" visible="false">Diagnostics</Button>
+                <Button id="logToggleButton" class="actionButton">Show Log</Button>
+                <Button id="closeBottomButton" class="actionButton">Close</Button>
+            </View>
+        </View>
+    </View>
+</Alloy>
