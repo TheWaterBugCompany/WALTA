@@ -1,0 +1,96 @@
+"#window": {
+    width: "70%",
+    height: "46%"
+}
+
+".offlineMessage": {
+    top: "8dp",
+    left: "16dp",
+    right: "16dp",
+    color: "#333333",
+    font: {
+        fontFamily: "sans-serif",
+        fontSize: "14dp"
+    },
+    textAlign: "left"
+}
+
+".progressBar": {
+    top: "16dp",
+    left: "16dp",
+    right: "16dp",
+    height: "36dp",
+    borderColor: "#26849c",
+    borderWidth: "1dp",
+    borderRadius: "4dp",
+    backgroundColor: "#ffffff"
+}
+
+".progressFill": {
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: "0%",
+    backgroundColor: "#26849c"
+}
+
+".progressText": {
+    color: "#ffffff",
+    font: {
+        fontFamily: "sans-serif",
+        fontSize: "14dp",
+        fontWeight: "bold"
+    },
+    textAlign: "center"
+}
+
+".logPane": {
+    top: "12dp",
+    left: "16dp",
+    right: "16dp",
+    height: "40%",
+    borderColor: "#26849c",
+    borderWidth: "1dp",
+    backgroundColor: "#ffffff"
+}
+
+".logScroll": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL,
+    layout: "vertical"
+}
+
+".logText": {
+    top: "4dp",
+    left: "8dp",
+    right: "8dp",
+    color: "#333333",
+    font: {
+        fontFamily: "monospace",
+        fontSize: "12dp"
+    },
+    textAlign: "left"
+}
+
+".buttonRow": {
+    bottom: "12dp",
+    right: "12dp",
+    height: Ti.UI.SIZE,
+    width: Ti.UI.SIZE,
+    horizontalWrap: false
+}
+
+".actionButton": {
+    left: "6dp",
+    height: "36dp",
+    width: Ti.UI.SIZE,
+    color: "#ffffff",
+    backgroundColor: "#26849c",
+    borderColor: "#26849c",
+    borderWidth: "1dp",
+    borderRadius: "4dp",
+    font: {
+        fontFamily: "sans-serif",
+        fontSize: "14dp"
+    }
+}
