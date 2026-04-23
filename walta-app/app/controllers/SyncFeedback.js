@@ -1,16 +1,10 @@
 var SyncFeedbackViewModel = require("logic/viewmodels/SyncFeedback");
-var Topics = require("ui/Topics");
+var SampleSync = require("logic/SampleSync");
 
 var FILL_TEAL = "#26849c";
 var FILL_RED = "#c0392b";
 
-var network = {
-    isOnline: function () {
-        return Ti.Network.networkType !== Ti.Network.NETWORK_NONE;
-    }
-};
-
-var vm = new SyncFeedbackViewModel({ topics: Topics, network: network });
+var vm = new SyncFeedbackViewModel({ syncController: SampleSync });
 
 function render(state) {
     $.offlineMessage.visible = state.status === "offline";
