@@ -4,7 +4,7 @@ This folder holds **ViewModels**: plain-JavaScript classes that own the state an
 actions of a UI screen or component, independent of Alloy, Titanium, and the DOM.
 
 Controllers stay thin plumbing: they instantiate a ViewModel and declare a
-widget-to-VM binding. The ViewModel has no Titanium imports and can be
+widget-to-ViewModel binding. The ViewModel has no Titanium imports and can be
 unit-tested in Node in milliseconds.
 
 ## Why
@@ -46,7 +46,7 @@ class ExampleViewModel extends ChangeNotifier {
   }
 
   // State is exposed as getters, computed from private fields and
-  // injected dependencies. No `this.state` bag.
+  // injected dependencies.
   get status()     { return this._syncController.status; }
   get logVisible() { return this._logVisible; }
   get message()    { return this.status === "offline" ? OFFLINE_MSG : ""; }
@@ -73,19 +73,18 @@ module.exports = ExampleViewModel;
 
 ### State
 
-State is exposed as **getters**, not a `this.state` object. Private fields
-(prefixed `_`) hold the underlying values; getters compose them — often mixing
-locally-owned fields with values read from an injected model or controller.
-
-Advantages over a state bag:
+State is exposed as **getters**. Private fields (prefixed `_`) hold the
+underlying values; getters compose them — often mixing locally-owned fields
+with values read from an injected model or controller. Some useful properties
+of this shape:
 
 - **Derived values are cheap.** `get message()` can condition on other getters
   without keeping a denormalised copy in sync.
-- **No diffing.** `notifyListeners()` is a plain signal; consumers re-read from
-  the VM. `bindView` does this for you.
-- **Composable.** A VM can delegate getters to a model it holds (see how
+- **Consumers re-read from the ViewModel.** `notifyListeners()` is a plain signal
+  with no payload; `bindView` re-pulls every bound getter on notify.
+- **Composable.** A ViewModel can delegate getters to a model it holds — see how
   `SyncFeedbackViewModel` reads `status`/`percent`/etc. straight off the
-  injected `syncController`, which is itself a `ChangeNotifier`).
+  injected `syncController`, which is itself a `ChangeNotifier`.
 
 ### Actions
 
@@ -99,7 +98,7 @@ Controller's job.
 
 - **State-change broadcast** — `addListener(cb)` / `removeListener(cb)` /
   `notifyListeners()`. The callback takes no arguments; listeners re-read from
-  the VM's getters. This is what `bindView` subscribes to.
+  the ViewModel's getters. This is what `bindView` subscribes to.
 - **Named events** — `on(event, cb)` / `off(event, cb)` / `trigger(event, data)`.
   Use this for one-shot view concerns that don't belong in re-renderable state
   ("user asked to close", "navigate to diagnostics"). The controller forwards
@@ -107,13 +106,14 @@ Controller's job.
 
 For external-model input, subscribe to an injected `ChangeNotifier` model in
 the constructor and re-fire your own `notifyListeners` (see
-`SyncFeedbackViewModel`). For legacy `Topics` input, inject the `topics`
-service and subscribe the same way.
+`SyncFeedbackViewModel`). For `Topics` input, inject the `topics` service and
+subscribe the same way.
 
 ## Controllers hosting a ViewModel
 
-Use `bindView` from `app/lib/util/bindView.js`. It replaces a hand-written
-`render()` loop plus event-wiring block with a declarative bindings map:
+Use `bindView` from `app/lib/util/bindView.js`. It takes a declarative
+widget-to-ViewModel bindings map and handles both property updates (re-applied on
+`notifyListeners`) and one-time event wiring:
 
 ```js
 // controllers/Example.js
@@ -131,7 +131,7 @@ bindView($, vm, {
     closeButton:       { onClose: "close" },    // Alloy <Require> sub-controller
 });
 
-// Named VM events — forward to Topics or to the controller's own trigger.
+// Named ViewModel events — forward to Topics or to the controller's own trigger.
 vm.on("close",       function () { $.trigger("close"); });
 vm.on("diagnostics", function () { Topics.fireTopicEvent(Topics.DIAGNOSTICS); });
 
@@ -143,11 +143,11 @@ exports.cleanUp = function () { vm.dispose(); };
 Each top-level key is an id from `$` (the Alloy widget map). Each nested key is
 either:
 
-- **A plain widget property** — value is the name of a VM getter. The property
-  is set once at bind time and re-set every time the VM calls
+- **A plain widget property** — value is the name of a ViewModel getter. The property
+  is set once at bind time and re-set every time the ViewModel calls
   `notifyListeners()`.
 - **An `on<Event>` key** (e.g. `onClick`, `onClose`) — value is the name of a
-  VM method. The event name is lower-cased (`onClick` → `click`) and bound
+  ViewModel method. The event name is lower-cased (`onClick` → `click`) and bound
   once; the handler calls the method with no arguments.
 
 Event wiring feature-detects the target:
@@ -158,22 +158,22 @@ Event wiring feature-detects the target:
 `bindView` returns an `unbind()` function that removes both the
 `ChangeNotifier` listener and every event handler it registered. Most
 controllers don't need to call it — `vm.dispose()` in `cleanUp` is enough,
-because it clears the VM's listener list and the view is about to be
+because it clears the ViewModel's listener list and the view is about to be
 destroyed anyway.
 
 ### When to step outside bindView
 
-Not everything is declarative — and not everything belongs in the VM in the
+Not everything is declarative — and not everything belongs in the ViewModel in the
 first place. The dividing line:
 
 > **If the code exists only to work around a Titanium quirk — something you
 > would throw away on a port to another framework — it belongs in the
-> controller, not the VM.**
+> controller, not the ViewModel.**
 
-The VM describes *what the view should show*. The controller describes *how
+The ViewModel describes *what the view should show*. The controller describes *how
 Titanium is coerced into showing it*. Ti-specific workarounds pile up in the
 controller alongside the `bindView` call, typically as a plain function
-subscribed to the VM:
+subscribed to the ViewModel:
 
 - **Keyboard hacks** — wrapping content in a `ScrollView` on iOS, nudging
   layout on keyboard show/hide.
@@ -183,23 +183,18 @@ subscribed to the VM:
 - **Two-tone / clipped rendering tricks** — e.g. the overlapping
   dark/light progress text that relies on a clip container whose width
   tracks the fill.
-- **Ti.UI.SIZE and other Ti-only values** — the VM can't return
+- **Ti.UI.SIZE and other Ti-only values** — the ViewModel can't return
   `Ti.UI.SIZE` without breaking its Node spec, so a boolean getter
   (`messageVisible`) gets translated to a concrete height/top in the
   controller.
 
-See `controllers/SyncFeedback.js` for worked examples of each. Extracting
-recurring patterns into helpers (e.g. `applyKeyboardTweaks`) is fine — the
-rule is about *which side of the VM/controller line they live on*, not
-whether they're inlined. What matters is that the VM's Node spec stays
-believable: a reader should be able to see at a glance that no Ti dependency
-has leaked into the ViewModel.
+See `controllers/SyncFeedback.js` for worked examples of each.
 
 ## Testing
 
 Specs live in `test/viewmodels/` and use the existing Mocha + Chai setup
 (`npx grunt unit-test-node`). Fake the injected dependencies — no Titanium is
-loaded. Read state via the VM's getters.
+loaded. Read state via the ViewModel's getters.
 
 ```js
 // test/viewmodels/Example_spec.js
@@ -226,7 +221,7 @@ function fakeSyncController() {
 
 On-device rendering is still covered by a small controller spec under
 `walta-app/app/spec/` that renders the view for each state and asserts the
-visible output. The VM spec covers the state machine; the controller spec
+visible output. The ViewModel spec covers the state machine; the controller spec
 covers only the state-to-DOM mapping.
 
 ## Toolchain support
