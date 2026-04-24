@@ -9,15 +9,12 @@ bindView($, vm, {
     progressFill:      { backgroundColor: "progressColor", width: "progressWidth" },
     progressText:      { text: "progressText" },
     logPane:           { visible: "logVisible" },
-    diagnosticsButton: { visible: "diagnosticsVisible" },
-    logToggleButton:   { title: "logToggleLabel" },
+    diagnosticsButton: { visible: "diagnosticsVisible", onClick: "openDiagnostics" },
+    logToggleButton:   { title: "logToggleLabel", onClick: "toggleLog" },
     logText:           { text: "logText" },
+    closeBottomButton: { onClick: "close" },
+    closeButton:       { onClose: "close" },
 });
-
-$.logToggleButton.addEventListener("click", function () { vm.toggleLog(); });
-$.diagnosticsButton.addEventListener("click", function () { vm.openDiagnostics(); });
-$.closeBottomButton.addEventListener("click", function () { vm.close(); });
-$.closeButton.on("close", function () { vm.close(); });
 
 vm.on("close", function () { $.trigger("close"); });
 vm.on("diagnostics", function () { $.trigger("diagnostics"); });
