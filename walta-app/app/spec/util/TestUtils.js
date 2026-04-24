@@ -160,25 +160,39 @@ function ifNotManual( cbTrue, cbFalse ) {
 	}
 }
 
+// Usage in an afterEach:
+//   afterEach(async () => {
+//     await closeWindow(win);   // blocks in --manual so the user can drive
+//                               // the UI; cleanUp is deferred as a result.
+//     ctl.cleanUp();            // runs once the window is actually closed
+//   });
+//
+// The order matters: `cleanUp()` disposes the VM (clearing listeners),
+// which dead-locks a live screen in manual mode. Always close first,
+// then clean up.
+//
+// Supports both the legacy callback style `closeWindow(win, done)` and
+// a promise-returning style `await closeWindow(win)`. In --manual mode
+// on iOS there is intentionally no auto-close mechanism — the promise
+// never resolves (and the legacy `done` never fires); the user
+// terminates the test session externally (Ctrl-C grunt, stop the sim).
 function closeWindow( win, done ) {
-	win.addEventListener( "close", function handler() {
-		win.removeEventListener( "close", handler );
-		if ( done )
-			done();
-	} );
-	ifNotManual(() => win.close(), function() {
-		if ( win.activity ) {
-			win.activity.onCreateOptionsMenu = (e) => {
-				var menu = e.menu;
-				var menuItem = menu.add( { title: "Continue", showAs: Ti.Android.SHOW_AS_ACTION_NEVER });
-				menuItem.addEventListener("click", () => win.close() )
+	return new Promise((resolve) => {
+		win.addEventListener( "close", function handler() {
+			win.removeEventListener( "close", handler );
+			if ( done ) done();
+			resolve();
+		} );
+		ifNotManual(() => win.close(), function() {
+			if ( win.activity ) {
+				win.activity.onCreateOptionsMenu = (e) => {
+					var menu = e.menu;
+					var menuItem = menu.add( { title: "Continue", showAs: Ti.Android.SHOW_AS_ACTION_NEVER });
+					menuItem.addEventListener("click", () => win.close() )
+				}
 			}
-		} else {
-			/*var cont = Ti.UI.createButton( { title: "Continue Test" } );
-			var toolbar = Ti.UI.createToolbar({ items: [cont], barColor: "transparent", translucent: true, bottom: 0 });
-			cont.addEventListener("click", () => win.close() );
-			win.add(toolbar);*/
-		}
+			// iOS manual: no auto-close — see comment above.
+		});
 	});
 }
 

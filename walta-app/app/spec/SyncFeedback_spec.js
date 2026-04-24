@@ -2,26 +2,14 @@ require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
 var { closeWindow, wrapViewInWindow, windowOpenTest } = require("spec/util/TestUtils");
 var SyncStore = require("models/SyncStore");
-
-function makeFakeSyncController(store) {
-    return {
-        get status()       { return store.status; },
-        get percent()      { return store.percent; },
-        get statusText()   { return store.statusText; },
-        get logLines()     { return store.logLines; },
-        get errorMessage() { return store.errorMessage; },
-        addListener: function (cb) { store.addListener(cb); },
-        removeListener: function (cb) { store.removeListener(cb); },
-        forceUpload: function () { /* no-op in tests */ },
-    };
-}
+var createSyncController = require("spec/fixtures/SyncController_fixture");
 
 describe("SyncFeedback controller", function () {
     var ctl, win;
 
     afterEach(async () => {
-        ctl.cleanUp();
         await closeWindow(win);
+        ctl.cleanUp();
     });
 
     describe("initial (idle) state", function () {
@@ -47,19 +35,15 @@ describe("SyncFeedback controller", function () {
     });
 
     describe("mid-sync (injected syncController)", function () {
-        var store;
-
         beforeEach(async () => {
-            store = new SyncStore();
+            var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
             store.recordProgress("Downloading samples");
             store.recordProgress("Uploading site photo");
             store.recordProgress("Uploading taxa 141 photo");
             // PROGRESS_STEP=15 → 3 increments puts percent at 45, status
             // text at the last message. Gives a clear mid-sync render.
-            ctl = Alloy.createController("SyncFeedback", {
-                syncController: makeFakeSyncController(store)
-            });
+            ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });

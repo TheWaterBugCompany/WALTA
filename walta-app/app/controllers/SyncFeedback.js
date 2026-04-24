@@ -34,12 +34,13 @@ $.progressBar.addEventListener("postlayout", function () {
 // but keeps its line-height reserved in the vertical layout. The
 // VM can't return Ti.UI.SIZE without breaking its Node spec, so
 // we translate the boolean here.
-function applyMessageLayout() {
+function applyDynamicMargins() {
     $.message.height = vm.messageVisible ? Ti.UI.SIZE : 0;
     $.message.top    = vm.messageVisible ? "8dp"       : 0;
+    $.logPane.bottom = vm.logVisible     ? "20dp"      : 0;
 }
-applyMessageLayout();
-vm.addListener(applyMessageLayout);
+applyDynamicMargins();
+vm.addListener(applyDynamicMargins);
 
 vm.on("close", function () { $.trigger("close"); });
 vm.on("diagnostics", function () { Topics.fireTopicEvent(Topics.DIAGNOSTICS); });

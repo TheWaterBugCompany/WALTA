@@ -45,7 +45,7 @@
 }
 
 "#progressTextDark": {
-    color: "#333333"
+    color: "#26849c"
 }
 
 "#progressText": {
@@ -83,7 +83,7 @@
     top: "4dp",
     left: "8dp",
     right: "8dp",
-    color: "#333333",
+    color: "#26849c",
     font: {
         fontFamily: "monospace",
         fontSize: "12dp"
@@ -102,7 +102,7 @@
 ".actionButton": {
     left: "6dp",
     height: "36dp",
-    width: Ti.UI.SIZE,
+    width: "100dp",
     color: "#ffffff",
     backgroundColor: "#26849c",
     borderColor: "#26849c",
@@ -112,4 +112,9 @@
         fontFamily: "sans-serif",
         fontSize: "14dp"
     }
+}
+
+"#diagnosticsButton": {
+    color: "#26849c",
+    backgroundColor: "#ffffff"
 }
