@@ -1,6 +1,10 @@
 "#window": {
     width: "70%",
-    height: "46%"
+    height: Ti.UI.SIZE
+}
+
+"#titlebar": {
+    height: Ti.UI.SIZE
 }
 
 ".message": {

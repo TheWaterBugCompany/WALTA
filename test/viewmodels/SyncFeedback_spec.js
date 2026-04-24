@@ -172,6 +172,17 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
+  describe("logPaneHeight (presentation)", function () {
+    it("is '0dp' when the log pane is hidden", function () {
+      expect(vm.logPaneHeight).to.equal("0dp");
+    });
+
+    it("is '180dp' when the log pane is visible", function () {
+      vm.toggleLog();
+      expect(vm.logPaneHeight).to.equal("180dp");
+    });
+  });
+
   describe("logText (presentation)", function () {
     it("is an empty string when there are no log lines", function () {
       expect(vm.logText).to.equal("");

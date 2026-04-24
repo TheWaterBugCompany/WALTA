@@ -1,7 +1,7 @@
 <Alloy>
     <View class="overlay">
         <View id="window" class="window" layout="vertical">
-            <View class="titlebar">
+            <View id="titlebar" class="titlebar">
                 <Label class="titleText" accessibilityLabel="Synchronise Data">Synchronise Data</Label>
                 <Require id="closeButton" src="CloseButton"/>
             </View>

@@ -56,6 +56,10 @@ class SyncFeedbackViewModel extends ChangeNotifier {
     return this.logLines.join("\n");
   }
 
+  get logPaneHeight() {
+    return this._logVisible ? "180dp" : "0dp";
+  }
+
   start() {
     this._syncController.forceUpload();
   }
