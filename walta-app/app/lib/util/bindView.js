@@ -1,6 +1,6 @@
 // Declarative glue between a ChangeNotifier-style ViewModel and
-// Alloy-bound widgets. Replaces a hand-written `render()` loop +
-// event-wiring block with a bindings map:
+// Alloy-bound widgets. Takes a bindings map and wires both property
+// updates (re-applied on notifyListeners) and one-time events:
 //
 //   bindView($, vm, {
 //     message:         { visible: "messageVisible", text: "message" },
