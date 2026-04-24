@@ -135,8 +135,8 @@ describe("SyncFeedbackViewModel", function () {
   });
 
   describe("logToggleLabel (presentation)", function () {
-    it("is 'Show Log' when the log pane is hidden", function () {
-      expect(vm.logToggleLabel).to.equal("Show Log");
+    it("is 'Show Logs' when the log pane is hidden", function () {
+      expect(vm.logToggleLabel).to.equal("Show Logs");
     });
 
     it("is 'Hide Logs' when the log pane is visible", function () {
