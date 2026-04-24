@@ -3,7 +3,7 @@ var SampleSync = require("logic/SampleSync");
 var Topics = require("ui/Topics");
 var bindView = require("util/bindView");
 
-var vm = new SyncFeedbackViewModel({ syncController: SampleSync });
+var vm = new SyncFeedbackViewModel({ syncController: $.args.syncController || SampleSync });
 
 bindView($, vm, {
     message:           { visible: "messageVisible", text: "message" },
