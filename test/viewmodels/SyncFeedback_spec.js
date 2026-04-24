@@ -46,6 +46,72 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
+  describe("progressColor (presentation)", function () {
+    it("is teal when idle", function () {
+      expect(vm.state.progressColor).to.equal("#26849c");
+    });
+
+    it("is teal while syncing", function () {
+      store.recordStart();
+      expect(vm.state.progressColor).to.equal("#26849c");
+    });
+
+    it("is teal on success", function () {
+      store.recordStart();
+      store.recordSuccess();
+      expect(vm.state.progressColor).to.equal("#26849c");
+    });
+
+    it("is teal while offline", function () {
+      store.recordOffline();
+      expect(vm.state.progressColor).to.equal("#26849c");
+    });
+
+    it("is red on error", function () {
+      store.recordStart();
+      store.recordError(new Error("boom"));
+      expect(vm.state.progressColor).to.equal("#c0392b");
+    });
+  });
+
+  describe("progressText (presentation)", function () {
+    it("is just the percent when idle", function () {
+      expect(vm.state.progressText).to.equal("0%");
+    });
+
+    it("includes the statusText when syncing with a message", function () {
+      store.recordStart();
+      store.recordProgress("Uploading taxa 141 photo");
+      expect(vm.state.progressText).to.equal("15% Uploading taxa 141 photo");
+    });
+
+    it("is just the percent when syncing with no statusText", function () {
+      store.recordStart();
+      expect(vm.state.progressText).to.equal("0%");
+    });
+
+    it("is 0% when offline regardless of percent", function () {
+      store.recordStart();
+      store.recordProgress("Uploading");
+      store.recordOffline();
+      expect(vm.state.progressText).to.equal("0%");
+    });
+
+    it("shows the error message on error", function () {
+      store.recordStart();
+      store.recordProgress("Uploading");
+      store.recordError(new Error("upload failed"));
+      expect(vm.state.progressText).to.equal("15% upload failed");
+    });
+
+    it("falls back to 'Server Error' when the error has no message", function () {
+      store.recordStart();
+      store.recordProgress("Uploading");
+      store.recordError(new Error(""));
+      expect(vm.state.progressText).to.equal("15% Server Error");
+    });
+  });
+
   describe("log visibility (VM-local)", function () {
     it("toggleLog() flips and notifies", function () {
       const seen = [];
