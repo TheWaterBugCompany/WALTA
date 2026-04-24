@@ -78,10 +78,25 @@ npx grunt --platform=ios --simulator --liveview \
   --grep=SyncFeedback --manual unit-test
 ```
 
-Once the spec reaches the controller, grab a screenshot:
+`--manual` is designed to hang so you can interact with the screen —
+the grunt process never exits on its own. Treat it as a background
+task you capture and then kill. Typical sequence:
 
 ```bash
+# 1. Kick off the run in the background (it will hang on purpose).
+npx grunt --platform=ios --simulator --liveview \
+  --grep=SyncFeedback --manual unit-test &
+
+# 2. Wait until the spec opens the controller (tail the output
+#    for the describe title), then give layout a moment to settle.
+#    With the Bash tool: run in the background, poll the output
+#    file for `SyncFeedback controller`, then sleep ~3s.
+
+# 3. Take the screenshot.
 xcrun simctl io booted screenshot /tmp/shot.png
+
+# 4. Clean up the hung run — otherwise the next one can't start.
+pkill -f "titanium serve"
 ```
 
 The Waterbug app is landscape-locked, but the simulator screenshot
@@ -97,7 +112,8 @@ clipped by parent bounds, children overflowing fixed-height containers,
 or screens that haven't been touched since a shared TSS class changed
 (e.g. the `.titlebar` class is shared across six screens — a change
 there ripples everywhere). When in doubt, run each affected
-`--grep=<name>` + screenshot to eyeball it.
+`--grep=<name>` + screenshot to eyeball it — and remember to `pkill`
+between runs.
 
 ## Running before push
 
