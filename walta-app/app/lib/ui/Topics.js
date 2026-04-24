@@ -58,6 +58,8 @@ var topics = {
 
 	ABOUT: 'about',
 
+	DIAGNOSTICS: 'diagnostics',
+
 	LOGIN: 'login',
 
 	GPSLOCK: 'gpslock',

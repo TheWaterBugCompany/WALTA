@@ -1,5 +1,6 @@
 var SyncFeedbackViewModel = require("viewmodels/SyncFeedback");
 var SampleSync = require("logic/SampleSync");
+var Topics = require("ui/Topics");
 var bindView = require("util/bindView");
 
 var vm = new SyncFeedbackViewModel({ syncController: SampleSync });
@@ -17,7 +18,7 @@ bindView($, vm, {
 });
 
 vm.on("close", function () { $.trigger("close"); });
-vm.on("diagnostics", function () { $.trigger("diagnostics"); });
+vm.on("diagnostics", function () { Topics.fireTopicEvent(Topics.DIAGNOSTICS); });
 
 function start() {
     vm.start();
