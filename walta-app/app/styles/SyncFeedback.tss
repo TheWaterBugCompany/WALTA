@@ -44,8 +44,27 @@
     textAlign: "center"
 }
 
+"#progressTextDark": {
+    color: "#333333"
+}
+
+"#progressText": {
+    left: 0
+}
+
+"#progressTextClip": {
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: "0%"
+}
+
+"#progressTextClip[platform=ios]": {
+    clipMode: Ti.UI.iOS.CLIP_MODE_ENABLED
+}
+
 ".logPane": {
-    top: "12dp",
+    top: "20dp",
     left: "16dp",
     right: "16dp",
     height: "40%",

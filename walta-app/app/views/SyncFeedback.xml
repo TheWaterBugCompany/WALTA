@@ -7,8 +7,11 @@
             </View>
             <Label id="message" class="message" visible="false"/>
             <View id="progressBar" class="progressBar">
+                <Label id="progressTextDark" class="progressText">0%</Label>
                 <View id="progressFill" class="progressFill"/>
-                <Label id="progressText" class="progressText">0%</Label>
+                <View id="progressTextClip">
+                    <Label id="progressText" class="progressText">0%</Label>
+                </View>
             </View>
             <View id="logPane" class="logPane" visible="false">
                 <ScrollView id="logScroll" class="logScroll">
