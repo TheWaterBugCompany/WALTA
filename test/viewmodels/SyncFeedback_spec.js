@@ -2,12 +2,13 @@ require("mocha");
 const { expect } = require("chai");
 const SyncFeedbackViewModel = require("../../walta-app/app/lib/viewmodels/SyncFeedback");
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
+const createSyncController = require("../../walta-app/app/spec/fixtures/SyncController_fixture");
 
 describe("SyncFeedbackViewModel", function () {
   let syncController, store, forceUploadCalls, vm;
 
   beforeEach(function () {
-    ({ syncController, store, forceUploadCalls } = createSyncController());
+    ({ syncController, store, forceUploadCalls } = createSyncController(SyncStore));
     vm = new SyncFeedbackViewModel({ syncController });
   });
 
@@ -236,18 +237,3 @@ describe("SyncFeedbackViewModel", function () {
   });
 });
 
-function createSyncController() {
-  const store = new SyncStore();
-  let calls = 0;
-  const syncController = {
-    get status()       { return store.status; },
-    get percent()      { return store.percent; },
-    get statusText()   { return store.statusText; },
-    get logLines()     { return store.logLines; },
-    get errorMessage() { return store.errorMessage; },
-    addListener: cb => store.addListener(cb),
-    removeListener: cb => store.removeListener(cb),
-    forceUpload: () => { calls++; },
-  };
-  return { syncController, store, forceUploadCalls: () => calls };
-}
