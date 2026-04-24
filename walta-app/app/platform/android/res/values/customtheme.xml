@@ -3,19 +3,29 @@
     <style name="Theme.WaterbugApp.Checkbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="buttonTint">#26849c</item>
     </style>
+    <style name="Widget.WaterbugApp.Button" parent="Widget.AppCompat.Button">
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="TextAppearance.WaterbugApp.Button" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textAllCaps">false</item>
+    </style>
     <style name="Theme.WaterbugApp" parent="Theme.AppCompat.Light">
         <item name="colorSurface">#FFFFFF</item>
         <item name="android:windowFullscreen">true</item>
 
         <item name="checkboxStyle">@style/Theme.WaterbugApp.Checkbox</item>
-       
+
+        <item name="android:buttonStyle">@style/Widget.WaterbugApp.Button</item>
+        <item name="buttonStyle">@style/Widget.WaterbugApp.Button</item>
+        <item name="textAppearanceButton">@style/TextAppearance.WaterbugApp.Button</item>
+
         <item name="android:windowBackground">@drawable/background</item>
-		<item name="android:windowActionBar">false</item>		
+		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
 
 		<!-- AppCompat Compatibility -->
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
-        
+
     </style>
 </resources>
