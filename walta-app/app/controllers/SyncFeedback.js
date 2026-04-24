@@ -17,7 +17,7 @@ function render() {
     $.logText.text = vm.logText;
 }
 
-var unsubscribe = vm.subscribe(render);
+vm.addListener(render);
 render();
 
 $.logToggleButton.addEventListener("click", function () { vm.toggleLog(); });
@@ -33,7 +33,6 @@ function start() {
 }
 
 function cleanUp() {
-    unsubscribe();
     vm.dispose();
     $.destroy();
     $.off();

@@ -37,9 +37,9 @@ describe("SyncFeedbackViewModel", function () {
   });
 
   describe("state-change propagation", function () {
-    it("re-notifies subscribers when the store's state changes", function () {
+    it("re-notifies listeners when the store's state changes", function () {
       const seen = [];
-      vm.subscribe(() => seen.push(vm.status));
+      vm.addListener(() => seen.push(vm.status));
       store.recordStart();
       store.recordSuccess();
       expect(seen).to.deep.equal(["syncing", "success"]);
@@ -115,7 +115,7 @@ describe("SyncFeedbackViewModel", function () {
   describe("log visibility (VM-local)", function () {
     it("toggleLog() flips and notifies", function () {
       const seen = [];
-      vm.subscribe(() => seen.push(vm.logVisible));
+      vm.addListener(() => seen.push(vm.logVisible));
       vm.toggleLog();
       vm.toggleLog();
       expect(seen).to.deep.equal([true, false]);
@@ -204,20 +204,21 @@ describe("SyncFeedbackViewModel", function () {
   describe("dispose()", function () {
     it("unsubscribes from the syncController", function () {
       let notifyCount = 0;
-      vm.subscribe(() => notifyCount++);
+      vm.addListener(() => notifyCount++);
       vm.dispose();
       store.recordStart();
       expect(notifyCount).to.equal(0);
     });
   });
 
-  describe("subscribe()", function () {
-    it("returns an unsubscribe function", function () {
+  describe("addListener()/removeListener()", function () {
+    it("removeListener stops further notifications", function () {
       let calls = 0;
-      const off = vm.subscribe(() => calls++);
+      const cb = () => calls++;
+      vm.addListener(cb);
       store.recordStart();
       expect(calls).to.equal(1);
-      off();
+      vm.removeListener(cb);
       store.recordSuccess();
       expect(calls).to.equal(1);
     });
@@ -229,7 +230,8 @@ function createSyncController() {
   let calls = 0;
   const syncController = {
     getState: () => store.getState(),
-    subscribe: cb => store.subscribe(cb),
+    addListener: cb => store.addListener(cb),
+    removeListener: cb => store.removeListener(cb),
     forceUpload: () => { calls++; },
   };
   return { syncController, store, forceUploadCalls: () => calls };

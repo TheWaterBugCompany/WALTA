@@ -1,15 +1,18 @@
+const ChangeNotifier = require("../../util/ChangeNotifier");
+
 const PROGRESS_COLOR_NORMAL = "#26849c";
 const PROGRESS_COLOR_ERROR = "#c0392b";
 
 const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.";
 
-class SyncFeedbackViewModel {
+class SyncFeedbackViewModel extends ChangeNotifier {
   constructor({ syncController }) {
+    super();
     this._syncController = syncController;
     this._logVisible = false;
-    this._stateListeners = [];
     this._eventListeners = {};
-    this._unsubSync = syncController.subscribe(() => this._notify());
+    this._onSyncChange = () => this.notifyListeners();
+    syncController.addListener(this._onSyncChange);
   }
 
   get status() { return this._syncController.getState().status; }
@@ -60,7 +63,7 @@ class SyncFeedbackViewModel {
 
   toggleLog() {
     this._logVisible = !this._logVisible;
-    this._notify();
+    this.notifyListeners();
   }
 
   close() {
@@ -71,25 +74,14 @@ class SyncFeedbackViewModel {
     this._emit("diagnostics");
   }
 
-  subscribe(cb) {
-    this._stateListeners.push(cb);
-    return () => {
-      this._stateListeners = this._stateListeners.filter(l => l !== cb);
-    };
-  }
-
   on(event, cb) {
     (this._eventListeners[event] = this._eventListeners[event] || []).push(cb);
   }
 
   dispose() {
-    if (this._unsubSync) this._unsubSync();
-    this._stateListeners = [];
+    this._syncController.removeListener(this._onSyncChange);
     this._eventListeners = {};
-  }
-
-  _notify() {
-    this._stateListeners.forEach(cb => cb());
+    super.dispose();
   }
 
   _emit(event, data) {

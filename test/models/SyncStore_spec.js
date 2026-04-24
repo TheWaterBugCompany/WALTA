@@ -31,9 +31,9 @@ describe("SyncStore", function () {
       expect(s.errorMessage).to.equal(null);
     });
 
-    it("notifies subscribers", function () {
+    it("notifies listeners", function () {
       const seen = [];
-      store.subscribe(s => seen.push(s.status));
+      store.addListener(() => seen.push(store.getState().status));
       store.recordStart();
       expect(seen).to.deep.equal(["syncing"]);
     });
@@ -118,13 +118,14 @@ describe("SyncStore", function () {
     });
   });
 
-  describe("subscribe()", function () {
-    it("returns an unsubscribe function that stops further notifications", function () {
+  describe("addListener()/removeListener()", function () {
+    it("removeListener stops further notifications", function () {
       let calls = 0;
-      const off = store.subscribe(() => calls++);
+      const cb = () => calls++;
+      store.addListener(cb);
       store.recordStart();
       expect(calls).to.equal(1);
-      off();
+      store.removeListener(cb);
       store.recordSuccess();
       expect(calls).to.equal(1);
     });
