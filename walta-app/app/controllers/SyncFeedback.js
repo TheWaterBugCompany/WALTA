@@ -4,16 +4,16 @@ var SampleSync = require("logic/SampleSync");
 var vm = new SyncFeedbackViewModel({ syncController: SampleSync });
 
 function render() {
-    $.offlineMessage.visible = vm.status === "offline";
+    $.offlineMessage.visible = vm.offlineMessageVisible;
 
     $.progressFill.backgroundColor = vm.progressColor;
-    $.progressFill.width = vm.percent + "%";
+    $.progressFill.width = vm.progressWidth;
     $.progressText.text = vm.progressText;
 
     $.logPane.visible = vm.logVisible;
-    $.diagnosticsButton.visible = vm.logVisible;
-    $.logToggleButton.title = vm.logVisible ? "Hide Logs" : "Show Log";
-    $.logText.text = vm.logLines.join("\n");
+    $.diagnosticsButton.visible = vm.diagnosticsVisible;
+    $.logToggleButton.title = vm.logToggleLabel;
+    $.logText.text = vm.logText;
 }
 
 var unsubscribe = vm.subscribe(render);

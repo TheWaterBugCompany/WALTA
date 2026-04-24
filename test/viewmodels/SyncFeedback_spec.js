@@ -122,6 +122,61 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
+  describe("diagnosticsVisible (presentation)", function () {
+    it("is false when the log pane is hidden", function () {
+      expect(vm.diagnosticsVisible).to.equal(false);
+    });
+
+    it("is true after toggleLog() shows the log pane", function () {
+      vm.toggleLog();
+      expect(vm.diagnosticsVisible).to.equal(true);
+    });
+  });
+
+  describe("logToggleLabel (presentation)", function () {
+    it("is 'Show Log' when the log pane is hidden", function () {
+      expect(vm.logToggleLabel).to.equal("Show Log");
+    });
+
+    it("is 'Hide Logs' when the log pane is visible", function () {
+      vm.toggleLog();
+      expect(vm.logToggleLabel).to.equal("Hide Logs");
+    });
+  });
+
+  describe("offlineMessageVisible (presentation)", function () {
+    it("is false when not offline", function () {
+      expect(vm.offlineMessageVisible).to.equal(false);
+    });
+
+    it("is true when offline", function () {
+      store.recordOffline();
+      expect(vm.offlineMessageVisible).to.equal(true);
+    });
+  });
+
+  describe("progressWidth (presentation)", function () {
+    it("formats the percent as a CSS-style width string", function () {
+      expect(vm.progressWidth).to.equal("0%");
+      store.recordStart();
+      store.recordProgress("Uploading");
+      expect(vm.progressWidth).to.equal("15%");
+    });
+  });
+
+  describe("logText (presentation)", function () {
+    it("is an empty string when there are no log lines", function () {
+      expect(vm.logText).to.equal("");
+    });
+
+    it("joins log lines with newlines", function () {
+      store.recordStart();
+      store.recordProgress("first");
+      store.recordProgress("second");
+      expect(vm.logText).to.equal("first\nsecond");
+    });
+  });
+
   describe("discrete events", function () {
     it("close() emits a 'close' event to on() listeners", function () {
       let closed = false;

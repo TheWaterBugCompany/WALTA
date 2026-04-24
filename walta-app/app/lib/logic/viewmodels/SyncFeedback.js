@@ -17,8 +17,16 @@ class SyncFeedbackViewModel {
   get errorMessage() { return this._syncController.getState().errorMessage; }
   get logVisible() { return this._logVisible; }
 
+  get offlineMessageVisible() {
+    return this.status === "offline";
+  }
+
   get progressColor() {
     return this.status === "error" ? PROGRESS_COLOR_ERROR : PROGRESS_COLOR_NORMAL;
+  }
+
+  get progressWidth() {
+    return this.percent + "%";
   }
 
   get progressText() {
@@ -26,6 +34,18 @@ class SyncFeedbackViewModel {
     if (this.status === "error") return this.percent + "% " + (this.errorMessage || "Server Error");
     if (this.statusText) return this.percent + "% " + this.statusText;
     return this.percent + "%";
+  }
+
+  get diagnosticsVisible() {
+    return this._logVisible;
+  }
+
+  get logToggleLabel() {
+    return this._logVisible ? "Hide Logs" : "Show Log";
+  }
+
+  get logText() {
+    return this.logLines.join("\n");
   }
 
   start() {
