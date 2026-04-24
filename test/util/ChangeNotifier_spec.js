@@ -65,4 +65,66 @@ describe("ChangeNotifier", function () {
     notifier.notifyListeners();
     expect(calls).to.equal(2);
   });
+
+  describe("named events (on/off/trigger)", function () {
+    it("on(event, cb) fires on trigger(event)", function () {
+      let calls = 0;
+      notifier.on("close", () => calls++);
+      notifier.trigger("close");
+      expect(calls).to.equal(1);
+    });
+
+    it("passes data through trigger(event, data) to the callback", function () {
+      let received;
+      notifier.on("update", x => { received = x; });
+      notifier.trigger("update", { value: 42 });
+      expect(received).to.deep.equal({ value: 42 });
+    });
+
+    it("different event names are independent", function () {
+      const seen = [];
+      notifier.on("a", () => seen.push("a"));
+      notifier.on("b", () => seen.push("b"));
+      notifier.trigger("a");
+      notifier.trigger("b");
+      notifier.trigger("a");
+      expect(seen).to.deep.equal(["a", "b", "a"]);
+    });
+
+    it("off(event, cb) stops further calls to that handler", function () {
+      let calls = 0;
+      const cb = () => calls++;
+      notifier.on("close", cb);
+      notifier.trigger("close");
+      notifier.off("close", cb);
+      notifier.trigger("close");
+      expect(calls).to.equal(1);
+    });
+
+    it("trigger on an unknown event is a no-op", function () {
+      expect(() => notifier.trigger("nobody-listens")).to.not.throw();
+    });
+
+    it("off for an unknown event or handler is a no-op", function () {
+      expect(() => notifier.off("never-registered", () => {})).to.not.throw();
+    });
+
+    it("dispose() clears named-event listeners too", function () {
+      let calls = 0;
+      notifier.on("close", () => calls++);
+      notifier.dispose();
+      notifier.trigger("close");
+      expect(calls).to.equal(0);
+    });
+
+    it("named-event listeners and change listeners are independent", function () {
+      let changes = 0, closes = 0;
+      notifier.addListener(() => changes++);
+      notifier.on("close", () => closes++);
+      notifier.notifyListeners();
+      notifier.trigger("close");
+      expect(changes).to.equal(1);
+      expect(closes).to.equal(1);
+    });
+  });
 });
