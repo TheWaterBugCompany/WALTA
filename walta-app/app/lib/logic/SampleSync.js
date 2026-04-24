@@ -17,8 +17,12 @@ function getState() {
     return syncStore.getState();
 }
 
-function subscribe(cb) {
-    return syncStore.subscribe(cb);
+function addListener(cb) {
+    syncStore.addListener(cb);
+}
+
+function removeListener(cb) {
+    syncStore.removeListener(cb);
 }
 
 var log = Logger.log;
@@ -119,5 +123,6 @@ function startSynchronise(options) {
 exports.forceUpload = forceUpload;
 exports.areWeSyncing = areWeSyncing;
 exports.getState = getState;
-exports.subscribe = subscribe;
+exports.addListener = addListener;
+exports.removeListener = removeListener;
 exports.init = init;

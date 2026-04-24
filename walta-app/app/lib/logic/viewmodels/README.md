@@ -98,21 +98,26 @@ const ExampleViewModel = require("logic/viewmodels/Example");
 const Topics = require("ui/Topics");
 
 const vm = new ExampleViewModel({ topics: Topics });
-const unsubscribe = vm.subscribe(render);
-render(vm.state);
+vm.addListener(render);
+render();
 
 $.someButton.addEventListener("click", () => vm.doSomething());
 
-function render(state) {
-  $.label.text = state.someField;
-  $.container.visible = state.status !== "idle";
+function render() {
+  $.label.text = vm.someField;
+  $.container.visible = vm.status !== "idle";
 }
 
 exports.cleanUp = function () {
-  unsubscribe();
   vm.dispose();
 };
 ```
+
+ViewModels extend `ChangeNotifier` (`app/lib/util/ChangeNotifier.js`)
+— a minimal Flutter-compatible base class. Consumers use
+`addListener(cb)` / `removeListener(cb)`; the VM calls
+`notifyListeners()` when any getter would return a new value. The
+callback takes no arguments — listeners re-read from the VM.
 
 The Controller owns the view binding; the ViewModel owns the state machine.
 

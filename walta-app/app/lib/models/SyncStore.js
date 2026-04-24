@@ -1,22 +1,17 @@
+const ChangeNotifier = require("../util/ChangeNotifier");
+
 const PROGRESS_STEP = 15;
 const PROGRESS_CAP = 95;
 const LOG_CAP = 200;
 
-class SyncStore {
+class SyncStore extends ChangeNotifier {
   constructor() {
-    this._listeners = [];
+    super();
     this._state = this._freshState();
   }
 
   getState() {
     return this._state;
-  }
-
-  subscribe(cb) {
-    this._listeners.push(cb);
-    return () => {
-      this._listeners = this._listeners.filter(l => l !== cb);
-    };
   }
 
   recordStart() {
@@ -61,7 +56,7 @@ class SyncStore {
 
   _setState(patch) {
     this._state = Object.assign({}, this._state, patch);
-    this._listeners.forEach(cb => cb(this._state));
+    this.notifyListeners();
   }
 }
 
