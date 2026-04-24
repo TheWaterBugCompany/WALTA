@@ -1,23 +1,24 @@
 <Alloy>
+    <Model src="syncFeedback"/>
     <View class="overlay">
         <View id="window" class="window" layout="vertical">
             <View class="titlebar">
                 <Label class="titleText" accessibilityLabel="Synchronise Data">Synchronise Data</Label>
                 <Require id="closeButton" src="CloseButton"/>
             </View>
-            <Label id="message" class="message" visible="false"/>
+            <Label id="message" class="message" text="{syncFeedback.message}" visible="{syncFeedback.messageVisible}"/>
             <View id="progressBar" class="progressBar">
-                <View id="progressFill" class="progressFill"/>
-                <Label id="progressText" class="progressText">0%</Label>
+                <View id="progressFill" class="progressFill" backgroundColor="{syncFeedback.progressColor}" width="{syncFeedback.progressWidth}"/>
+                <Label id="progressText" class="progressText" text="{syncFeedback.progressText}"/>
             </View>
-            <View id="logPane" class="logPane" visible="false">
+            <View id="logPane" class="logPane" visible="{syncFeedback.logVisible}">
                 <ScrollView id="logScroll" class="logScroll">
-                    <Label id="logText" class="logText"/>
+                    <Label id="logText" class="logText" text="{syncFeedback.logText}"/>
                 </ScrollView>
             </View>
             <View id="buttonRow" class="buttonRow" layout="horizontal">
-                <Button id="diagnosticsButton" class="actionButton" visible="false">Diagnostics</Button>
-                <Button id="logToggleButton" class="actionButton">Show Log</Button>
+                <Button id="diagnosticsButton" class="actionButton" visible="{syncFeedback.diagnosticsVisible}">Diagnostics</Button>
+                <Button id="logToggleButton" class="actionButton" title="{syncFeedback.logToggleLabel}"/>
                 <Button id="closeBottomButton" class="actionButton">Close</Button>
             </View>
         </View>

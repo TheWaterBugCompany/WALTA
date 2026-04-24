@@ -1,24 +1,15 @@
-var SyncFeedbackViewModel = require("logic/viewmodels/SyncFeedback");
-var SampleSync = require("logic/SampleSync");
+// SPIKE: view attributes are bound declaratively to $.syncFeedback
+// (the Alloy Model declared in the XML). The controller is pure
+// plumbing: wire button events to VM actions, forward VM events
+// to widget events, clean up on unload.
 
-var vm = new SyncFeedbackViewModel({ syncController: SampleSync });
+var vm = Alloy.Models.syncFeedback;
 
-function render() {
-    $.message.visible = vm.messageVisible;
-    $.message.text = vm.message;
-
-    $.progressFill.backgroundColor = vm.progressColor;
-    $.progressFill.width = vm.progressWidth;
-    $.progressText.text = vm.progressText;
-
-    $.logPane.visible = vm.logVisible;
-    $.diagnosticsButton.visible = vm.diagnosticsVisible;
-    $.logToggleButton.title = vm.logToggleLabel;
-    $.logText.text = vm.logText;
-}
-
-vm.addListener(render);
-render();
+// Force an initial render — Alloy's data-binding code wires a
+// `change` listener on this model *after* the model's `initialize`
+// has already set its attrs, so without a manual kick the view
+// never receives the initial values.
+vm.trigger("change");
 
 $.logToggleButton.addEventListener("click", function () { vm.toggleLog(); });
 $.diagnosticsButton.addEventListener("click", function () { vm.openDiagnostics(); });
@@ -33,7 +24,12 @@ function start() {
 }
 
 function cleanUp() {
-    vm.dispose();
+    // NOTE: the VM is a singleton (Alloy.Models.syncFeedback) — we
+    // must NOT call vm.dispose()/off() here, that would blow away
+    // Alloy's own binding listener *and* the VM's internal
+    // `change:*` listeners (wired in initialize(), which only runs
+    // once per singleton lifetime). Let Alloy's generated
+    // $.destroy() handle unbinding this controller's widgets.
     $.destroy();
     $.off();
 }
