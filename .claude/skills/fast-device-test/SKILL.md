@@ -67,6 +67,38 @@ Commit hygiene: remove the `.only()` before pushing — CI won't catch regressio
 - **Port 8323 stuck** — `lsof -ti:8323 | xargs kill -9` then re-run without `--reuse-server`.
 - **App hangs at `[vite] connected.` with no further output** — a LiveView vite plugin errored while serving a source file; the server returned HTTP 500 with an HTML error page, and the Titanium require path hangs trying to eval it as JS. Curl the server directly for a specific file to see the real error: `curl -s http://<serve-host>:8323/lib/<path>.js | head -40`. For the exact request the client was fetching, dump the sim log: `xcrun simctl spawn booted log show --last 1m --predicate 'process == "Waterbug"' | grep ':8323'`. Historical cause: a plain JS class placed under `app/lib/models/` was matched by the Alloy Model plugin regex and run through `compileModel`, which only understands Backbone-style model definitions (fixed in liveview `fix/android-emulator-unit-test-support` by anchoring the regex to `appDir`).
 
+## Validating the UI visually (iOS simulator)
+
+`--manual` leaves the window open after the spec finishes so you can
+inspect the rendered layout. Combined with `--grep=<Controller>`
+this gives a focused preview of a single screen:
+
+```bash
+npx grunt --platform=ios --simulator --liveview \
+  --grep=SyncFeedback --manual unit-test
+```
+
+Once the spec reaches the controller, grab a screenshot:
+
+```bash
+xcrun simctl io booted screenshot /tmp/shot.png
+```
+
+The Waterbug app is landscape-locked, but the simulator screenshot
+is captured in the device's physical portrait orientation — so the
+PNG will look rotated 90° CCW. Rotate to the in-app orientation:
+
+```bash
+sips -r 90 /tmp/shot.png --out /tmp/shot-landscape.png
+```
+
+Useful for catching layout regressions the spec runner can't: widgets
+clipped by parent bounds, children overflowing fixed-height containers,
+or screens that haven't been touched since a shared TSS class changed
+(e.g. the `.titlebar` class is shared across six screens — a change
+there ripples everywhere). When in doubt, run each affected
+`--grep=<name>` + screenshot to eyeball it.
+
 ## Running before push
 
 Before marking a PR ready-for-review, run the command **without** `--liveview` as a final safety net — `npx grunt --platform=android --simulator unit-test` builds a fresh APK and runs the full spec bundle, which catches anything the LiveView dev-time bundling could paper over.
