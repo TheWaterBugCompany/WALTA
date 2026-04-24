@@ -63,6 +63,7 @@ var SPEC_FILES = [
   "MayflyEmergenceMap",
   "MayflyMusterSelect",
   "SampleSync",
+  "SyncFeedback",
   "SampleHistory",
   "Gallery",
   "PhotoSelect",
