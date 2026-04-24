@@ -49,7 +49,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   }
 
   get logToggleLabel() {
-    return this._logVisible ? "Hide Logs" : "Show Log";
+    return this._logVisible ? "Hide Logs" : "Show Logs";
   }
 
   get logText() {
