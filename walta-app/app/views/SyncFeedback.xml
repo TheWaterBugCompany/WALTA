@@ -5,7 +5,7 @@
                 <Label class="titleText" accessibilityLabel="Synchronise Data">Synchronise Data</Label>
                 <Require id="closeButton" src="CloseButton"/>
             </View>
-            <Label id="offlineMessage" class="offlineMessage" visible="false">The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.</Label>
+            <Label id="message" class="message" visible="false"/>
             <View id="progressBar" class="progressBar">
                 <View id="progressFill" class="progressFill"/>
                 <Label id="progressText" class="progressText">0%</Label>

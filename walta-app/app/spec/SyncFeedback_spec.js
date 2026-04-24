@@ -20,7 +20,7 @@ describe("SyncFeedback controller", function () {
         expect(ctl.getView()).to.exist;
         expect(ctl.progressText.text).to.equal("0%");
         expect(ctl.logPane.visible).to.equal(false);
-        expect(ctl.offlineMessage.visible).to.equal(false);
+        expect(ctl.message.visible).to.equal(false);
     });
 
     it("shows the log pane and Diagnostics button after toggling the log", () => {

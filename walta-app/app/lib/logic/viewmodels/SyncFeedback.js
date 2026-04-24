@@ -1,6 +1,8 @@
 const PROGRESS_COLOR_NORMAL = "#26849c";
 const PROGRESS_COLOR_ERROR = "#c0392b";
 
+const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.";
+
 class SyncFeedbackViewModel {
   constructor({ syncController }) {
     this._syncController = syncController;
@@ -17,8 +19,12 @@ class SyncFeedbackViewModel {
   get errorMessage() { return this._syncController.getState().errorMessage; }
   get logVisible() { return this._logVisible; }
 
-  get offlineMessageVisible() {
-    return this.status === "offline";
+  get message() {
+    return this.status === "offline" ? OFFLINE_MESSAGE : "";
+  }
+
+  get messageVisible() {
+    return this.message !== "";
   }
 
   get progressColor() {

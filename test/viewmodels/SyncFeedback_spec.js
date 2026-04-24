@@ -144,14 +144,22 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
-  describe("offlineMessageVisible (presentation)", function () {
-    it("is false when not offline", function () {
-      expect(vm.offlineMessageVisible).to.equal(false);
+  describe("message (presentation)", function () {
+    it("is hidden and blank when idle", function () {
+      expect(vm.messageVisible).to.equal(false);
+      expect(vm.message).to.equal("");
     });
 
-    it("is true when offline", function () {
+    it("is hidden and blank while syncing", function () {
+      store.recordStart();
+      expect(vm.messageVisible).to.equal(false);
+      expect(vm.message).to.equal("");
+    });
+
+    it("shows the offline guidance when offline", function () {
       store.recordOffline();
-      expect(vm.offlineMessageVisible).to.equal(true);
+      expect(vm.messageVisible).to.equal(true);
+      expect(vm.message).to.match(/^The mobile network is unavailable/);
     });
   });
 
