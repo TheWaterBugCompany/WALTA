@@ -10,9 +10,11 @@ class SyncStore extends ChangeNotifier {
     this._state = this._freshState();
   }
 
-  getState() {
-    return this._state;
-  }
+  get status()       { return this._state.status; }
+  get percent()      { return this._state.percent; }
+  get statusText()   { return this._state.statusText; }
+  get logLines()     { return this._state.logLines; }
+  get errorMessage() { return this._state.errorMessage; }
 
   recordStart() {
     this._setState(this._freshState({ status: "syncing" }));

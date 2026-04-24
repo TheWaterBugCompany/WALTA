@@ -229,7 +229,11 @@ function createSyncController() {
   const store = new SyncStore();
   let calls = 0;
   const syncController = {
-    getState: () => store.getState(),
+    get status()       { return store.status; },
+    get percent()      { return store.percent; },
+    get statusText()   { return store.statusText; },
+    get logLines()     { return store.logLines; },
+    get errorMessage() { return store.errorMessage; },
     addListener: cb => store.addListener(cb),
     removeListener: cb => store.removeListener(cb),
     forceUpload: () => { calls++; },

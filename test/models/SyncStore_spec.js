@@ -11,12 +11,11 @@ describe("SyncStore", function () {
 
   describe("initial state", function () {
     it("starts 'idle' with no progress, no log, no error", function () {
-      const s = store.getState();
-      expect(s.status).to.equal("idle");
-      expect(s.percent).to.equal(0);
-      expect(s.statusText).to.equal("");
-      expect(s.logLines).to.deep.equal([]);
-      expect(s.errorMessage).to.equal(null);
+      expect(store.status).to.equal("idle");
+      expect(store.percent).to.equal(0);
+      expect(store.statusText).to.equal("");
+      expect(store.logLines).to.deep.equal([]);
+      expect(store.errorMessage).to.equal(null);
     });
   });
 
@@ -24,16 +23,15 @@ describe("SyncStore", function () {
     it("transitions to 'syncing' and resets progress/log/error", function () {
       store.recordError(new Error("boom"));
       store.recordStart();
-      const s = store.getState();
-      expect(s.status).to.equal("syncing");
-      expect(s.percent).to.equal(0);
-      expect(s.logLines).to.deep.equal([]);
-      expect(s.errorMessage).to.equal(null);
+      expect(store.status).to.equal("syncing");
+      expect(store.percent).to.equal(0);
+      expect(store.logLines).to.deep.equal([]);
+      expect(store.errorMessage).to.equal(null);
     });
 
     it("notifies listeners", function () {
       const seen = [];
-      store.addListener(() => seen.push(store.getState().status));
+      store.addListener(() => seen.push(store.status));
       store.recordStart();
       expect(seen).to.deep.equal(["syncing"]);
     });
@@ -44,16 +42,15 @@ describe("SyncStore", function () {
 
     it("appends a log line and updates statusText", function () {
       store.recordProgress("Uploading site photo");
-      const s = store.getState();
-      expect(s.statusText).to.equal("Uploading site photo");
-      expect(s.logLines).to.deep.equal(["Uploading site photo"]);
+      expect(store.statusText).to.equal("Uploading site photo");
+      expect(store.logLines).to.deep.equal(["Uploading site photo"]);
     });
 
     it("increments percent monotonically, capped below 100", function () {
       const percents = [];
       for (let i = 0; i < 10; i++) {
         store.recordProgress("step " + i);
-        percents.push(store.getState().percent);
+        percents.push(store.percent);
       }
       for (let i = 1; i < percents.length; i++) {
         expect(percents[i]).to.be.at.least(percents[i - 1]);
@@ -65,21 +62,19 @@ describe("SyncStore", function () {
     it("is ignored when not in the 'syncing' state", function () {
       store.recordSuccess();
       store.recordProgress("stale event");
-      const s = store.getState();
-      expect(s.status).to.equal("success");
-      expect(s.logLines).to.deep.equal([]);
+      expect(store.status).to.equal("success");
+      expect(store.logLines).to.deep.equal([]);
     });
 
     it("trims log lines past the cap so memory stays bounded", function () {
       for (let i = 0; i < 300; i++) store.recordProgress("line " + i);
-      const s = store.getState();
-      expect(s.logLines.length).to.be.at.most(200);
-      expect(s.logLines[s.logLines.length - 1]).to.equal("line 299");
+      expect(store.logLines.length).to.be.at.most(200);
+      expect(store.logLines[store.logLines.length - 1]).to.equal("line 299");
     });
 
     it("skips the log entry (but still notifies) when the message is empty", function () {
       store.recordProgress("");
-      expect(store.getState().logLines).to.deep.equal([]);
+      expect(store.logLines).to.deep.equal([]);
     });
   });
 
@@ -87,10 +82,9 @@ describe("SyncStore", function () {
     it("moves to 'success' with percent 100 and 'Sync complete' text", function () {
       store.recordStart();
       store.recordSuccess();
-      const s = store.getState();
-      expect(s.status).to.equal("success");
-      expect(s.percent).to.equal(100);
-      expect(s.statusText).to.equal("Sync complete");
+      expect(store.status).to.equal("success");
+      expect(store.percent).to.equal(100);
+      expect(store.statusText).to.equal("Sync complete");
     });
   });
 
@@ -98,23 +92,22 @@ describe("SyncStore", function () {
     it("moves to 'error' and captures the error message", function () {
       store.recordStart();
       store.recordError(new Error("server exploded"));
-      const s = store.getState();
-      expect(s.status).to.equal("error");
-      expect(s.errorMessage).to.equal("server exploded");
+      expect(store.status).to.equal("error");
+      expect(store.errorMessage).to.equal("server exploded");
     });
 
     it("tolerates a null/undefined error", function () {
       store.recordStart();
       store.recordError(null);
-      expect(store.getState().status).to.equal("error");
-      expect(store.getState().errorMessage).to.equal("");
+      expect(store.status).to.equal("error");
+      expect(store.errorMessage).to.equal("");
     });
   });
 
   describe("recordOffline()", function () {
     it("moves to 'offline'", function () {
       store.recordOffline();
-      expect(store.getState().status).to.equal("offline");
+      expect(store.status).to.equal("offline");
     });
   });
 

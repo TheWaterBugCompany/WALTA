@@ -14,11 +14,11 @@ class SyncFeedbackViewModel extends ChangeNotifier {
     syncController.addListener(this._onSyncChange);
   }
 
-  get status() { return this._syncController.getState().status; }
-  get percent() { return this._syncController.getState().percent; }
-  get statusText() { return this._syncController.getState().statusText; }
-  get logLines() { return this._syncController.getState().logLines; }
-  get errorMessage() { return this._syncController.getState().errorMessage; }
+  get status()       { return this._syncController.status; }
+  get percent()      { return this._syncController.percent; }
+  get statusText()   { return this._syncController.statusText; }
+  get logLines()     { return this._syncController.logLines; }
+  get errorMessage() { return this._syncController.errorMessage; }
   get logVisible() { return this._logVisible; }
 
   get message() {
