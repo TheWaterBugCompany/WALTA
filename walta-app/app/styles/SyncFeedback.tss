@@ -3,10 +3,6 @@
     height: Ti.UI.SIZE
 }
 
-"#titlebar": {
-    height: Ti.UI.SIZE
-}
-
 ".message": {
     top: "8dp",
     left: "16dp",
