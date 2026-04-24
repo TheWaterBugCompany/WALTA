@@ -10,7 +10,6 @@ class SyncFeedbackViewModel extends ChangeNotifier {
     super();
     this._syncController = syncController;
     this._logVisible = false;
-    this._eventListeners = {};
     this._onSyncChange = () => this.notifyListeners();
     syncController.addListener(this._onSyncChange);
   }
@@ -67,25 +66,16 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   }
 
   close() {
-    this._emit("close");
+    this.trigger("close");
   }
 
   openDiagnostics() {
-    this._emit("diagnostics");
-  }
-
-  on(event, cb) {
-    (this._eventListeners[event] = this._eventListeners[event] || []).push(cb);
+    this.trigger("diagnostics");
   }
 
   dispose() {
     this._syncController.removeListener(this._onSyncChange);
-    this._eventListeners = {};
     super.dispose();
-  }
-
-  _emit(event, data) {
-    (this._eventListeners[event] || []).forEach(cb => cb(data));
   }
 }
 
