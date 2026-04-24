@@ -4,7 +4,8 @@ var SampleSync = require("logic/SampleSync");
 var vm = new SyncFeedbackViewModel({ syncController: SampleSync });
 
 function render() {
-    $.offlineMessage.visible = vm.offlineMessageVisible;
+    $.message.visible = vm.messageVisible;
+    $.message.text = vm.message;
 
     $.progressFill.backgroundColor = vm.progressColor;
     $.progressFill.width = vm.progressWidth;

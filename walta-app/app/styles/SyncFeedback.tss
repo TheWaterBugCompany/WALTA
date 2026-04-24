@@ -3,7 +3,7 @@
     height: "46%"
 }
 
-".offlineMessage": {
+".message": {
     top: "8dp",
     left: "16dp",
     right: "16dp",
