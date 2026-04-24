@@ -4,10 +4,18 @@ const PROGRESS_STEP = 15;
 const PROGRESS_CAP = 95;
 const LOG_CAP = 200;
 
+const INITIAL_STATE = {
+  status: "idle",
+  percent: 0,
+  statusText: "",
+  logLines: [],
+  errorMessage: null,
+};
+
 class SyncStore extends ChangeNotifier {
   constructor() {
     super();
-    this._state = this._freshState();
+    this._state = { ...INITIAL_STATE };
   }
 
   get status()       { return this._state.status; }
@@ -17,7 +25,7 @@ class SyncStore extends ChangeNotifier {
   get errorMessage() { return this._state.errorMessage; }
 
   recordStart() {
-    this._setState(this._freshState({ status: "syncing" }));
+    this._setState({ ...INITIAL_STATE, status: "syncing" });
   }
 
   recordProgress(message) {
@@ -41,23 +49,13 @@ class SyncStore extends ChangeNotifier {
     this._setState({ status: "offline" });
   }
 
-  _freshState(patch) {
-    return Object.assign({
-      status: "idle",
-      percent: 0,
-      statusText: "",
-      logLines: [],
-      errorMessage: null,
-    }, patch || {});
-  }
-
   _appendLog(line) {
     const next = this._state.logLines.concat([line]);
     return next.length > LOG_CAP ? next.slice(next.length - LOG_CAP) : next;
   }
 
   _setState(patch) {
-    this._state = Object.assign({}, this._state, patch);
+    this._state = { ...this._state, ...patch };
     this.notifyListeners();
   }
 }
