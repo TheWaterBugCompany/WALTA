@@ -1,24 +1,18 @@
 var SyncFeedbackViewModel = require("logic/viewmodels/SyncFeedback");
 var SampleSync = require("logic/SampleSync");
+var bindView = require("util/bindView");
 
 var vm = new SyncFeedbackViewModel({ syncController: SampleSync });
 
-function render() {
-    $.message.visible = vm.messageVisible;
-    $.message.text = vm.message;
-
-    $.progressFill.backgroundColor = vm.progressColor;
-    $.progressFill.width = vm.progressWidth;
-    $.progressText.text = vm.progressText;
-
-    $.logPane.visible = vm.logVisible;
-    $.diagnosticsButton.visible = vm.diagnosticsVisible;
-    $.logToggleButton.title = vm.logToggleLabel;
-    $.logText.text = vm.logText;
-}
-
-vm.addListener(render);
-render();
+bindView($, vm, {
+    message:           { visible: "messageVisible", text: "message" },
+    progressFill:      { backgroundColor: "progressColor", width: "progressWidth" },
+    progressText:      { text: "progressText" },
+    logPane:           { visible: "logVisible" },
+    diagnosticsButton: { visible: "diagnosticsVisible" },
+    logToggleButton:   { title: "logToggleLabel" },
+    logText:           { text: "logText" },
+});
 
 $.logToggleButton.addEventListener("click", function () { vm.toggleLog(); });
 $.diagnosticsButton.addEventListener("click", function () { vm.openDiagnostics(); });
