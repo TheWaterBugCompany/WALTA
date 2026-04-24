@@ -10,24 +10,22 @@ class SyncFeedbackViewModel {
     this._unsubSync = syncController.subscribe(() => this._notify());
   }
 
-  get state() {
-    const base = this._syncController.getState();
-    return Object.assign({}, base, {
-      logVisible: this._logVisible,
-      progressColor: this._progressColor(base),
-      progressText: this._progressText(base),
-    });
+  get status() { return this._syncController.getState().status; }
+  get percent() { return this._syncController.getState().percent; }
+  get statusText() { return this._syncController.getState().statusText; }
+  get logLines() { return this._syncController.getState().logLines; }
+  get errorMessage() { return this._syncController.getState().errorMessage; }
+  get logVisible() { return this._logVisible; }
+
+  get progressColor() {
+    return this.status === "error" ? PROGRESS_COLOR_ERROR : PROGRESS_COLOR_NORMAL;
   }
 
-  _progressColor(base) {
-    return base.status === "error" ? PROGRESS_COLOR_ERROR : PROGRESS_COLOR_NORMAL;
-  }
-
-  _progressText(base) {
-    if (base.status === "offline") return "0%";
-    if (base.status === "error") return base.percent + "% " + (base.errorMessage || "Server Error");
-    if (base.statusText) return base.percent + "% " + base.statusText;
-    return base.percent + "%";
+  get progressText() {
+    if (this.status === "offline") return "0%";
+    if (this.status === "error") return this.percent + "% " + (this.errorMessage || "Server Error");
+    if (this.statusText) return this.percent + "% " + this.statusText;
+    return this.percent + "%";
   }
 
   start() {
@@ -65,7 +63,7 @@ class SyncFeedbackViewModel {
   }
 
   _notify() {
-    this._stateListeners.forEach(cb => cb(this.state));
+    this._stateListeners.forEach(cb => cb());
   }
 
   _emit(event, data) {
