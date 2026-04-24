@@ -1,4 +1,4 @@
-const ChangeNotifier = require("../../util/ChangeNotifier");
+const ChangeNotifier = require("../util/ChangeNotifier");
 
 const PROGRESS_COLOR_NORMAL = "#26849c";
 const PROGRESS_COLOR_ERROR = "#c0392b";

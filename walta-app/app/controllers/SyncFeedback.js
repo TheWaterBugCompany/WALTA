@@ -1,4 +1,4 @@
-var SyncFeedbackViewModel = require("logic/viewmodels/SyncFeedback");
+var SyncFeedbackViewModel = require("viewmodels/SyncFeedback");
 var SampleSync = require("logic/SampleSync");
 var bindView = require("util/bindView");
 
