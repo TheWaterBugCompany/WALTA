@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const SyncFeedbackViewModel = require("../../walta-app/app/lib/logic/viewmodels/SyncFeedback");
+const SyncFeedbackViewModel = require("../../walta-app/app/lib/viewmodels/SyncFeedback");
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
 
 describe("SyncFeedbackViewModel", function () {

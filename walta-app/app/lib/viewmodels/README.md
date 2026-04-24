@@ -18,7 +18,7 @@ can be unit-tested in Node in milliseconds.
 ## Folder layout
 
 ```
-walta-app/app/lib/logic/viewmodels/   # ViewModel classes
+walta-app/app/lib/viewmodels/         # ViewModel classes
 test/viewmodels/                      # Node-runnable specs (Mocha + Chai)
 ```
 
@@ -94,7 +94,7 @@ The Alloy controller is the thinnest possible glue:
 
 ```js
 // controllers/Example.js
-const ExampleViewModel = require("logic/viewmodels/Example");
+const ExampleViewModel = require("viewmodels/Example");
 const Topics = require("ui/Topics");
 
 const vm = new ExampleViewModel({ topics: Topics });
@@ -131,7 +131,7 @@ loaded.
 // test/viewmodels/Example_spec.js
 require("mocha");
 const { expect } = require("chai");
-const ExampleViewModel = require("../../walta-app/app/lib/logic/viewmodels/Example");
+const ExampleViewModel = require("../../walta-app/app/lib/viewmodels/Example");
 
 describe("ExampleViewModel", function () {
   it("transitions to 'ready' when started", function () {
