@@ -65,6 +65,7 @@ Commit hygiene: remove the `.only()` before pushing — CI won't catch regressio
 - **`failed to load config from walta-app/vite.config.js` with an ESM complaint** — `node_modules/vite` got bumped to ≥5 (ESM-only), which breaks `require('vite')`. Pin `vite` to `^4.5.0` in `package.json`; `.github/dependabot.yml` should already be excluding vite>=5 (see WB-36).
 - **Stale code running on device** — Server from a different platform is cached. Drop `--reuse-server` for one run to force a fresh server.
 - **Port 8323 stuck** — `lsof -ti:8323 | xargs kill -9` then re-run without `--reuse-server`.
+- **App hangs at `[vite] connected.` with no further output** — a LiveView vite plugin errored while serving a source file; the server returned HTTP 500 with an HTML error page, and the Titanium require path hangs trying to eval it as JS. Curl the server directly for a specific file to see the real error: `curl -s http://<serve-host>:8323/lib/<path>.js | head -40`. For the exact request the client was fetching, dump the sim log: `xcrun simctl spawn booted log show --last 1m --predicate 'process == "Waterbug"' | grep ':8323'`. Historical cause: a plain JS class placed under `app/lib/models/` was matched by the Alloy Model plugin regex and run through `compileModel`, which only understands Backbone-style model definitions (fixed in liveview `fix/android-emulator-unit-test-support` by anchoring the regex to `appDir`).
 
 ## Running before push
 
