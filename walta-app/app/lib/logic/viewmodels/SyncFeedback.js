@@ -1,3 +1,6 @@
+const PROGRESS_COLOR_NORMAL = "#26849c";
+const PROGRESS_COLOR_ERROR = "#c0392b";
+
 class SyncFeedbackViewModel {
   constructor({ syncController }) {
     this._syncController = syncController;
@@ -8,7 +11,23 @@ class SyncFeedbackViewModel {
   }
 
   get state() {
-    return Object.assign({ logVisible: this._logVisible }, this._syncController.getState());
+    const base = this._syncController.getState();
+    return Object.assign({}, base, {
+      logVisible: this._logVisible,
+      progressColor: this._progressColor(base),
+      progressText: this._progressText(base),
+    });
+  }
+
+  _progressColor(base) {
+    return base.status === "error" ? PROGRESS_COLOR_ERROR : PROGRESS_COLOR_NORMAL;
+  }
+
+  _progressText(base) {
+    if (base.status === "offline") return "0%";
+    if (base.status === "error") return base.percent + "% " + (base.errorMessage || "Server Error");
+    if (base.statusText) return base.percent + "% " + base.statusText;
+    return base.percent + "%";
   }
 
   start() {
