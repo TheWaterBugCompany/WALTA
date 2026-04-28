@@ -63,30 +63,33 @@ function createMockCerdiServer(callback) {
                     }
                 ]
             });
+            // .many() allows the stub to match an unlimited number of
+            // requests — auto-login's startup sync + the test's manual
+            // Sync Now both fetch the same endpoints.
             this.hockServer
                 .get("/samples")
-                .reply(200,[sampleData]);
+                .many().reply(200,[sampleData]);
             this.hockServer
                 .get(`/samples/${sampleData.id}/photos`)
-                .reply(200,[{id:1}]);
+                .many().reply(200,[{id:1}]);
             this.hockServer
                 .get(`/samples/${sampleData.id}/unknownCreatures`)
-                .reply(200,[]);
+                .many().reply(200,[]);
             this.hockServer
                 .get('/photos/1/view')
-                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/site-mock.jpg'));
+                .many().replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/site-mock.jpg'));
             this.hockServer
                 .get(`/samples/${sampleData.id}/creatures/12/photos`)
-                .reply(200,[{id:2}]);
+                .many().reply(200,[{id:2}]);
             this.hockServer
                 .get(`/samples/${sampleData.id}/creatures/11/photos`)
-                .reply(200,[{id:3}]);    
+                .many().reply(200,[{id:3}]);
             this.hockServer
                 .get('/photos/2/view')
-                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/simpleKey1/media/amphipoda_01.jpg'));
+                .many().replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/simpleKey1/media/amphipoda_01.jpg'));
             this.hockServer
                 .get('/photos/3/view')
-                .replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/simpleKey1/media/phreatoicidae.jpg'));
+                .many().replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/simpleKey1/media/phreatoicidae.jpg'));
         }
     };
 }
