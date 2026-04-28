@@ -70,6 +70,9 @@ function createMockCerdiServer(callback) {
                 .get(`/samples/${sampleData.id}/photos`)
                 .reply(200,[{id:1}]);
             this.hockServer
+                .get(`/samples/${sampleData.id}/unknownCreatures`)
+                .reply(200,[]);
+            this.hockServer
                 .get('/photos/1/view')
                 .replyWithFile(200, path.join(__dirname,'../../walta-app/app/spec/resources/site-mock.jpg'));
             this.hockServer
