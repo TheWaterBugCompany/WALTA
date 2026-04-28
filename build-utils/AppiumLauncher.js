@@ -10,6 +10,39 @@ function defaultIsAppiumRunning() {
   });
 }
 
+function buildIntentExtras(launchArgs) {
+  if (!launchArgs) return [];
+  const extras = [];
+  for (const key of Object.keys(launchArgs)) {
+    const value = launchArgs[key];
+    if (typeof value === "boolean") {
+      extras.push(["z", key, String(value)]);
+    } else if (value !== undefined && value !== null) {
+      extras.push(["s", key, String(value)]);
+    }
+  }
+  return extras;
+}
+
+// `appium:optionalIntentArguments` is a raw `am start` argument string
+// that Appium passes through on session-startup auto-launch. This is
+// what gets the override URL into the very first activity that
+// alloy.js sees (mobile: startActivity extras don't reliably propagate
+// across uiautomator2 versions, but the capability path does).
+function buildOptionalIntentArguments(launchArgs) {
+  if (!launchArgs) return undefined;
+  const parts = [];
+  for (const key of Object.keys(launchArgs)) {
+    const value = launchArgs[key];
+    if (typeof value === "boolean") {
+      parts.push("--ez", key, value ? "true" : "false");
+    } else if (value !== undefined && value !== null) {
+      parts.push("--es", key, String(value));
+    }
+  }
+  return parts.length ? parts.join(" ") : undefined;
+}
+
 function defaultKillProcess(pid) {
   // Negative pid kills the entire process group (needed because _ensureServer
   // spawns appium with detached:true, giving it its own process group).
@@ -20,6 +53,7 @@ class AppiumLauncher {
   constructor(platform, {
     isSimulator = false, host = 'local', kobitonVersion = null,
     appId = 'net.thewaterbug.waterbug', appActivity = '.WaterbugActivity',
+    launchArgs = null,
     startAppium = null, remote = defaultRemote, logPollInterval = 100,
     spawn = defaultSpawn, isAppiumRunning = defaultIsAppiumRunning,
     killProcess = defaultKillProcess,
@@ -30,6 +64,7 @@ class AppiumLauncher {
     this.kobitonVersion = kobitonVersion;
     this.appId = appId;
     this.appActivity = appActivity;
+    this.launchArgs = launchArgs;
     this._remote = remote;
     // Legacy injection point — if startAppium is provided, use it instead
     // of the built-in _createSession. Allows tests to inject a fake.
@@ -105,19 +140,26 @@ class AppiumLauncher {
         });
       }
     } else if (this.platform === "android") {
+      const optionalIntentArguments = buildOptionalIntentArguments(this.launchArgs);
       Object.assign(caps, {
         "appium:automationName": "uiautomator2",
         "platformName": "Android",
         "appium:autoGrantPermissions": true,
         "appium:appActivity": this.appActivity,
-        "appium:appWaitActivity": this.appActivity,
+        // Titanium swaps the launch activity for `org.appcelerator.titanium.TiActivity`
+        // at runtime, so the launcher activity is never the foreground activity.
+        // Wildcard so Appium considers any activity in our package "started".
+        "appium:appWaitActivity": "*",
         "appium:newCommandTimeout": 0,
         "appium:appPackage": this.appId,
         "appium:noReset": true,
-        "appium:autoLaunch": false,
+        "appium:forceAppLaunch": true,
         "appium:skipDeviceInitialization": false,
         "appium:skipServerInstallation": false,
       });
+      if (optionalIntentArguments) {
+        caps["appium:optionalIntentArguments"] = optionalIntentArguments;
+      }
       if (this.isSimulator) {
         Object.assign(caps, { "appium:avdName": "Medium_Phone_API_36.1" });
       }
@@ -195,9 +237,21 @@ class AppiumLauncher {
     }
   }
 
-  async launch(appId) {
+  async launch(appId, launchArgs) {
     const driver = await this.connect();
-    await driver.activateApp(appId);
+    if (this.platform === "android") {
+      // mirrors AndroidLauncher: `-S` (stop:true) force-stops the app before
+      // launching so JS re-runs and any new intent extras are picked up at
+      // alloy.js init — without it `am start` delivers onNewIntent to the
+      // live process and Alloy.CFG keeps its old values.
+      await driver.execute("mobile: startActivity", {
+        intent: `${appId}/${this.appActivity}`,
+        stop: true,
+        extras: buildIntentExtras(launchArgs),
+      });
+    } else {
+      await driver.activateApp(appId);
+    }
   }
 
   async terminate(appId) {

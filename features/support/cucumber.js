@@ -30,6 +30,21 @@ function setAndroidLocation() {
 // Device interactions are slow — 60s per step is the working baseline.
 setDefaultTimeout(60 * 1000);
 
+// The mock CERDI server runs on the host loopback (127.0.0.1:9999).
+// Android emulator can only reach it via 10.0.2.2; iOS sim shares
+// the host network. The override URL is passed to the app as an
+// Android intent extra (see alloy.js + AppiumLauncher.launch) so
+// release builds can be redirected to the mock without rebuilding.
+function mockCerdiUrl() {
+    if (process.env.MOCK_CERDI_URL) return process.env.MOCK_CERDI_URL;
+    if (global.platform === 'android' && global.isSimulator) return 'http://10.0.2.2:9999';
+    return 'http://127.0.0.1:9999';
+}
+
+function launchArgs() {
+    return { cerdiServerUrlOverride: mockCerdiUrl() };
+}
+
 // AppiumLauncher.connect() can take several minutes on iOS when WebDriverAgent
 // is built from source on a cold runner — give the hook generous headroom.
 BeforeAll({ timeout: 600 * 1000 }, async function () {
@@ -37,23 +52,17 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
     if (!opts.platform) {
         throw new Error("APPIUM_OPTIONS must include 'platform'");
     }
-    const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
-    global.launcher = new AppiumLauncher(opts.platform, opts);
-    global.driver = await global.launcher.connect();
     global.platform = opts.platform;
     global.isSimulator = !!opts.isSimulator;
     global.first = true;
     // Wipe app state (sqlite DB, filesystem, etc.) so each acceptance run
-    // starts from a clean slate. Appium's noReset:true keeps the app
-    // installed across sessions; without this, taxa from a previous run
-    // accumulate in the sample tray.
+    // starts from a clean slate. Done BEFORE Appium creates its session,
+    // so the auto-launch via `appium:optionalIntentArguments` lands on
+    // the freshly-cleared app — pm clear after session-create would
+    // negate the launch and force us to relaunch (where extras don't
+    // propagate via mobile: startActivity).
+    const appId = 'net.thewaterbug.waterbug';
     if (opts.platform === 'android' && opts.isSimulator) {
-        // `adb shell pm clear` wipes the app's SQLite DB, shared prefs,
-        // and filesystem — equivalent of the iOS remove+install dance
-        // but far quicker since it keeps the APK installed. pm clear
-        // also resets TCC permission grants and stops the app, so
-        // re-grant location and relaunch after.
-        const appId = global.launcher.appId;
         try {
             execFileSync(adb(), ['shell', 'pm', 'clear', appId]);
             execFileSync(adb(), ['shell', 'pm', 'grant', appId, 'android.permission.ACCESS_FINE_LOCATION']);
@@ -61,7 +70,11 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
         } catch (e) {
             console.warn(`[BeforeAll] adb pm clear/grant failed: ${e.message}`);
         }
-        await global.driver.activateApp(appId);
+    }
+    const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
+    global.launcher = new AppiumLauncher(opts.platform, { ...opts, launchArgs: launchArgs() });
+    global.driver = await global.launcher.connect();
+    if (opts.platform === 'android' && opts.isSimulator) {
         setAndroidLocation();
     }
     if (opts.platform === 'ios' && opts.isSimulator) {
@@ -84,7 +97,7 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
         }
         // Reinstall leaves the app not running — activate it and wait for
         // foreground state before the first scenario tries to drive the UI.
-        await global.driver.activateApp(appId);
+        await global.launcher.launch(appId, launchArgs());
         for (let i = 0; i < 60; i++) {
             const state = await global.driver.execute('mobile: queryAppState', { bundleId: appId });
             if (state === 4) break;
@@ -112,7 +125,7 @@ Before(async function () {
         // to get a clean state between scenarios.
         const appId = global.launcher.appId;
         await this.driver.terminateApp(appId);
-        await this.driver.activateApp(appId);
+        await global.launcher.launch(appId, launchArgs());
         // Wait until the app is actually in the foreground before
         // proceeding — activateApp can return before the UI is ready,
         // especially when WDA was started from a prebuilt cache.
