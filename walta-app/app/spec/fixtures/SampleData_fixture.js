@@ -1,5 +1,5 @@
 function makeCerdiSampleData(attrs) {
-    return _.extend({
+    return Object.assign({}, {
         "id": 473,
         "user_id": 38,
         "sample_date": "2020-09-25T09:41:46+00:00",
