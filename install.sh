@@ -17,15 +17,15 @@ if [ ! -e walta-app/app/controllers/index.js ]; then
   echo "Symlinked controllers/index.js -> index-app.js"
 fi
 
-# Generate mock app-config if missing (gitignored, needed for non-release builds)
-if [ ! -f walta-app/app/app-config.mock.json ]; then
-  cat > walta-app/app/app-config.mock.json << 'APPCONFIG'
-{
-	"cerdiServerUrl": "http://localhost:9999",
-	"cerdiApiSecret": "test-secret"
-}
-APPCONFIG
-  echo "Generated app-config.mock.json"
+# Seed app-config.test.json from template if missing. Gitignored —
+# the user fills in cerdiApiSecret from 1Password (see
+# INSTALLATION.md). Used by debug + acceptance/unit-test builds
+# (Gruntfile defaults --app-config to "test"); acceptance tests
+# redirect the URL to a local mock at runtime via the
+# cerdiServerUrlOverride intent extra.
+if [ ! -f walta-app/app/app-config.test.json ]; then
+  cp walta-app/app/app-config.test.json.template walta-app/app/app-config.test.json
+  echo "Seeded app-config.test.json from template — fill in cerdiApiSecret from 1Password"
 fi
 
 # Install Titanium native modules from official GitHub releases
