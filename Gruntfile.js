@@ -186,7 +186,7 @@ const KobitonAPI = require("./features/support/kobiton");
             args.push("--app-config", "production");
             break;
           default:
-            args.push("--app-config", "mock");
+            args.push("--app-config", "test");
             break;
         }
       }
