@@ -10,6 +10,21 @@ var debug = m => Logger.debug(m);
 const appConfig = Ti.Filesystem.getFile("app-config.json").read();
 _.extend(Alloy.CFG, JSON.parse(appConfig));
 
+// Runtime override for cerdiServerUrl — lets acceptance tests redirect
+// API traffic to a mock without rebuilding. Android: intent extra
+// from `am start --es cerdiServerUrlOverride <url>`. iOS: process arg
+// `--cerdiServerUrl <url>` passed via Appium processArguments.
+if (OS_ANDROID) {
+    try {
+        var androidOverride = Ti.Android.currentActivity.intent.getStringExtra("cerdiServerUrlOverride");
+        if (androidOverride) Alloy.CFG.cerdiServerUrl = androidOverride;
+    } catch (e) { /* no activity yet */ }
+} else if (OS_IOS) {
+    var iosArgs = Ti.App.arguments || [];
+    var idx = iosArgs.indexOf("--cerdiServerUrl");
+    if (idx >= 0 && iosArgs[idx + 1]) Alloy.CFG.cerdiServerUrl = iosArgs[idx + 1];
+}
+
 
 Logger.configure();
 Logger.setCustomKey("deploy.type", Ti.App.deployType );
