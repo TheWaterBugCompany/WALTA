@@ -32,9 +32,13 @@ setDefaultTimeout(60 * 1000);
 
 // The mock CERDI server runs on the host loopback (127.0.0.1:9999).
 // Android emulator can only reach it via 10.0.2.2; iOS sim shares
-// the host network. The override URL is passed to the app as an
-// Android intent extra (see alloy.js + AppiumLauncher.launch) so
-// release builds can be redirected to the mock without rebuilding.
+// the host network. The override URL + secret are passed to the
+// app as Android intent extras (see alloy.js + AppiumLauncher) so
+// any build (test/production) can be redirected to the mock without
+// rebuilding. The secret matches the fixed client_secret the mock
+// server expects in mock-cerdi-server.js.
+const MOCK_CERDI_SECRET = "hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz";
+
 function mockCerdiUrl() {
     if (process.env.MOCK_CERDI_URL) return process.env.MOCK_CERDI_URL;
     if (global.platform === 'android' && global.isSimulator) return 'http://10.0.2.2:9999';
@@ -42,7 +46,10 @@ function mockCerdiUrl() {
 }
 
 function launchArgs() {
-    return { cerdiServerUrlOverride: mockCerdiUrl() };
+    return {
+        cerdiServerUrlOverride: mockCerdiUrl(),
+        cerdiApiSecretOverride: MOCK_CERDI_SECRET,
+    };
 }
 
 // AppiumLauncher.connect() can take several minutes on iOS when WebDriverAgent

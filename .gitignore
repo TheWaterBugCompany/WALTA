@@ -37,7 +37,7 @@ builds/**/*.plist
 builds/**
 mock-server/rest/*/*/*/mock/response.txt
 walta-app/app/app-config*
-!walta-app/app/app-config.test.json
+!walta-app/app/app-config.test.json.template
 *.keystore
 *.jks
 *.p12

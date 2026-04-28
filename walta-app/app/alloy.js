@@ -16,13 +16,18 @@ _.extend(Alloy.CFG, JSON.parse(appConfig));
 // `--cerdiServerUrl <url>` passed via Appium processArguments.
 if (OS_ANDROID) {
     try {
-        var androidOverride = Ti.Android.currentActivity.intent.getStringExtra("cerdiServerUrlOverride");
-        if (androidOverride) Alloy.CFG.cerdiServerUrl = androidOverride;
+        var intent = Ti.Android.currentActivity.intent;
+        var urlOverride = intent.getStringExtra("cerdiServerUrlOverride");
+        var secretOverride = intent.getStringExtra("cerdiApiSecretOverride");
+        if (urlOverride)    Alloy.CFG.cerdiServerUrl = urlOverride;
+        if (secretOverride) Alloy.CFG.cerdiApiSecret = secretOverride;
     } catch (e) { /* no activity yet */ }
 } else if (OS_IOS) {
     var iosArgs = Ti.App.arguments || [];
-    var idx = iosArgs.indexOf("--cerdiServerUrl");
-    if (idx >= 0 && iosArgs[idx + 1]) Alloy.CFG.cerdiServerUrl = iosArgs[idx + 1];
+    var urlIdx = iosArgs.indexOf("--cerdiServerUrl");
+    var secretIdx = iosArgs.indexOf("--cerdiApiSecret");
+    if (urlIdx    >= 0 && iosArgs[urlIdx + 1])    Alloy.CFG.cerdiServerUrl  = iosArgs[urlIdx + 1];
+    if (secretIdx >= 0 && iosArgs[secretIdx + 1]) Alloy.CFG.cerdiApiSecret = iosArgs[secretIdx + 1];
 }
 
 

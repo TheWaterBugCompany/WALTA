@@ -272,15 +272,34 @@ npx grunt --platform=ios debug
 
 ## API Configuration
 
-Pass `--app-config=<value>` to any grunt build command to select the backend:
+The build hook (`plugins/unittest/1.0/hooks/appconfig.js`) copies
+`walta-app/app/app-config.<env>.json` into the build as
+`app-config.json`. `app-config.*` is gitignored — each developer
+creates the env file locally with their own secret.
+
+Pass `--app-config=<value>` to any grunt build command to select the
+backend:
 
 | Value | Points to |
 |---|---|
-| `mock` | Local stub server (offline development) |
-| `development` | Development API |
+| `test` | Test sandbox (default for debug + acceptance/unit-test builds) |
 | `production` | Production API (default for release builds) |
+
+`install.sh` seeds `app-config.test.json` from
+`app-config.test.json.template`. Open the seeded file and replace
+`<<INSERT SECRET HERE>>` with the real `cerdiApiSecret` from
+1Password ("The Waterbug App - CERDI API Secret"). To set up the
+production config, copy the template manually and fill in the
+production URL + secret.
+
+Acceptance tests bake in the test sandbox URL but redirect to a
+local mock CERDI server at runtime via the `cerdiServerUrlOverride`
+Android intent extra (see [walta-app/app/alloy.js](walta-app/app/alloy.js)),
+so the same APK can be used end-to-end against either backend
+without rebuilding.
 
 Example:
 ```bash
-npx grunt --platform=android debug --app-config=mock
+npx grunt --platform=android debug                       # uses test sandbox
+npx grunt --platform=android debug --app-config=production
 ```
