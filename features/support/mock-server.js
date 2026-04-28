@@ -1,19 +1,17 @@
 'use strict';
-const { After, Before } = require('@cucumber/cucumber');
+const { Before } = require('@cucumber/cucumber');
 var { createMockCerdiServer } = require('./mock-cerdi-server');
 
-Before({tags: "@mockserver"},function(testCase, callback) {
+Before({tags: "@mockserver"}, function(testCase, callback) {
+    // Server may already be running (started in cucumber.js BeforeAll
+    // before the app launches, so auto-login can hit /token/create
+    // immediately). If so this hook is a no-op.
     if ( !global.mockCerdiServer ) {
         global.mockCerdiServer = createMockCerdiServer(callback);
+    } else {
+        callback();
     }
 });
-
-
-After({tags: "@mockserver"}, function() {
-    if ( global.mockCerdiServer ) {
-        global.mockCerdiServer.shutdown();
-    }
-}); 
 
 /* require 'calabash-android/abase'
 class MockServer

@@ -14,6 +14,16 @@ Topics.init();
 
 // FIXME: deprecate using globals
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
+
+// Auto-login from launch args — used by acceptance tests to skip the
+// login UI flow (and iOS's "Save Password?" sheet that races with it).
+// Production builds don't pass these args so this is a no-op.
+if (Alloy.CFG.userEmail && Alloy.CFG.userPassword) {
+  Alloy.Globals.CerdiApi.loginUser(Alloy.CFG.userEmail, Alloy.CFG.userPassword)
+    .then(() => Topics.fireTopicEvent(Topics.LOGGEDIN))
+    .catch((e) => Logger.recordException(e));
+}
+
 SampleSync.init();
 
 // Report user name to Logger when logged in

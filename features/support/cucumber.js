@@ -3,6 +3,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { AfterAll, BeforeAll, Before, setDefaultTimeout } = require('@cucumber/cucumber');
 const { setUpWorld } = require('./all-screens');
+const { createMockCerdiServer } = require('./mock-cerdi-server');
 
 // Arbitrary but plausible location (Melbourne CBD) — the Summary screen
 // disables Done until the sample has a GPS lock, so acceptance runs need
@@ -47,8 +48,14 @@ function mockCerdiUrl() {
 
 function launchArgs() {
     return {
-        cerdiServerUrlOverride: mockCerdiUrl(),
-        cerdiApiSecretOverride: MOCK_CERDI_SECRET,
+        cerdiServerUrl: mockCerdiUrl(),
+        cerdiApiSecret: MOCK_CERDI_SECRET,
+        // Auto-login at app boot via CerdiApi.loginUser — bypasses the
+        // login UI entirely so we never trigger iOS's "Save Password?"
+        // sheet. The mock-cerdi-server's /token/create stub authenticates
+        // these credentials against its canned test user.
+        userEmail: "test@example.com",
+        userPassword: "password",
     };
 }
 
@@ -78,6 +85,17 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
             console.warn(`[BeforeAll] adb pm clear/grant failed: ${e.message}`);
         }
     }
+    // Start the mock CERDI server BEFORE launching the app — the
+    // app's auto-login (driven by userEmail/userPassword launch args)
+    // hits /token/create at boot, so the stub must be available by
+    // then. Canned sample data is set up here too so the FIRST sync
+    // after login finds it.
+    if (!global.mockCerdiServer) {
+        await new Promise((resolve) => {
+            global.mockCerdiServer = createMockCerdiServer(resolve);
+        });
+        global.mockCerdiServer.makeMockSample();
+    }
     const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
     global.launcher = new AppiumLauncher(opts.platform, { ...opts, launchArgs: launchArgs() });
     global.driver = await global.launcher.connect();
@@ -87,6 +105,24 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
     if (opts.platform === 'ios' && opts.isSimulator) {
         const appId = global.launcher.appId;
         const appPath = path.resolve(process.cwd(), 'builds/test-sim/Waterbug.app');
+        // Wipe iOS keychain so iCloud-saved passwords from previous runs
+        // don't trigger AutoFill prompts mid-test.
+        try {
+            execFileSync('xcrun', ['simctl', 'keychain', process.env.SIM_UDID, 'reset']);
+        } catch (e) {
+            console.warn(`[BeforeAll] simctl keychain reset failed: ${e.message}`);
+        }
+        // Disable iOS Password AutoFill globally so iOS doesn't prompt
+        // "Save this Password?" after the login form submits — that sheet
+        // races with the test's next tap and isn't a UIAlertController so
+        // autoDismissAlerts can't catch it.
+        try {
+            execFileSync('xcrun', ['simctl', 'spawn', process.env.SIM_UDID,
+                'defaults', 'write', 'com.apple.WebUIKit',
+                'StoredCredentialsEnabled', '-bool', 'false']);
+        } catch (e) {
+            console.warn(`[BeforeAll] disabling AutoFill failed: ${e.message}`);
+        }
         try { await global.driver.removeApp(appId); } catch (_) {}
         await global.driver.installApp(appPath);
         // Pre-grant location permission so the first-run native prompt
@@ -162,4 +198,8 @@ Before(async function () {
 
 AfterAll(async function () {
     if (global.launcher) await global.launcher.stop();
+    if (global.mockCerdiServer) {
+        global.mockCerdiServer.shutdown();
+        global.mockCerdiServer = null;
+    }
 });
