@@ -1,5 +1,16 @@
 'use strict';
 const { Given, When, Then } = require('@cucumber/cucumber');
+
+When('I open the sample history and tap Sync Now', {timeout: 60000}, async function () {
+    await this.menu.selectArchive();
+    await this.archive.clickSyncNow();
+});
+
+Then('the sync popup completes successfully', {timeout: 60000}, async function () {
+    await this.syncFeedback.waitForSuccess();
+    await this.syncFeedback.clickClose();
+});
+
 Given('one or more samples have been stored but not uploaded', function() {
   /*  MockServer.create_sample_upload()
     set_gps_coordinates( -122.084, 37.422 )

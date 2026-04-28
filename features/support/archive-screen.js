@@ -38,5 +38,10 @@ class ArchiveScreen extends BaseScreen {
         await row.click();
         await this.world.siteDetails.waitFor();
     }
-} 
+
+    async clickSyncNow() {
+        await this.click("Synchronise samples now");
+        await this.world.syncFeedback.waitFor();
+    }
+}
 module.exports = ArchiveScreen;
