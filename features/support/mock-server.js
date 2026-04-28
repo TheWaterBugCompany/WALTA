@@ -11,7 +11,7 @@ Before({tags: "@mockserver"},function(testCase, callback) {
 
 After({tags: "@mockserver"}, function() {
     if ( global.mockCerdiServer ) {
-        global.mockCerdiServer.shutDown();
+        global.mockCerdiServer.shutdown();
     }
 }); 
 
