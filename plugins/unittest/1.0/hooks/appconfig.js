@@ -13,7 +13,7 @@ exports.init = function (logger, config, cli) {
 		const argIdx = process.argv.indexOf('--app-config');
 		const appConfig = (argIdx !== -1 && process.argv[argIdx + 1])
 			? process.argv[argIdx + 1]
-			: (cli.argv["app-config"] || 'mock');
+			: (cli.argv["app-config"] || 'test');
 		let buildConfigFile = join(data.projectDir, "app",`app-config.${appConfig}.json`);
 		if ( fs.existsSync(buildConfigFile) ) {
 			debug(`file ${buildConfigFile} exists!`);
