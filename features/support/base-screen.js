@@ -37,7 +37,13 @@ class BaseScreen {
  
     async waitForText(text) {
         if ( this.isIos() ) {
-            await this.waitForRaw( `-ios predicate string:name CONTAINS '${text}'`, `text "${text}" not present`);
+            // visible == 1 filters out off-screen / overlay duplicates —
+            // multiple Titanium widgets can share the same text (e.g. the
+            // light/dark labels stacked on a progress bar) and `$()`
+            // returns the first match, which may be the hidden one.
+            await this.waitForRaw(
+                `-ios predicate string:visible == 1 AND (label CONTAINS '${text}' OR name CONTAINS '${text}' OR value CONTAINS '${text}')`,
+                `text "${text}" not present`);
         } else {
             await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`);
         }

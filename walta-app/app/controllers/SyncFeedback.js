@@ -9,7 +9,7 @@ bindView($, vm, {
     message:           { visible: "messageVisible", text: "message" },
     progressFill:      { backgroundColor: "progressColor", width: "progressWidth" },
     progressTextClip:  { width: "progressWidth" },
-    progressText:      { text: "progressText" },
+    progressText:      { text: "progressText", accessibilityLabel: "progressText", accessibilityValue: "progressText" },
     progressTextDark:  { text: "progressText" },
     logPane:           { visible: "logVisible", height: "logPaneHeight" },
     diagnosticsButton: { visible: "diagnosticsVisible", onClick: "openDiagnostics" },
