@@ -5,7 +5,8 @@ const { expect } = require("chai");
 
 Given('I have existing samples stored on the server', {timeout: 60000}, async function () {
     global.mockCerdiServer.makeMockSample();
-    await this.menu.login( "test@example.com", "password" )
+    // The user is pre-logged-in via launchArgs (cucumber.js) — bypassing
+    // the login flow avoids the iOS save-password sheet race entirely.
     await this.menu.waitFor();
 });
 

@@ -14,21 +14,36 @@ _.extend(Alloy.CFG, JSON.parse(appConfig));
 // API traffic to a mock without rebuilding. Android: intent extra
 // from `am start --es cerdiServerUrlOverride <url>`. iOS: process arg
 // `--cerdiServerUrl <url>` passed via Appium processArguments.
+var serverUrl = null;
+var apiSecret = null;
+var userEmail = null;
+var userPassword = null;
+
 if (OS_ANDROID) {
     try {
         var intent = Ti.Android.currentActivity.intent;
-        var urlOverride = intent.getStringExtra("cerdiServerUrlOverride");
-        var secretOverride = intent.getStringExtra("cerdiApiSecretOverride");
-        if (urlOverride)    Alloy.CFG.cerdiServerUrl = urlOverride;
-        if (secretOverride) Alloy.CFG.cerdiApiSecret = secretOverride;
+        serverUrl    = intent.getStringExtra("cerdiServerUrl");
+        apiSecret    = intent.getStringExtra("cerdiApiSecret");
+        userEmail    = intent.getStringExtra("userEmail");
+        userPassword = intent.getStringExtra("userPassword");
     } catch (e) { /* no activity yet */ }
 } else if (OS_IOS) {
-    var iosArgs = Ti.App.arguments || [];
-    var urlIdx = iosArgs.indexOf("--cerdiServerUrl");
-    var secretIdx = iosArgs.indexOf("--cerdiApiSecret");
-    if (urlIdx    >= 0 && iosArgs[urlIdx + 1])    Alloy.CFG.cerdiServerUrl  = iosArgs[urlIdx + 1];
-    if (secretIdx >= 0 && iosArgs[secretIdx + 1]) Alloy.CFG.cerdiApiSecret = iosArgs[secretIdx + 1];
+    // iOS auto-merges launch argv `-key value` pairs into NSUserDefaults,
+    // which Ti.App.Properties is the bridge to. See spec/index.js for
+    // the same pattern used by the unit-test runner.
+    serverUrl    = Ti.App.Properties.getString("cerdiServerUrl");
+    apiSecret    = Ti.App.Properties.getString("cerdiApiSecret");
+    userEmail    = Ti.App.Properties.getString("userEmail");
+    userPassword = Ti.App.Properties.getString("userPassword");
 }
+
+if (serverUrl) Alloy.CFG.cerdiServerUrl = serverUrl;
+if (apiSecret) Alloy.CFG.cerdiApiSecret = apiSecret;
+// Acceptance tests pass these to trigger an auto-login at app boot —
+// see index-app.js for the loginUser call. Bypasses the login UI
+// (and iOS's "Save Password?" sheet) entirely.
+if (userEmail)    Alloy.CFG.userEmail    = userEmail;
+if (userPassword) Alloy.CFG.userPassword = userPassword;
 
 
 Logger.configure();

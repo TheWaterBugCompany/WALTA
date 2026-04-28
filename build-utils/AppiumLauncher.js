@@ -43,6 +43,23 @@ function buildOptionalIntentArguments(launchArgs) {
   return parts.length ? parts.join(" ") : undefined;
 }
 
+// iOS equivalent: launch argv `-key value` pairs are auto-merged into
+// NSUserDefaults by iOS, which alloy.js reads via Ti.App.Properties.
+// Single-dash format mirrors IosSimulatorLauncher.buildLaunchArgv.
+function buildIosProcessArgs(launchArgs) {
+  if (!launchArgs) return [];
+  const args = [];
+  for (const key of Object.keys(launchArgs)) {
+    const value = launchArgs[key];
+    if (typeof value === "boolean") {
+      args.push(`-${key}`, value ? "true" : "false");
+    } else if (value !== undefined && value !== null) {
+      args.push(`-${key}`, String(value));
+    }
+  }
+  return args;
+}
+
 function defaultKillProcess(pid) {
   // Negative pid kills the entire process group (needed because _ensureServer
   // spawns appium with detached:true, giving it its own process group).
@@ -102,10 +119,13 @@ class AppiumLauncher {
 
     if (this.platform === "ios") {
       const wdaDerivedPath = process.env.WDA_DERIVED_DATA_PATH;
+      const iosArgs = buildIosProcessArgs(this.launchArgs);
       Object.assign(caps, {
         "appium:automationName": "XCUITest",
         "platformName": "iOS",
-        "appium:autoAcceptAlerts": true,
+        // System sheets (e.g. iOS "Save Password?") are dismissed
+        // explicitly in BaseScreen.clickRaw — auto-dismiss could race
+        // with the explicit handling.
         "appium:waitForQuiescence": false,
         "appium:useJSONSource": true,
         "appium:showXcodeLog": true,
@@ -117,7 +137,7 @@ class AppiumLauncher {
         "appium:bundleId": this.appId,
         "appium:noReset": true,
         "appium:autoLaunch": false,
-        "appium:processArguments": { "args": ["-FIRDebugEnabled"] }
+        "appium:processArguments": { "args": iosArgs }
       });
       if (wdaDerivedPath) {
         caps["appium:derivedDataPath"] = wdaDerivedPath;
@@ -248,6 +268,13 @@ class AppiumLauncher {
         intent: `${appId}/${this.appActivity}`,
         stop: true,
         extras: buildIntentExtras(launchArgs),
+      });
+    } else if (this.platform === "ios") {
+      // XCUITest's mobile: launchApp passes process arguments through to
+      // the running app where alloy.js can read them via Ti.App.arguments.
+      await driver.execute("mobile: launchApp", {
+        bundleId: appId,
+        arguments: buildIosProcessArgs(launchArgs),
       });
     } else {
       await driver.activateApp(appId);
