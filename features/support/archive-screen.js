@@ -40,7 +40,7 @@ class ArchiveScreen extends BaseScreen {
     }
 
     async clickSyncNow() {
-        await this.click("Synchronise samples now");
+        await this.click("Sync");
         await this.world.syncFeedback.waitFor();
     }
 }
