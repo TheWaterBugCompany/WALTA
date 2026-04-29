@@ -1,7 +1,16 @@
 import { remote as defaultRemote } from "webdriverio";
 import { spawn as defaultSpawn } from "child_process";
 import http from "http";
+import path from "path";
+import { fileURLToPath } from "url";
 import _ from "underscore";
+
+// Resolve the locally-installed appium binary relative to this file
+// (build-utils/AppiumLauncher.js → ../node_modules/.bin/appium). Going
+// direct skips the ~8 min npx resolution overhead seen on macOS-15 CI
+// runners — see WB-49.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_APPIUM_BIN = path.resolve(__dirname, "..", "node_modules", ".bin", "appium");
 
 function defaultIsAppiumRunning() {
   return new Promise((resolve) => {
@@ -60,6 +69,11 @@ class AppiumLauncher {
     startAppium = null, remote = defaultRemote, logPollInterval = 100,
     spawn = defaultSpawn, isAppiumRunning = defaultIsAppiumRunning,
     killProcess = defaultKillProcess,
+    appiumBin = DEFAULT_APPIUM_BIN,
+    // Match the 600s connectionRetryTimeout used for cold WDA builds —
+    // the macOS-15 runner has been seen taking ~8 min just to print
+    // appium's first stdout. 30s was too aggressive.
+    serverStartTimeoutMs = 300_000,
   } = {}) {
     this.platform = platform;
     this.isSimulator = isSimulator;
@@ -76,6 +90,8 @@ class AppiumLauncher {
     this._spawn = spawn;
     this._isAppiumRunning = isAppiumRunning;
     this._killProcess = killProcess;
+    this._appiumBin = appiumBin;
+    this._serverStartTimeoutMs = serverStartTimeoutMs;
     this._driver = null;
     this._serverPid = null;
   }
@@ -204,19 +220,20 @@ class AppiumLauncher {
     if (running) return;
 
     // DIAGNOSTIC: pipe appium stdio so its logs surface in CI output.
-    const child = this._spawn('npx', ['appium'], {
+    const child = this._spawn(this._appiumBin, [], {
       stdio: 'inherit',
       detached: true,
     });
     child.unref();
     this._serverPid = child.pid;
 
-    // Poll until the server responds (up to 30s)
-    for (let i = 0; i < 60; i++) {
-      await new Promise(r => setTimeout(r, 500));
+    const pollIntervalMs = 500;
+    const maxAttempts = Math.max(1, Math.ceil(this._serverStartTimeoutMs / pollIntervalMs));
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise(r => setTimeout(r, pollIntervalMs));
       if (await this._isAppiumRunning()) return;
     }
-    throw new Error('Appium server failed to start within 30s');
+    throw new Error(`Appium server failed to start within ${this._serverStartTimeoutMs / 1000}s`);
   }
 
   async connect() {
