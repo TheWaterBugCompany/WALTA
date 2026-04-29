@@ -22,11 +22,13 @@ describe("AppiumLauncher", function() {
   });
 
   describe("connect()", function() {
-    it("starts the appium server if it is not already running", async function() {
+    it("starts the appium server using the locally-installed binary (not npx)", async function() {
+      // npx adds significant cold-start overhead on macOS CI runners
+      // (observed ~8 min from spawn to first stdout). Skip it by going
+      // straight to node_modules/.bin/appium. See WB-49.
       const fakeChild = Object.assign(new EventEmitter(), { unref: sinon.stub() });
       const fakeSpawn = sinon.stub().returns(fakeChild);
       const fakeIsRunning = sinon.stub();
-      // First call: not running, second call (after spawn): running
       fakeIsRunning.onFirstCall().resolves(false);
       fakeIsRunning.onSecondCall().resolves(true);
 
@@ -38,8 +40,26 @@ describe("AppiumLauncher", function() {
       await launcher.connect();
       expect(fakeSpawn.calledOnce).to.be.true;
       const [cmd, args] = fakeSpawn.firstCall.args;
-      expect(cmd).to.equal("npx");
-      expect(args).to.include("appium");
+      expect(cmd).to.match(/[\/\\]node_modules[\/\\]\.bin[\/\\]appium$/);
+      expect(args).to.deep.equal([]);
+    });
+
+    it("throws after the configured timeout if the appium server never responds", async function() {
+      const fakeChild = Object.assign(new EventEmitter(), { unref: sinon.stub() });
+      const fakeSpawn = sinon.stub().returns(fakeChild);
+      const fakeIsRunning = sinon.stub().resolves(false); // never comes up
+
+      const launcher = new AppiumLauncher("android", {
+        startAppium: fakeStartAppium,
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+        serverStartTimeoutMs: 100,
+      });
+
+      let caught;
+      try { await launcher.connect(); } catch (e) { caught = e; }
+      expect(caught, "expected connect() to reject").to.exist;
+      expect(caught.message).to.match(/Appium server failed to start within 0\.1s/);
     });
 
     it("does not start the server if it is already running", async function() {
