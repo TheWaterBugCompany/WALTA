@@ -11,12 +11,6 @@ sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
   walta-app/tiapp.xml.template > walta-app/tiapp.xml
 echo "tiapp.xml generated from template."
 
-# Create default index.js symlink if missing (build plugin overwrites for unit-test builds)
-if [ ! -e walta-app/app/controllers/index.js ]; then
-  ln -s index-app.js walta-app/app/controllers/index.js
-  echo "Symlinked controllers/index.js -> index-app.js"
-fi
-
 # Seed app-config.test.json from template if missing. Gitignored —
 # the user fills in cerdiApiSecret from 1Password (see
 # INSTALLATION.md). Used by debug + acceptance/unit-test builds

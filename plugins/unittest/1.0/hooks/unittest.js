@@ -46,11 +46,11 @@ exports.init = function (_logger, _config, cli) {
 			fs.symlinkSync('../spec', specSymlink);
 		}
 
-		const indexSymlink = join(cli.argv['project-dir'], 'app', 'controllers', 'index.js');
-		try { fs.unlinkSync(indexSymlink); } catch(e) {}
-		const indexTarget = isUnitTest ? 'UnitTest.js' : 'index-app.js';
-		debug(`Symlinking app/controllers/index.js -> ${indexTarget}`);
-		fs.symlinkSync(indexTarget, indexSymlink);
+		// Note (WB-25): app/controllers/index.js used to be symlinked here
+		// to either UnitTest.js or index-app.js based on --unit-test. It's
+		// now a real dispatcher file that picks at runtime, so the symlink
+		// management has been removed. Both entry points are bundled in
+		// dev/CI builds and the launch arg `unit_test` selects between them.
 
 		// Swap the Camera wrapper for simulator builds. Using a file copy
 		// rather than a symlink because Alloy's Resource copy step chokes on
