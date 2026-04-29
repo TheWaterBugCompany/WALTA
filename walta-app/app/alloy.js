@@ -12,38 +12,32 @@ _.extend(Alloy.CFG, JSON.parse(appConfig));
 
 // Runtime override for cerdiServerUrl — lets acceptance tests redirect
 // API traffic to a mock without rebuilding. Android: intent extra
-// from `am start --es cerdiServerUrlOverride <url>`. iOS: process arg
+// from `am start --es cerdiServerUrl <url>`. iOS: process arg
 // `--cerdiServerUrl <url>` passed via Appium processArguments.
 var serverUrl = null;
 var apiSecret = null;
-var userEmail = null;
-var userPassword = null;
 
 if (OS_ANDROID) {
     try {
         var intent = Ti.Android.currentActivity.intent;
-        serverUrl    = intent.getStringExtra("cerdiServerUrl");
-        apiSecret    = intent.getStringExtra("cerdiApiSecret");
-        userEmail    = intent.getStringExtra("userEmail");
-        userPassword = intent.getStringExtra("userPassword");
-    } catch (e) { /* no activity yet */ }
+        serverUrl = intent.getStringExtra("cerdiServerUrl");
+        apiSecret = intent.getStringExtra("cerdiApiSecret");
+        Ti.API.debug(`[walta-launchargs] android intent.data=${intent.data} cerdiServerUrl=${serverUrl}`);
+    } catch (e) {
+        Ti.API.debug(`[walta-launchargs] android intent read failed: ${e && e.message}`);
+    }
 } else if (OS_IOS) {
     // iOS auto-merges launch argv `-key value` pairs into NSUserDefaults,
     // which Ti.App.Properties is the bridge to. See spec/index.js for
     // the same pattern used by the unit-test runner.
-    serverUrl    = Ti.App.Properties.getString("cerdiServerUrl");
-    apiSecret    = Ti.App.Properties.getString("cerdiApiSecret");
-    userEmail    = Ti.App.Properties.getString("userEmail");
-    userPassword = Ti.App.Properties.getString("userPassword");
+    serverUrl = Ti.App.Properties.getString("cerdiServerUrl");
+    apiSecret = Ti.App.Properties.getString("cerdiApiSecret");
+    Ti.API.debug(`[walta-launchargs] ios cerdiServerUrl=${serverUrl}`);
 }
 
 if (serverUrl) Alloy.CFG.cerdiServerUrl = serverUrl;
 if (apiSecret) Alloy.CFG.cerdiApiSecret = apiSecret;
-// Acceptance tests pass these to trigger an auto-login at app boot —
-// see index-app.js for the loginUser call. Bypasses the login UI
-// (and iOS's "Save Password?" sheet) entirely.
-if (userEmail)    Alloy.CFG.userEmail    = userEmail;
-if (userPassword) Alloy.CFG.userPassword = userPassword;
+Ti.API.debug(`[walta-launchargs] final Alloy.CFG.cerdiServerUrl=${Alloy.CFG.cerdiServerUrl}`);
 
 
 Logger.configure();

@@ -57,6 +57,17 @@
         <string>Optional. If allowed photos will be accessible via the photo library</string>
         <key>ITSAppUsesNonExemptEncryption</key>
         <false/>
+        <key>CFBundleURLTypes</key>
+        <array>
+          <dict>
+            <key>CFBundleURLName</key>
+            <string>net.thewaterbug.waterbug</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+              <string>walta</string>
+            </array>
+          </dict>
+        </array>
       </dict>
     </plist>
   </ios>
@@ -67,10 +78,16 @@
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35"/>
     <application android:debuggable="false" android:icon="@drawable/appicon" android:label="Waterbug" android:name="WaterbugApplication" android:theme="@style/Theme.WaterbugApp" android:resizeableActivity="true" android:screenOrientation="sensorLandscape">
       <meta-data android:name="com.google.android.geo.API_KEY" android:value="GOOGLE_MAPS_API_KEY_PLACEHOLDER" />
-      <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape">
+      <activity android:name=".WaterbugActivity" android:label="@string/app_name" android:theme="@style/Theme.WaterbugApp" android:configChanges="keyboardHidden|orientation|fontScale|screenSize|smallestScreenSize|screenLayout|density" android:screenOrientation="sensorLandscape" android:launchMode="singleTask">
         <intent-filter>
           <action android:name="android.intent.action.MAIN"/>
           <category android:name="android.intent.category.LAUNCHER"/>
+        </intent-filter>
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW"/>
+          <category android:name="android.intent.category.DEFAULT"/>
+          <category android:name="android.intent.category.BROWSABLE"/>
+          <data android:scheme="walta"/>
         </intent-filter>
       </activity>
 

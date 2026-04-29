@@ -4,7 +4,9 @@ I want to sample a site by doing a survey and identifying all the
 taxa I've collected.
 
 Scenario: Sample collection
-  Given a user has arrived at a site to sample
+  Given I am logged in as "test@example.com"
+    And the GPS has a fix
+    And a user has arrived at a site to sample
   When the user fills out the site details
    And the user fills out the habitat screen
    And the user identifies a number of taxa

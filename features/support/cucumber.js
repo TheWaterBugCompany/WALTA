@@ -5,27 +5,10 @@ const { AfterAll, BeforeAll, Before, setDefaultTimeout } = require('@cucumber/cu
 const { setUpWorld } = require('./all-screens');
 const { createMockCerdiServer } = require('./mock-cerdi-server');
 
-// Arbitrary but plausible location (Melbourne CBD) — the Summary screen
-// disables Done until the sample has a GPS lock, so acceptance runs need
-// a fix before reaching Summary.
-const TEST_LAT = -37.8136;
-const TEST_LNG = 144.9631;
-
 function adb() {
     return process.env.ANDROID_SDK_ROOT
         ? path.join(process.env.ANDROID_SDK_ROOT, 'platform-tools', 'adb')
         : 'adb';
-}
-
-function setAndroidLocation() {
-    // `adb emu geo fix` takes longitude first, then latitude — opposite
-    // of simctl's lat,lng order. The emulator's AndroidLocationManager
-    // forwards this to Ti.Geolocation listeners.
-    try {
-        execFileSync(adb(), ['emu', 'geo', 'fix', String(TEST_LNG), String(TEST_LAT)]);
-    } catch (e) {
-        console.warn(`[BeforeAll] adb emu geo fix failed: ${e.message}`);
-    }
 }
 
 // Device interactions are slow — 60s per step is the working baseline.
@@ -50,12 +33,6 @@ function launchArgs() {
     return {
         cerdiServerUrl: mockCerdiUrl(),
         cerdiApiSecret: MOCK_CERDI_SECRET,
-        // Auto-login at app boot via CerdiApi.loginUser — bypasses the
-        // login UI entirely so we never trigger iOS's "Save Password?"
-        // sheet. The mock-cerdi-server's /token/create stub authenticates
-        // these credentials against its canned test user.
-        userEmail: "test@example.com",
-        userPassword: "password",
     };
 }
 
@@ -99,9 +76,6 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
     const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
     global.launcher = new AppiumLauncher(opts.platform, { ...opts, launchArgs: launchArgs() });
     global.driver = await global.launcher.connect();
-    if (opts.platform === 'android' && opts.isSimulator) {
-        setAndroidLocation();
-    }
     if (opts.platform === 'ios' && opts.isSimulator) {
         const appId = global.launcher.appId;
         const appPath = path.resolve(process.cwd(), 'builds/test-sim/Waterbug.app');
@@ -146,15 +120,8 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
             if (state === 4) break;
             await new Promise(r => setTimeout(r, 500));
         }
-        // Seed a simulated GPS fix after the app is running so
-        // Ti.Geolocation's listener receives a location event. Setting
-        // before launch can miss the initial event since the listener
-        // isn't attached until SiteDetails opens.
-        try {
-            execFileSync('xcrun', ['simctl', 'location', udid, 'set', `${TEST_LAT},${TEST_LNG}`]);
-        } catch (e) {
-            console.warn(`[BeforeAll] simctl location failed: ${e.message}`);
-        }
+        // GPS fix is now set by the explicit `Given the GPS has a fix`
+        // step in scenarios that need one (see step_definitions/gps_steps.js).
     }
 });
 
@@ -164,8 +131,15 @@ Before(async function () {
     this.isSimulator = global.isSimulator;
     setUpWorld(this);
     if (!global.first) {
-        // driver.reset() was removed in webdriverio v9 — restart the app
-        // to get a clean state between scenarios.
+        // driver.reset() was removed in webdriverio v9 — terminate +
+        // relaunch is enough to restart the JS context and let the
+        // deeplink login re-authenticate. We deliberately do NOT wipe
+        // app data here: pm clear (Android) is fast but the iOS
+        // equivalent (removeApp + installApp) destabilises the
+        // simulator. Sample-DB leakage between scenarios is tolerable
+        // today; if it bites we'll reintroduce a cross-platform reset
+        // via a `walta://reset` deeplink action rather than per-platform
+        // hacks.
         const appId = global.launcher.appId;
         await this.driver.terminateApp(appId);
         await global.launcher.launch(appId, launchArgs());
@@ -173,7 +147,9 @@ Before(async function () {
         // proceeding — activateApp can return before the UI is ready,
         // especially when WDA was started from a prebuilt cache.
         if (global.platform === 'ios') {
-            for (let i = 0; i < 30; i++) {
+            // Reinstall + launch can take ~30s on a cold simulator;
+            // poll up to 60s before declaring the app stuck.
+            for (let i = 0; i < 120; i++) {
                 const state = await this.driver.execute('mobile: queryAppState', { bundleId: appId });
                 if (state === 4) break;
                 await new Promise(r => setTimeout(r, 500));
@@ -181,18 +157,6 @@ Before(async function () {
         }
     } else {
         global.first = false;
-    }
-    // Nudge the simulated GPS fix every scenario so Ti.Geolocation's
-    // listener (attached when SiteDetails opens) receives a fresh
-    // location update. Setting the same coordinate twice still fires
-    // location-manager updates, which is what we rely on.
-    if (global.platform === 'ios' && process.env.SIM_UDID) {
-        try {
-            execFileSync('xcrun', ['simctl', 'location', process.env.SIM_UDID,
-                'set', `${TEST_LAT},${TEST_LNG}`]);
-        } catch (_) { /* best-effort */ }
-    } else if (global.platform === 'android') {
-        setAndroidLocation();
     }
 });
 

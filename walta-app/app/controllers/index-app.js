@@ -1,10 +1,11 @@
 var CerdiApi = require("logic/CerdiApi");
 var KeyLoader = require('logic/KeyLoaderJson');
-var GeoLocationService = require('logic/GeoLocationService'); 
+var GeoLocationService = require('logic/GeoLocationService');
 var Logger = require('util/Logger');
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
 var PlatformSpecific = require("logic/PlatformSpecific");
+var UrlActions = require("UrlActions");
 var { System } = require("logic/System");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
@@ -15,13 +16,42 @@ Topics.init();
 // FIXME: deprecate using globals
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 
-// Auto-login from launch args — used by acceptance tests to skip the
-// login UI flow (and iOS's "Save Password?" sheet that races with it).
-// Production builds don't pass these args so this is a no-op.
-if (Alloy.CFG.userEmail && Alloy.CFG.userPassword) {
-  Alloy.Globals.CerdiApi.loginUser(Alloy.CFG.userEmail, Alloy.CFG.userPassword)
-    .then(() => Topics.fireTopicEvent(Topics.LOGGEDIN))
-    .catch((e) => Logger.recordException(e));
+// `walta://` URL scheme dispatcher — see UrlActions.js for the action
+// registry. Acceptance tests use `walta://login?email=...&password=...`
+// to bypass the login UI; the same surface is available in production.
+var urlActions = UrlActions.create({
+  cerdiApi: Alloy.Globals.CerdiApi,
+  onLoggedIn: function () { Topics.fireTopicEvent(Topics.LOGGEDIN); },
+});
+function handleDeeplink(url) {
+  Logger.log(`[walta-deeplink] dispatch url=${url}`);
+  Promise.resolve(urlActions.dispatch(url))
+    .catch(function (err) { Logger.recordException(err); });
+}
+if (OS_IOS) {
+  Ti.App.iOS.addEventListener("handleurl", function (e) {
+    Logger.log(`[walta-deeplink] iOS handleurl fired`);
+    handleDeeplink(e.launchOptions && e.launchOptions.url);
+  });
+} else if (OS_ANDROID) {
+  // The intent-filter is on WaterbugActivity (the launcher), so the
+  // OS delivers `walta://` intents there — not to whatever TiActivity
+  // happens to be foregrounded. With launchMode=singleTask the existing
+  // WaterbugActivity gets onNewIntent; rootActivity is our handle to it.
+  Logger.log(`[walta-deeplink] registering newintent listener on rootActivity`);
+  Ti.Android.rootActivity.addEventListener("newintent", function (e) {
+    Logger.log(`[walta-deeplink] android newintent fired`);
+    handleDeeplink(e.intent && e.intent.data);
+  });
+  // Also handle the case where the app was launched cold via the
+  // deeplink (or where we missed the warm-launch event for any reason).
+  try {
+    var launchData = Ti.Android.rootActivity.intent && Ti.Android.rootActivity.intent.data;
+    if (launchData) {
+      Logger.log(`[walta-deeplink] cold-launch intent data: ${launchData}`);
+      handleDeeplink(launchData);
+    }
+  } catch (e) { /* no rootActivity yet */ }
 }
 
 SampleSync.init();

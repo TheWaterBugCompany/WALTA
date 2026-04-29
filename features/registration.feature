@@ -1,4 +1,4 @@
-@mockserver @skip
+@skip
 Feature: Registration
 
 I want to be able to register with WaterbugBlitz to allow uploading samples.

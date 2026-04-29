@@ -3,21 +3,67 @@ const hock = require('hock');
 const path = require("path");
 const { makeCerdiSampleData } = require('../../walta-app/app/spec/fixtures/SampleData_fixture.js');
 
+// Wraps hock's handler to log every request and the response status —
+// invaluable for diagnosing acceptance-test sync failures where an
+// unstubbed endpoint or malformed body silently 500s and the test
+// just sees "Sync complete not present". Writes to a file because
+// cucumber-js's progress formatter swallows stdout `console.log`.
+// Default path: /tmp/mock-cerdi.log (set MOCK_CERDI_LOG=0 to disable,
+// or MOCK_CERDI_LOG=<path> to override).
+const fs = require('fs');
+function loggingHandler(hockServer) {
+    const baseHandler = hockServer.handler.bind(hockServer);
+    const logPath = process.env.MOCK_CERDI_LOG === '0'
+        ? null
+        : (process.env.MOCK_CERDI_LOG || '/tmp/mock-cerdi.log');
+    if (logPath) {
+        try { fs.writeFileSync(logPath, ''); } catch (_) { /* best-effort */ }
+    }
+    return function (req, res) {
+        if (!logPath) return baseHandler(req, res);
+        const start = Date.now();
+        const append = (line) => { try { fs.appendFileSync(logPath, line); } catch (_) { /* best-effort */ } };
+        append(`[${new Date().toISOString()}] >> ${req.method} ${req.url}\n`);
+        const writeHead = res.writeHead.bind(res);
+        let statusCode = null;
+        res.writeHead = function (code, ...rest) {
+            statusCode = code;
+            return writeHead(code, ...rest);
+        };
+        res.on('finish', () => {
+            const ms = Date.now() - start;
+            const bodyHint = (req.method === 'POST' || req.method === 'PUT')
+                ? ` body=${(req.body || '').slice(0, 200)}` : '';
+            append(`[${new Date().toISOString()}] << ${req.method} ${req.url} ${statusCode} (${ms}ms)${bodyHint}\n`);
+        });
+        res.on('close', () => {
+            if (!res.writableEnded) {
+                append(`[${new Date().toISOString()}] !! ${req.method} ${req.url} closed without finish\n`);
+            }
+        });
+        return baseHandler(req, res);
+    };
+}
+
 function createMockCerdiServer(callback) {
-    let hockServer = hock.createHock();
+    // throwOnUnmatched=false: unmatched requests get a 500 with a stderr
+    // log instead of crashing the http server. We want to see the bad
+    // request, not silently die.
+    let hockServer = hock.createHock({ throwOnUnmatched: false });
     hockServer
         .post('/token/create/server',{
             "client_secret":"hWVKBp0PkCf87IiL2eATE3HjQv4DjYL4q7GsLfnz",
             "scope":"create-users"
         })
+        .many()
         .reply(200, {
             "access_token": "secretaccesstoken",
             "expires_in": 31535997,
             "token_type": "Bearer"
         });
-    
 
-    let server = http.createServer(hockServer.handler);
+
+    let server = http.createServer(loggingHandler(hockServer));
     server.listen(9999, callback);
     return { 
         hockServer: hockServer, 
@@ -33,6 +79,7 @@ function createMockCerdiServer(callback) {
                     "password":"password",
                     "email":"test@example.com"
                 })
+                .many()
                 .reply(200,{
                     "id": 38,
                     "name": "Test Example",

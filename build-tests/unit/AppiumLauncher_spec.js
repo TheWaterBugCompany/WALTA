@@ -15,6 +15,7 @@ describe("AppiumLauncher", function() {
     fakeDriver = {
       activateApp: sinon.stub().resolves(),
       terminateApp: sinon.stub().resolves(),
+      execute: sinon.stub().resolves(),
       getLogs: sinon.stub().resolves([])
     };
     fakeStartAppium = sinon.stub().resolves(fakeDriver);
@@ -120,10 +121,47 @@ describe("AppiumLauncher", function() {
   });
 
   describe("launch()", function() {
-    it("activates the app with the given appId", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+    function makeFakeChildExitingZero() {
+      const child = new EventEmitter();
+      // Schedule a successful close after the current tick so the
+      // launch() promise resolves before the test inspects spawn args.
+      setImmediate(() => child.emit("close", 0));
+      return child;
+    }
+
+    it("force-stops and starts the activity on Android via adb am start", async function() {
+      const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn });
       await launcher.launch("net.thewaterbug.waterbug");
-      expect(fakeDriver.activateApp.calledWith("net.thewaterbug.waterbug")).to.be.true;
+      const [bin, args] = fakeSpawn.firstCall.args;
+      expect(bin === "adb" || bin.endsWith("/adb")).to.be.true;
+      expect(args).to.include("am");
+      expect(args).to.include("start");
+      expect(args).to.include("-S");
+      expect(args).to.include("-n");
+      expect(args).to.include("net.thewaterbug.waterbug/.WaterbugActivity");
+    });
+
+    it("passes launchArgs as --es / --ez flags to am start", async function() {
+      const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn });
+      await launcher.launch("net.thewaterbug.waterbug", {
+        cerdiServerUrl: "http://localhost:3000",
+        debug: true,
+      });
+      const args = fakeSpawn.firstCall.args[1];
+      const joined = args.join(" ");
+      expect(joined).to.include("--es cerdiServerUrl http://localhost:3000");
+      expect(joined).to.include("--ez debug true");
+    });
+
+    it("launches the iOS app via mobile: launchApp with bundleId and arguments", async function() {
+      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium });
+      await launcher.launch("net.thewaterbug.waterbug", { userEmail: "test@example.com" });
+      const [command, params] = fakeDriver.execute.firstCall.args;
+      expect(command).to.equal("mobile: launchApp");
+      expect(params.bundleId).to.equal("net.thewaterbug.waterbug");
+      expect(params.arguments).to.deep.equal(["-userEmail", "test@example.com"]);
     });
   });
 
