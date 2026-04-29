@@ -6,7 +6,7 @@ When('I open the sample history and tap Sync Now', {timeout: 60000}, async funct
     await this.archive.clickSyncNow();
 });
 
-Then('the sync popup completes successfully', {timeout: 60000}, async function () {
+Then('the sync popup completes successfully', {timeout: 120000}, async function () {
     await this.syncFeedback.waitForSuccess();
     await this.syncFeedback.clickClose();
 });

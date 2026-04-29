@@ -10,25 +10,11 @@ function defaultIsAppiumRunning() {
   });
 }
 
-function buildIntentExtras(launchArgs) {
-  if (!launchArgs) return [];
-  const extras = [];
-  for (const key of Object.keys(launchArgs)) {
-    const value = launchArgs[key];
-    if (typeof value === "boolean") {
-      extras.push(["z", key, String(value)]);
-    } else if (value !== undefined && value !== null) {
-      extras.push(["s", key, String(value)]);
-    }
-  }
-  return extras;
-}
-
-// `appium:optionalIntentArguments` is a raw `am start` argument string
-// that Appium passes through on session-startup auto-launch. This is
-// what gets the override URL into the very first activity that
-// alloy.js sees (mobile: startActivity extras don't reliably propagate
-// across uiautomator2 versions, but the capability path does).
+// Raw `am start` argument string used both by the session-startup
+// capability `appium:optionalIntentArguments` and by the per-launch
+// `mobile: startActivity` call. Using the same string format on both
+// paths avoids the array-of-tuples `extras` format whose cross-version
+// reliability under uiautomator2 we don't trust.
 function buildOptionalIntentArguments(launchArgs) {
   if (!launchArgs) return undefined;
   const parts = [];
@@ -260,14 +246,26 @@ class AppiumLauncher {
   async launch(appId, launchArgs) {
     const driver = await this.connect();
     if (this.platform === "android") {
-      // mirrors AndroidLauncher: `-S` (stop:true) force-stops the app before
-      // launching so JS re-runs and any new intent extras are picked up at
-      // alloy.js init — without it `am start` delivers onNewIntent to the
-      // live process and Alloy.CFG keeps its old values.
-      await driver.execute("mobile: startActivity", {
-        intent: `${appId}/${this.appActivity}`,
-        stop: true,
-        extras: buildIntentExtras(launchArgs),
+      // Bypass Appium's `mobile: startActivity` for the launch — its
+      // `optionalIntentArguments` parameter is silently ignored under
+      // uiautomator2 (verified empirically: per-scenario re-launches
+      // arrive with `intent.getStringExtra("cerdiServerUrl") == null`).
+      // Drop straight to `adb shell am start -S` instead; -S force-stops
+      // the app first so JS re-runs at init and Alloy.CFG picks up new
+      // extras, and `am start` honours --es directly.
+      const adbBin = process.env.ANDROID_SDK_ROOT
+        ? `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`
+        : "adb";
+      const args = ["shell", "am", "start", "-W", "-S",
+        "-n", `${appId}/${this.appActivity}`];
+      const extras = buildOptionalIntentArguments(launchArgs);
+      if (extras) args.push(...extras.split(" "));
+      await new Promise((resolve, reject) => {
+        const child = this._spawn(adbBin, args, { stdio: "inherit" });
+        child.on("close", (code) => code === 0
+          ? resolve()
+          : reject(new Error(`adb am start exited ${code}`)));
+        child.on("error", reject);
       });
     } else if (this.platform === "ios") {
       // XCUITest's mobile: launchApp passes process arguments through to

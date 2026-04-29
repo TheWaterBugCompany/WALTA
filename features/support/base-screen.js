@@ -20,11 +20,11 @@ class BaseScreen {
         return textElement.getText();
     }
 
-    async waitForRaw(sel, message) {
+    async waitForRaw(sel, message, timeout = 60000) {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
-        }, { timeout: 60000, timeoutMsg: message });
+        }, { timeout, timeoutMsg: message });
     }
 
     async waitFor() {
@@ -34,8 +34,8 @@ class BaseScreen {
     async waitForLabel(label) {
         await this.waitForRaw( this.selector(label), `${label} not present` );
     }
- 
-    async waitForText(text) {
+
+    async waitForText(text, timeout = 60000) {
         if ( this.isIos() ) {
             // visible == 1 filters out off-screen / overlay duplicates —
             // multiple Titanium widgets can share the same text (e.g. the
@@ -43,9 +43,10 @@ class BaseScreen {
             // returns the first match, which may be the hidden one.
             await this.waitForRaw(
                 `-ios predicate string:visible == 1 AND (label CONTAINS '${text}' OR name CONTAINS '${text}' OR value CONTAINS '${text}')`,
-                `text "${text}" not present`);
+                `text "${text}" not present`,
+                timeout);
         } else {
-            await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`);
+            await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`, timeout);
         }
     }
 

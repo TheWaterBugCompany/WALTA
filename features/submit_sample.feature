@@ -1,10 +1,10 @@
-@mockserver
 Feature: Upload Samples
 
 I want submit this sample to the database when internet is available.
 
 Scenario: User initiates sync from sample history
-  Given I have existing samples stored on the server
+  Given I am logged in as "test@example.com"
+    And I have existing samples stored on the server
    When I open the sample history and tap Sync Now
    Then the sync popup completes successfully
 

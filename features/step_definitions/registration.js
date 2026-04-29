@@ -8,10 +8,49 @@ Given('I am not logged in', function() {
     expect( @current_page.loggedIn? ).to eq(false) */
 });
 
-Given('I am logged in as "([^"]*)"', function(emailAddress) {
-/*     MockServer.create_account()
-    @current_page = RegistrationDriver.login( emailAddress, "password" )
-    expect( @current_page.loggedIn? ).to eq(true) */
+// Logs in via the `walta://login` deeplink — the app's UrlActions
+// dispatcher calls CerdiApi.loginUser then fires Topics.LOGGEDIN, which
+// the menu controller observes. Password is fixed to match the mock
+// CERDI server's /token/create stub.
+//
+// `driver.url` on Android UiAutomator2 routes the URL via Chrome,
+// which won't deliver custom schemes reliably. `mobile: deepLink` /
+// `mobile: deepLink` (iOS) sends the intent directly to the app.
+Given('I am logged in as {string}', {timeout: 60000}, async function(emailAddress) {
+    // Wait for the app to be fully booted FIRST. The launcher intent
+    // (mobile: startActivity) carries cerdiServerUrl/cerdiApiSecret as
+    // extras; alloy.js reads those and builds CerdiApi against the mock
+    // server. If we fire the deeplink before that boot completes, the
+    // OS treats the deeplink as a cold-launch intent (no extras) and
+    // CerdiApi is built against the production sandbox URL — login then
+    // never reaches the mock and the test silently passes the menu wait
+    // but is never actually authenticated.
+    await this.menu.waitFor();
+    const url = `walta://login?email=${encodeURIComponent(emailAddress)}&password=password`;
+    if (this.platform === 'android') {
+        await this.driver.execute('mobile: deepLink', {
+            url,
+            package: 'net.thewaterbug.waterbug',
+            waitForLaunch: false,
+        });
+    } else {
+        await this.driver.execute('mobile: deepLink', {
+            url,
+            bundleId: 'net.thewaterbug.waterbug',
+        });
+    }
+    // Wait for the "You are Logged in" label to appear in the Menu —
+    // this is the deterministic UI signal that LOGGEDIN fired and the
+    // menu re-rendered with logged-in state. Replaces a fixed sleep
+    // that was sometimes too short on iOS post-reinstall.
+    await this.menu.waitForLabel("You are Logged in");
+    // On iOS, LOGGEDIN → HOME → Navigation.openController("Menu") tears
+    // down the existing Menu and opens a new one; the label appears on
+    // the new instance, but immediate clicks can race against the
+    // tear-down. A brief settle avoids stale-element clicks.
+    if (this.platform === 'ios') {
+        await new Promise(r => setTimeout(r, 1500));
+    }
 });
 
 Given('the user "([^"]*)" does not exist', function(emailAddress) {
