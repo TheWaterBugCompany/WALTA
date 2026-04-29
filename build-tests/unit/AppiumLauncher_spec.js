@@ -224,6 +224,41 @@ describe("AppiumLauncher", function() {
     });
   });
 
+  describe("setLocation()", function() {
+    function makeFakeChildExitingZero() {
+      const child = new EventEmitter();
+      setImmediate(() => child.emit("close", 0));
+      return child;
+    }
+
+    it("calls `adb emu geo fix <lng> <lat>` on Android", async function() {
+      const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn });
+      await launcher.setLocation(-37.8136, 144.9631);
+      const [bin, args] = fakeSpawn.firstCall.args;
+      expect(bin === "adb" || bin.endsWith("/adb")).to.be.true;
+      // adb emu geo fix takes longitude first, then latitude.
+      expect(args).to.deep.equal(["emu", "geo", "fix", "144.9631", "-37.8136"]);
+    });
+
+    it("calls `xcrun simctl location <udid> set <lat>,<lng>` on iOS", async function() {
+      const originalUdid = process.env.SIM_UDID;
+      process.env.SIM_UDID = "FAKE-UDID";
+      const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
+      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium, spawn: fakeSpawn });
+      try {
+        await launcher.setLocation(-37.8136, 144.9631);
+      } finally {
+        if (originalUdid === undefined) delete process.env.SIM_UDID;
+        else process.env.SIM_UDID = originalUdid;
+      }
+      const [bin, args] = fakeSpawn.firstCall.args;
+      expect(bin).to.equal("xcrun");
+      // simctl location takes lat,lng (opposite of adb's lng,lat).
+      expect(args).to.deep.equal(["simctl", "location", "FAKE-UDID", "set", "-37.8136,144.9631"]);
+    });
+  });
+
   describe("streamLogs()", function() {
     it("polls driver.getLogs and emits each message", async function() {
       fakeDriver.getLogs.resolves([{ message: "log line 1" }, { message: "log line 2" }]);
