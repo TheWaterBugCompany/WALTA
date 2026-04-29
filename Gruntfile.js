@@ -676,6 +676,13 @@ const KobitonAPI = require("./features/support/kobiton");
       const grep = grunt.option('grep');
       if (grep) launchArgs.test_grep = grep;
       if (grunt.option('manual')) launchArgs.test_manual = true;
+      // WB-25: the index.js dispatcher reads `unit_test` to choose between
+      // the real app and the on-device test runner. Set it whenever we're
+      // launching the unit-test build path so the dispatcher routes to
+      // UnitTest.js.
+      if (buildType === 'unit-test' || buildType === 'unit-test-liveview') {
+        launchArgs.unit_test = true;
+      }
       const hasLaunchArgs = Object.keys(launchArgs).length > 0;
       if (hasLaunchArgs) {
         grunt.log.writeln(`Forwarding launch args to test runner: ${JSON.stringify(launchArgs)}`);

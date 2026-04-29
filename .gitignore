@@ -52,9 +52,6 @@ walta-app/modules/iphone/ti.map
 walta-app/modules/android/ti.map
 walta-app/modules/android/ti.playservices
 
-# Generated symlink (created by install.sh, overwritten by unittest plugin at build time)
-walta-app/app/controllers/index.js
-
 # Generated test libs (webpack + install.sh)
 walta-app/app/spec/lib/chai.js
 walta-app/app/spec/lib/chai.js.map

@@ -63,15 +63,18 @@ describe("unittest hook", function () {
             });
         });
 
-        it("should symlink index.js to index-app.js when --unit-test is not set", function (done) {
-            cli.argv["unit-test"] = false;
+        it("does not manage app/controllers/index.js — it is a real dispatcher file (WB-25)", function (done) {
+            cli.argv["unit-test"] = true;
             preCompile({}, function () {
-                expect(fs.symlinkSync.calledWith('index-app.js', `${projectDir}/app/controllers/index.js`)).to.be.true;
+                const indexPath = `${projectDir}/app/controllers/index.js`;
+                expect(fs.symlinkSync.calledWith('UnitTest.js', indexPath)).to.be.false;
+                expect(fs.symlinkSync.calledWith('index-app.js', indexPath)).to.be.false;
+                expect(fs.unlinkSync.calledWith(indexPath)).to.be.false;
                 done();
             });
         });
 
-        it("should remove any existing symlink before creating a new one", function (done) {
+        it("should remove any existing spec symlink before creating a new one", function (done) {
             cli.argv["unit-test"] = true;
             preCompile({}, function () {
                 expect(fs.unlinkSync.calledWith(`${projectDir}/app/lib/spec`)).to.be.true;
@@ -80,7 +83,7 @@ describe("unittest hook", function () {
             });
         });
 
-        it("should remove existing symlink on normal builds to keep specs out", function (done) {
+        it("should remove existing spec symlink on normal builds to keep specs out", function (done) {
             cli.argv["unit-test"] = false;
             preCompile({}, function () {
                 expect(fs.unlinkSync.calledWith(`${projectDir}/app/lib/spec`)).to.be.true;
