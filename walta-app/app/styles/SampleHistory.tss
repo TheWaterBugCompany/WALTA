@@ -41,24 +41,3 @@
     textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
     width: "35%"
 }
-".actionRow": {
-    height: "48dp",
-    width: Ti.UI.FILL,
-    layout: "horizontal",
-    horizontalWrap: false
-}
-".syncNowButton": {
-    right: "12dp",
-    top: "6dp",
-    height: "36dp",
-    width: Ti.UI.SIZE,
-    color: "#ffffff",
-    backgroundColor: "#26849c",
-    borderColor: "#26849c",
-    borderWidth: "1dp",
-    borderRadius: "4dp",
-    font: {
-        fontFamily: "sans-serif",
-        fontSize: "14dp"
-    }
-}

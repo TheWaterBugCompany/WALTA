@@ -142,6 +142,14 @@ adb logcat -s "TiAPI:*"   # Android
 - `features/` — Cucumber BDD acceptance tests
 - `end-to-end-testing/` — Appium integration tests
 
+### Documentation maintenance
+
+The `docs/` folder holds pattern references that this CLAUDE.md links to. **When you rediscover something** — a non-obvious pattern, a gotcha that bit you, a convention that wasn't clear from reading existing code — add it to the relevant doc (or create a new one and link it from here). Aim short and specific: a one-liner with a code example beats a paragraph. The test for "is this worth writing down?" is *would the next session save time if it could find this?*
+
+Existing pattern docs:
+- [docs/toolbar-buttons.md](docs/toolbar-buttons.md) — anchor bar / NavButton pattern
+- [docs/device-specs.md](docs/device-specs.md) — device spec idioms, child-controller refs, test pollution
+
 ### Patterns & Conventions
 
 **Controller communication:** Controllers communicate via `Topics` (a pub/sub event bus over Ti's global event system — see `lib/ui/Topics.js`). Use `Topics.fireTopicEvent(Topics.SOME_EVENT, payload)` to publish and `Topics.subscribe(Topics.SOME_EVENT, handler)` to listen. Direct function calls are used within a controller; Topics are used across controllers.
@@ -153,6 +161,8 @@ adb logcat -s "TiAPI:*"   # Android
 **Photo paths:** Photos taken by users are stored in `Ti.Filesystem.applicationDataDirectory` using relative paths (no leading `/`). Taxonomy reference images are in `Ti.Filesystem.resourcesDirectory` (absolute paths starting `/`). `PhotoUtils.absolutePath()` handles both conventions.
 
 **Ti.App.Properties keys:** Persistent storage uses `Ti.App.Properties.setObject/getObject`. Key names in use: `userAccessTokenLive` (user auth token object), `appAccessTokenLive` (app-level OAuth token object), `userAccessUsername` (logged-in email).
+
+**Toolbar buttons:** Screen-level action buttons (Back, Next, Done, Sync, etc.) belong on the anchor bar, not in the screen body. Pattern: `getAnchorBar().addTool(Alloy.createController("NavButton").getView())`. See [docs/toolbar-buttons.md](docs/toolbar-buttons.md) for the full pattern, accessibilityLabel semantics, and the Appium selector convention.
 
 ### Configuration & Environment
 
@@ -177,6 +187,12 @@ There are four levels of tests:
 2. **Device unit tests** (`walta-app/app/spec/`) — run on device via Titanium; required when code uses `Ti.*` APIs that cannot be mocked
 3. **End-to-end tests** (`end-to-end-testing/`) — Appium-driven
 4. **Acceptance/BDD tests** (`features/`) — Cucumber + WebdriverIO (Appium), uses `@only` tag to filter
+
+**Acceptance test environment:** The local dev environment is already provisioned — emulator/simulator, Appium drivers, and the mock CERDI server are configured and ready. Run acceptance tests directly (`npx grunt --platform=android acceptance-test`); don't gate on or caveat about setup.
+
+**Acceptance coverage does not replace device specs.** Every screen-level feature must have a device spec in `walta-app/app/spec/` even if an acceptance test covers the same path. Rationale: acceptance tests are slow integration tests — a single run takes minutes — so they're unsuitable for the tight TDD loop. Device specs run quickly with `--liveview --reuse-server` (see `fast-device-test`), give per-screen test checklists for future work, and pinpoint failures at the controller level rather than at the end of an end-to-end flow. When adding/modifying a screen feature, default to a device spec; add an acceptance scenario only for cross-screen flows.
+
+**Device spec idioms:** [docs/device-specs.md](docs/device-specs.md) covers the things that aren't obvious from reading existing specs — `TestUtils` helpers, how to reach inner views of child controllers (`ctl.childCtl.NavButton.fireEvent("click")`), test pollution between specs (Topics subscribers, `Alloy.Globals.CerdiApi`, `SyncStore` singleton), and `--manual` mode considerations. Read this before adding a new device spec.
 
 **Mocking `Ti.*` in Node.js tests:** The Node.js environment has no Titanium runtime. Mock `Ti.Network.createHTTPClient` by injecting a fake via the module's `ProxyCreateHTTPClient` export — see `test/CerdiApi_spec.js` for the canonical pattern. `mocha-bootstrap.js` is only loaded for on-device tests; do not include it in Node tests.
 

@@ -5,12 +5,19 @@ var SampleSync = require('logic/SampleSync');
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
 
+var acb = $.getAnchorBar();
+$.syncButton = Alloy.createController("NavButton");
+$.syncButton.setLabel("Sync");
+$.syncButton.on("click", syncNowClicked);
+acb.addTool( $.syncButton.getView() );
+
 Topics.subscribe( Topics.UPLOAD_PROGRESS, updateSampleList );
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     if ( $.sampleMenu ) {
         $.sampleMenu.cleanUp();
     }
     closeSyncFeedback();
+    $.syncButton.cleanUp();
     $.destroy();
     $.off();
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
