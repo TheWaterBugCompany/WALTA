@@ -279,6 +279,34 @@ class AppiumLauncher {
     }
   }
 
+  async setLocation(lat, lng) {
+    let bin, args;
+    if (this.platform === "android") {
+      bin = process.env.ANDROID_SDK_ROOT
+        ? `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`
+        : "adb";
+      // adb emu geo fix takes longitude first, then latitude — opposite
+      // of simctl's lat,lng order. The emulator's AndroidLocationManager
+      // forwards this to Ti.Geolocation listeners.
+      args = ["emu", "geo", "fix", String(lng), String(lat)];
+    } else if (this.platform === "ios") {
+      if (!process.env.SIM_UDID) {
+        throw new Error("SIM_UDID environment variable must be set for iOS setLocation");
+      }
+      bin = "xcrun";
+      args = ["simctl", "location", process.env.SIM_UDID, "set", `${lat},${lng}`];
+    } else {
+      return;
+    }
+    await new Promise((resolve, reject) => {
+      const child = this._spawn(bin, args, { stdio: "inherit" });
+      child.on("close", (code) => code === 0
+        ? resolve()
+        : reject(new Error(`${bin} ${args.join(" ")} exited ${code}`)));
+      child.on("error", reject);
+    });
+  }
+
   async terminate(appId) {
     const driver = await this.connect();
     await driver.terminateApp(
