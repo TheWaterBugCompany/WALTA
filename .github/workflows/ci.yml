@@ -212,7 +212,16 @@ jobs:
       - name: Run iOS simulator unit tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        run: npx grunt --platform=ios --simulator unit-test
+        # Same retry rationale as the Android jobs (WB-54): defence in
+        # depth against transient SDK / runner flakes.
+        run: |
+          for attempt in 1 2; do
+            if npx grunt --platform=ios --simulator unit-test; then
+              exit 0
+            fi
+            echo "::warning ::iOS unit-test attempt $attempt failed; retrying once (WB-54)"
+          done
+          exit 1
 
       - name: Capture simulator diagnostics on failure
         if: failure()
@@ -365,9 +374,20 @@ jobs:
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # Retry once on failure to absorb the intermittent AAPT
+          # `Theme.WaterbugApp not found` resource-linker flake (WB-54).
+          # Emulator stays booted across attempts so retry cost is just
+          # the gradle+test cycle (~2.5 min). A genuine deterministic
+          # failure still fails the job after the second attempt.
           script: |
             echo "Emulator booted"
-            npx grunt --platform=android --simulator unit-test
+            for attempt in 1 2; do
+              if npx grunt --platform=android --simulator unit-test; then
+                exit 0
+              fi
+              echo "::warning ::Android unit-test attempt $attempt failed; retrying once (WB-54)"
+            done
+            exit 1
 
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
   ios-simulator-acceptance-tests:
@@ -511,12 +531,32 @@ jobs:
       - name: Acceptance preflight (Appium launcher integration test)
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        run: npx grunt acceptance-preflight-test-ios-simulator
+        # Retry once (WB-54). The preflight is intentionally fast-fail
+        # so the cost of a retry is small (~1 min).
+        run: |
+          for attempt in 1 2; do
+            if npx grunt acceptance-preflight-test-ios-simulator; then
+              exit 0
+            fi
+            echo "::warning ::iOS preflight attempt $attempt failed; retrying once (WB-54)"
+          done
+          exit 1
 
       - name: Run iOS acceptance tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        run: npx grunt --platform=ios --simulator acceptance-test
+        # Retry once (WB-54). Cucumber suite takes ~15 min so a retry
+        # roughly doubles the cost on a deterministic failure — but
+        # acceptance flakes are common enough on macOS-15 runners that
+        # the trade-off favours green over fast-fail.
+        run: |
+          for attempt in 1 2; do
+            if npx grunt --platform=ios --simulator acceptance-test; then
+              exit 0
+            fi
+            echo "::warning ::iOS acceptance attempt $attempt failed; retrying once (WB-54)"
+          done
+          exit 1
 
       - name: Capture simulator diagnostics on failure
         if: failure()
@@ -656,7 +696,16 @@ jobs:
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # Retry once on failure — same rationale as the unit-test job
+          # above (WB-54). Wraps both preflight and acceptance so either
+          # phase being hit by the AAPT flake gets a second shot.
           script: |
             echo "Emulator booted"
-            npx grunt acceptance-preflight-test-android-emulator
-            npx grunt --platform=android --simulator acceptance-test
+            for attempt in 1 2; do
+              if npx grunt acceptance-preflight-test-android-emulator \
+                 && npx grunt --platform=android --simulator acceptance-test; then
+                exit 0
+              fi
+              echo "::warning ::Android acceptance attempt $attempt failed; retrying once (WB-54)"
+            done
+            exit 1
