@@ -527,6 +527,19 @@ jobs:
         if: steps.wda-cache.outputs.cache-hit != 'true'
         run: bash build-utils/prebuild-wda.sh
 
+      # Appium creates `node_modules/.cache/appium` on first start to hold
+      # driver-hash files; caching it across runs avoids re-doing that
+      # work and shaves driver-load time off every acceptance run.
+      # Keyed on package-lock.json so dependency upgrades bust the cache.
+      # See WB-50.
+      - name: Cache Appium driver hashes
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/appium
+          key: appium-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            appium-cache-${{ runner.os }}-
+
       - name: Acceptance preflight (Appium launcher integration test)
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
@@ -685,6 +698,19 @@ jobs:
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-30
           key: avd-30-google_apis-x86
+
+      # Appium creates `node_modules/.cache/appium` on first start to hold
+      # driver-hash files; caching it across runs avoids re-doing that
+      # work and shaves driver-load time off every acceptance run.
+      # Keyed on package-lock.json so dependency upgrades bust the cache.
+      # See WB-50.
+      - name: Cache Appium driver hashes
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/appium
+          key: appium-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            appium-cache-${{ runner.os }}-
 
       - name: Boot Android emulator and run acceptance tests
         uses: reactivecircus/android-emulator-runner@v2
