@@ -379,15 +379,14 @@ jobs:
           # Emulator stays booted across attempts so retry cost is just
           # the gradle+test cycle (~2.5 min). A genuine deterministic
           # failure still fails the job after the second attempt.
+          #
+          # `reactivecircus/android-emulator-runner@v2` runs each line
+          # of `script:` via a separate `sh -c`, so the retry has to
+          # fit on one logical line — `||` short-circuit is the
+          # cleanest fit.
           script: |
             echo "Emulator booted"
-            for attempt in 1 2; do
-              if npx grunt --platform=android --simulator unit-test; then
-                exit 0
-              fi
-              echo "::warning ::Android unit-test attempt $attempt failed; retrying once (WB-54)"
-            done
-            exit 1
+            npx grunt --platform=android --simulator unit-test || { echo "::warning ::Android unit-test first attempt failed; retrying once (WB-54)"; npx grunt --platform=android --simulator unit-test; }
 
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
   ios-simulator-acceptance-tests:
@@ -699,13 +698,8 @@ jobs:
           # Retry once on failure — same rationale as the unit-test job
           # above (WB-54). Wraps both preflight and acceptance so either
           # phase being hit by the AAPT flake gets a second shot.
+          # Single-line form per the action's `sh -c`-per-line execution
+          # model.
           script: |
             echo "Emulator booted"
-            for attempt in 1 2; do
-              if npx grunt acceptance-preflight-test-android-emulator \
-                 && npx grunt --platform=android --simulator acceptance-test; then
-                exit 0
-              fi
-              echo "::warning ::Android acceptance attempt $attempt failed; retrying once (WB-54)"
-            done
-            exit 1
+            ( npx grunt acceptance-preflight-test-android-emulator && npx grunt --platform=android --simulator acceptance-test ) || { echo "::warning ::Android acceptance first attempt failed; retrying once (WB-54)"; npx grunt acceptance-preflight-test-android-emulator && npx grunt --platform=android --simulator acceptance-test; }
