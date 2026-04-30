@@ -3,10 +3,22 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: >
+          Build environment.
+          'production' = real CERDI API + clean tag (v2.1.0.4).
+          'test' = sandbox CERDI API + version suffix (-test) in TestFlight /
+          Play Console + tag (v2.1.0.4-test). Default is production —
+          accidental triggers are safe.
+        type: choice
+        options:
+          - production
+          - test
+        default: production
       version:
         description: >
           Version (e.g. 2.0.5.1). Leave empty to auto-increment the build
-          number from the latest v* git tag.
+          number from the latest v* git tag (test or prod).
         required: false
         type: string
       platforms:
@@ -33,7 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      display_version: ${{ steps.version.outputs.display_version }}
       version_code: ${{ steps.version.outputs.version_code }}
+      tag_name: ${{ steps.version.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,13 +56,19 @@ jobs:
       - name: Compute version and versionCode
         id: version
         run: |
+          ENVIRONMENT="${{ inputs.environment }}"
+
           if [ -n "${{ inputs.version }}" ]; then
             VERSION="${{ inputs.version }}"
           else
-            # Auto-increment build number from the latest release tag
+            # Auto-increment build number from the latest release tag.
+            # Test releases (v*-test) and production releases (v*) share
+            # one build-number sequence so they never collide. Strip any
+            # `-test` suffix before parsing the numeric.
             LATEST_TAG=$(git tag -l 'v*' --sort=-v:refname | head -1)
             if [ -n "$LATEST_TAG" ]; then
               CURRENT="${LATEST_TAG#v}"
+              CURRENT="${CURRENT%-test}"
             else
               # No tags yet — fall back to 2.0.4.0 as the base version
               CURRENT="2.0.4.0"
@@ -62,9 +82,25 @@ jobs:
           IFS='.' read -r major minor patch build <<< "$VERSION"
           VERSION_CODE=$(( major * 1000000000 + minor * 10000000 + patch * 10000 + build ))
 
+          # Test builds carry a -test suffix in the human-visible
+          # version (tiapp.xml <version>, Android versionName,
+          # CFBundleShortVersionString) and in the git tag, so John
+          # / TestFlight / Play Console can tell them apart from prod.
+          # versionCode stays purely numeric.
+          if [ "$ENVIRONMENT" = "test" ]; then
+            DISPLAY_VERSION="${VERSION}-test"
+            TAG_NAME="v${VERSION}-test"
+          else
+            DISPLAY_VERSION="$VERSION"
+            TAG_NAME="v${VERSION}"
+          fi
+
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "display_version=$DISPLAY_VERSION" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
-          echo "Version: $VERSION (versionCode: $VERSION_CODE)"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "Environment: $ENVIRONMENT"
+          echo "Version: $DISPLAY_VERSION (versionCode: $VERSION_CODE, tag: $TAG_NAME)"
 
   # ── Android release ────────────────────────────────────────────────────
   release-android:
@@ -110,24 +146,35 @@ jobs:
 
       - name: Bump version in tiapp.xml
         run: |
-          VERSION="${{ needs.prepare.outputs.version }}"
+          DISPLAY_VERSION="${{ needs.prepare.outputs.display_version }}"
           VERSION_CODE="${{ needs.prepare.outputs.version_code }}"
-          sed -i "s|<version>[^<]*</version>|<version>${VERSION}</version>|" walta-app/tiapp.xml.template
+          sed -i "s|<version>[^<]*</version>|<version>${DISPLAY_VERSION}</version>|" walta-app/tiapp.xml.template
           sed -i "s|android:versionCode=\"[^\"]*\"|android:versionCode=\"${VERSION_CODE}\"|" walta-app/tiapp.xml.template
-          sed -i "s|android:versionName=\"[^\"]*\"|android:versionName=\"${VERSION}\"|" walta-app/tiapp.xml.template
+          sed -i "s|android:versionName=\"[^\"]*\"|android:versionName=\"${DISPLAY_VERSION}\"|" walta-app/tiapp.xml.template
           # Regenerate tiapp.xml from updated template
           sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
             walta-app/tiapp.xml.template > walta-app/tiapp.xml
-          echo "Updated to version $VERSION (versionCode $VERSION_CODE)"
+          echo "Updated to version $DISPLAY_VERSION (versionCode $VERSION_CODE)"
 
-      - name: Create production app config
+      - name: Create app config (production or test sandbox)
         run: |
-          cat > walta-app/app/app-config.production.json << EOF
-          {
-            "cerdiServerUrl": "${{ secrets.CERDI_SERVER_URL }}",
-            "cerdiApiSecret": "${{ secrets.CERDI_API_SECRET }}"
-          }
-          EOF
+          if [ "${{ inputs.environment }}" = "test" ]; then
+            cat > walta-app/app/app-config.test.json << EOF
+            {
+              "cerdiServerUrl": "${{ secrets.CERDI_TEST_SERVER_URL }}",
+              "cerdiApiSecret": "${{ secrets.CERDI_TEST_API_SECRET }}"
+            }
+            EOF
+            echo "Wrote app-config.test.json — sandbox API"
+          else
+            cat > walta-app/app/app-config.production.json << EOF
+            {
+              "cerdiServerUrl": "${{ secrets.CERDI_SERVER_URL }}",
+              "cerdiApiSecret": "${{ secrets.CERDI_API_SECRET }}"
+            }
+            EOF
+            echo "Wrote app-config.production.json — production API"
+          fi
 
       - name: Read Titanium SDK version
         id: ti-version
@@ -167,7 +214,12 @@ jobs:
           KEYSTORE: /tmp/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEYSTORE_SUBKEY: ${{ secrets.KEYSTORE_SUBKEY }}
-        run: npx grunt --platform=android clean release
+        run: |
+          if [ "${{ inputs.environment }}" = "test" ]; then
+            npx grunt --platform=android --override-app-config=test clean release
+          else
+            npx grunt --platform=android clean release
+          fi
 
       - name: Upload to Google Play (internal track)
         uses: r0adkll/upload-google-play@v1
@@ -181,7 +233,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-release-${{ needs.prepare.outputs.version }}
+          name: android-release-${{ needs.prepare.outputs.display_version }}
           path: builds/release/Waterbug.*
 
   # ── iOS release ────────────────────────────────────────────────────────
@@ -230,24 +282,35 @@ jobs:
 
       - name: Bump version in tiapp.xml
         run: |
-          VERSION="${{ needs.prepare.outputs.version }}"
+          DISPLAY_VERSION="${{ needs.prepare.outputs.display_version }}"
           VERSION_CODE="${{ needs.prepare.outputs.version_code }}"
-          sed -i '' "s|<version>[^<]*</version>|<version>${VERSION}</version>|" walta-app/tiapp.xml.template
+          sed -i '' "s|<version>[^<]*</version>|<version>${DISPLAY_VERSION}</version>|" walta-app/tiapp.xml.template
           sed -i '' "s|android:versionCode=\"[^\"]*\"|android:versionCode=\"${VERSION_CODE}\"|" walta-app/tiapp.xml.template
-          sed -i '' "s|android:versionName=\"[^\"]*\"|android:versionName=\"${VERSION}\"|" walta-app/tiapp.xml.template
+          sed -i '' "s|android:versionName=\"[^\"]*\"|android:versionName=\"${DISPLAY_VERSION}\"|" walta-app/tiapp.xml.template
           # Regenerate tiapp.xml from updated template
           sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
             walta-app/tiapp.xml.template > walta-app/tiapp.xml
-          echo "Updated to version $VERSION (versionCode $VERSION_CODE)"
+          echo "Updated to version $DISPLAY_VERSION (versionCode $VERSION_CODE)"
 
-      - name: Create production app config
+      - name: Create app config (production or test sandbox)
         run: |
-          cat > walta-app/app/app-config.production.json << EOF
-          {
-            "cerdiServerUrl": "${{ secrets.CERDI_SERVER_URL }}",
-            "cerdiApiSecret": "${{ secrets.CERDI_API_SECRET }}"
-          }
-          EOF
+          if [ "${{ inputs.environment }}" = "test" ]; then
+            cat > walta-app/app/app-config.test.json << EOF
+            {
+              "cerdiServerUrl": "${{ secrets.CERDI_TEST_SERVER_URL }}",
+              "cerdiApiSecret": "${{ secrets.CERDI_TEST_API_SECRET }}"
+            }
+            EOF
+            echo "Wrote app-config.test.json — sandbox API"
+          else
+            cat > walta-app/app/app-config.production.json << EOF
+            {
+              "cerdiServerUrl": "${{ secrets.CERDI_SERVER_URL }}",
+              "cerdiApiSecret": "${{ secrets.CERDI_API_SECRET }}"
+            }
+            EOF
+            echo "Wrote app-config.production.json — production API"
+          fi
 
       - name: Read Titanium SDK version
         id: ti-version
@@ -315,7 +378,12 @@ jobs:
         env:
           DEVELOPER: ${{ secrets.IOS_DEVELOPER_NAME }}
           PROFILE_DIST: ${{ secrets.IOS_PROFILE_UUID }}
-        run: npx grunt --platform=ios clean release
+        run: |
+          if [ "${{ inputs.environment }}" = "test" ]; then
+            npx grunt --platform=ios --override-app-config=test clean release
+          else
+            npx grunt --platform=ios clean release
+          fi
 
       - name: Upload to TestFlight
         run: |
@@ -335,7 +403,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-release-${{ needs.prepare.outputs.version }}
+          name: ios-release-${{ needs.prepare.outputs.display_version }}
           path: builds/release/Waterbug.ipa
 
   # ── Tag the release ────────────────────────────────────────────────────
@@ -352,8 +420,9 @@ jobs:
 
       - name: Create and push tag
         run: |
-          VERSION="${{ needs.prepare.outputs.version }}"
+          TAG_NAME="${{ needs.prepare.outputs.tag_name }}"
+          DISPLAY_VERSION="${{ needs.prepare.outputs.display_version }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${VERSION}" -m "Release ${VERSION}"
-          git push origin "v${VERSION}"
+          git tag -a "${TAG_NAME}" -m "Release ${DISPLAY_VERSION}"
+          git push origin "${TAG_NAME}"
