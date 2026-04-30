@@ -2,12 +2,14 @@ require("mocha");
 const { expect } = require("chai");
 const SyncFeedbackViewModel = require("../../walta-app/app/lib/viewmodels/SyncFeedback");
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
+const Logger = require("../../walta-app/app/lib/util/Logger");
 const createSyncController = require("../../walta-app/app/spec/fixtures/SyncController_fixture");
 
 describe("SyncFeedbackViewModel", function () {
   let syncController, store, forceUploadCalls, vm;
 
   beforeEach(function () {
+    Logger.clearLog();
     ({ syncController, store, forceUploadCalls } = createSyncController(SyncStore));
     vm = new SyncFeedbackViewModel({ syncController });
   });
@@ -26,7 +28,35 @@ describe("SyncFeedbackViewModel", function () {
       store.recordProgress("Uploading taxa 141 photo");
       const latecomer = new SyncFeedbackViewModel({ syncController });
       expect(latecomer.status).to.equal("syncing");
-      expect(latecomer.logLines).to.deep.equal(["Uploading taxa 141 photo"]);
+      // logLines comes from the Logger ring buffer now (WB-45) — the
+      // sync progress message is already on screen as statusText.
+      expect(latecomer.statusText).to.equal("Uploading taxa 141 photo");
+    });
+  });
+
+  describe("logLines (sourced from Logger ring buffer — WB-45)", function () {
+    it("returns whatever Logger has captured at read time", function () {
+      Logger.log("starting upload", "sync");
+      Logger.warn("rate limit hit", "sync");
+      expect(vm.logLines).to.deep.equal([
+        "[sync] starting upload",
+        "[sync] rate limit hit",
+      ]);
+    });
+
+    it("includes lines emitted after the popup was constructed", function () {
+      expect(vm.logLines).to.deep.equal([]);
+      Logger.error("upload failed", "sync");
+      expect(vm.logLines).to.deep.equal(["[sync] upload failed"]);
+    });
+
+    it("does not surface syncController progress messages directly", function () {
+      // Progress messages are the headline statusText — they shouldn't
+      // also fill the Show Logs pane. Logger output is the source of
+      // truth there.
+      store.recordStart();
+      store.recordProgress("Downloading samples");
+      expect(vm.logLines).to.deep.equal([]);
     });
   });
 
@@ -190,10 +220,9 @@ describe("SyncFeedbackViewModel", function () {
     });
 
     it("joins log lines with newlines", function () {
-      store.recordStart();
-      store.recordProgress("first");
-      store.recordProgress("second");
-      expect(vm.logText).to.equal("first\nsecond");
+      Logger.log("first", "sync");
+      Logger.log("second", "sync");
+      expect(vm.logText).to.equal("[sync] first\n[sync] second");
     });
   });
 

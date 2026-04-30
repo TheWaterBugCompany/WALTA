@@ -1,4 +1,5 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
+const Logger = require("../util/Logger");
 
 const PROGRESS_COLOR_NORMAL = "#26849c";
 const PROGRESS_COLOR_ERROR = "#c0392b";
@@ -17,7 +18,11 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   get status()       { return this._syncController.status; }
   get percent()      { return this._syncController.percent; }
   get statusText()   { return this._syncController.statusText; }
-  get logLines()     { return this._syncController.logLines; }
+  // Sourced from Logger's in-memory ring buffer, not the syncController
+  // — sync progress messages are already on screen as statusText. The
+  // Show Logs pane shows finer-grained Logger.log/warn/error output.
+  // See WB-45.
+  get logLines()     { return Logger.getLogLines(); }
   get errorMessage() { return this._syncController.errorMessage; }
   get logVisible() { return this._logVisible; }
 
