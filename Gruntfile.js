@@ -713,11 +713,20 @@ const KobitonAPI = require("./features/support/kobiton");
           resetTimer();
           const result = parseUnitTestResult(line);
           if (result) {
+            // Print the marker line so it shows up in CI logs.
+            grunt.log.writeln(line);
             clearTimeout(timer);
             if (option !== "preview") {
               stop();
-              // grunt's async done(): no arg / true = success, false = fail
-              done(result === "passed");
+              if (result === "failed") {
+                // Exit 2 = deterministic test failure. The CI retry
+                // wrapper keys off this code to skip its retry. The
+                // process.once('exit') handler registered in the
+                // `unit-test` task still fires here, so mockServer is
+                // shut down cleanly. See WB-48.
+                process.exit(2);
+              }
+              done();
             }
           } else {
             grunt.log.writeln(line);
@@ -848,6 +857,11 @@ const KobitonAPI = require("./features/support/kobiton");
 
           let mockServer = createMockCerdiServer();
           mockServer.makeMockSample();
+          // Cleanup runs at process exit — including the process.exit(2)
+          // path triggered from `output-logs` on UNIT_TESTS_FAILED. See
+          // WB-48. `grunt.task.run` only queues; doing shutdown() inline
+          // here would close the port before the queued tasks even start.
+          process.once('exit', () => mockServer.shutdown());
 
           grunt.task.run(`launch:${platform}:unit-test-liveview`);
           grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
@@ -856,7 +870,6 @@ const KobitonAPI = require("./features/support/kobiton");
           if (!grunt.option('manual')) {
             grunt.task.run(`terminate:${platform}`);
           }
-          mockServer.shutdown();
           done();
         }).catch(err => { grunt.fail.fatal(err); done(); });
       } else {
@@ -865,6 +878,8 @@ const KobitonAPI = require("./features/support/kobiton");
 
         let mockServer = createMockCerdiServer();
         mockServer.makeMockSample();
+        // See above — cleanup at process exit.
+        process.once('exit', () => mockServer.shutdown());
 
         grunt.task.run(`launch:${platform}:unit-test`);
         grunt.task.run(`output-logs:${platform}:${preview?"preview":""}`);
@@ -873,7 +888,6 @@ const KobitonAPI = require("./features/support/kobiton");
         if (!grunt.option('manual')) {
           grunt.task.run(`terminate:${platform}`);
         }
-        mockServer.shutdown();
       }
     } );
 
