@@ -416,7 +416,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           build_test: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js" "build-tests/unit/CucumberLauncher_spec.js"`,
+            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js" "build-tests/unit/CucumberLauncher_spec.js" "build-tests/unit/parseUnitTestResult_spec.js"`,
             stdout: "inherit", stderr: "inherit"
           },
 
@@ -692,7 +692,10 @@ const KobitonAPI = require("./features/support/kobiton");
       const isSimulator = grunt.option('simulator') || false;
       const idleTimeoutMs = 5 * 60 * 1000; // fail if no output for 5 minutes
 
-      getLauncher(platform, isSimulator).then(launcher => {
+      Promise.all([
+        getLauncher(platform, isSimulator),
+        import("./build-utils/parseUnitTestResult.js")
+      ]).then(([launcher, { parseUnitTestResult }]) => {
         let stop;
         const logLevel = grunt.option('log-level') || 'info';
         let timer;
@@ -708,11 +711,13 @@ const KobitonAPI = require("./features/support/kobiton");
 
         stop = launcher.streamLogs(line => {
           resetTimer();
-          if (/UNIT_TESTS_(PASSED|FAILED)/.test(line)) {
+          const result = parseUnitTestResult(line);
+          if (result) {
             clearTimeout(timer);
             if (option !== "preview") {
               stop();
-              done();
+              // grunt's async done(): no arg / true = success, false = fail
+              done(result === "passed");
             }
           } else {
             grunt.log.writeln(line);
