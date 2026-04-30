@@ -15,10 +15,14 @@ function getBugfender() {
 // the long-term sink. See WB-45.
 const LOG_CAP = 200;
 const _logBuffer = [];
+const _listeners = [];
 
 function _append(tag, message) {
     _logBuffer.push("[" + tag + "] " + message);
     if (_logBuffer.length > LOG_CAP) _logBuffer.splice(0, _logBuffer.length - LOG_CAP);
+    // Notify after the buffer is updated so listeners see the new line
+    // when they call getLogLines(). See WB-45.
+    for (let i = 0; i < _listeners.length; i++) _listeners[i]();
 }
 
 exports.getLogLines = function() {
@@ -27,6 +31,15 @@ exports.getLogLines = function() {
 
 exports.clearLog = function() {
     _logBuffer.length = 0;
+};
+
+exports.addListener = function(cb) {
+    _listeners.push(cb);
+};
+
+exports.removeListener = function(cb) {
+    const idx = _listeners.indexOf(cb);
+    if (idx >= 0) _listeners.splice(idx, 1);
 };
 
 exports.configure = function() {

@@ -76,4 +76,45 @@ describe("Logger ring buffer", function () {
             expect(Logger.getLogLines()).to.deep.equal([]);
         });
     });
+
+    describe("addListener() / removeListener()", function () {
+        it("notifies listeners on each log/warn/error call", function () {
+            const seen = [];
+            Logger.addListener(() => seen.push(Logger.getLogLines().length));
+            Logger.log("a");
+            Logger.warn("b");
+            Logger.error("c");
+            expect(seen).to.deep.equal([1, 2, 3]);
+        });
+
+        it("notifies after the line is appended (so listeners see the new entry)", function () {
+            let observedLast;
+            Logger.addListener(() => {
+                const lines = Logger.getLogLines();
+                observedLast = lines[lines.length - 1];
+            });
+            Logger.log("hello");
+            expect(observedLast).to.equal("[trace] hello");
+        });
+
+        it("stops notifying after removeListener()", function () {
+            let calls = 0;
+            const cb = () => { calls += 1; };
+            Logger.addListener(cb);
+            Logger.log("first");
+            Logger.removeListener(cb);
+            Logger.log("second");
+            expect(calls).to.equal(1);
+        });
+
+        it("supports multiple independent listeners", function () {
+            const seenA = [];
+            const seenB = [];
+            Logger.addListener(() => seenA.push(1));
+            Logger.addListener(() => seenB.push(1));
+            Logger.log("x");
+            expect(seenA).to.deep.equal([1]);
+            expect(seenB).to.deep.equal([1]);
+        });
+    });
 });
