@@ -14,7 +14,14 @@ describe("SyncFeedback controller", function () {
 
     describe("initial (idle) state", function () {
         beforeEach(async () => {
-            ctl = Alloy.createController("SyncFeedback");
+            // Inject a fresh SyncStore-backed syncController so we test
+            // the idle-state render in isolation, not whatever residual
+            // state the module-level syncStore singleton in SampleSync.js
+            // is left in by SampleSync_spec running earlier in the
+            // suite (recordSuccess() leaves it at 100% Sync complete).
+            // Same pattern as the mid-sync block below. See WB-48.
+            var { syncController } = createSyncController(SyncStore);
+            ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
