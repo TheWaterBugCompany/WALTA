@@ -8,6 +8,21 @@ When('I open the sample history and tap Sync Now', {timeout: 60000}, async funct
 
 Then('the sync popup completes successfully', {timeout: 120000}, async function () {
     await this.syncFeedback.waitForSuccess();
+});
+
+When('I tap Show Logs in the sync popup', async function () {
+    await this.syncFeedback.openLogs();
+});
+
+Then('the log pane shows sync activity from the Logger', async function () {
+    // Logger.log() defaults to tag "trace" and the pane prefixes every
+    // line with `[<tag>] `. If any sync code path executed Logger.log()
+    // (which it does — see SampleSync/SampleUploader/CerdiApi), the
+    // pane will contain at least one `[trace]` line. See WB-45.
+    await this.syncFeedback.expectLogsContain("[trace]");
+});
+
+When('I close the sync popup', async function () {
     await this.syncFeedback.clickClose();
 });
 

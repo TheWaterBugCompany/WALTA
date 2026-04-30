@@ -7,6 +7,9 @@ Scenario: User initiates sync from sample history
     And I have existing samples stored on the server
    When I open the sample history and tap Sync Now
    Then the sync popup completes successfully
+   When I tap Show Logs in the sync popup
+   Then the log pane shows sync activity from the Logger
+   When I close the sync popup
 
 @skip
 Scenario: Upload a sample when server is reachable

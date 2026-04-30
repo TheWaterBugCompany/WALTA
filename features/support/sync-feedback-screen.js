@@ -14,6 +14,14 @@ class SyncFeedbackScreen extends BaseScreen {
         await this.waitForText("Sync complete", 120000);
     }
 
+    async openLogs() {
+        await this.clickByText("Show Logs");
+    }
+
+    async expectLogsContain(text) {
+        await this.waitForText(text);
+    }
+
     async clickClose() {
         await this.click("Close sync popup");
     }
