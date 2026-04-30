@@ -212,16 +212,11 @@ jobs:
       - name: Run iOS simulator unit tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        # Same retry rationale as the Android jobs (WB-54): defence in
-        # depth against transient SDK / runner flakes.
-        run: |
-          for attempt in 1 2; do
-            if npx grunt --platform=ios --simulator unit-test; then
-              exit 0
-            fi
-            echo "::warning ::iOS unit-test attempt $attempt failed; retrying once (WB-54)"
-          done
-          exit 1
+        # Retry once on infrastructure flake (WB-54), but skip the retry
+        # if the device-side mocha runner emitted UNIT_TESTS_FAILED — a
+        # deterministic failure won't pass on re-run, so retrying just
+        # burns ~15 min for nothing. See WB-48.
+        run: bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=ios --simulator unit-test
 
       - name: Capture simulator diagnostics on failure
         if: failure()
@@ -374,19 +369,15 @@ jobs:
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          # Retry once on failure to absorb the intermittent AAPT
-          # `Theme.WaterbugApp not found` resource-linker flake (WB-54).
-          # Emulator stays booted across attempts so retry cost is just
-          # the gradle+test cycle (~2.5 min). A genuine deterministic
-          # failure still fails the job after the second attempt.
-          #
-          # `reactivecircus/android-emulator-runner@v2` runs each line
-          # of `script:` via a separate `sh -c`, so the retry has to
-          # fit on one logical line — `||` short-circuit is the
-          # cleanest fit.
+          # Retry once on infrastructure flake (WB-54: AAPT
+          # `Theme.WaterbugApp not found` resource-linker glitch). Skip
+          # the retry if the device-side mocha runner emitted
+          # UNIT_TESTS_FAILED — a deterministic failure won't pass on a
+          # re-run, so retrying just burns the ~2.5 min gradle+test
+          # cycle for nothing. See WB-48.
           script: |
             echo "Emulator booted"
-            npx grunt --platform=android --simulator unit-test || { echo "::warning ::Android unit-test first attempt failed; retrying once (WB-54)"; npx grunt --platform=android --simulator unit-test; }
+            bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=android --simulator unit-test
 
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
   ios-simulator-acceptance-tests:
