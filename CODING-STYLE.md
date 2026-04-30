@@ -2,17 +2,19 @@
 
 ## JavaScript
 
-New code in `build-utils/` and `build-tests/` should follow modern JavaScript practices:
+### Async style — `async`/`await` everywhere
 
-- **Modules:** Use `import`/`export` (ES modules) instead of `require`/`module.exports`
-- **Async:** Use `async`/`await` instead of `.then()`/`.catch()` chains
+Default to `async`/`await` for all new code, including in `walta-app/`. Modern Titanium SDKs (13.x+) support it natively at the language level — the legacy `.then()` chains in app code reflect when they were written, not a runtime constraint.
 
-`build-utils/` and `build-tests/` have a `package.json` with `"type": "module"` which
-enables ES module syntax for all `.js` files within them. The mocha commands for these
-tests use `NODE_OPTIONS=--experimental-vm-modules` to support ESM.
+When editing a file that uses `.then()` chains, convert the chains you touch to `async`/`await` as part of the change. **Opportunistic, not big-bang** — don't rewrite an entire file unless that's the task. The intent is to migrate the codebase incrementally as we move through it, without dedicated migration work.
 
-`Gruntfile.js` is CommonJS (`module.exports`, `require`) for Grunt compatibility — new
-code added to it should use `async`/`await` where possible, but `import`/`export` is not
-available there. Use dynamic `import()` to consume ES modules from the Gruntfile.
+### Module system — depends on the directory
 
-Legacy code in `walta-app/` uses CommonJS and `.then()` chains — leave those as-is.
+| Directory | Module style | Reason |
+|-----------|-------------|--------|
+| `build-utils/` | ES modules (`import`/`export`) | Has `package.json` with `"type": "module"` |
+| `build-tests/` | ES modules (`import`/`export`) | Has `package.json` with `"type": "module"`; mocha runs with `NODE_OPTIONS=--experimental-vm-modules` |
+| `Gruntfile.js` | CommonJS (`module.exports`, `require`) | Grunt 1.6+ supports `Gruntfile.mjs` for ESM — tracked in WB-55. Until that lands, use dynamic `import()` to consume ES modules. |
+| `walta-app/` | CommonJS (`require`, `module.exports`) | **Alloy's build pipeline is CommonJS-only.** Switching to ESM would require rewriting Alloy itself. Keep `require()` and `module.exports` in app code. |
+
+The Alloy constraint only applies to module syntax. `async`/`await` is just JavaScript syntax and works fine inside a CommonJS file.
