@@ -716,18 +716,12 @@ jobs:
       - name: Run iOS acceptance tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        # Retry once (WB-54). Cucumber suite takes ~15 min so a retry
-        # roughly doubles the cost on a deterministic failure — but
-        # acceptance flakes are common enough on macOS-15 runners that
-        # the trade-off favours green over fast-fail.
-        run: |
-          for attempt in 1 2; do
-            if npx grunt --platform=ios --simulator --skip-build acceptance-test; then
-              exit 0
-            fi
-            echo "::warning ::iOS acceptance attempt $attempt failed; retrying once (WB-54)"
-          done
-          exit 1
+        # Retry once on infrastructure flake (WB-54: macOS-15 runners,
+        # Appium / xcuitest hiccups). Skip the retry if cucumber-js
+        # exited 1 → grunt exit 2 → wrapper exit 1: the test failure
+        # is deterministic and a 15-min retry is wasted. Same exit-code
+        # contract as the WB-48 unit-test gating.
+        run: bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=ios --simulator --skip-build acceptance-test
 
       - name: Capture simulator diagnostics on failure
         if: failure()
@@ -853,11 +847,14 @@ jobs:
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          # Retry once on failure — same rationale as the unit-test job
-          # above (WB-54). Wraps both preflight and acceptance so either
-          # phase being hit by the AAPT flake gets a second shot.
-          # Single-line form per the action's `sh -c`-per-line execution
-          # model.
+          # Retry once on infrastructure flake (WB-54: AAPT
+          # `Theme.WaterbugApp not found` resource-linker glitch,
+          # Appium hiccups, etc.). Skip the retry if cucumber-js
+          # exited 1 → grunt exit 2 → wrapper exit 1: the failure is a
+          # deterministic test fail and a retry is just burning cycles.
+          # Same exit-code contract as the WB-48 unit-test gating.
+          # Wraps both preflight and acceptance so either phase being
+          # hit by an infra flake gets the second shot.
           script: |
             echo "Emulator booted"
-            ( npx grunt acceptance-preflight-test-android-emulator && npx grunt --platform=android --simulator --skip-build acceptance-test ) || { echo "::warning ::Android acceptance first attempt failed; retrying once (WB-54)"; npx grunt acceptance-preflight-test-android-emulator && npx grunt --platform=android --simulator --skip-build acceptance-test; }
+            bash build-utils/run-unit-tests-with-retry.sh sh -c "npx grunt acceptance-preflight-test-android-emulator && npx grunt --platform=android --simulator --skip-build acceptance-test"

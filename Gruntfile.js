@@ -589,12 +589,25 @@ const KobitonAPI = require("./features/support/kobiton");
       import("./build-utils/CucumberLauncher.js")
         .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, appiumOptions }).run())
         .then((code) => {
-          if (code !== 0) {
-            grunt.log.error(`cucumber-js exited with code ${code}`);
-            done(false);
+          if (code === 0) {
+            done();
             return;
           }
-          done();
+          if (code === 1) {
+            // cucumber-js exit 1 = ran to completion, reported test
+            // failures. Deterministic — no point retrying. Use exit
+            // code 2 so the CI retry wrapper
+            // (build-utils/run-unit-tests-with-retry.sh) skips its
+            // retry. Same convention as the on-device unit-test path
+            // established in WB-48.
+            grunt.log.error(`cucumber-js reported test failures (exit 1) — not retrying`);
+            process.exit(2);
+          }
+          // Other non-zero — pre-launch / appium / infrastructure
+          // failure. Let grunt's normal failure path run so the wrapper
+          // retries once.
+          grunt.log.error(`cucumber-js exited with code ${code}`);
+          done(false);
         })
         .catch((err) => { grunt.fail.fatal(err); done(false); });
     });
