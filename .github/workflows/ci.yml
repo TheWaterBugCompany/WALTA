@@ -847,14 +847,20 @@ jobs:
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          # Retry once on infrastructure flake (WB-54: AAPT
-          # `Theme.WaterbugApp not found` resource-linker glitch,
-          # Appium hiccups, etc.). Skip the retry if cucumber-js
-          # exited 1 → grunt exit 2 → wrapper exit 1: the failure is a
-          # deterministic test fail and a retry is just burning cycles.
-          # Same exit-code contract as the WB-48 unit-test gating.
-          # Wraps both preflight and acceptance so either phase being
-          # hit by an infra flake gets the second shot.
+          # Two phases — preflight then cucumber — each independently
+          # retry-wrapped, mirroring the iOS structure (preflight + Run
+          # iOS acceptance tests are separate steps there). The
+          # emulator-runner action runs each `script:` line via its own
+          # `sh -c`, so a failed preflight after retry doesn't
+          # short-circuit the cucumber phase — the cucumber phase will
+          # also fail and the overall step goes red. The wasted ~5 min
+          # is acceptable for the readability win in CI logs (each
+          # phase reports separately).
+          #
+          # Retry semantics on each phase: skip retry if grunt exits
+          # 2 (cucumber test failures, deterministic) — same exit-code
+          # contract established in WB-48.
           script: |
             echo "Emulator booted"
-            bash build-utils/run-unit-tests-with-retry.sh sh -c "npx grunt acceptance-preflight-test-android-emulator && npx grunt --platform=android --simulator --skip-build acceptance-test"
+            bash build-utils/run-unit-tests-with-retry.sh npx grunt acceptance-preflight-test-android-emulator
+            bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=android --simulator --skip-build acceptance-test
