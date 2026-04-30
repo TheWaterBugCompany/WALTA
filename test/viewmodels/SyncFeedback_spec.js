@@ -34,6 +34,26 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
+  describe("logLines live updates (Logger subscription — WB-45)", function () {
+    it("notifies vm listeners when Logger emits a new line", function () {
+      const seen = [];
+      vm.addListener(() => seen.push(vm.logLines.length));
+      Logger.log("first", "sync");
+      Logger.warn("second", "sync");
+      expect(seen).to.deep.equal([1, 2]);
+    });
+
+    it("unsubscribes from Logger on dispose() — no further vm notifications", function () {
+      let calls = 0;
+      vm.addListener(() => { calls += 1; });
+      Logger.log("before-dispose", "sync");
+      expect(calls).to.equal(1);
+      vm.dispose();
+      Logger.log("after-dispose", "sync");
+      expect(calls).to.equal(1);
+    });
+  });
+
   describe("logLines (sourced from Logger ring buffer — WB-45)", function () {
     it("returns whatever Logger has captured at read time", function () {
       Logger.log("starting upload", "sync");

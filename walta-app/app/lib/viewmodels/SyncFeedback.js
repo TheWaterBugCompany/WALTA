@@ -13,6 +13,10 @@ class SyncFeedbackViewModel extends ChangeNotifier {
     this._logVisible = false;
     this._onSyncChange = () => this.notifyListeners();
     syncController.addListener(this._onSyncChange);
+    // Live-update the Show Logs pane as new Logger output arrives,
+    // independently of sync progress events. See WB-45.
+    this._onLoggerEmit = () => this.notifyListeners();
+    Logger.addListener(this._onLoggerEmit);
   }
 
   get status()       { return this._syncController.status; }
@@ -84,6 +88,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
 
   dispose() {
     this._syncController.removeListener(this._onSyncChange);
+    Logger.removeListener(this._onLoggerEmit);
     super.dispose();
   }
 }
