@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 WALTA (Waterbug App) is a cross-platform mobile app for iOS and Android that enables dichotomous key-based insect identification for water quality monitoring. It is built on the Titanium/Alloy MVC framework.
 
+## Coding Style
+
+See [CODING-STYLE.md](CODING-STYLE.md) for JavaScript conventions — module system per directory, async/await direction, and incremental migration guidance.
+
 ## Methodology
 
 Folloing as test driven development philsophy, as Kent Beck intended, here is the breakdown:
