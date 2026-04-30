@@ -14,6 +14,18 @@ function exec(execFile, adb, args) {
   });
 }
 
+// Single-quote a string for `adb shell` to preserve it as a single
+// token. `adb shell <args...>` joins the args with spaces and runs the
+// result as a shell command on the device, so an unquoted value with
+// spaces gets re-tokenised — `am start --es test_grep "renders Logger
+// lines"` becomes `am start --es test_grep renders Logger lines`,
+// which makes `am start` interpret `Logger` as the next positional
+// and silently drop subsequent extras (including `--ez unit_test
+// true`). Standard POSIX single-quote escape: `'` → `'\''`.
+function shellQuote(s) {
+  return "'" + String(s).replace(/'/g, "'\\''") + "'";
+}
+
 function buildIntentExtras(launchArgs) {
   if (!launchArgs) return [];
   const flags = [];
@@ -22,7 +34,7 @@ function buildIntentExtras(launchArgs) {
     if (typeof value === "boolean") {
       flags.push("--ez", key, value ? "true" : "false");
     } else if (value !== undefined && value !== null) {
-      flags.push("--es", key, String(value));
+      flags.push("--es", key, shellQuote(value));
     }
   }
   return flags;
