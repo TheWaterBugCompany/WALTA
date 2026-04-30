@@ -10,6 +10,25 @@ function getBugfender() {
     return _Bugfender;
 }
 
+// In-memory ring buffer of recent log lines so the SyncFeedback
+// "Show Logs" popup pane has something to display. Bugfender remains
+// the long-term sink. See WB-45.
+const LOG_CAP = 200;
+const _logBuffer = [];
+
+function _append(tag, message) {
+    _logBuffer.push("[" + tag + "] " + message);
+    if (_logBuffer.length > LOG_CAP) _logBuffer.splice(0, _logBuffer.length - LOG_CAP);
+}
+
+exports.getLogLines = function() {
+    return _logBuffer.slice();
+};
+
+exports.clearLog = function() {
+    _logBuffer.length = 0;
+};
+
 exports.configure = function() {
     const Bugfender = getBugfender();
     if (!Bugfender) return;
@@ -56,16 +75,19 @@ exports.warn = function(message, tag = "warn") {
     const Bugfender = getBugfender();
     if (Bugfender) Bugfender.w({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.warn(message); else console.warn(message);
+    _append(tag, message);
 };
 
 exports.error = function(message, tag = "error") {
     const Bugfender = getBugfender();
     if (Bugfender) Bugfender.e({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.error(message); else console.error(message);
+    _append(tag, message);
 };
 
 exports.log = function(message, tag = "trace") {
     const Bugfender = getBugfender();
     if (Bugfender) Bugfender.t({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.debug(message); else console.log(message);
+    _append(tag, message);
 };
