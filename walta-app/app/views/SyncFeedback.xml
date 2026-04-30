@@ -20,7 +20,7 @@
             </View>
             <View id="buttonRow" class="buttonRow" layout="horizontal">
                 <Button id="diagnosticsButton" class="actionButton" visible="false">Diagnostics</Button>
-                <Button id="logToggleButton" class="actionButton">Show Log</Button>
+                <Button id="logToggleButton" class="actionButton" accessibilityLabel="Toggle log pane">Show Log</Button>
                 <Button id="closeBottomButton" class="actionButton" accessibilityLabel="Close sync popup">Close</Button>
             </View>
         </View>

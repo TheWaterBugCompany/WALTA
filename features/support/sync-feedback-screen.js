@@ -15,7 +15,7 @@ class SyncFeedbackScreen extends BaseScreen {
     }
 
     async openLogs() {
-        await this.clickByText("Show Logs");
+        await this.click("Toggle log pane");
     }
 
     async expectLogsContain(text) {
