@@ -159,20 +159,16 @@ jobs:
       - name: Create app config (production or test sandbox)
         run: |
           if [ "${{ inputs.environment }}" = "test" ]; then
-            cat > walta-app/app/app-config.test.json << EOF
-            {
-              "cerdiServerUrl": "${{ secrets.CERDI_TEST_SERVER_URL }}",
-              "cerdiApiSecret": "${{ secrets.CERDI_TEST_API_SECRET }}"
-            }
-            EOF
+            printf '{\n  "cerdiServerUrl": "%s",\n  "cerdiApiSecret": "%s"\n}\n' \
+              "${{ secrets.CERDI_TEST_SERVER_URL }}" \
+              "${{ secrets.CERDI_TEST_API_SECRET }}" \
+              > walta-app/app/app-config.test.json
             echo "Wrote app-config.test.json — sandbox API"
           else
-            cat > walta-app/app/app-config.production.json << EOF
-            {
-              "cerdiServerUrl": "${{ secrets.CERDI_SERVER_URL }}",
-              "cerdiApiSecret": "${{ secrets.CERDI_API_SECRET }}"
-            }
-            EOF
+            printf '{\n  "cerdiServerUrl": "%s",\n  "cerdiApiSecret": "%s"\n}\n' \
+              "${{ secrets.CERDI_SERVER_URL }}" \
+              "${{ secrets.CERDI_API_SECRET }}" \
+              > walta-app/app/app-config.production.json
             echo "Wrote app-config.production.json — production API"
           fi
 
@@ -295,20 +291,16 @@ jobs:
       - name: Create app config (production or test sandbox)
         run: |
           if [ "${{ inputs.environment }}" = "test" ]; then
-            cat > walta-app/app/app-config.test.json << EOF
-            {
-              "cerdiServerUrl": "${{ secrets.CERDI_TEST_SERVER_URL }}",
-              "cerdiApiSecret": "${{ secrets.CERDI_TEST_API_SECRET }}"
-            }
-            EOF
+            printf '{\n  "cerdiServerUrl": "%s",\n  "cerdiApiSecret": "%s"\n}\n' \
+              "${{ secrets.CERDI_TEST_SERVER_URL }}" \
+              "${{ secrets.CERDI_TEST_API_SECRET }}" \
+              > walta-app/app/app-config.test.json
             echo "Wrote app-config.test.json — sandbox API"
           else
-            cat > walta-app/app/app-config.production.json << EOF
-            {
-              "cerdiServerUrl": "${{ secrets.CERDI_SERVER_URL }}",
-              "cerdiApiSecret": "${{ secrets.CERDI_API_SECRET }}"
-            }
-            EOF
+            printf '{\n  "cerdiServerUrl": "%s",\n  "cerdiApiSecret": "%s"\n}\n' \
+              "${{ secrets.CERDI_SERVER_URL }}" \
+              "${{ secrets.CERDI_API_SECRET }}" \
+              > walta-app/app/app-config.production.json
             echo "Wrote app-config.production.json — production API"
           fi
 
