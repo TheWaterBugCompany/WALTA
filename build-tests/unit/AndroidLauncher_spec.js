@@ -136,19 +136,19 @@ describe("AndroidLauncher", function() {
       ]);
     });
 
-    it("appends string launchArgs as --es intent extras on am start", async function() {
+    it("appends string launchArgs as --es intent extras on am start (single-quoted)", async function() {
       const fakeExecFile = makeExecFile({
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep SyncFeedback": ""
+        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'SyncFeedback'": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", null, { test_grep: "SyncFeedback" });
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
-        "--es", "test_grep", "SyncFeedback"
+        "--es", "test_grep", "'SyncFeedback'"
       ]);
     });
 
@@ -173,15 +173,57 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep SyncFeedback --ez test_manual true": ""
+        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'SyncFeedback' --ez test_manual true": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", null, { test_grep: "SyncFeedback", test_manual: true });
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
-        "--es", "test_grep", "SyncFeedback",
+        "--es", "test_grep", "'SyncFeedback'",
         "--ez", "test_manual", "true"
+      ]);
+    });
+
+    it("single-quotes string launchArg values so adb shell does not tokenise on spaces", async function() {
+      // Without quoting, `--es test_grep renders Logger lines --ez unit_test true`
+      // becomes `am start --es test_grep renders Logger lines --ez unit_test true`
+      // on the device — `am start` parses `Logger` as the next positional and
+      // everything after is dropped, including `--ez unit_test true`. The
+      // dispatcher then doesn't see `unit_test=true` and routes to the prod
+      // app instead of the on-device test runner. Reproduced 2026-04-30.
+      const fakeExecFile = makeExecFile({
+        "devices": DEVICES_OUTPUT,
+        ...STAY_AWAKE_RESPONSES,
+        "-s emulator-5554 logcat -c": "",
+        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'renders Logger lines' --ez unit_test true": ""
+      });
+      const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
+      await launcher.launch("net.thewaterbug.waterbug", null, {
+        test_grep: "renders Logger lines",
+        unit_test: true,
+      });
+      expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
+        "-s", "emulator-5554",
+        "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
+        "--es", "test_grep", "'renders Logger lines'",
+        "--ez", "unit_test", "true",
+      ]);
+    });
+
+    it("escapes embedded single quotes in launchArg string values", async function() {
+      const fakeExecFile = makeExecFile({
+        "devices": DEVICES_OUTPUT,
+        ...STAY_AWAKE_RESPONSES,
+        "-s emulator-5554 logcat -c": "",
+        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es msg 'don'\\''t panic'": ""
+      });
+      const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
+      await launcher.launch("net.thewaterbug.waterbug", null, { msg: "don't panic" });
+      expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
+        "-s", "emulator-5554",
+        "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
+        "--es", "msg", "'don'\\''t panic'",
       ]);
     });
 
