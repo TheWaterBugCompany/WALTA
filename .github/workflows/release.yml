@@ -29,6 +29,13 @@ on:
           - android
           - ios
         default: both
+      skip_ci_gate:
+        description: >
+          Skip the requirement that the latest CI run on the release SHA
+          succeeded. Use only when CI is red for a known unrelated reason
+          (e.g. an intermittent flake) and you've manually verified the build.
+        type: boolean
+        default: false
 
 # Only one release at a time
 concurrency:
@@ -39,9 +46,47 @@ env:
   GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
 
 jobs:
+  # ── Gate: latest CI run on this SHA must have succeeded ────────────────
+  ci-gate:
+    name: CI gate
+    if: ${{ !inputs.skip_ci_gate }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify latest CI on release SHA succeeded
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA="$(git rev-parse HEAD)"
+          echo "Checking CI status for $SHA"
+          RESULT=$(gh run list \
+            --workflow=ci.yml \
+            --branch=main \
+            --commit="$SHA" \
+            --limit=1 \
+            --json conclusion,status,url)
+          if [ "$RESULT" = "[]" ]; then
+            echo "::error::No CI run found for $SHA — push and wait, or set skip_ci_gate=true."
+            exit 1
+          fi
+          STATUS=$(echo "$RESULT"     | jq -r '.[0].status')
+          CONCLUSION=$(echo "$RESULT" | jq -r '.[0].conclusion')
+          URL=$(echo "$RESULT"        | jq -r '.[0].url')
+          if [ "$STATUS" != "completed" ]; then
+            echo "::error::CI run on $SHA not complete (status=$STATUS). $URL"
+            exit 1
+          fi
+          if [ "$CONCLUSION" != "success" ]; then
+            echo "::error::CI run on $SHA conclusion=$CONCLUSION. $URL — fix or set skip_ci_gate=true."
+            exit 1
+          fi
+          echo "CI run on $SHA succeeded: $URL"
+
   # ── Compute version (shared by both platform jobs) ─────────────────────
   prepare:
     name: Compute version
+    needs: ci-gate
+    if: always() && (needs.ci-gate.result == 'success' || needs.ci-gate.result == 'skipped')
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
