@@ -423,6 +423,14 @@ jobs:
         run: |
           TAG_NAME="${{ needs.prepare.outputs.tag_name }}"
           DISPLAY_VERSION="${{ needs.prepare.outputs.display_version }}"
+          # Skip if the tag already exists on the remote — supports
+          # iOS-only retries at the version Android already shipped.
+          # Existing tag stays put; for a same-version retry the app
+          # commit is unchanged so the tag is still accurate.
+          if git ls-remote --exit-code --tags origin "${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Tag ${TAG_NAME} already on remote — skipping (likely a single-platform retry)"
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${TAG_NAME}" -m "Release ${DISPLAY_VERSION}"
