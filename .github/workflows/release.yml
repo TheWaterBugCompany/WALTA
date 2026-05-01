@@ -437,10 +437,20 @@ jobs:
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode \
             > ~/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
 
+          # altool has been observed to print "ERROR: …" and exit 0 on
+          # upload rejection (e.g. CFBundleVersion violations). Capture
+          # output and fail the step if any ERROR: line appears, even
+          # when altool itself reports success.
+          ALTOOL_LOG=$(mktemp)
           xcrun altool --upload-app --type ios \
             --file builds/release/Waterbug.ipa \
             --apiKey ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} \
-            --apiIssuer ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+            --apiIssuer ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }} \
+            2>&1 | tee "$ALTOOL_LOG"
+          if grep -qE '^[0-9].* ERROR:' "$ALTOOL_LOG"; then
+            echo "::error::altool printed ERROR: lines despite exit 0 — upload rejected"
+            exit 1
+          fi
 
       - name: Cleanup keychain
         if: always()
