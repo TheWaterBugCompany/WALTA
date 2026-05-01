@@ -127,11 +127,12 @@ jobs:
           IFS='.' read -r major minor patch build <<< "$VERSION"
           VERSION_CODE=$(( major * 1000000000 + minor * 10000000 + patch * 10000 + build ))
 
-          # Test builds carry a -test suffix in the human-visible
-          # version (tiapp.xml <version>, Android versionName,
-          # CFBundleShortVersionString) and in the git tag, so John
-          # / TestFlight / Play Console can tell them apart from prod.
-          # versionCode stays purely numeric.
+          # Test builds carry a -test suffix in DISPLAY_VERSION and the
+          # git tag. Android versionName accepts alpha characters, so it
+          # uses DISPLAY_VERSION. iOS CFBundleVersion / CFBundleShortVersionString
+          # do not (Apple rejects non-integer suffixes), so the iOS build
+          # uses the numeric VERSION and relies on TestFlight branding +
+          # the sandbox CERDI endpoint to differentiate test from prod.
           if [ "$ENVIRONMENT" = "test" ]; then
             DISPLAY_VERSION="${VERSION}-test"
             TAG_NAME="v${VERSION}-test"
@@ -326,17 +327,15 @@ jobs:
           DISPLAY_VERSION="${{ needs.prepare.outputs.display_version }}"
           VERSION="${{ needs.prepare.outputs.version }}"
           VERSION_CODE="${{ needs.prepare.outputs.version_code }}"
-          # <version> maps to CFBundleVersion, which Apple requires to be
-          # composed of integers separated by periods only — so use the
-          # numeric VERSION (no -test suffix).
+          # Apple requires both CFBundleVersion AND CFBundleShortVersionString
+          # to be composed of integers separated by periods — no alpha
+          # characters allowed anywhere. Titanium maps <version> to both,
+          # so write the numeric VERSION (no -test suffix). Test builds
+          # remain identifiable by TestFlight branding + the sandbox CERDI
+          # endpoint, not by an in-version marker.
           sed -i '' "s|<version>[^<]*</version>|<version>${VERSION}</version>|" walta-app/tiapp.xml.template
           sed -i '' "s|android:versionCode=\"[^\"]*\"|android:versionCode=\"${VERSION_CODE}\"|" walta-app/tiapp.xml.template
           sed -i '' "s|android:versionName=\"[^\"]*\"|android:versionName=\"${DISPLAY_VERSION}\"|" walta-app/tiapp.xml.template
-          # Inject CFBundleShortVersionString so the user-visible version
-          # in TestFlight carries the -test marker even though
-          # CFBundleVersion stays numeric.
-          NL=$'\n'
-          sed -i '' "s|^      </dict>$|        <key>CFBundleShortVersionString</key>\\${NL}        <string>${DISPLAY_VERSION}</string>\\${NL}      </dict>|" walta-app/tiapp.xml.template
           # Regenerate tiapp.xml from updated template
           sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
             walta-app/tiapp.xml.template > walta-app/tiapp.xml
