@@ -279,14 +279,23 @@ jobs:
       - name: Bump version in tiapp.xml
         run: |
           DISPLAY_VERSION="${{ needs.prepare.outputs.display_version }}"
+          VERSION="${{ needs.prepare.outputs.version }}"
           VERSION_CODE="${{ needs.prepare.outputs.version_code }}"
-          sed -i '' "s|<version>[^<]*</version>|<version>${DISPLAY_VERSION}</version>|" walta-app/tiapp.xml.template
+          # <version> maps to CFBundleVersion, which Apple requires to be
+          # composed of integers separated by periods only — so use the
+          # numeric VERSION (no -test suffix).
+          sed -i '' "s|<version>[^<]*</version>|<version>${VERSION}</version>|" walta-app/tiapp.xml.template
           sed -i '' "s|android:versionCode=\"[^\"]*\"|android:versionCode=\"${VERSION_CODE}\"|" walta-app/tiapp.xml.template
           sed -i '' "s|android:versionName=\"[^\"]*\"|android:versionName=\"${DISPLAY_VERSION}\"|" walta-app/tiapp.xml.template
+          # Inject CFBundleShortVersionString so the user-visible version
+          # in TestFlight carries the -test marker even though
+          # CFBundleVersion stays numeric.
+          NL=$'\n'
+          sed -i '' "s|^      </dict>$|        <key>CFBundleShortVersionString</key>\\${NL}        <string>${DISPLAY_VERSION}</string>\\${NL}      </dict>|" walta-app/tiapp.xml.template
           # Regenerate tiapp.xml from updated template
           sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" \
             walta-app/tiapp.xml.template > walta-app/tiapp.xml
-          echo "Updated to version $DISPLAY_VERSION (versionCode $VERSION_CODE)"
+          echo "Updated to version $VERSION (display $DISPLAY_VERSION, versionCode $VERSION_CODE)"
 
       - name: Create app config (production or test sandbox)
         run: |
