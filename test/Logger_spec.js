@@ -165,4 +165,26 @@ describe("Logger sink dispatch", function () {
         await new Promise(r => setImmediate(r));
         expect(sink.entries[0]).to.include({ level: "debug", message: "trace me" });
     });
+
+    it("falls back to Ti.API.log when a sink's write() rejects", async function () {
+        const fallbackCalls = [];
+        global.Ti = {
+            API: {
+                log(level, message) { fallbackCalls.push({ level, message }); },
+                debug() {}, info() {}, warn() {}, error() {}
+            }
+        };
+        try {
+            Logger.addSink({ write() { return Promise.reject(new Error("disk full")); } });
+            expect(() => Logger.log("hello")).to.not.throw();
+            await new Promise(r => setImmediate(r));
+            await new Promise(r => setImmediate(r));
+            expect(fallbackCalls).to.have.length(1);
+            expect(fallbackCalls[0].level).to.equal("trace");
+            expect(fallbackCalls[0].message).to.match(/disk full/);
+            expect(fallbackCalls[0].message).to.match(/hello/);
+        } finally {
+            delete global.Ti;
+        }
+    });
 });
