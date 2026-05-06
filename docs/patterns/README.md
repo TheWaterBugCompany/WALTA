@@ -14,3 +14,4 @@ Architectural patterns and module summaries for the WALTA codebase. Each file is
 - [cerdi-api.md](cerdi-api.md) — `CerdiApi.js` HTTP client, two-token auth model
 - [key-loader.md](key-loader.md) — `KeyLoader*.js` taxonomy data loaders
 - [sample-uploader.md](sample-uploader.md) — `SampleUploader.js` sequential upload + photo optimisation
+- [logger-sinks.md](logger-sinks.md) — `Logger` sink-based dispatch: pluggable sinks, fire-and-forget, per-sink filters
