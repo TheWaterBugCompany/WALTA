@@ -182,6 +182,18 @@ describe("Logger sink dispatch", function () {
         expect(sink.entries[0]).to.include({ level: "trace", facility: "sync", message: "upload finished" });
     });
 
+    it("includes a numeric millisecond timestamp on each entry", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        const before = Date.now();
+        Logger.log("hello");
+        const after = Date.now();
+        await new Promise(r => setImmediate(r));
+        expect(sink.entries[0].ts).to.be.a("number");
+        expect(sink.entries[0].ts).to.be.at.least(before);
+        expect(sink.entries[0].ts).to.be.at.most(after);
+    });
+
     it("falls back to Ti.API.log when a sink's write() rejects", async function () {
         const fallbackCalls = [];
         global.Ti = {
