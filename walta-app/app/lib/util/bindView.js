@@ -22,10 +22,18 @@
 // Initial values are applied immediately. Returns an unbind function
 // that removes BOTH the ChangeNotifier listener and every event
 // handler registered during setup.
+//
+// Optional 4th arg `palette` resolves Palette Symbols (see
+// util/Palette.js) returned by the VM to concrete values — typically
+// pass Alloy.CFG.colors so getters like
+//   get progressColor() { return Palette.error; }
+// land in the widget as the actual hex string. The Symbol's
+// .description is the lookup key. bindView itself stays
+// Titanium-free; the controller owns the palette object.
 
 const EVENT_KEY_RE = /^on([A-Z].*)$/;
 
-module.exports = function bindView($, vm, bindings) {
+module.exports = function bindView($, vm, bindings, palette) {
   validate($, vm, bindings);
 
   const eventTeardowns = [];
@@ -36,7 +44,11 @@ module.exports = function bindView($, vm, bindings) {
       const widgetBindings = bindings[widgetId];
       for (const key in widgetBindings) {
         if (EVENT_KEY_RE.test(key)) continue;
-        widget[key] = vm[widgetBindings[key]];
+        let value = vm[widgetBindings[key]];
+        if (typeof value === "symbol" && palette) {
+          value = palette[value.description];
+        }
+        widget[key] = value;
       }
     }
   }

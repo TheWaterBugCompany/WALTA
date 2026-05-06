@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const SyncFeedbackViewModel = require("../../walta-app/app/lib/viewmodels/SyncFeedback");
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
 const Logger = require("../../walta-app/app/lib/util/Logger");
-const colors = require("../../walta-app/app/lib/util/Colors");
+const Palette = require("../../walta-app/app/lib/util/Palette");
 const createSyncController = require("../../walta-app/app/spec/fixtures/SyncController_fixture");
 
 describe("SyncFeedbackViewModel", function () {
@@ -98,31 +98,31 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
-  describe("progressColor (presentation)", function () {
-    it("is the primary colour when idle", function () {
-      expect(vm.progressColor).to.equal(colors.primary);
+  describe("progressColor (semantic palette name)", function () {
+    it("is Palette.primary when idle", function () {
+      expect(vm.progressColor).to.equal(Palette.primary);
     });
 
-    it("is the primary colour while syncing", function () {
+    it("is Palette.primary while syncing", function () {
       store.recordStart();
-      expect(vm.progressColor).to.equal(colors.primary);
+      expect(vm.progressColor).to.equal(Palette.primary);
     });
 
-    it("is the primary colour on success", function () {
+    it("is Palette.primary on success", function () {
       store.recordStart();
       store.recordSuccess();
-      expect(vm.progressColor).to.equal(colors.primary);
+      expect(vm.progressColor).to.equal(Palette.primary);
     });
 
-    it("is the primary colour while offline", function () {
+    it("is Palette.primary while offline", function () {
       store.recordOffline();
-      expect(vm.progressColor).to.equal(colors.primary);
+      expect(vm.progressColor).to.equal(Palette.primary);
     });
 
-    it("is the error colour on error", function () {
+    it("is Palette.error on error", function () {
       store.recordStart();
       store.recordError(new Error("boom"));
-      expect(vm.progressColor).to.equal(colors.error);
+      expect(vm.progressColor).to.equal(Palette.error);
     });
   });
 
