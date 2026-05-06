@@ -102,6 +102,10 @@ exports.debug = function(message) {
     _dispatch("debug", message);
 };
 
+exports.info = function(message) {
+    _dispatch("info", message);
+};
+
 exports.warn = function(message, tag = "warn") {
     const Bugfender = getBugfender();
     if (Bugfender) Bugfender.w({ tag, message });
