@@ -14,9 +14,37 @@ Device specs (`walta-app/app/spec/*_spec.js`) run on a real or simulated device 
 # Fastest loop (LiveView reuses the dev server across runs)
 npx grunt --platform=android --simulator --liveview --reuse-server unit-test
 
-# Filter to one describe block by adding .only in the spec file:
+# Filter to specs matching a mocha grep pattern (preferred — no tracked-file edits).
+# IMPORTANT: use --grep=… (with `=`). Bare `--grep "..."` makes grunt treat the
+# value as a task name and aborts with `Task "..." not found`.
+npx grunt --platform=android --simulator --liveview --reuse-server unit-test --grep="error state"
+
+# Open the matching spec in manual mode so the screen stays open for human poking:
+npx grunt --platform=android --simulator --liveview --reuse-server --manual unit-test --grep="error state"
+
+# Last-resort filter when --grep isn't enough — add .only in the spec file.
+# Avoid committing this; it breaks the rest of the suite in CI.
 describe.only("My test", function() { ... });
 ```
+
+`--grep` and `--manual` are both forwarded from `grunt` → the on-device test runner via `launchArgs` (see `Gruntfile.js` and `walta-app/app/spec/index.js`).
+
+### Editing `config.json` while LiveView is running
+
+Editing `app/config.json` (e.g. tweaking the `Alloy.CFG.colors` palette) while a LiveView dev server is running will usually crash the next reload with:
+
+```
+Unexpected error: Uncaught Error: Requested module not found:
+  /@fs/.../node_modules/alloy/Alloy/lib/alloy/underscore.js
+```
+
+This is a known interaction between Alloy's compiler and LiveView's Vite-based HMR — not a code bug. Mechanism:
+
+- `node_modules/alloy/Alloy/template/lib/alloy.js` (the file that becomes the `Alloy` global) starts with `require('/alloy/underscore')`. `/alloy/*` is a virtual Titanium-runtime path, not a filesystem path.
+- Under LiveView, `Module.liveViewRequire` forwards that require to Vite. Vite only serves modules from the dependency graph it built lazily when the dev server started — it has no "look on disk" fallback for virtual paths.
+- A `config.json` edit makes Alloy regenerate `alloy.js` with a fresh dependency tree. The new file's *bytes* get HMR'd into Vite, but Vite's *resolver graph* is stale — it doesn't know to pre-index the new imports. Next require → 404.
+
+Workaround: drop `--reuse-server` (and ideally `--liveview` too) on the next run after editing `config.json`. LiveView is fine for source/style edits *between* config changes.
 
 See also the `fast-device-test` skill.
 
