@@ -118,3 +118,51 @@ describe("Logger ring buffer", function () {
         });
     });
 });
+
+// see docs/patterns/logger-sinks.md
+describe("Logger sink dispatch", function () {
+    let Logger;
+
+    beforeEach(function () {
+        delete require.cache[require.resolve("../walta-app/app/lib/util/Logger")];
+        Logger = require("../walta-app/app/lib/util/Logger");
+    });
+
+    function captureSink() {
+        const entries = [];
+        return { entries, write(entry) { entries.push(entry); return Promise.resolve(); } };
+    }
+
+    it("forwards Logger.log() entries to a registered sink", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        Logger.log("hello");
+        await new Promise(r => setImmediate(r));
+        expect(sink.entries).to.have.length(1);
+        expect(sink.entries[0]).to.include({ level: "trace", message: "hello" });
+    });
+
+    it("forwards Logger.warn() with level 'warn'", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        Logger.warn("careful");
+        await new Promise(r => setImmediate(r));
+        expect(sink.entries[0]).to.include({ level: "warn", message: "careful" });
+    });
+
+    it("forwards Logger.error() with level 'error'", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        Logger.error("boom");
+        await new Promise(r => setImmediate(r));
+        expect(sink.entries[0]).to.include({ level: "error", message: "boom" });
+    });
+
+    it("forwards Logger.debug() with level 'debug'", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        Logger.debug("trace me");
+        await new Promise(r => setImmediate(r));
+        expect(sink.entries[0]).to.include({ level: "debug", message: "trace me" });
+    });
+});
