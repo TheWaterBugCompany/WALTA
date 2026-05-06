@@ -48,10 +48,7 @@ When the user asks to start work on a Trello card (e.g. "let's start work on WB-
 
 1. Look up the card details from Trello to understand the requirements.
 2. Create a new branch named `task/wb-<N>-<short-slug>`.
-3. Once the first commits are ready, create a **draft PR** with:
-   - Title: `WB-<N>: <card title>`
-   - A link to the Trello card in the PR description
-   - A test plan checklist
+3. Once the first commits are ready, create a **draft PR** following the template in [docs/pull-requests.md](docs/pull-requests.md).
 
 ## Commands
 
@@ -155,6 +152,7 @@ All technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBU
 - [docs/architecture-vision.md](docs/architecture-vision.md) — long-term architectural direction
 - [docs/testing.md](docs/testing.md) — five test layers, when to write what, LiveView fast-iteration, run-both-suites rule, known gaps
 - [docs/device-specs.md](docs/device-specs.md) — writing device specs: idioms, child-controller refs, test pollution, `--manual` cleanup
+- [docs/pull-requests.md](docs/pull-requests.md) — PR template: title format, Trello link, screenshots policy, test plan checklist
 - [docs/patterns/](docs/patterns/) — one file per pattern / module summary (controller patterns, ViewModels, toolbar buttons, `CerdiApi`, `KeyLoader*`, `SampleUploader`, `Navigation`, …). See [docs/patterns/README.md](docs/patterns/README.md) for the index.
 
 ### Configuration & Environment
