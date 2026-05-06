@@ -17,8 +17,8 @@ exports.addSink = function (sink) {
     _sinks.push(sink);
 };
 
-function _dispatch(level, message) {
-    const entry = { level, message };
+function _dispatch(level, facility, message) {
+    const entry = { level, facility, message };
     for (let i = 0; i < _sinks.length; i++) {
         Promise.resolve(_sinks[i].write(entry)).catch(function (err) {
             const fallback = "Logger sink failed: " + (err && err.message) + " — original: " + message;
@@ -97,13 +97,13 @@ exports.setUserId = function(userId) {
     if (Bugfender) Bugfender.setDeviceString({ key: "user.email", value: userId });
 }
 
-exports.debug = function(message) {
+exports.debug = function(message, tag = "debug") {
     if (typeof Ti !== 'undefined') Ti.API.debug(message); else console.log(message);
-    _dispatch("debug", message);
+    _dispatch("debug", tag, message);
 };
 
-exports.info = function(message) {
-    _dispatch("info", message);
+exports.info = function(message, tag = "info") {
+    _dispatch("info", tag, message);
 };
 
 exports.warn = function(message, tag = "warn") {
@@ -111,7 +111,7 @@ exports.warn = function(message, tag = "warn") {
     if (Bugfender) Bugfender.w({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.warn(message); else console.warn(message);
     _append(tag, message);
-    _dispatch("warn", message);
+    _dispatch("warn", tag, message);
 };
 
 exports.error = function(message, tag = "error") {
@@ -119,7 +119,7 @@ exports.error = function(message, tag = "error") {
     if (Bugfender) Bugfender.e({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.error(message); else console.error(message);
     _append(tag, message);
-    _dispatch("error", message);
+    _dispatch("error", tag, message);
 };
 
 exports.log = function(message, tag = "trace") {
@@ -127,5 +127,5 @@ exports.log = function(message, tag = "trace") {
     if (Bugfender) Bugfender.t({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.debug(message); else console.log(message);
     _append(tag, message);
-    _dispatch("trace", message);
+    _dispatch("trace", tag, message);
 };
