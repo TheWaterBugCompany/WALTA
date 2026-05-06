@@ -1,35 +1,14 @@
-# Device Spec Idioms
+# Writing device specs
 
 Device specs (`walta-app/app/spec/*_spec.js`) run on a real or simulated device via the Titanium runtime. Use them when you need real `Ti.*` APIs, real Alloy controller construction, or a quick controller-level smoke test that's faster than acceptance.
+
+This page is about **writing** them — idioms, helpers, gotchas. For how to **run** them (commands, LiveView, `--grep`, `--manual`), see [testing.md](testing.md).
 
 ## Stack
 
 - Test runner: **mocha** via `spec/lib/ti-mocha`
-- Assertions: **chai 4.x** via `spec/lib/chai` — pinned at 4.x because chai 6 is ESM-only and breaks the device runner ([memory note](../README.md))
+- Assertions: **chai 4.x** via `spec/lib/chai` — pinned at 4.x because chai 6 is ESM-only and breaks the device runner
 - Mocking: **simple-mock** via `spec/lib/simple-mock`
-
-## Running
-
-```bash
-# Fastest loop (LiveView reuses the dev server across runs)
-npx grunt --platform=android --simulator --liveview --reuse-server unit-test
-
-# Filter to specs matching a mocha grep pattern (preferred — no tracked-file edits).
-# IMPORTANT: use --grep=… (with `=`). Bare `--grep "..."` makes grunt treat the
-# value as a task name and aborts with `Task "..." not found`.
-npx grunt --platform=android --simulator --liveview --reuse-server unit-test --grep="error state"
-
-# Open the matching spec in manual mode so the screen stays open for human poking:
-npx grunt --platform=android --simulator --liveview --reuse-server --manual unit-test --grep="error state"
-
-# Last-resort filter when --grep isn't enough — add .only in the spec file.
-# Avoid committing this; it breaks the rest of the suite in CI.
-describe.only("My test", function() { ... });
-```
-
-`--grep` and `--manual` are both forwarded from `grunt` → the on-device test runner via `launchArgs` (see `Gruntfile.js` and `walta-app/app/spec/index.js`). For the broader LiveView story (prerequisites, troubleshooting, the `config.json`-edit gotcha) see [testing.md § LiveView (fast iteration)](testing.md#liveview-fast-iteration).
-
-See also the `fast-device-test` skill.
 
 ## TestUtils helpers
 
@@ -71,7 +50,7 @@ Module-level state leaks across specs because Titanium loads modules once per te
 
 When in doubt, mock the leaf functions your code path will actually hit (`retrieveUserToken`, `forceUpload`, etc.) rather than trying to clean up upstream state.
 
-### `--manual` mode
+### Writing an `afterEach` that survives `--manual` mode
 
 `closeWindow` deliberately does not auto-close the window when `--manual` is set, so a human can poke at the UI. Spec teardown that runs synchronous cleanup *before* the close handler fires can dead-lock the screen. Pattern:
 
@@ -81,11 +60,3 @@ afterEach(async () => {
   ctl.cleanUp?.();                   // then dispose
 });
 ```
-
-### `mocha-bootstrap.js` is device-only
-
-Don't `require` it from Node.js specs — Node specs use Mocha directly and don't load Titanium globals.
-
-## Mocking `Ti.*` in Node specs
-
-Node specs (`test/*_spec.js`) have no Titanium runtime. Mock `Ti.Network.createHTTPClient` by injecting a fake via the module's `ProxyCreateHTTPClient` export — see `test/CerdiApi_spec.js` for the canonical pattern.
