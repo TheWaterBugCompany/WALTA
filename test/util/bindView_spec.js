@@ -95,6 +95,40 @@ describe("bindView", function () {
       .to.throw(/nonExistentProp/);
   });
 
+  describe("palette resolution", function () {
+    it("resolves a Symbol VM value through the palette object", function () {
+      const sym = Symbol("error");
+      Object.defineProperty(vm, "palettedColor", { value: sym, configurable: true });
+      const palette = { error: "#FF6161", primary: "#26849D" };
+      bindView($, vm, { label: { backgroundColor: "palettedColor" } }, palette);
+      expect($.label.backgroundColor).to.equal("#FF6161");
+    });
+
+    it("re-resolves through the palette on each notify", function () {
+      let current = Symbol("primary");
+      Object.defineProperty(vm, "palettedColor", { get() { return current; }, configurable: true });
+      const palette = { error: "#FF6161", primary: "#26849D" };
+      bindView($, vm, { label: { backgroundColor: "palettedColor" } }, palette);
+      expect($.label.backgroundColor).to.equal("#26849D");
+      current = Symbol("error");
+      vm.notifyListeners();
+      expect($.label.backgroundColor).to.equal("#FF6161");
+    });
+
+    it("passes non-Symbol values through unchanged even when a palette is supplied", function () {
+      const palette = { error: "#FF6161" };
+      bindView($, vm, { label: { text: "greeting" } }, palette);
+      expect($.label.text).to.equal("hi");
+    });
+
+    it("passes Symbol values through unchanged when no palette is supplied", function () {
+      const sym = Symbol("error");
+      Object.defineProperty(vm, "palettedColor", { value: sym, configurable: true });
+      bindView($, vm, { label: { backgroundColor: "palettedColor" } });
+      expect($.label.backgroundColor).to.equal(sym);
+    });
+  });
+
   describe("event wiring", function () {
     it("wires onClick to a VM method via addEventListener", function () {
       bindView($, vm, { label: { onClick: "toggle" } });
