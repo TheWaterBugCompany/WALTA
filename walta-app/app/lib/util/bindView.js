@@ -25,8 +25,8 @@
 //
 // Optional 4th arg `palette`: when a bound getter returns a Symbol,
 // bindView resolves it via palette[Symbol.description]. Used for
-// Palette colour Symbols (see docs/viewmodels.md "Semantic palette
-// colours"). bindView itself stays Titanium-free.
+// Palette colour Symbols (see docs/patterns/viewmodels.md "Semantic
+// palette colours"). bindView itself stays Titanium-free.
 
 const EVENT_KEY_RE = /^on([A-Z].*)$/;
 

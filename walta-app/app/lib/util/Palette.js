@@ -1,4 +1,4 @@
-// Palette colour enum — see docs/viewmodels.md "Semantic palette colours".
+// Palette colour enum — see docs/patterns/viewmodels.md "Semantic palette colours".
 // Each Symbol's .description must match the corresponding key in app/config.json
 // under global.colors.
 const Palette = {
