@@ -1,4 +1,4 @@
-function create({ cerdiApi, onLoggedIn }) {
+function create({ cerdiApi, onLoggedIn, appReset }) {
   const actions = {
     login: {
       params: ["email", "password"],
@@ -18,6 +18,17 @@ function create({ cerdiApi, onLoggedIn }) {
       }
     }
   };
+
+  // walta://reset — cucumber Before-hook fast path. Only registered when
+  // an appReset callback is supplied (i.e. non-production builds), so a
+  // release build silently ignores walta://reset URLs and can't have its
+  // user data wiped by a stray deeplink.
+  if (appReset) {
+    actions.reset = {
+      params: [],
+      handler: () => Promise.resolve(appReset()),
+    };
+  }
 
   function parse(url) {
     // Manual parser — Titanium 13.x's V8 doesn't expose the WHATWG URL

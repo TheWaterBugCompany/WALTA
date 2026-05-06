@@ -6,6 +6,7 @@ var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
 var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
+var AppReset = require("util/AppReset");
 var { System } = require("logic/System");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
@@ -19,9 +20,14 @@ Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Allo
 // `walta://` URL scheme dispatcher — see UrlActions.js for the action
 // registry. Acceptance tests use `walta://login?email=...&password=...`
 // to bypass the login UI; the same surface is available in production.
+//
+// `walta://reset` (cucumber Before-hook fast path) is registered only in
+// non-production builds (WB-67) — release builds must not be wiped by a
+// stray reset URL.
 var urlActions = UrlActions.create({
   cerdiApi: Alloy.Globals.CerdiApi,
   onLoggedIn: function () { Topics.fireTopicEvent(Topics.LOGGEDIN); },
+  appReset: Ti.App.deployType !== 'production' ? AppReset.reset : undefined,
 });
 function handleDeeplink(url) {
   Logger.log(`[walta-deeplink] dispatch url=${url}`);
