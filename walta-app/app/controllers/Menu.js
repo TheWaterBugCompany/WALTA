@@ -2,7 +2,12 @@ var Topics = require('ui/Topics');
 
 exports.baseController  = "TopLevelWindow";
 $.name = "home";
-$.appVersion.text = `v${Ti.App.version}`;
+if (Alloy.CFG.environment === "production") {
+  $.appVersion.text = `v${Ti.App.version}`;
+} else {
+  $.appVersion.text = "Test Server";
+  $.appVersion.color = Alloy.CFG.colors.errorDark;
+}
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   $.destroy();
   $.off();
