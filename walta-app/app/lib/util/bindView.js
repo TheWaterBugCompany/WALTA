@@ -23,13 +23,10 @@
 // that removes BOTH the ChangeNotifier listener and every event
 // handler registered during setup.
 //
-// Optional 4th arg `palette` resolves Palette Symbols (see
-// util/Palette.js) returned by the VM to concrete values — typically
-// pass Alloy.CFG.colors so getters like
-//   get progressColor() { return Palette.error; }
-// land in the widget as the actual hex string. The Symbol's
-// .description is the lookup key. bindView itself stays
-// Titanium-free; the controller owns the palette object.
+// Optional 4th arg `palette`: when a bound getter returns a Symbol,
+// bindView resolves it via palette[Symbol.description]. Used for
+// Palette colour Symbols (see docs/viewmodels.md "Semantic palette
+// colours"). bindView itself stays Titanium-free.
 
 const EVENT_KEY_RE = /^on([A-Z].*)$/;
 

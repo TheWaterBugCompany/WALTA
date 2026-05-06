@@ -161,6 +161,52 @@ controllers don't need to call it — `vm.dispose()` in `cleanUp` is enough,
 because it clears the ViewModel's listener list and the view is about to be
 destroyed anyway.
 
+### Semantic palette colours
+
+The colour palette lives in `app/config.json` under `global.colors` and is
+exposed at runtime as `Alloy.CFG.colors`. ViewModels can't reference it
+directly — `Alloy` doesn't exist in Node — but they can still own the *decision*
+of which colour to use. The mechanism is `lib/util/Palette.js`: a plain object
+whose values are Symbols, one per palette key.
+
+```js
+// lib/viewmodels/SyncFeedback.js
+const Palette = require("../util/Palette");
+
+get progressColor() {
+  return this.status === "error" ? Palette.error : Palette.primary;
+}
+```
+
+Each Symbol's `.description` matches the key in `config.json` (`"error"`,
+`"primary"`, …). bindView accepts an optional 4th `palette` argument; when a
+bound getter returns a Symbol, bindView resolves it through that palette.
+Controllers pass `Alloy.CFG.colors`:
+
+```js
+// controllers/SyncFeedback.js
+bindView($, vm, {
+    progressFill: { backgroundColor: "progressColor", width: "progressWidth" },
+    // ...
+}, Alloy.CFG.colors);
+```
+
+The binding declaration looks the same as any other property binding — bindView
+detects the Symbol and does the lookup. The ViewModel stays Titanium-free and
+the only place that touches `Alloy.CFG.colors` is the controller.
+
+Tests:
+
+- ViewModel specs assert `expect(vm.progressColor).to.equal(Palette.error)` —
+  semantic, no hex string.
+- Controller / device specs assert
+  `expect(ctl.progressFill.backgroundColor).to.equal(Alloy.CFG.colors.error)` —
+  the rendered hex, which is the right level for a controller test.
+
+To add a new palette colour, add the key to both `config.json` and `Palette.js`
+in the same edit. The `.description` linkage is the contract; nothing enforces
+it at compile time, so they have to be kept in step manually.
+
 ### When to step outside bindView
 
 Not everything is declarative — and not everything belongs in the ViewModel in the
