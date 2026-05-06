@@ -24,7 +24,7 @@ Then in the window's `cleanUp` listener, call `$.syncButton.cleanUp();` so the i
 - **`GoBackButton`** — back button that fires a Topic when clicked. Constructed with `{ topic, slide, readonly }`.
 - **`GoForwardButton`** — forward equivalent.
 
-Examples in [walta-app/app/controllers/Summary.js:16-27](../walta-app/app/controllers/Summary.js#L16-L27), [walta-app/app/controllers/Habitat.js](../walta-app/app/controllers/Habitat.js), [walta-app/app/controllers/SiteDetails.js](../walta-app/app/controllers/SiteDetails.js).
+Examples in [walta-app/app/controllers/Summary.js:16-27](../../walta-app/app/controllers/Summary.js#L16-L27), [walta-app/app/controllers/Habitat.js](../../walta-app/app/controllers/Habitat.js), [walta-app/app/controllers/SiteDetails.js](../../walta-app/app/controllers/SiteDetails.js).
 
 ## Label vs accessibilityLabel
 
@@ -37,4 +37,4 @@ Acceptance/spec tests select by accessibility identifier, so they match the orig
 
 ## Selector convention (Appium)
 
-The acceptance-test base screen wraps selectors as `~<label>.` — Titanium appends a period to its accessibility identifiers, which discriminates explicitly-set `accessibilityLabel` values from iOS auto-derived labels (e.g. a `<Label text="Sync"/>` body label without `accessibilityLabel` won't match `~Sync.`). See [features/support/base-screen.js:53-56](../features/support/base-screen.js#L53-L56).
+The acceptance-test base screen wraps selectors as `~<label>.` — Titanium appends a period to its accessibility identifiers, which discriminates explicitly-set `accessibilityLabel` values from iOS auto-derived labels (e.g. a `<Label text="Sync"/>` body label without `accessibilityLabel` won't match `~Sync.`). See [features/support/base-screen.js:53-56](../../features/support/base-screen.js#L53-L56).

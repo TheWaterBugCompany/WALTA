@@ -87,7 +87,7 @@ npx grunt --platform=android --simulator unit-test --grep="X"  # device-side cov
 
 If a `lib/` module needs a Titanium runtime global (like `Alloy.CFG`), keep the Titanium reference *out* of the module — pass the runtime value in from the controller.
 
-The canonical example is the colour palette: ViewModels return `Palette.error` / `Palette.primary` Symbols from [walta-app/app/lib/util/Palette.js](../walta-app/app/lib/util/Palette.js); the controller passes `Alloy.CFG.colors` as `bindView`'s 4th argument; `bindView` resolves the Symbol on render. See [viewmodels.md](viewmodels.md) "Semantic palette colours".
+The canonical example is the colour palette: ViewModels return `Palette.error` / `Palette.primary` Symbols from [walta-app/app/lib/util/Palette.js](../walta-app/app/lib/util/Palette.js); the controller passes `Alloy.CFG.colors` as `bindView`'s 4th argument; `bindView` resolves the Symbol on render. See [patterns/viewmodels.md](patterns/viewmodels.md) "Semantic palette colours".
 
 ## LiveView (fast iteration)
 

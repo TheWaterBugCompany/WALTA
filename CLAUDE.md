@@ -146,19 +146,16 @@ adb logcat -s "TiAPI:*"   # Android
 
 The `docs/` folder holds pattern references that this CLAUDE.md links to. **When you rediscover something** — a non-obvious pattern, a gotcha that bit you, a convention that wasn't clear from reading existing code — add it to the relevant doc (or create a new one and link it from here). Aim short and specific: a one-liner with a code example beats a paragraph. The test for "is this worth writing down?" is *would the next session save time if it could find this?*
 
-**Architectural narrative goes in `docs/`, not in source-file headers.** If a comment is more than a couple of lines explaining *why this pattern exists* or *how this module fits into the broader design*, it belongs in a `docs/` page (existing or new). Leave a one-line pointer in the source — e.g. `// see docs/viewmodels.md "Semantic palette colours"`. Reasons: code-level comments rot when the design moves; long blocks bloat the file and bury the actual code; the same explanation usually applies to multiple files, and `docs/` lets it live in one place. Inline comments are still right for the local *why* — a hidden constraint, a workaround for a specific bug, a non-obvious invariant — anything that wouldn't make sense outside the surrounding code.
+**Architectural narrative goes in `docs/`, not in source-file headers.** If a comment is more than a couple of lines explaining *why this pattern exists* or *how this module fits into the broader design*, it belongs in a `docs/` page (existing or new). Leave a one-line pointer in the source — e.g. `// see docs/patterns/viewmodels.md "Semantic palette colours"`. Reasons: code-level comments rot when the design moves; long blocks bloat the file and bury the actual code; the same explanation usually applies to multiple files, and `docs/` lets it live in one place. Inline comments are still right for the local *why* — a hidden constraint, a workaround for a specific bug, a non-obvious invariant — anything that wouldn't make sense outside the surrounding code.
 
 All technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBUTORS.md` stay at the repo root):
 
 - [docs/installation.md](docs/installation.md) — full setup guide: prerequisites, Titanium SDK, Android/iOS signing, env vars, API config
 - [docs/coding-style.md](docs/coding-style.md) — JS conventions: module system per directory, async/await direction
 - [docs/architecture-vision.md](docs/architecture-vision.md) — long-term architectural direction
-- [docs/patterns.md](docs/patterns.md) — controller communication (Topics), lifecycle, no `Alloy.Globals`, photo paths, `Ti.App.Properties` keys
-- [docs/modules.md](docs/modules.md) — narrative summaries of `CerdiApi`, `KeyLoader*`, `SampleUploader`, `Navigation`
 - [docs/testing.md](docs/testing.md) — five test layers, when to write what, LiveView fast-iteration, run-both-suites rule, known gaps
-- [docs/viewmodels.md](docs/viewmodels.md) — MVVM convention: ViewModel class shape, `bindView`, semantic palette colours via Symbols
-- [docs/device-specs.md](docs/device-specs.md) — device spec idioms, child-controller refs, test pollution
-- [docs/toolbar-buttons.md](docs/toolbar-buttons.md) — anchor bar / NavButton pattern
+- [docs/device-specs.md](docs/device-specs.md) — writing device specs: idioms, child-controller refs, test pollution, `--manual` cleanup
+- [docs/patterns/](docs/patterns/) — one file per pattern / module summary (controller patterns, ViewModels, toolbar buttons, `CerdiApi`, `KeyLoader*`, `SampleUploader`, `Navigation`, …). See [docs/patterns/README.md](docs/patterns/README.md) for the index.
 
 ### Configuration & Environment
 
