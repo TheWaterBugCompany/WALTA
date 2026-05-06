@@ -149,6 +149,7 @@ The `docs/` folder holds pattern references that this CLAUDE.md links to. **When
 Existing pattern docs:
 - [docs/toolbar-buttons.md](docs/toolbar-buttons.md) — anchor bar / NavButton pattern
 - [docs/device-specs.md](docs/device-specs.md) — device spec idioms, child-controller refs, test pollution
+- [docs/viewmodels.md](docs/viewmodels.md) — MVVM convention: ViewModel class shape, `bindView`, semantic palette colours via Symbols
 
 ### Patterns & Conventions
 
@@ -203,7 +204,7 @@ npx grunt unit-test-node                                           # fast — pu
 npx grunt --platform=android --simulator unit-test --grep="X"     # device-side coverage
 ```
 
-If a `lib/` module needs a Titanium runtime global (like `Alloy.CFG`), add a Node-safe fallback rather than asking tests to mock it. See `walta-app/app/lib/util/Colors.js` for the canonical pattern (returns `Alloy.CFG.colors` under Alloy, falls back to `require("../../config.json").global.colors` under bare Node).
+If a `lib/` module needs a Titanium runtime global (like `Alloy.CFG`), keep the Titanium reference *out* of the module — pass the runtime value in from the controller. The canonical example is the colour palette: ViewModels return `Palette.error` / `Palette.primary` Symbols from [walta-app/app/lib/util/Palette.js](walta-app/app/lib/util/Palette.js); the controller passes `Alloy.CFG.colors` as `bindView`'s 4th argument; `bindView` resolves the Symbol on render. See [docs/viewmodels.md](docs/viewmodels.md) "Semantic palette colours".
 
 **Known test gaps:** No unit tests exist for controllers, `KeyLoaderInk.js`, `Navigation.js`, or `SampleSync.js`.
 
