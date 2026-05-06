@@ -65,7 +65,7 @@ function buildPhotoView(urlObj) {
         var label = Ti.UI.createLabel({ 
                 color: "white",
                 font: { fontSize:"20dp" },
-                shadowColor: '#000',
+                shadowColor: Alloy.CFG.colors.black,
                 shadowOffset: {x:"5", y:"5"},
                 shadowRadius: "3dp",
                 text: urlObj.taxon.name, 

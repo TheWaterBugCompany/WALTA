@@ -1,7 +1,7 @@
 "#abundance": {
   right: "2dp",
   bottom: "6dp",
-  color: "#fff",
+  color: Alloy.CFG.colors.white,
   backgroundColor: "#f00",
   borderColor: "#f00",
   width: "35dp",

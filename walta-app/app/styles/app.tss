@@ -31,10 +31,10 @@ overrode the settings with other TSS, XML, or JS settings:
   style: Ti.UI.ActivityIndicatorStyle.BIG,
   width: Ti.UI.SIZE,
   height: Ti.UI.SIZE,
-  indicatorColor: "#26849c"
+  indicatorColor: Alloy.CFG.colors.primary
 }
 "TableViewRow": {
-    color: "#26849c"
+    color: Alloy.CFG.colors.primary
 }
 
 "TextField": {
@@ -70,7 +70,7 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 "Label": {
-	color: "#26849c",
+	color: Alloy.CFG.colors.primary,
 	font: {
 		fontFamily: 'sans-serif',
 		fontSize: '10dp'
@@ -99,8 +99,8 @@ overrode the settings with other TSS, XML, or JS settings:
 }
 
 ".window" : {
-	backgroundColor: "#ffffff",
-	borderColor: "#26849c"
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.primary
 }
 
 ".titlebar": {
@@ -134,7 +134,7 @@ overrode the settings with other TSS, XML, or JS settings:
 	fontWeight: "bold",
     fontSize: "16dp"
   },
-  color: "#26849c"
+  color: Alloy.CFG.colors.primary
 }
 
 ".headingText[if=Alloy.Globals.isHighRes]": {
@@ -157,7 +157,7 @@ overrode the settings with other TSS, XML, or JS settings:
   },
   left: "2%",
   textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-  color: "#26849c"
+  color: Alloy.CFG.colors.primary
 }
 
 ".labelText[if=Alloy.Globals.isLowRes]": {
@@ -185,7 +185,7 @@ overrode the settings with other TSS, XML, or JS settings:
     fontSize: "15dp"
   },
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  color: "#26849c",
+  color: Alloy.CFG.colors.primary,
   backgroundColor: "#b4d2d9",
   borderColor: "#b4d2d9",
   borderRadius: "4dp",
@@ -220,7 +220,7 @@ overrode the settings with other TSS, XML, or JS settings:
     height: Ti.UI.SIZE,
     left: "2%",
     right: "2%",
-	color: "#26849c",
+	color: Alloy.CFG.colors.primary,
     fullscreen: false
 }
 
@@ -272,8 +272,8 @@ overrode the settings with other TSS, XML, or JS settings:
     bottom: "0dp",
     height: "90%",
     horizontalWrap: false,
-    backgroundColor: "#26849c",
-    borderColor: "#26849c",
+    backgroundColor: Alloy.CFG.colors.primary,
+    borderColor: Alloy.CFG.colors.primary,
     borderRadius: "6dp",
     borderWidth: "2dp"
 }

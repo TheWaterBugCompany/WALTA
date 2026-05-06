@@ -22,7 +22,7 @@
     right: "5%",
     bottom: "3%",
     textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-    color: 	"#26849c",
+    color: 	Alloy.CFG.colors.primary,
     backgroundColor: "#b4d2d9",
     visible: false
 }

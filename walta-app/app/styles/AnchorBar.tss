@@ -5,7 +5,7 @@
     type: 'linear',
     startPoint: { x: '0%', y: '0%' },
     endPoint: { x: '0%', y: '120%' },
-    colors: [ {color: '#26849c', offset: 0.0 }, {color: '#b4d2d9', offset: 1.0 } ]
+    colors: [ {color: Alloy.CFG.colors.primary, offset: 0.0 }, {color: '#b4d2d9', offset: 1.0 } ]
   },
   bottom: 0,
   layout: "composite",
