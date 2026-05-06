@@ -3,6 +3,7 @@ const { expect } = require("chai");
 const SyncFeedbackViewModel = require("../../walta-app/app/lib/viewmodels/SyncFeedback");
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
 const Logger = require("../../walta-app/app/lib/util/Logger");
+const colors = require("../../walta-app/app/lib/util/Colors");
 const createSyncController = require("../../walta-app/app/spec/fixtures/SyncController_fixture");
 
 describe("SyncFeedbackViewModel", function () {
@@ -98,30 +99,30 @@ describe("SyncFeedbackViewModel", function () {
   });
 
   describe("progressColor (presentation)", function () {
-    it("is teal when idle", function () {
-      expect(vm.progressColor).to.equal("#26849c");
+    it("is the primary colour when idle", function () {
+      expect(vm.progressColor).to.equal(colors.primary);
     });
 
-    it("is teal while syncing", function () {
+    it("is the primary colour while syncing", function () {
       store.recordStart();
-      expect(vm.progressColor).to.equal("#26849c");
+      expect(vm.progressColor).to.equal(colors.primary);
     });
 
-    it("is teal on success", function () {
+    it("is the primary colour on success", function () {
       store.recordStart();
       store.recordSuccess();
-      expect(vm.progressColor).to.equal("#26849c");
+      expect(vm.progressColor).to.equal(colors.primary);
     });
 
-    it("is teal while offline", function () {
+    it("is the primary colour while offline", function () {
       store.recordOffline();
-      expect(vm.progressColor).to.equal("#26849c");
+      expect(vm.progressColor).to.equal(colors.primary);
     });
 
-    it("is red on error", function () {
+    it("is the error colour on error", function () {
       store.recordStart();
       store.recordError(new Error("boom"));
-      expect(vm.progressColor).to.equal("#c0392b");
+      expect(vm.progressColor).to.equal(colors.error);
     });
   });
 
