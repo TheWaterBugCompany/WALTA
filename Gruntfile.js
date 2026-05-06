@@ -179,7 +179,7 @@ const KobitonAPI = require("./features/support/kobiton");
       // build time.
       var overrideAppConfig = grunt.option('override-app-config');
       if ( overrideAppConfig ) {
-        args.push(`--app-config=${overrideAppConfig}`);
+        args.push("--app-config", overrideAppConfig);
       } else {
         switch(build_type) {
           case "release":

@@ -5,7 +5,7 @@ $.name = "home";
 if (Alloy.CFG.environment === "production") {
   $.appVersion.text = `v${Ti.App.version}`;
 } else {
-  $.appVersion.text = "Test Server";
+  $.appVersion.text = `Test Server v${Ti.App.version}`;
   $.appVersion.color = Alloy.CFG.colors.errorDark;
 }
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
