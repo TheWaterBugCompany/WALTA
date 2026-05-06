@@ -19,7 +19,13 @@ exports.addSink = function (sink) {
 
 function _dispatch(level, message) {
     const entry = { level, message };
-    for (let i = 0; i < _sinks.length; i++) _sinks[i].write(entry);
+    for (let i = 0; i < _sinks.length; i++) {
+        Promise.resolve(_sinks[i].write(entry)).catch(function (err) {
+            const fallback = "Logger sink failed: " + (err && err.message) + " — original: " + message;
+            if (typeof Ti !== 'undefined') Ti.API.log(level, fallback);
+            else console.log(fallback);
+        });
+    }
 }
 
 // Legacy ring buffer for the SyncFeedback "Show Logs" pane.
