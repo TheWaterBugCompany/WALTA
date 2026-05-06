@@ -1,4 +1,15 @@
 {
+  "global": {
+    "colors": {
+      "white":        "#FFFFFF",
+      "black":        "#000000",
+      "primary":      "#26849D",
+      "primaryLight": "#66CCCE",
+      "error":        "#FF6161",
+      "errorDark":    "#B80909",
+      "success":      "#64AC17"
+    }
+  },
   "autoStyle": true,
   "dependencies": {
     "com.skypanther.segmentedcontrol": "*"
