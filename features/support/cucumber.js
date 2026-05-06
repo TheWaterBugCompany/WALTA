@@ -131,30 +131,31 @@ Before(async function () {
     this.isSimulator = global.isSimulator;
     setUpWorld(this);
     if (!global.first) {
-        // driver.reset() was removed in webdriverio v9 — terminate +
-        // relaunch is enough to restart the JS context and let the
-        // deeplink login re-authenticate. We deliberately do NOT wipe
-        // app data here: pm clear (Android) is fast but the iOS
-        // equivalent (removeApp + installApp) destabilises the
-        // simulator. Sample-DB leakage between scenarios is tolerable
-        // today; if it bites we'll reintroduce a cross-platform reset
-        // via a `walta://reset` deeplink action rather than per-platform
-        // hacks.
+        // WB-67: in-app reset via the `walta://reset` deeplink replaces
+        // the previous terminateApp + launch + foreground-poll cycle.
+        // The handler (lib/util/AppReset.js) clears auth tokens, wipes
+        // sample/taxa tables, re-instantiates Alloy.Models, and fires
+        // Topics.HOME. The action is only registered in non-production
+        // builds — release builds silently ignore the URL.
         const appId = global.launcher.appId;
-        await this.driver.terminateApp(appId);
-        await global.launcher.launch(appId, launchArgs());
-        // Wait until the app is actually in the foreground before
-        // proceeding — activateApp can return before the UI is ready,
-        // especially when WDA was started from a prebuilt cache.
-        if (global.platform === 'ios') {
-            // Reinstall + launch can take ~30s on a cold simulator;
-            // poll up to 60s before declaring the app stuck.
-            for (let i = 0; i < 120; i++) {
-                const state = await this.driver.execute('mobile: queryAppState', { bundleId: appId });
-                if (state === 4) break;
-                await new Promise(r => setTimeout(r, 500));
-            }
+        const url = 'walta://reset';
+        if (this.platform === 'android') {
+            await this.driver.execute('mobile: deepLink', {
+                url,
+                package: appId,
+                waitForLaunch: false,
+            });
+        } else {
+            await this.driver.execute('mobile: deepLink', {
+                url,
+                bundleId: appId,
+            });
         }
+        // Topics.HOME → Navigation.openController("Menu") is async; give
+        // the new Menu window a moment to land before the first step
+        // queries the UI. (Avoids the stale-element race the login step
+        // also guards against post-LOGGEDIN.)
+        await new Promise(r => setTimeout(r, 500));
     } else {
         global.first = false;
     }

@@ -69,4 +69,29 @@ describe("UrlActions", function () {
       expect(actions.actions.login.handler).to.be.a("function");
     });
   });
+
+  describe("dispatch(reset)", function () {
+    // The reset action is the cucumber Before-hook fast path — replaces a
+    // slow `terminateApp + launch + poll` cycle. Production builds must not
+    // register it (a stray walta://reset URL must not wipe user data), so
+    // the action is gated behind an `appReset` callback that index-app.js
+    // only passes in non-production builds.
+    it("registers the reset action and invokes appReset when called", async function () {
+      const appReset = sinon.stub();
+      const withReset = UrlActions.create({ cerdiApi, onLoggedIn, appReset });
+      expect(withReset.actions.reset).to.exist;
+      expect(withReset.actions.reset.params).to.deep.equal([]);
+      await withReset.dispatch("walta://reset");
+      expect(appReset.calledOnce).to.be.true;
+    });
+
+    it("omits the reset action when no appReset callback is provided", function () {
+      // production-build safety: if index-app.js doesn't pass appReset
+      // (because Ti.App.deployType === 'production'), the action is absent
+      // from the registry and a walta://reset URL is silently ignored.
+      expect(actions.actions.reset).to.be.undefined;
+      const result = actions.dispatch("walta://reset");
+      expect(result).to.be.undefined;
+    });
+  });
 });
