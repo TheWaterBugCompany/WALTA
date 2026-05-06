@@ -319,7 +319,12 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
           clean: {
-            command: './node_modules/.bin/titanium clean --project-dir ./walta-app && rm -rf ./walta-app/build/android/assets ./walta-app/build/android/app/build/intermediates/merged_assets ./walta-app/build/android/app/build/outputs',
+            // Also nuke walta-app/Resources/ — Alloy stages compiled JS / CFG.js
+            // there and `titanium clean` leaves it behind, so a stale CFG.js can
+            // outlive a clean if Alloy fails to invalidate after a config.json
+            // change (bit us once when a palette refactor in main hadn't picked
+            // up locally).
+            command: './node_modules/.bin/titanium clean --project-dir ./walta-app && rm -rf ./walta-app/build/android/assets ./walta-app/build/android/app/build/intermediates/merged_assets ./walta-app/build/android/app/build/outputs ./walta-app/Resources',
             stdout: "inherit", stderr: "inherit"
           },
 
