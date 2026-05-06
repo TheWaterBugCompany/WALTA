@@ -146,6 +146,8 @@ adb logcat -s "TiAPI:*"   # Android
 
 The `docs/` folder holds pattern references that this CLAUDE.md links to. **When you rediscover something** — a non-obvious pattern, a gotcha that bit you, a convention that wasn't clear from reading existing code — add it to the relevant doc (or create a new one and link it from here). Aim short and specific: a one-liner with a code example beats a paragraph. The test for "is this worth writing down?" is *would the next session save time if it could find this?*
 
+**Architectural narrative goes in `docs/`, not in source-file headers.** If a comment is more than a couple of lines explaining *why this pattern exists* or *how this module fits into the broader design*, it belongs in a `docs/` page (existing or new). Leave a one-line pointer in the source — e.g. `// see docs/viewmodels.md "Semantic palette colours"`. Reasons: code-level comments rot when the design moves; long blocks bloat the file and bury the actual code; the same explanation usually applies to multiple files, and `docs/` lets it live in one place. Inline comments are still right for the local *why* — a hidden constraint, a workaround for a specific bug, a non-obvious invariant — anything that wouldn't make sense outside the surrounding code.
+
 Existing pattern docs:
 - [docs/toolbar-buttons.md](docs/toolbar-buttons.md) — anchor bar / NavButton pattern
 - [docs/device-specs.md](docs/device-specs.md) — device spec idioms, child-controller refs, test pollution
