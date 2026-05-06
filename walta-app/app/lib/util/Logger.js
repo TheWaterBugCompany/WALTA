@@ -18,7 +18,7 @@ exports.addSink = function (sink) {
 };
 
 function _dispatch(level, facility, message) {
-    const entry = { level, facility, message };
+    const entry = { ts: Date.now(), level, facility, message };
     for (let i = 0; i < _sinks.length; i++) {
         Promise.resolve(_sinks[i].write(entry)).catch(function (err) {
             const fallback = "Logger sink failed: " + (err && err.message) + " — original: " + message;
