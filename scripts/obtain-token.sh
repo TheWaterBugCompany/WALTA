@@ -20,8 +20,8 @@ if [ ! -f "$CONFIG" ]; then
   exit 1
 fi
 
-SERVER_URL=$(node -e "console.log(require(process.argv[1]).cerdiServerUrl)" "$CONFIG")
-CLIENT_SECRET=$(node -e "console.log(require(process.argv[1]).cerdiApiSecret)" "$CONFIG")
+SERVER_URL=$(jq -r .cerdiServerUrl "$CONFIG")
+CLIENT_SECRET=$(jq -r .cerdiApiSecret "$CONFIG")
 
 curl -X POST "${SERVER_URL}/token/create/server" \
   -H "accept: application/json" \
