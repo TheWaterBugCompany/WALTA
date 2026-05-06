@@ -174,6 +174,14 @@ describe("Logger sink dispatch", function () {
         expect(sink.entries[0]).to.include({ level: "info", message: "starting sync" });
     });
 
+    it("includes the tag argument as 'facility' on the entry", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        Logger.log("upload finished", "sync");
+        await new Promise(r => setImmediate(r));
+        expect(sink.entries[0]).to.include({ level: "trace", facility: "sync", message: "upload finished" });
+    });
+
     it("falls back to Ti.API.log when a sink's write() rejects", async function () {
         const fallbackCalls = [];
         global.Ti = {
