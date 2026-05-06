@@ -8,7 +8,14 @@ if (Alloy.CFG.environment === "production") {
   $.appVersion.text = `Test Server v${Ti.App.version}`;
   $.appVersion.color = Alloy.CFG.colors.errorDark;
 }
+// Refresh the login label whenever auth state changes — lets the menu stay
+// correct without needing to be recreated (which Navigation.openController
+// won't do anyway when Menu is already current; see WB-67).
+function onLoggedIn() { updateLoginText(); }
+Topics.subscribe(Topics.LOGGEDIN, onLoggedIn);
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+  Topics.unsubscribe(Topics.LOGGEDIN, onLoggedIn);
   $.destroy();
   $.off();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
