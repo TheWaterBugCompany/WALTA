@@ -25,26 +25,30 @@ describe("appconfig hook", function () {
     });
 
     describe("build.pre.compile hook", function () {
-        it("should copy the config file when it exists", function (done) {
+        it("writes the merged config (with environment field) to Resources/app-config.json", function (done) {
             sinon.stub(fs, "existsSync").returns(true);
-            const copyStub = sinon.stub(fs, "copyFileSync");
+            sinon.stub(fs, "readFileSync").returns('{"cerdiServerUrl":"x"}');
+            const writeStub = sinon.stub(fs, "writeFileSync");
 
             const data = { projectDir: "/project" };
             copyBuildConfig(data, function () {
-                expect(copyStub.calledOnce).to.be.true;
-                expect(copyStub.firstCall.args[0]).to.include("app-config.mock.json");
-                expect(copyStub.firstCall.args[1]).to.include("app-config.json");
+                expect(writeStub.calledOnce).to.be.true;
+                expect(writeStub.firstCall.args[0]).to.include("app-config.json");
+                expect(JSON.parse(writeStub.firstCall.args[1])).to.deep.equal({
+                    cerdiServerUrl: "x",
+                    environment: "mock",
+                });
                 done();
             });
         });
 
         it("should fail with an error when the config file does not exist", function (done) {
             sinon.stub(fs, "existsSync").returns(false);
-            const copyStub = sinon.stub(fs, "copyFileSync");
+            const writeStub = sinon.stub(fs, "writeFileSync");
 
             const data = { projectDir: "/project" };
             copyBuildConfig(data, function (err) {
-                expect(copyStub.called).to.be.false;
+                expect(writeStub.called).to.be.false;
                 expect(err).to.be.an.instanceOf(Error);
                 expect(err.message).to.include("app-config.mock.json");
                 done();
