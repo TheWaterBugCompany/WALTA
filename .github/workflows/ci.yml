@@ -102,21 +102,34 @@ jobs:
         run: npx grunt build-test
 
   # ── 2. iOS simulator unit tests ───────────────────────────────────────────
-  ios-simulator-tests:
-    name: iOS simulator unit tests
+  # ── 2a. iOS simulator build ───────────────────────────────────────────────
+  # Builds Waterbug.app once and uploads it as a workflow artifact so the
+  # iOS unit and acceptance jobs can both consume it instead of each
+  # rebuilding from scratch (WB-51). Tarballed before upload to preserve
+  # the .app bundle's executable bits and framework symlinks, which
+  # actions/upload-artifact@v4 strips otherwise.
+  ios-build:
+    name: iOS simulator build
     needs: changes
     if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
+    env:
+      # Pinned to match the acceptance job's WDA cache key — also used by
+      # ios-simulator-tests, so all three iOS jobs share the same Xcode.
+      XCODE_VERSION: "26.3"
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select latest Xcode
+      - name: Select pinned Xcode
         run: |
-          # Pick the highest Xcode version available (matches our App Store target)
-          LATEST_XCODE=$(ls /Applications | grep -E '^Xcode_[0-9]+\.[0-9]+(\.[0-9]+)?\.app$' | sort -V | tail -1)
-          echo "Selecting $LATEST_XCODE"
-          sudo xcode-select -s "/Applications/$LATEST_XCODE/Contents/Developer"
+          XCODE_APP="/Applications/Xcode_${XCODE_VERSION}.app"
+          if [ ! -d "$XCODE_APP" ]; then
+            echo "Xcode ${XCODE_VERSION} not installed on this runner. Available:" >&2
+            ls /Applications | grep -E '^Xcode_' >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
           xcodebuild -version
 
       - uses: actions/setup-node@v4
@@ -179,7 +192,123 @@ jobs:
       - name: Select iOS simulator
         id: sim
         run: |
-          # Pick the iPhone running the highest iOS runtime
+          # Build needs a valid sim UDID for `-C`, but doesn't require it
+          # to be booted (build-only target).
+          SELECTED=$(xcrun simctl list devices available -j | jq -r '
+            [.devices | to_entries[]
+             | select(.key | test("iOS-[0-9]"))
+             | {runtime: (.key | capture("iOS-(?<v>[0-9-]+)").v),
+                devices: [.value[] | select(.name | contains("iPhone")) | select(.isAvailable)]}]
+            | sort_by(.runtime | split("-") | map(tonumber)) | reverse
+            | .[0]
+            | .devices[0] | "\(.udid) \(.name)"')
+          UDID=$(echo "$SELECTED" | cut -d" " -f1)
+          NAME=$(echo "$SELECTED" | cut -d" " -f2-)
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Selected: $NAME ($UDID)"
+
+      - name: Build Waterbug.app for iOS simulator
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt exec:build:ios:test-sim
+
+      - name: Tarball Waterbug.app (preserves perms + symlinks)
+        run: tar -czf /tmp/waterbug-ios-sim.tgz -C builds/test-sim Waterbug.app
+
+      - name: Upload Waterbug.app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: waterbug-ios-sim
+          path: /tmp/waterbug-ios-sim.tgz
+          retention-days: 1
+
+  # ── 2b. iOS simulator unit tests ──────────────────────────────────────────
+  ios-simulator-tests:
+    name: iOS simulator unit tests
+    needs: [changes, ios-build]
+    if: needs.changes.outputs.relevant == 'true'
+    runs-on: macos-latest
+    timeout-minutes: 30
+    env:
+      XCODE_VERSION: "26.3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select pinned Xcode
+        run: |
+          XCODE_APP="/Applications/Xcode_${XCODE_VERSION}.app"
+          if [ ! -d "$XCODE_APP" ]; then
+            echo "Xcode ${XCODE_VERSION} not installed on this runner. Available:" >&2
+            ls /Applications | grep -E '^Xcode_' >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+          xcodebuild -version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Save node_modules cache
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Run install.sh
+        run: sh install.sh
+
+      - name: Read Titanium SDK version
+        id: ti-version
+        run: |
+          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
+          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
+
+      # SDK install is needed even with --skip-build because the unit-test
+      # grunt task starts with `titanium clean` (which expects an SDK present).
+      # Cached, so cheap.
+      - name: Restore Titanium SDK cache
+        id: ti-sdk-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
+          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
+
+      - name: Install Titanium SDK
+        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
+        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
+
+      - name: Configure Titanium
+        run: npx titanium config cli.logLevel info
+
+      - name: Download Waterbug.app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: waterbug-ios-sim
+          path: /tmp
+
+      - name: Extract Waterbug.app to builds/test-sim
+        run: |
+          mkdir -p builds/test-sim
+          tar -xzf /tmp/waterbug-ios-sim.tgz -C builds/test-sim
+
+      - name: Select iOS simulator
+        id: sim
+        run: |
           SELECTED=$(xcrun simctl list devices available -j | jq -r '
             [.devices | to_entries[]
              | select(.key | test("iOS-[0-9]"))
@@ -195,9 +324,6 @@ jobs:
 
       - name: Boot iOS simulator
         run: |
-          # `bootstatus` without `-b` waits for the in-flight boot started
-          # above; with `-b` it races to issue a second boot and fails with
-          # SimError 405 once the device has reached "Booted" state.
           xcrun simctl boot ${{ steps.sim.outputs.udid }} || true
           xcrun simctl bootstatus ${{ steps.sim.outputs.udid }}
           echo "Simulator booted"
@@ -216,7 +342,7 @@ jobs:
         # if the device-side mocha runner emitted UNIT_TESTS_FAILED — a
         # deterministic failure won't pass on re-run, so retrying just
         # burns ~15 min for nothing. See WB-48.
-        run: bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=ios --simulator unit-test
+        run: bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=ios --simulator --skip-build unit-test
 
       - name: Capture simulator diagnostics on failure
         if: failure()
@@ -382,7 +508,7 @@ jobs:
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
   ios-simulator-acceptance-tests:
     name: iOS simulator acceptance tests
-    needs: changes
+    needs: [changes, ios-build]
     if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
     timeout-minutes: 30
@@ -443,6 +569,8 @@ jobs:
           TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
           echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
 
+      # SDK install needed for `titanium clean` (run by the acceptance grunt
+      # task) even though the build itself was done in ios-build. Cached.
       - name: Restore Titanium SDK cache
         id: ti-sdk-cache
         uses: actions/cache/restore@v4
@@ -454,18 +582,19 @@ jobs:
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
         run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
 
-      - name: Save Titanium SDK cache
-        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
-          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
-
       - name: Configure Titanium
         run: npx titanium config cli.logLevel info
 
-      - name: Apply SDK patches
-        run: npm run patch-sdk
+      - name: Download Waterbug.app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: waterbug-ios-sim
+          path: /tmp
+
+      - name: Extract Waterbug.app to builds/test-sim
+        run: |
+          mkdir -p builds/test-sim
+          tar -xzf /tmp/waterbug-ios-sim.tgz -C builds/test-sim
 
       - name: Select iOS simulator
         id: sim
@@ -554,7 +683,7 @@ jobs:
         # the trade-off favours green over fast-fail.
         run: |
           for attempt in 1 2; do
-            if npx grunt --platform=ios --simulator acceptance-test; then
+            if npx grunt --platform=ios --simulator --skip-build acceptance-test; then
               exit 0
             fi
             echo "::warning ::iOS acceptance attempt $attempt failed; retrying once (WB-54)"
