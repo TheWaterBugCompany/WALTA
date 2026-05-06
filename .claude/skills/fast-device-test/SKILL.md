@@ -123,4 +123,4 @@ Before marking a PR ready-for-review, run the command **without** `--liveview` a
 
 Pure-JS code with no `Ti.*` or Alloy dependency belongs in `test/**/*_spec.js` and runs in < 1 s with `npx grunt unit-test-node`. Only drop down to the on-device loop when you actually need the device runtime.
 
-See `TESTING.md` for the full LiveView story (prerequisites for real devices, verbose vite logs, iOS-specific setup).
+See `docs/testing.md` for the full LiveView story (prerequisites for real devices, verbose vite logs, iOS-specific setup).
