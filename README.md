@@ -13,7 +13,7 @@ See [CONTRIBUTORS.md](CONTRIBUTORS.md) for the people and organisations behind t
 
 ## Setup
 
-See [INSTALLATION.md](INSTALLATION.md) for the full setup guide, including prerequisites, Titanium SDK, Android and iOS signing, environment variables, and API configuration.
+See [docs/installation.md](docs/installation.md) for the full setup guide, including prerequisites, Titanium SDK, Android and iOS signing, environment variables, and API configuration.
 
 ## Seeing logs on device
 
@@ -29,7 +29,7 @@ adb logcat -s "TiAPI:*,SQLiteStatements:*"
 
 ## Testing
 
-See [TESTING.md](TESTING.md) for the full guide — test levels, quick-reference commands, single-test filtering, LiveView fast iteration, and device-test details.
+See [docs/testing.md](docs/testing.md) for the full guide — test levels, quick-reference commands, single-test filtering, LiveView fast iteration, and device-test details.
 
 ## Building
 
