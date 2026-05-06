@@ -10,9 +10,20 @@ function getBugfender() {
     return _Bugfender;
 }
 
-// In-memory ring buffer of recent log lines so the SyncFeedback
-// "Show Logs" popup pane has something to display. Bugfender remains
-// the long-term sink. See WB-45.
+// see docs/patterns/logger-sinks.md
+const _sinks = [];
+
+exports.addSink = function (sink) {
+    _sinks.push(sink);
+};
+
+function _dispatch(level, message) {
+    const entry = { level, message };
+    for (let i = 0; i < _sinks.length; i++) _sinks[i].write(entry);
+}
+
+// Legacy ring buffer for the SyncFeedback "Show Logs" pane.
+// Will become a RingBufferSink — see docs/patterns/logger-sinks.md.
 const LOG_CAP = 200;
 const _logBuffer = [];
 const _listeners = [];
@@ -82,6 +93,7 @@ exports.setUserId = function(userId) {
 
 exports.debug = function(message) {
     if (typeof Ti !== 'undefined') Ti.API.debug(message); else console.log(message);
+    _dispatch("debug", message);
 };
 
 exports.warn = function(message, tag = "warn") {
@@ -89,6 +101,7 @@ exports.warn = function(message, tag = "warn") {
     if (Bugfender) Bugfender.w({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.warn(message); else console.warn(message);
     _append(tag, message);
+    _dispatch("warn", message);
 };
 
 exports.error = function(message, tag = "error") {
@@ -96,6 +109,7 @@ exports.error = function(message, tag = "error") {
     if (Bugfender) Bugfender.e({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.error(message); else console.error(message);
     _append(tag, message);
+    _dispatch("error", message);
 };
 
 exports.log = function(message, tag = "trace") {
@@ -103,4 +117,5 @@ exports.log = function(message, tag = "trace") {
     if (Bugfender) Bugfender.t({ tag, message });
     if (typeof Ti !== 'undefined') Ti.API.debug(message); else console.log(message);
     _append(tag, message);
+    _dispatch("trace", message);
 };
