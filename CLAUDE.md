@@ -196,6 +196,15 @@ There are four levels of tests:
 
 **Mocking `Ti.*` in Node.js tests:** The Node.js environment has no Titanium runtime. Mock `Ti.Network.createHTTPClient` by injecting a fake via the module's `ProxyCreateHTTPClient` export — see `test/CerdiApi_spec.js` for the canonical pattern. `mocha-bootstrap.js` is only loaded for on-device tests; do not include it in Node tests.
 
+**Run *both* Node and device suites before pushing changes to `walta-app/app/lib/`.** Modules under `lib/` (viewmodels, util, models, logic) are imported by both Node specs (`test/`) and device specs (`walta-app/app/spec/`). A green device run alone can mask a Node failure — e.g. a `Alloy.CFG.colors.*` reference works under Alloy but throws `ReferenceError: Alloy is not defined` under bare Node. Minimum gate before pushing such a change:
+
+```bash
+npx grunt unit-test-node                                           # fast — pure Node, no device
+npx grunt --platform=android --simulator unit-test --grep="X"     # device-side coverage
+```
+
+If a `lib/` module needs a Titanium runtime global (like `Alloy.CFG`), add a Node-safe fallback rather than asking tests to mock it. See `walta-app/app/lib/util/Colors.js` for the canonical pattern (returns `Alloy.CFG.colors` under Alloy, falls back to `require("../../config.json").global.colors` under bare Node).
+
 **Known test gaps:** No unit tests exist for controllers, `KeyLoaderInk.js`, `Navigation.js`, or `SampleSync.js`.
 
 ### Data Flow
