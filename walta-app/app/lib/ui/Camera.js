@@ -32,14 +32,14 @@ exports.requestCameraPermissions = function (callback) {
 exports.showCamera = function (options) {
     log('[Camera-test] showCamera called — opening test camera window');
     var win = Ti.UI.createWindow({
-        backgroundColor: '#000',
+        backgroundColor: Alloy.CFG.colors.black,
         fullscreen: true,
         layout: 'vertical',
         exitOnClose: false
     });
     var header = Ti.UI.createLabel({
         text: 'TEST CAMERA',
-        color: '#fff',
+        color: Alloy.CFG.colors.white,
         top: '5%',
         font: { fontSize: '24dp', fontWeight: 'bold' }
     });
@@ -82,8 +82,8 @@ exports.showCamera = function (options) {
         top: '5%',
         width: '200dp',
         height: '60dp',
-        backgroundColor: '#fff',
-        color: '#000'
+        backgroundColor: Alloy.CFG.colors.white,
+        color: Alloy.CFG.colors.black
     });
     var cancelBtn = tappableBox({
         title: 'Cancel',
@@ -92,7 +92,7 @@ exports.showCamera = function (options) {
         width: '150dp',
         height: '44dp',
         backgroundColor: '#888',
-        color: '#fff'
+        color: Alloy.CFG.colors.white
     });
 
     function closeAndCallback(cbName) {

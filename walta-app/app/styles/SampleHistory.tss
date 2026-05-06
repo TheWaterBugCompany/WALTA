@@ -1,7 +1,7 @@
 
 "#sampleTable": {
     separatorStyle: Ti.UI.TABLE_VIEW_SEPARATOR_STYLE_SINGLE_LINE,
-    separatorColor: "#26849c"
+    separatorColor: Alloy.CFG.colors.primary
 }
 ".column": {
     left: "1%",
@@ -22,7 +22,7 @@
     layout: "horizontal",
     horizontalWrap: false,
     backgroundColor: "white",
-    borderColor: "#26849c",
+    borderColor: Alloy.CFG.colors.primary,
     borderWidth: "2dp",
     height: "30dp",
     zIndex: 1

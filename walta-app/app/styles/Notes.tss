@@ -15,8 +15,8 @@
 "#notesTextField": {
     fullscreen: false,
     backgroundColor: "transparent",
-    borderColor: "#26849c",
-    color: "#26849c",
+    borderColor: Alloy.CFG.colors.primary,
+    color: Alloy.CFG.colors.primary,
     top: "10dp",
     borderWidth: "1dp",
     left: "16dp",

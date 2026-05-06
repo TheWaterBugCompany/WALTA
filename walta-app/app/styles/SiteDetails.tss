@@ -69,10 +69,10 @@
     bottom: "4dp",
     borderRadius: 6,
 	borderColor: "#b4d2d9",
-	selectedButtonColor: "#26849c",
-	unselectedButtonColor: "#fff", 
-	selectedButtonTextColor: "#fff",
-	unselectedButtonTextColor: "#26849c",
+	selectedButtonColor: Alloy.CFG.colors.primary,
+	unselectedButtonColor: Alloy.CFG.colors.white, 
+	selectedButtonTextColor: Alloy.CFG.colors.white,
+	unselectedButtonTextColor: Alloy.CFG.colors.primary,
 	withDividers: true
 }
 

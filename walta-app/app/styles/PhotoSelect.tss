@@ -26,7 +26,7 @@
 }
 
 "#photoSelectInner" : {
-    borderColor: "#26849c",
+    borderColor: Alloy.CFG.colors.primary,
     borderWidth: "1dp",
     backgroundColor: "#cee8ef",
     width: Ti.UI.FILL,
@@ -46,7 +46,7 @@
 }
 
 "#photoSelectOptionalLabel": {
-    color: "#26849c"
+    color: Alloy.CFG.colors.primary
 }
 
 "#photoSelectLabel" : {

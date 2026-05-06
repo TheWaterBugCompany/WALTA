@@ -1,6 +1,6 @@
 
 ".container" : {
-  backgroundColor: "#fff",
+  backgroundColor: Alloy.CFG.colors.white,
   backgroundImage: "/images/menu-background.png"
 }
 
@@ -24,7 +24,7 @@
   font: {
     fontSize: "12dp"
   },
-  color: "#26849c"
+  color: Alloy.CFG.colors.primary
 }
 
 "#logInLabel": {
@@ -48,7 +48,7 @@
     fontFamily: "Boulder",
     fontSize: "25dp"
   },
-  color: "#26849c"
+  color: Alloy.CFG.colors.primary
 }
 
 ".bigMenuText[if=Alloy.Globals.isLowRes]": {
@@ -119,7 +119,7 @@
     fontFamily: "Boulder",
     fontSize: "14dp"
   },
-  color: "#26849c"
+  color: Alloy.CFG.colors.primary
 }
 
 ".smallMenuText[if=Alloy.Globals.isLowRes]": {

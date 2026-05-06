@@ -12,7 +12,7 @@
   },
   left: "10dp",
   textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-  color: "#26849c"
+  color: Alloy.CFG.colors.primary
 }
 
 ".speciesItem[if=Alloy.Globals.isLowRes]": {
