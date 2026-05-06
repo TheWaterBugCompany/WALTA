@@ -166,6 +166,14 @@ describe("Logger sink dispatch", function () {
         expect(sink.entries[0]).to.include({ level: "debug", message: "trace me" });
     });
 
+    it("forwards Logger.info() with level 'info'", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        Logger.info("starting sync");
+        await new Promise(r => setImmediate(r));
+        expect(sink.entries[0]).to.include({ level: "info", message: "starting sync" });
+    });
+
     it("falls back to Ti.API.log when a sink's write() rejects", async function () {
         const fallbackCalls = [];
         global.Ti = {
