@@ -236,19 +236,6 @@ const KobitonAPI = require("./features/support/kobiton");
           }
           break;
 
-        case "unit-test-sim":
-          emulator();
-          args.push("--unit-test");
-          post_cmds.push("mkdir -p ./builds/unit-test");
-          if ( platform === "android" ) {
-            args.push("--output-dir builds/unit-test");
-            post_cmds.push("cp ./walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk ./builds/unit-test/Waterbug.apk");
-          } else if ( platform === "ios" ) {
-            post_cmds.push("rm -rf ./builds/unit-test/Waterbug.app");
-            post_cmds.push("cp -r ./walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app ./builds/unit-test/Waterbug.app");
-          }
-          break;
-
         case "release":
           production();
           args.push("--output-dir builds/release");
@@ -337,7 +324,7 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           clean_dist: {
-            command: 'rm -r ./builds/{release,debug,test,unit-test,unit-test-sim}/*.{apk,ipa,aab,app}',
+            command: 'rm -r ./builds/{release,debug,test,test-sim,unit-test}/*.{apk,ipa,aab,app}',
             exitCode: [ 0, 1 ],
             stdout: "inherit", stderr: "false",
             options: {
@@ -529,9 +516,6 @@ const KobitonAPI = require("./features/support/kobiton");
           unit_test_android: build_if_newer_options("android", "unit-test"),
           unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
-          unit_test_android_sim: build_if_newer_options("android", "unit-test-sim"),
-          unit_test_ios_sim: build_if_newer_options("ios", "unit-test-sim"),
-
           test_android: build_if_newer_options("android", "test"),
           test_ios: build_if_newer_options("ios", "test"),
 
@@ -653,9 +637,18 @@ const KobitonAPI = require("./features/support/kobiton");
         return './walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app';
       }
 
-      // Everything else is packaged into builds/<buildType>/
+      // WB-51: simulator builds share one canonical artifact regardless of
+      // buildType — `unit-test`/`test-sim` produce identical binaries since
+      // WB-25's runtime dispatcher decides modes via a launch arg.
+      if (isSimulator) {
+        return platform === 'android'
+          ? './builds/test-sim/Waterbug.apk'
+          : './builds/test-sim/Waterbug.app';
+      }
+
+      // Device packages still live under builds/<buildType>/
       const ext = platform === 'android' ? 'apk'
-        : ['debug', 'unit-test', 'test-sim'].includes(buildType) ? 'app'
+        : ['debug', 'unit-test'].includes(buildType) ? 'app'
         : 'ipa';
       return `./builds/${buildType}/Waterbug.${ext}`;
     }
@@ -881,7 +874,10 @@ const KobitonAPI = require("./features/support/kobiton");
         }).catch(err => { grunt.fail.fatal(err); done(); });
       } else {
         grunt.task.run('clean');
-        grunt.task.run(`newer:unit_test_${platform}${isSimulator?"_sim":""}`);
+        // Simulator builds share the canonical test-sim binary with the
+        // acceptance suite (WB-51). Device unit-test builds keep their
+        // own newer-target since the device path is distinct.
+        grunt.task.run(`newer:${isSimulator ? `test_sim_${platform}` : `unit_test_${platform}`}`);
 
         let mockServer = createMockCerdiServer();
         mockServer.makeMockSample();
