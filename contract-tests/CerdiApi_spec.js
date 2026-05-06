@@ -1,17 +1,16 @@
-require("mocha");
-const sinon = require("sinon");
-const { use, expect } = require("chai");
-const chaiAsPromised = require("chai-as-promised");
+import sinon from "sinon";
+import { use, expect } from "chai";
+import chaiAsPromised from "chai-as-promised";
 use(chaiAsPromised);
 
-const nock = require('nock');
-const request = require('request');
-const path = require('path');
-const fs = require('fs');
-const moment = require('moment');
-const _ = require("underscore");
+import nock from "nock";
+import request from "request";
+import path from "path";
+import fs from "fs";
+import moment from "moment";
+import _ from "underscore";
 
-const Backbone = require('backbone');
+import Backbone from "backbone";
 
 
 const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
@@ -178,15 +177,13 @@ function mockTiWithProxy() {
 
 mockTiWithProxy();
 
-var CerdiApi = require("../walta-app/app/lib/logic/CerdiApi");
+const CerdiApi = await import("../walta-app/app/lib/logic/CerdiApi.js");
 
-const { TIMEOUT } = require("dns");
-
-var SERVER_URL = null;
-var CLIENT_SECRET = null;
-contents = fs.readFileSync('./walta-app/app/app-config.test.json', 'utf8');
-var config = JSON.parse( contents );
-SERVER_URL = config.cerdiServerUrl
+let SERVER_URL = null;
+let CLIENT_SECRET = null;
+const contents = fs.readFileSync('./walta-app/app/app-config.test.json', 'utf8');
+const config = JSON.parse( contents );
+SERVER_URL = config.cerdiServerUrl;
 CLIENT_SECRET = config.cerdiApiSecret;
 
 if ( SERVER_URL === null || CLIENT_SECRET == null ) {
@@ -460,7 +457,7 @@ describe('CerdiApi', function() {
                 return img;
             }
             it("should retrieve unknown creature photo", function() {
-                let serverSampleId,sitePhotoId;
+                let serverSampleId, unknownCreaturePhotoId;
                 return cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
                     .then( () => submitTestSample(moment().format()) )
