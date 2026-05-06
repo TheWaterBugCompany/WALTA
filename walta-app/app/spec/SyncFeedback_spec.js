@@ -90,4 +90,22 @@ describe("SyncFeedback controller", function () {
             expect(ctl.progressFill.width).to.equal("45%");
         });
     });
+
+    describe("error state (injected syncController)", function () {
+        beforeEach(async () => {
+            var { syncController, store } = createSyncController(SyncStore);
+            store.recordStart();
+            store.recordProgress("Downloading samples");
+            store.recordProgress("Uploading site photo");
+            store.recordError(new Error("Server Error"));
+            ctl = Alloy.createController("SyncFeedback", { syncController });
+            win = wrapViewInWindow(ctl.getView());
+            await windowOpenTest(win);
+        });
+
+        it("renders the error message in the progress text with the error colour", () => {
+            expect(ctl.progressText.text).to.equal("30% Server Error");
+            expect(ctl.progressFill.backgroundColor).to.equal(Alloy.CFG.colors.error);
+        });
+    });
 });

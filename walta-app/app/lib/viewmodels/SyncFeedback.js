@@ -1,9 +1,6 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
 const Logger = require("../util/Logger");
 
-const PROGRESS_COLOR_NORMAL = "#26849c";
-const PROGRESS_COLOR_ERROR = "#c0392b";
-
 const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.";
 
 class SyncFeedbackViewModel extends ChangeNotifier {
@@ -39,7 +36,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   }
 
   get progressColor() {
-    return this.status === "error" ? PROGRESS_COLOR_ERROR : PROGRESS_COLOR_NORMAL;
+    return this.status === "error" ? Alloy.CFG.colors.error : Alloy.CFG.colors.primary;
   }
 
   get progressWidth() {
