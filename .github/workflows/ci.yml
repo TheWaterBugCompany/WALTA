@@ -272,29 +272,6 @@ jobs:
       - name: Run install.sh
         run: sh install.sh
 
-      - name: Read Titanium SDK version
-        id: ti-version
-        run: |
-          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
-          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
-
-      # SDK install is needed even with --skip-build because the unit-test
-      # grunt task starts with `titanium clean` (which expects an SDK present).
-      # Cached, so cheap.
-      - name: Restore Titanium SDK cache
-        id: ti-sdk-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
-          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
-
-      - name: Install Titanium SDK
-        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
-        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
-
-      - name: Configure Titanium
-        run: npx titanium config cli.logLevel info
-
       - name: Download Waterbug.app artifact
         uses: actions/download-artifact@v4
         with:
@@ -507,28 +484,6 @@ jobs:
       - name: Run install.sh
         run: sh install.sh
 
-      - name: Read Titanium SDK version
-        id: ti-version
-        run: |
-          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
-          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
-
-      # SDK install is needed even with --skip-build because the unit-test
-      # grunt task starts with `titanium clean`. Cache hit makes it cheap.
-      - name: Restore Titanium SDK cache
-        id: ti-sdk-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
-          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
-
-      - name: Install Titanium SDK
-        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
-        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
-
-      - name: Configure Titanium
-        run: npx titanium config cli.logLevel info
-
       - name: Download Waterbug.apk artifact
         uses: actions/download-artifact@v4
         with:
@@ -652,28 +607,6 @@ jobs:
 
       - name: Run install.sh
         run: sh install.sh
-
-      - name: Read Titanium SDK version
-        id: ti-version
-        run: |
-          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
-          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
-
-      # SDK install needed for `titanium clean` (run by the acceptance grunt
-      # task) even though the build itself was done in ios-build. Cached.
-      - name: Restore Titanium SDK cache
-        id: ti-sdk-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
-          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
-
-      - name: Install Titanium SDK
-        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
-        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
-
-      - name: Configure Titanium
-        run: npx titanium config cli.logLevel info
 
       - name: Download Waterbug.app artifact
         uses: actions/download-artifact@v4
@@ -837,28 +770,6 @@ jobs:
 
       - name: Run install.sh
         run: sh install.sh
-
-      - name: Read Titanium SDK version
-        id: ti-version
-        run: |
-          TI_SDK=$(grep -o '<sdk-version>[^<]*' walta-app/tiapp.xml | cut -d'>' -f2)
-          echo "version=$TI_SDK" >> "$GITHUB_OUTPUT"
-
-      # SDK install kept for `titanium clean` parity with unit-test job;
-      # cache hit makes it cheap.
-      - name: Restore Titanium SDK cache
-        id: ti-sdk-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
-          key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
-
-      - name: Install Titanium SDK
-        if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
-        run: npx titanium sdk install ${{ steps.ti-version.outputs.version }} --no-prompt
-
-      - name: Configure Titanium
-        run: npx titanium config cli.logLevel info
 
       - name: Download Waterbug.apk artifact
         uses: actions/download-artifact@v4

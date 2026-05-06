@@ -873,7 +873,13 @@ const KobitonAPI = require("./features/support/kobiton");
           done();
         }).catch(err => { grunt.fail.fatal(err); done(); });
       } else {
-        grunt.task.run('clean');
+        // Clean only makes sense as a "fresh build" guarantee — when
+        // --skip-build is set (e.g. CI consuming a prebuilt artifact),
+        // skip clean too so we don't need the Titanium SDK at runtime
+        // and don't clobber the prebuilt outputs (WB-51).
+        if (!grunt.option('skip-build')) {
+          grunt.task.run('clean');
+        }
         // Simulator builds share the canonical test-sim binary with the
         // acceptance suite (WB-51). Device unit-test builds keep their
         // own newer-target since the device path is distinct.
