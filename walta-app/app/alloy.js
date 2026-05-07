@@ -22,6 +22,19 @@ if (OS_ANDROID) {
         var intent = Ti.Android.currentActivity.intent;
         serverUrl = intent.getStringExtra("cerdiServerUrl");
         apiSecret = intent.getStringExtra("cerdiApiSecret");
+        // Persist test launchargs so subsequent cold-launches recover them.
+        // `mobile: deepLink` (used by acceptance tests for walta://reset)
+        // restarts the activity with only the URI in the intent — no extras.
+        // Without this, alloy.js would fall back to the production sandbox
+        // URL and login would never reach the mock. Guarded on deployType
+        // so release builds never write these (and a release install never
+        // carries the extras anyway, so reads stay null).
+        if (Ti.App.deployType !== 'production') {
+            if (serverUrl) Ti.App.Properties.setString("cerdiServerUrl", serverUrl);
+            if (apiSecret) Ti.App.Properties.setString("cerdiApiSecret", apiSecret);
+            if (!serverUrl) serverUrl = Ti.App.Properties.getString("cerdiServerUrl");
+            if (!apiSecret) apiSecret = Ti.App.Properties.getString("cerdiApiSecret");
+        }
         Ti.API.debug(`[walta-launchargs] android intent.data=${intent.data} cerdiServerUrl=${serverUrl}`);
     } catch (e) {
         Ti.API.debug(`[walta-launchargs] android intent read failed: ${e && e.message}`);
