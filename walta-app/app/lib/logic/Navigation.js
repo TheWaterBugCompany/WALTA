@@ -92,30 +92,10 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
 
 }
 
-// Two pages are "the same screen" if they show the same controller for the
-// same key node (or no node at all, e.g. Home).
-function isSameScreen(a, b) {
-    if (a.ctl !== b.ctl) return false;
-    const nodeA = a.args && a.args.node && a.args.node.id;
-    const nodeB = b.args && b.args.node && b.args.node.id;
-    return nodeA === nodeB;
-}
-
 Navigation.prototype.openController = async function (ctl, args) {
         if (!args) args = {};
         if (!args.slide) args.slide = "none";
         let page = { ctl: ctl, args: args };
-
-        // Going to the screen we're already on is a no-op. Saves a redundant
-        // controller construction + window transition, and avoids back-to-back
-        // openController calls confusing the platform driver in deeplink-driven
-        // flows (e.g. walta://login firing Topics.LOGGEDIN → Topics.HOME while
-        // already on Menu — see WB-67).
-        const top = this.history[this.history.length - 1];
-        if (top && isSameScreen(top, page)) {
-            return;
-        }
-
         try {
             await this.garbageCollectControllers(page);
 
