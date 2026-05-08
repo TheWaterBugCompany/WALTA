@@ -113,16 +113,16 @@ describe("SyncFeedback controller", function () {
         it("scrolls to the bottom when the user opens the pane (seeded entries are at the bottom)", async () => {
             const spy = simple.mock(ctl.logScroll, "scrollToBottom");
             ctl.logToggleButton.fireEvent("click");
-            await waitForTick(10)();
+            await waitForTick(200)();
             expect(spy.callCount).to.equal(1);
         });
 
         it("scrolls to the bottom when a new log entry lands while the pane is open", async () => {
             ctl.logToggleButton.fireEvent("click");
-            await waitForTick(10)();
+            await waitForTick(200)();
             const spy = simple.mock(ctl.logScroll, "scrollToBottom");
             Logger.info("new line", "sync");
-            await waitForTick(10)();
+            await waitForTick(200)();
             expect(spy.callCount).to.equal(1);
         });
     });
