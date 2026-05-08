@@ -2,38 +2,23 @@
 // See docs/patterns/logger-sinks.md for the design — sink writes go
 // through `append`; the SyncFeedback pane reads via `query`.
 
-const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
+const Migrator = require("./Migrator");
 
-// Append a function for each schema change. Existing entries must
-// not be modified — the migrator runs each one exactly once, in
-// order, then bumps PRAGMA user_version.
+const TABLE = "logs";
+
+// Append a `require` for each new migration file. Files use the same
+// shape as Alloy's app/migrations/ (timestamped filename, exports.id /
+// up / down) so future migration FROM Alloy is a file move, not a
+// rewrite. See docs/patterns/repository-pattern.md (TBD).
 const MIGRATIONS = [
-    function v1(db) {
-        db.execute(
-            "CREATE TABLE logs (" +
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "ts INTEGER NOT NULL, " +
-            "level TEXT NOT NULL, " +
-            "facility TEXT, " +
-            "message TEXT" +
-            ")"
-        );
-    }
+    require("./migrations/202605080000000_log")
 ];
 
-function migrate(db) {
-    const rs = db.execute("PRAGMA user_version");
-    const version = rs.fieldByName("user_version") || 0;
-    rs.close();
-    for (let i = version; i < MIGRATIONS.length; i++) {
-        MIGRATIONS[i](db);
-        db.execute("PRAGMA user_version = " + (i + 1));
-    }
-}
+const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
 
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
-    migrate(db);
+    Migrator.runMigrations(db, TABLE, MIGRATIONS);
 
     return {
         append: function (entry) {
