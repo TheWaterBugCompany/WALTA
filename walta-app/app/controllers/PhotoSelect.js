@@ -1,6 +1,7 @@
 var Logger = require('util/Logger');
-var info = Logger.log;
-var debug = Logger.debug;
+var info = (m, tag = "media") => Logger.log(m, tag);
+var debug = (m, tag = "media") => Logger.debug(m, tag);
+var error = (m, tag = "media") => Logger.error(m, tag);
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
@@ -25,7 +26,7 @@ var cropPhoto = $.args.cropPhoto;
 
 function setReadOnlyMode(p_readOnlyMode) {
     readOnlyMode = p_readOnlyMode;
-    Logger.log(`readOnlyMode = ${readOnlyMode}`);
+    info(`readOnlyMode = ${readOnlyMode}`);
     if ( readOnlyMode ) {
         $.camera.visible = false;
     } else {
@@ -56,7 +57,7 @@ function generateThumbnail( fileOrBlob ) {
     }
 
     if ( ! fullPhoto ) {
-        Logger.error(`Error loading photo: ${fileOrBlob}`);
+        error(`Error loading photo: ${fileOrBlob}`);
         throw new Error("Unable to load photo");
     }
 
@@ -111,7 +112,7 @@ function generateThumbnail( fileOrBlob ) {
         var cropY = (fullPhoto.height-newHeight)/2;
         var thumbnail = fullPhoto.imageAsCropped( { width: newWidth, height: newHeight, x:cropX, y:cropY });
         if ( ! thumbnail ) {
-            Logger.error(`Error cropping to create thumbnail: ${fullPhotoPath}`);
+            error(`Error cropping to create thumbnail: ${fullPhotoPath}`);
             throw new Error("Unable to crop photo");
         }
     }
