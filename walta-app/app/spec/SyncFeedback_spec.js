@@ -81,15 +81,29 @@ describe("SyncFeedback controller", function () {
         it("renders prior-run entries in the log pane after toggling Show Log", () => {
             ctl.logToggleButton.fireEvent("click");
             expect(ctl.logPane.visible).to.equal(true);
-            expect(ctl.logText.text).to.equal("[sync] starting upload\n[sync] rate limit hit");
+            expect(ctl.logText.text).to.equal("starting upload\nrate limit hit");
         });
 
         it("live-updates the rendered text when Logger.error fires while the popup is open", () => {
             ctl.logToggleButton.fireEvent("click");
             Logger.error("upload failed", "sync");
             expect(ctl.logText.text).to.equal(
-                "[sync] starting upload\n[sync] rate limit hit\n[sync] upload failed"
+                "starting upload\nrate limit hit\nupload failed"
             );
+        });
+    });
+
+    describe("just started (no progress yet)", function () {
+        beforeEach(async () => {
+            var { syncController, store } = createSyncController(SyncStore);
+            store.recordStart();
+            ctl = Alloy.createController("SyncFeedback", { syncController });
+            win = wrapViewInWindow(ctl.getView());
+            await windowOpenTest(win);
+        });
+
+        it("shows the seeded statusText so the bar isn't bare while we wait for the first milestone", () => {
+            expect(ctl.progressText.text).to.equal("0% Starting sync");
         });
     });
 

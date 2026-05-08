@@ -29,6 +29,11 @@ describe("SyncStore", function () {
       expect(store.errorMessage).to.equal(null);
     });
 
+    it("seeds statusText so the UI isn't bare before the first progress milestone", function () {
+      store.recordStart();
+      expect(store.statusText).to.equal("Starting sync");
+    });
+
     it("notifies listeners", function () {
       const seen = [];
       store.addListener(() => seen.push(store.status));

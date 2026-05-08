@@ -173,9 +173,9 @@ describe("SyncFeedbackViewModel", function () {
       expect(vm.progressText).to.equal("15% Uploading taxa 141 photo");
     });
 
-    it("is just the percent when syncing with no statusText", function () {
+    it("renders the seeded statusText after recordStart", function () {
       store.recordStart();
-      expect(vm.progressText).to.equal("0%");
+      expect(vm.progressText).to.equal("0% Starting sync");
     });
 
     it("is 0% when offline regardless of percent", function () {
@@ -276,10 +276,10 @@ describe("SyncFeedbackViewModel", function () {
       expect(vm.logText).to.equal("");
     });
 
-    it("joins log entries as '[facility] message' with newlines", function () {
+    it("joins log entries by message with newlines (no facility prefix — pane is sync-only)", function () {
       Logger.info("first", "sync");
       Logger.warn("second", "sync");
-      expect(vm.logText).to.equal("[sync] first\n[sync] second");
+      expect(vm.logText).to.equal("first\nsecond");
     });
   });
 
