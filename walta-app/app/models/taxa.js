@@ -1,5 +1,5 @@
 var Logger = require('util/Logger');
-var log = Logger.log;
+var log = (m, tag = "sample") => Logger.log(m, tag);
 var moment = require("lib/moment");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
 exports.definition = {

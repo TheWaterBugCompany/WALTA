@@ -1,4 +1,5 @@
 const Logger = require('util/Logger');
+const log = (m, tag = "sample") => Logger.log(m, tag);
 var Topics = require('ui/Topics');
 var SampleSync = require('logic/SampleSync');
 
@@ -27,7 +28,7 @@ function updateSampleList() {
         $.samples.loadSampleHistory(Alloy.Globals.CerdiApi.retrieveUserId());
     } catch(e) {
         // FIXME: for some reason these errors are not being reported if there isn't a catch here
-        Logger.log(`Error fetching sample list: ${JSON.stringify(e)}`);
+        log(`Error fetching sample list: ${JSON.stringify(e)}`);
         Logger.recordException(e);
     }
 }

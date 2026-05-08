@@ -1,6 +1,6 @@
 var Logger = require('util/Logger');
-var log = Logger.log;
-var debug = Logger.debug;
+var log = (m, tag = "sample") => Logger.log(m, tag);
+var debug = (m, tag = "sample") => Logger.debug(m, tag);
 var moment = require("lib/moment");
 var Sample = require("logic/Sample");
 var { removeFilesBeginningWith } = require('logic/FileUtils');

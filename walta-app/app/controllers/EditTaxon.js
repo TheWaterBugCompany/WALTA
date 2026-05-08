@@ -1,4 +1,5 @@
 const Logger = require("util/Logger");
+const log = (m, tag = "sample") => Logger.log(m, tag);
 var moment = require("lib/moment");
 let sampleTaxonId = $.args.sampleTaxonId; 
 let taxonId = $.args.taxonId;
@@ -6,7 +7,7 @@ let key = $.args.key;
 let { disableControl, enableControl } = require("ui/ViewUtils");
 
 let readOnlyMode = $.args.readonly === true;
-Logger.log(`EditTaxon readOnlyMode = ${readOnlyMode}`);
+log(`EditTaxon readOnlyMode = ${readOnlyMode}`);
 $.photoSelect.setReadOnlyMode(readOnlyMode);
 if ( readOnlyMode ) {
     disableControl($.deleteButton);
@@ -19,15 +20,15 @@ let taxon = null;
 
 /* if we a referencing an existing taxon load the specific one by sampletaxonid */
 if (sampleTaxonId) {
-    Logger.log(`calling with sampleTaxonId = ${sampleTaxonId}`)
+    log(`calling with sampleTaxonId = ${sampleTaxonId}`)
     taxon = Alloy.Collections["taxa"].findTaxonBySampleTaxonId(sampleTaxonId);
     taxonId = taxon.get("taxonId");
 } else if ( taxonId != null )  {
-    Logger.log("not calling with sampleTaxonId")
+    log("not calling with sampleTaxonId")
     taxon = Alloy.Collections["taxa"].findTaxon(taxonId);
 }
 
-Logger.log(`taxonId = ${taxonId}`);
+log(`taxonId = ${taxonId}`);
 if ( taxonId ) {
     $.taxonName.text = key.findTaxonById(taxonId).commonName;
 } else {
@@ -39,14 +40,14 @@ if (!taxon ) {
     taxons.loadTemporary(sampleId, taxonId); 
     taxon = taxons.first();
     if ( !taxon ) {
-        Logger.log(`creating new taxon as temporary taxon for sampleId = ${sampleId}`)
+        log(`creating new taxon as temporary taxon for sampleId = ${sampleId}`)
         taxon = Alloy.createModel( 'taxa', { sampleId: sampleId, taxonId: taxonId, abundance: "1-2" } );
         taxon.save();
     } else {
-        Logger.log(`existing temporary taxon ${JSON.stringify(taxon)}`);
+        log(`existing temporary taxon ${JSON.stringify(taxon)}`);
     }
 } else {
-    Logger.log(`existing persisted taxon ${JSON.stringify(taxon)}`);
+    log(`existing persisted taxon ${JSON.stringify(taxon)}`);
 }
 
 var realPhoto = false;

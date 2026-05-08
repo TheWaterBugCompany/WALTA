@@ -4,8 +4,8 @@
  */
 
 const Logger = require('util/Logger');
-var log = Logger.log;
-var debug = m => Logger.debug(m);
+var log = (m, tag = "sample") => Logger.log(m, tag);
+var debug = (m, tag = "sample") => Logger.debug(m, tag);
 
 const appConfig = Ti.Filesystem.getFile("app-config.json").read();
 _.extend(Alloy.CFG, JSON.parse(appConfig));
