@@ -30,6 +30,8 @@ function removeListener(cb) {
 
 var log = (m, tag = "sync") => Logger.log(m, tag);
 var debug = (m, tag = "sync") => Logger.debug(m, tag);
+var info = (m, tag = "sync") => Logger.info(m, tag);
+var error = (m, tag = "sync") => Logger.error(m, tag);
 
 let timeoutHandler = null;
 
@@ -107,18 +109,21 @@ function startSynchronise(options) {
     // flag that were are already syncing - to avoid reentrant calls
     isSyncing = true;
     syncStore.recordStart();
+    info("Starting sync");
     Topics.fireTopicEvent( Topics.SYNC_STARTED );
     return Promise.resolve()
         .then(() => sampleDownloader.downloadSamples() )
         .then(() => sampleUploader.uploadSamples() )
         .then(() => {
             syncStore.recordSuccess();
+            info("Sync finished successfully");
             Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } );
         })
-        .catch( error => {
-            Logger.recordException( error );
-            syncStore.recordError( error );
-            Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: false, error } );
+        .catch( err => {
+            error("Sync finished with errors");
+            Logger.recordException( err );
+            syncStore.recordError( err );
+            Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: false, error: err } );
         })
         .finally( rescheduleSync )
 }
