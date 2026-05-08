@@ -48,9 +48,13 @@ applyDynamicMargins();
 vm.addListener(applyDynamicMargins);
 
 let lastLogCount = vm.logLines.length;
+let lastLogVisible = vm.logVisible;
 function tailLogPane() {
-    if (vm.logLines.length === lastLogCount) return;
+    const justOpened = vm.logVisible && !lastLogVisible;
+    const grew = vm.logLines.length !== lastLogCount;
     lastLogCount = vm.logLines.length;
+    lastLogVisible = vm.logVisible;
+    if (!justOpened && !grew) return;
     // setTimeout: defer until after the Label has re-laid-out, otherwise
     // scrollToBottom uses the pre-update content height.
     setTimeout(() => $.logScroll.scrollToBottom(), 0);
