@@ -5,6 +5,7 @@ var Question = require('logic/Question');
 var Taxon = require('logic/Taxon');
 var SpeedbugIndex = require('./SpeedbugIndex');
 var Logger = require('util/Logger');
+var debug = (m, tag = "key") => Logger.debug(m, tag);
 
 
 // attach proper classes to key from plain json object hierarchy
@@ -34,7 +35,7 @@ function rehydrateKey( key, node ) {
 function rehydrateSpeedBug( key ) {
 	_(key.speedbugIndex)
 		.mapObject( (sbObj) => {
-			Logger.debug(`Rehyrdating ${sbObj.name}`);
+			debug(`Rehyrdating ${sbObj.name}`);
 			var sbIndex = SpeedbugIndex.createSpeedbugIndex(sbObj.name,key);
 			sbIndex.setSpeedbugIndex( sbObj.speedbugIndexInternal );
 			key.addSpeedbugIndex( sbIndex );

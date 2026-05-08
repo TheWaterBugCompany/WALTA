@@ -9,6 +9,7 @@
  */
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 var Logger = require('util/Logger');
+var error = (m, tag = "key") => Logger.error(m, tag);
 
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
@@ -55,12 +56,12 @@ function createKey( args ) {
 			if ( this.isNode( this.currentDecision ) ) {
 				var nd = this.currentDecision.questions[i].outcome;
 				if ( _.isUndefined(nd) || _.isNull( nd ) )
-					Logger.error( "Outcome for " + i + " is not defined!" );
+					error( "Outcome for " + i + " is not defined!" );
 
 				this.currentDecision = nd;
 			} else {
 				if ( Ti ) {
-					Logger.error("choose() called on non key node!");
+					error("choose() called on non key node!");
 				}
 			}
 		},
@@ -108,7 +109,7 @@ function createKey( args ) {
 				}
 			}
 			if ( _.isUndefined( node ) ) {
-				Logger.error( "Unable to find key node '" + refId +"'" );
+				error( "Unable to find key node '" + refId +"'" );
 			}
 
 			this.currentDecision = node;
