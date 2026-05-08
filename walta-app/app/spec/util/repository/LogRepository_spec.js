@@ -108,7 +108,7 @@ describe("LogRepository", function () {
     });
 
     describe("migration", function () {
-        it("schema survives close+reopen (PRAGMA user_version is idempotent)", function () {
+        it("schema survives close+reopen (migrations table tracks applied state)", function () {
             repo.append({ ts: 100, level: "info", facility: "x", message: "before close" });
             repo.close();
             repo = LogRepository.open(TEST_DB);
