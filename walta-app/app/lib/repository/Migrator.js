@@ -1,14 +1,19 @@
 // Migration runner for non-Alloy repositories. Mirrors Alloy's
 // `migrations` tracking table format (`latest TEXT, model TEXT`) and
 // migrator API (`createTable`, `dropTable`) so migration files can
-// move between this and Alloy without rewrites — see
-// docs/patterns/repository-pattern.md (TBD).
+// move between this and Alloy with only `migration.up` →
+// `exports.up` style edits — see docs/patterns/repository-pattern.md
+// (TBD).
 //
-// Migration file shape (in repository/migrations/<timestamp>_<table>.js):
+// Migration file shape (CommonJS):
 //
-//   exports.id = "<timestamp>";
-//   exports.up   = function (migrator) { migrator.createTable({ columns: {...} }); };
+//   exports.up   = function (migrator) { migrator.createTable({...}); };
 //   exports.down = function (migrator) { migrator.dropTable(); };
+//
+// Files live in <migrationsPath>/<id>_<table>.js where <id> is a
+// numeric timestamp. Filename is the source of truth for the id —
+// the runner enumerates the directory and parses ids from filenames,
+// matching Alloy's convention.
 
 function createMigrator(db, table) {
     return {
@@ -44,14 +49,32 @@ function setCurrentMigrationId(db, model, latest) {
     }
 }
 
-// Run any pending migrations (id > current) for `table`, in order.
-// All run inside a single transaction so partial failure rolls back.
-exports.runMigrations = function (db, table, migrations) {
-    const sorted = migrations.slice().sort((a, b) =>
+function discoverMigrations(table, migrationsPath) {
+    const dir = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, migrationsPath);
+    const entries = (dir && dir.getDirectoryListing()) || [];
+    const re = new RegExp("^(\\d+)_" + table + "\\.js$");
+    const migrations = [];
+    for (let i = 0; i < entries.length; i++) {
+        const filename = entries[i];
+        const match = filename.match(re);
+        if (!match) continue;
+        const id = match[1];
+        const moduleName = filename.replace(/\.js$/, "");
+        const mod = require(migrationsPath + "/" + moduleName);
+        migrations.push({ id: id, up: mod.up, down: mod.down });
+    }
+    migrations.sort((a, b) =>
         a.id < b.id ? -1 : a.id > b.id ? 1 : 0
     );
+    return migrations;
+}
+
+// Run any pending migrations (id > current) for `table`, in order.
+// All run inside a single transaction so partial failure rolls back.
+exports.runMigrations = function (db, table, migrationsPath) {
+    const migrations = discoverMigrations(table, migrationsPath);
     const current = getCurrentMigrationId(db, table);
-    const pending = sorted.filter(m => current === null || m.id > current);
+    const pending = migrations.filter(m => current === null || m.id > current);
     if (pending.length === 0) return;
 
     const migrator = createMigrator(db, table);

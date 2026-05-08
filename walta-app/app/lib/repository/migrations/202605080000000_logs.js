@@ -1,5 +1,3 @@
-exports.id = "202605080000000";
-
 exports.up = function (migrator) {
     migrator.createTable({
         columns: {
