@@ -3,10 +3,11 @@ import { isAppiumRunning as defaultIsAppiumRunning } from "./AppiumLauncher.js";
 
 class CucumberLauncher {
   constructor({
-    tags = "@only", appiumOptions = {}, spawn = defaultSpawn,
+    tags = "not @skip", name = null, appiumOptions = {}, spawn = defaultSpawn,
     isAppiumRunning = defaultIsAppiumRunning, killProcess = null,
   } = {}) {
     this._tags = tags;
+    this._name = name;
     this._appiumOptions = appiumOptions;
     this._spawn = spawn;
     this._isAppiumRunning = isAppiumRunning;
@@ -45,7 +46,11 @@ class CucumberLauncher {
     const code = await new Promise((resolve) => {
       const child = this._spawn(
         "npx",
-        ["cucumber-js", "--tags", this._tags, "--force-exit"],
+        [
+          "cucumber-js", "--tags", this._tags,
+          ...(this._name ? ["--name", this._name] : []),
+          "--force-exit",
+        ],
         {
           stdio: "inherit",
           env: {
