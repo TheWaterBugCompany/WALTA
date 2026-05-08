@@ -90,15 +90,21 @@ This refactor is being landed incrementally. Order:
    stays in `Logger.js` — SyncFeedback still depends on it until
    step 6.
 3. Add `LogRepository` and `SqlSink` for log persistence across
-   background/resume. Two modules, two responsibilities:
+   background/resume. *Done.* Two modules, two responsibilities:
    - `LogRepository.open(dbName)` opens `Ti.Database`, runs migrations
      via `PRAGMA user_version`, and exposes `append(entry)`,
-     `query({ facility, minLevel, limit })`, `prune(maxAgeMs, maxRows)`.
-     Tested at the device-spec layer against a real `Ti.Database`.
-   - `SqlSink.create(repo)` is ~10 lines: `levels` allowlist plus
-     `write(entry) { repo.append(entry); return Promise.resolve(); }`.
-   This is the first non-Alloy persistence module — establishes the
-   pattern for future repositories (own migrations, no Backbone).
+     `query({ facility, minLevel, limit })`, `prune(maxAgeMs, maxRows)`,
+     `close()`. Tested at the device-spec layer against a real
+     `Ti.Database` (`walta-app/app/spec/util/repository/LogRepository_spec.js`).
+   - `SqlSink.create(repo)` is the Logger sink adapter — `levels`
+     allowlist (`trace`, `info`, `warn`, `error` — skips `debug`)
+     plus `async write(entry) { repo.append(entry); }`. Sync throws
+     from `repo.append` become async rejections, handled by the
+     dispatcher's `Ti.API.log` fallback.
+   - `Logger.configure()` opens the repo, prunes at startup
+     (14 days OR 5,000-row cap), and registers SqlSink.
+   First non-Alloy persistence module — establishes the pattern for
+   future repositories (own migrations, no Backbone).
 4. Add `Logger.info()` and apply the facility taxonomy across the ~38
    files of existing call sites. *Done.* Eight facilities: `sync`,
    `auth`, `media`, `ui`, `navigation`, `location`, `key`, `sample`.
