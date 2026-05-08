@@ -117,7 +117,8 @@ function createSampleDownloader(delay) {
                         })
                         .catch( err => {
                             warn(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
-                            Logger.recordException(err)
+                            Logger.recordException(err);
+                            return [sample, serverSample];
                         });
                 } else {
                     return Promise.resolve([sample,serverSample]);
