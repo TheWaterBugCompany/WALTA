@@ -246,6 +246,58 @@ describe("Logger sink dispatch", function () {
     });
 });
 
+describe("Logger.subscribe", function () {
+    let Logger;
+
+    beforeEach(function () {
+        delete require.cache[require.resolve("../walta-app/app/lib/util/Logger")];
+        Logger = require("../walta-app/app/lib/util/Logger");
+    });
+
+    it("delivers entries that match both facility and minLevel", function () {
+        const captured = [];
+        Logger.subscribe({ facility: "sync", minLevel: "info" }, e => captured.push(e));
+        Logger.info("uploaded", "sync");
+        expect(captured).to.have.length(1);
+        expect(captured[0]).to.include({ level: "info", facility: "sync", message: "uploaded" });
+    });
+
+    it("filters out entries from a different facility", function () {
+        const captured = [];
+        Logger.subscribe({ facility: "sync", minLevel: "info" }, e => captured.push(e));
+        Logger.info("auth ok", "auth");
+        expect(captured).to.have.length(0);
+    });
+
+    it("filters out entries below minLevel (debug < trace < info < warn < error)", function () {
+        const captured = [];
+        Logger.subscribe({ facility: "sync", minLevel: "info" }, e => captured.push(e));
+        Logger.debug("noise", "sync");
+        Logger.log("trace bit", "sync");
+        Logger.info("milestone", "sync");
+        Logger.warn("slow", "sync");
+        Logger.error("boom", "sync");
+        expect(captured.map(e => e.level)).to.deep.equal(["info", "warn", "error"]);
+    });
+
+    it("returns an unsubscribe function that stops further notifications", function () {
+        const captured = [];
+        const unsubscribe = Logger.subscribe({ facility: "sync", minLevel: "info" }, e => captured.push(e));
+        Logger.info("first", "sync");
+        unsubscribe();
+        Logger.info("second", "sync");
+        expect(captured.map(e => e.message)).to.deep.equal(["first"]);
+    });
+
+    it("isolates a throwing subscriber so other subscribers still fire", function () {
+        const captured = [];
+        Logger.subscribe({ facility: "sync", minLevel: "info" }, () => { throw new Error("nope"); });
+        Logger.subscribe({ facility: "sync", minLevel: "info" }, e => captured.push(e));
+        expect(() => Logger.info("hello", "sync")).to.not.throw();
+        expect(captured).to.have.length(1);
+    });
+});
+
 describe("Logger.configure", function () {
     let Logger;
 
