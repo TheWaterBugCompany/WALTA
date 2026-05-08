@@ -12,10 +12,27 @@ function getBugfender() {
 
 // see docs/patterns/logger-sinks.md
 const _sinks = [];
+const _subscribers = [];
+const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
 
 exports.addSink = function (sink) {
     _sinks.push(sink);
 };
+
+exports.subscribe = function (filter, cb) {
+    const sub = { filter: filter || {}, cb };
+    _subscribers.push(sub);
+    return function unsubscribe() {
+        const idx = _subscribers.indexOf(sub);
+        if (idx >= 0) _subscribers.splice(idx, 1);
+    };
+};
+
+function _matches(filter, entry) {
+    if (filter.facility && filter.facility !== entry.facility) return false;
+    if (filter.minLevel && LEVEL_RANK[entry.level] < LEVEL_RANK[filter.minLevel]) return false;
+    return true;
+}
 
 function _dispatch(level, facility, message) {
     const entry = { ts: Date.now(), level, facility, message };
@@ -27,6 +44,16 @@ function _dispatch(level, facility, message) {
             if (typeof Ti !== 'undefined') Ti.API.log(level, fallback);
             else console.log(fallback);
         });
+    }
+    for (let i = 0; i < _subscribers.length; i++) {
+        const sub = _subscribers[i];
+        if (!_matches(sub.filter, entry)) continue;
+        try { sub.cb(entry); }
+        catch (e) {
+            const msg = "Logger subscriber threw: " + (e && e.message);
+            if (typeof Ti !== 'undefined') Ti.API.log("error", msg);
+            else console.log(msg);
+        }
     }
 }
 
