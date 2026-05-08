@@ -44,7 +44,7 @@ Ti.API.debug(`[walta-launchargs] final Alloy.CFG.cerdiServerUrl=${Alloy.CFG.cerd
 // before any repository's `open()` runs. The runner discovers every
 // migration file in repository/migrations/ and applies each
 // against this db.
-require("repository/Migrator").migrate("logs");
+require("repository/Migrator").migrate("waterbug_data");
 
 Logger.configure();
 Logger.setCustomKey("deploy.type", Ti.App.deployType );

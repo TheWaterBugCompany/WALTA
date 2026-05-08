@@ -5,7 +5,7 @@ var { removeDatabase } = require("spec/util/TestUtils");
 var LogRepository = require("repository/LogRepository");
 var Migrator = require("repository/Migrator");
 
-const TEST_DB = "logs_test";
+const TEST_DB = "waterbug_data_test";
 
 describe("LogRepository", function () {
     var repo;
