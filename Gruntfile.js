@@ -642,12 +642,19 @@ const KobitonAPI = require("./features/support/kobiton");
         .then(done);
     });
 
+    function isLiveViewBuildType(buildType) {
+      return buildType === 'unit-test-liveview' || buildType === 'debug-liveview';
+    }
+
     function resolveAppPath(platform, buildType, isSimulator) {
       if (!buildType) return null;
-      if (grunt.option('liveview-reuse') && buildType === 'unit-test-liveview') return null;
+      if (grunt.option('liveview-reuse') && isLiveViewBuildType(buildType)) return null;
 
       // LiveView builds come from the Titanium build dir, not builds/
-      if (buildType === 'unit-test-liveview') {
+      // — same raw output for both unit-test-liveview and debug-liveview;
+      // the only difference is whether `unit_test=true` is set as a launch
+      // arg (see launch task below).
+      if (isLiveViewBuildType(buildType)) {
         if (platform === 'android') return './walta-app/build/android/app/build/outputs/apk/debug/app-debug.apk';
         if (isSimulator) return './walta-app/build/iphone/build/Products/Debug-iphonesimulator/Waterbug.app';
         return './walta-app/build/iphone/build/Products/Debug-iphoneos/Waterbug.app';
@@ -975,7 +982,7 @@ const KobitonAPI = require("./features/support/kobiton");
             await liveview.stop();
             await liveview.start();
           }
-          grunt.task.run(`launch:${platform}:unit-test-liveview`);
+          grunt.task.run(`launch:${platform}:debug-liveview`);
           grunt.task.run(`output-logs:${platform}:preview`);
           done();
         }).catch(err => { grunt.fail.fatal(err); done(); });
