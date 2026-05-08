@@ -74,7 +74,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   }
 
   get logText() {
-    return this._logEntries.map(e => `[${e.facility}] ${e.message}`).join("\n");
+    return this._logEntries.map(e => e.message).join("\n");
   }
 
   get logPaneHeight() {

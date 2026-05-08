@@ -25,7 +25,7 @@ class SyncStore extends ChangeNotifier {
   get errorMessage() { return this._state.errorMessage; }
 
   recordStart() {
-    this._setState({ ...INITIAL_STATE, status: "syncing" });
+    this._setState({ ...INITIAL_STATE, status: "syncing", statusText: "Starting sync" });
   }
 
   recordProgress(message) {
