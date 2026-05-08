@@ -7,7 +7,10 @@ var { createSampleDownloader } = require("logic/SampleDownloader");
 
 var SYNC_INTERVAL = 1000*60*30; // 30 minutes
 var isSyncing = false;
+var cancelled = false;
 var syncStore = new SyncStore();
+
+const CANCELLED_MARKER = "__sync_cancelled__";
 
 function areWeSyncing() {
     return isSyncing;
@@ -61,8 +64,15 @@ function init() {
     log("Initialising SampleSync...");
     Ti.Network.addEventListener( "change", networkChanged );
     Topics.subscribe( Topics.LOGGEDIN, startSynchronise );
+    Topics.subscribe( Topics.LOGGEDOUT, onLoggedOut );
     Topics.subscribe( Topics.UPLOAD_PROGRESS, handleUploadProgress );
     startSynchronise();
+}
+
+function onLoggedOut() {
+    info("Logged out — cancelling any in-flight sync and stopping the schedule.");
+    cancelled = true;
+    clearUploadTimer();
 }
 
 function forceUpload(options) {
@@ -76,9 +86,14 @@ function startSynchronise(options) {
     let sampleDownloader = createSampleDownloader(delay);
     debug(`Starting sample syncronisation process... (delay=${delay})`);
 
+    cancelled = false;
 
     function rescheduleSync() {
         isSyncing = false;
+        if ( cancelled ) {
+           debug("Sync cancelled — not rescheduling.");
+           return Promise.resolve();
+        }
         if ( options && !_.isUndefined(options.noschedule) ) {
            debug("Not rescheduling sync");
         } else {
@@ -86,6 +101,10 @@ function startSynchronise(options) {
            timeoutHandler = setTimeout( () => startSynchronise(options), SYNC_INTERVAL );
         }
         return Promise.resolve();
+    }
+
+    function checkCancelled() {
+        if ( cancelled ) throw new Error(CANCELLED_MARKER);
     }
 
     if (isSyncing) {
@@ -113,13 +132,20 @@ function startSynchronise(options) {
     Topics.fireTopicEvent( Topics.SYNC_STARTED );
     return Promise.resolve()
         .then(() => sampleDownloader.downloadSamples() )
+        .then(checkCancelled)
         .then(() => sampleUploader.uploadSamples() )
+        .then(checkCancelled)
         .then(() => {
             syncStore.recordSuccess();
             info("Sync finished successfully");
             Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } );
         })
         .catch( err => {
+            if ( err && err.message === CANCELLED_MARKER ) {
+                info("Sync aborted: user logged out.");
+                Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: false, cancelled: true } );
+                return;
+            }
             error("Sync finished with errors");
             Logger.recordException( err );
             syncStore.recordError( err );
