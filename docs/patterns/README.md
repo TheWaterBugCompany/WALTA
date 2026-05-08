@@ -8,6 +8,7 @@ Architectural patterns and module summaries for the WALTA codebase. Each file is
 - [viewmodels.md](viewmodels.md) — MVVM convention: ViewModel class shape, `bindView`, semantic palette colours via Symbols
 - [toolbar-buttons.md](toolbar-buttons.md) — anchor bar / `NavButton` pattern
 - [photo-paths.md](photo-paths.md) — relative vs absolute path conventions for user vs reference images
+- [repository-pattern.md](repository-pattern.md) — non-Alloy persistence: `Migrator`, repository modules, migration file convention, shared `waterbug_data` db
 
 ## Module summaries
 
