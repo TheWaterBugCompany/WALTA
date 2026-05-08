@@ -28,8 +28,8 @@ function removeListener(cb) {
     Object.defineProperty(exports, attr, { get: function () { return syncStore[attr]; }, enumerable: true });
 });
 
-var log = Logger.log;
-var debug = m => Logger.debug(m);
+var log = (m, tag = "sync") => Logger.log(m, tag);
+var debug = (m, tag = "sync") => Logger.debug(m, tag);
 
 let timeoutHandler = null;
 
