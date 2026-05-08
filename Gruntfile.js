@@ -604,6 +604,30 @@ const KobitonAPI = require("./features/support/kobiton");
         .catch((err) => { grunt.fail.fatal(err); done(false); });
     });
 
+    // Wipe persistent app state (Ti.App.Properties / NSUserDefaults / sqlite)
+    // so the next launch starts clean. Android: `pm clear` keeps the app
+    // installed and clears /data. iOS sim: no `pm clear` equivalent, so
+    // uninstall + reinstall the freshly-built bundle. iOS device is not
+    // supported (use `grunt install` for that path).
+    grunt.registerTask("reset-app", function(platform, buildType) {
+      const isSimulator = grunt.option('simulator') || false;
+      const { execFileSync } = require('child_process');
+      if (platform === 'android') {
+        const adbBin = process.env.ANDROID_SDK_ROOT
+          ? `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`
+          : 'adb';
+        execFileSync(adbBin, ['shell', 'pm', 'clear', APP_ID], { stdio: 'inherit' });
+      } else if (platform === 'ios' && isSimulator) {
+        if (!SIM_UDID) grunt.fail.fatal('SIM_UDID environment variable must be set');
+        const appPath = resolveAppPath(platform, buildType, isSimulator);
+        // simctl uninstall is a no-op (exits 0) if the app isn't installed.
+        execFileSync('xcrun', ['simctl', 'uninstall', SIM_UDID, APP_ID], { stdio: 'inherit' });
+        execFileSync('xcrun', ['simctl', 'install', SIM_UDID, appPath], { stdio: 'inherit' });
+      } else {
+        grunt.log.writeln('--reset is only supported for Android and iOS simulator; skipping');
+      }
+    });
+
     grunt.registerTask("install", function(platform, build_type) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
@@ -994,8 +1018,18 @@ const KobitonAPI = require("./features/support/kobiton");
           done();
         }).catch(err => { grunt.fail.fatal(err); done(); });
       } else {
-        grunt.task.run(`newer:debug_${platform}`);
-        grunt.task.run(`launch:${platform}:debug`);
+        // The `debug` build type targets device (signed dev build); `test-sim`
+        // targets the simulator. Same dev build, different deploy target —
+        // see Gruntfile.js:151 (dev) vs :161 (emulator). Without this branch,
+        // `--simulator debug` installs the device binary on the sim and fails
+        // with EXEC_BAD_FORMAT.
+        const buildType = isSimulator ? 'test-sim' : 'debug';
+        const newerTarget = isSimulator ? `test_sim_${platform}` : `debug_${platform}`;
+        grunt.task.run(`newer:${newerTarget}`);
+        if (grunt.option('reset')) {
+          grunt.task.run(`reset-app:${platform}:${buildType}`);
+        }
+        grunt.task.run(`launch:${platform}:${buildType}`);
         grunt.task.run(`output-logs:${platform}:preview`);
       }
     });
