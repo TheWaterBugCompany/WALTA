@@ -1,5 +1,4 @@
 require("spec/lib/ti-mocha");
-var simple = require("spec/lib/simple-mock");
 var { expect } = require("spec/lib/chai");
 var { closeWindow, wrapViewInWindow, windowOpenTest, removeDatabase, waitForTick } = require("spec/util/TestUtils");
 var SyncStore = require("models/SyncStore");
@@ -95,41 +94,38 @@ describe("SyncFeedback controller", function () {
     });
 
     describe("tail-scrolls the log pane", function () {
+        // Seed enough entries that the rendered text overflows the
+        // pane's viewport — otherwise scrollToBottom is a no-op and
+        // contentOffset.y stays 0, so we can't tell the trigger fired.
+        function seedManyEntries(count) {
+            const entries = [];
+            for (let i = 0; i < count; i++) {
+                entries.push({ ts: 1000 + i, level: "info", facility: "sync", message: `line ${i}` });
+            }
+            return entries;
+        }
+
         beforeEach(async () => {
-            logRepository = makeTestLogRepository([
-                { ts: 100, level: "info", facility: "sync", message: "earlier line 1" },
-                { ts: 200, level: "info", facility: "sync", message: "earlier line 2" },
-            ]);
+            logRepository = makeTestLogRepository(seedManyEntries(40));
             var { syncController } = createSyncController(SyncStore);
             ctl = Alloy.createController("SyncFeedback", { syncController, logRepository });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
 
-        afterEach(() => {
-            simple.restore();
+        it("scrolls past the top when the user opens the pane (seeded entries are at the bottom)", async () => {
+            ctl.logToggleButton.fireEvent("click");
+            await waitForTick(400)();
+            expect(ctl.logScroll.contentOffset.y).to.be.greaterThan(0);
         });
 
-        // iOS Titanium proxies have native methods that aren't replaceable
-        // via JS assignment — simple.mock's `obj[key] = mockFn` silently
-        // no-ops, so the spy never registers a call. The Android coverage
-        // is enough to lock in the controller behaviour.
-        it("scrolls to the bottom when the user opens the pane (seeded entries are at the bottom)", async function () {
-            if (Ti.Platform.osname === "iphone" || Ti.Platform.osname === "ipad") this.skip();
-            const spy = simple.mock(ctl.logScroll, "scrollToBottom");
+        it("scrolls further down when a new log entry lands while the pane is open", async () => {
             ctl.logToggleButton.fireEvent("click");
-            await waitForTick(200)();
-            expect(spy.callCount).to.equal(1);
-        });
-
-        it("scrolls to the bottom when a new log entry lands while the pane is open", async function () {
-            if (Ti.Platform.osname === "iphone" || Ti.Platform.osname === "ipad") this.skip();
-            ctl.logToggleButton.fireEvent("click");
-            await waitForTick(200)();
-            const spy = simple.mock(ctl.logScroll, "scrollToBottom");
-            Logger.info("new line", "sync");
-            await waitForTick(200)();
-            expect(spy.callCount).to.equal(1);
+            await waitForTick(400)();
+            const before = ctl.logScroll.contentOffset.y;
+            for (let i = 0; i < 5; i++) Logger.info(`fresh line ${i}`, "sync");
+            await waitForTick(400)();
+            expect(ctl.logScroll.contentOffset.y).to.be.greaterThan(before);
         });
     });
 
