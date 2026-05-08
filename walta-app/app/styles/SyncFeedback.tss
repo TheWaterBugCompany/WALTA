@@ -75,7 +75,8 @@
 
 ".logScroll": {
     width: Ti.UI.FILL,
-    height: Ti.UI.FILL,
+    top: "4dp",
+    bottom: "8dp",
     layout: "vertical",
     showVerticalScrollIndicator: true
 }
