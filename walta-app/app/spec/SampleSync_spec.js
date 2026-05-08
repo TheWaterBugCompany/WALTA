@@ -662,6 +662,43 @@ describe("SampleSync", function () {
 
         });
 
+        it('should keep going (download taxa photos) when the site photo fetch fails', async function() {
+            // Regression: downloadSitePhoto's catch used to return undefined,
+            // which then crashed downloadCreaturePhotos when it destructured
+            // [sample, serverSample] from undefined. The chain must survive
+            // a 404 on the site photo and still process the taxa photos.
+            let creatureMock = {
+                id: 1948,
+                photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/spec/resources/simpleKey1/media/amphipoda_01.jpg"),
+            };
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUnknownCreatures")
+                .resolveWith([]);
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples")
+                .resolveWith([makeCerdiSampleData({
+                    photos: [{ "id": 1948 }],
+                    sampled_creatures: [{
+                        "id": 2390,
+                        "sample_id": 473,
+                        "creature_id": 1,
+                        "count": 2,
+                        "photos_count": 0
+                    }]
+                })]);
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSitePhoto")
+                .rejectWith({ message: "HTTP error" });
+            Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId, creatureId, photoPath) {
+                creatureMock.photo.copy(Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
+                return Promise.resolve(creatureMock);
+            };
+
+            await createSampleDownloader().downloadSamples();
+
+            let sample = Alloy.Models.instance("sample");
+            sample.loadByServerId(473);
+            let taxon = sample.loadTaxa().at(0);
+            expect(taxon.get("serverCreaturePhotoId")).to.equal(creatureMock.id);
+        });
+
         it('should download taxa photos if they are new',async function() {
             // TODO: Make sure the temporary photo is filed into the correct
             // place.
