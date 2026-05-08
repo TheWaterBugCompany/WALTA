@@ -51,7 +51,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   }
 
   get progressColor() {
-    return this.status === "error" ? Palette.error : Palette.primary;
+    return (this.status === "error" || this._syncController.hasErrors) ? Palette.error : Palette.primary;
   }
 
   get progressWidth() {

@@ -1,12 +1,17 @@
 require("mocha");
 const { expect } = require("chai");
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
+const Logger = require("../../walta-app/app/lib/util/Logger");
 
 describe("SyncStore", function () {
   let store;
 
   beforeEach(function () {
     store = new SyncStore();
+  });
+
+  afterEach(function () {
+    if (store) store.dispose();
   });
 
   describe("initial state", function () {
@@ -16,6 +21,57 @@ describe("SyncStore", function () {
       expect(store.statusText).to.equal("");
       expect(store.logLines).to.deep.equal([]);
       expect(store.errorMessage).to.equal(null);
+      expect(store.hasErrors).to.equal(false);
+    });
+  });
+
+  describe("hasErrors (Logger error during syncing window)", function () {
+    it("flips to true when Logger.error fires on facility=sync while syncing", function () {
+      store.recordStart();
+      Logger.error("Failed to download photo", "sync");
+      expect(store.hasErrors).to.equal(true);
+    });
+
+    it("ignores Logger.error before recordStart (stale errors don't poison the next run)", function () {
+      Logger.error("Failed to download photo", "sync");
+      expect(store.hasErrors).to.equal(false);
+    });
+
+    it("ignores errors on other facilities", function () {
+      store.recordStart();
+      Logger.error("Network down", "auth");
+      expect(store.hasErrors).to.equal(false);
+    });
+
+    it("ignores warn-level entries (only error counts as a sync failure)", function () {
+      store.recordStart();
+      Logger.warn("Missing photo on server", "sync");
+      expect(store.hasErrors).to.equal(false);
+    });
+
+    it("recordStart resets hasErrors so a fresh sync starts clean", function () {
+      store.recordStart();
+      Logger.error("boom", "sync");
+      expect(store.hasErrors).to.equal(true);
+      store.recordStart();
+      expect(store.hasErrors).to.equal(false);
+    });
+
+    it("recordSuccess preserves hasErrors so the UI can flag a partial-success run", function () {
+      store.recordStart();
+      Logger.error("boom", "sync");
+      store.recordSuccess();
+      expect(store.hasErrors).to.equal(true);
+    });
+  });
+
+  describe("dispose()", function () {
+    it("unsubscribes from Logger so post-dispose entries don't flip hasErrors", function () {
+      store.recordStart();
+      store.dispose();
+      Logger.error("late", "sync");
+      expect(store.hasErrors).to.equal(false);
+      store = null;
     });
   });
 

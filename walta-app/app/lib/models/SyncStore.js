@@ -1,4 +1,5 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
+const Logger = require("../util/Logger");
 
 const PROGRESS_STEP = 15;
 const PROGRESS_CAP = 95;
@@ -10,12 +11,21 @@ const INITIAL_STATE = {
   statusText: "",
   logLines: [],
   errorMessage: null,
+  hasErrors: false,
 };
 
 class SyncStore extends ChangeNotifier {
   constructor() {
     super();
     this._state = { ...INITIAL_STATE };
+    this._unsubscribeLogger = Logger.subscribe(
+      { facility: "sync", minLevel: "error" },
+      () => {
+        if (this._state.status === "syncing") {
+          this._setState({ hasErrors: true });
+        }
+      }
+    );
   }
 
   get status()       { return this._state.status; }
@@ -23,6 +33,12 @@ class SyncStore extends ChangeNotifier {
   get statusText()   { return this._state.statusText; }
   get logLines()     { return this._state.logLines; }
   get errorMessage() { return this._state.errorMessage; }
+  get hasErrors()    { return this._state.hasErrors; }
+
+  dispose() {
+    if (this._unsubscribeLogger) this._unsubscribeLogger();
+    super.dispose();
+  }
 
   recordStart() {
     this._setState({ ...INITIAL_STATE, status: "syncing", statusText: "Starting sync" });
