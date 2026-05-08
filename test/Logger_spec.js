@@ -133,11 +133,19 @@ describe("Logger sink dispatch", function () {
         return { entries, write(entry) { entries.push(entry); return Promise.resolve(); } };
     }
 
+    // Yield long enough for the microtask queue to drain fully, including
+    // microtasks queued by other microtasks. `await Promise.resolve()` only
+    // flushes one level — `setImmediate` schedules a macrotask, and microtasks
+    // are fully drained between macrotasks.
+    function flushMicroTasks() {
+        return new Promise(r => setImmediate(r));
+    }
+
     it("forwards Logger.log() entries to a registered sink", async function () {
         const sink = captureSink();
         Logger.addSink(sink);
         Logger.log("hello");
-        await new Promise(r => setImmediate(r));
+        await flushMicroTasks();
         expect(sink.entries).to.have.length(1);
         expect(sink.entries[0]).to.include({ level: "trace", message: "hello" });
     });
@@ -146,7 +154,7 @@ describe("Logger sink dispatch", function () {
         const sink = captureSink();
         Logger.addSink(sink);
         Logger.warn("careful");
-        await new Promise(r => setImmediate(r));
+        await flushMicroTasks();
         expect(sink.entries[0]).to.include({ level: "warn", message: "careful" });
     });
 
@@ -154,7 +162,7 @@ describe("Logger sink dispatch", function () {
         const sink = captureSink();
         Logger.addSink(sink);
         Logger.error("boom");
-        await new Promise(r => setImmediate(r));
+        await flushMicroTasks();
         expect(sink.entries[0]).to.include({ level: "error", message: "boom" });
     });
 
@@ -162,7 +170,7 @@ describe("Logger sink dispatch", function () {
         const sink = captureSink();
         Logger.addSink(sink);
         Logger.debug("trace me");
-        await new Promise(r => setImmediate(r));
+        await flushMicroTasks();
         expect(sink.entries[0]).to.include({ level: "debug", message: "trace me" });
     });
 
@@ -170,7 +178,7 @@ describe("Logger sink dispatch", function () {
         const sink = captureSink();
         Logger.addSink(sink);
         Logger.info("starting sync");
-        await new Promise(r => setImmediate(r));
+        await flushMicroTasks();
         expect(sink.entries[0]).to.include({ level: "info", message: "starting sync" });
     });
 
@@ -178,7 +186,7 @@ describe("Logger sink dispatch", function () {
         const sink = captureSink();
         Logger.addSink(sink);
         Logger.log("upload finished", "sync");
-        await new Promise(r => setImmediate(r));
+        await flushMicroTasks();
         expect(sink.entries[0]).to.include({ level: "trace", facility: "sync", message: "upload finished" });
     });
 
@@ -188,7 +196,7 @@ describe("Logger sink dispatch", function () {
         const before = Date.now();
         Logger.log("hello");
         const after = Date.now();
-        await new Promise(r => setImmediate(r));
+        await flushMicroTasks();
         expect(sink.entries[0].ts).to.be.a("number");
         expect(sink.entries[0].ts).to.be.at.least(before);
         expect(sink.entries[0].ts).to.be.at.most(after);
@@ -205,8 +213,7 @@ describe("Logger sink dispatch", function () {
         try {
             Logger.addSink({ write() { return Promise.reject(new Error("disk full")); } });
             expect(() => Logger.log("hello")).to.not.throw();
-            await new Promise(r => setImmediate(r));
-            await new Promise(r => setImmediate(r));
+            await flushMicroTasks();
             expect(fallbackCalls).to.have.length(1);
             expect(fallbackCalls[0].level).to.equal("trace");
             expect(fallbackCalls[0].message).to.match(/disk full/);
