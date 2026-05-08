@@ -8,6 +8,8 @@ var topics = {
 
 	LOGGEDIN: 'loggedin',
 
+	LOGGEDOUT: 'loggedout',
+
 	HOME: 'home',
 	SETTINGS: 'settings',
 	INFO: 'info',
