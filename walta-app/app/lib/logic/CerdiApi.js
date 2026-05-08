@@ -1,4 +1,5 @@
 const Logger = require('util/Logger');
+const log = (m, tag = "auth") => Logger.log(m, tag);
 var { loadPhoto, savePhoto } = require('util/PhotoUtils');
 function createHttpClient(method, url, contentType, acceptType = 'application/json', accessToken, sendDataFunction ) {
     return new Promise( (resolve, reject) => {
@@ -110,7 +111,7 @@ function retrievePhotoFromMeta( serverUrl, photoUrl, accessToken, photoPath ) {
 
 
 function createCerdiApi( serverUrl, client_secret  ) {
-        Logger.log(`Using CERDI API server ${serverUrl}` );
+        log(`Using CERDI API server ${serverUrl}` );
         var cerdiApi = {
             retrieveUserToken() {
                 return Ti.App.Properties.getObject('userAccessTokenLive');
@@ -133,14 +134,14 @@ function createCerdiApi( serverUrl, client_secret  ) {
                 return Promise.resolve(Ti.App.Properties.getObject('appAccessTokenLive'))
                     .then( (cachedAppAccessToken) => {
                         if ( cachedAppAccessToken ) {
-                            Logger.log(`Got existing access token retrieved_at = ${cachedAppAccessToken.retrieved_at} expires_in = ${cachedAppAccessToken.expires_in}`);
+                            log(`Got existing access token retrieved_at = ${cachedAppAccessToken.retrieved_at} expires_in = ${cachedAppAccessToken.expires_in}`);
                             let tokenAge = Date.now() - cachedAppAccessToken.retrieved_at;
                             if ( tokenAge < cachedAppAccessToken.expires_in*1000 )
                                 return cachedAppAccessToken;
-                            Logger.log("Expired token"); 
+                            log("Expired token"); 
                         } 
                         
-                        Logger.log("Requesting a new token");
+                        log("Requesting a new token");
                         return makeJsonPostRequest( this.serverUrl + '/token/create/server',
                             {
                                 "client_secret": this.client_secret,
