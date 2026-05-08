@@ -1,5 +1,5 @@
 var Logger = require('util/Logger');
-var log = Logger.log;
+var log = (m, tag = "sample") => Logger.log(m, tag);
 var Sample = require("logic/Sample");
 exports.baseController  = "TopLevelWindow";
 var Topics = require("ui/Topics");
