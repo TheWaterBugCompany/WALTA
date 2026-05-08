@@ -64,6 +64,7 @@ exports.removeListener = function(cb) {
 exports.configure = function() {
     _sinks.push(require("./sinks/ConsoleSink"));
     const Bugfender = getBugfender();
+    _sinks.push(require("./sinks/BugfenderSink").create(Bugfender));
     if (!Bugfender) return;
     Bugfender.init({
         applicationToken: "KyWNoMFRIZsT0P3WZtH9XvNNNc3Juhrv",
@@ -87,12 +88,9 @@ exports.setCustomKey = function(name, value) {
 }
 
 exports.recordException = function(err) {
-    const Bugfender = getBugfender();
     const ErrorUtils = require("util/ErrorUtils");
-    let errorFormatted = ErrorUtils.formatError(err);
-    if (Bugfender) Bugfender.e({ tag: "error", message: errorFormatted });
-    if (typeof Ti !== 'undefined') Ti.API.error(`Unexpected error: ${errorFormatted}`);
-    else console.error(`Unexpected error: ${errorFormatted}`);
+    const errorFormatted = ErrorUtils.formatError(err);
+    exports.error(`Unexpected error: ${errorFormatted}`, "exception");
 }
 
 exports.setUserId = function(userId) {
@@ -109,22 +107,16 @@ exports.info = function(message, tag = "info") {
 };
 
 exports.warn = function(message, tag = "warn") {
-    const Bugfender = getBugfender();
-    if (Bugfender) Bugfender.w({ tag, message });
     _append(tag, message);
     _dispatch("warn", tag, message);
 };
 
 exports.error = function(message, tag = "error") {
-    const Bugfender = getBugfender();
-    if (Bugfender) Bugfender.e({ tag, message });
     _append(tag, message);
     _dispatch("error", tag, message);
 };
 
 exports.log = function(message, tag = "trace") {
-    const Bugfender = getBugfender();
-    if (Bugfender) Bugfender.t({ tag, message });
     _append(tag, message);
     _dispatch("trace", tag, message);
 };
