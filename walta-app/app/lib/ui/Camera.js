@@ -14,7 +14,7 @@
  */
 
 var Logger = require('util/Logger');
-var log = Logger.log;
+var log = (m, tag = "media") => Logger.log(m, tag);
 
 exports.hasCameraPermissions = function () {
     // No real camera involved, so permissions are irrelevant.
