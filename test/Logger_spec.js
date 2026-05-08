@@ -214,6 +214,16 @@ describe("Logger sink dispatch", function () {
         expect(sink.entries[0]).to.include({ level: "warn", message: "warn msg" });
     });
 
+    it("recordException routes through the sink dispatcher as an error entry", async function () {
+        const sink = captureSink();
+        Logger.addSink(sink);
+        Logger.recordException(new Error("boom"));
+        await flushMicroTasks();
+        expect(sink.entries).to.have.length(1);
+        expect(sink.entries[0]).to.include({ level: "error", facility: "exception" });
+        expect(sink.entries[0].message).to.match(/boom/);
+    });
+
     it("falls back to Ti.API.log when a sink's write() rejects", async function () {
         const fallbackCalls = [];
         global.Ti = {
