@@ -74,6 +74,7 @@ var SPEC_FILES = [
   "LocationEntry",
   "Main",
   "Navigation",
+  "util/repository/LogRepository",
   //"Database"  - needs to run last, migrations are run in all database using test anyway
 ];
 
