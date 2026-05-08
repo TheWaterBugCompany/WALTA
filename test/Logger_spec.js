@@ -235,3 +235,54 @@ describe("Logger sink dispatch", function () {
         }
     });
 });
+
+describe("Logger.configure", function () {
+    let Logger;
+
+    beforeEach(function () {
+        delete require.cache[require.resolve("../walta-app/app/lib/util/Logger")];
+        delete require.cache[require.resolve("../walta-app/app/lib/util/sinks/ConsoleSink")];
+        Logger = require("../walta-app/app/lib/util/Logger");
+    });
+
+    function flushMicroTasks() {
+        return new Promise(r => setImmediate(r));
+    }
+
+    function fakeTi() {
+        const calls = [];
+        global.Ti = {
+            API: {
+                debug(m) { calls.push({ method: "debug", m }); },
+                info(m)  { calls.push({ method: "info",  m }); },
+                warn(m)  { calls.push({ method: "warn",  m }); },
+                error(m) { calls.push({ method: "error", m }); },
+                log() {}
+            }
+        };
+        return calls;
+    }
+
+    afterEach(function () { delete global.Ti; });
+
+    it("does not route Logger.log() to Ti.API before configure() registers ConsoleSink", async function () {
+        const tiCalls = fakeTi();
+        Logger.log("hello");
+        await flushMicroTasks();
+        expect(tiCalls).to.have.length(0);
+    });
+
+    it("routes Logger entries to Ti.API exactly once after configure()", async function () {
+        const tiCalls = fakeTi();
+        Logger.configure();
+        Logger.log("trace msg");
+        Logger.warn("warn msg");
+        Logger.error("error msg");
+        await flushMicroTasks();
+        expect(tiCalls).to.deep.equal([
+            { method: "debug", m: "trace msg" },
+            { method: "warn",  m: "warn msg" },
+            { method: "error", m: "error msg" }
+        ]);
+    });
+});
