@@ -53,6 +53,12 @@ if (apiSecret) Alloy.CFG.cerdiApiSecret = apiSecret;
 Ti.API.debug(`[walta-launchargs] final Alloy.CFG.cerdiServerUrl=${Alloy.CFG.cerdiServerUrl}`);
 
 
+// Apply pending migrations for the non-Alloy log persistence db
+// before any repository's `open()` runs. The runner discovers every
+// migration file in repository/migrations/ and applies each
+// against this db.
+require("repository/Migrator").migrate("logs");
+
 Logger.configure();
 Logger.setCustomKey("deploy.type", Ti.App.deployType );
 

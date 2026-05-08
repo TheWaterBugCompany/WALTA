@@ -1,22 +1,17 @@
 // Persistence layer for the SqlSink + SyncFeedback "Show Logs" pane.
 // See docs/patterns/logger-sinks.md for the design — sink writes go
 // through `append`; the SyncFeedback pane reads via `query`.
-
-const Migrator = require("./Migrator");
-
-const TABLE = "logs";
-// Migrator scans this directory for files matching <id>_logs.js. To
-// add a new migration just drop a new file in here — the loader picks
-// it up by filename (id is parsed from the timestamp prefix). Format
-// matches Alloy's app/migrations/ exactly modulo `migration` →
-// `exports`. See docs/patterns/repository-pattern.md (TBD).
-const MIGRATIONS_PATH = "repository/migrations";
+//
+// Schema setup is the caller's responsibility — `open()` expects the
+// `logs` table to already exist. Production code path: alloy.js calls
+// `Migrator.migrate("logs")` once at app startup before any
+// `LogRepository.open()` happens. Tests use `Migrator.migrate(testDbName)`
+// against their test-named db.
 
 const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
 
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
-    Migrator.runMigrations(db, TABLE, MIGRATIONS_PATH);
 
     return {
         append: function (entry) {
