@@ -57,37 +57,6 @@ function _dispatch(level, facility, message) {
     }
 }
 
-// Legacy ring buffer for the SyncFeedback "Show Logs" pane.
-// Will become a RingBufferSink — see docs/patterns/logger-sinks.md.
-const LOG_CAP = 200;
-const _logBuffer = [];
-const _listeners = [];
-
-function _append(tag, message) {
-    _logBuffer.push("[" + tag + "] " + message);
-    if (_logBuffer.length > LOG_CAP) _logBuffer.splice(0, _logBuffer.length - LOG_CAP);
-    // Notify after the buffer is updated so listeners see the new line
-    // when they call getLogLines(). See WB-45.
-    for (let i = 0; i < _listeners.length; i++) _listeners[i]();
-}
-
-exports.getLogLines = function() {
-    return _logBuffer.slice();
-};
-
-exports.clearLog = function() {
-    _logBuffer.length = 0;
-};
-
-exports.addListener = function(cb) {
-    _listeners.push(cb);
-};
-
-exports.removeListener = function(cb) {
-    const idx = _listeners.indexOf(cb);
-    if (idx >= 0) _listeners.splice(idx, 1);
-};
-
 // Persistence retention policy — entries older than 14d or beyond
 // the 5,000-row cap get pruned at startup. Tunable here.
 const LOG_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
@@ -151,16 +120,13 @@ exports.info = function(message, tag = "info") {
 };
 
 exports.warn = function(message, tag = "warn") {
-    _append(tag, message);
     _dispatch("warn", tag, message);
 };
 
 exports.error = function(message, tag = "error") {
-    _append(tag, message);
     _dispatch("error", tag, message);
 };
 
 exports.log = function(message, tag = "trace") {
-    _append(tag, message);
     _dispatch("trace", tag, message);
 };

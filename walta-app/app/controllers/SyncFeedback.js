@@ -1,9 +1,14 @@
 var SyncFeedbackViewModel = require("viewmodels/SyncFeedback");
 var SampleSync = require("logic/SampleSync");
+var LogRepository = require("repository/LogRepository");
 var Topics = require("ui/Topics");
 var bindView = require("util/bindView");
 
-var vm = new SyncFeedbackViewModel({ syncController: $.args.syncController || SampleSync });
+var logRepository = $.args.logRepository || LogRepository.open("logs");
+var vm = new SyncFeedbackViewModel({
+    syncController: $.args.syncController || SampleSync,
+    logRepository
+});
 
 bindView($, vm, {
     message:           { visible: "messageVisible", text: "message" },
@@ -51,6 +56,7 @@ function start() {
 
 function cleanUp() {
     vm.dispose();
+    if (!$.args.logRepository) logRepository.close();
     $.destroy();
     $.off();
 }
