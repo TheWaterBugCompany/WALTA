@@ -5,12 +5,13 @@ var Layout = require('ui/Layout');
 var Topics = require('ui/Topics');
 var Sample = require('logic/Sample');
 var Logger = require('util/Logger');
+var debug = (m, tag = "navigation") => Logger.debug(m, tag);
 
 var key = $.args.key;
 var surveyType = $.args.surveyType;
 var speedbugName = Sample.getSpeedbugIndexName( surveyType );
 
-Logger.debug(`Speedbug name = ${speedbugName}`);
+debug(`Speedbug name = ${speedbugName}`);
 
 exports.baseController  = "TopLevelWindow";
 $.TopLevelWindow.title = "Speedbug";
