@@ -4,7 +4,7 @@ var LogRepository = require("repository/LogRepository");
 var Topics = require("ui/Topics");
 var bindView = require("util/bindView");
 
-var logRepository = $.args.logRepository || LogRepository.open("logs");
+var logRepository = $.args.logRepository || LogRepository.open("waterbug_data");
 var vm = new SyncFeedbackViewModel({
     syncController: $.args.syncController || SampleSync,
     logRepository

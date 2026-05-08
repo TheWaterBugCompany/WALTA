@@ -4,9 +4,9 @@
 //
 // Schema setup is the caller's responsibility — `open()` expects the
 // `logs` table to already exist. Production code path: alloy.js calls
-// `Migrator.migrate("logs")` once at app startup before any
-// `LogRepository.open()` happens. Tests use `Migrator.migrate(testDbName)`
-// against their test-named db.
+// `Migrator.migrate("waterbug_data")` once at app startup before any
+// `LogRepository.open()` happens. Tests use
+// `Migrator.migrate(testDbName)` against their test-named db.
 
 const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
 

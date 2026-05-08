@@ -68,7 +68,7 @@ exports.configure = function() {
     _sinks.push(require("./sinks/BugfenderSink").create(Bugfender));
     try {
         if (typeof Ti !== 'undefined' && Ti.Database) {
-            const repo = require("../repository/LogRepository").open("logs");
+            const repo = require("../repository/LogRepository").open("waterbug_data");
             repo.prune(LOG_MAX_AGE_MS, LOG_MAX_ROWS);
             _sinks.push(require("./sinks/SqlSink").create(repo));
         }

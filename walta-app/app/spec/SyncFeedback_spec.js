@@ -7,7 +7,7 @@ var LogRepository = require("repository/LogRepository");
 var Migrator = require("repository/Migrator");
 var createSyncController = require("spec/fixtures/SyncController_fixture");
 
-const TEST_LOG_DB = "logs_syncfeedback_test";
+const TEST_LOG_DB = "waterbug_data_syncfeedback_test";
 
 // Build a fresh LogRepository against an isolated test db so the spec
 // doesn't read from / write to the real `logs.db`. Migrate explicitly
