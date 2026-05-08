@@ -1,5 +1,6 @@
 var Logger = require('util/Logger');
-var log = Logger.log;
+var log = (m, tag = "ui") => Logger.log(m, tag);
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
 /*
  * Controller: Gallery
  *
@@ -41,13 +42,13 @@ function buildPhotoView(urlObj) {
     }*/
     var imageUrl;
     if ( typeof(urlObj) == "object" ) {
-        Logger.log(`taxon = ${urlObj.taxon.taxonId}`)
+        log(`taxon = ${urlObj.taxon.taxonId}`)
         imageUrl=urlObj.url;
 
     } else {
         imageUrl=urlObj;
     }
-    Logger.debug(`creating tile for url = ${imageUrl}`);
+    debug(`creating tile for url = ${imageUrl}`);
     var needsPostLayout = !$.scrollView.size.height;
     var container = Ti.UI.createView({
         width: Ti.UI.FILL,
@@ -102,7 +103,7 @@ function updatePhotoView() {
     var page = $.scrollView.currentPage;
     var total = $.scrollView.views.length;
     
-    Logger.log(`scroll page = ${page} total = ${total}`)
+    log(`scroll page = ${page} total = ${total}`)
     if ( page+1 == total && (startPhotoIndex+$.scrollView.views.length) < (allPhotos.length - 5)) {
         startPhotoIndex=startPhotoIndex+5;
         var newViews = allPhotos.slice(startPhotoIndex+$.scrollView.views.length, startPhotoIndex+$.scrollView.views.length+5)
