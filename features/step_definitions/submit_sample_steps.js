@@ -15,11 +15,11 @@ When('I tap Show Logs in the sync popup', async function () {
 });
 
 Then('the log pane shows sync activity from the Logger', async function () {
-    // Logger.log() defaults to tag "trace" and the pane prefixes every
-    // line with `[<tag>] `. If any sync code path executed Logger.log()
-    // (which it does — see SampleSync/SampleUploader/CerdiApi), the
-    // pane will contain at least one `[trace]` line. See WB-45.
-    await this.syncFeedback.expectLogsContain("[trace]");
+    // SampleSync emits "Sync finished successfully" via Logger.info when
+    // the chain completes — the LOG_FILTER (facility=sync, minLevel=info)
+    // surfaces it in the pane. Since the previous step already awaited
+    // "Sync complete", that info entry has been recorded by now.
+    await this.syncFeedback.expectLogsContain("Sync finished");
 });
 
 When('I close the sync popup', async function () {
