@@ -2,8 +2,8 @@ var Logger = require('util/Logger');
 var moment = require("lib/moment");
 var Topics = require('ui/Topics');
 var { delayedPromise } = require("util/PromiseUtils");
-var log = Logger.log;
-var debug = Logger.debug;
+var log = (m, tag = "sync") => Logger.log(m, tag);
+var debug = (m, tag = "sync") => Logger.debug(m, tag);
 function createSampleDownloader(delay) {
     return {
         downloadSamples() {
