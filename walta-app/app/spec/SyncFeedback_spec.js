@@ -4,14 +4,17 @@ var { closeWindow, wrapViewInWindow, windowOpenTest, removeDatabase } = require(
 var SyncStore = require("models/SyncStore");
 var Logger = require("util/Logger");
 var LogRepository = require("repository/LogRepository");
+var Migrator = require("repository/Migrator");
 var createSyncController = require("spec/fixtures/SyncController_fixture");
 
 const TEST_LOG_DB = "logs_syncfeedback_test";
 
 // Build a fresh LogRepository against an isolated test db so the spec
-// doesn't read from / write to the real `logs.db`.
+// doesn't read from / write to the real `logs.db`. Migrate explicitly
+// since LogRepository.open() expects the schema to already exist.
 function makeTestLogRepository(seedEntries) {
     removeDatabase(TEST_LOG_DB);
+    Migrator.migrate(TEST_LOG_DB);
     const repo = LogRepository.open(TEST_LOG_DB);
     if (seedEntries) for (const e of seedEntries) repo.append(e);
     return repo;

@@ -3,6 +3,7 @@ var { expect } = require("spec/lib/chai");
 var { removeDatabase } = require("spec/util/TestUtils");
 
 var LogRepository = require("repository/LogRepository");
+var Migrator = require("repository/Migrator");
 
 const TEST_DB = "logs_test";
 
@@ -11,6 +12,7 @@ describe("LogRepository", function () {
 
     beforeEach(function () {
         removeDatabase(TEST_DB);
+        Migrator.migrate(TEST_DB);
         repo = LogRepository.open(TEST_DB);
     });
 
