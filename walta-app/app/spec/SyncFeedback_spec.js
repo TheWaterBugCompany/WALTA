@@ -1,16 +1,33 @@
 require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
-var { closeWindow, wrapViewInWindow, windowOpenTest } = require("spec/util/TestUtils");
+var { closeWindow, wrapViewInWindow, windowOpenTest, removeDatabase } = require("spec/util/TestUtils");
 var SyncStore = require("models/SyncStore");
 var Logger = require("util/Logger");
+var LogRepository = require("repository/LogRepository");
 var createSyncController = require("spec/fixtures/SyncController_fixture");
 
+const TEST_LOG_DB = "logs_syncfeedback_test";
+
+// Build a fresh LogRepository against an isolated test db so the spec
+// doesn't read from / write to the real `logs.db`.
+function makeTestLogRepository(seedEntries) {
+    removeDatabase(TEST_LOG_DB);
+    const repo = LogRepository.open(TEST_LOG_DB);
+    if (seedEntries) for (const e of seedEntries) repo.append(e);
+    return repo;
+}
+
 describe("SyncFeedback controller", function () {
-    var ctl, win;
+    var ctl, win, logRepository;
 
     afterEach(async () => {
         await closeWindow(win);
         ctl.cleanUp();
+        if (logRepository) {
+            logRepository.close();
+            removeDatabase(TEST_LOG_DB);
+            logRepository = null;
+        }
     });
 
     describe("initial (idle) state", function () {
@@ -22,7 +39,8 @@ describe("SyncFeedback controller", function () {
             // suite (recordSuccess() leaves it at 100% Sync complete).
             // Same pattern as the mid-sync block below. See WB-48.
             var { syncController } = createSyncController(SyncStore);
-            ctl = Alloy.createController("SyncFeedback", { syncController });
+            logRepository = makeTestLogRepository();
+            ctl = Alloy.createController("SyncFeedback", { syncController, logRepository });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
@@ -42,27 +60,28 @@ describe("SyncFeedback controller", function () {
         });
     });
 
-    describe("log pane populated from Logger ring buffer (WB-45)", function () {
+    describe("log pane populated from LogRepository + Logger.subscribe (WB-64)", function () {
         beforeEach(async () => {
-            // Logger's ring buffer is module-level / process-global.
-            // Earlier specs in the suite (SampleSync etc.) may have left
-            // entries in it; clear so the assertion is deterministic.
-            Logger.clearLog();
-            Logger.log("starting upload", "sync");
-            Logger.warn("rate limit hit", "sync");
+            // Seed the test log repository with prior-run entries; the
+            // pane's initial render reads from here. Live updates land
+            // via Logger.subscribe and the controller appends them.
+            logRepository = makeTestLogRepository([
+                { ts: 100, level: "info", facility: "sync", message: "starting upload" },
+                { ts: 200, level: "warn", facility: "sync", message: "rate limit hit" },
+            ]);
             var { syncController } = createSyncController(SyncStore);
-            ctl = Alloy.createController("SyncFeedback", { syncController });
+            ctl = Alloy.createController("SyncFeedback", { syncController, logRepository });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
 
-        it("renders Logger lines in the log pane after toggling Show Log", () => {
+        it("renders prior-run entries in the log pane after toggling Show Log", () => {
             ctl.logToggleButton.fireEvent("click");
             expect(ctl.logPane.visible).to.equal(true);
             expect(ctl.logText.text).to.equal("[sync] starting upload\n[sync] rate limit hit");
         });
 
-        it("live-updates the rendered text when Logger emits while the popup is open", () => {
+        it("live-updates the rendered text when Logger.error fires while the popup is open", () => {
             ctl.logToggleButton.fireEvent("click");
             Logger.error("upload failed", "sync");
             expect(ctl.logText.text).to.equal(
