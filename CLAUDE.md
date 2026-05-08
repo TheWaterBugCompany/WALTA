@@ -53,6 +53,10 @@ When the user asks to start work on a Trello card (e.g. "let's start work on WB-
    - A link to the Trello card in the PR description
    - A test plan checklist
 
+### Iterating on a draft PR
+
+Once the draft PR exists, commit and push directly to the task branch as work progresses — review happens on the PR's Files Changed view, not by showing diffs in chat. This applies to `task/wb-<N>-...` branches only; direct commits to `main`, force pushes, and history rewrites still need explicit approval.
+
 ## Commands
 
 ### Setup
