@@ -202,6 +202,18 @@ describe("Logger sink dispatch", function () {
         expect(sink.entries[0].ts).to.be.at.most(after);
     });
 
+    it("forwards only matching levels to a sink with a level allowlist", async function () {
+        const sink = captureSink();
+        sink.levels = ["warn"];
+        Logger.addSink(sink);
+        Logger.log("trace msg");
+        Logger.warn("warn msg");
+        Logger.error("error msg");
+        await flushMicroTasks();
+        expect(sink.entries).to.have.length(1);
+        expect(sink.entries[0]).to.include({ level: "warn", message: "warn msg" });
+    });
+
     it("falls back to Ti.API.log when a sink's write() rejects", async function () {
         const fallbackCalls = [];
         global.Ti = {
