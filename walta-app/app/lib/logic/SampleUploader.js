@@ -2,6 +2,8 @@
 var Logger = require('util/Logger');
 var log = (m, tag = "sync") => Logger.log(m, tag);
 var debug = (m, tag = "sync") => Logger.debug(m, tag);
+var info = (m, tag = "sync") => Logger.info(m, tag);
+var warn = (m, tag = "sync") => Logger.warn(m, tag);
 
 var Topics = require('ui/Topics');
 var moment = require("lib/moment");
@@ -34,7 +36,7 @@ function loadCorrectSampleToUpdate(sample) {
 function uploadSitePhoto(sample,delay) {
 
     function submitSitePhoto( sampleId, photoPath ) {
-        log(`Uploading site photo path = ${photoPath} [serverSampleId=${sampleId}]`);
+        info(`Uploading site photo path = ${photoPath} [serverSampleId=${sampleId}]`);
         return Promise.resolve()
                 .then(() => Alloy.Globals.CerdiApi.submitSitePhoto( sampleId, photoPath ));
     }
@@ -72,7 +74,7 @@ function uploadSitePhoto(sample,delay) {
 function uploadTaxaPhoto(sample,t,delay) {
 
     function submitCreaturePhoto( sampleId, taxonId, photoPath ) {
-        log(`Uploading taxa photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
+        info(`Uploading taxa photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
         return Promise.resolve()
                 .then( () => Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath ) )
                 .then( (res) => {
@@ -101,7 +103,7 @@ function uploadTaxaPhoto(sample,t,delay) {
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: `Uploading taxa ${taxonId} photo` } );
                     })
                     .catch( (err) => {
-                        log(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
+                        warn(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
                         Logger.recordException(err)
                     });
                         
@@ -134,7 +136,7 @@ function uploadUnknownCreature(sample,t,delay) {
     // skip known creatures and any unknown creatures that have had
     // their serverCreaturePhotoId set.
     if ( taxonId == null ) {
-        log(`Uploadin unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]`);
+        info(`Uploading unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]`);
         let photoPath = t.getPhoto();
         let count = t.getAbundance();
         if ( photoPath ) {
@@ -185,7 +187,7 @@ function deletePendingUnknownCreatures(sample,delay) {
             return Promise.resolve();
         }
 
-        log(`Deleting unknown creature: id = ${creatureId} [serverSampleId=${sampleId}]`);
+        info(`Deleting unknown creature: id = ${creatureId} [serverSampleId=${sampleId}]`);
         return delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.deleteUnknownCreature(creatureId) ), delay )
             .then( (res) => {
                 t.destroy();
@@ -246,13 +248,13 @@ function createSampleUploader(delay) {
             sampleCerdiJson.creatures = identifiedCreatures;
            
             function uploadSampleData( sample ) {
-                log(`Uploading new sample record [sampleId=${sample.get("sampleId")}]`);
+                info(`Uploading new sample record [sampleId=${sample.get("sampleId")}]`);
                return Promise.resolve()
                         .then( () => Alloy.Globals.CerdiApi.submitSample( sampleCerdiJson ) )
             }
         
             function updateExistingSampleData( sample ) {
-                log(`Updating existing sample [serverSampleId=${serverSampleId}]`); 
+                info(`Updating existing sample [serverSampleId=${serverSampleId}]`);
                 return Promise.resolve()
                     .then( () => Alloy.Globals.CerdiApi.updateSampleById( sample.get("serverSampleId"), sampleCerdiJson ) );
             }
@@ -260,7 +262,7 @@ function createSampleUploader(delay) {
             
 
             function updateSample(res) {
-                log(`Sample [serverSampleId=${res.id}] successfully uploaded setting uploaded flag.`);
+                info(`Sample [serverSampleId=${res.id}] successfully uploaded setting uploaded flag.`);
                 loadCorrectSampleToUpdate(sample);
                 sample.save({
                     "serverSampleId": res.id,
@@ -276,7 +278,7 @@ function createSampleUploader(delay) {
                 return delayedPromise(
                     Promise.resolve()
                         .then( () => {
-                            log("Upload successful.");
+                            info("Upload successful.");
                             loadCorrectSampleToUpdate(sample);
                             sample.set("serverSyncTime", moment().valueOf());
                             sample.save();

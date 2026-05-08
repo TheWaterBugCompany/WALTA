@@ -4,6 +4,8 @@ var Topics = require('ui/Topics');
 var { delayedPromise } = require("util/PromiseUtils");
 var log = (m, tag = "sync") => Logger.log(m, tag);
 var debug = (m, tag = "sync") => Logger.debug(m, tag);
+var info = (m, tag = "sync") => Logger.info(m, tag);
+var warn = (m, tag = "sync") => Logger.warn(m, tag);
 function createSampleDownloader(delay) {
     return {
         downloadSamples() {
@@ -83,7 +85,7 @@ function createSampleDownloader(delay) {
                 return sample.loadByServerId(serverSample.id) 
                     .then( () => {
                         if ( needsUpdate(serverSample,sample) ) {
-                            log(`Updating serverSampleId = ${serverSample.id}`);
+                            info(`Updating serverSampleId = ${serverSample.id}`);
                             // must set the serverSyncTime here so that if updatedAt
                             // is set to be a few milliseconds later - this can happen if
                             // habitat blanks are filled in, and we need to signal a re-upload.
@@ -104,7 +106,7 @@ function createSampleDownloader(delay) {
             function downloadSitePhoto([sample,serverSample]) {
                 if ( serverSample.photos.length > 0  ) {
                     let sitePhotoPath = `site_download_${serverSample.id}`;
-                    log(`Downloading site photo for ${serverSample.id}`);
+                    info(`Downloading site photo for ${serverSample.id}`);
                     return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
                         .then( photo => {
                             sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
@@ -114,7 +116,7 @@ function createSampleDownloader(delay) {
                             return [sample,serverSample];
                         })
                         .catch( err => {
-                            log(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
+                            warn(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
                             Logger.recordException(err)
                         });
                 } else {
@@ -128,7 +130,7 @@ function createSampleDownloader(delay) {
                 let serverCreaturePhotoId = taxon.get("serverCreaturePhotoId");
                 let taxonPhotoPath;
                 let retrievePhoto;
-                log(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                info(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                 
                 // In the case of unknown creatures the photo id is already known so we can
                 // directly retrieve the photo via this id, otherwise we need to look up the
@@ -152,7 +154,7 @@ function createSampleDownloader(delay) {
                                 taxon.set("serverCreaturePhotoId",photo.id);
                                 taxon.save();
                             } else {
-                                log(`Missing photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                                warn(`Missing photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                                 // indicates no photo exists on the server - but is not null to prevent future
                                 // uploads from trying to upload 
                                 taxon.set("serverCreaturePhotoId",0); 
@@ -161,7 +163,7 @@ function createSampleDownloader(delay) {
                             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
                         })
                         .catch( err => {
-                            log(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                            warn(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                             Logger.recordException(err)
                         });
             }
