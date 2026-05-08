@@ -160,6 +160,12 @@ describe("SyncFeedbackViewModel", function () {
       store.recordError(new Error("boom"));
       expect(vm.progressColor).to.equal(Palette.error);
     });
+
+    it("is Palette.error when soft errors occurred during sync (hasErrors)", function () {
+      store.recordStart();
+      Logger.error("Failed to download photo", "sync");
+      expect(vm.progressColor).to.equal(Palette.error);
+    });
   });
 
   describe("progressText (presentation)", function () {

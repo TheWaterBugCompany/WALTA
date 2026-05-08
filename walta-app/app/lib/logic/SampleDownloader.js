@@ -6,6 +6,7 @@ var log = (m, tag = "sync") => Logger.log(m, tag);
 var debug = (m, tag = "sync") => Logger.debug(m, tag);
 var info = (m, tag = "sync") => Logger.info(m, tag);
 var warn = (m, tag = "sync") => Logger.warn(m, tag);
+var error = (m, tag = "sync") => Logger.error(m, tag);
 function createSampleDownloader(delay) {
     return {
         downloadSamples() {
@@ -116,7 +117,7 @@ function createSampleDownloader(delay) {
                             return [sample,serverSample];
                         })
                         .catch( err => {
-                            warn(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
+                            error(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
                             Logger.recordException(err);
                             return [sample, serverSample];
                         });
@@ -164,7 +165,7 @@ function createSampleDownloader(delay) {
                             Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
                         })
                         .catch( err => {
-                            warn(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                            error(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                             Logger.recordException(err)
                         });
             }

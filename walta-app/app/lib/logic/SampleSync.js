@@ -24,7 +24,7 @@ function removeListener(cb) {
 // Expose the store's read-side getters on the module so consumers
 // that treat SampleSync as a syncController can read `.status`,
 // `.percent`, etc. directly — same shape as SyncStore itself.
-["status", "percent", "statusText", "logLines", "errorMessage"].forEach(function (attr) {
+["status", "percent", "statusText", "logLines", "errorMessage", "hasErrors"].forEach(function (attr) {
     Object.defineProperty(exports, attr, { get: function () { return syncStore[attr]; }, enumerable: true });
 });
 
