@@ -56,6 +56,10 @@ When the user asks to start work on a Trello card (e.g. "let's start work on WB-
 
 Once the draft PR exists, commit and push directly to the task branch as work progresses — review happens on the PR's Files Changed view, not by showing diffs in chat. This applies to `task/wb-<N>-...` branches only; direct commits to `main`, force pushes, and history rewrites still need explicit approval.
 
+### One PR = one responsibility
+
+If unrelated work surfaces while you're in the middle of a task — a build fix, a small refactor, an improvement to a different module, a new methodology rule — open a separate task branch and PR for it, merge that independently, and rebase the in-progress branch on top. Don't bundle side quests into the main PR. They turn a focused, mergeable change into a sprawling pile that's hard to review, hard to revert, and where one flaky test in the side quest delays the main work. Splitting after the fact is significant overhead (rebasing, multiple PR descriptions, CI re-runs); splitting up front is ~free.
+
 ## Commands
 
 ### Setup
