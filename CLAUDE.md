@@ -82,6 +82,11 @@ npx grunt --platform=ios debug
 npx grunt --platform=android clean release
 npx grunt --platform=ios clean release
 npx grunt --platform=android preview   # Live development with fast iteration
+
+# Add --simulator to target the emulator/iOS simulator instead of a device.
+# Add --reset to wipe Ti.App.Properties / sqlite before launch (handy when a
+# stale auth token from a prior session is poisoning login).
+npx grunt --platform=ios --simulator --reset debug
 ```
 
 ### Test
