@@ -78,6 +78,10 @@ exports.open = function (dbName) {
             return rows;
         },
 
+        // Row cap keeps the highest `maxRows` ids (newest insertions).
+        // In normal use id and ts agree because entries get `ts: Date.now()`
+        // when they're appended; using id rather than ts means we don't
+        // need a separate index.
         prune: function (maxAgeMs, maxRows) {
             if (maxAgeMs) {
                 const cutoff = Date.now() - maxAgeMs;

@@ -94,13 +94,16 @@ describe("LogRepository", function () {
 
         it("applies both age and row caps when both are passed", function () {
             const now = Date.now();
+            // 1 stale entry (gets killed by age), then 5 fresh entries
+            // inserted oldest-ts → newest-ts so id ordering and ts ordering
+            // agree. Row cap keeps the top 3 by id (= the 3 newest).
             repo.append({ ts: now - 1000 * 60 * 60 * 24 * 30, level: "info", facility: "x", message: "stale" });
             for (let i = 1; i <= 5; i++) {
-                repo.append({ ts: now - i, level: "info", facility: "x", message: "m" + i });
+                repo.append({ ts: now - (6 - i), level: "info", facility: "x", message: "m" + i });
             }
             repo.prune(1000 * 60 * 60 * 24 * 14, 3);
             const rows = repo.query();
-            expect(rows.map(r => r.message).sort()).to.deep.equal(["m1", "m2", "m3"]);
+            expect(rows.map(r => r.message).sort()).to.deep.equal(["m3", "m4", "m5"]);
         });
     });
 
