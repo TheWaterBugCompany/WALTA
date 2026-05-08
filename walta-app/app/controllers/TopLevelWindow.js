@@ -1,6 +1,7 @@
 var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
 var anchorBar = Alloy.createController("AnchorBar" );
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 
@@ -102,7 +103,7 @@ function addSwipeBack() {
 //addSwipeBack();
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-	Logger.debug(`cleaning up window...`);
+	debug(`cleaning up window...`);
 	$.destroy();
 	$.off();
 	anchorBar.cleanUp();

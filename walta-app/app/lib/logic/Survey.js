@@ -3,7 +3,7 @@ var SampleSync = require("logic/SampleSync");
 var Topics = require('ui/Topics');
 
 var Logger = require('util/Logger');
-var debug = m => Logger.debug(m);
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
 exports.Survey = {
     forceUpload: function() {
         debug("forcing synchronise");

@@ -1,3 +1,4 @@
 var Logger = require('util/Logger');
-Logger.debug("Unit Test Build Initializing...");
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
+debug("Unit Test Build Initializing...");
 require("spec/index");

@@ -5,7 +5,7 @@ var Sample = require('logic/Sample');
 var { checkForErrors } = require('util/PromiseUtils');
 var Logger = require('util/Logger');
 
-var debug = m => Logger.debug(m);
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
 
 var { System, Key, Survey, Navigation } = $.args;
 async function siteDetailsWindow(args) {
