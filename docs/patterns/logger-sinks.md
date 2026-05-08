@@ -99,8 +99,12 @@ This refactor is being landed incrementally. Order:
      `write(entry) { repo.append(entry); return Promise.resolve(); }`.
    This is the first non-Alloy persistence module — establishes the
    pattern for future repositories (own migrations, no Backbone).
-4. Add `Logger.info()` (*done*) and apply the facility taxonomy across
-   the ~38 files of existing call sites.
+4. Add `Logger.info()` and apply the facility taxonomy across the ~38
+   files of existing call sites. *Done.* Eight facilities: `sync`,
+   `auth`, `media`, `ui`, `navigation`, `location`, `key`, `sample`.
+   Each file declares per-method aliases that default the facility
+   (e.g. `var log = (m, tag = "sync") => Logger.log(m, tag);`),
+   so call sites stay terse and per-call override is still possible.
 5. Add `Logger.subscribe({ facility, minLevel }, cb)` so reactive UI
    surfaces can observe new log entries without coupling to any sink.
    *Done.*
