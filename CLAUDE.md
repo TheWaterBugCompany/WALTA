@@ -50,6 +50,10 @@ When the user asks to start work on a Trello card (e.g. "let's start work on WB-
 2. Create a new branch named `task/wb-<N>-<short-slug>`.
 3. Once the first commits are ready, create a **draft PR** following the template in [docs/pull-requests.md](docs/pull-requests.md).
 
+### Iterating on a draft PR
+
+Once the draft PR exists, commit and push directly to the task branch as work progresses — review happens on the PR's Files Changed view, not by showing diffs in chat. This applies to `task/wb-<N>-...` branches only; direct commits to `main`, force pushes, and history rewrites still need explicit approval.
+
 ## Commands
 
 ### Setup
