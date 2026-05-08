@@ -1,6 +1,8 @@
 var Topics = require("ui/Topics");
 var { DialogCancelled } = require("logic/View");
 const Logger = require('util/Logger');
+const log = (m, tag = "navigation") => Logger.log(m, tag);
+const debug = (m, tag = "navigation") => Logger.debug(m, tag);
 
 function questionToString(args) {
     if (!args || !args.node || !args.node.questions)
@@ -9,9 +11,9 @@ function questionToString(args) {
 }
 
 function dumpHistory(history) {
-    Logger.debug("\ndump history:\n");
+    debug("\ndump history:\n");
     history.forEach((obj, i) => {
-        Logger.debug(`${i}: ${obj.ctl} ${obj.args.slide} ${(obj.args.node && obj.args.node.id) ? obj.args.node.id : "(no id)"} ${questionToString(obj.args)}`)
+        debug(`${i}: ${obj.ctl} ${obj.args.slide} ${(obj.args.node && obj.args.node.id) ? obj.args.node.id : "(no id)"} ${questionToString(obj.args)}`)
     });
 }
 
@@ -128,7 +130,7 @@ Navigation.prototype.goBack = async function (args) {
                 newargs.slide = "left";
             }
         }
-        Logger.log(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
+        log(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
         await this.openController(ctl, newargs);
 
     }

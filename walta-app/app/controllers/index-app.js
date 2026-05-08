@@ -2,6 +2,7 @@ var CerdiApi = require("logic/CerdiApi");
 var KeyLoader = require('logic/KeyLoaderJson');
 var GeoLocationService = require('logic/GeoLocationService');
 var Logger = require('util/Logger');
+var log = (m, tag = "navigation") => Logger.log(m, tag);
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
 var PlatformSpecific = require("logic/PlatformSpecific");
@@ -24,13 +25,13 @@ var urlActions = UrlActions.create({
   onLoggedIn: function () { Topics.fireTopicEvent(Topics.LOGGEDIN); },
 });
 function handleDeeplink(url) {
-  Logger.log(`[walta-deeplink] dispatch url=${url}`);
+  log(`[walta-deeplink] dispatch url=${url}`);
   Promise.resolve(urlActions.dispatch(url))
     .catch(function (err) { Logger.recordException(err); });
 }
 if (OS_IOS) {
   Ti.App.iOS.addEventListener("handleurl", function (e) {
-    Logger.log(`[walta-deeplink] iOS handleurl fired`);
+    log(`[walta-deeplink] iOS handleurl fired`);
     handleDeeplink(e.launchOptions && e.launchOptions.url);
   });
 } else if (OS_ANDROID) {
@@ -38,9 +39,9 @@ if (OS_IOS) {
   // OS delivers `walta://` intents there — not to whatever TiActivity
   // happens to be foregrounded. With launchMode=singleTask the existing
   // WaterbugActivity gets onNewIntent; rootActivity is our handle to it.
-  Logger.log(`[walta-deeplink] registering newintent listener on rootActivity`);
+  log(`[walta-deeplink] registering newintent listener on rootActivity`);
   Ti.Android.rootActivity.addEventListener("newintent", function (e) {
-    Logger.log(`[walta-deeplink] android newintent fired`);
+    log(`[walta-deeplink] android newintent fired`);
     handleDeeplink(e.intent && e.intent.data);
   });
   // Also handle the case where the app was launched cold via the
@@ -48,7 +49,7 @@ if (OS_IOS) {
   try {
     var launchData = Ti.Android.rootActivity.intent && Ti.Android.rootActivity.intent.data;
     if (launchData) {
-      Logger.log(`[walta-deeplink] cold-launch intent data: ${launchData}`);
+      log(`[walta-deeplink] cold-launch intent data: ${launchData}`);
       handleDeeplink(launchData);
     }
   } catch (e) { /* no rootActivity yet */ }

@@ -1,12 +1,13 @@
 
 var Logger = require('util/Logger');
+var debug = (m, tag = "navigation") => Logger.debug(m, tag);
 
 function appStartUp() {
 	// Not needed any more
 }
 
 function appShutdown( ) {
-	Logger.debug("Application shutdown");
+	debug("Application shutdown");
 	Alloy.Globals.lastWindow.forEach( (w) => w.close() );
 	Ti.Android.currentActivity.finish();
 }
@@ -36,11 +37,11 @@ function transitionWindows( win, effect ) {
 	}
 
 	Alloy.Globals.lastWindow.push( win );
-	Logger.debug(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>getWindowName(w))}`);
+	debug(`Window stack: ${Alloy.Globals.lastWindow.map((w)=>getWindowName(w))}`);
 	win.open( args );
 	if ( Alloy.Globals.lastWindow.length > 1 ) {
 		var oldWindow = Alloy.Globals.lastWindow.shift();
-		Logger.debug(`oldWindow = ${getWindowName(oldWindow)} `);
+		debug(`oldWindow = ${getWindowName(oldWindow)} `);
 		oldWindow.close();
 	};
 }
