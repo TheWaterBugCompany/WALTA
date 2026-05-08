@@ -1,25 +1,44 @@
 const Logger = require('util/Logger');
 const log = (m, tag = "auth") => Logger.log(m, tag);
+const trace = (m) => Logger.log(m, "network");
 var { loadPhoto, savePhoto } = require('util/PhotoUtils');
+
+const SENSITIVE_KEYS = ["password", "client_secret", "accessToken", "access_token"];
+function redactBody(data) {
+    if (!data || typeof data !== 'object') return data;
+    const copy = Array.isArray(data) ? data.slice() : Object.assign({}, data);
+    for (const k of SENSITIVE_KEYS) {
+        if (k in copy) copy[k] = "[REDACTED]";
+    }
+    return copy;
+}
 function createHttpClient(method, url, contentType, acceptType = 'application/json', accessToken, sendDataFunction ) {
     return new Promise( (resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
                 onload: function() {
                     if ( acceptType === 'application/json' ) {
-                        resolve(JSON.parse(this.responseText));
+                        const parsed = JSON.parse(this.responseText);
+                        trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}`);
+                        resolve(parsed);
                     } else {
+                        const bytes = this.responseData ? this.responseData.length : 0;
+                        trace(`<- ${this.status} ${method} ${url} (${bytes} bytes)`);
                         resolve( this.responseData );
                     }
-                
                 },
                 onerror: function(err) {
+                    const status = this.status || '?';
                     if ( this.responseText ) {
                         try {
-                            reject( JSON.parse(this.responseText) );
+                            const parsed = JSON.parse(this.responseText);
+                            trace(`<- ${status} ${method} ${url} ERROR ${JSON.stringify(redactBody(parsed))}`);
+                            reject( parsed );
                         } catch(err2) {
+                            trace(`<- ${status} ${method} ${url} ERROR ${this.responseText}`);
                             reject(err);
                         }
                     } else {
+                        trace(`<- ${status} ${method} ${url} ERROR (no body)`);
                         reject(err);
                     }
                 }
@@ -37,41 +56,46 @@ function createHttpClient(method, url, contentType, acceptType = 'application/js
 }
 
 function makeJsonGetRequest( serverUrl, accessToken = null) {
-    //info(`get request to ${serverUrl}`);
-    return createHttpClient("GET", serverUrl, null, "application/json", accessToken, 
+    trace(`GET ${serverUrl}`);
+    return createHttpClient("GET", serverUrl, null, "application/json", accessToken,
                 (client) => client.send() );
 }
 
 function makeJsonDeleteRequest( serverUrl, accessToken = null) {
-    //info(`get request to ${serverUrl}`);
-    return createHttpClient("DELETE", serverUrl, null, "application/json", accessToken, 
+    trace(`DELETE ${serverUrl}`);
+    return createHttpClient("DELETE", serverUrl, null, "application/json", accessToken,
                 (client) => client.send() );
 }
 
 function makeJsonPostRequest( serverUrl, data, accessToken = null) {
-    return createHttpClient("POST", serverUrl, "application/json", "application/json",accessToken, 
+    trace(`POST ${serverUrl} ${JSON.stringify(redactBody(data))}`);
+    return createHttpClient("POST", serverUrl, "application/json", "application/json",accessToken,
                 (client) => client.send( JSON.stringify( data ) ) );
 }
 
 function makeJsonPutRequest( serverUrl, data, accessToken = null) {
-    return createHttpClient("PUT", serverUrl, "application/json", "application/json",accessToken, 
+    trace(`PUT ${serverUrl} ${JSON.stringify(redactBody(data))}`);
+    return createHttpClient("PUT", serverUrl, "application/json", "application/json",accessToken,
                 (client) => client.send( JSON.stringify( data ) ) );
 }
 
 function makeImagePostRequest( serverUrl, imageData, data, accessToken = null ) {
     data.photo = imageData;
-    return createHttpClient("POST", serverUrl, "multipart/form-data", "application/json", accessToken, 
+    trace(`POST ${serverUrl} (multipart, ${Object.keys(data).join(",")})`);
+    return createHttpClient("POST", serverUrl, "multipart/form-data", "application/json", accessToken,
                 (client) => client.send( data ) );
 }
 
 function makeImagePutRequest( serverUrl, imageData, data, accessToken = null ) {
     data.photo = imageData;
-    return createHttpClient("PUT", serverUrl, "multipart/form-data", "application/json", accessToken, 
+    trace(`PUT ${serverUrl} (multipart, ${Object.keys(data).join(",")})`);
+    return createHttpClient("PUT", serverUrl, "multipart/form-data", "application/json", accessToken,
                 (client) => client.send( data ) );
 }
 
 function makeImageGetRequest( serverUrl, accessToken = null ) {
-    return createHttpClient("GET", serverUrl, null, "image/jpeg", accessToken, 
+    trace(`GET ${serverUrl} (image)`);
+    return createHttpClient("GET", serverUrl, null, "image/jpeg", accessToken,
                 (client) => client.send() );
 }
 
