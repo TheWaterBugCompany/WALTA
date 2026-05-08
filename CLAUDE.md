@@ -36,6 +36,8 @@ The intention is to encourage the following:
 
  - Meaningful tests: the goal is not code coverage metrics but test quality. A good test tells you *what* broke and *where* — not just that something failed. Ask: if this test fails in 6 months, will it point me directly at the problem? Coverage is a byproduct of good tests, not a target in itself.
 
+ - Don't mock for mocking's sake: use the real implementation when a dependency is fast and side-effect-free (Logger, Topics, pure utilities, in-memory stores). Mock only what's slow or has external side effects (CerdiApi/network, Sample/sqlite, filesystem). Mock-heavy tests pass while the real code breaks, and they bloat setup with boilerplate that hides what the test is actually proving.
+
  - Meaningful code: by writing the code to implement the tests, we are avoiding writing code that isn't strictly necessary, and also this gives us an opportunity to be pragmatic about refactoring rather than speculative.
 
  - Keeping technical debt in check: by keeping to this rhythm we use our test cases to drive the design of the code and we take the opportunity at every incremental step to refactor.
