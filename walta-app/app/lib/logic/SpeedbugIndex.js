@@ -1,5 +1,6 @@
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 var Logger = require('util/Logger');
+var debug = (m, tag = "key") => Logger.debug(m, tag);
 
 function createSpeedbugIndex( name, key )  {
   var speedbugIndex = {};
@@ -40,10 +41,10 @@ function createSpeedbugIndex( name, key )  {
         var bug = this.reverseLookup( node.id );
 
         if ( bug ) {
-          Logger.debug(`found: ${bug.imgUrl}`);
+          debug(`found: ${bug.imgUrl}`);
           return bug.imgUrl;
         } else {
-          Logger.debug(`can't find silhouette for: ${node.id}`);
+          debug(`can't find silhouette for: ${node.id}`);
           return;
         }
       }
