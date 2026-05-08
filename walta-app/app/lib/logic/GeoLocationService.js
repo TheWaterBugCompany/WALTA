@@ -1,5 +1,7 @@
 var Topics = require("ui/Topics");
 const Logger = require('util/Logger');
+const log = (m, tag = "location") => Logger.log(m, tag);
+const debug = (m, tag = "location") => Logger.debug(m, tag);
 
 var lastGpsPointEvent;
 
@@ -33,7 +35,7 @@ function init() {
 }
 
 function cleanup() {
-    Logger.log("Stopping geolocation service...");
+    log("Stopping geolocation service...");
     activityDestroyed();
     if (Titanium.Platform.name == 'android')
     {
@@ -45,7 +47,7 @@ function cleanup() {
 
 function gotLocation(e) {
     if ( e.success && e.coords ) {
-        Logger.debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`);
+        debug(`got GPS lock: lat = ${e.coords.latitude} lng = ${e.coords.longitude} accuracy=${e.coords.accuracy}`);
         lastGpsPointEvent = e;
         Topics.fireTopicEvent(Topics.GPSLOCK, e.coords);
     } else {
@@ -54,7 +56,7 @@ function gotLocation(e) {
 }
 
 function startListening() {
-    Logger.debug("start listening for GPS events")
+    debug("start listening for GPS events")
     Ti.Geolocation.addEventListener('location', gotLocation );
     Alloy.Globals.GeoLocationState = "listening";
 }
@@ -66,19 +68,19 @@ function stopListening( state = "stopped" ) {
 
 function start() {
     if ( Alloy.Globals.GeoLocationState === "stopped" ) {
-        Logger.debug("Starting geolocation service...");
+        debug("Starting geolocation service...");
         Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_HIGH;
         Ti.Geolocation.distanceFilter = 10;
         if (Ti.Geolocation.hasLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE)) {
-            Logger.debug("Got permissions");
+            debug("Got permissions");
             startListening();
         } else {
             Ti.Geolocation.requestLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE, (e) => {
                 if ( e.success ) {
-                    Logger.debug("Got permissions");
+                    debug("Got permissions");
                     startListening();
                 } else {
-                    Logger.debug("Unable to get geolcation permissions");
+                    debug("Unable to get geolcation permissions");
                 }
             });
         };
@@ -87,7 +89,7 @@ function start() {
 
 function stop() {
     if ( Alloy.Globals.GeoLocationState !== "stopped" ) {
-        Logger.debug("Stopping geolocation service...");
+        debug("Stopping geolocation service...");
         stopListening();
     }
 }
