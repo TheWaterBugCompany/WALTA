@@ -1,6 +1,7 @@
 require("spec/lib/ti-mocha");
+var simple = require("spec/lib/simple-mock");
 var { expect } = require("spec/lib/chai");
-var { closeWindow, wrapViewInWindow, windowOpenTest, removeDatabase } = require("spec/util/TestUtils");
+var { closeWindow, wrapViewInWindow, windowOpenTest, removeDatabase, waitForTick } = require("spec/util/TestUtils");
 var SyncStore = require("models/SyncStore");
 var Logger = require("util/Logger");
 var LogRepository = require("repository/LogRepository");
@@ -90,6 +91,39 @@ describe("SyncFeedback controller", function () {
             expect(ctl.logText.text).to.equal(
                 "starting upload\nrate limit hit\nupload failed"
             );
+        });
+    });
+
+    describe("tail-scrolls the log pane", function () {
+        beforeEach(async () => {
+            logRepository = makeTestLogRepository([
+                { ts: 100, level: "info", facility: "sync", message: "earlier line 1" },
+                { ts: 200, level: "info", facility: "sync", message: "earlier line 2" },
+            ]);
+            var { syncController } = createSyncController(SyncStore);
+            ctl = Alloy.createController("SyncFeedback", { syncController, logRepository });
+            win = wrapViewInWindow(ctl.getView());
+            await windowOpenTest(win);
+        });
+
+        afterEach(() => {
+            simple.restore();
+        });
+
+        it("scrolls to the bottom when the user opens the pane (seeded entries are at the bottom)", async () => {
+            const spy = simple.mock(ctl.logScroll, "scrollToBottom");
+            ctl.logToggleButton.fireEvent("click");
+            await waitForTick(10)();
+            expect(spy.callCount).to.equal(1);
+        });
+
+        it("scrolls to the bottom when a new log entry lands while the pane is open", async () => {
+            ctl.logToggleButton.fireEvent("click");
+            await waitForTick(10)();
+            const spy = simple.mock(ctl.logScroll, "scrollToBottom");
+            Logger.info("new line", "sync");
+            await waitForTick(10)();
+            expect(spy.callCount).to.equal(1);
         });
     });
 
