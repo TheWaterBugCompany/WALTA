@@ -1,6 +1,6 @@
 var Logger = require('util/Logger');
-var info = function(mess) { Logger.debug(mess); }
-var log = Logger.log;
+var info = (m, tag = "media") => Logger.debug(m, tag);
+var log = (m, tag = "media") => Logger.log(m, tag);
 function absolutePath(path) {
     if ( path.startsWith("file:///") ) {
         //info(`${path} starts with file:///`);
@@ -58,7 +58,7 @@ function savePhoto( blob, filename  ) {
  * not reached in practice on Android.
  */
 function needsOptimising( photo ) {
-    Logger.debug(`needsOptimisng photo.length = ${photo.length}`)
+    info(`needsOptimisng photo.length = ${photo.length}`)
     let res = ( photo.length > 4*1024*1024 /*|| photo.width > 1600 || photo.height > 1600 */);
     return res;
 }
@@ -79,7 +79,7 @@ function optimisePhoto( fullPhoto ) {
     if ( needsOptimising(fullPhoto) ) {
         log(`file too big, size is ${fullPhoto.length/(1024*1024)}Mb, width = ${fullPhoto.width}, height = ${fullPhoto.height}, resizing and compressing photo...`);
         fullPhoto = fullPhoto.imageAsResized(1600, 1600*aspectRatio);
-        Logger.debug( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
+        info( `photo size in bytes ${fullPhoto.length}, width = ${fullPhoto.width}, height = ${fullPhoto.height}` )
         if ( ! fullPhoto ) {
             log(`Error resizing photo: ${fileOrBlob}`);
             throw new Error("Unable to resize photo");
