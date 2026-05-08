@@ -5,20 +5,18 @@
 const Migrator = require("./Migrator");
 
 const TABLE = "logs";
-
-// Append a `require` for each new migration file. Files use the same
-// shape as Alloy's app/migrations/ (timestamped filename, exports.id /
-// up / down) so future migration FROM Alloy is a file move, not a
-// rewrite. See docs/patterns/repository-pattern.md (TBD).
-const MIGRATIONS = [
-    require("./migrations/202605080000000_log")
-];
+// Migrator scans this directory for files matching <id>_logs.js. To
+// add a new migration just drop a new file in here — the loader picks
+// it up by filename (id is parsed from the timestamp prefix). Format
+// matches Alloy's app/migrations/ exactly modulo `migration` →
+// `exports`. See docs/patterns/repository-pattern.md (TBD).
+const MIGRATIONS_PATH = "repository/migrations";
 
 const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
 
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
-    Migrator.runMigrations(db, TABLE, MIGRATIONS);
+    Migrator.runMigrations(db, TABLE, MIGRATIONS_PATH);
 
     return {
         append: function (entry) {
