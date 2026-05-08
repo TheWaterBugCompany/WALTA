@@ -73,49 +73,10 @@ or above a threshold. Ordering: `debug < trace < info < warn < error`.
 
 ## Facility taxonomy
 
-Every entry carries a `facility` string in addition to its level (e.g.
-`sync`, `auth`, `key-loader`, `ui`). Consumers slice on facility — the
+Every entry carries a `facility` string in addition to its level
+(`sync`, `auth`, `media`, `ui`, `navigation`, `location`, `key`,
+`sample`). Consumers slice on facility — the
 SyncFeedback pane queries `LogRepository` with `facility=sync,
 minLevel=info` for prior-run history, and subscribes via
 `Logger.subscribe()` with the same filter for live updates.
 
-## Migration status (WB-64)
-
-This refactor is being landed incrementally. Order:
-
-1. Sink dispatcher + `addSink` (foundation). *Done.*
-2. Migrate `ConsoleSink` and `BugfenderSink` onto the sink interface,
-   each with a level allowlist. *Done.*
-3. Add `LogRepository` and `SqlSink` for log persistence across
-   background/resume. *Done.* Two modules, two responsibilities:
-   - `LogRepository.open(dbName)` opens `Ti.Database`, runs migrations
-     via `PRAGMA user_version`, and exposes `append(entry)`,
-     `query({ facility, minLevel, limit })`, `prune(maxAgeMs, maxRows)`,
-     `close()`. Tested at the device-spec layer against a real
-     `Ti.Database` (`walta-app/app/spec/util/repository/LogRepository_spec.js`).
-   - `SqlSink.create(repo)` is the Logger sink adapter — `levels`
-     allowlist (`trace`, `info`, `warn`, `error` — skips `debug`)
-     plus `async write(entry) { repo.append(entry); }`. Sync throws
-     from `repo.append` become async rejections, handled by the
-     dispatcher's `Ti.API.log` fallback.
-   - `Logger.configure()` opens the repo, prunes at startup
-     (14 days OR 5,000-row cap), and registers SqlSink.
-   First non-Alloy persistence module — establishes the pattern for
-   future repositories (own migrations, no Backbone).
-4. Add `Logger.info()` and apply the facility taxonomy across the ~38
-   files of existing call sites. *Done.* Eight facilities: `sync`,
-   `auth`, `media`, `ui`, `navigation`, `location`, `key`, `sample`.
-   Each file declares per-method aliases that default the facility
-   (e.g. `var log = (m, tag = "sync") => Logger.log(m, tag);`),
-   so call sites stay terse and per-call override is still possible.
-5. Add `Logger.subscribe({ facility, minLevel }, cb)` so reactive UI
-   surfaces can observe new log entries without coupling to any sink.
-   *Done.*
-6. Switch SyncFeedback's "Show Logs" pane to
-   `LogRepository.query({ facility: 'sync', minLevel: 'info' })` for
-   the initial render and `Logger.subscribe()` for live updates;
-   delete the legacy ring-buffer paths from `Logger.js`. *Done.*
-
-All six steps complete — `Logger.js` is now a thin dispatcher, all
-destinations are pluggable sinks, and the SyncFeedback pane reads
-from persisted storage so it survives background/resume.
