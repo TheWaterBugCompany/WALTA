@@ -88,10 +88,27 @@ exports.removeListener = function(cb) {
     if (idx >= 0) _listeners.splice(idx, 1);
 };
 
+// Persistence retention policy — entries older than 14d or beyond
+// the 5,000-row cap get pruned at startup. Tunable here.
+const LOG_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+const LOG_MAX_ROWS = 5000;
+
 exports.configure = function() {
     _sinks.push(require("./sinks/ConsoleSink"));
     const Bugfender = getBugfender();
     _sinks.push(require("./sinks/BugfenderSink").create(Bugfender));
+    try {
+        if (typeof Ti !== 'undefined' && Ti.Database) {
+            const repo = require("../repository/LogRepository").open("logs");
+            repo.prune(LOG_MAX_AGE_MS, LOG_MAX_ROWS);
+            _sinks.push(require("./sinks/SqlSink").create(repo));
+        }
+    } catch (e) {
+        // Don't crash app startup on persistence init failure — fall back
+        // to the other sinks. The error itself goes to Ti.API since the
+        // sink dispatcher isn't usable for diagnosing its own setup.
+        if (typeof Ti !== 'undefined') Ti.API.warn("LogRepository init failed: " + (e && e.message));
+    }
     if (!Bugfender) return;
     Bugfender.init({
         applicationToken: "KyWNoMFRIZsT0P3WZtH9XvNNNc3Juhrv",
