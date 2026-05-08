@@ -62,6 +62,7 @@ exports.removeListener = function(cb) {
 };
 
 exports.configure = function() {
+    _sinks.push(require("./sinks/ConsoleSink"));
     const Bugfender = getBugfender();
     if (!Bugfender) return;
     Bugfender.init({
@@ -100,7 +101,6 @@ exports.setUserId = function(userId) {
 }
 
 exports.debug = function(message, tag = "debug") {
-    if (typeof Ti !== 'undefined') Ti.API.debug(message); else console.log(message);
     _dispatch("debug", tag, message);
 };
 
@@ -111,7 +111,6 @@ exports.info = function(message, tag = "info") {
 exports.warn = function(message, tag = "warn") {
     const Bugfender = getBugfender();
     if (Bugfender) Bugfender.w({ tag, message });
-    if (typeof Ti !== 'undefined') Ti.API.warn(message); else console.warn(message);
     _append(tag, message);
     _dispatch("warn", tag, message);
 };
@@ -119,7 +118,6 @@ exports.warn = function(message, tag = "warn") {
 exports.error = function(message, tag = "error") {
     const Bugfender = getBugfender();
     if (Bugfender) Bugfender.e({ tag, message });
-    if (typeof Ti !== 'undefined') Ti.API.error(message); else console.error(message);
     _append(tag, message);
     _dispatch("error", tag, message);
 };
@@ -127,7 +125,6 @@ exports.error = function(message, tag = "error") {
 exports.log = function(message, tag = "trace") {
     const Bugfender = getBugfender();
     if (Bugfender) Bugfender.t({ tag, message });
-    if (typeof Ti !== 'undefined') Ti.API.debug(message); else console.log(message);
     _append(tag, message);
     _dispatch("trace", tag, message);
 };
