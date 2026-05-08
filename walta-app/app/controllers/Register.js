@@ -1,5 +1,5 @@
 var Logger = require('util/Logger');
-var log = Logger.log;
+var log = (m, tag = "auth") => Logger.log(m, tag);
 var Topics = require("ui/Topics");
 var { emailValidity } = require("util/EmailUtils");
 
