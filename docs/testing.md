@@ -66,13 +66,13 @@ describe.only("My module", function() {
 
 **Device unit tests** (`walta-app/app/spec/`): same `.only` approach, or use `--grep="..."` (see [LiveView § Runtime Test Config](#runtime-test-config---grep-and---manual)) to filter without editing the file.
 
-**Acceptance tests** (Cucumber features): add the `@only` tag above a scenario:
+**Acceptance tests** (Cucumber features): pass `--grep="<scenario name>"` (regex against the `Scenario:` text) to filter without editing the file:
 
-```gherkin
-@only
-Scenario: Download samples from server
-  Given I have existing samples stored on the server
+```bash
+npx grunt --platform=ios --simulator --grep="Log in with existing account" acceptance-test
 ```
+
+`--grep` maps to cucumber-js's `--name` flag. Use `--cucumber-tags=<expr>` if you want to filter by tag instead (defaults to `not @skip`).
 
 ## Run *both* Node and device suites before pushing changes to `walta-app/app/lib/`
 

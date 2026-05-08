@@ -110,7 +110,7 @@ describe("CucumberLauncher", function() {
       expect(args).to.deep.equal(["cucumber-js", "--tags", "@smoke", "--force-exit"]);
     });
 
-    it("defaults tags to @only when none are provided", async function() {
+    it("defaults tags to 'not @skip' when none are provided", async function() {
       const launcher = new CucumberLauncher({
         spawn: fakeSpawn,
         isAppiumRunning: fakeIsRunning,
@@ -118,7 +118,21 @@ describe("CucumberLauncher", function() {
       const promise = launcher.run();
       await exitAfterSpawn(fakeSpawn, 0, 0);
       await promise;
-      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["cucumber-js", "--tags", "@only", "--force-exit"]);
+      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["cucumber-js", "--tags", "not @skip", "--force-exit"]);
+    });
+
+    it("passes --name <pattern> to cucumber-js when name is provided", async function() {
+      const launcher = new CucumberLauncher({
+        name: "Log in with existing",
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      const promise = launcher.run();
+      await exitAfterSpawn(fakeSpawn, 0, 0);
+      await promise;
+      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(
+        ["cucumber-js", "--tags", "not @skip", "--name", "Log in with existing", "--force-exit"]
+      );
     });
 
     it("serializes appiumOptions as APPIUM_OPTIONS env var", async function() {
