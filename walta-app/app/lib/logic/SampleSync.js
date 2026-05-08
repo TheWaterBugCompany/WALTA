@@ -38,10 +38,10 @@ let timeoutHandler = null;
 function networkChanged( e ) {
     if ( e.networkType === Ti.Network.NETWORK_NONE ) {
         // don't bother trying to upload (saves battery)
-        log("Lost network connection, sleeping.");
+        info("Lost network connection, sleeping.");
         clearUploadTimer();
     } else {
-        log("Network connection up.");
+        info("Network connection up.");
         startSynchronise();
     }
 }
