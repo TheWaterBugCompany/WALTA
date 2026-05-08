@@ -85,10 +85,7 @@ This refactor is being landed incrementally. Order:
 
 1. Sink dispatcher + `addSink` (foundation). *Done.*
 2. Migrate `ConsoleSink` and `BugfenderSink` onto the sink interface,
-   each with a level allowlist. *Done.* The legacy in-memory ring
-   buffer (`_append` / `_logBuffer` / `getLogLines` / `addListener`)
-   stays in `Logger.js` — SyncFeedback still depends on it until
-   step 6.
+   each with a level allowlist. *Done.*
 3. Add `LogRepository` and `SqlSink` for log persistence across
    background/resume. *Done.* Two modules, two responsibilities:
    - `LogRepository.open(dbName)` opens `Ti.Database`, runs migrations
@@ -114,12 +111,11 @@ This refactor is being landed incrementally. Order:
 5. Add `Logger.subscribe({ facility, minLevel }, cb)` so reactive UI
    surfaces can observe new log entries without coupling to any sink.
    *Done.*
-6. Switch SyncFeedback's "Show Logs" pane: replace `getLogLines()` with
+6. Switch SyncFeedback's "Show Logs" pane to
    `LogRepository.query({ facility: 'sync', minLevel: 'info' })` for
-   the initial render, and `addListener()` with `Logger.subscribe()`
-   using the same filter for live updates. Delete the legacy
-   ring-buffer paths from `Logger.js` once nothing depends on them.
+   the initial render and `Logger.subscribe()` for live updates;
+   delete the legacy ring-buffer paths from `Logger.js`. *Done.*
 
-The legacy in-memory ring buffer (`_append` / `_logBuffer` /
-`getLogLines` / `addListener`) remains in `Logger.js` until step 6 —
-SyncFeedback still depends on it.
+All six steps complete — `Logger.js` is now a thin dispatcher, all
+destinations are pluggable sinks, and the SyncFeedback pane reads
+from persisted storage so it survives background/resume.
