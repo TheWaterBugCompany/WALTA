@@ -16,6 +16,7 @@ function createSyncController(SyncStore) {
         get statusText()   { return store.statusText; },
         get logLines()     { return store.logLines; },
         get errorMessage() { return store.errorMessage; },
+        get hasErrors()    { return store.hasErrors; },
         addListener:    function (cb) { store.addListener(cb); },
         removeListener: function (cb) { store.removeListener(cb); },
         forceUpload:    function ()   { forceUploadCalls++; },

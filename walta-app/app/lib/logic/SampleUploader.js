@@ -4,6 +4,7 @@ var log = (m, tag = "sync") => Logger.log(m, tag);
 var debug = (m, tag = "sync") => Logger.debug(m, tag);
 var info = (m, tag = "sync") => Logger.info(m, tag);
 var warn = (m, tag = "sync") => Logger.warn(m, tag);
+var error = (m, tag = "sync") => Logger.error(m, tag);
 
 var Topics = require('ui/Topics');
 var moment = require("lib/moment");
@@ -103,7 +104,7 @@ function uploadTaxaPhoto(sample,t,delay) {
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: `Uploading taxa ${taxonId} photo` } );
                     })
                     .catch( (err) => {
-                        warn(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
+                        error(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
                         Logger.recordException(err)
                     });
                         
