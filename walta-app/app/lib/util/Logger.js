@@ -20,7 +20,9 @@ exports.addSink = function (sink) {
 function _dispatch(level, facility, message) {
     const entry = { ts: Date.now(), level, facility, message };
     for (let i = 0; i < _sinks.length; i++) {
-        Promise.resolve(_sinks[i].write(entry)).catch(function (err) {
+        const sink = _sinks[i];
+        if (sink.levels && sink.levels.indexOf(level) === -1) continue;
+        Promise.resolve(sink.write(entry)).catch(function (err) {
             const fallback = "Logger sink failed: " + (err && err.message) + " — original: " + message;
             if (typeof Ti !== 'undefined') Ti.API.log(level, fallback);
             else console.log(fallback);
