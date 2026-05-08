@@ -2,17 +2,38 @@ require("mocha");
 const { expect } = require("chai");
 const SyncFeedbackViewModel = require("../../walta-app/app/lib/viewmodels/SyncFeedback");
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
-const Logger = require("../../walta-app/app/lib/util/Logger");
 const Palette = require("../../walta-app/app/lib/util/Palette");
 const createSyncController = require("../../walta-app/app/spec/fixtures/SyncController_fixture");
 
+// Fake LogRepository — only `query` and `close` are exercised by the
+// viewmodel; tests can seed it with prior-run entries via the arg.
+function fakeLogRepository(initialEntries = []) {
+  return {
+    query: (opts) => {
+      const limit = (opts && opts.limit) || 200;
+      return initialEntries.slice().sort((a, b) => b.ts - a.ts).slice(0, limit);
+    },
+    close: () => {}
+  };
+}
+
+// Use the same Logger instance the viewmodel imports — the test's
+// Logger.info(...) calls must hit the same module on which the vm
+// registered its subscription.
+const Logger = require("../../walta-app/app/lib/util/Logger");
+
 describe("SyncFeedbackViewModel", function () {
-  let syncController, store, forceUploadCalls, vm;
+  let syncController, store, forceUploadCalls, vm, repo;
 
   beforeEach(function () {
-    Logger.clearLog();
     ({ syncController, store, forceUploadCalls } = createSyncController(SyncStore));
-    vm = new SyncFeedbackViewModel({ syncController });
+    repo = fakeLogRepository();
+    vm = new SyncFeedbackViewModel({ syncController, logRepository: repo });
+  });
+
+  afterEach(function () {
+    // Releases the Logger subscription so it doesn't leak across tests.
+    if (vm) vm.dispose();
   });
 
   describe("initial state", function () {
@@ -27,57 +48,72 @@ describe("SyncFeedbackViewModel", function () {
     it("reflects a sync already in progress when the popup opens", function () {
       store.recordStart();
       store.recordProgress("Uploading taxa 141 photo");
-      const latecomer = new SyncFeedbackViewModel({ syncController });
-      expect(latecomer.status).to.equal("syncing");
-      // logLines comes from the Logger ring buffer now (WB-45) — the
-      // sync progress message is already on screen as statusText.
-      expect(latecomer.statusText).to.equal("Uploading taxa 141 photo");
+      const latecomer = new SyncFeedbackViewModel({ syncController, logRepository: fakeLogRepository() });
+      try {
+        expect(latecomer.status).to.equal("syncing");
+        expect(latecomer.statusText).to.equal("Uploading taxa 141 photo");
+      } finally {
+        latecomer.dispose();
+      }
     });
   });
 
-  describe("logLines live updates (Logger subscription — WB-45)", function () {
-    it("notifies vm listeners when Logger emits a new line", function () {
+  describe("logLines initial render (LogRepository.query — cross-run history)", function () {
+    it("seeds from the repository's prior-run entries, oldest-first", function () {
+      const seeded = fakeLogRepository([
+        { ts: 200, level: "info", facility: "sync", message: "second" },
+        { ts: 100, level: "info", facility: "sync", message: "first" }
+      ]);
+      const vm2 = new SyncFeedbackViewModel({ syncController, logRepository: seeded });
+      try {
+        expect(vm2.logLines.map(e => e.message)).to.deep.equal(["first", "second"]);
+      } finally {
+        vm2.dispose();
+      }
+    });
+  });
+
+  describe("logLines live updates (Logger.subscribe with facility=sync, minLevel=info)", function () {
+    it("notifies vm listeners when a matching entry is logged", function () {
       const seen = [];
       vm.addListener(() => seen.push(vm.logLines.length));
-      Logger.log("first", "sync");
-      Logger.warn("second", "sync");
+      Logger.info("milestone", "sync");
+      Logger.warn("slow", "sync");
       expect(seen).to.deep.equal([1, 2]);
     });
 
-    it("unsubscribes from Logger on dispose() — no further vm notifications", function () {
+    it("filters out entries below minLevel (trace, debug)", function () {
+      const seen = [];
+      vm.addListener(() => seen.push(vm.logLines.length));
+      Logger.log("trace from sync", "sync");
+      Logger.debug("debug from sync", "sync");
+      expect(seen).to.deep.equal([]);
+      expect(vm.logLines).to.deep.equal([]);
+    });
+
+    it("filters out entries from other facilities", function () {
+      const seen = [];
+      vm.addListener(() => seen.push(vm.logLines.length));
+      Logger.info("info from auth", "auth");
+      Logger.warn("warn from media", "media");
+      expect(seen).to.deep.equal([]);
+      expect(vm.logLines).to.deep.equal([]);
+    });
+
+    it("appends matching live entries to the end (newest-last)", function () {
+      Logger.info("first", "sync");
+      Logger.warn("second", "sync");
+      expect(vm.logLines.map(e => e.message)).to.deep.equal(["first", "second"]);
+    });
+
+    it("unsubscribes from Logger on dispose()", function () {
       let calls = 0;
       vm.addListener(() => { calls += 1; });
-      Logger.log("before-dispose", "sync");
+      Logger.info("before-dispose", "sync");
       expect(calls).to.equal(1);
       vm.dispose();
-      Logger.log("after-dispose", "sync");
+      Logger.info("after-dispose", "sync");
       expect(calls).to.equal(1);
-    });
-  });
-
-  describe("logLines (sourced from Logger ring buffer — WB-45)", function () {
-    it("returns whatever Logger has captured at read time", function () {
-      Logger.log("starting upload", "sync");
-      Logger.warn("rate limit hit", "sync");
-      expect(vm.logLines).to.deep.equal([
-        "[sync] starting upload",
-        "[sync] rate limit hit",
-      ]);
-    });
-
-    it("includes lines emitted after the popup was constructed", function () {
-      expect(vm.logLines).to.deep.equal([]);
-      Logger.error("upload failed", "sync");
-      expect(vm.logLines).to.deep.equal(["[sync] upload failed"]);
-    });
-
-    it("does not surface syncController progress messages directly", function () {
-      // Progress messages are the headline statusText — they shouldn't
-      // also fill the Show Logs pane. Logger output is the source of
-      // truth there.
-      store.recordStart();
-      store.recordProgress("Downloading samples");
-      expect(vm.logLines).to.deep.equal([]);
     });
   });
 
@@ -240,9 +276,9 @@ describe("SyncFeedbackViewModel", function () {
       expect(vm.logText).to.equal("");
     });
 
-    it("joins log lines with newlines", function () {
-      Logger.log("first", "sync");
-      Logger.log("second", "sync");
+    it("joins log entries as '[facility] message' with newlines", function () {
+      Logger.info("first", "sync");
+      Logger.warn("second", "sync");
       expect(vm.logText).to.equal("[sync] first\n[sync] second");
     });
   });
@@ -286,4 +322,3 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 });
-

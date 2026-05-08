@@ -4,29 +4,43 @@ const Palette = require("../util/Palette");
 
 const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.";
 
+// Show Logs pane filter — only the curated info-level milestones from
+// the sync facility (start/end markers, key download done, etc.).
+// See docs/patterns/logger-sinks.md.
+const LOG_FILTER = { facility: "sync", minLevel: "info" };
+const LOG_LIMIT = 200;
+
 class SyncFeedbackViewModel extends ChangeNotifier {
-  constructor({ syncController }) {
+  constructor({ syncController, logRepository }) {
     super();
     this._syncController = syncController;
+    this._logRepository = logRepository;
     this._logVisible = false;
     this._onSyncChange = () => this.notifyListeners();
     syncController.addListener(this._onSyncChange);
-    // Live-update the Show Logs pane as new Logger output arrives,
-    // independently of sync progress events. See WB-45.
-    this._onLoggerEmit = () => this.notifyListeners();
-    Logger.addListener(this._onLoggerEmit);
+
+    // Cross-run history: query persisted entries newest-first, then
+    // reverse for display so the pane reads top-to-bottom chronologically
+    // (oldest → newest), tail-style.
+    const recent = logRepository.query({ ...LOG_FILTER, limit: LOG_LIMIT });
+    recent.reverse();
+    this._logEntries = recent;
+
+    // Live updates: subscribe directly to Logger, independent of any
+    // sink. New matching entries get appended to the end (newest-last).
+    this._unsubscribeLogger = Logger.subscribe(LOG_FILTER, (entry) => {
+      this._logEntries.push(entry);
+      if (this._logEntries.length > LOG_LIMIT) this._logEntries.shift();
+      this.notifyListeners();
+    });
   }
 
   get status()       { return this._syncController.status; }
   get percent()      { return this._syncController.percent; }
   get statusText()   { return this._syncController.statusText; }
-  // Sourced from Logger's in-memory ring buffer, not the syncController
-  // — sync progress messages are already on screen as statusText. The
-  // Show Logs pane shows finer-grained Logger.log/warn/error output.
-  // See WB-45.
-  get logLines()     { return Logger.getLogLines(); }
+  get logLines()     { return this._logEntries; }
   get errorMessage() { return this._syncController.errorMessage; }
-  get logVisible() { return this._logVisible; }
+  get logVisible()   { return this._logVisible; }
 
   get message() {
     return this.status === "offline" ? OFFLINE_MESSAGE : "";
@@ -60,7 +74,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   }
 
   get logText() {
-    return this.logLines.join("\n");
+    return this._logEntries.map(e => `[${e.facility}] ${e.message}`).join("\n");
   }
 
   get logPaneHeight() {
@@ -86,7 +100,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
 
   dispose() {
     this._syncController.removeListener(this._onSyncChange);
-    Logger.removeListener(this._onLoggerEmit);
+    if (this._unsubscribeLogger) this._unsubscribeLogger();
     super.dispose();
   }
 }
