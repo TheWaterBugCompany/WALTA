@@ -47,6 +47,16 @@ function applyDynamicMargins() {
 applyDynamicMargins();
 vm.addListener(applyDynamicMargins);
 
+let lastLogCount = vm.logLines.length;
+function tailLogPane() {
+    if (vm.logLines.length === lastLogCount) return;
+    lastLogCount = vm.logLines.length;
+    // setTimeout: defer until after the Label has re-laid-out, otherwise
+    // scrollToBottom uses the pre-update content height.
+    setTimeout(() => $.logScroll.scrollToBottom(), 0);
+}
+vm.addListener(tailLogPane);
+
 vm.on("close", function () { $.trigger("close"); });
 vm.on("diagnostics", function () { Topics.fireTopicEvent(Topics.DIAGNOSTICS); });
 
