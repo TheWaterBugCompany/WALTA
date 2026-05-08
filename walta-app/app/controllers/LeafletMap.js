@@ -1,6 +1,7 @@
 // Arguments passed into this controller can be accessed via the `$.args` object directly or:
 var args = $.args;
 var Logger = require('util/Logger');
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
 var ready = false;
 var mapPoint = null;
 var longPressHandler = null;
@@ -16,7 +17,7 @@ function cleanUp() {
     Ti.App.removeEventListener("waterbug-map:opened", webviewReady);
 }
 function webviewReady() {
-    Logger.debug("LeaftletMap: WebView is ready");
+    debug("LeaftletMap: WebView is ready");
     ready = true;
     onReadyHandlers.forEach( function( h ) {
         h();

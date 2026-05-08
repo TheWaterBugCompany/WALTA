@@ -1,6 +1,6 @@
 var PlatformSpecific = require("logic/PlatformSpecific");
 var Logger = require('util/Logger');
-var debug = m => Logger.debug(m);
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
 exports.System = {
     requestPermission: function( permissions ) {
         if ( OS_ANDROID ) {

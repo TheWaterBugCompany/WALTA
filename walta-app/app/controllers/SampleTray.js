@@ -4,6 +4,7 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
+var debug = (m, tag = "ui") => Logger.debug(m, tag);
 
 var DEBUG = false; // WARNING turning this on breaks unit tests
 
@@ -321,7 +322,7 @@ function updateSampleTrayTile( tileNum ) {
 
 function releaseTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Logger.debug(`releaseTiles(${start_n},${end_n})`);
+    debug(`releaseTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
     if ( i >=  0 ) {
@@ -337,7 +338,7 @@ function releaseTiles( start_n, end_n ) {
 
 function addTiles( start_n, end_n ) {
   if ( DEBUG ) {
-    Logger.debug(`addTiles(${start_n},${end_n})`);
+    debug(`addTiles(${start_n},${end_n})`);
   }
   for( var i = start_n; i<=end_n; i++ ) {
    if ( i >=  0 ) {
@@ -367,7 +368,7 @@ function updateVisibleTiles( scrollx) {
   var rightEdge = roundToTile( scrollx + viewWidth + middleWidth - 1 );
   var leftEdge = roundToTile( scrollx );
   if ( DEBUG ) {
-    Logger.debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}, leftEdge=${leftEdge}, rightEdge=${rightEdge}`);
+    debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}, leftEdge=${leftEdge}, rightEdge=${rightEdge}`);
   }
   addTiles(leftEdge,rightEdge - 1);
   releaseTiles( 0, leftEdge-1 );
@@ -379,14 +380,14 @@ function drawIcecubeTray() {
      since you can see the tray behind the edit screen. But this cancels the redraw if the controller hasn't yet set its size values */
   if ( $.content.size.height === 0 ) {
     if ( DEBUG ) {
-      Logger.debug("view not yet initialised skipping redraw!")
+      debug("view not yet initialised skipping redraw!")
     }
     return;
   }
 
   // froce the contentWidth to update - on iOS this doesn't seem to be automatic
   if ( DEBUG ) {
-    Logger.debug(`trayWidth=${getTrayWidth()}, viewWidth=${getViewWidth()}, scrollOffset=${getScrollOffset()}`);
+    debug(`trayWidth=${getTrayWidth()}, viewWidth=${getViewWidth()}, scrollOffset=${getScrollOffset()}`);
   }
   $.tray.width = `${getTrayWidth()}dp`;
   $.contentWidth = `${getTrayWidth()}dp`;
@@ -426,7 +427,7 @@ function startIdentification(e) {
 
   $.selectMethod.on("unknownbug", function() {
     closeSelectMethod();
-    Logger.debug("firing identify")
+    debug("firing identify")
     Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: null }  );
   });
 

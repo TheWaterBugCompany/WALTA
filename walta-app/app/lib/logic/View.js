@@ -2,7 +2,7 @@
 var Topics = require('ui/Topics');
 const Logger = require("util/Logger");
 
-var debug = Logger.log;
+var debug = (m, tag = "ui") => Logger.log(m, tag);
 let currentController = null;
 let saveOrDiscard = null;
 
