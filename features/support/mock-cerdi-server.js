@@ -71,27 +71,25 @@ function createMockCerdiServer(callback) {
         shutdown() {
             this.server.close();
         },
-        makeMockSample() {
-            let accessToken = "testusertoken";
-            // set up user account responses
+        registerAccount({ email, password }) {
             this.hockServer
-                .post("/token/create",{
-                    "password":"password",
-                    "email":"test@example.com"
-                })
+                .post("/token/create", { password, email })
                 .many()
-                .reply(200,{
+                .reply(200, {
                     "id": 38,
-                    "name": "Test Example",
-                    "email": "testlogin@example.com",
+                    "name": "Test User",
+                    "email": email,
                     "created_at": "2018-09-07 08:55:30",
                     "updated_at": "2018-09-07 08:55:30",
                     "group": 0,
                     "survey_consent": 0,
                     "share_name_consent": 0,
                     "oauth_network": null,
-                    "accessToken": accessToken
+                    "accessToken": "testusertoken"
                 });
+        },
+        makeMockSample() {
+            this.registerAccount({ email: "test@example.com", password: "password" });
             // set up samples response
             let sampleData = makeCerdiSampleData({
                 photos: [{"id": 1}],

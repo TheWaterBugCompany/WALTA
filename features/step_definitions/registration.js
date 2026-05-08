@@ -67,12 +67,13 @@ Then('I am registered on the server', function() {
    expect( serverReq["share_name_consent"] ).to eq(false) */
 });
 
-Then('I am logged in', function() {
-/*     expect( @current_page.loggedIn? ).to eq(true) */
+Then('I am logged in', {timeout: 60000}, async function() {
+    await this.menu.waitForLabel("You are Logged in");
 });
 
-When('I log in with "([^"]*)" and password "([^"]*)"', function(emailAddress, password) {
-/*     @current_page = RegistrationDriver.login( emailAddress, password ) */
+When('I log in with {string} and password {string}', {timeout: 60000}, async function(emailAddress, password) {
+    await this.menu.waitFor();
+    await this.menu.login(emailAddress, password);
 });
 
 When('I register as "([^"]*)"', function(emailAddress) {
@@ -86,14 +87,8 @@ When('I register as "([^"]*)"', function(emailAddress) {
     @current_page = @current_page.register_via_email( emailAddress, "Test User", "t3stPassw0rd") */
 });
 
-Given('The "([^"]*)" account exists with password "([^"]*)"', function(emailAddress, password) {
-/*     @emailAddress = emailAddress
-    @password = password
-    MockServer.create_account() */
-});
-  
-When('I log in via username and password', function() {
-/*    @current_page = RegistrationDriver.login( @emailAddress, @password ) */
+Given('The {string} account exists with password {string}', function(emailAddress, password) {
+    global.mockCerdiServer.registerAccount({ email: emailAddress, password });
 });
 
 When('I restart the application', function() {
