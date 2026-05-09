@@ -715,20 +715,12 @@ jobs:
           done
           exit 1
 
-      - name: Capture simulator diagnostics on failure
-        if: failure()
-        run: |
-          echo "=== Simulator screenshot ==="
-          xcrun simctl io ${{ steps.sim.outputs.udid }} screenshot /tmp/sim-screenshot.png || true
-          echo "=== Last 200 lines of ALL simulator syslog ==="
-          xcrun simctl spawn ${{ steps.sim.outputs.udid }} log show --last 5m --style syslog 2>&1 | grep -i "waterbug\|titanium\|TiAPI\|TiLog\|appium\|cucumber" | tail -200 || true
-
-      - name: Upload simulator screenshot
+      - name: Upload per-scenario failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: ios-acceptance-screenshot
-          path: /tmp/sim-screenshot.png
+          name: acceptance-failures-ios
+          path: /tmp/acceptance-artifacts
           if-no-files-found: ignore
 
   # ── 5. Android emulator acceptance tests ──────────────────────────────────
@@ -847,3 +839,11 @@ jobs:
           script: |
             echo "Emulator booted"
             npx grunt --platform=android --simulator --skip-build acceptance-test || { echo "::warning ::Android acceptance first attempt failed; retrying once (WB-54)"; npx grunt --platform=android --simulator --skip-build acceptance-test; }
+
+      - name: Upload per-scenario failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-failures-android
+          path: /tmp/acceptance-artifacts
+          if-no-files-found: ignore
