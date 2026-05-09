@@ -42,19 +42,24 @@ async function captureScreenshot(driver, dir) {
     }
 }
 
+// `simctl log show --last 5m` on iOS easily produces tens of MB of
+// syslog. Default spawnSync maxBuffer (1 MB) overflows with ENOBUFS,
+// so bump it generously here.
+const SPAWN_OPTS = { maxBuffer: 64 * 1024 * 1024 };
+
 function captureDeviceLog(platform, dir) {
     try {
         if (platform === 'android') {
             const adb = process.env.ANDROID_SDK_ROOT
                 ? path.join(process.env.ANDROID_SDK_ROOT, 'platform-tools', 'adb')
                 : 'adb';
-            const out = execFileSync(adb, ['logcat', '-d', '-t', '500', '-s', 'TiAPI:V']);
+            const out = execFileSync(adb, ['logcat', '-d', '-t', '500', '-s', 'TiAPI:V'], SPAWN_OPTS);
             fs.writeFileSync(path.join(dir, 'device.log'), out);
         } else if (platform === 'ios' && process.env.SIM_UDID) {
             const out = execFileSync('xcrun', [
                 'simctl', 'spawn', process.env.SIM_UDID,
                 'log', 'show', '--last', '5m', '--style', 'syslog',
-            ]);
+            ], SPAWN_OPTS);
             const filtered = out.toString()
                 .split('\n')
                 .filter((l) => /waterbug|titanium|TiAPI|TiLog|appium/i.test(l))
