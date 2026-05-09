@@ -40,7 +40,7 @@ install_ti_module() {
   local url="https://github.com/appcelerator-modules/$module/releases/download/v$version$tag_suffix/$module-$platform-$version.zip"
   local tmp=$(mktemp -d)
   echo "Downloading $module $platform v$version..."
-  curl -sL "$url" -o "$tmp/module.zip"
+  curl -sSL --fail --retry 3 --retry-delay 2 --retry-all-errors "$url" -o "$tmp/module.zip"
   unzip -q "$tmp/module.zip" -d "$tmp"
   rm -rf "walta-app/modules/$platform/$module"
   mkdir -p "walta-app/modules/$platform/$module"
