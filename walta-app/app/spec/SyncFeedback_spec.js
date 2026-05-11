@@ -1,6 +1,6 @@
 require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
-var { closeWindow, wrapViewInWindow, windowOpenTest, removeDatabase, waitForTick } = require("spec/util/TestUtils");
+var { closeWindow, wrapViewInWindow, windowOpenTest, removeDatabase, waitFor } = require("spec/util/TestUtils");
 var SyncStore = require("models/SyncStore");
 var Logger = require("util/Logger");
 var LogRepository = require("repository/LogRepository");
@@ -81,13 +81,13 @@ describe("SyncFeedback controller", function () {
         it("renders prior-run entries in the log pane after toggling Show Log", () => {
             ctl.logToggleButton.fireEvent("click");
             expect(ctl.logPane.visible).to.equal(true);
-            expect(ctl.logText.text).to.equal("starting upload\nrate limit hit");
+            expect(ctl.logText.value).to.equal("starting upload\nrate limit hit");
         });
 
         it("live-updates the rendered text when Logger.error fires while the popup is open", () => {
             ctl.logToggleButton.fireEvent("click");
             Logger.error("upload failed", "sync");
-            expect(ctl.logText.text).to.equal(
+            expect(ctl.logText.value).to.equal(
                 "starting upload\nrate limit hit\nupload failed"
             );
         });
@@ -105,27 +105,45 @@ describe("SyncFeedback controller", function () {
             return entries;
         }
 
-        beforeEach(async () => {
-            logRepository = makeTestLogRepository(seedManyEntries(40));
+        async function buildController(seedCount) {
+            logRepository = makeTestLogRepository(seedManyEntries(seedCount));
             var { syncController } = createSyncController(SyncStore);
             ctl = Alloy.createController("SyncFeedback", { syncController, logRepository });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
-        });
+        }
 
-        it("scrolls past the top when the user opens the pane (seeded entries are at the bottom)", async () => {
+        it("scrolls past the top when the user opens the pane (seeded entries are at the bottom, buffer at cap)", async () => {
+            // Seed at LOG_LIMIT so this also exercises the worst-case
+            // render — the pane has to lay out 5000 lines without crashing.
+            await buildController(5000);
             ctl.logToggleButton.fireEvent("click");
-            await waitForTick(400)();
+            await waitFor(() => ctl.logScroll.contentOffset.y > 0);
             expect(ctl.logScroll.contentOffset.y).to.be.greaterThan(0);
         });
 
         it("scrolls further down when a new log entry lands while the pane is open", async () => {
+            // Seed below LOG_LIMIT so each append actually grows the
+            // rendered content (no shift-off-the-top), letting us
+            // observe contentOffset.y move further down. At the cap
+            // this assertion isn't meaningful — see the cap-anchor
+            // test below for that case.
+            await buildController(500);
             ctl.logToggleButton.fireEvent("click");
-            await waitForTick(400)();
+            await waitFor(() => ctl.logScroll.contentOffset.y > 0);
             const before = ctl.logScroll.contentOffset.y;
             for (let i = 0; i < 5; i++) Logger.info(`fresh line ${i}`, "sync");
-            await waitForTick(400)();
+            await waitFor(() => ctl.logScroll.contentOffset.y > before);
             expect(ctl.logScroll.contentOffset.y).to.be.greaterThan(before);
+        });
+
+        it("keeps the newest entry visible at the tail when appending at the cap", async () => {
+            await buildController(5000);
+            ctl.logToggleButton.fireEvent("click");
+            await waitFor(() => ctl.logScroll.contentOffset.y > 0);
+            Logger.info("fresh tail line", "sync");
+            await waitFor(() => ctl.logText.value.endsWith("fresh tail line"));
+            expect(ctl.logText.value.endsWith("fresh tail line")).to.equal(true);
         });
     });
 

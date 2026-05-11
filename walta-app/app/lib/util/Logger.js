@@ -60,7 +60,7 @@ function _dispatch(level, facility, message) {
 // Persistence retention policy — entries older than 14d or beyond
 // the 5,000-row cap get pruned at startup. Tunable here.
 const LOG_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
-const LOG_MAX_ROWS = 5000;
+const LOG_MAX_ROWS = 100000;
 
 exports.configure = function() {
     _sinks.push(require("./sinks/ConsoleSink"));

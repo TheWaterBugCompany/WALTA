@@ -19,7 +19,7 @@ bindView($, vm, {
     logPane:           { visible: "logVisible", height: "logPaneHeight" },
     diagnosticsButton: { visible: "diagnosticsVisible", onClick: "openDiagnostics" },
     logToggleButton:   { title: "logToggleLabel", onClick: "toggleLog" },
-    logText:           { text: "logText" },
+    logText:           { value: "logText" },
     closeBottomButton: { onClick: "close" },
     closeButton:       { onClose: "close" },
 }, Alloy.CFG.colors);
@@ -47,16 +47,19 @@ function applyDynamicMargins() {
 applyDynamicMargins();
 vm.addListener(applyDynamicMargins);
 
-let lastLogCount = vm.logLines.length;
+let lastLogSeq = vm.logSeq;
 let lastLogVisible = vm.logVisible;
 function tailLogPane() {
     const justOpened = vm.logVisible && !lastLogVisible;
-    const grew = vm.logLines.length !== lastLogCount;
-    lastLogCount = vm.logLines.length;
+    const grew = vm.logSeq !== lastLogSeq;
+    lastLogSeq = vm.logSeq;
     lastLogVisible = vm.logVisible;
     if (!justOpened && !grew) return;
-    // setTimeout: defer until after the Label has re-laid-out, otherwise
-    // scrollToBottom uses the pre-update content height.
+    // setTimeout: defer until after the TextArea has re-laid-out, otherwise
+    // scrollToBottom uses the pre-update content height. The TextArea
+    // itself is `scrollable: false` so the wrapping ScrollView is what
+    // actually scrolls the content (chosen over native TextArea scrolling
+    // because Ti's setSelection isn't exposed on TextArea in our SDK).
     setTimeout(() => $.logScroll.scrollToBottom(), 0);
 }
 vm.addListener(tailLogPane);
