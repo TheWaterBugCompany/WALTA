@@ -8,39 +8,15 @@ WALTA (Waterbug App) is a cross-platform mobile app for iOS and Android that ena
 
 ## Coding Style
 
-See [docs/coding-style.md](docs/coding-style.md) for JavaScript conventions — module system per directory, async/await direction, and incremental migration guidance.
+Before writing or editing code, consult [docs/coding-style.md](docs/coding-style.md) — module system per directory, async/await direction, the comment policy (short *why* comments are welcome; long, flowery ones are a refactor signal — and architectural narrative belongs in `docs/`, not source headers), and incremental migration guidance.
 
 ## Methodology
 
-Folloing as test driven development philsophy, as Kent Beck intended, here is the breakdown:
+This project follows test-driven development (Kent Beck style): each behavioural change starts with a small failing test, then the minimal code to make it pass, then a tidy-up pass. Work in small increments and prefer small commits focused on a single change. The point is to drive design with tests and refactor continuously so tech debt doesn't accumulate — coverage is a byproduct of good tests, not the target.
 
-1. Break up the changes into small increments, strongly prefer small commits that focus on one small change at a time.
+Before any development work, load the [tdd](.claude/skills/tdd/SKILL.md) skill — every behavioural change starts with a failing test, including small ones. Skip only for non-behavioural edits (typos, formatting, comment-only changes).
 
-2. Find an appropriate type of test to write that covers the change, for example if this is adding a new feature and write a cucumber test, if this change is better tested at a unit test level, then add a unit test. (Be pragmatic about writing tests).
-
-3. Write a test to verify the new code, this shouldn't test the entire feature comphrensively upfront, but it should be a minimal failing test that tests just the incremental chagne we are adding. (RED)
-
-4. Write the minimal amount of code to get the tests to pass. (GREEN)
-
-5. Once the tests are passing take a step back and do refactoring phase: refactoring should be small steps to tidy the code, again make this pragmatic the code doesn't have to be perfect, but this is important to stop tech debt accruing. (REFACTOR)
-
-6. Don't forget to refactor tests if they need it.
-
-7. Once everything is green we can begin the next micro iteration: beginning from step 3 (RED) and adding a new failing test.
-
-8. Continue the RED/GREEN/REFACTOR until the feature is complete.
-
-### Rationale
-
-The intention is to encourage the following:
-
- - Meaningful tests: the goal is not code coverage metrics but test quality. A good test tells you *what* broke and *where* — not just that something failed. Ask: if this test fails in 6 months, will it point me directly at the problem? Coverage is a byproduct of good tests, not a target in itself.
-
- - Test behaviour, not implementation: prefer socialised tests — real collaborators running together, asserting on observable outcomes (rendered text, scroll position, persisted state, what the user would see). Mockist testing (mock every collaborator, assert on internal method calls) makes tests pass while the real code breaks and couples tests to implementation details so refactors become painful. Mock only when a real collaborator is genuinely impractical: slow (CerdiApi/network), unstable (third-party services), or has hard-to-isolate side effects (filesystem, shared sqlite). For everything else (Logger, Topics, pure utilities, in-memory stores) use the real thing — outcome-level assertions take slightly more setup effort but survive refactors and catch real bugs.
-
- - Meaningful code: by writing the code to implement the tests, we are avoiding writing code that isn't strictly necessary, and also this gives us an opportunity to be pragmatic about refactoring rather than speculative.
-
- - Keeping technical debt in check: by keeping to this rhythm we use our test cases to drive the design of the code and we take the opportunity at every incremental step to refactor.
+When a code smell surfaces mid-session — tangled deps, hidden state, a function doing two things, a workaround stacking on a workaround — pause and flag it for review rather than silently restructuring or pressing on. Code happens fast in these sessions; the human reviewer is the project's refactor-detector, and surfacing smells gives them a checkpoint to decide refactor-now vs. carry-on.
 
 ## Workflow
 
@@ -50,7 +26,7 @@ When the user asks to start work on a Trello card (e.g. "let's start work on WB-
 
 1. Look up the card details from Trello to understand the requirements.
 2. Create a new branch named `task/wb-<N>-<short-slug>`.
-3. Once the first commits are ready, create a **draft PR** following the template in [docs/pull-requests.md](docs/pull-requests.md).
+3. Once the first commits are ready, create a **draft PR** — load the [open-pr](.claude/skills/open-pr/SKILL.md) skill for the procedure (template reference: [docs/pull-requests.md](docs/pull-requests.md)).
 
 ### Iterating on a draft PR
 
@@ -102,33 +78,10 @@ npx grunt --platform=ios --simulator --reset debug
 ### Test
 
 ```bash
-# Node.js unit tests (fastest)
-npx grunt unit-test-node
-
-# Device unit tests (requires connected device)
-npx grunt --platform=android unit-test
-npx grunt --platform=ios unit-test
-
-# Simulator/emulator unit tests (no physical device required)
-npx grunt --platform=android --simulator unit-test
-npx grunt --platform=ios --simulator unit-test
-
-# Fast on-device iteration: LiveView + reuse-server skips the rebuild
-# step on subsequent runs. Use this for tight feedback loops while
-# editing controllers/specs. See docs/testing.md § "LiveView (fast
-# iteration)" for the full story (prerequisites, troubleshooting).
-npx grunt --platform=android --simulator --liveview --reuse-server unit-test
-
-# End-to-end and acceptance tests
-npx grunt --platform=android end-to-end-test
-npx grunt --platform=android acceptance-test
-npx grunt --platform=android visual-regression-test
+npx grunt unit-test-node   # Node-only unit tests, fastest feedback
 ```
 
-To run a single test, add `.only` to the describe block in the spec file:
-```javascript
-describe.only("My test", function() { ... });
-```
+See the [tdd](.claude/skills/tdd/SKILL.md) and [fast-iteration](.claude/skills/fast-iteration/SKILL.md) skills.
 
 ### Device Logging
 
@@ -154,23 +107,17 @@ adb logcat -s "TiAPI:*"   # Android
 - `features/` — Cucumber BDD acceptance tests
 - `end-to-end-testing/` — Appium integration tests
 
-### Documentation maintenance
+### Project docs
 
-The `docs/` folder holds pattern references that this CLAUDE.md links to. **When you rediscover something** — a non-obvious pattern, a gotcha that bit you, a convention that wasn't clear from reading existing code — add it to the relevant doc (or create a new one and link it from here). Aim short and specific: a one-liner with a code example beats a paragraph. The test for "is this worth writing down?" is *would the next session save time if it could find this?*
+Technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBUTORS.md` stay at the repo root). See the [write-docs](.claude/skills/write-docs/SKILL.md) skill for adding to or updating them.
 
-**Architectural narrative goes in `docs/`, not in source-file headers.** If a comment is more than a couple of lines explaining *why this pattern exists* or *how this module fits into the broader design*, it belongs in a `docs/` page (existing or new). Leave a one-line pointer in the source — e.g. `// see docs/patterns/viewmodels.md "Semantic palette colours"`. Reasons: code-level comments rot when the design moves; long blocks bloat the file and bury the actual code; the same explanation usually applies to multiple files, and `docs/` lets it live in one place. Inline comments are still right for the local *why* — a hidden constraint, a workaround for a specific bug, a non-obvious invariant — anything that wouldn't make sense outside the surrounding code.
-
-**Treat every comment as a code smell.** A comment usually signals that the code itself can't make its point — and the right response is normally to refactor (better names, smaller functions, clearer structure), not to paper over the smell with prose. Noise comments are worse than missing ones: they dilute the signal so that the few comments worth reading get lost. So: try refactoring first; only keep a comment when there's an irreducible WHY (a hidden constraint, a non-obvious workaround). Don't paraphrase what the code already says, don't narrate the change you're making, don't recap the bug you just fixed — that context belongs in the commit message. Commits don't rot; code comments do.
-
-All technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBUTORS.md` stay at the repo root):
-
-- [docs/installation.md](docs/installation.md) — full setup guide: prerequisites, Titanium SDK, Android/iOS signing, env vars, API config
-- [docs/coding-style.md](docs/coding-style.md) — JS conventions: module system per directory, async/await direction
+- [docs/installation.md](docs/installation.md) — setup guide: prerequisites, Titanium SDK, signing, env vars
+- [docs/coding-style.md](docs/coding-style.md) — JS conventions and comment policy
 - [docs/architecture-vision.md](docs/architecture-vision.md) — long-term architectural direction
-- [docs/testing.md](docs/testing.md) — five test layers, when to write what, LiveView fast-iteration, run-both-suites rule, known gaps
-- [docs/device-specs.md](docs/device-specs.md) — writing device specs: idioms, child-controller refs, test pollution, `--manual` cleanup
-- [docs/pull-requests.md](docs/pull-requests.md) — PR template: title format, Trello link, screenshots policy, test plan checklist
-- [docs/patterns/](docs/patterns/) — one file per pattern / module summary (controller patterns, ViewModels, toolbar buttons, `CerdiApi`, `KeyLoader*`, `SampleUploader`, `Navigation`, …). See [docs/patterns/README.md](docs/patterns/README.md) for the index.
+- [docs/testing.md](docs/testing.md) — five test layers and what to use when
+- [docs/device-specs.md](docs/device-specs.md) — device-spec idioms and gotchas
+- [docs/pull-requests.md](docs/pull-requests.md) — PR template
+- [docs/patterns/](docs/patterns/) — pattern/module summaries; see [docs/patterns/README.md](docs/patterns/README.md) for the index
 
 ### Configuration & Environment
 
@@ -180,4 +127,4 @@ All technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBU
 
 ### Data Flow
 
-The app loads taxonomy data from `walta-taxonomy/walta/key.ink.json` via `KeyLoaderInk.js`. `CerdiApi.js` handles all remote API communication for sample upload/download and user authentication. `SampleUploader` and `SampleDownloader` orchestrate bi-directional sync, fired by `SampleSync.js` on a timer.
+The app loads taxonomy data from `taxonomy/walta/key.json` via `KeyLoaderJson.js` at startup ([walta-app/app/controllers/index-app.js](walta-app/app/controllers/index-app.js)). `CerdiApi.js` handles all remote API communication for sample upload/download and user authentication. `SampleUploader` and `SampleDownloader` orchestrate bi-directional sync, fired by `SampleSync.js` on a timer.

@@ -18,3 +18,27 @@ When editing a file that uses `.then()` chains, convert the chains you touch to 
 | `walta-app/` | CommonJS (`require`, `module.exports`) | **Alloy's build pipeline is CommonJS-only.** Switching to ESM would require rewriting Alloy itself. Keep `require()` and `module.exports` in app code. |
 
 The Alloy constraint only applies to module syntax. `async`/`await` is just JavaScript syntax and works fine inside a CommonJS file.
+
+## Comments
+
+A short comment that pins down a non-obvious **why** is welcome — a hidden constraint, a workaround for a specific bug, an invariant that wouldn't make sense from the surrounding code alone. That's what comments are for.
+
+**But long, flowery comments are a refactor signal.** If you find yourself writing paragraphs to explain what a function does or why a block is structured the way it is, the code itself is probably too complex. Reach for clearer names, smaller functions, better structure first — the comment usually disappears on its own. The same goes for runs of short comments stitched together to narrate every few lines: that's prose papering over structure that should speak for itself.
+
+A few rules of thumb regardless of length:
+
+1. Don't paraphrase what the code already says.
+2. Don't narrate the change you're making — that context belongs in the commit message. Commits don't rot; source comments do.
+3. Don't recap the bug you just fixed for the same reason.
+
+### Long comments belong in `docs/`
+
+If a comment is more than a couple of lines explaining *why this pattern exists* or *how this module fits into the broader design*, it belongs in a `docs/` page — not in the source file. Leave a one-line pointer:
+
+```js
+// see docs/patterns/viewmodels.md "Semantic palette colours"
+```
+
+Reasons: code-level comments rot when the design moves; long blocks bury the actual code; the same explanation usually applies to multiple files, and `docs/` lets it live in one place. Inline comments are still right for the *local* why — a hidden constraint, a workaround for a specific bug, a non-obvious invariant.
+
+When adding to `docs/`, follow the [write-docs](../.claude/skills/write-docs/SKILL.md) skill.

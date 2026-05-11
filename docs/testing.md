@@ -18,7 +18,7 @@ Five layers, ordered fastest to slowest:
 
 **Default to a Node unit test** for logic in `lib/logic/` and `lib/util/`. They're the fast TDD loop.
 
-**Default to a device spec** for screen-level features. Every screen feature must have a device spec under `walta-app/app/spec/`, even if an acceptance test covers the same path. Rationale: acceptance tests are slow integration tests — a single run takes minutes — so they're unsuitable for the tight TDD loop. Device specs run quickly with `--liveview --reuse-server` (see the `fast-device-test` skill), give per-screen test checklists for future work, and pinpoint failures at the controller level rather than at the end of an end-to-end flow.
+**Default to a device spec** for screen-level features. Every screen feature must have a device spec under `walta-app/app/spec/`, even if an acceptance test covers the same path. Rationale: acceptance tests are slow integration tests — a single run takes minutes — so they're unsuitable for the tight TDD loop. Device specs run quickly with `--liveview --reuse-server` (see the `fast-iteration` skill), give per-screen test checklists for future work, and pinpoint failures at the controller level rather than at the end of an end-to-end flow.
 
 **Add an acceptance scenario** only for cross-screen flows.
 
@@ -235,15 +235,6 @@ npx grunt clean-integration-fixtures
 ```
 
 Build tests use ES modules and require `NODE_OPTIONS=--experimental-vm-modules` (handled automatically by the grunt tasks).
-
-## Known test gaps
-
-No unit tests exist for:
-
-- Controllers
-- `KeyLoaderInk.js`
-- `Navigation.js`
-- `SampleSync.js`
 
 ## Additional options
 
