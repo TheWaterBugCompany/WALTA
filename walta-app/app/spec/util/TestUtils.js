@@ -12,14 +12,18 @@ var manualTests = false;
 function setManualTests( b ) { manualTests = b; }
 function isManualTests() { return manualTests; }
 
-function waitFor(predicate) {
-	return new Promise( (resolve) => {
+function waitFor(predicate, { timeoutMs = 5000, intervalMs = 50 } = {}) {
+	return new Promise( (resolve, reject) => {
+		var start = Date.now();
 		function checkCondition() {
-			if ( predicate() ) {
-				resolve();
-			} else {
-				setTimeout( checkCondition, 50 );
+			try {
+				if ( predicate() ) { resolve(); return; }
+			} catch (e) { /* let the predicate retry until the deadline */ }
+			if ( Date.now() - start >= timeoutMs ) {
+				reject(new Error(`waitFor: predicate never became true within ${timeoutMs}ms`));
+				return;
 			}
+			setTimeout( checkCondition, intervalMs );
 		}
 		checkCondition()
 	})
@@ -184,6 +188,8 @@ function closeWindow( win, done ) {
 			resolve();
 		} );
 		ifNotManual(() => win.close(), function() {
+			Ti.API.info("[manual] Spec finished; window left open for inspection. " +
+				"Android: tap Continue from the menu. iOS: kill the grunt process to end the session.");
 			if ( win.activity ) {
 				win.activity.onCreateOptionsMenu = (e) => {
 					var menu = e.menu;

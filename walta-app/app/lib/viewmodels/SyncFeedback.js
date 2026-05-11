@@ -8,7 +8,7 @@ const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample
 // the sync facility (start/end markers, key download done, etc.).
 // See docs/patterns/logger-sinks.md.
 const LOG_FILTER = { facility: "sync", minLevel: "info" };
-const LOG_LIMIT = 200;
+const LOG_LIMIT = 5000;
 
 class SyncFeedbackViewModel extends ChangeNotifier {
   constructor({ syncController, logRepository }) {
@@ -25,12 +25,17 @@ class SyncFeedbackViewModel extends ChangeNotifier {
     const recent = logRepository.query({ ...LOG_FILTER, limit: LOG_LIMIT });
     recent.reverse();
     this._logEntries = recent;
+    // Monotonic append counter — used by views to detect new entries
+    // even when the buffer is at LOG_LIMIT (length stops changing once
+    // every push is matched by a shift).
+    this._logSeq = 0;
 
     // Live updates: subscribe directly to Logger, independent of any
     // sink. New matching entries get appended to the end (newest-last).
     this._unsubscribeLogger = Logger.subscribe(LOG_FILTER, (entry) => {
       this._logEntries.push(entry);
       if (this._logEntries.length > LOG_LIMIT) this._logEntries.shift();
+      this._logSeq++;
       this.notifyListeners();
     });
   }
@@ -39,6 +44,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   get percent()      { return this._syncController.percent; }
   get statusText()   { return this._syncController.statusText; }
   get logLines()     { return this._logEntries; }
+  get logSeq()       { return this._logSeq; }
   get errorMessage() { return this._syncController.errorMessage; }
   get logVisible()   { return this._logVisible; }
 

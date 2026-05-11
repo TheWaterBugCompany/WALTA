@@ -15,7 +15,7 @@
             </View>
             <View id="logPane" class="logPane" visible="false">
                 <ScrollView id="logScroll" class="logScroll">
-                    <Label id="logText" class="logText"/>
+                    <TextArea id="logText" class="logText" editable="false" scrollable="false" accessibilityLabel="Log Pane"/>
                 </ScrollView>
             </View>
             <View id="buttonRow" class="buttonRow" layout="horizontal">

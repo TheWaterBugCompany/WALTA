@@ -85,6 +85,8 @@
     top: "4dp",
     left: "8dp",
     right: "8dp",
+    height: Ti.UI.SIZE,
+    backgroundColor: "transparent",
     color: Alloy.CFG.colors.primary,
     font: {
         fontFamily: "monospace",
