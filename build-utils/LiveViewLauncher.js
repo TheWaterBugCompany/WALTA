@@ -1,13 +1,27 @@
 import { spawn as defaultSpawn, execFile as defaultExecFile } from "child_process";
+import http from "http";
 
 const DEFAULT_PORT = 8323;
 const READY_PATTERN = /\[LiveView\] Server ready/;
+const PROBE_TIMEOUT_MS = 2000;
+
+function defaultProbe(url) {
+  return new Promise((resolve, reject) => {
+    const req = http.get(url, (res) => {
+      res.resume();
+      resolve(res.statusCode);
+    });
+    req.on("error", reject);
+    req.setTimeout(PROBE_TIMEOUT_MS, () => req.destroy(new Error("probe timeout")));
+  });
+}
 
 class LiveViewLauncher {
-  constructor({ port = DEFAULT_PORT, spawn = defaultSpawn, execFile = defaultExecFile, command = "./node_modules/.bin/titanium", args = [], env = {} } = {}) {
+  constructor({ port = DEFAULT_PORT, spawn = defaultSpawn, execFile = defaultExecFile, probe = defaultProbe, command = "./node_modules/.bin/titanium", args = [], env = {} } = {}) {
     this._port = port;
     this._spawn = spawn;
     this._execFile = execFile;
+    this._probe = probe;
     this._command = command;
     this._args = args;
     this._env = env;
@@ -45,9 +59,21 @@ class LiveViewLauncher {
     });
   }
 
+  async isResponsive() {
+    try {
+      await this._probe(`http://127.0.0.1:${this._port}/`);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async ensureRunning() {
     if (await this.isRunning()) {
-      return true;
+      if (await this.isResponsive()) {
+        return true;
+      }
+      await this.stop();
     }
     await this.start();
     return false;

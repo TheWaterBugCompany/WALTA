@@ -124,11 +124,26 @@ describe("LiveViewLauncher", function () {
     });
   });
 
+  describe("isResponsive()", function () {
+    it("returns true when the probe resolves", async function () {
+      const probe = sinon.stub().resolves(200);
+      const launcher = new LiveViewLauncher({ probe });
+      expect(await launcher.isResponsive()).to.be.true;
+    });
+
+    it("returns false when the probe rejects (connection refused / timeout)", async function () {
+      const probe = sinon.stub().rejects(new Error("ECONNREFUSED"));
+      const launcher = new LiveViewLauncher({ probe });
+      expect(await launcher.isResponsive()).to.be.false;
+    });
+  });
+
   describe("ensureRunning()", function () {
-    it("should return true (reused) when server is already running", async function () {
+    it("should return true (reused) when server is already running and responsive", async function () {
       const execFile = makeExecFile({ "lsof -ti :8323": "1234\n" });
+      const probe = sinon.stub().resolves(200);
       const { stub } = makeSpawn();
-      const launcher = new LiveViewLauncher({ execFile, spawn: stub, args: [] });
+      const launcher = new LiveViewLauncher({ execFile, spawn: stub, probe, args: [] });
 
       const reused = await launcher.ensureRunning();
 
@@ -145,6 +160,22 @@ describe("LiveViewLauncher", function () {
 
       expect(reused).to.be.false;
       expect(stub.calledOnce).to.be.true;
+    });
+
+    it("should stop the zombie and start fresh when port is bound but unresponsive", async function () {
+      const execFile = makeExecFile({
+        "lsof -ti :8323": "1234\n",
+        "kill -9 1234": ""
+      });
+      const probe = sinon.stub().rejects(new Error("ECONNREFUSED"));
+      const { stub: spawnStub } = makeSpawn("[LiveView] Server ready");
+      const launcher = new LiveViewLauncher({ execFile, spawn: spawnStub, probe, args: [] });
+
+      const reused = await launcher.ensureRunning();
+
+      expect(reused).to.be.false;
+      expect(spawnStub.calledOnce).to.be.true;
+      expect(execFile.getCalls().some(c => c.args[0] === "kill")).to.be.true;
     });
   });
 });
