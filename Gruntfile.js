@@ -42,6 +42,14 @@ const KobitonAPI = require("./features/support/kobiton");
       './plugins/**/*.js'
     ];
 
+    // Forwards `npx grunt <task> --grep <pattern>` to mocha's --grep flag.
+    // Read at exec-task time (not initConfig time) so each task pulls the
+    // current value of grunt.option('grep').
+    function mochaGrepFlag() {
+      const grep = grunt.option('grep');
+      return grep ? ` --grep ${JSON.stringify(grep)}` : '';
+    }
+
     function getLocalIP() {
       const interfaces = os.networkInterfaces();
       for (const name of Object.keys(interfaces)) {
@@ -400,11 +408,10 @@ const KobitonAPI = require("./features/support/kobiton");
             }
           },
 
-          // Test-runner exec entries — actual commands are built in the
-          // matching registerTask wrappers below so `--grep <pattern>` can be
-          // forwarded through. Stub `command` exists only to keep grunt's
-          // config validator happy until the wrapper overrides it.
-          unit_test_node: { command: "true", stdout: "inherit", stderr: "inherit" },
+          unit_test_node: {
+            command: () => `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "test/**/*_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
 
           contract_test: {
             command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "contract-tests/*_spec.js"`,
@@ -412,7 +419,15 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
-          build_test:         { command: "true", stdout: "inherit", stderr: "inherit" },
+          // Every spec under build-tests/unit/ is pure Node + sinon stubs — no
+          // real `xcrun` or `adb` calls — so we don't split iOS/Android specs
+          // onto their respective platform runners. Integration tests that *do*
+          // shell out live in build-tests/integration/ and stay split via the
+          // build-integration-test-* tasks below.
+          build_test: {
+            command: () => `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "build-tests/unit/*_spec.js"`,
+            stdout: "inherit", stderr: "inherit"
+          },
 
           build_integration_test: {
             command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/*.js"`,
@@ -929,31 +944,9 @@ const KobitonAPI = require("./features/support/kobiton");
       }
     } );
 
-    function mochaGrepFlag() {
-      const grep = grunt.option('grep');
-      return grep ? ` --grep ${JSON.stringify(grep)}` : '';
-    }
-
-    grunt.registerTask('unit-test-node', function() {
-      grunt.config.set('exec.unit_test_node.command',
-        `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "test/**/*_spec.js"`);
-      grunt.task.run(`exec:unit_test_node`);
-    } );
-
-    grunt.registerTask('contract-test', function() {
-      grunt.task.run(`exec:contract_test`);
-    } );
-
-    // Every spec under build-tests/unit/ is pure Node + sinon stubs — no
-    // real `xcrun` or `adb` calls — so there's no need to split iOS and
-    // Android launcher specs onto their respective platform runners.
-    // Integration tests that *do* shell out live in build-tests/integration/
-    // and stay split via the build-integration-test-* tasks below.
-    grunt.registerTask('build-test', function() {
-      grunt.config.set('exec.build_test.command',
-        `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "build-tests/unit/*_spec.js"`);
-      grunt.task.run(`exec:build_test`);
-    } );
+    grunt.registerTask('unit-test-node', ['exec:unit_test_node']);
+    grunt.registerTask('contract-test',  ['exec:contract_test']);
+    grunt.registerTask('build-test',     ['exec:build_test']);
 
     grunt.registerTask('build-integration-test-ios-simulator', function() {
       grunt.task.run('exec:build_integration_fixtures_ios_simulator');
