@@ -929,22 +929,14 @@ const KobitonAPI = require("./features/support/kobiton");
       }
     } );
 
-    // Mocha-runner wrappers share the same shape: build a command from
-    // (env vars, file patterns, optional --ignore), inject the user's
-    // --grep if provided, then defer to the matching exec entry.
-    function buildMochaCommand({ env, timeoutMs = 60000, patterns, ignore = [] }) {
+    function mochaGrepFlag() {
       const grep = grunt.option('grep');
-      const grepFlag = grep ? ` --grep ${JSON.stringify(grep)}` : '';
-      const patternArgs = patterns.map(p => `"${p}"`).join(' ');
-      const ignoreFlags = ignore.map(p => `--ignore "${p}"`).join(' ');
-      return `${env} mocha --timeout ${timeoutMs} --exit${grepFlag} ${patternArgs}${ignoreFlags ? ' ' + ignoreFlags : ''}`;
+      return grep ? ` --grep ${JSON.stringify(grep)}` : '';
     }
 
     grunt.registerTask('unit-test-node', function() {
-      grunt.config.set('exec.unit_test_node.command', buildMochaCommand({
-        env: "NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH",
-        patterns: ["test/**/*_spec.js"],
-      }));
+      grunt.config.set('exec.unit_test_node.command',
+        `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "test/**/*_spec.js"`);
       grunt.task.run(`exec:unit_test_node`);
     } );
 
@@ -958,10 +950,8 @@ const KobitonAPI = require("./features/support/kobiton");
     // Integration tests that *do* shell out live in build-tests/integration/
     // and stay split via the build-integration-test-* tasks below.
     grunt.registerTask('build-test', function() {
-      grunt.config.set('exec.build_test.command', buildMochaCommand({
-        env: "NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH",
-        patterns: ["build-tests/unit/*_spec.js"],
-      }));
+      grunt.config.set('exec.build_test.command',
+        `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "build-tests/unit/*_spec.js"`);
       grunt.task.run(`exec:build_test`);
     } );
 
