@@ -245,7 +245,11 @@ const KobitonAPI = require("./features/support/kobiton");
         default:
           throw new Error(`Unknown build "${build_type}" type!`)
       }
-      if ( grunt.option('liveview') && !build_type.includes('liveview') ) {
+      // `test-sim` (acceptance-test) starts its own LiveView server before
+      // this inline build runs; appending --liveview here would start a
+      // second server inside `titanium build` that never exits, deadlocking
+      // the wrapper shell. Other build types are unaffected.
+      if ( grunt.option('liveview') && !build_type.includes('liveview') && build_type !== 'test-sim' ) {
         args.push("--liveview");
         args.push(`--liveview-host ${getLocalIP()}`);
       }
