@@ -22,8 +22,38 @@ Then('the log pane shows sync activity from the Logger', async function () {
     await this.syncFeedback.expectLogsContain("Sync finished");
 });
 
+When('I remember the first {int} lines of the log pane', async function (n) {
+    const { expect } = require('chai');
+    const lines = await this.syncFeedback.firstNonEmptyLines(n);
+    // RED guard: if SqlSink never registered (e.g. migrations skipped),
+    // the pane is empty and there's nothing to remember. Fail here with
+    // a clear message rather than silently capturing [] and trivially
+    // passing the later "still contains" assertion.
+    expect(lines, "log pane was empty — nothing to remember").to.have.length.at.least(n);
+    this.rememberedLogLines = lines;
+});
+
+Then('the log pane still contains the remembered lines', async function () {
+    await this.syncFeedback.expectLogPaneContainsAll(this.rememberedLogLines);
+});
+
 When('I close the sync popup', async function () {
     await this.syncFeedback.clickClose();
+});
+
+When('I close and reopen the app', { timeout: 120000 }, async function () {
+    const appId = global.launcher.appId;
+    await this.driver.terminateApp(appId);
+    await this.driver.activateApp(appId);
+    // Wait for the freshly-activated app to reach foreground state, then
+    // for the Menu to land after the persisted-token auto-login completes.
+    // Mirrors the foreground-poll in the BeforeAll cold-launch path.
+    for (let i = 0; i < 60; i++) {
+        const state = await this.driver.execute('mobile: queryAppState', { bundleId: appId });
+        if (state === 4) break;
+        await new Promise(r => setTimeout(r, 500));
+    }
+    await this.menu.waitFor();
 });
 
 Given('one or more samples have been stored but not uploaded', function() {
