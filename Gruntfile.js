@@ -419,11 +419,6 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
-          // Every spec under build-tests/unit/ is pure Node + sinon stubs — no
-          // real `xcrun` or `adb` calls — so we don't split iOS/Android specs
-          // onto their respective platform runners. Integration tests that *do*
-          // shell out live in build-tests/integration/ and stay split via the
-          // build-integration-test-* tasks below.
           build_test: {
             command: () => `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "build-tests/unit/*_spec.js"`,
             stdout: "inherit", stderr: "inherit"
