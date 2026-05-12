@@ -3,7 +3,21 @@ import { mkdtemp, readFile as defaultReadFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { createHash } from "crypto";
-import defaultIosDevice from "node-ios-device";
+import { createRequire } from "node:module";
+
+// node-ios-device ships a darwin-only native binding. A top-level
+// import resolved the binding eagerly, breaking even unit-test imports
+// on Linux runners (Ubuntu build-test job). Resolve via createRequire
+// at first use, so specs that inject a fake `iosDevice` never trigger
+// the native binding.
+const requireCJS = createRequire(import.meta.url);
+let _defaultIosDevice;
+function getDefaultIosDevice() {
+  if (_defaultIosDevice === undefined) {
+    _defaultIosDevice = requireCJS("node-ios-device");
+  }
+  return _defaultIosDevice;
+}
 
 function computeLogPort(appId) {
   const sha1 = createHash('sha1').update(appId).digest('hex');
@@ -25,7 +39,7 @@ function buildLaunchArgv(launchArgs) {
 }
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, iosDevice = defaultIosDevice, udid = null, appId = null } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, iosDevice = null, udid = null, appId = null } = {}) {
     this._execFile = execFile;
     this._readFile = readFile;
     this._spawn = spawn;
@@ -99,10 +113,11 @@ class IosLauncher {
       : ['[TRACE]', '[DEBUG]']; // 'info' and above
 
     let handle = null;
+    const iosDevice = this._iosDevice ?? getDefaultIosDevice();
 
     const tryConnect = () => {
       try {
-        handle = this._iosDevice.forward(this._udid, this._logPort)
+        handle = iosDevice.forward(this._udid, this._logPort)
           .on('data', msg => {
             if (msg.startsWith('{"appId"')) return; // skip JSON header
             if (suppressedPrefixes.some(p => msg.startsWith(p))) return;
