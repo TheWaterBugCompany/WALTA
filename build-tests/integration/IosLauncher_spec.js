@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { execFile } from "child_process";
 import { expect } from "chai";
+import iosDevice from "node-ios-device";
 import IosLauncher from "../../build-utils/IosLauncher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -99,7 +100,7 @@ describe("IosLauncher (integration)", function() {
       const lines = await new Promise((resolve, reject) => {
         let settled = false;
         const collected = [];
-        const logLauncher = new IosLauncher({ logProcessName: "HelloWorld", udid: launcher._udid });
+        const logLauncher = new IosLauncher({ logProcessName: "HelloWorld", udid: launcher._udid, iosDevice });
         const stop = logLauncher.streamLogs(line => {
           collected.push(line);
           if (!settled) { settled = true; stop(); resolve(collected); }
