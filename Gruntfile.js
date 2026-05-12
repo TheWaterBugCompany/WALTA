@@ -42,9 +42,6 @@ const KobitonAPI = require("./features/support/kobiton");
       './plugins/**/*.js'
     ];
 
-    // Forwards `npx grunt <task> --grep <pattern>` to mocha's --grep flag.
-    // Read at exec-task time (not initConfig time) so each task pulls the
-    // current value of grunt.option('grep').
     function mochaGrepFlag() {
       const grep = grunt.option('grep');
       return grep ? ` --grep ${JSON.stringify(grep)}` : '';
