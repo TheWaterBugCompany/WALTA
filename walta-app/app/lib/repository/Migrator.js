@@ -2,26 +2,20 @@
 // `migrations` tracking table format (`latest TEXT, model TEXT`) and
 // migrator API (`createTable`, `dropTable`) so migration files can
 // move between this and Alloy with only `migration.up` →
-// `exports.up` style edits — see docs/patterns/repository-pattern.md
-// (TBD).
+// `exports.up` style edits — see docs/patterns/repository-pattern.md.
 //
-// Migration file shape (CommonJS):
+// Migrations are listed explicitly in `./migrations/index.js`, each
+// entry `{ id, table, up, down }`. We deliberately don't enumerate the
+// directory at runtime — `Ti.Filesystem.resourcesDirectory` returned an
+// empty listing for bundled lib/ subdirectories on iOS device, which
+// silently skipped every migration (WB-78).
 //
-//   exports.up   = function (migrator) { migrator.createTable({...}); };
-//   exports.down = function (migrator) { migrator.dropTable(); };
-//
-// Files live in MIGRATIONS_DIR (below) named `<id>_<table>.js` where
-// <id> is a numeric timestamp. Filename is the source of truth for
-// both id and table name — the runner enumerates the directory and
-// parses both from each filename, matching Alloy's convention.
-//
-// App startup calls `Migrator.migrate(dbName)` once. The runner scans
-// MIGRATIONS_DIR, parses table name from each filename, and applies
-// every pending migration against the named db (one tracking row per
+// App startup calls `Migrator.migrate(dbName)` once. The runner applies
+// each pending migration against the named db (one tracking row per
 // table in that db's `migrations` table). Tests can run against a
 // custom-named test db via `Migrator.runForDb(openDbHandle)`.
 
-const MIGRATIONS_DIR = "repository/migrations";
+const MIGRATIONS = require("./migrations/index");
 
 function createMigrator(db, table) {
     return {
@@ -57,21 +51,11 @@ function setCurrentMigrationId(db, model, latest) {
     }
 }
 
-function discoverMigrations() {
-    const dir = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, MIGRATIONS_DIR);
-    const entries = (dir && dir.getDirectoryListing()) || [];
-    const re = /^(\d+)_(\w+)\.js$/;
+function groupByTable() {
     const byTable = {};
-    for (let i = 0; i < entries.length; i++) {
-        const filename = entries[i];
-        const match = filename.match(re);
-        if (!match) continue;
-        const id = match[1];
-        const table = match[2];
-        const moduleName = filename.replace(/\.js$/, "");
-        const mod = require(MIGRATIONS_DIR + "/" + moduleName);
-        if (!byTable[table]) byTable[table] = [];
-        byTable[table].push({ id: id, up: mod.up, down: mod.down });
+    for (const m of MIGRATIONS) {
+        if (!byTable[m.table]) byTable[m.table] = [];
+        byTable[m.table].push({ id: m.id, up: m.up, down: m.down });
     }
     for (const table in byTable) {
         byTable[table].sort((a, b) =>
@@ -100,11 +84,11 @@ function applyForTable(db, table, migrations) {
     }
 }
 
-// Run all pending migrations across every table found in
-// MIGRATIONS_DIR against an already-open `db` handle. Each table's
-// state is tracked independently in the `migrations` table.
+// Run all pending migrations across every table in the manifest
+// against an already-open `db` handle. Each table's state is tracked
+// independently in the `migrations` table.
 exports.runForDb = function (db) {
-    const byTable = discoverMigrations();
+    const byTable = groupByTable();
     for (const table in byTable) {
         applyForTable(db, table, byTable[table]);
     }
