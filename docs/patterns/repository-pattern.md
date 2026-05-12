@@ -33,6 +33,7 @@ walta-app/app/lib/repository/
 ├── Migrator.js                 — runs migrations at startup (shared)
 ├── LogRepository.js            — first repository
 └── migrations/
+    ├── index.js                — explicit manifest, `[{id,table,up,down}, ...]`
     └── 202605080000000_logs.js — Alloy-shape migration file
 ```
 
@@ -40,12 +41,19 @@ walta-app/app/lib/repository/
 
 One shared module per app. Exposes:
 
-- `Migrator.migrate(dbName)` — opens the named db, scans
-  `repository/migrations/` for any `<id>_<table>.js`, applies pending
-  migrations grouped per table, closes. Called once at app startup
-  from [walta-app/app/alloy.js](../../walta-app/app/alloy.js).
+- `Migrator.migrate(dbName)` — opens the named db, reads
+  `repository/migrations/index.js`, applies every pending migration
+  grouped per table, closes. Called once at app startup from
+  [walta-app/app/alloy.js](../../walta-app/app/alloy.js).
 - `Migrator.runForDb(db)` — same logic against an already-open db
   handle. Used by tests that target a custom-named test db.
+
+The runner deliberately doesn't enumerate the directory at runtime —
+`Ti.Filesystem.resourcesDirectory` returned an empty listing for
+bundled `lib/` subdirectories on iOS device, silently skipping every
+migration (WB-78). The static manifest is bundled by Titanium's
+CommonJS resolver at build time, so simulator and device behave
+identically.
 
 State tracking matches Alloy's: a `migrations (latest TEXT, model TEXT)`
 table inside the same db, with one row per table. Each `up()` runs in
@@ -121,9 +129,12 @@ convention.
    `walta-app/app/lib/repository/migrations/<timestamp>_<table>.js`
    creating the table. Use the current UTC time formatted as
    `YYYYMMDDhhmmssSSS` for the timestamp.
-3. No change to `alloy.js` — `Migrator.migrate("waterbug_data")` already
-   discovers every migration file, so the new one runs automatically.
-4. Tests against the repository call `Migrator.migrate(testDbName)`
+3. Append an entry to `walta-app/app/lib/repository/migrations/index.js`
+   pointing at the new file. Without this the migration is bundled but
+   never runs.
+4. No change to `alloy.js` — `Migrator.migrate("waterbug_data")` already
+   walks the manifest, so the new entry runs automatically.
+5. Tests against the repository call `Migrator.migrate(testDbName)`
    before opening the repository, so schema is in place.
 
 That's it — no model file, no compiler hooks, no `Alloy.M()` call.
