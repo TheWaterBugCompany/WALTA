@@ -332,6 +332,23 @@ class AppiumLauncher {
     );
   }
 
+  // Polls `mobile: queryAppState` until the app is in the foreground
+  // (state === 4) or the timeout elapses. Encapsulates the platform-specific
+  // param name — Android takes `appId`, iOS takes `bundleId` — that
+  // otherwise leaks into every step def that needs a foreground wait.
+  async waitForForeground({ timeoutMs = 30_000, pollIntervalMs = 500 } = {}) {
+    const driver = await this.connect();
+    const queryArgs = this.platform === "android"
+      ? { appId: this.appId }
+      : { bundleId: this.appId };
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+      const state = await driver.execute("mobile: queryAppState", queryArgs);
+      if (state === 4) return;
+      await new Promise(r => setTimeout(r, pollIntervalMs));
+    }
+  }
+
   streamLogs(onLine) {
     let stopped = false;
     const poll = async () => {

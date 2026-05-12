@@ -199,6 +199,42 @@ describe("AppiumLauncher", function() {
     });
   });
 
+  describe("waitForForeground()", function() {
+    // Android's `mobile: queryAppState` takes `appId`, iOS takes `bundleId`.
+    // The whole point of the method is to keep that quirk out of step defs.
+    it("polls queryAppState with appId on Android", async function() {
+      fakeDriver.execute.resolves(4);
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      await launcher.waitForForeground();
+      expect(fakeDriver.execute.calledWith("mobile: queryAppState",
+        { appId: "net.thewaterbug.waterbug" })).to.be.true;
+    });
+
+    it("polls queryAppState with bundleId on iOS", async function() {
+      fakeDriver.execute.resolves(4);
+      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium });
+      await launcher.waitForForeground();
+      expect(fakeDriver.execute.calledWith("mobile: queryAppState",
+        { bundleId: "net.thewaterbug.waterbug" })).to.be.true;
+    });
+
+    it("returns once queryAppState reports foreground (state === 4)", async function() {
+      fakeDriver.execute.onCall(0).resolves(2);
+      fakeDriver.execute.onCall(1).resolves(3);
+      fakeDriver.execute.onCall(2).resolves(4);
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      await launcher.waitForForeground({ pollIntervalMs: 1 });
+      expect(fakeDriver.execute.callCount).to.equal(3);
+    });
+
+    it("gives up after the timeout if state never reaches 4", async function() {
+      fakeDriver.execute.resolves(2);
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      await launcher.waitForForeground({ timeoutMs: 20, pollIntervalMs: 5 });
+      expect(fakeDriver.execute.callCount).to.be.greaterThan(0);
+    });
+  });
+
   describe("stop()", function() {
     it("calls deleteSession on the driver", async function() {
       fakeDriver.deleteSession = sinon.stub().resolves();
