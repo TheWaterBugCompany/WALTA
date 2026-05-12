@@ -400,10 +400,11 @@ const KobitonAPI = require("./features/support/kobiton");
             }
           },
 
-          unit_test_node: {
-            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "test/**/*_spec.js"`,
-            stdout: "inherit", stderr: "inherit"
-          },
+          // Test-runner exec entries — actual commands are built in the
+          // matching registerTask wrappers below so `--grep <pattern>` can be
+          // forwarded through. Stub `command` exists only to keep grunt's
+          // config validator happy until the wrapper overrides it.
+          unit_test_node: { command: "true", stdout: "inherit", stderr: "inherit" },
 
           contract_test: {
             command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "contract-tests/*_spec.js"`,
@@ -411,20 +412,9 @@ const KobitonAPI = require("./features/support/kobiton");
             stdout: "inherit", stderr: "inherit"
           },
 
-          build_test: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/appconfig_spec.js" "build-tests/unit/stripsimincompatiblemodules_spec.js" "build-tests/unit/transpilefix_spec.js" "build-tests/unit/unittest_spec.js" "build-tests/unit/AppiumLauncher_spec.js" "build-tests/unit/LiveViewLauncher_spec.js" "build-tests/unit/CucumberLauncher_spec.js" "build-tests/unit/parseUnitTestResult_spec.js" "build-tests/unit/run_unit_tests_with_retry_spec.js"`,
-            stdout: "inherit", stderr: "inherit"
-          },
-
-          build_test_ios: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/IosLauncher_spec.js" "build-tests/unit/IosSimulatorLauncher_spec.js"`,
-            stdout: "inherit", stderr: "inherit"
-          },
-
-          build_test_android: {
-            command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/unit/AndroidLauncher_spec.js" "build-tests/unit/AndroidEmulatorLauncher_spec.js"`,
-            stdout: "inherit", stderr: "inherit"
-          },
+          build_test:         { command: "true", stdout: "inherit", stderr: "inherit" },
+          build_test_ios:     { command: "true", stdout: "inherit", stderr: "inherit" },
+          build_test_android: { command: "true", stdout: "inherit", stderr: "inherit" },
 
           build_integration_test: {
             command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/*.js"`,
@@ -941,7 +931,22 @@ const KobitonAPI = require("./features/support/kobiton");
       }
     } );
 
+    // Mocha-runner wrappers share the same shape: build a command from
+    // (env vars, file patterns, optional --ignore), inject the user's
+    // --grep if provided, then defer to the matching exec entry.
+    function buildMochaCommand({ env, timeoutMs = 60000, patterns, ignore = [] }) {
+      const grep = grunt.option('grep');
+      const grepFlag = grep ? ` --grep ${JSON.stringify(grep)}` : '';
+      const patternArgs = patterns.map(p => `"${p}"`).join(' ');
+      const ignoreFlags = ignore.map(p => `--ignore "${p}"`).join(' ');
+      return `${env} mocha --timeout ${timeoutMs} --exit${grepFlag} ${patternArgs}${ignoreFlags ? ' ' + ignoreFlags : ''}`;
+    }
+
     grunt.registerTask('unit-test-node', function() {
+      grunt.config.set('exec.unit_test_node.command', buildMochaCommand({
+        env: "NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH",
+        patterns: ["test/**/*_spec.js"],
+      }));
       grunt.task.run(`exec:unit_test_node`);
     } );
 
@@ -949,15 +954,34 @@ const KobitonAPI = require("./features/support/kobiton");
       grunt.task.run(`exec:contract_test`);
     } );
 
+    // Glob over build-tests/unit, exclude the platform-specific launcher
+    // specs (run via build-test-ios / build-test-android against runners
+    // that have xcrun / adb).
     grunt.registerTask('build-test', function() {
+      grunt.config.set('exec.build_test.command', buildMochaCommand({
+        env: "NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH",
+        patterns: ["build-tests/unit/*_spec.js"],
+        ignore: [
+          "build-tests/unit/Ios*Launcher_spec.js",
+          "build-tests/unit/Android*Launcher_spec.js",
+        ],
+      }));
       grunt.task.run(`exec:build_test`);
     } );
 
     grunt.registerTask('build-test-ios', function() {
+      grunt.config.set('exec.build_test_ios.command', buildMochaCommand({
+        env: "NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH",
+        patterns: ["build-tests/unit/Ios*Launcher_spec.js"],
+      }));
       grunt.task.run(`exec:build_test_ios`);
     } );
 
     grunt.registerTask('build-test-android', function() {
+      grunt.config.set('exec.build_test_android.command', buildMochaCommand({
+        env: "NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH",
+        patterns: ["build-tests/unit/Android*Launcher_spec.js"],
+      }));
       grunt.task.run(`exec:build_test_android`);
     } );
 
