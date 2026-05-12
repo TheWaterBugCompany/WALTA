@@ -568,7 +568,8 @@ const KobitonAPI = require("./features/support/kobiton");
           _launcher = new AndroidLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
-          _launcher = new IosLauncher({ appId: APP_ID, udid: DEVICE_ID });
+          const { default: iosDevice } = await import("node-ios-device");
+          _launcher = new IosLauncher({ appId: APP_ID, udid: DEVICE_ID, iosDevice });
         } else if (platform === "android" && isSimulator) {
           const { default: AndroidEmulatorLauncher } = await import("./build-utils/AndroidEmulatorLauncher.js");
           _launcher = new AndroidEmulatorLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });

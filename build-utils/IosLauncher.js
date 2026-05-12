@@ -3,21 +3,11 @@ import { mkdtemp, readFile as defaultReadFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { createHash } from "crypto";
-import { createRequire } from "node:module";
 
-// node-ios-device ships a darwin-only native binding. A top-level
-// import resolved the binding eagerly, breaking even unit-test imports
-// on Linux runners (Ubuntu build-test job). Resolve via createRequire
-// at first use, so specs that inject a fake `iosDevice` never trigger
-// the native binding.
-const requireCJS = createRequire(import.meta.url);
-let _defaultIosDevice;
-function getDefaultIosDevice() {
-  if (_defaultIosDevice === undefined) {
-    _defaultIosDevice = requireCJS("node-ios-device");
-  }
-  return _defaultIosDevice;
-}
+// `iosDevice` (used by streamLogs for port forwarding) is dependency-
+// injected by the caller — it's normally `node-ios-device`, which ships
+// a darwin-only native binding. Importing it at module scope would break
+// even an `import IosLauncher` on Linux build-test runners.
 
 function computeLogPort(appId) {
   const sha1 = createHash('sha1').update(appId).digest('hex');
@@ -113,11 +103,10 @@ class IosLauncher {
       : ['[TRACE]', '[DEBUG]']; // 'info' and above
 
     let handle = null;
-    const iosDevice = this._iosDevice ?? getDefaultIosDevice();
 
     const tryConnect = () => {
       try {
-        handle = iosDevice.forward(this._udid, this._logPort)
+        handle = this._iosDevice.forward(this._udid, this._logPort)
           .on('data', msg => {
             if (msg.startsWith('{"appId"')) return; // skip JSON header
             if (suppressedPrefixes.some(p => msg.startsWith(p))) return;
