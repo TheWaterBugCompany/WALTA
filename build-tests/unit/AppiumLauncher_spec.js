@@ -140,6 +140,40 @@ describe("AppiumLauncher", function() {
     });
   });
 
+  describe("iOS device capabilities", function() {
+    let originalUdid;
+
+    beforeEach(function() {
+      originalUdid = process.env.IOS_DEVICE_UDID;
+    });
+
+    afterEach(function() {
+      if (originalUdid === undefined) delete process.env.IOS_DEVICE_UDID;
+      else process.env.IOS_DEVICE_UDID = originalUdid;
+    });
+
+    it("throws when IOS_DEVICE_UDID is not set", async function() {
+      delete process.env.IOS_DEVICE_UDID;
+      const launcher = new AppiumLauncher("ios", { isSimulator: false, startAppium: fakeStartAppium });
+      let caught;
+      try { await launcher.connect(); } catch (e) { caught = e; }
+      expect(caught).to.exist;
+      expect(caught.message).to.match(/IOS_DEVICE_UDID/);
+    });
+
+    it("passes IOS_DEVICE_UDID through as appium:udid", async function() {
+      process.env.IOS_DEVICE_UDID = "0123-fake-iphone-udid";
+      const launcher = new AppiumLauncher("ios", { isSimulator: false, startAppium: fakeStartAppium });
+      await launcher.connect();
+      const caps = fakeStartAppium.firstCall.args[0];
+      expect(caps["appium:udid"]).to.equal("0123-fake-iphone-udid");
+      // Hardcoded device-specific values dropped — Appium discovers them
+      // from the connected device.
+      expect(caps).to.not.have.property("appium:platformVersion");
+      expect(caps).to.not.have.property("appium:deviceName");
+    });
+  });
+
   describe("launch()", function() {
     function makeFakeChildExitingZero() {
       const child = new EventEmitter();
