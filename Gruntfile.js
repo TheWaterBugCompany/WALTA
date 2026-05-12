@@ -413,8 +413,6 @@ const KobitonAPI = require("./features/support/kobiton");
           },
 
           build_test:         { command: "true", stdout: "inherit", stderr: "inherit" },
-          build_test_ios:     { command: "true", stdout: "inherit", stderr: "inherit" },
-          build_test_android: { command: "true", stdout: "inherit", stderr: "inherit" },
 
           build_integration_test: {
             command: `NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "build-tests/integration/*.js"`,
@@ -954,35 +952,17 @@ const KobitonAPI = require("./features/support/kobiton");
       grunt.task.run(`exec:contract_test`);
     } );
 
-    // Glob over build-tests/unit, exclude the platform-specific launcher
-    // specs (run via build-test-ios / build-test-android against runners
-    // that have xcrun / adb).
+    // Every spec under build-tests/unit/ is pure Node + sinon stubs — no
+    // real `xcrun` or `adb` calls — so there's no need to split iOS and
+    // Android launcher specs onto their respective platform runners.
+    // Integration tests that *do* shell out live in build-tests/integration/
+    // and stay split via the build-integration-test-* tasks below.
     grunt.registerTask('build-test', function() {
       grunt.config.set('exec.build_test.command', buildMochaCommand({
         env: "NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH",
         patterns: ["build-tests/unit/*_spec.js"],
-        ignore: [
-          "build-tests/unit/Ios*Launcher_spec.js",
-          "build-tests/unit/Android*Launcher_spec.js",
-        ],
       }));
       grunt.task.run(`exec:build_test`);
-    } );
-
-    grunt.registerTask('build-test-ios', function() {
-      grunt.config.set('exec.build_test_ios.command', buildMochaCommand({
-        env: "NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH",
-        patterns: ["build-tests/unit/Ios*Launcher_spec.js"],
-      }));
-      grunt.task.run(`exec:build_test_ios`);
-    } );
-
-    grunt.registerTask('build-test-android', function() {
-      grunt.config.set('exec.build_test_android.command', buildMochaCommand({
-        env: "NODE_OPTIONS=--experimental-vm-modules PATH=./node_modules/.bin/:$PATH",
-        patterns: ["build-tests/unit/Android*Launcher_spec.js"],
-      }));
-      grunt.task.run(`exec:build_test_android`);
     } );
 
     grunt.registerTask('build-integration-test-ios-simulator', function() {
