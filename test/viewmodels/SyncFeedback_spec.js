@@ -58,6 +58,28 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
+  describe("logRepository unavailable (WB-75 defensive guard)", function () {
+    // WB-78 root cause: on iOS device, repository/migrations/ enumerates as
+    // empty so the logs table never gets created. Then `repo.query()` throws
+    // "no such table: logs" inside the VM ctor, the SyncFeedback controller
+    // crashes, and the user sees the popup do nothing on Sync Now. The guard
+    // here lets the VM still construct (with an empty pane) until the actual
+    // migrations fix lands.
+    it("falls back to an empty log list when logRepository.query throws", function () {
+      const failingRepo = {
+        query: () => { throw new Error("no such table: logs"); },
+        close: () => {}
+      };
+      const fallbackVm = new SyncFeedbackViewModel({ syncController, logRepository: failingRepo });
+      try {
+        expect(fallbackVm.logLines).to.deep.equal([]);
+        expect(fallbackVm.logText).to.equal("");
+      } finally {
+        fallbackVm.dispose();
+      }
+    });
+  });
+
   describe("logLines initial render (LogRepository.query — cross-run history)", function () {
     it("seeds from the repository's prior-run entries, oldest-first", function () {
       const seeded = fakeLogRepository([
