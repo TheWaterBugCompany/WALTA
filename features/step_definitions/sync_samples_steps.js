@@ -48,8 +48,10 @@ When('I close and reopen the app', { timeout: 120000 }, async function () {
     // Wait for the freshly-activated app to reach foreground state, then
     // for the Menu to land after the persisted-token auto-login completes.
     // Mirrors the foreground-poll in the BeforeAll cold-launch path.
+    // Android's `mobile: queryAppState` takes `appId`; iOS takes `bundleId`.
+    const queryArgs = this.platform === 'android' ? { appId } : { bundleId: appId };
     for (let i = 0; i < 60; i++) {
-        const state = await this.driver.execute('mobile: queryAppState', { bundleId: appId });
+        const state = await this.driver.execute('mobile: queryAppState', queryArgs);
         if (state === 4) break;
         await new Promise(r => setTimeout(r, 500));
     }
