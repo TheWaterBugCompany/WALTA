@@ -14,6 +14,11 @@ walta-app/app/assets/unit-test/lib/chai.js
 walta-app/app/assets/unit-test/lib/chai-date-string.js
 walta-app/app/assets/leaflet/**
 walta-app/app/lib/lib/moment.js
+# Build artifact — plugins/unittest/1.0/hooks/unittest.js copies either
+# Camera-prod.js (device builds) or Camera-test.js (simulator builds) into
+# this path before compile. Both source variants stay tracked; the output
+# is regenerated every build.
+walta-app/app/lib/ui/Camera.js
 walta-app/app/assets/browserify/**
 .metadata
 *.aab
