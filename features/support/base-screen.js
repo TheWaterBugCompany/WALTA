@@ -46,7 +46,11 @@ class BaseScreen {
                 `text "${text}" not present`,
                 timeout);
         } else {
-            await this.waitForRaw( `//android.widget.TextView[contains(@text,"${text}")]`, `text "${text}" not present`, timeout);
+            // TextView covers Label / Button text; EditText covers TextField /
+            // TextArea (e.g. the SyncFeedback log pane).
+            await this.waitForRaw(
+                `//*[(self::android.widget.TextView or self::android.widget.EditText) and contains(@text,"${text}")]`,
+                `text "${text}" not present`, timeout);
         }
     }
 
