@@ -207,7 +207,7 @@ export DEVELOPER="Your Name (TEAMID)"       # Common Name from your signing cert
 export PROFILE_DIST="<app-store-profile-uuid>"
 export PROFILE_ADHOC="<adhoc-profile-uuid>"
 export PROFILE_DEV="<dev-profile-uuid>"
-export DEVICE_UDID="<device-udid>"          # Run: idevice_id -l
+export IOS_DEVICE_UDID="<device-udid>"      # Run: idevice_id -l
 ```
 
 Profile UUIDs are visible in the developer portal. To find your device UDID:
@@ -265,7 +265,7 @@ npx grunt --platform=ios debug
 | `PROFILE_DIST` | iOS App Store builds | UUID |
 | `PROFILE_ADHOC` | iOS ad-hoc builds | UUID |
 | `PROFILE_DEV` | iOS dev/debug builds | UUID |
-| `DEVICE_UDID` | iOS ad-hoc builds | from `idevice_id -l` |
+| `IOS_DEVICE_UDID` | iOS device builds + acceptance | from `idevice_id -l` |
 | `NODE_PATH` | Node.js unit tests | `./walta-app/app/lib/` |
 
 ---

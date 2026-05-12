@@ -153,10 +153,11 @@ class AppiumLauncher {
           "appium:udid": process.env.SIM_UDID,
         });
       } else {
+        if (!process.env.IOS_DEVICE_UDID) {
+          throw new Error("IOS_DEVICE_UDID must be set for iOS device runs (`idevice_id -l`)");
+        }
         Object.assign(caps, {
-          "appium:platformVersion": "12.4",
-          "appium:deviceName": "The Code Sharman Test iPhone",
-          "appium:udid": "auto",
+          "appium:udid": process.env.IOS_DEVICE_UDID,
           "appium:xcodeOrgId": "6RRED3LUUV",
           "appium:xcodeSigningId": "Apple Development",
         });
