@@ -4,11 +4,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { createHash } from "crypto";
 
-// `iosDevice` (used by streamLogs for port forwarding) is dependency-
-// injected by the caller — it's normally `node-ios-device`, which ships
-// a darwin-only native binding. Importing it at module scope would break
-// even an `import IosLauncher` on Linux build-test runners.
-
+// Pass `node-ios-device` as `iosDevice` (caller-injected — darwin-only binding).
 function computeLogPort(appId) {
   const sha1 = createHash('sha1').update(appId).digest('hex');
   return parseInt(sha1, 16) % 50000 + 10000;
