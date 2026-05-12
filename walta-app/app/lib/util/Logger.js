@@ -74,9 +74,11 @@ exports.configure = function() {
         }
     } catch (e) {
         // Don't crash app startup on persistence init failure — fall back
-        // to the other sinks. The error itself goes to Ti.API since the
-        // sink dispatcher isn't usable for diagnosing its own setup.
-        if (typeof Ti !== 'undefined') Ti.API.warn("LogRepository init failed: " + (e && e.message));
+        // to the other sinks. Re-dispatch through Logger.error so it lands
+        // in ConsoleSink + BugfenderSink (already registered above); a bare
+        // Ti.API.warn would never have reached Bugfender, which is how
+        // WB-78 stayed invisible across releases.
+        exports.error("LogRepository init failed: " + (e && e.message), "logger-init");
     }
     if (!Bugfender) return;
     Bugfender.init({

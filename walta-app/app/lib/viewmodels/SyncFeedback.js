@@ -24,9 +24,17 @@ class SyncFeedbackViewModel extends ChangeNotifier {
 
     // Cross-run history: query persisted entries newest-first, then
     // reverse for display so the pane reads top-to-bottom chronologically
-    // (oldest → newest), tail-style.
-    const recent = logRepository.query({ ...LOG_FILTER, limit: LOG_LIMIT });
-    recent.reverse();
+    // (oldest → newest), tail-style. Guard the query: a missing `logs`
+    // table (migrations skipped — see WB-78) used to throw straight out
+    // of the ctor, taking the SyncFeedback popup down with it. Fall back
+    // to an empty pane and surface the failure to Bugfender.
+    let recent = [];
+    try {
+      recent = logRepository.query({ ...LOG_FILTER, limit: LOG_LIMIT });
+      recent.reverse();
+    } catch (e) {
+      Logger.error("LogRepository.query failed — log pane will start empty: " + (e && e.message), "logger-init");
+    }
     this._logEntries = recent;
     // Monotonic append counter — used by views to detect new entries
     // even when the buffer is at LOG_LIMIT (length stops changing once
