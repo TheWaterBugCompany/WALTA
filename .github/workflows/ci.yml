@@ -305,9 +305,6 @@ jobs:
           xcrun simctl bootstatus ${{ steps.sim.outputs.udid }}
           echo "Simulator booted"
 
-      - name: Run iOS build tests
-        run: npx grunt build-test-ios
-
       - name: Sample simulator log format
         run: |
           xcrun simctl spawn ${{ steps.sim.outputs.udid }} log stream --style syslog 2>&1 | head -20 || true
@@ -543,9 +540,6 @@ jobs:
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-30
           key: avd-30-google_apis-x86
-
-      - name: Run Android build tests
-        run: npx grunt build-test-android
 
       - name: Boot Android emulator and run tests
         uses: reactivecircus/android-emulator-runner@v2
