@@ -6,6 +6,8 @@ import AppiumLauncher from "../../build-utils/AppiumLauncher.js";
 describe("AppiumLauncher", function() {
   let fakeDriver;
   let fakeStartAppium;
+  let originalSimUdid;
+  let originalIosDeviceUdid;
   const originalMaxListeners = process.getMaxListeners();
 
   before(function() { process.setMaxListeners(20); });
@@ -19,6 +21,21 @@ describe("AppiumLauncher", function() {
       getLogs: sinon.stub().resolves([])
     };
     fakeStartAppium = sinon.stub().resolves(fakeDriver);
+    // Stub iOS UDID env vars so tests that construct an iOS launcher
+    // for command-dispatch assertions (launch/terminate) don't hit the
+    // device-path or sim-path UDID throws. Tests that exercise the
+    // "env unset" contract delete these in-body.
+    originalSimUdid = process.env.SIM_UDID;
+    originalIosDeviceUdid = process.env.IOS_DEVICE_UDID;
+    process.env.SIM_UDID = "test-sim-udid";
+    process.env.IOS_DEVICE_UDID = "test-device-udid";
+  });
+
+  afterEach(function() {
+    if (originalSimUdid === undefined) delete process.env.SIM_UDID;
+    else process.env.SIM_UDID = originalSimUdid;
+    if (originalIosDeviceUdid === undefined) delete process.env.IOS_DEVICE_UDID;
+    else process.env.IOS_DEVICE_UDID = originalIosDeviceUdid;
   });
 
   describe("connect()", function() {
