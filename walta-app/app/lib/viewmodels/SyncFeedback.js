@@ -8,7 +8,10 @@ const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample
 // the sync facility (start/end markers, key download done, etc.).
 // See docs/patterns/logger-sinks.md.
 const LOG_FILTER = { facility: "sync", minLevel: "info" };
-const LOG_LIMIT = 5000;
+// Display cap in the popup pane — kept modest so the TextArea lays
+// out fast on older Android phones. Full history (up to LOG_MAX_ROWS)
+// is still persisted and reachable via the Diagnostics screen.
+const LOG_LIMIT = 500;
 
 class SyncFeedbackViewModel extends ChangeNotifier {
   constructor({ syncController, logRepository }) {
@@ -112,3 +115,4 @@ class SyncFeedbackViewModel extends ChangeNotifier {
 }
 
 module.exports = SyncFeedbackViewModel;
+module.exports.LOG_LIMIT = LOG_LIMIT;

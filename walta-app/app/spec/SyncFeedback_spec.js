@@ -6,6 +6,7 @@ var Logger = require("util/Logger");
 var LogRepository = require("repository/LogRepository");
 var Migrator = require("repository/Migrator");
 var createSyncController = require("spec/fixtures/SyncController_fixture");
+var { LOG_LIMIT } = require("viewmodels/SyncFeedback");
 
 const TEST_LOG_DB = "waterbug_data_syncfeedback_test";
 
@@ -115,8 +116,8 @@ describe("SyncFeedback controller", function () {
 
         it("scrolls past the top when the user opens the pane (seeded entries are at the bottom, buffer at cap)", async () => {
             // Seed at LOG_LIMIT so this also exercises the worst-case
-            // render — the pane has to lay out 5000 lines without crashing.
-            await buildController(5000);
+            // render — the pane has to lay out a full buffer's worth.
+            await buildController(LOG_LIMIT);
             ctl.logToggleButton.fireEvent("click");
             await waitFor(() => ctl.logScroll.contentOffset.y > 0);
             expect(ctl.logScroll.contentOffset.y).to.be.greaterThan(0);
@@ -128,7 +129,7 @@ describe("SyncFeedback controller", function () {
             // observe contentOffset.y move further down. At the cap
             // this assertion isn't meaningful — see the cap-anchor
             // test below for that case.
-            await buildController(500);
+            await buildController(Math.floor(LOG_LIMIT / 5));
             ctl.logToggleButton.fireEvent("click");
             await waitFor(() => ctl.logScroll.contentOffset.y > 0);
             const before = ctl.logScroll.contentOffset.y;
@@ -138,7 +139,7 @@ describe("SyncFeedback controller", function () {
         });
 
         it("keeps the newest entry visible at the tail when appending at the cap", async () => {
-            await buildController(5000);
+            await buildController(LOG_LIMIT);
             ctl.logToggleButton.fireEvent("click");
             await waitFor(() => ctl.logScroll.contentOffset.y > 0);
             Logger.info("fresh tail line", "sync");
