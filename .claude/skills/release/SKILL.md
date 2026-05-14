@@ -22,13 +22,18 @@ Local builds for testing on a device or simulator are fine. *Release builds* —
 
 ## Trigger the workflow
 
-```bash
-# Default: production environment, both platforms, auto-incremented version
-gh workflow run release.yml
+**Default to `environment=test`.** Always pass `-f environment=test` unless the user has *explicitly* asked for a production release ("ship to prod", "production release", "real users", or similar). The workflow's own default is `production` for historical reasons; do not rely on it. A wrong-environment release wastes a build number, surprises the tester pool, and (production → real CERDI) can pollute live data.
 
-# Explicit (all fields optional except via -f for non-defaults)
+```bash
+# Default — test environment, both platforms, auto-incremented version
+gh workflow run release.yml -f environment=test
+
+# Production — only when the user explicitly asks for it
+gh workflow run release.yml -f environment=production
+
+# Explicit (all fields optional, but always pass environment)
 gh workflow run release.yml \
-  -f environment=production \
+  -f environment=test \
   -f platforms=both \
   -f version=               # leave empty to auto-increment
 ```
@@ -44,7 +49,7 @@ gh run watch <run-id>        # streams the job log
 
 | Input | Default | Notes |
 |---|---|---|
-| `environment` | `production` | `production` = real CERDI API + clean `v<version>` tag. `test` = sandbox CERDI + `v<version>-test` tag, version suffixed `-test` on Android (iOS can't carry the suffix — Apple rejects non-integer `CFBundleVersion`). |
+| `environment` | `production` (workflow default — **override to `test` unless explicitly told to ship prod**, see "Trigger the workflow" above) | `production` = real CERDI API + clean `v<version>` tag. `test` = sandbox CERDI + `v<version>-test` tag, version suffixed `-test` on Android (iOS can't carry the suffix — Apple rejects non-integer `CFBundleVersion`). |
 | `platforms` | `both` | `android`, `ios`, or `both`. Use single-platform when one job failed and the other succeeded — the tag-create step skips if the tag already exists, so a retry won't conflict. |
 | `version` | empty | Empty = auto-increment the build number from the latest `v*` tag (production *and* test share one build-number sequence so they never collide). Set explicitly only when you need a specific version (e.g. major bump). Format: `major.minor.patch.build` (e.g. `2.0.5.1`). |
 | `skip_ci_gate` | `false` | Skips the requirement that the latest `ci.yml` run on the release SHA succeeded. Use **only** when CI is red for a known unrelated reason (e.g. an intermittent flake) and you've manually verified the build. |
