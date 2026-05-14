@@ -2,7 +2,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { execFile } from "child_process";
 import { expect } from "chai";
-import iosDevice from "node-ios-device";
 import IosLauncher from "../../build-utils/IosLauncher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -65,7 +64,7 @@ describe("IosLauncher (integration)", function() {
 
   before(async function() {
     this.timeout(15000);
-    launcher = new IosLauncher({ udid: DEVICE_UDID });
+    launcher = new IosLauncher({ udid: DEVICE_UDID, appId: HELLO_APP_ID });
     await launcher.connect();
   });
 
@@ -90,22 +89,27 @@ describe("IosLauncher (integration)", function() {
   });
 
   describe("streamLogs()", function() {
-    // idevicesyslog captures the legacy BSD syslog stream, but iOS 14+ routes user app
-    // NSLog output through the unified logging system, which idevicesyslog cannot access.
-    // macOS 26 Tahoe removed `log stream --device` with no CLI replacement.
-    // Unskip this test when a working device log streaming mechanism is available.
-    it.skip("captures NSLog output from the running app", async function() {
-      this.timeout(20000);
+    // WB-76: switched from idevicesyslog (which is blind to iOS 14+ unified
+    // logging) to `devicectl --console`. streamLogs relaunches the app with
+    // console attached and streams its stdout/stderr.
+    it("captures NSLog output from the relaunched app", async function() {
+      this.timeout(30000);
+      // Install must precede streamLogs, but the launch in streamLogs
+      // re-terminates and re-launches the app with --console, so no
+      // separate launch() call is needed here.
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
       const lines = await new Promise((resolve, reject) => {
         let settled = false;
         const collected = [];
-        const logLauncher = new IosLauncher({ logProcessName: "HelloWorld", udid: launcher._udid, iosDevice });
-        const stop = logLauncher.streamLogs(line => {
+        const stop = launcher.streamLogs(line => {
           collected.push(line);
-          if (!settled) { settled = true; stop(); resolve(collected); }
+          if (line.includes("App started") && !settled) {
+            settled = true; stop(); resolve(collected);
+          }
         });
-        setTimeout(() => { if (!settled) { settled = true; stop(); reject(new Error("No log lines received within timeout")); } }, 15000);
+        setTimeout(() => {
+          if (!settled) { settled = true; stop(); reject(new Error(`No "App started" line received within timeout. Got: ${JSON.stringify(collected.slice(0, 20))}`)); }
+        }, 25000);
       });
       expect(lines.some(l => l.includes("App started"))).to.be.true;
     });
