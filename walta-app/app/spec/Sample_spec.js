@@ -212,6 +212,40 @@ describe("Taxa collection", function() {
     
   });
 
+  // WB-12: re-syncing a sample from the server must not wipe the
+  // locally-stored serverCreaturePhotoId. The server doesn't echo
+  // `_serverCreaturePhotoId` for known creatures, so reading it back as
+  // null on every download makes findPendingUploads() flag every taxon
+  // as pending — triggering an upload loop.
+  it('should preserve serverCreaturePhotoId when re-syncing a known creature whose photo was already uploaded', function() {
+    clearDatabase();
+    let taxon = Alloy.createModel("taxa");
+    taxon.set("sampleId", 666);
+    taxon.set("abundance", "> 20");
+    taxon.set("taxonId", 1);
+    taxon.set("serverCreatureId", 9067);
+    taxon.set("serverCreaturePhotoId", 12345);
+    taxon.set("taxonPhotoPath", makeTestPhoto("test-photo.jpg"));
+    taxon.set("updatedAt", 0);
+    taxon.save();
+
+    let taxa = Alloy.createCollection("taxa");
+    taxa.load(666);
+
+    // simulate a real server response — `_serverCreaturePhotoId` is absent
+    // because the server treats `_`-prefixed fields as private to the client.
+    taxa.fromCerdiApiJson([{
+      id: 9067,
+      creature_id: 1,
+      count: 25,
+      photos_count: 1
+    }], 666);
+
+    taxa.load(666);
+    expect(taxa.size(), "size of taxa collection").to.equal(1);
+    expect(taxa.at(0).get("serverCreaturePhotoId"), "serverCreaturePhotoId should be preserved across re-sync").to.equal(12345);
+  });
+
   it('should return taxons pending upload', function() {
     clearDatabase();
     let taxon1, taxon2,taxon3;
