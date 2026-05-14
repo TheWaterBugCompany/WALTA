@@ -79,7 +79,10 @@ npx grunt --platform=ios --simulator --reset debug
 
 ```bash
 npx grunt unit-test-node   # Node-only unit tests, fastest feedback
+npx grunt build-test       # Build-utils / hooks / launcher unit tests
 ```
+
+**Always invoke tests via the grunt wrappers** — never `npx mocha` directly. The wrappers set the right `NODE_PATH`, `NODE_OPTIONS`, and test-file globs; raw mocha runs can hang silently (no test output) when those aren't configured.
 
 See the [tdd](.claude/skills/tdd/SKILL.md) and [fast-iteration](.claude/skills/fast-iteration/SKILL.md) skills.
 
