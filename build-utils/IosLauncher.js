@@ -2,13 +2,12 @@ import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_proces
 import { mkdtemp, readFile as defaultReadFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
-import { createHash } from "crypto";
 
-// Pass `node-ios-device` as `iosDevice` (caller-injected — darwin-only binding).
-function computeLogPort(appId) {
-  const sha1 = createHash('sha1').update(appId).digest('hex');
-  return parseInt(sha1, 16) % 50000 + 10000;
-}
+// Apple unified-log line format from `devicectl device process launch --console`:
+//   "YYYY-MM-DD HH:MM:SS.sss ProcessName[pid:tid] message"
+// Group 1 is the message portion; everything outside (devicectl's own
+// "Acquired tunnel connection" chatter, blank lines) is dropped.
+const LOG_LINE_RE = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ \S+\[\d+:\d+\]\s+(.*)$/;
 
 function buildLaunchArgv(launchArgs) {
   if (!launchArgs) return [];
@@ -25,13 +24,12 @@ function buildLaunchArgv(launchArgs) {
 }
 
 class IosLauncher {
-  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, iosDevice = null, udid = null, appId = null } = {}) {
+  constructor({ execFile = defaultExecFile, readFile = defaultReadFile, spawn = defaultSpawn, udid = null, appId = null } = {}) {
     this._execFile = execFile;
     this._readFile = readFile;
     this._spawn = spawn;
-    this._iosDevice = iosDevice;
     this._udid = udid;
-    this._logPort = appId ? computeLogPort(appId) : null;
+    this._appId = appId;
     this._pid = null;
   }
 
@@ -93,28 +91,49 @@ class IosLauncher {
     this._pid = null;
   }
 
-  streamLogs(onLine, { logLevel = 'info' } = {}) {
+  // Launch the app with `devicectl --console` so its stdout/stderr stream
+  // back. WB-76: this replaces the old node-ios-device port-forward path
+  // because iOS 14+ routes Ti.API output through the unified logging
+  // system, which is invisible to the legacy BSD syslog stream.
+  // `--terminate-existing` is mandatory — `--console` only attaches at
+  // launch, so any already-running instance must be killed first.
+  streamLogs(onLine, { logLevel = 'info', launchArgs } = {}) {
+    if (!this._appId) throw new Error("IosLauncher was constructed without an appId — streamLogs needs it to launch the app");
+    if (!this._udid) throw new Error("connect() must succeed before streamLogs() can be called");
+
     const suppressedPrefixes = logLevel === 'trace' ? []
       : logLevel === 'debug' ? ['[TRACE]']
       : ['[TRACE]', '[DEBUG]']; // 'info' and above
 
-    let handle = null;
+    const args = [
+      "devicectl", "device", "process", "launch",
+      "--terminate-existing",
+      "--console",
+      "--device", this._udid,
+      this._appId,
+      ...buildLaunchArgv(launchArgs),
+    ];
 
-    const tryConnect = () => {
-      try {
-        handle = this._iosDevice.forward(this._udid, this._logPort)
-          .on('data', msg => {
-            if (msg.startsWith('{"appId"')) return; // skip JSON header
-            if (suppressedPrefixes.some(p => msg.startsWith(p))) return;
-            onLine(msg);
-          });
-      } catch (_err) {
-        setTimeout(tryConnect, 1000);
+    const proc = this._spawn("xcrun", args);
+
+    let buffer = "";
+    const onData = (chunk) => {
+      buffer += chunk.toString();
+      const lines = buffer.split("\n");
+      buffer = lines.pop(); // partial line — wait for newline
+      for (const line of lines) {
+        const m = line.match(LOG_LINE_RE);
+        if (!m) continue;
+        const msg = m[1];
+        if (suppressedPrefixes.some(p => msg.startsWith(p))) continue;
+        onLine(msg);
       }
     };
 
-    tryConnect();
-    return () => handle && handle.stop();
+    proc.stdout.on('data', onData);
+    proc.stderr.on('data', onData);
+
+    return () => proc.kill();
   }
 
   getDriver() {
