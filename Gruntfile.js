@@ -565,8 +565,7 @@ const KobitonAPI = require("./features/support/kobiton");
           _launcher = new AndroidLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
         } else if (platform === "ios" && !isSimulator) {
           const { default: IosLauncher } = await import("./build-utils/IosLauncher.js");
-          const { default: iosDevice } = await import("node-ios-device");
-          _launcher = new IosLauncher({ appId: APP_ID, udid: DEVICE_ID, iosDevice });
+          _launcher = new IosLauncher({ appId: APP_ID, udid: DEVICE_ID });
         } else if (platform === "android" && isSimulator) {
           const { default: AndroidEmulatorLauncher } = await import("./build-utils/AndroidEmulatorLauncher.js");
           _launcher = new AndroidEmulatorLauncher({ activity: APP_ACTIVITY, logTag: "TiAPI", logNoisePattern: /^Waterbug \d|^ti\.playservices:/ });
@@ -690,18 +689,12 @@ const KobitonAPI = require("./features/support/kobiton");
       return `./builds/${buildType}/Waterbug.${ext}`;
     }
 
-    grunt.registerTask("launch", function(platform, buildType) {
-      const done = this.async();
-      const isSimulator = grunt.option('simulator') || false;
-      const appPath = resolveAppPath(platform, buildType, isSimulator);
-
-      if (!appPath) {
-        grunt.log.writeln('No app path — launching existing installed app');
-      }
-
-      // Optional runtime test config forwarded to the on-device spec runner.
-      // Android: intent extras via `am start --es/--ez`.
-      // iOS: NSUserDefaults-style argv via `simctl launch`.
+    // Build the runtime test-config argv that gets forwarded to the on-device
+    // spec runner. Android: intent extras via `am start --es/--ez`. iOS:
+    // NSUserDefaults-style argv via `simctl launch` / `devicectl ...`.
+    // WB-76: also consumed by the `output-logs` task so streamLogs can replay
+    // them when it relaunches the app with `devicectl --console`.
+    function computeLaunchArgs(buildType) {
       const launchArgs = {};
       const grep = grunt.option('grep');
       if (grep) launchArgs.test_grep = grep;
@@ -713,6 +706,19 @@ const KobitonAPI = require("./features/support/kobiton");
       if (buildType === 'unit-test' || buildType === 'unit-test-liveview') {
         launchArgs.unit_test = true;
       }
+      return launchArgs;
+    }
+
+    grunt.registerTask("launch", function(platform, buildType) {
+      const done = this.async();
+      const isSimulator = grunt.option('simulator') || false;
+      const appPath = resolveAppPath(platform, buildType, isSimulator);
+
+      if (!appPath) {
+        grunt.log.writeln('No app path — launching existing installed app');
+      }
+
+      const launchArgs = computeLaunchArgs(buildType);
       const hasLaunchArgs = Object.keys(launchArgs).length > 0;
       if (hasLaunchArgs) {
         grunt.log.writeln(`Forwarding launch args to test runner: ${JSON.stringify(launchArgs)}`);
@@ -735,6 +741,11 @@ const KobitonAPI = require("./features/support/kobiton");
       ]).then(([launcher, { parseUnitTestResult }]) => {
         let stop;
         const logLevel = grunt.option('log-level') || 'info';
+        // WB-76: iOS device streamLogs() now relaunches the app via
+        // `devicectl --console`, so it must replay the same NSUserDefaults
+        // argv that the launch task sent. output-logs only runs in the
+        // unit-test paths, so buildType is always unit-test*.
+        const launchArgs = computeLaunchArgs('unit-test');
         let timer;
         const resetTimer = () => {
           if (timer) clearTimeout(timer);
@@ -768,7 +779,7 @@ const KobitonAPI = require("./features/support/kobiton");
           } else {
             grunt.log.writeln(line);
           }
-        }, { logLevel });
+        }, { logLevel, launchArgs });
       });
     });
 
