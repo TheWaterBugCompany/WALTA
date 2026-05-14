@@ -32,11 +32,11 @@ async function isInstalled(udid, appId) {
   }
 }
 
-async function isRunning(udid, pid) {
+async function isProcessRunning(udid, executableName) {
   try {
     const out = await devicectl("device", "info", "processes",
       "--device", udid,
-      "--filter", `processIdentifier == ${pid}`
+      "--filter", `executable.path contains "${executableName}"`
     );
     const tableLines = out.trim().split("\n").filter(l => !/^\d+:\d+:\d+/.test(l));
     return tableLines.length > 2; // header + separator + at least one row
@@ -78,29 +78,28 @@ describe("IosLauncher (integration)", function() {
     it("installs and launches the hello world app", async function() {
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
       expect(await isInstalled(launcher._udid, HELLO_APP_ID), "app should be installed").to.be.true;
-      expect(launcher._pid, "PID should be stored").to.be.a("number");
+      expect(await isProcessRunning(launcher._udid, "HelloWorld"), "app should be running").to.be.true;
+      await launcher.terminate();
     });
 
     it("installs the updated app when a newer build is launched", async function() {
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V2);
       expect(await installedBundleVersion(launcher._udid, HELLO_APP_ID), "bundle version should be updated to 2").to.equal(2);
-      expect(await isRunning(launcher._udid, launcher._pid), "updated app should be running").to.be.true;
+      expect(await isProcessRunning(launcher._udid, "HelloWorld"), "updated app should be running").to.be.true;
+      await launcher.terminate();
     });
   });
 
   describe("streamLogs()", function() {
-    // WB-76: switched from idevicesyslog (which is blind to iOS 14+ unified
-    // logging) to `devicectl --console`. streamLogs relaunches the app with
-    // console attached and streams its stdout/stderr.
-    it("captures NSLog output from the relaunched app", async function() {
+    // WB-76: launch() now attaches `devicectl --console` to capture iOS 14+
+    // unified-logging output; streamLogs() subscribes to the already-running
+    // devicectl process. No second launch.
+    it("captures NSLog output from the launched app", async function() {
       this.timeout(30000);
-      // Install must precede streamLogs, but the launch in streamLogs
-      // re-terminates and re-launches the app with --console, so no
-      // separate launch() call is needed here.
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
+      const collected = [];
       const lines = await new Promise((resolve, reject) => {
         let settled = false;
-        const collected = [];
         const stop = launcher.streamLogs(line => {
           collected.push(line);
           if (line.includes("App started") && !settled) {
@@ -112,16 +111,18 @@ describe("IosLauncher (integration)", function() {
         }, 25000);
       });
       expect(lines.some(l => l.includes("App started"))).to.be.true;
+      await launcher.terminate();
     });
   });
 
   describe("terminate()", function() {
     it("terminates the running app", async function() {
       await launcher.launch(HELLO_APP_ID, HELLO_APP_V1);
-      if (!launcher._pid) throw new Error("launch() must have succeeded before terminate() can be tested");
-      const pid = launcher._pid;
+      expect(await isProcessRunning(launcher._udid, "HelloWorld"), "app should be running pre-terminate").to.be.true;
       await launcher.terminate(HELLO_APP_ID);
-      expect(await isRunning(launcher._udid, pid), "app should not be running").to.be.false;
+      // Give devicectl a moment to propagate the kill before checking.
+      await new Promise(r => setTimeout(r, 1000));
+      expect(await isProcessRunning(launcher._udid, "HelloWorld"), "app should not be running post-terminate").to.be.false;
     });
   });
 });

@@ -741,11 +741,6 @@ const KobitonAPI = require("./features/support/kobiton");
       ]).then(([launcher, { parseUnitTestResult }]) => {
         let stop;
         const logLevel = grunt.option('log-level') || 'info';
-        // WB-76: iOS device streamLogs() now relaunches the app via
-        // `devicectl --console`, so it must replay the same NSUserDefaults
-        // argv that the launch task sent. output-logs only runs in the
-        // unit-test paths, so buildType is always unit-test*.
-        const launchArgs = computeLaunchArgs('unit-test');
         let timer;
         const resetTimer = () => {
           if (timer) clearTimeout(timer);
@@ -779,7 +774,7 @@ const KobitonAPI = require("./features/support/kobiton");
           } else {
             grunt.log.writeln(line);
           }
-        }, { logLevel, launchArgs });
+        }, { logLevel });
       });
     });
 
