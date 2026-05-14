@@ -67,13 +67,17 @@ class IosLauncher {
     if (appPath) {
       await this._exec(["devicectl", "device", "install", "app", "--device", this._udid, appPath]);
     }
+    // The `--` separator is mandatory before app argv: devicectl greedily
+    // parses `-` prefixed tokens as its own options (e.g. `-unit_test true`
+    // gets mis-parsed as `-t true` for `--timeout`, devicectl exits 64).
+    const appArgs = buildLaunchArgv(launchArgs);
     const args = [
       "devicectl", "device", "process", "launch",
       "--terminate-existing",
       "--console",
       "--device", this._udid,
       appId,
-      ...buildLaunchArgv(launchArgs),
+      ...(appArgs.length > 0 ? ["--", ...appArgs] : []),
     ];
     const proc = this._spawn("xcrun", args);
     this._consoleProc = proc;
