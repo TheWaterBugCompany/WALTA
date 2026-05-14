@@ -428,6 +428,24 @@ describe('CerdiApi', function() {
             expect(res4[0].creature_id).to.be.null;
         });
 
+        // WB-12: verify the unknown-creature round-trip exposes a photo id we
+        // can use to populate `serverCreaturePhotoId` locally on download.
+        // SampleDownloader.js:66 relies on `u.photos[0].id` from this endpoint.
+        it("should round-trip unknown creature photo id", async function() {
+            await cerdi.loginUser('testlogin@example.com', 'tstPassw0rd!');
+            const sampleRes = await submitTestSample(moment().format());
+            const submitRes = await cerdi.submitUnknownCreature(sampleRes.id, 6, creaturePhotoPath);
+            const uploadedPhotoId = submitRes.photos[0].id;
+            console.log('submitUnknownCreature response:', JSON.stringify(submitRes, null, 2));
+
+            const fetched = await cerdi.retrieveUnknownCreatures(sampleRes.id);
+            console.log('retrieveUnknownCreatures response:', JSON.stringify(fetched, null, 2));
+
+            expect(fetched).to.have.lengthOf(1);
+            expect(fetched[0].photos, 'photos array on GET').to.have.lengthOf(1);
+            expect(fetched[0].photos[0].id, 'photo id on GET matches upload response').to.equal(uploadedPhotoId);
+        });
+
         it("should delete unknown creatures", async function() {
             let serverSampleId;
             await cerdi.loginUser( 'testlogin@example.com', 'tstPassw0rd!' );
@@ -619,6 +637,38 @@ describe('CerdiApi', function() {
                 })
         });
         
+        // WB-12: the patch-broken-records block at sample.js:455-476 assumes
+        // the server stores habitat 0s as NULL for two-word fields, and bumps
+        // `updatedAt` to force a re-upload — driving the observed upload loop.
+        // Verify whether the assumption still holds by round-tripping zeros
+        // for all 8 fields and asserting each individually.
+        it("should round-trip habitat zero values", async function() {
+            await cerdi.loginUser('testlogin@example.com', 'tstPassw0rd!');
+            const sampleData = makeTestSample(moment().format());
+            sampleData.habitat = {
+                boulder: 0,
+                gravel: 0,
+                sand_or_silt: 0,
+                leaf_packs: 0,
+                wood: 0,
+                aquatic_plants: 0,
+                open_water: 0,
+                edge_plants: 0
+            };
+            const submitted = await cerdi.submitSample(sampleData);
+            const fetched = await cerdi.retrieveSampleById(submitted.id);
+            expect(fetched.habitat).to.deep.include({
+                boulder: 0,
+                gravel: 0,
+                sand_or_silt: 0,
+                leaf_packs: 0,
+                wood: 0,
+                aquatic_plants: 0,
+                open_water: 0,
+                edge_plants: 0
+            });
+        });
+
         it("should retrieve samples", function() {
             let createdAt = null, updatedAt = null, sampleDate = moment().format();
             return cerdi
