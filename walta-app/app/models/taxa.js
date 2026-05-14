@@ -128,7 +128,13 @@ exports.definition = {
 					abundance: this.convertCountToAbundance(creature.count)
 				};
 				
-				fields.serverCreaturePhotoId = parseIntOrNull(creature._serverCreaturePhotoId);
+				// Only populated by SampleDownloader.processUnknownCreatures for
+				// unknown creatures; for known creatures the server doesn't echo
+				// this field. Guard the read so re-syncs don't wipe the local
+				// id that downloadCreaturePhoto set on first download.
+				if ( !_.isUndefined(creature._serverCreaturePhotoId) ) {
+					fields.serverCreaturePhotoId = parseIntOrNull(creature._serverCreaturePhotoId);
+				}
 				fields.serverCreatureId = parseIntOrNull(creature.id);
 				fields.taxonId = parseIntOrNull(creature.creature_id);
 
