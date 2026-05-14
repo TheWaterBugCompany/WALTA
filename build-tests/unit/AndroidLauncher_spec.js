@@ -72,7 +72,7 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
+        "-s emulator-5554 shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
@@ -85,13 +85,13 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
+        "-s emulator-5554 shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
       expect(fakeExecFile.getCall(4).args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start",
+        "shell", "am", "start", "-W",
         "-a", "android.intent.action.MAIN",
         "-c", "android.intent.category.LAUNCHER",
         "-p", "net.thewaterbug.waterbug"
@@ -103,14 +103,27 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -n net.thewaterbug.waterbug/.WaterbugActivity": ""
+        "-s emulator-5554 shell am start -W -n net.thewaterbug.waterbug/.WaterbugActivity": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
       expect(fakeExecFile.getCall(4).args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start", "-n", "net.thewaterbug.waterbug/.WaterbugActivity"
+        "shell", "am", "start", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity"
       ]);
+    });
+
+    it("passes -W to am start so it waits for the launch to complete (avoids flaky pidof races)", async function() {
+      const fakeExecFile = makeExecFile({
+        "devices": DEVICES_OUTPUT,
+        ...STAY_AWAKE_RESPONSES,
+        "-s emulator-5554 logcat -c": "",
+        "-s emulator-5554 shell am start -W -n net.thewaterbug.waterbug/.WaterbugActivity": ""
+      });
+      const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
+      await launcher.launch("net.thewaterbug.waterbug");
+      const amStartCall = fakeExecFile.getCalls().find(c => c.args[1]?.includes("am") && c.args[1]?.includes("start"));
+      expect(amStartCall.args[1]).to.include("-W");
     });
 
     it("uninstalls then installs the APK before starting when an apkPath is given", async function() {
@@ -120,7 +133,7 @@ describe("AndroidLauncher", function() {
         "-s emulator-5554 uninstall net.thewaterbug.waterbug": "",
         "-s emulator-5554 install -r ./builds/unit-test/Waterbug.apk": "",
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
+        "-s emulator-5554 shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", "./builds/unit-test/Waterbug.apk");
@@ -129,7 +142,7 @@ describe("AndroidLauncher", function() {
       expect(fakeExecFile.getCall(5).args[1]).to.deep.equal(["-s", "emulator-5554", "logcat", "-c"]);
       expect(fakeExecFile.getCall(6).args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start",
+        "shell", "am", "start", "-W",
         "-a", "android.intent.action.MAIN",
         "-c", "android.intent.category.LAUNCHER",
         "-p", "net.thewaterbug.waterbug"
@@ -141,13 +154,13 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'SyncFeedback'": ""
+        "-s emulator-5554 shell am start -S -W -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'SyncFeedback'": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", null, { test_grep: "SyncFeedback" });
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
+        "shell", "am", "start", "-S", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
         "--es", "test_grep", "'SyncFeedback'"
       ]);
     });
@@ -157,13 +170,13 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --ez test_manual true": ""
+        "-s emulator-5554 shell am start -S -W -n net.thewaterbug.waterbug/.WaterbugActivity --ez test_manual true": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", null, { test_manual: true });
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
+        "shell", "am", "start", "-S", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
         "--ez", "test_manual", "true"
       ]);
     });
@@ -173,13 +186,13 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'SyncFeedback' --ez test_manual true": ""
+        "-s emulator-5554 shell am start -S -W -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'SyncFeedback' --ez test_manual true": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", null, { test_grep: "SyncFeedback", test_manual: true });
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
+        "shell", "am", "start", "-S", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
         "--es", "test_grep", "'SyncFeedback'",
         "--ez", "test_manual", "true"
       ]);
@@ -196,7 +209,7 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'renders Logger lines' --ez unit_test true": ""
+        "-s emulator-5554 shell am start -S -W -n net.thewaterbug.waterbug/.WaterbugActivity --es test_grep 'renders Logger lines' --ez unit_test true": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", null, {
@@ -205,7 +218,7 @@ describe("AndroidLauncher", function() {
       });
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
+        "shell", "am", "start", "-S", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
         "--es", "test_grep", "'renders Logger lines'",
         "--ez", "unit_test", "true",
       ]);
@@ -216,13 +229,13 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -S -n net.thewaterbug.waterbug/.WaterbugActivity --es msg 'don'\\''t panic'": ""
+        "-s emulator-5554 shell am start -S -W -n net.thewaterbug.waterbug/.WaterbugActivity --es msg 'don'\\''t panic'": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", null, { msg: "don't panic" });
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start", "-S", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
+        "shell", "am", "start", "-S", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity",
         "--es", "msg", "'don'\\''t panic'",
       ]);
     });
@@ -232,13 +245,13 @@ describe("AndroidLauncher", function() {
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -n net.thewaterbug.waterbug/.WaterbugActivity": ""
+        "-s emulator-5554 shell am start -W -n net.thewaterbug.waterbug/.WaterbugActivity": ""
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
       expect(fakeExecFile.lastCall.args[1]).to.deep.equal([
         "-s", "emulator-5554",
-        "shell", "am", "start", "-n", "net.thewaterbug.waterbug/.WaterbugActivity"
+        "shell", "am", "start", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity"
       ]);
     });
 
@@ -249,7 +262,7 @@ describe("AndroidLauncher", function() {
         "-s emulator-5554 uninstall net.thewaterbug.waterbug": new Error("adb: failed to uninstall"),
         "-s emulator-5554 install -r ./builds/unit-test/Waterbug.apk": "",
         "-s emulator-5554 logcat -c": "",
-        "-s emulator-5554 shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
+        "-s emulator-5554 shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", "./builds/unit-test/Waterbug.apk");

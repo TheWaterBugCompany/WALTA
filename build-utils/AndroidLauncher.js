@@ -83,7 +83,10 @@ class AndroidLauncher {
     // `-S` force-stops the app before starting so JS re-runs and any new
     // intent extras are picked up at spec-runner init — otherwise `am start`
     // on a live process only delivers onNewIntent and index.js isn't re-evaluated.
-    const startFlags = extras.length > 0 ? ["-S"] : [];
+    // `-W` makes `am start` wait until the launch completes so the integration
+    // test's `pidof` check doesn't race against an Activity that's still
+    // spawning its process.
+    const startFlags = extras.length > 0 ? ["-S", "-W"] : ["-W"];
     if (this._activity) {
       await this._exec(["shell", "am", "start", ...startFlags, "-n", `${appId}/${this._activity}`, ...extras]);
     } else {
