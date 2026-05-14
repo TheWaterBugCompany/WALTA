@@ -6,6 +6,12 @@ import AppiumLauncher from "../../build-utils/AppiumLauncher.js";
 describe("AppiumLauncher", function() {
   let fakeDriver;
   let fakeStartAppium;
+  // Default `_ensureServer()` to a no-op: pretend Appium is already running
+  // so the launcher never falls through to the real `defaultIsAppiumRunning`
+  // (HTTP poll on localhost:4723) or `defaultSpawn` (which launches a real
+  // Appium binary detached + unref'd, leaking it across test runs). Tests
+  // exercising the server-startup contract override this in-body.
+  let fakeIsAppiumRunning;
   let originalSimUdid;
   let originalIosDeviceUdid;
   const originalMaxListeners = process.getMaxListeners();
@@ -21,6 +27,7 @@ describe("AppiumLauncher", function() {
       getLogs: sinon.stub().resolves([])
     };
     fakeStartAppium = sinon.stub().resolves(fakeDriver);
+    fakeIsAppiumRunning = sinon.stub().resolves(true);
     // Stub iOS UDID env vars so tests that construct an iOS launcher
     // for command-dispatch assertions (launch/terminate) don't hit the
     // device-path or sim-path UDID throws. Tests that exercise the
@@ -93,7 +100,7 @@ describe("AppiumLauncher", function() {
     });
 
     it("starts an Appium session with Android capabilities", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       const caps = fakeStartAppium.firstCall.args[0];
       expect(fakeStartAppium.calledOnce).to.be.true;
@@ -102,20 +109,20 @@ describe("AppiumLauncher", function() {
     });
 
     it("reuses the existing session on subsequent calls", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       await launcher.connect();
       expect(fakeStartAppium.calledOnce).to.be.true;
     });
 
     it("passes a custom host through to startAppium", async function() {
-      const launcher = new AppiumLauncher("android", { host: "kobiton", startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { host: "kobiton", startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       expect(fakeStartAppium.firstCall.args[1]).to.equal("kobiton");
     });
 
     it("defaults to host 'local' when none is provided", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       expect(fakeStartAppium.firstCall.args[1]).to.equal("local");
     });
@@ -140,7 +147,7 @@ describe("AppiumLauncher", function() {
 
     it("defaults usePrebuiltWDA to false and omits derivedDataPath", async function() {
       delete process.env.WDA_DERIVED_DATA_PATH;
-      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       const caps = fakeStartAppium.firstCall.args[0];
       expect(caps["appium:usePrebuiltWDA"]).to.equal(false);
@@ -149,7 +156,7 @@ describe("AppiumLauncher", function() {
 
     it("enables prebuilt WDA when WDA_DERIVED_DATA_PATH is set", async function() {
       process.env.WDA_DERIVED_DATA_PATH = "/tmp/wda-derived";
-      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       const caps = fakeStartAppium.firstCall.args[0];
       expect(caps["appium:usePrebuiltWDA"]).to.equal(true);
@@ -171,7 +178,7 @@ describe("AppiumLauncher", function() {
 
     it("throws when IOS_DEVICE_UDID is not set", async function() {
       delete process.env.IOS_DEVICE_UDID;
-      const launcher = new AppiumLauncher("ios", { isSimulator: false, startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("ios", { isSimulator: false, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       let caught;
       try { await launcher.connect(); } catch (e) { caught = e; }
       expect(caught).to.exist;
@@ -180,7 +187,7 @@ describe("AppiumLauncher", function() {
 
     it("passes IOS_DEVICE_UDID through as appium:udid", async function() {
       process.env.IOS_DEVICE_UDID = "0123-fake-iphone-udid";
-      const launcher = new AppiumLauncher("ios", { isSimulator: false, startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("ios", { isSimulator: false, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       const caps = fakeStartAppium.firstCall.args[0];
       expect(caps["appium:udid"]).to.equal("0123-fake-iphone-udid");
@@ -202,7 +209,7 @@ describe("AppiumLauncher", function() {
 
     it("force-stops and starts the activity on Android via adb am start", async function() {
       const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.launch("net.thewaterbug.waterbug");
       const [bin, args] = fakeSpawn.firstCall.args;
       expect(bin === "adb" || bin.endsWith("/adb")).to.be.true;
@@ -215,7 +222,7 @@ describe("AppiumLauncher", function() {
 
     it("passes launchArgs as --es / --ez flags to am start", async function() {
       const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.launch("net.thewaterbug.waterbug", {
         cerdiServerUrl: "http://localhost:3000",
         debug: true,
@@ -227,7 +234,7 @@ describe("AppiumLauncher", function() {
     });
 
     it("launches the iOS app via mobile: launchApp with bundleId and arguments", async function() {
-      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.launch("net.thewaterbug.waterbug", { userEmail: "test@example.com" });
       const [command, params] = fakeDriver.execute.firstCall.args;
       expect(command).to.equal("mobile: launchApp");
@@ -238,13 +245,13 @@ describe("AppiumLauncher", function() {
 
   describe("terminate()", function() {
     it("terminates the app on Android using the appId", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.terminate("net.thewaterbug.waterbug");
       expect(fakeDriver.terminateApp.calledWith("net.thewaterbug.waterbug", undefined)).to.be.true;
     });
 
     it("terminates the app on iOS using the appId", async function() {
-      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.terminate("net.thewaterbug.waterbug");
       expect(fakeDriver.terminateApp.calledWith(undefined, "net.thewaterbug.waterbug")).to.be.true;
     });
@@ -255,7 +262,7 @@ describe("AppiumLauncher", function() {
     // The whole point of the method is to keep that quirk out of step defs.
     it("polls queryAppState with appId on Android", async function() {
       fakeDriver.execute.resolves(4);
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.waitForForeground();
       expect(fakeDriver.execute.calledWith("mobile: queryAppState",
         { appId: "net.thewaterbug.waterbug" })).to.be.true;
@@ -263,7 +270,7 @@ describe("AppiumLauncher", function() {
 
     it("polls queryAppState with bundleId on iOS", async function() {
       fakeDriver.execute.resolves(4);
-      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.waitForForeground();
       expect(fakeDriver.execute.calledWith("mobile: queryAppState",
         { bundleId: "net.thewaterbug.waterbug" })).to.be.true;
@@ -273,14 +280,14 @@ describe("AppiumLauncher", function() {
       fakeDriver.execute.onCall(0).resolves(2);
       fakeDriver.execute.onCall(1).resolves(3);
       fakeDriver.execute.onCall(2).resolves(4);
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.waitForForeground({ pollIntervalMs: 1 });
       expect(fakeDriver.execute.callCount).to.equal(3);
     });
 
     it("gives up after the timeout if state never reaches 4", async function() {
       fakeDriver.execute.resolves(2);
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.waitForForeground({ timeoutMs: 20, pollIntervalMs: 5 });
       expect(fakeDriver.execute.callCount).to.be.greaterThan(0);
     });
@@ -289,7 +296,7 @@ describe("AppiumLauncher", function() {
   describe("stop()", function() {
     it("calls deleteSession on the driver", async function() {
       fakeDriver.deleteSession = sinon.stub().resolves();
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       await launcher.stop();
       expect(fakeDriver.deleteSession.calledOnce).to.be.true;
@@ -297,7 +304,7 @@ describe("AppiumLauncher", function() {
 
     it("allows connect() to create a new session after stop()", async function() {
       fakeDriver.deleteSession = sinon.stub().resolves();
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       await launcher.stop();
       await launcher.connect();
@@ -305,7 +312,7 @@ describe("AppiumLauncher", function() {
     });
 
     it("is a no-op when no session exists", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.stop(); // should not throw
     });
 
@@ -340,7 +347,7 @@ describe("AppiumLauncher", function() {
 
     it("calls `adb emu geo fix <lng> <lat>` on Android", async function() {
       const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.setLocation(-37.8136, 144.9631);
       const [bin, args] = fakeSpawn.firstCall.args;
       expect(bin === "adb" || bin.endsWith("/adb")).to.be.true;
@@ -352,7 +359,7 @@ describe("AppiumLauncher", function() {
       const originalUdid = process.env.SIM_UDID;
       process.env.SIM_UDID = "FAKE-UDID";
       const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
-      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium, spawn: fakeSpawn });
+      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium, spawn: fakeSpawn, isAppiumRunning: fakeIsAppiumRunning });
       try {
         await launcher.setLocation(-37.8136, 144.9631);
       } finally {
@@ -369,7 +376,7 @@ describe("AppiumLauncher", function() {
   describe("streamLogs()", function() {
     it("polls driver.getLogs and emits each message", async function() {
       fakeDriver.getLogs.resolves([{ message: "log line 1" }, { message: "log line 2" }]);
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, logPollInterval: 0 });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, logPollInterval: 0, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       const lines = [];
       const stop = launcher.streamLogs(line => lines.push(line));
@@ -380,7 +387,7 @@ describe("AppiumLauncher", function() {
     });
 
     it("returns a stop function that halts polling", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, logPollInterval: 0 });
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, logPollInterval: 0, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.connect();
       const stop = launcher.streamLogs(() => {});
       stop();
