@@ -78,10 +78,12 @@ npx grunt --platform=ios --simulator --reset debug
 ### Test
 
 ```bash
-npx grunt unit-test-node                   # Node-only unit tests, fastest feedback
-npx grunt build-test                       # Build-utils / hooks / launcher unit tests
-npx grunt --platform=ios unit-test         # Device / simulator unit specs
-npx grunt --platform=ios acceptance-test   # Cucumber acceptance scenarios
+npx grunt unit-test-node                       # Node-only unit tests, fastest feedback
+npx grunt build-test                           # Build-utils / hooks / launcher unit tests
+npx grunt --platform=ios unit-test             # iOS device / simulator unit specs
+npx grunt --platform=android unit-test         # Android device / emulator unit specs
+npx grunt --platform=ios acceptance-test       # iOS cucumber acceptance scenarios
+npx grunt --platform=android acceptance-test   # Android cucumber acceptance scenarios
 ```
 
 **Always invoke tests via the grunt wrappers** — never `npx mocha` directly. The wrappers set the right `NODE_PATH`, `NODE_OPTIONS`, and test-file globs; raw mocha runs can hang silently (no test output) when those aren't configured.
