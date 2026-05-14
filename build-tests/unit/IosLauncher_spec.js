@@ -124,17 +124,30 @@ describe("IosLauncher", function() {
       ]);
     });
 
-    it("forwards launchArgs as NSUserDefaults-style argv after the bundle id", async function() {
+    it("forwards launchArgs as NSUserDefaults-style argv after a -- separator", async function() {
+      // The `--` separator is mandatory: devicectl mis-parses `-unit_test true`
+      // as `-t true` (its own --timeout flag) and exits 64 without it.
       const { spawn } = makeFakeSpawn();
       const launcher = new IosLauncher({ execFile: makeFakeExecFile(), spawn, udid: UDID });
       await launcher.launch(APP_ID, null, { test_grep: "About", test_manual: true });
 
       const args = spawn.firstCall.args[1];
-      const tail = args.slice(args.indexOf(APP_ID) + 1);
+      const sepIdx = args.indexOf("--");
+      const bundleIdx = args.indexOf(APP_ID);
+      expect(sepIdx, "expected -- separator after the bundle id").to.be.greaterThan(bundleIdx);
+      const tail = args.slice(sepIdx + 1);
       expect(tail).to.include("-test_grep");
       expect(tail[tail.indexOf("-test_grep") + 1]).to.equal("About");
       expect(tail).to.include("-test_manual");
       expect(tail[tail.indexOf("-test_manual") + 1]).to.equal("true");
+    });
+
+    it("omits the -- separator when there are no launchArgs", async function() {
+      const { spawn } = makeFakeSpawn();
+      const launcher = new IosLauncher({ execFile: makeFakeExecFile(), spawn, udid: UDID });
+      await launcher.launch(APP_ID);
+      const args = spawn.firstCall.args[1];
+      expect(args).to.not.include("--");
     });
 
     it("rejects if devicectl exits before printing the launch confirmation", async function() {
