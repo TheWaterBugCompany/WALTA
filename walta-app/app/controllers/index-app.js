@@ -13,7 +13,9 @@ var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
 var { checkForErrors } = require('util/PromiseUtils');
+var DiagnosticsBundle = require('util/DiagnosticsBundle');
 Topics.init();
+DiagnosticsBundle.subscribe();
 
 // FIXME: deprecate using globals
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
