@@ -153,7 +153,11 @@ function createCerdiApi( serverUrl, client_secret  ) {
                     return token.id;
                 }
             },
-        
+
+            retrieveUsername() {
+                return Ti.App.Properties.getObject("userAccessUsername");
+            },
+
             storeUserToken( email, accessToken ) {
                 //Ti.API.info(`accessToken = ${JSON.stringify(accessToken)}`)
                 Ti.App.Properties.setObject("userAccessUsername", email );

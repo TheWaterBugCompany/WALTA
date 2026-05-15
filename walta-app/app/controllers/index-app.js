@@ -66,8 +66,8 @@ if (OS_IOS) {
 SampleSync.init();
 
 // Report user name to Logger when logged in
-function setUserId() { 
-  Logger.setUserId( Ti.App.Properties.getObject('userAccessUsername') ); 
+function setUserId() {
+  Logger.setUserId( Alloy.Globals.CerdiApi.retrieveUsername() );
 }
 Topics.subscribe( Topics.LOGGEDIN, (data) => setUserId() );
 if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
