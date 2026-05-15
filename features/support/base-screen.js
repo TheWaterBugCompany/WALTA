@@ -21,10 +21,36 @@ class BaseScreen {
     }
 
     async waitForRaw(sel, message, timeout = 60000) {
-        await this.driver.waitUntil( async () => {
-            var el = await this.driver.$( sel );
-            return await el.isDisplayed();
-        }, { timeout, timeoutMsg: message });
+        const attempt = async () => {
+            await this.driver.waitUntil( async () => {
+                var el = await this.driver.$( sel );
+                return await el.isDisplayed();
+            }, { timeout, timeoutMsg: message });
+        };
+        try {
+            await attempt();
+        } catch (err) {
+            // iOS may overlay the app with the system "Save Password?" sheet after
+            // login. It persists across walta://reset (system overlay, not a
+            // UIAlertController) and blocks taps to the underlay. If we hit a wait
+            // timeout, probe for the sheet — if present, dismiss and retry once.
+            // No sheet → propagate the original error (no silent swallow).
+            if (this.isIos() && await this._dismissSavePasswordIfPresent()) {
+                await attempt();
+            } else {
+                throw err;
+            }
+        }
+    }
+
+    async _dismissSavePasswordIfPresent() {
+        const btn = await this.driver.$("-ios predicate string:label == 'Not Now'");
+        let visible = false;
+        try { visible = await btn.isDisplayed(); } catch (e) { /* not present */ }
+        if (!visible) return false;
+        await btn.click();
+        await btn.waitForDisplayed({ timeout: 5000, reverse: true });
+        return true;
     }
 
     async waitFor() {
