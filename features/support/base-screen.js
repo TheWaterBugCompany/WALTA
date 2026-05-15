@@ -21,26 +21,16 @@ class BaseScreen {
     }
 
     async waitForRaw(sel, message, timeout = 60000) {
-        const attempt = async () => {
-            await this.driver.waitUntil( async () => {
-                var el = await this.driver.$( sel );
-                return await el.isDisplayed();
-            }, { timeout, timeoutMsg: message });
-        };
-        try {
-            await attempt();
-        } catch (err) {
-            // iOS may overlay the app with the system "Save Password?" sheet after
-            // login. It persists across walta://reset (system overlay, not a
-            // UIAlertController) and blocks taps to the underlay. If we hit a wait
-            // timeout, probe for the sheet — if present, dismiss and retry once.
-            // No sheet → propagate the original error (no silent swallow).
-            if (this.isIos() && await this._dismissSavePasswordIfPresent()) {
-                await attempt();
-            } else {
-                throw err;
-            }
-        }
+        // iOS may overlay the app with the system "Save Password?" sheet after
+        // login. It persists across walta://reset (system overlay, not a
+        // UIAlertController) and blocks taps to the underlay. Pre-probe and
+        // dismiss it before waiting; doing it after a timeout would need a
+        // retry, and the doubled wait budget blows cucumber's step timeout.
+        if (this.isIos()) await this._dismissSavePasswordIfPresent();
+        await this.driver.waitUntil( async () => {
+            var el = await this.driver.$( sel );
+            return await el.isDisplayed();
+        }, { timeout, timeoutMsg: message });
     }
 
     async _dismissSavePasswordIfPresent() {
