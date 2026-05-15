@@ -75,6 +75,7 @@ var SPEC_FILES = [
   "Main",
   "Navigation",
   "util/repository/LogRepository",
+  "DiagnosticsBundle",
   //"Database"  - needs to run last, migrations are run in all database using test anyway
 ];
 
