@@ -6,15 +6,15 @@ on:
       environment:
         description: >
           Build environment.
-          'production' = real CERDI API + clean tag (v2.1.0.4).
           'test' = sandbox CERDI API + version suffix (-test) in TestFlight /
-          Play Console + tag (v2.1.0.4-test). Default is production —
-          accidental triggers are safe.
+          Play Console + tag (v2.1.0.4-test).
+          'production' = real CERDI API + clean tag (v2.1.0.4) — must be
+          explicitly selected to avoid accidental prod releases.
         type: choice
         options:
-          - production
           - test
-        default: production
+          - production
+        default: test
       version:
         description: >
           Version (e.g. 2.0.5.1). Leave empty to auto-increment the build

@@ -22,7 +22,7 @@ Local builds for testing on a device or simulator are fine. *Release builds* —
 
 ## Trigger the workflow
 
-**Default to `environment=test`.** Always pass `-f environment=test` unless the user has *explicitly* asked for a production release ("ship to prod", "production release", "real users", or similar). The workflow's own default is `production` for historical reasons; do not rely on it. A wrong-environment release wastes a build number, surprises the tester pool, and (production → real CERDI) can pollute live data.
+**Default to `environment=test`.** Always pass `-f environment=test` unless the user has *explicitly* asked for a production release ("ship to prod", "production release", "real users", or similar). The workflow's own default is also `test` (defence in depth), but pass it explicitly anyway — it makes the intent unambiguous in the workflow-run log. A wrong-environment release wastes a build number, surprises the tester pool, and (production → real CERDI) can pollute live data.
 
 ```bash
 # Default — test environment, both platforms, auto-incremented version
