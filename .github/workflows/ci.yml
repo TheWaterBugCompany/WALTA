@@ -700,9 +700,14 @@ jobs:
         # roughly doubles the cost on a deterministic failure — but
         # acceptance flakes are common enough on macOS-15 runners that
         # the trade-off favours green over fast-fail.
+        #
+        # WB-87: cap each grunt invocation at 600s. Observed runner-level
+        # hangs where grunt/npx/simulator-session stalls and produces zero
+        # log output, burning the whole 30-min job timeout on one silent
+        # attempt. The 600s ceiling lets the WB-54 retry recover instead.
         run: |
           for attempt in 1 2; do
-            if npx grunt --platform=ios --simulator --skip-build acceptance-test; then
+            if timeout 600 npx grunt --platform=ios --simulator --skip-build acceptance-test; then
               exit 0
             fi
             echo "::warning ::iOS acceptance attempt $attempt failed; retrying once (WB-54)"
