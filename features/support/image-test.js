@@ -1,59 +1,46 @@
-const looksSame = require('looks-same');
-const path = require('path');
 const fs = require('fs');
-const images = require('images');
-const { expect } = require("chai");
+const { PNG } = require('pngjs');
+const pixelmatch = require('pixelmatch');
+const { expect } = require('chai');
 
-function ensurePng(filePath) {
-    if ( typeof filePath !== "string" )
-        return filePath;
-    console.log(`reading image from ${filePath}`);
-    let img = fs.readFileSync(filePath);
-    if ( img === undefined ) 
-            throw `Unable to read file ${filePath}`;
-    if ( path.extname(filePath) !== "png" ) {
-        return images(img).encode("png");
-    } else {
-        return img;
-    }
+// Allow up to ~0.5% of pixels to differ. Covers sub-pixel rendering
+// jitter and JPEG-decode variance without masking the placeholder-vs-real
+// photo swap that WB-89 needs to catch.
+const DIFF_TOLERANCE_FRACTION = 0.005;
+const PIXELMATCH_OPTS = { threshold: 0.1, includeAA: false };
+
+function readPng(filePath) {
+    return PNG.sync.read(fs.readFileSync(filePath));
 }
 
-function assertLooksSame( img1, img2 ) {
-    return new Promise( function(resolve, reject) {
-        
-        
-
-        looksSame( ensurePng(img1), ensurePng(img2), { tolerance: 50, ignoreAntialiasing: true, antialiasingTolerance: 6 }, function(error, result) {
-            if ( error ) {
-                reject(error);
-            } else {
-                try { 
-                    expect(result.equal, "baseline image is different" ).to.be.true;
-                    resolve();
-                } catch(e) {
-                    reject(e);
-                }
-            }
-        });
-    });
+function assertLooksSame(refPath, curPath) {
+    const ref = readPng(refPath);
+    const cur = readPng(curPath);
+    expect(cur.width, `image width (${curPath})`).to.equal(ref.width);
+    expect(cur.height, `image height (${curPath})`).to.equal(ref.height);
+    const diffPixels = pixelmatch(
+        ref.data, cur.data, null,
+        ref.width, ref.height,
+        PIXELMATCH_OPTS,
+    );
+    const maxAllowed = Math.floor(ref.width * ref.height * DIFF_TOLERANCE_FRACTION);
+    expect(diffPixels, `differing pixels between ${refPath} and ${curPath} (max ${maxAllowed})`)
+        .to.be.at.most(maxAllowed);
 }
 
-function diffImages(img1,img2,diffPath,done) {
-    console.log(`difference image ${diffPath}`);
-    let ref = ensurePng(img1), cur = ensurePng(img2);
-    looksSame.createDiff({
-        reference: ref,
-        current: cur,
-        highlightColor: "#ff0000",
-        tolerance: 40
-    }, function(error, buffer) {
-        if ( error )
-            throw new Error(error);
-        fs.writeFileSync(diffPath,buffer);
-        fs.writeFileSync("/tmp/img1.png",ref);
-        fs.writeFileSync("/tmp/img2.png",cur);
-        done();
-    } );
+function diffImages(refPath, curPath, diffPath) {
+    const ref = readPng(refPath);
+    const cur = readPng(curPath);
+    const diff = new PNG({ width: ref.width, height: ref.height });
+    pixelmatch(
+        ref.data, cur.data, diff.data,
+        ref.width, ref.height,
+        PIXELMATCH_OPTS,
+    );
+    fs.writeFileSync(diffPath, PNG.sync.write(diff));
+    fs.writeFileSync('/tmp/img1.png', PNG.sync.write(ref));
+    fs.writeFileSync('/tmp/img2.png', PNG.sync.write(cur));
 }
-exports.diffImages = diffImages;
+
 exports.assertLooksSame = assertLooksSame;
+exports.diffImages = diffImages;
