@@ -20,7 +20,7 @@ const { expect } = require('chai');
 
 const HIST_BINS_PER_CHANNEL = 8;       // 8^3 = 512 buckets
 const RESIZE_FOR_SPEED = 256;          // not for normalization — histogram is size-agnostic
-const SIMILARITY_THRESHOLD = 0.75;
+const SIMILARITY_THRESHOLD = 0.95;
 
 async function loadAndHistogram(filePath) {
     const img = await Jimp.read(filePath);
