@@ -71,7 +71,13 @@ Then('I am logged in', {timeout: 60000}, async function() {
     await this.menu.waitForLabel("You are Logged in");
 });
 
-When('I log in with {string} and password {string}', {timeout: 60000}, async function(emailAddress, password) {
+// 5-min step timeout: form-fill (~3-5s) + LoginScreen.dismissSavePasswordSheet's
+// own 60s wait for the iOS Save Password sheet sum to more than the previous
+// 60s cucumber budget on cold-start CI runners. With both clocks set to 60s,
+// the step kept self-killing before the dismiss could actually see + tap
+// "Not Now". Locally on a warm sim the sheet pops in a few seconds and 60s
+// was enough; on shared macOS-15 runners it isn't.
+When('I log in with {string} and password {string}', {timeout: 300000}, async function(emailAddress, password) {
     await this.menu.waitFor();
     await this.menu.login(emailAddress, password);
 });
