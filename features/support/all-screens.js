@@ -17,6 +17,7 @@ const HelpScreen = require('./help-screen.js');
 const NotesScreen = require('./notes-screen.js');
 const SummaryScreen = require('./summary-screen.js');
 const ArchiveScreen = require('./archive-screen.js');
+const SampleEditMenuScreen = require('./sample-edit-menu-screen.js');
 const SyncFeedbackScreen = require('./sync-feedback-screen.js');
 
 function setUpWorld(world) {
@@ -41,6 +42,7 @@ function setUpWorld(world) {
     world.swipeRight = swipeRight;
     world.swipeLeft = swipeLeft;
     world.archive = new ArchiveScreen( world );
+    world.sampleEditMenu = new SampleEditMenuScreen( world );
     world.syncFeedback = new SyncFeedbackScreen( world );
 }
 

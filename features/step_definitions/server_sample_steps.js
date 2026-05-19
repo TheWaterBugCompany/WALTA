@@ -23,6 +23,7 @@ Then('the new samples are downloaded to the phone', {timeout: 60000}, async func
     expect(dateCompleted).to.equal("25/Sep/2020 7:41:46 pm");
 
     await this.archive.clickRow();
+    await this.sampleEditMenu.selectView();
 
     let waterbodyNameSiteScreen = await this.siteDetails.getWaterbodyName();
     expect(waterbodyNameSiteScreen).to.equal("test waterbody name");
