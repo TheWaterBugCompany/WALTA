@@ -9,7 +9,15 @@ class SampleScreen extends BaseScreen {
         await this.world.methodSelect.waitFor();
     }
     async openTaxon( id ) {
-        await this.click(`Taxon ${id}`);
+        // SampleTaxaIcon's accessibilityLabel is
+        // "Taxon <id>, <species name>, abundance <abundance>" — the
+        // bare "Taxon <id>" id doesn't exist as a discrete a11y element.
+        // BEGINSWITH on "Taxon <id>, " disambiguates 12 from 121, 123, ...
+        const fragment = `Taxon ${id}, `;
+        const selector = this.isIos()
+            ? `-ios predicate string:label BEGINSWITH '${fragment}'`
+            : `android=new UiSelector().descriptionStartsWith("${fragment}")`;
+        await this.clickRaw(selector);
         await this.world.editTaxon.waitFor();
     }
 

@@ -4,8 +4,10 @@ const path = require('path');
 const { assertLooksSame } = require('../support/image-test');
 
 When('I open the sample tray for the downloaded sample', { timeout: 60000 }, async function () {
-    await this.menu.selectArchive();
+    // The preceding "close the sync popup" step leaves us on the Archive
+    // screen (sync was launched from there), so no Menu hop needed.
     await this.archive.clickRow();
+    await this.sampleEditMenu.selectView();
     await this.siteDetails.goNext();
     await this.habitat.goNext();
     await this.sample.waitFor();

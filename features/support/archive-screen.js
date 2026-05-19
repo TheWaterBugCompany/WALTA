@@ -36,7 +36,10 @@ class ArchiveScreen extends BaseScreen {
     async clickRow() {
         let row = await this.getWaterbodyNameElement();
         await row.click();
-        await this.world.siteDetails.waitFor();
+        // Tapping a row opens the SampleEditMenu modal (View vs Edit).
+        // Callers chain sampleEditMenu.selectView() / selectEdit() to
+        // dismiss it and land on SiteDetails.
+        await this.world.sampleEditMenu.waitFor();
     }
 
     async clickSyncNow() {
