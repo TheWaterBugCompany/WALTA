@@ -23,7 +23,29 @@ After({ timeout: 30000 }, async function ({ pickle, result }) {
     await captureScreenshot(this.driver, dir);
     captureDeviceLog(this.platform, dir);
     captureTempPhotos(dir);
+    captureMockCerdiLog(dir);
 });
+
+// The mock cerdi server (features/support/mock-cerdi-server.js) appends
+// every request/response to /tmp/mock-cerdi.log for the whole session.
+// When a login or sync step fails, this log tells us whether the HTTP
+// call ever reached the mock at all — distinguishing "deeplink/URL
+// handler never fired" from "login hit the server but the app didn't
+// observe LOGGEDIN".
+function captureMockCerdiLog(dir) {
+    const logPath = process.env.MOCK_CERDI_LOG === '0'
+        ? null
+        : (process.env.MOCK_CERDI_LOG || '/tmp/mock-cerdi.log');
+    if (!logPath) return;
+    try {
+        if (fs.existsSync(logPath)) {
+            fs.copyFileSync(logPath, path.join(dir, 'mock-cerdi.log'));
+        }
+    } catch (e) {
+        fs.writeFileSync(path.join(dir, 'mock-cerdi.log.error.txt'),
+            `captureMockCerdiLog threw: ${e && e.message}`);
+    }
+}
 
 // Photo-diff steps save `/tmp/<thing>_photo.png` just before
 // assertLooksSame() runs; if the assertion fails, the temp file is the
