@@ -3,7 +3,7 @@
 const { After, BeforeAll, Status } = require('@cucumber/cucumber');
 const fs = require('fs');
 const path = require('path');
-const { execFileSync } = require('child_process');
+const { execFileSync, spawnSync } = require('child_process');
 
 const ARTIFACTS_ROOT = '/tmp/acceptance-artifacts';
 
@@ -84,9 +84,6 @@ async function captureScreenshot(driver, dir) {
     }
 }
 
-// `simctl log show --last 5m` on iOS easily produces tens of MB of
-// syslog. Default spawnSync maxBuffer (1 MB) overflows with ENOBUFS,
-// so bump it generously here.
 const SPAWN_OPTS = { maxBuffer: 64 * 1024 * 1024 };
 
 function captureDeviceLog(platform, dir) {
@@ -98,16 +95,26 @@ function captureDeviceLog(platform, dir) {
             const out = execFileSync(adb, ['logcat', '-d', '-t', '500', '-s', 'TiAPI:V'], SPAWN_OPTS);
             fs.writeFileSync(path.join(dir, 'device.log'), out);
         } else if (platform === 'ios' && process.env.SIM_UDID) {
-            const out = execFileSync('xcrun', [
-                'simctl', 'spawn', process.env.SIM_UDID,
-                'log', 'show', '--last', '5m', '--style', 'syslog',
-            ], SPAWN_OPTS);
-            const filtered = out.toString()
+            // Even with maxBuffer at 64MB, `simctl spawn ... log show` was
+            // failing with ENOBUFS — the kernel pipe between xcrun and Node
+            // gets backed up on a near-OOM CI runner mid-acceptance-run.
+            // Redirecting xcrun's stdout directly to a file via the shell
+            // sidesteps Node's pipe entirely. The 30s window also keeps
+            // volume sane (it always covers the failing step + setup).
+            const rawPath = path.join(dir, 'device.log.raw');
+            const r = spawnSync('sh', ['-c',
+                `xcrun simctl spawn ${process.env.SIM_UDID} log show --last 30s --style syslog > '${rawPath}'`,
+            ], { stdio: ['ignore', 'inherit', 'inherit'] });
+            if (r.status !== 0) {
+                throw new Error(`xcrun exited ${r.status}${r.error ? ': ' + r.error.message : ''}`);
+            }
+            const filtered = fs.readFileSync(rawPath, 'utf8')
                 .split('\n')
                 .filter((l) => /waterbug|titanium|TiAPI|TiLog|appium/i.test(l))
-                .slice(-500)
+                .slice(-1000)
                 .join('\n');
             fs.writeFileSync(path.join(dir, 'device.log'), filtered);
+            fs.unlinkSync(rawPath);
         }
     } catch (e) {
         fs.writeFileSync(path.join(dir, 'device.log.error.txt'), `device-log capture threw: ${e && e.message}`);
