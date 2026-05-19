@@ -22,7 +22,27 @@ After({ timeout: 30000 }, async function ({ pickle, result }) {
     await capturePageSource(this.driver, dir);
     await captureScreenshot(this.driver, dir);
     captureDeviceLog(this.platform, dir);
+    captureTempPhotos(dir);
 });
+
+// Photo-diff steps save `/tmp/<thing>_photo.png` just before
+// assertLooksSame() runs; if the assertion fails, the temp file is the
+// only record of what the device actually rendered. Bundling them into
+// the artifact lets us recover them from CI (where /tmp is gone after
+// the runner shuts down) — useful for regenerating baselines when a
+// new device profile lands or the test catches a real divergence.
+function captureTempPhotos(dir) {
+    try {
+        for (const name of fs.readdirSync('/tmp')) {
+            if (/_photo\.png$/.test(name)) {
+                fs.copyFileSync(path.join('/tmp', name), path.join(dir, name));
+            }
+        }
+    } catch (e) {
+        fs.writeFileSync(path.join(dir, 'temp-photos.error.txt'),
+            `captureTempPhotos threw: ${e && e.message}`);
+    }
+}
 
 async function capturePageSource(driver, dir) {
     try {
