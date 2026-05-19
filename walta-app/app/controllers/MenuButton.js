@@ -21,7 +21,11 @@ if ( $.args.size ) {
   
 }
 
-$.button.accessibilityLabel = $.args.title;
+// Fall back to description when title is null (e.g. SampleEditMenu's
+// View/Edit buttons). Without this, iOS Titanium treats the button as
+// a nameless a11y element and hides its children too — invisible to
+// Appium / XCUITest, even though the text renders visually.
+$.button.accessibilityLabel = $.args.title || $.args.description;
 
 function onClick(e) {
   if ( $.args.topic ) {
