@@ -29,7 +29,10 @@ Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Allo
 // stray reset URL.
 var urlActions = UrlActions.create({
   cerdiApi: Alloy.Globals.CerdiApi,
-  onLoggedIn: function () { Topics.fireTopicEvent(Topics.LOGGEDIN); },
+  onLoggedIn: function () {
+    Ti.API.info(`[WB89] onLoggedIn callback → firing Topics.LOGGEDIN; token=${!!Alloy.Globals.CerdiApi.retrieveUserToken()}`);
+    Topics.fireTopicEvent(Topics.LOGGEDIN);
+  },
   appReset: Ti.App.deployType !== 'production' ? AppReset.reset : undefined,
 });
 function handleDeeplink(url) {

@@ -54,7 +54,10 @@ async function startApp(options) {
   routePromise(Topics.FORWARD,  (data) => updateDecisionWindow(extend(data, { slide: 'right' })));
   routePromise(Topics.HOME,  (data) =>  Navigation.openController("Menu", data));
   routePromise(Topics.LOGIN,  (data) =>  Navigation.openController("LogIn", data));
-  Topics.subscribe(Topics.LOGGEDIN,  (data) =>  Topics.fireTopicEvent(Topics.HOME, data));
+  Topics.subscribe(Topics.LOGGEDIN, (data) => {
+    Ti.API.info(`[WB89-Main] LOGGEDIN → firing HOME`);
+    Topics.fireTopicEvent(Topics.HOME, data);
+  });
   routePromise(Topics.BROWSE,  (data) =>   Navigation.openController("TaxonList", data));
   routePromise(Topics.SAMPLETRAY,  (data) =>   Navigation.openController("SampleTray", data));
   routePromise(Topics.IDENTIFY,  (data) =>   Navigation.openController("SampleTray", data));
