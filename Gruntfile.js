@@ -595,9 +595,14 @@ const KobitonAPI = require("./features/support/kobiton");
         .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, name, appiumOptions }).run())
         .then((code) => {
           if (code !== 0) {
+            // WB-94: propagate the launcher's specific exit code so the
+            // CI shell can distinguish a real test failure (cucumber-js's
+            // own 1/2 codes) from an infrastructure failure that never
+            // reached tests (EX_TEMPFAIL = 75). `done(false)` would
+            // collapse everything to grunt's generic non-zero, losing
+            // the signal CI needs to decide whether to retry.
             grunt.log.error(`cucumber-js exited with code ${code}`);
-            done(false);
-            return;
+            process.exit(code);
           }
           done();
         })

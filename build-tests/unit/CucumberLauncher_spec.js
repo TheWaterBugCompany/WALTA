@@ -4,7 +4,19 @@ import { EventEmitter } from "events";
 import CucumberLauncher from "../../build-utils/CucumberLauncher.js";
 
 function makeFakeChild() {
-  return Object.assign(new EventEmitter(), { unref: sinon.stub() });
+  const child = Object.assign(new EventEmitter(), { unref: sinon.stub() });
+  child.stdout = new EventEmitter();
+  child.stderr = new EventEmitter();
+  return child;
+}
+
+// Trigger the lifecycle the launcher's stdout-watcher expects:
+// emit some stdout chunks, then exit. Used to simulate cucumber-js
+// runs that did/didn't reach the "N scenarios (...)" summary.
+function emitThenExit(child, { stdoutChunks = [], stderrChunks = [], code = 0 } = {}) {
+  for (const chunk of stdoutChunks) child.stdout.emit("data", Buffer.from(chunk));
+  for (const chunk of stderrChunks) child.stderr.emit("data", Buffer.from(chunk));
+  child.emit("exit", code);
 }
 
 // Helper: wait for the spawn stub to be called, then emit exit on the
@@ -167,8 +179,83 @@ describe("CucumberLauncher", function() {
         isAppiumRunning: fakeIsRunning,
       });
       const promise = launcher.run();
-      await exitAfterSpawn(fakeSpawn, 0, 1);
+      // Include the scenarios-summary marker so "tests-ran-and-failed" is
+      // distinguished from "tests-never-started" (covered below).
+      const wait = exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: ["7 scenarios (5 failed, 2 passed)\n"],
+        code: 1,
+      });
+      await wait;
       expect(await promise).to.equal(1);
+    });
+
+    // WB-94: distinguish startup-infra failure from real test failure so
+    // CI can retry the former but not the latter. Marker = the
+    // "N scenarios (...)" summary cucumber-js prints once it has run at
+    // least one scenario through to its end-of-run summary. If cucumber-js
+    // exits non-zero *without* ever printing that summary, it never
+    // reached scenarios (Appium connect refused, BeforeAll crash, etc.) —
+    // a transient infrastructure problem — and we surface `75` (BSD
+    // sysexits.h `EX_TEMPFAIL`) so the CI shell knows it's retry-eligible.
+    it("resolves with EX_TEMPFAIL (75) when cucumber-js exits non-zero without the scenarios-summary marker", async function() {
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      const promise = launcher.run();
+      const wait = exitAfterSpawnEmit(fakeSpawn, 0, {
+        stderrChunks: ["Error: connect ECONNREFUSED 127.0.0.1:4723\n"],
+        code: 1,
+      });
+      await wait;
+      expect(await promise).to.equal(75);
+    });
+
+    it("propagates cucumber-js's exit code unchanged when the scenarios-summary marker is present", async function() {
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      const promise = launcher.run();
+      // Cucumber-js exit 2 is config error — but if it emitted the
+      // summary line, scenarios ran. Don't rewrite to EX_TEMPFAIL.
+      const wait = exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: ["1 scenario (1 failed)\n"],
+        code: 2,
+      });
+      await wait;
+      expect(await promise).to.equal(2);
+    });
+
+    it("resolves with 0 (not 75) when cucumber-js succeeds even if no summary was captured", async function() {
+      // Defensive: success is success; the EX_TEMPFAIL rewrite only
+      // applies when the exit code was already non-zero.
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      const promise = launcher.run();
+      const wait = exitAfterSpawnEmit(fakeSpawn, 0, { code: 0 });
+      await wait;
+      expect(await promise).to.equal(0);
     });
   });
 });
+
+// Helper: wait for the spawn at childIndex, emit any stdout/stderr chunks,
+// then exit with the given code. Generalises exitAfterSpawn for tests that
+// need to assert behaviour against specific output content.
+function exitAfterSpawnEmit(spawnStub, childIndex, opts) {
+  return new Promise(resolve => {
+    const check = () => {
+      if (spawnStub.callCount > childIndex) {
+        const child = spawnStub.getCall(childIndex).returnValue;
+        emitThenExit(child, opts);
+        resolve();
+      } else {
+        setTimeout(check, 5);
+      }
+    };
+    check();
+  });
+}
