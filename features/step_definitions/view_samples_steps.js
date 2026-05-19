@@ -39,9 +39,11 @@ When('I select the creature with taxon id {int}', async function (id) {
 
 Then('the creature photo matches the expected image', async function () {
     const id = this.currentTaxonId;
-    const platformSuffix = this.platform === "ios" ? ".ios" : "";
+    // assertLooksSame normalises both images to a fixed size before
+    // pixel-diff (see features/support/image-test.js), so one baseline
+    // serves every device profile.
     const baseline = path.join(__dirname,
-        `../../test-resources/expected_taxon${id}_photo${platformSuffix}.png`);
+        `../../test-resources/expected_taxon${id}_photo.png`);
     const captured = `/tmp/taxon${id}_photo.png`;
     await this.editTaxon.saveTaxonPhoto(captured);
     await assertLooksSame(baseline, captured);
