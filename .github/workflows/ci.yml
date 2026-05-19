@@ -696,18 +696,24 @@ jobs:
       - name: Run iOS acceptance tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        # Retry once (WB-54). Cucumber suite takes ~15 min so a retry
-        # roughly doubles the cost on a deterministic failure — but
-        # acceptance flakes are common enough on macOS-15 runners that
-        # the trade-off favours green over fast-fail.
+        # WB-94: smart retry. The CucumberLauncher returns 75 (EX_TEMPFAIL
+        # from BSD sysexits.h) when cucumber-js exited non-zero without
+        # ever reaching scenario execution — Appium connect refused,
+        # BeforeAll crash, sim/WDA not ready, etc. — meaning the
+        # infrastructure was the problem and the run is retry-eligible.
+        # A real test failure surfaces as cucumber-js's own exit code
+        # (1, 2, ...) and is NOT retried — doubling the cost on a
+        # deterministic test failure was the cost we paid under the
+        # previous WB-54 retry-on-anything loop.
         run: |
           for attempt in 1 2; do
-            if npx grunt --platform=ios --simulator --skip-build acceptance-test; then
-              exit 0
-            fi
-            echo "::warning ::iOS acceptance attempt $attempt failed; retrying once (WB-54)"
+            npx grunt --platform=ios --simulator --skip-build acceptance-test
+            rc=$?
+            [ $rc -eq 0 ] && exit 0
+            [ $rc -ne 75 ] && exit $rc
+            echo "::warning ::iOS acceptance attempt $attempt returned EX_TEMPFAIL (75); retrying once (WB-94)"
           done
-          exit 1
+          exit 75
 
       - name: Upload per-scenario failure artifacts
         if: failure()
