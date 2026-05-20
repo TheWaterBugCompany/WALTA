@@ -83,29 +83,34 @@ function createSampleDownloader(delay) {
                 function retrieveUnknownCreatures() {
                     return delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.retrieveUnknownCreatures(serverSample.id) ), delay )
                 }
-                return sample.loadByServerId(serverSample.id) 
+                return sample.loadByServerId(serverSample.id)
                     .then( () => {
                         if ( needsUpdate(serverSample,sample) ) {
                             info(`Updating serverSampleId = ${serverSample.id}`);
-                            // must set the serverSyncTime here so that if updatedAt
-                            // is set to be a few milliseconds later - this can happen if
-                            // habitat blanks are filled in, and we need to signal a re-upload.
+                            // serverSyncTime is set right after persistSample so that an
+                            // updatedAt bumped a few ms later (e.g. habitat blanks being
+                            // filled in) lands after it and signals a re-upload.
                             return Promise.resolve()
                                 .then( retrieveUnknownCreatures )
                                 .then( processUnknownCreatures )
                                 .then( persistSample )
-                                .then( () => [sample,serverSample] )
-                                .then( downloadSitePhoto )
-                                .then( downloadCreaturePhotos )
-                                
                                 .then( setTimestamp );
-                        } 
+                        }
                     })
+                    // Photo downloads run on every sync, independent of the metadata
+                    // needsUpdate gate, so a photo that failed to download earlier (e.g.
+                    // marginal network) is retried without re-persisting sample metadata
+                    // (WB-101). Both steps are no-ops once nothing is outstanding.
+                    .then( () => [sample,serverSample] )
+                    .then( downloadSitePhoto )
+                    .then( downloadCreaturePhotos )
                     .then( () => [sample,serverSample]);
             }
 
             function downloadSitePhoto([sample,serverSample]) {
-                if ( serverSample.photos.length > 0  ) {
+                // Skip when we already have it — photos are immutable on the server,
+                // so a present serverSitePhotoId means there's nothing to re-fetch.
+                if ( serverSample.photos.length > 0 && ! sample.get("serverSitePhotoId") ) {
                     let sitePhotoPath = `site_download_${serverSample.id}`;
                     info(`Downloading site photo for ${serverSample.id}`);
                     return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
@@ -177,7 +182,10 @@ function createSampleDownloader(delay) {
                 // this means photos are only ever downloaded from the server when they
                 // do not exist on the client - this is a fair assumption since the photo
                 // can not be changed on the server.
-                let pendingTaxaPhotos = taxa.filter( t => _.isNull(t.get("taxonPhotoPath")));
+                // serverCreaturePhotoId === 0 marks "no photo on the server" (set by
+                // downloadCreaturePhoto), so it's excluded — only fresh or previously
+                // failed photos remain pending and get (re)tried (WB-101).
+                let pendingTaxaPhotos = taxa.filter( t => _.isNull(t.get("taxonPhotoPath")) && t.get("serverCreaturePhotoId") !== 0 );
                 return _.reduce( pendingTaxaPhotos,  
                     (queue,t) => queue.then( () => delayedPromise( downloadCreaturePhoto(t,serverSample),delay)),
                     Promise.resolve())

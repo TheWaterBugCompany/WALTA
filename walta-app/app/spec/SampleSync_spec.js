@@ -754,7 +754,50 @@ describe("SampleSync", function () {
             verifyTaxon(1);
 
         });
-        
+
+        it('should retry a creature photo that failed to download on an earlier sync', async function() {
+            // WB-101: a transient photo-download failure (e.g. marginal network)
+            // must not strand the photo. The sample stays pending so a later
+            // sync re-fetches it, rather than being marked fully synced with a
+            // null taxonPhotoPath that is never retried.
+            let creatureMock = {
+                id: 1948,
+                photo: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/spec/resources/simpleKey1/media/amphipoda_01.jpg"),
+            };
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUnknownCreatures")
+                .resolveWith([]);
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples")
+                .resolveWith([makeCerdiSampleData({
+                    sampled_creatures: [{
+                        "id": 2390,
+                        "sample_id": 473,
+                        "creature_id": 1,
+                        "count": 2,
+                        "photos_count": 0
+                    }]
+                })]);
+
+            let networkUp = false;
+            Alloy.Globals.CerdiApi.retrieveCreaturePhoto = function(serverSampleId, creatureId, photoPath) {
+                if ( !networkUp ) return Promise.reject({ message: "HTTP error" });
+                creatureMock.photo.copy(Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
+                return Promise.resolve(creatureMock);
+            };
+
+            // First sync: the photo fetch fails, so the photo stays pending.
+            await createSampleDownloader().downloadSamples();
+            let sample = Alloy.Models.instance("sample");
+            sample.loadByServerId(473);
+            expect(sample.loadTaxa().at(0).get("taxonPhotoPath"), "photo pending after failed fetch").to.be.null;
+
+            // Second sync once the network recovers: the photo must be retried.
+            networkUp = true;
+            await createSampleDownloader().downloadSamples();
+            sample = Alloy.Models.instance("sample");
+            sample.loadByServerId(473);
+            expect(sample.loadTaxa().at(0).get("serverCreaturePhotoId"), "photo recovered on retry").to.equal(creatureMock.id);
+        });
+
 
         // Due to protocol error early on it is possible for habitat data to be incorrectly blank
         // on the server, if somehow we download corrupt habitat data, make sure any correct data
