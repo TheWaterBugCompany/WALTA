@@ -67,6 +67,7 @@ var SPEC_FILES = [
   "SampleHistory",
   "Gallery",
   "PhotoSelect",
+  "PhotoPaths",
   "EditTaxon",
   "NavButton",
   "GoBackButton",
