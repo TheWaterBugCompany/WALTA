@@ -26,9 +26,10 @@ Then('I can see each creature with its abundance', async function () {
             ? `-ios predicate string:label BEGINSWITH '${fragment}'`
             : `android=new UiSelector().descriptionStartsWith("${fragment}")`;
         const el = await this.driver.$(selector);
-        if (!(await el.isDisplayed())) {
-            throw new Error(`Sample tray is missing tile starting with "${fragment}"`);
-        }
+        await el.waitForDisplayed({
+            timeout: 10000,
+            timeoutMsg: `Sample tray is missing tile starting with "${fragment}"`,
+        });
     }
 });
 

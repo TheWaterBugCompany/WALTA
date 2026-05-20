@@ -56,9 +56,10 @@ Then('the sample tray is filled with each identification', async function () {
             ? `-ios predicate string:label CONTAINS '${expected}'`
             : `android=new UiSelector().descriptionContains("${expected}")`;
         var el = await this.driver.$(selector);
-        if (!(await el.isDisplayed())) {
-            throw new Error(`Sample tray is missing tile for "${expected}"`);
-        }
+        await el.waitForDisplayed({
+            timeout: 10000,
+            timeoutMsg: `Sample tray is missing tile for "${expected}"`,
+        });
     }
 });
 
