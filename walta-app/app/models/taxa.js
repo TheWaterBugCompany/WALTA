@@ -84,8 +84,11 @@ exports.definition = {
 				log(`updating photo from ${file} to ${newPhotoName}`);
 				var taxonPhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				photoFile.move(taxonPhotoPath.nativePath);
-				this.set( "taxonPhotoPath", taxonPhotoPath.nativePath );
-				return this.get("taxonPhotoPath");	
+				// Store the relative name, not the absolute nativePath: the iOS
+				// data-container UUID changes across updates, so an absolute path
+				// goes stale (WB-88). PhotoUtils.absolutePath resolves the name.
+				this.set( "taxonPhotoPath", newPhotoName );
+				return this.get("taxonPhotoPath");
 			},
 
 			getPhoto() {

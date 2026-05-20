@@ -4,7 +4,7 @@ var debug = (m, tag = "media") => Logger.debug(m, tag);
 var error = (m, tag = "media") => Logger.error(m, tag);
 var moment = require('lib/moment');
 var { removeFilesBeginningWith } = require('logic/FileUtils');
-var { optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
+var { optimisePhoto, savePhoto, loadPhoto, absolutePath } = require('util/PhotoUtils');
 var Topics = require("ui/Topics");
 
 var readOnlyMode = false;
@@ -151,8 +151,12 @@ function setImage( fileOrBlob ) {
             $.photoUrls = [photo];
         } else {
             debug(`not calling generateThumbnail fileOrBlob = ${fileOrBlob}`)
-            $.photo.image = fileOrBlob;
-            $.photoUrls = [fileOrBlob];
+            // Resolve to the current container's absolute path: stored paths may
+            // be relative names or legacy absolute paths with a stale container
+            // UUID, neither of which ImageView.image can load directly (WB-88).
+            var resolved = absolutePath(fileOrBlob).nativePath;
+            $.photo.image = resolved;
+            $.photoUrls = [resolved];
         }
         
     }
