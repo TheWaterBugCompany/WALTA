@@ -8,21 +8,13 @@ if (Alloy.CFG.environment === "production") {
   $.appVersion.text = `Test Server v${Ti.App.version}`;
   $.appVersion.color = Alloy.CFG.colors.errorDark;
 }
-// WB-89: tag each Menu instance so multi-instance traces are readable.
-var __menuInstanceId = `M${Date.now().toString(36)}${Math.floor(Math.random()*1e4).toString(36)}`;
-Ti.API.info(`[WB89-Menu ${__menuInstanceId}] init; token=${!!Alloy.Globals.CerdiApi.retrieveUserToken()}`);
-
 // Refresh the login label whenever auth state changes — lets the menu stay
 // correct without needing to be recreated (which Navigation.openController
 // won't do anyway when Menu is already current; see WB-67).
-function onLoggedIn() {
-  Ti.API.info(`[WB89-Menu ${__menuInstanceId}] LOGGEDIN received; token=${!!Alloy.Globals.CerdiApi.retrieveUserToken()}`);
-  updateLoginText();
-}
+function onLoggedIn() { updateLoginText(); }
 Topics.subscribe(Topics.LOGGEDIN, onLoggedIn);
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-  Ti.API.info(`[WB89-Menu ${__menuInstanceId}] close — unsubscribing LOGGEDIN`);
   Topics.unsubscribe(Topics.LOGGEDIN, onLoggedIn);
   $.destroy();
   $.off();
@@ -119,9 +111,7 @@ function helpClick() {
 }
 
 function updateLoginText() {
-  var hasToken = !!Alloy.Globals.CerdiApi.retrieveUserToken();
-  Ti.API.info(`[WB89-Menu ${__menuInstanceId}] updateLoginText; token=${hasToken}`);
-  if ( hasToken ) {
+  if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
       $.logInLabel.text = "You are Logged in";
       $.logInLabel.accessibilityLabel = "You are Logged in";
   }
