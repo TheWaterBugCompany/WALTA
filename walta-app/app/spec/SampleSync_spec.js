@@ -654,10 +654,11 @@ describe("SampleSync", function () {
             sample.loadByServerId(473);
             // checking the site photo id proves the code was run
             expect(sample.get("serverSitePhotoId")).to.equal(1948);
-            // check the photo path contans the correct photo - we compare file sizes 
-            let sampleSitePhoto = Ti.Filesystem.getFile(sample.getSitePhoto());
+            // resolve the stored path the same way production does (loadPhoto →
+            // absolutePath) and compare content; getSitePhoto now returns a
+            // relative name, not an absolute path.
             let siteMockBlob = siteMock.read();
-            let photoBlob = sampleSitePhoto.read();
+            let photoBlob = loadPhoto(sample.getSitePhoto());
             expect(siteMockBlob.length).to.equal(photoBlob.length);
 
         });
@@ -744,9 +745,8 @@ describe("SampleSync", function () {
             function verifyTaxon(i) {
                 let taxon = taxa.at(i);
                 expect(taxon.get("serverCreaturePhotoId")).to.equal(creatureMocks[i].id);
-                let creaturePhoto = Ti.Filesystem.getFile(taxon.getPhoto());
                 let expectedBlob = creatureMocks[i].photo.read();
-                let actualBlob = creaturePhoto.read();
+                let actualBlob = loadPhoto(taxon.getPhoto());
                 expect(expectedBlob.length).to.equal(actualBlob.length);
             }
             // checking the site photo id proves the code was run
