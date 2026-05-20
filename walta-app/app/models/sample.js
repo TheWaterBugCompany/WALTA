@@ -119,7 +119,9 @@ exports.definition = {
 				removeFilesBeginningWith(`sitePhoto_${this.get("sampleId")}_`);
 				var sitePhotoPath = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, newPhotoName);
 				Ti.Filesystem.getFile(...file).move(sitePhotoPath.nativePath);
-				this.set( "sitePhotoPath", sitePhotoPath.nativePath );
+				// Store the relative name, not the absolute nativePath (see WB-88
+				// / taxa.setPhoto): absolute container paths go stale on update.
+				this.set( "sitePhotoPath", newPhotoName );
 				this.set( "serverSitePhotoId", null); // indicates this photo hasn't been uploaded yet
 			},
 

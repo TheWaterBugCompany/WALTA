@@ -1,17 +1,29 @@
 var Logger = require('util/Logger');
 var info = (m, tag = "media") => Logger.debug(m, tag);
 var log = (m, tag = "media") => Logger.log(m, tag);
-function absolutePath(path) {
+// Pure decision: which base directory a stored photo path belongs to, and the
+// segment to join onto it. Kept Ti-free so it's unit-testable.
+//
+// `file:///` values are legacy absolute paths that embed the iOS data-container
+// UUID, which changes across app updates/reinstalls — so the stored prefix can
+// point at a dead container. We collapse them to their basename and re-resolve
+// against the *current* data directory, healing stale rows on read (WB-88).
+function resolvePhotoLocation(path) {
     if ( path.startsWith("file:///") ) {
-        //info(`${path} starts with file:///`);
-        return Ti.Filesystem.getFile(path);
+        return { dir: "data", name: path.slice(path.lastIndexOf("/") + 1) };
     } else if ( path.startsWith("/") ) {
-        //info(`${path} starts with /`)
-        return Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,path);
+        return { dir: "resources", name: path };
     } else {
-       // info(`${path} doesn't start with /`)
-        return Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, path);
+        return { dir: "data", name: path };
     }
+}
+
+function absolutePath(path) {
+    const { dir, name } = resolvePhotoLocation(path);
+    const baseDir = dir === "resources"
+        ? Ti.Filesystem.resourcesDirectory
+        : Ti.Filesystem.applicationDataDirectory;
+    return Ti.Filesystem.getFile(baseDir, name);
 }
 
 function loadPhoto(path) {
@@ -91,6 +103,7 @@ function optimisePhoto( fullPhoto ) {
     return fullPhoto;
 }
 
+exports.absolutePath = absolutePath;
 exports.optimisePhoto = optimisePhoto;
 exports.savePhoto = savePhoto;
 exports.loadPhoto = loadPhoto;
