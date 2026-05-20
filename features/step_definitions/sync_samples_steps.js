@@ -44,16 +44,9 @@ When('I close the sync popup', async function () {
 When('I close and reopen the app', { timeout: 120000 }, async function () {
     const appId = global.launcher.appId;
     await this.driver.terminateApp(appId);
-    // Relaunch via the launcher (not driver.activateApp) so the mock-server
-    // launch args ride along again. activateApp resumes the bundle with no
-    // process arguments, so alloy.js rebuilds CerdiApi against the PRODUCTION
-    // sandbox URL — and that mis-configured instance then leaks into the next
-    // scenario via the Before-hook `walta://reset` (which is only a deeplink,
-    // not a relaunch). The next mock-credentialed login 401s against prod.
+    // Must relaunch via the launcher, not driver.activateApp — only launch()
+    // re-passes the mock-server args; activateApp would point the app at prod.
     await global.launcher.launch(appId, global.launcher.launchArgs);
-    // Wait for foreground state before the Menu waitFor — the persisted-
-    // token auto-login starts on activate and the UI isn't drivable until
-    // the activity is in state 4.
     await global.launcher.waitForForeground();
     await this.menu.waitFor();
 });

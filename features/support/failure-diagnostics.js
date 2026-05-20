@@ -26,12 +26,6 @@ After({ timeout: 30000 }, async function ({ pickle, result }) {
     captureMockCerdiLog(dir);
 });
 
-// The mock cerdi server (features/support/mock-cerdi-server.js) appends
-// every request/response to /tmp/mock-cerdi.log for the whole session.
-// When a login or sync step fails, this log tells us whether the HTTP
-// call ever reached the mock at all — distinguishing "deeplink/URL
-// handler never fired" from "login hit the server but the app didn't
-// observe LOGGEDIN".
 function captureMockCerdiLog(dir) {
     const logPath = process.env.MOCK_CERDI_LOG === '0'
         ? null
@@ -47,12 +41,6 @@ function captureMockCerdiLog(dir) {
     }
 }
 
-// Photo-diff steps save `/tmp/<thing>_photo.png` just before
-// assertLooksSame() runs; if the assertion fails, the temp file is the
-// only record of what the device actually rendered. Bundling them into
-// the artifact lets us recover them from CI (where /tmp is gone after
-// the runner shuts down) — useful for regenerating baselines when a
-// new device profile lands or the test catches a real divergence.
 function captureTempPhotos(dir) {
     try {
         for (const name of fs.readdirSync('/tmp')) {
@@ -95,12 +83,8 @@ function captureDeviceLog(platform, dir) {
             const out = execFileSync(adb, ['logcat', '-d', '-t', '500', '-s', 'TiAPI:V'], SPAWN_OPTS);
             fs.writeFileSync(path.join(dir, 'device.log'), out);
         } else if (platform === 'ios' && process.env.SIM_UDID) {
-            // Even with maxBuffer at 64MB, `simctl spawn ... log show` was
-            // failing with ENOBUFS — the kernel pipe between xcrun and Node
-            // gets backed up on a near-OOM CI runner mid-acceptance-run.
-            // Redirecting xcrun's stdout directly to a file via the shell
-            // sidesteps Node's pipe entirely, so we can take a generous
-            // window. 5m covers the full 120s step timeout + setup.
+            // Shell-redirect to a file rather than capturing via Node — piping
+            // simctl's output through spawnSync throws ENOBUFS regardless of maxBuffer.
             const rawPath = path.join(dir, 'device.log.raw');
             const r = spawnSync('sh', ['-c',
                 `xcrun simctl spawn ${process.env.SIM_UDID} log show --last 5m --style syslog > '${rawPath}'`,
@@ -108,23 +92,14 @@ function captureDeviceLog(platform, dir) {
             if (r.status !== 0) {
                 throw new Error(`xcrun exited ${r.status}${r.error ? ': ' + r.error.message : ''}`);
             }
-            // Two filters: (a) drop XCTAutomationSupport AX-scan spam that
-            // mentions "Waterbug" only as the AX target, (b) keep lines
-            // from the app's own process — `Waterbug[<pid>]:` — plus any
-            // line explicitly tagged TiAPI / TiLog / WB89.
             const filtered = fs.readFileSync(rawPath, 'utf8')
                 .split('\n')
-                .filter((l) => /(Waterbug\[\d+\]:|TiAPI|TiLog|WB89)/.test(l))
+                .filter((l) => /(Waterbug\[\d+\]:|TiAPI|TiLog)/.test(l))
                 .filter((l) => !/XCTAutomationSupport/.test(l))
                 .slice(-2000)
                 .join('\n');
             fs.writeFileSync(path.join(dir, 'device.log'), filtered);
-            // Keep the raw log too. The filter above is heuristic — if Ti.API
-            // output uses an unexpected process name (or the window mostly
-            // contained XCT scans), the filtered file will be empty. The raw
-            // file lets us see what was actually emitted. Capped at 2MB; the
-            // unfiltered 5-minute log can run to ~10 MB which is too much
-            // artifact bloat to upload routinely.
+            // Keep the raw log as a fallback when the filter misses, capped to bound artifact size.
             const rawStat = fs.statSync(rawPath);
             const RAW_CAP = 2 * 1024 * 1024;
             if (rawStat.size > RAW_CAP) {

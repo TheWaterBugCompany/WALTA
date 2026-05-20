@@ -16,10 +16,6 @@ Given('I am not logged in', function() {
 // `driver.url` on Android UiAutomator2 routes the URL via Chrome,
 // which won't deliver custom schemes reliably. `mobile: deepLink` /
 // `mobile: deepLink` (iOS) sends the intent directly to the app.
-// 120s budget: app-boot + deeplink dispatch + HTTP login + Topics.LOGGEDIN
-// propagation. 60s was enough for 6/7 scenarios on CI, but the last one in
-// run order would occasionally time out — probing whether slow macOS runners
-// (sim memory pressure accumulating across scenarios) is the cause. WB-89.
 Given('I am logged in as {string}', {timeout: 120000}, async function(emailAddress) {
     // Wait for the app to be fully booted FIRST. The launcher intent
     // (mobile: startActivity) carries cerdiServerUrl/cerdiApiSecret as
