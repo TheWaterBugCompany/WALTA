@@ -10,6 +10,8 @@ WALTA (Waterbug App) is a cross-platform mobile app for iOS and Android that ena
 
 Before writing or editing code, consult [docs/coding-style.md](docs/coding-style.md) — module system per directory, async/await direction, the comment policy (short *why* comments are welcome; long, flowery ones are a refactor signal — and architectural narrative belongs in `docs/`, not source headers), and incremental migration guidance.
 
+**Comments: default to none.** Add one only for a non-obvious *why* — a hidden constraint, a workaround for a specific bug, an invariant the surrounding code can't convey — and keep it to a single line. Never narrate the change you're making, recap the bug you just fixed, or replay hypotheses you explored: that belongs in the commit message and PR description, which don't rot. If a block seems to need a paragraph, restructure the code or move the explanation to `docs/`. When in doubt, leave it out.
+
 ## Methodology
 
 This project follows test-driven development (Kent Beck style): each behavioural change starts with a small failing test, then the minimal code to make it pass, then a tidy-up pass. Work in small increments and prefer small commits focused on a single change. The point is to drive design with tests and refactor continuously so tech debt doesn't accumulate — coverage is a byproduct of good tests, not the target.
