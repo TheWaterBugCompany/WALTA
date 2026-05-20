@@ -99,22 +99,44 @@ function captureDeviceLog(platform, dir) {
             // failing with ENOBUFS — the kernel pipe between xcrun and Node
             // gets backed up on a near-OOM CI runner mid-acceptance-run.
             // Redirecting xcrun's stdout directly to a file via the shell
-            // sidesteps Node's pipe entirely. The 30s window also keeps
-            // volume sane (it always covers the failing step + setup).
+            // sidesteps Node's pipe entirely, so we can take a generous
+            // window. 5m covers the full 120s step timeout + setup.
             const rawPath = path.join(dir, 'device.log.raw');
             const r = spawnSync('sh', ['-c',
-                `xcrun simctl spawn ${process.env.SIM_UDID} log show --last 30s --style syslog > '${rawPath}'`,
+                `xcrun simctl spawn ${process.env.SIM_UDID} log show --last 5m --style syslog > '${rawPath}'`,
             ], { stdio: ['ignore', 'inherit', 'inherit'] });
             if (r.status !== 0) {
                 throw new Error(`xcrun exited ${r.status}${r.error ? ': ' + r.error.message : ''}`);
             }
+            // Two filters: (a) drop XCTAutomationSupport AX-scan spam that
+            // mentions "Waterbug" only as the AX target, (b) keep lines
+            // from the app's own process — `Waterbug[<pid>]:` — plus any
+            // line explicitly tagged TiAPI / TiLog / WB89.
             const filtered = fs.readFileSync(rawPath, 'utf8')
                 .split('\n')
-                .filter((l) => /waterbug|titanium|TiAPI|TiLog|appium/i.test(l))
-                .slice(-1000)
+                .filter((l) => /(Waterbug\[\d+\]:|TiAPI|TiLog|WB89)/.test(l))
+                .filter((l) => !/XCTAutomationSupport/.test(l))
+                .slice(-2000)
                 .join('\n');
             fs.writeFileSync(path.join(dir, 'device.log'), filtered);
-            fs.unlinkSync(rawPath);
+            // Keep the raw log too. The filter above is heuristic — if Ti.API
+            // output uses an unexpected process name (or the window mostly
+            // contained XCT scans), the filtered file will be empty. The raw
+            // file lets us see what was actually emitted. Capped at 2MB; the
+            // unfiltered 5-minute log can run to ~10 MB which is too much
+            // artifact bloat to upload routinely.
+            const rawStat = fs.statSync(rawPath);
+            const RAW_CAP = 2 * 1024 * 1024;
+            if (rawStat.size > RAW_CAP) {
+                const fd = fs.openSync(rawPath, 'r');
+                const buf = Buffer.alloc(RAW_CAP);
+                fs.readSync(fd, buf, 0, RAW_CAP, rawStat.size - RAW_CAP);
+                fs.closeSync(fd);
+                fs.writeFileSync(path.join(dir, 'device.log.raw'), buf);
+                fs.unlinkSync(rawPath);
+            } else {
+                fs.renameSync(rawPath, path.join(dir, 'device.log.raw'));
+            }
         }
     } catch (e) {
         fs.writeFileSync(path.join(dir, 'device.log.error.txt'), `device-log capture threw: ${e && e.message}`);
