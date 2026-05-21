@@ -11,7 +11,10 @@ const { makeCerdiSampleData } = require('../../walta-app/app/spec/fixtures/Sampl
 // Default path: /tmp/mock-cerdi.log (set MOCK_CERDI_LOG=0 to disable,
 // or MOCK_CERDI_LOG=<path> to override).
 const fs = require('fs');
-function loggingHandler(hockServer) {
+function isSamplesFetch(req) {
+    return req.method === 'GET' && (req.url === '/samples' || req.url.startsWith('/samples?'));
+}
+function loggingHandler(hockServer, faultState) {
     const baseHandler = hockServer.handler.bind(hockServer);
     const logPath = process.env.MOCK_CERDI_LOG === '0'
         ? null
@@ -20,6 +23,16 @@ function loggingHandler(hockServer) {
         try { fs.writeFileSync(logPath, ''); } catch (_) { /* best-effort */ }
     }
     return function (req, res) {
+        // Lets a resilience test count history-download attempts and force them
+        // to fail, so an interrupted full sync can be driven deterministically.
+        if (isSamplesFetch(req)) {
+            faultState.sampleFetches++;
+            if (faultState.failing) {
+                res.writeHead(500);
+                res.end('injected sync fault');
+                return;
+            }
+        }
         if (!logPath) return baseHandler(req, res);
         const start = Date.now();
         const append = (line) => { try { fs.appendFileSync(logPath, line); } catch (_) { /* best-effort */ } };
@@ -63,13 +76,20 @@ function createMockCerdiServer(callback) {
         });
 
 
-    let server = http.createServer(loggingHandler(hockServer));
+    const faultState = { failing: false, sampleFetches: 0 };
+    let server = http.createServer(loggingHandler(hockServer, faultState));
     server.listen(9999, callback);
-    return { 
-        hockServer: hockServer, 
+    return {
+        hockServer: hockServer,
         server: server,
         shutdown() {
             this.server.close();
+        },
+        setSampleFetchFailing(value) {
+            faultState.failing = !!value;
+        },
+        samplesFetchCount() {
+            return faultState.sampleFetches;
         },
         registerAccount({ email, password }) {
             this.hockServer
