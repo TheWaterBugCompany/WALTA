@@ -3,8 +3,10 @@ const { AfterAll, BeforeAll, Before, setDefaultTimeout } = require('@cucumber/cu
 const { setUpWorld } = require('./all-screens');
 const { startMockServer, connectAndPrepareApp, resetApp, teardown } = require('./appium-world');
 
-// Device interactions are slow — 60s per step is the working baseline.
-setDefaultTimeout(60 * 1000);
+// Device interactions are slow, and contested CI runners run ~2x slower
+// (Android acceptance: ~5min off-peak vs ~9min at 10-15 UTC peak), so give
+// each step a generous budget so slow-but-fine steps don't self-kill.
+setDefaultTimeout(120 * 1000);
 
 // connect() can take minutes on iOS when WebDriverAgent builds from source.
 BeforeAll({ timeout: 600 * 1000 }, async function () {

@@ -20,7 +20,7 @@ class BaseScreen {
         return textElement.getText();
     }
 
-    async waitForRaw(sel, message, timeout = 60000) {
+    async waitForRaw(sel, message, timeout = 90000) {
         await this.driver.waitUntil( async () => {
             var el = await this.driver.$( sel );
             return await el.isDisplayed();
@@ -35,7 +35,7 @@ class BaseScreen {
         await this.waitForRaw( this.selector(label), `${label} not present` );
     }
 
-    async waitForText(text, timeout = 60000) {
+    async waitForText(text, timeout = 90000) {
         if ( this.isIos() ) {
             // visible == 1 filters out off-screen / overlay duplicates —
             // multiple Titanium widgets can share the same text (e.g. the
@@ -121,7 +121,7 @@ class BaseScreen {
 
     async clickRaw( sel ) {
         var el = await this.driver.$( sel );
-        await el.waitForDisplayed({ timeout: 10000 });
+        await el.waitForDisplayed({ timeout: 30000 });
         await el.click();
     }
 

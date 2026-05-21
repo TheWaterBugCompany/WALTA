@@ -27,7 +27,7 @@ Then('I can see each creature with its abundance', async function () {
             : `android=new UiSelector().descriptionStartsWith("${fragment}")`;
         const el = await this.driver.$(selector);
         await el.waitForDisplayed({
-            timeout: 10000,
+            timeout: 30000,
             timeoutMsg: `Sample tray is missing tile starting with "${fragment}"`,
         });
     }
