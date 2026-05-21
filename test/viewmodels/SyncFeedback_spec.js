@@ -23,10 +23,10 @@ function fakeLogRepository(initialEntries = []) {
 const Logger = require("../../walta-app/app/lib/util/Logger");
 
 describe("SyncFeedbackViewModel", function () {
-  let syncController, store, forceUploadCalls, vm, repo;
+  let syncController, store, forceSyncCalls, vm, repo;
 
   beforeEach(function () {
-    ({ syncController, store, forceUploadCalls } = createSyncController(SyncStore));
+    ({ syncController, store, forceSyncCalls } = createSyncController(SyncStore));
     repo = fakeLogRepository();
     vm = new SyncFeedbackViewModel({ syncController, logRepository: repo });
   });
@@ -140,9 +140,9 @@ describe("SyncFeedbackViewModel", function () {
   });
 
   describe("start()", function () {
-    it("forwards to syncController.forceUpload()", function () {
+    it("forwards to syncController.forceSync()", function () {
       vm.start();
-      expect(forceUploadCalls()).to.equal(1);
+      expect(forceSyncCalls()).to.equal(1);
     });
   });
 

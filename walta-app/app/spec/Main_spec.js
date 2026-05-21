@@ -23,9 +23,9 @@ describe("Main controller", function() {
       Survey: Survey
   }
   services.View = new View(services);
-  services.Survey.forceUpload = function() {};
+  services.Survey.uploadNewSample = function() {};
   beforeEach(function() {
-    simple.mock(services.Survey.forceUpload).returnWith();
+    simple.mock(services.Survey.uploadNewSample).returnWith();
   })
   services.Navigation = new Navigation(services);
   function currentController() { 

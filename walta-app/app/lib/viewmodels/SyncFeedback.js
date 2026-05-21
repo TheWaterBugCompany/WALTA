@@ -99,7 +99,7 @@ class SyncFeedbackViewModel extends ChangeNotifier {
   }
 
   start() {
-    this._syncController.forceUpload();
+    this._syncController.forceSync();
   }
 
   toggleLog() {

@@ -67,7 +67,7 @@ async function startApp(options) {
   // routePromise( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   routePromise(Topics.HELP,  (data) =>  Navigation.openController("Help", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ABOUT,  (data) =>  Navigation.openController("About", extend(data, { keyUrl: Key.url })));
-  Topics.subscribe(Topics.FORCE_UPLOAD,  () => Survey.forceUpload());
+  Topics.subscribe(Topics.FORCE_UPLOAD,  () => Survey.uploadNewSample());
   routePromise(Topics.NOTES,  (data) =>  Navigation.openController("Notes", data));
   routePromise(Topics.JUMPTO, async function (data) {
     if (!_.isUndefined(data.id)) {

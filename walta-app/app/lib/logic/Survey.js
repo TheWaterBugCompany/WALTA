@@ -5,9 +5,9 @@ var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
 var debug = (m, tag = "ui") => Logger.debug(m, tag);
 exports.Survey = {
-    forceUpload: function() {
-        debug("forcing synchronise");
-        SampleSync.forceUpload();
+    uploadNewSample: function() {
+        debug("uploading new sample");
+        SampleSync.uploadPending();
     },
 
     startSurvey: function( surveyType ) {

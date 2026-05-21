@@ -53,7 +53,7 @@ describe("SampleHistory controller", function() {
   });
   it('clicking the Sync button opens the SyncFeedback popup', async function() {
     Alloy.Globals.CerdiApi.retrieveUserToken = function() { return null; };
-    simple.mock(SampleSync, "forceUpload");
+    simple.mock(SampleSync, "forceSync");
     await controllerOpenTest( ctl );
     ctl.syncButton.NavButton.fireEvent("click");
     expect( ctl.syncFeedback ).to.exist;
