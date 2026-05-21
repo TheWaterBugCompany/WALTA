@@ -73,4 +73,3 @@ function rowSelected(e) {
 }
 
 updateSampleList();
-Topics.fireTopicEvent(Topics.FORCE_UPLOAD);
