@@ -707,8 +707,11 @@ jobs:
         # previous WB-54 retry-on-anything loop.
         run: |
           for attempt in 1 2; do
-            npx grunt --platform=ios --simulator --skip-build acceptance-test
-            rc=$?
+            # `|| rc=$?` keeps the grunt failure inside a list so bash's
+            # default `set -e` doesn't abort the step before we can inspect
+            # the code and decide whether to retry (WB-102).
+            rc=0
+            npx grunt --platform=ios --simulator --skip-build acceptance-test || rc=$?
             [ $rc -eq 0 ] && exit 0
             [ $rc -ne 75 ] && exit $rc
             echo "::warning ::iOS acceptance attempt $attempt returned EX_TEMPFAIL (75); retrying once (WB-94)"
