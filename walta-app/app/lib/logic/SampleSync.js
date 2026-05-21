@@ -184,15 +184,30 @@ function runSync({ download, options }) {
     syncStore.recordStart();
     info(`Starting ${download?"sync":"upload"}`);
     Topics.fireTopicEvent( Topics.SYNC_STARTED );
-    return Promise.resolve()
-        .then(() => download ? sampleDownloader.downloadSamples() : undefined )
-        .then(checkCancelled)
-        .then(() => sampleUploader.uploadSamples() )
-        .then(checkCancelled)
+    let didDownload = download;
+    function syncPass( withDownload ) {
+        return Promise.resolve()
+            .then(() => withDownload ? sampleDownloader.downloadSamples() : undefined )
+            .then(checkCancelled)
+            .then(() => sampleUploader.uploadSamples() )
+            .then(checkCancelled);
+    }
+    return syncPass( download )
         .then(() => {
-            if ( download ) setFullSyncPending(false);
+            // A full sync requested while this one was already running set
+            // fullSyncPending mid-flight (forceSync bailed on the isSyncing
+            // guard). Run its download now, in this same session, so the
+            // request isn't dropped, deferred to the backstop timer, or
+            // reported complete before the download actually happened.
+            if ( !didDownload && isFullSyncPending() ) {
+                didDownload = true;
+                return syncPass( true );
+            }
+        })
+        .then(() => {
+            if ( didDownload ) setFullSyncPending(false);
             syncStore.recordSuccess();
-            info(`${download?"Sync":"Upload"} finished successfully`);
+            info(`${didDownload?"Sync":"Upload"} finished successfully`);
             Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } );
         })
         .catch( err => {
