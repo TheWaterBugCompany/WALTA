@@ -11,11 +11,7 @@ var cancelled = false;
 var syncStore = new SyncStore();
 
 const CANCELLED_MARKER = "__sync_cancelled__";
-// Persisted across launches: records that the user has asked for a full
-// history sync (download + upload) that hasn't completed yet. We never
-// *initiate* a full sync automatically, but a user-requested one is
-// resumed until it succeeds — across network drops, backgrounding and
-// app restarts (WB-8).
+// A user-requested full sync, persisted so it resumes until it succeeds; never auto-set (WB-8).
 const FULL_SYNC_PENDING_KEY = "fullSyncPending";
 
 function areWeSyncing() {
@@ -30,9 +26,7 @@ function removeListener(cb) {
     syncStore.removeListener(cb);
 }
 
-// Expose the store's read-side getters on the module so consumers
-// that treat SampleSync as a syncController can read `.status`,
-// `.percent`, etc. directly — same shape as SyncStore itself.
+// Expose the store's read-side getters so consumers can read SampleSync like a SyncStore.
 ["status", "percent", "statusText", "logLines", "errorMessage", "hasErrors"].forEach(function (attr) {
     Object.defineProperty(exports, attr, { get: function () { return syncStore[attr]; }, enumerable: true });
 });
@@ -97,9 +91,7 @@ function init() {
     } else {
         Ti.App.addEventListener( 'resumed', appResumed );
     }
-    // Never initiate a sync on launch. Only resume work the user already
-    // asked for — a pending full sync, or queued uploads (WB-8). Gated on
-    // an established session so we don't race a not-yet-ready login (WB-103).
+    // Never auto-initiate; only resume user-requested work, and only with a session (WB-103).
     if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
         resumeInterruptedWork();
     }
@@ -112,22 +104,19 @@ function onLoggedOut() {
     setFullSyncPending(false);
 }
 
-// User tapped Sync: a full history sync (download + upload). Records the
-// intent so it survives interruption, then runs.
+// User tapped Sync: a full history sync (download + upload), resumable across interruption.
 function forceSync(options) {
     setFullSyncPending(true);
     clearUploadTimer();
     return runSync({ download: true, options });
 }
 
-// Background upload of the pending-upload queue only — no historical
-// download. Fired on survey submit and when resuming queued uploads.
+// Upload the pending queue only — no history download (survey submit, resume).
 function uploadPending(options) {
     return runSync({ download: false, options });
 }
 
-// Continue work the user has already requested, without ever initiating a
-// fresh full sync. A pending full sync wins; otherwise flush queued uploads.
+// Resume user-requested work only: a pending full sync wins, else flush queued uploads.
 function resumeInterruptedWork(options) {
     if ( ! Alloy.Globals.CerdiApi.retrieveUserToken() ) {
         debug("Not logged in — nothing to resume.");
@@ -162,8 +151,7 @@ function runSync({ download, options }) {
            debug("Not rescheduling sync");
            return Promise.resolve();
         }
-        // Backstop retry only when work remains; an empty queue with no
-        // pending full sync leaves no lingering timer.
+        // Only reschedule when work remains, so an idle queue leaves no lingering timer.
         if ( isFullSyncPending() || hasPendingUploads() ) {
            debug("Work remains — scheduling retry");
            timeoutHandler = setTimeout( resumeInterruptedWork, SYNC_INTERVAL );
@@ -192,7 +180,6 @@ function runSync({ download, options }) {
         return;
     }
 
-    // flag that were are already syncing - to avoid reentrant calls
     isSyncing = true;
     syncStore.recordStart();
     info(`Starting ${download?"sync":"upload"}`);
