@@ -66,7 +66,12 @@ function init() {
     Topics.subscribe( Topics.LOGGEDIN, startSynchronise );
     Topics.subscribe( Topics.LOGGEDOUT, onLoggedOut );
     Topics.subscribe( Topics.UPLOAD_PROGRESS, handleUploadProgress );
-    startSynchronise();
+    // Only sync eagerly if we already have a session; otherwise wait for the
+    // LOGGEDIN event. Starting unconditionally raced a not-yet-established (or
+    // about-to-be-cleared) login and caused "Not logged in" mid-sync (WB-103).
+    if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
+        startSynchronise();
+    }
 }
 
 function onLoggedOut() {
