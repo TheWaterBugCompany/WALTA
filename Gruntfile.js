@@ -589,10 +589,15 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask("cucumber", function () {
       const done = this.async();
-      const tags = grunt.option('cucumber-tags') || 'not @skip';
+      const platform = grunt.option('platform');
+      // Default excludes @skip everywhere; on iOS it also excludes @skip-ios
+      // (e.g. the form-login scenario whose iOS "Save Password?" sheet leaks
+      // across scenarios — WB-87). Android still runs those.
+      const tags = grunt.option('cucumber-tags')
+        || (platform === 'ios' ? 'not @skip and not @skip-ios' : 'not @skip');
       const name = grunt.option('grep') || null;
       const appiumOptions = {
-        platform: grunt.option('platform'),
+        platform,
         isSimulator: !!grunt.option('simulator'),
         host: grunt.option('kobiton') ? 'kobiton' : 'local',
       };
