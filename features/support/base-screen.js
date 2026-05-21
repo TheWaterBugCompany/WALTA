@@ -4,7 +4,7 @@ class BaseScreen {
         this.driver = world.driver;
         this.platform = world.platform;
         this.world = world;
-        this.presenceSelector=this.selector("unknown_base_screen"); // casues waitFor to fail
+        this.presenceSelector=this.selector("unknown_base_screen"); // causes waitFor to fail until a subclass overrides it
     }
 
     isIos() { return this.platform === "ios"; }
@@ -37,17 +37,14 @@ class BaseScreen {
 
     async waitForText(text, timeout = 90000) {
         if ( this.isIos() ) {
-            // visible == 1 filters out off-screen / overlay duplicates —
-            // multiple Titanium widgets can share the same text (e.g. the
-            // light/dark labels stacked on a progress bar) and `$()`
-            // returns the first match, which may be the hidden one.
+            // visible == 1 filters out off-screen/overlay duplicates that share
+            // the same text (e.g. stacked light/dark progress-bar labels).
             await this.waitForRaw(
                 `-ios predicate string:visible == 1 AND (label CONTAINS '${text}' OR name CONTAINS '${text}' OR value CONTAINS '${text}')`,
                 `text "${text}" not present`,
                 timeout);
         } else {
-            // TextView covers Label / Button text; EditText covers TextField /
-            // TextArea (e.g. the SyncFeedback log pane).
+            // TextView covers Label/Button text; EditText covers TextField/TextArea.
             await this.waitForRaw(
                 `//*[(self::android.widget.TextView or self::android.widget.EditText) and contains(@text,"${text}")]`,
                 `text "${text}" not present`, timeout);
@@ -70,10 +67,9 @@ class BaseScreen {
         var location = await el.getLocation();
         var dist = Math.round(size.width * percent / 100);
         var cy = Math.round(location.y + size.height / 2);
-        // iOS slider value at min sits at the left edge; start a few px in
-        // to land on the thumb, then drag to the target offset. Use W3C
-        // actions with an explicit pause — `mobile: dragFromToForDuration`
-        // doesn't reliably fire the Titanium slider's change event on sim.
+        // iOS: start a few px in to land on the thumb. W3C actions with an
+        // explicit pause — dragFromToForDuration doesn't reliably fire the
+        // Titanium slider's change event on sim.
         var fromX = this.isIos() ? location.x + 10 : location.x;
         await this.driver.performActions([{
             type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
@@ -94,9 +90,8 @@ class BaseScreen {
         }
         await el.setValue(text);
         if ( this.isIos() ) {
-            // Titanium text fields don't expose a standard keyboard dismiss
-            // button, so hideKeyboard() fails. Tap above the keyboard to
-            // blur the text field and dismiss it.
+            // hideKeyboard() fails on Titanium text fields; tap above the
+            // keyboard to blur the field and dismiss it.
             var size = await this.driver.getWindowSize();
             await this.driver.performActions([{
                 type: 'pointer', id: 'finger1', parameters: { pointerType: 'touch' },
