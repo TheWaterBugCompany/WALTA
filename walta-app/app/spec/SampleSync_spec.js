@@ -1121,7 +1121,7 @@ describe("SampleSync", function () {
         // need to fake being logged in or else sync operation fails
         simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
                .resolveWith(true);
-        await SampleSync.forceUpload({delay:0, noschedule:true});
+        await SampleSync.forceSync({delay:0, noschedule:true});
         
 
         // should upload sample and new photo
@@ -1392,9 +1392,116 @@ describe("SampleSync", function () {
             // check that the taxon has actaully been removed
             sample.loadByServerId(473);
             let taxa  = sample.loadTaxa();
-            expect(taxa.size()).to.equal(1); 
+            expect(taxa.size()).to.equal(1);
 
 
+        });
+    })
+
+    context("WB-8: upload / full-sync separation", function () {
+        const FULL_SYNC_PENDING_KEY = "fullSyncPending";
+
+        function mockLoggedIn() {
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUserToken").returnWith({ accessToken: "tok" });
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUserId").returnWith(38);
+        }
+
+        function mockUploadEndpoints() {
+            simple.mock(Alloy.Globals.CerdiApi, "submitSample").resolveWith({ id: 123, user_id: 38 });
+            simple.mock(Alloy.Globals.CerdiApi, "submitSitePhoto").resolveWith({ id: 1 });
+        }
+
+        function queueNewSample() {
+            makeSampleData().save();
+        }
+
+        this.beforeEach(function () {
+            clearMockSampleData();
+            Ti.App.Properties.setBool(FULL_SYNC_PENDING_KEY, false);
+        });
+
+        this.afterEach(function () {
+            Ti.App.Properties.setBool(FULL_SYNC_PENDING_KEY, false);
+            simple.restore();
+        });
+
+        it("forceSync downloads then uploads", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            queueNewSample();
+
+            await SampleSync.forceSync({ delay: 0, noschedule: true });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(1);
+            expect(Alloy.Globals.CerdiApi.submitSample.callCount, "submitSample (upload)").to.equal(1);
+        });
+
+        it("uploadPending uploads without downloading", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            queueNewSample();
+
+            await SampleSync.uploadPending({ delay: 0, noschedule: true });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(0);
+            expect(Alloy.Globals.CerdiApi.submitSample.callCount, "submitSample (upload)").to.equal(1);
+        });
+
+        it("resumeInterruptedWork resumes a pending full sync (downloads)", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            queueNewSample();
+            Ti.App.Properties.setBool(FULL_SYNC_PENDING_KEY, true);
+
+            await SampleSync.resumeInterruptedWork({ delay: 0, noschedule: true });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(1);
+        });
+
+        it("resumeInterruptedWork flushes queued uploads only when no full sync is pending", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            queueNewSample();
+
+            await SampleSync.resumeInterruptedWork({ delay: 0, noschedule: true });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(0);
+            expect(Alloy.Globals.CerdiApi.submitSample.callCount, "submitSample (upload)").to.equal(1);
+        });
+
+        it("resumeInterruptedWork does nothing when there is no pending work", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+
+            await SampleSync.resumeInterruptedWork({ delay: 0, noschedule: true });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(0);
+            expect(Alloy.Globals.CerdiApi.submitSample.callCount, "submitSample (upload)").to.equal(0);
+        });
+
+        it("clears the pending-full-sync flag on success but keeps it when the sync fails", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            queueNewSample();
+
+            await SampleSync.forceSync({ delay: 0, noschedule: true });
+            expect(Ti.App.Properties.getBool(FULL_SYNC_PENDING_KEY), "flag after success").to.equal(false);
+
+            // A failed download leaves the intent set so it resumes later (WB-8 resilience).
+            simple.restore();
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").rejectWith(new Error("network blip"));
+            queueNewSample();
+
+            await SampleSync.forceSync({ delay: 0, noschedule: true });
+            expect(Ti.App.Properties.getBool(FULL_SYNC_PENDING_KEY), "flag after failure").to.equal(true);
         });
     })
 });

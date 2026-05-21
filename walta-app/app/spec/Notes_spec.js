@@ -62,7 +62,7 @@ describe("Notes controller", function () {
       },
       Key: mockKey,
       Survey: {
-        forceUpload: function () { },
+        uploadNewSample: function () { },
         startSurvey: function () { }
       }
     }
