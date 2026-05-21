@@ -17,6 +17,13 @@ function adb() {
         : 'adb';
 }
 
+// Scope adb to a specific device when ANDROID_SERIAL is set, so `pm clear`
+// etc. don't fail with "more than one device/emulator" on a dev box that
+// has both an emulator and a physical phone attached (WB-105).
+function adbDeviceArgs() {
+    return process.env.ANDROID_SERIAL ? ['-s', process.env.ANDROID_SERIAL] : [];
+}
+
 function mockCerdiUrl() {
     if (process.env.MOCK_CERDI_URL) return process.env.MOCK_CERDI_URL;
     // Android emulator reaches the host loopback only via 10.0.2.2.
@@ -50,9 +57,10 @@ async function connectAndPrepareApp({ platform, isSimulator }) {
     // don't propagate to a relaunch (a pm clear afterwards would negate it).
     if (platform === 'android' && isSimulator) {
         try {
-            execFileSync(adb(), ['shell', 'pm', 'clear', APP_ID]);
-            execFileSync(adb(), ['shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_FINE_LOCATION']);
-            execFileSync(adb(), ['shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_COARSE_LOCATION']);
+            const dev = adbDeviceArgs();
+            execFileSync(adb(), [...dev, 'shell', 'pm', 'clear', APP_ID]);
+            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_FINE_LOCATION']);
+            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_COARSE_LOCATION']);
         } catch (e) {
             console.warn(`[appium-world] adb pm clear/grant failed: ${e.message}`);
         }
