@@ -341,6 +341,13 @@ class AppiumLauncher {
     );
   }
 
+  // Sends the app to the background for `seconds`, then it returns to the
+  // foreground — firing the platform resume event the app listens for.
+  async background(seconds = 2) {
+    const driver = await this.connect();
+    await driver.execute("mobile: backgroundApp", { seconds });
+  }
+
   // Polls `mobile: queryAppState` until the app is in the foreground
   // (state === 4) or the timeout elapses. Encapsulates the platform-specific
   // param name — Android takes `appId`, iOS takes `bundleId` — that
