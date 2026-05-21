@@ -1503,5 +1503,28 @@ describe("SampleSync", function () {
             await SampleSync.forceSync({ delay: 0, noschedule: true });
             expect(Ti.App.Properties.getBool(FULL_SYNC_PENDING_KEY), "flag after failure").to.equal(true);
         });
+
+        it("resumes a pending full sync when the network comes back up", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            Ti.App.Properties.setBool(FULL_SYNC_PENDING_KEY, true);
+
+            await SampleSync.networkChanged({ networkType: Ti.Network.NETWORK_WIFI });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(1);
+        });
+
+        it("does not start a sync when the network drops", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            queueNewSample();
+            Ti.App.Properties.setBool(FULL_SYNC_PENDING_KEY, true);
+
+            await SampleSync.networkChanged({ networkType: Ti.Network.NETWORK_NONE });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(0);
+        });
     })
 });

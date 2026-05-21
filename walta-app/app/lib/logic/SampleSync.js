@@ -71,7 +71,7 @@ function networkChanged( e ) {
         clearUploadTimer();
     } else {
         info("Network connection up.");
-        resumeInterruptedWork();
+        return resumeInterruptedWork();
     }
 }
 
@@ -212,6 +212,7 @@ function runSync({ download, options }) {
 exports.forceSync = forceSync;
 exports.uploadPending = uploadPending;
 exports.resumeInterruptedWork = resumeInterruptedWork;
+exports.networkChanged = networkChanged;
 exports.areWeSyncing = areWeSyncing;
 exports.addListener = addListener;
 exports.removeListener = removeListener;
