@@ -15,11 +15,12 @@ When('I tap Show Logs in the sync popup', async function () {
 });
 
 Then('the log pane shows sync activity from the Logger', async function () {
-    // SampleSync emits "Sync finished successfully" via Logger.info when
-    // the chain completes — the LOG_FILTER (facility=sync, minLevel=info)
-    // surfaces it in the pane. Since the previous step already awaited
-    // "Sync complete", that info entry has been recorded by now.
-    await this.syncFeedback.expectLogsContain("Sync finished");
+    // Assert a real-work milestone, not just a start/end marker: the pane must
+    // show the sync genuinely downloading. "Downloading site photo" is logged
+    // mid-sync (before completion), so it's reliably present when we look —
+    // unlike the final "Sync finished" line, which races the async SqlSink
+    // write. Sync completion itself is asserted by the preceding step.
+    await this.syncFeedback.expectLogsContain("Downloading site photo");
 });
 
 When('I remember the first {int} lines of the log pane', async function (n) {
