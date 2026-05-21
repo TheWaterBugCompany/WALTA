@@ -125,7 +125,7 @@ Technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBUTORS
 - [docs/installation.md](docs/installation.md) — setup guide: prerequisites, Titanium SDK, signing, env vars
 - [docs/coding-style.md](docs/coding-style.md) — JS conventions and comment policy
 - [docs/architecture-vision.md](docs/architecture-vision.md) — long-term architectural direction
-- [docs/testing.md](docs/testing.md) — five test layers and what to use when
+- [docs/testing.md](docs/testing.md) — five test layers and what to use when. Note the deliberate split between the two top layers: `features/` (Cucumber) is business-readable BDD tied to product requirements; `end-to-end-testing/` (Mocha+Appium) is for extensive, mechanism-heavy integration (e.g. sync interrupt/resume) that would clutter a business scenario. The E2E layer is dormant pending WB-104 — don't push low-level integration mechanics into `features/`.
 - [docs/device-specs.md](docs/device-specs.md) — device-spec idioms and gotchas
 - [docs/pull-requests.md](docs/pull-requests.md) — PR template
 - [docs/patterns/](docs/patterns/) — pattern/module summaries; see [docs/patterns/README.md](docs/patterns/README.md) for the index
