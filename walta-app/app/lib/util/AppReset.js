@@ -15,6 +15,11 @@ function reset() {
   Alloy.Globals.CerdiApi.storeUserToken(null, null);
   Ti.App.Properties.removeProperty('appAccessTokenLive');
 
+  // Reset is a logout, so announce it — SampleSync cancels any in-flight
+  // sync started against the now-cleared token (WB-103), mirroring the
+  // real logout path in Menu.js.
+  Topics.fireTopicEvent(Topics.LOGGEDOUT, null);
+
   // Wipe the local sample/taxa tables. Same DELETE pattern as
   // walta-app/app/spec/util/TestUtils.clearDatabase.
   const db = Ti.Database.open('samples');
