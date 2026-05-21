@@ -850,3 +850,249 @@ jobs:
           name: acceptance-failures-android
           path: /tmp/acceptance-artifacts
           if-no-files-found: ignore
+
+  # ── 6. iOS simulator end-to-end tests ─────────────────────────────────────
+  # Mocha+Appium full-stack tests (end-to-end-testing/). Mirrors the iOS
+  # acceptance job — same prebuilt app artifact, sim boot, WDA + Appium
+  # caches — but runs the `end-to-end-test` grunt task. Reserved for
+  # mechanism-heavy flows device specs can't reach (e.g. kill + restart),
+  # per docs/testing.md.
+  ios-simulator-e2e-tests:
+    name: iOS simulator end-to-end tests
+    needs: [changes, ios-build]
+    if: needs.changes.outputs.relevant == 'true'
+    runs-on: macos-latest
+    timeout-minutes: 30
+    env:
+      WDA_DERIVED_DATA_PATH: ${{ github.workspace }}/.wda-derived
+      XCODE_VERSION: "26.3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select pinned Xcode
+        run: |
+          XCODE_APP="/Applications/Xcode_${XCODE_VERSION}.app"
+          if [ ! -d "$XCODE_APP" ]; then
+            echo "Xcode ${XCODE_VERSION} not installed on this runner. Available:" >&2
+            ls /Applications | grep -E '^Xcode_' >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+          xcodebuild -version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Save node_modules cache
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Run install.sh
+        run: sh install.sh
+
+      - name: Download Waterbug.app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: waterbug-ios-sim
+          path: /tmp
+
+      - name: Extract Waterbug.app to builds/test-sim
+        run: |
+          mkdir -p builds/test-sim
+          tar -xzf /tmp/waterbug-ios-sim.tgz -C builds/test-sim
+
+      - name: Select iOS simulator
+        id: sim
+        run: |
+          SELECTED=$(xcrun simctl list devices available -j | jq -r '
+            [.devices | to_entries[]
+             | select(.key | test("iOS-[0-9]"))
+             | {runtime: (.key | capture("iOS-(?<v>[0-9-]+)").v),
+                devices: [.value[] | select(.name | contains("iPhone")) | select(.isAvailable)]}]
+            | sort_by(.runtime | split("-") | map(tonumber)) | reverse
+            | .[0]
+            | .devices[0] | "\(.udid) \(.name)"')
+          UDID=$(echo "$SELECTED" | cut -d" " -f1)
+          NAME=$(echo "$SELECTED" | cut -d" " -f2-)
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Selected: $NAME ($UDID)"
+
+      - name: Boot iOS simulator with Simulator.app UI
+        run: |
+          SIM_UDID="${{ steps.sim.outputs.udid }}"
+          STATE=$(xcrun simctl list devices -j | jq -r ".devices[][] | select(.udid==\"$SIM_UDID\") | .state")
+          if [ "$STATE" = "Booted" ]; then
+            echo "Simulator already booted — skipping boot"
+          else
+            open -a Simulator --args -CurrentDeviceUDID "$SIM_UDID"
+            xcrun simctl bootstatus "$SIM_UDID"
+          fi
+          echo "Simulator boot step complete"
+
+      - name: Cache prebuilt WebDriverAgent
+        id: wda-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.WDA_DERIVED_DATA_PATH }}
+          key: wda-prebuilt-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/package.json') }}
+
+      - name: Prebuild WebDriverAgent
+        if: steps.wda-cache.outputs.cache-hit != 'true'
+        run: bash build-utils/prebuild-wda.sh
+
+      - name: Cache Appium driver hashes
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/appium
+          key: appium-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            appium-cache-${{ runner.os }}-
+
+      - name: Run iOS end-to-end tests
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        # Mocha has no EX_TEMPFAIL signal to distinguish infra flake from a
+        # real failure, so retry once on any failure (same rationale as the
+        # Android acceptance job, WB-54).
+        run: |
+          npx grunt --platform=ios --simulator --skip-build end-to-end-test || { echo "::warning ::iOS e2e first attempt failed; retrying once"; npx grunt --platform=ios --simulator --skip-build end-to-end-test; }
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failures-ios
+          path: /tmp/acceptance-artifacts
+          if-no-files-found: ignore
+
+  # ── 7. Android emulator end-to-end tests ──────────────────────────────────
+  android-emulator-e2e-tests:
+    name: Android emulator end-to-end tests
+    needs: [changes, android-build]
+    if: needs.changes.outputs.relevant == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Save node_modules cache
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Run install.sh
+        run: sh install.sh
+
+      - name: Download Waterbug.apk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: waterbug-android-sim
+          path: builds/test-sim
+
+      - name: Enable KVM for hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Restore Android AVD cache
+        id: avd-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-30
+          key: avd-30-google_apis-x86
+
+      - name: Pre-warm AVD snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86
+          avd-name: Medium_Phone_API_36.1
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: echo "AVD snapshot ready for caching"
+
+      - name: Save Android AVD cache
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-30
+          key: avd-30-google_apis-x86
+
+      - name: Cache Appium driver hashes
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/appium
+          key: appium-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            appium-cache-${{ runner.os }}-
+
+      - name: Boot Android emulator and run end-to-end tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86
+          avd-name: Medium_Phone_API_36.1
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            echo "Emulator booted"
+            npx grunt --platform=android --simulator --skip-build end-to-end-test || { echo "::warning ::Android e2e first attempt failed; retrying once"; npx grunt --platform=android --simulator --skip-build end-to-end-test; }
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failures-android
+          path: /tmp/acceptance-artifacts
+          if-no-files-found: ignore
