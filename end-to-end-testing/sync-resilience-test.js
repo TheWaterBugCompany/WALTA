@@ -68,4 +68,29 @@ describe('E2E resilience: an interrupted full sync resumes after relaunch', func
             () => global.mockCerdiServer.samplesFetchCount() > fetchesBeforeRelaunch,
             { timeout: 120000 });
     });
+
+    it('resumes the pending full sync when brought back to the foreground', async function () {
+        const world = global.world;
+        await login(world, 'test@example.com');
+
+        global.mockCerdiServer.setSampleFetchFailing(true);
+
+        await world.menu.selectArchive();
+        await world.archive.clickSyncNow();
+
+        // The download has been attempted and failed, so fullSyncPending stays
+        // set. No retry fires on its own — the backstop is ~30 min away — so the
+        // fetch count is quiet until we bring the app back to the foreground.
+        await waitUntil(() => global.mockCerdiServer.samplesFetchCount() >= 1);
+        const fetchesBeforeBackground = global.mockCerdiServer.samplesFetchCount();
+
+        // Background then foreground: the app's resume handler flushes the
+        // pending full sync, re-fetching /samples without a fresh Sync tap.
+        await global.launcher.background(2);
+        await global.launcher.waitForForeground();
+
+        await waitUntil(
+            () => global.mockCerdiServer.samplesFetchCount() > fetchesBeforeBackground,
+            { timeout: 120000 });
+    });
 });
