@@ -1,30 +1,15 @@
 'use strict';
 const { Given, When, Then } = require('@cucumber/cucumber');
 Given('I am not logged in', function() {
-/*     @current_page = page(MenuScreen).await
-    if @current_page.loggedIn?
-        @current_page.log_out
-    end
-    expect( @current_page.loggedIn? ).to eq(false) */
 });
 
-// Logs in via the `walta://login` deeplink — the app's UrlActions
-// dispatcher calls CerdiApi.loginUser then fires Topics.LOGGEDIN, which
-// the menu controller observes. Password is fixed to match the mock
-// CERDI server's /token/create stub.
-//
-// `driver.url` on Android UiAutomator2 routes the URL via Chrome,
-// which won't deliver custom schemes reliably. `mobile: deepLink` /
-// `mobile: deepLink` (iOS) sends the intent directly to the app.
+// Password is fixed to match the mock CERDI server's /token/create stub.
+// `mobile: deepLink` (not driver.url, which Android routes via Chrome and
+// drops custom schemes) sends the walta://login intent straight to the app.
 Given('I am logged in as {string}', {timeout: 120000}, async function(emailAddress) {
-    // Wait for the app to be fully booted FIRST. The launcher intent
-    // (mobile: startActivity) carries cerdiServerUrl/cerdiApiSecret as
-    // extras; alloy.js reads those and builds CerdiApi against the mock
-    // server. If we fire the deeplink before that boot completes, the
-    // OS treats the deeplink as a cold-launch intent (no extras) and
-    // CerdiApi is built against the production sandbox URL — login then
-    // never reaches the mock and the test silently passes the menu wait
-    // but is never actually authenticated.
+    // Wait for boot first: a deeplink fired before boot is treated as a
+    // cold-launch intent without the cerdiServerUrl/Secret extras, so CerdiApi
+    // builds against prod and login silently never reaches the mock.
     await this.menu.waitFor();
     const url = `walta://login?email=${encodeURIComponent(emailAddress)}&password=password`;
     if (this.platform === 'android') {
@@ -39,58 +24,31 @@ Given('I am logged in as {string}', {timeout: 120000}, async function(emailAddre
             bundleId: 'net.thewaterbug.waterbug',
         });
     }
-    // Wait for the "You are Logged in" label to appear in the Menu —
-    // this is the deterministic UI signal that LOGGEDIN fired and the
-    // menu re-rendered with logged-in state. Replaces a fixed sleep
-    // that was sometimes too short on iOS post-reinstall.
     await this.menu.waitForLabel("You are Logged in");
-    // On iOS, LOGGEDIN → HOME → Navigation.openController("Menu") tears
-    // down the existing Menu and opens a new one; the label appears on
-    // the new instance, but immediate clicks can race against the
-    // tear-down. A brief settle avoids stale-element clicks.
+    // iOS re-opens the Menu on LOGGEDIN; let it settle to avoid a stale click.
     if (this.platform === 'ios') {
         await new Promise(r => setTimeout(r, 1500));
     }
 });
 
 Given('the user "([^"]*)" does not exist', function(emailAddress) {
-/*     MockServer.create_user_does_not_exist() */
 });
 
 Then('I am registered on the server', function() {
-/*    serverReq = JSON.parse( Mirage::Client.new.requests(2).body )
-   expect( serverReq["email"] ).to eq(@emailAddress)
-   expect( serverReq["name"] ).to eq("Test User")
-   expect( serverReq["password"] ).to eq("t3stPassw0rd")
-   expect( serverReq["group"] ).to eq(false)
-   expect( serverReq["survey_consent"] ).to eq(false)
-   expect( serverReq["share_name_consent"] ).to eq(false) */
 });
 
 Then('I am logged in', {timeout: 60000}, async function() {
     await this.menu.waitForLabel("You are Logged in");
 });
 
-// 5-min step timeout: form-fill (~3-5s) + LoginScreen.dismissSavePasswordSheet's
-// own 60s wait for the iOS Save Password sheet sum to more than the previous
-// 60s cucumber budget on cold-start CI runners. With both clocks set to 60s,
-// the step kept self-killing before the dismiss could actually see + tap
-// "Not Now". Locally on a warm sim the sheet pops in a few seconds and 60s
-// was enough; on shared macOS-15 runners it isn't.
+// 5-min timeout: form-fill + dismissSavePasswordSheet's own 60s sheet wait
+// exceed the 60s budget on cold-start CI runners (warm local sims are fine).
 When('I log in with {string} and password {string}', {timeout: 300000}, async function(emailAddress, password) {
     await this.menu.waitFor();
     await this.menu.login(emailAddress, password);
 });
 
 When('I register as "([^"]*)"', function(emailAddress) {
-/*     @emailAddress = emailAddress
-    @current_page = page(MenuScreen).await
-    @current_page = @current_page.select("Log In")
-    @current_page = page(LoginScreen).await
-    @current_page = @current_page.select("Register")
-    @current_page = page(RegisterScreen).await
-    sleep 0.5
-    @current_page = @current_page.register_via_email( emailAddress, "Test User", "t3stPassw0rd") */
 });
 
 Given('The {string} account exists with password {string}', function(emailAddress, password) {

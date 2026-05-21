@@ -5,8 +5,7 @@ const { expect } = require("chai");
 
 Given('I have existing samples stored on the server', {timeout: 60000}, async function () {
     global.mockCerdiServer.makeMockSample();
-    // The user is pre-logged-in via launchArgs (cucumber.js) — bypassing
-    // the login flow avoids the iOS save-password sheet race entirely.
+    // Pre-logged-in via launchArgs (cucumber.js) — skips the save-password race.
     await this.menu.waitFor();
 });
 
@@ -88,5 +87,5 @@ Then('the new samples are downloaded to the phone', {timeout: 60000}, async func
 });
 
 When('the server becomes reachable', function() {
-/* # its always reachable */
+    // no-op: the mock server is always reachable
 });
