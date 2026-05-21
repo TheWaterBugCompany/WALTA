@@ -1526,5 +1526,20 @@ describe("SampleSync", function () {
 
             expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "retrieveSamples (download)").to.equal(0);
         });
+
+        it("runs the download before reporting success when a full sync is requested mid-upload", async function () {
+            mockLoggedIn();
+            mockUploadEndpoints();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            queueNewSample();
+            // Mimics forceSync bailing on the isSyncing guard mid-upload: the
+            // intent flag is set while an upload-only sync is in flight.
+            Ti.App.Properties.setBool(FULL_SYNC_PENDING_KEY, true);
+
+            await SampleSync.uploadPending({ delay: 0, noschedule: true });
+
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "download ran before success").to.equal(1);
+            expect(Ti.App.Properties.getBool(FULL_SYNC_PENDING_KEY), "flag cleared once the full sync ran").to.equal(false);
+        });
     })
 });
