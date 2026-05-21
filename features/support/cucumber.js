@@ -6,8 +6,7 @@ const { startMockServer, connectAndPrepareApp, resetApp, teardown } = require('.
 // Device interactions are slow — 60s per step is the working baseline.
 setDefaultTimeout(60 * 1000);
 
-// AppiumLauncher.connect() can take several minutes on iOS when WebDriverAgent
-// is built from source on a cold runner — give the hook generous headroom.
+// connect() can take minutes on iOS when WebDriverAgent builds from source.
 BeforeAll({ timeout: 600 * 1000 }, async function () {
     const opts = JSON.parse(process.env.APPIUM_OPTIONS || '{}');
     if (!opts.platform) {
@@ -16,8 +15,6 @@ BeforeAll({ timeout: 600 * 1000 }, async function () {
     global.first = true;
     await startMockServer();
     await connectAndPrepareApp({ platform: opts.platform, isSimulator: !!opts.isSimulator });
-    // GPS fix is set by the explicit `Given the GPS has a fix` step in
-    // scenarios that need one (see step_definitions/gps_steps.js).
 });
 
 Before(async function () {
