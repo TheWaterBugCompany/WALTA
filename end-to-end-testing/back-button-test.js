@@ -41,8 +41,6 @@ describe('Back button tests', function() {
     });
 
     // Skipped pending WB-104 follow-up: reviving the navigation E2E coverage.
-    // This PR proves the revived harness via sync-smoke-test.js; the survey
-    // wizard back-navigation flow needs its own pass to confirm it isn't rotted.
     describe.skip('should go back from each page of the survey wizard', async function() {
         before( startAppium );
         after( stopAppium );

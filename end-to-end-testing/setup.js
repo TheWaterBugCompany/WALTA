@@ -1,8 +1,5 @@
 'use strict';
-// Mocha root hooks for the end-to-end suite. Reuses the same Appium
-// orchestration as the cucumber acceptance suite (features/support/appium-world).
-// Loaded first by the grunt `end-to-end-test` task so its root-level
-// before/beforeEach/after register before any *-test.js spec runs.
+// Mocha root hooks for the end-to-end suite — see docs/testing.md.
 const { expect } = require('chai');
 const fs = require('fs');
 const path = require('path');
@@ -13,9 +10,7 @@ global.world = {};
 global.expect = expect;
 global.swipeRight = function (options) { global.world.swipeRight(global.world, options); };
 
-// Back-compat shims: legacy specs (back-button-test.js) call these in their
-// own before/after hooks. The root hooks below now own connect/teardown, so
-// these are no-ops.
+// No-op shims: the root hooks own connect/teardown; legacy specs still call these.
 global.startAppium = async function () {};
 global.stopAppium = async function () {};
 
@@ -37,7 +32,6 @@ before(async function () {
 
 beforeEach(async function () {
     this.timeout(120000);
-    // Skip the reset before the first test — the app was just launched fresh.
     if (global.first) {
         global.first = false;
         return;
@@ -73,7 +67,6 @@ async function captureFailure(title) {
             fs.writeFileSync(path.join(dir, 'page-source.error.txt'), String(e && e.message));
         }
     } catch (e) {
-        // diagnostics are best-effort; never mask the real test failure
         console.warn(`[e2e] captureFailure failed: ${e && e.message}`);
     }
 }

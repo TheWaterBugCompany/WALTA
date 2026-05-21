@@ -50,6 +50,23 @@ npx grunt contract-test
 npx grunt --platform=android visual-regression-test
 ```
 
+## Shared Appium orchestration
+
+The end-to-end suite (`end-to-end-testing/`) and the cucumber acceptance suite
+(`features/`) drive the same app the same way, so the shared orchestration lives
+once in [features/support/appium-world.js](../features/support/appium-world.js):
+starting the mock CERDI server, computing launch args, per-platform app
+preparation, the between-test reset, and teardown. Both runners' hooks
+(`end-to-end-testing/setup.js` Mocha root hooks, `features/support/cucumber.js`
+cucumber hooks) call into it and set the same globals (`global.launcher`,
+`global.driver`, `global.mockCerdiServer`, `global.platform`,
+`global.isSimulator`) that the step and test files read.
+
+The mock server's override URL and secret reach the app as launch args (Android
+intent extras / iOS process arguments — see `alloy.js` + `AppiumLauncher`), so
+any build can be redirected to the mock without rebuilding. The server must be
+running before the app launches, because auto-login hits `/token/create` at boot.
+
 ## Acceptance test environment
 
 The local dev environment is already provisioned — emulator/simulator, Appium drivers, and the mock CERDI server are configured and ready. Run acceptance tests directly; don't gate on or caveat about setup.
