@@ -389,11 +389,16 @@ const KobitonAPI = require("./features/support/kobiton");
           },*/
 
           end_to_end_test: {
+            // setup.js holds the Mocha root hooks (mock server + Appium
+            // connect + reset); list it first, then run the *-test.js specs.
             command: function() {
-              return `VERSION=${grunt.option('kobiton-version')}  mocha --timeout 60000 "./end-to-end-testing/*.js"`;
+              return `mocha --timeout 120000 ./end-to-end-testing/setup.js "./end-to-end-testing/*-test.js"`;
             },
             options: {
-              env: envVars()
+              // Merge over process.env so the mocha child inherits SIM_UDID,
+              // WDA_DERIVED_DATA_PATH, ANDROID_SDK_ROOT, MOCK_CERDI_URL etc.
+              // (envVars() alone would replace the env and drop them).
+              env: { ...process.env, ...envVars() }
             },
             exitCode: [0,1,]
           },
@@ -810,7 +815,17 @@ const KobitonAPI = require("./features/support/kobiton");
 
     grunt.registerTask('end-to-end-test', function () {
       var platform = grunt.option('platform');
-      grunt.task.run(`newer:test_${platform}`);
+      const isSimulator = grunt.option('simulator') || false;
+      const launchBuildType = isSimulator ? 'test-sim' : 'test';
+      const newerTarget = isSimulator ? `test_sim_${platform}` : `test_${platform}`;
+      // --skip-build: CI consumes the prebuilt artifact (WB-51), so don't
+      // rebuild (and don't require the Titanium SDK at runtime).
+      if (!grunt.option('skip-build')) {
+        grunt.task.run(`newer:${newerTarget}`);
+      }
+      // Install + launch via simctl/adb before the mocha process connects
+      // Appium — mirrors how acceptance-test launches before cucumber.
+      grunt.task.run(`launch:${platform}:${launchBuildType}`);
       grunt.task.run(`exec:end_to_end_test:${platform}`);
     });
 
