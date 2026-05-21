@@ -198,6 +198,33 @@ describe("AppiumLauncher", function() {
     });
   });
 
+  describe("Android device targeting (appium:udid)", function() {
+    let originalSerial;
+    beforeEach(function() {
+      originalSerial = process.env.ANDROID_SERIAL;
+      delete process.env.ANDROID_SERIAL;
+    });
+    afterEach(function() {
+      if (originalSerial === undefined) delete process.env.ANDROID_SERIAL;
+      else process.env.ANDROID_SERIAL = originalSerial;
+    });
+
+    it("passes ANDROID_SERIAL through as appium:udid so the session targets that device", async function() {
+      process.env.ANDROID_SERIAL = "emulator-5554";
+      const launcher = new AppiumLauncher("android", { isSimulator: true, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      const caps = fakeStartAppium.firstCall.args[0];
+      expect(caps["appium:udid"]).to.equal("emulator-5554");
+    });
+
+    it("omits appium:udid when ANDROID_SERIAL is unset (single-device default)", async function() {
+      const launcher = new AppiumLauncher("android", { isSimulator: true, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      const caps = fakeStartAppium.firstCall.args[0];
+      expect(caps).to.not.have.property("appium:udid");
+    });
+  });
+
   describe("launch()", function() {
     function makeFakeChildExitingZero() {
       const child = new EventEmitter();

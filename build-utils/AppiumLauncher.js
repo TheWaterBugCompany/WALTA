@@ -183,6 +183,14 @@ class AppiumLauncher {
       if (optionalIntentArguments) {
         caps["appium:optionalIntentArguments"] = optionalIntentArguments;
       }
+      // Pin the session to a specific device when ANDROID_SERIAL is set —
+      // without it, uiautomator2 can't disambiguate between multiple attached
+      // devices (e.g. a dev box with both an emulator and a physical phone)
+      // and attaches to the wrong one or stalls. Symmetric with iOS reading
+      // SIM_UDID / IOS_DEVICE_UDID. CI is single-device so this is a no-op there.
+      if (process.env.ANDROID_SERIAL) {
+        caps["appium:udid"] = process.env.ANDROID_SERIAL;
+      }
       if (this.isSimulator) {
         Object.assign(caps, { "appium:avdName": "Medium_Phone_API_36.1" });
       }
