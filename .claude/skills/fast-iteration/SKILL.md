@@ -29,6 +29,10 @@ Skip when:
 - the code under test is pure JS with no `Ti.*` / Alloy dependency → `npx grunt unit-test-node`
 - you need the full acceptance suite to pass/fail in CI — run the regular
   `acceptance-test` task without `--liveview` for the final pre-merge check
+- the test is an extensive, mechanism-heavy full-stack flow (e.g. sync
+  interrupt/resume) — that belongs in the Mocha+Appium E2E layer
+  (`end-to-end-testing/`), not a cucumber feature. See docs/testing.md;
+  revival tracked in WB-104.
 
 ## The command
 

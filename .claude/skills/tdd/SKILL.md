@@ -86,8 +86,8 @@ Cheapest layer that meaningfully exercises the change:
 
 - **Node unit** (`test/**/*_spec.js`, `npx grunt unit-test-node`) — pure JS, no `Ti.*`. Sub-second feedback. Most defects belong here.
 - **Device unit** (`walta-app/app/spec/*_spec.js`) — needs Alloy / `Ti.*`. Drive with [fast-iteration](../fast-iteration/SKILL.md).
-- **Cucumber** (`features/`) — cross-screen user flows. Slow; use sparingly.
-- **Appium** (`end-to-end-testing/`) — full-stack smoke. Reserve for golden-path checks.
+- **Cucumber acceptance** (`features/`) — cross-screen flows that map to a *business requirement*; keep them business-readable. Slow; use sparingly.
+- **Appium E2E** (`end-to-end-testing/`, Mocha+Appium) — extensive, mechanism-heavy full-stack integration that doesn't belong in business language (e.g. sync interrupt/resume across restart/network/foreground). Currently dormant + not in CI — revival tracked in WB-104.
 
 When in doubt, lowest layer that can observe the bug.
 

@@ -11,8 +11,8 @@ Five layers, ordered fastest to slowest:
 | Node.js unit tests | `test/*_spec.js` | Mocha (Node) | Logic in `lib/logic/` and `lib/util/` that doesn't use `Ti.*` APIs |
 | Build utility tests | `build-tests/unit/*.js` | Mocha (Node, ESM) | Build tools, launchers, hooks |
 | Device unit tests | `walta-app/app/spec/*_spec.js` | ti-mocha (on-device) | Code that depends on `Ti.*` APIs or Alloy controllers |
-| End-to-end tests | `end-to-end-testing/*.js` | Mocha + Appium | Full user interaction flows |
-| Acceptance tests | `features/*.feature` | Cucumber + WebdriverIO | BDD scenarios against product requirements |
+| End-to-end tests | `end-to-end-testing/*.js` | Mocha + Appium | Extensive, mechanism-heavy full-stack integration — developer-oriented flows that would clutter a business-readable scenario |
+| Acceptance tests | `features/*.feature` | Cucumber + WebdriverIO | Business-readable BDD tied to a product requirement; kept high-level |
 
 ## When to write what
 
@@ -20,7 +20,11 @@ Five layers, ordered fastest to slowest:
 
 **Default to a device spec** for screen-level features. Every screen feature must have a device spec under `walta-app/app/spec/`, even if an acceptance test covers the same path. Rationale: acceptance tests are slow integration tests — a single run takes minutes — so they're unsuitable for the tight TDD loop. Device specs run quickly with `--liveview --reuse-server` (see the `fast-iteration` skill), give per-screen test checklists for future work, and pinpoint failures at the controller level rather than at the end of an end-to-end flow.
 
-**Add an acceptance scenario** only for cross-screen flows.
+**Add an acceptance scenario** (`features/`, Cucumber) for a cross-screen flow that maps to a *business requirement* — it should read like a spec a non-developer could follow. Keep the mechanism out: no "kill the app mid-sync, toggle the network, assert N rows" plumbing.
+
+**Drop to an end-to-end test** (`end-to-end-testing/`, Mocha + Appium) for extensive, mechanism-heavy full-stack integration that doesn't belong in business language — e.g. interrupting a sync mid-flight and asserting it resumes after app restart / network restore / foreground. The two layers are deliberately split: `features/` answers "does the product meet the requirement?", `end-to-end-testing/` answers "does this mechanism hold up under real-stack conditions?".
+
+> **Note (2026-05):** the end-to-end layer is currently dormant — only a back-button smoke test, and no CI job runs the `end-to-end-test` grunt task (it appears in `ci.yml` only as a `changes` path-filter). Reviving the harness, wiring it into CI, and adding the sync interrupt/resume suite is tracked in **WB-104**. Until then, prefer device specs for mechanism coverage and don't add low-level integration mechanics to `features/`.
 
 ## Quick reference
 
