@@ -107,17 +107,34 @@ describe("SyncStore", function () {
       expect(store.logLines).to.deep.equal(["Uploading site photo"]);
     });
 
-    it("increments percent monotonically, capped below 100", function () {
-      const percents = [];
-      for (let i = 0; i < 10; i++) {
-        store.recordProgress("step " + i);
-        percents.push(store.percent);
-      }
-      for (let i = 1; i < percents.length; i++) {
-        expect(percents[i]).to.be.at.least(percents[i - 1]);
-      }
-      expect(percents[percents.length - 1]).to.be.below(100);
-      expect(percents[0]).to.be.greaterThan(0);
+    it("sets percent from the current/total work fraction", function () {
+      store.recordProgress("downloading", { current: 1, total: 4 });
+      expect(store.percent).to.equal(25);
+      store.recordProgress("downloading", { current: 2, total: 4 });
+      expect(store.percent).to.equal(50);
+      store.recordProgress("downloading", { current: 3, total: 4 });
+      expect(store.percent).to.equal(75);
+    });
+
+    it("caps percent below 100 until recordSuccess, even when all work is done", function () {
+      store.recordProgress("last item", { current: 4, total: 4 });
+      expect(store.percent).to.be.below(100);
+      store.recordSuccess();
+      expect(store.percent).to.equal(100);
+    });
+
+    it("leaves percent unchanged for a message-only progress event (no fraction)", function () {
+      store.recordProgress("starting", { current: 2, total: 4 });
+      store.recordProgress("a note with no fraction");
+      expect(store.percent).to.equal(50);
+    });
+
+    it("advances percent without disturbing statusText for a percent-only tick", function () {
+      store.recordProgress("Downloading samples", { current: 1, total: 4 });
+      store.recordProgress(undefined, { current: 2, total: 4 });
+      expect(store.percent).to.equal(50);
+      expect(store.statusText).to.equal("Downloading samples");
+      expect(store.logLines).to.deep.equal(["Downloading samples"]);
     });
 
     it("is ignored when not in the 'syncing' state", function () {

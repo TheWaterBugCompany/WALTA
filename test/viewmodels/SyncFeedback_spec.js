@@ -197,8 +197,8 @@ describe("SyncFeedbackViewModel", function () {
 
     it("includes the statusText when syncing with a message", function () {
       store.recordStart();
-      store.recordProgress("Uploading taxa 141 photo");
-      expect(vm.progressText).to.equal("15% Uploading taxa 141 photo");
+      store.recordProgress("Uploading taxa 141 photo", { current: 1, total: 4 });
+      expect(vm.progressText).to.equal("25% Uploading taxa 141 photo");
     });
 
     it("renders the seeded statusText after recordStart", function () {
@@ -215,16 +215,16 @@ describe("SyncFeedbackViewModel", function () {
 
     it("shows the error message on error", function () {
       store.recordStart();
-      store.recordProgress("Uploading");
+      store.recordProgress("Uploading", { current: 1, total: 4 });
       store.recordError(new Error("upload failed"));
-      expect(vm.progressText).to.equal("15% upload failed");
+      expect(vm.progressText).to.equal("25% upload failed");
     });
 
     it("falls back to 'Server Error' when the error has no message", function () {
       store.recordStart();
-      store.recordProgress("Uploading");
+      store.recordProgress("Uploading", { current: 1, total: 4 });
       store.recordError(new Error(""));
-      expect(vm.progressText).to.equal("15% Server Error");
+      expect(vm.progressText).to.equal("25% Server Error");
     });
   });
 
@@ -283,8 +283,8 @@ describe("SyncFeedbackViewModel", function () {
     it("formats the percent as a CSS-style width string", function () {
       expect(vm.progressWidth).to.equal("0%");
       store.recordStart();
-      store.recordProgress("Uploading");
-      expect(vm.progressWidth).to.equal("15%");
+      store.recordProgress("Uploading", { current: 1, total: 4 });
+      expect(vm.progressWidth).to.equal("25%");
     });
   });
 
