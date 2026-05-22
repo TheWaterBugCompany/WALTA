@@ -590,11 +590,13 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.registerTask("cucumber", function () {
       const done = this.async();
       const platform = grunt.option('platform');
-      // Default excludes @skip everywhere; on iOS it also excludes @skip-ios
-      // (e.g. the form-login scenario whose iOS "Save Password?" sheet leaks
-      // across scenarios — WB-87). Android still runs those.
+      // Default excludes @skip everywhere; each platform also excludes its own
+      // @skip-<platform> tag — e.g. @skip-ios for the form-login scenario whose
+      // iOS "Save Password?" sheet leaks across scenarios (WB-87), and
+      // @skip-android for the iOS-springboard app-badge checks (Android badge
+      // is WB-10b).
       const tags = grunt.option('cucumber-tags')
-        || (platform === 'ios' ? 'not @skip and not @skip-ios' : 'not @skip');
+        || (platform === 'ios' ? 'not @skip and not @skip-ios' : 'not @skip and not @skip-android');
       const name = grunt.option('grep') || null;
       const appiumOptions = {
         platform,

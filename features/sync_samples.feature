@@ -26,3 +26,18 @@ Scenario: Diagnostic logs persist across app restart
     And I open the sample history and tap Sync Now
     And I tap Show Logs in the sync popup
    Then the log pane still contains the remembered lines
+
+  # iOS-only: the app-icon badge is an iOS-springboard artifact. The Android
+  # notification-dot equivalent is WB-10b, hence @skip-android.
+  @skip-android
+  Scenario: A logged-in user is nudged to sync via the app-icon badge
+    Given I am logged in as "test@example.com"
+     Then the app icon shows a sync badge of 1
+
+  @skip-android
+  Scenario: The app-icon sync badge clears after a full sync
+    Given I am logged in as "test@example.com"
+      And I have existing samples stored on the server
+     When I open the sample history and tap Sync Now
+     Then the sync popup completes successfully
+      And the app icon shows no sync badge
