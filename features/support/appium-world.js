@@ -61,6 +61,9 @@ async function connectAndPrepareApp({ platform, isSimulator }) {
             execFileSync(adb(), [...dev, 'shell', 'pm', 'clear', APP_ID]);
             execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_FINE_LOCATION']);
             execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_COARSE_LOCATION']);
+            // WB-10b: the sync nudge is a notification-dot; on Android 13+ the
+            // notification (hence dot) only shows once POST_NOTIFICATIONS is granted.
+            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.POST_NOTIFICATIONS']);
         } catch (e) {
             console.warn(`[appium-world] adb pm clear/grant failed: ${e.message}`);
         }
