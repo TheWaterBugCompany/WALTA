@@ -23,8 +23,8 @@ function createUploadBadge({ properties, pendingCount, setBadge }) {
   return {
     value,
     refresh,
-    onLogin: recommend,          // history not yet pulled this session
-    onLocalActivity: recommend,  // new/edited sample needs reconciling
+    onLogin: recommend,        // history not yet pulled this session
+    onLocalActivity: refresh,  // new/edited sample already shows via the pending count
     onLogout: clear,
     onSyncFinished({ success, fullSync }) {
       if (success && fullSync) setRecommended(false);
