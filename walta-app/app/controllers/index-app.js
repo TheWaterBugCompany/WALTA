@@ -6,6 +6,7 @@ var log = (m, tag = "navigation") => Logger.log(m, tag);
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
 var UploadBadge = require("logic/UploadBadge");
+var AndroidNotificationBadge = require("logic/AndroidNotificationBadge");
 var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
 var AppReset = require("util/AppReset");
@@ -67,18 +68,33 @@ if (OS_IOS) {
 SampleSync.init();
 
 // App-icon "sync recommended" indicator (WB-10). iOS sets the numeric
-// appBadge; Android is a no-op for now (notification-based badge: WB-10b).
+// appBadge; Android has no numeric badge, so it drives a notification-dot
+// via an ongoing notification on a badge-enabled channel (WB-10b).
+var androidBadge = OS_ANDROID ? AndroidNotificationBadge.createAndroidBadgeSetter({
+  importanceLow: Ti.Android.IMPORTANCE_LOW,
+  createChannel: function (spec) { return Ti.Android.NotificationManager.createNotificationChannel(spec); },
+  createNotification: function (spec) { return Ti.Android.createNotification(spec); },
+  notify: function (id, n) { Ti.Android.NotificationManager.notify(id, n); },
+  cancel: function (id) { Ti.Android.NotificationManager.cancel(id); },
+}) : null;
+
 UploadBadge.init({
   properties: Ti.App.Properties,
   pendingCount: SampleSync.countSamplesNeedingUpload,
-  setBadge: function (n) { if (OS_IOS) Ti.UI.iOS.appBadge = n; },
+  setBadge: function (n) {
+    if (OS_IOS) Ti.UI.iOS.appBadge = n;
+    else if (OS_ANDROID) androidBadge(n);
+  },
   topics: Topics,
   // iOS only renders the app-icon badge under full badge authorization —
   // provisional auth grants quietly but never shows the badge (verified on
-  // device). So request BADGE, which prompts once.
+  // device). So request BADGE, which prompts once. Android 13+ needs the
+  // runtime POST_NOTIFICATIONS grant before a notification (hence dot) shows.
   requestPermission: OS_IOS ? function () {
     Ti.App.iOS.registerUserNotificationSettings({ types: [ Ti.App.iOS.USER_NOTIFICATION_TYPE_BADGE ] });
-  } : undefined,
+  } : (OS_ANDROID ? function () {
+    Ti.Android.requestPermissions([ "android.permission.POST_NOTIFICATIONS" ]);
+  } : undefined),
 });
 
 // Report user name to Logger when logged in
