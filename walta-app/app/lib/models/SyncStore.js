@@ -1,8 +1,9 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
 const Logger = require("../util/Logger");
 
-const PROGRESS_STEP = 15;
-const PROGRESS_CAP = 95;
+// Hold just below 100 until recordSuccess() owns the final 100%, so the
+// bar never reports complete while work is still settling.
+const PROGRESS_CAP = 99;
 const LOG_CAP = 200;
 
 const INITIAL_STATE = {
@@ -44,12 +45,19 @@ class SyncStore extends ChangeNotifier {
     this._setState({ ...INITIAL_STATE, status: "syncing", statusText: "Starting sync" });
   }
 
-  recordProgress(message) {
+  recordProgress(message, progress) {
     if (this._state.status !== "syncing") return;
-    const safe = message || "";
-    const nextPercent = Math.min(PROGRESS_CAP, this._state.percent + PROGRESS_STEP);
-    const nextLog = safe ? this._appendLog(safe) : this._state.logLines;
-    this._setState({ percent: nextPercent, statusText: safe, logLines: nextLog });
+    const patch = {};
+    // Omit message entirely (a percent-only tick) to advance the bar
+    // without disturbing the phase label currently shown.
+    if (message !== undefined) {
+      patch.statusText = message || "";
+      if (message) patch.logLines = this._appendLog(message);
+    }
+    if (progress && progress.total > 0) {
+      patch.percent = Math.min(PROGRESS_CAP, Math.round((progress.current / progress.total) * 100));
+    }
+    this._setState(patch);
   }
 
   recordSuccess() {
