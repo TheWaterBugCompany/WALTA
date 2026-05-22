@@ -44,3 +44,35 @@ Then('the app icon shows no sync badge', { timeout: 30000 }, async function () {
         throw new Error(`Expected no app-icon sync badge but found ${actual}`);
     }
 });
+
+// Android: there's no numeric app-icon badge, so the sync nudge is a launcher
+// notification-dot driven by an ongoing "Sync recommended" notification
+// (WB-10b). Read it from the notification shade and poll until it settles on
+// the expected presence (the notification posts a beat after the Topics event).
+async function waitForSyncNotification(driver, shouldBePresent) {
+    await driver.openNotifications();
+    let present = false;
+    await driver
+        .waitUntil(async () => {
+            const note = await driver.$('android=new UiSelector().textContains("Sync recommended")');
+            present = await note.isExisting();
+            return present === shouldBePresent;
+        }, { timeout: 10000, interval: 500 })
+        .catch(() => {});
+    await driver.pressKeyCode(4); // BACK — close the shade
+    return present;
+}
+
+Then('the app shows a sync notification', { timeout: 30000 }, async function () {
+    const present = await waitForSyncNotification(this.driver, true);
+    if (!present) {
+        throw new Error('Expected a sync notification but none was shown');
+    }
+});
+
+Then('the app shows no sync notification', { timeout: 30000 }, async function () {
+    const present = await waitForSyncNotification(this.driver, false);
+    if (present) {
+        throw new Error('Expected no sync notification but one was shown');
+    }
+});

@@ -41,3 +41,18 @@ Scenario: Diagnostic logs persist across app restart
      When I open the sample history and tap Sync Now
      Then the sync popup completes successfully
       And the app icon shows no sync badge
+
+  # Android: the sync nudge is a launcher notification-dot, surfaced as an
+  # ongoing notification (WB-10b) since Android has no numeric app-icon badge.
+  @skip-ios
+  Scenario: A logged-in user is nudged to sync via a notification
+    Given I am logged in as "test@example.com"
+     Then the app shows a sync notification
+
+  @skip-ios
+  Scenario: The sync notification clears after a full sync
+    Given I am logged in as "test@example.com"
+      And I have existing samples stored on the server
+     When I open the sample history and tap Sync Now
+     Then the sync popup completes successfully
+      And the app shows no sync notification
