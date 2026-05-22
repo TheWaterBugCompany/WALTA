@@ -1566,5 +1566,32 @@ describe("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "download ran before success").to.equal(1);
             expect(Ti.App.Properties.getBool(FULL_SYNC_PENDING_KEY), "flag cleared once the full sync ran").to.equal(false);
         });
+
+        it("emits no info-level log line for an idle sync with nothing to do", async function () {
+            mockLoggedIn();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            const Logger = require("util/Logger");
+            const captured = [];
+            const unsubscribe = Logger.subscribe({ facility: "sync", minLevel: "info" }, (e) => captured.push(e.message));
+
+            await SampleSync.forceSync({ delay: 0, noschedule: true });
+            unsubscribe();
+
+            expect(captured, "info-level sync log").to.deep.equal([]);
+        });
+
+        it("logs a one-line summary when a sync actually moves data", async function () {
+            mockLoggedIn();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUnknownCreatures").resolveWith([]);
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([makeCerdiSampleData({ user_id: 38 })]);
+            const Logger = require("util/Logger");
+            const captured = [];
+            const unsubscribe = Logger.subscribe({ facility: "sync", minLevel: "info" }, (e) => captured.push(e.message));
+
+            await SampleSync.forceSync({ delay: 0, noschedule: true });
+            unsubscribe();
+
+            expect(captured, "summary line").to.include("Sync finished: downloaded 1, uploaded 0");
+        });
     })
 });
