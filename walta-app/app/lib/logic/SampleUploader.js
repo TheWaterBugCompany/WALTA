@@ -212,18 +212,24 @@ function loadSamples() {
     return samples;
 }
 
-function createSampleUploader(delay) {
+function createSampleUploader(delay, progress) {
+    progress = progress || { plan() {}, tick() {} };
     return {
         uploadSamples() {
             debug(`Queuing uploading samples to server...`);
             return Promise.resolve()
                 .then(loadSamples)
-                .then((samples) => this.uploadRemainingSamples(samples) );
+                .then((samples) => {
+                    const planned = samples.length;
+                    progress.plan( planned );
+                    return this.uploadRemainingSamples(samples).then( () => planned );
+                });
         },
 
          uploadRemainingSamples(samples) {
             if ( samples.length > 0 ) {
                 return this.uploadNextSample(samples)
+                    .then( () => progress.tick() )
                     .then( () => this.uploadRemainingSamples(samples) )
                     .catch( (err) => {
                         if ( err.message === "The given data was invalid.") {

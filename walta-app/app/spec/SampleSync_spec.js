@@ -221,6 +221,19 @@ describe("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.submitSample.calls[0].args[0].waterbody_name).to.equal("test water body name");
             expect(sample.get("serverSyncTime")).to.be.a('number');
         });
+        it('returns the count of uploaded samples and reports progress per sample', async function() {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId").returnWith(38);
+            simple.mock(Alloy.Globals.CerdiApi,"submitSample").resolveWith({id:123, user_id:38});
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
+            let sample = makeSampleData();
+            sample.save();
+            const planned = [], ticks = [];
+            const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
+            const count = await createSampleUploader(undefined, progress).uploadSamples();
+            expect(count, "uploaded count").to.equal(1);
+            expect(planned, "planned total").to.deep.equal([1]);
+            expect(ticks.length, "ticks").to.equal(1);
+        });
         it('should upload modified samples to the server', async function() {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
@@ -514,6 +527,18 @@ describe("SampleSync", function () {
             expect(taxa.at(1).get("taxonId")).to.equal(2);
             expect(taxa.at(1).get("abundance")).to.equal("6-10");
             expect(sample.get("serverUserId")).to.equal(38);
+        });
+        it('returns the count of updated samples and reports progress per sample', async function () {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith([makeCerdiSampleData({user_id:38})]);
+            const planned = [], ticks = [];
+            const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
+            const count = await createSampleDownloader(undefined, progress).downloadSamples();
+            expect(count, "updated count").to.equal(1);
+            expect(planned, "planned total").to.deep.equal([1]);
+            expect(ticks.length, "ticks").to.equal(1);
         });
         it('should update existing samples if they have been updated on the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
