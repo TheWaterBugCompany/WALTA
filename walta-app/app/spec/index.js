@@ -64,6 +64,7 @@ var SPEC_FILES = [
   "MayflyMusterSelect",
   "SampleSync",
   "SyncFeedback",
+  "UploadBadge",
   "SampleHistory",
   "Gallery",
   "PhotoSelect",
