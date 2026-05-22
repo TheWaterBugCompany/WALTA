@@ -166,19 +166,16 @@ describe("SyncFeedback controller", function () {
         beforeEach(async () => {
             var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
-            store.recordProgress("Downloading samples");
-            store.recordProgress("Uploading site photo");
-            store.recordProgress("Uploading taxa 141 photo");
-            // PROGRESS_STEP=15 → 3 increments puts percent at 45, status
-            // text at the last message. Gives a clear mid-sync render.
+            // 3 of 4 work units done → 75%, status text at the last message.
+            store.recordProgress("Uploading taxa 141 photo", { current: 3, total: 4 });
             ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
 
         it("shows the bar partially filled with the latest status text", () => {
-            expect(ctl.progressText.text).to.equal("45% Uploading taxa 141 photo");
-            expect(ctl.progressFill.width).to.equal("45%");
+            expect(ctl.progressText.text).to.equal("75% Uploading taxa 141 photo");
+            expect(ctl.progressFill.width).to.equal("75%");
         });
     });
 
@@ -186,8 +183,7 @@ describe("SyncFeedback controller", function () {
         beforeEach(async () => {
             var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
-            store.recordProgress("Downloading samples");
-            store.recordProgress("Uploading site photo");
+            store.recordProgress("Uploading site photo", { current: 1, total: 4 });
             store.recordError(new Error("Server Error"));
             ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
@@ -195,7 +191,7 @@ describe("SyncFeedback controller", function () {
         });
 
         it("renders the error message in the progress text with the error colour", () => {
-            expect(ctl.progressText.text).to.equal("30% Server Error");
+            expect(ctl.progressText.text).to.equal("25% Server Error");
             expect(ctl.progressFill.backgroundColor).to.equal(Alloy.CFG.colors.error);
         });
     });
