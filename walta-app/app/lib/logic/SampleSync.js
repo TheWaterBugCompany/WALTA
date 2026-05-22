@@ -232,7 +232,7 @@ function runSync({ download, options }) {
             } else {
                 debug(`Sync check complete — nothing to ${didDownload?"sync":"upload"}`);
             }
-            Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } );
+            Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true, fullSync: didDownload } );
         })
         .catch( err => {
             if ( err && err.message === CANCELLED_MARKER ) {
@@ -250,6 +250,7 @@ function runSync({ download, options }) {
 
 exports.forceSync = forceSync;
 exports.uploadPending = uploadPending;
+exports.countPendingUploads = countPendingUploads;
 exports.resumeInterruptedWork = resumeInterruptedWork;
 exports.networkChanged = networkChanged;
 exports.areWeSyncing = areWeSyncing;
