@@ -11,15 +11,17 @@ function createUploadBadge({ properties, pendingCount, setBadge }) {
   function isRecommended() { return properties.getBool(SYNC_RECOMMENDED_KEY, false); }
   function setRecommended(value) { properties.setBool(SYNC_RECOMMENDED_KEY, value); }
 
-  function shouldShow() { return isRecommended() || pendingCount() > 0; }
+  // Badge = samples still needing upload, plus one for "a full sync is
+  // recommended" (history not pulled / local changes not reconciled).
+  function value() { return pendingCount() + (isRecommended() ? 1 : 0); }
 
-  function refresh() { setBadge(shouldShow() ? 1 : 0); }
+  function refresh() { setBadge(value()); }
 
   function recommend() { setRecommended(true); refresh(); }
   function clear() { setRecommended(false); refresh(); }
 
   return {
-    shouldShow,
+    value,
     refresh,
     onLogin: recommend,          // history not yet pulled this session
     onLocalActivity: recommend,  // new/edited sample needs reconciling

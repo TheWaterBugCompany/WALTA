@@ -57,6 +57,17 @@ function hasPendingUploads() {
     return countPendingUploads() > 0;
 }
 
+// loadUploadQueue returns every completed sample for the user (incl. ones
+// already uploaded); the per-sample hasPendingUploads() is the real
+// "needs upload" test the uploader applies. Count those for the badge so it
+// reflects samples actually awaiting upload, not the whole history.
+function countSamplesNeedingUpload() {
+    let userId = Alloy.Globals.CerdiApi.retrieveUserId();
+    let samples = Alloy.createCollection("sample");
+    samples.loadUploadQueue(userId);
+    return samples.filter((s) => s.hasPendingUploads()).length;
+}
+
 function clearUploadTimer() {
     if ( timeoutHandler ) {
         clearTimeout( timeoutHandler );
@@ -251,6 +262,7 @@ function runSync({ download, options }) {
 exports.forceSync = forceSync;
 exports.uploadPending = uploadPending;
 exports.countPendingUploads = countPendingUploads;
+exports.countSamplesNeedingUpload = countSamplesNeedingUpload;
 exports.resumeInterruptedWork = resumeInterruptedWork;
 exports.networkChanged = networkChanged;
 exports.areWeSyncing = areWeSyncing;

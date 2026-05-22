@@ -25,70 +25,84 @@ describe("UploadBadge", function () {
     });
   });
 
-  describe("shouldShow", function () {
-    it("is false initially — nothing recommended and no pending uploads", function () {
-      expect(badge.shouldShow()).to.equal(false);
+  function lastBadge() { return badges[badges.length - 1]; }
+
+  describe("value — pending uploads plus one when a full sync is recommended", function () {
+    it("is 0 when nothing is pending and no sync is recommended", function () {
+      expect(badge.value()).to.equal(0);
     });
 
-    it("is true when there are pending uploads even if a sync isn't recommended", function () {
+    it("counts pending uploads when no sync is recommended", function () {
       pending = 2;
-      expect(badge.shouldShow()).to.equal(true);
+      expect(badge.value()).to.equal(2);
+    });
+
+    it("adds one to the pending count when a sync is recommended", function () {
+      pending = 2;
+      badge.onLogin();
+      expect(badge.value()).to.equal(3);
+    });
+
+    it("is just 1 when a sync is recommended but nothing is pending", function () {
+      badge.onLogin();
+      expect(badge.value()).to.equal(1);
     });
   });
 
   describe("state transitions", function () {
     it("recommends a sync after login (historical samples not yet pulled)", function () {
       badge.onLogin();
-      expect(badge.shouldShow()).to.equal(true);
+      expect(badge.value()).to.equal(1);
     });
 
     it("recommends a sync after local activity (new/edited sample)", function () {
       badge.onLocalActivity();
-      expect(badge.shouldShow()).to.equal(true);
+      expect(badge.value()).to.equal(1);
     });
 
     it("clears the recommendation when a full sync completes successfully", function () {
       badge.onLogin();
       badge.onSyncFinished({ success: true, fullSync: true });
-      expect(badge.shouldShow()).to.equal(false);
+      expect(badge.value()).to.equal(0);
     });
 
     it("keeps the recommendation after an upload-only sync (history still not pulled)", function () {
       badge.onLogin();
       badge.onSyncFinished({ success: true, fullSync: false });
-      expect(badge.shouldShow()).to.equal(true);
+      expect(badge.value()).to.equal(1);
     });
 
     it("keeps the recommendation when a full sync fails", function () {
       badge.onLogin();
       badge.onSyncFinished({ success: false, fullSync: true });
-      expect(badge.shouldShow()).to.equal(true);
+      expect(badge.value()).to.equal(1);
     });
 
     it("clears the recommendation on logout", function () {
       badge.onLogin();
       badge.onLogout();
-      expect(badge.shouldShow()).to.equal(false);
+      expect(badge.value()).to.equal(0);
     });
 
-    it("still shows after a cleared recommendation while uploads remain queued", function () {
+    it("still counts queued uploads after a full sync clears the recommendation", function () {
       badge.onLogin();
-      pending = 1;
+      pending = 3;
       badge.onSyncFinished({ success: true, fullSync: true });
-      expect(badge.shouldShow()).to.equal(true);
+      expect(badge.value()).to.equal(3);
     });
   });
 
   describe("badge side-effects", function () {
-    it("sets the badge to 1 when the indicator should show", function () {
+    it("sets the badge to the pending count plus the recommendation", function () {
+      pending = 2;
       badge.onLogin();
-      expect(badges[badges.length - 1]).to.equal(1);
+      expect(lastBadge()).to.equal(3);
     });
 
-    it("clears the badge to 0 when the indicator should not show", function () {
+    it("clears the badge to 0 when nothing is pending and not recommended", function () {
       badge.onLogin();
       badge.onLogout();
-      expect(badges[badges.length - 1]).to.equal(0);
+      expect(lastBadge()).to.equal(0);
     });
   });
 
@@ -99,6 +113,7 @@ describe("UploadBadge", function () {
         LOGGEDIN: "loggedin", LOGGEDOUT: "loggedout",
         FORCE_UPLOAD: "forceupload", SYNC_FINISHED: "syncfinished",
         subscribe: (t, cb) => { (subs[t] = subs[t] || []).push(cb); },
+        unsubscribe: (t, cb) => { subs[t] = (subs[t] || []).filter((c) => c !== cb); },
         fire: (t, e) => (subs[t] || []).forEach((cb) => cb(e)),
       };
     }
@@ -111,19 +126,18 @@ describe("UploadBadge", function () {
 
     it("recommends a sync when a sample is submitted (FORCE_UPLOAD)", function () {
       const topics = fakeTopics();
-      const b = wire(topics);
+      wire(topics);
       topics.fire(topics.FORCE_UPLOAD);
-      expect(b.shouldShow()).to.equal(true);
-      expect(badges[badges.length - 1]).to.equal(1);
+      expect(lastBadge()).to.equal(1);
     });
 
     it("recommends after login and clears after a successful full sync", function () {
       const topics = fakeTopics();
       const b = wire(topics);
       topics.fire(topics.LOGGEDIN);
-      expect(b.shouldShow()).to.equal(true);
+      expect(b.value()).to.equal(1);
       topics.fire(topics.SYNC_FINISHED, { success: true, fullSync: true });
-      expect(b.shouldShow()).to.equal(false);
+      expect(b.value()).to.equal(0);
     });
 
     it("clears on logout", function () {
@@ -131,7 +145,7 @@ describe("UploadBadge", function () {
       const b = wire(topics);
       topics.fire(topics.LOGGEDIN);
       topics.fire(topics.LOGGEDOUT);
-      expect(b.shouldShow()).to.equal(false);
+      expect(b.value()).to.equal(0);
     });
 
     it("requests badge permission once and refreshes on init", function () {
@@ -140,6 +154,15 @@ describe("UploadBadge", function () {
       wire(topics, { requestPermission: () => perm++ });
       expect(perm).to.equal(1);
       expect(badges.length).to.be.greaterThan(0);
+    });
+
+    it("dispose() drops its Topics subscriptions", function () {
+      const topics = fakeTopics();
+      const b = wire(topics);
+      b.dispose();
+      const before = badges.length;
+      topics.fire(topics.LOGGEDIN);
+      expect(badges.length).to.equal(before);
     });
   });
 });

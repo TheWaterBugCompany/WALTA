@@ -1593,5 +1593,21 @@ describe("SampleSync", function () {
 
             expect(captured, "summary line").to.include("Sync finished: downloaded 1, uploaded 0");
         });
+
+        it("countSamplesNeedingUpload counts only samples still needing upload, not the whole history", function () {
+            mockLoggedIn();
+            // fully-synced: uploaded, synced after its last edit, site photo up
+            makeSampleData({
+                serverSampleId: 999,
+                serverSitePhotoId: 5,
+                updatedAt: moment("2020-01-01").valueOf(),
+                serverSyncTime: moment("2020-02-01").valueOf(),
+            }).save();
+            expect(SampleSync.countSamplesNeedingUpload(), "synced sample excluded").to.equal(0);
+
+            // a fresh sample whose site photo hasn't uploaded → needs upload
+            makeSampleData().save();
+            expect(SampleSync.countSamplesNeedingUpload(), "one pending").to.equal(1);
+        });
     })
 });
