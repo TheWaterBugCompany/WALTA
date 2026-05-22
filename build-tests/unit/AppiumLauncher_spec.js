@@ -343,6 +343,19 @@ describe("AppiumLauncher", function() {
       await launcher.stop(); // should not throw
     });
 
+    it("tolerates deleteSession rejecting when the session is already gone", async function() {
+      // On a contended CI runner the Appium/WDA session connection can drop
+      // (UND_ERR_CLOSED) before teardown; deleting a session we're discarding
+      // anyway must not fail the run (WB-113).
+      fakeDriver.deleteSession = sinon.stub().rejects(new Error("Request failed with error code UND_ERR_CLOSED"));
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      await launcher.stop(); // should not throw
+      // the dead driver is cleared, so a fresh connect() starts a new session
+      await launcher.connect();
+      expect(fakeStartAppium.calledTwice).to.be.true;
+    });
+
     it("kills the appium server if we started it", async function() {
       fakeDriver.deleteSession = sinon.stub().resolves();
       const fakeChild = Object.assign(new EventEmitter(), { unref: sinon.stub(), pid: 12345 });
