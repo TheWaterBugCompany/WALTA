@@ -14,9 +14,9 @@ describe("SqlSink", function () {
         return { appended, append(entry) { appended.push(entry); } };
     }
 
-    it("create() returns a sink with levels [trace, info, warn, error] (skips debug)", function () {
+    it("create() returns a sink that persists debug too (only ever read back in diagnostics)", function () {
         const sink = SqlSink.create(fakeRepo());
-        expect(sink.levels).to.deep.equal(["trace", "info", "warn", "error"]);
+        expect(sink.levels).to.deep.equal(["trace", "debug", "info", "warn", "error"]);
     });
 
     it("write() forwards the entry to repo.append and returns a Promise", async function () {

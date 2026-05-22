@@ -8,7 +8,7 @@
 // `LogRepository.open()` happens. Tests use
 // `Migrator.migrate(testDbName)` against their test-named db.
 
-const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
+const { LEVEL_RANK } = require("../util/LogLevels");
 
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
