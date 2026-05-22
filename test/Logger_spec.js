@@ -151,7 +151,7 @@ describe("Logger.subscribe", function () {
         expect(captured).to.have.length(0);
     });
 
-    it("filters out entries below minLevel (debug < trace < info < warn < error)", function () {
+    it("filters out entries below minLevel (trace < debug < info < warn < error)", function () {
         const captured = [];
         Logger.subscribe({ facility: "sync", minLevel: "info" }, e => captured.push(e));
         Logger.debug("noise", "sync");
@@ -160,6 +160,15 @@ describe("Logger.subscribe", function () {
         Logger.warn("slow", "sync");
         Logger.error("boom", "sync");
         expect(captured.map(e => e.level)).to.deep.equal(["info", "warn", "error"]);
+    });
+
+    it("ranks trace below debug — minLevel 'debug' excludes trace but keeps debug", function () {
+        const captured = [];
+        Logger.subscribe({ facility: "sync", minLevel: "debug" }, e => captured.push(e));
+        Logger.log("trace bit", "sync");
+        Logger.debug("debug bit", "sync");
+        Logger.info("milestone", "sync");
+        expect(captured.map(e => e.level)).to.deep.equal(["debug", "info"]);
     });
 
     it("returns an unsubscribe function that stops further notifications", function () {

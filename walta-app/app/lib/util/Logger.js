@@ -13,7 +13,7 @@ function getBugfender() {
 // see docs/patterns/logger-sinks.md
 const _sinks = [];
 const _subscribers = [];
-const LEVEL_RANK = { debug: 0, trace: 1, info: 2, warn: 3, error: 4 };
+const { LEVEL_RANK } = require("./LogLevels");
 
 exports.addSink = function (sink) {
     _sinks.push(sink);
