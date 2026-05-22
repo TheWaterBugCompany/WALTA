@@ -133,8 +133,15 @@ async function resetApp() {
     } else {
         await global.driver.execute('mobile: deepLink', { url, bundleId: appId });
     }
-    // Topics.HOME → openController("Menu") is async; let the window land.
-    await new Promise(r => setTimeout(r, 500));
+    // Reset announces the logout (menu shows "Log In") only *after* it has
+    // quiesced any in-flight sync and cleared the token — so the Log In button
+    // is a reliable "reset complete" signal. Polling for it (rather than a
+    // fixed sleep) avoids the race where the next scenario logs in before
+    // reset finishes and reset then nulls the freshly-set token.
+    await global.driver.waitUntil(async () => {
+        const el = await global.driver.$('~Log In.');
+        return el.isDisplayed().catch(() => false);
+    }, { timeout: 15000, interval: 200, timeoutMsg: 'app did not return to the logged-out menu after reset' });
 }
 
 async function teardown() {

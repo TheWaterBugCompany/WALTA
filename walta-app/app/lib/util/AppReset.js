@@ -6,19 +6,24 @@
 // (WB-67).
 
 const Topics = require('ui/Topics');
+const SampleSync = require('logic/SampleSync');
 
-function reset() {
-  // Logout — drop the persistent user/app tokens so the next scenario
-  // starts unauthenticated. CerdiApi.storeUserToken handles
-  // userAccessUsername + userAccessTokenLive; appAccessTokenLive is a
-  // separate key.
+async function reset() {
+  // Cancel any in-flight sync and wait for it to actually stop *before*
+  // dropping the token: otherwise a straddling sync's next API call fails
+  // with "Not logged in", stranding a half-downloaded sample that leaks into
+  // the next scenario. We cancel directly rather than via LOGGEDOUT so the
+  // menu doesn't flip to its logged-out state until reset has finished —
+  // that lets the harness poll the logged-out menu as a reliable
+  // "reset complete" signal (features/support/appium-world.js).
+  SampleSync.cancel();
+  await SampleSync.whenQuiesced();
+
+  // Drop the persistent user/app tokens so the next scenario starts
+  // unauthenticated. CerdiApi.storeUserToken handles userAccessUsername +
+  // userAccessTokenLive; appAccessTokenLive is a separate key.
   Alloy.Globals.CerdiApi.storeUserToken(null, null);
   Ti.App.Properties.removeProperty('appAccessTokenLive');
-
-  // Reset is a logout, so announce it — SampleSync cancels any in-flight
-  // sync started against the now-cleared token (WB-103), mirroring the
-  // real logout path in Menu.js.
-  Topics.fireTopicEvent(Topics.LOGGEDOUT, null);
 
   // Wipe the local sample/taxa tables. Same DELETE pattern as
   // walta-app/app/spec/util/TestUtils.clearDatabase.
@@ -38,9 +43,12 @@ function reset() {
   Alloy.Models.instance('sample');
   Alloy.Models.instance('taxa');
 
-  // Topics.HOME → Navigation.openController("Menu") (see Main.js). The
-  // navigation logic truncates the history and fires PAGES_UNLOADED so
-  // intermediate controllers clean themselves up.
+  // Announce the logout last — now that the token is cleared, this flips the
+  // menu to its logged-out state (the harness's reset-complete signal) and
+  // clears the sync-recommended badge. Topics.HOME → openController("Menu")
+  // (see Main.js) truncates history and fires PAGES_UNLOADED so intermediate
+  // controllers clean themselves up.
+  Topics.fireTopicEvent(Topics.LOGGEDOUT, null);
   Topics.fireTopicEvent(Topics.HOME);
 }
 
