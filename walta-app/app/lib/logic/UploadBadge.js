@@ -36,12 +36,16 @@ function createUploadBadge({ properties, pendingCount, setBadge }) {
 // permission). Refreshes once on startup so a relaunch reflects current state.
 function init({ properties, pendingCount, setBadge, topics, requestPermission }) {
   const badge = createUploadBadge({ properties, pendingCount, setBadge });
-  topics.subscribe(topics.LOGGEDIN, () => badge.onLogin());
-  topics.subscribe(topics.LOGGEDOUT, () => badge.onLogout());
-  topics.subscribe(topics.FORCE_UPLOAD, () => badge.onLocalActivity());
-  topics.subscribe(topics.SYNC_FINISHED, (e) => badge.onSyncFinished(e || {}));
+  const subs = [];
+  function on(topic, fn) { topics.subscribe(topic, fn); subs.push([topic, fn]); }
+  on(topics.LOGGEDIN, () => badge.onLogin());
+  on(topics.LOGGEDOUT, () => badge.onLogout());
+  on(topics.FORCE_UPLOAD, () => badge.onLocalActivity());
+  on(topics.SYNC_FINISHED, (e) => badge.onSyncFinished(e || {}));
   if (requestPermission) requestPermission();
   badge.refresh();
+  // Lets a test (or a re-init) drop the Topics subscriptions it added.
+  badge.dispose = () => subs.forEach(([t, fn]) => topics.unsubscribe(t, fn));
   return badge;
 }
 
