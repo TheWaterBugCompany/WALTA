@@ -260,7 +260,15 @@ class AppiumLauncher {
 
   async stop() {
     if (this._driver) {
-      await this._driver.deleteSession();
+      // The session may already be gone (e.g. UND_ERR_CLOSED when a contended
+      // CI runner drops the WDA/Appium connection mid-run). Deleting a session
+      // we're discarding anyway must not fail teardown — mirror the SIGINT
+      // handler's tolerant cleanup (WB-113).
+      try {
+        await this._driver.deleteSession();
+      } catch (e) {
+        console.warn("AppiumLauncher.stop: deleteSession failed, session likely already gone:", e && e.message);
+      }
       this._driver = null;
     }
     if (this._serverPid) {
