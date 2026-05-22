@@ -55,7 +55,8 @@ describe("UploadBadge", function () {
       expect(badge.value()).to.equal(1);
     });
 
-    it("recommends a sync after local activity (new/edited sample)", function () {
+    it("does not add the recommendation on local activity — the new sample shows via the pending count", function () {
+      pending = 1;
       badge.onLocalActivity();
       expect(badge.value()).to.equal(1);
     });
@@ -124,11 +125,12 @@ describe("UploadBadge", function () {
       }, extra));
     }
 
-    it("recommends a sync when a sample is submitted (FORCE_UPLOAD)", function () {
+    it("reflects pending uploads on FORCE_UPLOAD without adding the recommendation", function () {
       const topics = fakeTopics();
       wire(topics);
+      pending = 2;
       topics.fire(topics.FORCE_UPLOAD);
-      expect(lastBadge()).to.equal(1);
+      expect(lastBadge()).to.equal(2);
     });
 
     it("recommends after login and clears after a successful full sync", function () {

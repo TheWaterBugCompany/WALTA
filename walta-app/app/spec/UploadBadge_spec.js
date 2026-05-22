@@ -6,14 +6,15 @@ var { init, SYNC_RECOMMENDED_KEY } = require("logic/UploadBadge");
 // this proves the real Topics events drive the badge end-to-end (up to the
 // platform appBadge call, stubbed here via setBadge).
 describe("UploadBadge (device wiring)", function () {
-    let badges, badge;
+    let badges, badge, pending;
 
     beforeEach(function () {
         Ti.App.Properties.setBool(SYNC_RECOMMENDED_KEY, false);
         badges = [];
+        pending = 0;
         badge = init({
             properties: Ti.App.Properties,
-            pendingCount: () => 0,
+            pendingCount: () => pending,
             setBadge: (n) => badges.push(n),
             topics: Topics,
         });
@@ -31,9 +32,10 @@ describe("UploadBadge (device wiring)", function () {
         expect(lastBadge()).to.equal(1);
     });
 
-    it("shows the badge on local activity (sample submitted)", function () {
+    it("reflects pending uploads on local activity without adding the recommendation", function () {
+        pending = 2;
         Topics.fireTopicEvent(Topics.FORCE_UPLOAD);
-        expect(lastBadge()).to.equal(1);
+        expect(lastBadge()).to.equal(2);
     });
 
     it("clears the badge after a successful full sync", function () {
