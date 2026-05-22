@@ -27,8 +27,15 @@ Scenario: Diagnostic logs persist across app restart
     And I tap Show Logs in the sync popup
    Then the log pane still contains the remembered lines
 
+  # The app-icon badge / notification-dot nudge (WB-10) scenarios run last, on
+  # purpose: they assert global app state (the springboard badge / notification
+  # shade) that a sync left in flight by an earlier scenario could perturb, so
+  # running them here surfaces any accidental cross-scenario coupling rather
+  # than hiding it. resetApp quiesces in-flight sync between scenarios so each
+  # still starts clean.
+
   # iOS-only: the app-icon badge is an iOS-springboard artifact. The Android
-  # notification-dot equivalent is WB-10b, hence @skip-android.
+  # notification-dot equivalent is below, hence @skip-android.
   @skip-android
   Scenario: A logged-in user is nudged to sync via the app-icon badge
     Given I am logged in as "test@example.com"

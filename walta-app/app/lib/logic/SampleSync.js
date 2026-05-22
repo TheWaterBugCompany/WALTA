@@ -18,6 +18,19 @@ function areWeSyncing() {
     return isSyncing;
 }
 
+// Resolve once no sync is in flight (or after timeoutMs as a safety net, so a
+// wedged HTTP can't hang the caller forever). Used by AppReset to let a
+// cancelled sync stop cleanly before the session token is dropped.
+function whenQuiesced(timeoutMs = 10000) {
+    return new Promise(function (resolve) {
+        var start = Date.now();
+        (function poll() {
+            if (!isSyncing || Date.now() - start > timeoutMs) return resolve();
+            setTimeout(poll, 50);
+        })();
+    });
+}
+
 function addListener(cb) {
     syncStore.addListener(cb);
 }
@@ -112,11 +125,19 @@ function init() {
     }
 }
 
-function onLoggedOut() {
-    info("Logged out — cancelling any in-flight sync and stopping the schedule.");
+// Signal any in-flight sync to stop and drop the schedule. Doesn't touch the
+// session — callers that also log out fire LOGGEDOUT separately. AppReset uses
+// this directly so it can quiesce the sync before clearing the token, without
+// flipping the UI to logged-out until reset has finished (see AppReset.js).
+function cancel() {
     cancelled = true;
     clearUploadTimer();
     setFullSyncPending(false);
+}
+
+function onLoggedOut() {
+    info("Logged out — cancelling any in-flight sync and stopping the schedule.");
+    cancel();
 }
 
 // User tapped Sync: a full history sync (download + upload), resumable across interruption.
@@ -266,6 +287,8 @@ exports.countSamplesNeedingUpload = countSamplesNeedingUpload;
 exports.resumeInterruptedWork = resumeInterruptedWork;
 exports.networkChanged = networkChanged;
 exports.areWeSyncing = areWeSyncing;
+exports.whenQuiesced = whenQuiesced;
+exports.cancel = cancel;
 exports.addListener = addListener;
 exports.removeListener = removeListener;
 exports.init = init;
