@@ -70,7 +70,7 @@ SampleSync.init();
 // appBadge; Android is a no-op for now (notification-based badge: WB-10b).
 UploadBadge.init({
   properties: Ti.App.Properties,
-  pendingCount: SampleSync.countPendingUploads,
+  pendingCount: SampleSync.countSamplesNeedingUpload,
   setBadge: function (n) { if (OS_IOS) Ti.UI.iOS.appBadge = n; },
   topics: Topics,
   requestPermission: OS_IOS ? function () {
