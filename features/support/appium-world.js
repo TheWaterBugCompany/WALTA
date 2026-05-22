@@ -100,6 +100,21 @@ async function prepareIosSimApp() {
         if (state === 4) break;
         await new Promise(r => setTimeout(r, 500));
     }
+    await acceptNotificationPrompt();
+}
+
+// index-app requests notification (badge) permission at startup (WB-10);
+// accept the system prompt so it doesn't overlay the menu and block the
+// first scenario. noReset means it's only asked once per sim, so a single
+// accept in BeforeAll clears it for the whole run.
+async function acceptNotificationPrompt() {
+    try {
+        const allow = await global.driver.$("-ios predicate string:label == 'Allow'");
+        await allow.waitForDisplayed({ timeout: 10000 });
+        await allow.click();
+    } catch (e) {
+        console.warn(`[appium-world] no notification permission prompt to accept: ${e.message}`);
+    }
 }
 
 // In-app reset via the `walta://reset` deeplink (lib/util/AppReset.js).

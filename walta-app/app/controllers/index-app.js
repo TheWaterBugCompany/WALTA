@@ -73,14 +73,11 @@ UploadBadge.init({
   pendingCount: SampleSync.countSamplesNeedingUpload,
   setBadge: function (n) { if (OS_IOS) Ti.UI.iOS.appBadge = n; },
   topics: Topics,
-  // Provisional authorization badges quietly with no permission prompt
-  // (Ti 13.2 → UNAuthorizationOptionProvisional). The user can promote or
-  // silence it later in Settings.
+  // iOS only renders the app-icon badge under full badge authorization —
+  // provisional auth grants quietly but never shows the badge (verified on
+  // device). So request BADGE, which prompts once.
   requestPermission: OS_IOS ? function () {
-    Ti.App.iOS.registerUserNotificationSettings({ types: [
-      Ti.App.iOS.USER_NOTIFICATION_TYPE_BADGE,
-      Ti.App.iOS.USER_NOTIFICATION_TYPE_PROVISIONAL,
-    ] });
+    Ti.App.iOS.registerUserNotificationSettings({ types: [ Ti.App.iOS.USER_NOTIFICATION_TYPE_BADGE ] });
   } : undefined,
 });
 
