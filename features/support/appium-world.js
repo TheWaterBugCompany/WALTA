@@ -61,9 +61,13 @@ async function connectAndPrepareApp({ platform, isSimulator }) {
             execFileSync(adb(), [...dev, 'shell', 'pm', 'clear', APP_ID]);
             execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_FINE_LOCATION']);
             execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_COARSE_LOCATION']);
-            // WB-10b: the sync nudge is a notification-dot; on Android 13+ the
-            // notification (hence dot) only shows once POST_NOTIFICATIONS is granted.
-            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.POST_NOTIFICATIONS']);
+            // WB-10b: the sync nudge is a notification-dot; Android 13+ needs
+            // POST_NOTIFICATIONS granted before the notification (hence dot)
+            // shows. Pre-33 doesn't define the permission — `pm grant` throws
+            // "Unknown permission" there, which is expected and harmless.
+            try {
+                execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.POST_NOTIFICATIONS']);
+            } catch (_) { /* pre-Android-13: no runtime notification permission */ }
         } catch (e) {
             console.warn(`[appium-world] adb pm clear/grant failed: ${e.message}`);
         }
