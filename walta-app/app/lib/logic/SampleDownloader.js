@@ -7,10 +7,12 @@ var debug = (m, tag = "sync") => Logger.debug(m, tag);
 var info = (m, tag = "sync") => Logger.info(m, tag);
 var warn = (m, tag = "sync") => Logger.warn(m, tag);
 var error = (m, tag = "sync") => Logger.error(m, tag);
-function createSampleDownloader(delay) {
+function createSampleDownloader(delay, progress) {
+    progress = progress || { plan() {}, tick() {} };
     return {
         downloadSamples() {
             debug(`Queuing sample retrieval from server... `);
+            let updatedCount = 0;
             
             // only update if updated after it was last uploaded - this allows user changes
             // to not be overwritten.
@@ -87,6 +89,7 @@ function createSampleDownloader(delay) {
                     .then( () => {
                         if ( needsUpdate(serverSample,sample) ) {
                             info(`Updating serverSampleId = ${serverSample.id}`);
+                            updatedCount++;
                             // serverSyncTime is set right after persistSample so that an
                             // updatedAt bumped a few ms later (e.g. habitat blanks being
                             // filled in) lands after it and signals a re-upload.
@@ -193,11 +196,14 @@ function createSampleDownloader(delay) {
                 
             }
 
-            function saveNewSamples( samples ) {     
-                return _.reduce( samples, 
+            function saveNewSamples( samples ) {
+                progress.plan( samples.length );
+                return _.reduce( samples,
                     (updateAllSamples, serverSample ) => updateAllSamples
                             .then( () => serverSample )
-                            .then( updateIncomingSample ),Promise.resolve() );
+                            .then( updateIncomingSample )
+                            .then( () => progress.tick() ),Promise.resolve() )
+                    .then( () => updatedCount );
             }
             return delayedPromise( Alloy.Globals.CerdiApi.retrieveSamples(), delay )
                 .then( saveNewSamples );
