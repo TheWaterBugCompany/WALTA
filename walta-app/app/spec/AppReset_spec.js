@@ -18,12 +18,15 @@ describe("AppReset", function () {
         Alloy.Globals.CerdiApi = savedApi;
     });
 
-    it("fires LOGGEDOUT so subscribers can cancel work tied to the session", function () {
+    // reset() quiesces any in-flight sync before announcing the logout, so it
+    // is async now (WB-116) — LOGGEDOUT fires after the returned promise's
+    // await, hence we await reset() before asserting and unsubscribing.
+    it("fires LOGGEDOUT so subscribers can cancel work tied to the session", async function () {
         var fired = false;
         function onLoggedOut() { fired = true; }
         Topics.subscribe(Topics.LOGGEDOUT, onLoggedOut);
         try {
-            AppReset.reset();
+            await AppReset.reset();
         } finally {
             Topics.unsubscribe(Topics.LOGGEDOUT, onLoggedOut);
         }
