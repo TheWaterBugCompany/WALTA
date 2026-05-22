@@ -5,6 +5,7 @@ var Logger = require('util/Logger');
 var log = (m, tag = "navigation") => Logger.log(m, tag);
 var Topics = require('ui/Topics');
 var SampleSync = require("logic/SampleSync");
+var UploadBadge = require("logic/UploadBadge");
 var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
 var AppReset = require("util/AppReset");
@@ -64,6 +65,18 @@ if (OS_IOS) {
 }
 
 SampleSync.init();
+
+// App-icon "sync recommended" indicator (WB-10). iOS sets the numeric
+// appBadge; Android is a no-op for now (notification-based badge: WB-10b).
+UploadBadge.init({
+  properties: Ti.App.Properties,
+  pendingCount: SampleSync.countPendingUploads,
+  setBadge: function (n) { if (OS_IOS) Ti.UI.iOS.appBadge = n; },
+  topics: Topics,
+  requestPermission: OS_IOS ? function () {
+    Ti.App.iOS.registerUserNotificationSettings({ types: [ Ti.App.iOS.USER_NOTIFICATION_TYPE_BADGE ] });
+  } : undefined,
+});
 
 // Report user name to Logger when logged in
 function setUserId() {
