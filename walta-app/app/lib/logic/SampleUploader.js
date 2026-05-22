@@ -220,17 +220,18 @@ function createSampleUploader(delay, progress) {
             return Promise.resolve()
                 .then(loadSamples)
                 .then((samples) => {
-                    const planned = samples.length;
-                    progress.plan( planned );
-                    return this.uploadRemainingSamples(samples).then( () => planned );
+                    progress.plan( samples.length );
+                    return this.uploadRemainingSamples(samples);
                 });
         },
 
          uploadRemainingSamples(samples) {
             if ( samples.length > 0 ) {
                 return this.uploadNextSample(samples)
-                    .then( () => progress.tick() )
-                    .then( () => this.uploadRemainingSamples(samples) )
+                    .then( (uploaded) => {
+                        progress.tick();
+                        return this.uploadRemainingSamples(samples).then( (rest) => uploaded + rest );
+                    })
                     .catch( (err) => {
                         if ( err.message === "The given data was invalid.") {
                             return this.uploadRemainingSamples(samples);
@@ -239,7 +240,7 @@ function createSampleUploader(delay, progress) {
                         }
                     })
             } else {
-                return Promise.resolve();
+                return Promise.resolve(0);
             }
         },
 
@@ -308,9 +309,10 @@ function createSampleUploader(delay, progress) {
                         .then( (sample) => uploadUnknownCreatures(sample,delay))
                         .then( (sample) => deletePendingUnknownCreatures(sample,delay))
                         .then( (sample) => markSampleComplete(sample,delay) )
-                        .catch( Logger.recordException );
+                        .then( () => 1 )
+                        .catch( (err) => { Logger.recordException(err); return 0; } );
             } else {
-                return Promise.resolve(sample);
+                return Promise.resolve(0);
             }
         
                      

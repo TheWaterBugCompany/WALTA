@@ -46,11 +46,15 @@ function setFullSyncPending(value) {
     Ti.App.Properties.setBool(FULL_SYNC_PENDING_KEY, value);
 }
 
-function hasPendingUploads() {
+function countPendingUploads() {
     let userId = Alloy.Globals.CerdiApi.retrieveUserId();
     let samples = Alloy.createCollection("sample");
     samples.loadUploadQueue(userId);
-    return samples.length > 0;
+    return samples.length;
+}
+
+function hasPendingUploads() {
+    return countPendingUploads() > 0;
 }
 
 function clearUploadTimer() {
@@ -135,8 +139,21 @@ function resumeInterruptedWork(options) {
 
 function runSync({ download, options }) {
     let delay = (options && !_.isUndefined(options.delay)?options.delay:2500);
-    let sampleUploader = createSampleUploader(delay);
-    let sampleDownloader = createSampleDownloader(delay);
+
+    // Combined-pool progress: one running fraction across the download and
+    // upload phases. Upload work is countable up front, so seed it before
+    // the download phase plans its own count — that keeps the bar from
+    // jumping backwards when uploads begin after a download.
+    let progressDone = 0, progressTotal = countPendingUploads();
+    function tick(message) {
+        progressDone++;
+        syncStore.recordProgress(message, { current: progressDone, total: progressTotal });
+    }
+    let downloadProgress = { plan: (n) => { progressTotal += n; }, tick };
+    let uploadProgress = { plan() {}, tick };
+
+    let sampleUploader = createSampleUploader(delay, uploadProgress);
+    let sampleDownloader = createSampleDownloader(delay, downloadProgress);
     debug(`Starting ${download?"full sync":"upload"} process... (delay=${delay})`);
 
     cancelled = false;
@@ -182,15 +199,15 @@ function runSync({ download, options }) {
 
     isSyncing = true;
     syncStore.recordStart();
-    info(`Starting ${download?"sync":"upload"}`);
     Topics.fireTopicEvent( Topics.SYNC_STARTED );
     let didDownload = download;
+    let downloadedCount = 0, uploadedCount = 0;
     function syncPass( withDownload ) {
         return Promise.resolve()
-            .then(() => withDownload ? sampleDownloader.downloadSamples() : undefined )
-            .then(checkCancelled)
+            .then(() => withDownload ? sampleDownloader.downloadSamples() : 0 )
+            .then((n) => { downloadedCount += (n || 0); checkCancelled(); })
             .then(() => sampleUploader.uploadSamples() )
-            .then(checkCancelled);
+            .then((n) => { uploadedCount += (n || 0); checkCancelled(); });
     }
     return syncPass( download )
         .then(() => {
@@ -207,7 +224,14 @@ function runSync({ download, options }) {
         .then(() => {
             if ( didDownload ) setFullSyncPending(false);
             syncStore.recordSuccess();
-            info(`${didDownload?"Sync":"Upload"} finished successfully`);
+            // Only narrate a sync that actually moved data; an idle check
+            // leaves just a debug breadcrumb so the log isn't dominated by
+            // empty-sync brackets.
+            if ( downloadedCount + uploadedCount > 0 ) {
+                info(`Sync finished: downloaded ${downloadedCount}, uploaded ${uploadedCount}`);
+            } else {
+                debug(`Sync check complete — nothing to ${didDownload?"sync":"upload"}`);
+            }
             Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } );
         })
         .catch( err => {
