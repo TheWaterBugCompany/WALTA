@@ -1,4 +1,6 @@
 'use strict';
+const path = require('path');
+const { execFileSync } = require('child_process');
 const { Then } = require('@cucumber/cucumber');
 
 const APP_ID = 'net.thewaterbug.waterbug';
@@ -46,33 +48,52 @@ Then('the app icon shows no sync badge', { timeout: 30000 }, async function () {
 });
 
 // Android: there's no numeric app-icon badge, so the sync nudge is a launcher
-// notification-dot driven by an ongoing "Sync recommended" notification
-// (WB-10b). Read it from the notification shade and poll until it settles on
-// the expected presence (the notification posts a beat after the Topics event).
+// notification-dot driven by an ongoing "Sync recommended" notification on the
+// `sync-recommended` channel (WB-10b). We read posted notifications from
+// `dumpsys notification` rather than the shade UI, which renders inconsistently
+// across Android versions. An active NotificationRecord on our channel means
+// the dot is showing; it disappears from the list once the notification is
+// cancelled. The channel *registry* uses a different format (mId='...') so a
+// `channel=sync-recommended` NotificationRecord line is unambiguously a post.
+function adbBin() {
+    return process.env.ANDROID_SDK_ROOT
+        ? path.join(process.env.ANDROID_SDK_ROOT, 'platform-tools', 'adb')
+        : 'adb';
+}
+
+function syncNotificationPosted() {
+    const dev = process.env.ANDROID_SERIAL ? ['-s', process.env.ANDROID_SERIAL] : [];
+    const dump = execFileSync(adbBin(), [...dev, 'shell', 'dumpsys', 'notification']).toString();
+    return dump
+        .split('\n')
+        .some((line) => line.includes('NotificationRecord')
+            && line.includes('pkg=' + APP_ID)
+            && line.includes('channel=sync-recommended'));
+}
+
+// Poll until the posted/cleared state settles — the notification is posted a
+// beat after the Topics event that triggers it.
 async function waitForSyncNotification(driver, shouldBePresent) {
-    await driver.openNotifications();
-    let present = false;
+    let posted = false;
     await driver
         .waitUntil(async () => {
-            const note = await driver.$('android=new UiSelector().textContains("Sync recommended")');
-            present = await note.isExisting();
-            return present === shouldBePresent;
+            posted = syncNotificationPosted();
+            return posted === shouldBePresent;
         }, { timeout: 10000, interval: 500 })
         .catch(() => {});
-    await driver.pressKeyCode(4); // BACK — close the shade
-    return present;
+    return posted;
 }
 
 Then('the app shows a sync notification', { timeout: 30000 }, async function () {
-    const present = await waitForSyncNotification(this.driver, true);
-    if (!present) {
-        throw new Error('Expected a sync notification but none was shown');
+    const posted = await waitForSyncNotification(this.driver, true);
+    if (!posted) {
+        throw new Error('Expected a sync notification but none was posted');
     }
 });
 
 Then('the app shows no sync notification', { timeout: 30000 }, async function () {
-    const present = await waitForSyncNotification(this.driver, false);
-    if (present) {
-        throw new Error('Expected no sync notification but one was shown');
+    const posted = await waitForSyncNotification(this.driver, false);
+    if (posted) {
+        throw new Error('Expected no sync notification but one was posted');
     }
 });
