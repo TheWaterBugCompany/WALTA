@@ -62,9 +62,17 @@ function _dispatch(level, facility, message) {
 const LOG_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 const LOG_MAX_ROWS = 100000;
 
+// Development builds (local dev + CI acceptance emulators/sims) bundle the
+// Bugfender module but shouldn't ship telemetry — it pollutes the dashboard
+// and burns the free-tier log budget. Production covers store + beta builds.
+exports.bugfenderEnabled = function(deployType) {
+    return deployType !== "development";
+};
+
 exports.configure = function() {
     _sinks.push(require("./sinks/ConsoleSink"));
-    const Bugfender = getBugfender();
+    const deployType = (typeof Ti !== 'undefined' && Ti.App) ? Ti.App.deployType : undefined;
+    const Bugfender = exports.bugfenderEnabled(deployType) ? getBugfender() : null;
     _sinks.push(require("./sinks/BugfenderSink").create(Bugfender));
     try {
         if (typeof Ti !== 'undefined' && Ti.Database) {

@@ -239,3 +239,24 @@ describe("Logger.configure", function () {
         ]);
     });
 });
+
+describe("Logger.bugfenderEnabled", function () {
+    let Logger;
+
+    beforeEach(function () {
+        delete require.cache[require.resolve("../walta-app/app/lib/util/Logger")];
+        Logger = require("../walta-app/app/lib/util/Logger");
+    });
+
+    it("is disabled for development builds (CI + local dev)", function () {
+        expect(Logger.bugfenderEnabled("development")).to.equal(false);
+    });
+
+    it("is enabled for production builds (store + beta/TestFlight/Play-internal)", function () {
+        expect(Logger.bugfenderEnabled("production")).to.equal(true);
+    });
+
+    it("is enabled for any non-development deployType", function () {
+        expect(Logger.bugfenderEnabled("test")).to.equal(true);
+    });
+});
