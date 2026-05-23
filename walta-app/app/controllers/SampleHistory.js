@@ -12,8 +12,20 @@ $.syncButton.setLabel("Sync");
 $.syncButton.on("click", syncNowClicked);
 acb.addTool( $.syncButton.getView() );
 
-Topics.subscribe( Topics.UPLOAD_PROGRESS, updateSampleList );
+// UPLOAD_PROGRESS fires several times per sample during a sync; reloading the
+// whole list on each tick rebuilds every TableView row and races Titanium's
+// cell cleanup (WB-118 crash). Throttle to coalesce the burst, and take an
+// authoritative reload when the sync finishes. WB-119 replaces this with
+// per-row ViewModel updates.
+var RELOAD_THROTTLE_MS = 1000;
+var closed = false;
+var reloadSampleList = _.throttle( updateSampleList, RELOAD_THROTTLE_MS );
+Topics.subscribe( Topics.UPLOAD_PROGRESS, reloadSampleList );
+Topics.subscribe( Topics.SYNC_FINISHED, updateSampleList );
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
+    closed = true;
+    Topics.unsubscribe( Topics.UPLOAD_PROGRESS, reloadSampleList );
+    Topics.unsubscribe( Topics.SYNC_FINISHED, updateSampleList );
     if ( $.sampleMenu ) {
         $.sampleMenu.cleanUp();
     }
@@ -24,6 +36,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 function updateSampleList() {
+    if ( closed ) return;
     try {
         $.samples.loadSampleHistory(Alloy.Globals.CerdiApi.retrieveUserId());
     } catch(e) {
