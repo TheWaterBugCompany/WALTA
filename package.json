@@ -48,7 +48,6 @@
     "grunt-exec": "^3.0.0",
     "grunt-newer-explicit": "^0.9.9",
     "grunt-parallel": "^0.5.1",
-    "grunt-run": "^0.8.1",
     "grunt-then": "^1.0.0",
     "hock": "^1.4.1",
     "image-convert": "^0.1.33",

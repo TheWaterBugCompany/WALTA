@@ -504,17 +504,6 @@ const KobitonAPI = require("./features/support/kobiton");
 
         },
 
-        run: {
-          appium: {
-            options: { 
-              wait: false,
-              quiet: true,
-              ready: /Appium REST http interface listener started on/ 
-            },
-            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:debug",
-          },
-        },
-
         newer: {
           tiapp: {
             src: ['./walta-app/tiapp.xml.template'],
@@ -804,7 +793,6 @@ const KobitonAPI = require("./features/support/kobiton");
     });
 
     grunt.loadNpmTasks("grunt-exec");
-    grunt.loadNpmTasks("grunt-run");
     grunt.loadNpmTasks("grunt-newer-explicit");
     grunt.loadNpmTasks("grunt-then");
     grunt.loadNpmTasks('grunt-parallel');
