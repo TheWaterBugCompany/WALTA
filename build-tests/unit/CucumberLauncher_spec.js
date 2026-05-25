@@ -84,6 +84,33 @@ describe("CucumberLauncher", function() {
       expect(fakeSpawn.secondCall.args[1]).to.include("cucumber-js");
     });
 
+    // The appium server's log carries the WDA/xcode command trace
+    // (showXcodeLog) needed to pinpoint a hung driver command. Spawn it with
+    // debug file logging so failure-diagnostics can capture ./appium.log.
+    it("starts the appium server with debug file logging so the WDA log is captured", async function() {
+      fakeIsRunning.onFirstCall().resolves(false);
+      fakeIsRunning.onSecondCall().resolves(true);
+
+      const appiumChild = makeFakeChild();
+      const cucumberChild = makeFakeChild();
+      fakeSpawn.onFirstCall().returns(appiumChild);
+      fakeSpawn.onSecondCall().returns(cucumberChild);
+
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      const promise = launcher.run();
+      await exitAfterSpawn(fakeSpawn, 1, 0);
+      await promise;
+
+      const appiumArgs = fakeSpawn.firstCall.args[1];
+      expect(appiumArgs).to.include("--log");
+      expect(appiumArgs).to.include("./appium.log");
+      expect(appiumArgs).to.include("--log-level");
+      expect(appiumArgs).to.include("info:debug");
+    });
+
     it("stops the server after cucumber exits if we started it", async function() {
       fakeIsRunning.onFirstCall().resolves(false);
       fakeIsRunning.onSecondCall().resolves(true);

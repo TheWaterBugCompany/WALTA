@@ -33,7 +33,10 @@ class CucumberLauncher {
 
   async _ensureServer() {
     if (await this._isAppiumRunning()) return;
-    const child = this._spawn('npx', ['appium'], {
+    // Log to a file at debug so the WDA/xcode trace (showXcodeLog) survives —
+    // stdio is ignored, so without --log the appium output is lost and a hung
+    // driver command can't be pinpointed. failure-diagnostics captures the file.
+    const child = this._spawn('npx', ['appium', '--log', './appium.log', '--log-level', 'info:debug'], {
       stdio: 'ignore',
       detached: true,
     });
