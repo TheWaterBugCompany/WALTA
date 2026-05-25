@@ -52,7 +52,9 @@ class BaseScreen {
     }
 
     selector( sel ) {
-        // Titanium appends a period to accessibility identifiers on both platforms
+        // Titanium appends a period to accessibility identifiers on both platforms.
+        // Accessibility id is the default; for big-tree iOS finds prefer a class
+        // chain — see docs/testing.md "Locator strategy on iOS (acceptance)".
         return "~" + sel + ".";
     }
 

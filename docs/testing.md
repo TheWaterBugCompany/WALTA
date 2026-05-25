@@ -71,6 +71,40 @@ intent extras / iOS process arguments — see `alloy.js` + `AppiumLauncher`), so
 any build can be redirected to the mock without rebuilding. The server must be
 running before the app launches, because auto-login hits `/token/create` at boot.
 
+## Locator strategy on iOS (acceptance)
+
+Locator choice is a *performance* decision on iOS, not just a matching one. To
+resolve an `accessibility id` (`~Foo`) or `xpath` query, WDA builds a snapshot
+of the **whole** element tree and computes visibility for every node. On a small
+screen that's free; on a big tree it's brutal — finding the springboard app
+icon (`~Waterbug`, ~640 nodes) once took **~2 minutes** on a contended CI runner
+and blew the step timeout (WB-127).
+
+Pick by context:
+
+- **`accessibility id`** (`~Foo.` — the `base-screen.js` default) — fine for
+  small in-app screens. The `.` suffix is Titanium's; see `BaseScreen.selector()`.
+- **`-ios predicate string`** — when you need to match on an *attribute*
+  accessibility id can't (`label CONTAINS`, `BEGINSWITH`, `value ==`). E.g.
+  `SampleScreen.openTaxon`, `BrowseScreen.chooseSpecies`. Note: predicate pays
+  the *same* full-snapshot cost as accessibility id — it buys expressiveness, not speed.
+- **`-ios class chain`** — the only strategy that skips the full snapshot
+  (it walks the live hierarchy and can short-circuit at the first match). Reach
+  for it when a find on a *large* tree is measured slow:
+
+  ```js
+  // features/step_definitions/app_badge_steps.js — springboard icon
+  driver.$('-ios class chain:**/XCUIElementTypeIcon[`name == "Waterbug"`]')
+  ```
+
+Don't pre-optimise: `accessibility id` is the right, escaping-safe default.
+Switch a find to a class chain only when it's *measured* slow — the
+`appium.log` captured into the per-scenario failure artifacts shows the
+fingerprint (a long gap around a find plus repeated `Fetching of
+XC_kAXXCAttributeIsVisible … took …s` lines). Slowness from *scrolling* a long
+list (e.g. `BrowseScreen.chooseSpecies`'s swipe loop) is a different problem — a
+locator swap won't help it.
+
 ## Acceptance test environment
 
 The local dev environment is already provisioned — emulator/simulator, Appium drivers, and the mock CERDI server are configured and ready. Run acceptance tests directly; don't gate on or caveat about setup.
