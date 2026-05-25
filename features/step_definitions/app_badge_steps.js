@@ -5,21 +5,11 @@ const { Then } = require('@cucumber/cucumber');
 
 const APP_ID = 'net.thewaterbug.waterbug';
 
-// A single springboard accessibility query can stall on a contended CI runner;
-// bound each read so the poll loop retries rather than the stall consuming the
-// whole step budget (WB-127). A stalled query resolves null and is re-polled.
-function withTimeout(promise, ms) {
-    let timer;
-    const guard = new Promise((resolve) => { timer = setTimeout(() => resolve(null), ms); });
-    return Promise.race([promise.catch(() => null), guard]).finally(() => clearTimeout(timer));
-}
-
 // The app-icon badge lives on the iOS springboard, exposed to XCUITest as the
-// icon's `value` (e.g. "1 new item"); no badge → empty value. Returns null when
-// the springboard hasn't rendered the icon yet so the caller keeps polling.
+// icon's `value` (e.g. "1 new item"); no badge → empty value.
 async function readSyncBadge(driver) {
     const icon = await driver.$('~Waterbug');
-    if (!(await icon.isExisting())) return null;
+    await icon.waitForExist({ timeout: 10000 });
     const value = await icon.getAttribute('value');
     const match = value && value.match(/\d+/);
     return match ? parseInt(match[0], 10) : 0;
@@ -31,17 +21,17 @@ async function readSyncBadge(driver) {
 // read so the caller can report a clear mismatch.
 async function waitForSyncBadge(driver, expected) {
     await driver.execute('mobile: pressButton', { name: 'home' });
-    let actual = null;
+    let actual = await readSyncBadge(driver);
     await driver
         .waitUntil(async () => {
-            actual = await withTimeout(readSyncBadge(driver), 5000);
+            actual = await readSyncBadge(driver);
             return actual === expected;
-        }, { timeout: 20000, interval: 500 })
+        }, { timeout: 10000, interval: 500 })
         .catch(() => {});
     return actual;
 }
 
-Then('the app icon shows a sync badge of {int}', { timeout: 60000 }, async function (expected) {
+Then('the app icon shows a sync badge of {int}', { timeout: 30000 }, async function (expected) {
     const actual = await waitForSyncBadge(this.driver, expected);
     await this.driver.execute('mobile: activateApp', { bundleId: APP_ID });
     if (actual !== expected) {
@@ -49,7 +39,7 @@ Then('the app icon shows a sync badge of {int}', { timeout: 60000 }, async funct
     }
 });
 
-Then('the app icon shows no sync badge', { timeout: 60000 }, async function () {
+Then('the app icon shows no sync badge', { timeout: 30000 }, async function () {
     const actual = await waitForSyncBadge(this.driver, 0);
     await this.driver.execute('mobile: activateApp', { bundleId: APP_ID });
     if (actual !== 0) {

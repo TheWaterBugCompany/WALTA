@@ -24,7 +24,37 @@ After({ timeout: 30000 }, async function ({ pickle, result }) {
     captureDeviceLog(this.platform, dir);
     captureTempPhotos(dir);
     captureMockCerdiLog(dir);
+    captureAppiumLog(dir);
 });
+
+// The appium server (grunt `appium` task, --log ./appium.log) carries the
+// WDA/xcode output (showXcodeLog) that pins down which driver command hung —
+// detail the device log can't show. The file accumulates across the whole run,
+// so keep the tail to bound artifact size while still covering the failure.
+function captureAppiumLog(dir) {
+    const logPath = process.env.APPIUM_LOG === '0'
+        ? null
+        : (process.env.APPIUM_LOG || path.resolve(process.cwd(), 'appium.log'));
+    if (!logPath) return;
+    try {
+        if (!fs.existsSync(logPath)) return;
+        const out = path.join(dir, 'appium.log');
+        const CAP = 4 * 1024 * 1024;
+        const stat = fs.statSync(logPath);
+        if (stat.size > CAP) {
+            const fd = fs.openSync(logPath, 'r');
+            const buf = Buffer.alloc(CAP);
+            fs.readSync(fd, buf, 0, CAP, stat.size - CAP);
+            fs.closeSync(fd);
+            fs.writeFileSync(out, buf);
+        } else {
+            fs.copyFileSync(logPath, out);
+        }
+    } catch (e) {
+        fs.writeFileSync(path.join(dir, 'appium.log.error.txt'),
+            `captureAppiumLog threw: ${e && e.message}`);
+    }
+}
 
 function captureMockCerdiLog(dir) {
     const logPath = process.env.MOCK_CERDI_LOG === '0'

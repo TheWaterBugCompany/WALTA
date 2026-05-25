@@ -511,7 +511,7 @@ const KobitonAPI = require("./features/support/kobiton");
               quiet: true,
               ready: /Appium REST http interface listener started on/ 
             },
-            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:error",
+            exec: "PATH=./node_modules/.bin/:$PATH appium --log ./appium.log --log-level info:debug",
           },
         },
 
