@@ -7,8 +7,15 @@ const APP_ID = 'net.thewaterbug.waterbug';
 
 // The app-icon badge lives on the iOS springboard, exposed to XCUITest as the
 // icon's `value` (e.g. "1 new item"); no badge → empty value.
+//
+// Locate via a class chain, not `~Waterbug`: an accessibility-id/xpath find
+// forces WDA to snapshot the whole springboard tree (~640 nodes) and compute
+// visibility for each — ~2 min on a contended CI runner, blowing the step
+// timeout. A class chain short-circuits to the icon without the full pass (WB-127).
+const WATERBUG_ICON = '-ios class chain:**/XCUIElementTypeIcon[`name == "Waterbug"`]';
+
 async function readSyncBadge(driver) {
-    const icon = await driver.$('~Waterbug');
+    const icon = await driver.$(WATERBUG_ICON);
     await icon.waitForExist({ timeout: 10000 });
     const value = await icon.getAttribute('value');
     const match = value && value.match(/\d+/);
