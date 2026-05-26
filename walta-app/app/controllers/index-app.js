@@ -35,6 +35,12 @@ var urlActions = UrlActions.create({
   cerdiApi: Alloy.Globals.CerdiApi,
   onLoggedIn: function () { Topics.fireTopicEvent(Topics.LOGGEDIN); },
   appReset: Ti.App.deployType !== 'production' ? AppReset.reset : undefined,
+  // walta://ballast?mb=N — dev-only WB-118 repro knob. Fire it before
+  // walta://login so the login-triggered sync runs under memory pressure.
+  setBallast: Ti.App.deployType !== 'production' ? function (mb) {
+    MemoryBallast.inflate(mb);
+    log(`memory ballast: holding ${mb} MB to induce pressure`);
+  } : undefined,
 });
 function handleDeeplink(url) {
   log(`[walta-deeplink] dispatch url=${url}`);
@@ -73,17 +79,6 @@ SampleSync.init();
 // racing in-flight JS proxy creation. Android has no equivalent Ti event.
 if (OS_IOS) {
   MemoryMonitor.start(Ti.App);
-}
-
-// Dev-only WB-118 repro knob: set the `memoryBallastMb` property and relaunch
-// to consume RAM and force memory warnings on a device with more headroom than
-// the 3 GB iPad. Never on production builds.
-if (Ti.App.deployType !== 'production') {
-  var ballastMb = Ti.App.Properties.getInt('memoryBallastMb', 0);
-  if (ballastMb > 0) {
-    MemoryBallast.inflate(ballastMb);
-    log(`memory ballast: holding ${ballastMb} MB to induce pressure`);
-  }
 }
 
 // App-icon "sync recommended" indicator (WB-10). iOS sets the numeric
