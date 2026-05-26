@@ -11,6 +11,7 @@ var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
 var AppReset = require("util/AppReset");
 var MemoryMonitor = require("util/MemoryMonitor");
+var MemoryBallast = require("util/MemoryBallast");
 var { System } = require("logic/System");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
@@ -72,6 +73,17 @@ SampleSync.init();
 // racing in-flight JS proxy creation. Android has no equivalent Ti event.
 if (OS_IOS) {
   MemoryMonitor.start(Ti.App);
+}
+
+// Dev-only WB-118 repro knob: set the `memoryBallastMb` property and relaunch
+// to consume RAM and force memory warnings on a device with more headroom than
+// the 3 GB iPad. Never on production builds.
+if (Ti.App.deployType !== 'production') {
+  var ballastMb = Ti.App.Properties.getInt('memoryBallastMb', 0);
+  if (ballastMb > 0) {
+    MemoryBallast.inflate(ballastMb);
+    log(`memory ballast: holding ${ballastMb} MB to induce pressure`);
+  }
 }
 
 // App-icon "sync recommended" indicator (WB-10). iOS sets the numeric
