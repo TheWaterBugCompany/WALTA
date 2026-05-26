@@ -52,14 +52,15 @@ describe('VideoView', function() {
     });
 
     it('should pause the video if the screen is clicked',function(done){
-        controllerOpenTest( ctl, function() {
-            setTimeout( function() {
-                ctl.videoPlayer.fireEvent("click");
-                setTimeout( ()=> checkTestResult( done,
-                    function() {
-                        expect( ctl.videoPlayer.playbackState).to.equal(Ti.Media.VIDEO_PLAYBACK_STATE_PAUSED);
-                    }), 1000 );
-                },1200);
-            });
+        function onPlaying() {
+            ctl.videoPlayer.removeEventListener("playing", onPlaying);
+            ctl.videoPlayer.fireEvent("click");
+            setTimeout( ()=> checkTestResult( done,
+                function() {
+                    expect( ctl.videoPlayer.playbackState).to.equal(Ti.Media.VIDEO_PLAYBACK_STATE_PAUSED);
+                }), 200 );
+        }
+        ctl.videoPlayer.addEventListener("playing", onPlaying);
+        controllerOpenTest( ctl, function() {} );
     });
 });
