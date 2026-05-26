@@ -52,15 +52,20 @@ describe('VideoView', function() {
     });
 
     it('should pause the video if the screen is clicked',function(done){
-        function onPlaying() {
-            ctl.videoPlayer.removeEventListener("playing", onPlaying);
-            ctl.videoPlayer.fireEvent("click");
-            setTimeout( ()=> checkTestResult( done,
-                function() {
-                    expect( ctl.videoPlayer.playbackState).to.equal(Ti.Media.VIDEO_PLAYBACK_STATE_PAUSED);
-                }), 200 );
+        function onState(e) {
+            if ( e.playbackState !== Ti.Media.VIDEO_PLAYBACK_STATE_PLAYING ) return;
+            ctl.videoPlayer.removeEventListener("playbackstate", onState);
+            // Pausing at the play transition stops the player (state 0) on iOS — let
+            // playback establish first, then click while it's genuinely playing.
+            setTimeout( function() {
+                ctl.videoPlayer.fireEvent("click");
+                setTimeout( ()=> checkTestResult( done,
+                    function() {
+                        expect( ctl.videoPlayer.playbackState).to.equal(Ti.Media.VIDEO_PLAYBACK_STATE_PAUSED);
+                    }), 200 );
+            }, 200 );
         }
-        ctl.videoPlayer.addEventListener("playing", onPlaying);
+        ctl.videoPlayer.addEventListener("playbackstate", onState);
         controllerOpenTest( ctl, function() {} );
     });
 });
