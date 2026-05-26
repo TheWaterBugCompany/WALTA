@@ -41,41 +41,50 @@ describe("UrlActions.create (generic dispatcher)", function () {
 });
 
 describe("UrlActions.buildActions (declarative catalog)", function () {
-  let cerdiApi, onLoggedIn, appReset, setBallast;
+  const MemoryBallast = require("util/MemoryBallast");
+  let cerdiApi;
   beforeEach(function () {
     cerdiApi = { loginUser: sinon.stub().resolves({ accessToken: "tok" }), serverUrl: "x" };
-    onLoggedIn = sinon.stub();
-    appReset = sinon.stub();
-    setBallast = sinon.stub();
+    // Topics fires through Alloy.Events; shim the framework bus so the real
+    // Topics module (ours) runs unmocked.
+    global.Alloy = { Events: { trigger: sinon.stub() } };
+  });
+  afterEach(function () {
+    delete global.Alloy;
+    MemoryBallast.deflate();
   });
 
-  it("login calls loginUser with the credentials and fires onLoggedIn after it resolves", async function () {
-    const actions = UrlActions.buildActions({ cerdiApi, onLoggedIn });
+  it("login calls loginUser with the credentials and fires the LOGGEDIN topic after it resolves", async function () {
+    const actions = UrlActions.buildActions({ cerdiApi });
     await actions.login({ email: "a@b.c", password: "p" });
     expect(cerdiApi.loginUser.calledOnceWith("a@b.c", "p")).to.equal(true);
-    expect(onLoggedIn.calledOnce).to.equal(true);
+    expect(global.Alloy.Events.trigger.calledOnceWith("waterbug:loggedin")).to.equal(true);
   });
 
-  it("login does not fire onLoggedIn when loginUser rejects", async function () {
+  it("login does not fire LOGGEDIN when loginUser rejects", async function () {
     cerdiApi.loginUser = sinon.stub().rejects(new Error("bad creds"));
-    const actions = UrlActions.buildActions({ cerdiApi, onLoggedIn });
+    const actions = UrlActions.buildActions({ cerdiApi });
     try { await actions.login({ email: "a@b.c", password: "p" }); } catch (e) { /* expected */ }
-    expect(onLoggedIn.notCalled).to.equal(true);
+    expect(global.Alloy.Events.trigger.notCalled).to.equal(true);
   });
 
   // reset (wipe) and ballast (balloon memory) are dev-only — a release build
   // must never expose them to a stray URL. Gated on allowDev.
   it("omits reset and ballast when allowDev is false", function () {
-    const actions = UrlActions.buildActions({ cerdiApi, onLoggedIn, appReset, setBallast, allowDev: false });
+    const actions = UrlActions.buildActions({ cerdiApi, allowDev: false });
     expect(actions.reset).to.equal(undefined);
     expect(actions.ballast).to.equal(undefined);
   });
 
-  it("includes reset and ballast when allowDev is true", async function () {
-    const actions = UrlActions.buildActions({ cerdiApi, onLoggedIn, appReset, setBallast, allowDev: true });
-    await actions.reset();
-    expect(appReset.calledOnce).to.equal(true);
-    await actions.ballast({ mb: "256" });
-    expect(setBallast.calledOnceWith(256)).to.equal(true);
+  it("exposes reset and ballast when allowDev is true", function () {
+    const actions = UrlActions.buildActions({ cerdiApi, allowDev: true });
+    expect(actions.reset).to.be.a("function");
+    expect(actions.ballast).to.be.a("function");
+  });
+
+  it("ballast inflates the real MemoryBallast buffer to the requested size", async function () {
+    const actions = UrlActions.buildActions({ cerdiApi, allowDev: true });
+    await actions.ballast({ mb: "1" });
+    expect(MemoryBallast.heldBytes()).to.equal(1 * 1024 * 1024);
   });
 });

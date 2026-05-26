@@ -1,3 +1,9 @@
+const Topics = require("ui/Topics");
+const AppReset = require("util/AppReset");
+const MemoryBallast = require("util/MemoryBallast");
+const Logger = require("util/Logger");
+const log = (m) => Logger.log(m, "navigation");
+
 // Generic walta:// deeplink dispatcher. It knows nothing about specific
 // actions — it parses walta://<name>?k=v&k=v and calls the matching handler
 // with the parsed params. The action catalog is declared once in
@@ -30,11 +36,14 @@ function create(actions) {
   return { dispatch, actions };
 }
 
-// The declarative action catalog. Dev-only actions (reset wipes user data,
-// ballast balloons memory for WB-118 repro) are included only when allowDev —
-// index-app passes deployType !== 'production' — so a release build can never
-// be wiped or memory-ballooned by a stray walta:// URL.
-function buildActions({ cerdiApi, onLoggedIn, appReset, setBallast, allowDev }) {
+// The declarative action catalog. cerdiApi (network) and allowDev (a Ti
+// deployType value) are the only true boundaries index-app must supply;
+// everything else is a collaborator this module owns and calls directly.
+// Dev-only actions (reset wipes user data, ballast balloons memory for WB-118
+// repro) are included only when allowDev — index-app passes
+// deployType !== 'production' — so a release build can never be wiped or
+// memory-ballooned by a stray walta:// URL.
+function buildActions({ cerdiApi, allowDev }) {
   const actions = {
     login: ({ email, password }) => {
       if (typeof Ti !== 'undefined') {
@@ -43,7 +52,7 @@ function buildActions({ cerdiApi, onLoggedIn, appReset, setBallast, allowDev }) 
       return cerdiApi.loginUser(email, password)
         .then(() => {
           if (typeof Ti !== 'undefined') Ti.API.debug(`[walta-deeplink] login resolved`);
-          return onLoggedIn();
+          Topics.fireTopicEvent(Topics.LOGGEDIN);
         })
         .catch((err) => {
           if (typeof Ti !== 'undefined') Ti.API.error(`[walta-deeplink] login failed: ${err && err.message}`);
@@ -53,8 +62,12 @@ function buildActions({ cerdiApi, onLoggedIn, appReset, setBallast, allowDev }) 
   };
 
   if (allowDev) {
-    actions.reset = () => Promise.resolve(appReset());
-    actions.ballast = ({ mb }) => Promise.resolve(setBallast(parseInt(mb, 10) || 0));
+    actions.reset = () => AppReset.reset();
+    actions.ballast = ({ mb }) => {
+      const held = MemoryBallast.inflate(parseInt(mb, 10) || 0);
+      log(`memory ballast: holding ${mb} MB to induce pressure`);
+      return held;
+    };
   }
 
   return actions;

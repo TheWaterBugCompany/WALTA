@@ -9,9 +9,7 @@ var UploadBadge = require("logic/UploadBadge");
 var AndroidNotificationBadge = require("logic/AndroidNotificationBadge");
 var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
-var AppReset = require("util/AppReset");
 var MemoryMonitor = require("util/MemoryMonitor");
-var MemoryBallast = require("util/MemoryBallast");
 var { System } = require("logic/System");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
@@ -32,12 +30,6 @@ Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Allo
 // or memory-ballooned by a stray URL.
 var urlActions = UrlActions.create(UrlActions.buildActions({
   cerdiApi: Alloy.Globals.CerdiApi,
-  onLoggedIn: function () { Topics.fireTopicEvent(Topics.LOGGEDIN); },
-  appReset: AppReset.reset,
-  setBallast: function (mb) {
-    MemoryBallast.inflate(mb);
-    log(`memory ballast: holding ${mb} MB to induce pressure`);
-  },
   allowDev: Ti.App.deployType !== 'production',
 }));
 function handleDeeplink(url) {
