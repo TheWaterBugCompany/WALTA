@@ -13,9 +13,13 @@ it (write to console, ship to Bugfender, persist to SQLite, …).
 - **Pluggable persistence.** Adding a new destination (e.g. SQLite for
   surviving background/resume) is a new sink, not another inline branch
   in every `Logger` method.
-- **Per-sink level filter.** `debug` is dev-only noise — it should hit
-  `ConsoleSink` but not be shipped to Bugfender or persisted to SQLite.
-  The level allowlist lives on the sink, not in `Logger`.
+- **Per-sink level filter.** Each sink declares which levels it accepts
+  via its own `levels` allowlist; the allowlist lives on the sink, not in
+  `Logger`. All five levels currently fan out to every sink — including
+  `debug`, which `SqlSink` persists for the diagnostics export and
+  `BugfenderSink` ships remotely so crash breadcrumbs are visible on the
+  dashboard (debug is still suppressed entirely on `development` builds via
+  `bugfenderEnabled`).
 - **Cross-run log visibility.** `SqlSink` writes entries through a
   separate `LogRepository` that persists them across background/resume,
   so the SyncFeedback "Show Logs" pane can query prior-run history via
@@ -69,7 +73,7 @@ Logs" pane); persistence and shipping live in sinks.
 `debug`, `trace`, `info`, `warn`, `error`. All five fan out to every
 registered sink and to every matching subscriber. Sinks narrow with a
 level allowlist; subscribers use `minLevel` to receive everything at
-or above a threshold. Ordering: `debug < trace < info < warn < error`.
+or above a threshold. Ordering: `trace < debug < info < warn < error`.
 
 ## Facility taxonomy
 

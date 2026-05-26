@@ -19,9 +19,9 @@ describe("BugfenderSink", function () {
         };
     });
 
-    it("create() returns a sink that lets trace/info/warn/error through (debug excluded as dev-only)", function () {
+    it("create() returns a sink that lets trace/debug/info/warn/error through", function () {
         const sink = BugfenderSink.create(fakeBugfender);
-        expect(sink.levels).to.deep.equal(["trace", "info", "warn", "error"]);
+        expect(sink.levels).to.deep.equal(["trace", "debug", "info", "warn", "error"]);
     });
 
     it("write() returns a Promise", function () {
@@ -63,9 +63,9 @@ describe("BugfenderSink", function () {
         expect(bfCalls).to.have.length(0);
     });
 
-    it("write() is a no-op for debug entries (defensive — dispatcher should filter)", async function () {
+    it("routes debug to Bugfender.d with facility as tag", async function () {
         const sink = BugfenderSink.create(fakeBugfender);
-        await sink.write({ level: "debug", facility: "x", message: "noise" });
-        expect(bfCalls).to.have.length(0);
+        await sink.write({ level: "debug", facility: "sync", message: "needsUpdate: remote newer" });
+        expect(bfCalls).to.deep.equal([{ method: "d", arg: { tag: "sync", message: "needsUpdate: remote newer" } }]);
     });
 });
