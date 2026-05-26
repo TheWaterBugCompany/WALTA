@@ -1,5 +1,6 @@
 const LEVEL_TO_METHOD = {
     trace: "t",
+    debug: "d",
     info:  "i",
     warn:  "w",
     error: "e"
@@ -7,7 +8,7 @@ const LEVEL_TO_METHOD = {
 
 exports.create = function (Bugfender) {
     return {
-        levels: ["trace", "info", "warn", "error"],
+        levels: ["trace", "debug", "info", "warn", "error"],
         write: function (entry) {
             if (!Bugfender) return Promise.resolve();
             const method = LEVEL_TO_METHOD[entry.level];
