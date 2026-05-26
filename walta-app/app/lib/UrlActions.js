@@ -4,27 +4,27 @@ const MemoryBallast = require("util/MemoryBallast");
 const Logger = require("util/Logger");
 const log = (m) => Logger.log(m, "navigation");
 
-// Generic walta:// deeplink dispatcher. It knows nothing about specific
-// actions — it parses walta://<name>?k=v&k=v and calls the matching handler
-// with the parsed params. The action catalog is declared once in
-// buildActions(); adding an action touches only that catalog, not this
-// dispatch mechanism. index-app.js wires the two together.
-function create(actions) {
-  // Manual parser — Titanium 13.x's V8 doesn't expose the WHATWG URL
-  // constructor in the JS runtime, so `new URL(...)` throws.
-  function parse(url) {
-    const m = String(url || "").match(/^walta:\/\/([^/?#]+)(?:\?([^#]*))?/);
-    if (!m) return null;
-    const params = {};
-    (m[2] || "").split("&").filter(Boolean).forEach(pair => {
-      const eq = pair.indexOf("=");
-      const k = eq === -1 ? pair : pair.slice(0, eq);
-      const v = eq === -1 ? "" : pair.slice(eq + 1);
-      params[decodeURIComponent(k)] = decodeURIComponent(v);
-    });
-    return { name: m[1], params };
-  }
+// Manual parser — Titanium 13.x's V8 doesn't expose the WHATWG URL
+// constructor in the JS runtime, so `new URL(...)` throws.
+function parse(url) {
+  const m = String(url || "").match(/^walta:\/\/([^/?#]+)(?:\?([^#]*))?/);
+  if (!m) return null;
+  const params = {};
+  (m[2] || "").split("&").filter(Boolean).forEach(pair => {
+    const eq = pair.indexOf("=");
+    const k = eq === -1 ? pair : pair.slice(0, eq);
+    const v = eq === -1 ? "" : pair.slice(eq + 1);
+    params[decodeURIComponent(k)] = decodeURIComponent(v);
+  });
+  return { name: m[1], params };
+}
 
+// Build a walta:// deeplink dispatcher for the given boundaries. The dispatch
+// mechanism (parse walta://<name>?k=v and route to the matching handler) and
+// the action catalog are composed here, so the caller wires one thing:
+// `UrlActions.create({ cerdiApi, allowDev }).dispatch(url)`.
+function create(deps) {
+  const actions = buildActions(deps);
   function dispatch(url) {
     const parsed = parse(url);
     if (!parsed) return;
@@ -32,8 +32,7 @@ function create(actions) {
     if (!handler) return;
     return handler(parsed.params);
   }
-
-  return { dispatch, actions };
+  return { dispatch };
 }
 
 // The declarative action catalog. cerdiApi (network) and allowDev (a Ti

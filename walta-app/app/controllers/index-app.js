@@ -22,16 +22,15 @@ DiagnosticsBundle.subscribe();
 // FIXME: deprecate using globals
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 
-// `walta://` URL scheme dispatcher — the action catalog lives in
-// UrlActions.buildActions(). Acceptance tests use
+// `walta://` URL scheme dispatcher. Acceptance tests use
 // `walta://login?email=...&password=...` to bypass the login UI. The dev-only
 // actions (`walta://reset` cucumber fast-path WB-67; `walta://ballast?mb=N`
 // WB-118 repro knob) are gated by allowDev so a release build can't be wiped
 // or memory-ballooned by a stray URL.
-var urlActions = UrlActions.create(UrlActions.buildActions({
+var urlActions = UrlActions.create({
   cerdiApi: Alloy.Globals.CerdiApi,
   allowDev: Ti.App.deployType !== 'production',
-}));
+});
 function handleDeeplink(url) {
   log(`[walta-deeplink] dispatch url=${url}`);
   Promise.resolve(urlActions.dispatch(url))
