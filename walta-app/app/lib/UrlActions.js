@@ -1,4 +1,4 @@
-function create({ cerdiApi, onLoggedIn, appReset }) {
+function create({ cerdiApi, onLoggedIn, appReset, setBallast }) {
   const actions = {
     login: {
       params: ["email", "password"],
@@ -27,6 +27,17 @@ function create({ cerdiApi, onLoggedIn, appReset }) {
     actions.reset = {
       params: [],
       handler: () => Promise.resolve(appReset()),
+    };
+  }
+
+  // walta://ballast?mb=<N> — dev-only WB-118 repro knob. Like reset, only
+  // registered when index-app.js supplies a setBallast callback (non-production
+  // builds), so a release build ignores the URL and can never balloon its own
+  // memory. Session-only: inflates now, does not persist.
+  if (setBallast) {
+    actions.ballast = {
+      params: ["mb"],
+      handler: ({ mb }) => Promise.resolve(setBallast(parseInt(mb, 10) || 0)),
     };
   }
 

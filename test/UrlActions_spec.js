@@ -38,6 +38,21 @@ describe("UrlActions", function () {
     });
   });
 
+  describe("dispatch(ballast)", function () {
+    // Dev-only WB-118 repro knob — gated behind a setBallast callback that
+    // index-app.js only supplies on non-production builds, like reset.
+    it("registers the ballast action and calls setBallast with the parsed mb", async function () {
+      const setBallast = sinon.stub();
+      const withBallast = UrlActions.create({ cerdiApi, onLoggedIn, setBallast });
+      await withBallast.dispatch("walta://ballast?mb=256");
+      expect(setBallast.calledOnceWith(256)).to.equal(true);
+    });
+
+    it("does not register the ballast action without a setBallast callback", function () {
+      expect(actions.dispatch("walta://ballast?mb=256")).to.equal(undefined);
+    });
+  });
+
   describe("dispatch (invalid input)", function () {
     it("ignores non-walta schemes", function () {
       const result = actions.dispatch("https://example.com/login?email=a@b.c");
