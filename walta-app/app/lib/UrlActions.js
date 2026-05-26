@@ -1,50 +1,12 @@
-function create({ cerdiApi, onLoggedIn, appReset, setBallast }) {
-  const actions = {
-    login: {
-      params: ["email", "password"],
-      handler: ({ email, password }) => {
-        if (typeof Ti !== 'undefined') {
-          Ti.API.debug(`[walta-deeplink] login handler: serverUrl=${cerdiApi.serverUrl} email=${email}`);
-        }
-        return cerdiApi.loginUser(email, password)
-          .then((resp) => {
-            if (typeof Ti !== 'undefined') Ti.API.debug(`[walta-deeplink] login resolved`);
-            return onLoggedIn();
-          })
-          .catch((err) => {
-            if (typeof Ti !== 'undefined') Ti.API.error(`[walta-deeplink] login failed: ${err && err.message}`);
-            throw err;
-          });
-      }
-    }
-  };
-
-  // walta://reset — cucumber Before-hook fast path. Only registered when
-  // an appReset callback is supplied (i.e. non-production builds), so a
-  // release build silently ignores walta://reset URLs and can't have its
-  // user data wiped by a stray deeplink.
-  if (appReset) {
-    actions.reset = {
-      params: [],
-      handler: () => Promise.resolve(appReset()),
-    };
-  }
-
-  // walta://ballast?mb=<N> — dev-only WB-118 repro knob. Like reset, only
-  // registered when index-app.js supplies a setBallast callback (non-production
-  // builds), so a release build ignores the URL and can never balloon its own
-  // memory. Session-only: inflates now, does not persist.
-  if (setBallast) {
-    actions.ballast = {
-      params: ["mb"],
-      handler: ({ mb }) => Promise.resolve(setBallast(parseInt(mb, 10) || 0)),
-    };
-  }
-
+// Generic walta:// deeplink dispatcher. It knows nothing about specific
+// actions — it parses walta://<name>?k=v&k=v and calls the matching handler
+// with the parsed params. The action catalog is declared once in
+// buildActions(); adding an action touches only that catalog, not this
+// dispatch mechanism. index-app.js wires the two together.
+function create(actions) {
+  // Manual parser — Titanium 13.x's V8 doesn't expose the WHATWG URL
+  // constructor in the JS runtime, so `new URL(...)` throws.
   function parse(url) {
-    // Manual parser — Titanium 13.x's V8 doesn't expose the WHATWG URL
-    // constructor in the JS runtime, so `new URL(...)` throws and the
-    // dispatch silently returns. Format: walta://<action>?k=v&k=v
     const m = String(url || "").match(/^walta:\/\/([^/?#]+)(?:\?([^#]*))?/);
     if (!m) return null;
     const params = {};
@@ -60,14 +22,42 @@ function create({ cerdiApi, onLoggedIn, appReset, setBallast }) {
   function dispatch(url) {
     const parsed = parse(url);
     if (!parsed) return;
-    const action = actions[parsed.name];
-    if (!action) return;
-    const args = {};
-    action.params.forEach(k => { args[k] = parsed.params[k]; });
-    return action.handler(args);
+    const handler = actions[parsed.name];
+    if (!handler) return;
+    return handler(parsed.params);
   }
 
   return { dispatch, actions };
 }
 
-module.exports = { create };
+// The declarative action catalog. Dev-only actions (reset wipes user data,
+// ballast balloons memory for WB-118 repro) are included only when allowDev —
+// index-app passes deployType !== 'production' — so a release build can never
+// be wiped or memory-ballooned by a stray walta:// URL.
+function buildActions({ cerdiApi, onLoggedIn, appReset, setBallast, allowDev }) {
+  const actions = {
+    login: ({ email, password }) => {
+      if (typeof Ti !== 'undefined') {
+        Ti.API.debug(`[walta-deeplink] login handler: serverUrl=${cerdiApi.serverUrl} email=${email}`);
+      }
+      return cerdiApi.loginUser(email, password)
+        .then(() => {
+          if (typeof Ti !== 'undefined') Ti.API.debug(`[walta-deeplink] login resolved`);
+          return onLoggedIn();
+        })
+        .catch((err) => {
+          if (typeof Ti !== 'undefined') Ti.API.error(`[walta-deeplink] login failed: ${err && err.message}`);
+          throw err;
+        });
+    },
+  };
+
+  if (allowDev) {
+    actions.reset = () => Promise.resolve(appReset());
+    actions.ballast = ({ mb }) => Promise.resolve(setBallast(parseInt(mb, 10) || 0));
+  }
+
+  return actions;
+}
+
+module.exports = { create, buildActions };
