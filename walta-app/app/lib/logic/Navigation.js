@@ -2,20 +2,6 @@ var Topics = require("ui/Topics");
 var { DialogCancelled } = require("logic/View");
 const Logger = require('util/Logger');
 const log = (m, tag = "navigation") => Logger.log(m, tag);
-const debug = (m, tag = "navigation") => Logger.debug(m, tag);
-
-function questionToString(args) {
-    if (!args || !args.node || !args.node.questions)
-        return "";
-    return `[0]= ${args.node.questions[0].text} [1]= ${args.node.questions[1].text}`;
-}
-
-function dumpHistory(history) {
-    debug("\ndump history:\n");
-    history.forEach((obj, i) => {
-        debug(`${i}: ${obj.ctl} ${obj.args.slide} ${(obj.args.node && obj.args.node.id) ? obj.args.node.id : "(no id)"} ${questionToString(obj.args)}`)
-    });
-}
 
 function Navigation(services) {
     this.history = [];
@@ -102,7 +88,7 @@ Navigation.prototype.openController = async function (ctl, args) {
             await this.garbageCollectControllers(page);
 
             this.history.push(page);
-            dumpHistory(this.history);
+            log(`opening controller ="${ctl}" with args.slide="${args.slide}"`);
             await this.onOpenView(ctl, args);
         } catch( err ) {
             // do nothing if dialog is aborted
@@ -129,7 +115,6 @@ Navigation.prototype.goBack = async function (args) {
                 newargs.slide = "left";
             }
         }
-        log(`opening controller (on back) ="${ctl}" with args.slide="${newargs.slide}"`);
         await this.openController(ctl, newargs);
 
     }

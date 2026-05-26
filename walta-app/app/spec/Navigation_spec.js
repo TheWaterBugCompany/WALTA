@@ -3,6 +3,7 @@ var { expect } = require("spec/lib/chai");
 var simple = require("spec/lib/simple-mock");
 var { closeWindow, controllerOpenTest } = require("spec/util/TestUtils");
 var { Navigation } = require('logic/Navigation');
+var Logger = require('util/Logger');
 describe("logic/Navigation service", function() {
   let services = {
     Key: {},
@@ -29,6 +30,18 @@ describe("logic/Navigation service", function() {
     simple.restore();
     simple.mock(services.View, "askDiscardEdits").resolveWith("discard");
   });
+  it('logs a navigation breadcrumb naming the opened controller', async function() {
+    var captured = [];
+    var unsubscribe = Logger.subscribe({ facility: "navigation" }, e => captured.push(e));
+    try {
+      let nav = new Navigation(services);
+      await nav.openController("SiteDetails");
+      expect(captured.some(e => e.message.indexOf("SiteDetails") >= 0)).to.equal(true);
+    } finally {
+      unsubscribe();
+    }
+  });
+
   it('should not ask to discard when tranistion to SiteDetails',async function() {
     let nav = new Navigation(services);
     
