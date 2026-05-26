@@ -10,6 +10,7 @@ var AndroidNotificationBadge = require("logic/AndroidNotificationBadge");
 var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
 var AppReset = require("util/AppReset");
+var MemoryMonitor = require("util/MemoryMonitor");
 var { System } = require("logic/System");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
@@ -66,6 +67,12 @@ if (OS_IOS) {
 }
 
 SampleSync.init();
+
+// Log iOS memory warnings (WB-118): the SDK purges proxies on a warning,
+// racing in-flight JS proxy creation. Android has no equivalent Ti event.
+if (OS_IOS) {
+  MemoryMonitor.start(Ti.App);
+}
 
 // App-icon "sync recommended" indicator (WB-10). iOS sets the numeric
 // appBadge; Android has no numeric badge, so it drives a notification-dot
