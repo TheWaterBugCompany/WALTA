@@ -43,6 +43,10 @@
         <string>
             We need to record the location of the waterbody survey.
         </string>
+        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+        <string>
+            We need to record the location of the waterbody survey.
+        </string>
         <key>NSPhotoLibraryUsageDescription</key>
         <string>
             To allow attaching photos to samples and sites.
