@@ -1,8 +1,8 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
 
-// Per-row VM. Mutated in place across reloads so the controller's bound
-// Label widgets keep their UILabel instances — this is what avoids the
-// WB-118 TiUILabel lazy-init crash on iOS 26.x.
+// Per-row VM. Mutated in place across UPLOAD_PROGRESS ticks so the
+// controller's bound Label widgets keep their UILabel instances — this
+// is what avoids the WB-118 TiUILabel lazy-init crash on iOS 26.x.
 class SampleRowViewModel extends ChangeNotifier {
   constructor(data) {
     super();
@@ -40,9 +40,7 @@ class SampleHistoryViewModel extends ChangeNotifier {
     this._rows = sampleSource.loadAll().map(d => new SampleRowViewModel(d));
 
     this._onUploadProgress = (payload) => this._handleUploadProgress(payload);
-    this._onSyncFinished   = ()        => this._handleSyncFinished();
     topics.subscribe(topics.UPLOAD_PROGRESS, this._onUploadProgress);
-    topics.subscribe(topics.SYNC_FINISHED,   this._onSyncFinished);
   }
 
   get rows() { return this._rows; }
@@ -50,44 +48,31 @@ class SampleHistoryViewModel extends ChangeNotifier {
   _handleUploadProgress(payload) {
     const id = payload && payload.id;
     if (id === undefined || id === null) return;
-    const row = this._rows.find(r => r.id === id);
-    if (!row) return;
-    const data = this._sampleSource.loadOne(id);
-    if (!data) return;
-    row.update(data);
-  }
 
-  _handleSyncFinished() {
-    const incoming = this._sampleSource.loadAll();
-    const byId = new Map(this._rows.map(r => [r.id, r]));
-    const before = this._rows;
-    const next = incoming.map(d => {
-      const existing = byId.get(d.id);
-      if (existing) {
-        existing.update(d);
-        return existing;
-      }
-      return new SampleRowViewModel(d);
-    });
-    this._rows = next;
-    if (structureChanged(before, next)) {
-      this.notifyListeners();
+    const data = this._sampleSource.loadOne(id);
+    const existingIdx = this._rows.findIndex(r => r.id === id);
+
+    if (data && existingIdx >= 0) {
+      this._rows[existingIdx].update(data);
+      return;
     }
+    if (data && existingIdx < 0) {
+      this._rows = [new SampleRowViewModel(data), ...this._rows];
+      this.notifyListeners();
+      return;
+    }
+    if (!data && existingIdx >= 0) {
+      this._rows = this._rows.filter((_, i) => i !== existingIdx);
+      this.notifyListeners();
+      return;
+    }
+    // !data && existingIdx < 0 — unknown id, nothing to do.
   }
 
   dispose() {
     this._topics.unsubscribe(this._topics.UPLOAD_PROGRESS, this._onUploadProgress);
-    this._topics.unsubscribe(this._topics.SYNC_FINISHED,   this._onSyncFinished);
     super.dispose();
   }
-}
-
-function structureChanged(before, after) {
-  if (before.length !== after.length) return true;
-  for (let i = 0; i < before.length; i++) {
-    if (before[i] !== after[i]) return true;
-  }
-  return false;
 }
 
 module.exports = SampleHistoryViewModel;
