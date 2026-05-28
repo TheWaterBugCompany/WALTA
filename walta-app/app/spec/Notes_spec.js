@@ -75,7 +75,7 @@ describe("Notes controller", function () {
     afterEach(function () {
       if ( ! isManualTests() ) {
         currentController().TopLevelWindow.close();
-        Alloy.Events.off(); // remove global events handlers
+        Topics.reset(); // remove global events handlers
       }
     });
     it('should move from the sample tray to the notes screen', async function () {

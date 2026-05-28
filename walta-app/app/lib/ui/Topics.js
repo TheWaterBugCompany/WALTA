@@ -6,11 +6,12 @@
  */
 
 function createEventBus() {
-	const subs = {};
+	let subs = {};
 	return {
 		on(evt, cb) { (subs[evt] = subs[evt] || []).push(cb); },
 		off(evt, cb) { if (subs[evt]) subs[evt] = subs[evt].filter(c => c !== cb); },
-		trigger(evt, data) { (subs[evt] || []).slice().forEach(cb => cb(data)); }
+		trigger(evt, data) { (subs[evt] || []).slice().forEach(cb => cb(data)); },
+		clear() { subs = {}; }
 	};
 }
 
@@ -117,6 +118,10 @@ var topics = {
 		Ti.App.addEventListener("waterbug", function(e) {
 			bus.trigger(`waterbug:${e.event}`, e);
 		})
+	},
+
+	reset: function() {
+		bus.clear();
 	}
 
 };
