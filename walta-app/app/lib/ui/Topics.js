@@ -4,6 +4,18 @@
  * PubSub events provide a loosely coupled interface to
  * navigation logic with the app.
  */
+
+function createEventBus() {
+	const subs = {};
+	return {
+		on(evt, cb) { (subs[evt] = subs[evt] || []).push(cb); },
+		off(evt, cb) { if (subs[evt]) subs[evt] = subs[evt].filter(c => c !== cb); },
+		trigger(evt, data) { (subs[evt] || []).slice().forEach(cb => cb(data)); }
+	};
+}
+
+const bus = createEventBus();
+
 var topics = {
 
 	LOGGEDIN: 'loggedin',
@@ -50,7 +62,7 @@ var topics = {
 
 	COMPLETE: 'complete',
 
-	HISTORY: 'history', 
+	HISTORY: 'history',
 
 	HELP: 'help',
 
@@ -85,25 +97,25 @@ var topics = {
 	DISCARD_OR_SAVE: 'discard_or_save',
 
 	unsubscribe: function( topic, callback ) {
-		Alloy.Events.off( 'waterbug:' + topic, callback );
+		bus.off( 'waterbug:' + topic, callback );
 	},
 
 	subscribe: function( topic, callback ) {
-		Alloy.Events.on( 'waterbug:' + topic, callback );
+		bus.on( 'waterbug:' + topic, callback );
 	},
 
 	fireTopicEvent: function( topic, data ) {
 		if ( topic ) {
-			Alloy.Events.trigger( 'waterbug:' + topic, data );
+			bus.trigger( 'waterbug:' + topic, data );
 		} else {
 			throw new Error("undefined topic");
 		}
-	}, 
+	},
 
 	init: function() {
-		// add a listener to bridge from webview to titanium events
+		if ( typeof Ti === "undefined" ) return;
 		Ti.App.addEventListener("waterbug", function(e) {
-			Alloy.Events.trigger(`waterbug:${e.event}`, e);
+			bus.trigger(`waterbug:${e.event}`, e);
 		})
 	}
 

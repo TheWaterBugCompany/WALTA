@@ -2,16 +2,15 @@ require("mocha");
 const { expect } = require("chai");
 const sinon = require("sinon");
 const UrlActions = require("../walta-app/app/lib/UrlActions");
+const Topics = require("../walta-app/app/lib/ui/Topics");
 
 describe("UrlActions.create (deeplink dispatch)", function () {
   const MemoryBallast = require("util/MemoryBallast");
   let cerdiApi;
   beforeEach(function () {
     cerdiApi = { loginUser: sinon.stub().resolves({ accessToken: "tok" }), serverUrl: "x" };
-    global.Alloy = { Events: { trigger: sinon.stub() } };
   });
   afterEach(function () {
-    delete global.Alloy;
     MemoryBallast.deflate();
   });
 
@@ -45,15 +44,15 @@ describe("UrlActions.create (deeplink dispatch)", function () {
 
 describe("UrlActions.buildActions (declarative catalog)", function () {
   const MemoryBallast = require("util/MemoryBallast");
-  let cerdiApi;
+  let cerdiApi, loggedInPayloads, loggedInListener;
   beforeEach(function () {
     cerdiApi = { loginUser: sinon.stub().resolves({ accessToken: "tok" }), serverUrl: "x" };
-    // Topics fires through Alloy.Events; shim the framework bus so the real
-    // Topics module (ours) runs unmocked.
-    global.Alloy = { Events: { trigger: sinon.stub() } };
+    loggedInPayloads = [];
+    loggedInListener = (payload) => loggedInPayloads.push(payload);
+    Topics.subscribe(Topics.LOGGEDIN, loggedInListener);
   });
   afterEach(function () {
-    delete global.Alloy;
+    Topics.unsubscribe(Topics.LOGGEDIN, loggedInListener);
     MemoryBallast.deflate();
   });
 
@@ -61,14 +60,14 @@ describe("UrlActions.buildActions (declarative catalog)", function () {
     const actions = UrlActions.buildActions({ cerdiApi });
     await actions.login({ email: "a@b.c", password: "p" });
     expect(cerdiApi.loginUser.calledOnceWith("a@b.c", "p")).to.equal(true);
-    expect(global.Alloy.Events.trigger.calledOnceWith("waterbug:loggedin")).to.equal(true);
+    expect(loggedInPayloads.length).to.equal(1);
   });
 
   it("login does not fire LOGGEDIN when loginUser rejects", async function () {
     cerdiApi.loginUser = sinon.stub().rejects(new Error("bad creds"));
     const actions = UrlActions.buildActions({ cerdiApi });
     try { await actions.login({ email: "a@b.c", password: "p" }); } catch (e) { /* expected */ }
-    expect(global.Alloy.Events.trigger.notCalled).to.equal(true);
+    expect(loggedInPayloads.length).to.equal(0);
   });
 
   // reset (wipe) and ballast (balloon memory) are dev-only — a release build
