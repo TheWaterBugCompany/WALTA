@@ -59,20 +59,12 @@ describe("SampleHistory controller", function() {
     expect( ctl.syncFeedback ).to.exist;
   });
 
-  it('coalesces a burst of UPLOAD_PROGRESS events into a single reload', async function() {
+  it('updates a row VM in place when its UPLOAD_PROGRESS fires', async function() {
     await controllerOpenTest( ctl );
-    var reload = simple.mock( ctl.samples, "loadSampleHistory" );
-    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: 1 } );
-    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: 1 } );
-    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: 1 } );
-    expect( reload.callCount ).to.equal(1);
-  });
-
-  it('refreshes the list once when the sync finishes', async function() {
-    await controllerOpenTest( ctl );
-    var reload = simple.mock( ctl.samples, "loadSampleHistory" );
-    Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: true } );
-    expect( reload.callCount ).to.equal(1);
+    var rowBefore = ctl.vm.rows[0];
+    var sampleId = rowBefore.sampleId;
+    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId } );
+    expect( ctl.vm.rows[0] ).to.equal( rowBefore );
   });
 
 });

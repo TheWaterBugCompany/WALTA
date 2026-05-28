@@ -6,7 +6,7 @@ class SampleRowViewModel extends ChangeNotifier {
     this._data = data;
   }
 
-  get id()            { return this._data.id; }
+  get serverId()      { return this._data.serverId != null ? String(this._data.serverId) : ""; }
   get sampleId()      { return this._data.sampleId; }
   get dateCompleted() { return this._data.dateCompleted; }
   get waterbodyName() { return this._data.waterbodyName; }
@@ -21,7 +21,7 @@ class SampleRowViewModel extends ChangeNotifier {
 
   _dataEquals(other) {
     const a = this._data;
-    return a.id === other.id
+    return a.serverId === other.serverId
       && a.sampleId === other.sampleId
       && a.dateCompleted === other.dateCompleted
       && a.waterbodyName === other.waterbodyName

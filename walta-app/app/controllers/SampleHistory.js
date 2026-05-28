@@ -1,88 +1,119 @@
-const Logger = require('util/Logger');
-const log = (m, tag = "sample") => Logger.log(m, tag);
 var Topics = require('ui/Topics');
-var SampleSync = require('logic/SampleSync');
+var SampleHistoryViewModel = require('viewmodels/SampleHistory');
 
-exports.baseController  = "TopLevelWindow";
+exports.baseController = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
+
+var userId = Alloy.Globals.CerdiApi.retrieveUserId();
+$.samples = Alloy.createCollection("sample");
+
+function toRowData(m) {
+    var json = m.transform();
+    return {
+        serverId: m.get("serverSampleId"),
+        sampleId: m.get("sampleId"),
+        dateCompleted: json.dateCompleted,
+        waterbodyName: json.waterbodyName,
+        uploaded: json.uploaded
+    };
+}
+
+var sampleSource = {
+    loadAll: function() {
+        $.samples.loadSampleHistory(userId);
+        return $.samples.map(toRowData);
+    },
+    loadOne: function(sampleId) {
+        var m = Alloy.createModel("sample");
+        m.loadById(sampleId);
+        if (!m.get("sampleId")) return undefined;
+        return toRowData(m);
+    }
+};
+
+$.vm = new SampleHistoryViewModel({ sampleSource: sampleSource, topics: Topics });
+
+var rowControllers = new Map();
+
+function buildAndBindRow(rowVm) {
+    var ctl = Alloy.createController("SampleHistoryRow");
+    var unbind = ctl.bind(rowVm);
+    rowControllers.set(rowVm.sampleId, { ctl: ctl, unbind: unbind });
+    return ctl.getView();
+}
+
+function disposeRow(sampleId) {
+    var r = rowControllers.get(sampleId);
+    if (!r) return;
+    r.unbind();
+    if (r.ctl && typeof r.ctl.destroy === "function") r.ctl.destroy();
+    rowControllers.delete(sampleId);
+}
+
+function renderRows() {
+    $.sampleTable.setData($.vm.rows.map(function(rowVm) {
+        if (rowControllers.has(rowVm.sampleId)) {
+            return rowControllers.get(rowVm.sampleId).ctl.getView();
+        }
+        return buildAndBindRow(rowVm);
+    }));
+}
+
+renderRows();
+
+$.vm.addListener(function () {
+    var newIds = new Set($.vm.rows.map(function(r) { return r.sampleId; }));
+    Array.from(rowControllers.keys()).forEach(function(id) {
+        if (!newIds.has(id)) disposeRow(id);
+    });
+    renderRows();
+});
 
 var acb = $.getAnchorBar();
 $.syncButton = Alloy.createController("NavButton");
 $.syncButton.setLabel("Sync");
 $.syncButton.on("click", syncNowClicked);
-acb.addTool( $.syncButton.getView() );
+acb.addTool($.syncButton.getView());
 
-// UPLOAD_PROGRESS fires several times per sample during a sync; reloading the
-// whole list on each tick rebuilds every TableView row and races Titanium's
-// cell cleanup (WB-118 crash). Throttle to coalesce the burst, and take an
-// authoritative reload when the sync finishes. WB-119 replaces this with
-// per-row ViewModel updates.
-var RELOAD_THROTTLE_MS = 1000;
-var closed = false;
-var reloadSampleList = _.throttle( updateSampleList, RELOAD_THROTTLE_MS );
-Topics.subscribe( Topics.UPLOAD_PROGRESS, reloadSampleList );
-Topics.subscribe( Topics.SYNC_FINISHED, updateSampleList );
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-    closed = true;
-    Topics.unsubscribe( Topics.UPLOAD_PROGRESS, reloadSampleList );
-    Topics.unsubscribe( Topics.SYNC_FINISHED, updateSampleList );
-    if ( $.sampleMenu ) {
-        $.sampleMenu.cleanUp();
-    }
+    rowControllers.forEach(function(r) {
+        r.unbind();
+        if (r.ctl && typeof r.ctl.destroy === "function") r.ctl.destroy();
+    });
+    rowControllers.clear();
+    $.vm.dispose();
+    if ($.sampleMenu) $.sampleMenu.cleanUp();
     closeSyncFeedback();
     $.syncButton.cleanUp();
     $.destroy();
     $.off();
-	$.TopLevelWindow.removeEventListener('close', cleanUp );
+    $.TopLevelWindow.removeEventListener('close', cleanUp);
 });
-function updateSampleList() {
-    if ( closed ) return;
-    try {
-        $.samples.loadSampleHistory(Alloy.Globals.CerdiApi.retrieveUserId());
-    } catch(e) {
-        // FIXME: for some reason these errors are not being reported if there isn't a catch here
-        log(`Error fetching sample list: ${JSON.stringify(e)}`);
-        Logger.recordException(e);
-    }
-}
-
-function openErrorsClick(e) {
-    var error = $.samples.at(e.index).get("lastError");
-    if ( error ) {
-        var dialog = Ti.UI.createAlertDialog({
-            message: error,
-            ok: 'Ok',
-            title: 'Last server error'
-        });
-        dialog.show();
-    }
-}
 
 function syncNowClicked() {
-    if ( $.syncFeedback ) return;
+    if ($.syncFeedback) return;
     $.syncFeedback = Alloy.createController("SyncFeedback");
-    $.TopLevelWindow.add( $.syncFeedback.getView() );
+    $.TopLevelWindow.add($.syncFeedback.getView());
     $.syncFeedback.on("close", closeSyncFeedback);
     $.syncFeedback.start();
 }
 
 function closeSyncFeedback() {
-    if ( ! $.syncFeedback ) return;
-    $.TopLevelWindow.remove( $.syncFeedback.getView() );
+    if (!$.syncFeedback) return;
+    $.TopLevelWindow.remove($.syncFeedback.getView());
     $.syncFeedback.cleanUp();
     $.syncFeedback = null;
 }
 
 function rowSelected(e) {
-    var sample = $.samples.at(e.index);
-    var sampleId = sample.get("sampleId");
+    var rowVm = $.vm.rows[e.index];
+    if (!rowVm) return;
+    var sampleId = rowVm.sampleId;
     function closeSelectMethod() {
-          $.TopLevelWindow.remove($.sampleMenu.getView());
-          $.sampleMenu.cleanUp();
+        $.TopLevelWindow.remove($.sampleMenu.getView());
+        $.sampleMenu.cleanUp();
     }
     $.sampleMenu = Alloy.createController("SampleEditMenu", { sampleId: sampleId });
     $.TopLevelWindow.add($.sampleMenu.getView());
     $.sampleMenu.on("close", closeSelectMethod);
 }
-
-updateSampleList();
