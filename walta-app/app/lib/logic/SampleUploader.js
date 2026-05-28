@@ -282,7 +282,7 @@ function createSampleUploader(delay, progress) {
             }
 
             function markSampleComplete(sample, delay) {
-                
+
                 return delayedPromise(
                     Promise.resolve()
                         .then( () => {
@@ -290,6 +290,7 @@ function createSampleUploader(delay, progress) {
                             loadCorrectSampleToUpdate(sample);
                             sample.set("serverSyncTime", moment().valueOf());
                             sample.save();
+                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                         }), delay)
             }
 

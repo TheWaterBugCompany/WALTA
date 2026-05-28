@@ -18,6 +18,7 @@ Alloy.Globals.CerdiApi = createCerdiApi();
 var Sample = require("logic/Sample");
 var Taxon = require("logic/Taxon");
 var SampleSync = require('logic/SampleSync');
+var Topics = require('ui/Topics');
 
 
 
@@ -233,6 +234,29 @@ describe("SampleSync", function () {
             expect(count, "uploaded count").to.equal(1);
             expect(planned, "planned total").to.deep.equal([1]);
             expect(ticks.length, "ticks").to.equal(1);
+        });
+        it('fires UPLOAD_PROGRESS after the sample is marked complete (serverSyncTime set)', async function() {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId").returnWith(38);
+            simple.mock(Alloy.Globals.CerdiApi,"submitSample").resolveWith({id:123, user_id:38});
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
+            let sample = makeSampleData();
+            sample.save();
+            const captures = [];
+            const handler = (e) => {
+                const m = Alloy.createModel("sample");
+                m.loadById(e && e.id);
+                captures.push({ id: e && e.id, sst: m.get("serverSyncTime") || 0 });
+            };
+            Topics.subscribe(Topics.UPLOAD_PROGRESS, handler);
+            try {
+                await createSampleUploader().uploadSamples();
+            } finally {
+                Topics.unsubscribe(Topics.UPLOAD_PROGRESS, handler);
+            }
+            expect(captures.length, "at least one UPLOAD_PROGRESS fired").to.be.at.least(1);
+            const last = captures[captures.length - 1];
+            expect(last.id, "last event was for our sample").to.equal(sample.get("sampleId"));
+            expect(last.sst, "last fire happened after serverSyncTime was set").to.be.greaterThan(0);
         });
         it('should upload modified samples to the server', async function() {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
@@ -539,6 +563,27 @@ describe("SampleSync", function () {
             expect(count, "updated count").to.equal(1);
             expect(planned, "planned total").to.deep.equal([1]);
             expect(ticks.length, "ticks").to.equal(1);
+        });
+        it('fires UPLOAD_PROGRESS after setTimestamp finishes (serverSyncTime set)', async function () {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith([makeCerdiSampleData({user_id:38, sampled_creatures: []})]);
+            const captures = [];
+            const handler = (e) => {
+                const m = Alloy.createModel("sample");
+                m.loadById(e && e.id);
+                captures.push({ id: e && e.id, sst: m.get("serverSyncTime") || 0 });
+            };
+            Topics.subscribe(Topics.UPLOAD_PROGRESS, handler);
+            try {
+                await createSampleDownloader().downloadSamples();
+            } finally {
+                Topics.unsubscribe(Topics.UPLOAD_PROGRESS, handler);
+            }
+            expect(captures.length, "at least one UPLOAD_PROGRESS fired").to.be.at.least(1);
+            const last = captures[captures.length - 1];
+            expect(last.sst, "last fire happened after serverSyncTime was set").to.be.greaterThan(0);
         });
         it('should update existing samples if they have been updated on the server', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
