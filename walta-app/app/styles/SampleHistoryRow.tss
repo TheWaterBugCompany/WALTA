@@ -1,7 +1,3 @@
-"#sampleTable": {
-    separatorStyle: Ti.UI.TABLE_VIEW_SEPARATOR_STYLE_SINGLE_LINE,
-    separatorColor: Alloy.CFG.colors.primary
-}
 ".column": {
     left: "1%",
     right: "1%",
@@ -13,14 +9,9 @@
         fontSize: "14dp"
     }
 }
-".headerRow": {
+".row": {
     layout: "horizontal",
-    horizontalWrap: false,
-    backgroundColor: "white",
-    borderColor: Alloy.CFG.colors.primary,
-    borderWidth: "2dp",
-    height: "30dp",
-    zIndex: 1
+    horizontalWrap: false
 }
 ".dateCompletedColumn": {
     width: "180dp",

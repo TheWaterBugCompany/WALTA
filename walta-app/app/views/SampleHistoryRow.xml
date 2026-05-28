@@ -1,0 +1,8 @@
+<Alloy>
+	<TableViewRow class="row">
+		<Label id="idColumn" class="idColumn column" accessibilityLabel="Server Identifier"/>
+		<Label id="dateCompletedColumn" class="dateCompletedColumn column" accessibilityLabel="Date Sample Completed"/>
+		<Label id="waterbodyName" class="waterbodyName column" accessibilityLabel="Waterbody Name"/>
+		<Label id="boolColumn" class="boolColumn column" accessibilityLabel="Has Sample Been Uploaded"/>
+	</TableViewRow>
+</Alloy>
