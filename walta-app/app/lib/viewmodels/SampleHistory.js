@@ -1,8 +1,5 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
 
-// Per-row VM. Mutated in place across UPLOAD_PROGRESS ticks so the
-// controller's bound Label widgets keep their UILabel instances — this
-// is what avoids the WB-118 TiUILabel lazy-init crash on iOS 26.x.
 class SampleRowViewModel extends ChangeNotifier {
   constructor(data) {
     super();
@@ -14,9 +11,6 @@ class SampleRowViewModel extends ChangeNotifier {
   get waterbodyName() { return this._data.waterbodyName; }
   get uploaded()      { return this._data.uploaded; }
 
-  // Returns true (and notifies row listeners) only when something
-  // actually changed, so an UPLOAD_PROGRESS tick that didn't move this
-  // row is a no-op for its bound widgets.
   update(data) {
     if (this._dataEquals(data)) return false;
     this._data = data;

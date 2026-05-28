@@ -2,10 +2,6 @@ require("mocha");
 const { expect } = require("chai");
 const SampleHistoryViewModel = require("../../walta-app/app/lib/viewmodels/SampleHistory");
 
-// In-memory sample source. `loadAll()` returns the current full list
-// (used only on construction); `loadOne(id)` returns the entry matching
-// that id, or undefined if the sample has been removed. Tests mutate
-// via `setRows()` / `setRow(id, data)` / `removeRow(id)` / `addRow(data)`.
 function fakeSampleSource(initial) {
   const state = { rows: initial };
   const calls = { loadAll: 0, loadOne: 0 };
@@ -29,8 +25,6 @@ function fakeSampleSource(initial) {
   };
 }
 
-// Mimics the real Topics module surface the VM uses — subscribe/unsubscribe
-// plus the topic-name constant. `fire()` is test-only.
 function fakeTopics() {
   const subscriptions = {};
   return {
