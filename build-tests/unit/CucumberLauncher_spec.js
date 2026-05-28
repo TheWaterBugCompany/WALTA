@@ -80,7 +80,7 @@ describe("CucumberLauncher", function() {
       await promise;
 
       expect(fakeSpawn.calledTwice).to.be.true;
-      expect(fakeSpawn.firstCall.args[1]).to.include("appium");
+      expect(fakeSpawn.firstCall.args[0]).to.match(/appium$/);
       expect(fakeSpawn.secondCall.args[1]).to.include("cucumber-js");
     });
 
@@ -109,6 +109,51 @@ describe("CucumberLauncher", function() {
       expect(appiumArgs).to.include("./appium.log");
       expect(appiumArgs).to.include("--log-level");
       expect(appiumArgs).to.include("info:debug");
+    });
+
+    // npx resolution adds ~8 min cold-start latency on macOS-15 runners
+    // (see WB-49). Spawn the directly-resolved binary instead.
+    it("spawns the direct appium binary, not npx", async function() {
+      fakeIsRunning.onFirstCall().resolves(false);
+      fakeIsRunning.onSecondCall().resolves(true);
+
+      const appiumChild = makeFakeChild();
+      const cucumberChild = makeFakeChild();
+      fakeSpawn.onFirstCall().returns(appiumChild);
+      fakeSpawn.onSecondCall().returns(cucumberChild);
+
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+      });
+      const promise = launcher.run();
+      await exitAfterSpawn(fakeSpawn, 1, 0);
+      await promise;
+
+      const cmd = fakeSpawn.firstCall.args[0];
+      expect(cmd).to.not.equal("npx");
+      expect(cmd).to.match(/node_modules\/\.bin\/appium$/);
+    });
+
+    // The previous hard-coded 30s ceiling fired before macOS-15 CI runners
+    // could even cold-start Appium. Mirror AppiumLauncher's configurable
+    // serverStartTimeoutMs (default 300s) so the message names the real value.
+    it("throws after the configured serverStartTimeoutMs with the message naming the value", async function() {
+      fakeIsRunning.resolves(false);
+
+      const appiumChild = makeFakeChild();
+      fakeSpawn.returns(appiumChild);
+
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn,
+        isAppiumRunning: fakeIsRunning,
+        serverStartTimeoutMs: 100,
+      });
+
+      let caught;
+      try { await launcher.run(); } catch (e) { caught = e; }
+      expect(caught, "expected timeout error").to.exist;
+      expect(caught.message).to.match(/Appium server failed to start within 0\.1s/);
     });
 
     it("stops the server after cucumber exits if we started it", async function() {
