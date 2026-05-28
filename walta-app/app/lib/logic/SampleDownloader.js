@@ -81,6 +81,7 @@ function createSampleDownloader(delay, progress) {
                     log(`Setting serverSyncTime [sampleId=${sample.get("sampleId")}] ${syncedAt}`)
                     sample.set("serverSyncTime",syncedAt);
                     sample.save();
+                    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                 }
                 function retrieveUnknownCreatures() {
                     return delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.retrieveUnknownCreatures(serverSample.id) ), delay )
