@@ -7,6 +7,7 @@ class SampleRowViewModel extends ChangeNotifier {
   }
 
   get id()            { return this._data.id; }
+  get sampleId()      { return this._data.sampleId; }
   get dateCompleted() { return this._data.dateCompleted; }
   get waterbodyName() { return this._data.waterbodyName; }
   get uploaded()      { return this._data.uploaded; }
@@ -21,6 +22,7 @@ class SampleRowViewModel extends ChangeNotifier {
   _dataEquals(other) {
     const a = this._data;
     return a.id === other.id
+      && a.sampleId === other.sampleId
       && a.dateCompleted === other.dateCompleted
       && a.waterbodyName === other.waterbodyName
       && a.uploaded === other.uploaded;
@@ -41,13 +43,13 @@ class SampleHistoryViewModel extends ChangeNotifier {
   get rows() { return this._rows; }
 
   _handleUploadProgress(payload) {
-    const id = payload && payload.id;
-    if (id === undefined || id === null) {
+    const sampleId = payload && payload.id;
+    if (sampleId === undefined || sampleId === null) {
       throw new Error("SampleHistoryViewModel: UPLOAD_PROGRESS payload missing id: " + JSON.stringify(payload));
     }
 
-    const data = this._sampleSource.loadOne(id);
-    const existingIdx = this._rows.findIndex(r => r.id === id);
+    const data = this._sampleSource.loadOne(sampleId);
+    const existingIdx = this._rows.findIndex(r => r.sampleId === sampleId);
 
     if (data && existingIdx >= 0) {
       this._rows[existingIdx].update(data);
@@ -63,7 +65,7 @@ class SampleHistoryViewModel extends ChangeNotifier {
       this.notifyListeners();
       return;
     }
-    throw new Error("SampleHistoryViewModel: UPLOAD_PROGRESS for unknown sample id " + id + " (not in rows and no source data)");
+    throw new Error("SampleHistoryViewModel: UPLOAD_PROGRESS for unknown sampleId " + sampleId + " (not in rows and no source data)");
   }
 
   dispose() {
