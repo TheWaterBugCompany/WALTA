@@ -18,18 +18,19 @@ class SampleRowViewModel extends ChangeNotifier {
   // actually changed, so an UPLOAD_PROGRESS tick that didn't move this
   // row is a no-op for its bound widgets.
   update(data) {
-    if (rowDataEquals(this._data, data)) return false;
+    if (this._dataEquals(data)) return false;
     this._data = data;
     this.notifyListeners();
     return true;
   }
-}
 
-function rowDataEquals(a, b) {
-  return a.id === b.id
-    && a.dateCompleted === b.dateCompleted
-    && a.waterbodyName === b.waterbodyName
-    && a.uploaded === b.uploaded;
+  _dataEquals(other) {
+    const a = this._data;
+    return a.id === other.id
+      && a.dateCompleted === other.dateCompleted
+      && a.waterbodyName === other.waterbodyName
+      && a.uploaded === other.uploaded;
+  }
 }
 
 class SampleHistoryViewModel extends ChangeNotifier {
@@ -47,7 +48,9 @@ class SampleHistoryViewModel extends ChangeNotifier {
 
   _handleUploadProgress(payload) {
     const id = payload && payload.id;
-    if (id === undefined || id === null) return;
+    if (id === undefined || id === null) {
+      throw new Error("SampleHistoryViewModel: UPLOAD_PROGRESS payload missing id: " + JSON.stringify(payload));
+    }
 
     const data = this._sampleSource.loadOne(id);
     const existingIdx = this._rows.findIndex(r => r.id === id);
@@ -66,7 +69,7 @@ class SampleHistoryViewModel extends ChangeNotifier {
       this.notifyListeners();
       return;
     }
-    // !data && existingIdx < 0 — unknown id, nothing to do.
+    throw new Error("SampleHistoryViewModel: UPLOAD_PROGRESS for unknown sample id " + id + " (not in rows and no source data)");
   }
 
   dispose() {

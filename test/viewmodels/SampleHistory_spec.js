@@ -198,30 +198,23 @@ describe("SampleHistoryViewModel", function () {
     });
   });
 
-  describe("UPLOAD_PROGRESS — defensive cases", function () {
-    it("is a no-op when the event id is unknown AND loadOne returns nothing", function () {
+  describe("UPLOAD_PROGRESS — surfaces upstream contract violations", function () {
+    it("throws when the event references an id that exists nowhere (unknown row AND no source data)", function () {
       const source = fakeSampleSource(INITIAL_ROWS());
       const topics = fakeTopics();
-      const vm = new SampleHistoryViewModel({ sampleSource: source, topics });
-      const before = vm.rows.slice();
-      let structureChangeCount = 0;
-      vm.addListener(() => structureChangeCount++);
+      new SampleHistoryViewModel({ sampleSource: source, topics });
 
-      topics.fire("uploadprogress", { id: 9999 });
-
-      expect(vm.rows).to.deep.equal(before);
-      expect(structureChangeCount).to.equal(0);
+      expect(() => topics.fire("uploadprogress", { id: 9999 }))
+        .to.throw(/9999/);
     });
 
-    it("is a no-op when the event carries no id", function () {
+    it("throws when the event carries no id", function () {
       const source = fakeSampleSource(INITIAL_ROWS());
       const topics = fakeTopics();
-      const vm = new SampleHistoryViewModel({ sampleSource: source, topics });
-      const before = vm.rows.slice();
+      new SampleHistoryViewModel({ sampleSource: source, topics });
 
-      topics.fire("uploadprogress", {});
-
-      expect(vm.rows).to.deep.equal(before);
+      expect(() => topics.fire("uploadprogress", {}))
+        .to.throw(/id/);
     });
   });
 
