@@ -12,6 +12,8 @@ Before writing or editing code, consult [docs/coding-style.md](docs/coding-style
 
 **Comments: default to none.** Add one only for a non-obvious *why* — a hidden constraint, a workaround for a specific bug, an invariant the surrounding code can't convey — and keep it to a single line. Never narrate the change you're making, recap the bug you just fixed, or replay hypotheses you explored: that belongs in the commit message and PR description, which don't rot. If a block seems to need a paragraph, restructure the code or move the explanation to `docs/`. When in doubt, leave it out.
 
+**Comments must be self-contained.** Don't reference Trello card numbers (`WB-XXX`), PR numbers, GitHub issues, or anything else that lives outside the repo. Those identifiers belong in commit messages and PR descriptions — in a comment they couple the source to an external system that will rot, churn, or disappear, and a reader can't understand the comment without leaving the codebase. If the *why* needs more than the surrounding code can convey, write it so a future reader can grasp it from the comment alone.
+
 ## Methodology
 
 This project follows test-driven development (Kent Beck style): each behavioural change starts with a small failing test, then the minimal code to make it pass, then a tidy-up pass. Work in small increments and prefer small commits focused on a single change. The point is to drive design with tests and refactor continuously so tech debt doesn't accumulate — coverage is a byproduct of good tests, not the target.
