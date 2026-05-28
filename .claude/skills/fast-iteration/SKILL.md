@@ -160,11 +160,23 @@ pkill -f "titanium serve"
 
 The Waterbug app is landscape-locked, but the simulator screenshot
 is captured in the device's physical portrait orientation — so the
-PNG will look rotated 90° CCW. Rotate to the in-app orientation:
+PNG will look rotated 90° from in-app orientation. Rotate to upright:
 
 ```bash
 sips -r 90 /tmp/shot.png --out /tmp/shot-landscape.png
 ```
+
+If the result is upside-down (the sim was holding the device in the
+opposite landscape orientation from what `sips -r 90` assumes), flip
+the result another 180°:
+
+```bash
+sips -r 180 /tmp/shot-landscape.png --out /tmp/shot-final.png
+```
+
+A single `sips -r 270` (or `-r -90`) on the original would do the
+same in one shot — pick whichever ends upright on your sim and stick
+with it.
 
 Useful for catching layout regressions the spec runner can't: widgets
 clipped by parent bounds, children overflowing fixed-height containers,
