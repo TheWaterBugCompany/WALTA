@@ -222,7 +222,7 @@ describe("SampleSync", function () {
             expect(Alloy.Globals.CerdiApi.submitSample.calls[0].args[0].waterbody_name).to.equal("test water body name");
             expect(sample.get("serverSyncTime")).to.be.a('number');
         });
-        it('returns the count of uploaded samples and reports progress per sample', async function() {
+        it('returns the count of uploaded samples and reports progress per sample plus its site photo', async function() {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId").returnWith(38);
             simple.mock(Alloy.Globals.CerdiApi,"submitSample").resolveWith({id:123, user_id:38});
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
@@ -232,8 +232,25 @@ describe("SampleSync", function () {
             const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
             const count = await createSampleUploader(undefined, progress).uploadSamples();
             expect(count, "uploaded count").to.equal(1);
-            expect(planned, "planned total").to.deep.equal([1]);
-            expect(ticks.length, "ticks").to.equal(1);
+            expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + site photo)").to.equal(2);
+            expect(ticks.length, "ticks (sample + site photo)").to.equal(2);
+        });
+        it('reports progress for each pending taxon photo upload alongside the sample', async function() {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId").returnWith(38);
+            simple.mock(Alloy.Globals.CerdiApi,"submitSample").resolveWith({id:123, user_id:38});
+            simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
+            simple.mock(Alloy.Globals.CerdiApi,"submitCreaturePhoto").resolveWith({id:7});
+            let sample = makeSampleData();
+            sample.save();
+            let t1 = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonId: 1, taxonPhotoPath: makeTestPhoto("taxon1.jpg"), abundance: "1-2", updatedAt: 0 });
+            t1.save();
+            let t2 = Alloy.createModel("taxa", { sampleId: sample.get("sampleId"), taxonId: 2, taxonPhotoPath: makeTestPhoto("taxon2.jpg"), abundance: "3-5", updatedAt: 0 });
+            t2.save();
+            const planned = [], ticks = [];
+            const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
+            await createSampleUploader(undefined, progress).uploadSamples();
+            expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + site + 2 taxa)").to.equal(4);
+            expect(ticks.length, "ticks (sample + site + 2 taxa)").to.equal(4);
         });
         it('fires UPLOAD_PROGRESS after the sample is marked complete (serverSyncTime set)', async function() {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId").returnWith(38);
@@ -601,8 +618,42 @@ describe("SampleSync", function () {
             const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
             const count = await createSampleDownloader(undefined, progress).downloadSamples();
             expect(count, "updated count").to.equal(1);
-            expect(planned, "planned total").to.deep.equal([1]);
+            expect(planned.reduce((a,b)=>a+b,0), "planned total").to.equal(1);
             expect(ticks.length, "ticks").to.equal(1);
+        });
+        it('reports progress for the site photo alongside the sample', async function () {
+            let siteMock = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "/spec/resources/site-mock.jpg");
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith([makeCerdiSampleData({ photos: [{"id": 1948}] })]);
+            Alloy.Globals.CerdiApi.retrieveSitePhoto = function (serverSampleId, photoPath) {
+                siteMock.copy(Ti.Filesystem.applicationDataDirectory + Ti.Filesystem.separator + photoPath);
+                return Promise.resolve({"id": 1948});
+            };
+            const planned = [], ticks = [];
+            const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
+            await createSampleDownloader(undefined, progress).downloadSamples();
+            expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + site photo)").to.equal(2);
+            expect(ticks.length, "ticks (sample + site photo)").to.equal(2);
+        });
+        it('reports progress for each creature photo alongside the sample', async function () {
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
+                .resolveWith([]);
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveSamples")
+                .resolveWith([makeCerdiSampleData({
+                    sampled_creatures: [
+                        { "id": 2390, "sample_id": 473, "creature_id": 1, "count": 2, "photos_count": 1 },
+                        { "id": 2391, "sample_id": 473, "creature_id": 2, "count": 5, "photos_count": 1 }
+                    ]
+                })]);
+            simple.mock(Alloy.Globals.CerdiApi,"retrieveCreaturePhoto")
+                .rejectWith({ message: "no photo" });
+            const planned = [], ticks = [];
+            const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
+            await createSampleDownloader(undefined, progress).downloadSamples();
+            expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + 2 creature photos)").to.equal(3);
+            expect(ticks.length, "ticks (sample + 2 creature photos)").to.equal(3);
         });
         it('fires UPLOAD_PROGRESS after setTimestamp finishes (serverSyncTime set)', async function () {
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUnknownCreatures")
