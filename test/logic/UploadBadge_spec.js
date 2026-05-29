@@ -39,22 +39,17 @@ describe("UploadBadge", function () {
 
     it("adds one to the pending count when a sync is recommended", function () {
       pending = 2;
-      badge.onLogin();
+      badge.recommend();
       expect(badge.value()).to.equal(3);
     });
 
     it("is just 1 when a sync is recommended but nothing is pending", function () {
-      badge.onLogin();
+      badge.recommend();
       expect(badge.value()).to.equal(1);
     });
   });
 
   describe("state transitions", function () {
-    it("recommends a sync after login (historical samples not yet pulled)", function () {
-      badge.onLogin();
-      expect(badge.value()).to.equal(1);
-    });
-
     it("does not add the recommendation on local activity — the new sample shows via the pending count", function () {
       pending = 1;
       badge.onLocalActivity();
@@ -62,31 +57,31 @@ describe("UploadBadge", function () {
     });
 
     it("clears the recommendation when a full sync completes successfully", function () {
-      badge.onLogin();
+      badge.recommend();
       badge.onSyncFinished({ success: true, fullSync: true });
       expect(badge.value()).to.equal(0);
     });
 
     it("keeps the recommendation after an upload-only sync (history still not pulled)", function () {
-      badge.onLogin();
+      badge.recommend();
       badge.onSyncFinished({ success: true, fullSync: false });
       expect(badge.value()).to.equal(1);
     });
 
     it("keeps the recommendation when a full sync fails", function () {
-      badge.onLogin();
+      badge.recommend();
       badge.onSyncFinished({ success: false, fullSync: true });
       expect(badge.value()).to.equal(1);
     });
 
     it("clears the recommendation on logout", function () {
-      badge.onLogin();
+      badge.recommend();
       badge.onLogout();
       expect(badge.value()).to.equal(0);
     });
 
     it("still counts queued uploads after a full sync clears the recommendation", function () {
-      badge.onLogin();
+      badge.recommend();
       pending = 3;
       badge.onSyncFinished({ success: true, fullSync: true });
       expect(badge.value()).to.equal(3);
@@ -96,12 +91,12 @@ describe("UploadBadge", function () {
   describe("badge side-effects", function () {
     it("sets the badge to the pending count plus the recommendation", function () {
       pending = 2;
-      badge.onLogin();
+      badge.recommend();
       expect(lastBadge()).to.equal(3);
     });
 
     it("clears the badge to 0 when nothing is pending and not recommended", function () {
-      badge.onLogin();
+      badge.recommend();
       badge.onLogout();
       expect(lastBadge()).to.equal(0);
     });
@@ -115,7 +110,7 @@ describe("UploadBadge", function () {
         FORCE_UPLOAD: "forceupload", SYNC_FINISHED: "syncfinished",
         subscribe: (t, cb) => { (subs[t] = subs[t] || []).push(cb); },
         unsubscribe: (t, cb) => { subs[t] = (subs[t] || []).filter((c) => c !== cb); },
-        fire: (t, e) => (subs[t] || []).forEach((cb) => cb(e)),
+        fire: (t, e) => Promise.all((subs[t] || []).map((cb) => cb(e))),
       };
     }
 
@@ -133,19 +128,70 @@ describe("UploadBadge", function () {
       expect(lastBadge()).to.equal(2);
     });
 
-    it("recommends after login and clears after a successful full sync", function () {
+    it("recommends after login when the probe says a sync is needed", async function () {
       const topics = fakeTopics();
-      const b = wire(topics);
-      topics.fire(topics.LOGGEDIN);
+      const b = wire(topics, { checkSyncNeeded: () => Promise.resolve(true) });
+      await topics.fire(topics.LOGGEDIN);
       expect(b.value()).to.equal(1);
       topics.fire(topics.SYNC_FINISHED, { success: true, fullSync: true });
       expect(b.value()).to.equal(0);
     });
 
-    it("clears on logout", function () {
+    it("does not recommend after login when the probe says nothing is needed", async function () {
       const topics = fakeTopics();
-      const b = wire(topics);
-      topics.fire(topics.LOGGEDIN);
+      const b = wire(topics, { checkSyncNeeded: () => Promise.resolve(false) });
+      await topics.fire(topics.LOGGEDIN);
+      expect(b.value()).to.equal(0);
+    });
+
+    it("clears a stale recommendation after login when the probe says nothing is needed", async function () {
+      const topics = fakeTopics();
+      store.setBool("syncRecommended", true);
+      const b = wire(topics, { checkSyncNeeded: () => Promise.resolve(false) });
+      await topics.fire(topics.LOGGEDIN);
+      expect(b.value()).to.equal(0);
+    });
+
+    it("leaves the recommendation flag alone when the probe can't answer (offline / in-flight)", async function () {
+      const topics = fakeTopics();
+      store.setBool("syncRecommended", true);
+      const b = wire(topics, { checkSyncNeeded: () => Promise.resolve(undefined) });
+      await topics.fire(topics.LOGGEDIN);
+      expect(b.value(), "stays recommended").to.equal(1);
+    });
+
+    it("clears authoritatively after a successful full sync without re-probing", async function () {
+      const topics = fakeTopics();
+      let probes = 0;
+      const b = wire(topics, { checkSyncNeeded: () => { probes++; return Promise.resolve(true); } });
+      store.setBool("syncRecommended", true);
+      await topics.fire(topics.SYNC_FINISHED, { success: true, fullSync: true });
+      expect(b.value(), "flag cleared by sync outcome").to.equal(0);
+      expect(probes, "no probe needed when full sync already cleared the flag").to.equal(0);
+    });
+
+    it("re-probes after a non-full-sync to keep the badge truthful (piggybacks on the 30-min timer)", async function () {
+      const topics = fakeTopics();
+      let probes = 0;
+      const b = wire(topics, { checkSyncNeeded: () => { probes++; return Promise.resolve(false); } });
+      store.setBool("syncRecommended", true);   // stale recommendation
+      await topics.fire(topics.SYNC_FINISHED, { success: true, fullSync: false });
+      expect(probes, "probed after upload-only sync").to.equal(1);
+      expect(b.value(), "stale flag cleared by probe").to.equal(0);
+    });
+
+    it("re-probes after a failed full sync", async function () {
+      const topics = fakeTopics();
+      let probes = 0;
+      wire(topics, { checkSyncNeeded: () => { probes++; return Promise.resolve(true); } });
+      await topics.fire(topics.SYNC_FINISHED, { success: false, fullSync: true });
+      expect(probes).to.equal(1);
+    });
+
+    it("clears on logout", async function () {
+      const topics = fakeTopics();
+      const b = wire(topics, { checkSyncNeeded: () => Promise.resolve(true) });
+      await topics.fire(topics.LOGGEDIN);
       topics.fire(topics.LOGGEDOUT);
       expect(b.value()).to.equal(0);
     });
@@ -158,12 +204,12 @@ describe("UploadBadge", function () {
       expect(badges.length).to.be.greaterThan(0);
     });
 
-    it("dispose() drops its Topics subscriptions", function () {
+    it("dispose() drops its Topics subscriptions", async function () {
       const topics = fakeTopics();
-      const b = wire(topics);
+      const b = wire(topics, { checkSyncNeeded: () => Promise.resolve(true) });
       b.dispose();
       const before = badges.length;
-      topics.fire(topics.LOGGEDIN);
+      await topics.fire(topics.LOGGEDIN);
       expect(badges.length).to.equal(before);
     });
   });
