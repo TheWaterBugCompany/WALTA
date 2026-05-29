@@ -101,7 +101,7 @@ function uploadTaxaPhoto(sample,t,delay) {
                     .then( (res) => {
                         debug(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
-                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: `Uploading taxa ${taxonId} photo` } );
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading taxa photo" } );
                     })
                     .catch( (err) => {
                         error(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
@@ -276,7 +276,7 @@ function createSampleUploader(delay, progress) {
                     "serverSampleId": res.id,
                     "serverUserId": res.user_id
                 });
-                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: `Uploading sample id: ${sample.get("sampleId")}` } );
+                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Uploading sample" } );
     
 
             }

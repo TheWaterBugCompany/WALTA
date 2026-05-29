@@ -47,12 +47,12 @@ describe("SyncFeedbackViewModel", function () {
 
     it("reflects a sync already in progress when the popup opens", function () {
       store.recordStart();
-      store.recordProgress("Uploading taxa 141 photo", { current: 1, total: 4 });
+      store.recordProgress("Uploading taxa photo", { current: 1, total: 4 });
       const latecomer = new SyncFeedbackViewModel({ syncController, logRepository: fakeLogRepository() });
       try {
         expect(latecomer.status).to.equal("syncing");
         expect(latecomer.percent).to.equal(25);
-        expect(latecomer.statusText).to.equal("Uploading taxa 141 photo");
+        expect(latecomer.statusText).to.equal("Uploading taxa photo");
       } finally {
         latecomer.dispose();
       }
@@ -198,8 +198,8 @@ describe("SyncFeedbackViewModel", function () {
 
     it("uses the publisher's terse step message during a sync", function () {
       store.recordStart();
-      store.recordProgress("Uploading taxa 141 photo", { current: 1, total: 4 });
-      expect(vm.progressText).to.equal("25% Uploading taxa 141 photo");
+      store.recordProgress("Uploading taxa photo", { current: 1, total: 4 });
+      expect(vm.progressText).to.equal("25% Uploading taxa photo");
     });
 
     it("falls back to '0% Syncing' immediately after recordStart, before the first step message", function () {
@@ -209,7 +209,7 @@ describe("SyncFeedbackViewModel", function () {
 
     it("is '100% Synced' on success", function () {
       store.recordStart();
-      store.recordProgress("Uploading taxa 141 photo", { current: 4, total: 4 });
+      store.recordProgress("Uploading taxa photo", { current: 4, total: 4 });
       store.recordSuccess();
       expect(vm.progressText).to.equal("100% Synced");
     });

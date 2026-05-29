@@ -135,7 +135,7 @@ describe("SyncStore", function () {
   describe("recordSuccess()", function () {
     it("moves to 'success' with percent 100 and clears the step headline", function () {
       store.recordStart();
-      store.recordProgress("Uploading taxa 12 photo", { current: 4, total: 4 });
+      store.recordProgress("Uploading taxa photo", { current: 4, total: 4 });
       store.recordSuccess();
       expect(store.status).to.equal("success");
       expect(store.percent).to.equal(100);
