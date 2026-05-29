@@ -12,7 +12,7 @@ class SyncFeedbackScreen extends BaseScreen {
         // when the deeplink login completes, plus another from the user
         // tapping Sync Now. With 2.5s delays per upload op, give the
         // second one room to finish.
-        await this.waitForText("Sync complete", 120000);
+        await this.waitForText("Synced", 120000);
     }
 
     async openLogs() {
