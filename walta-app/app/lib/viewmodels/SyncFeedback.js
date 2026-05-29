@@ -53,7 +53,6 @@ class SyncFeedbackViewModel extends ChangeNotifier {
 
   get status()       { return this._syncController.status; }
   get percent()      { return this._syncController.percent; }
-  get statusText()   { return this._syncController.statusText; }
   get logLines()     { return this._logEntries; }
   get logSeq()       { return this._logSeq; }
   get errorMessage() { return this._syncController.errorMessage; }
@@ -75,11 +74,16 @@ class SyncFeedbackViewModel extends ChangeNotifier {
     return this.percent + "%";
   }
 
+  // Headline derived from status + percent. Progress detail (per-photo
+  // milestones etc.) lives only in the log pane — not duplicated here.
   get progressText() {
-    if (this.status === "offline") return "0%";
-    if (this.status === "error") return this.percent + "% " + (this.errorMessage || "Server Error");
-    if (this.statusText) return this.percent + "% " + this.statusText;
-    return this.percent + "%";
+    switch (this.status) {
+      case "offline": return "0% Offline";
+      case "error":   return this.percent + "% " + (this.errorMessage || "Server Error");
+      case "success": return "100% Synced";
+      case "syncing": return this.percent + "% Syncing";
+      default:        return this.percent + "%";
+    }
   }
 
   get diagnosticsVisible() {

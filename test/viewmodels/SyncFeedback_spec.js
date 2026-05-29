@@ -40,18 +40,17 @@ describe("SyncFeedbackViewModel", function () {
     it("mirrors the syncController's current state (idle by default)", function () {
       expect(vm.status).to.equal("idle");
       expect(vm.percent).to.equal(0);
-      expect(vm.statusText).to.equal("");
       expect(vm.logVisible).to.equal(false);
       expect(vm.logLines).to.deep.equal([]);
     });
 
     it("reflects a sync already in progress when the popup opens", function () {
       store.recordStart();
-      store.recordProgress("Uploading taxa 141 photo");
+      store.recordProgress({ current: 1, total: 4 });
       const latecomer = new SyncFeedbackViewModel({ syncController, logRepository: fakeLogRepository() });
       try {
         expect(latecomer.status).to.equal("syncing");
-        expect(latecomer.statusText).to.equal("Uploading taxa 141 photo");
+        expect(latecomer.percent).to.equal(25);
       } finally {
         latecomer.dispose();
       }
@@ -190,39 +189,43 @@ describe("SyncFeedbackViewModel", function () {
     });
   });
 
-  describe("progressText (presentation)", function () {
+  describe("progressText (presentation — derived from status enum + percent)", function () {
     it("is just the percent when idle", function () {
       expect(vm.progressText).to.equal("0%");
     });
 
-    it("includes the statusText when syncing with a message", function () {
+    it("is percent + 'Syncing' while syncing", function () {
       store.recordStart();
-      store.recordProgress("Uploading taxa 141 photo", { current: 1, total: 4 });
-      expect(vm.progressText).to.equal("25% Uploading taxa 141 photo");
+      store.recordProgress({ current: 1, total: 4 });
+      expect(vm.progressText).to.equal("25% Syncing");
     });
 
-    it("renders the seeded statusText after recordStart", function () {
+    it("is '0% Syncing' immediately after recordStart", function () {
       store.recordStart();
-      expect(vm.progressText).to.equal("0% Starting sync");
+      expect(vm.progressText).to.equal("0% Syncing");
     });
 
-    it("is 0% when offline regardless of percent", function () {
+    it("is '100% Synced' on success", function () {
       store.recordStart();
-      store.recordProgress("Uploading");
+      store.recordSuccess();
+      expect(vm.progressText).to.equal("100% Synced");
+    });
+
+    it("is '0% Offline' when offline", function () {
       store.recordOffline();
-      expect(vm.progressText).to.equal("0%");
+      expect(vm.progressText).to.equal("0% Offline");
     });
 
     it("shows the error message on error", function () {
       store.recordStart();
-      store.recordProgress("Uploading", { current: 1, total: 4 });
+      store.recordProgress({ current: 1, total: 4 });
       store.recordError(new Error("upload failed"));
       expect(vm.progressText).to.equal("25% upload failed");
     });
 
     it("falls back to 'Server Error' when the error has no message", function () {
       store.recordStart();
-      store.recordProgress("Uploading", { current: 1, total: 4 });
+      store.recordProgress({ current: 1, total: 4 });
       store.recordError(new Error(""));
       expect(vm.progressText).to.equal("25% Server Error");
     });
@@ -283,7 +286,7 @@ describe("SyncFeedbackViewModel", function () {
     it("formats the percent as a CSS-style width string", function () {
       expect(vm.progressWidth).to.equal("0%");
       store.recordStart();
-      store.recordProgress("Uploading", { current: 1, total: 4 });
+      store.recordProgress({ current: 1, total: 4 });
       expect(vm.progressWidth).to.equal("25%");
     });
   });

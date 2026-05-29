@@ -157,8 +157,8 @@ describe("SyncFeedback controller", function () {
             await windowOpenTest(win);
         });
 
-        it("shows the seeded statusText so the bar isn't bare while we wait for the first milestone", () => {
-            expect(ctl.progressText.text).to.equal("0% Starting sync");
+        it("shows '0% Syncing' so the bar isn't bare while we wait for the first milestone", () => {
+            expect(ctl.progressText.text).to.equal("0% Syncing");
         });
     });
 
@@ -166,15 +166,14 @@ describe("SyncFeedback controller", function () {
         beforeEach(async () => {
             var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
-            // 3 of 4 work units done → 75%, status text at the last message.
-            store.recordProgress("Uploading taxa 141 photo", { current: 3, total: 4 });
+            store.recordProgress({ current: 3, total: 4 });
             ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
 
-        it("shows the bar partially filled with the latest status text", () => {
-            expect(ctl.progressText.text).to.equal("75% Uploading taxa 141 photo");
+        it("shows the bar partially filled with the 'Syncing' headline", () => {
+            expect(ctl.progressText.text).to.equal("75% Syncing");
             expect(ctl.progressFill.width).to.equal("75%");
         });
     });
@@ -183,7 +182,7 @@ describe("SyncFeedback controller", function () {
         beforeEach(async () => {
             var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
-            store.recordProgress("Uploading site photo", { current: 1, total: 4 });
+            store.recordProgress({ current: 1, total: 4 });
             store.recordError(new Error("Server Error"));
             ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
