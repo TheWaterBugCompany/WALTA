@@ -1,5 +1,10 @@
 require("mocha");
 const { expect } = require("chai");
+const {
+    installFakeTi,
+    uninstallFakeTi,
+    makeCapturingTiAPI,
+} = require("./fixtures/tiFakes");
 
 // see docs/patterns/logger-sinks.md
 describe("Logger sink dispatch", function () {
@@ -107,13 +112,8 @@ describe("Logger sink dispatch", function () {
     });
 
     it("falls back to Ti.API.log when a sink's write() rejects", async function () {
-        const fallbackCalls = [];
-        global.Ti = {
-            API: {
-                log(level, message) { fallbackCalls.push({ level, message }); },
-                debug() {}, info() {}, warn() {}, error() {}
-            }
-        };
+        const { api, calls: fallbackCalls } = makeCapturingTiAPI();
+        installFakeTi({ api });
         try {
             Logger.addSink({ write() { return Promise.reject(new Error("disk full")); } });
             expect(() => Logger.log("hello")).to.not.throw();
@@ -123,7 +123,7 @@ describe("Logger sink dispatch", function () {
             expect(fallbackCalls[0].message).to.match(/disk full/);
             expect(fallbackCalls[0].message).to.match(/hello/);
         } finally {
-            delete global.Ti;
+            uninstallFakeTi();
         }
     });
 });
@@ -202,31 +202,21 @@ describe("Logger.configure", function () {
         return new Promise(r => setImmediate(r));
     }
 
-    function fakeTi() {
-        const calls = [];
-        global.Ti = {
-            API: {
-                debug(m) { calls.push({ method: "debug", m }); },
-                info(m)  { calls.push({ method: "info",  m }); },
-                warn(m)  { calls.push({ method: "warn",  m }); },
-                error(m) { calls.push({ method: "error", m }); },
-                log() {}
-            }
-        };
-        return calls;
-    }
-
-    afterEach(function () { delete global.Ti; });
+    let tiCalls;
+    beforeEach(function () {
+        const captured = makeCapturingTiAPI();
+        tiCalls = captured.calls;
+        installFakeTi({ api: captured.api });
+    });
+    afterEach(uninstallFakeTi);
 
     it("does not route Logger.log() to Ti.API before configure() registers ConsoleSink", async function () {
-        const tiCalls = fakeTi();
         Logger.log("hello");
         await flushMicroTasks();
         expect(tiCalls).to.have.length(0);
     });
 
     it("routes Logger entries to Ti.API exactly once after configure()", async function () {
-        const tiCalls = fakeTi();
         Logger.configure();
         Logger.log("trace msg");
         Logger.warn("warn msg");

@@ -1,55 +1,35 @@
 require("mocha");
 const { expect } = require("chai");
+const {
+    installFakeTi,
+    uninstallFakeTi,
+    makeCapturingTiAPI,
+    makeCapturingConsole,
+} = require("../../fixtures/tiFakes");
 
 describe("ConsoleSink", function () {
     let ConsoleSink;
-    let tiCalls;
-    let consoleCalls;
 
     beforeEach(function () {
         delete require.cache[require.resolve("../../../walta-app/app/lib/util/sinks/ConsoleSink")];
         ConsoleSink = require("../../../walta-app/app/lib/util/sinks/ConsoleSink");
-        tiCalls = [];
-        consoleCalls = [];
     });
 
-    afterEach(function () {
-        delete global.Ti;
-    });
-
-    function fakeTi() {
-        global.Ti = {
-            API: {
-                debug(m) { tiCalls.push({ method: "debug", m }); },
-                info(m)  { tiCalls.push({ method: "info",  m }); },
-                warn(m)  { tiCalls.push({ method: "warn",  m }); },
-                error(m) { tiCalls.push({ method: "error", m }); }
-            }
-        };
-    }
-
-    function fakeConsole() {
-        const orig = { log: console.log, info: console.info, warn: console.warn, error: console.error };
-        console.log = function (m) { consoleCalls.push({ method: "log", m }); };
-        console.info = function (m) { consoleCalls.push({ method: "info", m }); };
-        console.warn = function (m) { consoleCalls.push({ method: "warn", m }); };
-        console.error = function (m) { consoleCalls.push({ method: "error", m }); };
-        return function restore() {
-            console.log = orig.log;
-            console.info = orig.info;
-            console.warn = orig.warn;
-            console.error = orig.error;
-        };
-    }
+    afterEach(uninstallFakeTi);
 
     it("write() returns a Promise", function () {
-        fakeTi();
+        installFakeTi({ api: makeCapturingTiAPI().api });
         const result = ConsoleSink.write({ ts: 0, level: "trace", facility: "x", message: "hi" });
         expect(result).to.be.an.instanceof(Promise);
     });
 
     describe("with Ti.API present", function () {
-        beforeEach(fakeTi);
+        let tiCalls;
+        beforeEach(function () {
+            const captured = makeCapturingTiAPI();
+            tiCalls = captured.calls;
+            installFakeTi({ api: captured.api });
+        });
 
         it("routes trace to Ti.API.debug", async function () {
             await ConsoleSink.write({ level: "trace", message: "t" });
@@ -78,14 +58,14 @@ describe("ConsoleSink", function () {
     });
 
     describe("without Ti.API (Node fallback)", function () {
-        let restoreConsole;
-        beforeEach(function () { restoreConsole = fakeConsole(); });
-        afterEach(function () { restoreConsole(); });
+        let cap;
+        beforeEach(function () { cap = makeCapturingConsole(); });
+        afterEach(function () { cap.restore(); });
 
         it("routes trace and debug to console.log", async function () {
             await ConsoleSink.write({ level: "trace", message: "t" });
             await ConsoleSink.write({ level: "debug", message: "d" });
-            expect(consoleCalls).to.deep.equal([
+            expect(cap.calls).to.deep.equal([
                 { method: "log", m: "t" },
                 { method: "log", m: "d" }
             ]);
@@ -95,7 +75,7 @@ describe("ConsoleSink", function () {
             await ConsoleSink.write({ level: "info",  message: "i" });
             await ConsoleSink.write({ level: "warn",  message: "w" });
             await ConsoleSink.write({ level: "error", message: "e" });
-            expect(consoleCalls).to.deep.equal([
+            expect(cap.calls).to.deep.equal([
                 { method: "info",  m: "i" },
                 { method: "warn",  m: "w" },
                 { method: "error", m: "e" }

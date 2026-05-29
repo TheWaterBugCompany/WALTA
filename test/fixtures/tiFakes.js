@@ -34,7 +34,7 @@ function makeFakeProps(initial = {}) {
     };
 }
 
-function installFakeTi({ httpClient, props, filesystem } = {}) {
+function installFakeTi({ httpClient, props, filesystem, api } = {}) {
     global.Ti = {
         Network: {
             NETWORK_NONE: 0,
@@ -43,7 +43,7 @@ function installFakeTi({ httpClient, props, filesystem } = {}) {
         App: {
             Properties: props || makeFakeProps(),
         },
-        API: { info() {}, error() {}, warn() {}, debug() {} },
+        API: api || { info() {}, error() {}, warn() {}, debug() {}, log() {} },
         Filesystem: filesystem || {
             getFile: () => ({ exists: () => false }),
             resourcesDirectory: "/tmp/r",
@@ -56,9 +56,46 @@ function uninstallFakeTi() {
     delete global.Ti;
 }
 
+function makeCapturingTiAPI() {
+    const calls = [];
+    const api = {
+        debug(m) { calls.push({ method: "debug", m }); },
+        info(m)  { calls.push({ method: "info",  m }); },
+        warn(m)  { calls.push({ method: "warn",  m }); },
+        error(m) { calls.push({ method: "error", m }); },
+        log(level, message) { calls.push({ method: "log", level, message }); },
+    };
+    return { api, calls };
+}
+
+function makeCapturingConsole() {
+    const orig = {
+        log: console.log,
+        info: console.info,
+        warn: console.warn,
+        error: console.error,
+    };
+    const calls = [];
+    console.log   = function (m) { calls.push({ method: "log",   m }); };
+    console.info  = function (m) { calls.push({ method: "info",  m }); };
+    console.warn  = function (m) { calls.push({ method: "warn",  m }); };
+    console.error = function (m) { calls.push({ method: "error", m }); };
+    return {
+        calls,
+        restore() {
+            console.log   = orig.log;
+            console.info  = orig.info;
+            console.warn  = orig.warn;
+            console.error = orig.error;
+        },
+    };
+}
+
 module.exports = {
     makeScriptedHTTPClient,
     makeFakeProps,
     installFakeTi,
     uninstallFakeTi,
+    makeCapturingTiAPI,
+    makeCapturingConsole,
 };
