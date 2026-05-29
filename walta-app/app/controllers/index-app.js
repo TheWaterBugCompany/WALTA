@@ -84,6 +84,7 @@ var androidBadge = OS_ANDROID ? AndroidNotificationBadge.createAndroidBadgeSette
 UploadBadge.init({
   properties: Ti.App.Properties,
   pendingCount: SampleSync.countSamplesNeedingUpload,
+  checkSyncNeeded: SampleSync.checkSyncNeeded,
   setBadge: function (n) {
     if (OS_IOS) Ti.UI.iOS.appBadge = n;
     else if (OS_ANDROID) androidBadge(n);

@@ -1782,4 +1782,85 @@ describe("SampleSync", function () {
             expect(SampleSync.countSamplesNeedingUpload(), "one pending").to.equal(1);
         });
     })
+
+    // The sync-recommended badge used to be set blindly on login and only
+    // cleared by a full sync. The probe answers "does the server have changes
+    // we don't, or do we have local uploads pending?" cheaply enough to run on
+    // login + the existing 30-min timer, so the badge becomes truthful.
+    context("WB-114: sync-needed probe", function () {
+        function mockLoggedIn() {
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUserToken").returnWith({ accessToken: "tok" });
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUserId").returnWith(38);
+        }
+
+        this.beforeEach(function () {
+            clearMockSampleData();
+        });
+
+        this.afterEach(function () {
+            simple.restore();
+        });
+
+        it("returns true when there are pending uploads, without touching the server", async function () {
+            mockLoggedIn();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+            // A fresh sample with a site photo has a pending upload.
+            makeSampleData({ sitePhotoPath: makeTestPhoto("site.jpg") }).save();
+
+            const needed = await SampleSync.checkSyncNeeded();
+
+            expect(needed, "needed").to.equal(true);
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "skips the server probe").to.equal(0);
+        });
+
+        it("returns true when the server has a sample newer than local", async function () {
+            mockLoggedIn();
+            // local copy synced a while ago; server says it was updated later
+            makeSampleData({
+                serverSampleId: 473,
+                serverSitePhotoId: 5,
+                serverSyncTime: moment("2020-01-01").valueOf(),
+                updatedAt: moment("2020-01-01").valueOf(),
+            }).save();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([
+                makeCerdiSampleData({ id: 473, updated_at: moment("2020-06-01").format() }),
+            ]);
+
+            expect(await SampleSync.checkSyncNeeded()).to.equal(true);
+        });
+
+        it("returns false when nothing is pending locally and the server has no newer copies", async function () {
+            mockLoggedIn();
+            makeSampleData({
+                serverSampleId: 473,
+                serverSitePhotoId: 5,
+                serverSyncTime: moment("2020-06-01").valueOf(),
+                updatedAt: moment("2020-01-01").valueOf(),
+            }).save();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([
+                makeCerdiSampleData({ id: 473, updated_at: moment("2020-05-01").format() }),
+            ]);
+
+            expect(await SampleSync.checkSyncNeeded()).to.equal(false);
+        });
+
+        it("returns true when the server has a sample the device has never seen", async function () {
+            mockLoggedIn();
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([
+                makeCerdiSampleData({ id: 999, updated_at: moment("2020-06-01").format() }),
+            ]);
+
+            expect(await SampleSync.checkSyncNeeded()).to.equal(true);
+        });
+
+        it("returns undefined when not logged in (state untouched)", async function () {
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUserToken").returnWith(null);
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples").resolveWith([]);
+
+            const needed = await SampleSync.checkSyncNeeded();
+
+            expect(needed, "no answer when not logged in").to.equal(undefined);
+            expect(Alloy.Globals.CerdiApi.retrieveSamples.callCount, "no API call").to.equal(0);
+        });
+    });
 });

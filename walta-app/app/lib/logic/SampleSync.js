@@ -3,7 +3,7 @@ var Topics = require('ui/Topics');
 var SyncStore = require('models/SyncStore');
 
 var { createSampleUploader } = require("logic/SampleUploader");
-var { createSampleDownloader } = require("logic/SampleDownloader");
+var { createSampleDownloader, needsUpdate } = require("logic/SampleDownloader");
 
 var SYNC_INTERVAL = 1000*60*30; // 30 minutes
 var isSyncing = false;
@@ -94,6 +94,30 @@ function countSamplesNeedingUpload() {
     let samples = Alloy.createCollection("sample");
     samples.loadUploadQueue(userId);
     return samples.filter((s) => s.hasPendingUploads()).length;
+}
+
+// Cheap probe: does the user actually have work to sync? Skips photos and
+// per-sample fetches — only `GET /samples` and a local needsUpdate pass.
+// Returns true / false to drive the sync-recommended badge, or undefined when
+// we can't tell (logged out, offline, or a real sync is already in flight) so
+// the caller leaves the existing flag value alone (WB-114).
+function checkSyncNeeded() {
+    if ( ! Alloy.Globals.CerdiApi.retrieveUserToken() ) return Promise.resolve(undefined);
+    if ( Ti.Network.networkType === Ti.Network.NETWORK_NONE ) return Promise.resolve(undefined);
+    if ( isSyncing ) return Promise.resolve(undefined);
+    if ( countSamplesNeedingUpload() > 0 ) return Promise.resolve(true);
+    return Promise.resolve()
+        .then( () => Alloy.Globals.CerdiApi.retrieveSamples() )
+        .then( (serverSamples) => _.some( serverSamples || [], (s) => {
+            let local = Alloy.createModel("sample");
+            local.loadByServerId(s.id);
+            return needsUpdate(s, local);
+        }))
+        .catch( (err) => {
+            // Network blip / 5xx on the probe is a no-signal, not "all clear".
+            debug(`Sync-needed probe failed: ${err && err.message}`);
+            return undefined;
+        });
 }
 
 function clearUploadTimer() {
@@ -299,6 +323,7 @@ exports.forceSync = forceSync;
 exports.uploadPending = uploadPending;
 exports.countPendingUploads = countPendingUploads;
 exports.countSamplesNeedingUpload = countSamplesNeedingUpload;
+exports.checkSyncNeeded = checkSyncNeeded;
 exports.resumeInterruptedWork = resumeInterruptedWork;
 exports.networkChanged = networkChanged;
 exports.areWeSyncing = areWeSyncing;

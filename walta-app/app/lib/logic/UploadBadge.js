@@ -23,7 +23,8 @@ function createUploadBadge({ properties, pendingCount, setBadge }) {
   return {
     value,
     refresh,
-    onLogin: recommend,        // history not yet pulled this session
+    recommend,
+    clear,
     onLocalActivity: refresh,  // new/edited sample already shows via the pending count
     onLogout: clear,
     onSyncFinished({ success, fullSync }) {
@@ -35,17 +36,40 @@ function createUploadBadge({ properties, pendingCount, setBadge }) {
 
 // Wire a badge to the app's Topics + platform IO. `topics` is the Topics
 // module (or a test fake); `requestPermission` is optional (iOS badge
-// permission). Refreshes once on startup so a relaunch reflects current state.
-function init({ properties, pendingCount, setBadge, topics, requestPermission }) {
+// permission). `checkSyncNeeded` is the WB-114 probe — on login (and any
+// other refresh trigger callers wire in), it answers true/false/undefined and
+// drives the flag from the answer rather than blindly recommending.
+// Refreshes once on startup so a relaunch reflects current state.
+function init({ properties, pendingCount, setBadge, topics, checkSyncNeeded, requestPermission }) {
   const badge = createUploadBadge({ properties, pendingCount, setBadge });
   const subs = [];
   function on(topic, fn) { topics.subscribe(topic, fn); subs.push([topic, fn]); }
-  on(topics.LOGGEDIN, () => badge.onLogin());
+
+  function probeAndApply() {
+    return Promise.resolve()
+      .then(() => checkSyncNeeded && checkSyncNeeded())
+      .then((needed) => {
+        if (needed === true) badge.recommend();
+        else if (needed === false) badge.clear();
+        else badge.refresh();   // undefined: leave the flag alone, just sync the badge
+      });
+  }
+
+  on(topics.LOGGEDIN, probeAndApply);
   on(topics.LOGGEDOUT, () => badge.onLogout());
   on(topics.FORCE_UPLOAD, () => badge.onLocalActivity());
-  on(topics.SYNC_FINISHED, (e) => badge.onSyncFinished(e || {}));
+  // A successful full sync authoritatively clears the flag; any other outcome
+  // (upload-only, failure) leaves the flag's accuracy uncertain, so reprobe.
+  // This piggybacks on the 30-min SampleSync timer — every periodic attempt
+  // fires SYNC_FINISHED, which keeps the badge truthful between manual syncs.
+  on(topics.SYNC_FINISHED, (e) => {
+    const evt = e || {};
+    if (evt.success && evt.fullSync) { badge.onSyncFinished(evt); return; }
+    return probeAndApply();
+  });
   if (requestPermission) requestPermission();
   badge.refresh();
+  badge.probe = probeAndApply;
   // Lets a test (or a re-init) drop the Topics subscriptions it added.
   badge.dispose = () => subs.forEach(([t, fn]) => topics.unsubscribe(t, fn));
   return badge;

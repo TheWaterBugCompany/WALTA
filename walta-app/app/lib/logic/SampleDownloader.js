@@ -7,48 +7,27 @@ var debug = (m, tag = "sync") => Logger.debug(m, tag);
 var info = (m, tag = "sync") => Logger.info(m, tag);
 var warn = (m, tag = "sync") => Logger.warn(m, tag);
 var error = (m, tag = "sync") => Logger.error(m, tag);
+
+// Does the server's copy of this sample have changes the local doesn't? Pure
+// read against `serverSyncTime` so it can drive both the real download and the
+// lightweight probe that auto-clears the sync-recommended badge (WB-114).
+function needsUpdate(serverSample, sample) {
+    if ( ! sample.get("serverSampleId") ) return true;
+
+    let serverSyncTime = sample.get("serverSyncTime");
+    if ( _.isUndefined(serverSyncTime) ) return true;
+
+    // 10s grace so the timestamp drift between our just-finished upload and the
+    // server's updated_at doesn't re-pull the same sample.
+    return moment(serverSample.updated_at).subtract(10, "s").isAfter(moment(serverSyncTime));
+}
+
 function createSampleDownloader(delay, progress) {
     progress = progress || { plan() {}, tick() {} };
     return {
         downloadSamples() {
             debug(`Queuing sample retrieval from server... `);
             let updatedCount = 0;
-            
-            // only update if updated after it was last uploaded - this allows user changes
-            // to not be overwritten.
-            function needsUpdate(serverSample,sample) {
-
-                debug(`Checking if sampleId=${sample.get("sampleId")} needs downloading `);
-                // This can be true if the sample wasn't reviously on the device sibce a new 
-                // record as been created and this will be blank.
-                if ( ! sample.get("serverSampleId") ) {
-                    debug(`Yes there is no serverSampleId yet.`);
-                    return true;
-                } 
-
-                let serverSyncTime = sample.get("serverSyncTime");
-                if ( _.isUndefined(serverSyncTime) ) {
-                    debug(`Yes there is no serverSyncTime yet.`);
-                    return true;
-                }
-                
-                let serverUpdateTimeM = moment(serverSample.updated_at);
-                let serverSyncTimeM = moment(serverSyncTime); 
-
-                debug(`serverUpdateTimeM=${serverSyncTimeM.valueOf()} serverSyncTimeM=${serverSyncTimeM.valueOf()}`);
-
-                // We need to subtract a small window to account for upload delay; otherwise
-                // a download will be intitiated every time an upload occurs.
-                if ( serverUpdateTimeM.subtract(10,"s").isAfter(serverSyncTimeM) ) {
-                    debug(`Yes the sample was updated on the server after the sync.`);
-                    return true;
-                }
-
-                debug(`No download needed.`);
-
-                return false; // update not needed
-
-            }
             function updateIncomingSample(serverSample) {
                 let sample = Alloy.createModel("sample");
                 // The sync time is set to when we started the download process
@@ -238,3 +217,4 @@ function createSampleDownloader(delay, progress) {
 };
 
 exports.createSampleDownloader = createSampleDownloader;
+exports.needsUpdate = needsUpdate;
