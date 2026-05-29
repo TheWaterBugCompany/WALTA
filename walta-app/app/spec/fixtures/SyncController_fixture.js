@@ -13,6 +13,7 @@ function createSyncController(SyncStore) {
     var syncController = {
         get status()       { return store.status; },
         get percent()      { return store.percent; },
+        get statusText()   { return store.statusText; },
         get errorMessage() { return store.errorMessage; },
         get hasErrors()    { return store.hasErrors; },
         addListener:    function (cb) { store.addListener(cb); },

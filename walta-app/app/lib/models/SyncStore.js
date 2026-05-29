@@ -8,6 +8,7 @@ const PROGRESS_CAP = 99;
 const INITIAL_STATE = {
   status: "idle",
   percent: 0,
+  statusText: "",
   errorMessage: null,
   hasErrors: false,
 };
@@ -28,6 +29,7 @@ class SyncStore extends ChangeNotifier {
 
   get status()       { return this._state.status; }
   get percent()      { return this._state.percent; }
+  get statusText()   { return this._state.statusText; }
   get errorMessage() { return this._state.errorMessage; }
   get hasErrors()    { return this._state.hasErrors; }
 
@@ -40,17 +42,21 @@ class SyncStore extends ChangeNotifier {
     this._setState({ ...INITIAL_STATE, status: "syncing" });
   }
 
-  recordProgress(progress) {
+  recordProgress(message, progress) {
     if (this._state.status !== "syncing") return;
+    const patch = {};
+    // Terse user-visible step name from the publisher (UPLOAD_PROGRESS).
+    // Omit `message` entirely (percent-only tick) to advance the bar
+    // without disturbing the headline currently shown.
+    if (message !== undefined) patch.statusText = message || "";
     if (progress && progress.total > 0) {
-      this._setState({
-        percent: Math.min(PROGRESS_CAP, Math.round((progress.current / progress.total) * 100))
-      });
+      patch.percent = Math.min(PROGRESS_CAP, Math.round((progress.current / progress.total) * 100));
     }
+    this._setState(patch);
   }
 
   recordSuccess() {
-    this._setState({ status: "success", percent: 100 });
+    this._setState({ status: "success", percent: 100, statusText: "" });
   }
 
   recordError(error) {
