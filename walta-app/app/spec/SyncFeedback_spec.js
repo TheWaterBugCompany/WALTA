@@ -157,7 +157,7 @@ describe("SyncFeedback controller", function () {
             await windowOpenTest(win);
         });
 
-        it("shows '0% Syncing' so the bar isn't bare while we wait for the first milestone", () => {
+        it("falls back to '0% Syncing' so the bar isn't bare while we wait for the first step message", () => {
             expect(ctl.progressText.text).to.equal("0% Syncing");
         });
     });
@@ -166,14 +166,14 @@ describe("SyncFeedback controller", function () {
         beforeEach(async () => {
             var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
-            store.recordProgress({ current: 3, total: 4 });
+            store.recordProgress("Uploading taxa 141 photo", { current: 3, total: 4 });
             ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
 
-        it("shows the bar partially filled with the 'Syncing' headline", () => {
-            expect(ctl.progressText.text).to.equal("75% Syncing");
+        it("shows the bar partially filled with the publisher's step message", () => {
+            expect(ctl.progressText.text).to.equal("75% Uploading taxa 141 photo");
             expect(ctl.progressFill.width).to.equal("75%");
         });
     });
@@ -182,7 +182,7 @@ describe("SyncFeedback controller", function () {
         beforeEach(async () => {
             var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
-            store.recordProgress({ current: 1, total: 4 });
+            store.recordProgress("Uploading site photo", { current: 1, total: 4 });
             store.recordError(new Error("Server Error"));
             ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());

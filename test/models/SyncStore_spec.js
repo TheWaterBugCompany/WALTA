@@ -15,9 +15,10 @@ describe("SyncStore", function () {
   });
 
   describe("initial state", function () {
-    it("starts 'idle' with no progress and no error", function () {
+    it("starts 'idle' with no progress, no headline, no error", function () {
       expect(store.status).to.equal("idle");
       expect(store.percent).to.equal(0);
+      expect(store.statusText).to.equal("");
       expect(store.errorMessage).to.equal(null);
       expect(store.hasErrors).to.equal(false);
     });
@@ -74,11 +75,12 @@ describe("SyncStore", function () {
   });
 
   describe("recordStart()", function () {
-    it("transitions to 'syncing' and resets progress/error", function () {
+    it("transitions to 'syncing' and resets progress/error/headline", function () {
       store.recordError(new Error("boom"));
       store.recordStart();
       expect(store.status).to.equal("syncing");
       expect(store.percent).to.equal(0);
+      expect(store.statusText).to.equal("");
       expect(store.errorMessage).to.equal(null);
     });
 
@@ -93,36 +95,51 @@ describe("SyncStore", function () {
   describe("recordProgress()", function () {
     beforeEach(function () { store.recordStart(); });
 
+    it("sets statusText from the publisher's terse step message", function () {
+      store.recordProgress("Uploading site photo");
+      expect(store.statusText).to.equal("Uploading site photo");
+    });
+
     it("sets percent from the current/total work fraction", function () {
-      store.recordProgress({ current: 1, total: 4 });
+      store.recordProgress("downloading", { current: 1, total: 4 });
       expect(store.percent).to.equal(25);
-      store.recordProgress({ current: 2, total: 4 });
+      store.recordProgress("downloading", { current: 2, total: 4 });
       expect(store.percent).to.equal(50);
-      store.recordProgress({ current: 3, total: 4 });
+      store.recordProgress("downloading", { current: 3, total: 4 });
       expect(store.percent).to.equal(75);
     });
 
     it("caps percent below 100 until recordSuccess, even when all work is done", function () {
-      store.recordProgress({ current: 4, total: 4 });
+      store.recordProgress("last item", { current: 4, total: 4 });
       expect(store.percent).to.be.below(100);
       store.recordSuccess();
       expect(store.percent).to.equal(100);
     });
 
+    it("advances percent without disturbing statusText for a percent-only tick (no message)", function () {
+      store.recordProgress("Downloading samples", { current: 1, total: 4 });
+      store.recordProgress(undefined, { current: 2, total: 4 });
+      expect(store.percent).to.equal(50);
+      expect(store.statusText).to.equal("Downloading samples");
+    });
+
     it("is ignored when not in the 'syncing' state", function () {
       store.recordSuccess();
-      store.recordProgress({ current: 1, total: 4 });
+      store.recordProgress("stale", { current: 1, total: 4 });
       expect(store.status).to.equal("success");
       expect(store.percent).to.equal(100);
+      expect(store.statusText).to.equal("");
     });
   });
 
   describe("recordSuccess()", function () {
-    it("moves to 'success' with percent 100", function () {
+    it("moves to 'success' with percent 100 and clears the step headline", function () {
       store.recordStart();
+      store.recordProgress("Uploading taxa 12 photo", { current: 4, total: 4 });
       store.recordSuccess();
       expect(store.status).to.equal("success");
       expect(store.percent).to.equal(100);
+      expect(store.statusText).to.equal("");
     });
   });
 

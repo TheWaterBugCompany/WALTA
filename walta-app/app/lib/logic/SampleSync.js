@@ -40,7 +40,7 @@ function removeListener(cb) {
 }
 
 // Expose the store's read-side getters so consumers can read SampleSync like a SyncStore.
-["status", "percent", "errorMessage", "hasErrors"].forEach(function (attr) {
+["status", "percent", "statusText", "errorMessage", "hasErrors"].forEach(function (attr) {
     Object.defineProperty(exports, attr, { get: function () { return syncStore[attr]; }, enumerable: true });
 });
 
@@ -88,6 +88,10 @@ function clearUploadTimer() {
     }
 }
 
+function handleUploadProgress(data) {
+    syncStore.recordProgress(data && data.message);
+}
+
 function networkChanged( e ) {
     if ( e.networkType === Ti.Network.NETWORK_NONE ) {
         // don't bother trying to upload (saves battery)
@@ -109,6 +113,7 @@ function init() {
     Ti.Network.addEventListener( "change", networkChanged );
     Topics.subscribe( Topics.LOGGEDIN, () => resumeInterruptedWork() );
     Topics.subscribe( Topics.LOGGEDOUT, onLoggedOut );
+    Topics.subscribe( Topics.UPLOAD_PROGRESS, handleUploadProgress );
     if ( Titanium.Platform.name === 'android' ) {
         Ti.Android.currentActivity.addEventListener( 'resume', appResumed );
     } else {
@@ -172,9 +177,9 @@ function runSync({ download, options }) {
     // the download phase plans its own count — that keeps the bar from
     // jumping backwards when uploads begin after a download.
     let progressDone = 0, progressTotal = countPendingUploads();
-    function tick() {
+    function tick(message) {
         progressDone++;
-        syncStore.recordProgress({ current: progressDone, total: progressTotal });
+        syncStore.recordProgress(message, { current: progressDone, total: progressTotal });
     }
     let downloadProgress = { plan: (n) => { progressTotal += n; }, tick };
     let uploadProgress = { plan() {}, tick };
