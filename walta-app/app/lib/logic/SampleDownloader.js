@@ -199,10 +199,17 @@ function createSampleDownloader(delay, progress) {
 
             function saveNewSamples( samples ) {
                 progress.plan( samples.length );
+                // Isolate each sample: a transient failure on one (e.g. 5xx
+                // after retries exhausted) leaves that sample without a
+                // serverSyncTime so the next sync retries it, while the rest
+                // of the queue still drains.
                 return _.reduce( samples,
                     (updateAllSamples, serverSample ) => updateAllSamples
-                            .then( () => serverSample )
-                            .then( updateIncomingSample )
+                            .then( () => updateIncomingSample(serverSample) )
+                            .catch( err => {
+                                error(`Failed to download sample [serverSampleId=${serverSample.id}] — leaving pending for next sync`);
+                                Logger.recordException(err);
+                            })
                             .then( () => progress.tick() ),Promise.resolve() )
                     .then( () => updatedCount );
             }

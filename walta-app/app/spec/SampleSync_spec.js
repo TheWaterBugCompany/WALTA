@@ -459,7 +459,7 @@ describe("SampleSync", function () {
         });
         it('should upload new photo if site photo is changed', async function() {
             let sample = makeSampleData( { sitePhotoPath: makeTestPhoto("site.jpg") });
-            sample.save(); 
+            sample.save();
             simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
                 .returnWith(38);
             simple.mock(Alloy.Globals.CerdiApi,"submitSitePhoto").resolveWith({id:1});
@@ -471,6 +471,46 @@ describe("SampleSync", function () {
             sample.save();
             await createSampleUploader().uploadSamples();
             expect(Alloy.Globals.CerdiApi.submitSitePhoto.callCount).to.equal(2);
+        });
+
+        it('keeps processing remaining samples when one sample upload fails', async function() {
+            // A transient failure uploading one sample (e.g. 5xx after retries
+            // exhausted) must not strand the rest of the queue. The failing
+            // sample stays pending so a later sync retries it.
+            let firstSample = makeSampleData({ waterbodyName: "first" });
+            firstSample.save();
+            let doomedSample = makeSampleData({ waterbodyName: "doomed" });
+            doomedSample.save();
+            let thirdSample = makeSampleData({ waterbodyName: "third" });
+            thirdSample.save();
+
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUserId").returnWith(38);
+            simple.mock(Alloy.Globals.CerdiApi, "submitSitePhoto").resolveWith({id:1});
+            simple.mock(Alloy.Globals.CerdiApi, "submitSample")
+                .callFn((sampleJson) => {
+                    if (sampleJson.waterbody_name === "doomed") {
+                        return Promise.reject(new Error("HTTP 503"));
+                    }
+                    let nextId = sampleJson.waterbody_name === "first" ? 1001 : 1003;
+                    return Promise.resolve({ id: nextId, user_id: 38 });
+                });
+
+            await createSampleUploader().uploadSamples();
+
+            let firstReloaded = Alloy.createModel("sample");
+            firstReloaded.loadById(firstSample.get("sampleId"));
+            expect(firstReloaded.get("serverSampleId"), "first sample uploaded").to.equal(1001);
+            expect(firstReloaded.get("serverSyncTime"), "first sample marked complete").to.be.a("number");
+
+            let thirdReloaded = Alloy.createModel("sample");
+            thirdReloaded.loadById(thirdSample.get("sampleId"));
+            expect(thirdReloaded.get("serverSampleId"), "third sample uploaded after failed second").to.equal(1003);
+            expect(thirdReloaded.get("serverSyncTime"), "third sample marked complete").to.be.a("number");
+
+            let doomedReloaded = Alloy.createModel("sample");
+            doomedReloaded.loadById(doomedSample.get("sampleId"));
+            expect(doomedReloaded.get("serverSampleId"), "failed sample left pending for retry").to.not.be.ok;
+            expect(doomedReloaded.get("serverSyncTime"), "failed sample not marked complete").to.not.be.a("number");
         });
     });
 
@@ -950,8 +990,44 @@ describe("SampleSync", function () {
             expect(sample.get("serverSampleId")).to.equal(235);
             expect(sample.get("waterbodyName")).to.equal("second test sample");
         });
-        
-    }); 
+
+        it('keeps processing remaining samples when one sample download fails', async function() {
+            // A transient failure on one sample (e.g. 429 after retries exhausted,
+            // server error fetching unknown creatures) must not strand the rest
+            // of the queue. The failing sample stays pending so a later sync
+            // retries it.
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveUnknownCreatures")
+                .callFn((serverSampleId) => {
+                    if (serverSampleId === 235) {
+                        return Promise.reject(new Error("HTTP 503"));
+                    }
+                    return Promise.resolve([]);
+                });
+            simple.mock(Alloy.Globals.CerdiApi, "retrieveSamples")
+                .resolveWith([
+                    makeCerdiSampleData({ id: 234, waterbody_name: "first" }),
+                    makeCerdiSampleData({ id: 235, waterbody_name: "doomed" }),
+                    makeCerdiSampleData({ id: 236, waterbody_name: "third" }),
+                ]);
+
+            await createSampleDownloader().downloadSamples();
+
+            let sample = Alloy.Models.instance("sample");
+            sample.loadByServerId(234);
+            expect(sample.get("serverSampleId"), "first sample persisted").to.equal(234);
+            expect(sample.get("serverSyncTime"), "first sample marked synced").to.be.a("number");
+
+            sample = Alloy.createModel("sample");
+            sample.loadByServerId(236);
+            expect(sample.get("serverSampleId"), "third sample persisted after failed second").to.equal(236);
+            expect(sample.get("serverSyncTime"), "third sample marked synced after failed second").to.be.a("number");
+
+            sample = Alloy.createModel("sample");
+            sample.loadByServerId(235);
+            expect(sample.get("serverSyncTime"), "failed sample left pending for retry").to.not.be.a("number");
+        });
+
+    });
 
     it('should not duplicate record if edited whilst uploading', async function() {
         clearMockSampleData();
