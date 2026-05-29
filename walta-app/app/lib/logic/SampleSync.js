@@ -66,6 +66,21 @@ function countPendingUploads() {
     return samples.length;
 }
 
+// Combined-pool seed: every unit the uploader will tick on — samples plus
+// their pending site and taxon photos. Must mirror SampleUploader.uploadSamples'
+// plan() arithmetic so the bar doesn't sprint past 99% when uploads run after
+// a download (and doesn't stall there either).
+function countPendingUploadUnits() {
+    let userId = Alloy.Globals.CerdiApi.retrieveUserId();
+    let samples = Alloy.createCollection("sample");
+    samples.loadUploadQueue(userId);
+    return samples.reduce((sum, s) => {
+        let pendingSite = (s.get("sitePhotoPath") && _.isNull(s.get("serverSitePhotoId"))) ? 1 : 0;
+        let pendingTaxa = s.loadTaxa().findPendingUploads().length;
+        return sum + 1 + pendingSite + pendingTaxa;
+    }, 0);
+}
+
 function hasPendingUploads() {
     return countPendingUploads() > 0;
 }
@@ -176,7 +191,7 @@ function runSync({ download, options }) {
     // upload phases. Upload work is countable up front, so seed it before
     // the download phase plans its own count — that keeps the bar from
     // jumping backwards when uploads begin after a download.
-    let progressDone = 0, progressTotal = countPendingUploads();
+    let progressDone = 0, progressTotal = countPendingUploadUnits();
     function tick(message) {
         progressDone++;
         syncStore.recordProgress(message, { current: progressDone, total: progressTotal });

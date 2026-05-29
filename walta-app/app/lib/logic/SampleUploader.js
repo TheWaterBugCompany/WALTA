@@ -34,7 +34,7 @@ function loadCorrectSampleToUpdate(sample) {
     serverSitePhotoId is used to indicate that the photo has been
     sucessfully uploaded.
 */
-function uploadSitePhoto(sample,delay) {
+function uploadSitePhoto(sample,delay,progress) {
 
     function submitSitePhoto( sampleId, photoPath ) {
         info(`Uploading site photo path = ${photoPath} [serverSampleId=${sampleId}]`);
@@ -52,7 +52,7 @@ function uploadSitePhoto(sample,delay) {
             if ( needsOptimising(blob) ) {
                 log(`Optimising ${sitePhoto}`);
                 savePhoto( optimisePhoto(blob), sitePhoto );
-            } 
+            }
             log(`Uploading site photo: ${sitePhoto}`);
             return delayedPromise( submitSitePhoto( sampleId, sitePhoto ), delay)
                     .then( (res) => {
@@ -61,18 +61,20 @@ function uploadSitePhoto(sample,delay) {
                             "serverSitePhotoId": res.id
                         });
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading site photo" } );
+                        progress.tick();
                         return sample;
                     })
                     .catch( (err) => {
                         Logger.recordException(err);
+                        progress.tick();
                         return sample;
                     })
-        } 
-    } 
+        }
+    }
     return sample;
 }
 
-function uploadTaxaPhoto(sample,t,delay) {
+function uploadTaxaPhoto(sample,t,delay,progress) {
 
     function submitCreaturePhoto( sampleId, taxonId, photoPath ) {
         info(`Uploading taxa photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
@@ -92,22 +94,24 @@ function uploadTaxaPhoto(sample,t,delay) {
     if ( ! taxonPhotoId && (taxonId != null) ) {
         var photoPath = t.getPhoto();
         if ( photoPath ) {
-            
+
             let blob = loadPhoto( photoPath );
             if ( needsOptimising(blob) ) {
                 savePhoto( optimisePhoto( blob ), photoPath );
-            } 
+            }
             return delayedPromise( submitCreaturePhoto(sampleId, taxonId, photoPath ), delay )
                     .then( (res) => {
                         debug(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
                         Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading taxa photo" } );
+                        progress.tick();
                     })
                     .catch( (err) => {
                         error(`Error when attempting to upload taxon photo [serverSampleId=${sampleId},taxonId=${taxonId}]`)
                         Logger.recordException(err)
+                        progress.tick();
                     });
-                        
+
         }
     }
     return Promise.resolve();
@@ -117,18 +121,18 @@ function uploadTaxaPhoto(sample,t,delay) {
     serverCreaturePhotoId is used to determine if this taxon photo has
     already been uploaded to the server. 
 */
-function uploadTaxaPhotos(sample,delay) {
+function uploadTaxaPhotos(sample,delay,progress) {
     let taxa = sample.getTaxa();
     return taxa.reduce(
-                (uploadTaxaPhotos,t) => 
+                (uploadTaxaPhotos,t) =>
                     uploadTaxaPhotos
-                        .then( uploadTaxaPhoto(sample,t,delay)),
+                        .then( uploadTaxaPhoto(sample,t,delay,progress)),
                 Promise.resolve() )
             .then( () => sample );
-        
+
 }
 
-function uploadUnknownCreature(sample,t,delay) {
+function uploadUnknownCreature(sample,t,delay,progress) {
     var taxonId = t.getTaxonId();
     var sampleId = sample.get("serverSampleId");
     var serverCreatureId = t.get("serverCreatureId");
@@ -141,14 +145,14 @@ function uploadUnknownCreature(sample,t,delay) {
         let photoPath = t.getPhoto();
         let count = t.getAbundance();
         if ( photoPath ) {
-            
+
             let blob = loadPhoto( photoPath );
             if ( needsOptimising(blob) ) {
                 savePhoto( optimisePhoto( blob ), photoPath );
-            } 
+            }
             let actions;
-             
-            if ( !serverCreatureId ) { 
+
+            if ( !serverCreatureId ) {
                 actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath ) ), delay );
             } else {
                 actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.updateUnknownCreature(serverCreatureId,count,photoPath) ), delay);
@@ -159,20 +163,22 @@ function uploadUnknownCreature(sample,t,delay) {
                     "serverCreaturePhotoId": res.photos[0].id
                 });
                 Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading unknown creature" } );
+                progress.tick();
             })
             .catch( (err) => {
                   Logger.recordException(err);
-            });             
+                  progress.tick();
+            });
         }
     }
     return Promise.resolve();
 }
 
-function uploadUnknownCreatures(sample,delay) {
+function uploadUnknownCreatures(sample,delay,progress) {
     let taxa = sample.getTaxa();
-    return taxa.reduce( 
-        (uploadUnknown,t) => 
-            uploadUnknown.then( uploadUnknownCreature(sample,t,delay)),
+    return taxa.reduce(
+        (uploadUnknown,t) =>
+            uploadUnknown.then( uploadUnknownCreature(sample,t,delay,progress)),
                 Promise.resolve() )
         .then( () => sample );
 }
@@ -220,7 +226,15 @@ function createSampleUploader(delay, progress) {
             return Promise.resolve()
                 .then(loadSamples)
                 .then((samples) => {
-                    progress.plan( samples.length );
+                    // Plan once: samples plus their pending photos (site + taxa).
+                    // Walking the queue here keeps the denominator stable through
+                    // the upload phase so the bar doesn't jump when each photo lands.
+                    let photoCount = samples.reduce((sum, s) => {
+                        let pendingSite = (s.get("sitePhotoPath") && _.isNull(s.get("serverSitePhotoId"))) ? 1 : 0;
+                        let pendingTaxa = s.loadTaxa().findPendingUploads().length;
+                        return sum + pendingSite + pendingTaxa;
+                    }, 0);
+                    progress.plan( samples.length + photoCount );
                     return this.uploadRemainingSamples(samples);
                 });
         },
@@ -305,9 +319,9 @@ function createSampleUploader(delay, progress) {
                 return uploadOrUpdate
                         .then( updateSample )
                         .then( () => sample  )
-                        .then( (sample) => uploadSitePhoto(sample,delay) )
-                        .then( (sample) => uploadTaxaPhotos(sample,delay) )
-                        .then( (sample) => uploadUnknownCreatures(sample,delay))
+                        .then( (sample) => uploadSitePhoto(sample,delay,progress) )
+                        .then( (sample) => uploadTaxaPhotos(sample,delay,progress) )
+                        .then( (sample) => uploadUnknownCreatures(sample,delay,progress))
                         .then( (sample) => deletePendingUnknownCreatures(sample,delay))
                         .then( (sample) => markSampleComplete(sample,delay) )
                         .then( () => 1 )

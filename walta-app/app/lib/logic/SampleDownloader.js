@@ -112,28 +112,34 @@ function createSampleDownloader(delay, progress) {
             }
 
             function downloadSitePhoto([sample,serverSample]) {
-                // Skip when we already have it — photos are immutable on the server,
-                // so a present serverSitePhotoId means there's nothing to re-fetch.
-                if ( serverSample.photos.length > 0 && ! sample.get("serverSitePhotoId") ) {
-                    let sitePhotoPath = `site_download_${serverSample.id}`;
-                    info(`Downloading site photo for ${serverSample.id}`);
-                    return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
-                        .then( photo => {
-                            sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
-                            sample.set("serverSitePhotoId", photo.id);
-                            sample.save();
-                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Downloading site photo" } );
-                            return [sample,serverSample];
-                        })
-                        .catch( err => {
-                            error(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
-                            Logger.recordException(err);
-                            return [sample, serverSample];
-                        });
-                } else {
+                // No site photo to account for at all — keep plan and tick aligned by
+                // simply doing nothing here (the planning pre-pass also skipped it).
+                if ( serverSample.photos.length === 0 ) {
                     return Promise.resolve([sample,serverSample]);
                 }
-                
+                // Skip when we already have it — photos are immutable on the server,
+                // so a present serverSitePhotoId means there's nothing to re-fetch.
+                if ( sample.get("serverSitePhotoId") ) {
+                    progress.tick();
+                    return Promise.resolve([sample,serverSample]);
+                }
+                let sitePhotoPath = `site_download_${serverSample.id}`;
+                info(`Downloading site photo for ${serverSample.id}`);
+                return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
+                    .then( photo => {
+                        sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
+                        sample.set("serverSitePhotoId", photo.id);
+                        sample.save();
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Downloading site photo" } );
+                        progress.tick();
+                        return [sample,serverSample];
+                    })
+                    .catch( err => {
+                        error(`Failed to download photo for [serverSampleId=${serverSample.id}]`)
+                        Logger.recordException(err);
+                        progress.tick();
+                        return [sample, serverSample];
+                    });
             }
             
             function downloadCreaturePhoto(taxon,serverSample) {
@@ -182,23 +188,34 @@ function createSampleDownloader(delay, progress) {
             function downloadCreaturePhotos([sample,serverSample]) {
                 let taxa = sample.loadTaxa();
 
-                // Download photos that haven't yet been assigned a taxonPhotoPath
-                // this means photos are only ever downloaded from the server when they
-                // do not exist on the client - this is a fair assumption since the photo
-                // can not be changed on the server.
-                // serverCreaturePhotoId === 0 marks "no photo on the server" (set by
-                // downloadCreaturePhoto), so it's excluded — only fresh or previously
-                // failed photos remain pending and get (re)tried (WB-101).
-                let pendingTaxaPhotos = taxa.filter( t => _.isNull(t.get("taxonPhotoPath")) && t.get("serverCreaturePhotoId") !== 0 );
-                return _.reduce( pendingTaxaPhotos,  
-                    (queue,t) => queue.then( () => delayedPromise( downloadCreaturePhoto(t,serverSample),delay)),
+                // Iterate ALL taxa, not just the pending ones: download photos that
+                // haven't been fetched yet (taxonPhotoPath null, server says it has one),
+                // and tick either way so per-photo progress accounting stays aligned
+                // with the metadata-based plan even on resync where most photos are
+                // already local.
+                // serverCreaturePhotoId === 0 marks "no photo on the server", so it's
+                // excluded — only fresh or previously failed photos get (re)tried (WB-101).
+                return taxa.reduce(
+                    (queue,t) => queue
+                        .then( () => {
+                            if ( _.isNull(t.get("taxonPhotoPath")) && t.get("serverCreaturePhotoId") !== 0 ) {
+                                return delayedPromise( downloadCreaturePhoto(t,serverSample), delay );
+                            }
+                        })
+                        .then( () => progress.tick() ),
                     Promise.resolve())
                     .then(()=>[sample,serverSample])
-                
+
             }
 
             function saveNewSamples( samples ) {
-                progress.plan( samples.length );
+                // Plan once for both samples and their photos, from the GET /samples
+                // metadata: a stable denominator avoids the bar jumping mid-stream
+                // when photos start downloading.
+                let photoCount = samples.reduce(
+                    (sum, s) => sum + (s.photos.length > 0 ? 1 : 0) + s.sampled_creatures.length,
+                    0);
+                progress.plan( samples.length + photoCount );
                 // Isolate each sample: a transient failure on one (e.g. 5xx
                 // after retries exhausted) leaves that sample without a
                 // serverSyncTime so the next sync retries it, while the rest
