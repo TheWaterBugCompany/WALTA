@@ -7,6 +7,10 @@ function makeScriptedHTTPClient(scripted, attempts = []) {
             open(method, url) { this._method = method; this._url = url; },
             setRequestHeader(name, value) { this._headers[name] = value; },
             getResponseHeader(name) { return (this._responseHeaders || {})[name]; },
+            getAllResponseHeaders() {
+                const h = this._responseHeaders || {};
+                return Object.keys(h).map((k) => `${k}: ${h[k]}`).join('\r\n');
+            },
             send() {
                 const next = scripted.shift();
                 if (!next) throw new Error("No scripted response left");

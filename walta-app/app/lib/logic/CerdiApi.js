@@ -27,6 +27,47 @@ function truncate(s) {
     return `${s.slice(0, MAX_ERROR_BODY_CHARS)}…[${s.length - MAX_ERROR_BODY_CHARS} more chars truncated]`;
 }
 
+const SENSITIVE_HEADER_NAMES = new Set([
+    'authorization',
+    'proxy-authorization',
+    'cookie',
+    'set-cookie',
+    'x-auth-token',
+    'x-api-key',
+    'x-csrf-token',
+]);
+
+function parseHeaders(raw) {
+    if (typeof raw !== 'string' || !raw.length) return null;
+    const out = {};
+    const lines = raw.split(/\r?\n/);
+    for (const line of lines) {
+        if (!line) continue;
+        const idx = line.indexOf(':');
+        if (idx <= 0) continue;
+        const name = line.slice(0, idx).trim();
+        const value = line.slice(idx + 1).trim();
+        out[name] = value;
+    }
+    return Object.keys(out).length ? out : null;
+}
+
+function redactHeaders(headers) {
+    if (!headers || typeof headers !== 'object') return headers;
+    const out = {};
+    for (const key of Object.keys(headers)) {
+        out[key] = SENSITIVE_HEADER_NAMES.has(key.toLowerCase()) ? '[REDACTED]' : headers[key];
+    }
+    return out;
+}
+
+function formatResponseHeaders(client) {
+    if (typeof client.getAllResponseHeaders !== 'function') return '';
+    const parsed = parseHeaders(client.getAllResponseHeaders());
+    if (!parsed) return '';
+    return ` headers=${JSON.stringify(redactHeaders(parsed))}`;
+}
+
 function parseRetryAfter(raw) {
     if (raw == null) return undefined;
     const n = parseInt(raw, 10);
@@ -45,28 +86,30 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
     return new Promise((resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
             onload: function () {
+                const headers = formatResponseHeaders(this);
                 if (acceptType === 'application/json') {
                     const parsed = JSON.parse(this.responseText);
-                    trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}`);
+                    trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}${headers}`);
                     resolve(parsed);
                 } else {
                     const bytes = this.responseData ? this.responseData.length : 0;
-                    trace(`<- ${this.status} ${method} ${url} (${bytes} bytes)`);
+                    trace(`<- ${this.status} ${method} ${url} (${bytes} bytes)${headers}`);
                     resolve(this.responseData);
                 }
             },
             onerror: function (err) {
                 const status = this.status || '?';
+                const headers = formatResponseHeaders(this);
                 let body = err;
                 if (this.responseText) {
                     try {
                         body = JSON.parse(this.responseText);
-                        trace(`<- ${status} ${method} ${url} ERROR ${JSON.stringify(redactBody(body))}`);
+                        trace(`<- ${status} ${method} ${url} ERROR ${JSON.stringify(redactBody(body))}${headers}`);
                     } catch (_) {
-                        trace(`<- ${status} ${method} ${url} ERROR ${truncate(this.responseText)}`);
+                        trace(`<- ${status} ${method} ${url} ERROR ${truncate(this.responseText)}${headers}`);
                     }
                 } else {
-                    trace(`<- ${status} ${method} ${url} ERROR (no body)`);
+                    trace(`<- ${status} ${method} ${url} ERROR (no body)${headers}`);
                 }
                 const retryAfterRaw = typeof this.getResponseHeader === 'function'
                     ? this.getResponseHeader('Retry-After')
