@@ -166,14 +166,14 @@ describe("SyncFeedback controller", function () {
         beforeEach(async () => {
             var { syncController, store } = createSyncController(SyncStore);
             store.recordStart();
-            store.recordProgress("Uploading taxa 141 photo", { current: 3, total: 4 });
+            store.recordProgress("Uploading taxa photo", { current: 3, total: 4 });
             ctl = Alloy.createController("SyncFeedback", { syncController });
             win = wrapViewInWindow(ctl.getView());
             await windowOpenTest(win);
         });
 
         it("shows the bar partially filled with the publisher's step message", () => {
-            expect(ctl.progressText.text).to.equal("75% Uploading taxa 141 photo");
+            expect(ctl.progressText.text).to.equal("75% Uploading taxa photo");
             expect(ctl.progressFill.width).to.equal("75%");
         });
     });

@@ -72,10 +72,10 @@ function createSampleDownloader(delay, progress) {
                 }
 
                 function persistSample(sampleJson) {
-                    sample.fromCerdiApiJson(sampleJson); 
+                    sample.fromCerdiApiJson(sampleJson);
                     sample.save();
-                    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
-             
+                    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Downloading sample" } );
+
                 }
                 function setTimestamp(){
                     log(`Setting serverSyncTime [sampleId=${sample.get("sampleId")}] ${syncedAt}`)
@@ -122,7 +122,7 @@ function createSampleDownloader(delay, progress) {
                             sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
                             sample.set("serverSitePhotoId", photo.id);
                             sample.save();
-                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
+                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Downloading site photo" } );
                             return [sample,serverSample];
                         })
                         .catch( err => {
@@ -171,7 +171,7 @@ function createSampleDownloader(delay, progress) {
                                 taxon.set("serverCreaturePhotoId",0); 
                                 taxon.save();
                             }
-                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId() } );
+                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId(), message: "Downloading taxa photo" } );
                         })
                         .catch( err => {
                             error(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
