@@ -629,8 +629,16 @@ const KobitonAPI = require("./features/support/kobiton");
         // simctl uninstall is a no-op (exits 0) if the app isn't installed.
         execFileSync('xcrun', ['simctl', 'uninstall', SIM_UDID, APP_ID], { stdio: 'inherit' });
         execFileSync('xcrun', ['simctl', 'install', SIM_UDID, appPath], { stdio: 'inherit' });
-      } else {
-        grunt.log.writeln('--reset is only supported for Android and iOS simulator; skipping');
+      } else if (platform === 'ios') {
+        if (!DEVICE_ID) grunt.fail.fatal('IOS_DEVICE_UDID must be set to --reset a physical iOS device');
+        // devicectl uninstall errors when the app isn't installed; swallow
+        // it so --reset works on a fresh device too. The subsequent launch
+        // task reinstalls.
+        try {
+          execFileSync('xcrun', ['devicectl', 'device', 'uninstall', 'app', '--device', DEVICE_ID, APP_ID], { stdio: 'inherit' });
+        } catch (_) {
+          grunt.log.writeln('App not installed on device — nothing to uninstall');
+        }
       }
     });
 
