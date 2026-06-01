@@ -7,6 +7,7 @@ var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
 
 var { makeTestPhoto, removeDatabase, resetSample, clearDatabase, waitForTick  } = require("spec/util/TestUtils");
 use( require('spec/lib/chai-date-string') );
+use( require('spec/lib/chai-falsy') );
 var Sample = require('logic/Sample');
 
 describe("Taxa collection", function() {
@@ -1111,18 +1112,18 @@ describe("WB-143: complete=false survives the edit roundtrip", function() {
 
   it("(A) createTemporaryForEdit preserves complete=false in the in-memory dup", function() {
     let dup = makeUncheckedSample().createTemporaryForEdit();
-    expect(!!dup.get("complete"),
+    expect(dup.get("complete"),
       `dup.complete after createTemporaryForEdit: ${dup.get("complete")} (typeof ${typeof dup.get("complete")})`)
-      .to.equal(false);
+      .to.be.falsy;
   });
 
   it("(B) complete=false survives dup.save() + reload via loadById", function() {
     let dup = makeUncheckedSample().createTemporaryForEdit();
     let reloaded = Alloy.createModel("sample");
     reloaded.loadById(dup.get("sampleId"));
-    expect(!!reloaded.get("complete"),
+    expect(reloaded.get("complete"),
       `reloaded.complete: ${reloaded.get("complete")} (typeof ${typeof reloaded.get("complete")})`)
-      .to.equal(false);
+      .to.be.falsy;
   });
 
   it("(C) toCerdiApiJson after the roundtrip still serialises complete=false", function() {
