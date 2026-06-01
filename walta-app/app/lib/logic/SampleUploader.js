@@ -77,7 +77,7 @@ function uploadSitePhoto(sample,delay,progress) {
 function uploadTaxaPhoto(sample,t,delay,progress) {
 
     function submitCreaturePhoto( sampleId, taxonId, photoPath ) {
-        info(`Uploading taxa photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
+        info(`Uploading taxon photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
         return Promise.resolve()
                 .then( () => Alloy.Globals.CerdiApi.submitCreaturePhoto( sampleId, taxonId, photoPath ) )
                 .then( (res) => {
@@ -103,7 +103,7 @@ function uploadTaxaPhoto(sample,t,delay,progress) {
                     .then( (res) => {
                         debug(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
-                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading taxa photo" } );
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading taxon photo" } );
                         progress.tick();
                     })
                     .catch( (err) => {
