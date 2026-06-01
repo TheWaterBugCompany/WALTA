@@ -130,6 +130,38 @@ describe("RateLimitPacer", function () {
         });
     });
 
+    describe("acquire() with the budget exhausted (remaining === 0)", function () {
+        it("waits until resetAt regardless of elapsed time since the last request", async function () {
+            const clock = makeClock();
+            const sleeper = makeSleepRecorder(clock);
+            const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
+            pacer.observe(HttpHeaders.parse(createHttpHeaders({
+                "X-RateLimit-Remaining": "0",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 60_000),
+                "Date": utcStringForDeviceTime(clock),
+            })));
+            clock.advance(30_000);
+            await pacer.acquire();
+            expect(sleeper.calls).to.deep.equal([30_000]);
+        });
+
+        it("does not sleep when the reset moment has already passed", async function () {
+            const clock = makeClock();
+            const sleeper = makeSleepRecorder(clock);
+            const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
+            pacer.observe(HttpHeaders.parse(createHttpHeaders({
+                "X-RateLimit-Remaining": "0",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
+                "Date": utcStringForDeviceTime(clock),
+            })));
+            clock.advance(15_000);
+            await pacer.acquire();
+            expect(sleeper.calls).to.deep.equal([]);
+        });
+    });
+
     describe("clock-skew correction via Date header", function () {
         it("interprets x-ratelimit-reset in device time using the server's Date header", async function () {
             const clock = makeClock();
