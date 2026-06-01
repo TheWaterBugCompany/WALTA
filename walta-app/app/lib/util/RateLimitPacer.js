@@ -14,11 +14,16 @@ function createPacer(opts = {}) {
     let hasFiredRequest = false;
 
     function observe(headers) {
-        const remainingParsed = parseInt(headers?.["X-RateLimit-Remaining"]);
-        const resetEpochSeconds = parseInt(headers?.["X-RateLimit-Reset"]);
+        if (!headers) return;
+        const lower = {};
+        for (const key of Object.keys(headers)) {
+            lower[key.toLowerCase()] = headers[key];
+        }
+        const remainingParsed = parseInt(lower["x-ratelimit-remaining"]);
+        const resetEpochSeconds = parseInt(lower["x-ratelimit-reset"]);
         if (!Number.isFinite(remainingParsed) || !Number.isFinite(resetEpochSeconds)) return;
 
-        const serverNowMs = Date.parse(headers["Date"]);
+        const serverNowMs = Date.parse(lower["date"]);
         const skewMs = Number.isFinite(serverNowMs) ? serverNowMs - now() : 0;
 
         remaining = Math.max(0, remainingParsed);
