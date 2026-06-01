@@ -1,7 +1,8 @@
 require("spec/lib/ti-mocha");
 var Topics = require('ui/Topics');
 var simple = require("spec/lib/simple-mock");
-var { expect } = require("spec/lib/chai");
+var { use, expect } = require("spec/lib/chai");
+use( require('spec/lib/chai-falsy') );
 var { closeWindow, controllerOpenTest, waitForTick, isManualTests, waitForTopic } = require("spec/util/TestUtils");
 var { Navigation } = require('logic/Navigation');
 var { View } = require('logic/View');
@@ -30,7 +31,7 @@ describe("Notes controller", function () {
       expect(ctl.partialToggle.value).to.equal(true);
       ctl.partialToggle.value = false;
       await waitForTick(10)();
-      expect(!!Alloy.Models.instance("sample").get("complete")).to.equal(false);
+      expect(Alloy.Models.instance("sample").get("complete")).to.be.falsy;
     });
     it('should bind the notes field to the notes field in the sample model', async function () {
 
@@ -129,9 +130,9 @@ describe("WB-143: Notes screen does not flip complete on note-only edit", functi
     ctl.notesTextField.fireEvent("change", { value: "edit one character" });
     await waitForTick(10)();
 
-    expect(!!Alloy.Models.instance("sample").get("complete"),
+    expect(Alloy.Models.instance("sample").get("complete"),
       `sample.complete after note-only edit: ${Alloy.Models.instance("sample").get("complete")}`)
-      .to.equal(false);
+      .to.be.falsy;
   });
 
   it("(E) toggling partial off persists complete=false and serialises as false on next upload", async function () {
@@ -158,9 +159,9 @@ describe("WB-143: Notes screen does not flip complete on note-only edit", functi
 
     let reloaded = Alloy.createModel("sample");
     reloaded.loadById(id);
-    expect(!!reloaded.get("complete"),
+    expect(reloaded.get("complete"),
       `reloaded.complete after toggling off: ${reloaded.get("complete")} (typeof ${typeof reloaded.get("complete")})`)
-      .to.equal(false);
+      .to.be.falsy;
     expect(reloaded.toCerdiApiJson().complete,
       `serialised complete after toggling off: ${reloaded.toCerdiApiJson().complete}`)
       .to.equal(false);
