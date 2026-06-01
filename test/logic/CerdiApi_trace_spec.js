@@ -46,9 +46,9 @@ describe("CerdiApi: network trace headers", function () {
         await cerdi.retrieveSamples();
         const responseLine = networkLogs.find((e) => /^<- 200/.test(e.message));
         expect(responseLine, "expected a 200 response trace").to.exist;
-        expect(responseLine.message).to.include('Content-Type');
+        expect(responseLine.message).to.include('content-type');
         expect(responseLine.message).to.include('application/json');
-        expect(responseLine.message).to.include('X-RateLimit-Remaining');
+        expect(responseLine.message).to.include('x-ratelimit-remaining');
         expect(responseLine.message).to.include('57');
     });
 
@@ -65,10 +65,10 @@ describe("CerdiApi: network trace headers", function () {
         await cerdi.retrieveSamples();
         const errorLine = networkLogs.find((e) => /^<- 429 .* ERROR/.test(e.message));
         expect(errorLine, "expected a 429 error trace").to.exist;
-        expect(errorLine.message).to.include('Retry-After');
+        expect(errorLine.message).to.include('retry-after');
         expect(errorLine.message).to.include('"8"');
-        expect(errorLine.message).to.include('X-RateLimit-Remaining');
-        expect(errorLine.message).to.include('X-RateLimit-Reset');
+        expect(errorLine.message).to.include('x-ratelimit-remaining');
+        expect(errorLine.message).to.include('x-ratelimit-reset');
     });
 
     it("redacts the value of sensitive headers by name", async function () {
@@ -85,8 +85,8 @@ describe("CerdiApi: network trace headers", function () {
         await cerdi.retrieveSamples();
         const responseLine = networkLogs.find((e) => /^<- 200/.test(e.message));
         expect(responseLine, "expected a 200 response trace").to.exist;
-        expect(responseLine.message).to.include('Set-Cookie');
-        expect(responseLine.message).to.include('Authorization');
+        expect(responseLine.message).to.include('set-cookie');
+        expect(responseLine.message).to.include('authorization');
         expect(responseLine.message).to.not.include('session=abc123');
         expect(responseLine.message).to.not.include('eyJ-secret-payload');
         expect(responseLine.message).to.include('[REDACTED]');
