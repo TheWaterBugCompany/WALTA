@@ -29,27 +29,8 @@ function truncate(s) {
     return `${s.slice(0, MAX_ERROR_BODY_CHARS)}…[${s.length - MAX_ERROR_BODY_CHARS} more chars truncated]`;
 }
 
-const SENSITIVE_HEADER_NAMES = new Set([
-    'authorization',
-    'proxy-authorization',
-    'cookie',
-    'set-cookie',
-    'x-auth-token',
-    'x-api-key',
-    'x-csrf-token',
-]);
-
 function readResponseHeaders(client) {
     return HttpHeaders.parse(client.getAllResponseHeaders());
-}
-
-function formatHeadersForTrace(headers) {
-    if (!headers.size) return '';
-    const out = {};
-    for (const [name, value] of headers.entries()) {
-        out[name] = SENSITIVE_HEADER_NAMES.has(name) ? '[REDACTED]' : value;
-    }
-    return ` headers=${JSON.stringify(out)}`;
 }
 
 function parseRetryAfter(raw) {
@@ -71,7 +52,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
         var client = Ti.Network.createHTTPClient({
             onload: function () {
                 const parsedHeaders = readResponseHeaders(this);
-                const headers = formatHeadersForTrace(parsedHeaders);
+                const headers = parsedHeaders.formatForLog();
                 if (onResponseHeaders) onResponseHeaders(parsedHeaders);
                 if (acceptType === 'application/json') {
                     const parsed = JSON.parse(this.responseText);
@@ -86,7 +67,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
             onerror: function (err) {
                 const status = this.status || '?';
                 const parsedHeaders = readResponseHeaders(this);
-                const headers = formatHeadersForTrace(parsedHeaders);
+                const headers = parsedHeaders.formatForLog();
                 if (onResponseHeaders) onResponseHeaders(parsedHeaders);
                 let body = err;
                 if (this.responseText) {

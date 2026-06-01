@@ -1,3 +1,13 @@
+const SENSITIVE_HEADER_NAMES = new Set([
+    'authorization',
+    'proxy-authorization',
+    'cookie',
+    'set-cookie',
+    'x-auth-token',
+    'x-api-key',
+    'x-csrf-token',
+]);
+
 class HttpHeaders {
     constructor() {
         this._entries = new Map();
@@ -27,6 +37,15 @@ class HttpHeaders {
 
     entries() {
         return this._entries.entries();
+    }
+
+    formatForLog() {
+        if (!this.size) return '';
+        const out = {};
+        for (const [name, value] of this.entries()) {
+            out[name] = SENSITIVE_HEADER_NAMES.has(name) ? '[REDACTED]' : value;
+        }
+        return ` headers=${JSON.stringify(out)}`;
     }
 }
 

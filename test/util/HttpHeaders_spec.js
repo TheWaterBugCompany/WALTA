@@ -61,4 +61,31 @@ describe("HttpHeaders", function () {
             });
         });
     });
+
+    describe("formatForLog()", function () {
+        it("returns an empty string when there are no headers", function () {
+            expect(HttpHeaders.parse("").formatForLog()).to.equal("");
+        });
+
+        it("emits a ` headers={...}` JSON suffix when there are headers", function () {
+            const h = HttpHeaders.parse("Content-Type: application/json\r\nX-RateLimit-Remaining: 57");
+            expect(h.formatForLog()).to.equal(
+                ' headers={"content-type":"application/json","x-ratelimit-remaining":"57"}'
+            );
+        });
+
+        it("redacts the values of sensitive headers by name", function () {
+            const h = HttpHeaders.parse(
+                "Content-Type: application/json\r\n" +
+                "Authorization: Bearer eyJ-secret-payload\r\n" +
+                "Set-Cookie: session=abc123; Path=/"
+            );
+            const out = h.formatForLog();
+            expect(out).to.include('authorization');
+            expect(out).to.include('set-cookie');
+            expect(out).to.include('[REDACTED]');
+            expect(out).to.not.include('eyJ-secret-payload');
+            expect(out).to.not.include('session=abc123');
+        });
+    });
 });
