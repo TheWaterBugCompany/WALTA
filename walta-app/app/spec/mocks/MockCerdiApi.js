@@ -1,6 +1,8 @@
 var simple = require("spec/lib/simple-mock");
 function createCerdiApi( serverUrl, client_secret  ) {
-    var cerdiApi = {};
+    var cerdiApi = {
+        acquire: () => Promise.resolve(),
+    };
 
    /*     storeUserToken( accessToken ) {
            
@@ -90,7 +92,6 @@ function createCerdiApi( serverUrl, client_secret  ) {
     simple.mock(cerdiApi,"retrieveCreaturePhoto").resolveWith();
     simple.mock(cerdiApi,"retrievePhotoMetadata").resolveWith();
     simple.mock(cerdiApi,"forgotPassword").resolveWith();
-    simple.mock(cerdiApi,"acquire").resolveWith();
 
     return cerdiApi;
 }
