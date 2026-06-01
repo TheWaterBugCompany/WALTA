@@ -1094,3 +1094,44 @@ describe("Sample model", function() {
     });
   });
 });
+
+describe("WB-143: complete=false survives the edit roundtrip", function() {
+  beforeEach(clearDatabase);
+
+  function makeUncheckedSample() {
+    let s = makeSampleData({
+      serverSampleId: 1862,
+      complete: 0,
+      dateCompleted: moment().format(),
+      serverSyncTime: moment().valueOf()
+    });
+    s.save();
+    return s;
+  }
+
+  it("(A) createTemporaryForEdit preserves complete=false in the in-memory dup", function() {
+    let dup = makeUncheckedSample().createTemporaryForEdit();
+    expect(!!dup.get("complete"),
+      `dup.complete after createTemporaryForEdit: ${dup.get("complete")} (typeof ${typeof dup.get("complete")})`)
+      .to.equal(false);
+  });
+
+  it("(B) complete=false survives dup.save() + reload via loadById", function() {
+    let dup = makeUncheckedSample().createTemporaryForEdit();
+    let reloaded = Alloy.createModel("sample");
+    reloaded.loadById(dup.get("sampleId"));
+    expect(!!reloaded.get("complete"),
+      `reloaded.complete: ${reloaded.get("complete")} (typeof ${typeof reloaded.get("complete")})`)
+      .to.equal(false);
+  });
+
+  it("(C) toCerdiApiJson after the roundtrip still serialises complete=false", function() {
+    let dup = makeUncheckedSample().createTemporaryForEdit();
+    let reloaded = Alloy.createModel("sample");
+    reloaded.loadById(dup.get("sampleId"));
+    let json = reloaded.toCerdiApiJson();
+    expect(json.complete,
+      `serialised complete: ${json.complete} (typeof ${typeof json.complete})`)
+      .to.equal(false);
+  });
+});
