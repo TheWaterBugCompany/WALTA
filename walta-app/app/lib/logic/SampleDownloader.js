@@ -126,7 +126,7 @@ function createSampleDownloader(delay, progress) {
                 let serverCreaturePhotoId = taxon.get("serverCreaturePhotoId");
                 let taxonPhotoPath;
                 let retrievePhoto;
-                info(`Downloading taxa photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
+                info(`Downloading taxon photo [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
                 
                 // In the case of unknown creatures the photo id is already known so we can
                 // directly retrieve the photo via this id, otherwise we need to look up the
@@ -156,7 +156,7 @@ function createSampleDownloader(delay, progress) {
                                 taxon.set("serverCreaturePhotoId",0); 
                                 taxon.save();
                             }
-                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId(), message: "Downloading taxa photo" } );
+                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: taxon.getSampleId(), message: "Downloading taxon photo" } );
                         })
                         .catch( err => {
                             error(`Failed to download photo for [serverSampleId=${serverSample.id},taxonId=${taxonId}]`);
