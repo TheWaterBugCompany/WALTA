@@ -14,6 +14,13 @@ const fs = require('fs');
 function isSamplesFetch(req) {
     return req.method === 'GET' && (req.url === '/samples' || req.url.startsWith('/samples?'));
 }
+function applyRateLimitHeaders(res, bucket) {
+    if (!bucket) return;
+    res.setHeader('X-RateLimit-Remaining', String(bucket.remaining));
+    res.setHeader('X-RateLimit-Reset', String(Math.floor(Date.now() / 1000) + bucket.resetSecondsFromNow));
+    res.setHeader('X-RateLimit-Limit', String(bucket.limit));
+}
+
 function loggingHandler(hockServer, faultState) {
     const baseHandler = hockServer.handler.bind(hockServer);
     const logPath = process.env.MOCK_CERDI_LOG === '0'
@@ -28,11 +35,13 @@ function loggingHandler(hockServer, faultState) {
         if (isSamplesFetch(req)) {
             faultState.sampleFetches++;
             if (faultState.failing) {
+                applyRateLimitHeaders(res, faultState.rateLimit);
                 res.writeHead(500);
                 res.end('injected sync fault');
                 return;
             }
         }
+        applyRateLimitHeaders(res, faultState.rateLimit);
         if (!logPath) return baseHandler(req, res);
         const start = Date.now();
         const append = (line) => { try { fs.appendFileSync(logPath, line); } catch (_) { /* best-effort */ } };
@@ -76,7 +85,11 @@ function createMockCerdiServer(callback) {
         });
 
 
-    const faultState = { failing: false, sampleFetches: 0 };
+    const faultState = {
+        failing: false,
+        sampleFetches: 0,
+        rateLimit: { remaining: 50, resetSecondsFromNow: 60, limit: 60 },
+    };
     let server = http.createServer(loggingHandler(hockServer, faultState));
     server.listen(9999, callback);
     return {
@@ -90,6 +103,11 @@ function createMockCerdiServer(callback) {
         },
         samplesFetchCount() {
             return faultState.sampleFetches;
+        },
+        setRateLimitBucket(bucket) {
+            faultState.rateLimit = bucket
+                ? { remaining: 50, resetSecondsFromNow: 60, limit: 60, ...bucket }
+                : null;
         },
         registerAccount({ email, password }) {
             this.hockServer

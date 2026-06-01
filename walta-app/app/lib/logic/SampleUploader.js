@@ -8,7 +8,6 @@ var error = (m, tag = "sync") => Logger.error(m, tag);
 
 var Topics = require('ui/Topics');
 var moment = require("lib/moment");
-var { delayedPromise } = require("util/PromiseUtils");
 var { errorHandler, formatError } = require("util/ErrorUtils");
 var { needsOptimising, optimisePhoto, savePhoto, loadPhoto } = require('util/PhotoUtils');
 
@@ -34,7 +33,7 @@ function loadCorrectSampleToUpdate(sample) {
     serverSitePhotoId is used to indicate that the photo has been
     sucessfully uploaded.
 */
-function uploadSitePhoto(sample,delay,progress) {
+function uploadSitePhoto(sample,progress) {
 
     function submitSitePhoto( sampleId, photoPath ) {
         info(`Uploading site photo path = ${photoPath} [serverSampleId=${sampleId}]`);
@@ -54,7 +53,8 @@ function uploadSitePhoto(sample,delay,progress) {
                 savePhoto( optimisePhoto(blob), sitePhoto );
             }
             log(`Uploading site photo: ${sitePhoto}`);
-            return delayedPromise( submitSitePhoto( sampleId, sitePhoto ), delay)
+            return Alloy.Globals.CerdiApi.acquire()
+                    .then( () => submitSitePhoto( sampleId, sitePhoto ) )
                     .then( (res) => {
                         loadCorrectSampleToUpdate(sample);
                         sample.save({
@@ -74,7 +74,7 @@ function uploadSitePhoto(sample,delay,progress) {
     return sample;
 }
 
-function uploadTaxaPhoto(sample,t,delay,progress) {
+function uploadTaxaPhoto(sample,t,progress) {
 
     function submitCreaturePhoto( sampleId, taxonId, photoPath ) {
         info(`Uploading taxon photo path = ${photoPath} [serverSampleId=${sampleId},taxonId=${taxonId}]`);
@@ -99,7 +99,8 @@ function uploadTaxaPhoto(sample,t,delay,progress) {
             if ( needsOptimising(blob) ) {
                 savePhoto( optimisePhoto( blob ), photoPath );
             }
-            return delayedPromise( submitCreaturePhoto(sampleId, taxonId, photoPath ), delay )
+            return Alloy.Globals.CerdiApi.acquire()
+                    .then( () => submitCreaturePhoto(sampleId, taxonId, photoPath) )
                     .then( (res) => {
                         debug(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
@@ -121,18 +122,18 @@ function uploadTaxaPhoto(sample,t,delay,progress) {
     serverCreaturePhotoId is used to determine if this taxon photo has
     already been uploaded to the server. 
 */
-function uploadTaxaPhotos(sample,delay,progress) {
+function uploadTaxaPhotos(sample,progress) {
     let taxa = sample.getTaxa();
     return taxa.reduce(
                 (uploadTaxaPhotos,t) =>
                     uploadTaxaPhotos
-                        .then( uploadTaxaPhoto(sample,t,delay,progress)),
+                        .then( uploadTaxaPhoto(sample,t,progress)),
                 Promise.resolve() )
             .then( () => sample );
 
 }
 
-function uploadUnknownCreature(sample,t,delay,progress) {
+function uploadUnknownCreature(sample,t,progress) {
     var taxonId = t.getTaxonId();
     var sampleId = sample.get("serverSampleId");
     var serverCreatureId = t.get("serverCreatureId");
@@ -153,9 +154,11 @@ function uploadUnknownCreature(sample,t,delay,progress) {
             let actions;
 
             if ( !serverCreatureId ) {
-                actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath ) ), delay );
+                actions = Alloy.Globals.CerdiApi.acquire()
+                    .then( () => Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath) );
             } else {
-                actions = delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.updateUnknownCreature(serverCreatureId,count,photoPath) ), delay);
+                actions = Alloy.Globals.CerdiApi.acquire()
+                    .then( () => Alloy.Globals.CerdiApi.updateUnknownCreature(serverCreatureId, count, photoPath) );
             }
             return actions.then( (res) => {
                 t.save({
@@ -174,16 +177,16 @@ function uploadUnknownCreature(sample,t,delay,progress) {
     return Promise.resolve();
 }
 
-function uploadUnknownCreatures(sample,delay,progress) {
+function uploadUnknownCreatures(sample,progress) {
     let taxa = sample.getTaxa();
     return taxa.reduce(
         (uploadUnknown,t) =>
-            uploadUnknown.then( uploadUnknownCreature(sample,t,delay,progress)),
+            uploadUnknown.then( uploadUnknownCreature(sample,t,progress)),
                 Promise.resolve() )
         .then( () => sample );
 }
 
-function deletePendingUnknownCreatures(sample,delay) {
+function deletePendingUnknownCreatures(sample) {
     function deleteUnknownCreature(sample,t) {
         let creatureId = t.get("serverCreatureId");
         let sampleId = sample.get("sampleId");
@@ -195,7 +198,8 @@ function deletePendingUnknownCreatures(sample,delay) {
         }
 
         info(`Deleting unknown creature: id = ${creatureId} [serverSampleId=${sampleId}]`);
-        return delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.deleteUnknownCreature(creatureId) ), delay )
+        return Alloy.Globals.CerdiApi.acquire()
+            .then( () => Alloy.Globals.CerdiApi.deleteUnknownCreature(creatureId) )
             .then( (res) => {
                 t.destroy();
             })
@@ -218,7 +222,7 @@ function loadSamples() {
     return samples;
 }
 
-function createSampleUploader(delay, progress) {
+function createSampleUploader(progress) {
     progress = progress || { plan() {}, tick() {} };
     return {
         uploadSamples() {
@@ -295,35 +299,30 @@ function createSampleUploader(delay, progress) {
 
             }
 
-            function markSampleComplete(sample, delay) {
-
-                return delayedPromise(
-                    Promise.resolve()
-                        .then( () => {
-                            info("Upload successful.");
-                            loadCorrectSampleToUpdate(sample);
-                            sample.set("serverSyncTime", moment().valueOf());
-                            sample.save();
-                            Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
-                        }), delay)
+            function markSampleComplete(sample) {
+                info("Upload successful.");
+                loadCorrectSampleToUpdate(sample);
+                sample.set("serverSyncTime", moment().valueOf());
+                sample.save();
+                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
             }
 
             //debug(`serverSyncTime = ${serverSyncTime}, updatedAt = ${updatedAt}`);
             if ( !serverSampleId ) {
-                uploadOrUpdate = delayedPromise( uploadSampleData(sample), delay );
+                uploadOrUpdate = Alloy.Globals.CerdiApi.acquire().then( () => uploadSampleData(sample) );
             } else if ( sample.hasPendingUploads() ) {
-                uploadOrUpdate = delayedPromise( updateExistingSampleData( sample ), delay );
-            } 
+                uploadOrUpdate = Alloy.Globals.CerdiApi.acquire().then( () => updateExistingSampleData(sample) );
+            }
 
             if ( uploadOrUpdate ) {
                 return uploadOrUpdate
                         .then( updateSample )
                         .then( () => sample  )
-                        .then( (sample) => uploadSitePhoto(sample,delay,progress) )
-                        .then( (sample) => uploadTaxaPhotos(sample,delay,progress) )
-                        .then( (sample) => uploadUnknownCreatures(sample,delay,progress))
-                        .then( (sample) => deletePendingUnknownCreatures(sample,delay))
-                        .then( (sample) => markSampleComplete(sample,delay) )
+                        .then( (sample) => uploadSitePhoto(sample,progress) )
+                        .then( (sample) => uploadTaxaPhotos(sample,progress) )
+                        .then( (sample) => uploadUnknownCreatures(sample,progress))
+                        .then( (sample) => deletePendingUnknownCreatures(sample))
+                        .then( (sample) => markSampleComplete(sample) )
                         .then( () => 1 )
                         .catch( (err) => { Logger.recordException(err); return 0; } );
             } else {

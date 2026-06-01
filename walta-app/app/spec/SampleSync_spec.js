@@ -88,7 +88,7 @@ describe("SampleSync", function () {
         tempSample.set("waterbodyName", "edited");
 
         // start uploading original sample
-        let uploadingPromise = createSampleUploader(200).uploadSamples(); 
+        let uploadingPromise = createSampleUploader().uploadSamples();
 
         // save the editted copy
         let savePromise = new Promise( (resolve) => setTimeout( () => { 
@@ -230,7 +230,7 @@ describe("SampleSync", function () {
             sample.save();
             const planned = [], ticks = [];
             const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
-            const count = await createSampleUploader(undefined, progress).uploadSamples();
+            const count = await createSampleUploader(progress).uploadSamples();
             expect(count, "uploaded count").to.equal(1);
             expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + site photo)").to.equal(2);
             expect(ticks.length, "ticks (sample + site photo)").to.equal(2);
@@ -248,7 +248,7 @@ describe("SampleSync", function () {
             t2.save();
             const planned = [], ticks = [];
             const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
-            await createSampleUploader(undefined, progress).uploadSamples();
+            await createSampleUploader(progress).uploadSamples();
             expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + site + 2 taxa)").to.equal(4);
             expect(ticks.length, "ticks (sample + site + 2 taxa)").to.equal(4);
         });
@@ -616,7 +616,7 @@ describe("SampleSync", function () {
                 .resolveWith([makeCerdiSampleData({user_id:38})]);
             const planned = [], ticks = [];
             const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
-            const count = await createSampleDownloader(undefined, progress).downloadSamples();
+            const count = await createSampleDownloader(progress).downloadSamples();
             expect(count, "updated count").to.equal(1);
             expect(planned.reduce((a,b)=>a+b,0), "planned total").to.equal(1);
             expect(ticks.length, "ticks").to.equal(1);
@@ -633,7 +633,7 @@ describe("SampleSync", function () {
             };
             const planned = [], ticks = [];
             const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
-            await createSampleDownloader(undefined, progress).downloadSamples();
+            await createSampleDownloader(progress).downloadSamples();
             expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + site photo)").to.equal(2);
             expect(ticks.length, "ticks (sample + site photo)").to.equal(2);
         });
@@ -651,7 +651,7 @@ describe("SampleSync", function () {
                 .rejectWith({ message: "no photo" });
             const planned = [], ticks = [];
             const progress = { plan: (n) => planned.push(n), tick: () => ticks.push(1) };
-            await createSampleDownloader(undefined, progress).downloadSamples();
+            await createSampleDownloader(progress).downloadSamples();
             expect(planned.reduce((a,b)=>a+b,0), "planned total (sample + 2 creature photos)").to.equal(3);
             expect(ticks.length, "ticks (sample + 2 creature photos)").to.equal(3);
         });

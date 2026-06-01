@@ -1,7 +1,6 @@
 var Logger = require('util/Logger');
 var moment = require("lib/moment");
 var Topics = require('ui/Topics');
-var { delayedPromise } = require("util/PromiseUtils");
 var log = (m, tag = "sync") => Logger.log(m, tag);
 var debug = (m, tag = "sync") => Logger.debug(m, tag);
 var info = (m, tag = "sync") => Logger.info(m, tag);
@@ -22,7 +21,7 @@ function needsUpdate(serverSample, sample) {
     return moment(serverSample.updated_at).subtract(10, "s").isAfter(moment(serverSyncTime));
 }
 
-function createSampleDownloader(delay, progress) {
+function createSampleDownloader(progress) {
     progress = progress || { plan() {}, tick() {} };
     return {
         downloadSamples() {
@@ -63,7 +62,8 @@ function createSampleDownloader(delay, progress) {
                     Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId") } );
                 }
                 function retrieveUnknownCreatures() {
-                    return delayedPromise( Promise.resolve().then( () => Alloy.Globals.CerdiApi.retrieveUnknownCreatures(serverSample.id) ), delay )
+                    return Alloy.Globals.CerdiApi.acquire()
+                        .then( () => Alloy.Globals.CerdiApi.retrieveUnknownCreatures(serverSample.id) );
                 }
                 return sample.loadByServerId(serverSample.id)
                     .then( () => {
@@ -104,7 +104,8 @@ function createSampleDownloader(delay, progress) {
                 }
                 let sitePhotoPath = `site_download_${serverSample.id}`;
                 info(`Downloading site photo for ${serverSample.id}`);
-                return delayedPromise( Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath), delay )
+                return Alloy.Globals.CerdiApi.acquire()
+                    .then( () => Alloy.Globals.CerdiApi.retrieveSitePhoto(serverSample.id, sitePhotoPath) )
                     .then( photo => {
                         sample.setSitePhoto( Ti.Filesystem.applicationDataDirectory, sitePhotoPath);
                         sample.set("serverSitePhotoId", photo.id);
@@ -178,7 +179,8 @@ function createSampleDownloader(delay, progress) {
                     (queue,t) => queue
                         .then( () => {
                             if ( _.isNull(t.get("taxonPhotoPath")) && t.get("serverCreaturePhotoId") !== 0 ) {
-                                return delayedPromise( downloadCreaturePhoto(t,serverSample), delay );
+                                return Alloy.Globals.CerdiApi.acquire()
+                                    .then( () => downloadCreaturePhoto(t, serverSample) );
                             }
                         })
                         .then( () => progress.tick() ),
@@ -209,7 +211,8 @@ function createSampleDownloader(delay, progress) {
                             .then( () => progress.tick() ),Promise.resolve() )
                     .then( () => updatedCount );
             }
-            return delayedPromise( Alloy.Globals.CerdiApi.retrieveSamples(), delay )
+            return Alloy.Globals.CerdiApi.acquire()
+                .then( () => Alloy.Globals.CerdiApi.retrieveSamples() )
                 .then( saveNewSamples );
 
         }

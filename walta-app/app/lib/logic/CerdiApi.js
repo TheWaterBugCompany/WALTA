@@ -1,5 +1,6 @@
 const Logger = require('util/Logger');
 const { withRetry } = require('util/PromiseUtils');
+const { createPacer } = require('util/RateLimitPacer');
 const log = (m, tag = "auth") => Logger.log(m, tag);
 const trace = (m) => Logger.log(m, "network");
 var { loadPhoto, savePhoto } = require('util/PhotoUtils');
@@ -61,9 +62,12 @@ function redactHeaders(headers) {
     return out;
 }
 
-function formatResponseHeaders(client) {
-    if (typeof client.getAllResponseHeaders !== 'function') return '';
-    const parsed = parseHeaders(client.getAllResponseHeaders());
+function readResponseHeaders(client) {
+    if (typeof client.getAllResponseHeaders !== 'function') return null;
+    return parseHeaders(client.getAllResponseHeaders());
+}
+
+function formatHeadersForTrace(parsed) {
     if (!parsed) return '';
     return ` headers=${JSON.stringify(redactHeaders(parsed))}`;
 }
@@ -82,11 +86,13 @@ function isRetryableHttpError(err) {
     return err.status === 429 || (err.status >= 500 && err.status < 600);
 }
 
-function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFunction) {
+function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFunction, onResponseHeaders) {
     return new Promise((resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
             onload: function () {
-                const headers = formatResponseHeaders(this);
+                const parsedHeaders = readResponseHeaders(this);
+                const headers = formatHeadersForTrace(parsedHeaders);
+                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
                 if (acceptType === 'application/json') {
                     const parsed = JSON.parse(this.responseText);
                     trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}${headers}`);
@@ -99,7 +105,9 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
             },
             onerror: function (err) {
                 const status = this.status || '?';
-                const headers = formatResponseHeaders(this);
+                const parsedHeaders = readResponseHeaders(this);
+                const headers = formatHeadersForTrace(parsedHeaders);
+                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
                 let body = err;
                 if (this.responseText) {
                     try {
@@ -130,10 +138,11 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
     });
 }
 
-function buildHttp(retryOpts) {
+function buildHttp(retryOpts, pacer) {
+    const onResponseHeaders = pacer ? (parsed) => pacer.observe(parsed) : null;
     function createHttpClient(method, url, contentType, acceptType, accessToken, sendDataFunction) {
         return withRetry(
-            () => sendOnce(method, url, contentType, acceptType, accessToken, sendDataFunction),
+            () => sendOnce(method, url, contentType, acceptType, accessToken, sendDataFunction, onResponseHeaders),
             { ...retryOpts, isRetryable: isRetryableHttpError }
         ).catch((err) => {
             if (err && typeof err === 'object' && 'body' in err && 'status' in err) {
@@ -221,9 +230,12 @@ function buildHttp(retryOpts) {
 
 function createCerdiApi(serverUrl, client_secret, opts = {}) {
     log(`Using CERDI API server ${serverUrl}`);
-    const http = buildHttp({ ...DEFAULT_RETRY_OPTS, ...(opts.retry || {}) });
+    const pacer = createPacer(opts.rateLimit || {});
+    const http = buildHttp({ ...DEFAULT_RETRY_OPTS, ...(opts.retry || {}) }, pacer);
 
     var cerdiApi = {
+        acquire: pacer.acquire,
+
         retrieveUserToken() {
             return Ti.App.Properties.getObject('userAccessTokenLive');
         },

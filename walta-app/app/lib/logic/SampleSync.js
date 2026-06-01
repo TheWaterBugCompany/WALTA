@@ -209,8 +209,6 @@ function resumeInterruptedWork(options) {
 }
 
 function runSync({ download, options }) {
-    let delay = (options && !_.isUndefined(options.delay)?options.delay:2500);
-
     // Combined-pool progress: one running fraction across the download and
     // upload phases. Upload work is countable up front, so seed it before
     // the download phase plans its own count — that keeps the bar from
@@ -223,9 +221,9 @@ function runSync({ download, options }) {
     let downloadProgress = { plan: (n) => { progressTotal += n; }, tick };
     let uploadProgress = { plan() {}, tick };
 
-    let sampleUploader = createSampleUploader(delay, uploadProgress);
-    let sampleDownloader = createSampleDownloader(delay, downloadProgress);
-    debug(`Starting ${download?"full sync":"upload"} process... (delay=${delay})`);
+    let sampleUploader = createSampleUploader(uploadProgress);
+    let sampleDownloader = createSampleDownloader(downloadProgress);
+    debug(`Starting ${download?"full sync":"upload"} process...`);
 
     cancelled = false;
 
