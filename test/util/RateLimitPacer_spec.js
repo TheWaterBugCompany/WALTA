@@ -57,9 +57,9 @@ describe("RateLimitPacer", function () {
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
             pacer.observe({
-                "x-ratelimit-remaining": "37",
-                "x-ratelimit-reset": epochSecondsForDeviceTime(clock, 60_000),
-                "date": utcStringForDeviceTime(clock),
+                "X-RateLimit-Remaining": "37",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 60_000),
+                "Date": utcStringForDeviceTime(clock),
             });
             await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([]);
@@ -72,9 +72,9 @@ describe("RateLimitPacer", function () {
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
             pacer.observe({
-                "x-ratelimit-remaining": "2",
-                "x-ratelimit-reset": epochSecondsForDeviceTime(clock, 10_000),
-                "date": utcStringForDeviceTime(clock),
+                "X-RateLimit-Remaining": "2",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
+                "Date": utcStringForDeviceTime(clock),
             });
             await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([5000]);
@@ -85,9 +85,9 @@ describe("RateLimitPacer", function () {
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
             pacer.observe({
-                "x-ratelimit-remaining": "1",
-                "x-ratelimit-reset": epochSecondsForDeviceTime(clock, 60_000),
-                "date": utcStringForDeviceTime(clock),
+                "X-RateLimit-Remaining": "1",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 60_000),
+                "Date": utcStringForDeviceTime(clock),
             });
             await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([60_000]);
@@ -98,9 +98,9 @@ describe("RateLimitPacer", function () {
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
             pacer.observe({
-                "x-ratelimit-remaining": "2",
-                "x-ratelimit-reset": epochSecondsForDeviceTime(clock, 10_000),
-                "date": utcStringForDeviceTime(clock),
+                "X-RateLimit-Remaining": "2",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
+                "Date": utcStringForDeviceTime(clock),
             });
             await pacer.acquire();
             clock.advance(1000);
@@ -113,9 +113,9 @@ describe("RateLimitPacer", function () {
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
             pacer.observe({
-                "x-ratelimit-remaining": "2",
-                "x-ratelimit-reset": epochSecondsForDeviceTime(clock, 10_000),
-                "date": utcStringForDeviceTime(clock),
+                "X-RateLimit-Remaining": "2",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
+                "Date": utcStringForDeviceTime(clock),
             });
             await pacer.acquire();
             clock.advance(10_000);
@@ -131,9 +131,9 @@ describe("RateLimitPacer", function () {
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
             const serverAheadMs = 5000;
             pacer.observe({
-                "x-ratelimit-remaining": "2",
-                "x-ratelimit-reset": epochSecondsForDeviceTime(clock, serverAheadMs + 10_000),
-                "date": utcStringForDeviceTime(clock, serverAheadMs),
+                "X-RateLimit-Remaining": "2",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, serverAheadMs + 10_000),
+                "Date": utcStringForDeviceTime(clock, serverAheadMs),
             });
             await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([5000]);
@@ -171,9 +171,9 @@ describe("RateLimitPacer", function () {
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ fallbackDelayMs: 2500, now: clock.now, sleep: sleeper.sleep });
             pacer.observe({
-                "x-ratelimit-remaining": "not-a-number",
-                "x-ratelimit-reset": "garbage",
-                "date": utcStringForDeviceTime(clock),
+                "X-RateLimit-Remaining": "not-a-number",
+                "X-RateLimit-Reset": "garbage",
+                "Date": utcStringForDeviceTime(clock),
             });
             await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([2500]);
@@ -184,8 +184,8 @@ describe("RateLimitPacer", function () {
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
             pacer.observe({
-                "x-ratelimit-remaining": "2",
-                "x-ratelimit-reset": epochSecondsForDeviceTime(clock, 10_000),
+                "X-RateLimit-Remaining": "2",
+                "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
             });
             await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([5000]);
