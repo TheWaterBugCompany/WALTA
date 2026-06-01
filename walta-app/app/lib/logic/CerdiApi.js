@@ -25,7 +25,7 @@ const DEFAULT_RETRY_OPTS = {
 
 const MAX_ERROR_BODY_CHARS = 500;
 function truncate(s) {
-    if (typeof s !== 'string' || s.length <= MAX_ERROR_BODY_CHARS) return s;
+    if (s.length <= MAX_ERROR_BODY_CHARS) return s;
     return `${s.slice(0, MAX_ERROR_BODY_CHARS)}…[${s.length - MAX_ERROR_BODY_CHARS} more chars truncated]`;
 }
 
@@ -53,7 +53,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
             onload: function () {
                 const parsedHeaders = readResponseHeaders(this);
                 const headers = parsedHeaders.formatForLog();
-                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
+                onResponseHeaders(parsedHeaders);
                 if (acceptType === 'application/json') {
                     const parsed = JSON.parse(this.responseText);
                     trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}${headers}`);
@@ -68,7 +68,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
                 const status = this.status || '?';
                 const parsedHeaders = readResponseHeaders(this);
                 const headers = parsedHeaders.formatForLog();
-                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
+                onResponseHeaders(parsedHeaders);
                 let body = err;
                 if (this.responseText) {
                     try {
@@ -80,9 +80,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
                 } else {
                     trace(`<- ${status} ${method} ${url} ERROR (no body)${headers}`);
                 }
-                const retryAfterRaw = typeof this.getResponseHeader === 'function'
-                    ? this.getResponseHeader('Retry-After')
-                    : undefined;
+                const retryAfterRaw = this.getResponseHeader('Retry-After');
                 const wrapped = { status: this.status, body };
                 const retryAfterMs = parseRetryAfter(retryAfterRaw);
                 if (retryAfterMs !== undefined) wrapped.retryAfterMs = retryAfterMs;
@@ -100,15 +98,13 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
 }
 
 function buildHttp(retryOpts, pacer) {
-    const onResponseHeaders = pacer ? (parsed) => pacer.observe(parsed) : null;
+    const onResponseHeaders = (parsed) => pacer.observe(parsed);
     function createHttpClient(method, url, contentType, acceptType, accessToken, sendDataFunction) {
         return withRetry(
             () => sendOnce(method, url, contentType, acceptType, accessToken, sendDataFunction, onResponseHeaders),
             { ...retryOpts, isRetryable: isRetryableHttpError }
         ).catch((err) => {
-            if (err && typeof err === 'object' && 'body' in err && 'status' in err) {
-                throw err.body;
-            }
+            if (err && 'body' in err) throw err.body;
             throw err;
         });
     }
