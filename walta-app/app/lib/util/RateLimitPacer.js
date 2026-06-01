@@ -2,14 +2,6 @@ function defaultSleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function lowercaseProps(obj) {
-    const out = {};
-    for (const key of Object.keys(obj)) {
-        out[key.toLowerCase()] = obj[key];
-    }
-    return out;
-}
-
 function createPacer(opts = {}) {
     const headroom = opts.headroom != null ? opts.headroom : 10;
     const fallbackDelayMs = opts.fallbackDelayMs != null ? opts.fallbackDelayMs : 2500;
@@ -22,12 +14,11 @@ function createPacer(opts = {}) {
     let hasFiredRequest = false;
 
     function observe(headers) {
-        const lowerHeaders = lowercaseProps(headers);
-        const remainingParsed = parseInt(lowerHeaders["x-ratelimit-remaining"]);
-        const resetEpochSeconds = parseInt(lowerHeaders["x-ratelimit-reset"]);
+        const remainingParsed = parseInt(headers.get("x-ratelimit-remaining"));
+        const resetEpochSeconds = parseInt(headers.get("x-ratelimit-reset"));
         if (!Number.isFinite(remainingParsed) || !Number.isFinite(resetEpochSeconds)) return;
 
-        const serverNowMs = Date.parse(lowerHeaders["date"]);
+        const serverNowMs = Date.parse(headers.get("date"));
         const skewMs = Number.isFinite(serverNowMs) ? serverNowMs - now() : 0;
 
         remaining = Math.max(0, remainingParsed);

@@ -1,6 +1,7 @@
 const Logger = require('util/Logger');
 const { withRetry } = require('util/PromiseUtils');
 const { createPacer } = require('util/RateLimitPacer');
+const { HttpHeaders } = require('util/HttpHeaders');
 const log = (m, tag = "auth") => Logger.log(m, tag);
 const trace = (m) => Logger.log(m, "network");
 var { loadPhoto, savePhoto } = require('util/PhotoUtils');
@@ -38,38 +39,17 @@ const SENSITIVE_HEADER_NAMES = new Set([
     'x-csrf-token',
 ]);
 
-function parseHeaders(raw) {
-    if (typeof raw !== 'string' || !raw.length) return null;
-    const out = {};
-    const lines = raw.split(/\r?\n/);
-    for (const line of lines) {
-        if (!line) continue;
-        const idx = line.indexOf(':');
-        if (idx <= 0) continue;
-        const name = line.slice(0, idx).trim();
-        const value = line.slice(idx + 1).trim();
-        out[name] = value;
-    }
-    return Object.keys(out).length ? out : null;
-}
-
-function redactHeaders(headers) {
-    if (!headers || typeof headers !== 'object') return headers;
-    const out = {};
-    for (const key of Object.keys(headers)) {
-        out[key] = SENSITIVE_HEADER_NAMES.has(key.toLowerCase()) ? '[REDACTED]' : headers[key];
-    }
-    return out;
-}
-
 function readResponseHeaders(client) {
-    if (typeof client.getAllResponseHeaders !== 'function') return null;
-    return parseHeaders(client.getAllResponseHeaders());
+    return HttpHeaders.parse(client.getAllResponseHeaders());
 }
 
-function formatHeadersForTrace(parsed) {
-    if (!parsed) return '';
-    return ` headers=${JSON.stringify(redactHeaders(parsed))}`;
+function formatHeadersForTrace(headers) {
+    if (!headers.size) return '';
+    const out = {};
+    for (const [name, value] of headers.entries()) {
+        out[name] = SENSITIVE_HEADER_NAMES.has(name) ? '[REDACTED]' : value;
+    }
+    return ` headers=${JSON.stringify(out)}`;
 }
 
 function parseRetryAfter(raw) {
@@ -92,7 +72,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
             onload: function () {
                 const parsedHeaders = readResponseHeaders(this);
                 const headers = formatHeadersForTrace(parsedHeaders);
-                if (onResponseHeaders && parsedHeaders) onResponseHeaders(parsedHeaders);
+                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
                 if (acceptType === 'application/json') {
                     const parsed = JSON.parse(this.responseText);
                     trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}${headers}`);
@@ -107,7 +87,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
                 const status = this.status || '?';
                 const parsedHeaders = readResponseHeaders(this);
                 const headers = formatHeadersForTrace(parsedHeaders);
-                if (onResponseHeaders && parsedHeaders) onResponseHeaders(parsedHeaders);
+                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
                 let body = err;
                 if (this.responseText) {
                     try {
