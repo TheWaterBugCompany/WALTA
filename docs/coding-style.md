@@ -27,6 +27,20 @@ The Alloy constraint only applies to module syntax. `async`/`await` is just Java
 
 **Question cargo-culted defensiveness.** Habits like `parseInt(x, 10)`, `(opts || {}).foo`, `JSON.parse(x ?? "{}")` were each fixes for a real bug at some point, but the original bug may be long-dead in modern JS. Before keeping such a bit, ask "what fails if I remove this?" — if the answer is "nothing", remove it.
 
+**Express option defaults at the function signature.** For factory/options-object functions, destructure with defaults in the parameter list rather than running an `opts.X != null ? opts.X : default` ladder in the body. Defaults live where the reader looks first, and the body uses bare names.
+
+```js
+// Prefer
+function createPacer({ headroom = 10, fallbackDelayMs = 2500 } = {}) { /* ... */ }
+
+// Over
+function createPacer(opts = {}) {
+    const headroom = opts.headroom != null ? opts.headroom : 10;
+    const fallbackDelayMs = opts.fallbackDelayMs != null ? opts.fallbackDelayMs : 2500;
+    // ...
+}
+```
+
 **Let it error on unexpected input.** JavaScript is happy to throw on `null.foo` or `Object.keys(undefined)` — that's a feature. A `TypeError` surfaces a caller bug at the seam where it happens; an `if (!x) return;` swallows the same bug and turns it into a silent no-op that fails far away from the cause. Validate at *real* boundaries (Ti.Network responses, user input, files from disk); inside our own modules, trust the contract and let unexpected `null`/`undefined` throw. If the loud crash is the wrong answer for a particular caller, fix the *caller* to not pass garbage — don't paper over it in the callee.
 
 ## Comments
