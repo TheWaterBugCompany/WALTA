@@ -8,8 +8,8 @@ var { loadPhoto, savePhoto } = require('util/PhotoUtils');
 
 const SENSITIVE_KEYS = ["password", "client_secret", "accessToken", "access_token"];
 function redactBody(data) {
-    if (!data || typeof data !== 'object') return data;
-    const copy = Array.isArray(data) ? data.slice() : Object.assign({}, data);
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return data;
+    const copy = { ...data };
     for (const k of SENSITIVE_KEYS) {
         if (k in copy) copy[k] = "[REDACTED]";
     }
@@ -35,8 +35,8 @@ function readResponseHeaders(client) {
 
 function parseRetryAfter(raw) {
     if (raw == null) return undefined;
-    const n = parseInt(raw, 10);
-    if (Number.isFinite(n) && String(n) === String(raw).trim()) return n * 1000;
+    const n = parseInt(raw);
+    if (Number.isFinite(n)) return n * 1000;
     const at = Date.parse(raw);
     if (Number.isFinite(at)) return Math.max(0, at - Date.now());
     return undefined;
@@ -80,9 +80,8 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
                 } else {
                     trace(`<- ${status} ${method} ${url} ERROR (no body)${headers}`);
                 }
-                const retryAfterRaw = this.getResponseHeader('Retry-After');
                 const wrapped = { status: this.status, body };
-                const retryAfterMs = parseRetryAfter(retryAfterRaw);
+                const retryAfterMs = parseRetryAfter(this.getResponseHeader('Retry-After'));
                 if (retryAfterMs !== undefined) wrapped.retryAfterMs = retryAfterMs;
                 reject(wrapped);
             }
