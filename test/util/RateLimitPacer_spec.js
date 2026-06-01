@@ -162,11 +162,10 @@ describe("RateLimitPacer", function () {
     });
 
     describe("graceful handling of missing or garbage headers", function () {
-        it("falls back to fallbackDelayMs on the second acquire when observe(null) and observe({}) leave no state", async function () {
+        it("falls back to fallbackDelayMs on the second acquire when observe({}) leaves no state", async function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ fallbackDelayMs: 2500, now: clock.now, sleep: sleeper.sleep });
-            pacer.observe(null);
             pacer.observe({});
             await pacer.acquire();
             await pacer.acquire();

@@ -27,6 +27,8 @@ The Alloy constraint only applies to module syntax. `async`/`await` is just Java
 
 **Question cargo-culted defensiveness.** Habits like `parseInt(x, 10)`, `(opts || {}).foo`, `JSON.parse(x ?? "{}")` were each fixes for a real bug at some point, but the original bug may be long-dead in modern JS. Before keeping such a bit, ask "what fails if I remove this?" — if the answer is "nothing", remove it.
 
+**Let it error on unexpected input.** JavaScript is happy to throw on `null.foo` or `Object.keys(undefined)` — that's a feature. A `TypeError` surfaces a caller bug at the seam where it happens; an `if (!x) return;` swallows the same bug and turns it into a silent no-op that fails far away from the cause. Validate at *real* boundaries (Ti.Network responses, user input, files from disk); inside our own modules, trust the contract and let unexpected `null`/`undefined` throw. If the loud crash is the wrong answer for a particular caller, fix the *caller* to not pass garbage — don't paper over it in the callee.
+
 ## Comments
 
 A short comment that pins down a non-obvious **why** is welcome — a hidden constraint, a workaround for a specific bug, an invariant that wouldn't make sense from the surrounding code alone. That's what comments are for.

@@ -92,7 +92,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
             onload: function () {
                 const parsedHeaders = readResponseHeaders(this);
                 const headers = formatHeadersForTrace(parsedHeaders);
-                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
+                if (onResponseHeaders && parsedHeaders) onResponseHeaders(parsedHeaders);
                 if (acceptType === 'application/json') {
                     const parsed = JSON.parse(this.responseText);
                     trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}${headers}`);
@@ -107,7 +107,7 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
                 const status = this.status || '?';
                 const parsedHeaders = readResponseHeaders(this);
                 const headers = formatHeadersForTrace(parsedHeaders);
-                if (onResponseHeaders) onResponseHeaders(parsedHeaders);
+                if (onResponseHeaders && parsedHeaders) onResponseHeaders(parsedHeaders);
                 let body = err;
                 if (this.responseText) {
                     try {
