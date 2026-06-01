@@ -26,7 +26,7 @@ function updateFields() {
 }
 
 function onPartialChange( data ) {
-    sample.set("complete", data.value );
+    sample.set("complete", data.value ? 1 : 0 );
     sample.save();
 }
 
