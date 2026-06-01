@@ -17,12 +17,6 @@ function lookupHeader(headers, name) {
     return undefined;
 }
 
-function parseFiniteInt(raw) {
-    if (raw == null) return undefined;
-    const n = parseInt(raw, 10);
-    return Number.isFinite(n) && String(n) === String(raw).trim() ? n : undefined;
-}
-
 function createPacer(opts = {}) {
     const headroom = opts.headroom != null ? opts.headroom : 10;
     const fallbackDelayMs = opts.fallbackDelayMs != null ? opts.fallbackDelayMs : 2500;
@@ -36,11 +30,9 @@ function createPacer(opts = {}) {
     let hasFiredRequest = false;
 
     function observe(headers) {
-        const remainingRaw = lookupHeader(headers, headerNames.remaining);
-        const resetRaw = lookupHeader(headers, headerNames.reset);
-        const remainingParsed = parseFiniteInt(remainingRaw);
-        const resetEpochSeconds = parseFiniteInt(resetRaw);
-        if (remainingParsed === undefined || resetEpochSeconds === undefined) return;
+        const remainingParsed = parseInt(lookupHeader(headers, headerNames.remaining));
+        const resetEpochSeconds = parseInt(lookupHeader(headers, headerNames.reset));
+        if (!Number.isFinite(remainingParsed) || !Number.isFinite(resetEpochSeconds)) return;
 
         const dateRaw = lookupHeader(headers, headerNames.date);
         const serverNowMs = dateRaw ? Date.parse(dateRaw) : NaN;
