@@ -105,3 +105,32 @@ describe("Notes controller", function () {
     });
   });
 });
+
+describe("WB-143: Notes screen does not flip complete on note-only edit", function () {
+  let ctl;
+  beforeEach(function () {
+    Alloy.Models.instance("sample").clear();
+    Alloy.Models.instance("sample").set("complete", false);
+    Alloy.Models.sample.set("notes", "original notes");
+  });
+  afterEach(function (done) {
+    if (ctl) closeWindow(ctl.getView(), done);
+    else done();
+  });
+
+  it("(D) typing into notesTextField leaves sample.complete=false and toggle off", async function () {
+    ctl = Alloy.createController("Notes");
+    await controllerOpenTest(ctl);
+
+    expect(ctl.partialToggle.value,
+      `partialToggle on open with sample.complete=false: ${ctl.partialToggle.value}`)
+      .to.equal(false);
+
+    ctl.notesTextField.fireEvent("change", { value: "edit one character" });
+    await waitForTick(10)();
+
+    expect(!!Alloy.Models.instance("sample").get("complete"),
+      `sample.complete after note-only edit: ${Alloy.Models.instance("sample").get("complete")}`)
+      .to.equal(false);
+  });
+});
