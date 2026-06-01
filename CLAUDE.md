@@ -8,7 +8,7 @@ WALTA (Waterbug App) is a cross-platform mobile app for iOS and Android that ena
 
 ## Coding Style
 
-Before writing or editing code, consult [docs/coding-style.md](docs/coding-style.md) — module system per directory, async/await direction, the comment policy (short *why* comments are welcome; long, flowery ones are a refactor signal — and architectural narrative belongs in `docs/`, not source headers), and incremental migration guidance.
+Before writing or editing code, consult [docs/coding-style.md](docs/coding-style.md) — module system per directory, async/await direction, the defensive-code policy (trust inputs from systems we control; don't extract helpers for trivial logic; question cargo-culted defensiveness), the comment policy (short *why* comments are welcome; long, flowery ones are a refactor signal — and architectural narrative belongs in `docs/`, not source headers), and incremental migration guidance.
 
 **Comments: default to none.** Add one only for a non-obvious *why* — a hidden constraint, a workaround for a specific bug, an invariant the surrounding code can't convey — and keep it to a single line. Never narrate the change you're making, recap the bug you just fixed, or replay hypotheses you explored: that belongs in the commit message and PR description, which don't rot. If a block seems to need a paragraph, restructure the code or move the explanation to `docs/`. When in doubt, leave it out.
 

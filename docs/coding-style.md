@@ -19,6 +19,14 @@ When editing a file that uses `.then()` chains, convert the chains you touch to 
 
 The Alloy constraint only applies to module syntax. `async`/`await` is just JavaScript syntax and works fine inside a CommonJS file.
 
+## Defensive code
+
+**Trust inputs from systems you control.** When parsing values from our own backend, our own config, or our own storage, default to the simplest correct parse — `parseInt`, `JSON.parse`, plain destructuring — and let downstream fallback paths catch malformed values. Strict parsers (round-trip-string equality, regex pre-validation, exhaustive type guards) belong at *untrusted* boundaries — direct user input, third-party APIs we don't own, files chosen from the filesystem. If our own backend sends garbage, that's a server bug; the fix is on the server, not a stricter parser on the client.
+
+**Don't extract helpers for trivial logic.** A named wrapper around one or two lines of recognisable code reads slower than the inline version, because the reader has to leave the call site to learn what the helper does. Extract when there's a real reuse story (three-plus sites) or when the helper name communicates a non-obvious *why* — not just to give a name to "the way we parse a header".
+
+**Question cargo-culted defensiveness.** Habits like `parseInt(x, 10)`, `(opts || {}).foo`, `JSON.parse(x ?? "{}")` were each fixes for a real bug at some point, but the original bug may be long-dead in modern JS. Before keeping such a bit, ask "what fails if I remove this?" — if the answer is "nothing", remove it.
+
 ## Comments
 
 A short comment that pins down a non-obvious **why** is welcome — a hidden constraint, a workaround for a specific bug, an invariant that wouldn't make sense from the surrounding code alone. That's what comments are for.
