@@ -25,7 +25,7 @@ function parseFiniteInt(raw) {
 
 function createPacer(opts = {}) {
     const headroom = opts.headroom != null ? opts.headroom : 10;
-    const maxDelayMs = opts.maxDelayMs != null ? opts.maxDelayMs : 2500;
+    const fallbackDelayMs = opts.fallbackDelayMs != null ? opts.fallbackDelayMs : 2500;
     const now = opts.now || (() => Date.now());
     const sleep = opts.sleep || defaultSleep;
     const headerNames = Object.assign({}, DEFAULT_HEADER_NAMES, opts.headerNames || {});
@@ -50,14 +50,21 @@ function createPacer(opts = {}) {
     }
 
     async function acquire() {
-        if (remaining !== null && resetAt !== null && remaining <= headroom) {
+        let wait = 0;
+        if (remaining === null || resetAt === null) {
+            // No header data — pace conservatively so we don't burst a server
+            // that hasn't told us its limit. Once the first response lands,
+            // subsequent acquires use the real bucket and skip this branch.
+            const elapsed = now() - lastReqStarted;
+            wait = Math.max(0, fallbackDelayMs - elapsed);
+        } else if (remaining <= headroom) {
             const t = now();
             const msUntilReset = Math.max(0, resetAt - t);
             const spread = Math.floor(msUntilReset / Math.max(remaining, 1));
             const elapsed = t - lastReqStarted;
-            const wait = Math.min(Math.max(0, spread - elapsed), maxDelayMs);
-            if (wait > 0) await sleep(wait);
+            wait = Math.max(0, spread - elapsed);
         }
+        if (wait > 0) await sleep(wait);
         lastReqStarted = now();
     }
 
