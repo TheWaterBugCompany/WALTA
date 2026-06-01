@@ -33,6 +33,7 @@ function createPacer(opts = {}) {
     let remaining = null;
     let resetAt = null;
     let lastReqStarted = now();
+    let hasFiredRequest = false;
 
     function observe(headers) {
         const remainingRaw = lookupHeader(headers, headerNames.remaining);
@@ -51,10 +52,13 @@ function createPacer(opts = {}) {
 
     async function acquire() {
         let wait = 0;
-        if (remaining === null || resetAt === null) {
-            // No header data — pace conservatively so we don't burst a server
-            // that hasn't told us its limit. Once the first response lands,
-            // subsequent acquires use the real bucket and skip this branch.
+        if (!hasFiredRequest) {
+            // First request is always instant — one request can't burst a
+            // server, and we need it out to learn the bucket state.
+        } else if (remaining === null || resetAt === null) {
+            // Still no header data after a previous request — pace
+            // conservatively so a repeated burst can't hammer a server that
+            // isn't telling us its limit.
             const elapsed = now() - lastReqStarted;
             wait = Math.max(0, fallbackDelayMs - elapsed);
         } else if (remaining <= headroom) {
@@ -66,6 +70,7 @@ function createPacer(opts = {}) {
         }
         if (wait > 0) await sleep(wait);
         lastReqStarted = now();
+        hasFiredRequest = true;
     }
 
     return { observe, acquire };

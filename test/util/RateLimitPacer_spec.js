@@ -32,22 +32,22 @@ function utcStringForDeviceTime(clock, offsetMs = 0) {
 
 describe("RateLimitPacer", function () {
     describe("acquire() before any response has been observed", function () {
-        it("waits fallbackDelayMs so we don't burst a server that hasn't told us its limit", async function () {
+        it("fires the first request instantly even without headers — one request can't burst a server", async function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ fallbackDelayMs: 2500, now: clock.now, sleep: sleeper.sleep });
             await pacer.acquire();
-            expect(sleeper.calls).to.deep.equal([2500]);
+            expect(sleeper.calls).to.deep.equal([]);
         });
 
-        it("spaces back-to-back acquires by fallbackDelayMs while still in fresh state", async function () {
+        it("paces subsequent acquires by fallbackDelayMs when header data still hasn't arrived", async function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ fallbackDelayMs: 2500, now: clock.now, sleep: sleeper.sleep });
             await pacer.acquire();
             clock.advance(1000);
             await pacer.acquire();
-            expect(sleeper.calls).to.deep.equal([2500, 1500]);
+            expect(sleeper.calls).to.deep.equal([1500]);
         });
     });
 
@@ -71,6 +71,7 @@ describe("RateLimitPacer", function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire(); // first request is instant; observe + acquire below exercises pacing
             pacer.observe({
                 "X-RateLimit-Remaining": "2",
                 "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
@@ -84,6 +85,7 @@ describe("RateLimitPacer", function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
             pacer.observe({
                 "X-RateLimit-Remaining": "1",
                 "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 60_000),
@@ -97,6 +99,7 @@ describe("RateLimitPacer", function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
             pacer.observe({
                 "X-RateLimit-Remaining": "2",
                 "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
@@ -112,6 +115,7 @@ describe("RateLimitPacer", function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
             pacer.observe({
                 "X-RateLimit-Remaining": "2",
                 "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
@@ -129,6 +133,7 @@ describe("RateLimitPacer", function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
             const serverAheadMs = 5000;
             pacer.observe({
                 "X-RateLimit-Remaining": "2",
@@ -145,6 +150,7 @@ describe("RateLimitPacer", function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
             pacer.observe({
                 "X-RateLimit-Remaining": "2",
                 "X-RATELIMIT-RESET": epochSecondsForDeviceTime(clock, 10_000),
@@ -156,17 +162,18 @@ describe("RateLimitPacer", function () {
     });
 
     describe("graceful handling of missing or garbage headers", function () {
-        it("falls back to fallbackDelayMs when observe(null) and observe({}) leave no state", async function () {
+        it("falls back to fallbackDelayMs on the second acquire when observe(null) and observe({}) leave no state", async function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ fallbackDelayMs: 2500, now: clock.now, sleep: sleeper.sleep });
             pacer.observe(null);
             pacer.observe({});
             await pacer.acquire();
+            await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([2500]);
         });
 
-        it("falls back to fallbackDelayMs when remaining and reset don't parse", async function () {
+        it("falls back to fallbackDelayMs on the second acquire when remaining and reset don't parse", async function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ fallbackDelayMs: 2500, now: clock.now, sleep: sleeper.sleep });
@@ -176,6 +183,7 @@ describe("RateLimitPacer", function () {
                 "Date": utcStringForDeviceTime(clock),
             });
             await pacer.acquire();
+            await pacer.acquire();
             expect(sleeper.calls).to.deep.equal([2500]);
         });
 
@@ -183,6 +191,7 @@ describe("RateLimitPacer", function () {
             const clock = makeClock();
             const sleeper = makeSleepRecorder(clock);
             const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
             pacer.observe({
                 "X-RateLimit-Remaining": "2",
                 "X-RateLimit-Reset": epochSecondsForDeviceTime(clock, 10_000),
