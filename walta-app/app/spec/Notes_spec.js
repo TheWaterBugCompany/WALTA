@@ -30,7 +30,7 @@ describe("Notes controller", function () {
       expect(ctl.partialToggle.value).to.equal(true);
       ctl.partialToggle.value = false;
       await waitForTick(10)();
-      expect(Alloy.Models.instance("sample").get("complete")).to.equal(false);
+      expect(!!Alloy.Models.instance("sample").get("complete")).to.equal(false);
     });
     it('should bind the notes field to the notes field in the sample model', async function () {
 
@@ -131,6 +131,38 @@ describe("WB-143: Notes screen does not flip complete on note-only edit", functi
 
     expect(!!Alloy.Models.instance("sample").get("complete"),
       `sample.complete after note-only edit: ${Alloy.Models.instance("sample").get("complete")}`)
+      .to.equal(false);
+  });
+
+  it("(E) toggling partial off persists complete=false and serialises as false on next upload", async function () {
+    let { makeSampleData } = require("spec/fixtures/SampleData_fixture");
+    let { clearDatabase } = require("spec/util/TestUtils");
+    let moment = require("lib/moment");
+    clearDatabase();
+
+    Alloy.Models.sample = makeSampleData({
+      serverSampleId: 1862,
+      complete: 1,
+      dateCompleted: moment().format(),
+      serverSyncTime: moment().valueOf()
+    });
+    Alloy.Models.sample.save();
+    let id = Alloy.Models.sample.get("sampleId");
+
+    ctl = Alloy.createController("Notes");
+    await controllerOpenTest(ctl);
+    expect(ctl.partialToggle.value, "toggle starts on for a complete sample").to.equal(true);
+
+    ctl.partialToggle.fireEvent("change", { value: false });
+    await waitForTick(10)();
+
+    let reloaded = Alloy.createModel("sample");
+    reloaded.loadById(id);
+    expect(!!reloaded.get("complete"),
+      `reloaded.complete after toggling off: ${reloaded.get("complete")} (typeof ${typeof reloaded.get("complete")})`)
+      .to.equal(false);
+    expect(reloaded.toCerdiApiJson().complete,
+      `serialised complete after toggling off: ${reloaded.toCerdiApiJson().complete}`)
       .to.equal(false);
   });
 });
