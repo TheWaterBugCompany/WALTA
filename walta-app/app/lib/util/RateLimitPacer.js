@@ -1,7 +1,7 @@
 const DEFAULT_HEADER_NAMES = {
-    remaining: "x-ratelimit-remaining",
-    reset: "x-ratelimit-reset",
-    date: "date",
+    remaining: "X-RateLimit-Remaining",
+    reset: "X-RateLimit-Reset",
+    date: "Date",
 };
 
 function defaultSleep(ms) {
