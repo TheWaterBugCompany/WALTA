@@ -90,6 +90,7 @@ function createCerdiApi( serverUrl, client_secret  ) {
     simple.mock(cerdiApi,"retrieveCreaturePhoto").resolveWith();
     simple.mock(cerdiApi,"retrievePhotoMetadata").resolveWith();
     simple.mock(cerdiApi,"forgotPassword").resolveWith();
+    simple.mock(cerdiApi,"acquire").resolveWith();
 
     return cerdiApi;
 }
