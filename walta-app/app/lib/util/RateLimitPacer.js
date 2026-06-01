@@ -2,6 +2,14 @@ function defaultSleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function lowercaseHeaders(headers) {
+    const out = {};
+    for (const key of Object.keys(headers)) {
+        out[key.toLowerCase()] = headers[key];
+    }
+    return out;
+}
+
 function createPacer(opts = {}) {
     const headroom = opts.headroom != null ? opts.headroom : 10;
     const fallbackDelayMs = opts.fallbackDelayMs != null ? opts.fallbackDelayMs : 2500;
@@ -15,10 +23,7 @@ function createPacer(opts = {}) {
 
     function observe(headers) {
         if (!headers) return;
-        const lower = {};
-        for (const key of Object.keys(headers)) {
-            lower[key.toLowerCase()] = headers[key];
-        }
+        const lower = lowercaseHeaders(headers);
         const remainingParsed = parseInt(lower["x-ratelimit-remaining"]);
         const resetEpochSeconds = parseInt(lower["x-ratelimit-reset"]);
         if (!Number.isFinite(remainingParsed) || !Number.isFinite(resetEpochSeconds)) return;
