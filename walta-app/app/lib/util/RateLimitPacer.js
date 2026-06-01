@@ -1,20 +1,5 @@
-const DEFAULT_HEADER_NAMES = {
-    remaining: "X-RateLimit-Remaining",
-    reset: "X-RateLimit-Reset",
-    date: "Date",
-};
-
 function defaultSleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function lookupHeader(headers, name) {
-    if (!headers || typeof headers !== "object") return undefined;
-    const target = name.toLowerCase();
-    for (const key of Object.keys(headers)) {
-        if (key.toLowerCase() === target) return headers[key];
-    }
-    return undefined;
 }
 
 function createPacer(opts = {}) {
@@ -22,7 +7,6 @@ function createPacer(opts = {}) {
     const fallbackDelayMs = opts.fallbackDelayMs != null ? opts.fallbackDelayMs : 2500;
     const now = opts.now || (() => Date.now());
     const sleep = opts.sleep || defaultSleep;
-    const headerNames = Object.assign({}, DEFAULT_HEADER_NAMES, opts.headerNames || {});
 
     let remaining = null;
     let resetAt = null;
@@ -30,12 +14,11 @@ function createPacer(opts = {}) {
     let hasFiredRequest = false;
 
     function observe(headers) {
-        const remainingParsed = parseInt(lookupHeader(headers, headerNames.remaining));
-        const resetEpochSeconds = parseInt(lookupHeader(headers, headerNames.reset));
+        const remainingParsed = parseInt(headers?.["X-RateLimit-Remaining"]);
+        const resetEpochSeconds = parseInt(headers?.["X-RateLimit-Reset"]);
         if (!Number.isFinite(remainingParsed) || !Number.isFinite(resetEpochSeconds)) return;
 
-        const dateRaw = lookupHeader(headers, headerNames.date);
-        const serverNowMs = dateRaw ? Date.parse(dateRaw) : NaN;
+        const serverNowMs = Date.parse(headers["Date"]);
         const skewMs = Number.isFinite(serverNowMs) ? serverNowMs - now() : 0;
 
         remaining = Math.max(0, remainingParsed);
