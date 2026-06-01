@@ -145,6 +145,22 @@ describe("RateLimitPacer", function () {
         });
     });
 
+    describe("header-name handling", function () {
+        it("looks up rate-limit headers case-insensitively", async function () {
+            const clock = makeClock();
+            const sleeper = makeSleepRecorder(clock);
+            const pacer = createPacer({ headroom: 10, now: clock.now, sleep: sleeper.sleep });
+            await pacer.acquire();
+            pacer.observe({
+                "X-RateLimit-Remaining": "2",
+                "X-RATELIMIT-RESET": epochSecondsForDeviceTime(clock, 10_000),
+                "Date": utcStringForDeviceTime(clock),
+            });
+            await pacer.acquire();
+            expect(sleeper.calls).to.deep.equal([5000]);
+        });
+    });
+
     describe("graceful handling of missing or garbage headers", function () {
         it("falls back to fallbackDelayMs on the second acquire when observe(null) and observe({}) leave no state", async function () {
             const clock = makeClock();
