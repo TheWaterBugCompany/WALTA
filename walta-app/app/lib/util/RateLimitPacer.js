@@ -36,10 +36,13 @@ function createPacer(opts = {}) {
             // isn't telling us its limit.
             const elapsed = now() - lastReqStarted;
             wait = Math.max(0, fallbackDelayMs - elapsed);
+        } else if (remaining === 0) {
+            // Budget exhausted — wait until the bucket resets.
+            wait = Math.max(0, resetAt - now());
         } else if (remaining <= headroom) {
             const t = now();
             const msUntilReset = Math.max(0, resetAt - t);
-            const spread = Math.floor(msUntilReset / Math.max(remaining, 1));
+            const spread = Math.floor(msUntilReset / remaining);
             const elapsed = t - lastReqStarted;
             wait = Math.max(0, spread - elapsed);
         }
