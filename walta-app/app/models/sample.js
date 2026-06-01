@@ -442,7 +442,7 @@ exports.definition = {
 					"serverUserId": sample.user_id,
 					"serverSampleId": sample.id,
 					"dateCompleted": sample.sample_date,
-					"complete": sample.complete,
+					"complete": sample.complete ? 1 : 0,
 					"notes": sample.notes,
 					"lat": parseFloat(sample.lat),
 					"lng": parseFloat(sample.lng),
