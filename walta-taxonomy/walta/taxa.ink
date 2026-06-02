@@ -2574,7 +2574,7 @@
 # taxonomicLevel: "family"
 # mediaUrls: ["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/baetidae_m1.mp4"]
 # description: ""
-# bluebug: [
+# bluebug: []
 -> DONE
 
 === adult_leptophlebiidae ===
