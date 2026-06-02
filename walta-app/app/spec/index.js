@@ -65,6 +65,7 @@ var SPEC_FILES = [
   "SampleSync",
   "SyncFeedback",
   "UploadBadge",
+  "SampleEditMenu",
   "SampleHistory",
   "Gallery",
   "PhotoSelect",
