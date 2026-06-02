@@ -6,7 +6,12 @@
 					<Require id="closeButton" src="CloseButton"/>
 				</View>
 				<View id="content" layout="vertical">
-
+					<View id="view" class="actionRow" accessibilityLabel="View selected survey.">
+						<Label class="actionRowText">View selected survey.</Label>
+					</View>
+					<View id="edit" class="actionRow" accessibilityLabel="Edit selected survey.">
+						<Label class="actionRowText">Edit selected survey.</Label>
+					</View>
 				</View>
 			</View>
 	</View>
