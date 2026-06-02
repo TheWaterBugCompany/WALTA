@@ -908,7 +908,7 @@
 # taxonomicLevel: "genus"
 # mediaUrls: ["/taxonomy/walta/media/helicopsyche_01.jpg"]
 # description: ""
-# bluebug: ["/taxonomy/walta/media/speedbug/flatsnail_b.png"]
+# bluebug: ["/taxonomy/walta/media/speedbug/flat_snail_b.png"]
 -> DONE
 
 === tasimiidae ===
