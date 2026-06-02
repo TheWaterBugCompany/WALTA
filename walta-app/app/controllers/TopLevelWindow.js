@@ -32,18 +32,7 @@ function openWindow() {
 		$.content.width = Ti.UI.FILL;
 		$.TopLevelWindow.add( $.content );
 	}
-	if ( $.TopLevelWindow.useUnSafeArea ) {
-		// No safe-area adjustment is coming, but consumers still need
-		// the signal to know layout is settled. Fire once on first
-		// postlayout.
-		$.TopLevelWindow.addEventListener('postlayout', function firstLayout() {
-			$.TopLevelWindow.removeEventListener('postlayout', firstLayout);
-			safeAreaApplied = true;
-			$.trigger("safe-area-applied");
-		});
-	} else {
-		$.TopLevelWindow.addEventListener('postlayout', updateSafeArea);
-	}
+	$.TopLevelWindow.addEventListener('postlayout', updateSafeArea);
 	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
 	$.TopLevelWindow.addEventListener('postlayout',function() {
 		$.trigger("window-opened");
@@ -64,7 +53,13 @@ function updateSafeArea() {
 	//Ti.API.info(`safeAreaPadding = ${JSON.stringify(padding)}`)
 	anchorBar.leftTools.left = padding.left;
 	anchorBar.rightTools.right = padding.right;
-	$.content.applyProperties(padding);
+	// Anchor bar always honours the bottom inset, even when the screen
+	// opts the content area out of safe-area padding — otherwise its
+	// buttons sit under the home indicator.
+	anchorBar.getView().bottom = padding.bottom;
+	if ( !$.TopLevelWindow.useUnSafeArea ) {
+		$.content.applyProperties(padding);
+	}
 	// Signal once, after padding is applied, so consumers (e.g.
 	// applyKeyboardTweaks) can restructure the view tree against the
 	// final content dimensions rather than the pre-safe-area window
@@ -110,8 +105,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	noSwipeBack();
 	$.TopLevelWindow.removeEventListener('androidback', backEvent );
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
-	if ( ! $.TopLevelWindow.useUnSafeArea )
-		$.TopLevelWindow.removeEventListener('postlayout', updateSafeArea );
+	$.TopLevelWindow.removeEventListener('postlayout', updateSafeArea );
 });
 
 function getAnchorBar() {

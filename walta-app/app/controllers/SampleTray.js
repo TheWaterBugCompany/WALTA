@@ -23,10 +23,10 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var readOnlyMode = $.args.readonly === true;
-var acb = $.getAnchorBar(); 
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left", readonly: readOnlyMode }  ); 
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.NOTES, slide: "right", readonly: readOnlyMode } ); 
-acb.addTool( $.backButton.getView() ); 
+var acb = $.getAnchorBar();
+$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left", readonly: readOnlyMode }  );
+$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.NOTES, slide: "right", readonly: readOnlyMode } );
+acb.addTool( $.backButton.getView() );
 acb.addTool( $.nextButton.getView() );
 
 // Keeps track of the tile views we cache
