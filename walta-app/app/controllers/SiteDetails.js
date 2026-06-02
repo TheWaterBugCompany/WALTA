@@ -22,10 +22,6 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var { applyKeyboardTweaks } = require("ui/Layout");
-// WB-28: opt out of the ScrollView wrap — it establishes a measurement
-// context that causes #right to overflow on notched iPhones. Keyboard
-// auto-scroll is not critical here because the text fields sit in the top
-// portion of #left and remain visible above the keyboard in landscape.
 applyKeyboardTweaks( $, [ $.waterbodyNameField, $.nearByFeatureField ] );
 
 var acb = $.getAnchorBar();  

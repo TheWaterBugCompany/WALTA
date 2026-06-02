@@ -234,28 +234,15 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    // WB-28: camera icon was rendering off the right edge of the viewport on
-    // notched iPhones. Root cause was applyKeyboardTweaks wrapping $.content
-    // in a ScrollView on iOS, which caused percentage-width children to be
-    // measured against the window width (874) instead of the safe-area-
-    // adjusted content width (750). SiteDetails now opts out of that wrap
-    // via `{wrapInScrollView: false}`; children resolve percentages against
-    // $.content directly, which reflows when TopLevelWindow.updateSafeArea
-    // applies safeAreaPadding.
+    // WB-28: #right must fit within the safe-area-padded viewport so the
+    // camera icon stays on-screen on notched iPhones.
     it("right column should fit within the content area (WB-28)", function(done) {
         ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
-            // Let postlayout -> updateSafeArea -> safe-area-applied ->
-            // applyKeyboardTweaks' deferred ScrollView wrap -> relayout
-            // all settle before reading rects.
             setTimeout( function() {
                 var right = ctl.right;
                 var win = ctl.TopLevelWindow;
                 var sap = win.safeAreaPadding || {};
-                // applyKeyboardTweaks wraps the original content view in
-                // a ScrollView — assert right fits within the window's
-                // safe-area-padded region (where the user actually sees
-                // things), which is what matters for WB-28.
                 var visibleRight = win.size.width - sap.right;
                 expect( right.rect.x + right.rect.width ).to.be.at.most( visibleRight );
                 done();
