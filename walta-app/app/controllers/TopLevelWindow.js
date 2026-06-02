@@ -53,10 +53,6 @@ function updateSafeArea() {
 	//Ti.API.info(`safeAreaPadding = ${JSON.stringify(padding)}`)
 	anchorBar.leftTools.left = padding.left;
 	anchorBar.rightTools.right = padding.right;
-	// Anchor bar always honours the bottom inset, even when the screen
-	// opts the content area out of safe-area padding — otherwise its
-	// buttons sit under the home indicator.
-	anchorBar.getView().bottom = padding.bottom;
 	if ( !$.TopLevelWindow.useUnSafeArea ) {
 		$.content.applyProperties(padding);
 	}
