@@ -20,7 +20,7 @@ Every behavioural change starts with a failing test.
 1. Pick the smallest behavioural change you can make next.
 2. Write a *single* failing test that pins that behaviour (RED). Run it; confirm it fails for the right reason.
 3. Write the minimal production code to pass (GREEN).
-4. Refactor with the test as a safety net (REFACTOR). Refactor the test too if its structure has decayed.
+4. Refactor with the test as a safety net (REFACTOR) — see [tidy](../tidy/SKILL.md) for what to look for and the discipline around proposing-vs-restructuring. Refactor the test too if its structure has decayed.
 5. Repeat.
 
 One observable behaviour per test (or per cucumber scenario). Multiple assertions in one `it` hide which behaviour broke.

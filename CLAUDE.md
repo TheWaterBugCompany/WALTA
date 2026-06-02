@@ -16,6 +16,8 @@ This project follows test-driven development (Kent Beck style): each behavioural
 
 Before any development work, load the [tdd](.claude/skills/tdd/SKILL.md) skill — every behavioural change starts with a failing test, including small ones. Skip only for non-behavioural edits (typos, formatting, comment-only changes).
 
+For structural improvements without a behaviour change — the refactor phase of TDD, a standalone cleanup pass, or extractions surfaced while reading code in service of another task — load the [tidy](.claude/skills/tidy/SKILL.md) skill. It encodes the project's stance on extracting for intent (including at the margin), the speculative objections to ignore (caller count, hop cost, allocations), and the scope discipline for drive-by tidies.
+
 When iterating on `Ti.*` / Alloy code (controllers, view specs, cucumber scenarios), load the [fast-iteration](.claude/skills/fast-iteration/SKILL.md) skill — narrow with `--grep` and use `--liveview --reuse-server` so each iteration is seconds, not minutes. Skip this skill when the change is pure JS — `npx grunt unit-test-node` is faster.
 
 When a code smell surfaces mid-session — tangled deps, hidden state, a function doing two things, a workaround stacking on a workaround — pause and flag it for review rather than silently restructuring or pressing on. Code happens fast in these sessions; the human reviewer is the project's refactor-detector, and surfacing smells gives them a checkpoint to decide refactor-now vs. carry-on.
