@@ -290,6 +290,14 @@ function buildSpeedbugIndex( speedbugName, rootMenu, key ) {
 
 	var index = SpeedbugIndex.createSpeedbugIndex( speedbugName );
 
+	// Speedbug imgUrl is always a single string downstream (the silhouette
+	// is one image), even though questions in general carry mediaUrls as an
+	// array. Unwrap here so the SpeedbugIndex tile renders a path string,
+	// not a path array.
+	var firstUrl = function( q ) {
+		return q && q.mediaUrls && q.mediaUrls.length ? q.mediaUrls[0] : undefined;
+	};
+
 	_.each( speedBugNode.questions, function( q ) {
 		var sub = q.outcome;
 		if ( q.text && sub && sub.questions && sub.questions[0] && (sub.questions[0].text || '').trim().toLowerCase() === 'not sure' ) {
@@ -297,11 +305,11 @@ function buildSpeedbugIndex( speedbugName, rootMenu, key ) {
 			var groupId = notSure.outcome.id;
 			index.addSpeedbugGroup( groupId );
 			_.each( sub.questions, function( q2 ) {
-				index.addSpeedbugIndex( q2.mediaUrls, groupId, q2.outcome.id );
+				index.addSpeedbugIndex( firstUrl( q2 ), groupId, q2.outcome.id );
 			});
 		} else if ( sub ) {
 			index.addSpeedbugGroup( sub.id );
-			index.addSpeedbugIndex( q.mediaUrls, sub.id, sub.id );
+			index.addSpeedbugIndex( firstUrl( q ), sub.id, sub.id );
 		}
 	});
 
