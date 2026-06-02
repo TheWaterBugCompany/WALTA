@@ -481,10 +481,6 @@ const KobitonAPI = require("./features/support/kobiton");
             command: `bash build-tests/integration/fixtures/HelloWorld-ios/build.sh --simulator-only`,
             stdout: "inherit", stderr: "inherit"
           },
-          build_key_ink: {
-            command: "./ink/inklecate/bin/Release/netcoreapp3.1/osx-x64/inklecate -o ./walta-taxonomy/walta/key.ink.json ./walta-taxonomy/walta/key.ink"
-          },
-
           build: {
             command: build_app,
             options: {
@@ -1049,15 +1045,26 @@ const KobitonAPI = require("./features/support/kobiton");
     });
 
 
-    grunt.registerTask('build-key-from-ink-json', function() {
-      const key = KeyLoader.loadKey( './walta-app/app/assets/taxonomy/walta/', '/taxonomy/walta' );
+    grunt.registerTask('build-key-from-ink', function() {
+      const key = KeyLoader.loadKey( './walta-taxonomy/walta/', '/taxonomy/walta' );
       fs.writeFileSync( './walta-taxonomy/walta/key.json', CircularJSON.stringify(key) );
     });
 
-    grunt.registerTask('build-key', function() {
-      grunt.task.run("exec:build_key_ink");
-      grunt.task.run("build-key-from-ink-json");
+    grunt.registerTask('verify-media', function() {
+      const key = KeyLoader.loadKey( './walta-taxonomy/walta/', '/taxonomy/walta' );
+      const refs = [].concat(
+        key.findAllMedia( 'mediaUrls', false ),
+        key.findAllMedia( 'bluebug' )
+      );
+      const missing = refs.filter( ({ url }) => url && !fs.existsSync( url.replace('/taxonomy/', 'walta-taxonomy/') ) );
+      if ( missing.length ) {
+        missing.forEach( ({ url, taxon }) => grunt.log.error(`missing media: ${url} (referenced by ${taxon.id || taxon.taxonId || '?'})`));
+        grunt.fail.warn(`${missing.length} media reference(s) point to files that do not exist`);
+      }
+      grunt.log.ok(`verified ${refs.length} media reference(s)`);
     });
+
+    grunt.registerTask('build-key', ['build-key-from-ink', 'verify-media']);
     grunt.registerTask('build-html', ['browserify:mayfly']);
     grunt.registerTask('build-misc', ['build-key', 'build-html']);
   };
