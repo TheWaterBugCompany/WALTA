@@ -1,0 +1,1458 @@
+=== KEY ROOT ===
+ NODE id="root" questions=2
+/0 Q text="Animal with a shell (snails and mussels)" mediaUrls=["/taxonomy/walta/media/withshell.gif"]
+/0 NODE id="k_mollusca" questions=2
+/0/0 Q text="Animals look like snails or limpets." mediaUrls=[]
+/0/0 NODE id="order_gastropoda" questions=2
+/0/0/0 Q text="Order level ID Gastropoda." mediaUrls=[]
+/0/0/0 TAXON id="gastropoda" taxonId="181" name="gastropods" size=40 signalScore=1 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/flatsnails_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif","/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/physa_acuta_closeup.jpg","/taxonomy/walta/media/lymnaeidae_01.jpg","/taxonomy/walta/media/ancylidae.jpg"] bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"]
+/0/0/1 Q text="Identify further." mediaUrls=[]
+/0/0/1 NODE id="node_2" questions=2
+/0/0/1/0 Q text="Animals look like snails." mediaUrls=[]
+/0/0/1/0 NODE id="k_gastropoda" questions=2
+/0/0/1/0/0 Q text="Snails with flat shells." mediaUrls=[]
+/0/0/1/0/0 TAXON id="flat_snails" taxonId="189" name="Planorbidae" size=6 signalScore=6 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/flatsnails_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/flat_snail_b.png"]
+/0/0/1/0/1 Q text="Shells are not flat, have normal spire." mediaUrls=[]
+/0/0/1/0/1 NODE id="node_3" questions=2
+/0/0/1/0/1/0 Q text="Snails are coiled, small (less than 10mm), often black or dark brown and occur in large numbers." mediaUrls=["/taxonomy/walta/media/potamopyrgus_02.gif"]
+/0/0/1/0/1/0 TAXON id="potamopyrgus_antipodarum" taxonId="193" name="Potamopyrgus antipodarum" size=4 signalScore=1 taxonomicLevel="species" mediaUrls=["/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif"] bluebug=["/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"]
+/0/0/1/0/1/1 Q text="Snails not as above." mediaUrls=[]
+/0/0/1/0/1/1 NODE id="node_4" questions=2
+/0/0/1/0/1/1/0 Q text="Shell sinistral (left handed - or footed)" mediaUrls=["/taxonomy/walta/media/shell_sinistral.gif"]
+/0/0/1/0/1/1/0 NODE id="node_5" questions=2
+/0/0/1/0/1/1/0/0 Q text="Mottled pattern visible through the shell. You might need good light to see this" mediaUrls=["/taxonomy/walta/media/physa_acuta_closeup.jpg"]
+/0/0/1/0/1/1/0/0 TAXON id="physa_acuta" taxonId="187" name="Physa acuta" size=10 signalScore=1 taxonomicLevel="species" mediaUrls=["/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/physa_acuta_closeup.jpg"] bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"]
+/0/0/1/0/1/1/0/1 Q text="Snail without obvious mottling." mediaUrls=[]
+/0/0/1/0/1/1/0/1 TAXON id="planorbids" taxonId="190" name="Planorbids" size=15 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/planorbids_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"]
+/0/0/1/0/1/1/1 Q text="Shell dextral (right handed)" mediaUrls=["/taxonomy/walta/media/shell_dextral.gif"]
+/0/0/1/0/1/1/1 TAXON id="lymnaeidae" taxonId="185" name="Lymnaeidae" size=40 signalScore=1 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/lymnaeidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"]
+/0/0/1/1 Q text="Animals look like limpets." mediaUrls=[]
+/0/0/1/1 TAXON id="ancylidae" taxonId="184" name="Ancylidae" size=4 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/ancylidae.jpg"] bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"]
+/0/1 Q text="Animals look like mussels." mediaUrls=[]
+/0/1 NODE id="order_bivalvia" questions=2
+/0/1/0 Q text="Class level ID. Bivalvia (mussels)." mediaUrls=[]
+/0/1/0 TAXON id="bivalvia" taxonId="179" name="Hyriidae" size=120 signalScore=3 taxonomicLevel="class" mediaUrls=["/taxonomy/walta/media/hyriidae_01.jpg","/taxonomy/walta/media/sphaeriidae_and_corbiculidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hyriidae_b.png"]
+/0/1/1 Q text="Identify further." mediaUrls=[]
+/0/1/1 NODE id="k_bivalvia" questions=2
+/0/1/1/0 Q text="Shell halves are large (longer than 25 mm), dark, thick and usually not symmetrical." mediaUrls=[]
+/0/1/1/0 TAXON id="hyriidae" taxonId="179" name="Hyriidae" size=120 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/hyriidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hyriidae_b.png"]
+/0/1/1/1 Q text="Shell halves are small (less than 25 mm); light coloured, relatively thin and symmetrical." mediaUrls=[]
+/0/1/1/1 TAXON id="sphaeriidae_and_corbiculidae" taxonId="180" name="Sphaeriidae and Corbiculidae" size=25 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/sphaeriidae_and_corbiculidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"]
+/1 Q text="Animal without a shell" mediaUrls=["/taxonomy/walta/media/withoutshell.gif"]
+/1 NODE id="node_1" questions=2
+/1/0 Q text="Animal with legs" mediaUrls=["/taxonomy/walta/media/withlegs.gif"]
+/1/0 NODE id="k_arthropoda" questions=2
+/1/0/0 Q text="With more than eight legs" mediaUrls=["/taxonomy/walta/media/morethaneightlegs.gif"]
+/1/0/0 NODE id="k_crustacea" questions=2
+/1/0/0/0 Q text="Robust animals, freshwater crayfish or yabbies with obvious front pincers, movement walking or sometimes 'flips' of the tail that propel the animal backwards." mediaUrls=[]
+/1/0/0/0 NODE id="decapoda_intercept_1" questions=2
+/1/0/0/0/0 Q text="Oder level ID Decapoda (decapods)" mediaUrls=[]
+/1/0/0/0/0 TAXON id="decapoda" taxonId="3" name="Decapods" size=50 signalScore=4 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/atyidae_01.jpg","/taxonomy/walta/media/hymenosomatidae_01.jpg","/taxonomy/walta/media/parastacidae_01.jpg","/taxonomy/walta/media/macrobrachium_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/atyidae_b.png"]
+/1/0/0/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/0/0/1 TAXON id="parastacidae" taxonId="4" name="Parastacidae" size=300 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/parastacide_01.jpg","/taxonomy/walta/media/parastacide_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/parastacidae_b.png"]
+/1/0/0/1 Q text="Not as above." mediaUrls=[]
+/1/0/0/1 NODE id="node_7" questions=2
+/1/0/0/1/0 Q text="Shrimp or prawn-like animals." mediaUrls=["/taxonomy/walta/media/shrimplike.gif"]
+/1/0/0/1/0 NODE id="decapoda_intercept_2" questions=2
+/1/0/0/1/0/0 Q text="Oder level ID Decapoda (decapods)" mediaUrls=[]
+/1/0/0/1/0/0 -> (visited TAXON:3)
+/1/0/0/1/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/0/1/0/1 NODE id="k_shrimpandprawns" questions=2
+/1/0/0/1/0/1/0 Q text="Second leg with pincers and noticeably longer than others. Body translucent/opaque." mediaUrls=[]
+/1/0/0/1/0/1/0 TAXON id="macrobrachium" taxonId="7" name="Macrobrachium" size=50 signalScore=4 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/macrobrachium_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/atyidae_b.png"]
+/1/0/0/1/0/1/1 Q text="Transparent (or at least translucent) front pairs of legs similar sized." mediaUrls=[]
+/1/0/0/1/0/1/1 TAXON id="atyidae" taxonId="8" name="Atyidae" size=35 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/atyidae_01.jpg","/taxonomy/walta/media/atyidae_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/atyidae_b.png"]
+/1/0/0/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/0/1/1 NODE id="node_8" questions=2
+/1/0/0/1/1/0 Q text="Round body, slow-moving, obviously crab-like (see image)." mediaUrls=["/taxonomy/walta/media/crablike.gif"]
+/1/0/0/1/1/0 NODE id="decapoda_intercept_3" questions=2
+/1/0/0/1/1/0/0 Q text="Oder level ID Decapoda (decapods)" mediaUrls=[]
+/1/0/0/1/1/0/0 -> (visited TAXON:3)
+/1/0/0/1/1/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/0/1/1/0/1 TAXON id="hymenosomatidae" taxonId="5" name="Hymenosomatidae" size=15 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/hymenosomatidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"]
+/1/0/0/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/0/1/1/1 NODE id="node_9" questions=2
+/1/0/0/1/1/1/0 Q text="Animals strongly flattened from the sides (like dogs and cats); often lying on their side or moving with their side flat against the substrate." mediaUrls=["/taxonomy/walta/media/sidesquashed.gif"]
+/1/0/0/1/1/1/0 NODE id="node_10" questions=2
+/1/0/0/1/1/1/0/0 Q text="Animal rests on its side, swims in swift bursts." mediaUrls=["/taxonomy/walta/media/amphipoda_02.jpg"]
+/1/0/0/1/1/1/0/0 TAXON id="amphipoda" taxonId="12" name="Amphipoda" size=15 signalScore=3 taxonomicLevel="class" mediaUrls=["/taxonomy/walta/media/amphipoda_01.jpg","/taxonomy/walta/media/amphipoda_02.jpg","/taxonomy/walta/media/amphipoda_03.jpg"] bluebug=["/taxonomy/walta/media/speedbug/amphipoda_b.png"]
+/1/0/0/1/1/1/0/1 Q text="Animal slow moving, walks, relatively robust looking animal, bovine." mediaUrls=["/taxonomy/walta/media/phreatoicidae_02.jpg"]
+/1/0/0/1/1/1/0/1 TAXON id="phreatoicidae" taxonId="11" name="Phreatoicidae" size=25 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/phreatoicidae_01.jpg","/taxonomy/walta/media/phreatoicidae_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/amphipoda_b.png"]
+/1/0/0/1/1/1/1 Q text="Animals not flattened or flattened 'front to back' (like humans or cockroaches)." mediaUrls=["/taxonomy/walta/media/frontbacksquashed.gif"]
+/1/0/0/1/1/1/1 NODE id="node_11" questions=2
+/1/0/0/1/1/1/1/0 Q text="Small, pale (white to light brown or grey) crustacean, final segments as broad or broader than head, slow moving and slater-like." mediaUrls=[]
+/1/0/0/1/1/1/1/0 TAXON id="janiridae" taxonId="10" name="Janiridae" size=7 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/janiridae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/amphipoda_b.png"]
+/1/0/0/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/0/1/1/1/1/1 NODE id="node_12" questions=2
+/1/0/0/1/1/1/1/1/0 Q text="Animal looks like this." mediaUrls=["/taxonomy/walta/media/anostraca_01.jpg"]
+/1/0/0/1/1/1/1/1/0 TAXON id="anostraca" taxonId="13" name="Anostraca" size=25 signalScore=1 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/anostraca_01.jpg","/taxonomy/walta/media/anostraca_02.jpg","/taxonomy/walta/media/anostraca_03.jpg","/taxonomy/walta/media/anostraca_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/anostraca_b.png"]
+/1/0/0/1/1/1/1/1/1 Q text="Not as above" mediaUrls=[]
+/1/0/0/1/1/1/1/1/1 NODE id="node_13" questions=2
+/1/0/0/1/1/1/1/1/1/0 Q text="Animal looks like this." mediaUrls=["/taxonomy/walta/media/notostraca_01.jpg"]
+/1/0/0/1/1/1/1/1/1/0 TAXON id="notostraca" taxonId="15" name="Notostraca" size=40 signalScore=1 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/notostraca_01.jpg","/taxonomy/walta/media/notostraca_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/notostraca_b.png"]
+/1/0/0/1/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/0/1/1/1/1/1/1/1 TAXON id="conchostraca" taxonId="14" name="Conchostraca" size=8 signalScore=1 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/conchostraca_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"]
+/1/0/1 Q text="With eight legs or less" mediaUrls=[]
+/1/0/1 NODE id="node_6" questions=2
+/1/0/1/0 Q text="with eight legs" mediaUrls=["/taxonomy/walta/media/eightlegs.gif"]
+/1/0/1/0 NODE id="k_chelicerata" questions=2
+/1/0/1/0/0 Q text="found under water" mediaUrls=[]
+/1/0/1/0/0 TAXON id="acarina" taxonId="19" name="Acarina" size=5 signalScore=5 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/acarina_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hydracarina_b.png"]
+/1/0/1/0/1 Q text="found on the surface of the water, or if underneath, it is covered in a silvery bubble of air." mediaUrls=[]
+/1/0/1/0/1 TAXON id="pisauridae_and_lycosidae" taxonId="18" name="Pisauridae and Lycosidae" size=120 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/pisauridae_and_lycosidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/pisauridae_b.png"]
+/1/0/1/1 Q text="with six legs" mediaUrls=["/taxonomy/walta/media/sixlegs.gif"]
+/1/0/1/1 NODE id="k_hexapoda" questions=2
+/1/0/1/1/0 Q text="with wing covers (beetles and bugs)" mediaUrls=["/taxonomy/walta/media/wingcovers.gif"]
+/1/0/1/1/0 NODE id="node_14" questions=2
+/1/0/1/1/0/0 Q text="hard wingcovers, symmetrical, animal rounded on top (beetles)" mediaUrls=["/taxonomy/walta/media/hardwingcovers.gif"]
+/1/0/1/1/0/0 NODE id="order_coleoptera" questions=2
+/1/0/1/1/0/0/0 Q text="Order level ID Coleoptera (beetles)" mediaUrls=[]
+/1/0/1/1/0/0/0 TAXON id="coleoptera" taxonId="26" name="Beetles" size=45 signalScore=5 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/swimming_water_tiger_larvae_01.jpg","/taxonomy/walta/media/hydraenidae_and_hydrochidae_01.jpg","/taxonomy/walta/media/scirtidae_01.jpg","/taxonomy/walta/media/sclerocyphon_01.jpg","/taxonomy/walta/media/lancetes_01"] bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
+/1/0/1/1/0/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/0/0/1 NODE id="k_coleoptera" questions=2
+/1/0/1/1/0/0/1/0 Q text="Beetles active swimmers" mediaUrls=[]
+/1/0/1/1/0/0/1/0 NODE id="node_16" questions=2
+/1/0/1/1/0/0/1/0/0 Q text="Beetles swim rapidly in circular patterns on the water surface as well as below, shiny beetles with legs tucked neatly under body, often found in groups." mediaUrls=[]
+/1/0/1/1/0/0/1/0/0 TAXON id="gyrinidae_adult" taxonId="50" name="Gyrinidae adult" size=12 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/gyrinidae_adult_01.jpg","/taxonomy/walta/media/gyrinidae_adult_m1.mp4","/taxonomy/walta/media/gyrinidae_adult_m2.mp4"] bluebug=["/taxonomy/walta/media/speedbug/gyrinidae_b.png"]
+/1/0/1/1/0/0/1/0/1 Q text="Beetles swim submerged, with obvious legs." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1 NODE id="node_18" questions=2
+/1/0/1/1/0/0/1/0/1/0 Q text="Beetles move with all 3 or at least 2 pairs of legs. Legs move alternately." mediaUrls=["/taxonomy/walta/media/elmidae_m1.mp4"]
+/1/0/1/1/0/0/1/0/1/0 NODE id="node_19" questions=2
+/1/0/1/1/0/0/1/0/1/0/0 Q text="Always with a black head and a brown body; may screech when in net or tray. Distinctively 'lumpy' appearance; Rare." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/0/0 TAXON id="hygrobia_adult" taxonId="62" name="Hygrobia adult" size=10 signalScore=1 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/hygrobia_adult_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
+/1/0/1/1/0/0/1/0/1/0/1 Q text="Often black but may be green or brown. Flat on the underside, sometimes with a bubble vest; head bent downwards; Common." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/0/1 TAXON id="hydrophilidae_adult" taxonId="59" name="Water scavenger beetle adult" size=35 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/water_scavenger_beetle_adult_02.jpg","/taxonomy/walta/media/water_scavenger_beetle_adult_01.jpg","/taxonomy/walta/media/hydrophilidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
+/1/0/1/1/0/0/1/0/1/1 Q text="Beetles appear to swim smoothly with only the rear pair of legs, legs move in unison; motion is like breast stroke. Rear swimming legs held upwards when beetle rests." mediaUrls=["/taxonomy/walta/media/lancetes_m1.mp4"]
+/1/0/1/1/0/0/1/0/1/1 NODE id="k_dytiscidae" questions=2
+/1/0/1/1/0/0/1/0/1/1/0 Q text="less than 10mm" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0 NODE id="node_20" questions=2
+/1/0/1/1/0/0/1/0/1/1/0/0 Q text="less than 4mm" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/0 NODE id="node_22" questions=2
+/1/0/1/1/0/0/1/0/1/1/0/0/0 Q text="Body segment associated with first pair of legs constricted to give the beetle a distinctly waisted look." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/0/0 TAXON id="carabhydrus" taxonId="30" name="Carabhydrus" size=3 signalScore=7 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/carabhydrus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/0/1/1/0/0/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/0/1 NODE id="node_24" questions=2
+/1/0/1/1/0/0/1/0/1/1/0/0/1/0 Q text="Conspicuous lateral stripes, water-drop shaped beetles." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/0/1/0 TAXON id="australphilus" taxonId="29" name="Australphilus" size=3 signalScore=7 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/australphilus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"]
+/1/0/1/1/0/0/1/0/1/1/0/0/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/0/1/1 TAXON id="little_diving_beetles" taxonId="37" name="little diving beetles" size=4 signalScore=1 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/little_diving_beetles_01.jpg","/taxonomy/walta/media/little_diving_beetles_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/0/1/1/0/1 Q text="greater than 4mm" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/1 NODE id="node_23" questions=2
+/1/0/1/1/0/0/1/0/1/1/0/1/0 Q text="Beetles with some form of colour pattern (variable patterns: mottled, brindled, stripes or patches.)" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/1/0 TAXON id="mixed_diving_beetles" taxonId="38" name="mixed diving beetles" size=8 signalScore=1 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/mixed_diving_beetles_01.jpg","/taxonomy/walta/media/mixed_diving_beetles_02.jpg","/taxonomy/walta/media/mixed_diving_beetles_03.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"]
+/1/0/1/1/0/0/1/0/1/1/0/1/1 Q text="Beetles totally lack colour. Black." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/0/1/1 TAXON id="stealth_diving_beetles" taxonId="39" name="stealth diving beetles" size=10 signalScore=1 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/stealth_diving_beetles_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"]
+/1/0/1/1/0/0/1/0/1/1/1 Q text="larger than 10mm" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1 NODE id="node_21" questions=2
+/1/0/1/1/0/0/1/0/1/1/1/0 Q text="less than 15mm" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/0 NODE id="node_25" questions=2
+/1/0/1/1/0/0/1/0/1/1/1/0/0 Q text="Beetle with distinctive longitudinal stripes (like a pin-stripe)." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/0/0 TAXON id="lancetes" taxonId="33" name="Lancetes" size=10 signalScore=2 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/lancetes_01.jpg","/taxonomy/walta/media/lancetes_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/0/1/1/1/0/1 Q text="Beetle without longitudinal stripes" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/0/1 NODE id="node_27" questions=2
+/1/0/1/1/0/0/1/0/1/1/1/0/1/0 Q text="Beetle with dark patch in middle of head, body pale underneath." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/0/1/0 TAXON id="eretes" taxonId="31" name="Eretes" size=16 signalScore=1 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/eretes_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/0/1/1/1/0/1/1 Q text="Beetle with light patch in middle of head, body dark underneath." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/0/1/1 TAXON id="rhantus" taxonId="35" name="Rhantus" size=14 signalScore=1 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/rhantus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/0/1/1/1/1 Q text="larger than 15mm" mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/1 NODE id="node_26" questions=2
+/1/0/1/1/0/0/1/0/1/1/1/1/0 Q text="Beetle black / dark." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/1/0 TAXON id="hyderodes" taxonId="32" name="Hyderodes" size=20 signalScore=2 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/hyderodes_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/0/1/1/1/1/1 Q text="Beetle green." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/1/1 NODE id="node_28" questions=2
+/1/0/1/1/0/0/1/0/1/1/1/1/1/0 Q text="Beetle with dark undersides. Never larger than 20mm." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/1/1/0 TAXON id="spencerhydrus" taxonId="36" name="Spencerhydrus" size=18 signalScore=5 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/spencerhydrus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/0/1/1/1/1/1/1 Q text="Beetle with orange undersides. Often larger than 20mm." mediaUrls=[]
+/1/0/1/1/0/0/1/0/1/1/1/1/1/1 TAXON id="onychohydrus" taxonId="34" name="Onychohydrus" size=28 signalScore=5 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/onychohydrus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/1 Q text="Beetles crawl (or don't move much)." mediaUrls=[]
+/1/0/1/1/0/0/1/1 NODE id="node_17" questions=2
+/1/0/1/1/0/0/1/1/0 Q text="Beetle has a distinct 'nose' or snout." mediaUrls=[]
+/1/0/1/1/0/0/1/1/0 TAXON id="curculionidae" taxonId="27" name="Curculionidae" size=9 signalScore=2 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/curculionidae_01.jpg","/taxonomy/walta/media/curculionidae_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/1/1 Q text="Beetle has no 'nose'. (How does it smell?)" mediaUrls=[]
+/1/0/1/1/0/0/1/1/1 NODE id="node_29" questions=2
+/1/0/1/1/0/0/1/1/1/0 Q text="Small to tiny beetles with well-developed claws, usually black, sometimes dark brown or red, with a shiny plastron or bubble vest; slow moving, sometimes hang motionless mid-water." mediaUrls=[]
+/1/0/1/1/0/0/1/1/1/0 TAXON id="elmidae_adult" taxonId="47" name="Elmidae adult" size=6 signalScore=7 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/elmidae_adult_01.jpg","/taxonomy/walta/media/elmidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"]
+/1/0/1/1/0/0/1/1/1/1 Q text="Not as above, may crawl on the underside of the water surface." mediaUrls=[]
+/1/0/1/1/0/0/1/1/1/1 NODE id="node_30" questions=2
+/1/0/1/1/0/0/1/1/1/1/0 Q text="Small to tiny, elongate, often metallic beetles." mediaUrls=[]
+/1/0/1/1/0/0/1/1/1/1/0 TAXON id="hydraenidae_and_hydrochidae" taxonId="54" name="Hydraenidae and Hydrochidae" size=4 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/hydraenidae_and_hydrochidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
+/1/0/1/1/0/0/1/1/1/1/1 Q text="Larger dull coloured beetles sometimes with prominent yellow egg sac." mediaUrls=[]
+/1/0/1/1/0/0/1/1/1/1/1 TAXON id="helochares" taxonId="57" name="Helochares" size=8 signalScore=2 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/helochares_01.jpg","/taxonomy/walta/media/helochares_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"]
+/1/0/1/1/0/1 Q text="leathery wingcovers, asymmetrical, animal flattened on top (true bugs)" mediaUrls=["/taxonomy/walta/media/leatherywingcovers.gif"]
+/1/0/1/1/0/1 NODE id="order_hemiptera" questions=2
+/1/0/1/1/0/1/0 Q text="Order level ID Hemiptera (true bugs)." mediaUrls=[]
+/1/0/1/1/0/1/0 TAXON id="hemiptera" taxonId="101" name="Hemiptera" size=12 signalScore=2 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/anisops_01.jpg","/taxonomy/walta/media/corixidae_m1.mp4","/taxonomy/walta/media/diplonychus_01.jpg","/taxonomy/walta/media/enithares_anisops.jpg","/taxonomy/walta/media/gelastocoridae_01.jpg","/taxonomy/walta/media/naucoris_01.jpg","/taxonomy/walta/media/pleidae_01.jpg","/taxonomy/walta/media/gerridae_01.jpg","/taxonomy/walta/media/ranatra_01.jpg","/taxonomy/walta/media/laccotrephes_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
+/1/0/1/1/0/1/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/0/1/1 NODE id="k_hemiptera" questions=2
+/1/0/1/1/0/1/1/0 Q text="Bugs walking/running on the water surface." mediaUrls=[]
+/1/0/1/1/0/1/1/0 NODE id="node_31" questions=2
+/1/0/1/1/0/1/1/0/0 Q text="Short bodied bugs that move quickly on the water surface." mediaUrls=[]
+/1/0/1/1/0/1/1/0/0 NODE id="node_33" questions=2
+/1/0/1/1/0/1/1/0/0/0 Q text="Bugs with very long hind and middle legs. Move with a skating/sculling motion." mediaUrls=[]
+/1/0/1/1/0/1/1/0/0/0 TAXON id="gerridae" taxonId="110" name="Gerridae" size=70 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/gerridae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/gerridae_b.png"]
+/1/0/1/1/0/1/1/0/0/1 Q text="Small to tiny bugs with shorter legs, running on the water surface." mediaUrls=[]
+/1/0/1/1/0/1/1/0/0/1 TAXON id="veliidae_mesoveliidae_and_hebridae" taxonId="121" name="Veliidae, Mesoveliidae and Hebridae" size=5 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/veliidae_Mesoveliidae_and_herbridae_01.jpg","/taxonomy/walta/media/veliidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/veliids_b.png"]
+/1/0/1/1/0/1/1/0/1 Q text="Elongate bugs with antennae at the very tip of the head. Walk slowly on water surface." mediaUrls=[]
+/1/0/1/1/0/1/1/0/1 TAXON id="hydrometridae" taxonId="111" name="Hydrometridae" size=15 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/hydrometridae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hydrometridae_b.png"]
+/1/0/1/1/0/1/1/1 Q text="Bugs swimming below the surface." mediaUrls=[]
+/1/0/1/1/0/1/1/1 NODE id="node_32" questions=2
+/1/0/1/1/0/1/1/1/0 Q text="Bugs walk or swim awkwardly." mediaUrls=[]
+/1/0/1/1/0/1/1/1/0 NODE id="node_34" questions=2
+/1/0/1/1/0/1/1/1/0/0 Q text="Ugly dark brown bugs with wide heads and a warty appearance. Pointed, grasping front legs. Semi-aquatic." mediaUrls=[]
+/1/0/1/1/0/1/1/1/0/0 TAXON id="gelastocoridae" taxonId="109" name="Gelastocoridae" size=10 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/gelastocoridae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
+/1/0/1/1/0/1/1/1/0/1 Q text="Large (>20mm), elongate bugs with front legs for grabbing prey. Body stick or leaf like. Long legs. Long breathing tube at hind end." mediaUrls=[]
+/1/0/1/1/0/1/1/1/0/1 NODE id="k_nepidae" questions=2
+/1/0/1/1/0/1/1/1/0/1/0 Q text="Long, thin, skinny bug, pale coloured. Looks like a stick or a piece of sedge." mediaUrls=[]
+/1/0/1/1/0/1/1/1/0/1/0 TAXON id="ranatra" taxonId="116" name="Ranatra" size=90 signalScore=3 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/ranatra_01.jpg","/taxonomy/walta/media/ranatra_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/ranatra_b.png"]
+/1/0/1/1/0/1/1/1/0/1/1 Q text="Long flattened bug, dark or black. Looks like a leaf." mediaUrls=[]
+/1/0/1/1/0/1/1/1/0/1/1 TAXON id="laccotrephes" taxonId="115" name="Laccotrephes" size=90 signalScore=3 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/laccotrephes_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/laccotrephes_b.png"]
+/1/0/1/1/0/1/1/1/1 Q text="Bugs swim well." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1 NODE id="node_35" questions=2
+/1/0/1/1/0/1/1/1/1/0 Q text="Bugs swim upside down, with legs uppermost, dark on upper surface, lighter coloured underneath." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/0 NODE id="node_36" questions=2
+/1/0/1/1/0/1/1/1/1/0/0 Q text="Tiny orange bugs with a highly convex humped back. No prominent swimming legs. Look a bit like a tiny, mobile jelly bean." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/0/0 TAXON id="pleidae" taxonId="120" name="Pleidae" size=3 signalScore=2 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/pleidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/enithares_b2.png"]
+/1/0/1/1/0/1/1/1/1/0/1 Q text="Elongate bugs with two prominent, narrow swimming legs. Swim with a jerky motion. Very active. Obviously dark on one side (top) and light on the other (underneath)." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/0/1 NODE id="k_notonectidae" questions=2
+/1/0/1/1/0/1/1/1/1/0/1/0 Q text="Robust, chunky, fast moving. Either at water surface or holding onto something. Triangular when viewed from above (animal on left of image)." mediaUrls=["/taxonomy/walta/media/enithares_anisops.jpg"]
+/1/0/1/1/0/1/1/1/1/0/1/0 TAXON id="enithares" taxonId="119" name="Enithares" size=12 signalScore=1 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/enithares_01.jpg","/taxonomy/walta/media/enithares_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/enithares_b2.png"]
+/1/0/1/1/0/1/1/1/1/0/1/1 Q text="Slender, relaxed, unhurried movement. Able to stay still mid-water (thanks to buoyancy regulation). Thinner and parallel sided when viewed from above (animal on right of image)." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/0/1/1 TAXON id="anisops" taxonId="118" name="Anisops" size=9 signalScore=1 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/anisops_01.jpg","/taxonomy/walta/media/anisops_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/anisops_b.png"]
+/1/0/1/1/0/1/1/1/1/1 Q text="Bugs swim the right way up, with legs beneath them, wings on the upper surface if present." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/1 NODE id="k_bugs" questions=2
+/1/0/1/1/0/1/1/1/1/1/0 Q text="Larger 10-30mm bugs. Front legs pointed for piercing prey. Do not flick swimming legs when at rest." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/1/0 NODE id="node_37" questions=2
+/1/0/1/1/0/1/1/1/1/1/0/0 Q text="Medium sized bugs (10-15mm) with broad heads and light/dark checks (taxi stripes) along their sides." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/1/0/0 TAXON id="naucoris" taxonId="113" name="Naucoris" size=12 signalScore=2 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/naucoris_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
+/1/0/1/1/0/1/1/1/1/1/0/1 Q text="Larger bugs (up to 30mm) without checks. Flattened body, narrower heads." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/1/0/1 TAXON id="diplonychus" taxonId="103" name="Diplonychus" size=30 signalScore=1 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/diplonychus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"]
+/1/0/1/1/0/1/1/1/1/1/1 Q text="Small (<10mm) active bugs with two broad paddle like swimming legs which they flick back and forth when at rest. Streamlined body, blunt head. An air bubble may be visible under the body. May make buzzing or squeaking sounds in the tray." mediaUrls=["/taxonomy/walta/media/corixidae_m1.mp4"]
+/1/0/1/1/0/1/1/1/1/1/1 NODE id="k_corixidae" questions=2
+/1/0/1/1/0/1/1/1/1/1/1/0 Q text="Small boatmen (<4mm), mottled or brindle wing covers (see photo). By far the commonest corixid." mediaUrls=["/taxonomy/walta/media/micronecta_01.jpg"]
+/1/0/1/1/0/1/1/1/1/1/1/0 TAXON id="micronecta" taxonId="107" name="Micronecta" size=4 signalScore=2 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/micronecta_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"]
+/1/0/1/1/0/1/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/1/1/1 NODE id="node_38" questions=2
+/1/0/1/1/0/1/1/1/1/1/1/1/0 Q text="Segment after the head (pronotum) with distinctive stripes or bands (see photo) you need a hand lens to see this." mediaUrls=["/taxonomy/walta/media/sigara_01.jpg"]
+/1/0/1/1/0/1/1/1/1/1/1/1/0 TAXON id="sigara" taxonId="108" name="Sigara" size=8 signalScore=3 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/sigara_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"]
+/1/0/1/1/0/1/1/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/1/1/1/1 NODE id="node_39" questions=2
+/1/0/1/1/0/1/1/1/1/1/1/1/1/0 Q text="Head with 'nostrils' (Ocelli, they are more like eyes - see photo). Usually distinctly orange or yellow coloured head and underneath." mediaUrls=["/taxonomy/walta/media/diaprepocoris_01.jpg"]
+/1/0/1/1/0/1/1/1/1/1/1/1/1/0 TAXON id="diaprepocoris_barycephala" taxonId="106" name="Diaprepocoris barycephala" size=8 signalScore=6 taxonomicLevel="species" mediaUrls=["/taxonomy/walta/media/diaprepocoris_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"]
+/1/0/1/1/0/1/1/1/1/1/1/1/1/1 Q text="Large boatmen (>4mm) brown /yellow /grey, markings are not distinctive, looks a lot like television static (pre-digital telly). Unlike all of the above. Rare." mediaUrls=[]
+/1/0/1/1/0/1/1/1/1/1/1/1/1/1 TAXON id="agraptocorixa" taxonId="105" name="Agraptocorixa" size=10 signalScore=6 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/agraptocorixa_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"]
+/1/0/1/1/1 Q text="with no wing covers, possibly with wing buds" mediaUrls=["/taxonomy/walta/media/nowingcovers.gif"]
+/1/0/1/1/1 NODE id="node_15" questions=2
+/1/0/1/1/1/0 Q text="no obvious tails" mediaUrls=["/taxonomy/walta/media/notails.gif"]
+/1/0/1/1/1/0 NODE id="node_40" questions=2
+/1/0/1/1/1/0/0 Q text="with a case. Sometimes the case may be lost. Look for small, terminal, lateral hooks on the abdomen or ventral pro-legs on the abdomen." mediaUrls=["/taxonomy/walta/media/withcase.gif"]
+/1/0/1/1/1/0/0 NODE id="node_42" questions=2
+/1/0/1/1/1/0/0/0 Q text="long legs,case never with coarse vegetation badly attached lengthways" mediaUrls=["/taxonomy/walta/media/casedcaddisflies.gif"]
+/1/0/1/1/1/0/0/0 NODE id="order_trichoptera" questions=2
+/1/0/1/1/1/0/0/0/0 Q text="Order level ID Trichoptera (caddisflies)" mediaUrls=[]
+/1/0/1/1/1/0/0/0/0 TAXON id="trichoptera" taxonId="145" name="Caddis" size=25 signalScore=8 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydropsychidae_01.jpg","/taxonomy/walta/media/oecetis_01.jpg","/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/log_cabin_caddis_01.jpg","/taxonomy/walta/media/triplectides_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
+/1/0/1/1/1/0/0/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1 NODE id="k_trichoptera" questions=2
+/1/0/1/1/1/0/0/0/1/0 Q text="Caddis living in a portable case. Most crawl slowly, some swim by head-thrashing or arm-waving; if out of case, body blunt ending with tiny prolegs and hooks." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0 NODE id="k_cased" questions=2
+/1/0/1/1/1/0/0/0/1/0/0 Q text="Tiny larvae <5mm long. Abdomen yellow, swollen, thicker than thorax. Purse shaped case of translucent silk, sometimes with sand or algae. Slow moving, hard to see." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/0 TAXON id="hydroptilidae" taxonId="161" name="Hydroptilidae" size=5 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/hydroptilidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1 NODE id="node_45" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/0 Q text="Fang-shaped case made from fine particles, sometimes with a groove. Hind legs curved like talons, head pointy, all body segments covered in hairs." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/0 TAXON id="atriplectides" taxonId="147" name="Atriplectides" size=15 signalScore=3 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/atriplectides_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1 NODE id="node_46" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/0 Q text="Case made mainly from sand." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0 NODE id="node_47" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/0/0 Q text="Case like a messy ‘sand igloo’. Larvae fall out easily. Slow moving." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/0 TAXON id="agapetus" taxonId="156" name="Agapetus" size=6 signalScore=9 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/glossosomatidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1 Q text="Case not like a messy sand igloo." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1 NODE id="node_49" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/0 Q text="Case appears round but is actually coiled like a snail shell. Active but slow moving." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/0 TAXON id="helicopsyche" taxonId="158" name="Helicopsyche" size=5 signalScore=8 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/helicopsyche_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/flat_snail_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1 Q text="Case not like a snail shell." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1 NODE id="node_50" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/0 Q text="Case triangular, often with larger particles down each side. Eyes of larvae protrude when viewed from above." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/0 TAXON id="tasimiidae" taxonId="173" name="Tasimiidae" size=10 signalScore=8 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/tasimiidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/1 Q text="Case tubular, legs sharp, for grabbing prey. Fast deliberate movement." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/1 NODE id="node_51" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/1/0 Q text="Animal found in highland site" mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/1/0 TAXON id="philorheithridae" taxonId="172" name="Philorheithridae" size=25 signalScore=8 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/philorheithridae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/1/1 Q text="Animal found in a lowland site" mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/0/1/1/1/1 TAXON id="attack_caddis_lowlander" taxonId="166" name="Some Oecetis sp. (Leptoceridae) and Odontoceridae" size=25 signalScore=8 taxonomicLevel="" mediaUrls=["/taxonomy/walta/media/oecetis_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1 Q text="Case made from plant material or silk secretion but may incorporate some mineral particles." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1 NODE id="node_48" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0 Q text="Case made from flat pieces of leaf, giving it a flat appearance overall." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0 NODE id="node_52" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/0 Q text="Case built from 2 flat pieces of leaf, the dorsal piece is slightly larger forming a 'veranda'." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/0 TAXON id="anisocentropus" taxonId="149" name="Anisocentropus" size=20 signalScore=7 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/anisocentropus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/1 Q text="Not as above" mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/1 NODE id="node_54" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/1/0 Q text="Case built from many round, shingle-like bits of leaf, in two distinct rows." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/1/0 TAXON id="caenota_plicata" taxonId="151" name="Caenota plicata" size=20 signalScore=7 taxonomicLevel="" mediaUrls=["/taxonomy/walta/media/caenota_plicata_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/1/1 Q text="Case built from a messy assortment of leaf plates, but still flat. Sometimes tapered quite severely." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/0/1/1 TAXON id="lectrides_varians" taxonId="163" name="Lectrides varians" size=25 signalScore=4 taxonomicLevel="species" mediaUrls=["/taxonomy/walta/media/lectrides_varians_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1 Q text="Case made from all sorts, including: silk secretion, sticks, or other plant material and sometimes sand (never leaf plates by themselves). Case not flat." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1 NODE id="node_53" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/0 Q text="Larvae with short legs, head compact, bullet like. Case often made with rings of different colours, sometimes with sand or may look like orange plastic. Slow moving, never swimming." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/0 TAXON id="conoesucidae_calocidae_and_helicophidae" taxonId="152" name="Conoesucidae, Calocidae and Helicophidae" size=13 signalScore=7 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/conoesucidae_calocidae_and_helicophidae_01.jpg","/taxonomy/walta/media/conoesucidae_calocidae_and_helicophidae_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/conoesucidae_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1 Q text="Larvae with long legs; may swim by thrashing their head about. Case variable." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1 NODE id="k_leptoceridae" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/0 Q text="Case constructed from a single stick or piece of aquatic plant." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/0 TAXON id="triplectides" taxonId="169" name="Triplectides" size=30 signalScore=4 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/triplectides_01.jpg","/taxonomy/walta/media/triplectides_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1 NODE id="node_55" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/0 Q text="Case constructed like a log cabin, square in cross section (see photo)." mediaUrls=["/taxonomy/walta/media/log_cabin_caddis_01.jpg"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/0 TAXON id="log_cabin_caddis" taxonId="167" name="Oecetis" size=20 signalScore=5 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/log_cabin_caddis_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1 NODE id="node_56" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/0 Q text="Case with sand or fine gravel at the opening (front) and the rest of the case made from pieces of vegetation." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/0 TAXON id="symphitoneuria" taxonId="168" name="Symphitoneuria" size=15 signalScore=6 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/symphitoneuria_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/1 NODE id="node_57" questions=2
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/1/0 Q text="Case made from a variety of materials, may be arranged spirally (but not always). When disturbed animal flails its body in a head-banging motion." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/1/0 TAXON id="notalina" taxonId="164" name="Notalina" size=21 signalScore=6 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/notalina_01.jpg","/taxonomy/walta/media/headbanger_caddis_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/1/1 Q text="Not as above. Generally a mix of caddis with long hind legs and mixed messy cases" mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/0/1/1/1/1/1/1/1/1/1 TAXON id="leptocerids" taxonId="170" name="Leptocerids" size=null signalScore=6 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/leptocerids_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"]
+/1/0/1/1/1/0/0/0/1/1 Q text="Free-living caddis, body with abdominal pro-legs (like a pair of hooks on short prolegs at the end of the abdomen, these may look like tails without magnification)." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1 NODE id="k_freeliving" questions=2
+/1/0/1/1/1/0/0/0/1/1/0 Q text="Order level ID Trichoptera (caddisflies)" mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/0 -> (visited TAXON:145)
+/1/0/1/1/1/0/0/0/1/1/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/1 NODE id="node_44b" questions=2
+/1/0/1/1/1/0/0/0/1/1/1/0 Q text="All three thoracic segments (leg-bearing segments after the head) hard or sclerotised, they appear darker or different in colour to the soft unsclerotised abdomen." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/1/0 NODE id="node_58" questions=2
+/1/0/1/1/1/0/0/0/1/1/1/0/0 Q text="Abdominal gills present (hairy chest), slow moving. May undulate abdomen to ventilate gills. To 15mm." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/1/0/0 TAXON id="hydropsychidae" taxonId="160" name="Hydropsychidae" size=12 signalScore=6 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/hydropsychidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hydropsychidae_b.png"]
+/1/0/1/1/1/0/0/0/1/1/1/0/1 Q text="Abdominal gills absent, often with a pattern on the head like a bandits mask." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/1/0/1 TAXON id="ecnomus" taxonId="154" name="Ecnomus" size=15 signalScore=4 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/ecnomus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hydropsychidae_b.png"]
+/1/0/1/1/1/0/0/0/1/1/1/1 Q text="Only the first thoracic segment sclerotised." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/1/1 NODE id="node_59" questions=2
+/1/0/1/1/1/0/0/0/1/1/1/1/0 Q text="Larvae can be green when alive. Forelegs modified into a pincer, scissors, or broad with a large spine. Larvae hunt from side to side with the forelegs." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/1/1/0 TAXON id="hydrobiosidae" taxonId="159" name="Hydrobiosidae" size=20 signalScore=8 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_m1.mp4","/taxonomy/walta/media/hydrobiosidae_m2.mp4"] bluebug=["/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"]
+/1/0/1/1/1/0/0/0/1/1/1/1/1 Q text="Larvae without pincers, body not green. Often pale, head brown or yellow. Don't tend to hunt actively." mediaUrls=[]
+/1/0/1/1/1/0/0/0/1/1/1/1/1 TAXON id="philopotamidae_polycentropodidae_and_ecnomidae" taxonId="171" name="Philopotamidae, Polycentropodidae and Ecnomidae" size=18 signalScore=7 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/philopotamidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"]
+/1/0/1/1/1/0/0/1 Q text="short, stumpy legs, case with coarse vegetation badly attached lengthways" mediaUrls=["/taxonomy/walta/media/aquatic_caterpillers_01.gif"]
+/1/0/1/1/1/0/0/1 TAXON id="lepidoptera" taxonId="25" name="Lepidoptera" size=20 signalScore=2 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/lepidoptera_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/lepidoptera_b.png"]
+/1/0/1/1/1/0/1 Q text="without a case" mediaUrls=["/taxonomy/walta/media/nocase.gif"]
+/1/0/1/1/1/0/1 NODE id="node_43" questions=2
+/1/0/1/1/1/0/1/0 Q text="with wingbuds and well developed compound eyes" mediaUrls=["/taxonomy/walta/media/compoundeyes.gif"]
+/1/0/1/1/1/0/1/0 NODE id="order_odonata" questions=2
+/1/0/1/1/1/0/1/0/0 Q text="Order level ID Odonata (dragonflies and damselflies)." mediaUrls=[]
+/1/0/1/1/1/0/1/0/0 TAXON id="odonata" taxonId="122" name="spider mud eye" size=40 signalScore=3 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4","/taxonomy/walta/media/gomphidae_01.jpg","/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4","/taxonomy/walta/media/megapodagrionidae_01.jpg","/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
+/1/0/1/1/1/0/1/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1 NODE id="k_odonata" questions=2
+/1/0/1/1/1/0/1/0/1/0 Q text="Slender larvae, with 3 long tails (terminal gills). These can break off. Swim by undulating (snake-like)." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0 NODE id="k_prezygoptera" questions=2
+/1/0/1/1/1/0/1/0/1/0/0 Q text="sub order ID Zygoptera (damselfly nymphs)" mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/0 TAXON id="zygoptera" taxonId="128" name="damselflies" size=30 signalScore=3 taxonomicLevel="suborder" mediaUrls=["/taxonomy/walta/media/megapodagrionidae_01.jpg","/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"]
+/1/0/1/1/1/0/1/0/1/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1 NODE id="k_zygoptera" questions=2
+/1/0/1/1/1/0/1/0/1/0/1/0 Q text="Leaf-like terminal gills held flat and fanned out horizontally." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/0 TAXON id="megapodagrionidae" taxonId="132" name="Megapodagrionidae" size=26 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/megapodagrionidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"]
+/1/0/1/1/1/0/1/0/1/0/1/1 Q text="Gills different in shape or orientation." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/1 NODE id="node_60" questions=2
+/1/0/1/1/1/0/1/0/1/0/1/1/0 Q text="Gills shorter than last 3 abdominal segments" mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/1/0 TAXON id="synlestidae" taxonId="133" name="Synlestidae" size=20 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/synlestidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"]
+/1/0/1/1/1/0/1/0/1/0/1/1/1 Q text="Gills equal in length or longer than last 3 abdominal segments." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/1/1 NODE id="node_61" questions=2
+/1/0/1/1/1/0/1/0/1/0/1/1/1/0 Q text="Gills divided into two parts by constriction." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/1/1/0 TAXON id="isostictidae" taxonId="130" name="Isostictidae" size=20 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/isostictidae_01.jpg","/taxonomy/walta/media/isostictidae_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"]
+/1/0/1/1/1/0/1/0/1/0/1/1/1/1 Q text="Gills complete, without constriction." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/1/1/1 NODE id="node_62" questions=2
+/1/0/1/1/1/0/1/0/1/0/1/1/1/1/0 Q text="Gills sack-like, with hairy ends." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/1/1/1/0 TAXON id="diphlebiidae" taxonId="129" name="Diphlebiidae" size=30 signalScore=2 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/diphlebiidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"]
+/1/0/1/1/1/0/1/0/1/0/1/1/1/1/1 Q text="Gills leaf like." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/0/1/1/1/1/1 TAXON id="lestidae_and_coenagrionidae" taxonId="131" name="Lestidae and Coenagrionidae" size=30 signalScore=2 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg","/taxonomy/walta/media/zygoptera_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"]
+/1/0/1/1/1/0/1/0/1/1 Q text="Robust larvae, without tails. Swim by jetting water out of their bums." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/1 NODE id="k_preepiproctophora" questions=2
+/1/0/1/1/1/0/1/0/1/1/0 Q text="sub order ID Epiproctophora (dragonfly nymphs)" mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/1/0 TAXON id="epiproctophora" taxonId="123" name="dragonflies" size=40 signalScore=3 taxonomicLevel="suborder" mediaUrls=["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4","/taxonomy/walta/media/gomphidae_01.jpg","/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
+/1/0/1/1/1/0/1/0/1/1/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/1/1 NODE id="k_epiproctophora" questions=2
+/1/0/1/1/1/0/1/0/1/1/1/0 Q text="Medium sized nymphs with club or sausage shaped antennae. Sluggish, often green or brown. No obvious spines on the edges of abdominal segments." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/1/1/0 TAXON id="gomphidae" taxonId="125" name="Gomphidae" size=30 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/gomphidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/spidermudeye_b.png"]
+/1/0/1/1/1/0/1/0/1/1/1/1 Q text="Large nymphs with tiny antennae" mediaUrls=["/taxonomy/walta/media/mouthpartsfolded.jpg"]
+/1/0/1/1/1/0/1/0/1/1/1/1 NODE id="node_63" questions=2
+/1/0/1/1/1/0/1/0/1/1/1/1/0 Q text="Fat, round ended body and long legs make them look spider-like. Mouthparts form a ladle-shaped mask in front of face." mediaUrls=["/taxonomy/walta/media/mudeyeface.jpg"]
+/1/0/1/1/1/0/1/0/1/1/1/1/0 TAXON id="spider_mud_eye" taxonId="127" name="spider mud eye" size=30 signalScore=5 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/spidermudeye_b.png"]
+/1/0/1/1/1/0/1/0/1/1/1/1/1 Q text="Relatively elongate body, NOT spider-like. Mouthparts flat, folded under 'chin'" mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/1/1/1/1 NODE id="node_64" questions=2
+/1/0/1/1/1/0/1/0/1/1/1/1/1/0 Q text="Dark mottled nymphs usually with large spines on the edges of the abdominal segments. Central bum-spine pointed." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/1/1/1/1/0 TAXON id="telephlebiidae" taxonId="126" name="Telephlebiidae" size=30 signalScore=9 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/telephlebiidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
+/1/0/1/1/1/0/1/0/1/1/1/1/1/1 Q text="Green or brown nymphs. Central bum-spine with a cut-off end. This can be seen even on small nymphs." mediaUrls=[]
+/1/0/1/1/1/0/1/0/1/1/1/1/1/1 TAXON id="aeshnidae" taxonId="124" name="Aeshnidae" size=40 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"]
+/1/0/1/1/1/0/1/1 Q text="without wing buds, eyes simple dots" mediaUrls=["/taxonomy/walta/media/doteyes.gif"]
+/1/0/1/1/1/0/1/1 NODE id="k_larval" questions=2
+/1/0/1/1/1/0/1/1/0 Q text="mouthparts straight and longer than head" mediaUrls=["/taxonomy/walta/media/lacewinglarvae.gif"]
+/1/0/1/1/1/0/1/1/0 TAXON id="neuroptera" taxonId="24" name="Neuroptera" size=20 signalScore=8 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/neurorthridae_01.jpg","/taxonomy/walta/media/osmylidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/neuroptera_b.png"]
+/1/0/1/1/1/0/1/1/1 Q text="mouthparts short and curved or too small to see" mediaUrls=["/taxonomy/walta/media/shortcurvedmouth.gif"]
+/1/0/1/1/1/0/1/1/1 NODE id="node_104" questions=2
+/1/0/1/1/1/0/1/1/1/0 Q text="animals with a single row of projections along the sides of the abdomen" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0 NODE id="node_65" questions=2
+/1/0/1/1/1/0/1/1/1/0/0 Q text="7 or 8 abdominal projections (dangly bits), found in rivers" mediaUrls=["/taxonomy/walta/media/toebiter.gif"]
+/1/0/1/1/1/0/1/1/1/0/0 NODE id="order_megaloptera" questions=2
+/1/0/1/1/1/0/1/1/1/0/0/0 Q text="Order level ID Megaloptera (Dobson flies and Alderflies)" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/0/0 TAXON id="megaloptera" taxonId="22" name="Megaloptera" size=35 signalScore=8 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/corydalidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/megaloptera_b.png"]
+/1/0/1/1/1/0/1/1/1/0/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/0/1 NODE id="k_megaloptera_larvae" questions=2
+/1/0/1/1/1/0/1/1/1/0/0/1/0 Q text="robust animal, distinctive, abdominal projections robust (see image), found in cobbly rivers" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/0/1/0 TAXON id="corydalidae" taxonId="23" name="Corydalidae" size=35 signalScore=10 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/corydalidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/megaloptera_b.png"]
+/1/0/1/1/1/0/1/1/1/0/0/1/1 Q text="slender animal, or with slender abdominal projections (dangly bits), found in pools and wetlands" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/0/1/1 TAXON id="sialidae" taxonId="201" name="Sialidae" size=35 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/sialidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/megaloptera_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1 Q text="9 or 10 abdominal projections (dangly bits), found in pools and wetlands" mediaUrls=["/taxonomy/walta/media/beetlelarvae.gif"]
+/1/0/1/1/1/0/1/1/1/0/1 NODE id="k_coleoptera_larvae" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/0 Q text="Order level ID Coleoptera (beetles)" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/0 -> (visited TAXON:26)
+/1/0/1/1/1/0/1/1/1/0/1/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1 NODE id="k_coleoptera_larvae_b" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/0 Q text="Beetle larvae swim actively with all legs; usually with wide flat heads and prominent mandibles; middle of the head sometimes projected forwards like a nose on smaller examples; may be biting and killing other animals in the tray." mediaUrls=["/taxonomy/walta/media/dytiscidae_larva_m1.mp4"]
+/1/0/1/1/1/0/1/1/1/0/1/1/0 NODE id="k_dytiscidae_L" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/0/0 Q text="Larvae larger than 12mm long." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/0 NODE id="node_67" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/0/0/0 Q text="Larvae without a pair of tails. Last segment tapers to a point and is fringed with swimming hairs." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/0/0 TAXON id="taper_tailed_tiger_larvae" taxonId="41" name="taper-tailed tiger larvae" size=50 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/taper-tailed_tiger_larvae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/0/1 Q text="Larvae with two distinct tails" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/0/1 TAXON id="two_tailed_tiger_larvae" taxonId="42" name="two-tailed tiger larvae" size=35 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/two-tailed_tiger_larvae_01.jpg","/taxonomy/walta/media/dytiscidae_larva_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1 Q text="Larvae shorter than 12mm long." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1 NODE id="node_68" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/0 Q text="Larvae with a strong 'nose'." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/0 TAXON id="nosey_tiger_larvae" taxonId="43" name="nosey tiger larvae" size=12 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/nosey_tiger_larvae_01.jpg","/taxonomy/walta/media/nosey_tiger_larvae_02.jpg","/taxonomy/walta/media/nosey_tiger_larvae_03.jpg"] bluebug=["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/1 Q text="Larvae without a nose." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/1 NODE id="node_69" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/1/0 Q text="Larvae strong swimmers, constantly moving, obvious tails." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/1/0 TAXON id="swimming_water_tiger_larvae" taxonId="45" name="swimming water tiger larvae" size=12 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/swimming_water_tiger_larvae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/1/1 Q text="Larvae crawl slowly, tails minute." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/0/1/1/1 TAXON id="crawling_water_tiger_larvae" taxonId="44" name="crawling water tiger larvae" size=12 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/crawling_water_tiger_larvae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1 Q text="Beetle larvae crawl slowly, or, may propel themselves by longitudinal thrashing of the body." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1 NODE id="node_66" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/1/0 Q text="Strongly flattened, round, slater-like larvae, on rocks." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/0 TAXON id="sclerocyphon" taxonId="65" name="Sclerocyphon" size=10 signalScore=6 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/sclerocyphon_01.jpg","/taxonomy/walta/media/sclerocyphon_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/psephenidae_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1 NODE id="node_70" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0 Q text="Elongate slow moving larvae with hard bodies and short legs; often dark coloured, flowing water." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0 NODE id="k_crunchy_beetle_larvae" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/0 Q text="Flattened, cockroach-like larvae with simple bodies and long antennae. Yellow, brown to black." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/0 TAXON id="scirtidae" taxonId="68" name="Scirtidae" size=10 signalScore=6 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/scirtidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/scirtidae_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/1 Q text="Larvae with short antennae, not obviously flattened." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/1 NODE id="node_72" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/1/0 Q text="Small to tiny and often comma shaped." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/1/0 TAXON id="elmidae_larvae" taxonId="48" name="Elmidae larvae" size=6 signalScore=7 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/elmidae_larvae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/elmidae_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/1/1 Q text="Larger more elongate larvae shiny, water repellent skin. Sometimes stuck in water surface tension." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/0/1/1 TAXON id="byrrocryptus" taxonId="67" name="Byrrocryptus" size=20 signalScore=10 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/byrrocryptus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1 Q text="Soft bodied larvae, still and flowing water." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1 NODE id="node_71" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/0 Q text="Elongate, slender larvae with feathery lateral gills and terminal anal claws (see picture); head dark, body pale." mediaUrls=["/taxonomy/walta/media/gyrinidae_larvae_01.jpg"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/0 TAXON id="gyrinidae_larvae" taxonId="51" name="Gyrinidae larvae" size=15 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/gyrinidae_larvae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1 Q text="Robust larvae, without feathery gills but may have long lateral filaments; large head with prominent mandibles." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1 NODE id="node_73" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/0 Q text="Abdomen with long lateral filaments." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/0 TAXON id="berosus" taxonId="56" name="Berosus" size=8 signalScore=2 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/berosus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/berosus_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/1 NODE id="node_74" questions=2
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/1/0 Q text="Large beetle larvae (up to 50mm). Dark head that is angled upwards." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/1/0 TAXON id="hydrophilus" taxonId="58" name="Hydrophilus" size=50 signalScore=2 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/hydrophilus_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/berosus_b.png"]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/0/1/1/1/1/1/1/1/1 TAXON id="water_scavenger_beetle_larvae" taxonId="60" name="Water scavenger beetle larvae" size=10 signalScore=2 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/water_scavenger_beetle_larvae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"]
+/1/0/1/1/1/0/1/1/1/1 Q text="animals without a single row of projections (may have a mess of gills)" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/1 NODE id="node_44c" questions=2
+/1/0/1/1/1/0/1/1/1/1/0 Q text="animals with robust posterior prolegs (like a pair of hooks on short prolegs at the end of the abdomen)" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/1/0 -> (visited NODE:k_freeliving)
+/1/0/1/1/1/0/1/1/1/1/1 Q text="animals without robust posterior prolegs" mediaUrls=[]
+/1/0/1/1/1/0/1/1/1/1/1 -> (visited NODE:k_coleoptera_larvae)
+/1/0/1/1/1/1 Q text="with obvious tails. Check they are not abdominal pro-legs (like a pair of hooks on short prolegs at the end of the abdomen)" mediaUrls=["/taxonomy/walta/media/withtails.gif"]
+/1/0/1/1/1/1 NODE id="node_41" questions=2
+/1/0/1/1/1/1/0 Q text="with two tails" mediaUrls=["/taxonomy/walta/media/stoneflynymph.gif"]
+/1/0/1/1/1/1/0 NODE id="node_75" questions=2
+/1/0/1/1/1/1/0/0 Q text="with compound eyes (like a mirror ball upclose) and wing buds (except on very young animals)" mediaUrls=["/taxonomy/walta/media/stoneflynymph.gif"]
+/1/0/1/1/1/1/0/0 NODE id="order_plecoptera" questions=2
+/1/0/1/1/1/1/0/0/0 Q text="Order level ID Plecoptera (Stoneflies)" mediaUrls=[]
+/1/0/1/1/1/1/0/0/0 TAXON id="plecoptera" taxonId="134" name="Stoneflies" size=25 signalScore=10 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/acruroperla_atra_01.jpg","/taxonomy/walta/media/austroperlids_01.jpg","/taxonomy/walta/media/hairy_sprawler_01.jpg","/taxonomy/walta/media/blond_sprawler_01.jpg","/taxonomy/walta/media/eustheniidae_01.jpg","/taxonomy/walta/media/ gripopterygidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1 NODE id="k_plecoptera" questions=2
+/1/0/1/1/1/1/0/0/1/0 Q text="Large nymphs up to 40mm usually bright green, orange or blue. Animals have gills along the side of the abdomen." mediaUrls=["/taxonomy/walta/media/sidegills.jpg"]
+/1/0/1/1/1/1/0/0/1/0 TAXON id="eustheniidae" taxonId="138" name="Eustheniidae" size=40 signalScore=10 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/eustheniidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/eusthenia_b.png"]
+/1/0/1/1/1/1/0/0/1/1 Q text="Smaller nymphs, less flamboyantly coloured, with gills on the tip of the abdomen or with no visible gills." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1 NODE id="node_77" questions=2
+/1/0/1/1/1/1/0/0/1/1/0 Q text="Nymphs with two long tails. (These could be broken leaving only ‘stumps’). Gills either absent or look like a tuft or pom-pom at the end of the abdomen." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0 NODE id="node_78" questions=2
+/1/0/1/1/1/1/0/0/1/1/0/0 Q text="External gills form tuft at the tip of the abdomen earning them the common name of 'fluffy bums'. Often wag their abdomen to oxygenate the gills." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/0 NODE id="node_80" questions=2
+/1/0/1/1/1/1/0/0/1/1/0/0/0 Q text="Smaller nymphs, brown or black with a single row or ridge of triangular projections along their back." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/0/0 TAXON id="riekoperla" taxonId="141" name="Riekoperla" size=10 signalScore=8 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/riekoperla_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1/1/0/0/1 Q text="No triangular projections along their back." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/0/1 NODE id="node_81" questions=2
+/1/0/1/1/1/1/0/0/1/1/0/0/1/0 Q text="Large, sprawling nymphs with hairy legs, hairs dark and conspicuous. Often with high contrast patterns" mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/0/1/0 TAXON id="hairy_sprawler" taxonId="142" name="Hairy sprawler" size=18 signalScore=10 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/hairy_sprawler_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1/1/0/0/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/0/1/1 NODE id="node_82" questions=2
+/1/0/1/1/1/1/0/0/1/1/0/0/1/1/0 Q text="Large, sprawling nymphs, hairs pale if present. Blond, never darkly patterned." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/0/1/1/0 TAXON id="illiesoperla" taxonId="140" name="Illiesoperla" size=18 signalScore=10 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/illiesoperla_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1/1/0/0/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/0/1/1/1 TAXON id="gripops_or_fluffy_bums" taxonId="143" name="Gripops or Fluffy bums" size=10 signalScore=7 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/gripopterygidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1/1/0/1 Q text="Smaller nymphs with no gills on the tip of the abdomen. May also wag, but don't have fluffy gills." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/0/1 TAXON id="notonemouridae" taxonId="144" name="Notonemouridae" size=12 signalScore=6 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/notonemouridae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1/1/1 Q text="Nymphs with short tails, shorter than half the length of the abdomen. Only 3 or 5 gills, which are similar in length and thickness to the tails." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/1 NODE id="node_79" questions=2
+/1/0/1/1/1/1/0/0/1/1/1/0 Q text="Nymphs with a double row of spines along their backs." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/1/0 NODE id="acruroperla_crypturoperla" questions=2
+/1/0/1/1/1/1/0/0/1/1/1/0/0 Q text="Mainland." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/1/0/0 TAXON id="acruroperla_atra" taxonId="136" name="Acruroperla atra" size=18 signalScore=10 taxonomicLevel="species" mediaUrls=["/taxonomy/walta/media/acruroperla_atra_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1/1/1/0/1 Q text="Tasmania." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/1/0/1 TAXON id="crypturoperla_paradoxa" taxonId="205" name="Crypturoperla paradoxa" size=18 signalScore=10 taxonomicLevel="species" mediaUrls=[""] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/0/1/1/1/1 Q text="Nymphs without a double row of spines." mediaUrls=[]
+/1/0/1/1/1/1/0/0/1/1/1/1 TAXON id="austroperlids" taxonId="137" name="Austroperlids" size=30 signalScore=10 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/austroperlids_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"]
+/1/0/1/1/1/1/0/1 Q text="simple eyes (several dots), never with wing pads" mediaUrls=["/taxonomy/walta/media/swimming_water_tiger_larvae_01.jpg"]
+/1/0/1/1/1/1/0/1 -> (visited NODE:k_coleoptera_larvae)
+/1/0/1/1/1/1/1 Q text="with three tails" mediaUrls=["/taxonomy/walta/media/threetails.gif"]
+/1/0/1/1/1/1/1 NODE id="mayfly_start_point" questions=2
+/1/0/1/1/1/1/1/0 Q text="adult mayfly with obvious wings, found out of the water, or on the surface" mediaUrls=["/taxonomy/walta/media/adult_mayfly.gif"]
+/1/0/1/1/1/1/1/0 NODE id="k_adult_mayflies" questions=2
+/1/0/1/1/1/1/1/0/0 Q text="hind wing obviously greater than 1/3 the length of the forewing" mediaUrls=[]
+/1/0/1/1/1/1/1/0/0 NODE id="node_112" questions=2
+/1/0/1/1/1/1/1/0/0/0 Q text="wings pink-purple, and/or with a cluster of cells near the apex that have more than 5 sides" mediaUrls=[]
+/1/0/1/1/1/1/1/0/0/0 TAXON id="adult_ameletopsidae" taxonId="256" name="Adult Ameletopsidae" size=20 signalScore=7 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/mirawara_01.jpg"] bluebug=[]
+/1/0/1/1/1/1/1/0/0/1 Q text="wings clear, grey, yellow or brown, and all cells with a maximum of five sides" mediaUrls=[]
+/1/0/1/1/1/1/1/0/0/1 NODE id="node_113" questions=2
+/1/0/1/1/1/1/1/0/0/1/0 Q text="3 tails (2 cerci and one terminal filament)" mediaUrls=[]
+/1/0/1/1/1/1/1/0/0/1/0 TAXON id="adult_siphlonuridae" taxonId="250" name="Adult Siphlonuridae" size=17 signalScore=10 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/siphlonuridae_01.jpg"] bluebug=[]
+/1/0/1/1/1/1/1/0/0/1/1 Q text="2 tails" mediaUrls=[]
+/1/0/1/1/1/1/1/0/0/1/1 NODE id="node_114" questions=2
+/1/0/1/1/1/1/1/0/0/1/1/0 Q text="small mayfly (found near lakes and slow flowing parts rivers)" mediaUrls=[]
+/1/0/1/1/1/1/1/0/0/1/1/0 TAXON id="adult_oniscigastridae" taxonId="251" name="Adult Oniscigastridae" size=15 signalScore=8 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/tasmanophlebia_01.jpg"] bluebug=[]
+/1/0/1/1/1/1/1/0/0/1/1/1 Q text="large mayfly (found near pebble /cobble streams and rivers)" mediaUrls=[]
+/1/0/1/1/1/1/1/0/0/1/1/1 TAXON id="adult_coloburiscidae" taxonId="252" name="Adult Coloburiscidae" size=20 signalScore=8 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/coloburiscoides_01.jpg","/taxonomy/walta/media/coloburiscoides_m1.mp4"] bluebug=[]
+/1/0/1/1/1/1/1/0/1 Q text="hind wing 1/3 the length of the forewing, smaller, or absent" mediaUrls=[]
+/1/0/1/1/1/1/1/0/1 NODE id="node_115" questions=2
+/1/0/1/1/1/1/1/0/1/0 Q text="with hind wings" mediaUrls=[]
+/1/0/1/1/1/1/1/0/1/0 NODE id="node_116" questions=2
+/1/0/1/1/1/1/1/0/1/0/0 Q text="hind wings very small, margin of forewing with numerous unconnected ends of veins" mediaUrls=["/taxonomy/walta/media/adult_baetidae.gif"]
+/1/0/1/1/1/1/1/0/1/0/0 TAXON id="adult_baetidae" taxonId="253" name="Adult Baetidae" size=10 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/baetidae_m1.mp4"] bluebug=[]
+/1/0/1/1/1/1/1/0/1/0/1 Q text="hind wings 1/3 the length of forewing, margin veins all connected" mediaUrls=["/taxonomy/walta/media/adult_mayfly.gif"]
+/1/0/1/1/1/1/1/0/1/0/1 TAXON id="adult_leptophlebiidae" taxonId="254" name="Adult Leptophlebiidae" size=20 signalScore=8 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/leptophlebs_01.jpg"] bluebug=[]
+/1/0/1/1/1/1/1/0/1/1 Q text="without hindwings" mediaUrls=[]
+/1/0/1/1/1/1/1/0/1/1 NODE id="node_117" questions=2
+/1/0/1/1/1/1/1/0/1/1/0 Q text="forewings with very few cross veins, all marginal veins well connected" mediaUrls=["/taxonomy/walta/media/adult_caenidae_prosopistomatidae.gif"]
+/1/0/1/1/1/1/1/0/1/1/0 TAXON id="adult_caenidae_prosopistomatidae" taxonId="255" name="Adult Caenidae and Prosopistomatidae" size=8 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/caenidae_01.jpg","/taxonomy/walta/media/caenidae_m1.mp4"] bluebug=[]
+/1/0/1/1/1/1/1/0/1/1/1 Q text="forewings with many cross veins, some marginal veins unconnected" mediaUrls=["/taxonomy/walta/media/adult_baetidae.gif"]
+/1/0/1/1/1/1/1/0/1/1/1 -> (visited TAXON:253)
+/1/0/1/1/1/1/1/1 Q text="without obvious wings.  may have wing buds; mostly found underwater" mediaUrls=["/taxonomy/walta/media/mayfly.gif"]
+/1/0/1/1/1/1/1/1 NODE id="old_mayfly_start_point" questions=2
+/1/0/1/1/1/1/1/1/0 Q text="tails flattened, leaf-like or broad, jaw large and folded away under head" mediaUrls=["/taxonomy/walta/media/damselfly.gif"]
+/1/0/1/1/1/1/1/1/0 -> (visited NODE:k_odonata)
+/1/0/1/1/1/1/1/1/1 Q text="tails thin, round in cross section" mediaUrls=["/taxonomy/walta/media/mayfly.gif"]
+/1/0/1/1/1/1/1/1/1 NODE id="order_ephemeroptera" questions=2
+/1/0/1/1/1/1/1/1/1/0 Q text="Order level ID Ephemeroptera (mayflies)" mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/0 TAXON id="ephemeroptera" taxonId="87" name="Mayflies" size=20 signalScore=9 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/leptophlebs_01.jpg","/taxonomy/walta/media/mirawara_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1 Q text="Identify further." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1 NODE id="k_ephemeroptera" questions=2
+/1/0/1/1/1/1/1/1/1/1/0 Q text="Nymphs with gills along the side of the abdomen." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0 NODE id="node_83" questions=2
+/1/0/1/1/1/1/1/1/1/1/0/0 Q text="Robust dark brown nymphs with alternating spiny V-shaped gills and smaller feathery gills. Move with a distinct rocking horse motion. Large thorax giving a hunched appearance." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/0 TAXON id="coloburiscoides" taxonId="93" name="Coloburiscoides" size=20 signalScore=8 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/coloburiscoides_01.jpg","/taxonomy/walta/media/coloburiscoides_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/coloburiscidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1/0/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1 NODE id="node_85" questions=2
+/1/0/1/1/1/1/1/1/1/1/0/1/0 Q text="Large nymphs with helmet-like heads and prominent eyes; two different types of gill which are flicked in sync; crawl slowly but can swim rapidly." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/0 TAXON id="mirawara" taxonId="89" name="Mirawara" size=20 signalScore=7 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/mirawara_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1/0/1/1 Q text="Not as above head not helmet like, upper and lower gills similar." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1 NODE id="node_86" questions=2
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0 Q text="Nymphs usually run rather than swim, but can 'dolphin' clumsily if disturbed. Conspicuously flattened nymphs, head square. Legs sprawling with wide, flat femurs." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0 NODE id="k_leptophlebiidae" questions=2
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/0 Q text="With a conspicuous set of horns." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/0 TAXON id="jappa" taxonId="96" name="Jappa" size=20 signalScore=8 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/jappa_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/1 NODE id="node_88" questions=2
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/1/0 Q text="Gills fluffy, each one ending in many fingers making them look like tinsel." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/1/0 TAXON id="atalophlebia" taxonId="95" name="Atalophlebia" size=22 signalScore=5 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/atalophlebia_01.jpg","/taxonomy/walta/media/atalophlebia_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/atalophlebia_b.png"]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/1/1 Q text="Not as above." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/0/1/1 TAXON id="leptophlebs" taxonId="97" name="Leptophlebs" size=20 signalScore=8 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/leptophlebs_01.jpg","/taxonomy/walta/media/leptophlebiidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/1 Q text="Nymphs are fast swimmers, but swim in bursts like tiny fish. Nymphs not flattened or sprawling, head bullet shaped. Tails fringed with hairs." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/1 NODE id="node_87" questions=2
+/1/0/1/1/1/1/1/1/1/1/0/1/1/1/0 Q text="Large nymphs up to 17mm. Antennae shorter than head. Rare." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/1/0 TAXON id="siphlonuridae" taxonId="100" name="Siphlonuridae" size=17 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/siphlonuridae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/1/1 Q text="Small nymphs less than 10mm. Antennae longer than head. Common." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/0/1/1/1/1 TAXON id="baetidae" taxonId="90" name="Baetidae" size=10 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/baetidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1/1 Q text="Nymphs with gill covers over part of the abdomen; gill covers can look like wing buds but are always behind the last pair of legs." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/1 NODE id="node_84" questions=2
+/1/0/1/1/1/1/1/1/1/1/1/0 Q text="Very small <5mm grey brown nymphs with a fuzzy silt covered appearance. Slow moving but may swim lazily. Flat gill covers large, meeting along the midline like a mini skirt." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/1/0 TAXON id="caenidae" taxonId="91" name="Caenidae" size=8 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/caenidae_01.jpg","/taxonomy/walta/media/caenidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"]
+/1/0/1/1/1/1/1/1/1/1/1/1 Q text="Larger nymphs with a camouflage pattern and eyes which may appear to shine in bright light. Rarely crawl but swim rapidly. Gill covers small, elliptical, not meeting in the middle." mediaUrls=[]
+/1/0/1/1/1/1/1/1/1/1/1/1 TAXON id="tasmanophlebia" taxonId="99" name="Tasmanophlebia" size=15 signalScore=8 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/tasmanophlebia_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"]
+/1/1 Q text="Animal without legs" mediaUrls=["/taxonomy/walta/media/withoutlegs.gif"]
+/1/1 NODE id="k_worm_like" questions=2
+/1/1/0 Q text="segmented" mediaUrls=["/taxonomy/walta/media/segmented.gif"]
+/1/1/0 NODE id="node_89" questions=2
+/1/1/0/0 Q text="without suction cups" mediaUrls=["/taxonomy/walta/media/segmented.gif"]
+/1/1/0/0 NODE id="node_91" questions=2
+/1/1/0/0/0 Q text="with hard mouthparts (these can be inside the head and difficult to see)" mediaUrls=["/taxonomy/walta/media/trueflies.gif"]
+/1/1/0/0/0 NODE id="order_diptera" questions=2
+/1/1/0/0/0/0 Q text="Order level ID Diptera (maggots or true fly larvae)" mediaUrls=[]
+/1/1/0/0/0/0 TAXON id="diptera" taxonId="69" name="maggots" size=20 signalScore=3 taxonomicLevel="order" mediaUrls=["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/stratiomyidae_01.jpg","/taxonomy/walta/media/blood_worm_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
+/1/1/0/0/0/1 Q text="Identify further." mediaUrls=[]
+/1/1/0/0/0/1 NODE id="k_diptera" questions=2
+/1/1/0/0/0/1/0 Q text="Maggots break the surface of the water to breathe; their bodies are buoyant in deeper water (floaters)." mediaUrls=[]
+/1/1/0/0/0/1/0 NODE id="node_93" questions=2
+/1/1/0/0/0/1/0/0 Q text="Animal has obviously sclerotised (armoured or hardened) body plates, either the whole body or bands on all segments." mediaUrls=[]
+/1/1/0/0/0/1/0/0 NODE id="node_94" questions=2
+/1/1/0/0/0/1/0/0/0 Q text="All of body sclerotised (darkened and toughened skin), animal can grow to 20mm." mediaUrls=[]
+/1/1/0/0/0/1/0/0/0 TAXON id="stratiomyidae" taxonId="83" name="Stratiomyidae" size=20 signalScore=2 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/stratiomyidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
+/1/1/0/0/0/1/0/0/1 Q text="Only bands of the upper surface of the body are sclerotised, smaller than 6mm." mediaUrls=[]
+/1/1/0/0/0/1/0/0/1 TAXON id="psychodidae" taxonId="81" name="Psychodidae" size=4 signalScore=3 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/psychodidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
+/1/1/0/0/0/1/0/1 Q text="Animal mostly soft bodied, although it may have sclerotised plates on its head and abdomen." mediaUrls=[]
+/1/1/0/0/0/1/0/1 NODE id="node_95" questions=2
+/1/1/0/0/0/1/0/1/0 Q text="Animals with obviously sclerotised (dark) head capsule and final segments." mediaUrls=[]
+/1/1/0/0/0/1/0/1/0 NODE id="node_96" questions=2
+/1/1/0/0/0/1/0/1/0/0 Q text="Animal restricted to the water surface, bent 'U' posture at rest, final segments usually out of the water so they distort the surface." mediaUrls=[]
+/1/1/0/0/0/1/0/1/0/0 TAXON id="dixidae" taxonId="79" name="Dixidae" size=6 signalScore=7 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/dixidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/mosquitolarva_b.png"]
+/1/1/0/0/0/1/0/1/0/1 Q text="Often dive when disturbed, leaving the surface quite readily, move in a rapid tumbling or wriggling motion." mediaUrls=[]
+/1/1/0/0/0/1/0/1/0/1 TAXON id="culicidae" taxonId="78" name="Culicidae" size=9 signalScore=1 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/culicidae_01.jpg","/taxonomy/walta/media/culicidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/mosquitolarva_b.png"]
+/1/1/0/0/0/1/0/1/1 Q text="Not as above." mediaUrls=[]
+/1/1/0/0/0/1/0/1/1 NODE id="node_97" questions=2
+/1/1/0/0/0/1/0/1/1/0 Q text="Animal with a distinctive elongate tail (a snorkel)." mediaUrls=[]
+/1/1/0/0/0/1/0/1/1/0 TAXON id="syrphidae" taxonId="84" name="Syrphidae" size=20 signalScore=1 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/syrphidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
+/1/1/0/0/0/1/0/1/1/1 Q text="Animal with very few characteristics of note, maggot-like in appearance." mediaUrls=[]
+/1/1/0/0/0/1/0/1/1/1 TAXON id="ephydridae_and_sciomyzidae" taxonId="80" name="Ephydridae and Sciomyzidae" size=15 signalScore=2 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/ephydridae_and_sciomyzidae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/athericidae_b.png"]
+/1/1/0/0/0/1/1 Q text="Maggots don't need contact with the water surface, bodies are not buoyant in deeper water, may still be active and swim past the surface (sinkers)." mediaUrls=[]
+/1/1/0/0/0/1/1 NODE id="k_maggots" questions=2
+/1/1/0/0/0/1/1/0 Q text="Bleffs (very distinctive, see picture), only found in fast flowing water." mediaUrls=["/taxonomy/walta/media/blephariceridae_01.jpg"]
+/1/1/0/0/0/1/1/0 TAXON id="blephariceridae" taxonId="71" name="Blephariceridae" size=13 signalScore=10 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/blephariceridae_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/blephariceridae_b.png"]
+/1/1/0/0/0/1/1/1 Q text="Not a bleff." mediaUrls=[]
+/1/1/0/0/0/1/1/1 NODE id="node_98" questions=2
+/1/1/0/0/0/1/1/1/0 Q text="Animal with a head capsule; long, thin, worm-like or leech-like body form and movement." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0 NODE id="node_99" questions=2
+/1/1/0/0/0/1/1/1/0/0 Q text="Animal moves like a leech, rarely losing hold of the substrate, abdomen broadly swollen giving a 'chicken drumstick' appearance, expandable antennae modified to form broad 'antlers' for filter feeding; typical of fast flowing waters with solid surfaces." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/0 TAXON id="simuliidae" taxonId="82" name="Simuliidae" size=5 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/simuliidae_02.jpg","/taxonomy/walta/media/simuliidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/simuliidae_b.png"]
+/1/1/0/0/0/1/1/1/0/1 Q text="Animal moves by coiling and uncoiling, or by rapid undulations. Unattached to the substrate; abdomen may be swollen but only the very end; antennae small and simple if present." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/1 NODE id="k_chironomid" questions=2
+/1/1/0/0/0/1/1/1/0/1/0 Q text="Animals obviously red." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/1/0 TAXON id="chironomus" taxonId="76" name="Chironomus" size=14 signalScore=1 taxonomicLevel="genus" mediaUrls=["/taxonomy/walta/media/chironomus_01.jpg","/taxonomy/walta/media/chironomus_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/bloodworm_b.png"]
+/1/1/0/0/0/1/1/1/0/1/1 Q text="Colour variable but not red." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/1/1 NODE id="node_101" questions=2
+/1/1/0/0/0/1/1/1/0/1/1/0 Q text="Animal looks like a swimming eyelash, with stiff, snake-like movements." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/1/1/0 TAXON id="ceratopogonidae" taxonId="72" name="Ceratopogonidae" size=10 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/ceratopogonidae_01.jpg","/taxonomy/walta/media/ceratopogonidae_m1.mp4"] bluebug=["/taxonomy/walta/media/speedbug/bloodworm_b.png"]
+/1/1/0/0/0/1/1/1/0/1/1/1 Q text="Not as above." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/1/1/1 NODE id="node_102" questions=2
+/1/1/0/0/0/1/1/1/0/1/1/1/0 Q text="Head capsule obvious, small prolegs at both ends of the animal, rarely longer than 7mm." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/1/1/1/0 TAXON id="chironomid" taxonId="77" name="Chironomid" size=13 signalScore=3 taxonomicLevel="alt" mediaUrls=["/taxonomy/walta/media/chironomid_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/bloodworm_b.png"]
+/1/1/0/0/0/1/1/1/0/1/1/1/1 Q text="Head capsule retractable, no pro-legs, sometimes with a set of hairy, feathered or fleshy appendages at the posterior end, may be covered in downy hairs, often longer than 5mm." mediaUrls=[]
+/1/1/0/0/0/1/1/1/0/1/1/1/1 TAXON id="tipulidae" taxonId="86" name="Tipulidae" size=36 signalScore=5 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/tipulidae_02.jpg","/taxonomy/walta/media/tipulidae_03.jpg"] bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
+/1/1/0/0/0/1/1/1/1 Q text="Animal without a head capsule; traditionally maggot-like in body form and movement." mediaUrls=[]
+/1/1/0/0/0/1/1/1/1 NODE id="node_100" questions=2
+/1/1/0/0/0/1/1/1/1/0 Q text="Appendages along both sides of the animal (see picture)." mediaUrls=["/taxonomy/walta/media/athericidae_01.jpg"]
+/1/1/0/0/0/1/1/1/1/0 TAXON id="athericidae" taxonId="70" name="Athericidae" size=10 signalScore=8 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/athericidae_02.jpg"] bluebug=["/taxonomy/walta/media/speedbug/athericidae_b.png"]
+/1/1/0/0/0/1/1/1/1/1 Q text="Animal without appendages or only present on the final segments of the animal." mediaUrls=[]
+/1/1/0/0/0/1/1/1/1/1 TAXON id="tabanidae_dolichopodidae_empididae_some_tipulidae" taxonId="85" name="Tabanidae, Dolichopodidae, Empididae & some Tipulidae" size=30 signalScore=4 taxonomicLevel="family" mediaUrls=["/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_01.jpg","/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_02.jpg","/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_03.jpg"] bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"]
+/1/1/0/0/1 Q text="without hard mouthparts" mediaUrls=["/taxonomy/walta/media/nohardmouth.gif"]
+/1/1/0/0/1 TAXON id="oligochaeta" taxonId="176" name="Oligochaeta" size=100 signalScore=1 taxonomicLevel="class" mediaUrls=["/taxonomy/walta/media/oligochaeta_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/oligochaeta_b.png"]
+/1/1/0/1 Q text="with suction cups on either end of the body" mediaUrls=[]
+/1/1/0/1 NODE id="node_92" questions=2
+/1/1/0/1/0 Q text="without a hardened head capsule" mediaUrls=["/taxonomy/walta/media/leeches.gif"]
+/1/1/0/1/0 TAXON id="hirudinea" taxonId="175" name="Hirudinea" size=10 signalScore=1 taxonomicLevel="class" mediaUrls=["/taxonomy/walta/media/hirudinea_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/hirudinea_b.png"]
+/1/1/0/1/1 Q text="with a head capsule" mediaUrls=["/taxonomy/walta/media/blackflylarva.gif"]
+/1/1/0/1/1 -> (visited NODE:order_diptera)
+/1/1/1 Q text="not segmented" mediaUrls=["/taxonomy/walta/media/notsegmented.gif"]
+/1/1/1 NODE id="node_90" questions=2
+/1/1/1/0 Q text="flattened, short and slimy" mediaUrls=["/taxonomy/walta/media/flatshortslimy.gif"]
+/1/1/1/0 TAXON id="turbellaria" taxonId="198" name="Turbellaria" size=20 signalScore=1 taxonomicLevel="phylum" mediaUrls=["/taxonomy/walta/media/turbellaria_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/turbellaria_b.png"]
+/1/1/1/1 Q text="not flattened, long and thin" mediaUrls=["/taxonomy/walta/media/longthinworm.gif"]
+/1/1/1/1 NODE id="node_103" questions=2
+/1/1/1/1/0 Q text="shorter than 1.5cm, tapering" mediaUrls=["/taxonomy/walta/media/short_tapering.gif"]
+/1/1/1/1/0 TAXON id="nematoda" taxonId="196" name="Nematoda" size=5 signalScore=1 taxonomicLevel="phylum" mediaUrls=["/taxonomy/walta/media/nematoda_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/nematoda_b.png"]
+/1/1/1/1/1 Q text="longer than 1.5cm" mediaUrls=["/taxonomy/walta/media/horsehairworm.gif"]
+/1/1/1/1/1 TAXON id="nematomorpha" taxonId="197" name="Nematomorpha" size=50 signalScore=6 taxonomicLevel="phylum" mediaUrls=["/taxonomy/walta/media/nematomorpha_01.jpg"] bluebug=["/taxonomy/walta/media/speedbug/gordian_b.png"]
+
+=== SPEEDBUG INDEXES ===
+Speedbug: 19 group(s)
+  group acarina refId="acarina" bugs=1
+    bug refId="acarina" imgUrl="/taxonomy/walta/media/speedbug/hydracarina_b.png"
+  group k_bivalvia refId="k_bivalvia" bugs=2
+    bug refId="hyriidae" imgUrl="/taxonomy/walta/media/speedbug/hyriidae_b.png"
+    bug refId="sphaeriidae_and_corbiculidae" imgUrl="/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"
+  group k_bugs refId="k_bugs" bugs=3
+    bug refId="k_corixidae" imgUrl="/taxonomy/walta/media/speedbug/corixidae_b.png"
+    bug refId="naucoris" imgUrl="/taxonomy/walta/media/speedbug/naucoridae_b.png"
+    bug refId="veliidae_mesoveliidae_and_hebridae" imgUrl="/taxonomy/walta/media/speedbug/veliids_b.png"
+  group k_cased refId="k_cased" bugs=5
+    bug refId="atriplectides" imgUrl="/taxonomy/walta/media/speedbug/atriplectides_b.png"
+    bug refId="k_cased" imgUrl="/taxonomy/walta/media/speedbug/lepidoptera_b.png"
+    bug refId="k_cased" imgUrl="/taxonomy/walta/media/speedbug/conoesucidae_b.png"
+    bug refId="k_cased" imgUrl="/taxonomy/walta/media/speedbug/philorheithridae_b.png"
+    bug refId="k_cased" imgUrl="/taxonomy/walta/media/speedbug/triplectides_b.png"
+  group k_coleoptera refId="k_coleoptera" bugs=4
+    bug refId="gyrinidae_adult" imgUrl="/taxonomy/walta/media/speedbug/gyrinidae_b.png"
+    bug refId="hydrophilidae_adult" imgUrl="/taxonomy/walta/media/speedbug/hydrophilus_b.png"
+    bug refId="k_dytiscidae" imgUrl="/taxonomy/walta/media/speedbug/divingbeetles_b.png"
+    bug refId="k_dytiscidae" imgUrl="/taxonomy/walta/media/speedbug/divingbeetletop_b.png"
+  group k_crunchy_beetle_larvae refId="k_crunchy_beetle_larvae" bugs=4
+    bug refId="byrrocryptus" imgUrl="/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"
+    bug refId="elmidae_larvae" imgUrl="/taxonomy/walta/media/speedbug/elmidae_b.png"
+    bug refId="scirtidae" imgUrl="/taxonomy/walta/media/speedbug/scirtidae_b.png"
+    bug refId="sclerocyphon" imgUrl="/taxonomy/walta/media/speedbug/psephenidae_b.png"
+  group k_crustacea refId="k_crustacea" bugs=6
+    bug refId="amphipoda" imgUrl="/taxonomy/walta/media/speedbug/amphipoda_b.png"
+    bug refId="anostraca" imgUrl="/taxonomy/walta/media/speedbug/anostraca_b.png"
+    bug refId="hymenosomatidae" imgUrl="/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"
+    bug refId="k_shrimpandprawns" imgUrl="/taxonomy/walta/media/speedbug/atyidae_b.png"
+    bug refId="notostraca" imgUrl="/taxonomy/walta/media/speedbug/notostraca_b.png"
+    bug refId="parastacidae" imgUrl="/taxonomy/walta/media/speedbug/parastacidae_b.png"
+  group k_ephemeroptera refId="k_ephemeroptera" bugs=4
+    bug refId="atalophlebia" imgUrl="/taxonomy/walta/media/speedbug/atalophlebia_b.png"
+    bug refId="baetidae" imgUrl="/taxonomy/walta/media/speedbug/baetidae_b.png"
+    bug refId="coloburiscoides" imgUrl="/taxonomy/walta/media/speedbug/coloburiscidae_b.png"
+    bug refId="k_leptophlebiidae" imgUrl="/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"
+  group k_epiproctophora refId="k_epiproctophora" bugs=2
+    bug refId="k_epiproctophora" imgUrl="/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"
+    bug refId="spider_mud_eye" imgUrl="/taxonomy/walta/media/speedbug/spidermudeye_b.png"
+  group k_gastropoda refId="k_gastropoda" bugs=3
+    bug refId="flat_snails" imgUrl="/taxonomy/walta/media/speedbug/flat_snail_b.png"
+    bug refId="k_gastropoda" imgUrl="/taxonomy/walta/media/speedbug/snails_b.png"
+    bug refId="potamopyrgus_antipodarum" imgUrl="/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"
+  group k_larval refId="k_larval" bugs=8
+    bug refId="berosus" imgUrl="/taxonomy/walta/media/speedbug/berosus_b.png"
+    bug refId="corydalidae" imgUrl="/taxonomy/walta/media/speedbug/megaloptera_b.png"
+    bug refId="gyrinidae_larvae" imgUrl="/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"
+    bug refId="hydrobiosidae" imgUrl="/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"
+    bug refId="hydropsychidae" imgUrl="/taxonomy/walta/media/speedbug/hydropsychidae_b.png"
+    bug refId="k_dytiscidae_L" imgUrl="/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"
+    bug refId="k_dytiscidae_L" imgUrl="/taxonomy/walta/media/speedbug/twotailedtiger_b.png"
+    bug refId="neuroptera" imgUrl="/taxonomy/walta/media/speedbug/neuroptera_b.png"
+  group k_maggots refId="k_maggots" bugs=4
+    bug refId="athericidae" imgUrl="/taxonomy/walta/media/speedbug/athericidae_b.png"
+    bug refId="blephariceridae" imgUrl="/taxonomy/walta/media/speedbug/blephariceridae_b.png"
+    bug refId="culicidae" imgUrl="/taxonomy/walta/media/speedbug/mosquitolarva_b.png"
+    bug refId="simuliidae" imgUrl="/taxonomy/walta/media/speedbug/simuliidae_b.png"
+  group k_nepidae refId="k_nepidae" bugs=4
+    bug refId="gerridae" imgUrl="/taxonomy/walta/media/speedbug/gerridae_b.png"
+    bug refId="hydrometridae" imgUrl="/taxonomy/walta/media/speedbug/hydrometridae_b.png"
+    bug refId="laccotrephes" imgUrl="/taxonomy/walta/media/speedbug/laccotrephes_b.png"
+    bug refId="ranatra" imgUrl="/taxonomy/walta/media/speedbug/ranatra_b.png"
+  group k_notonectidae refId="k_notonectidae" bugs=2
+    bug refId="anisops" imgUrl="/taxonomy/walta/media/speedbug/anisops_b.png"
+    bug refId="enithares" imgUrl="/taxonomy/walta/media/speedbug/enithares_b2.png"
+  group k_plecoptera refId="k_plecoptera" bugs=2
+    bug refId="eustheniidae" imgUrl="/taxonomy/walta/media/speedbug/eusthenia_b.png"
+    bug refId="illiesoperla" imgUrl="/taxonomy/walta/media/speedbug/illiesoperla_b.png"
+  group k_worm_like refId="k_worm_like" bugs=6
+    bug refId="hirudinea" imgUrl="/taxonomy/walta/media/speedbug/hirudinea_b.png"
+    bug refId="k_chironomid" imgUrl="/taxonomy/walta/media/speedbug/bloodworm_b.png"
+    bug refId="nematoda" imgUrl="/taxonomy/walta/media/speedbug/nematoda_b.png"
+    bug refId="nematomorpha" imgUrl="/taxonomy/walta/media/speedbug/gordian_b.png"
+    bug refId="oligochaeta" imgUrl="/taxonomy/walta/media/speedbug/oligochaeta_b.png"
+    bug refId="tabanidae_dolichopodidae_empididae_some_tipulidae" imgUrl="/taxonomy/walta/media/speedbug/tipulidae_b.png"
+  group k_zygoptera refId="k_zygoptera" bugs=2
+    bug refId="k_zygoptera" imgUrl="/taxonomy/walta/media/speedbug/damselfly_b.png"
+    bug refId="megapodagrionidae" imgUrl="/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
+  group pisauridae_and_lycosidae refId="pisauridae_and_lycosidae" bugs=1
+    bug refId="pisauridae_and_lycosidae" imgUrl="/taxonomy/walta/media/speedbug/pisauridae_b.png"
+  group turbellaria refId="turbellaria" bugs=1
+    bug refId="turbellaria" imgUrl="/taxonomy/walta/media/speedbug/turbellaria_b.png"
+Mayfly Muster Speedbug: 3 group(s)
+  group ephemeroptera refId="ephemeroptera" bugs=4
+    bug refId="atalophlebia" imgUrl="/taxonomy/walta/media/speedbug/atalophlebia_b.png"
+    bug refId="baetidae" imgUrl="/taxonomy/walta/media/speedbug/baetidae_b.png"
+    bug refId="coloburiscoides" imgUrl="/taxonomy/walta/media/speedbug/coloburiscidae_b.png"
+    bug refId="k_leptophlebiidae" imgUrl="/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"
+  group k_zygoptera refId="k_zygoptera" bugs=1
+    bug refId="k_zygoptera" imgUrl="/taxonomy/walta/media/speedbug/damselfly_b.png"
+  group plecoptera refId="plecoptera" bugs=2
+    bug refId="plecoptera" imgUrl="/taxonomy/walta/media/speedbug/illiesoperla_b.png"
+    bug refId="plecoptera" imgUrl="/taxonomy/walta/media/speedbug/eusthenia_b.png"
+Order Speedbug: 16 group(s)
+  group acarina refId="acarina" bugs=1
+    bug refId="acarina" imgUrl="/taxonomy/walta/media/speedbug/hydracarina_b.png"
+  group bivalvia refId="bivalvia" bugs=2
+    bug refId="bivalvia" imgUrl="/taxonomy/walta/media/speedbug/hyriidae_b.png"
+    bug refId="bivalvia" imgUrl="/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"
+  group coleoptera refId="coleoptera" bugs=7
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/psephenidae_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/elmidae_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/scirtidae_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/divingbeetles_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/hydrophilus_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/gyrinidae_b.png"
+  group diptera refId="diptera" bugs=4
+    bug refId="diptera" imgUrl="/taxonomy/walta/media/speedbug/athericidae_b.png"
+    bug refId="diptera" imgUrl="/taxonomy/walta/media/speedbug/blephariceridae_b.png"
+    bug refId="diptera" imgUrl="/taxonomy/walta/media/speedbug/simuliidae_b.png"
+    bug refId="diptera" imgUrl="/taxonomy/walta/media/speedbug/mosquitolarva_b.png"
+  group ephemeroptera refId="ephemeroptera" bugs=2
+    bug refId="ephemeroptera" imgUrl="/taxonomy/walta/media/speedbug/baetidae_b.png"
+    bug refId="ephemeroptera" imgUrl="/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"
+  group epiproctophora refId="epiproctophora" bugs=2
+    bug refId="epiproctophora" imgUrl="/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"
+    bug refId="epiproctophora" imgUrl="/taxonomy/walta/media/speedbug/spidermudeye_b.png"
+  group gastropoda refId="gastropoda" bugs=3
+    bug refId="gastropoda" imgUrl="/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"
+    bug refId="gastropoda" imgUrl="/taxonomy/walta/media/speedbug/flat_snail_b.png"
+    bug refId="gastropoda" imgUrl="/taxonomy/walta/media/speedbug/snails_b.png"
+  group hemiptera refId="hemiptera" bugs=8
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/enithares_b2.png"
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/veliids_b.png"
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/corixidae_b.png"
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/naucoridae_b.png"
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/ranatra_b.png"
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/laccotrephes_b.png"
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/hydrometridae_b.png"
+    bug refId="hemiptera" imgUrl="/taxonomy/walta/media/speedbug/gerridae_b.png"
+  group k_cased refId="k_cased" bugs=4
+    bug refId="lepidoptera" imgUrl="/taxonomy/walta/media/speedbug/lepidoptera_b.png"
+    bug refId="trichoptera" imgUrl="/taxonomy/walta/media/speedbug/atriplectides_b.png"
+    bug refId="trichoptera" imgUrl="/taxonomy/walta/media/speedbug/philorheithridae_b.png"
+    bug refId="trichoptera" imgUrl="/taxonomy/walta/media/speedbug/triplectides_b.png"
+  group k_ephemeroptera refId="k_ephemeroptera" bugs=6
+    bug refId="amphipoda" imgUrl="/taxonomy/walta/media/speedbug/amphipoda_b.png"
+    bug refId="anostraca" imgUrl="/taxonomy/walta/media/speedbug/anostraca_b.png"
+    bug refId="decapoda" imgUrl="/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"
+    bug refId="decapoda" imgUrl="/taxonomy/walta/media/speedbug/atyidae_b.png"
+    bug refId="decapoda" imgUrl="/taxonomy/walta/media/speedbug/parastacidae_b.png"
+    bug refId="notostraca" imgUrl="/taxonomy/walta/media/speedbug/notostraca_b.png"
+  group k_larval refId="k_larval" bugs=7
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/berosus_b.png"
+    bug refId="coleoptera" imgUrl="/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"
+    bug refId="corydalidae" imgUrl="/taxonomy/walta/media/speedbug/megaloptera_b.png"
+    bug refId="neuroptera" imgUrl="/taxonomy/walta/media/speedbug/neuroptera_b.png"
+    bug refId="trichoptera" imgUrl="/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"
+    bug refId="trichoptera" imgUrl="/taxonomy/walta/media/speedbug/hydropsychidae_b.png"
+  group k_worm_like refId="k_worm_like" bugs=6
+    bug refId="diptera" imgUrl="/taxonomy/walta/media/speedbug/bloodworm_b.png"
+    bug refId="diptera" imgUrl="/taxonomy/walta/media/speedbug/tipulidae_b.png"
+    bug refId="hirudinea" imgUrl="/taxonomy/walta/media/speedbug/hirudinea_b.png"
+    bug refId="nematoda" imgUrl="/taxonomy/walta/media/speedbug/nematoda_b.png"
+    bug refId="nematomorpha" imgUrl="/taxonomy/walta/media/speedbug/gordian_b.png"
+    bug refId="oligochaeta" imgUrl="/taxonomy/walta/media/speedbug/oligochaeta_b.png"
+  group pisauridae_and_lycosidae refId="pisauridae_and_lycosidae" bugs=1
+    bug refId="pisauridae_and_lycosidae" imgUrl="/taxonomy/walta/media/speedbug/pisauridae_b.png"
+  group plecoptera refId="plecoptera" bugs=2
+    bug refId="plecoptera" imgUrl="/taxonomy/walta/media/speedbug/illiesoperla_b.png"
+    bug refId="plecoptera" imgUrl="/taxonomy/walta/media/speedbug/eusthenia_b.png"
+  group turbellaria refId="turbellaria" bugs=1
+    bug refId="turbellaria" imgUrl="/taxonomy/walta/media/speedbug/turbellaria_b.png"
+  group zygoptera refId="zygoptera" bugs=2
+    bug refId="zygoptera" imgUrl="/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
+    bug refId="zygoptera" imgUrl="/taxonomy/walta/media/speedbug/damselfly_b.png"
+
+=== ALL TAXA (sorted by taxonId) ===
+taxon "3" id="decapoda" name="Decapods" bluebug=["/taxonomy/walta/media/speedbug/atyidae_b.png"] mediaUrls=["/taxonomy/walta/media/atyidae_01.jpg","/taxonomy/walta/media/hymenosomatidae_01.jpg","/taxonomy/walta/media/parastacidae_01.jpg","/taxonomy/walta/media/macrobrachium_01.jpg"]
+taxon "4" id="parastacidae" name="Parastacidae" bluebug=["/taxonomy/walta/media/speedbug/parastacidae_b.png"] mediaUrls=["/taxonomy/walta/media/parastacide_01.jpg","/taxonomy/walta/media/parastacide_02.jpg"]
+taxon "5" id="hymenosomatidae" name="Hymenosomatidae" bluebug=["/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"] mediaUrls=["/taxonomy/walta/media/hymenosomatidae_01.jpg"]
+taxon "7" id="macrobrachium" name="Macrobrachium" bluebug=["/taxonomy/walta/media/speedbug/atyidae_b.png"] mediaUrls=["/taxonomy/walta/media/macrobrachium_01.jpg"]
+taxon "8" id="atyidae" name="Atyidae" bluebug=["/taxonomy/walta/media/speedbug/atyidae_b.png"] mediaUrls=["/taxonomy/walta/media/atyidae_01.jpg","/taxonomy/walta/media/atyidae_02.jpg"]
+taxon "10" id="janiridae" name="Janiridae" bluebug=["/taxonomy/walta/media/speedbug/amphipoda_b.png"] mediaUrls=["/taxonomy/walta/media/janiridae_01.jpg"]
+taxon "11" id="phreatoicidae" name="Phreatoicidae" bluebug=["/taxonomy/walta/media/speedbug/amphipoda_b.png"] mediaUrls=["/taxonomy/walta/media/phreatoicidae_01.jpg","/taxonomy/walta/media/phreatoicidae_02.jpg"]
+taxon "12" id="amphipoda" name="Amphipoda" bluebug=["/taxonomy/walta/media/speedbug/amphipoda_b.png"] mediaUrls=["/taxonomy/walta/media/amphipoda_01.jpg","/taxonomy/walta/media/amphipoda_02.jpg","/taxonomy/walta/media/amphipoda_03.jpg"]
+taxon "13" id="anostraca" name="Anostraca" bluebug=["/taxonomy/walta/media/speedbug/anostraca_b.png"] mediaUrls=["/taxonomy/walta/media/anostraca_01.jpg","/taxonomy/walta/media/anostraca_02.jpg","/taxonomy/walta/media/anostraca_03.jpg","/taxonomy/walta/media/anostraca_m1.mp4"]
+taxon "14" id="conchostraca" name="Conchostraca" bluebug=["/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"] mediaUrls=["/taxonomy/walta/media/conchostraca_01.jpg"]
+taxon "15" id="notostraca" name="Notostraca" bluebug=["/taxonomy/walta/media/speedbug/notostraca_b.png"] mediaUrls=["/taxonomy/walta/media/notostraca_01.jpg","/taxonomy/walta/media/notostraca_m1.mp4"]
+taxon "18" id="pisauridae_and_lycosidae" name="Pisauridae and Lycosidae" bluebug=["/taxonomy/walta/media/speedbug/pisauridae_b.png"] mediaUrls=["/taxonomy/walta/media/pisauridae_and_lycosidae_01.jpg"]
+taxon "19" id="acarina" name="Acarina" bluebug=["/taxonomy/walta/media/speedbug/hydracarina_b.png"] mediaUrls=["/taxonomy/walta/media/acarina_01.jpg"]
+taxon "22" id="megaloptera" name="Megaloptera" bluebug=["/taxonomy/walta/media/speedbug/megaloptera_b.png"] mediaUrls=["/taxonomy/walta/media/corydalidae_01.jpg"]
+taxon "23" id="corydalidae" name="Corydalidae" bluebug=["/taxonomy/walta/media/speedbug/megaloptera_b.png"] mediaUrls=["/taxonomy/walta/media/corydalidae_01.jpg"]
+taxon "24" id="neuroptera" name="Neuroptera" bluebug=["/taxonomy/walta/media/speedbug/neuroptera_b.png"] mediaUrls=["/taxonomy/walta/media/neurorthridae_01.jpg","/taxonomy/walta/media/osmylidae_01.jpg"]
+taxon "25" id="lepidoptera" name="Lepidoptera" bluebug=["/taxonomy/walta/media/speedbug/lepidoptera_b.png"] mediaUrls=["/taxonomy/walta/media/lepidoptera_01.jpg"]
+taxon "26" id="coleoptera" name="Beetles" bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"] mediaUrls=["/taxonomy/walta/media/swimming_water_tiger_larvae_01.jpg","/taxonomy/walta/media/hydraenidae_and_hydrochidae_01.jpg","/taxonomy/walta/media/scirtidae_01.jpg","/taxonomy/walta/media/sclerocyphon_01.jpg","/taxonomy/walta/media/lancetes_01"]
+taxon "27" id="curculionidae" name="Curculionidae" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/curculionidae_01.jpg","/taxonomy/walta/media/curculionidae_02.jpg"]
+taxon "29" id="australphilus" name="Australphilus" bluebug=["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"] mediaUrls=["/taxonomy/walta/media/australphilus_01.jpg"]
+taxon "30" id="carabhydrus" name="Carabhydrus" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/carabhydrus_01.jpg"]
+taxon "31" id="eretes" name="Eretes" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/eretes_01.jpg"]
+taxon "32" id="hyderodes" name="Hyderodes" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/hyderodes_01.jpg"]
+taxon "33" id="lancetes" name="Lancetes" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/lancetes_01.jpg","/taxonomy/walta/media/lancetes_m1.mp4"]
+taxon "34" id="onychohydrus" name="Onychohydrus" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/onychohydrus_01.jpg"]
+taxon "35" id="rhantus" name="Rhantus" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/rhantus_01.jpg"]
+taxon "36" id="spencerhydrus" name="Spencerhydrus" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/spencerhydrus_01.jpg"]
+taxon "37" id="little_diving_beetles" name="little diving beetles" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/little_diving_beetles_01.jpg","/taxonomy/walta/media/little_diving_beetles_02.jpg"]
+taxon "38" id="mixed_diving_beetles" name="mixed diving beetles" bluebug=["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"] mediaUrls=["/taxonomy/walta/media/mixed_diving_beetles_01.jpg","/taxonomy/walta/media/mixed_diving_beetles_02.jpg","/taxonomy/walta/media/mixed_diving_beetles_03.jpg"]
+taxon "39" id="stealth_diving_beetles" name="stealth diving beetles" bluebug=["/taxonomy/walta/media/speedbug/divingbeetletop_b.png"] mediaUrls=["/taxonomy/walta/media/stealth_diving_beetles_01.jpg"]
+taxon "41" id="taper_tailed_tiger_larvae" name="taper-tailed tiger larvae" bluebug=["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"] mediaUrls=["/taxonomy/walta/media/taper-tailed_tiger_larvae_01.jpg"]
+taxon "42" id="two_tailed_tiger_larvae" name="two-tailed tiger larvae" bluebug=["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"] mediaUrls=["/taxonomy/walta/media/two-tailed_tiger_larvae_01.jpg","/taxonomy/walta/media/dytiscidae_larva_m1.mp4"]
+taxon "43" id="nosey_tiger_larvae" name="nosey tiger larvae" bluebug=["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"] mediaUrls=["/taxonomy/walta/media/nosey_tiger_larvae_01.jpg","/taxonomy/walta/media/nosey_tiger_larvae_02.jpg","/taxonomy/walta/media/nosey_tiger_larvae_03.jpg"]
+taxon "44" id="crawling_water_tiger_larvae" name="crawling water tiger larvae" bluebug=["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"] mediaUrls=["/taxonomy/walta/media/crawling_water_tiger_larvae_01.jpg"]
+taxon "45" id="swimming_water_tiger_larvae" name="swimming water tiger larvae" bluebug=["/taxonomy/walta/media/speedbug/twotailedtiger_b.png"] mediaUrls=["/taxonomy/walta/media/swimming_water_tiger_larvae_01.jpg"]
+taxon "47" id="elmidae_adult" name="Elmidae adult" bluebug=["/taxonomy/walta/media/speedbug/divingbeetles_b.png"] mediaUrls=["/taxonomy/walta/media/elmidae_adult_01.jpg","/taxonomy/walta/media/elmidae_m1.mp4"]
+taxon "48" id="elmidae_larvae" name="Elmidae larvae" bluebug=["/taxonomy/walta/media/speedbug/elmidae_b.png"] mediaUrls=["/taxonomy/walta/media/elmidae_larvae_01.jpg"]
+taxon "50" id="gyrinidae_adult" name="Gyrinidae adult" bluebug=["/taxonomy/walta/media/speedbug/gyrinidae_b.png"] mediaUrls=["/taxonomy/walta/media/gyrinidae_adult_01.jpg","/taxonomy/walta/media/gyrinidae_adult_m1.mp4","/taxonomy/walta/media/gyrinidae_adult_m2.mp4"]
+taxon "51" id="gyrinidae_larvae" name="Gyrinidae larvae" bluebug=["/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"] mediaUrls=["/taxonomy/walta/media/gyrinidae_larvae_01.jpg"]
+taxon "54" id="hydraenidae_and_hydrochidae" name="Hydraenidae and Hydrochidae" bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"] mediaUrls=["/taxonomy/walta/media/hydraenidae_and_hydrochidae_01.jpg"]
+taxon "56" id="berosus" name="Berosus" bluebug=["/taxonomy/walta/media/speedbug/berosus_b.png"] mediaUrls=["/taxonomy/walta/media/berosus_01.jpg"]
+taxon "57" id="helochares" name="Helochares" bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"] mediaUrls=["/taxonomy/walta/media/helochares_01.jpg","/taxonomy/walta/media/helochares_m1.mp4"]
+taxon "58" id="hydrophilus" name="Hydrophilus" bluebug=["/taxonomy/walta/media/speedbug/berosus_b.png"] mediaUrls=["/taxonomy/walta/media/hydrophilus_01.jpg"]
+taxon "59" id="hydrophilidae_adult" name="Water scavenger beetle adult" bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"] mediaUrls=["/taxonomy/walta/media/water_scavenger_beetle_adult_02.jpg","/taxonomy/walta/media/water_scavenger_beetle_adult_01.jpg","/taxonomy/walta/media/hydrophilidae_m1.mp4"]
+taxon "60" id="water_scavenger_beetle_larvae" name="Water scavenger beetle larvae" bluebug=["/taxonomy/walta/media/speedbug/dytiscidae_L_b.png"] mediaUrls=["/taxonomy/walta/media/water_scavenger_beetle_larvae_01.jpg"]
+taxon "62" id="hygrobia_adult" name="Hygrobia adult" bluebug=["/taxonomy/walta/media/speedbug/hydrophilus_b.png"] mediaUrls=["/taxonomy/walta/media/hygrobia_adult_01.jpg"]
+taxon "65" id="sclerocyphon" name="Sclerocyphon" bluebug=["/taxonomy/walta/media/speedbug/psephenidae_b.png"] mediaUrls=["/taxonomy/walta/media/sclerocyphon_01.jpg","/taxonomy/walta/media/sclerocyphon_02.jpg"]
+taxon "67" id="byrrocryptus" name="Byrrocryptus" bluebug=["/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"] mediaUrls=["/taxonomy/walta/media/byrrocryptus_01.jpg"]
+taxon "68" id="scirtidae" name="Scirtidae" bluebug=["/taxonomy/walta/media/speedbug/scirtidae_b.png"] mediaUrls=["/taxonomy/walta/media/scirtidae_01.jpg"]
+taxon "69" id="diptera" name="maggots" bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"] mediaUrls=["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/stratiomyidae_01.jpg","/taxonomy/walta/media/blood_worm_01.jpg"]
+taxon "70" id="athericidae" name="Athericidae" bluebug=["/taxonomy/walta/media/speedbug/athericidae_b.png"] mediaUrls=["/taxonomy/walta/media/athericidae_01.jpg","/taxonomy/walta/media/athericidae_02.jpg"]
+taxon "71" id="blephariceridae" name="Blephariceridae" bluebug=["/taxonomy/walta/media/speedbug/blephariceridae_b.png"] mediaUrls=["/taxonomy/walta/media/blephariceridae_01.jpg"]
+taxon "72" id="ceratopogonidae" name="Ceratopogonidae" bluebug=["/taxonomy/walta/media/speedbug/bloodworm_b.png"] mediaUrls=["/taxonomy/walta/media/ceratopogonidae_01.jpg","/taxonomy/walta/media/ceratopogonidae_m1.mp4"]
+taxon "76" id="chironomus" name="Chironomus" bluebug=["/taxonomy/walta/media/speedbug/bloodworm_b.png"] mediaUrls=["/taxonomy/walta/media/chironomus_01.jpg","/taxonomy/walta/media/chironomus_m1.mp4"]
+taxon "77" id="chironomid" name="Chironomid" bluebug=["/taxonomy/walta/media/speedbug/bloodworm_b.png"] mediaUrls=["/taxonomy/walta/media/chironomid_01.jpg"]
+taxon "78" id="culicidae" name="Culicidae" bluebug=["/taxonomy/walta/media/speedbug/mosquitolarva_b.png"] mediaUrls=["/taxonomy/walta/media/culicidae_01.jpg","/taxonomy/walta/media/culicidae_m1.mp4"]
+taxon "79" id="dixidae" name="Dixidae" bluebug=["/taxonomy/walta/media/speedbug/mosquitolarva_b.png"] mediaUrls=["/taxonomy/walta/media/dixidae_01.jpg"]
+taxon "80" id="ephydridae_and_sciomyzidae" name="Ephydridae and Sciomyzidae" bluebug=["/taxonomy/walta/media/speedbug/athericidae_b.png"] mediaUrls=["/taxonomy/walta/media/ephydridae_and_sciomyzidae_01.jpg"]
+taxon "81" id="psychodidae" name="Psychodidae" bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"] mediaUrls=["/taxonomy/walta/media/psychodidae_01.jpg"]
+taxon "82" id="simuliidae" name="Simuliidae" bluebug=["/taxonomy/walta/media/speedbug/simuliidae_b.png"] mediaUrls=["/taxonomy/walta/media/simuliidae_01.jpg","/taxonomy/walta/media/simuliidae_02.jpg","/taxonomy/walta/media/simuliidae_m1.mp4"]
+taxon "83" id="stratiomyidae" name="Stratiomyidae" bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"] mediaUrls=["/taxonomy/walta/media/stratiomyidae_01.jpg"]
+taxon "84" id="syrphidae" name="Syrphidae" bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"] mediaUrls=["/taxonomy/walta/media/syrphidae_01.jpg"]
+taxon "85" id="tabanidae_dolichopodidae_empididae_some_tipulidae" name="Tabanidae, Dolichopodidae, Empididae & some Tipulidae" bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"] mediaUrls=["/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_01.jpg","/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_02.jpg","/taxonomy/walta/media/tabanidae_dolichopodidae_empididae_some_tipulidae_03.jpg"]
+taxon "86" id="tipulidae" name="Tipulidae" bluebug=["/taxonomy/walta/media/speedbug/tipulidae_b.png"] mediaUrls=["/taxonomy/walta/media/tipulidae_01.jpg","/taxonomy/walta/media/tipulidae_02.jpg","/taxonomy/walta/media/tipulidae_03.jpg"]
+taxon "87" id="ephemeroptera" name="Mayflies" bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"] mediaUrls=["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/leptophlebs_01.jpg","/taxonomy/walta/media/mirawara_01.jpg"]
+taxon "89" id="mirawara" name="Mirawara" bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"] mediaUrls=["/taxonomy/walta/media/mirawara_01.jpg"]
+taxon "90" id="baetidae" name="Baetidae" bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"] mediaUrls=["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/baetidae_m1.mp4"]
+taxon "91" id="caenidae" name="Caenidae" bluebug=["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"] mediaUrls=["/taxonomy/walta/media/caenidae_01.jpg","/taxonomy/walta/media/caenidae_m1.mp4"]
+taxon "93" id="coloburiscoides" name="Coloburiscoides" bluebug=["/taxonomy/walta/media/speedbug/coloburiscidae_b.png"] mediaUrls=["/taxonomy/walta/media/coloburiscoides_01.jpg","/taxonomy/walta/media/coloburiscoides_m1.mp4"]
+taxon "95" id="atalophlebia" name="Atalophlebia" bluebug=["/taxonomy/walta/media/speedbug/atalophlebia_b.png"] mediaUrls=["/taxonomy/walta/media/atalophlebia_01.jpg","/taxonomy/walta/media/atalophlebia_m1.mp4"]
+taxon "96" id="jappa" name="Jappa" bluebug=["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"] mediaUrls=["/taxonomy/walta/media/jappa_01.jpg"]
+taxon "97" id="leptophlebs" name="Leptophlebs" bluebug=["/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"] mediaUrls=["/taxonomy/walta/media/leptophlebs_01.jpg","/taxonomy/walta/media/leptophlebiidae_m1.mp4"]
+taxon "99" id="tasmanophlebia" name="Tasmanophlebia" bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"] mediaUrls=["/taxonomy/walta/media/tasmanophlebia_01.jpg"]
+taxon "100" id="siphlonuridae" name="Siphlonuridae" bluebug=["/taxonomy/walta/media/speedbug/baetidae_b.png"] mediaUrls=["/taxonomy/walta/media/siphlonuridae_01.jpg"]
+taxon "101" id="hemiptera" name="Hemiptera" bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"] mediaUrls=["/taxonomy/walta/media/anisops_01.jpg","/taxonomy/walta/media/corixidae_m1.mp4","/taxonomy/walta/media/diplonychus_01.jpg","/taxonomy/walta/media/enithares_anisops.jpg","/taxonomy/walta/media/gelastocoridae_01.jpg","/taxonomy/walta/media/naucoris_01.jpg","/taxonomy/walta/media/pleidae_01.jpg","/taxonomy/walta/media/gerridae_01.jpg","/taxonomy/walta/media/ranatra_01.jpg","/taxonomy/walta/media/laccotrephes_01.jpg"]
+taxon "103" id="diplonychus" name="Diplonychus" bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"] mediaUrls=["/taxonomy/walta/media/diplonychus_01.jpg"]
+taxon "105" id="agraptocorixa" name="Agraptocorixa" bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"] mediaUrls=["/taxonomy/walta/media/agraptocorixa_01.jpg"]
+taxon "106" id="diaprepocoris_barycephala" name="Diaprepocoris barycephala" bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"] mediaUrls=["/taxonomy/walta/media/diaprepocoris_01.jpg"]
+taxon "107" id="micronecta" name="Micronecta" bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"] mediaUrls=["/taxonomy/walta/media/micronecta_01.jpg"]
+taxon "108" id="sigara" name="Sigara" bluebug=["/taxonomy/walta/media/speedbug/corixidae_b.png"] mediaUrls=["/taxonomy/walta/media/sigara_01.jpg"]
+taxon "109" id="gelastocoridae" name="Gelastocoridae" bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"] mediaUrls=["/taxonomy/walta/media/gelastocoridae_01.jpg"]
+taxon "110" id="gerridae" name="Gerridae" bluebug=["/taxonomy/walta/media/speedbug/gerridae_b.png"] mediaUrls=["/taxonomy/walta/media/gerridae_01.jpg"]
+taxon "111" id="hydrometridae" name="Hydrometridae" bluebug=["/taxonomy/walta/media/speedbug/hydrometridae_b.png"] mediaUrls=["/taxonomy/walta/media/hydrometridae_01.jpg"]
+taxon "113" id="naucoris" name="Naucoris" bluebug=["/taxonomy/walta/media/speedbug/naucoridae_b.png"] mediaUrls=["/taxonomy/walta/media/naucoris_01.jpg"]
+taxon "115" id="laccotrephes" name="Laccotrephes" bluebug=["/taxonomy/walta/media/speedbug/laccotrephes_b.png"] mediaUrls=["/taxonomy/walta/media/laccotrephes_01.jpg"]
+taxon "116" id="ranatra" name="Ranatra" bluebug=["/taxonomy/walta/media/speedbug/ranatra_b.png"] mediaUrls=["/taxonomy/walta/media/ranatra_01.jpg","/taxonomy/walta/media/ranatra_m1.mp4"]
+taxon "118" id="anisops" name="Anisops" bluebug=["/taxonomy/walta/media/speedbug/anisops_b.png"] mediaUrls=["/taxonomy/walta/media/anisops_01.jpg","/taxonomy/walta/media/anisops_m1.mp4"]
+taxon "119" id="enithares" name="Enithares" bluebug=["/taxonomy/walta/media/speedbug/enithares_b2.png"] mediaUrls=["/taxonomy/walta/media/enithares_01.jpg","/taxonomy/walta/media/enithares_m1.mp4"]
+taxon "120" id="pleidae" name="Pleidae" bluebug=["/taxonomy/walta/media/speedbug/enithares_b2.png"] mediaUrls=["/taxonomy/walta/media/pleidae_01.jpg"]
+taxon "121" id="veliidae_mesoveliidae_and_hebridae" name="Veliidae, Mesoveliidae and Hebridae" bluebug=["/taxonomy/walta/media/speedbug/veliids_b.png"] mediaUrls=["/taxonomy/walta/media/veliidae_Mesoveliidae_and_herbridae_01.jpg","/taxonomy/walta/media/veliidae_m1.mp4"]
+taxon "122" id="odonata" name="spider mud eye" bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"] mediaUrls=["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4","/taxonomy/walta/media/gomphidae_01.jpg","/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4","/taxonomy/walta/media/megapodagrionidae_01.jpg","/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg"]
+taxon "123" id="epiproctophora" name="dragonflies" bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"] mediaUrls=["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4","/taxonomy/walta/media/gomphidae_01.jpg","/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4"]
+taxon "124" id="aeshnidae" name="Aeshnidae" bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"] mediaUrls=["/taxonomy/walta/media/aeshnidae_01.jpg","/taxonomy/walta/media/aeshnidae_m1.mp4"]
+taxon "125" id="gomphidae" name="Gomphidae" bluebug=["/taxonomy/walta/media/speedbug/spidermudeye_b.png"] mediaUrls=["/taxonomy/walta/media/gomphidae_01.jpg"]
+taxon "126" id="telephlebiidae" name="Telephlebiidae" bluebug=["/taxonomy/walta/media/speedbug/aeshnidae_telephleb_b.png"] mediaUrls=["/taxonomy/walta/media/telephlebiidae_01.jpg"]
+taxon "127" id="spider_mud_eye" name="spider mud eye" bluebug=["/taxonomy/walta/media/speedbug/spidermudeye_b.png"] mediaUrls=["/taxonomy/walta/media/spider_mud_eye_01.jpg","/taxonomy/walta/media/spider_mud_eye_m1.mp4"]
+taxon "128" id="zygoptera" name="damselflies" bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"] mediaUrls=["/taxonomy/walta/media/megapodagrionidae_01.jpg","/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg"]
+taxon "129" id="diphlebiidae" name="Diphlebiidae" bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"] mediaUrls=["/taxonomy/walta/media/diphlebiidae_01.jpg"]
+taxon "130" id="isostictidae" name="Isostictidae" bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"] mediaUrls=["/taxonomy/walta/media/isostictidae_01.jpg","/taxonomy/walta/media/isostictidae_02.jpg"]
+taxon "131" id="lestidae_and_coenagrionidae" name="Lestidae and Coenagrionidae" bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"] mediaUrls=["/taxonomy/walta/media/lestidae_and_coenagrionidae_01.jpg","/taxonomy/walta/media/zygoptera_m1.mp4"]
+taxon "132" id="megapodagrionidae" name="Megapodagrionidae" bluebug=["/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"] mediaUrls=["/taxonomy/walta/media/megapodagrionidae_01.jpg"]
+taxon "133" id="synlestidae" name="Synlestidae" bluebug=["/taxonomy/walta/media/speedbug/damselfly_b.png"] mediaUrls=["/taxonomy/walta/media/synlestidae_01.jpg"]
+taxon "134" id="plecoptera" name="Stoneflies" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/acruroperla_atra_01.jpg","/taxonomy/walta/media/austroperlids_01.jpg","/taxonomy/walta/media/hairy_sprawler_01.jpg","/taxonomy/walta/media/blond_sprawler_01.jpg","/taxonomy/walta/media/eustheniidae_01.jpg","/taxonomy/walta/media/ gripopterygidae_m1.mp4"]
+taxon "136" id="acruroperla_atra" name="Acruroperla atra" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/acruroperla_atra_01.jpg"]
+taxon "137" id="austroperlids" name="Austroperlids" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/austroperlids_01.jpg"]
+taxon "138" id="eustheniidae" name="Eustheniidae" bluebug=["/taxonomy/walta/media/speedbug/eusthenia_b.png"] mediaUrls=["/taxonomy/walta/media/eustheniidae_01.jpg"]
+taxon "140" id="illiesoperla" name="Illiesoperla" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/illiesoperla_01.jpg"]
+taxon "141" id="riekoperla" name="Riekoperla" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/riekoperla_01.jpg"]
+taxon "142" id="hairy_sprawler" name="Hairy sprawler" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/hairy_sprawler_01.jpg"]
+taxon "143" id="gripops_or_fluffy_bums" name="Gripops or Fluffy bums" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/gripops_or_fluffy_bums_01.jpg","/taxonomy/walta/media/gripopterygidae_m1.mp4"]
+taxon "144" id="notonemouridae" name="Notonemouridae" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=["/taxonomy/walta/media/notonemouridae_01.jpg"]
+taxon "145" id="trichoptera" name="Caddis" bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"] mediaUrls=["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydropsychidae_01.jpg","/taxonomy/walta/media/oecetis_01.jpg","/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/log_cabin_caddis_01.jpg","/taxonomy/walta/media/triplectides_01.jpg"]
+taxon "147" id="atriplectides" name="Atriplectides" bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"] mediaUrls=["/taxonomy/walta/media/atriplectides_01.jpg"]
+taxon "149" id="anisocentropus" name="Anisocentropus" bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"] mediaUrls=["/taxonomy/walta/media/anisocentropus_01.jpg"]
+taxon "151" id="caenota_plicata" name="Caenota plicata" bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"] mediaUrls=["/taxonomy/walta/media/caenota_plicata_01.jpg"]
+taxon "152" id="conoesucidae_calocidae_and_helicophidae" name="Conoesucidae, Calocidae and Helicophidae" bluebug=["/taxonomy/walta/media/speedbug/conoesucidae_b.png"] mediaUrls=["/taxonomy/walta/media/conoesucidae_calocidae_and_helicophidae_01.jpg","/taxonomy/walta/media/conoesucidae_calocidae_and_helicophidae_02.jpg"]
+taxon "154" id="ecnomus" name="Ecnomus" bluebug=["/taxonomy/walta/media/speedbug/hydropsychidae_b.png"] mediaUrls=["/taxonomy/walta/media/ecnomus_01.jpg"]
+taxon "156" id="agapetus" name="Agapetus" bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"] mediaUrls=["/taxonomy/walta/media/agapetus_01.jpg","/taxonomy/walta/media/glossosomatidae_m1.mp4"]
+taxon "158" id="helicopsyche" name="Helicopsyche" bluebug=["/taxonomy/walta/media/speedbug/flat_snail_b.png"] mediaUrls=["/taxonomy/walta/media/helicopsyche_01.jpg"]
+taxon "159" id="hydrobiosidae" name="Hydrobiosidae" bluebug=["/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"] mediaUrls=["/taxonomy/walta/media/hydrobiosidae_01.jpg","/taxonomy/walta/media/hydrobiosidae_m1.mp4","/taxonomy/walta/media/hydrobiosidae_m2.mp4"]
+taxon "160" id="hydropsychidae" name="Hydropsychidae" bluebug=["/taxonomy/walta/media/speedbug/hydropsychidae_b.png"] mediaUrls=["/taxonomy/walta/media/hydropsychidae_01.jpg"]
+taxon "161" id="hydroptilidae" name="Hydroptilidae" bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"] mediaUrls=["/taxonomy/walta/media/hydroptilidae_01.jpg"]
+taxon "163" id="lectrides_varians" name="Lectrides varians" bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"] mediaUrls=["/taxonomy/walta/media/lectrides_varians_01.jpg"]
+taxon "164" id="notalina" name="Notalina" bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"] mediaUrls=["/taxonomy/walta/media/notalina_01.jpg","/taxonomy/walta/media/headbanger_caddis_m1.mp4"]
+taxon "166" id="attack_caddis_lowlander" name="Some Oecetis sp. (Leptoceridae) and Odontoceridae" bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"] mediaUrls=["/taxonomy/walta/media/oecetis_01.jpg"]
+taxon "167" id="log_cabin_caddis" name="Oecetis" bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"] mediaUrls=["/taxonomy/walta/media/log_cabin_caddis_01.jpg"]
+taxon "168" id="symphitoneuria" name="Symphitoneuria" bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"] mediaUrls=["/taxonomy/walta/media/symphitoneuria_01.jpg"]
+taxon "169" id="triplectides" name="Triplectides" bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"] mediaUrls=["/taxonomy/walta/media/triplectides_01.jpg","/taxonomy/walta/media/triplectides_m1.mp4"]
+taxon "170" id="leptocerids" name="Leptocerids" bluebug=["/taxonomy/walta/media/speedbug/triplectides_b.png"] mediaUrls=["/taxonomy/walta/media/leptocerids_01.jpg"]
+taxon "171" id="philopotamidae_polycentropodidae_and_ecnomidae" name="Philopotamidae, Polycentropodidae and Ecnomidae" bluebug=["/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"] mediaUrls=["/taxonomy/walta/media/philopotamidae_polycentropodidae_and_ecnomidae_01.jpg","/taxonomy/walta/media/philopotamidae_m1.mp4"]
+taxon "172" id="philorheithridae" name="Philorheithridae" bluebug=["/taxonomy/walta/media/speedbug/philorheithridae_b.png"] mediaUrls=["/taxonomy/walta/media/philorheithridae_01.jpg","/taxonomy/walta/media/philorheithridae_m1.mp4"]
+taxon "173" id="tasimiidae" name="Tasimiidae" bluebug=["/taxonomy/walta/media/speedbug/atriplectides_b.png"] mediaUrls=["/taxonomy/walta/media/tasimiidae_01.jpg"]
+taxon "175" id="hirudinea" name="Hirudinea" bluebug=["/taxonomy/walta/media/speedbug/hirudinea_b.png"] mediaUrls=["/taxonomy/walta/media/hirudinea_01.jpg"]
+taxon "176" id="oligochaeta" name="Oligochaeta" bluebug=["/taxonomy/walta/media/speedbug/oligochaeta_b.png"] mediaUrls=["/taxonomy/walta/media/oligochaeta_01.jpg"]
+taxon "179" id="hyriidae" name="Hyriidae" bluebug=["/taxonomy/walta/media/speedbug/hyriidae_b.png"] mediaUrls=["/taxonomy/walta/media/hyriidae_01.jpg"]
+taxon "180" id="sphaeriidae_and_corbiculidae" name="Sphaeriidae and Corbiculidae" bluebug=["/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"] mediaUrls=["/taxonomy/walta/media/sphaeriidae_and_corbiculidae_01.jpg"]
+taxon "181" id="gastropoda" name="gastropods" bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"] mediaUrls=["/taxonomy/walta/media/flatsnails_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif","/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/physa_acuta_closeup.jpg","/taxonomy/walta/media/lymnaeidae_01.jpg","/taxonomy/walta/media/ancylidae.jpg"]
+taxon "184" id="ancylidae" name="Ancylidae" bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"] mediaUrls=["/taxonomy/walta/media/ancylidae.jpg"]
+taxon "185" id="lymnaeidae" name="Lymnaeidae" bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"] mediaUrls=["/taxonomy/walta/media/lymnaeidae_01.jpg"]
+taxon "187" id="physa_acuta" name="Physa acuta" bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"] mediaUrls=["/taxonomy/walta/media/physa_acuta_01.jpg","/taxonomy/walta/media/physa_acuta_closeup.jpg"]
+taxon "189" id="flat_snails" name="Planorbidae" bluebug=["/taxonomy/walta/media/speedbug/flat_snail_b.png"] mediaUrls=["/taxonomy/walta/media/flatsnails_01.jpg"]
+taxon "190" id="planorbids" name="Planorbids" bluebug=["/taxonomy/walta/media/speedbug/snails_b.png"] mediaUrls=["/taxonomy/walta/media/planorbids_01.jpg"]
+taxon "193" id="potamopyrgus_antipodarum" name="Potamopyrgus antipodarum" bluebug=["/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"] mediaUrls=["/taxonomy/walta/media/potamopyrgus_antipodarum_01.jpg","/taxonomy/walta/media/potamopyrgus_antipodarum_02.jpg","/taxonomy/walta/media/potamopyrgus_02.gif"]
+taxon "196" id="nematoda" name="Nematoda" bluebug=["/taxonomy/walta/media/speedbug/nematoda_b.png"] mediaUrls=["/taxonomy/walta/media/nematoda_01.jpg"]
+taxon "197" id="nematomorpha" name="Nematomorpha" bluebug=["/taxonomy/walta/media/speedbug/gordian_b.png"] mediaUrls=["/taxonomy/walta/media/nematomorpha_01.jpg"]
+taxon "198" id="turbellaria" name="Turbellaria" bluebug=["/taxonomy/walta/media/speedbug/turbellaria_b.png"] mediaUrls=["/taxonomy/walta/media/turbellaria_01.jpg"]
+taxon "201" id="sialidae" name="Sialidae" bluebug=["/taxonomy/walta/media/speedbug/megaloptera_b.png"] mediaUrls=["/taxonomy/walta/media/sialidae_01.jpg"]
+taxon "205" id="crypturoperla_paradoxa" name="Crypturoperla paradoxa" bluebug=["/taxonomy/walta/media/speedbug/illiesoperla_b.png"] mediaUrls=[""]
+taxon "250" id="adult_siphlonuridae" name="Adult Siphlonuridae" bluebug=[] mediaUrls=["/taxonomy/walta/media/siphlonuridae_01.jpg"]
+taxon "251" id="adult_oniscigastridae" name="Adult Oniscigastridae" bluebug=[] mediaUrls=["/taxonomy/walta/media/tasmanophlebia_01.jpg"]
+taxon "252" id="adult_coloburiscidae" name="Adult Coloburiscidae" bluebug=[] mediaUrls=["/taxonomy/walta/media/coloburiscoides_01.jpg","/taxonomy/walta/media/coloburiscoides_m1.mp4"]
+taxon "253" id="adult_baetidae" name="Adult Baetidae" bluebug=[] mediaUrls=["/taxonomy/walta/media/baetidae_01.jpg","/taxonomy/walta/media/baetidae_m1.mp4"]
+taxon "254" id="adult_leptophlebiidae" name="Adult Leptophlebiidae" bluebug=[] mediaUrls=["/taxonomy/walta/media/leptophlebs_01.jpg"]
+taxon "255" id="adult_caenidae_prosopistomatidae" name="Adult Caenidae and Prosopistomatidae" bluebug=[] mediaUrls=["/taxonomy/walta/media/caenidae_01.jpg","/taxonomy/walta/media/caenidae_m1.mp4"]
+taxon "256" id="adult_ameletopsidae" name="Adult Ameletopsidae" bluebug=[] mediaUrls=["/taxonomy/walta/media/mirawara_01.jpg"]
+
+=== SILHOUETTE LOOKUPS (taxon × index) ===
+getSpeedbugFromTaxonId("3", "Speedbug") = undef
+getSpeedbugFromTaxonId("3", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("3", "Order Speedbug") = "/taxonomy/walta/media/speedbug/parastacidae_b.png"
+getSpeedbugFromTaxonId("4", "Speedbug") = "/taxonomy/walta/media/speedbug/parastacidae_b.png"
+getSpeedbugFromTaxonId("4", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("4", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("5", "Speedbug") = "/taxonomy/walta/media/speedbug/hymenosomatidae_b.png"
+getSpeedbugFromTaxonId("5", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("5", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("7", "Speedbug") = undef
+getSpeedbugFromTaxonId("7", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("7", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("8", "Speedbug") = undef
+getSpeedbugFromTaxonId("8", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("8", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("10", "Speedbug") = undef
+getSpeedbugFromTaxonId("10", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("10", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("11", "Speedbug") = undef
+getSpeedbugFromTaxonId("11", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("11", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("12", "Speedbug") = "/taxonomy/walta/media/speedbug/amphipoda_b.png"
+getSpeedbugFromTaxonId("12", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("12", "Order Speedbug") = "/taxonomy/walta/media/speedbug/amphipoda_b.png"
+getSpeedbugFromTaxonId("13", "Speedbug") = "/taxonomy/walta/media/speedbug/anostraca_b.png"
+getSpeedbugFromTaxonId("13", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("13", "Order Speedbug") = "/taxonomy/walta/media/speedbug/anostraca_b.png"
+getSpeedbugFromTaxonId("14", "Speedbug") = undef
+getSpeedbugFromTaxonId("14", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("14", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("15", "Speedbug") = "/taxonomy/walta/media/speedbug/notostraca_b.png"
+getSpeedbugFromTaxonId("15", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("15", "Order Speedbug") = "/taxonomy/walta/media/speedbug/notostraca_b.png"
+getSpeedbugFromTaxonId("18", "Speedbug") = "/taxonomy/walta/media/speedbug/pisauridae_b.png"
+getSpeedbugFromTaxonId("18", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("18", "Order Speedbug") = "/taxonomy/walta/media/speedbug/pisauridae_b.png"
+getSpeedbugFromTaxonId("19", "Speedbug") = "/taxonomy/walta/media/speedbug/hydracarina_b.png"
+getSpeedbugFromTaxonId("19", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("19", "Order Speedbug") = "/taxonomy/walta/media/speedbug/hydracarina_b.png"
+getSpeedbugFromTaxonId("22", "Speedbug") = undef
+getSpeedbugFromTaxonId("22", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("22", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("23", "Speedbug") = "/taxonomy/walta/media/speedbug/megaloptera_b.png"
+getSpeedbugFromTaxonId("23", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("23", "Order Speedbug") = "/taxonomy/walta/media/speedbug/megaloptera_b.png"
+getSpeedbugFromTaxonId("24", "Speedbug") = "/taxonomy/walta/media/speedbug/neuroptera_b.png"
+getSpeedbugFromTaxonId("24", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("24", "Order Speedbug") = "/taxonomy/walta/media/speedbug/neuroptera_b.png"
+getSpeedbugFromTaxonId("25", "Speedbug") = undef
+getSpeedbugFromTaxonId("25", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("25", "Order Speedbug") = "/taxonomy/walta/media/speedbug/lepidoptera_b.png"
+getSpeedbugFromTaxonId("26", "Speedbug") = undef
+getSpeedbugFromTaxonId("26", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("26", "Order Speedbug") = "/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"
+getSpeedbugFromTaxonId("27", "Speedbug") = undef
+getSpeedbugFromTaxonId("27", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("27", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("29", "Speedbug") = undef
+getSpeedbugFromTaxonId("29", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("29", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("30", "Speedbug") = undef
+getSpeedbugFromTaxonId("30", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("30", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("31", "Speedbug") = undef
+getSpeedbugFromTaxonId("31", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("31", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("32", "Speedbug") = undef
+getSpeedbugFromTaxonId("32", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("32", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("33", "Speedbug") = undef
+getSpeedbugFromTaxonId("33", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("33", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("34", "Speedbug") = undef
+getSpeedbugFromTaxonId("34", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("34", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("35", "Speedbug") = undef
+getSpeedbugFromTaxonId("35", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("35", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("36", "Speedbug") = undef
+getSpeedbugFromTaxonId("36", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("36", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("37", "Speedbug") = undef
+getSpeedbugFromTaxonId("37", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("37", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("38", "Speedbug") = undef
+getSpeedbugFromTaxonId("38", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("38", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("39", "Speedbug") = undef
+getSpeedbugFromTaxonId("39", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("39", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("41", "Speedbug") = undef
+getSpeedbugFromTaxonId("41", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("41", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("42", "Speedbug") = undef
+getSpeedbugFromTaxonId("42", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("42", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("43", "Speedbug") = undef
+getSpeedbugFromTaxonId("43", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("43", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("44", "Speedbug") = undef
+getSpeedbugFromTaxonId("44", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("44", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("45", "Speedbug") = undef
+getSpeedbugFromTaxonId("45", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("45", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("47", "Speedbug") = undef
+getSpeedbugFromTaxonId("47", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("47", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("48", "Speedbug") = "/taxonomy/walta/media/speedbug/elmidae_b.png"
+getSpeedbugFromTaxonId("48", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("48", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("50", "Speedbug") = "/taxonomy/walta/media/speedbug/gyrinidae_b.png"
+getSpeedbugFromTaxonId("50", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("50", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("51", "Speedbug") = "/taxonomy/walta/media/speedbug/gyrinidae_larva_b.png"
+getSpeedbugFromTaxonId("51", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("51", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("54", "Speedbug") = undef
+getSpeedbugFromTaxonId("54", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("54", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("56", "Speedbug") = "/taxonomy/walta/media/speedbug/berosus_b.png"
+getSpeedbugFromTaxonId("56", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("56", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("57", "Speedbug") = undef
+getSpeedbugFromTaxonId("57", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("57", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("58", "Speedbug") = undef
+getSpeedbugFromTaxonId("58", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("58", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("59", "Speedbug") = "/taxonomy/walta/media/speedbug/hydrophilus_b.png"
+getSpeedbugFromTaxonId("59", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("59", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("60", "Speedbug") = undef
+getSpeedbugFromTaxonId("60", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("60", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("62", "Speedbug") = undef
+getSpeedbugFromTaxonId("62", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("62", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("65", "Speedbug") = "/taxonomy/walta/media/speedbug/psephenidae_b.png"
+getSpeedbugFromTaxonId("65", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("65", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("67", "Speedbug") = "/taxonomy/walta/media/speedbug/ptilodactylidae_b.png"
+getSpeedbugFromTaxonId("67", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("67", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("68", "Speedbug") = "/taxonomy/walta/media/speedbug/scirtidae_b.png"
+getSpeedbugFromTaxonId("68", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("68", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("69", "Speedbug") = undef
+getSpeedbugFromTaxonId("69", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("69", "Order Speedbug") = "/taxonomy/walta/media/speedbug/mosquitolarva_b.png"
+getSpeedbugFromTaxonId("70", "Speedbug") = "/taxonomy/walta/media/speedbug/athericidae_b.png"
+getSpeedbugFromTaxonId("70", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("70", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("71", "Speedbug") = "/taxonomy/walta/media/speedbug/blephariceridae_b.png"
+getSpeedbugFromTaxonId("71", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("71", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("72", "Speedbug") = undef
+getSpeedbugFromTaxonId("72", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("72", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("76", "Speedbug") = undef
+getSpeedbugFromTaxonId("76", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("76", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("77", "Speedbug") = undef
+getSpeedbugFromTaxonId("77", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("77", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("78", "Speedbug") = "/taxonomy/walta/media/speedbug/mosquitolarva_b.png"
+getSpeedbugFromTaxonId("78", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("78", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("79", "Speedbug") = undef
+getSpeedbugFromTaxonId("79", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("79", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("80", "Speedbug") = undef
+getSpeedbugFromTaxonId("80", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("80", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("81", "Speedbug") = undef
+getSpeedbugFromTaxonId("81", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("81", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("82", "Speedbug") = "/taxonomy/walta/media/speedbug/simuliidae_b.png"
+getSpeedbugFromTaxonId("82", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("82", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("83", "Speedbug") = undef
+getSpeedbugFromTaxonId("83", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("83", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("84", "Speedbug") = undef
+getSpeedbugFromTaxonId("84", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("84", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("85", "Speedbug") = "/taxonomy/walta/media/speedbug/tipulidae_b.png"
+getSpeedbugFromTaxonId("85", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("85", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("86", "Speedbug") = undef
+getSpeedbugFromTaxonId("86", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("86", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("87", "Speedbug") = undef
+getSpeedbugFromTaxonId("87", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("87", "Order Speedbug") = "/taxonomy/walta/media/speedbug/leptophlebiidae_b.png"
+getSpeedbugFromTaxonId("89", "Speedbug") = undef
+getSpeedbugFromTaxonId("89", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("89", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("90", "Speedbug") = "/taxonomy/walta/media/speedbug/baetidae_b.png"
+getSpeedbugFromTaxonId("90", "Mayfly Muster Speedbug") = "/taxonomy/walta/media/speedbug/baetidae_b.png"
+getSpeedbugFromTaxonId("90", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("91", "Speedbug") = undef
+getSpeedbugFromTaxonId("91", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("91", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("93", "Speedbug") = "/taxonomy/walta/media/speedbug/coloburiscidae_b.png"
+getSpeedbugFromTaxonId("93", "Mayfly Muster Speedbug") = "/taxonomy/walta/media/speedbug/coloburiscidae_b.png"
+getSpeedbugFromTaxonId("93", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("95", "Speedbug") = "/taxonomy/walta/media/speedbug/atalophlebia_b.png"
+getSpeedbugFromTaxonId("95", "Mayfly Muster Speedbug") = "/taxonomy/walta/media/speedbug/atalophlebia_b.png"
+getSpeedbugFromTaxonId("95", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("96", "Speedbug") = undef
+getSpeedbugFromTaxonId("96", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("96", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("97", "Speedbug") = undef
+getSpeedbugFromTaxonId("97", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("97", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("99", "Speedbug") = undef
+getSpeedbugFromTaxonId("99", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("99", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("100", "Speedbug") = undef
+getSpeedbugFromTaxonId("100", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("100", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("101", "Speedbug") = undef
+getSpeedbugFromTaxonId("101", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("101", "Order Speedbug") = "/taxonomy/walta/media/speedbug/gerridae_b.png"
+getSpeedbugFromTaxonId("103", "Speedbug") = undef
+getSpeedbugFromTaxonId("103", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("103", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("105", "Speedbug") = undef
+getSpeedbugFromTaxonId("105", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("105", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("106", "Speedbug") = undef
+getSpeedbugFromTaxonId("106", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("106", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("107", "Speedbug") = undef
+getSpeedbugFromTaxonId("107", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("107", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("108", "Speedbug") = undef
+getSpeedbugFromTaxonId("108", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("108", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("109", "Speedbug") = undef
+getSpeedbugFromTaxonId("109", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("109", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("110", "Speedbug") = "/taxonomy/walta/media/speedbug/gerridae_b.png"
+getSpeedbugFromTaxonId("110", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("110", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("111", "Speedbug") = "/taxonomy/walta/media/speedbug/hydrometridae_b.png"
+getSpeedbugFromTaxonId("111", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("111", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("113", "Speedbug") = "/taxonomy/walta/media/speedbug/naucoridae_b.png"
+getSpeedbugFromTaxonId("113", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("113", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("115", "Speedbug") = "/taxonomy/walta/media/speedbug/laccotrephes_b.png"
+getSpeedbugFromTaxonId("115", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("115", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("116", "Speedbug") = "/taxonomy/walta/media/speedbug/ranatra_b.png"
+getSpeedbugFromTaxonId("116", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("116", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("118", "Speedbug") = "/taxonomy/walta/media/speedbug/anisops_b.png"
+getSpeedbugFromTaxonId("118", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("118", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("119", "Speedbug") = "/taxonomy/walta/media/speedbug/enithares_b2.png"
+getSpeedbugFromTaxonId("119", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("119", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("120", "Speedbug") = undef
+getSpeedbugFromTaxonId("120", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("120", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("121", "Speedbug") = "/taxonomy/walta/media/speedbug/veliids_b.png"
+getSpeedbugFromTaxonId("121", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("121", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("122", "Speedbug") = undef
+getSpeedbugFromTaxonId("122", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("122", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("123", "Speedbug") = undef
+getSpeedbugFromTaxonId("123", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("123", "Order Speedbug") = "/taxonomy/walta/media/speedbug/spidermudeye_b.png"
+getSpeedbugFromTaxonId("124", "Speedbug") = undef
+getSpeedbugFromTaxonId("124", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("124", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("125", "Speedbug") = undef
+getSpeedbugFromTaxonId("125", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("125", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("126", "Speedbug") = undef
+getSpeedbugFromTaxonId("126", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("126", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("127", "Speedbug") = "/taxonomy/walta/media/speedbug/spidermudeye_b.png"
+getSpeedbugFromTaxonId("127", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("127", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("128", "Speedbug") = undef
+getSpeedbugFromTaxonId("128", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("128", "Order Speedbug") = "/taxonomy/walta/media/speedbug/damselfly_b.png"
+getSpeedbugFromTaxonId("129", "Speedbug") = undef
+getSpeedbugFromTaxonId("129", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("129", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("130", "Speedbug") = undef
+getSpeedbugFromTaxonId("130", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("130", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("131", "Speedbug") = undef
+getSpeedbugFromTaxonId("131", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("131", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("132", "Speedbug") = "/taxonomy/walta/media/speedbug/megapodagrionidae_b.png"
+getSpeedbugFromTaxonId("132", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("132", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("133", "Speedbug") = undef
+getSpeedbugFromTaxonId("133", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("133", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("134", "Speedbug") = undef
+getSpeedbugFromTaxonId("134", "Mayfly Muster Speedbug") = "/taxonomy/walta/media/speedbug/eusthenia_b.png"
+getSpeedbugFromTaxonId("134", "Order Speedbug") = "/taxonomy/walta/media/speedbug/eusthenia_b.png"
+getSpeedbugFromTaxonId("136", "Speedbug") = undef
+getSpeedbugFromTaxonId("136", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("136", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("137", "Speedbug") = undef
+getSpeedbugFromTaxonId("137", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("137", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("138", "Speedbug") = "/taxonomy/walta/media/speedbug/eusthenia_b.png"
+getSpeedbugFromTaxonId("138", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("138", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("140", "Speedbug") = "/taxonomy/walta/media/speedbug/illiesoperla_b.png"
+getSpeedbugFromTaxonId("140", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("140", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("141", "Speedbug") = undef
+getSpeedbugFromTaxonId("141", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("141", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("142", "Speedbug") = undef
+getSpeedbugFromTaxonId("142", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("142", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("143", "Speedbug") = undef
+getSpeedbugFromTaxonId("143", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("143", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("144", "Speedbug") = undef
+getSpeedbugFromTaxonId("144", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("144", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("145", "Speedbug") = undef
+getSpeedbugFromTaxonId("145", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("145", "Order Speedbug") = "/taxonomy/walta/media/speedbug/triplectides_b.png"
+getSpeedbugFromTaxonId("147", "Speedbug") = "/taxonomy/walta/media/speedbug/atriplectides_b.png"
+getSpeedbugFromTaxonId("147", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("147", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("149", "Speedbug") = undef
+getSpeedbugFromTaxonId("149", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("149", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("151", "Speedbug") = undef
+getSpeedbugFromTaxonId("151", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("151", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("152", "Speedbug") = undef
+getSpeedbugFromTaxonId("152", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("152", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("154", "Speedbug") = undef
+getSpeedbugFromTaxonId("154", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("154", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("156", "Speedbug") = undef
+getSpeedbugFromTaxonId("156", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("156", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("158", "Speedbug") = undef
+getSpeedbugFromTaxonId("158", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("158", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("159", "Speedbug") = "/taxonomy/walta/media/speedbug/hydrobiosidae_b.png"
+getSpeedbugFromTaxonId("159", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("159", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("160", "Speedbug") = "/taxonomy/walta/media/speedbug/hydropsychidae_b.png"
+getSpeedbugFromTaxonId("160", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("160", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("161", "Speedbug") = undef
+getSpeedbugFromTaxonId("161", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("161", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("163", "Speedbug") = undef
+getSpeedbugFromTaxonId("163", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("163", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("164", "Speedbug") = undef
+getSpeedbugFromTaxonId("164", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("164", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("166", "Speedbug") = undef
+getSpeedbugFromTaxonId("166", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("166", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("167", "Speedbug") = undef
+getSpeedbugFromTaxonId("167", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("167", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("168", "Speedbug") = undef
+getSpeedbugFromTaxonId("168", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("168", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("169", "Speedbug") = undef
+getSpeedbugFromTaxonId("169", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("169", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("170", "Speedbug") = undef
+getSpeedbugFromTaxonId("170", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("170", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("171", "Speedbug") = undef
+getSpeedbugFromTaxonId("171", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("171", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("172", "Speedbug") = undef
+getSpeedbugFromTaxonId("172", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("172", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("173", "Speedbug") = undef
+getSpeedbugFromTaxonId("173", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("173", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("175", "Speedbug") = "/taxonomy/walta/media/speedbug/hirudinea_b.png"
+getSpeedbugFromTaxonId("175", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("175", "Order Speedbug") = "/taxonomy/walta/media/speedbug/hirudinea_b.png"
+getSpeedbugFromTaxonId("176", "Speedbug") = "/taxonomy/walta/media/speedbug/oligochaeta_b.png"
+getSpeedbugFromTaxonId("176", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("176", "Order Speedbug") = "/taxonomy/walta/media/speedbug/oligochaeta_b.png"
+getSpeedbugFromTaxonId("179", "Speedbug") = "/taxonomy/walta/media/speedbug/hyriidae_b.png"
+getSpeedbugFromTaxonId("179", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("179", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("180", "Speedbug") = "/taxonomy/walta/media/speedbug/sphaeriidae_and_corbiculidae_b.png"
+getSpeedbugFromTaxonId("180", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("180", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("181", "Speedbug") = undef
+getSpeedbugFromTaxonId("181", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("181", "Order Speedbug") = "/taxonomy/walta/media/speedbug/snails_b.png"
+getSpeedbugFromTaxonId("184", "Speedbug") = undef
+getSpeedbugFromTaxonId("184", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("184", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("185", "Speedbug") = undef
+getSpeedbugFromTaxonId("185", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("185", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("187", "Speedbug") = undef
+getSpeedbugFromTaxonId("187", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("187", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("189", "Speedbug") = "/taxonomy/walta/media/speedbug/flat_snail_b.png"
+getSpeedbugFromTaxonId("189", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("189", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("190", "Speedbug") = undef
+getSpeedbugFromTaxonId("190", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("190", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("193", "Speedbug") = "/taxonomy/walta/media/speedbug/potamopyrgus_antipodarum_b.png"
+getSpeedbugFromTaxonId("193", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("193", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("196", "Speedbug") = "/taxonomy/walta/media/speedbug/nematoda_b.png"
+getSpeedbugFromTaxonId("196", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("196", "Order Speedbug") = "/taxonomy/walta/media/speedbug/nematoda_b.png"
+getSpeedbugFromTaxonId("197", "Speedbug") = "/taxonomy/walta/media/speedbug/gordian_b.png"
+getSpeedbugFromTaxonId("197", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("197", "Order Speedbug") = "/taxonomy/walta/media/speedbug/gordian_b.png"
+getSpeedbugFromTaxonId("198", "Speedbug") = "/taxonomy/walta/media/speedbug/turbellaria_b.png"
+getSpeedbugFromTaxonId("198", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("198", "Order Speedbug") = "/taxonomy/walta/media/speedbug/turbellaria_b.png"
+getSpeedbugFromTaxonId("201", "Speedbug") = undef
+getSpeedbugFromTaxonId("201", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("201", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("205", "Speedbug") = undef
+getSpeedbugFromTaxonId("205", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("205", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("250", "Speedbug") = undef
+getSpeedbugFromTaxonId("250", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("250", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("251", "Speedbug") = undef
+getSpeedbugFromTaxonId("251", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("251", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("252", "Speedbug") = undef
+getSpeedbugFromTaxonId("252", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("252", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("253", "Speedbug") = undef
+getSpeedbugFromTaxonId("253", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("253", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("254", "Speedbug") = undef
+getSpeedbugFromTaxonId("254", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("254", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("255", "Speedbug") = undef
+getSpeedbugFromTaxonId("255", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("255", "Order Speedbug") = undef
+getSpeedbugFromTaxonId("256", "Speedbug") = undef
+getSpeedbugFromTaxonId("256", "Mayfly Muster Speedbug") = undef
+getSpeedbugFromTaxonId("256", "Order Speedbug") = undef
