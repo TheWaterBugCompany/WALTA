@@ -17,12 +17,8 @@ class HttpHeaders {
         const h = new HttpHeaders();
         if (!raw) return h;
         for (const line of raw.split(/\r?\n/)) {
-            if (!line) continue;
-            const idx = line.indexOf(':');
-            if (idx <= 0) continue;
-            const name = line.slice(0, idx).trim().toLowerCase();
-            const value = line.slice(idx + 1).trim();
-            h._entries.set(name, value);
+            const entry = parseHeaderLine(line);
+            if (entry) h._entries.set(entry.name.toLowerCase(), entry.value);
         }
         return h;
     }
@@ -47,6 +43,15 @@ class HttpHeaders {
         }
         return ` headers=${JSON.stringify(out)}`;
     }
+}
+
+function parseHeaderLine(line) {
+    const idx = line.indexOf(':');
+    if (idx <= 0) return null;
+    return {
+        name: line.slice(0, idx).trim(),
+        value: line.slice(idx + 1).trim(),
+    };
 }
 
 exports.HttpHeaders = HttpHeaders;
