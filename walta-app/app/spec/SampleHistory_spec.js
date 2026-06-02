@@ -30,19 +30,19 @@ describe("SampleHistory controller", function() {
   it('selecting row should open menu', async function() {
     await controllerOpenTest( ctl );
     ctl.sampleTable.fireEvent("click", { index: 0 } );
-    expect( ctl.sampleMenu.view.description.text ).to.include("View");
+    expect( ctl.sampleMenu.view.accessibilityLabel ).to.include("View");
   });
   it('selecting view should raise view event', async function() {
     await controllerOpenTest( ctl );
     ctl.sampleTable.fireEvent("click", { index: 0 } );
-    let result = await actionFiresTopicTest( ctl.sampleMenu.view.getView(), "click", Topics.SITEDETAILS );
+    let result = await actionFiresTopicTest( ctl.sampleMenu.view, "click", Topics.SITEDETAILS );
     expect( result.readonly ).to.be.true;
 
   });
   it('selecting edit should raise edit event', async function() {
     await controllerOpenTest( ctl );
     ctl.sampleTable.fireEvent("click", { index: 0 } );
-    let result = await actionFiresTopicTest( ctl.sampleMenu.edit.getView(), "click", Topics.SITEDETAILS );
+    let result = await actionFiresTopicTest( ctl.sampleMenu.edit, "click", Topics.SITEDETAILS );
     expect( result.readonly ).to.be.false;
   });
   it('places a Sync button on the anchor bar toolbar', async function() {

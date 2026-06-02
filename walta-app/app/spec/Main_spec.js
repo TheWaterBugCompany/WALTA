@@ -62,7 +62,7 @@ describe("Main controller", function() {
     currentController().sampleTable.fireEvent("click", { index: 0 });
 
     await waitForTick(10)();
-    await actionFiresTopicTest( currentController().sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
+    await actionFiresTopicTest( currentController().sampleMenu.edit, "click", Topics.PAGE_OPENED );
     currentController().waterbodyNameField.value = "changed by test edit";
     currentController().waterbodyNameField.fireEvent("change"); // simulate user entering text
 
@@ -94,9 +94,9 @@ describe("Main controller", function() {
    
     await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED);
     currentController().sampleTable.fireEvent("click", { index: 0 });
-    await actionFiresTopicTest( currentController().sampleMenu.edit.getView(), "click", Topics.PAGE_OPENED );
+    await actionFiresTopicTest( currentController().sampleMenu.edit, "click", Topics.PAGE_OPENED );
 
-    // At this point the global sample SHOULD NOT be the original record but 
+    // At this point the global sample SHOULD NOT be the original record but
     // a temporary copy instead. This a new sample with the DateSubmitted field blank.
     expect( Alloy.Models.instance("sample").get("serverSampleId")).to.equal(666);
     expect( Alloy.Models.instance("sample").get("dateCompleted")).to.be.undefined;
@@ -123,7 +123,7 @@ describe("Main controller", function() {
     currentController().sampleTable.fireEvent("click", { index: 0 });
 
     
-    await actionFiresTopicTest( currentController().sampleMenu.view.getView(), "click", Topics.PAGE_OPENED );
+    await actionFiresTopicTest( currentController().sampleMenu.view, "click", Topics.PAGE_OPENED );
 
     // verify change has been persisted
     expect( currentController().waterbodyNameField.value ).to.equal("changed by test edit");
