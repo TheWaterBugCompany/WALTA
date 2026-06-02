@@ -982,6 +982,20 @@ describe( 'SampleTray controller', function() {
 
     
   });
+  describe("anchor bar safe-area handling", function() {
+    afterEach(cleanupSampleTray);
+
+    it('should sit above the bottom safe-area inset so home/next buttons clear the home indicator', async function() {
+      Alloy.Collections.taxa = Alloy.createCollection("taxa");
+      setupSampleTray();
+      await openSampleTray();
+      await waitFor( () => SampleTray.isSafeAreaApplied() );
+      var padding = SampleTrayWin.safeAreaPadding || {};
+      var anchorBarView = SampleTray.getAnchorBar().getView();
+      expect( anchorBarView.bottom ).to.equal( padding.bottom || 0 );
+    });
+  });
+
   describe("Unknown bugs", function() {
     it("should display multiple unknown bugs", async function() {
       Alloy.Collections.taxa = Alloy.createCollection("taxa", [
