@@ -116,12 +116,9 @@ function applyKeyboardTweaks( ctlr, blurFields ) {
             // Lock to vertical-only — the ScrollView exists solely to
             // slide content out from under the keyboard. Without these,
             // iOS's rubber-band effect lets the user drag horizontally
-            // even when contentWidth matches the viewport. The global
-            // TSS default (ScrollView { scrollType: "vertical" }) only
-            // applies to Alloy-declared views, not Ti.UI.createScrollView.
+            // even when contentWidth matches the viewport.
             var scrollView = Ti.UI.createScrollView({
                 top: 0,
-                scrollType: "vertical",
                 horizontalBounce: false,
                 showHorizontalScrollIndicator: false
             });
