@@ -263,6 +263,22 @@ describe("SiteDetails controller", function() {
         } );
     });
 
+    // WB-100: SiteDetails rubber-banded on horizontal drag because the
+    // keyboard-tweak ScrollView wrapper relied on iOS's auto-axis detection
+    // and `layout="horizontal"` content can overflow by a hair. Lock the
+    // wrapper to vertical-only.
+    if (OS_IOS) {
+        it("keyboard-tweak ScrollView should be locked to vertical scroll (WB-100)", function(done) {
+            ctl = Alloy.createController("SiteDetails");
+            controllerOpenTest( ctl, function() {
+                setTimeout( function() {
+                    expect( ctl.content.scrollType ).to.equal("vertical");
+                    done();
+                }, 800 );
+            } );
+        });
+    }
+
     it("photo should NOT be selectable when in read only mode", function(done) {
         ctl = Alloy.createController("SiteDetails", { readonly: true });
         controllerOpenTest( ctl, function() {
