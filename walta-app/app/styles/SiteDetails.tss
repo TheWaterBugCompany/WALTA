@@ -5,10 +5,12 @@
     height: Ti.UI.FILL
 }
 
+// WB-100: do not combine `width` with `right` here — Ti Classic
+// expands #content to satisfy both, and the keyboard-tweak ScrollView
+// wrap (lib/ui/Layout.js) then rubber-bands on horizontal drag.
 "#right" : {
     left: "2%",
     width: "40%",
-    right: "2%",
     top: "5%"
 }
 
