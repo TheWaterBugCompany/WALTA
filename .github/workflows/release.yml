@@ -152,7 +152,11 @@ jobs:
   release-android:
     name: Android release
     needs: prepare
-    if: inputs.platforms != 'ios'
+    # always() + explicit needs.prepare.result check so the job runs when
+    # ci-gate was skipped via skip_ci_gate=true (prepare recovers via its
+    # own always(), but downstream non-status if: conditions otherwise
+    # propagate the upstream skip).
+    if: ${{ always() && needs.prepare.result == 'success' && inputs.platforms != 'ios' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -284,7 +288,9 @@ jobs:
   release-ios:
     name: iOS release
     needs: prepare
-    if: inputs.platforms != 'android'
+    # See release-android above for why this needs always() + the explicit
+    # prepare result check.
+    if: ${{ always() && needs.prepare.result == 'success' && inputs.platforms != 'android' }}
     runs-on: macos-latest
     timeout-minutes: 45
     steps:
