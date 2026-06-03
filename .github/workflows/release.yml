@@ -274,8 +274,11 @@ jobs:
           packageName: net.thewaterbug.waterbug
           releaseFiles: builds/release/Waterbug.aab
           # test → internal track (sandbox testers).
-          # production → beta track (Open Testing, public opt-in link).
-          track: ${{ inputs.environment == 'production' && 'beta' || 'internal' }}
+          # production → alpha track (Closed Testing, email/Google Group
+          # allowlist) — mirrors the email-managed Production Api Testers
+          # external group on TestFlight, keeps tester control symmetric
+          # across stores, and stops random URL-clickers polluting CERDI.
+          track: ${{ inputs.environment == 'production' && 'alpha' || 'internal' }}
           status: completed
 
       - name: Upload build artifact
