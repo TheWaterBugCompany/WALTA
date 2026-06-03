@@ -491,16 +491,41 @@ jobs:
             CHANGELOG_ARG=(--changelog "Release ${VERSION}")
           fi
 
-          fastlane pilot distribute \
-            --api_key_path /tmp/asc_key.json \
-            --app_identifier net.thewaterbug.waterbug \
-            --app_platform ios \
-            --app_version "$VERSION" \
-            --build_number "$VERSION" \
-            --groups "$GROUP" \
-            --distribute_external $EXTERNAL \
-            --notify_external_testers $EXTERNAL \
-            "${CHANGELOG_ARG[@]}"
+          # altool returns as soon as the IPA hits ASC; the build then takes
+          # a few minutes to appear via the ASC API. pilot distribute does
+          # a one-shot lookup and bails with "No build to distribute!" if
+          # the ingestion isn't done yet, so poll: retry on that specific
+          # error, fail fast on anything else.
+          ATTEMPTS=30
+          SLEEP_SECS=30
+          for i in $(seq 1 $ATTEMPTS); do
+            set +e
+            fastlane pilot distribute \
+              --api_key_path /tmp/asc_key.json \
+              --app_identifier net.thewaterbug.waterbug \
+              --app_platform ios \
+              --app_version "$VERSION" \
+              --build_number "$VERSION" \
+              --groups "$GROUP" \
+              --distribute_external $EXTERNAL \
+              --notify_external_testers $EXTERNAL \
+              "${CHANGELOG_ARG[@]}" 2>&1 | tee /tmp/pilot.log
+            PILOT_EXIT=${PIPESTATUS[0]}
+            set -e
+
+            if [ "$PILOT_EXIT" -eq 0 ]; then
+              echo "Distribute succeeded on attempt $i."
+              exit 0
+            fi
+            if ! grep -q "No build to distribute" /tmp/pilot.log; then
+              echo "::error::pilot distribute failed with a non-retriable error"
+              exit 1
+            fi
+            echo "Build not yet in ASC (attempt $i/$ATTEMPTS) — waiting ${SLEEP_SECS}s..."
+            sleep "$SLEEP_SECS"
+          done
+          echo "::error::Build never appeared in ASC after $((ATTEMPTS * SLEEP_SECS))s"
+          exit 1
 
       - name: Cleanup keychain
         if: always()
