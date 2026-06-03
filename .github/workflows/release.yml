@@ -438,39 +438,30 @@ jobs:
             npx grunt --platform=ios clean release
           fi
 
-      - name: Upload to TestFlight
-        run: |
-          mkdir -p ~/private_keys
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode \
-            > ~/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
-
-          # altool has been observed to print "ERROR: …" and exit 0 on
-          # upload rejection (e.g. CFBundleVersion violations). Capture
-          # output and fail the step if any ERROR: line appears, even
-          # when altool itself reports success.
-          ALTOOL_LOG=$(mktemp)
-          xcrun altool --upload-app --type ios \
-            --file builds/release/Waterbug.ipa \
-            --apiKey ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} \
-            --apiIssuer ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }} \
-            2>&1 | tee "$ALTOOL_LOG"
-          if grep -qE '^[0-9].* ERROR:' "$ALTOOL_LOG"; then
-            echo "::error::altool printed ERROR: lines despite exit 0 — upload rejected"
-            exit 1
-          fi
-
-      - name: Distribute build to TestFlight group
+      - name: Upload to TestFlight and assign to test group
         env:
           ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
+          # pilot upload (single step): uploads the IPA via fastlane's
+          # transporter, waits for ASC processing, then assigns the
+          # build it just uploaded to the right group. Using upload rather
+          # than altool + pilot distribute avoids a version-string-match
+          # race — pilot knows the build it uploaded by internal ID, not
+          # by querying ASC for a build matching --app_version/--build_number
+          # (which was wedging with "No build to distribute!" because Apple
+          # stores/returns the version field differently than pilot queries
+          # for it).
+          #
           # The Sandbox Api Testers internal group has "Enable automatic
-          # distribution" turned OFF, so altool uploads sit unassigned
-          # until this step explicitly hands the build to a group.
+          # distribution" turned OFF in ASC, so this --groups assignment is
+          # the only thing that puts a build in front of internal testers.
           # test → Sandbox Api Testers (internal, no review).
           # production → Production Api Testers (external, submits to
           # Beta App Review and notifies testers on approval).
-          VERSION="${{ needs.prepare.outputs.version }}"
+          mkdir -p ~/private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode \
+            > ~/private_keys/AuthKey_${ASC_KEY_ID}.p8
 
           # fastlane wants the ASC key as a JSON wrapper around the .p8.
           KEY_CONTENT=$(cat ~/private_keys/AuthKey_${ASC_KEY_ID}.p8)
@@ -481,51 +472,26 @@ jobs:
             '{key_id: $key_id, issuer_id: $issuer_id, key: $key, in_house: false}' \
             > /tmp/asc_key.json
 
+          VERSION="${{ needs.prepare.outputs.version }}"
           if [ "${{ inputs.environment }}" = "test" ]; then
             GROUP="Sandbox Api Testers"
             EXTERNAL=false
-            CHANGELOG_ARG=()
+            EXTRA_ARGS=()
           else
             GROUP="Production Api Testers"
             EXTERNAL=true
-            CHANGELOG_ARG=(--changelog "Release ${VERSION}")
+            EXTRA_ARGS=(--changelog "Release ${VERSION}")
           fi
 
-          # altool returns as soon as the IPA hits ASC; the build then takes
-          # a few minutes to appear via the ASC API. pilot distribute does
-          # a one-shot lookup and bails with "No build to distribute!" if
-          # the ingestion isn't done yet, so poll: retry on that specific
-          # error, fail fast on anything else.
-          ATTEMPTS=30
-          SLEEP_SECS=30
-          for i in $(seq 1 $ATTEMPTS); do
-            set +e
-            fastlane pilot distribute \
-              --api_key_path /tmp/asc_key.json \
-              --app_identifier net.thewaterbug.waterbug \
-              --app_platform ios \
-              --app_version "$VERSION" \
-              --build_number "$VERSION" \
-              --groups "$GROUP" \
-              --distribute_external $EXTERNAL \
-              --notify_external_testers $EXTERNAL \
-              "${CHANGELOG_ARG[@]}" 2>&1 | tee /tmp/pilot.log
-            PILOT_EXIT=${PIPESTATUS[0]}
-            set -e
-
-            if [ "$PILOT_EXIT" -eq 0 ]; then
-              echo "Distribute succeeded on attempt $i."
-              exit 0
-            fi
-            if ! grep -q "No build to distribute" /tmp/pilot.log; then
-              echo "::error::pilot distribute failed with a non-retriable error"
-              exit 1
-            fi
-            echo "Build not yet in ASC (attempt $i/$ATTEMPTS) — waiting ${SLEEP_SECS}s..."
-            sleep "$SLEEP_SECS"
-          done
-          echo "::error::Build never appeared in ASC after $((ATTEMPTS * SLEEP_SECS))s"
-          exit 1
+          fastlane pilot upload \
+            --api_key_path /tmp/asc_key.json \
+            --app_identifier net.thewaterbug.waterbug \
+            --app_platform ios \
+            --ipa builds/release/Waterbug.ipa \
+            --groups "$GROUP" \
+            --distribute_external $EXTERNAL \
+            --notify_external_testers $EXTERNAL \
+            "${EXTRA_ARGS[@]}"
 
       - name: Cleanup keychain
         if: always()
