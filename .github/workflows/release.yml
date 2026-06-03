@@ -263,13 +263,15 @@ jobs:
             npx grunt --platform=android clean release
           fi
 
-      - name: Upload to Google Play (internal track)
+      - name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: net.thewaterbug.waterbug
           releaseFiles: builds/release/Waterbug.aab
-          track: internal
+          # test → internal track (sandbox testers).
+          # production → beta track (Open Testing, public opt-in link).
+          track: ${{ inputs.environment == 'production' && 'beta' || 'internal' }}
           status: completed
 
       - name: Upload build artifact
@@ -450,6 +452,48 @@ jobs:
             echo "::error::altool printed ERROR: lines despite exit 0 — upload rejected"
             exit 1
           fi
+
+      - name: Distribute build to TestFlight group
+        env:
+          ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          # The Sandbox Api Testers internal group has "Enable automatic
+          # distribution" turned OFF, so altool uploads sit unassigned
+          # until this step explicitly hands the build to a group.
+          # test → Sandbox Api Testers (internal, no review).
+          # production → Production Api Testers (external, submits to
+          # Beta App Review and notifies testers on approval).
+          VERSION="${{ needs.prepare.outputs.version }}"
+
+          # fastlane wants the ASC key as a JSON wrapper around the .p8.
+          KEY_CONTENT=$(cat ~/private_keys/AuthKey_${ASC_KEY_ID}.p8)
+          jq -n \
+            --arg key_id "$ASC_KEY_ID" \
+            --arg issuer_id "$ASC_ISSUER_ID" \
+            --arg key "$KEY_CONTENT" \
+            '{key_id: $key_id, issuer_id: $issuer_id, key: $key, in_house: false}' \
+            > /tmp/asc_key.json
+
+          if [ "${{ inputs.environment }}" = "test" ]; then
+            GROUP="Sandbox Api Testers"
+            EXTERNAL=false
+            CHANGELOG_ARG=()
+          else
+            GROUP="Production Api Testers"
+            EXTERNAL=true
+            CHANGELOG_ARG=(--changelog "Release ${VERSION}")
+          fi
+
+          fastlane pilot distribute \
+            --api_key_path /tmp/asc_key.json \
+            --app_identifier net.thewaterbug.waterbug \
+            --app_version "$VERSION" \
+            --build_number "$VERSION" \
+            --groups "$GROUP" \
+            --distribute_external $EXTERNAL \
+            --notify_external_testers $EXTERNAL \
+            "${CHANGELOG_ARG[@]}"
 
       - name: Cleanup keychain
         if: always()
