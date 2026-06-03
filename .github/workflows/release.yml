@@ -475,15 +475,23 @@ jobs:
             '{key_id: $key_id, issuer_id: $issuer_id, key: $key, in_house: false}' \
             > /tmp/asc_key.json
 
+          # `submit_beta_review` defaults to true in pilot and gates on
+          # `(groups || distribute_external)` (an OR), so just specifying
+          # --groups — even with an internal group like Sandbox Api Testers —
+          # silently submits the build to Beta App Review. Pass it explicitly:
+          # false for test (internal-only, no review needed), true for
+          # production (external, Apple review is the point).
           VERSION="${{ needs.prepare.outputs.version }}"
           if [ "${{ inputs.environment }}" = "test" ]; then
             GROUP="Sandbox Api Testers"
             EXTERNAL=false
-            EXTRA_ARGS=()
+            SUBMIT_REVIEW=false
+            CHANGELOG_ARGS=()
           else
             GROUP="Production Api Testers"
             EXTERNAL=true
-            EXTRA_ARGS=(--changelog "Release ${VERSION}")
+            SUBMIT_REVIEW=true
+            CHANGELOG_ARGS=(--changelog "Release ${VERSION}")
           fi
 
           fastlane pilot upload \
@@ -494,7 +502,8 @@ jobs:
             --groups "$GROUP" \
             --distribute_external $EXTERNAL \
             --notify_external_testers $EXTERNAL \
-            "${EXTRA_ARGS[@]}"
+            --submit_beta_review $SUBMIT_REVIEW \
+            "${CHANGELOG_ARGS[@]}"
 
       - name: Cleanup keychain
         if: always()
