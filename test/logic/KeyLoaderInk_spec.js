@@ -5,7 +5,7 @@ const os = require("os");
 const path = require("path");
 
 const KeyLoaderInk = require("logic/KeyLoaderInk");
-const { Tag, Divert, Choice, Node } = KeyLoaderInk.__test;
+const { Tag, Divert, Choice, Node, Knot } = KeyLoaderInk.__test;
 
 describe("KeyLoaderInk (direct .ink parser)", function () {
 	describe("Tag", function () {
@@ -34,6 +34,14 @@ describe("KeyLoaderInk (direct .ink parser)", function () {
 	describe("Node", function () {
 		it("dispatches a tag line to a Tag instance", function () {
 			expect(Node.parse("# x: y")).to.be.instanceOf(Tag);
+		});
+	});
+
+	describe("Knot", function () {
+		it("flags a knot containing a taxonId tag as a taxon and exposes taxonArgs", function () {
+			const k = new Knot("frog", [Tag.parse('# taxonId: "42"')]);
+			expect(k.isTaxon()).to.equal(true);
+			expect(k.taxonArgs().taxonId).to.equal("42");
 		});
 	});
 
