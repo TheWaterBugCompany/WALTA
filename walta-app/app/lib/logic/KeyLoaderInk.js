@@ -154,8 +154,19 @@ function parseLine( raw ) {
 }
 
 class InkDocument {
-	static parse( inkPath ) { return new InkDocument(); }
-	knot( name ) { return null; }
+	constructor( knots ) {
+		this._knots = knots;
+	}
+
+	static parse( inkPath ) {
+		var raw = loadInkLines( inkPath );
+		var parsed = _.compact( _.map( stripComments( raw ), parseLine ) );
+		return new InkDocument( groupByKnot( parsed ) );
+	}
+
+	knot( name ) {
+		return this._knots[name];
+	}
 }
 
 function loadInkLines( inkPath ) {
@@ -240,10 +251,10 @@ function groupByKnot( parsed ) {
 
 	`expandKnot` returns either a Taxon or a KeyNode.
 */
-function expandKnot( knotName, knots, key, building ) {
+function expandKnot( knotName, doc, key, building ) {
 	if ( building[knotName] ) return building[knotName];
 
-	var knot = knots[knotName] || new Knot( knotName );
+	var knot = doc.knot( knotName ) || new Knot( knotName );
 
 	if ( knot.isTaxon() ) {
 		var taxon = Taxon.createTaxon( knot.taxonArgs() );
@@ -260,11 +271,11 @@ function expandKnot( knotName, knots, key, building ) {
 	var baseDepth = _.min( _.map( choices, function( c ) { return c.depth; }) );
 	if ( ! _.isFinite( baseDepth ) ) baseDepth = 1;
 
-	walkChoices( choices, baseDepth, knots, key, building, node );
+	walkChoices( choices, baseDepth, doc, key, building, node );
 	return node;
 }
 
-function buildAnonymousNode( choices, parentDepth, knots, key, building ) {
+function buildAnonymousNode( choices, parentDepth, doc, key, building ) {
 	var node = Key.createKeyNode( {} );
 	key.attachNode( node );
 
@@ -272,14 +283,14 @@ function buildAnonymousNode( choices, parentDepth, knots, key, building ) {
 	var actualDepths = _.uniq( _.map( choices, function( c ) { return c.depth; }));
 	if ( actualDepths.length ) depthHere = _.min( actualDepths );
 
-	walkChoices( choices, depthHere, knots, key, building, node );
+	walkChoices( choices, depthHere, doc, key, building, node );
 	return node;
 }
 
 // Walk the choices that sit at exactly `depth`, attaching each as a
 // Question on `owner`. Deeper-depth choices become a nested anonymous
 // sub-node; same-depth siblings end the gather.
-function walkChoices( choices, depth, knots, key, building, owner ) {
+function walkChoices( choices, depth, doc, key, building, owner ) {
 	for ( var i = 0; i < choices.length; i++ ) {
 		var c = choices[i];
 		if ( c.depth !== depth ) continue;
@@ -295,14 +306,14 @@ function walkChoices( choices, depth, knots, key, building, owner ) {
 		if ( c.divert ) {
 			outcome = c.divert.isTerminator()
 				? null
-				: expandKnot( c.divert.target, knots, key, building );
+				: expandKnot( c.divert.target, doc, key, building );
 		} else {
 			var nestedEntries = [];
 			for ( var j = i + 1; j < choices.length; j++ ) {
 				if ( choices[j].depth <= depth ) break;
 				nestedEntries.push( choices[j] );
 			}
-			outcome = buildAnonymousNode( nestedEntries, depth, knots, key, building );
+			outcome = buildAnonymousNode( nestedEntries, depth, doc, key, building );
 		}
 
 		question.outcome = outcome;
@@ -353,13 +364,10 @@ function buildSpeedbugIndex( speedbugName, rootMenu, key ) {
 }
 
 function loadKey( root ) {
-	var inkPath = path.join( root, 'key.ink' );
-	var raw = loadInkLines( inkPath );
-	var parsed = _.compact( _.map( stripComments( raw ), parseLine ) );
-	var knots = groupByKnot( parsed );
+	var doc = InkDocument.parse( path.join( root, 'key.ink' ) );
 
 	var key = Key.createKey( { url: root });
-	var rootMenu = expandKnot( '', knots, key, {} );
+	var rootMenu = expandKnot( '', doc, key, {} );
 	key.setRootNode( rootMenu );
 
 	var altKeyQ = rootMenu.findQuestion( 'ALT Key' );
