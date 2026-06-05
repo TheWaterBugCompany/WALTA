@@ -112,8 +112,28 @@ class Knot {
 		this.name = name;
 		this.entries = entries || [];
 	}
-	isTaxon() { return false; }
-	taxonArgs() { return {}; }
+
+	add( entry ) {
+		this.entries.push( entry );
+	}
+
+	choices() {
+		return _.filter( this.entries, function( e ) { return e instanceof Choice; });
+	}
+
+	tags() {
+		return _.filter( this.entries, function( e ) { return e instanceof Tag; });
+	}
+
+	isTaxon() {
+		return _.any( this.tags(), function( t ) { return t.name === 'taxonId'; });
+	}
+
+	taxonArgs() {
+		var args = { id: this.name };
+		_.each( this.tags(), function( t ) { args[ t.name ] = t.parsedValue(); });
+		return args;
+	}
 }
 
 class Node {
@@ -193,43 +213,36 @@ function stripComments( lines ) {
 	header live under the synthetic name '' (the "root" entry point).
 */
 function groupByKnot( parsed ) {
-	var knots = { '': [] };
+	var knots = { '': new Knot('') };
 	var current = '';
 	_.each( parsed, function( p ) {
 		if ( ! p ) return;
 		if ( p.kind === 'knot' ) {
 			current = p.name;
-			if ( ! knots[current] ) knots[current] = [];
+			if ( ! knots[current] ) knots[current] = new Knot( current );
 		} else {
-			knots[current].push( p );
+			knots[current].add( p );
 		}
 	});
 	return knots;
 }
 
 /*
-	A knot is either a TAXON (its first non-divert content is a `# taxonId:`
-	tag) or a NODE (containing choices). Taxa accumulate tag attributes and
-	get linked under the parent Question; nodes have their choices walked
-	and either link to another knot via divert or into a synthetic sub-node
-	formed by deeper-depth choices.
+	A knot is either a TAXON (it contains a `# taxonId:` tag) or a NODE
+	(containing choices). Taxa accumulate tag attributes and get linked
+	under the parent Question; nodes have their choices walked, with each
+	choice either linking to another knot via divert or to a synthetic
+	sub-node formed by deeper-depth choices.
 
-	`expandKnot` returns either a Taxon object or a KeyNode object.
+	`expandKnot` returns either a Taxon or a KeyNode.
 */
 function expandKnot( knotName, knots, key, building ) {
 	if ( building[knotName] ) return building[knotName];
 
-	var entries = knots[knotName] || [];
-	var isTaxon = _.any( entries, function( e ) {
-		return e.kind === 'tag' && e.name === 'taxonId';
-	} );
+	var knot = knots[knotName] || new Knot( knotName );
 
-	if ( isTaxon ) {
-		var taxonArgs = { id: knotName };
-		_.each( entries, function( e ) {
-			if ( e.kind === 'tag' ) taxonArgs[ e.name ] = e.parsedValue();
-		});
-		var taxon = Taxon.createTaxon( taxonArgs );
+	if ( knot.isTaxon() ) {
+		var taxon = Taxon.createTaxon( knot.taxonArgs() );
 		key.attachTaxon( taxon );
 		building[knotName] = taxon;
 		return taxon;
@@ -239,45 +252,11 @@ function expandKnot( knotName, knots, key, building ) {
 	key.attachNode( node );
 	building[knotName] = node;
 
-	// A knot's content is a flat list of choices at depth 1 (or sometimes
-	// deeper-only). Walk depth 1 choices and recursively gather their
-	// nested deeper choices as a sub-node.
-	var choices = _.filter( entries, function( e ) { return e instanceof Choice; });
+	var choices = knot.choices();
 	var baseDepth = _.min( _.map( choices, function( c ) { return c.depth; }) );
 	if ( ! _.isFinite( baseDepth ) ) baseDepth = 1;
 
-	for ( var i = 0; i < choices.length; i++ ) {
-		var c = choices[i];
-		if ( c.depth !== baseDepth ) continue;
-
-		var question = { text: c.text };
-		if ( c.tag && c.tag.name === 'mediaUrls' ) {
-			question.mediaUrls = c.tag.parsedValue();
-			if ( ! _.isArray( question.mediaUrls ) ) question.mediaUrls = [ question.mediaUrls ];
-		}
-		question = Question.createQuestion( question );
-
-		var outcome;
-		if ( c.divert ) {
-			outcome = c.divert.isTerminator()
-				? null
-				: expandKnot( c.divert.target, knots, key, building );
-		} else {
-			// Gather nested choices that belong to this branch (until next
-			// same-depth or shallower sibling, or end of list).
-			var nestedEntries = [];
-			for ( var j = i + 1; j < choices.length; j++ ) {
-				if ( choices[j].depth <= baseDepth ) break;
-				nestedEntries.push( choices[j] );
-			}
-			outcome = buildAnonymousNode( nestedEntries, baseDepth, knots, key, building );
-		}
-
-		question.outcome = outcome;
-		if ( outcome && outcome.parentLink === null ) outcome.parentLink = node;
-		node.questions.push( question );
-	}
-
+	walkChoices( choices, baseDepth, knots, key, building, node );
 	return node;
 }
 
@@ -289,9 +268,17 @@ function buildAnonymousNode( choices, parentDepth, knots, key, building ) {
 	var actualDepths = _.uniq( _.map( choices, function( c ) { return c.depth; }));
 	if ( actualDepths.length ) depthHere = _.min( actualDepths );
 
+	walkChoices( choices, depthHere, knots, key, building, node );
+	return node;
+}
+
+// Walk the choices that sit at exactly `depth`, attaching each as a
+// Question on `owner`. Deeper-depth choices become a nested anonymous
+// sub-node; same-depth siblings end the gather.
+function walkChoices( choices, depth, knots, key, building, owner ) {
 	for ( var i = 0; i < choices.length; i++ ) {
 		var c = choices[i];
-		if ( c.depth !== depthHere ) continue;
+		if ( c.depth !== depth ) continue;
 
 		var question = { text: c.text };
 		if ( c.tag && c.tag.name === 'mediaUrls' ) {
@@ -308,18 +295,16 @@ function buildAnonymousNode( choices, parentDepth, knots, key, building ) {
 		} else {
 			var nestedEntries = [];
 			for ( var j = i + 1; j < choices.length; j++ ) {
-				if ( choices[j].depth <= depthHere ) break;
+				if ( choices[j].depth <= depth ) break;
 				nestedEntries.push( choices[j] );
 			}
-			outcome = buildAnonymousNode( nestedEntries, depthHere, knots, key, building );
+			outcome = buildAnonymousNode( nestedEntries, depth, knots, key, building );
 		}
 
 		question.outcome = outcome;
-		if ( outcome && outcome.parentLink === null ) outcome.parentLink = node;
-		node.questions.push( question );
+		if ( outcome && outcome.parentLink === null ) outcome.parentLink = owner;
+		owner.questions.push( question );
 	}
-
-	return node;
 }
 
 /*
