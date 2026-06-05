@@ -107,6 +107,15 @@ class Choice {
 	  { kind: 'knot', name }   (a === knot === header)
 	  null      (blank or unrecognised)
 */
+class Knot {
+	constructor( name, entries ) {
+		this.name = name;
+		this.entries = entries || [];
+	}
+	isTaxon() { return false; }
+	taxonArgs() { return {}; }
+}
+
 class Node {
 	static parse( raw ) {
 		var line = raw.trim();
@@ -380,4 +389,4 @@ function loadKey( root ) {
 }
 
 exports.loadKey = loadKey;
-exports.__test = { Tag, Divert, Choice, Node };
+exports.__test = { Tag, Divert, Choice, Node, Knot };
