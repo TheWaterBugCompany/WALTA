@@ -26,10 +26,8 @@ class Tag {
 	}
 
 	static parse( raw ) {
-		var line = raw.trim();
-		if ( line.charAt(0) !== '#' ) return null;
-		var parts = splitByFirst( line.slice(1), ':' );
-		if ( ! parts ) return null;
+		var parts = splitByFirst( raw.trim().slice(1), ':' );
+		if ( ! parts ) throw new Error( `Malformed tag (no colon): ${raw}` );
 		return new Tag( parts[0], parts[1] );
 	}
 
