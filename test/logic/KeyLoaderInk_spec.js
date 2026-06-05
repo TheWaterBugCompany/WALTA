@@ -5,7 +5,7 @@ const os = require("os");
 const path = require("path");
 
 const KeyLoaderInk = require("logic/KeyLoaderInk");
-const { Tag, Divert } = KeyLoaderInk.__test;
+const { Tag, Divert, Choice } = KeyLoaderInk.__test;
 
 describe("KeyLoaderInk (direct .ink parser)", function () {
 	describe("Tag", function () {
@@ -19,6 +19,15 @@ describe("KeyLoaderInk (direct .ink parser)", function () {
 	describe("Divert", function () {
 		it("recognises DONE as a terminator", function () {
 			expect(Divert.parse("-> DONE").isTerminator()).to.equal(true);
+		});
+	});
+
+	describe("Choice", function () {
+		it("parses post-divert tag form into text + tag + divert.target", function () {
+			const c = Choice.parse('* X -> dest # mediaUrls: "/p.png"');
+			expect(c.text).to.equal("X");
+			expect(c.tag.name).to.equal("mediaUrls");
+			expect(c.divert.target).to.equal("dest");
 		});
 	});
 
