@@ -6,7 +6,6 @@ var Key = require('./Key');
 var Taxon = require('./Taxon');
 var Question = require('./Question');
 var SpeedbugIndex = require('./SpeedbugIndex');
-var splitByFirst = require('../util/splitByFirst');
 
 /*
 	Build-time loader: reads the .ink source files directly and constructs the
@@ -74,28 +73,22 @@ class Choice {
 		var tag = null;
 		var divert = null;
 
-		var divertSplit = splitByFirst( body, '->' );
-		if ( divertSplit ) {
-			var divPart;
-			[ body, divPart ] = divertSplit;
-			// Either "* text # tag -> dest" or "* text -> dest # tag" appears
-			// in WALTA's .ink. Hoist a tag found after the divert back into
-			// the body so the # extractor below sees a single canonical form.
-			var hoist = splitByFirst( divPart, '#' );
-			if ( hoist ) {
-				var hoistTagBody;
-				[ divPart, hoistTagBody ] = hoist;
-				body = body + ' #' + hoistTagBody;
-			}
-			divert = Divert.parse( '-> ' + divPart );
+		// Either "* text # tag -> dest" or "* text -> dest # tag" appears
+		// in WALTA's .ink. The divert regex captures an optional post-divert
+		// tag in group 3, which gets folded back into the body so the tag
+		// regex below sees a single canonical "text # tag" form.
+		var divertMatch = body.match( /^(.*?)\s*->\s*(\S+)(?:\s*(#.*))?$/ );
+		if ( divertMatch ) {
+			body = divertMatch[1];
+			divert = new Divert( divertMatch[2] );
+			if ( divertMatch[3] ) body = body + ' ' + divertMatch[3];
 		}
-		var tagSplit = splitByFirst( body, '#' );
-		if ( tagSplit ) {
-			var tagBody;
-			[ body, tagBody ] = tagSplit;
-			tag = Tag.parse( '#' + tagBody );
+		var tagMatch = body.match( /^(.*?)\s*(#.*)$/ );
+		if ( tagMatch ) {
+			body = tagMatch[1];
+			tag = Tag.parse( tagMatch[2] );
 		}
-		return new Choice( depth, body, tag, divert );
+		return new Choice( depth, body.trim(), tag, divert );
 	}
 }
 
