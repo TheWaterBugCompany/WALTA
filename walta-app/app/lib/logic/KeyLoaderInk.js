@@ -43,8 +43,19 @@ class Tag {
 }
 
 class Divert {
+	constructor( target ) {
+		this.kind = 'divert';
+		this.target = target;
+	}
+
 	static parse( raw ) {
-		return null;
+		var m = raw.trim().match(/^->\s*(\S+)/);
+		if ( ! m ) return null;
+		return new Divert( m[1] );
+	}
+
+	isTerminator() {
+		return this.target === 'DONE' || this.target === 'END';
 	}
 }
 
@@ -137,7 +148,7 @@ function parseLine( raw ) {
 				body = body + ' ' + divPart.slice( afterTagIdx );
 				divPart = divPart.slice( 0, afterTagIdx ).trim();
 			}
-			divert = divPart.split(/\s+/)[0];
+			divert = Divert.parse( '-> ' + divPart );
 		}
 		var tagIdx = body.indexOf('#');
 		if ( tagIdx !== -1 ) {
@@ -151,10 +162,7 @@ function parseLine( raw ) {
 		return Tag.parse( line );
 	}
 
-	var div = line.match(/^->\s*(\S+)/);
-	if ( div ) return { kind: 'divert', target: div[1] };
-
-	return null;
+	return Divert.parse( line );
 }
 
 /*
@@ -228,9 +236,9 @@ function expandKnot( knotName, knots, key, building ) {
 
 		var outcome;
 		if ( c.divert ) {
-			outcome = ( c.divert === 'DONE' || c.divert === 'END' )
+			outcome = c.divert.isTerminator()
 				? null
-				: expandKnot( c.divert, knots, key, building );
+				: expandKnot( c.divert.target, knots, key, building );
 		} else {
 			// Gather nested choices that belong to this branch (until next
 			// same-depth or shallower sibling, or end of list).
@@ -271,9 +279,9 @@ function buildAnonymousNode( choices, parentDepth, knots, key, building ) {
 
 		var outcome;
 		if ( c.divert ) {
-			outcome = ( c.divert === 'DONE' || c.divert === 'END' )
+			outcome = c.divert.isTerminator()
 				? null
-				: expandKnot( c.divert, knots, key, building );
+				: expandKnot( c.divert.target, knots, key, building );
 		} else {
 			var nestedEntries = [];
 			for ( var j = i + 1; j < choices.length; j++ ) {
