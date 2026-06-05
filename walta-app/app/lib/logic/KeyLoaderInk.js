@@ -99,6 +99,12 @@ class Choice {
 	}
 }
 
+class Node {
+	static parse( raw ) {
+		return null;
+	}
+}
+
 function loadInkLines( inkPath ) {
 	var dir = path.dirname( inkPath );
 	var text = fs.readFileSync( inkPath, 'utf-8' );
@@ -381,4 +387,4 @@ function loadKey( root ) {
 }
 
 exports.loadKey = loadKey;
-exports.__test = { Tag, Divert, Choice };
+exports.__test = { Tag, Divert, Choice, Node };

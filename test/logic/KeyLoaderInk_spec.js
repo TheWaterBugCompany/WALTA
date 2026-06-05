@@ -5,7 +5,7 @@ const os = require("os");
 const path = require("path");
 
 const KeyLoaderInk = require("logic/KeyLoaderInk");
-const { Tag, Divert, Choice } = KeyLoaderInk.__test;
+const { Tag, Divert, Choice, Node } = KeyLoaderInk.__test;
 
 describe("KeyLoaderInk (direct .ink parser)", function () {
 	describe("Tag", function () {
@@ -28,6 +28,12 @@ describe("KeyLoaderInk (direct .ink parser)", function () {
 			expect(c.text).to.equal("X");
 			expect(c.tag.name).to.equal("mediaUrls");
 			expect(c.divert.target).to.equal("dest");
+		});
+	});
+
+	describe("Node", function () {
+		it("dispatches a tag line to a Tag instance", function () {
+			expect(Node.parse("# x: y")).to.be.instanceOf(Tag);
 		});
 	});
 
