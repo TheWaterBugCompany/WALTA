@@ -5,8 +5,17 @@ const os = require("os");
 const path = require("path");
 
 const KeyLoaderInk = require("logic/KeyLoaderInk");
+const { Tag } = KeyLoaderInk.__test;
 
 describe("KeyLoaderInk (direct .ink parser)", function () {
+	describe("Tag", function () {
+		it("parses a standalone-line tag into name + JSON-coerced value", function () {
+			const tag = Tag.parse("# size: 10");
+			expect(tag.name).to.equal("size");
+			expect(tag.parsedValue()).to.equal(10);
+		});
+	});
+
 	let dir;
 
 	beforeEach(function () {
