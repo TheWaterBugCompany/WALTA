@@ -5,7 +5,7 @@ var Key = require('./Key');
 var Taxon = require('./Taxon');
 var Question = require('./Question');
 var SpeedbugIndex = require('./SpeedbugIndex');
-var { Knot, InkDocument } = require('./InkDocument');
+var { InkDocument } = require('./InkDocument');
 
 /*
 	Build-time loader: walks an InkDocument and constructs the WALTA
@@ -21,7 +21,7 @@ class KeyLoaderInk {
 	constructor( root ) {
 		this._doc = new InkDocument( path.join( root, 'key.ink' ) );
 		this._key = Key.createKey( { url: root } );
-		this._building = {};
+		this._knotCache = {};
 	}
 
 	// The root entry point (the '' synthetic knot) is the menu of top-level
@@ -45,49 +45,38 @@ class KeyLoaderInk {
 	}
 
 	expandKnot( knotName ) {
-		if ( this._building[knotName] ) return this._building[knotName];
+		if ( this._knotCache[knotName] ) return this._knotCache[knotName];
 
-		const knot = this._doc.knot( knotName ) || new Knot( knotName );
+		const knot = this._doc.knot( knotName );
+		if ( ! knot ) throw new Error( `Divert target '${knotName}' not found in .ink document` );
 
 		if ( this.isTaxon( knot ) ) {
 			const taxon = Taxon.createTaxon( this.taxonArgs( knot ) );
 			this._key.attachTaxon( taxon );
-			this._building[knotName] = taxon;
+			this._knotCache[knotName] = taxon;
 			return taxon;
 		}
 
 		const node = Key.createKeyNode( { id: knotName } );
 		this._key.attachNode( node );
-		this._building[knotName] = node;
+		this._knotCache[knotName] = node;
 
-		const choices = knot.choices();
-		let baseDepth = _.min( _.map( choices, ( c ) => c.depth ) );
-		if ( ! _.isFinite( baseDepth ) ) baseDepth = 1;
-
-		this.walkChoices( choices, baseDepth, node );
+		this.walkChoices( knot.choices(), node );
 		return node;
 	}
 
-	buildAnonymousNode( choices, parentDepth ) {
+	buildAnonymousNode( choices ) {
 		const node = Key.createKeyNode( {} );
 		this._key.attachNode( node );
-
-		let depthHere = parentDepth + 1;
-		const actualDepths = _.uniq( _.map( choices, ( c ) => c.depth ) );
-		if ( actualDepths.length ) depthHere = _.min( actualDepths );
-
-		this.walkChoices( choices, depthHere, node );
+		this.walkChoices( choices, node );
 		return node;
 	}
 
-	// Walk the choices that sit at exactly `depth`, attaching each as a
-	// Question on `owner`. Deeper-depth choices become a nested anonymous
-	// sub-node; same-depth siblings end the gather.
-	walkChoices( choices, depth, owner ) {
-		for ( let i = 0; i < choices.length; i++ ) {
-			const c = choices[i];
-			if ( c.depth !== depth ) continue;
-
+	// Walk a list of Choices, attaching each as a Question on `owner`. The
+	// nesting structure already lives in each Choice's `children` from
+	// InkDocument.
+	walkChoices( choices, owner ) {
+		for ( const c of choices ) {
 			let question = { text: c.text };
 			if ( c.tag && c.tag.name === 'mediaUrls' ) {
 				question.mediaUrls = c.tag.parsedValue();
@@ -101,12 +90,7 @@ class KeyLoaderInk {
 					? null
 					: this.expandKnot( c.divert.target );
 			} else {
-				const nestedEntries = [];
-				for ( let j = i + 1; j < choices.length; j++ ) {
-					if ( choices[j].depth <= depth ) break;
-					nestedEntries.push( choices[j] );
-				}
-				outcome = this.buildAnonymousNode( nestedEntries, depth );
+				outcome = this.buildAnonymousNode( c.children );
 			}
 
 			question.outcome = outcome;

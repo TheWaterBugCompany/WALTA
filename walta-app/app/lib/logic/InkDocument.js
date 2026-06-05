@@ -61,6 +61,19 @@ class Choice {
 		this.text = text;
 		this.tag = tag;
 		this.divert = divert;
+		this.children = [];
+		this.parent = null;
+	}
+
+	// Walk up the ancestor chain (starting from this Choice) until we find one
+	// strictly shallower than `depth`. Used to find the parent for a new
+	// sibling/child being added after `this`.
+	parentForDepth( depth ) {
+		let p = this;
+		while ( p && p.depth >= depth ) {
+			p = p.parent;
+		}
+		return p;
 	}
 
 	static parse( raw ) {
@@ -111,7 +124,10 @@ class Include {
 class Knot {
 	constructor( name, entries ) {
 		this.name = name;
-		this.entries = entries || [];
+		this.entries = [];
+		this._choiceTree = [];
+		this._lastChoice = null;
+		if ( entries ) entries.forEach( ( e ) => this.add( e ) );
 	}
 
 	static parse( raw ) {
@@ -121,12 +137,24 @@ class Knot {
 		return new Knot( m[1] );
 	}
 
+	// Place each Choice in the tree as it arrives. The last-seen Choice
+	// computes who the new Choice's parent should be.
 	add( entry ) {
 		this.entries.push( entry );
+		if ( entry instanceof Choice ) {
+			const parent = this._lastChoice?.parentForDepth( entry.depth ) ?? null;
+			if ( parent ) {
+				entry.parent = parent;
+				parent.children.push( entry );
+			} else {
+				this._choiceTree.push( entry );
+			}
+			this._lastChoice = entry;
+		}
 	}
 
 	choices() {
-		return _.filter( this.entries, function( e ) { return e instanceof Choice; });
+		return this._choiceTree;
 	}
 
 	tags() {
