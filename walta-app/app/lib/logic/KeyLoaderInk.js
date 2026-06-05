@@ -98,6 +98,20 @@ class Choice {
 	}
 }
 
+class Include {
+	constructor( lines ) {
+		this.lines = lines;
+	}
+
+	static parse( raw, dir ) {
+		// "INCLUDE filename.ink"
+		var m = raw.match(/^\s*INCLUDE\s+(\S+)\s*$/);
+		if ( ! m ) return null;
+		var lines = fs.readFileSync( path.join( dir, m[1] ), 'utf-8' ).replace(/\r\n?/g, '\n').split('\n');
+		return new Include( lines );
+	}
+}
+
 class Knot {
 	constructor( name, entries ) {
 		this.name = name;
@@ -137,14 +151,16 @@ class Knot {
 
 class InkDocument {
 	constructor( inkPath ) {
-		this._lines = this.flattenIncludes( inkPath );
-		this.stripComments();
+		var dir = path.dirname( inkPath );
+		this._lines = fs.readFileSync( inkPath, 'utf-8' ).replace(/\r\n?/g, '\n').split('\n');
 		this._knots = [];
 		var current = new Knot( '' );
 		while ( this._lines.length > 0 ) {
-			var line = this._lines.shift();
-			var parsed = Knot.parse( line ) ?? Choice.parse( line ) ?? Tag.parse( line ) ?? Divert.parse( line );
-			if ( parsed instanceof Knot ) {
+			var line = this.readNextLine();
+			var parsed = Include.parse( line, dir ) ?? Knot.parse( line ) ?? Choice.parse( line ) ?? Tag.parse( line ) ?? Divert.parse( line );
+			if ( parsed instanceof Include ) {
+				this._lines = this._lines.concat( parsed.lines );
+			} else if ( parsed instanceof Knot ) {
 				this._knots.push( current );
 				current = parsed;
 			} else if ( parsed != null ) {
@@ -158,56 +174,37 @@ class InkDocument {
 		return _.find( this._knots, ( k ) => k.name === name );
 	}
 
-	// Append each INCLUDE'd file's lines after the parent's own lines so any
-	// loose root-level content in the parent (e.g. key.ink's top-level menu
-	// choices, written below the INCLUDE) reaches the synthetic root knot
-	// before being shadowed by the first === knot === in the include.
-	flattenIncludes( inkPath ) {
-		var dir = path.dirname( inkPath );
-		var lines = fs.readFileSync( inkPath, 'utf-8' ).replace(/\r\n?/g, '\n').split('\n');
-		var ownLines = [];
-		var includedLines = [];
-		_.each( lines, ( line ) => {
-			// "INCLUDE filename.ink"
-			var inc = line.match(/^\s*INCLUDE\s+(\S+)\s*$/);
-			if ( inc ) {
-				includedLines = includedLines.concat( this.flattenIncludes( path.join( dir, inc[1] ) ) );
-			} else {
-				ownLines.push( line );
+	// Shift one logical line, scanning char-by-char to skip comments. If a
+	// /* opens but doesn't close on this line, the do-while keeps pulling
+	// lines until the block closes.
+	readNextLine() {
+		let outLine = '';
+		let insideComment = false;
+		do {
+			let line
+			if ( line = this._lines.shift() ) {
+				let pos = 0
+				do { 
+					if ( insideComment ) {
+						// swallow characters whilst we're inside a comment block
+						if ( line.startsWith( '*/', pos ) ) { 
+							insideComment = false
+							pos++ 
+						}
+					} else if ( line.startsWith( '/*', pos ) ) { 
+						insideComment = true
+						pos++ 
+					}
+					else if ( line.startsWith( '//', pos ) ) { 
+						break
+					}
+					else {
+						outLine += line[pos]
+					}
+				} while ( ++pos < line.length )
 			}
-		});
-		return ownLines.concat( includedLines );
-	}
-
-	stripComments() {
-		var out = [];
-		var inBlock = false;
-		_.each( this._lines, function( line ) {
-			if ( inBlock ) {
-				var endIdx = line.indexOf('*/');
-				if ( endIdx === -1 ) {
-					out.push( '' );
-					return;
-				}
-				line = line.slice( endIdx + 2 );
-				inBlock = false;
-			}
-			while ( true ) {
-				var startIdx = line.indexOf('/*');
-				if ( startIdx === -1 ) break;
-				var endIdx = line.indexOf('*/', startIdx + 2);
-				if ( endIdx === -1 ) {
-					line = line.slice( 0, startIdx );
-					inBlock = true;
-					break;
-				}
-				line = line.slice( 0, startIdx ) + line.slice( endIdx + 2 );
-			}
-			var lineIdx = line.indexOf('//');
-			if ( lineIdx !== -1 ) line = line.slice( 0, lineIdx );
-			out.push( line );
-		});
-		this._lines = out;
+		} while ( insideComment );
+		return outLine;
 	}
 
 }
@@ -356,4 +353,4 @@ function loadKey( root ) {
 }
 
 exports.loadKey = loadKey;
-exports.__test = { Tag, Divert, Choice, Knot, InkDocument };
+exports.__test = { Tag, Divert, Choice, Knot, Include, InkDocument };
