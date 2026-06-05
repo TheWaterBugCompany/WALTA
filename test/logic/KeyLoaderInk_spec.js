@@ -71,6 +71,16 @@ describe("KeyLoaderInk", function () {
 			expect(sub.questions.map(q => q.text)).to.deep.equal(["child1", "child2"]);
 			expect(sub.questions[0].outcome.id).to.equal("dest1");
 		});
+
+		it("handles a choice that diverts directly to DONE without crashing", function () {
+			const key = writeKey(`
+* ALT Key -> root
+=== root ===
+* dead end -> DONE
+`);
+			expect(key.root.questions[0].text).to.equal("dead end");
+			expect(key.root.questions[0].outcome).to.satisfy(o => o == null);
+		});
 	});
 
 	describe("tags on choices — both syntactic forms", function () {
