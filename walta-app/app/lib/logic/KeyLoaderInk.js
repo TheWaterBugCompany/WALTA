@@ -137,16 +137,6 @@ class Knot {
 		return _.filter( this.entries, function( e ) { return e instanceof Tag; });
 	}
 
-	isTaxon() {
-		return _.any( this.tags(), function( t ) { return t.name === 'taxonId'; });
-	}
-
-	taxonArgs() {
-		var args = { id: this.name };
-		_.each( this.tags(), function( t ) { args[ t.name ] = t.parsedValue(); });
-		return args;
-	}
-
 }
 
 class InkDocument {
@@ -218,13 +208,23 @@ class InkDocument {
 
 	`expandKnot` returns either a Taxon or a KeyNode.
 */
+function isTaxon( knot ) {
+	return _.any( knot.tags(), function( t ) { return t.name === 'taxonId'; });
+}
+
+function taxonArgs( knot ) {
+	const args = { id: knot.name };
+	_.each( knot.tags(), function( t ) { args[ t.name ] = t.parsedValue(); });
+	return args;
+}
+
 function expandKnot( knotName, doc, key, building ) {
 	if ( building[knotName] ) return building[knotName];
 
 	var knot = doc.knot( knotName ) || new Knot( knotName );
 
-	if ( knot.isTaxon() ) {
-		var taxon = Taxon.createTaxon( knot.taxonArgs() );
+	if ( isTaxon( knot ) ) {
+		var taxon = Taxon.createTaxon( taxonArgs( knot ) );
 		key.attachTaxon( taxon );
 		building[knotName] = taxon;
 		return taxon;
@@ -335,15 +335,11 @@ function loadKey( root ) {
 
 	var key = Key.createKey( { url: root });
 	var rootMenu = expandKnot( '', doc, key, {} );
-	key.setRootNode( rootMenu );
 
-	var altKeyQ = rootMenu.findQuestion( 'ALT Key' );
-	if ( altKeyQ ) {
-		var altKey = altKeyQ.outcome;
-		key.dettachNode( rootMenu );
-		altKey.parentLink = null;
-		key.setRootNode( altKey );
-	}
+	const altKey = rootMenu.findQuestion( 'ALT Key' ).outcome;
+	key.dettachNode( rootMenu );
+	altKey.parentLink = null;
+	key.setRootNode( altKey );
 
 	_.each( [ 'Speedbug', 'Mayfly Muster Speedbug', 'Order Speedbug' ], function( name ) {
 		buildSpeedbugIndex( name, rootMenu, key );

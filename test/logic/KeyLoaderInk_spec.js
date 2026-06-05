@@ -40,14 +40,6 @@ describe("KeyLoaderInk (direct .ink parser)", function () {
 		});
 	});
 
-	describe("Knot", function () {
-		it("flags a knot containing a taxonId tag as a taxon and exposes taxonArgs", function () {
-			const k = new Knot("frog", [Tag.parse('# taxonId: "42"')]);
-			expect(k.isTaxon()).to.equal(true);
-			expect(k.taxonArgs().taxonId).to.equal("42");
-		});
-	});
-
 	let dir;
 
 	beforeEach(function () {
