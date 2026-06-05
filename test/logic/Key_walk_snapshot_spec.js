@@ -22,8 +22,24 @@ function fmt(v) {
 	if (v === undefined) return "undef";
 	if (v === null) return "null";
 	if (Array.isArray(v)) return "[" + v.map(fmt).join(",") + "]";
-	if (typeof v === "object") return "{obj}";
+	if (typeof v === "object") return JSON.stringify(v);
 	return JSON.stringify(v);
+}
+
+// Every persisted Taxon attribute. Pinning all of them in the snapshot
+// means a parser regression that drops or corrupts (say) commonName or
+// habitat for some taxon fails this test, even though it'd otherwise
+// only surface in the taxon detail screen's asDetailHtml output.
+// parentLink/taxonParent are deliberately excluded — they're object
+// references the walker already follows via the tree traversal, and
+// fmt'ing them as JSON would either cycle or dump a sibling sub-tree.
+const TAXON_ATTRS = [
+	"taxonId", "ref", "name", "scientificName", "commonName",
+	"size", "signalScore", "habitat", "movement", "confusedWith",
+	"taxonomicLevel", "description", "mediaUrls", "bluebug"
+];
+function taxonAttrs(t) {
+	return TAXON_ATTRS.map(k => `${k}=${fmt(t[k])}`).join(" ");
 }
 
 function walkKey(key) {
@@ -42,12 +58,7 @@ function walkKey(key) {
 		visited.add(node);
 
 		if (key.isTaxon(node)) {
-			lines.push(
-				`${trail} TAXON id=${fmt(node.id)} taxonId=${fmt(node.taxonId)} ` +
-				`name=${fmt(node.name)} size=${fmt(node.size)} ` +
-				`signalScore=${fmt(node.signalScore)} taxonomicLevel=${fmt(node.taxonomicLevel)} ` +
-				`mediaUrls=${fmt(node.mediaUrls)} bluebug=${fmt(node.bluebug)}`
-			);
+			lines.push(`${trail} TAXON id=${fmt(node.id)} ${taxonAttrs(node)}`);
 			return;
 		}
 
@@ -88,10 +99,7 @@ function walkKey(key) {
 		return isNaN(an - bn) ? String(a.taxonId).localeCompare(String(b.taxonId)) : an - bn;
 	});
 	taxa.forEach(t => {
-		lines.push(
-			`taxon ${fmt(t.taxonId)} id=${fmt(t.id)} name=${fmt(t.name)} ` +
-			`bluebug=${fmt(t.bluebug)} mediaUrls=${fmt(t.mediaUrls)}`
-		);
+		lines.push(`taxon ${fmt(t.taxonId)} id=${fmt(t.id)} ${taxonAttrs(t)}`);
 	});
 
 	lines.push("");
