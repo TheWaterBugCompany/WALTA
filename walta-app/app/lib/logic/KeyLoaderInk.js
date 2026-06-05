@@ -128,9 +128,17 @@ class KeyLoaderInk {
 			return q.mediaUrls[0];
 		};
 
+		// Speedbug entries can be authored as a flat tile OR as a "Group" whose
+		// first child is a "Not sure" tile that diverts to the group taxon. This
+		// detects the second form.
+		const isNotSureGroup = ( q ) => {
+			const firstChildText = q.outcome?.questions?.[0]?.text;
+			return ( firstChildText || '' ).trim().toLowerCase() === 'not sure';
+		};
+
 		_.each( speedBugNode.questions, ( q ) => {
 			const sub = q.outcome;
-			if ( q.text && sub && sub.questions && sub.questions[0] && (sub.questions[0].text || '').trim().toLowerCase() === 'not sure' ) {
+			if ( isNotSureGroup( q ) ) {
 				const notSure = sub.questions.shift();
 				const groupId = notSure.outcome.id;
 				index.addSpeedbugGroup( groupId );
@@ -145,6 +153,8 @@ class KeyLoaderInk {
 
 		this._key.addSpeedbugIndex( index );
 	}
+
+	
 
 	isTaxon( knot ) {
 		return _.any( knot.tags(), ( t ) => t.name === 'taxonId' );
