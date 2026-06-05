@@ -78,22 +78,24 @@ class Choice {
 
 		var divertSplit = splitByFirst( body, '->' );
 		if ( divertSplit ) {
-			body = divertSplit[0];
-			var divPart = divertSplit[1];
+			var divPart;
+			[ body, divPart ] = divertSplit;
 			// Either "* text # tag -> dest" or "* text -> dest # tag" appears
 			// in WALTA's .ink. Hoist a tag found after the divert back into
 			// the body so the # extractor below sees a single canonical form.
 			var hoist = splitByFirst( divPart, '#' );
 			if ( hoist ) {
-				body = body + ' #' + hoist[1];
-				divPart = hoist[0];
+				var hoistTagBody;
+				[ divPart, hoistTagBody ] = hoist;
+				body = body + ' #' + hoistTagBody;
 			}
 			divert = Divert.parse( '-> ' + divPart );
 		}
 		var tagSplit = splitByFirst( body, '#' );
 		if ( tagSplit ) {
-			tag = Tag.parse( '#' + tagSplit[1] );
-			body = tagSplit[0];
+			var tagBody;
+			[ body, tagBody ] = tagSplit;
+			tag = Tag.parse( '#' + tagBody );
 		}
 		return new Choice( depth, body, tag, divert );
 	}
