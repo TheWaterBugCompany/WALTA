@@ -20,7 +20,7 @@ Every behavioural change starts with a failing test.
 1. Pick the smallest behavioural change you can make next.
 2. Write a *single* failing test that pins that behaviour (RED). Run it; confirm it fails for the right reason.
 3. Write the minimal production code to pass (GREEN).
-4. Refactor with the test as a safety net (REFACTOR) — see [tidy](../tidy/SKILL.md) for what to look for and the discipline around proposing-vs-restructuring. Refactor the test too if its structure has decayed.
+4. Refactor with the test as a safety net (REFACTOR) — see [tidy](../tidy/SKILL.md) for what to look for and the discipline around proposing-vs-restructuring. Refactor the test too if its structure has decayed. **Don't skip this step.** Green means the test passes, not that you're done — pause and look at the shape critically before moving on.
 5. Repeat.
 
 One observable behaviour per test (or per cucumber scenario). Multiple assertions in one `it` hide which behaviour broke.
@@ -79,6 +79,17 @@ Moves that usually help:
 - Emit a domain event when "done" so the test can `await` it instead of polling.
 
 If still hard *after* a sincere refactor attempt, flag it to the user before plastering over with mocks.
+
+## Don't skip refactor — especially on "small" tasks
+
+The refactor phase needs a human-judgment beat: "would this code surprise a reader in six months?" The risk: when a task is framed as quick/small/no biggy/just a, both sides silently treat tests-pass as done and skip the refactor pass. Structural debt bakes in.
+
+Concrete example: an `.ink`-format parser under `walta-app/app/lib/logic/` was originally generated as "just a 150-line parser, no biggy" — written in one shot, tests passed, shipped. The TDD red/green phases were followed; refactor was silently skipped. Mixed parser/domain concerns, depth-handling leaking into the domain layer, silent fallbacks on missing inputs, no error states tested. Three days later it took ~25 cleanup commits in one focused session to bring it up to standard — short enough that the rewrite was still cheap, long enough that "should we tidy this now?" had already stopped being asked.
+
+When you hear "quick" / "no biggy" / "just a" framing on non-trivial code, treat it as a stop sign:
+- Name it back ("the 'quick' framing usually means refactor gets skipped — want to start with one failing test and stop after green to look at the shape?").
+- Suggest the minimum first step rather than the whole shape.
+- After each green, prompt the user explicitly to look at the code shape *before* moving to the next test.
 
 ## Which test layer
 
