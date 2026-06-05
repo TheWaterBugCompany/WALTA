@@ -18,8 +18,27 @@ var SpeedbugIndex = require('./SpeedbugIndex');
 */
 
 class Tag {
+	constructor( name, value ) {
+		this.kind = 'tag';
+		this.name = name;
+		this.value = value;
+	}
+
 	static parse( raw ) {
-		return null;
+		var line = raw.trim();
+		if ( line.charAt(0) !== '#' ) return null;
+		var body = line.slice(1).trim();
+		var colon = body.indexOf(':');
+		if ( colon === -1 ) return null;
+		return new Tag( body.slice(0, colon).trim(), body.slice(colon + 1).trim() );
+	}
+
+	parsedValue() {
+		try {
+			return JSON.parse( this.value );
+		} catch ( e ) {
+			return this.value;
+		}
 	}
 }
 
@@ -116,21 +135,14 @@ function parseLine( raw ) {
 		}
 		var tagIdx = body.indexOf('#');
 		if ( tagIdx !== -1 ) {
-			var tagBody = body.slice( tagIdx + 1 ).trim();
+			tag = Tag.parse( body.slice( tagIdx ) );
 			body = body.slice( 0, tagIdx ).trim();
-			var colon = tagBody.indexOf(':');
-			if ( colon !== -1 ) {
-				tag = { name: tagBody.slice(0, colon).trim(), value: tagBody.slice(colon + 1).trim() };
-			}
 		}
 		return { kind: 'choice', depth: depth, text: body.trim(), tag: tag, divert: divert };
 	}
 
 	if ( line.charAt(0) === '#' ) {
-		var body = line.slice(1).trim();
-		var colon = body.indexOf(':');
-		if ( colon === -1 ) return null;
-		return { kind: 'tag', name: body.slice(0, colon).trim(), value: body.slice(colon + 1).trim() };
+		return Tag.parse( line );
 	}
 
 	var div = line.match(/^->\s*(\S+)/);
@@ -158,14 +170,6 @@ function groupByKnot( parsed ) {
 	return knots;
 }
 
-function parseTagValue( value ) {
-	try {
-		return JSON.parse( value );
-	} catch ( e ) {
-		return value;
-	}
-}
-
 /*
 	A knot is either a TAXON (its first non-divert content is a `# taxonId:`
 	tag) or a NODE (containing choices). Taxa accumulate tag attributes and
@@ -186,7 +190,7 @@ function expandKnot( knotName, knots, key, building ) {
 	if ( isTaxon ) {
 		var taxonArgs = { id: knotName };
 		_.each( entries, function( e ) {
-			if ( e.kind === 'tag' ) taxonArgs[ e.name ] = parseTagValue( e.value );
+			if ( e.kind === 'tag' ) taxonArgs[ e.name ] = e.parsedValue();
 		});
 		var taxon = Taxon.createTaxon( taxonArgs );
 		key.attachTaxon( taxon );
@@ -211,7 +215,7 @@ function expandKnot( knotName, knots, key, building ) {
 
 		var question = { text: c.text };
 		if ( c.tag && c.tag.name === 'mediaUrls' ) {
-			question.mediaUrls = parseTagValue( c.tag.value );
+			question.mediaUrls = c.tag.parsedValue();
 			if ( ! _.isArray( question.mediaUrls ) ) question.mediaUrls = [ question.mediaUrls ];
 		}
 		question = Question.createQuestion( question );
@@ -254,7 +258,7 @@ function buildAnonymousNode( choices, parentDepth, knots, key, building ) {
 
 		var question = { text: c.text };
 		if ( c.tag && c.tag.name === 'mediaUrls' ) {
-			question.mediaUrls = parseTagValue( c.tag.value );
+			question.mediaUrls = c.tag.parsedValue();
 			if ( ! _.isArray( question.mediaUrls ) ) question.mediaUrls = [ question.mediaUrls ];
 		}
 		question = Question.createQuestion( question );
