@@ -19,6 +19,10 @@ When editing a file that uses `.then()` chains, convert the chains you touch to 
 
 The Alloy constraint only applies to module syntax. `async`/`await` is just JavaScript syntax and works fine inside a CommonJS file.
 
+### Variable declarations — `let`/`const`, never `var`
+
+`const` by default, `let` when reassigning. Never `var` — block scoping avoids the hoisting and function-scope surprises of `var`. Convert opportunistically when you touch existing `var` declarations; don't undertake bulk rewrites.
+
 ## Defensive code
 
 **Trust inputs from systems you control.** When parsing values from our own backend, our own config, or our own storage, default to the simplest correct parse — `parseInt`, `JSON.parse`, plain destructuring — and let downstream fallback paths catch malformed values. Strict parsers (round-trip-string equality, regex pre-validation, exhaustive type guards) belong at *untrusted* boundaries — direct user input, third-party APIs we don't own, files chosen from the filesystem. If our own backend sends garbage, that's a server bug; the fix is on the server, not a stricter parser on the client.
