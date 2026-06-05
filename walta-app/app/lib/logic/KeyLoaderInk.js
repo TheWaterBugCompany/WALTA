@@ -77,26 +77,36 @@ class KeyLoaderInk {
 	// InkDocument.
 	walkChoices( choices, owner ) {
 		for ( const c of choices ) {
-			let question = { text: c.text };
-			if ( c.tag && c.tag.name === 'mediaUrls' ) {
-				question.mediaUrls = c.tag.parsedValue();
-				if ( ! _.isArray( question.mediaUrls ) ) question.mediaUrls = [ question.mediaUrls ];
-			}
-			question = Question.createQuestion( question );
-
-			let outcome;
-			if ( c.divert ) {
-				outcome = c.divert.isTerminator()
-					? null
-					: this.expandKnot( c.divert.target );
-			} else {
-				outcome = this.buildAnonymousNode( c.children );
-			}
-
-			question.outcome = outcome;
-			if ( outcome && outcome.parentLink === null ) outcome.parentLink = owner;
-			owner.questions.push( question );
+			owner.questions.push( this.buildQuestion( c, owner ) );
 		}
+	}
+
+	buildMediaUrls( choice ) {
+		let urls = [];
+		if ( choice.tag && choice.tag.name === 'mediaUrls' ) {
+			urls = urls.concat(choice.tag.parsedValue() );
+		}
+		return urls;
+	}
+
+	buildOutcome( choice, owner ) {
+		let outcome = null;
+		if ( choice.divert ) {
+			if ( ! choice.divert.isTerminator() ) 
+				outcome = this.expandKnot( choice.divert.target );
+		} else {
+			outcome = this.buildAnonymousNode( choice.children );
+		}
+		if ( outcome && outcome.parentLink === null ) outcome.parentLink = owner;
+		return outcome;
+	}
+
+	buildQuestion( choice, owner ) {
+		return Question.createQuestion( { 
+			text: choice.text,
+			mediaUrls: this.buildMediaUrls(choice),
+			outcome: this.buildOutcome(choice, owner)
+		} );
 	}
 
 	buildSpeedbugIndex( speedbugName, rootMenu ) {
