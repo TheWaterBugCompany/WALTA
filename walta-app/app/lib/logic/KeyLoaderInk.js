@@ -60,8 +60,42 @@ class Divert {
 }
 
 class Choice {
+	constructor( depth, text, tag, divert ) {
+		this.kind = 'choice';
+		this.depth = depth;
+		this.text = text;
+		this.tag = tag;
+		this.divert = divert;
+	}
+
 	static parse( raw ) {
-		return null;
+		var m = raw.trim().match(/^(\*+)\s*(.*)$/);
+		if ( ! m ) return null;
+		var depth = m[1].length;
+		var body = m[2];
+		var tag = null;
+		var divert = null;
+
+		var divIdx = body.indexOf('->');
+		if ( divIdx !== -1 ) {
+			var divPart = body.slice( divIdx + 2 ).trim();
+			body = body.slice( 0, divIdx ).trim();
+			// Either "* text # tag -> dest" or "* text -> dest # tag" appears
+			// in WALTA's .ink. Hoist a tag found after the divert back into
+			// the body so the # extractor below sees a single canonical form.
+			var afterTagIdx = divPart.indexOf('#');
+			if ( afterTagIdx !== -1 ) {
+				body = body + ' ' + divPart.slice( afterTagIdx );
+				divPart = divPart.slice( 0, afterTagIdx ).trim();
+			}
+			divert = Divert.parse( '-> ' + divPart );
+		}
+		var tagIdx = body.indexOf('#');
+		if ( tagIdx !== -1 ) {
+			tag = Tag.parse( body.slice( tagIdx ) );
+			body = body.slice( 0, tagIdx ).trim();
+		}
+		return new Choice( depth, body.trim(), tag, divert );
 	}
 }
 
@@ -136,33 +170,8 @@ function parseLine( raw ) {
 	var knot = line.match(/^={2,}\s*(\w+)\s*={0,}$/);
 	if ( knot ) return { kind: 'knot', name: knot[1] };
 
-	var choice = line.match(/^(\*+)\s*(.*)$/);
-	if ( choice ) {
-		var depth = choice[1].length;
-		var body = choice[2];
-		var tag = null;
-		var divert = null;
-		var divIdx = body.indexOf('->');
-		if ( divIdx !== -1 ) {
-			var divPart = body.slice( divIdx + 2 ).trim();
-			body = body.slice( 0, divIdx ).trim();
-			// Either "* text # tag -> dest" or "* text -> dest # tag" appears
-			// in WALTA's .ink. Hoist a tag found after the divert back into
-			// the body so the # extractor below sees a single canonical form.
-			var afterTagIdx = divPart.indexOf('#');
-			if ( afterTagIdx !== -1 ) {
-				body = body + ' ' + divPart.slice( afterTagIdx );
-				divPart = divPart.slice( 0, afterTagIdx ).trim();
-			}
-			divert = Divert.parse( '-> ' + divPart );
-		}
-		var tagIdx = body.indexOf('#');
-		if ( tagIdx !== -1 ) {
-			tag = Tag.parse( body.slice( tagIdx ) );
-			body = body.slice( 0, tagIdx ).trim();
-		}
-		return { kind: 'choice', depth: depth, text: body.trim(), tag: tag, divert: divert };
-	}
+	var choice = Choice.parse( line );
+	if ( choice ) return choice;
 
 	if ( line.charAt(0) === '#' ) {
 		return Tag.parse( line );
@@ -225,7 +234,7 @@ function expandKnot( knotName, knots, key, building ) {
 	// A knot's content is a flat list of choices at depth 1 (or sometimes
 	// deeper-only). Walk depth 1 choices and recursively gather their
 	// nested deeper choices as a sub-node.
-	var choices = _.filter( entries, function( e ) { return e.kind === 'choice'; });
+	var choices = _.filter( entries, function( e ) { return e instanceof Choice; });
 	var baseDepth = _.min( _.map( choices, function( c ) { return c.depth; }) );
 	if ( ! _.isFinite( baseDepth ) ) baseDepth = 1;
 
