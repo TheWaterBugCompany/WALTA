@@ -25,6 +25,7 @@ class Tag {
 	}
 
 	static parse( raw ) {
+		// "# name: value"
 		var m = raw.match( /^\s*#\s*(\w+)\s*:\s*(.*?)\s*$/ );
 		if ( ! m ) throw new Error( `Malformed tag: ${raw}` );
 		return new Tag( m[1], m[2] );
@@ -46,6 +47,7 @@ class Divert {
 	}
 
 	static parse( raw ) {
+		// "-> target"
 		var m = raw.trim().match(/^->\s*(\S+)/);
 		if ( ! m ) return null;
 		return new Divert( m[1] );
@@ -66,6 +68,7 @@ class Choice {
 	}
 
 	static parse( raw ) {
+		// "*[*...] body" — depth = number of leading asterisks
 		var m = raw.trim().match(/^(\*+)\s*(.*)$/);
 		if ( ! m ) return null;
 		var depth = m[1].length;
@@ -77,12 +80,15 @@ class Choice {
 		// in WALTA's .ink. The divert regex captures an optional post-divert
 		// tag in group 3, which gets folded back into the body so the tag
 		// regex below sees a single canonical "text # tag" form.
+
+		// "text -> target [# tag...]" — group 3 is the optional post-divert tag
 		var divertMatch = body.match( /^(.*?)\s*->\s*(\S+)(?:\s*(#.*))?$/ );
 		if ( divertMatch ) {
 			body = divertMatch[1];
 			divert = new Divert( divertMatch[2] );
 			if ( divertMatch[3] ) body = body + ' ' + divertMatch[3];
 		}
+		// "text # tag..."
 		var tagMatch = body.match( /^(.*?)\s*(#.*)$/ );
 		if ( tagMatch ) {
 			body = tagMatch[1];
@@ -134,6 +140,7 @@ class Node {
 		var line = raw.trim();
 		if ( ! line ) return null;
 
+		// "=== knot_name ===" (trailing === optional)
 		var knot = line.match(/^={2,}\s*(\w+)\s*={0,}$/);
 		if ( knot ) return { kind: 'knot', name: knot[1] };
 
@@ -160,6 +167,7 @@ function loadInkLines( inkPath ) {
 	// choices, written below the INCLUDE) reach the synthetic root knot
 	// before being shadowed by the first === knot === in the include.
 	_.each( lines, function( line ) {
+		// "INCLUDE filename.ink"
 		var inc = line.match(/^\s*INCLUDE\s+(\S+)\s*$/);
 		if ( inc ) {
 			included = included.concat( loadInkLines( path.join( dir, inc[1] ) ) );
