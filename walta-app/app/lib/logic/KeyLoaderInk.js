@@ -26,9 +26,9 @@ class Tag {
 	}
 
 	static parse( raw ) {
-		var parts = splitByFirst( raw.trim().slice(1), ':' );
-		if ( ! parts ) throw new Error( `Malformed tag (no colon): ${raw}` );
-		return new Tag( parts[0], parts[1] );
+		var m = raw.match( /^\s*#\s*(\w+)\s*:\s*(.*?)\s*$/ );
+		if ( ! m ) throw new Error( `Malformed tag: ${raw}` );
+		return new Tag( m[1], m[2] );
 	}
 
 	parsedValue() {
