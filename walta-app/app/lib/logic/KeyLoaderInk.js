@@ -98,14 +98,6 @@ class Choice {
 	}
 }
 
-/*
-	Parse a single content line into one of:
-	  Choice    (a * / ** / *** entry, optionally with an inline tag and/or divert)
-	  Tag       (a standalone # name: value line)
-	  Divert    (a standalone -> target line)
-	  { kind: 'knot', name }   (a === knot === header)
-	  null      (blank or unrecognised)
-*/
 class Knot {
 	constructor( name, entries ) {
 		this.name = name;
@@ -135,24 +127,30 @@ class Knot {
 	}
 }
 
-class Node {
-	static parse( raw ) {
-		var line = raw.trim();
-		if ( ! line ) return null;
+/*
+	Dispatch a single content line to one of:
+	  Choice    (a * / ** / *** entry, optionally with an inline tag and/or divert)
+	  Tag       (a standalone # name: value line)
+	  Divert    (a standalone -> target line)
+	  { kind: 'knot', name }   (a === knot === header)
+	  null      (blank or unrecognised)
+*/
+function parseLine( raw ) {
+	var line = raw.trim();
+	if ( ! line ) return null;
 
-		// "=== knot_name ===" (trailing === optional)
-		var knot = line.match(/^={2,}\s*(\w+)\s*={0,}$/);
-		if ( knot ) return { kind: 'knot', name: knot[1] };
+	// "=== knot_name ===" (trailing === optional)
+	var knot = line.match(/^={2,}\s*(\w+)\s*={0,}$/);
+	if ( knot ) return { kind: 'knot', name: knot[1] };
 
-		var choice = Choice.parse( line );
-		if ( choice ) return choice;
+	var choice = Choice.parse( line );
+	if ( choice ) return choice;
 
-		if ( line.charAt(0) === '#' ) {
-			return Tag.parse( line );
-		}
-
-		return Divert.parse( line );
+	if ( line.charAt(0) === '#' ) {
+		return Tag.parse( line );
 	}
+
+	return Divert.parse( line );
 }
 
 function loadInkLines( inkPath ) {
@@ -352,7 +350,7 @@ function buildSpeedbugIndex( speedbugName, rootMenu, key ) {
 function loadKey( root ) {
 	var inkPath = path.join( root, 'key.ink' );
 	var raw = loadInkLines( inkPath );
-	var parsed = _.compact( _.map( stripComments( raw ), Node.parse ) );
+	var parsed = _.compact( _.map( stripComments( raw ), parseLine ) );
 	var knots = groupByKnot( parsed );
 
 	var key = Key.createKey( { url: root });
@@ -375,4 +373,4 @@ function loadKey( root ) {
 }
 
 exports.loadKey = loadKey;
-exports.__test = { Tag, Divert, Choice, Node, Knot };
+exports.__test = { Tag, Divert, Choice, Knot, parseLine };
