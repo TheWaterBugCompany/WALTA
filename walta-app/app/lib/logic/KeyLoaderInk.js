@@ -99,9 +99,30 @@ class Choice {
 	}
 }
 
+/*
+	Parse a single content line into one of:
+	  Choice    (a * / ** / *** entry, optionally with an inline tag and/or divert)
+	  Tag       (a standalone # name: value line)
+	  Divert    (a standalone -> target line)
+	  { kind: 'knot', name }   (a === knot === header)
+	  null      (blank or unrecognised)
+*/
 class Node {
 	static parse( raw ) {
-		return null;
+		var line = raw.trim();
+		if ( ! line ) return null;
+
+		var knot = line.match(/^={2,}\s*(\w+)\s*={0,}$/);
+		if ( knot ) return { kind: 'knot', name: knot[1] };
+
+		var choice = Choice.parse( line );
+		if ( choice ) return choice;
+
+		if ( line.charAt(0) === '#' ) {
+			return Tag.parse( line );
+		}
+
+		return Divert.parse( line );
 	}
 }
 
@@ -156,34 +177,6 @@ function stripComments( lines ) {
 		out.push( line );
 	});
 	return out;
-}
-
-/*
-	Parse a single content line into one of:
-	  { kind: 'choice', depth: N, text: 'foo', tag: {name, value}?, divert: 'target'? }
-	  { kind: 'tag', name: 'foo', value: 'bar' }
-	  { kind: 'divert', target: 'foo' }
-	  { kind: 'knot', name: 'foo' }
-	  null  (blank or unrecognised)
-	The 'tag' carried on a choice is the inline tag form (# name: value) that
-	immediately precedes the divert; the standalone-line tag form maps to
-	{kind: 'tag', ...}.
-*/
-function parseLine( raw ) {
-	var line = raw.trim();
-	if ( ! line ) return null;
-
-	var knot = line.match(/^={2,}\s*(\w+)\s*={0,}$/);
-	if ( knot ) return { kind: 'knot', name: knot[1] };
-
-	var choice = Choice.parse( line );
-	if ( choice ) return choice;
-
-	if ( line.charAt(0) === '#' ) {
-		return Tag.parse( line );
-	}
-
-	return Divert.parse( line );
 }
 
 /*
@@ -364,7 +357,7 @@ function buildSpeedbugIndex( speedbugName, rootMenu, key ) {
 function loadKey( root ) {
 	var inkPath = path.join( root, 'key.ink' );
 	var raw = loadInkLines( inkPath );
-	var parsed = _.compact( _.map( stripComments( raw ), parseLine ) );
+	var parsed = _.compact( _.map( stripComments( raw ), Node.parse ) );
 	var knots = groupByKnot( parsed );
 
 	var key = Key.createKey( { url: root });
