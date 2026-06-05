@@ -17,6 +17,12 @@ var SpeedbugIndex = require('./SpeedbugIndex');
 	going through inklecate/inkjs and walking the compiled bytecode.
 */
 
+class Tag {
+	static parse( raw ) {
+		return null;
+	}
+}
+
 function loadInkLines( inkPath ) {
 	var dir = path.dirname( inkPath );
 	var text = fs.readFileSync( inkPath, 'utf-8' );
@@ -342,3 +348,4 @@ function loadKey( root ) {
 }
 
 exports.loadKey = loadKey;
+exports.__test = { Tag };
