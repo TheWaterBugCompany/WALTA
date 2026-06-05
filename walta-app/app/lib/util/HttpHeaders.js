@@ -1,3 +1,5 @@
+const splitByFirst = require('./splitByFirst');
+
 const SENSITIVE_HEADER_NAMES = new Set([
     'authorization',
     'proxy-authorization',
@@ -46,12 +48,9 @@ class HttpHeaders {
 }
 
 function parseHeaderLine(line) {
-    const idx = line.indexOf(':');
-    if (idx <= 0) return null;
-    return {
-        name: line.slice(0, idx).trim(),
-        value: line.slice(idx + 1).trim(),
-    };
+    const parts = splitByFirst(line, ':');
+    if (!parts || !parts[0]) return null;
+    return { name: parts[0], value: parts[1] };
 }
 
 exports.HttpHeaders = HttpHeaders;

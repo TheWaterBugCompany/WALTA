@@ -6,6 +6,7 @@ var Key = require('./Key');
 var Taxon = require('./Taxon');
 var Question = require('./Question');
 var SpeedbugIndex = require('./SpeedbugIndex');
+var splitByFirst = require('../util/splitByFirst');
 
 /*
 	Build-time loader: reads the .ink source files directly and constructs the
@@ -27,10 +28,9 @@ class Tag {
 	static parse( raw ) {
 		var line = raw.trim();
 		if ( line.charAt(0) !== '#' ) return null;
-		var body = line.slice(1).trim();
-		var colon = body.indexOf(':');
-		if ( colon === -1 ) return null;
-		return new Tag( body.slice(0, colon).trim(), body.slice(colon + 1).trim() );
+		var parts = splitByFirst( line.slice(1), ':' );
+		if ( ! parts ) return null;
+		return new Tag( parts[0], parts[1] );
 	}
 
 	parsedValue() {
@@ -76,26 +76,26 @@ class Choice {
 		var tag = null;
 		var divert = null;
 
-		var divIdx = body.indexOf('->');
-		if ( divIdx !== -1 ) {
-			var divPart = body.slice( divIdx + 2 ).trim();
-			body = body.slice( 0, divIdx ).trim();
+		var divertSplit = splitByFirst( body, '->' );
+		if ( divertSplit ) {
+			body = divertSplit[0];
+			var divPart = divertSplit[1];
 			// Either "* text # tag -> dest" or "* text -> dest # tag" appears
 			// in WALTA's .ink. Hoist a tag found after the divert back into
 			// the body so the # extractor below sees a single canonical form.
-			var afterTagIdx = divPart.indexOf('#');
-			if ( afterTagIdx !== -1 ) {
-				body = body + ' ' + divPart.slice( afterTagIdx );
-				divPart = divPart.slice( 0, afterTagIdx ).trim();
+			var hoist = splitByFirst( divPart, '#' );
+			if ( hoist ) {
+				body = body + ' #' + hoist[1];
+				divPart = hoist[0];
 			}
 			divert = Divert.parse( '-> ' + divPart );
 		}
-		var tagIdx = body.indexOf('#');
-		if ( tagIdx !== -1 ) {
-			tag = Tag.parse( body.slice( tagIdx ) );
-			body = body.slice( 0, tagIdx ).trim();
+		var tagSplit = splitByFirst( body, '#' );
+		if ( tagSplit ) {
+			tag = Tag.parse( '#' + tagSplit[1] );
+			body = tagSplit[0];
 		}
-		return new Choice( depth, body.trim(), tag, divert );
+		return new Choice( depth, body, tag, divert );
 	}
 }
 
