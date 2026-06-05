@@ -24,14 +24,14 @@ class KeyLoaderInk {
 		this._knotCache = {};
 	}
 
-	// The root entry point (the '' synthetic knot) is the menu of top-level
-	// choices: "ALT Key", "Mayfly Muster Speedbug", "Speedbug", "Order
-	// Speedbug", "Mayfly start point". The taxonomy lives under "ALT Key" and
-	// becomes the actual root of the Key. The three speedbug entries become
-	// SpeedbugIndex objects. "Mayfly start point" is unused.
 	buildKey() {
 		const rootMenu = this.expandKnot( '' );
 
+		// The root entry point (the '' synthetic knot) is the menu of top-level
+		// choices: "ALT Key", "Mayfly Muster Speedbug", "Speedbug", "Order
+		// Speedbug", "Mayfly start point". The taxonomy lives under "ALT Key" and
+		// becomes the actual root of the Key. The three speedbug entries become
+		// SpeedbugIndex objects. "Mayfly start point" is unused.
 		const altKey = rootMenu.findQuestion( 'ALT Key' ).outcome;
 		this._key.dettachNode( rootMenu );
 		altKey.parentLink = null;
@@ -110,8 +110,8 @@ class KeyLoaderInk {
 	}
 
 	buildSpeedbugIndex( speedbugName, rootMenu ) {
-		const entry = _.find( rootMenu.questions, ( q ) => q.text.trim() === speedbugName );
-		if ( ! entry ) return;
+		const entry = rootMenu.findQuestion( speedbugName );
+		if ( ! entry ) throw new Error( `Speedbug menu entry '${speedbugName}' not found in root menu` );
 		const speedBugNode = entry.outcome;
 		this._key.dettachNode( speedBugNode );
 
@@ -121,7 +121,12 @@ class KeyLoaderInk {
 		// is one image), even though questions in general carry mediaUrls as an
 		// array. Unwrap here so the SpeedbugIndex tile renders a path string,
 		// not a path array.
-		const firstUrl = ( q ) => q && q.mediaUrls && q.mediaUrls.length ? q.mediaUrls[0] : undefined;
+		const firstUrl = ( q ) => {
+			if ( ! q.mediaUrls || q.mediaUrls.length === 0 ) {
+				throw new Error( `Speedbug entry '${q.text}' is missing a mediaUrls tag` );
+			}
+			return q.mediaUrls[0];
+		};
 
 		_.each( speedBugNode.questions, ( q ) => {
 			const sub = q.outcome;

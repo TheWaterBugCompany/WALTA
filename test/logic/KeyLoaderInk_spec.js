@@ -14,7 +14,24 @@ describe("KeyLoaderInk", function () {
 	});
 
 	function writeKey(text, includes = {}) {
-		fs.writeFileSync(path.join(dir, "key.ink"), text);
+		// KeyLoaderInk requires all three speedbug entries in the root menu.
+		// Most tests don't care about speedbug behaviour — auto-stub missing
+		// entries so each test only writes the .ink it actually exercises.
+		const required = ["Speedbug", "Mayfly Muster Speedbug", "Order Speedbug"];
+		const missing = required.filter(name => !text.includes(`* ${name}`));
+		let augmented = text;
+		if (missing.length > 0) {
+			const stubChoices = missing.map((name, i) => `* ${name} -> __stub_sb_${i}`).join("\n");
+			const stubKnots = missing.map((_, i) => `=== __stub_sb_${i} ===\n-> DONE`).join("\n");
+			const firstKnot = augmented.indexOf("===");
+			if (firstKnot >= 0) {
+				augmented = augmented.slice(0, firstKnot) + stubChoices + "\n" + augmented.slice(firstKnot);
+			} else {
+				augmented = augmented + "\n" + stubChoices + "\n";
+			}
+			augmented = augmented + "\n" + stubKnots + "\n";
+		}
+		fs.writeFileSync(path.join(dir, "key.ink"), augmented);
 		Object.entries(includes).forEach(([name, body]) => {
 			fs.writeFileSync(path.join(dir, name), body);
 		});
@@ -314,6 +331,43 @@ INCLUDE taxa.ink
 				url && !fs.existsSync(url.replace("/taxonomy/", "walta-taxonomy/"))
 			);
 			expect(missing.map(r => r.url)).to.deep.equal([]);
+		});
+	});
+
+	describe("build-time errors on malformed .ink", function () {
+		it("throws when a divert points to a non-existent knot", function () {
+			expect(() => writeKey(`
+* ALT Key -> root
+=== root ===
+* x -> nonexistent
+`)).to.throw(/Divert target 'nonexistent' not found/);
+		});
+
+		it("throws when a required speedbug entry is missing from the root menu", function () {
+			// Write key.ink directly to bypass writeKey's auto-stubbing
+			fs.writeFileSync(path.join(dir, "key.ink"), `
+* ALT Key -> root
+* Speedbug -> sb
+=== root ===
+-> DONE
+=== sb ===
+-> DONE
+`);
+			expect(() => KeyLoaderInk.loadKey(dir + "/")).to.throw(/Mayfly Muster Speedbug.*not found/);
+		});
+
+		it("throws when a speedbug tile is missing a mediaUrls tag", function () {
+			expect(() => writeKey(`
+* ALT Key -> root
+* Speedbug -> sb
+=== root ===
+-> DONE
+=== sb ===
+* TileNoMedia -> t1
+=== t1 ===
+# taxonId: "1"
+-> DONE
+`)).to.throw(/TileNoMedia.*missing.*mediaUrls/);
 		});
 	});
 });
