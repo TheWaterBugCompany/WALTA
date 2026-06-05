@@ -5,7 +5,7 @@ const os = require("os");
 const path = require("path");
 
 const KeyLoaderInk = require("logic/KeyLoaderInk");
-const { Tag, Divert, Choice, Knot, parseLine } = KeyLoaderInk.__test;
+const { Tag, Divert, Choice, Knot, parseLine, InkDocument } = KeyLoaderInk.__test;
 
 describe("KeyLoaderInk (direct .ink parser)", function () {
 	describe("Tag", function () {
@@ -34,6 +34,15 @@ describe("KeyLoaderInk (direct .ink parser)", function () {
 	describe("parseLine", function () {
 		it("dispatches a tag line to a Tag instance", function () {
 			expect(parseLine("# x: y")).to.be.instanceOf(Tag);
+		});
+	});
+
+	describe("InkDocument", function () {
+		it("resolves an INCLUDE'd knot via doc.knot()", function () {
+			fs.writeFileSync(path.join(dir, "key.ink"), "INCLUDE foo.ink\n");
+			fs.writeFileSync(path.join(dir, "foo.ink"), `=== foo ===\n# taxonId: "42"\n-> DONE\n`);
+			const doc = InkDocument.parse(path.join(dir, "key.ink"));
+			expect(doc.knot("foo")).to.be.instanceOf(Knot);
 		});
 	});
 
