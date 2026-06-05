@@ -27,7 +27,7 @@ class Tag {
 	static parse( raw ) {
 		// "# name: value"
 		var m = raw.match( /^\s*#\s*(\w+)\s*:\s*(.*?)\s*$/ );
-		if ( ! m ) throw new Error( `Malformed tag: ${raw}` );
+		if ( ! m ) return null;
 		return new Tag( m[1], m[2] );
 	}
 
@@ -104,6 +104,13 @@ class Knot {
 		this.entries = entries || [];
 	}
 
+	static parse( raw ) {
+		// "=== knot_name ===" (trailing === optional)
+		var m = raw.match(/^\s*={2,}\s*(\w+)\s*={0,}\s*$/);
+		if ( ! m ) return null;
+		return new Knot( m[1] );
+	}
+
 	add( entry ) {
 		this.entries.push( entry );
 	}
@@ -126,69 +133,56 @@ class Knot {
 		return args;
 	}
 
-	// Group parsed entries by knot. The entries before the first === knot ===
-	// header live under the synthetic name '' (the "root" entry point).
-	// Returns { name: Knot }.
-	static assemble( parsed ) {
-		var knots = { '': new Knot('') };
-		var current = '';
-		_.each( parsed, function( p ) {
-			if ( ! p ) return;
-			if ( p.kind === 'knot' ) {
-				current = p.name;
-				if ( ! knots[current] ) knots[current] = new Knot( current );
-			} else {
-				knots[current].add( p );
-			}
-		});
-		return knots;
-	}
 }
 
 class InkDocument {
-	constructor( knots ) {
-		this._knots = knots;
-	}
-
-	static parse( inkPath ) {
-		var lines = InkDocument.readLines( inkPath );
-		var clean = InkDocument.stripComments( lines );
-		var parsed = _.compact( _.map( clean, InkDocument.parseLine ) );
-		return new InkDocument( Knot.assemble( parsed ) );
+	constructor( inkPath ) {
+		this._lines = this.flattenIncludes( inkPath );
+		this.stripComments();
+		this._knots = [];
+		var current = new Knot( '' );
+		while ( this._lines.length > 0 ) {
+			var line = this._lines.shift();
+			var parsed = Knot.parse( line ) ?? Choice.parse( line ) ?? Tag.parse( line ) ?? Divert.parse( line );
+			if ( parsed instanceof Knot ) {
+				this._knots.push( current );
+				current = parsed;
+			} else if ( parsed != null ) {
+				current.add( parsed );
+			}
+		}
+		this._knots.push( current );
 	}
 
 	knot( name ) {
-		return this._knots[name];
+		return _.find( this._knots, ( k ) => k.name === name );
 	}
 
-	// Read the .ink file at `inkPath` and return its lines, with each INCLUDE'd
-	// file's lines appended after the parent's own lines so any loose root-level
-	// content in the parent (e.g. key.ink's top-level menu choices, written
-	// below the INCLUDE) reaches the synthetic root knot before being shadowed
-	// by the first === knot === in the include.
-	static readLines( inkPath ) {
+	// Append each INCLUDE'd file's lines after the parent's own lines so any
+	// loose root-level content in the parent (e.g. key.ink's top-level menu
+	// choices, written below the INCLUDE) reaches the synthetic root knot
+	// before being shadowed by the first === knot === in the include.
+	flattenIncludes( inkPath ) {
 		var dir = path.dirname( inkPath );
-		var text = fs.readFileSync( inkPath, 'utf-8' );
-		// Normalise CRLF -> LF so the parser doesn't need to think about it.
-		var lines = text.replace(/\r\n?/g, '\n').split('\n');
+		var lines = fs.readFileSync( inkPath, 'utf-8' ).replace(/\r\n?/g, '\n').split('\n');
 		var ownLines = [];
-		var included = [];
-		_.each( lines, function( line ) {
+		var includedLines = [];
+		_.each( lines, ( line ) => {
 			// "INCLUDE filename.ink"
 			var inc = line.match(/^\s*INCLUDE\s+(\S+)\s*$/);
 			if ( inc ) {
-				included = included.concat( InkDocument.readLines( path.join( dir, inc[1] ) ) );
+				includedLines = includedLines.concat( this.flattenIncludes( path.join( dir, inc[1] ) ) );
 			} else {
 				ownLines.push( line );
 			}
 		});
-		return ownLines.concat( included );
+		return ownLines.concat( includedLines );
 	}
 
-	static stripComments( lines ) {
+	stripComments() {
 		var out = [];
 		var inBlock = false;
-		_.each( lines, function( line ) {
+		_.each( this._lines, function( line ) {
 			if ( inBlock ) {
 				var endIdx = line.indexOf('*/');
 				if ( endIdx === -1 ) {
@@ -213,33 +207,7 @@ class InkDocument {
 			if ( lineIdx !== -1 ) line = line.slice( 0, lineIdx );
 			out.push( line );
 		});
-		return out;
-	}
-
-	/*
-		Dispatch a single content line to one of:
-		  Choice    (a * / ** / *** entry, optionally with an inline tag and/or divert)
-		  Tag       (a standalone # name: value line)
-		  Divert    (a standalone -> target line)
-		  { kind: 'knot', name }   (a === knot === header)
-		  null      (blank or unrecognised)
-	*/
-	static parseLine( raw ) {
-		var line = raw.trim();
-		if ( ! line ) return null;
-
-		// "=== knot_name ===" (trailing === optional)
-		var knot = line.match(/^={2,}\s*(\w+)\s*={0,}$/);
-		if ( knot ) return { kind: 'knot', name: knot[1] };
-
-		var choice = Choice.parse( line );
-		if ( choice ) return choice;
-
-		if ( line.charAt(0) === '#' ) {
-			return Tag.parse( line );
-		}
-
-		return Divert.parse( line );
+		this._lines = out;
 	}
 
 }
@@ -366,7 +334,7 @@ function buildSpeedbugIndex( speedbugName, rootMenu, key ) {
 }
 
 function loadKey( root ) {
-	var doc = InkDocument.parse( path.join( root, 'key.ink' ) );
+	var doc = new InkDocument( path.join( root, 'key.ink' ) );
 
 	var key = Key.createKey( { url: root });
 	var rootMenu = expandKnot( '', doc, key, {} );

@@ -31,17 +31,11 @@ describe("KeyLoaderInk (direct .ink parser)", function () {
 		});
 	});
 
-	describe("InkDocument.parseLine", function () {
-		it("dispatches a tag line to a Tag instance", function () {
-			expect(InkDocument.parseLine("# x: y")).to.be.instanceOf(Tag);
-		});
-	});
-
 	describe("InkDocument", function () {
 		it("resolves an INCLUDE'd knot via doc.knot()", function () {
 			fs.writeFileSync(path.join(dir, "key.ink"), "INCLUDE foo.ink\n");
 			fs.writeFileSync(path.join(dir, "foo.ink"), `=== foo ===\n# taxonId: "42"\n-> DONE\n`);
-			const doc = InkDocument.parse(path.join(dir, "key.ink"));
+			const doc = new InkDocument(path.join(dir, "key.ink"));
 			expect(doc.knot("foo")).to.be.instanceOf(Knot);
 		});
 	});
