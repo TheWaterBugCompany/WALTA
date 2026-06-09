@@ -4,7 +4,6 @@ import chaiAsPromised from "chai-as-promised";
 use(chaiAsPromised);
 
 import nock from "nock";
-import request from "request";
 import path from "path";
 import fs from "fs";
 import moment from "moment";
@@ -59,50 +58,39 @@ function ProxyCreateHTTPClient( params ) {
             }
             return null;
         },
-        send( data ) {
-            let attrs = {
-                method: this.method,
-                url: this.url,
-                headers: this.headers,
-                json: false
-            }
+        async send( data ) {
+            const opts = { method: this.method, headers: { ...this.headers } };
             if ( typeof(data) === "object" && (this.method === "POST" || this.method === "PUT") && data.photo ) {
                 // Image posts: Ti.Network constructs multipart/form-data
                 // transparently when send() is given a {photo, count}
                 // dict; mirror that here so CerdiApi.js doesn't need to know.
-                attrs.formData = {};
-                if ( data.count ) {
-                    attrs.formData.count = data.count;
-                }
-                attrs.formData.photo ={
-                        value: data.photo,
-                        options: {
-                            filename: "unittest.jpg",
-                            contentType: "image/jpeg"
-                        }
-                };
-            } else {
-                attrs.body = data;
+                // fetch sets its own multipart Content-Type with boundary —
+                // any existing Content-Type would conflict.
+                const form = new FormData();
+                if ( data.count ) form.append('count', String(data.count));
+                form.append('photo', new Blob([data.photo], { type: 'image/jpeg' }), 'unittest.jpg');
+                opts.body = form;
+                delete opts.headers['Content-Type'];
+            } else if ( data !== undefined ) {
+                opts.body = data;
             }
-            let rawContentChunks = [];
-            request(attrs, (err,res,body) => {
-                if ( err ) {
-                    params.onerror.call( this, err );
-                    return;
-                }
-                let rawData = Buffer.concat(rawContentChunks);
-                this.responseData = rawData;
-                this.responseText = rawData.toString("utf8");
-                this.status = res.statusCode;
-                this._responseHeaders = res.headers || {};
-                if ( isHttpError( res.statusCode ) ) {
-                    params.onerror.call( this, { status: res.statusCode } );
+            try {
+                const res = await fetch(this.url, opts);
+                const buf = Buffer.from(await res.arrayBuffer());
+                this.responseData = buf;
+                this.responseText = buf.toString("utf8");
+                this.status = res.status;
+                const headers = {};
+                for (const [k, v] of res.headers.entries()) headers[k] = v;
+                this._responseHeaders = headers;
+                if ( isHttpError( res.status ) ) {
+                    params.onerror.call( this, { status: res.status } );
                 } else {
-                    params.onload.call( this, res );
+                    params.onload.call( this, { statusCode: res.status } );
                 }
-            })
-            .on('error', err => params.onerror.call({}, err ) )
-            .on('data', chunk => rawContentChunks.push(chunk) );
+            } catch ( err ) {
+                params.onerror.call( this, err );
+            }
         }
     }
 }
