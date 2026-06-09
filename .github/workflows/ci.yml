@@ -70,7 +70,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Restore node_modules cache
         id: node-modules-cache
@@ -134,7 +134,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Restore node_modules cache
         id: node-modules-cache
@@ -247,7 +247,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Restore node_modules cache
         id: node-modules-cache
@@ -360,7 +360,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - uses: actions/setup-java@v4
         with:
@@ -467,7 +467,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - uses: actions/setup-java@v4
         with:
@@ -593,7 +593,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Restore node_modules cache
         id: node-modules-cache
@@ -738,7 +738,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - uses: actions/setup-java@v4
         with:
@@ -882,7 +882,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Restore node_modules cache
         id: node-modules-cache
@@ -994,7 +994,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - uses: actions/setup-java@v4
         with:

@@ -45,7 +45,7 @@ If unrelated work surfaces while you're in the middle of a task — a build fix,
 ### Setup
 
 ```bash
-brew install node@20
+brew install node@24
 brew install ios-deploy
 brew install libimobiledevice
 npm install

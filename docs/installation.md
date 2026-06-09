@@ -10,10 +10,10 @@ Install [Homebrew](https://brew.sh) if not already present:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### Node.js 20
+### Node.js 24
 ```bash
-brew install node@20
-echo 'export PATH="/opt/homebrew/opt/node@20/bin:$PATH"' >> ~/.zshrc
+brew install node@24
+echo 'export PATH="/opt/homebrew/opt/node@24/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
