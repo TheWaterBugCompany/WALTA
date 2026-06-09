@@ -58,7 +58,6 @@
     "node-ios-device": "^4.0.3",
     "npm": "^11.16.0",
     "process": "^0.11.10",
-    "request": "^2.88.2",
     "rollup": "^4.61.1",
     "simple-mock": "^0.8.0",
     "sinon": "^22.0.0",
