@@ -47,11 +47,8 @@ npx grunt --platform=android end-to-end-test
 # Acceptance tests
 npx grunt --platform=android acceptance-test
 
-# Contract tests (API contract verification)
+# Contract tests (API contract verification — see contract-tests/README.md)
 npx grunt contract-test
-
-# Visual regression tests
-npx grunt --platform=android visual-regression-test
 ```
 
 ## Shared Appium orchestration
