@@ -52,7 +52,7 @@ jobs:
     if: ${{ !inputs.skip_ci_gate }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Verify latest CI on release SHA succeeded
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -94,7 +94,7 @@ jobs:
       version_code: ${{ steps.version.outputs.version_code }}
       tag_name: ${{ steps.version.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0  # need full history for tags
 
@@ -160,20 +160,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '24'
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
       - name: Restore node_modules cache
         id: node-modules-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -186,7 +186,7 @@ jobs:
 
       - name: Save node_modules cache
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -230,7 +230,7 @@ jobs:
 
       - name: Restore Titanium SDK cache
         id: ti-sdk-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
           key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
@@ -241,7 +241,7 @@ jobs:
 
       - name: Save Titanium SDK cache
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ~/.titanium/mobilesdk/linux/${{ steps.ti-version.outputs.version }}
           key: titanium-sdk-${{ steps.ti-version.outputs.version }}-linux
@@ -282,7 +282,7 @@ jobs:
           status: completed
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-release-${{ needs.prepare.outputs.display_version }}
           path: builds/release/Waterbug.*
@@ -297,7 +297,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Select latest Xcode
         run: |
@@ -306,13 +306,13 @@ jobs:
           sudo xcode-select -s "/Applications/$LATEST_XCODE/Contents/Developer"
           xcodebuild -version
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '24'
 
       - name: Restore node_modules cache
         id: node-modules-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -325,7 +325,7 @@ jobs:
 
       - name: Save node_modules cache
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -376,7 +376,7 @@ jobs:
 
       - name: Restore Titanium SDK cache
         id: ti-sdk-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
           key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
@@ -387,7 +387,7 @@ jobs:
 
       - name: Save Titanium SDK cache
         if: steps.ti-sdk-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ~/Library/Application Support/Titanium/mobilesdk/osx/${{ steps.ti-version.outputs.version }}
           key: titanium-sdk-${{ steps.ti-version.outputs.version }}-osx
@@ -510,7 +510,7 @@ jobs:
         run: security delete-keychain "$KEYCHAIN_PATH" 2>/dev/null || true
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-release-${{ needs.prepare.outputs.display_version }}
           path: builds/release/Waterbug.ipa
@@ -525,7 +525,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Create and push tag
         run: |
