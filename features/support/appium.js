@@ -1,7 +1,6 @@
 const { remote } = require('webdriverio');
 const http = require('http');
 const _ = require('underscore');
-const KobitonAPI = require("./kobiton");
 
 function isAppiumRunning() {
     return new Promise((resolve) => {
@@ -14,36 +13,8 @@ function isAppiumRunning() {
 // (IosSimulatorLauncher / AndroidEmulatorLauncher / IosLauncher / AndroidLauncher)
 // has already installed and launched. Appium attaches to it via bundleId/appPackage —
 // it never installs the app itself, hence noReset:true and autoLaunch:false everywhere.
-async function getCapabilities(platform, host = 'local', kobitonVersion = null, deviceResolution = null, simulator = false) {
+async function getCapabilities(platform, simulator = false) {
     let caps = {};
-
-    if (host === "kobiton") {
-        _(caps).extend({
-            sessionName:        'Automation test session',
-            sessionDescription: '',
-            captureScreenshots: true,
-            browserName:        'chrome',
-            deviceGroup:        'KOBITON',
-            app: `kobiton-store:v${kobitonVersion}`
-        });
-
-        if (platform === "android") {
-            _(caps).extend({ autoGrantPermissions: true, platformName: 'Android' });
-        } else if (platform === "ios") {
-            _(caps).extend({ platformName: 'iOS' });
-        }
-
-        if (deviceResolution) {
-            const kb = new KobitonAPI("thecodesharman", "acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
-            const devices = await kb.getAvailableDevicesByResolution(platform, deviceResolution.width, deviceResolution.height);
-            if (devices.length > 0) {
-                _(caps).extend({ platformVersion: '*', deviceName: devices[0].deviceName });
-            }
-        } else {
-            _(caps).extend({ platformVersion: '*', deviceName: '*' });
-        }
-        return caps;
-    }
 
     if (platform === "ios") {
         _(caps).extend({
@@ -99,27 +70,13 @@ async function getCapabilities(platform, host = 'local', kobitonVersion = null, 
     return caps;
 }
 
-async function startAppium( caps, host = 'local' ) {
-    let driver;
-    if ( host === 'kobiton' ) {
-        driver = await remote({
-            protocol: 'https',
-            port: 443,
-            hostname: 'api.kobiton.com',
-            user: 'thecodesharman',
-            /* TODO: read key from non published file*/
-            key: '<<<SECRET>>>',
-            capabilities: caps,
-            logLevel: 'error'
-        });
-    } else {
-        driver = await remote({
-            logLevel: 'error',
-            hostname: 'localhost',
-            port: 4723,
-            capabilities: caps
-        });
-    }
+async function startAppium( caps ) {
+    const driver = await remote({
+        logLevel: 'error',
+        hostname: 'localhost',
+        port: 4723,
+        capabilities: caps
+    });
     process.once('SIGINT', () => {
         driver.deleteSession().catch(() => {}).finally(() => process.exit(0));
     });

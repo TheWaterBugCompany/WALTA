@@ -1,5 +1,4 @@
 module.exports = function(grunt) {
-const KobitonAPI = require("./features/support/kobiton");
 
     const fs = require('fs');
     const path = require('path');
@@ -84,50 +83,6 @@ const KobitonAPI = require("./features/support/kobiton");
       );
     }
 
-    const Kobiton = new KobitonAPI("thecodesharman","acbea4cd-f259-42bc-9f75-ad25f9cfec5c");
-
-    // List of possible resolutions, not all resolutions are available on all platforms though
-    const AVAILABLE_SCREEN_SIZES =
-    {
-      "android": [
-        { width:1080, height:1920 },
-        { width:1080, height:2220 },
-        { width:1440, height:3200 },
-        { width:720, height:1280 },
-        { width:1440, height:2560 },
-        { width:1440, height:3040 },
-        { width:720, height:1520 },
-        { width:720, height:1560 },
-        { width:1440, height:2960 },
-        { width:1440, height:2880 },
-        { width:480, height:854 },
-        { width:1200, height:1920 },
-        { width:1536, height:2048 },
-        { width:1080, height:2160 },
-        { width:1080, height:2280 },
-        { width:1600, height:2560 },
-        { width:1080, height:2520 },
-        { width:1440, height:3120 },
-        { width:1080, height:2340 },
-        { width:2560, height:1800 },
-        { width:800, height:1280 },
-        { width:1080, height:2270 },
-        { width:1080, height:2312 }
-      ],
-      "ios":[
-        { width:1080, height:1920 },
-        { width:1536, height:2048 },
-        { width:750, height:1334 },
-        { width:1125, height:2436 },
-        { width:2048, height:2732 },
-        { width:1242, height:2688 },
-        { width:640, height:1136 },
-        { width:828, height:1792 },
-        { width:1668, height:2388 },
-        { width:1668, height:2224 }
-      ]
-    } 
-    
     function build_app(platform,build_type) {
 
       let args = [ "--project-dir walta-app"];
@@ -280,9 +235,6 @@ const KobitonAPI = require("./features/support/kobiton");
         // Regenerate tiapp.xml from template if it changed
         tasks.push('newer:tiapp');
         tasks.push(`exec:build:${platform}:${build_type}`);
-        if ( grunt.option('kobiton') ) {
-          tasks.push(`upload:${platform}:${build_type}`);
-        }
       }
       return {
         src: SOURCES,
@@ -295,7 +247,6 @@ const KobitonAPI = require("./features/support/kobiton");
       return {
         "PATH": `./node_modules/.bin/:${process.env.PATH}`,
         "PLATFORM": grunt.option('platform'),
-        "HOST": grunt.option('kobiton') ? "kobiton" : "local",
         "SIMULATOR": grunt.option('simulator') ? "true" : "false"
       }
     }
@@ -312,14 +263,6 @@ const KobitonAPI = require("./features/support/kobiton");
               "standalone": "WktUtils"
             },
           }
-        }
-      },
-      parallel: {
-        visual_regression_test: {
-          options: {
-            grunt: true
-          },
-          tasks: AVAILABLE_SCREEN_SIZES[(grunt.option('platform')?grunt.option('platform'):'android')].map( r => `exec:visual_regression_test:${r.width}:${r.height}`)
         }
       },
       exec: {
@@ -378,16 +321,6 @@ const KobitonAPI = require("./features/support/kobiton");
             command: `PATH=./node_modules/.bin/:$PATH ios-deploy --uninstall_only --bundle_id ${APP_ID}`
           },
 
-        /*  acceptance_test: {
-            command: function(platform,option) {
-              return `VERSION=${grunt.option('kobiton-version')} cucumber-js --tags "@only"`;
-            },
-            options: {
-              env: envVars()
-            },
-            exitCode: [0,1]
-          },*/
-
           end_to_end_test: {
             // setup.js holds the Mocha root hooks (mock server + Appium
             // connect + reset); list it first, then run the *-test.js specs.
@@ -401,13 +334,6 @@ const KobitonAPI = require("./features/support/kobiton");
               env: { ...process.env, ...envVars() }
             },
             exitCode: [0,1,]
-          },
-
-          visual_regression_test: {
-            command: (width,height) => `VERSION=${grunt.option('kobiton-version')} RES=${width}x${height} mocha --reporter=list --report-option output=./visual-regression-testing/logs/${width}x${height}.test --timeout 60000 \"./visual-regression-testing/*.js\" >> ./visual-regression-testing/logs/${width}x${height}.log 2>> ./visual-regression-testing/logs/${width}x${height}.error; exit 0`,
-            options: {
-              env: envVars()
-            }
           },
 
           unit_test_node: {
@@ -563,7 +489,6 @@ const KobitonAPI = require("./features/support/kobiton");
           const { default: IosSimulatorLauncher } = await import("./build-utils/IosSimulatorLauncher.js");
           _launcher = new IosSimulatorLauncher({ logProcessName: "Waterbug(TitaniumKit)", udid: SIM_UDID });
         } else {
-          // AppiumLauncher kept for acceptance-test and visual-regression-test
           const { default: AppiumLauncher } = await import("./build-utils/AppiumLauncher.js");
           _launcher = new AppiumLauncher(platform, { isSimulator: isSimulator || false });
         }
@@ -586,7 +511,6 @@ const KobitonAPI = require("./features/support/kobiton");
       const appiumOptions = {
         platform,
         isSimulator: !!grunt.option('simulator'),
-        host: grunt.option('kobiton') ? 'kobiton' : 'local',
       };
       import("./build-utils/CucumberLauncher.js")
         .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, name, appiumOptions }).run())
@@ -653,17 +577,6 @@ const KobitonAPI = require("./features/support/kobiton");
         })
     });
 
-
-    grunt.registerTask("upload",function(platform,build_type) {
-      const done = this.async();
-      var ext = { "android": "apk", "ios": "ipa" }[platform];
-      var appId = WATERBUG_APPID[platform];
-      var filepath = `./builds/${build_type}/Waterbug.${ext}`;
-      grunt.log.writeln(`Uploading ${filepath}`);
-      Kobiton.uploadAppVersion(filepath, appId )
-        .then( version => kobitonCurrentVersion = version ) 
-        .then(done);
-    });
 
     function isLiveViewBuildType(buildType) {
       return buildType === 'unit-test-liveview' || buildType === 'debug-liveview';
@@ -799,7 +712,6 @@ const KobitonAPI = require("./features/support/kobiton");
     grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-newer-explicit");
     grunt.loadNpmTasks("grunt-then");
-    grunt.loadNpmTasks('grunt-parallel');
     grunt.loadNpmTasks('grunt-browserify');
   
 
@@ -828,71 +740,33 @@ const KobitonAPI = require("./features/support/kobiton");
       grunt.task.run(`exec:end_to_end_test:${platform}`);
     });
 
-    grunt.registerTask('get-kobiton-version', function() {
-      var done = this.async();
-      Kobiton.getLatestVersion(WATERBUG_APPID[grunt.option('platform')])
-        .then( v => {
-          grunt.log.writeln(`Using Kobiton app version ${v.id}`);
-          grunt.option("kobiton-version", v.id );
-          done();
-        } )
-        .catch( err => grunt.fail.fatal(err) );
-    })
-
-    grunt.registerTask('visual-regression-test', function () {
-      var platform = grunt.option('platform');
-      grunt.task.run(`newer:test_${platform}`);
-      if ( grunt.option('kobiton') ) {
-        grunt.task.run('get-kobiton-version');
-      }
-      if ( grunt.option("all-sizes") ) {
-        grunt.task.run('parallel:visual_regression_test');
-      } else {
-        var res = AVAILABLE_SCREEN_SIZES[platform][0];
-        var width = res.width;
-        var height = res.height;
-
-        if ( grunt.option("select-size") ) {
-          var sizeParts = grunt.option("select-size").split("x");
-          width = sizeParts[0];
-          height = sizeParts[1];
-
-        }
-
-        grunt.task.run(`exec:visual_regression_test:${width}:${height}`);
-      }
-      
-    });
-
     grunt.registerTask('acceptance-test', function () {
       var platform = grunt.option('platform');
       const isSimulator = grunt.option('simulator') || false;
       const launchBuildType = isSimulator ? 'test-sim' : 'test';
       const newerTarget = isSimulator ? `test_sim_${platform}` : `test_${platform}`;
       grunt.task.run(`newer:${newerTarget}`);
-      if ( ! grunt.option('kobiton') ) {
-        if ( grunt.option('liveview') ) {
-          const done = this.async();
-          const reuseServer = grunt.option('reuse-server');
-          createLiveViewLauncher(platform, { isSimulator }).then(async (liveview) => {
-            if (reuseServer) {
-              const reused = await liveview.ensureRunning();
-              if (reused) {
-                grunt.log.writeln('LiveView server already running, reusing existing session');
-              }
-            } else {
-              await liveview.stop();
-              await liveview.start();
+      if ( grunt.option('liveview') ) {
+        const done = this.async();
+        const reuseServer = grunt.option('reuse-server');
+        createLiveViewLauncher(platform, { isSimulator }).then(async (liveview) => {
+          if (reuseServer) {
+            const reused = await liveview.ensureRunning();
+            if (reused) {
+              grunt.log.writeln('LiveView server already running, reusing existing session');
             }
-            grunt.task.run(`launch:${platform}:${launchBuildType}`);
-            grunt.task.run("cucumber");
-            done();
-          }).catch(err => { grunt.fail.fatal(err); done(); });
-          return;
-        }
-
-        grunt.task.run(`launch:${platform}:${launchBuildType}`);
+          } else {
+            await liveview.stop();
+            await liveview.start();
+          }
+          grunt.task.run(`launch:${platform}:${launchBuildType}`);
+          grunt.task.run("cucumber");
+          done();
+        }).catch(err => { grunt.fail.fatal(err); done(); });
+        return;
       }
+
+      grunt.task.run(`launch:${platform}:${launchBuildType}`);
       grunt.task.run("cucumber");
     });
 

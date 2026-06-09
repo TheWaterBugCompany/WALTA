@@ -114,18 +114,6 @@ describe("AppiumLauncher", function() {
       await launcher.connect();
       expect(fakeStartAppium.calledOnce).to.be.true;
     });
-
-    it("passes a custom host through to startAppium", async function() {
-      const launcher = new AppiumLauncher("android", { host: "kobiton", startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
-      await launcher.connect();
-      expect(fakeStartAppium.firstCall.args[1]).to.equal("kobiton");
-    });
-
-    it("defaults to host 'local' when none is provided", async function() {
-      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
-      await launcher.connect();
-      expect(fakeStartAppium.firstCall.args[1]).to.equal("local");
-    });
   });
 
   describe("iOS simulator capabilities", function() {

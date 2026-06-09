@@ -63,7 +63,7 @@ function defaultKillProcess(pid) {
 
 class AppiumLauncher {
   constructor(platform, {
-    isSimulator = false, host = 'local', kobitonVersion = null,
+    isSimulator = false,
     appId = 'net.thewaterbug.waterbug', appActivity = '.WaterbugActivity',
     launchArgs = null,
     startAppium = null, remote = defaultRemote, logPollInterval = 100,
@@ -77,8 +77,6 @@ class AppiumLauncher {
   } = {}) {
     this.platform = platform;
     this.isSimulator = isSimulator;
-    this.host = host;
-    this.kobitonVersion = kobitonVersion;
     this.appId = appId;
     this.appActivity = appActivity;
     this.launchArgs = launchArgs;
@@ -98,26 +96,6 @@ class AppiumLauncher {
 
   _buildCapabilities() {
     const caps = {};
-
-    if (this.host === "kobiton") {
-      Object.assign(caps, {
-        sessionName: 'Automation test session',
-        sessionDescription: '',
-        captureScreenshots: true,
-        browserName: 'chrome',
-        deviceGroup: 'KOBITON',
-        app: `kobiton-store:v${this.kobitonVersion}`
-      });
-
-      if (this.platform === "android") {
-        Object.assign(caps, { autoGrantPermissions: true, platformName: 'Android' });
-      } else if (this.platform === "ios") {
-        Object.assign(caps, { platformName: 'iOS' });
-      }
-
-      Object.assign(caps, { platformVersion: '*', deviceName: '*' });
-      return caps;
-    }
 
     if (this.platform === "ios") {
       const wdaDerivedPath = process.env.WDA_DERIVED_DATA_PATH;
@@ -199,17 +177,6 @@ class AppiumLauncher {
   }
 
   async _createSession(caps) {
-    if (this.host === 'kobiton') {
-      return this._remote({
-        protocol: 'https',
-        port: 443,
-        hostname: 'api.kobiton.com',
-        user: 'thecodesharman',
-        key: '<<<SECRET>>>',
-        capabilities: caps,
-        logLevel: 'error'
-      });
-    }
     return this._remote({
       logLevel: 'error',
       hostname: 'localhost',
@@ -224,7 +191,6 @@ class AppiumLauncher {
   }
 
   async _ensureServer() {
-    if (this.host !== 'local') return;
     const running = await this._isAppiumRunning();
     if (running) return;
 
@@ -250,7 +216,7 @@ class AppiumLauncher {
     await this._ensureServer();
     const caps = this._buildCapabilities();
     this._driver = this._startAppium
-      ? await this._startAppium(caps, this.host)
+      ? await this._startAppium(caps)
       : await this._createSession(caps);
     process.once('SIGINT', () => {
       if (this._driver) this._driver.deleteSession().catch(() => {}).finally(() => process.exit(0));
