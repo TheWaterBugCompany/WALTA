@@ -249,7 +249,10 @@ describe('CerdiApi', function() {
         describe('token expiration', function() {
             let clock;
             beforeEach( function() {
-                clock = sinon.useFakeTimers( { now: 12345678 });
+                // toFake: ['Date'] — sinon 22 patches setImmediate by default, which
+                // suspends nock's async response delivery (callback never fires →
+                // 60s test timeout). We only need fake Date for the cache-age math.
+                clock = sinon.useFakeTimers( { now: 12345678, toFake: ['Date'] });
                 nock(SERVER_URL)
                     .post( '/token/create/server')
                     .reply( 200, {
