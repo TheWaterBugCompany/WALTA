@@ -5,11 +5,11 @@ var { closeWindow, wrapViewInWindow, windowOpenTest, actionFiresEventTest } = re
 // iOS only: the inline date picker this modal embeds crashes Titanium's
 // Android Material TextInputLayout, so Android uses the native date dialog
 // (see Notes controller) and never instantiates this modal.
-describe("SurveyDatePicker controller", function () {
+describe("IosSurveyDatePicker controller", function () {
   var ctl, win;
   beforeEach(async function () {
     if (!OS_IOS) this.skip();
-    ctl = Alloy.createController("SurveyDatePicker", { date: new Date(2020, 0, 2) });
+    ctl = Alloy.createController("IosSurveyDatePicker", { date: new Date(2020, 0, 2) });
     win = wrapViewInWindow(ctl.getView());
     await windowOpenTest(win);
   });

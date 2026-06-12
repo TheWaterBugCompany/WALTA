@@ -5,7 +5,7 @@ $.name = "notes";
 var Topics = require("ui/Topics");
 var NotesViewModel = require("viewmodels/Notes");
 var bindView = require("util/bindView");
-var SurveyDatePickerPresenter = require("logic/SurveyDatePickerPresenter");
+var SurveyDatePicker = require("logic/SurveyDatePicker");
 
 var readOnlyMode = $.args.readonly === true;
 var vm = new NotesViewModel({ sample: Alloy.Models.sample, readonly: readOnlyMode });
@@ -32,7 +32,7 @@ function selectSurveyDate( date ) { vm.surveyDate = date; }
 
 function onSurveyDateClick() {
     if ( !vm.editable || $.surveyDatePicker ) return;
-    $.surveyDatePicker = SurveyDatePickerPresenter.open({
+    $.surveyDatePicker = SurveyDatePicker.open({
         window: $.TopLevelWindow,
         date: vm.surveyDate,
         onSelected: selectSurveyDate,
