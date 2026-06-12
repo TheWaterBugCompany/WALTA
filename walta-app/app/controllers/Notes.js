@@ -20,23 +20,28 @@ acb.addTool( $.nextButton.getView() );
 
 bindView($, vm, {
     surveyDateValue: { text: "surveyDateLabel" },
-    partialToggle:   { enabled: "editable" },
-    notesTextField:  { editable: "editable" },
+    partialToggle:   { value: "complete", enabled: "editable" },
+    notesTextField:  { value: "notes", editable: "editable" },
 });
-
-// Seeded once, not bound: re-pushing a TextArea's value on every
-// keystroke-driven notify would fight the cursor; the Switch likewise only
-// needs its initial value — user toggles flow back through onPartialChange.
-$.partialToggle.value = vm.complete;
-$.notesTextField.value = vm.notes;
 
 function onPartialChange( e ) { vm.setComplete( e.value ); }
 function onNotesChange( e )   { vm.setNotes( e.value ); }
 
 function selectSurveyDate( date ) { vm.setSurveyDate( date ); }
 
+// iOS has no native modal date dialog, so it gets the SurveyDatePicker overlay
+// (inline calendar). Android's embedded date picker crashes inside Titanium's
+// Material TextInputLayout, and the platform has a native dialog anyway.
 function onSurveyDateClick() {
-    if ( !vm.editable || $.surveyDatePicker ) return;
+    if ( !vm.editable ) return;
+    if ( OS_ANDROID ) {
+        Ti.UI.createPicker({ type: Ti.UI.PICKER_TYPE_DATE }).showDatePickerDialog({
+            value: vm.surveyDate,
+            callback: function ( e ) { if ( !e.cancel && e.value ) selectSurveyDate( e.value ); }
+        });
+        return;
+    }
+    if ( $.surveyDatePicker ) return;
     $.surveyDatePicker = Alloy.createController("SurveyDatePicker", { date: vm.surveyDate });
     $.TopLevelWindow.add( $.surveyDatePicker.getView() );
     $.surveyDatePicker.on("selected", ( e ) => selectSurveyDate( e.value ));

@@ -2,14 +2,18 @@ require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
 var { closeWindow, wrapViewInWindow, windowOpenTest, actionFiresEventTest } = require("spec/util/TestUtils");
 
+// iOS only: the inline date picker this modal embeds crashes Titanium's
+// Android Material TextInputLayout, so Android uses the native date dialog
+// (see Notes controller) and never instantiates this modal.
 describe("SurveyDatePicker controller", function () {
   var ctl, win;
-  beforeEach(async () => {
+  beforeEach(async function () {
+    if (!OS_IOS) this.skip();
     ctl = Alloy.createController("SurveyDatePicker", { date: new Date(2020, 0, 2) });
     win = wrapViewInWindow(ctl.getView());
     await windowOpenTest(win);
   });
-  afterEach(async () => await closeWindow(win));
+  afterEach(async () => { if (win) await closeWindow(win); });
 
   it("seeds an inline date picker with the given date", function () {
     expect(ctl.datePicker.type).to.equal(Ti.UI.PICKER_TYPE_DATE);

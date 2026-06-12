@@ -77,6 +77,22 @@ describe("bindView", function () {
     expect($.label.text).to.equal("hi");
   });
 
+  it("does not re-assign a property whose value is unchanged", function () {
+    bindView($, vm, { label: { text: "greeting" } });
+    let sets = 0;
+    let stored = $.label.text;
+    Object.defineProperty($.label, "text", {
+      get() { return stored; },
+      set(v) { sets++; stored = v; },
+      configurable: true,
+    });
+    vm.notifyListeners();           // greeting still "hi" — unchanged, no write
+    expect(sets).to.equal(0);
+    vm._status = "busy";
+    vm.notifyListeners();           // now "bye" — changed, one write
+    expect(sets).to.equal(1);
+  });
+
   it("returns an unbind function that stops further updates", function () {
     const unbind = bindView($, vm, { label: { text: "greeting" } });
     unbind();
