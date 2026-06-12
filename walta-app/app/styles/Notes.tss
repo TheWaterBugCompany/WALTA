@@ -4,6 +4,37 @@
     right: "10dp",
     layout:"vertical"
 }
+"#surveyDate": {
+    height: "44dp",
+    layout: "horizontal",
+    top: "4dp"
+}
+"#surveyDateTitle": {
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE,
+    left: 0
+}
+"#surveyDateField": {
+    layout: "horizontal",
+    left: "12dp",
+    width: Ti.UI.SIZE,
+    height: "36dp",
+    borderColor: Alloy.CFG.colors.primary,
+    borderWidth: "1dp",
+    borderRadius: "6dp"
+}
+"#surveyDateValue": {
+    left: "12dp",
+    width: Ti.UI.SIZE,
+    height: Ti.UI.SIZE
+}
+"#surveyDateIcon": {
+    left: "8dp",
+    right: "10dp",
+    width: "18dp",
+    height: "18dp",
+    tintColor: Alloy.CFG.colors.primary
+}
 "#partial": {
     height: "50dp"
 }
