@@ -1,0 +1,29 @@
+"#pickerWindow": {
+    width: "380dp",
+    height: Ti.UI.SIZE,
+    borderWidth: "1dp",
+    borderRadius: "12dp"
+}
+"#pickerCard": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE
+}
+"#datePicker": {
+    type: Ti.UI.PICKER_TYPE_DATE,
+    top: 0
+}
+"#datePicker[platform=ios]": {
+    datePickerStyle: Ti.UI.DATE_PICKER_STYLE_INLINE,
+    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE,
+    left: "8dp",
+    right: "8dp"
+}
+"#buttonBar": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE,
+    bottom: "10dp"
+}
+"#doneButton": {
+    right: "12dp"
+}
