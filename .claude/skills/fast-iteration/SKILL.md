@@ -11,12 +11,21 @@ allowed-tools:
 
 # Fast on-device iteration loop (unit specs + cucumber, LiveView)
 
+**You can run device specs yourself, in-session, in a tight loop.** This is not
+a CI-only or human-only step — cold build ~1–2 min, warm reruns ~20–30 s (see
+Timing below). `--manual` + `xcrun simctl io booted screenshot` even gives you a
+visual layout check. Default to running the device spec; only stay in Node for
+genuinely pure-JS logic. If you catch yourself thinking "I can't run this on a
+device here," you can — reach for this skill.
+
 Runs unit specs (`walta-app/app/spec/*_spec.js`) or cucumber scenarios
 (`features/**/*.feature`) against the Titanium runtime with LiveView, so
 subsequent iterations skip the rebuild+install step.
 
 ## When to invoke this skill
 
+- **any time you write or touch a device spec and want to actually run it** —
+  this is the default loop, not an exceptional one
 - "show me how X looks in the simulator" / "see the new panel" / "verify the layout"
 - worst-case visual checks ("seed 500 entries and see how the pane copes")
 - iterating on a controller / TSS / view file and wanting fast feedback
