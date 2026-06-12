@@ -48,7 +48,8 @@ exports.definition = {
 			"serverUserId": "INTEGER", // user_id field from CERDI server
 			"originalSampleId": "INTEGER", 
 			"complete": "INTEGER", // boolean actually
-			"notes": "TEXT"
+			"notes": "TEXT",
+			"overrideDateCompleted": "VARCHAR(255)" // user-chosen survey date; applied to dateCompleted at submit (WB-158)
 		},
 		adapter: {
 			type: "sql",
@@ -153,7 +154,7 @@ exports.definition = {
 				let updatedAt = moment().valueOf();
 				this.save({
 					'updatedAt': updatedAt,
-					'dateCompleted': moment().format()
+					'dateCompleted': this.get("overrideDateCompleted") || moment().format()
 				});
 			},
 
