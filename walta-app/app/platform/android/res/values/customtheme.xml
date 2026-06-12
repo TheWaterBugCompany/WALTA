@@ -9,16 +9,17 @@
     <style name="TextAppearance.WaterbugApp.Button" parent="TextAppearance.AppCompat.Button">
         <item name="android:textAllCaps">false</item>
     </style>
-    <!-- Titanium 10+ dropped AppCompat support and renders native Material
-         widgets, so the app theme inherits from a full Theme.MaterialComponents
-         base. This also defines materialCalendarTheme (which showDatePickerDialog's
-         MaterialDatePicker requires) and a default Material textInputStyle. -->
-    <style name="Theme.WaterbugApp" parent="Theme.MaterialComponents.Light">
+    <!-- Bridge base: provides the Material Components attributes that
+         showDatePickerDialog's MaterialDatePicker needs, while keeping AppCompat
+         widget rendering so the app's custom button backgroundColors still apply
+         (a full Material base swaps in MaterialButton, which ignores Ti's
+         backgroundColor). materialCalendarTheme isn't defined by Bridge, so it's
+         set explicitly; colorPrimary brands the picker's landscape header. -->
+    <style name="Theme.WaterbugApp" parent="Theme.MaterialComponents.Light.Bridge">
         <item name="colorSurface">#FFFFFF</item>
-        <!-- Brand colour drives Material widgets (incl. the date picker header,
-             otherwise an unstyled grey panel beside the calendar in landscape). -->
         <item name="colorPrimary">#26849c</item>
         <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar</item>
         <item name="android:windowFullscreen">true</item>
 
         <item name="checkboxStyle">@style/Theme.WaterbugApp.Checkbox</item>
