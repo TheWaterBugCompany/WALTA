@@ -32,7 +32,7 @@ describe("NotesViewModel", function () {
       const sample = fakeSample();
       const vm = new NotesViewModel({ sample, now: fixedNow });
       const chosen = new Date("2020-01-02T03:04:05");
-      vm.setSurveyDate(chosen);
+      vm.surveyDate = chosen;
       expect(new Date(sample.get("overrideDateCompleted")).getTime()).to.equal(chosen.getTime());
       expect(vm.surveyDateLabel).to.equal("2 January 2020");
     });
@@ -59,9 +59,9 @@ describe("NotesViewModel", function () {
     it("persists the complete flag as 1/0 when toggled", function () {
       const sample = fakeSample();
       const vm = new NotesViewModel({ sample });
-      vm.setComplete(true);
+      vm.complete = true;
       expect(sample.get("complete")).to.equal(1);
-      vm.setComplete(false);
+      vm.complete = false;
       expect(sample.get("complete")).to.equal(0);
     });
   });
@@ -74,7 +74,7 @@ describe("NotesViewModel", function () {
     it("persists edited notes text to the sample", function () {
       const sample = fakeSample();
       const vm = new NotesViewModel({ sample });
-      vm.setNotes("a new note");
+      vm.notes = "a new note";
       expect(sample.get("notes")).to.equal("a new note");
     });
   });

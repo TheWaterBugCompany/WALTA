@@ -25,10 +25,10 @@ bindView($, vm, {
     notesTextField:  { value: "notes", editable: "editable" },
 });
 
-function onPartialChange( e ) { vm.setComplete( e.value ); }
-function onNotesChange( e )   { vm.setNotes( e.value ); }
+function onPartialChange( e ) { vm.complete = e.value; }
+function onNotesChange( e )   { vm.notes = e.value; }
 
-function selectSurveyDate( date ) { vm.setSurveyDate( date ); }
+function selectSurveyDate( date ) { vm.surveyDate = date; }
 
 function onSurveyDateClick() {
     if ( !vm.editable || $.surveyDatePicker ) return;
