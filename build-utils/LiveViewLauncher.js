@@ -27,6 +27,17 @@ class LiveViewLauncher {
     this._env = env;
   }
 
+  // Child env is the inherited process env with our overrides applied; an
+  // override of `undefined` unsets the inherited key (e.g. clearing a
+  // profile-level ANDROID_DEVICE_SERIAL so it can't pin adb to a device).
+  _childEnv() {
+    const env = { ...process.env, ...this._env };
+    for (const key of Object.keys(this._env)) {
+      if (this._env[key] === undefined) delete env[key];
+    }
+    return env;
+  }
+
   isRunning() {
     return new Promise((resolve) => {
       this._execFile("lsof", ["-ti", `:${this._port}`], (err, stdout) => {
@@ -40,7 +51,7 @@ class LiveViewLauncher {
       const proc = this._spawn(this._command, this._args, {
         detached: true,
         stdio: ["ignore", "pipe", "pipe"],
-        env: { ...process.env, ...this._env },
+        env: this._childEnv(),
       });
 
       proc.unref();
