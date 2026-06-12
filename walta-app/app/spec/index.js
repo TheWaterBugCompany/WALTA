@@ -50,6 +50,7 @@ var SPEC_FILES = [
   "MethodSelect",
   "Menu",
   "Notes",
+  "IosSurveyDatePicker",
   "Register",
   "QuestionController",
   "SampleTray",
