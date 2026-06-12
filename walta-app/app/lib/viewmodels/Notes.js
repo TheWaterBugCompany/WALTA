@@ -44,9 +44,6 @@ class NotesViewModel extends ChangeNotifier {
     this._sample.save();
     this.notifyListeners();
   }
-
-  goBack()    { this.trigger("back"); }
-  goForward() { this.trigger("forward"); }
 }
 
 module.exports = NotesViewModel;

@@ -38,6 +38,19 @@ describe("Notes controller", function () {
       let stored = Alloy.Models.sample.get("overrideDateCompleted");
       expect(require("lib/moment")(stored).format("D MMMM YYYY")).to.equal("2 January 2020");
     });
+    it('opens a date picker when the survey date field is tapped', async function () {
+      await controllerOpenTest(ctl);
+      ctl.surveyDateField.fireEvent("click");
+      await waitForTick(10)();
+      let picker = ctl.getSurveyDatePicker();
+      expect(picker, "tapping the field should create a date picker").to.exist;
+      expect(picker.type).to.equal(Ti.UI.PICKER_TYPE_DATE);
+      // iOS defaults to the compact style (a tappable field needing a second
+      // tap); the screen forces the calendar inline so one tap reaches it.
+      if (OS_IOS) {
+        expect(picker.datePickerStyle).to.equal(Ti.UI.iOS.DATE_PICKER_STYLE_INLINE);
+      }
+    });
     it('should bind the partial submission checkbox to the partial field in the sample', async function () {
 
       await controllerOpenTest(ctl);
