@@ -45,7 +45,11 @@ module.exports = function bindView($, vm, bindings, palette) {
         if (typeof value === "symbol" && palette) {
           value = palette[value.description];
         }
-        widget[key] = value;
+        // Only write on change: re-pushing an unchanged value into a text
+        // input on every notify would reset the cursor mid-edit.
+        if (widget[key] !== value) {
+          widget[key] = value;
+        }
       }
     }
   }
