@@ -1029,6 +1029,25 @@ describe("Sample model", function() {
 
   });
 
+  context("saveCurrentSample survey date (WB-158)", function() {
+    beforeEach(function() {
+      clearDatabase();
+      Alloy.Models.sample = makeSampleData({ dateCompleted: null });
+    });
+
+    it("defaults dateCompleted to now when no survey-date override is set", async function() {
+      await Alloy.Models.sample.saveCurrentSample();
+      expect(Alloy.Models.sample.get("dateCompleted")).to.be.a.dateString();
+    });
+
+    it("uses overrideDateCompleted as dateCompleted when the user chose a survey date", async function() {
+      let chosen = moment("2020-01-02T03:04:05").format();
+      Alloy.Models.sample.set("overrideDateCompleted", chosen);
+      await Alloy.Models.sample.saveCurrentSample();
+      expect(Alloy.Models.sample.get("dateCompleted")).to.equal(chosen);
+    });
+  });
+
   context("user filtering of sample records", function() {
     it('should filter out any records not belonging to the current user from upload queue', function() {
       makeSampleData({ serverUserId: 123, serverSampleId: 666}).save();
