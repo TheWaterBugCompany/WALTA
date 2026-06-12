@@ -7,11 +7,12 @@
 "#surveyDate": {
     height: "44dp",
     layout: "horizontal",
-    top: "4dp"
+    top: "20dp"
 }
 "#surveyDateTitle": {
     width: Ti.UI.SIZE,
-    height: Ti.UI.SIZE,
+    height: "36dp",
+    verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
     left: 0
 }
 "#surveyDateField": {
@@ -26,11 +27,13 @@
 "#surveyDateValue": {
     left: "12dp",
     width: Ti.UI.SIZE,
-    height: Ti.UI.SIZE
+    height: "36dp",
+    verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
 }
 "#surveyDateIcon": {
     left: "8dp",
     right: "10dp",
+    top: "9dp",
     width: "18dp",
     height: "18dp",
     tintColor: Alloy.CFG.colors.primary
