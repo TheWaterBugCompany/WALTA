@@ -25,6 +25,19 @@ describe("Notes controller", function () {
       expect(ctl.partialToggle.enabled).to.be.true;
       expect(ctl.notesTextField.editable).to.be.true;
     });
+    it('defaults the survey date field to today', async function () {
+      await controllerOpenTest(ctl);
+      let today = require("lib/moment")().format("D MMMM YYYY");
+      expect(ctl.surveyDateValue.text).to.equal(today);
+    });
+    it('persists a chosen survey date to the sample and updates the field', async function () {
+      await controllerOpenTest(ctl);
+      ctl.selectSurveyDate(new Date(2020, 0, 2, 3, 4, 5));
+      await waitForTick(10)();
+      expect(ctl.surveyDateValue.text).to.equal("2 January 2020");
+      let stored = Alloy.Models.sample.get("overrideDateCompleted");
+      expect(require("lib/moment")(stored).format("D MMMM YYYY")).to.equal("2 January 2020");
+    });
     it('should bind the partial submission checkbox to the partial field in the sample', async function () {
 
       await controllerOpenTest(ctl);
