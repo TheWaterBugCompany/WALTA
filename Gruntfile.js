@@ -58,8 +58,22 @@ module.exports = function(grunt) {
       return '127.0.0.1';
     }
 
+    // The serial of a running emulator (emulator-NNNN), or undefined if none is up.
+    function resolveEmulatorSerial() {
+      const { execFileSync } = require('child_process');
+      const adbBin = process.env.ANDROID_SDK_ROOT ? `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb` : 'adb';
+      try {
+        const out = execFileSync(adbBin, ['devices'], { encoding: 'utf8' });
+        const line = out.split('\n').find((l) => /^emulator-\d+\s+device\b/.test(l));
+        return line ? line.split(/\s+/)[0] : undefined;
+      } catch (e) {
+        return undefined;
+      }
+    }
+
     function createLiveViewLauncher(platform, { isSimulator = false, target, unitTest = false, buildOnly = true, noPrompt = true } = {}) {
       const args = ["serve", "-p", platform, "-d", "./walta-app", "--deploy-type", "development", "--liveview-ip", getLocalIP()];
+      const env = { ALLOY_PATH: "./node_modules/.bin/alloy" };
       if (target) {
         args.push("--target", target);
       }
@@ -70,6 +84,10 @@ module.exports = function(grunt) {
         if (SIM_UDID) args.push("-C", SIM_UDID);
       } else if (platform === "android" && isSimulator) {
         args.push("-C", "Medium_Phone_API_36.1", "--target", "emulator");
+        // A profile-level ANDROID_DEVICE_SERIAL pins adb to a physical device,
+        // overriding --target emulator. Point adb at the running emulator (or
+        // clear the pin when none is up) so the build, install and logcat land there.
+        env.ANDROID_DEVICE_SERIAL = resolveEmulatorSerial();
       } else if (platform === "android" && !isSimulator) {
         if (ANDROID_DEVICE_SERIAL) args.push("-C", ANDROID_DEVICE_SERIAL);
         args.push("--target", "device");
@@ -79,7 +97,7 @@ module.exports = function(grunt) {
       if (noPrompt) args.push("--no-prompt");
       // Dynamic import for ESM module
       return import("./build-utils/LiveViewLauncher.js").then(({ default: LiveViewLauncher }) =>
-        new LiveViewLauncher({ command: "./node_modules/.bin/titanium", args, env: { ALLOY_PATH: "./node_modules/.bin/alloy" } })
+        new LiveViewLauncher({ command: "./node_modules/.bin/titanium", args, env })
       );
     }
 

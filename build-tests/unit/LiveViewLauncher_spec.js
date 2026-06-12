@@ -82,6 +82,27 @@ describe("LiveViewLauncher", function () {
       await startPromise; // should resolve without timeout
     });
 
+    it("should drop an inherited env var when the override value is undefined", async function () {
+      const { stub } = makeSpawn("[LiveView] Server ready");
+      const prev = process.env.ANDROID_DEVICE_SERIAL;
+      process.env.ANDROID_DEVICE_SERIAL = "PIXEL123";
+      try {
+        const launcher = new LiveViewLauncher({ spawn: stub, args: [], env: { ANDROID_DEVICE_SERIAL: undefined } });
+        await launcher.start();
+        expect(stub.firstCall.args[2].env).to.not.have.property("ANDROID_DEVICE_SERIAL");
+      } finally {
+        if (prev === undefined) delete process.env.ANDROID_DEVICE_SERIAL;
+        else process.env.ANDROID_DEVICE_SERIAL = prev;
+      }
+    });
+
+    it("should pass through a defined env override", async function () {
+      const { stub } = makeSpawn("[LiveView] Server ready");
+      const launcher = new LiveViewLauncher({ spawn: stub, args: [], env: { ANDROID_DEVICE_SERIAL: "emulator-5554" } });
+      await launcher.start();
+      expect(stub.firstCall.args[2].env).to.include({ ANDROID_DEVICE_SERIAL: "emulator-5554" });
+    });
+
     it("should reject if the process exits before becoming ready", async function () {
       const { stub, proc } = makeSpawn();
       const launcher = new LiveViewLauncher({ spawn: stub, args: [] });
