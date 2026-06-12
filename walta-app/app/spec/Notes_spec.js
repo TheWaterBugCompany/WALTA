@@ -38,18 +38,6 @@ describe("Notes controller", function () {
       let stored = Alloy.Models.sample.get("overrideDateCompleted");
       expect(require("lib/moment")(stored).format("D MMMM YYYY")).to.equal("2 January 2020");
     });
-    // iOS only: Android opens the native date dialog (showDatePickerDialog),
-    // which is a fire-and-forget native call with nothing to introspect.
-    it('opens the inline calendar modal when the field is tapped (iOS)', async function () {
-      if (!OS_IOS) this.skip();
-      await controllerOpenTest(ctl);
-      expect(ctl.surveyDatePicker, "no modal before tapping").to.not.exist;
-      ctl.surveyDateField.fireEvent("click");
-      await waitForTick(10)();
-      expect(ctl.surveyDatePicker, "tapping the field opens the picker modal").to.exist;
-      expect(ctl.surveyDatePicker.datePicker.type).to.equal(Ti.UI.PICKER_TYPE_DATE);
-      expect(ctl.surveyDatePicker.datePicker.datePickerStyle).to.equal(Ti.UI.DATE_PICKER_STYLE_INLINE);
-    });
     it('should bind the partial submission checkbox to the partial field in the sample', async function () {
 
       await controllerOpenTest(ctl);
@@ -83,6 +71,30 @@ describe("Notes controller", function () {
       ctl.surveyDateField.fireEvent("click");
       await waitForTick(10)();
       expect(ctl.surveyDatePicker, "read-only must not open the date picker").to.not.exist;
+    });
+  });
+
+  // iOS only: Android opens the native date dialog (showDatePickerDialog),
+  // a fire-and-forget native call with no modal to introspect. Skipping in a
+  // beforeEach keeps the window unopened, so the afterEach must guard on ctl.
+  context("inline calendar modal (iOS)", function () {
+    var ctl;
+    beforeEach(async function () {
+      if (!OS_IOS) this.skip();
+      ctl = Alloy.createController("Notes");
+      await controllerOpenTest(ctl);
+    });
+    afterEach(function (done) {
+      if (ctl) closeWindow(ctl.getView(), done);
+      else done();
+    });
+    it('opens when the survey date field is tapped', async function () {
+      expect(ctl.surveyDatePicker, "no modal before tapping").to.not.exist;
+      ctl.surveyDateField.fireEvent("click");
+      await waitForTick(10)();
+      expect(ctl.surveyDatePicker, "tapping the field opens the picker modal").to.exist;
+      expect(ctl.surveyDatePicker.datePicker.type).to.equal(Ti.UI.PICKER_TYPE_DATE);
+      expect(ctl.surveyDatePicker.datePicker.datePickerStyle).to.equal(Ti.UI.DATE_PICKER_STYLE_INLINE);
     });
   });
 
