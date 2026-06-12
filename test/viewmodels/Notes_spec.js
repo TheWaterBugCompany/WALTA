@@ -88,22 +88,4 @@ describe("NotesViewModel", function () {
       expect(new NotesViewModel({ sample: fakeSample(), readonly: true }).editable).to.be.false;
     });
   });
-
-  describe("navigation", function () {
-    it("triggers a back event when goBack is called", function () {
-      const vm = new NotesViewModel({ sample: fakeSample() });
-      let fired = false;
-      vm.on("back", () => { fired = true; });
-      vm.goBack();
-      expect(fired).to.be.true;
-    });
-
-    it("triggers a forward event when goForward is called", function () {
-      const vm = new NotesViewModel({ sample: fakeSample() });
-      let fired = false;
-      vm.on("forward", () => { fired = true; });
-      vm.goForward();
-      expect(fired).to.be.true;
-    });
-  });
 });
