@@ -5,6 +5,7 @@ $.name = "notes";
 var Topics = require("ui/Topics");
 var NotesViewModel = require("viewmodels/Notes");
 var bindView = require("util/bindView");
+var SurveyDatePickerPresenter = require("logic/SurveyDatePickerPresenter");
 
 var readOnlyMode = $.args.readonly === true;
 var vm = new NotesViewModel({ sample: Alloy.Models.sample, readonly: readOnlyMode });
@@ -29,30 +30,19 @@ function onNotesChange( e )   { vm.setNotes( e.value ); }
 
 function selectSurveyDate( date ) { vm.setSurveyDate( date ); }
 
-// iOS has no native modal date dialog, so it gets the SurveyDatePicker overlay
-// (inline calendar). Android's embedded date picker crashes inside Titanium's
-// Material TextInputLayout, and the platform has a native dialog anyway.
 function onSurveyDateClick() {
-    if ( !vm.editable ) return;
-    if ( OS_ANDROID ) {
-        Ti.UI.createPicker({ type: Ti.UI.PICKER_TYPE_DATE }).showDatePickerDialog({
-            value: vm.surveyDate,
-            callback: function ( e ) { if ( !e.cancel && e.value ) selectSurveyDate( e.value ); }
-        });
-        return;
-    }
-    if ( $.surveyDatePicker ) return;
-    $.surveyDatePicker = Alloy.createController("SurveyDatePicker", { date: vm.surveyDate });
-    $.TopLevelWindow.add( $.surveyDatePicker.getView() );
-    $.surveyDatePicker.on("selected", ( e ) => selectSurveyDate( e.value ));
-    $.surveyDatePicker.on("close", closeSurveyDatePicker);
+    if ( !vm.editable || $.surveyDatePicker ) return;
+    $.surveyDatePicker = SurveyDatePickerPresenter.open({
+        window: $.TopLevelWindow,
+        date: vm.surveyDate,
+        onSelected: selectSurveyDate,
+        onClose: closeSurveyDatePicker,
+    });
 }
 
 function closeSurveyDatePicker() {
     if ( !$.surveyDatePicker ) return;
-    $.surveyDatePicker.off();
-    $.TopLevelWindow.remove( $.surveyDatePicker.getView() );
-    $.surveyDatePicker.cleanUp();
+    $.surveyDatePicker.close();
     $.surveyDatePicker = null;
 }
 
