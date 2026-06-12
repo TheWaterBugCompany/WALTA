@@ -96,7 +96,7 @@ When you hear "quick" / "no biggy" / "just a" framing on non-trivial code, treat
 Cheapest layer that meaningfully exercises the change:
 
 - **Node unit** (`test/**/*_spec.js`, `npx grunt unit-test-node`) — pure JS, no `Ti.*`. Sub-second feedback. Most defects belong here.
-- **Device unit** (`walta-app/app/spec/*_spec.js`) — needs Alloy / `Ti.*`. Drive with [fast-iteration](../fast-iteration/SKILL.md).
+- **Device unit** (`walta-app/app/spec/*_spec.js`) — needs Alloy / `Ti.*`. Runnable in-session via [fast-iteration](../fast-iteration/SKILL.md) (~20–30 s warm) — pick Node over device for genuinely pure-JS logic, never just to dodge a device build.
 - **Cucumber acceptance** (`features/`) — cross-screen flows that map to a *business requirement*; keep them business-readable. Slow; use sparingly.
 - **Appium E2E** (`end-to-end-testing/`, Mocha+Appium) — extensive, mechanism-heavy full-stack integration that doesn't belong in business language (e.g. sync interrupt/resume across restart/network/foreground). Currently dormant + not in CI — revival tracked in WB-104.
 

@@ -92,6 +92,8 @@ npx grunt --platform=android acceptance-test   # Android cucumber acceptance sce
 
 **Always invoke tests via the grunt wrappers** — never `npx mocha` directly. The wrappers set the right `NODE_PATH`, `NODE_OPTIONS`, and test-file globs; raw mocha runs can hang silently (no test output) when those aren't configured.
 
+**Device and acceptance specs are runnable in-session** via the [fast-iteration](.claude/skills/fast-iteration/SKILL.md) skill (LiveView warm loop ~20–30 s) — they are not human-only or CI-only. Treat a device spec as a normal part of the TDD loop; don't push logic into Node-only shapes just to avoid a device build.
+
 See the [tdd](.claude/skills/tdd/SKILL.md) and [fast-iteration](.claude/skills/fast-iteration/SKILL.md) skills.
 
 ### Device Logging
