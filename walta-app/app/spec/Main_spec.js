@@ -59,7 +59,7 @@ describe("Main controller", function() {
     app = Alloy.createController("Main", services);
     await app.startApp();
     await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED );
-    currentController().sampleTable.fireEvent("click", { index: 0 });
+    currentController().sampleTable.data[0].rows[0].fireEvent("click");
 
     await waitForTick(10)();
     await actionFiresTopicTest( currentController().sampleMenu.edit, "click", Topics.PAGE_OPENED );
@@ -93,7 +93,7 @@ describe("Main controller", function() {
     await app.startApp();
    
     await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED);
-    currentController().sampleTable.fireEvent("click", { index: 0 });
+    currentController().sampleTable.data[0].rows[0].fireEvent("click");
     await actionFiresTopicTest( currentController().sampleMenu.edit, "click", Topics.PAGE_OPENED );
 
     // At this point the global sample SHOULD NOT be the original record but
@@ -120,7 +120,7 @@ describe("Main controller", function() {
     
     expect( currentController().sampleTable.data[0].rows.length, "there should only be one row" ).to.equal(1);
 
-    currentController().sampleTable.fireEvent("click", { index: 0 });
+    currentController().sampleTable.data[0].rows[0].fireEvent("click");
 
     
     await actionFiresTopicTest( currentController().sampleMenu.view, "click", Topics.PAGE_OPENED );
