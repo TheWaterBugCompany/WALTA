@@ -537,6 +537,11 @@ exports.definition = {
 
 				dup.set("originalSampleId",this.get("sampleId"));
 
+				// Carry the original survey date so editing doesn't reset it to today
+				// (WB-166). dateCompleted stays null (the editing marker); the date
+				// rides on overrideDateCompleted, which saveCurrentSample reapplies.
+				dup.set("overrideDateCompleted", this.get("dateCompleted"));
+
 				// accuracy isn't in the CERDI JSON currently
 				dup.set("accuracy", this.get("accuracy"));
 

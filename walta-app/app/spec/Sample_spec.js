@@ -1115,6 +1115,33 @@ describe("Sample model", function() {
   });
 });
 
+describe("WB-166: editing a dated survey keeps its survey date", function() {
+  beforeEach(clearDatabase);
+
+  function makeDatedSurvey(originalDate) {
+    let s = makeSampleData({
+      serverSampleId: 777,
+      dateCompleted: originalDate,
+      serverSyncTime: moment().valueOf()
+    });
+    s.save();
+    return s;
+  }
+
+  it("opens the temporary edit on the original survey date, not today", function() {
+    let originalDate = moment("2020-03-15T09:00:00").format();
+    let temp = makeDatedSurvey(originalDate).createTemporaryForEdit();
+    expect(temp.get("overrideDateCompleted")).to.equal(originalDate);
+  });
+
+  it("preserves the original date when an edited survey is resubmitted", async function() {
+    let originalDate = moment("2020-03-15T09:00:00").format();
+    let temp = makeDatedSurvey(originalDate).createTemporaryForEdit();
+    await temp.saveCurrentSample();
+    expect(temp.get("dateCompleted")).to.equal(originalDate);
+  });
+});
+
 describe("WB-143: complete=false survives the edit roundtrip", function() {
   beforeEach(clearDatabase);
 
