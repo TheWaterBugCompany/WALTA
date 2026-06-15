@@ -178,6 +178,45 @@ describe("SampleSync", function () {
         expectPhotoOptimised(Alloy.Globals.CerdiApi.submitSitePhoto.lastCall.args[1]);
         expectPhotoOptimised(Alloy.Globals.CerdiApi.submitCreaturePhoto.lastCall.args[2]);
     });
+
+    // WB-167: SampleHistory resolves UPLOAD_PROGRESS by local sampleId, so every
+    // step must report the local id. The photo steps used to report serverSampleId.
+    it("reports UPLOAD_PROGRESS with the local sampleId for every step, including photos", async function () {
+        clearMockSampleData();
+
+        let samples = Alloy.Collections.instance("sample");
+        let taxa = Alloy.Collections.instance("taxa");
+
+        let sample = Alloy.createModel("sample", { sitePhotoPath: makeTestPhoto("site.jpg") });
+        sample.save();
+        let localId = sample.get("sampleId");
+
+        let taxon = Alloy.createModel("taxa", {
+            taxonId: 1, sampleId: localId,
+            taxonPhotoPath: makeTestPhoto("taxon.jpg"), abundance: "1-2", updatedAt: 0
+        });
+        taxa.add(taxon);
+        taxon.save();
+        samples.add(sample);
+
+        simple.mock(Alloy.Globals.CerdiApi, "submitSample").resolveWith({ id: 666 });
+        simple.mock(Alloy.Globals.CerdiApi, "submitSitePhoto").resolveWith({ id: 1 });
+        simple.mock(Alloy.Globals.CerdiApi, "submitCreaturePhoto").resolveWith({ id: 2 });
+
+        let progressIds = [];
+        let onProgress = (payload) => progressIds.push(payload.id);
+        Topics.subscribe(Topics.UPLOAD_PROGRESS, onProgress);
+        try {
+            await createSampleUploader().uploadNextSample(samples);
+        } finally {
+            Topics.unsubscribe(Topics.UPLOAD_PROGRESS, onProgress);
+        }
+
+        expect(progressIds.length, "some UPLOAD_PROGRESS events fired").to.be.greaterThan(0);
+        expect(progressIds.every(id => id === localId),
+            `every UPLOAD_PROGRESS id should be local sampleId ${localId}, got ${JSON.stringify(progressIds)}`)
+            .to.be.true;
+    });
     /*
         Sample Sync upload
         - polls every fifteen minutes to upload
