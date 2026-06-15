@@ -1140,6 +1140,13 @@ describe("WB-166: editing a dated survey keeps its survey date", function() {
     await temp.saveCurrentSample();
     expect(temp.get("dateCompleted")).to.equal(originalDate);
   });
+
+  it("shows the overridden date on the summary while editing, not today", function() {
+    let originalDate = moment("2020-03-15T09:00:00").format();
+    let temp = makeDatedSurvey(originalDate).createTemporaryForEdit();
+    expect(temp.transform().dateCompleted)
+      .to.equal(moment(originalDate).format("DD/MMM/YYYY h:mm:ss a"));
+  });
 });
 
 describe("WB-143: complete=false survives the edit roundtrip", function() {
