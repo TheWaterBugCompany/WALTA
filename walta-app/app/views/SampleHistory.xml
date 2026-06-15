@@ -6,6 +6,6 @@
 			<Label class="waterbodyName column" text="Waterbody Name"/>
 			<Label class="boolColumn column" text="Sync"/>
 		</View>
-		<TableView id="sampleTable" onClick="rowSelected"/>
+		<TableView id="sampleTable"/>
 	</View>
 </Alloy>
