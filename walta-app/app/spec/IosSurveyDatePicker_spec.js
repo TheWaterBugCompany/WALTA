@@ -22,6 +22,12 @@ describe("IosSurveyDatePicker controller", function () {
     }
   });
 
+  // The app has no dark palette; on a dark-mode device the system picker draws
+  // white-on-white and the cells vanish, so pin the picker to light mode.
+  it("forces the picker to light mode", function () {
+    expect(ctl.datePicker.overrideUserInterfaceStyle).to.equal(Ti.UI.USER_INTERFACE_STYLE_LIGHT);
+  });
+
   it("triggers 'selected' with the chosen date when Done is tapped", function (done) {
     ctl.on("selected", function (e) {
       expect(e.value).to.be.a("date");
