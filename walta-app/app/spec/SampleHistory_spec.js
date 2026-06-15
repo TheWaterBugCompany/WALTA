@@ -29,19 +29,19 @@ describe("SampleHistory controller", function() {
   });
   it('selecting row should open menu', async function() {
     await controllerOpenTest( ctl );
-    ctl.sampleTable.fireEvent("click", { index: 0 } );
+    ctl.sampleTable.data[0].rows[0].fireEvent("click");
     expect( ctl.sampleMenu.view.accessibilityLabel ).to.include("View");
   });
   it('selecting view should raise view event', async function() {
     await controllerOpenTest( ctl );
-    ctl.sampleTable.fireEvent("click", { index: 0 } );
+    ctl.sampleTable.data[0].rows[0].fireEvent("click");
     let result = await actionFiresTopicTest( ctl.sampleMenu.view, "click", Topics.SITEDETAILS );
     expect( result.readonly ).to.be.true;
 
   });
   it('selecting edit should raise edit event', async function() {
     await controllerOpenTest( ctl );
-    ctl.sampleTable.fireEvent("click", { index: 0 } );
+    ctl.sampleTable.data[0].rows[0].fireEvent("click");
     let result = await actionFiresTopicTest( ctl.sampleMenu.edit, "click", Topics.SITEDETAILS );
     expect( result.readonly ).to.be.false;
   });
@@ -65,6 +65,22 @@ describe("SampleHistory controller", function() {
     var sampleId = rowBefore.sampleId;
     Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId } );
     expect( ctl.vm.rows[0] ).to.equal( rowBefore );
+  });
+
+  it('a reused row still opens its menu after the list reorders during sync', async function() {
+    await controllerOpenTest( ctl );
+
+    // A new sample arrives mid-sync and is prepended, reordering the
+    // already-rendered (reused) rows — the WB-168 trigger.
+    var newSample = makeSampleData({ serverSampleId: 669, dateCompleted: moment("2021-06-22T09:00").format() });
+    newSample.save();
+    Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: newSample.get("sampleId") } );
+
+    // Tapping a reused, shifted row must still open the View/Edit menu.
+    var rows = ctl.sampleTable.data[0].rows;
+    rows[rows.length - 1].fireEvent("click");
+    expect( ctl.sampleMenu, "menu should open for the tapped row" ).to.exist;
+    expect( ctl.sampleMenu.view.accessibilityLabel ).to.include("View");
   });
 
 });

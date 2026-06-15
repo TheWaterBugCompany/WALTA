@@ -38,7 +38,10 @@ var rowControllers = new Map();
 function buildAndBindRow(rowVm) {
     var ctl = Alloy.createController("SampleHistoryRow");
     var unbind = ctl.bind(rowVm);
-    rowControllers.set(rowVm.sampleId, { ctl: ctl, unbind: unbind });
+    // Per-row click by stable sampleId — Android drops table-level dispatch on reused/reordered row proxies.
+    var onClick = function() { openSampleMenu(rowVm.sampleId); };
+    ctl.getView().addEventListener("click", onClick);
+    rowControllers.set(rowVm.sampleId, { ctl: ctl, unbind: unbind, onClick: onClick });
     return ctl.getView();
 }
 
@@ -46,6 +49,7 @@ function disposeRow(sampleId) {
     var r = rowControllers.get(sampleId);
     if (!r) return;
     r.unbind();
+    r.ctl.getView().removeEventListener("click", r.onClick);
     if (r.ctl && typeof r.ctl.destroy === "function") r.ctl.destroy();
     rowControllers.delete(sampleId);
 }
@@ -76,11 +80,7 @@ $.syncButton.on("click", syncNowClicked);
 acb.addTool($.syncButton.getView());
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-    rowControllers.forEach(function(r) {
-        r.unbind();
-        if (r.ctl && typeof r.ctl.destroy === "function") r.ctl.destroy();
-    });
-    rowControllers.clear();
+    Array.from(rowControllers.keys()).forEach(disposeRow);
     $.vm.dispose();
     if ($.sampleMenu) $.sampleMenu.cleanUp();
     closeSyncFeedback();
@@ -105,10 +105,7 @@ function closeSyncFeedback() {
     $.syncFeedback = null;
 }
 
-function rowSelected(e) {
-    var rowVm = $.vm.rows[e.index];
-    if (!rowVm) return;
-    var sampleId = rowVm.sampleId;
+function openSampleMenu(sampleId) {
     function closeSelectMethod() {
         $.TopLevelWindow.remove($.sampleMenu.getView());
         $.sampleMenu.cleanUp();
