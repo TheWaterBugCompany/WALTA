@@ -347,8 +347,12 @@ exports.definition = {
 
 				sampleJson.surveyType = Sample.surveyTypeToString( parseInt( sampleJson.surveyType ) );
 					
-				if ( sampleJson.dateCompleted ) {
-					sampleJson.dateCompleted = moment(sampleJson.dateCompleted).format("DD/MMM/YYYY h:mm:ss a");
+				// While editing, dateCompleted is null and the chosen survey date
+				// lives on overrideDateCompleted (WB-166); fall back to now only
+				// when neither is set.
+				let surveyDate = sampleJson.dateCompleted || sampleJson.overrideDateCompleted;
+				if ( surveyDate ) {
+					sampleJson.dateCompleted = moment(surveyDate).format("DD/MMM/YYYY h:mm:ss a");
 				} else {
 					sampleJson.dateCompleted = moment().format("DD/MMM/YYYY h:mm:ss a");
 				}
