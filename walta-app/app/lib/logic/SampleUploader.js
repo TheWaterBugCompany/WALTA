@@ -45,7 +45,7 @@ function uploadSitePhoto(sample,progress) {
     var sitePhotoId = sample.get("serverSitePhotoId");
     if ( !sitePhotoId ) {
         var sitePhoto = sample.getSitePhoto();
-        var sampleId = sample.get("serverSampleId");
+        var serverSampleId = sample.get("serverSampleId");
         if ( sitePhoto ) {
             let blob = loadPhoto( sitePhoto );
             if ( needsOptimising(blob) ) {
@@ -54,13 +54,13 @@ function uploadSitePhoto(sample,progress) {
             }
             log(`Uploading site photo: ${sitePhoto}`);
             return Alloy.Globals.CerdiApi.acquire()
-                    .then( () => submitSitePhoto( sampleId, sitePhoto ) )
+                    .then( () => submitSitePhoto( serverSampleId, sitePhoto ) )
                     .then( (res) => {
                         loadCorrectSampleToUpdate(sample);
                         sample.save({
                             "serverSitePhotoId": res.id
                         });
-                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading site photo" } );
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Uploading site photo" } );
                         progress.tick();
                         return sample;
                     })
@@ -87,7 +87,7 @@ function uploadTaxaPhoto(sample,t,progress) {
     }
 
     var taxonId = t.getTaxonId();
-    var sampleId = sample.get("serverSampleId");
+    var serverSampleId = sample.get("serverSampleId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
 
     // don't upload photos for unknown bugs here
@@ -100,11 +100,11 @@ function uploadTaxaPhoto(sample,t,progress) {
                 savePhoto( optimisePhoto( blob ), photoPath );
             }
             return Alloy.Globals.CerdiApi.acquire()
-                    .then( () => submitCreaturePhoto(sampleId, taxonId, photoPath) )
+                    .then( () => submitCreaturePhoto(serverSampleId, taxonId, photoPath) )
                     .then( (res) => {
                         debug(`setting serverCreaturePhotoId = ${res.id}`);
                         t.save({"serverCreaturePhotoId": res.id});
-                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading taxon photo" } );
+                        Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Uploading taxon photo" } );
                         progress.tick();
                     })
                     .catch( (err) => {
@@ -135,14 +135,14 @@ function uploadTaxaPhotos(sample,progress) {
 
 function uploadUnknownCreature(sample,t,progress) {
     var taxonId = t.getTaxonId();
-    var sampleId = sample.get("serverSampleId");
+    var serverSampleId = sample.get("serverSampleId");
     var serverCreatureId = t.get("serverCreatureId");
     var taxonPhotoId = t.get("serverCreaturePhotoId");
 
     // skip known creatures and any unknown creatures that have had
     // their serverCreaturePhotoId set.
     if ( taxonId == null ) {
-        info(`Uploading unknown creature and photo [serverSampleId=${sampleId},taxonId=${taxonId}]`);
+        info(`Uploading unknown creature and photo [serverSampleId=${serverSampleId},taxonId=${taxonId}]`);
         let photoPath = t.getPhoto();
         let count = t.getAbundance();
         if ( photoPath ) {
@@ -155,7 +155,7 @@ function uploadUnknownCreature(sample,t,progress) {
 
             if ( !serverCreatureId ) {
                 actions = Alloy.Globals.CerdiApi.acquire()
-                    .then( () => Alloy.Globals.CerdiApi.submitUnknownCreature(sampleId, count, photoPath) );
+                    .then( () => Alloy.Globals.CerdiApi.submitUnknownCreature(serverSampleId, count, photoPath) );
             } else {
                 actions = Alloy.Globals.CerdiApi.acquire()
                     .then( () => Alloy.Globals.CerdiApi.updateUnknownCreature(serverCreatureId, count, photoPath) );
@@ -165,7 +165,7 @@ function uploadUnknownCreature(sample,t,progress) {
                     "serverCreatureId": res.id,
                     "serverCreaturePhotoId": res.photos[0].id
                 });
-                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sampleId, message: "Uploading unknown creature" } );
+                Topics.fireTopicEvent( Topics.UPLOAD_PROGRESS, { id: sample.get("sampleId"), message: "Uploading unknown creature" } );
                 progress.tick();
             })
             .catch( (err) => {
