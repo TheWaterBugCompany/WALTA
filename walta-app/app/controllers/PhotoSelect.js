@@ -222,6 +222,7 @@ function setImage( fileOrBlob ) {
 }
 
 var Camera = require('ui/Camera');
+var Gallery = require('ui/Gallery');
 
 function requestCameraPermissions( success, failure ) {
     if (!Camera.hasCameraPermissions()) {
@@ -235,6 +236,40 @@ function requestCameraPermissions( success, failure ) {
     } else {
        success();
     }
+}
+
+function requestGalleryPermissions( success, failure ) {
+    if (!Gallery.hasPhotoGalleryPermissions()) {
+        Gallery.requestPhotoGalleryPermissions(function (e) {
+            if (e.success) {
+                success();
+            } else {
+                failure();
+            }
+        });
+    } else {
+       success();
+    }
+}
+
+function chooseFromGallery(e) {
+    if ( $.disabled ) return;
+    e.cancelBubble = true;
+    requestGalleryPermissions(
+        function success() {
+            Gallery.openPhotoGallery({
+                autohide: true,
+                animated: true,
+                success: (result) => photoCapturedHandler(result),
+                cancel: () => {},
+                error: (err) => alert(`Unable to open gallery: ${err.error}`),
+                mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
+            });
+        },
+        function failure() {
+            alert("Unable to access the photo gallery, please allow photo permissions to add photos");
+        }
+    );
 }
 
 function openGallery(e) {
