@@ -9,7 +9,7 @@
 			<Label id="photoSelectOptionalLabel"  class="photoMessage" text="Tap camera icon to\nadd a photo" visible="false"/>
 			<View id="iconHolder" class="shrinkWrap">
 				<ImageView id="magnify" class="icon" accessibilityLabel="Magnify" visible="false" onClick="openGallery"/>
-				<ImageView id="gallery" class="icon" accessibilityLabel="Choose From Gallery" visible="false"/>
+				<ImageView id="gallery" class="icon" accessibilityLabel="Choose From Gallery" visible="false" onClick="chooseFromGallery"/>
 				<ImageView id="camera" class="icon" accessibilityLabel="Take Photo" visible="false"  onClick="takePhoto"/>
 			</View>
 		</View>
