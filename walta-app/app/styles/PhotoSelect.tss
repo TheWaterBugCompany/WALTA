@@ -88,6 +88,11 @@
     image: "/images/icon-magnify.png"
 }
 
+"#gallery": {
+    backgroundDisabledColor: "grey",
+    image: "/images/gallery-icon.png"
+}
+
 "#camera": {
     backgroundDisabledColor: "grey",
     image: "/images/camera-icon.png"

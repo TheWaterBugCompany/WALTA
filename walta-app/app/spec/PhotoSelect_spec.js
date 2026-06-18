@@ -98,6 +98,23 @@ describe('PhotoSelect controller', function() {
 		}) );
 	});
 
+	it('should show a gallery import button alongside the camera when editable', function(done) {
+		makePhotoSelect( false );
+		windowOpenTest( win, () => checkTestResult( done, () => {
+			expect( pv.camera.visible, "camera visible" ).to.be.true;
+			expect( pv.gallery.visible, "gallery import button visible" ).to.be.true;
+		}) );
+	});
+
+	it('should hide the gallery import button in readonly mode', function(done) {
+		makePhotoSelect( true, '/spec/resources/simpleKey1/media/amphipoda_01.jpg' );
+		pv.on("loaded", () => checkTestResult( done, () => {
+			expect( pv.camera.visible, "camera hidden" ).to.be.false;
+			expect( pv.gallery.visible, "gallery import button hidden" ).to.be.false;
+		}) );
+		windowOpenTest( win );
+	});
+
 	it('should display a take photo view with must take photo message on setError()', function(done) {
 		makePhotoSelect( false, '/spec/resources/simpleKey1/media/speedbug/amphipoda_b.png' );
 		pv.setError(); 

@@ -27,11 +27,14 @@ var cropPhoto = $.args.cropPhoto;
 function setReadOnlyMode(p_readOnlyMode) {
     readOnlyMode = p_readOnlyMode;
     info(`readOnlyMode = ${readOnlyMode}`);
-    if ( readOnlyMode ) {
-        $.camera.visible = false;
-    } else {
-        $.camera.visible = true;
-    }
+    setEditControlsVisible( !readOnlyMode );
+}
+
+// The camera and gallery-import buttons are the editing affordances: shown
+// together when the photo is editable, hidden together in readonly mode.
+function setEditControlsVisible( visible ) {
+    $.camera.visible = visible;
+    $.gallery.visible = visible;
 }
 
 function getFullPhotoUrl() {
@@ -134,13 +137,13 @@ function setImage( fileOrBlob ) {
     if ( !fileOrBlob && !readOnlyMode) {
         $.photoSelectOptionalLabel.visible = true;
         $.magnify.visible = false;
-        $.camera.visible = !readOnlyMode;
+        setEditControlsVisible( !readOnlyMode );
         return;
-    } 
+    }
 
     $.photoSelectOptionalLabel.visible = false;
     $.magnify.visible = true;
-    $.camera.visible = !readOnlyMode;
+    setEditControlsVisible( !readOnlyMode );
     
 
     function setThumbnail( fileOrBlob) {
