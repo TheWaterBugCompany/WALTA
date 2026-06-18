@@ -14,7 +14,6 @@
 }
 "#datePicker[platform=ios]": {
     datePickerStyle: Ti.UI.DATE_PICKER_STYLE_INLINE,
-    overrideUserInterfaceStyle: Ti.UI.USER_INTERFACE_STYLE_LIGHT,
     width: Ti.UI.FILL,
     height: Ti.UI.SIZE,
     left: "8dp",
