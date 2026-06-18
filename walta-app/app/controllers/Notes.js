@@ -21,6 +21,10 @@ acb.addTool( $.nextButton.getView() );
 
 bindView($, vm, {
     surveyDateValue: { text: "surveyDateLabel" },
+    // The field's accessibilityLabel ("Survey date") hides the child date label
+    // from assistive tech; expose the date as the field's value so it's
+    // announced (and assertable) rather than silent.
+    surveyDateField: { accessibilityValue: "surveyDateLabel" },
     partialToggle:   { value: "complete", enabled: "editable" },
     notesTextField:  { value: "notes", editable: "editable" },
 });
