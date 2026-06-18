@@ -39,6 +39,8 @@
         <true/>
         <key>UIStatusBarStyle</key>
         <string>UIStatusBarStyleDefault</string>
+        <key>UIUserInterfaceStyle</key>
+        <string>Light</string>
         <key>NSLocationWhenInUseUsageDescription</key>
         <string>
             We need to record the location of the waterbody survey.
