@@ -295,7 +295,10 @@ jobs:
     # prepare result check.
     if: ${{ always() && needs.prepare.result == 'success' && inputs.platforms != 'android' }}
     runs-on: macos-latest
-    timeout-minutes: 45
+    # The TestFlight upload step waits on Apple's build processing before it can
+    # assign the build to the test group; processing is normally <15 min but can
+    # spike. 90 absorbs a slow day so a successful upload isn't cancelled mid-wait.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v6
 
