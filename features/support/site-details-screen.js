@@ -111,5 +111,10 @@ class SiteDetailsScreen extends BaseScreen {
         await this.click("Take Photo");
         await this.world.camera.waitFor();
     }
+
+    async selectSitePhotoFromGallery() {
+        await this.click("Choose From Gallery");
+        await this.world.photoLibrary.waitFor();
+    }
 }
 module.exports = SiteDetailsScreen;

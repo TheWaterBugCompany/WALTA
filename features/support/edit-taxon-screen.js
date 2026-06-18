@@ -12,6 +12,10 @@ class EditTaxonScreen extends BaseScreen {
       await this.click("Take Photo");
       await this.world.camera.waitFor();
     }
+    async importPhotoFromGallery() {
+      await this.click("Choose From Gallery");
+      await this.world.photoLibrary.waitFor();
+    }
     async setAbundance(amount) {
       let value = 0;
       switch(amount) {
