@@ -630,10 +630,31 @@ describe('CerdiApi', function() {
                             },
                             "photos": []
                         }
-                    ); 
+                    );
                 })
         });
-        
+
+        // WB-169: the sample is created then immediately updated, so it is
+        // seconds old — a failure here rules out an age-based server lock and
+        // pins the contract that updating sample_date must persist. Expected to
+        // fail against the current sandbox, which discards sample_date on PUT.
+        it("should update the sample_date on an existing sample", async function() {
+            await cerdi.loginUser('testlogin@example.com', 'tstPassw0rd!');
+
+            const sampleData = makeTestSample(moment().format());
+            const created = await cerdi.submitSample(sampleData);
+
+            const backDated = moment().subtract(30, 'days').format();
+            sampleData.sample_date = backDated;
+            await cerdi.updateSampleById(created.id, sampleData);
+
+            const result = await cerdi.retrieveSampleById(created.id);
+            expect(
+                moment(result.sample_date).isSame(moment(backDated)),
+                `expected server to persist updated sample_date ${backDated}, got ${result.sample_date}`
+            ).to.be.true;
+        });
+
         // WB-12: the patch-broken-records block at sample.js:455-476 assumes
         // the server stores habitat 0s as NULL for two-word fields, and bumps
         // `updatedAt` to force a re-upload — driving the observed upload loop.
