@@ -71,6 +71,27 @@ module.exports = function(grunt) {
       }
     }
 
+    // For `--simulator` Android runs, pin all tooling to the running emulator.
+    // A profile-level ANDROID_DEVICE_SERIAL (Titanium) / ANDROID_SERIAL (adb,
+    // Appium) pins the toolchain to a physical device, which overrides
+    // `--target emulator` and makes the build, install, launch and Appium
+    // session land on (or hang waiting for) the phone. Mutating process.env
+    // here propagates to every child process — build, install, `am start`,
+    // logcat and cucumber's Appium session — so it works regardless of
+    // --liveview. When no emulator is up, clear the pins so `--target emulator`
+    // can boot one. No-op on iOS or device builds.
+    function pinAndroidToEmulator(platform, isSimulator) {
+      if (platform !== 'android' || !isSimulator) return;
+      const serial = resolveEmulatorSerial();
+      if (serial) {
+        process.env.ANDROID_DEVICE_SERIAL = serial;
+        process.env.ANDROID_SERIAL = serial;
+      } else {
+        delete process.env.ANDROID_DEVICE_SERIAL;
+        delete process.env.ANDROID_SERIAL;
+      }
+    }
+
     function createLiveViewLauncher(platform, { isSimulator = false, target, unitTest = false, buildOnly = true, noPrompt = true } = {}) {
       const args = ["serve", "-p", platform, "-d", "./walta-app", "--deploy-type", "development", "--liveview-ip", getLocalIP()];
       const env = { ALLOY_PATH: "./node_modules/.bin/alloy" };
@@ -83,11 +104,10 @@ module.exports = function(grunt) {
       } else if (platform === "ios" && isSimulator) {
         if (SIM_UDID) args.push("-C", SIM_UDID);
       } else if (platform === "android" && isSimulator) {
+        // Emulator pinning (ANDROID_DEVICE_SERIAL/ANDROID_SERIAL) is handled by
+        // pinAndroidToEmulator() in the task entry, so it applies to the build,
+        // install and Appium session too — not just this serve subprocess.
         args.push("-C", "Medium_Phone_API_36.1", "--target", "emulator");
-        // A profile-level ANDROID_DEVICE_SERIAL pins adb to a physical device,
-        // overriding --target emulator. Point adb at the running emulator (or
-        // clear the pin when none is up) so the build, install and logcat land there.
-        env.ANDROID_DEVICE_SERIAL = resolveEmulatorSerial();
       } else if (platform === "android" && !isSimulator) {
         if (ANDROID_DEVICE_SERIAL) args.push("-C", ANDROID_DEVICE_SERIAL);
         args.push("--target", "device");
@@ -745,6 +765,7 @@ module.exports = function(grunt) {
     grunt.registerTask('end-to-end-test', function () {
       var platform = grunt.option('platform');
       const isSimulator = grunt.option('simulator') || false;
+      pinAndroidToEmulator(platform, isSimulator);
       const launchBuildType = isSimulator ? 'test-sim' : 'test';
       const newerTarget = isSimulator ? `test_sim_${platform}` : `test_${platform}`;
       // --skip-build: CI consumes the prebuilt artifact (WB-51), so don't
@@ -761,6 +782,7 @@ module.exports = function(grunt) {
     grunt.registerTask('acceptance-test', function () {
       var platform = grunt.option('platform');
       const isSimulator = grunt.option('simulator') || false;
+      pinAndroidToEmulator(platform, isSimulator);
       const launchBuildType = isSimulator ? 'test-sim' : 'test';
       const newerTarget = isSimulator ? `test_sim_${platform}` : `test_${platform}`;
       grunt.task.run(`newer:${newerTarget}`);
@@ -792,6 +814,7 @@ module.exports = function(grunt) {
     grunt.registerTask('unit-test', function( ) {
       var platform = grunt.option('platform');
       var isSimulator = grunt.option('simulator');
+      pinAndroidToEmulator(platform, isSimulator);
       var preview = grunt.option('preview');
 
       if ( grunt.option('liveview') ) {
@@ -901,6 +924,7 @@ module.exports = function(grunt) {
     grunt.registerTask('debug', function() {
       var platform = grunt.option('platform');
       const isSimulator = grunt.option('simulator') || false;
+      pinAndroidToEmulator(platform, isSimulator);
       if (grunt.option('liveview')) {
         const done = this.async();
         const reuseServer = grunt.option('reuse-server');
