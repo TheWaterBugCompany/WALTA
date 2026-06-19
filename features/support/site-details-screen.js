@@ -39,6 +39,17 @@ class SiteDetailsScreen extends BaseScreen {
         return el.getText();
     }
 
+    // The location label reads "Location not obtained" until a GPS fix the
+    // app accepts (accuracy < 100m) arrives, then switches to "<lat>°S
+    // <lng>°E". Wait for that so flows that pause GPS next (e.g. opening the
+    // gallery picker) don't race the fix.
+    async waitForLocationLock() {
+        await this.driver.waitUntil(async () => {
+            let text = await this.getLocation();
+            return text && text.includes("°");
+        }, { timeout: 30000, interval: 500, timeoutMsg: "GPS lock not obtained on Site Details" });
+    }
+
     async getWaterbodyTypeElement() {
         return this.getElement("Waterbody Type");
     }

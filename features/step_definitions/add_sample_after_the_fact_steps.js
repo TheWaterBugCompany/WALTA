@@ -35,6 +35,8 @@ When('the user fills out the site details choosing a photo from the gallery', { 
     await this.siteDetails.selectRiver();
     await this.siteDetails.setWaterbodyName("Test Creek");
     await this.siteDetails.setNearByFeature("Bridge");
+    // Opening the gallery picker pauses GPS, so wait for the fix to land first.
+    await this.siteDetails.waitForLocationLock();
     await this.siteDetails.selectSitePhotoFromGallery();
     await this.photoLibrary.selectFirstPhoto();
     await this.siteDetails.goNext();
