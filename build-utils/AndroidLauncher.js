@@ -75,8 +75,13 @@ class AndroidLauncher {
     await this._exec(["shell", "svc", "power", "stayon", "usb"]).catch(() => {});
     await this._exec(["shell", "input", "keyevent", "KEYCODE_WAKEUP"]).catch(() => {});
     if (apkPath) {
-      await this._exec(["uninstall", appId]).catch(() => {});
-      await this._exec(["install", "-r", apkPath]);
+      // Reinstall in place (-r) and grant all manifest runtime permissions (-g).
+      // No uninstall: it would wipe runtime grants, so the freshly-installed app
+      // requests a permission at boot, the system GrantPermissionsActivity dialog
+      // opens, and `am start -W` waits forever for an "idle" the dialog never
+      // lets it reach — wedging the launch. (App state is reset separately via
+      // `pm clear` in the test harness.) -g re-grants on every reinstall.
+      await this._exec(["install", "-r", "-g", apkPath]);
     }
     await this._exec(["logcat", "-c"]);
     const extras = buildIntentExtras(launchArgs);
