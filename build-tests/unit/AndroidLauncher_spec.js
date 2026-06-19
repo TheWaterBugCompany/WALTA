@@ -126,21 +126,24 @@ describe("AndroidLauncher", function() {
       expect(amStartCall.args[1]).to.include("-W");
     });
 
-    it("uninstalls then installs the APK before starting when an apkPath is given", async function() {
+    it("reinstalls the APK in place with all runtime permissions granted (-r -g, no uninstall) before starting", async function() {
+      // No uninstall: it would wipe runtime grants so the freshly-installed app
+      // prompts for a permission at boot and `am start -W` hangs waiting for an
+      // idle the dialog never reaches. -g pre-grants on every reinstall.
       const fakeExecFile = makeExecFile({
         "devices": DEVICES_OUTPUT,
         ...STAY_AWAKE_RESPONSES,
-        "-s emulator-5554 uninstall net.thewaterbug.waterbug": "",
-        "-s emulator-5554 install -r ./builds/unit-test/Waterbug.apk": "",
+        "-s emulator-5554 install -r -g ./builds/unit-test/Waterbug.apk": "",
         "-s emulator-5554 logcat -c": "",
         "-s emulator-5554 shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p net.thewaterbug.waterbug": ""
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug", "./builds/unit-test/Waterbug.apk");
-      expect(fakeExecFile.getCall(3).args[1]).to.deep.equal(["-s", "emulator-5554", "uninstall", "net.thewaterbug.waterbug"]);
-      expect(fakeExecFile.getCall(4).args[1]).to.deep.equal(["-s", "emulator-5554", "install", "-r", "./builds/unit-test/Waterbug.apk"]);
-      expect(fakeExecFile.getCall(5).args[1]).to.deep.equal(["-s", "emulator-5554", "logcat", "-c"]);
-      expect(fakeExecFile.getCall(6).args[1]).to.deep.equal([
+      const allArgs = fakeExecFile.getCalls().map(c => c.args[1]);
+      expect(allArgs).to.not.deep.include(["-s", "emulator-5554", "uninstall", "net.thewaterbug.waterbug"]);
+      expect(fakeExecFile.getCall(3).args[1]).to.deep.equal(["-s", "emulator-5554", "install", "-r", "-g", "./builds/unit-test/Waterbug.apk"]);
+      expect(fakeExecFile.getCall(4).args[1]).to.deep.equal(["-s", "emulator-5554", "logcat", "-c"]);
+      expect(fakeExecFile.getCall(5).args[1]).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start", "-W",
         "-a", "android.intent.action.MAIN",
