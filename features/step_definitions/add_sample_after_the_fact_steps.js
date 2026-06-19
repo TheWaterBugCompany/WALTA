@@ -2,7 +2,6 @@ const { Given, When, Then } = require('@cucumber/cucumber');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
-const APP_ID = 'net.thewaterbug.waterbug';
 const SEED_IMAGE = path.resolve(process.cwd(), 'walta-app/app/spec/resources/site-mock.jpg');
 
 function adb() {
@@ -20,16 +19,13 @@ Given('a photo is already in the phone gallery', function () {
         // seed the photo, which is safe while the app is running.
         execFileSync('xcrun', ['simctl', 'addmedia', process.env.SIM_UDID, SEED_IMAGE]);
     } else {
+        // Library read permission is pre-granted before launch (appium-world.js);
+        // here we only seed the photo into the gallery.
         const { tool, dev } = adb();
         const dest = '/sdcard/Pictures/seed-gallery.jpg';
         execFileSync(tool, [...dev, 'push', SEED_IMAGE, dest]);
         execFileSync(tool, [...dev, 'shell', 'am', 'broadcast',
             '-a', 'android.intent.action.MEDIA_SCANNER_SCAN_FILE', '-d', `file://${dest}`]);
-        try {
-            execFileSync(tool, [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.READ_MEDIA_IMAGES']);
-        } catch (e) {
-            console.warn(`[gallery] pm grant READ_MEDIA_IMAGES failed: ${e.message}`);
-        }
     }
 });
 

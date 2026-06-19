@@ -37,7 +37,9 @@ class NotesScreen extends BaseScreen {
         if ( this.isIos() ) {
             await this.clickRaw("-ios predicate string:label == 'Survey date'");
         } else {
-            await this.click("Survey date");
+            // Android folds accessibilityValue into the content-description too,
+            // so match by substring rather than the exact `~Survey date.` id.
+            await this.clickRaw('android=new UiSelector().descriptionContains("Survey date")');
         }
     }
 

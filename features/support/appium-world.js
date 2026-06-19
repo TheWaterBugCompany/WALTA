@@ -68,6 +68,12 @@ async function connectAndPrepareApp({ platform, isSimulator }) {
             try {
                 execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.POST_NOTIFICATIONS']);
             } catch (_) { /* pre-Android-13: no runtime notification permission */ }
+            // Android 13+ gallery import needs READ_MEDIA_IMAGES; pre-grant so
+            // openPhotoGallery goes straight to the picker. Pre-33 doesn't
+            // define it — `pm grant` throws there, which is expected.
+            try {
+                execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.READ_MEDIA_IMAGES']);
+            } catch (_) { /* pre-Android-13: no runtime media-images permission */ }
         } catch (e) {
             console.warn(`[appium-world] adb pm clear/grant failed: ${e.message}`);
         }

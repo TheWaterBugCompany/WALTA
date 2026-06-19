@@ -252,24 +252,35 @@ function requestGalleryPermissions( success, failure ) {
     }
 }
 
+function openPhotoGallery() {
+    Gallery.openPhotoGallery({
+        autohide: true,
+        animated: true,
+        allowMultiple: false, // one photo per slot, matching the camera flow
+        success: (result) => photoCapturedHandler(result),
+        cancel: () => {},
+        error: (err) => alert(`Unable to open gallery: ${err.error}`),
+        mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
+    });
+}
+
 function chooseFromGallery(e) {
     if ( $.disabled ) return;
     e.cancelBubble = true;
-    requestGalleryPermissions(
-        function success() {
-            Gallery.openPhotoGallery({
-                autohide: true,
-                animated: true,
-                success: (result) => photoCapturedHandler(result),
-                cancel: () => {},
-                error: (err) => alert(`Unable to open gallery: ${err.error}`),
-                mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
-            });
-        },
-        function failure() {
-            alert("Unable to access the photo gallery, please allow photo permissions to add photos");
-        }
-    );
+    if ( OS_ANDROID ) {
+        // Android's system photo picker grants access per selection, so there
+        // is no runtime permission to request — and Ti.Media.hasPhotoGallery-
+        // Permissions is unreliable on API 33+ (returns false even when
+        // READ_MEDIA_IMAGES is granted), so gating on it would wrongly block.
+        openPhotoGallery();
+    } else {
+        requestGalleryPermissions(
+            openPhotoGallery,
+            function failure() {
+                alert("Unable to access the photo gallery, please allow photo permissions to add photos");
+            }
+        );
+    }
 }
 
 function openGallery(e) {
