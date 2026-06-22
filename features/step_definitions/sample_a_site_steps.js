@@ -10,6 +10,9 @@ When('the user fills out the site details', { timeout: 120000 }, async function 
     await this.siteDetails.selectRiver();
     await this.siteDetails.setWaterbodyName("Test Creek");
     await this.siteDetails.setNearByFeature("Bridge");
+    // Opening the camera pauses GPS; wait for the fix first so Done isn't left
+    // disabled when the emulator hasn't converged below the 100m gate yet.
+    await this.siteDetails.waitForLocationLock();
     await this.siteDetails.selectSitePhoto();
     await this.camera.takePhoto();
     await this.siteDetails.goNext();
