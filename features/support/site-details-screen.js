@@ -39,11 +39,15 @@ class SiteDetailsScreen extends BaseScreen {
         return el.getText();
     }
 
-    // The location label reads "Location not obtained" until a GPS fix the
-    // app accepts (accuracy < 100m) arrives, then switches to "<lat>°S
-    // <lng>°E". Wait for that so flows that pause GPS next (e.g. opening the
-    // gallery picker) don't race the fix.
+    // Android only: the emulator's first GPS fix reports accuracy=100m, which
+    // the app rejects (gate is <100m), and it converges to a usable fix only
+    // after a few seconds of listening. Opening the gallery picker pauses GPS,
+    // so wait for the on-screen lock first to avoid racing convergence. iOS
+    // gets a usable fix during the normal dwell, and its location label masks
+    // its text behind accessibilityLabel="Location" so this poll can't read it
+    // — skip there.
     async waitForLocationLock() {
+        if ( this.isIos() ) return;
         await this.driver.waitUntil(async () => {
             let text = await this.getLocation();
             return text && text.includes("°");
