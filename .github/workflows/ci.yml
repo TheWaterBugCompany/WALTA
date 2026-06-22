@@ -339,14 +339,14 @@ jobs:
           if-no-files-found: ignore
 
   # ── 3. Android emulator unit tests ────────────────────────────────────────
-  # Runs on ubuntu-latest (x86_64) with an x86 emulator image.
-  # - x86_64 ubuntu: KVM supports x86 guests natively ✓
-  # - x86 arch: bundled Titanium modules ship x86 libs ✓
-  # - API 30 google_apis: last Android API level with x86 system images ✓
+  # Runs on ubuntu-latest (x86_64) with an x86_64 emulator image.
+  # - x86_64 ubuntu: KVM accelerates x86_64 guests natively ✓
+  # - x86_64 arch: required for API 33+, which dropped 32-bit x86 images ✓
+  # - API 34 google_apis: ships the modern system photo picker (API 33+) ✓
   # - ubuntu-latest: cheapest runner option ✓
   # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
   # ── 3a. Android emulator build ────────────────────────────────────────────
-  # Builds Waterbug.apk once for the x86 emulator and uploads it as a
+  # Builds Waterbug.apk once for the x86_64 emulator and uploads it as a
   # workflow artifact. Smaller savings than the iOS equivalent (Linux
   # gradle is fast) but kept symmetric with iOS for clarity (WB-51).
   android-build:
@@ -390,8 +390,15 @@ jobs:
       - name: Run install.sh
         run: sh install.sh
 
-      - name: Add x86 ABI for emulator builds
-        run: sed -i 's|<abi>arm64-v8a,armeabi-v7a</abi>|<abi>arm64-v8a,armeabi-v7a,x86</abi>|' walta-app/tiapp.xml
+      # API 34 emulators are x86_64-only (no 32-bit x86 images), so the
+      # emulator APK needs an x86_64 slice. The vendored Bugfender module
+      # ships no x86_64 lib — and dev builds disable Bugfender telemetry
+      # anyway (see Logger.bugfenderEnabled) — so drop it from the emulator
+      # build to keep the x86_64 packaging clean.
+      - name: Add x86_64 ABI and drop Bugfender for emulator builds
+        run: |
+          sed -i 's|<abi>arm64-v8a,armeabi-v7a</abi>|<abi>arm64-v8a,armeabi-v7a,x86_64</abi>|' walta-app/tiapp.xml
+          sed -i '/<module platform="android">be.aca.mobile.bugfender<\/module>/d' walta-app/tiapp.xml
 
       - name: Read Titanium SDK version
         id: ti-version
@@ -450,10 +457,10 @@ jobs:
           retention-days: 1
 
   # ── 3b. Android emulator unit tests ───────────────────────────────────────
-  # Runs on ubuntu-latest (x86_64) with an x86 emulator image.
-  # - x86_64 ubuntu: KVM supports x86 guests natively ✓
-  # - x86 arch: bundled Titanium modules ship x86 libs ✓
-  # - API 30 google_apis: last Android API level with x86 system images ✓
+  # Runs on ubuntu-latest (x86_64) with an x86_64 emulator image.
+  # - x86_64 ubuntu: KVM accelerates x86_64 guests natively ✓
+  # - x86_64 arch: required for API 33+, which dropped 32-bit x86 images ✓
+  # - API 34 google_apis: ships the modern system photo picker (API 33+) ✓
   # - ubuntu-latest: cheapest runner option ✓
   # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
   android-emulator-tests:
@@ -516,16 +523,16 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-30
-          key: avd-30-google_apis-x86
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 34
           target: google_apis
-          arch: x86
+          arch: x86_64
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -538,15 +545,15 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-30
-          key: avd-30-google_apis-x86
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
 
       - name: Boot Android emulator and run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 34
           target: google_apis
-          arch: x86
+          arch: x86_64
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -787,16 +794,16 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-30
-          key: avd-30-google_apis-x86
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 34
           target: google_apis
-          arch: x86
+          arch: x86_64
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -809,8 +816,8 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-30
-          key: avd-30-google_apis-x86
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
 
       # Appium creates `node_modules/.cache/appium` on first start to hold
       # driver-hash files; caching it across runs avoids re-doing that
@@ -828,9 +835,9 @@ jobs:
       - name: Boot Android emulator and run acceptance tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 34
           target: google_apis
-          arch: x86
+          arch: x86_64
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -1043,16 +1050,16 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-30
-          key: avd-30-google_apis-x86
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 34
           target: google_apis
-          arch: x86
+          arch: x86_64
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -1065,8 +1072,8 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-30
-          key: avd-30-google_apis-x86
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
 
       - name: Cache Appium driver hashes
         uses: actions/cache@v5
@@ -1079,9 +1086,9 @@ jobs:
       - name: Boot Android emulator and run end-to-end tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 34
           target: google_apis
-          arch: x86
+          arch: x86_64
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
