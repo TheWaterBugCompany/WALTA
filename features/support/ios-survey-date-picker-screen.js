@@ -27,8 +27,12 @@ class IosSurveyDatePickerScreen extends BaseScreen {
         await wheels[0].addValue( date.month );
         await wheels[1].addValue( date.year );
         await header.click(); // collapse back to the day grid
-        var day = await this.driver.$(`-ios predicate string:name CONTAINS '${date.day} ${date.month} ${date.year}' OR name CONTAINS '${date.day} ${date.month}'`);
-        await day.waitForDisplayed({ timeout: 8000, timeoutMsg: `day cell '${date.day} ${date.month}' not found` });
+        // Day cells read "<Weekday>, <Month> <day>" on iOS 17+ (e.g. "Friday,
+        // March 15") but "<Weekday> <day> <Month>" on older versions. Match the
+        // trailing "<Month> <day>"/"<day> <Month>" either way; ENDSWITH avoids
+        // "March 1" matching "March 15".
+        var day = await this.driver.$(`-ios predicate string:name ENDSWITH '${date.month} ${date.day}' OR name ENDSWITH '${date.day} ${date.month}'`);
+        await day.waitForDisplayed({ timeout: 8000, timeoutMsg: `day cell for ${date.month} ${date.day} not found` });
         await day.click();
         await this.clickByText("Done");
     }
