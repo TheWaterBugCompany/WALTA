@@ -144,6 +144,33 @@ async function resetApp() {
     }, { timeout: 15000, interval: 200, timeoutMsg: 'app did not return to the logged-out menu after reset' });
 }
 
+async function sessionIsAlive() {
+    if (!global.driver) return false;
+    try {
+        await global.driver.getPageSource();
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+// Contended CI runners occasionally drop the WDA/Appium session mid-run
+// (WB-149). The session is created once and reused across scenarios, so a
+// drop would otherwise fail every remaining scenario with "session is either
+// terminated or not started". Rebuild it instead. Returns true when it had to
+// reconnect — the caller then skips the in-app reset, since a reconnected app
+// is freshly launched (iOS reinstalls; Android relaunches) and already at a
+// clean starting point.
+async function recoverSessionIfDead() {
+    if (await sessionIsAlive()) return false;
+    console.warn('[appium-world] driver session is dead — reconnecting');
+    global.driver = await global.launcher.reconnect();
+    if (global.platform === 'ios' && global.isSimulator) {
+        await prepareIosSimApp();
+    }
+    return true;
+}
+
 async function teardown() {
     if (global.launcher) await global.launcher.stop();
     if (global.mockCerdiServer) {
@@ -160,5 +187,6 @@ module.exports = {
     startMockServer,
     connectAndPrepareApp,
     resetApp,
+    recoverSessionIfDead,
     teardown,
 };

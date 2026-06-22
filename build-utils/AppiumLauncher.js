@@ -224,6 +224,18 @@ class AppiumLauncher {
     return this._driver;
   }
 
+  // Discard the current session handle and create a fresh one against the
+  // still-running Appium server. Used to recover when a contended CI runner
+  // drops the WDA session mid-run (WB-149) so one dead session doesn't fail
+  // every remaining scenario.
+  async reconnect() {
+    if (this._driver) {
+      try { await this._driver.deleteSession(); } catch (_) { /* already gone */ }
+      this._driver = null;
+    }
+    return this.connect();
+  }
+
   async stop() {
     if (this._driver) {
       // The session may already be gone (e.g. UND_ERR_CLOSED when a contended
