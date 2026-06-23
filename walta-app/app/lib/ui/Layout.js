@@ -70,8 +70,11 @@ exports.SPEEDBUG_TILE_HEIGHT = '225dip';
 exports.SPEEDBUG_PRECACHE_TILES = 2;
 
 function fixScrollContentsSize(ctlr){
-    if ( ctlr.content.contentWidth != ctlr.TopLevelWindow.size.width
-        || ctlr.content.contentHeight != ctlr.TopLevelWindow.size.height ) {
+    // Compare against the ScrollView's own frame, not the window: safe-area
+    // insets shrink the frame below the window width, so comparing to the
+    // window leaves contentWidth too wide and adds phantom horizontal scroll.
+    if ( ctlr.content.contentWidth != ctlr.content.size.width
+        || ctlr.content.contentHeight != ctlr.content.size.height ) {
         ctlr.content.contentWidth = ctlr.content.size.width;
         ctlr.content.contentHeight = ctlr.content.size.height;
     }
