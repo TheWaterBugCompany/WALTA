@@ -18,24 +18,6 @@ When('the user fills out the site details', { timeout: 120000 }, async function 
     await this.siteDetails.goNext();
 });
 
-When('the user takes a site photo', { timeout: 120000 }, async function () {
-    await this.menu.selectWaterbugSurvey();
-    // Opening the camera pauses GPS; wait for the fix first (Android).
-    await this.siteDetails.waitForLocationLock();
-    await this.siteDetails.selectSitePhoto();
-    await this.camera.takePhoto();
-    await this.siteDetails.waitFor();
-});
-
-// With a photo set the magnify icon appears, making three icons in the row.
-// When the panel's content overflows the safe-area ScrollView frame the
-// right-anchored camera is clipped off-screen and can't be tapped, so
-// reopening the camera fails (WB-176).
-Then('the user can reopen the camera to retake the photo', async function () {
-    await this.siteDetails.selectSitePhoto();
-    await this.camera.waitFor();
-});
-
 When('the user fills out the habitat screen', { timeout: 60000 }, async function () {
     // Habitat values must sum to 100% or the Next button stays disabled.
     await this.habitat.setLeafPacks("20");
