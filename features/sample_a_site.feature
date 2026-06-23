@@ -17,13 +17,6 @@ Scenario: Sample collection
    And a sample id is automatically created for the user
    And a sample is stored and sample tray is cleared
 
-Scenario: The camera stays reachable after a site photo is taken
-  Given I am logged in as "test@example.com"
-    And the GPS has a fix
-    And a user has arrived at a site to sample
-  When the user takes a site photo
-  Then the user can reopen the camera to retake the photo
-
 @skip
 Scenario: Cancel sample
   Given the user has identified a number of taxa

@@ -3,7 +3,7 @@ var moment = require('lib/moment')
 var Topics = require('ui/Topics'); 
 var { SURVEY_ORDER, SURVEY_DETAILED, WATERBODY_LAKE } = require("logic/Sample");
 var { expect } = require("spec/lib/chai");
-var { closeWindow, controllerOpenTest, checkTestResult, setManualTests } = require("spec/util/TestUtils");
+var { closeWindow, controllerOpenTest, checkTestResult, setManualTests, waitFor } = require("spec/util/TestUtils");
 var { simulatePhotoCapture } = require("spec/mocks/MockCamera");
 describe("SiteDetails controller", function() {
     var ctl;
@@ -248,6 +248,31 @@ describe("SiteDetails controller", function() {
                 done();
             }, 800 );
         } );
+    });
+
+    // WB-176: with a photo set, three right-anchored icons appear. On notched
+    // iPhones the safe-area insets shrink the keyboard-tweak ScrollView frame
+    // below the window; its contentWidth must follow, or the content overflows
+    // horizontally and the rightmost (camera) icon is clipped off-screen.
+    it("photo panel content must not overflow the ScrollView horizontally (WB-176)", async function() {
+        if ( OS_ANDROID ) this.skip(); // no ScrollView wrap on Android
+        ctl = Alloy.createController("SiteDetails");
+        await controllerOpenTest( ctl );
+        var loaded = new Promise( (resolve) => ctl.photoSelect.on("loaded", resolve) );
+        simulatePhotoCapture( ctl.photoSelect );
+        await loaded;
+        await waitFor( () => ctl.content.apiName === "Ti.UI.ScrollView" && ctl.content.size.width > 0 );
+        // The overflow only exists where safe-area insets shrink the frame below
+        // the window (notched iPhones in landscape); nothing to test otherwise.
+        var sap = ctl.TopLevelWindow.safeAreaPadding || {};
+        if ( !( sap.left > 0 || sap.right > 0 ) ) this.skip();
+        // Wait for the inset to actually shrink the frame — the bug's live state.
+        await waitFor( () => ctl.content.size.width < ctl.TopLevelWindow.size.width );
+        // Drive one more layout pass so fixScrollContentsSize reconciles
+        // contentWidth against the now-settled frame (the idle spec harness
+        // doesn't otherwise fire it again after the frame shrinks).
+        ctl.TopLevelWindow.fireEvent("postlayout");
+        expect( ctl.content.contentWidth ).to.be.at.most( ctl.content.size.width );
     });
 
     it("photo should NOT be selectable when in read only mode", function(done) {
