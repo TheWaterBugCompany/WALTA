@@ -252,15 +252,56 @@ function requestGalleryPermissions( success, failure ) {
     }
 }
 
+// The app is landscape-locked but the system camera/gallery pickers force a
+// portrait rotation. Open them behind a black "blind" window so that rotation
+// — and any layout artifacts on the way back — aren't visible to the user.
+// openPicker receives { captured, dismiss }:
+//   captured(result) — picker returned a photo: close the blind first, then
+//       hand the result on once the blind has fully gone, so the heavy
+//       thumbnail processing happens hidden behind it.
+//   dismiss()        — picker was cancelled or errored: just close the blind.
+function openBehindBlind( openPicker ) {
+    let blinds = Ti.UI.createWindow( { backgroundColor: "black", exitOnClose: false } );
+    // The OS picker can take several seconds to present; spin on the blind so
+    // the user sees activity rather than a dead black screen. The picker covers
+    // it once presented, and it's torn down with the blind.
+    let spinner = Ti.UI.createActivityIndicator({
+        style: Ti.UI.ActivityIndicatorStyle.BIG,
+        indicatorColor: "white"
+    });
+    blinds.add( spinner );
+    function captured( result ) {
+        blinds.addEventListener( "close", function handler() {
+            blinds.removeEventListener("close", handler);
+            setTimeout( () => photoCapturedHandler(result), 50 );
+        });
+        blinds.close();
+    }
+    function dismiss() {
+        blinds.close();
+    }
+    blinds.addEventListener("open", function handler() {
+        blinds.removeEventListener("open", handler );
+        spinner.show();
+        openPicker({ captured, dismiss });
+    });
+    blinds.open();
+}
+
 function openPhotoGallery() {
-    Gallery.openPhotoGallery({
-        autohide: true,
-        animated: true,
-        allowMultiple: false, // one photo per slot, matching the camera flow
-        success: (result) => photoCapturedHandler(result),
-        cancel: () => {},
-        error: (err) => alert(`Unable to open gallery: ${err.error}`),
-        mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
+    openBehindBlind( ({ captured, dismiss }) => {
+        Gallery.openPhotoGallery({
+            autohide: true,
+            animated: true,
+            allowMultiple: false, // one photo per slot, matching the camera flow
+            success: captured,
+            cancel: dismiss,
+            error: (err) => {
+                dismiss();
+                alert(`Unable to open gallery: ${err.error}`);
+            },
+            mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
+        });
     });
 }
 
@@ -306,42 +347,25 @@ function takePhoto(e) {
     e.cancelBubble = true;
     requestCameraPermissions(
         function success() {
-            // Create "blinds" to block the display with a black window so that artifacts in any 
-            // orientation changes whilst the camera app is opened are not visible to user.
-            let blinds = Ti.UI.createWindow( { backgroundColor: "black", exitOnClose: false } );
-           
-            function openCamera() {
+            openBehindBlind( ({ captured, dismiss }) => {
                 Camera.showCamera({
                     autohide: true,
                     animated: false,
                     autorotate: false,
-                    cancel: () => blinds.close(),
+                    cancel: dismiss,
                     success: (result) => {
                         info("Got camera success");
-                        // ensure the blind window is closed before starting
-                        // the heavy operation of processing the photo
-                        blinds.addEventListener( "close", function handler() {
-                            blinds.removeEventListener("close", handler);
-                            setTimeout( () => photoCapturedHandler(result), 50 );
-                        });
-                        blinds.close(); 
+                        captured(result);
                     },
                     error: function (error) {
-                        blinds.close();
-                        alert(`Unable to open camera: ${error.error}`); 
+                        dismiss();
+                        alert(`Unable to open camera: ${error.error}`);
                     },
                     saveToPhotoGallery: true,
                     whichCamera: Titanium.Media.CAMERA_FRONT,
                     mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
                 });
-            }
-            blinds.addEventListener("open", function handler() {
-                blinds.removeEventListener("open", handler );
-                openCamera();
-                
             });
-            blinds.open();
-                
         },
 
         function failure() {
@@ -349,7 +373,7 @@ function takePhoto(e) {
         }
 
     )
-} 
+}
 
 function setError() {
     $.resetClass( $.photoSelectBoundary, "photoError" );
