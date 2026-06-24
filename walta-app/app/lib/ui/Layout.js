@@ -70,12 +70,15 @@ exports.SPEEDBUG_TILE_HEIGHT = '225dip';
 exports.SPEEDBUG_PRECACHE_TILES = 2;
 
 function fixScrollContentsSize(ctlr){
-    // Compare against the ScrollView's own frame, not the window: safe-area
-    // insets shrink the frame below the window width, so comparing to the
-    // window leaves contentWidth too wide and adds phantom horizontal scroll.
-    if ( ctlr.content.contentWidth != ctlr.content.size.width
+    // Derive the width from the window minus its safe-area insets, not the live
+    // frame: during a relayout a postlayout can fire while the frame is still
+    // the full window width, pinning contentWidth too wide and leaving the
+    // right-anchored camera clipped in phantom horizontal scroll.
+    var sap = ctlr.TopLevelWindow.safeAreaPadding || {};
+    var contentWidth = ctlr.TopLevelWindow.size.width - (sap.left || 0) - (sap.right || 0);
+    if ( ctlr.content.contentWidth != contentWidth
         || ctlr.content.contentHeight != ctlr.content.size.height ) {
-        ctlr.content.contentWidth = ctlr.content.size.width;
+        ctlr.content.contentWidth = contentWidth;
         ctlr.content.contentHeight = ctlr.content.size.height;
     }
 }
@@ -143,7 +146,18 @@ function applyKeyboardTweaks( ctlr, blurFields ) {
             scrollView.add(oldContent);
             window.add(scrollView);
             if (anchorBarView) window.add(anchorBarView);
+            // updateSafeArea targets ctlr.content, about to become the
+            // ScrollView — clear the inset already on the inner content so it
+            // isn't double-padded once the ScrollView carries it.
+            oldContent.applyProperties({ left: 0, right: 0, top: 0, bottom: 0 });
             ctlr.content = scrollView;
+            // Seed the inset now: updateSafeArea only re-applies it on the next
+            // postlayout, which may not fire until an unrelated relayout, so
+            // otherwise the ScrollView opens unpadded and content bleeds under
+            // the notch.
+            if (!window.useUnSafeArea && window.safeAreaPadding) {
+                scrollView.applyProperties(window.safeAreaPadding);
+            }
             window.addEventListener("postlayout", fixScrollContentsSizeCallback );
         }
         // Defer the wrap out of the current postlayout callback — doing
