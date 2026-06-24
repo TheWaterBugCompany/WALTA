@@ -22,7 +22,10 @@ describe("SiteDetails controller", function() {
 	});
 	afterEach( function(done) {
         sample.off();
-        closeWindow( ctl.getView(), done );
+        // The WB-176 overflow test skips on Android before assigning ctl,
+        // so the shared teardown must guard against a null controller.
+        if (ctl) closeWindow( ctl.getView(), done );
+        else done();
         sample = null;
         ctl = null;
     });
