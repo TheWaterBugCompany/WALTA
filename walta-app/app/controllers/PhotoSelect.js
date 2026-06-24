@@ -289,7 +289,7 @@ function openBehindBlind( openPicker ) {
 }
 
 function openPhotoGallery() {
-    openBehindBlind( ({ captured, dismiss }) => {
+    function showPicker({ captured, dismiss }) {
         Gallery.openPhotoGallery({
             autohide: true,
             animated: true,
@@ -302,7 +302,16 @@ function openPhotoGallery() {
             },
             mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
         });
-    });
+    }
+    // Only iOS forces the portrait-rotation flip that the blind hides. On
+    // Android, wrapping the picker's real intent in a heavyweight blind window
+    // breaks its result delivery (the photo never comes back), so open it
+    // directly.
+    if (OS_IOS) {
+        openBehindBlind( showPicker );
+    } else {
+        showPicker({ captured: photoCapturedHandler, dismiss: () => {} });
+    }
 }
 
 function chooseFromGallery(e) {
