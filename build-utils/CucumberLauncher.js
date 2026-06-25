@@ -78,6 +78,11 @@ class CucumberLauncher {
         [
           "cucumber-js", "--tags", this._tags,
           ...(this._name ? ["--name", this._name] : []),
+          // @gallery drives the real out-of-process iOS photo picker, which WDA
+          // intermittently crashes under peak CI contention — the session dies
+          // mid-scenario. Retry only that scenario; the Before hook's
+          // recoverSessionIfDead rebuilds the session so each retry starts fresh.
+          "--retry", "2", "--retry-tag-filter", "@gallery",
           "--force-exit",
         ],
         {
