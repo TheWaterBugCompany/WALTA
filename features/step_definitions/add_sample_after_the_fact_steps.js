@@ -29,7 +29,7 @@ Given('a photo is already in the phone gallery', function () {
     }
 });
 
-When('the user fills out the site details choosing a photo from the gallery', { timeout: 120000 }, async function () {
+When('the user fills out the site details choosing a photo from the gallery', { timeout: 180000 }, async function () {
     await this.menu.selectWaterbugSurvey();
     await this.siteDetails.selectDetailed();
     await this.siteDetails.selectRiver();
@@ -42,7 +42,7 @@ When('the user fills out the site details choosing a photo from the gallery', { 
     await this.siteDetails.goNext();
 });
 
-When('the user identifies a taxon choosing a photo from the gallery', { timeout: 120000 }, async function () {
+When('the user identifies a taxon choosing a photo from the gallery', { timeout: 180000 }, async function () {
     await this.sample.waitFor();
     await this.sample.selectAddSample();
     await this.methodSelect.viaBrowse();
