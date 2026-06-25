@@ -24,16 +24,34 @@ class AndroidSurveyDatePickerScreen extends BaseScreen {
         return parseInt( year, 10 ) * 12 + MONTHS.indexOf( month );
     }
 
+    // Bring the target year into view and tap it. UiScrollable.scrollIntoView
+    // resets to the top of the (~1900+) list first and crawls back down — slow.
+    // The list opens centred on the current year, so scroll straight toward the
+    // target (earlier years sit above) and tap once it renders.
+    async scrollToYear( year, currentYear ) {
+        const yearSelector = `android=new UiSelector().text("${year}")`;
+        const direction = parseInt( year, 10 ) <= currentYear ? "up" : "down";
+        for ( let guard = 0; guard < 24; guard++ ) {
+            const cell = await this.driver.$( yearSelector );
+            if ( await cell.isExisting() ) {
+                await cell.click();
+                return;
+            }
+            const list = await this.driver.$('android=new UiSelector().resourceIdMatches(".*:id/mtrl_calendar_year_selector_frame")');
+            await this.driver.execute( "mobile: scrollGesture", {
+                elementId: list.elementId, direction, percent: 0.8,
+            });
+        }
+        throw new Error(`date picker year ${year} not reachable`);
+    }
+
     // date: { day: "15", month: "March", year: "2024" }
     async selectDate( date ) {
-        // Jump to the target year via the header year list. The list opens at
-        // the current year and earlier years sit above it, so scroll back to
-        // bring the target into view before tapping it.
-        await this.clickRaw( this.toggleSelector );
-        await this.clickRaw(
-            'android=new UiScrollable(new UiSelector().resourceIdMatches(".*:id/mtrl_calendar_year_selector_frame"))' +
-            `.scrollIntoView(new UiSelector().text("${date.year}"))`
-        );
+        // Read the currently-shown year before expanding, so we know which way
+        // to scroll the year list.
+        const currentYear = parseInt( (await (await this.driver.$( this.toggleSelector )).getText()).split(' ')[1], 10 );
+        await this.clickRaw( this.toggleSelector );  // expand the year list
+        await this.scrollToYear( date.year, currentYear );
 
         // Step months until the header shows the target month/year.
         const target = this.monthOrdinal( `${date.month} ${date.year}` );
