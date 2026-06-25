@@ -21,7 +21,17 @@ async function getCapabilities(platform, simulator = false) {
             "appium:automationName": "XCUITest",
             "platformName": "iOS",
             "appium:autoAcceptAlerts": false,
+            // WDA blocks each command until the app reports idle. The
+            // out-of-process photo picker (PHPicker) never does, so a command
+            // issued while it is up overruns newCommandTimeout (60s default) and
+            // the session is reaped mid-scenario ("session is either terminated
+            // or not started"). waitForQuiescence is ignored in xcuitest-driver
+            // 11.x — waitForIdleTimeout is the honoured knob; 0 disables the
+            // idle wait. newCommandTimeout 0 stops the reap outright (matches
+            // Android).
             "appium:waitForQuiescence": false,
+            "appium:waitForIdleTimeout": 0,
+            "appium:newCommandTimeout": 0,
             "appium:useJSONSource": true,
             "appium:showXcodeLog": true,
             "appium:usePrebuiltWDA": false,
