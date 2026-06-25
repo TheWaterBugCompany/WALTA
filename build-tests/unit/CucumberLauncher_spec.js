@@ -191,7 +191,7 @@ describe("CucumberLauncher", function() {
 
       const [cmd, args] = fakeSpawn.firstCall.args;
       expect(cmd).to.equal("npx");
-      expect(args).to.deep.equal(["cucumber-js", "--tags", "@smoke", "--force-exit"]);
+      expect(args).to.deep.equal(["cucumber-js", "--tags", "@smoke", "--retry", "2", "--retry-tag-filter", "@gallery", "--force-exit"]);
     });
 
     it("defaults tags to 'not @skip' when none are provided", async function() {
@@ -202,7 +202,7 @@ describe("CucumberLauncher", function() {
       const promise = launcher.run();
       await exitAfterSpawn(fakeSpawn, 0, 0);
       await promise;
-      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["cucumber-js", "--tags", "not @skip", "--force-exit"]);
+      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["cucumber-js", "--tags", "not @skip", "--retry", "2", "--retry-tag-filter", "@gallery", "--force-exit"]);
     });
 
     it("passes --name <pattern> to cucumber-js when name is provided", async function() {
@@ -215,7 +215,7 @@ describe("CucumberLauncher", function() {
       await exitAfterSpawn(fakeSpawn, 0, 0);
       await promise;
       expect(fakeSpawn.firstCall.args[1]).to.deep.equal(
-        ["cucumber-js", "--tags", "not @skip", "--name", "Log in with existing", "--force-exit"]
+        ["cucumber-js", "--tags", "not @skip", "--name", "Log in with existing", "--retry", "2", "--retry-tag-filter", "@gallery", "--force-exit"]
       );
     });
 
