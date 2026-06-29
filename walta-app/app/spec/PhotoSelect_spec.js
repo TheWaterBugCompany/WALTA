@@ -1,12 +1,12 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
-var { wrapViewInWindow, waitForTick, waitForEvent, closeWindow, windowOpenTest, checkTestResult } = require('spec/util/TestUtils');
+var { wrapViewInWindow, waitForTick, waitForEvent, waitFor, closeWindow, windowOpenTest, checkTestResult } = require('spec/util/TestUtils');
 var { simulatePhotoCapture } = require("spec/mocks/MockCamera");
 
 describe('PhotoSelect controller', function() { 
 	var win, vw, pv;
-	function makePhotoSelect( readonly, images, cropPhoto = true ) {
-		pv = Alloy.createController("PhotoSelect", {readonly: readonly, image: images, cropPhoto: cropPhoto});
+	function makePhotoSelect( readonly, images, cropPhoto = true, aspectFit = false ) {
+		pv = Alloy.createController("PhotoSelect", {readonly: readonly, image: images, cropPhoto: cropPhoto, aspectFit: aspectFit});
 		win = wrapViewInWindow(  _(pv.getView()).extend( { height: '100%', width: '100%' } ) );
 		win.addEventListener("close", function cleanUp() {
 			win.removeEventListener( "close", cleanUp );
@@ -56,6 +56,25 @@ describe('PhotoSelect controller', function() {
 			expect( displayedRatio ).to.be.closeTo( panelRatio, 0.05 );
 		}) );
 		windowOpenTest( win );
+	});
+
+	it("should fit a reference photo inside the panel, preserving its aspect ratio without cropping or re-encoding", async function() {
+		var imagePath = '/spec/resources/simpleKey1/media/amphipoda_01.jpg';
+		makePhotoSelect( true, [ imagePath ], false, true );
+		await new Promise( resolve => {
+			pv.on("loaded", function loaded() { pv.off("loaded", loaded); resolve(); });
+			windowOpenTest( win );
+		});
+		var source = Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, imagePath ).read();
+		var sourceRatio = source.width / source.height;
+		// The fitted dimensions land on a later layout pass than the loaded event.
+		await waitFor( () => pv.photo.size.height > 0 &&
+			Math.abs( pv.photo.size.width / pv.photo.size.height - sourceRatio ) < 0.05 );
+		var shown = pv.photo.size;
+		var panel = pv.photoSelectInner.size;
+		expect( shown.width / shown.height, "aspect ratio preserved" ).to.be.closeTo( sourceRatio, 0.05 );
+		expect( shown.width, "fits panel width" ).to.be.at.most( panel.width + 1 );
+		expect( shown.height, "fits panel height" ).to.be.at.most( panel.height + 1 );
 	});
 
 	it("should dynamically enable readonly mode", function( done ) {
