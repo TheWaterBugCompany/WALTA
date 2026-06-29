@@ -55,18 +55,22 @@ describe("SiteDetails controller", function() {
         } );
     });
  
-    it('should save the photo field', function(done){   
+    it('should save the photo field', function(done){
         ctl = Alloy.createController("SiteDetails");
-        var doneOnce = _.once(done);
-        controllerOpenTest( ctl,  ()=>{
+        controllerOpenTest( ctl,  async ()=>{
             // set a photo as if taken by the user
-            ctl.photoSelect.on("loaded", () => checkTestResult( doneOnce, () => {
-                expect( ctl.photoSelect.getThumbnailImageUrl() ).to.include("sitePhoto");
-                expect( Ti.Filesystem.getFile( ctl.photoSelect.getThumbnailImageUrl() ).exists() ).to.be.ok;
-            }) );
             simulatePhotoCapture( ctl.photoSelect );
+            // photoTaken persists the full photo to the sample, then the widget
+            // re-displays it as a thumbnail cropped to the panel (WB-175) — so
+            // assert on the saved path, not the displayed thumbnail's name.
+            await waitFor( () => !!sample.get("sitePhotoPath") );
+            await waitFor( () => Ti.Filesystem.getFile( ctl.photoSelect.getThumbnailImageUrl() ).exists() );
+            checkTestResult( done, () => {
+                expect( sample.get("sitePhotoPath") ).to.include("sitePhoto");
+                expect( Ti.Filesystem.getFile( ctl.photoSelect.getThumbnailImageUrl() ).exists() ).to.be.ok;
+            });
         });
-    }); 
+    });
 
     it('should save waterbody name field', function(done) { 
         ctl = Alloy.createController("SiteDetails");
