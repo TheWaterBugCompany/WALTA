@@ -23,6 +23,7 @@ clearError();
 
 
 var cropPhoto = $.args.cropPhoto;
+var aspectFit = $.args.aspectFit === true;
 
 function setReadOnlyMode(p_readOnlyMode) {
     readOnlyMode = p_readOnlyMode;
@@ -126,6 +127,21 @@ function generateThumbnail( fileOrBlob ) {
     return { thumbnail: thumbnailPath, photo: fullPhotoPath };
 }
 
+// Reference images (e.g. dichotomous-key questions) must show the whole photo —
+// cropping could hide the diagnostic features being matched — so we letterbox
+// rather than fill. Scaling the ImageView to dimensions that keep the source
+// ratio avoids the stretch without re-encoding the image (WB-175).
+function fitToView( path ) {
+    var photo = loadPhoto( path );
+    var pxWidth = $.photoSelectInner.size.width;
+    var pxHeight = $.photoSelectInner.size.height;
+    var scale = Math.min( pxWidth / photo.width, pxHeight / photo.height );
+    $.photo.width = Math.round( photo.width * scale );
+    $.photo.height = Math.round( photo.height * scale );
+    $.photo.image = photo;
+    $.photoUrls = [absolutePath(path).nativePath];
+}
+
 function getOriginalPhotoUrl() {
     return originalPhotoUrl;
 }
@@ -148,7 +164,9 @@ function setImage( fileOrBlob ) {
 
     function setThumbnail( fileOrBlob) {
         info(`setThumbnail ${fileOrBlob}`)
-        if ( cropPhoto || typeof fileOrBlob === "object") {
+        if ( aspectFit && typeof fileOrBlob === "string" ) {
+            fitToView( fileOrBlob );
+        } else if ( cropPhoto || typeof fileOrBlob === "object") {
             var { thumbnail, photo } = generateThumbnail( fileOrBlob );
             $.photo.image = thumbnail;
             $.photoUrls = [photo];
