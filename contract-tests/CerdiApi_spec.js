@@ -11,6 +11,9 @@ import _ from "underscore";
 
 import Backbone from "backbone";
 
+import { assertLooksSame } from "../features/support/image-test.js";
+import { createPacer } from "../walta-app/app/lib/util/RateLimitPacer.js";
+
 
 const dumpReject = (err) => { console.log( JSON.stringify(err) ); throw err; };
 
@@ -194,10 +197,38 @@ if ( SERVER_URL === null || CLIENT_SECRET == null ) {
     process.exit(1);
 }
 
+// One pacer shared across the whole suite. CERDI throttles per IP, so the
+// rate-limit budget must be remembered between tests — a fresh pacer per test
+// forgets the budget and bursts straight back into "Too Many Attempts". The
+// pace() wrapper then gates every network call through acquire() before it
+// fires, mirroring how the production sync layer paces its requests.
+const suitePacer = createPacer();
+
+// These methods are synchronous local accessors, not network calls — leave
+// them unwrapped so callers still get a value rather than a promise.
+const UNPACED = new Set(["acquire", "retrieveUserToken", "retrieveUserId"]);
+
+function pace(api) {
+    return new Proxy(api, {
+        get(target, prop, receiver) {
+            const value = Reflect.get(target, prop, receiver);
+            if (typeof value !== "function" || UNPACED.has(prop)) return value;
+            return async (...args) => {
+                await target.acquire();
+                return target[prop](...args);
+            };
+        },
+    });
+}
+
+function makeCerdi() {
+    return pace(CerdiApi.createCerdiApi(SERVER_URL, CLIENT_SECRET, { pacer: suitePacer }));
+}
+
 function createTestLogin() {
     // make sure our test user is registered for tests that
     // require it.
-    return CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET ).registerUser( {
+    return makeCerdi().registerUser( {
         email: `testlogin@example.com`,
         group: false,
         survey_consent: false,
@@ -220,7 +251,7 @@ describe('CerdiApi', function() {
     beforeEach( function() {
         
         mockTiWithProxy();
-        cerdi = CerdiApi.createCerdiApi( SERVER_URL, CLIENT_SECRET );
+        cerdi = makeCerdi();
     });
 
     describe('#obtainAccessToken', function() {
@@ -465,11 +496,10 @@ describe('CerdiApi', function() {
         });
 
         context("image comparision tests", function() {
-            // Skipped: image-diff helpers (assertLooksSame, rescaleImage) were
-            // removed when WB-92 replaced the macOS-arm64-hanging `looks-same`
-            // and `images` packages. Re-enable when WB-92 follow-up wires up
-            // pixelmatch-based assertions for contract tests.
-            function assertLooksSame() { throw Error("assertLooksSame unimplemented") }
+            // Image fidelity is asserted via the shared jimp colour-histogram
+            // helper (features/support/image-test.js) — size-agnostic, so no
+            // rescale is needed. The site/unknown-creature retrieve tests below
+            // stay skipped pending their own wiring.
             function rescaleImage(filePath,width) { return fs.readFileSync(filePath); }
             it.skip("should retrieve unknown creature photo", function() {
                 let serverSampleId, unknownCreaturePhotoId;
@@ -495,7 +525,7 @@ describe('CerdiApi', function() {
                     .then( () => cerdi.retrieveSitePhoto(serverSampleId,"testsitephoto.jpg"))
                     .then( () => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/testsitephoto.jpg`));
             });
-            it.skip("should retrieve creature photo", function() {
+            it("should retrieve creature photo", function() {
                 let serverSampleId,sitePhotoId,creaturePhotoId;
                 return cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
