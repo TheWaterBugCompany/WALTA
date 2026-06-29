@@ -186,7 +186,7 @@ function buildHttp(retryOpts, pacer) {
 
 function createCerdiApi(serverUrl, client_secret, opts = {}) {
     log(`Using CERDI API server ${serverUrl}`);
-    const pacer = createPacer(opts.rateLimit || {});
+    const pacer = opts.pacer || createPacer(opts.rateLimit || {});
     const http = buildHttp({ ...DEFAULT_RETRY_OPTS, ...(opts.retry || {}) }, pacer);
 
     var cerdiApi = {
