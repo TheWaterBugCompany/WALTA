@@ -153,13 +153,12 @@ function setImage( fileOrBlob ) {
             $.photo.image = thumbnail;
             $.photoUrls = [photo];
         } else {
-            debug(`not calling generateThumbnail fileOrBlob = ${fileOrBlob}`)
-            // Resolve to the current container's absolute path: stored paths may
-            // be relative names or legacy absolute paths with a stale container
-            // UUID, neither of which ImageView.image can load directly (WB-88).
-            var resolved = absolutePath(fileOrBlob).nativePath;
-            $.photo.image = resolved;
-            $.photoUrls = [resolved];
+            // Crop to the panel aspect ratio so a non-square panel can't
+            // stretch the photo (WB-175); the gallery still gets the original.
+            var { thumbnail } = generateThumbnail( fileOrBlob );
+            $.photo.image = thumbnail;
+            // Resolve relative/legacy stored paths so the gallery can load them (WB-88).
+            $.photoUrls = [absolutePath(fileOrBlob).nativePath];
         }
         
     }

@@ -5,8 +5,8 @@ var { simulatePhotoCapture } = require("spec/mocks/MockCamera");
 
 describe('PhotoSelect controller', function() { 
 	var win, vw, pv;
-	function makePhotoSelect( readonly, images ) {
-		pv = Alloy.createController("PhotoSelect", {readonly: readonly, image: images, cropPhoto: true});
+	function makePhotoSelect( readonly, images, cropPhoto = true ) {
+		pv = Alloy.createController("PhotoSelect", {readonly: readonly, image: images, cropPhoto: cropPhoto});
 		win = wrapViewInWindow(  _(pv.getView()).extend( { height: '100%', width: '100%' } ) );
 		win.addEventListener("close", function cleanUp() {
 			win.removeEventListener( "close", cleanUp );
@@ -46,7 +46,19 @@ describe('PhotoSelect controller', function() {
 		windowOpenTest( win );
 	});
 
-	it("should dynamically enable readonly mode", function( done ) { 
+	it("should crop a redisplayed photo to the panel aspect ratio rather than stretch it", function( done ) {
+		makePhotoSelect( true, '/spec/resources/simpleKey1/media/amphipoda_01.jpg', false );
+		pv.on("loaded", () => checkTestResult( done, () => {
+			var displayed = Ti.Filesystem.getFile( pv.getThumbnailImageUrl() ).read();
+			var panel = pv.photoSelectInner.size;
+			var displayedRatio = displayed.width / displayed.height;
+			var panelRatio = panel.width / panel.height;
+			expect( displayedRatio ).to.be.closeTo( panelRatio, 0.05 );
+		}) );
+		windowOpenTest( win );
+	});
+
+	it("should dynamically enable readonly mode", function( done ) {
 		makePhotoSelect( false, [
 			'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
 			'/spec/resources/simpleKey1/media/amphipoda_02.jpg',
