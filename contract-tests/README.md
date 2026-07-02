@@ -14,7 +14,9 @@ Distinct from the other test layers:
 
 ## How it works
 
-The spec mocks `Ti.Network.createHTTPClient` with `ProxyCreateHTTPClient`, which preserves Titanium's `client.{open, setRequestHeader, send, getAllResponseHeaders, getResponseHeader}` shape but forwards each call through the `request` npm package to the real sandbox. The production `CerdiApi.js` runs unchanged — only its HTTP transport is swapped at the boundary.
+The spec mocks `Ti.Network.createHTTPClient` with `ProxyCreateHTTPClient`, which preserves Titanium's `client.{open, setRequestHeader, send, getAllResponseHeaders, getResponseHeader}` shape but forwards each call through the global `fetch` API to the real sandbox. The production `CerdiApi.js` runs unchanged — only its HTTP transport is swapped at the boundary.
+
+The suite shares one `RateLimitPacer` (via `createCerdiApi(url, secret, { pacer })`) and gates every network call through `acquire()` before it fires, so it observes CERDI's per-IP rate limit and doesn't trip the "Too Many Attempts" throttle.
 
 When `CerdiApi.js` adds a new `Ti.Network` method call, the proxy needs the matching method added too. See WB-154 (2026-06-09) for the history of letting that drift.
 
@@ -26,17 +28,19 @@ npx grunt contract-test
 
 Requires network access to `api-sandbox.waterbugblitz.org.au` and a test account on the sandbox (`testlogin@example.com` / `tstPassw0rd!` is what the existing tests use). Run time is around 2 minutes against a healthy sandbox.
 
-## Expected output (as of 2026-06-09, post-WB-154)
+## Expected output (as of 2026-07-02, post-WB-183)
 
-- 15 passing
-- 3 pending (`it.skip`ped image-comparison tests — see WB-92 for the missing pixelmatch wiring)
-- 3 failing — known pre-existing issues each tracked separately:
-  - WB-156 — `#obtainAccessToken` token-expiration tests time out under `sinon.useFakeTimers` + `nock`
-  - WB-157 — `should update unknown creatures` count drift (15 expected, 6 returned)
+- 22 passing, 0 pending, 0 failing against a healthy sandbox.
+
+The image-comparison tests are active and assert fidelity via the shared jimp
+colour-histogram helper (`features/support/image-test.js`). The previously
+tracked WB-156 (token-expiration timing) and WB-157 (unknown-creature count
+drift) failures no longer reproduce. WB-156's fake-timer tests remain
+timing-sensitive, so an occasional flake there is a machine-speed artefact, not
+a contract break.
 
 Run to investigate the sandbox; not part of regular CI because the suite would hammer CERDI's sandbox on every push.
 
 ## Out of scope
 
-- Migrating off `request` (deprecated). Tracked separately under WB-153 follow-up — only safe to do once this suite is reliably green so the refactor has a baseline to compare against.
 - Adding to CI. The point of contract tests is to surface assumption mismatches against the live API; running on every push would be slow + noisy.

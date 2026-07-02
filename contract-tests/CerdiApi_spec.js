@@ -497,11 +497,9 @@ describe('CerdiApi', function() {
 
         context("image comparision tests", function() {
             // Image fidelity is asserted via the shared jimp colour-histogram
-            // helper (features/support/image-test.js) — size-agnostic, so no
-            // rescale is needed. The site/unknown-creature retrieve tests below
-            // stay skipped pending their own wiring.
-            function rescaleImage(filePath,width) { return fs.readFileSync(filePath); }
-            it.skip("should retrieve unknown creature photo", function() {
+            // helper (features/support/image-test.js) — size-agnostic, so the
+            // reference image can be compared directly with no rescale.
+            it("should retrieve unknown creature photo", function() {
                 let serverSampleId, unknownCreaturePhotoId;
                 return cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
@@ -512,10 +510,8 @@ describe('CerdiApi', function() {
                     .then( () => cerdi.retrievePhoto(unknownCreaturePhotoId,"testsitephoto.jpg"))
                     .then( () => assertLooksSame(creaturePhotoPath,`/tmp/waterbugtest/applicationData/testsitephoto.jpg`));
             });
-            it.skip("should retrieve site photo", function() {
+            it("should retrieve site photo", function() {
                 let serverSampleId,sitePhotoId;
-                
-                let siteImageRescaled = rescaleImage(sitePhotoPath,1280);
                 return cerdi
                     .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
                     .then( () => submitTestSample(moment().format()) )
@@ -523,7 +519,7 @@ describe('CerdiApi', function() {
                     .then( () => submitSitePhoto( serverSampleId ) )
                     .then( res => sitePhotoId = res.id )
                     .then( () => cerdi.retrieveSitePhoto(serverSampleId,"testsitephoto.jpg"))
-                    .then( () => assertLooksSame(siteImageRescaled,`/tmp/waterbugtest/applicationData/testsitephoto.jpg`));
+                    .then( () => assertLooksSame(sitePhotoPath,`/tmp/waterbugtest/applicationData/testsitephoto.jpg`));
             });
             it("should retrieve creature photo", function() {
                 let serverSampleId,sitePhotoId,creaturePhotoId;
@@ -579,8 +575,8 @@ describe('CerdiApi', function() {
                             "waterbody_name": "test water body",
                             "nearby_feature": "test nearby feature",
                             "notes": "test sample",
-                            "reviewed": 0,
-                            "corrected": 0,
+                            "qc_status": "pending",
+                            "corrected": false,
                             "complete": null,
                             "score": 0,
                             "weighted_score": null,
@@ -631,8 +627,8 @@ describe('CerdiApi', function() {
                             "waterbody_name": "updated water body name",
                             "nearby_feature": "test nearby feature",
                             "notes": "test sample",
-                            "reviewed": 0,
-                            "corrected": 0,
+                            "qc_status": "pending",
+                            "corrected": false,
                             "complete": null,
                             "score": 0,
                             "weighted_score": null,
@@ -718,7 +714,10 @@ describe('CerdiApi', function() {
         });
 
         it("should retrieve samples", function() {
-            let createdAt = null, updatedAt = null, sampleDate = moment().format();
+            // Unique past date so re-runs don't collide with an existing
+            // sample at the same user/time/location on the shared sandbox.
+            let createdAt = null, updatedAt = null,
+                sampleDate = moment().subtract(Math.floor(Math.random() * 315360000), 'seconds').format();
             return cerdi
                 .loginUser( 'testlogin@example.com', 'tstPassw0rd!' )
                 .then( () => submitTestSample(sampleDate) )
@@ -752,8 +751,8 @@ describe('CerdiApi', function() {
                             "waterbody_name": "test water body",
                             "nearby_feature": "test nearby feature",
                             "notes": "test sample",
-                            "reviewed": 0,
-                            "corrected": 0,
+                            "qc_status": "pending",
+                            "corrected": false,
                             "complete": null,
                             "score": 0,
                             "weighted_score": null,
