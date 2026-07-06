@@ -44,7 +44,7 @@ The remaining ~65 alerts fall into these clusters, ordered by alert count:
 
 - **`xmldom` (legacy, 7 alerts)** — pulled in by `liveview → alloy-compiler` and `node-titanium-sdk`. Build-time only.
 - **`elliptic` (7)** — dev-tree crypto. Build-time only.
-- **`vite` (5)** — used by LiveView fast-iteration. We are pinned to 4.x (see card WB-36). Build-time only.
+- **`vite` (5)** — used by LiveView fast-iteration. We are pinned to 4.x (5+ is ESM-only and breaks `require('vite')` in the LiveView config). Build-time only.
 - **`qs` (3), `undici` (3)** — HTTP request internals used by Appium / build tooling. Build/test only.
 - **`ansi-regex`, `ejs`, `express`, `lodash`, `minimatch`, `semver`, `serialize-javascript`, `tmp` (2 each)** — all build/test transitives.
 - **18 single-alert packages** (`body-parser`, `browserify-sign`, `cipher-base`, `cookie`, `esbuild`, `eventsource`, `form-data`, `images`, `js-yaml`, `json-schema`, `lodash.set`, `node-extend`, `react-dev-utils`, `request`, `send`, `serve-static`, `tough-cookie`, `uuid`, `xml2js`, `yauzl`) — all build/test transitives, none reachable from `walta-app/app/`.
@@ -56,7 +56,7 @@ None of these packages are bundled into the device app. The risk surface is "a m
 ## Maintenance policy
 
 1. **Dependabot grouped PRs land routinely.** The repo has Dependabot configured to open weekly grouped dev-dependency PRs (see `commit 54ac956c`). Merge these as they come.
-2. **Track major-version blockers as their own cards.** `vite` (WB-36 pin to 4.x), `Bugfender SDK` (WB-77), `chai` (capped at 4.x — see project memory) — these need scoped upgrade work and don't belong in a sweeping audit.
+2. **Track major-version blockers as their own scoped tasks.** `vite` (pinned to 4.x), `Bugfender SDK` (2019-era module + bundled SDK), `chai` (capped at 4.x — 6 is ESM-only and breaks the device unit-test runner) — these need scoped upgrade work and don't belong in a sweeping audit.
 3. **Dismiss inapplicable alerts in the GitHub UI with a comment linking here**, so the dashboard reflects actual risk rather than transitive-tree noise. The dismissal options to use:
    - **Vulnerable code is not actually used** — for `@xmldom/xmldom` (no serializer use) and `underscore` (no `_.template/flatten/isEqual` use).
    - **Vulnerability is in tests/build pipeline only** — for everything in the build-time-only cluster.

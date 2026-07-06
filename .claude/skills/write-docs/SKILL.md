@@ -109,6 +109,9 @@ of what's inside.
 - **No process logs, no decision diaries, no roadmaps in `docs/`** — those
   belong in Trello / commit messages / PR descriptions where they have a
   natural decay path.
+- **No Trello card numbers (`WB-N`) or other private identifiers.** The repo
+  is public; card refs are opaque to outside readers and rot silently.
+  Describe the change or constraint itself; leave tracking to commits/PRs.
 - **No long-form architecture pieces in source files.** Source comments
   are for local why only.
 

@@ -363,7 +363,7 @@ module.exports = function(grunt) {
             // setup.js holds the Mocha root hooks (mock server + Appium
             // connect + reset); list it first, then run the *-test.js specs.
             command: function() {
-              return `mocha --timeout 120000 ./end-to-end-testing/setup.js "./end-to-end-testing/*-test.js"`;
+              return `mocha --timeout 120000${mochaGrepFlag()} ./end-to-end-testing/setup.js "./end-to-end-testing/*-test.js"`;
             },
             options: {
               // Merge over process.env so the mocha child inherits SIM_UDID,
@@ -380,7 +380,7 @@ module.exports = function(grunt) {
           },
 
           contract_test: {
-            command: `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit "contract-tests/*_spec.js"`,
+            command: () => `NODE_PATH=./walta-app/app/lib/ PATH=./node_modules/.bin/:$PATH mocha --timeout 60000 --exit${mochaGrepFlag()} "contract-tests/*_spec.js"`,
             exitCode: [0,1],
             stdout: "inherit", stderr: "inherit"
           },

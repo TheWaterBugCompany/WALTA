@@ -26,7 +26,7 @@ When a code smell surfaces mid-session — tangled deps, hidden state, a functio
 
 ### Starting a Trello task
 
-When the user asks to start work on a Trello card (e.g. "let's start work on WB-3"):
+When the user asks to start work on a Trello card (e.g. "let's start work on `WB-N`"):
 
 1. Look up the card details from Trello to understand the requirements.
 2. Create a new branch named `task/wb-<N>-<short-slug>`.
@@ -124,10 +124,12 @@ adb logcat -s "TiAPI:*"   # Android
 
 Technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBUTORS.md` stay at the repo root). See the [write-docs](.claude/skills/write-docs/SKILL.md) skill for adding to or updating them.
 
+**Docs are public** (the repo is open-source) — never cite Trello card numbers (`WB-N`) or other private/internal identifiers in `docs/`, `README.md`, or `CLAUDE.md`. They're opaque to outside readers and rot silently. Describe the change or constraint itself; card/issue tracking belongs in commit messages and PR descriptions (the same rule the [coding-style](docs/coding-style.md) comment policy applies to source).
+
 - [docs/installation.md](docs/installation.md) — setup guide: prerequisites, Titanium SDK, signing, env vars
 - [docs/coding-style.md](docs/coding-style.md) — JS conventions and comment policy
 - [docs/architecture-vision.md](docs/architecture-vision.md) — long-term architectural direction
-- [docs/testing.md](docs/testing.md) — five test layers and what to use when. Note the deliberate split between the two top layers: `features/` (Cucumber) is business-readable BDD tied to product requirements; `end-to-end-testing/` (Mocha+Appium) is for extensive, mechanism-heavy integration (e.g. sync interrupt/resume) that would clutter a business scenario. The E2E layer is dormant pending WB-104 — don't push low-level integration mechanics into `features/`.
+- [docs/testing.md](docs/testing.md) — five test layers and what to use when. Note the deliberate split between the two top layers: `features/` (Cucumber) is business-readable BDD tied to product requirements; `end-to-end-testing/` (Mocha+Appium) is for extensive, mechanism-heavy integration (e.g. sync interrupt/resume) that would clutter a business scenario. It runs in CI on both platforms — don't push low-level integration mechanics into `features/`.
 - [docs/device-specs.md](docs/device-specs.md) — device-spec idioms and gotchas
 - [docs/pull-requests.md](docs/pull-requests.md) — PR template
 - [docs/security.md](docs/security.md) — Dependabot triage policy: why scope ≠ runtime risk for Titanium, what's runtime-bundled, and how to handle alerts

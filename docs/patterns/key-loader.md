@@ -22,7 +22,7 @@ Run the full pipeline: `npx grunt build-key`. That runs `build-key-from-ink` (pa
 
 ## Prerequisites
 
-`npm install` is the only setup step. The build-time parser is pure Node — no `.NET`, no `inklecate` binary, no `ink` git submodule. (The empty `ink/` directory and `.gitmodules` entry are tracked for removal under WB-80 along with the other legacy `walta-taxonomy/` scripts.)
+`npm install` is the only setup step. The build-time parser is pure Node — no `.NET`, no `inklecate` binary, no `ink` git submodule. (The empty `ink/` directory and `.gitmodules` entry are left for a future cleanup along with the other legacy `walta-taxonomy/` scripts.)
 
 ## The loaders
 
