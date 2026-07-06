@@ -47,6 +47,10 @@ function isRetryableHttpError(err) {
     return err.status === 429 || (err.status >= 500 && err.status < 600);
 }
 
+function isUnauthorized(err) {
+    return !!err && err.status === 401;
+}
+
 function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFunction, onResponseHeaders) {
     return new Promise((resolve, reject) => {
         var client = Ti.Network.createHTTPClient({
@@ -103,7 +107,14 @@ function buildHttp(retryOpts, pacer) {
             () => sendOnce(method, url, contentType, acceptType, accessToken, sendDataFunction, onResponseHeaders),
             { ...retryOpts, isRetryable: isRetryableHttpError }
         ).catch((err) => {
-            if (err && 'body' in err) throw err.body;
+            if (err && 'body' in err) {
+                const body = err.body;
+                // Carry the HTTP status for auth-refresh logic without changing the
+                // enumerable error shape callers and serialisers observe.
+                if (body && typeof body === 'object' && typeof err.status === 'number')
+                    Object.defineProperty(body, 'status', { value: err.status, configurable: true });
+                throw body;
+            }
             throw err;
         });
     }
@@ -241,20 +252,36 @@ function createCerdiApi(serverUrl, client_secret, opts = {}) {
                 });
         },
 
-        registerUser(userInfo) {
+        invalidateServerAccessToken() {
+            Ti.App.Properties.removeProperty('appAccessTokenLive');
+        },
+
+        // The cached server token can be invalidated server-side (e.g. a backend
+        // redeploy) before its local expiry, so a request may 401 on a token the
+        // client still thinks is valid. Evict it and retry once with a fresh one.
+        withServerAccessToken(requestFn) {
             return this.obtainServerAccessToken()
-                .then((accessToken) =>
-                    http.makeJsonPostRequest(this.serverUrl + '/user/create', userInfo, accessToken))
+                .then(requestFn)
+                .catch((err) => {
+                    if (!isUnauthorized(err)) throw err;
+                    log("Server access token rejected (401) — refreshing and retrying");
+                    this.invalidateServerAccessToken();
+                    return this.obtainServerAccessToken().then(requestFn);
+                });
+        },
+
+        registerUser(userInfo) {
+            return this.withServerAccessToken((accessToken) =>
+                http.makeJsonPostRequest(this.serverUrl + '/user/create', userInfo, accessToken))
                 .then((resp) => ({ id: resp.id, accessToken: resp.accessToken }));
         },
 
         loginUser(email, password) {
-            return this.obtainServerAccessToken()
-                .then((accessToken) =>
-                    http.makeJsonPostRequest(this.serverUrl + '/token/create', {
-                        "password": password,
-                        "email": email
-                    }, accessToken))
+            return this.withServerAccessToken((accessToken) =>
+                http.makeJsonPostRequest(this.serverUrl + '/token/create', {
+                    "password": password,
+                    "email": email
+                }, accessToken))
                 .then((resp) => {
                     resp.retrieved_at = Date.now();
                     this.storeUserToken(email, resp);
@@ -337,8 +364,8 @@ function createCerdiApi(serverUrl, client_secret, opts = {}) {
         },
 
         forgotPassword(email) {
-            return this.obtainServerAccessToken()
-                .then((accessToken) => http.makeJsonPostRequest(this.serverUrl + '/password/email', { "email": email }, accessToken));
+            return this.withServerAccessToken((accessToken) =>
+                http.makeJsonPostRequest(this.serverUrl + '/password/email', { "email": email }, accessToken));
         }
     };
     cerdiApi.client_secret = client_secret;
