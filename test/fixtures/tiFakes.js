@@ -33,6 +33,7 @@ function makeFakeProps(initial = {}) {
     return {
         getObject(name) { return store.get(name); },
         setObject(name, value) { store.set(name, value); },
+        removeProperty(name) { store.delete(name); },
         hasProperty(name) { return store.has(name); },
         clear() { store.clear(); },
     };
