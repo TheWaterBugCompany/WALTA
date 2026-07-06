@@ -51,7 +51,7 @@ One shared module per app. Exposes:
 The runner deliberately doesn't enumerate the directory at runtime —
 `Ti.Filesystem.resourcesDirectory` returned an empty listing for
 bundled `lib/` subdirectories on iOS device, silently skipping every
-migration (WB-78). The static manifest is bundled by Titanium's
+migration. The static manifest is bundled by Titanium's
 CommonJS resolver at build time, so simulator and device behave
 identically.
 

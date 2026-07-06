@@ -5,7 +5,7 @@
 
 `PhotoUtils.absolutePath()` resolves both conventions — call it whenever you need the resolved filesystem path, and never assign a stored path straight to `ImageView.image`.
 
-## Never store an absolute container path (WB-88)
+## Never store an absolute container path
 
 On iOS the app's data-container path includes a UUID (`…/Application/<UUID>/Documents/`) that **changes across app updates/reinstalls**. A stored absolute `file:///…/<UUID>/…` path therefore goes stale — the file still exists, but under a *different* container, so the old path resolves to nothing and the image renders blank.
 

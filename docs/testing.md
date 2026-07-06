@@ -24,7 +24,7 @@ Five layers, ordered fastest to slowest:
 
 **Drop to an end-to-end test** (`end-to-end-testing/`, Mocha + Appium) for extensive, mechanism-heavy full-stack integration that doesn't belong in business language — e.g. interrupting a sync mid-flight and asserting it resumes after app restart / network restore / foreground. The two layers are deliberately split: `features/` answers "does the product meet the requirement?", `end-to-end-testing/` answers "does this mechanism hold up under real-stack conditions?".
 
-> **Note (2026-05):** the end-to-end layer is currently dormant — only a back-button smoke test, and no CI job runs the `end-to-end-test` grunt task (it appears in `ci.yml` only as a `changes` path-filter). Reviving the harness, wiring it into CI, and adding the sync interrupt/resume suite is tracked in **WB-104**. Until then, prefer device specs for mechanism coverage and don't add low-level integration mechanics to `features/`.
+> **Note:** the end-to-end layer covers a back-button smoke test and a sync interrupt/resume resilience suite (asserting a full sync resumes after force-quit relaunch and after foregrounding). CI runs it on both platforms — the `ios-simulator-e2e-tests` and `android-emulator-e2e-tests` jobs invoke the `end-to-end-test` grunt task, gated by a `changes` path-filter so they only run when app or E2E code changes. Still prefer device specs for the tight TDD loop; reserve this layer for mechanism-heavy full-stack integration and keep low-level integration mechanics out of `features/`.
 
 ## Quick reference
 
@@ -75,7 +75,7 @@ resolve an `accessibility id` (`~Foo`) or `xpath` query, WDA builds a snapshot
 of the **whole** element tree and computes visibility for every node. On a small
 screen that's free; on a big tree it's brutal — finding the springboard app
 icon (`~Waterbug`, ~640 nodes) once took **~2 minutes** on a contended CI runner
-and blew the step timeout (WB-127).
+and blew the step timeout.
 
 Pick by context:
 
@@ -108,23 +108,18 @@ The local dev environment is already provisioned — emulator/simulator, Appium 
 
 ## Running a single test
 
-**Mocha tests** (Node.js unit, build, end-to-end, contract): add `.only` to a `describe` or `it` block:
-
-```javascript
-describe.only("My module", function() {
-  it("does the thing", function() { ... });
-});
-```
-
-**Device unit tests** (`walta-app/app/spec/`): same `.only` approach, or use `--grep="..."` (see [LiveView § Runtime Test Config](#runtime-test-config---grep-and---manual)) to filter without editing the file.
-
-**Acceptance tests** (Cucumber features): pass `--grep="<scenario name>"` (regex against the `Scenario:` text) to filter without editing the file:
+Prefer `--grep` over `.only`/`.skip` — it focuses a run without editing files, so there's no risk of committing a stray focus. Every layer's grunt wrapper threads it through:
 
 ```bash
-npx grunt --platform=ios --simulator --grep="Log in with existing account" acceptance-test
+npx grunt unit-test-node --grep="My module"                                                 # Node unit
+npx grunt build-test --grep="launcher"                                                      # build-utils
+npx grunt contract-test --grep="should retrieve creature photo"                             # contract (live sandbox)
+npx grunt --platform=android --simulator unit-test --grep="SiteDetails"                     # device unit
+npx grunt --platform=ios --simulator end-to-end-test --grep="back button"                   # end-to-end (Mocha+Appium)
+npx grunt --platform=ios --simulator acceptance-test --grep="Log in with existing account"  # acceptance (Cucumber)
 ```
 
-`--grep` maps to cucumber-js's `--name` flag. Use `--cucumber-tags=<expr>` if you want to filter by tag instead (defaults to `not @skip`).
+For the Mocha layers `--grep` is a regex against the test title; for device unit tests it filters via the runtime test config (see [LiveView § Runtime Test Config](#runtime-test-config---grep-and---manual)); for acceptance it maps to cucumber-js's `--name` flag (regex against the `Scenario:` text). Use `--cucumber-tags=<expr>` to filter acceptance by tag instead (defaults to `not @skip`).
 
 ## Run *both* Node and device suites before pushing changes to `walta-app/app/lib/`
 

@@ -9,7 +9,7 @@ Distinct from the other test layers:
 | `test/` (Node unit) | Mocked dependencies | Yes |
 | `walta-app/app/spec/` (device unit) | Mocked `Ti.*` | Yes |
 | `features/` (Cucumber acceptance) | Real Appium, mock CERDI server | Yes |
-| `end-to-end-testing/` (Appium integration) | Real Appium, mock CERDI server, dormant | No (revival = WB-104) |
+| `end-to-end-testing/` (Appium integration) | Real Appium, mock CERDI server | Yes (both platforms, on relevant changes) |
 | **`contract-tests/` (this directory)** | **Real CERDI sandbox API** | **No** |
 
 ## How it works
@@ -18,7 +18,7 @@ The spec mocks `Ti.Network.createHTTPClient` with `ProxyCreateHTTPClient`, which
 
 The suite shares one `RateLimitPacer` (via `createCerdiApi(url, secret, { pacer })`) and gates every network call through `acquire()` before it fires, so it observes CERDI's per-IP rate limit and doesn't trip the "Too Many Attempts" throttle.
 
-When `CerdiApi.js` adds a new `Ti.Network` method call, the proxy needs the matching method added too. See WB-154 (2026-06-09) for the history of letting that drift.
+When `CerdiApi.js` adds a new `Ti.Network` method call, the proxy needs the matching method added too — keep the two in sync, or the suite fails with `client.<method> is not a function`.
 
 ## Running
 
@@ -28,14 +28,14 @@ npx grunt contract-test
 
 Requires network access to `api-sandbox.waterbugblitz.org.au` and a test account on the sandbox (`testlogin@example.com` / `tstPassw0rd!` is what the existing tests use). Run time is around 2 minutes against a healthy sandbox.
 
-## Expected output (as of 2026-07-02, post-WB-183)
+## Expected output (as of 2026-07-02)
 
 - 22 passing, 0 pending, 0 failing against a healthy sandbox.
 
 The image-comparison tests are active and assert fidelity via the shared jimp
-colour-histogram helper (`features/support/image-test.js`). The previously
-tracked WB-156 (token-expiration timing) and WB-157 (unknown-creature count
-drift) failures no longer reproduce. WB-156's fake-timer tests remain
+colour-histogram helper (`features/support/image-test.js`). Two previously
+tracked failures — token-expiration timing and an unknown-creature count drift
+— no longer reproduce. The token-expiration tests use fake timers and stay
 timing-sensitive, so an occasional flake there is a machine-speed artefact, not
 a contract break.
 
