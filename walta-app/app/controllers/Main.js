@@ -55,6 +55,12 @@ async function startApp(options) {
   routePromise(Topics.HOME,  (data) =>  Navigation.openController("Menu", data));
   routePromise(Topics.LOGIN,  (data) =>  Navigation.openController("LogIn", data));
   Topics.subscribe(Topics.LOGGEDIN,  (data) =>  Topics.fireTopicEvent(Topics.HOME, data));
+  // Session token rejected mid-sync: clear it and route to login to re-authenticate.
+  Topics.subscribe(Topics.SESSION_EXPIRED, () => {
+    Alloy.Globals.CerdiApi.storeUserToken(null, null);
+    Topics.fireTopicEvent(Topics.LOGGEDOUT, null);
+    Topics.fireTopicEvent(Topics.LOGIN, null);
+  });
   routePromise(Topics.BROWSE,  (data) =>   Navigation.openController("TaxonList", data));
   routePromise(Topics.SAMPLETRAY,  (data) =>   Navigation.openController("SampleTray", data));
   routePromise(Topics.IDENTIFY,  (data) =>   Navigation.openController("SampleTray", data));

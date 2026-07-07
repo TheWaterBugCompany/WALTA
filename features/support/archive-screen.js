@@ -46,5 +46,11 @@ class ArchiveScreen extends BaseScreen {
         await this.click("Sync");
         await this.world.syncFeedback.waitFor();
     }
+
+    // Tap Sync without waiting for the feedback overlay — for syncs expected to
+    // navigate away (a rejected session drops straight to login).
+    async tapSync() {
+        await this.click("Sync");
+    }
 }
 module.exports = ArchiveScreen;
