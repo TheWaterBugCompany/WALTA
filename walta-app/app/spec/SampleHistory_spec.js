@@ -59,6 +59,16 @@ describe("SampleHistory controller", function() {
     expect( ctl.syncFeedback ).to.exist;
   });
 
+  it('closes the SyncFeedback popup when the session is logged out', async function() {
+    Alloy.Globals.CerdiApi.retrieveUserToken = function() { return null; };
+    simple.mock(SampleSync, "forceSync");
+    await controllerOpenTest( ctl );
+    ctl.syncButton.NavButton.fireEvent("click");
+    expect( ctl.syncFeedback, "popup should be open before logout" ).to.exist;
+    Topics.fireTopicEvent( Topics.LOGGEDOUT, null );
+    expect( ctl.syncFeedback, "popup should close on logout" ).to.not.exist;
+  });
+
   it('updates a row VM in place when its UPLOAD_PROGRESS fires', async function() {
     await controllerOpenTest( ctl );
     var rowBefore = ctl.vm.rows[0];
