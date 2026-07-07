@@ -79,10 +79,15 @@ $.syncButton.setLabel("Sync");
 $.syncButton.on("click", syncNowClicked);
 acb.addTool($.syncButton.getView());
 
+// Session ended (manual logout, or a rejected token mid-sync dropping to
+// login): tear down any open sync feedback so it doesn't linger behind.
+Topics.subscribe(Topics.LOGGEDOUT, closeSyncFeedback);
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     Array.from(rowControllers.keys()).forEach(disposeRow);
     $.vm.dispose();
     if ($.sampleMenu) $.sampleMenu.cleanUp();
+    Topics.unsubscribe(Topics.LOGGEDOUT, closeSyncFeedback);
     closeSyncFeedback();
     $.syncButton.cleanUp();
     $.destroy();
