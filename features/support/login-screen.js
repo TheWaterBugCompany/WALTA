@@ -5,6 +5,7 @@ const BaseScreen = require('./base-screen');
 class LoginScreen extends BaseScreen {
     constructor( world ) {
         super( world );
+        this.presenceSelector = this.selector('login_login_button');
     }
     async login( email, password ) {
         await this.enter('login_email_textfield', email );

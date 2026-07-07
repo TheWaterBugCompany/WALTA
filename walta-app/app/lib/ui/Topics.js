@@ -23,6 +23,9 @@ var topics = {
 
 	LOGGEDOUT: 'loggedout',
 
+	// The session token was rejected mid-sync (e.g. password changed): drop to login.
+	SESSION_EXPIRED: 'session_expired',
+
 	HOME: 'home',
 	SETTINGS: 'settings',
 	INFO: 'info',

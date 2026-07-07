@@ -18,6 +18,11 @@ function areWeSyncing() {
     return isSyncing;
 }
 
+// A rejected token surfaces as a 401 carried on the error (see CerdiApi).
+function isUnauthorized(err) {
+    return !!err && err.status === 401;
+}
+
 // Resolve once no sync is in flight (or after timeoutMs as a safety net, so a
 // wedged HTTP can't hang the caller forever). Used by AppReset to let a
 // cancelled sync stop cleanly before the session token is dropped.
@@ -307,6 +312,15 @@ function runSync({ download, options }) {
             if ( err && err.message === CANCELLED_MARKER ) {
                 info("Sync aborted: user logged out.");
                 Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: false, cancelled: true } );
+                return;
+            }
+            if ( isUnauthorized(err) ) {
+                // The session token was rejected — it can't be refreshed without
+                // the password, so retrying is futile. Announce the expiry and
+                // let the app route to login (Main.js) rather than looping.
+                info("Sync failed: session token rejected (401) — re-authenticating.");
+                Topics.fireTopicEvent( Topics.SESSION_EXPIRED, null );
+                Topics.fireTopicEvent( Topics.SYNC_FINISHED, { success: false, sessionExpired: true } );
                 return;
             }
             error("Sync finished with errors");

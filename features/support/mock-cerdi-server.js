@@ -14,6 +14,21 @@ const fs = require('fs');
 function isSamplesFetch(req) {
     return req.method === 'GET' && (req.url === '/samples' || req.url.startsWith('/samples?'));
 }
+
+// The mock issues these fixed bearer tokens, so a fault can target one token
+// type without touching the other: the server token gates login/register, the
+// user token gates logged-in sync.
+const SERVER_TOKEN_BEARER = 'Bearer secretaccesstoken';
+const USER_TOKEN_BEARER = 'Bearer testusertoken';
+
+function isServerTokenFetch(req) {
+    return req.method === 'POST' && req.url === '/token/create/server';
+}
+
+function reply401(res) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'Unauthenticated.' }));
+}
 function applyRateLimitHeaders(res, bucket) {
     if (!bucket) return;
     res.setHeader('X-RateLimit-Remaining', String(bucket.remaining));
@@ -40,6 +55,21 @@ function loggingHandler(hockServer, faultState) {
                 res.end('injected sync fault');
                 return;
             }
+        }
+        if (isServerTokenFetch(req)) faultState.serverTokenFetches++;
+        const auth = req.headers.authorization || '';
+        // One-shot 401 on a server-token-bearing request models a server that
+        // invalidated the cached token: the client should refresh it and retry.
+        if (faultState.rejectServerTokenOnce && auth === SERVER_TOKEN_BEARER) {
+            faultState.rejectServerTokenOnce = false;
+            reply401(res);
+            return;
+        }
+        // A persistently-invalid user token models a password change the user
+        // never re-logged-in for: every sync request 401s until they re-auth.
+        if (faultState.userTokenInvalid && auth === USER_TOKEN_BEARER) {
+            reply401(res);
+            return;
         }
         applyRateLimitHeaders(res, faultState.rateLimit);
         if (!logPath) return baseHandler(req, res);
@@ -88,6 +118,9 @@ function createMockCerdiServer(callback) {
     const faultState = {
         failing: false,
         sampleFetches: 0,
+        rejectServerTokenOnce: false,
+        userTokenInvalid: false,
+        serverTokenFetches: 0,
         rateLimit: { remaining: 50, resetSecondsFromNow: 60, limit: 60 },
     };
     let server = http.createServer(loggingHandler(hockServer, faultState));
@@ -103,6 +136,19 @@ function createMockCerdiServer(callback) {
         },
         samplesFetchCount() {
             return faultState.sampleFetches;
+        },
+        // Reject the next server-token-bearing request once with a 401 (see WB-185).
+        setServerTokenRejectOnce() {
+            faultState.rejectServerTokenOnce = true;
+        },
+        // Count of /token/create/server fetches — a second fetch proves the
+        // client refreshed a rejected server token rather than giving up.
+        serverTokenFetchCount() {
+            return faultState.serverTokenFetches;
+        },
+        // 401 every request bearing the user token (models a password change).
+        setUserTokenInvalid(value) {
+            faultState.userTokenInvalid = !!value;
         },
         setRateLimitBucket(bucket) {
             faultState.rateLimit = bucket
