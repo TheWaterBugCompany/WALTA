@@ -273,11 +273,10 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: net.thewaterbug.waterbug
           releaseFiles: builds/release/Waterbug.aab
-          # test → internal track (private, sandbox testers, no review).
-          # production → beta track (Open Testing) — public opt-in link at
-          # play.google.com/apps/testing/net.thewaterbug.waterbug, anyone can
-          # join. The old alpha (Closed Testing) track is retired; internal
-          # testing now covers the private/allowlisted case.
+          # test → internal track: we verify the build ourselves first.
+          # production → beta track (Open Testing): public opt-in link at
+          # play.google.com/apps/testing/net.thewaterbug.waterbug — anyone
+          # can join the beta.
           track: ${{ inputs.environment == 'production' && 'beta' || 'internal' }}
           status: completed
 
