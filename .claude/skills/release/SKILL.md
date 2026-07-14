@@ -1,6 +1,6 @@
 ---
 name: release
-description: Cut a WALTA release — triggers the `release.yml` GitHub Action which builds, signs, uploads to Play Store internal track / TestFlight, and tags the SHA. Load when the user asks to release, push a beta, cut a build for testers, or bump the version.
+description: Cut a WALTA release — triggers the `release.yml` GitHub Action which builds, signs, uploads to Google Play (Open Testing for prod, internal for test) / TestFlight, and tags the SHA. Load when the user asks to release, push a beta, cut a build for testers, or bump the version.
 user-invocable: true
 allowed-tools:
   - Bash
@@ -15,7 +15,7 @@ Releases run from [.github/workflows/release.yml](../../.github/workflows/releas
 
 - version computation (auto-increment from the latest `v*` tag),
 - signing-secret handling (Android keystore, iOS p12 + provisioning profile),
-- store upload (Google Play internal track, Apple TestFlight),
+- store upload (Google Play Open Testing / internal, Apple TestFlight),
 - annotated tag creation (`v<version>`).
 
 Local builds for testing on a device or simulator are fine. *Release builds* — anything going to a store or a tester — go through the workflow.
@@ -58,7 +58,7 @@ gh run watch <run-id>        # streams the job log
 
 1. **CI gate** — refuses to release a SHA whose latest `ci.yml` run didn't succeed. Bypass with `skip_ci_gate=true` only after manual verification.
 2. **Compute version** — auto-increments from `git tag -l 'v*' --sort=-v:refname | head -1`, or uses the explicit `version` input. Fallback base when no tags exist: `2.0.4.0`.
-3. **Android build** — bumps `tiapp.xml.template`, writes app-config (prod or test sandbox), builds signed release with the project keystore, uploads the `.aab` to Google Play **internal track** (status `completed`).
+3. **Android build** — bumps `tiapp.xml.template`, writes app-config (prod or test sandbox), builds signed release with the project keystore, uploads the `.aab` to Google Play (status `completed`) — **Open Testing (`beta` track)** for production, **internal** for test.
 4. **iOS build** — same prep, builds signed `.ipa`, uploads to **TestFlight** via `altool`. (Note: the upload step now fails if `altool` prints `ERROR:` lines even when it exits 0 — historically masked CFBundleVersion rejections.)
 5. **Tag release** — pushes an annotated `v<version>` (or `v<version>-test`) tag. Skips silently if the tag already exists on the remote, supporting single-platform retries at the same version.
 
@@ -66,7 +66,7 @@ Concurrency is `group: release, cancel-in-progress: false` — only one release 
 
 ## Post-release checks
 
-- **Android**: appears in Google Play Console → Internal testing track within ~10 min. Testers update via the Play Store on their device.
+- **Android**: production appears in Google Play Console → Open testing (test builds → Internal testing) within ~10 min. Open-testing testers join via the public opt-in link (`https://play.google.com/apps/testing/net.thewaterbug.waterbug`) and update through the Play Store. Note: a *new* Open-testing release can sit in review before it's downloadable — internal builds are not reviewed.
 - **iOS**: appears in App Store Connect → TestFlight → Builds. Apple's "Processing" step takes ~10-30 min before testers can install.
 - **Tag**: `git fetch --tags && git tag -l 'v*' | tail -1` should show the new tag.
 
