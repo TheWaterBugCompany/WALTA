@@ -161,6 +161,24 @@ controllers don't need to call it — `vm.dispose()` in `cleanUp` is enough,
 because it clears the ViewModel's listener list and the view is about to be
 destroyed anyway.
 
+### Bindings are applied twice: at setup and after first layout
+
+iOS silently drops writes to some properties — `accessibilityLabel` is the
+known one — when they are made before the view is realised. `bindView` runs at
+controller construction, which is exactly that window, so it also re-applies
+every bound property once the controller's view reports its first `postlayout`.
+
+This matters because the failure is invisible on screen: the widget renders the
+correct text and lays out at the correct width, and only the *accessibility
+identifier* keeps its stale XML value. What breaks is acceptance and end-to-end
+tests, which locate elements by that identifier (`~<label>.` — see
+`features/support/base-screen.js`). A screen can look perfect in the simulator
+and still fail every scenario that waits on it.
+
+Controllers get this for free and need no `postlayout` handler of their own.
+`bindView` finds the view via `$.getView()` and no-ops when there isn't one, so
+it is safe for row and sub-view controllers too.
+
 ### Semantic palette colours
 
 The colour palette lives in `app/config.json` under `global.colors` and is

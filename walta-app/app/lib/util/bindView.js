@@ -70,12 +70,33 @@ module.exports = function bindView($, vm, bindings, palette) {
 
   applyProps();
   vm.addListener(applyProps);
+  eventTeardowns.push(reapplyOnFirstLayout($, applyProps));
 
   return function unbind() {
     vm.removeListener(applyProps);
     eventTeardowns.forEach(fn => fn());
   };
 };
+
+// iOS silently drops writes to some properties — accessibilityLabel is the
+// known one — when they are made before the view is realised. bindView runs at
+// controller construction, which is exactly that window, so the values are
+// re-applied once the view reports its first layout.
+function reapplyOnFirstLayout($, applyProps) {
+  const view = typeof $.getView === "function" ? $.getView() : null;
+  if (!view || typeof view.addEventListener !== "function") return () => {};
+
+  let detach = () => {
+    view.removeEventListener("postlayout", onFirstLayout);
+    detach = () => {};
+  };
+  function onFirstLayout() {
+    detach();
+    applyProps();
+  }
+  view.addEventListener("postlayout", onFirstLayout);
+  return () => detach();
+}
 
 function attachEvent(target, eventName, handler) {
   if (typeof target.addEventListener === "function") {
