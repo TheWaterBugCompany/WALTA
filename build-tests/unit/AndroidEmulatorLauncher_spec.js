@@ -98,6 +98,7 @@ describe("AndroidEmulatorLauncher", function() {
         launch: sinon.stub().resolves(),
         terminate: sinon.stub().resolves(),
         streamLogs: sinon.stub().returns(() => {}),
+        captureDiagnostics: sinon.stub().resolves("device state"),
       };
       launcher = new AndroidEmulatorLauncher({ execFile: fakeExecFile, innerLauncher: fakeLauncher });
       await launcher.connect();
@@ -137,6 +138,12 @@ describe("AndroidEmulatorLauncher", function() {
       const onLine = () => {};
       launcher.streamLogs(onLine);
       expect(fakeLauncher.streamLogs.calledWith(onLine)).to.be.true;
+    });
+
+    it("delegates captureDiagnostics() to the inner launcher", async function() {
+      const report = await launcher.captureDiagnostics("com.example.app");
+      expect(fakeLauncher.captureDiagnostics.calledWith("com.example.app")).to.be.true;
+      expect(report).to.equal("device state");
     });
 
     it("getDriver() returns null", function() {

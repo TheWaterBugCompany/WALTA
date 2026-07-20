@@ -27,6 +27,10 @@ if [ $EXIT -eq 2 ]; then
     exit 1
 fi
 
-echo "::warning ::Unit-test attempt 1 failed with exit $EXIT (infra flake); retrying once (WB-54)"
+# Deliberately does not claim a cause. This branch covers build/AAPT wobbles
+# and the output-logs idle hang alike, and calling every one of them an "infra
+# flake" is what kept the hang unexamined for months (WB-196). The retry stays;
+# the diagnosis does not.
+echo "::warning ::Unit-test attempt 1 failed with exit $EXIT (cause unknown — check the log above for a device-state dump); retrying once (WB-54)"
 "$@"
 exit $?
