@@ -28,6 +28,10 @@
 					<ImageView id="galleryIcon" class="smallButtonIcon"  />
 					<Label id="galleryLabel" class="smallMenuText" text="Photo Gallery" accessibilityLabel="Photo Gallery" />
 				</View>
+				<View id="academy" class="smallButton">
+					<ImageView id="academyIcon" class="smallButtonIcon"  />
+					<Label id="academyLabel" class="smallMenuText" text="Academy"  accessibilityLabel="Academy" />
+				</View>
 				<View id="about" class="smallButton">
 					<ImageView id="aboutIcon" class="smallButtonIcon"  />
 					<Label id="aboutLabel" class="smallMenuText" text="About"  accessibilityLabel="About" />
