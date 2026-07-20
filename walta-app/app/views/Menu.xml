@@ -2,13 +2,13 @@
 	<View id="content" class="container">
 			<View id="bigOptions">
 				<Label id="appVersion"/>
-				<View id="logInOrRegister" onClick="logInClick">
+				<View id="logInOrRegister">
 					<Label id="logInLabel" class="smallMenuText" text="Log In"  accessibilityLabel="Log In"  />
 				</View>
 				<View>
-					
+
 				</View>
-				<View id="detailed" onClick="detailedClick">
+				<View id="detailed">
 					<View id="detailedIconWrapper">
 						<ImageView id="detailedIcon" />
 					</View> 
@@ -16,19 +16,19 @@
 				</View>
 			</View>
 			<View id="smallOptions" layout="horizontal">
-				<View id="identify" class="smallButton" onClick="identifyClick">
+				<View id="identify" class="smallButton">
 					<ImageView id="identifyIcon" class="smallButtonIcon"  />
 					<Label id="identifyLabel" class="smallMenuText" text="Identify" accessibilityLabel="Identify" />
 				</View>
-				<View id="history" class="smallButton" onClick="historyClick">
+				<View id="history" class="smallButton">
 					<ImageView id="historyIcon" class="smallButtonIcon"  />
 					<Label id="historyLabel" class="smallMenuText" text="Archive"  accessibilityLabel="Archive" />
 				</View>
-				<View id="gallery" class="smallButton" onClick="galleryClick">
+				<View id="gallery" class="smallButton">
 					<ImageView id="galleryIcon" class="smallButtonIcon"  />
 					<Label id="galleryLabel" class="smallMenuText" text="Photo Gallery" accessibilityLabel="Photo Gallery" />
 				</View>
-				<View id="about" class="smallButton" onClick="aboutClick">
+				<View id="about" class="smallButton">
 					<ImageView id="aboutIcon" class="smallButtonIcon"  />
 					<Label id="aboutLabel" class="smallMenuText" text="About"  accessibilityLabel="About" />
 				</View>
