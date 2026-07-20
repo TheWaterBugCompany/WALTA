@@ -104,6 +104,35 @@ class AndroidLauncher {
     await this._exec(["shell", "am", "force-stop", appId]);
   }
 
+  // Called when a run hangs with no log output. streamLogs filters to the
+  // Titanium tag, so a crash or a process that never started leaves nothing
+  // behind — these probes are the only record of which it was. Every probe is
+  // best-effort: this runs on an already-failing path and must not mask it.
+  async captureDiagnostics(appId) {
+    await this.connect();
+    const probes = [
+      // pidof exits non-zero when nothing matches, so "the app never started"
+      // — the signal we most want — arrives here as a command failure.
+      { label: "app process", args: ["shell", "pidof", appId], whenFailed: "not running" },
+      { label: "crash buffer", args: ["logcat", "-b", "crash", "-d", "-t", "50"] },
+      // Filtered rather than the raw buffer: unfiltered logcat on an emulator is
+      // almost entirely artd/gms chatter that buries anything relevant.
+      { label: "errors + Titanium output", args: ["logcat", "-d", "-t", "100", "TiAPI:V", "AndroidRuntime:E", "*:E"] },
+    ];
+
+    const sections = [];
+    for (const { label, args, whenFailed } of probes) {
+      let body;
+      try {
+        body = (await this._exec(args)).trim() || "(empty)";
+      } catch (err) {
+        body = whenFailed || `probe failed: ${err.message}`;
+      }
+      sections.push(`--- ${label} ---\n${body}`);
+    }
+    return sections.join("\n");
+  }
+
   streamLogs(onLine) {
     const serialArgs = this._serial ? ["-s", this._serial] : [];
     const proc = this._spawn(this._adb, [...serialArgs, "logcat", "-s", `${this._logTag}:I`]);
