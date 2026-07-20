@@ -26,6 +26,12 @@ describe('Menu controller', function() {
 		actionFiresTopicTest( mnu.about, 'click', Topics.ABOUT, () => done() );
 	});
 
+	it('should offer Academy immediately before About', function() {
+		var buttons = mnu.smallOptions.children;
+		expect( mnu.academyLabel.text ).to.equal("Academy");
+		expect( buttons.indexOf( mnu.academy ) ).to.equal( buttons.indexOf( mnu.about ) - 1 );
+	});
+
 	it('should fire the KEYSEARCH topic', function(done) {
 		clickButton( mnu.identify );
 		Topics.subscribe(Topics.KEYSEARCH, () => done() );

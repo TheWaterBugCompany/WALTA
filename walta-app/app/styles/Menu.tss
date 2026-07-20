@@ -194,6 +194,11 @@
   image: "/images/gallery-icon.png",
 }
 
+"#academyIcon" : {
+  backgroundColor: "transparent",
+  image: "/images/academy-icon.png",
+}
+
 "#aboutIcon" : {
   backgroundColor: "transparent",
   image: "/images/about-icon.png",
