@@ -26,6 +26,12 @@ describe('Menu controller', function() {
 		actionFiresTopicTest( mnu.about, 'click', Topics.ABOUT, () => done() );
 	});
 
+	// Acceptance tests locate the login label by accessibility id, so it has to
+	// survive the open — iOS drops accessibilityLabel writes made before then.
+	it('should expose the login state as an accessibility label once open', function() {
+		expect( mnu.logInLabel.accessibilityLabel ).to.equal( mnu.logInLabel.text );
+	});
+
 	it('should offer Academy immediately before About', function() {
 		var buttons = mnu.smallOptions.children;
 		expect( mnu.academyLabel.text ).to.equal("Academy");
