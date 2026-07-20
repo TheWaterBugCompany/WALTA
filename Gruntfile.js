@@ -694,7 +694,8 @@ module.exports = function(grunt) {
     grunt.registerTask("output-logs", function(platform, option) {
       const done = this.async();
       const isSimulator = grunt.option('simulator') || false;
-      const idleTimeoutMs = 5 * 60 * 1000; // fail if no output for 5 minutes
+      // Overridable so the hang path can be exercised without a 5-minute wait.
+      const idleTimeoutMs = (grunt.option('idle-timeout') || 5 * 60) * 1000;
 
       Promise.all([
         getLauncher(platform, isSimulator),
@@ -705,8 +706,15 @@ module.exports = function(grunt) {
         let timer;
         const resetTimer = () => {
           if (timer) clearTimeout(timer);
-          timer = setTimeout(() => {
+          timer = setTimeout(async () => {
             if (stop) stop();
+            // The stream is filtered to the Titanium tag, so an idle hang leaves
+            // no evidence of whether the app crashed, never started, or simply
+            // said nothing. Capture the wider state before failing (WB-196).
+            const report = typeof launcher.captureDiagnostics === "function"
+              ? await launcher.captureDiagnostics(APP_ID).catch(err => `diagnostics failed: ${err.message}`)
+              : `${launcher.constructor.name} has no captureDiagnostics()`;
+            grunt.log.writeln(`No log activity for ${idleTimeoutMs / 1000}s. Device state:\n${report}`);
             grunt.fail.fatal(`output-logs idle for ${idleTimeoutMs / 1000}s — no log activity, assuming hang`);
             done();
           }, idleTimeoutMs);

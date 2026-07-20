@@ -353,4 +353,65 @@ describe("AndroidLauncher", function() {
       ]);
     });
   });
+
+  // The log stream is filtered to the Titanium tag, so when a run hangs with no
+  // output there is nothing to diagnose from. These capture the wider state.
+  describe("captureDiagnostics()", function() {
+    const APP_ID = "net.thewaterbug.waterbug";
+
+    const PIDOF = `-s emulator-5554 shell pidof ${APP_ID}`;
+    const CRASH = "-s emulator-5554 logcat -b crash -d -t 50";
+    const TAIL = "-s emulator-5554 logcat -d -t 100 TiAPI:V AndroidRuntime:E *:E";
+
+    function diagnosticResponses(overrides = {}) {
+      return Object.assign({
+        "devices": DEVICES_OUTPUT,
+        [PIDOF]: "4321\n",
+        [CRASH]: "",
+        [TAIL]: "E AndroidRuntime: FATAL EXCEPTION\n",
+      }, overrides);
+    }
+
+    it("reports the app process id when it is running", async function() {
+      const launcher = new AndroidLauncher({ execFile: makeExecFile(diagnosticResponses()) });
+      const report = await launcher.captureDiagnostics(APP_ID);
+      expect(report).to.match(/4321/);
+    });
+
+    // `adb shell pidof` exits non-zero when no process matches, so the most
+    // important signal — the app never started — arrives as a command failure.
+    it("reports the app as not running when pidof exits non-zero", async function() {
+      const launcher = new AndroidLauncher({
+        execFile: makeExecFile(diagnosticResponses({ [PIDOF]: new Error("Command failed: pidof") }))
+      });
+      const report = await launcher.captureDiagnostics(APP_ID);
+      expect(report).to.match(/not running/i);
+      expect(report).to.not.match(/probe failed/i);
+    });
+
+    it("includes errors and Titanium output rather than the whole noisy buffer", async function() {
+      const launcher = new AndroidLauncher({ execFile: makeExecFile(diagnosticResponses()) });
+      const report = await launcher.captureDiagnostics(APP_ID);
+      expect(report).to.match(/FATAL EXCEPTION/);
+    });
+
+    it("includes the crash buffer, which survives the app dying", async function() {
+      const launcher = new AndroidLauncher({
+        execFile: makeExecFile(diagnosticResponses({ [CRASH]: "F DEBUG: signal 11 SIGSEGV\n" }))
+      });
+      const report = await launcher.captureDiagnostics(APP_ID);
+      expect(report).to.match(/SIGSEGV/);
+    });
+
+    // Diagnostics run on a path that is already failing — they must never
+    // replace the original failure with one of their own.
+    it("still reports what it could gather when a probe fails", async function() {
+      const launcher = new AndroidLauncher({
+        execFile: makeExecFile(diagnosticResponses({ [TAIL]: new Error("device offline") }))
+      });
+      const report = await launcher.captureDiagnostics(APP_ID);
+      expect(report).to.match(/4321/);
+      expect(report).to.match(/device offline/);
+    });
+  });
 });
