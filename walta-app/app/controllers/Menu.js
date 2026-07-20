@@ -27,13 +27,6 @@ bindView($, vm, {
 vm.on("identify", openSelectMethod);
 vm.on("confirmLogout", confirmLogout);
 
-// iOS silently drops accessibilityLabel writes made before the window opens,
-// leaving the accessibility id at its XML value. Re-apply once it is open.
-$.TopLevelWindow.addEventListener('open', function reapplyBindings() {
-  $.TopLevelWindow.removeEventListener('open', reapplyBindings);
-  vm.notifyListeners();
-});
-
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   vm.dispose();
   $.destroy();

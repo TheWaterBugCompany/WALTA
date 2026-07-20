@@ -51,6 +51,20 @@ describe("bindView", function () {
     vm = makeVm();
   });
 
+  // iOS silently drops some property writes (accessibilityLabel) made before
+  // the view is realised, so the first layout is the earliest point the values
+  // are guaranteed to stick.
+  it("re-applies bindings once the view completes its first layout", function () {
+    const view = makeWidget();
+    $.getView = () => view;
+    bindView($, vm, { label: { text: "greeting" } });
+
+    $.label.text = "dropped by the platform";
+    view.fireEvent("postlayout");
+
+    expect($.label.text).to.equal("hi");
+  });
+
   it("assigns initial values from the VM on setup", function () {
     bindView($, vm, {
       label: { text: "greeting", visible: "logVisible" },
