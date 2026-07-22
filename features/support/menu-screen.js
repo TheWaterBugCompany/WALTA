@@ -1,9 +1,20 @@
 'use strict';
 const BaseScreen = require('./base-screen');
+const waitForSettled = require('./wait-for-settled');
 class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );
         this.presenceSelector = this.selector("Waterbug Survey");
+    }
+
+    // On iOS the Menu tears down and re-opens when LOGGEDIN fires, so a click
+    // issued the instant the "You are Logged in" label appears can land on the
+    // outgoing instance. Wait for the view to stop changing before proceeding.
+    async waitForLoginSettled() {
+        await this.waitForLabel("You are Logged in");
+        if ( this.isIos() ) {
+            await waitForSettled( () => this.driver.getPageSource() );
+        }
     }
     async login( email, password ) {
         await this.click('Log In');
