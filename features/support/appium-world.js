@@ -5,6 +5,7 @@
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { createMockCerdiServer } = require('./mock-cerdi-server');
+const recoverSession = require('./recover-session');
 
 const APP_ID = 'net.thewaterbug.waterbug';
 
@@ -168,13 +169,17 @@ async function sessionIsAlive() {
 // is freshly launched (iOS reinstalls; Android relaunches) and already at a
 // clean starting point.
 async function recoverSessionIfDead() {
-    if (await sessionIsAlive()) return false;
-    console.warn('[appium-world] driver session is dead — reconnecting');
-    global.driver = await global.launcher.reconnect();
-    if (global.platform === 'ios' && global.isSimulator) {
+    const reconnected = await recoverSession({
+        isAlive: sessionIsAlive,
+        reconnect: async () => {
+            console.warn('[appium-world] driver session is dead — reconnecting');
+            global.driver = await global.launcher.reconnect();
+        },
+    });
+    if (reconnected && global.platform === 'ios' && global.isSimulator) {
         await prepareIosSimApp();
     }
-    return true;
+    return reconnected;
 }
 
 async function teardown() {

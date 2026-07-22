@@ -573,7 +573,11 @@ jobs:
     needs: [changes, ios-build]
     if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
-    timeout-minutes: 30
+    # A healthy run is ~24 min and the WB-94 retry runs a second attempt in the
+    # same budget. With the reconnect now failing fast instead of hanging to the
+    # ceiling (WB-200), a fail-fast first attempt (~3 min) plus a full retry fits
+    # here with headroom; 30 min left no room once the suite duration crept up.
+    timeout-minutes: 45
     env:
       # Stable path for the prebuilt WebDriverAgent DerivedData. Cached
       # across runs and passed to Appium via the derivedDataPath capability
