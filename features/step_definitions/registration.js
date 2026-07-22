@@ -24,11 +24,7 @@ Given('I am logged in as {string}', {timeout: 120000}, async function(emailAddre
             bundleId: 'net.thewaterbug.waterbug',
         });
     }
-    await this.menu.waitForLabel("You are Logged in");
-    // iOS re-opens the Menu on LOGGEDIN; let it settle to avoid a stale click.
-    if (this.platform === 'ios') {
-        await new Promise(r => setTimeout(r, 1500));
-    }
+    await this.menu.waitForLoginSettled();
 });
 
 Given('the user "([^"]*)" does not exist', function(emailAddress) {

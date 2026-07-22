@@ -15,9 +15,7 @@ async function login(world, email) {
     } else {
         await world.driver.execute('mobile: deepLink', { url, bundleId: APP_ID });
     }
-    await world.menu.waitForLabel('You are Logged in');
-    // iOS re-opens the Menu on LOGGEDIN; let it settle to avoid a stale click.
-    if (world.platform === 'ios') await new Promise(r => setTimeout(r, 1500));
+    await world.menu.waitForLoginSettled();
 }
 
 async function waitUntil(predicate, { timeout = 60000, interval = 250 } = {}) {

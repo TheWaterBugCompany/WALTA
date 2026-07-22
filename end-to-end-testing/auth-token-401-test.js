@@ -17,8 +17,7 @@ async function login(world, email) {
     } else {
         await world.driver.execute('mobile: deepLink', { url, bundleId: APP_ID });
     }
-    await world.menu.waitForLabel('You are Logged in');
-    if (world.platform === 'ios') await new Promise(r => setTimeout(r, 1500));
+    await world.menu.waitForLoginSettled();
 }
 
 describe('E2E auth: 401 handling for server and user tokens', function () {
