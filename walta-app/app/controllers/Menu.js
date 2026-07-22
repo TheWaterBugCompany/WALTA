@@ -20,6 +20,7 @@ bindView($, vm, {
   identify:        { onClick: "identify" },
   history:         { onClick: "history" },
   gallery:         { onClick: "gallery" },
+  academy:         { onClick: "academy" },
   about:           { onClick: "about" }
 }, Alloy.CFG.colors);
 

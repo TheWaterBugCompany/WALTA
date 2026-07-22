@@ -52,6 +52,11 @@ class MenuViewModel extends ChangeNotifier {
     this._topics.fireTopicEvent(this._topics.ABOUT);
   }
 
+  // Placeholder for the training feature — the button is present but inert
+  // until Academy is built.
+  academy() {
+  }
+
   get isProduction() {
     return this._environment === "production";
   }
