@@ -116,6 +116,45 @@ describe("AppiumLauncher", function() {
     });
   });
 
+  describe("reconnect()", function() {
+    // Uses the real _createSession path (via an injected `remote`) so the
+    // connectionRetryTimeout handed to webdriverio is observable.
+    function makeRemote() {
+      const driver = { deleteSession: sinon.stub().resolves() };
+      const remote = sinon.stub().resolves(driver);
+      return { remote, driver };
+    }
+
+    it("waits the full cold-build timeout on the initial connect", async function() {
+      const { remote } = makeRemote();
+      const launcher = new AppiumLauncher("android", { remote, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      expect(remote.firstCall.args[0].connectionRetryTimeout).to.equal(600000);
+    });
+
+    // A mid-run reconnect is against an already-built WDA. If the session can't
+    // re-establish quickly the runner has collapsed, so it must not wait the
+    // full 10-minute cold-build budget — that's the 26-minute hang (WB-200).
+    it("uses a short connection timeout when reconnecting a dropped session", async function() {
+      const { remote } = makeRemote();
+      const launcher = new AppiumLauncher("android", { remote, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      await launcher.reconnect();
+      const reconnectTimeout = remote.secondCall.args[0].connectionRetryTimeout;
+      expect(reconnectTimeout).to.be.at.most(60000);
+      expect(reconnectTimeout).to.be.below(600000);
+    });
+
+    it("discards the dead session before rebuilding", async function() {
+      const { remote, driver } = makeRemote();
+      const launcher = new AppiumLauncher("android", { remote, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      await launcher.reconnect();
+      expect(driver.deleteSession.calledOnce).to.be.true;
+      expect(remote.calledTwice).to.be.true;
+    });
+  });
+
   describe("iOS simulator capabilities", function() {
     let originalSimUdid;
     let originalWdaDerived;

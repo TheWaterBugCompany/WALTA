@@ -11,6 +11,12 @@ import _ from "underscore";
 // runners — see WB-49.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_APPIUM_BIN = path.resolve(__dirname, "..", "node_modules", ".bin", "appium");
+// Cold WDA builds on CI can take ~8 min, so the initial connect waits long.
+const COLD_BUILD_TIMEOUT_MS = 600_000;
+// A mid-run reconnect is against an already-built WDA; if it doesn't come back
+// in a minute the runner has collapsed and waiting the cold-build budget just
+// burns CI time (WB-200).
+const RECONNECT_TIMEOUT_MS = 60_000;
 
 function defaultIsAppiumRunning() {
   return new Promise((resolve) => {
@@ -176,15 +182,16 @@ class AppiumLauncher {
     return caps;
   }
 
-  async _createSession(caps) {
+  async _createSession(caps, connectionRetryTimeout = COLD_BUILD_TIMEOUT_MS) {
     return this._remote({
       logLevel: 'error',
       hostname: 'localhost',
       port: 4723,
       // Allow plenty of time for cold WDA builds on CI runners — the
       // default connectionRetryTimeout of 120s expires while xcodebuild
-      // is still compiling WebDriverAgent on the first run.
-      connectionRetryTimeout: 600000,
+      // is still compiling WebDriverAgent on the first run. A reconnect
+      // passes a shorter value (see reconnect()).
+      connectionRetryTimeout,
       connectionRetryCount: 1,
       capabilities: caps
     });
@@ -211,13 +218,13 @@ class AppiumLauncher {
     throw new Error(`Appium server failed to start within ${this._serverStartTimeoutMs / 1000}s`);
   }
 
-  async connect() {
+  async connect({ connectionRetryTimeout } = {}) {
     if (this._driver) return this._driver;
     await this._ensureServer();
     const caps = this._buildCapabilities();
     this._driver = this._startAppium
       ? await this._startAppium(caps)
-      : await this._createSession(caps);
+      : await this._createSession(caps, connectionRetryTimeout);
     process.once('SIGINT', () => {
       if (this._driver) this._driver.deleteSession().catch(() => {}).finally(() => process.exit(0));
     });
@@ -233,7 +240,11 @@ class AppiumLauncher {
       try { await this._driver.deleteSession(); } catch (_) { /* already gone */ }
       this._driver = null;
     }
-    return this.connect();
+    // A reconnect is against an already-built WDA, unlike the cold-build
+    // initial connect. If the session can't re-establish quickly the runner
+    // has collapsed, so don't wait the full cold-build budget — that's what
+    // turned a dropped session into a 26-minute job-timeout hang (WB-200).
+    return this.connect({ connectionRetryTimeout: RECONNECT_TIMEOUT_MS });
   }
 
   async stop() {
