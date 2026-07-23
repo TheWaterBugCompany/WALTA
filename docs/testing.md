@@ -68,6 +68,44 @@ intent extras / iOS process arguments — see `alloy.js` + `AppiumLauncher`), so
 any build can be redirected to the mock without rebuilding. The server must be
 running before the app launches, because auto-login hits `/token/create` at boot.
 
+## iOS system permission alerts — dismiss by polling, don't pre-grant
+
+On a fresh simulator the app raises system permission alerts — notifications
+(badge, at startup) and the photo library (at the gallery) — that overlay the
+app. A system alert survives `walta://reset`, so one left on screen fails the
+first screen check *and every scenario after it*.
+
+**Don't try to pre-grant them.** It keeps looking tempting and keeps not
+working, so this is the standing decision: `xcrun simctl privacy` has **no
+`notifications` service at all**, and in practice its `photos` grant doesn't
+satisfy the iOS-14+ "full access" request either (the alert still shows). The
+only tool that pre-grants notifications is `applesimutils` — a non-Apple brew
+dependency — and mixing it with `simctl` is fragile: its SpringBoard restart
+reverts a grant made just before it.
+
+**Dismiss by polling instead.** Tap the accept button and re-check until the
+target screen appears, retrying — via the shared
+[dismiss-permission-alert.js](../features/support/dismiss-permission-alert.js):
+
+```js
+await dismissPermissionAlert({
+    isDone:    () => isDisplayed('~Waterbug Survey.'),         // alert gone once the menu is reachable
+    tapAccept: () => tapIfDisplayed("… label == 'Allow'"),    // no-op if it isn't showing
+    sleep,
+});
+```
+
+A single fixed-timeout tap is the trap: the alert can appear *after* the wait
+window closes, and a tap WDA reports as succeeded (HTTP 200) may not actually
+close a SpringBoard alert — with no retry, either miss leaves it up. The
+notification path ([appium-world.js](../features/support/appium-world.js)) and
+the photo path
+([ios-photo-library-screen.js](../features/support/ios-photo-library-screen.js))
+both go through that helper.
+
+Android is different: its runtime permissions *can* be pre-granted reliably with
+`adb shell pm grant` (see `connectAndPrepareApp`), so there it does exactly that.
+
 ## Locator strategy on iOS (acceptance)
 
 Locator choice is a *performance* decision on iOS, not just a matching one. To

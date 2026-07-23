@@ -136,6 +136,24 @@ class BaseScreen {
     async click( sel ) {
         await this.clickRaw(this.selector( sel ) );
     }
+
+    // Non-throwing probe/tap for a full selector — building blocks for a
+    // poll-and-dismiss loop, where a missing or stale element just means "try
+    // again next round", not a failure.
+    async isDisplayedRaw( sel ) {
+        try {
+            return await (await this.driver.$( sel )).isDisplayed();
+        } catch (_) {
+            return false;
+        }
+    }
+
+    async tapIfDisplayedRaw( sel ) {
+        try {
+            const el = await this.driver.$( sel );
+            if ( await el.isDisplayed() ) await el.click();
+        } catch (_) { /* not present or stale — the next poll retries */ }
+    }
 }
 
 module.exports = BaseScreen;

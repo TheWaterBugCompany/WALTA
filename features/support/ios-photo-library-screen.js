@@ -1,4 +1,5 @@
 const BaseScreen = require('./base-screen');
+const dismissPermissionAlert = require('./dismiss-permission-alert');
 
 // Drives the real iOS photo picker presented by Ti.Media.openPhotoGallery.
 // The first open shows the photo-library permission alert; we grant full
@@ -10,21 +11,20 @@ class IosPhotoLibraryScreen extends BaseScreen {
         this.presenceSelector = "-ios class chain:**/XCUIElementTypeNavigationBar[`name == 'Photos'`]";
     }
 
-    async dismissPermissionAlertIfPresent() {
-        try {
-            var allow = await this.driver.$("-ios predicate string:type == 'XCUIElementTypeButton' AND name == 'Allow Full Access'");
-            await allow.waitForDisplayed({ timeout: 8000 });
-            await allow.click();
-        } catch (e) { /* already granted on a prior open — no alert */ }
-    }
-
     async waitFor() {
-        await this.dismissPermissionAlertIfPresent();
-        // The out-of-process PHPicker is slow to present — ~10s even on an idle
-        // local sim, and well past 20s on contended CI runners (the same delay
-        // the WB-176 blind spinner hides from users). Wait generously; this is a
-        // ceiling, so it doesn't slow runs where the grid shows quickly.
-        await this.waitForRaw( this.presenceSelector, "iOS photo picker grid did not appear", 90000 );
+        // The first open shows the photo-library permission alert, and the
+        // out-of-process PHPicker is slow to present — ~10s even on an idle local
+        // sim, well past 20s on contended CI. Pre-granting isn't reliable (see
+        // docs/testing.md), so poll: tap "Allow Full Access" until the grid
+        // appears — a single fixed-timeout tap misses a late alert or one whose
+        // tap didn't register. The grid showing is the signal the alert is gone.
+        const allowFullAccess = "-ios predicate string:type == 'XCUIElementTypeButton' AND name == 'Allow Full Access'";
+        await dismissPermissionAlert({
+            isDone: () => this.isDisplayedRaw( this.presenceSelector ),
+            tapAccept: () => this.tapIfDisplayedRaw( allowFullAccess ),
+            sleep: (ms) => this.sleep(ms),
+        });
+        await this.waitForRaw( this.presenceSelector, "iOS photo picker grid did not appear", 5000 );
     }
 
     async selectFirstPhoto() {
