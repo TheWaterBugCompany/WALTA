@@ -199,5 +199,6 @@ module.exports = {
     connectAndPrepareApp,
     resetApp,
     recoverSessionIfDead,
+    sessionIsAlive,
     teardown,
 };

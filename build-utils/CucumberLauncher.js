@@ -2,6 +2,7 @@ import { spawn as defaultSpawn } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 import { isAppiumRunning as defaultIsAppiumRunning } from "./AppiumLauncher.js";
+import { parseInfraFailures } from "../features/support/infra-failure-marker.js";
 
 // Direct binary path — npx resolution adds ~8 min cold-start latency on
 // macOS-15 CI runners.
@@ -72,23 +73,43 @@ class CucumberLauncher {
   async run() {
     await this._ensureServer();
 
-    const code = await new Promise((resolve) => {
+    let { code, sawSummary, output } = await this._runCucumber([
+      ...(this._name ? ["--name", this._name] : []),
+    ]);
+
+    if (code !== 0 && !sawSummary) {
+      // Non-zero exit before any scenario completed — infrastructure problem,
+      // not a test failure. Surface as EX_TEMPFAIL so the CI shell can retry.
+      this._stopServer();
+      return EX_TEMPFAIL;
+    }
+
+    if (code !== 0) {
+      // Scenarios ran and something failed. Re-run only the ones a contended
+      // runner killed via a dropped session (marked by the cucumber After
+      // hook), on a fresh session — but only if *every* failure was infra. A
+      // genuine defect alongside them must stay red and never be retried
+      // (WB-200).
+      const infra = parseInfraFailures(output);
+      if (infra.length > 0 && infra.length === failedCount(output)) {
+        const nameArgs = infra.flatMap(name => ["--name", `^${escapeRegExp(name)}$`]);
+        ({ code } = await this._runCucumber(nameArgs));
+      }
+    }
+
+    this._stopServer();
+    return code;
+  }
+
+  _runCucumber(extraArgs) {
+    return new Promise((resolve) => {
       const child = this._spawn(
         "npx",
-        [
-          "cucumber-js", "--tags", this._tags,
-          ...(this._name ? ["--name", this._name] : []),
-          // @gallery drives the real out-of-process iOS photo picker, which WDA
-          // intermittently crashes under peak CI contention — the session dies
-          // mid-scenario. Retry only that scenario; the Before hook's
-          // recoverSessionIfDead rebuilds the session so each retry starts fresh.
-          "--retry", "2", "--retry-tag-filter", "@gallery",
-          "--force-exit",
-        ],
+        ["cucumber-js", "--tags", this._tags, ...extraArgs, "--force-exit"],
         {
-          // Piped (not 'inherit') so we can watch stdout/stderr for the
-          // scenarios-summary marker. Output is still streamed live to
-          // the parent below — no log capture, just a tee with a regex test.
+          // Piped (not 'inherit') so we can watch for the scenarios-summary
+          // marker and the After hook's infra-failure markers. Output is still
+          // streamed live to the parent.
           stdio: ['ignore', 'pipe', 'pipe'],
           env: {
             ...process.env,
@@ -99,32 +120,31 @@ class CucumberLauncher {
       );
 
       let sawSummary = false;
+      let output = "";
       const watch = (source, sink) => {
         source.on('data', (chunk) => {
           sink.write(chunk);
-          if (!sawSummary && SCENARIOS_SUMMARY.test(chunk.toString())) {
-            sawSummary = true;
-          }
+          const text = chunk.toString();
+          output += text;
+          if (!sawSummary && SCENARIOS_SUMMARY.test(text)) sawSummary = true;
         });
       };
       watch(child.stdout, process.stdout);
       watch(child.stderr, process.stderr);
 
-      child.on("exit", (exitCode) => {
-        if (exitCode !== 0 && !sawSummary) {
-          // Non-zero exit before any scenario completed — infrastructure
-          // problem, not a test failure. Surface as EX_TEMPFAIL so the
-          // CI shell can retry exactly this kind of failure.
-          resolve(EX_TEMPFAIL);
-          return;
-        }
-        resolve(exitCode);
-      });
+      child.on("exit", (exitCode) => resolve({ code: exitCode, sawSummary, output }));
     });
-
-    this._stopServer();
-    return code;
   }
+}
+
+// "9 scenarios (8 passed, 1 failed)" → 1. Zero when no "failed" is reported.
+function failedCount(output) {
+  const match = output.match(/\d+ scenarios? \([^)]*?(\d+) failed[^)]*\)/);
+  return match ? Number(match[1]) : 0;
+}
+
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 export default CucumberLauncher;
