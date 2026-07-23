@@ -6,6 +6,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { createMockCerdiServer } = require('./mock-cerdi-server');
 const recoverSession = require('./recover-session');
+const dismissPermissionAlert = require('./dismiss-permission-alert');
 
 const APP_ID = 'net.thewaterbug.waterbug';
 
@@ -114,21 +115,31 @@ async function prepareIosSimApp() {
         if (state === 4) break;
         await new Promise(r => setTimeout(r, 500));
     }
-    await acceptNotificationPrompt();
+    // index-app requests notification (badge) permission at startup (WB-10); the
+    // system alert overlays the menu. Pre-granting it isn't an option — simctl
+    // privacy has no notifications service — so dismiss it by tapping. Poll and
+    // re-tap until the menu is actually reachable: a one-shot tap misses a late
+    // alert and a tap WDA reports as succeeded but that didn't close the alert.
+    await dismissPermissionAlert({
+        isDone: () => isDisplayed('~Waterbug Survey.'),
+        tapAccept: () => tapIfDisplayed("-ios predicate string:label == 'Allow'"),
+        sleep: (ms) => new Promise(r => setTimeout(r, ms)),
+    });
 }
 
-// index-app requests notification (badge) permission at startup (WB-10);
-// accept the system prompt so it doesn't overlay the menu and block the
-// first scenario. noReset means it's only asked once per sim, so a single
-// accept in BeforeAll clears it for the whole run.
-async function acceptNotificationPrompt() {
+async function isDisplayed(selector) {
     try {
-        const allow = await global.driver.$("-ios predicate string:label == 'Allow'");
-        await allow.waitForDisplayed({ timeout: 10000 });
-        await allow.click();
-    } catch (e) {
-        console.warn(`[appium-world] no notification permission prompt to accept: ${e.message}`);
+        return await (await global.driver.$(selector)).isDisplayed();
+    } catch (_) {
+        return false;
     }
+}
+
+async function tapIfDisplayed(selector) {
+    try {
+        const el = await global.driver.$(selector);
+        if (await el.isDisplayed()) await el.click();
+    } catch (_) { /* not present or stale — the next poll retries */ }
 }
 
 // In-app reset via the `walta://reset` deeplink (lib/util/AppReset.js).
