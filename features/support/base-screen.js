@@ -1,4 +1,5 @@
 var { expect } = require('chai');
+var isSessionDeadError = require('./is-session-dead-error');
 class BaseScreen {
     constructor( world ) {
         this.driver = world.driver;
@@ -20,11 +21,21 @@ class BaseScreen {
         return textElement.getText();
     }
 
-    async waitForRaw(sel, message, timeout = 90000) {
-        await this.driver.waitUntil( async () => {
-            var el = await this.driver.$( sel );
-            return await el.isDisplayed();
-        }, { timeout, timeoutMsg: message });
+    async waitForRaw(sel, message, timeout = 90000, pollMs = 500) {
+        const deadline = Date.now() + timeout;
+        do {
+            try {
+                var el = await this.driver.$( sel );
+                if ( await el.isDisplayed() ) return;
+            } catch (e) {
+                // A dead session is infra, not a slow render — abort now rather
+                // than hammering the corpse for the full timeout (WB-200). Any
+                // other error means the element isn't there yet: keep polling.
+                if ( isSessionDeadError(e) ) throw e;
+            }
+            await this.sleep(pollMs);
+        } while (Date.now() < deadline);
+        throw new Error(message);
     }
 
     async waitFor() {
