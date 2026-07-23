@@ -191,7 +191,7 @@ describe("CucumberLauncher", function() {
 
       const [cmd, args] = fakeSpawn.firstCall.args;
       expect(cmd).to.equal("npx");
-      expect(args).to.deep.equal(["cucumber-js", "--tags", "@smoke", "--retry", "2", "--retry-tag-filter", "@gallery", "--force-exit"]);
+      expect(args).to.deep.equal(["cucumber-js", "--tags", "@smoke", "--force-exit"]);
     });
 
     it("defaults tags to 'not @skip' when none are provided", async function() {
@@ -202,7 +202,7 @@ describe("CucumberLauncher", function() {
       const promise = launcher.run();
       await exitAfterSpawn(fakeSpawn, 0, 0);
       await promise;
-      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["cucumber-js", "--tags", "not @skip", "--retry", "2", "--retry-tag-filter", "@gallery", "--force-exit"]);
+      expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["cucumber-js", "--tags", "not @skip", "--force-exit"]);
     });
 
     it("passes --name <pattern> to cucumber-js when name is provided", async function() {
@@ -215,7 +215,7 @@ describe("CucumberLauncher", function() {
       await exitAfterSpawn(fakeSpawn, 0, 0);
       await promise;
       expect(fakeSpawn.firstCall.args[1]).to.deep.equal(
-        ["cucumber-js", "--tags", "not @skip", "--name", "Log in with existing", "--retry", "2", "--retry-tag-filter", "@gallery", "--force-exit"]
+        ["cucumber-js", "--tags", "not @skip", "--name", "Log in with existing", "--force-exit"]
       );
     });
 
@@ -310,6 +310,70 @@ describe("CucumberLauncher", function() {
       const wait = exitAfterSpawnEmit(fakeSpawn, 0, { code: 0 });
       await wait;
       expect(await promise).to.equal(0);
+    });
+  });
+
+  // WB-200: a scenario killed by an infra session-drop is marked by the
+  // cucumber After hook. When every failure is infra, re-run just those
+  // scenarios on a fresh session rather than failing the whole suite.
+  describe("infra-failure re-run", function() {
+    const INFRA_MARKER = "[infra-failure] session-dead :: ";
+
+    it("re-runs only the infra-failed scenario by name and returns its result", async function() {
+      const child0 = makeFakeChild();
+      const child1 = makeFakeChild();
+      fakeSpawn.onFirstCall().returns(child0);
+      fakeSpawn.onSecondCall().returns(child1);
+      const launcher = new CucumberLauncher({ spawn: fakeSpawn, isAppiumRunning: fakeIsRunning });
+
+      const promise = launcher.run();
+      await exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: [`${INFRA_MARKER}Sync from history\n`, "1 scenario (1 failed)\n"],
+        code: 1,
+      });
+      await exitAfterSpawnEmit(fakeSpawn, 1, {
+        stdoutChunks: ["1 scenario (1 passed)\n"],
+        code: 0,
+      });
+
+      expect(await promise).to.equal(0);
+      expect(fakeSpawn.calledTwice, "should have re-run cucumber once").to.be.true;
+      const rerunArgs = fakeSpawn.secondCall.args[1];
+      expect(rerunArgs).to.include("--name");
+      expect(rerunArgs.some(a => /Sync from history/.test(a)), "re-run should target the failed scenario by name").to.be.true;
+    });
+
+    it("does not re-run, and stays red, when a genuine failure sits alongside an infra one", async function() {
+      const launcher = new CucumberLauncher({ spawn: fakeSpawn, isAppiumRunning: fakeIsRunning });
+      const promise = launcher.run();
+      // 2 failed, but only 1 is infra-marked → the other is a real defect.
+      await exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: [`${INFRA_MARKER}Flaky sync\n`, "5 scenarios (3 passed, 2 failed)\n"],
+        code: 1,
+      });
+      expect(await promise).to.equal(1);
+      expect(fakeSpawn.calledOnce, "must not re-run when a genuine failure is present").to.be.true;
+    });
+
+    it("re-runs at most once — a re-run that dies on infra again stays red", async function() {
+      const child0 = makeFakeChild();
+      const child1 = makeFakeChild();
+      fakeSpawn.onFirstCall().returns(child0);
+      fakeSpawn.onSecondCall().returns(child1);
+      const launcher = new CucumberLauncher({ spawn: fakeSpawn, isAppiumRunning: fakeIsRunning });
+
+      const promise = launcher.run();
+      await exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: [`${INFRA_MARKER}Sync from history\n`, "1 scenario (1 failed)\n"],
+        code: 1,
+      });
+      await exitAfterSpawnEmit(fakeSpawn, 1, {
+        stdoutChunks: [`${INFRA_MARKER}Sync from history\n`, "1 scenario (1 failed)\n"],
+        code: 1,
+      });
+
+      expect(await promise).to.equal(1);
+      expect(fakeSpawn.calledTwice, "should not re-run more than once").to.be.true;
     });
   });
 });

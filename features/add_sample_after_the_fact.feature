@@ -4,7 +4,6 @@ I want to enter a sample I collected in the field earlier, choosing the
 photos I already took from my phone's gallery and setting the survey date
 to the day I actually collected it.
 
-@gallery
 Scenario: Enter a previously collected sample from gallery photos with a back dated survey date
   Given I am logged in as "test@example.com"
     And the GPS has a fix

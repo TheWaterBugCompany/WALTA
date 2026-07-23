@@ -1,7 +1,8 @@
 'use strict';
-const { AfterAll, BeforeAll, Before, setDefaultTimeout } = require('@cucumber/cucumber');
+const { AfterAll, BeforeAll, Before, After, Status, setDefaultTimeout } = require('@cucumber/cucumber');
 const { setUpWorld } = require('./all-screens');
-const { startMockServer, connectAndPrepareApp, resetApp, recoverSessionIfDead, teardown } = require('./appium-world');
+const { startMockServer, connectAndPrepareApp, resetApp, recoverSessionIfDead, sessionIsAlive, teardown } = require('./appium-world');
+const { markerLine } = require('./infra-failure-marker');
 
 // Device interactions are slow, and contested CI runners run ~2x slower
 // (Android acceptance: ~5min off-peak vs ~9min at 10-15 UTC peak), so give
@@ -33,6 +34,18 @@ Before(async function () {
         // A reconnected app is freshly launched and already at a clean start;
         // only the reuse path needs the in-app reset.
         await resetApp();
+    }
+});
+
+After(async function (scenario) {
+    // Classify a failure by its cause: if the session is dead the scenario was
+    // killed by an infra collapse (contended runner dropped WDA), not a real
+    // defect. Emit a marker so CucumberLauncher can re-run just these on a
+    // fresh session, while genuine failures (session still alive) are left to
+    // fail. This replaces the hard-coded @gallery retry with cause-based
+    // handling that covers any scenario (WB-200).
+    if (scenario.result?.status === Status.FAILED && !(await sessionIsAlive())) {
+        console.log(markerLine(scenario.pickle.name));
     }
 });
 
