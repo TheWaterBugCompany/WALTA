@@ -20,6 +20,8 @@ For structural improvements without a behaviour change — the refactor phase of
 
 When iterating on `Ti.*` / Alloy code (controllers, view specs, cucumber scenarios), load the [fast-iteration](.claude/skills/fast-iteration/SKILL.md) skill — narrow with `--grep` and use `--liveview --reuse-server` so each iteration is seconds, not minutes. Skip this skill when the change is pure JS — `npx grunt unit-test-node` is faster.
 
+When building or restyling a screen (view/TSS work), **always drive it from a device spec and iterate on screenshots** in `--manual` mode — don't reason about Alloy/TSS layout blind. See [docs/testing.md](docs/testing.md) "Designing or restyling a screen".
+
 When a code smell surfaces mid-session — tangled deps, hidden state, a function doing two things, a workaround stacking on a workaround — pause and flag it for review rather than silently restructuring or pressing on. Code happens fast in these sessions; the human reviewer is the project's refactor-detector, and surfacing smells gives them a checkpoint to decide refactor-now vs. carry-on.
 
 ## Workflow

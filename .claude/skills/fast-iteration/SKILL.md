@@ -127,6 +127,31 @@ npx grunt --platform=ios --simulator --liveview --reuse-server --grep="user logs
 - **Acceptance suite degrades after many runs in a session (boot hangs, WDA/session weirdness even with a fresh server)** — the simulator accumulates TCC/WDA/session cruft. `xcrun simctl shutdown <udid> && xcrun simctl erase <udid> && xcrun simctl boot <udid>` (then `xcrun simctl bootstatus <udid> -b`) clears it; the next run rebuilds WDA (slower) but boots clean. Reach for this when a scenario that passed earlier in the session starts failing at boot for no code reason.
 - **App hangs at `[vite] connected.` with no further output** — a LiveView vite plugin errored while serving a source file; the server returned HTTP 500 with an HTML error page, and the Titanium require path hangs trying to eval it as JS. Curl the server directly for a specific file to see the real error: `curl -s http://<serve-host>:8323/lib/<path>.js | head -40`. For the exact request the client was fetching, dump the sim log: `xcrun simctl spawn booted log show --last 1m --predicate 'process == "Waterbug"' | grep ':8323'`. Historical cause: a plain JS class placed under `app/lib/models/` was matched by the Alloy Model plugin regex and run through `compileModel`, which only understands Backbone-style model definitions (fixed in liveview `fix/android-emulator-unit-test-support` by anchoring the regex to `appDir`).
 
+## Designing or restyling a screen — always write a device spec + iterate on screenshots
+
+For any screen build or restyle (view/TSS work), **write a device spec that
+renders the controller and iterate on `--manual` screenshots.** Don't reason
+about Alloy/TSS layout blind — the screenshot loop is the only reliable way to
+see what the device renders, and it catches layout bugs a Node test can't (a
+label with both `top` and `bottom` in a composite parent stretches and hides the
+rest of the card; the screenshot shows it instantly).
+
+Gotchas that will waste a build if you miss them:
+
+- **Register the spec.** New `walta-app/app/spec/<Name>_spec.js` files must be
+  added to `walta-app/app/spec/index.js` (manual require list, not a glob) or
+  they never run.
+- **Unique `describe` name.** `--grep` matches the fully-qualified title across
+  *all* specs — `--grep=Academy` also hits `Menu`'s "…Academy…" test. Name the
+  describe distinctly (e.g. `"Academy modal"`) and grep that.
+- **Overlay/modal views** render faithfully because `wrapViewInWindow` hosts
+  them in a `Ti.UI.FILL` window — the same full-size host they get in the app.
+- **Don't `pkill -9` a build mid-flight** — a half-written `Waterbug.app` fails
+  install with `Missing bundle ID`. If that happens, `rm -rf walta-app/build/iphone`
+  and rebuild clean. Only kill the *manual hang* after you've taken the shot.
+
+See docs/testing.md "Designing or restyling a screen" for the spec skeleton.
+
 ## Validating the UI visually (iOS simulator, unit-test only)
 
 `--manual` leaves the window open after the spec finishes so you can
