@@ -4,9 +4,9 @@ const bindView = require("util/bindView");
 // Titanium-free screen controller for the Academy modal.
 // See docs/patterns/modals.md for the pattern.
 const BINDINGS = {
-  digit1:       { text: "digit1" },   // display-only boxes; tapping one opens the picker
-  digit2:       { text: "digit2" },
-  digit3:       { text: "digit3" },
+  digit1:       { title: "digit1" },   // tap-to-edit boxes (Buttons, so they stay findable when empty)
+  digit2:       { title: "digit2" },
+  digit3:       { title: "digit3" },
   digitPicker:  { visible: "pickerVisible", onClick: "cancelPicker" },  // tap backdrop to dismiss
   startButton:  { enabled: "startEnabled", onClick: "start" },
   closeButton:  { onClose: "close" },   // the ✕ (CloseButton Require)

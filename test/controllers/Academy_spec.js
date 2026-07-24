@@ -24,9 +24,9 @@ function makeBackboneTarget() {
 
 function makeView() {
   const view = {
-    digit1: makeWidget({ text: "" }),
-    digit2: makeWidget({ text: "" }),
-    digit3: makeWidget({ text: "" }),
+    digit1: makeWidget({ title: "" }),
+    digit2: makeWidget({ title: "" }),
+    digit3: makeWidget({ title: "" }),
     digitPicker: makeWidget({ visible: null }),
     startButton: makeWidget({ enabled: null }),
     closeButton: makeBackboneTarget(),
@@ -63,7 +63,7 @@ describe("Academy controller", function () {
 
   it("fills the tapped box with the picked digit and hides the picker", function () {
     pick(0, 5);
-    expect(view.digit1.text).to.equal("5");
+    expect(view.digit1.title).to.equal("5");
     expect(view.digitPicker.visible).to.equal(false);
   });
 
