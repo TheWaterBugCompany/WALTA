@@ -149,6 +149,19 @@ either:
 - **An `on<Event>` key** (e.g. `onClick`, `onClose`) — value is the name of a
   ViewModel method. The event name is lower-cased (`onClick` → `click`) and bound
   once; the handler calls the method with no arguments.
+- **A `twoWay("prop")` property** — the same VM-getter → widget flow as a plain
+  property, plus a `change` listener that writes the widget's `e.value` back into
+  the VM setter. Use it for inputs (text fields, switches) instead of hand-wiring
+  an `onChange` handler in the controller:
+
+  ```js
+  const { twoWay } = require("util/bindView");
+  bindView($, vm, { codeBox: { value: twoWay("code") } });
+  ```
+
+  The write-on-change diff-guard closes the feedback loop: the setter's
+  `notifyListeners()` re-runs the getter → widget write, but the widget already
+  holds that value so nothing is re-written (a text field's cursor is not reset).
 
 Event wiring feature-detects the target:
 
