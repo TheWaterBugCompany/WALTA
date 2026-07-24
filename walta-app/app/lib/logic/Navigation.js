@@ -26,11 +26,12 @@ Navigation.prototype.onCloseApp = function() {
 // stack, so they live outside the history. View owns the Titanium glue (building
 // the overlay controller, handing it to an optional lib/controllers/<name>, and
 // teardown); Navigation just names the concept.
-Navigation.prototype.openModal = function (name, args) {
+// async so the Main.js route's checkForErrors receives a promise, like openController.
+Navigation.prototype.openModal = async function (name, args) {
     return this.services.View.openModal(name, args || {}, this.services);
 }
 
-Navigation.prototype.closeModal = function () {
+Navigation.prototype.closeModal = async function () {
     return this.services.View.closeModal();
 }
 
