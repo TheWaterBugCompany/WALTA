@@ -22,6 +22,18 @@ Navigation.prototype.onCloseApp = function() {
     this.services.System.closeApp();
 }
 
+// Modals are overlaid on the current window rather than pushed onto the window
+// stack, so they live outside the history. View owns the Titanium glue (building
+// the overlay controller, handing it to an optional lib/controllers/<name>, and
+// teardown); Navigation just names the concept.
+Navigation.prototype.openModal = function (name, args) {
+    return this.services.View.openModal(name, args || {}, this.services);
+}
+
+Navigation.prototype.closeModal = function () {
+    return this.services.View.closeModal();
+}
+
 // implement me to open user dialogue
 Navigation.prototype.onDiscardEdits = async function () {
     // will reject if the user cancels
