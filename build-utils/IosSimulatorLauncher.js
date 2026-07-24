@@ -15,11 +15,12 @@ function buildLaunchArgv(launchArgs) {
 }
 
 class IosSimulatorLauncher {
-  constructor({ execFile = defaultExecFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)" } = {}) {
+  constructor({ execFile = defaultExecFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)", sleep = (ms) => new Promise(r => setTimeout(r, ms)) } = {}) {
     this._execFile = execFile;
     this._spawn = spawn;
     this._udid = udid;
     this._logProcessName = logProcessName;
+    this._sleep = sleep;
     this._booted = false;
     this._pid = null;
   }
@@ -40,11 +41,26 @@ class IosSimulatorLauncher {
   async connect() {
     if (this._booted) return this;
     if (!this._udid) throw new Error("IosSimulatorLauncher requires a udid");
-    try {
-      await this._exec(["simctl", "boot", this._udid]);
-    } catch (err) {
-      if (!/Unable to boot device in current state/.test(err.message)) throw err;
+    // A contended runner can fail `simctl boot` with a fatal that lands before
+    // cucumber runs — so it exits 1, not the EX_TEMPFAIL (75) the CI shell's
+    // infra retry looks for, and the whole job fails needing a manual re-run.
+    // Retry a bounded number of times ("already booted" is success), then wait
+    // for bootstatus so install/launch don't race a half-booted sim.
+    const MAX_ATTEMPTS = 3;
+    let lastErr = null;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        await this._exec(["simctl", "boot", this._udid]);
+        lastErr = null;
+        break;
+      } catch (err) {
+        if (/Unable to boot device in current state/.test(err.message)) { lastErr = null; break; }
+        lastErr = err;
+        if (attempt < MAX_ATTEMPTS) await this._sleep(2000);
+      }
     }
+    if (lastErr) throw lastErr;
+    await this._exec(["simctl", "bootstatus", this._udid], { timeout: 180000 });
     this._booted = true;
     return this;
   }

@@ -53,7 +53,65 @@ describe("IosSimulatorLauncher", function() {
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
       await launcher.connect();
       await launcher.connect();
-      expect(fakeExecFile.callCount).to.equal(1); // boot once, then idempotent
+      const bootCalls = fakeExecFile.getCalls().filter(c => c.args[1][1] === "boot");
+      expect(bootCalls, "boot once, then idempotent").to.have.lengthOf(1);
+    });
+
+    it("waits for bootstatus after booting so install/launch don't race a half-booted sim", async function() {
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl bootstatus ${UDID}`]: "",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.connect();
+      const bootstatus = fakeExecFile.getCalls().find(c => c.args[1][1] === "bootstatus");
+      expect(bootstatus, "expected a bootstatus call after boot").to.exist;
+      expect(bootstatus.args[1]).to.deep.equal(["simctl", "bootstatus", UDID]);
+    });
+
+    it("retries a transient boot failure and succeeds on the retry", async function() {
+      // A contended runner can fail `simctl boot` with a fatal that lands
+      // before cucumber, so the exit-75 infra retry never sees it. Retry here.
+      let bootAttempts = 0;
+      const fakeExecFile = sinon.stub().callsFake((_cmd, args, _opts, callback) => {
+        const key = args.join(" ");
+        if (key === `simctl boot ${UDID}`) {
+          bootAttempts++;
+          if (bootAttempts === 1) callback(new Error("Command failed: xcrun simctl boot"), "", "");
+          else callback(null, "", "");
+        } else {
+          callback(null, "", "");
+        }
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID, sleep: () => Promise.resolve() });
+      await launcher.connect();
+      expect(bootAttempts).to.equal(2);
+    });
+
+    it("throws after three boot attempts when boot keeps failing", async function() {
+      const err = new Error("Command failed: xcrun simctl boot");
+      const fakeExecFile = makeExecFile({ [`simctl boot ${UDID}`]: err });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID, sleep: () => Promise.resolve() });
+      let caught;
+      try {
+        await launcher.connect();
+      } catch (e) { caught = e; }
+      expect(caught, "expected connect to reject after retries exhausted").to.exist;
+      const bootCalls = fakeExecFile.getCalls().filter(c => c.args[1][1] === "boot");
+      expect(bootCalls, "three boot attempts before giving up").to.have.lengthOf(3);
+    });
+
+    it("does not retry when the sim is already booted", async function() {
+      const err = new Error("Unable to boot device in current state: Booted");
+      let bootAttempts = 0;
+      const fakeExecFile = sinon.stub().callsFake((_cmd, args, _opts, callback) => {
+        const key = args.join(" ");
+        if (key === `simctl boot ${UDID}`) { bootAttempts++; callback(err, "", err.message); }
+        else callback(null, "", "");
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID, sleep: () => Promise.resolve() });
+      await launcher.connect(); // should not throw
+      expect(bootAttempts, "already-booted is success, not retried").to.equal(1);
     });
 
     it("throws immediately when udid is not provided", async function() {
