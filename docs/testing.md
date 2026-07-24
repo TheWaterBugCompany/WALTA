@@ -225,6 +225,36 @@ npx grunt --platform=android --simulator --liveview --reuse-server \
 
 Combine freely with `--liveview --reuse-server` for sub-30-second iteration on a focused test.
 
+### Designing or restyling a screen — always drive it from a device spec
+
+When you build or restyle a screen (view/TSS work), **write a device unit spec that renders the controller and iterate on screenshots in `--manual` mode.** Reasoning about Alloy/TSS layout is unreliable; the spec + screenshot loop is how you see what the device actually renders, and it catches layout bugs a Node test never could — e.g. a label with both `top` and `bottom` set stretches in a composite parent and hides the rest of the card, which the screenshot exposes immediately.
+
+1. Add `walta-app/app/spec/<Name>_spec.js` that renders the controller in a window, and **register `<Name>` in `walta-app/app/spec/index.js`** — the spec list is a manual require list, not a glob, so a new file won't run until it's listed. Give the `describe` a unique name so `--grep` doesn't collide with another spec's test titles (`--grep=Academy` also matches `Menu`'s "…Academy…" test; `--grep="Academy modal"` is unique).
+
+   ```js
+   var { wrapViewInWindow, windowOpenTest, closeWindow } = require('spec/util/TestUtils');
+   describe('Academy modal', function() {
+     var ctl, win;
+     beforeEach(function(done) {
+       ctl = Alloy.createController("Academy");
+       win = wrapViewInWindow( ctl.getView() );   // FILL window hosts the overlay faithfully
+       windowOpenTest( win, done );
+     });
+     afterEach(function(done) { closeWindow( win, done ); });   // no-op under --manual
+     it('renders', function() { expect(ctl.startButton).to.exist; });
+   });
+   ```
+
+2. Run in manual mode and screenshot; the window stays open for inspection:
+
+   ```bash
+   npx grunt --platform=ios --simulator --liveview --grep="Academy modal" --manual unit-test
+   # then, while it holds open:
+   xcrun simctl io booted screenshot /tmp/shot.png && sips -r 270 /tmp/shot.png --out /tmp/shot-ls.png
+   ```
+
+3. Adjust the TSS/XML, re-run, re-shoot until it matches the design. The app is landscape-locked, so rotate the portrait screenshot (`sips -r 270`). Kill the hung manual run between iterations (`pkill -9 -f "titanium serve"`).
+
 ### LiveView with other tasks
 
 ```bash
