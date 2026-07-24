@@ -21,6 +21,7 @@ const SampleEditMenuScreen = require('./sample-edit-menu-screen.js');
 const SyncFeedbackScreen = require('./sync-feedback-screen.js');
 const createPhotoLibraryScreen = require('./photo-library-screen.js');
 const createSurveyDatePickerScreen = require('./survey-date-picker-screen.js');
+const AcademyScreen = require('./academy-screen.js');
 
 function setUpWorld(world) {
     world.login = new LoginScreen( world );
@@ -48,6 +49,7 @@ function setUpWorld(world) {
     world.syncFeedback = new SyncFeedbackScreen( world );
     world.photoLibrary = createPhotoLibraryScreen( world );
     world.surveyDatePicker = createSurveyDatePickerScreen( world );
+    world.academy = new AcademyScreen( world );
 }
 
 async function swipeRight( world, { start_x=30, end_x=0.95 } = {} ) {
