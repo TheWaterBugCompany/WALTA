@@ -1,11 +1,17 @@
 ".academyWindow": {
 	width: "72%",
-	height: "82%",
+	height: Ti.UI.SIZE,
 	layout: "vertical"
 }
 
+"#academyTitle": {
+	top: "12dp",
+	height: Ti.UI.SIZE,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "26dp" }
+}
+
 ".academyIntro": {
-	top: "4%",
+	top: "16dp",
 	left: "6%",
 	right: "6%",
 	color: Alloy.CFG.colors.primary,
@@ -13,7 +19,7 @@
 }
 
 ".academyPrompt": {
-	top: "4%",
+	top: "16dp",
 	left: "6%",
 	right: "6%",
 	color: Alloy.CFG.colors.primary,
@@ -21,7 +27,7 @@
 }
 
 ".codeRow": {
-	top: "4%",
+	top: "16dp",
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE
 }
@@ -54,18 +60,22 @@
 }
 
 ".academyButtons": {
-	top: "6%",
-	bottom: "4%",
+	top: "24dp",
+	bottom: "20dp",
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE
 }
 
-".academyButtons > .actionButton": {
-	left: "8dp",
-	right: "8dp"
+"#cancelButton": {
+	right: "12dp",
+	color: Alloy.CFG.colors.primary,
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.primary,
+	borderWidth: "1dp"
 }
 
-".startButton": {
+"#startButton": {
+	left: "12dp",
 	color: Alloy.CFG.colors.white,
 	backgroundColor: Alloy.CFG.colors.success,
 	borderColor: Alloy.CFG.colors.success

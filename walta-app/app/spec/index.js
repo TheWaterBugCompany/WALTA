@@ -48,6 +48,7 @@ var SPEC_FILES = [
   "LogIn",
   "MediaUtil",
   "MethodSelect",
+  "Academy",
   "Menu",
   "Notes",
   "IosSurveyDatePicker",
