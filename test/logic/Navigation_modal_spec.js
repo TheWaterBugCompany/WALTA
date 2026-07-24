@@ -28,6 +28,12 @@ describe("Navigation modals", function () {
     expect(calls[0].args).to.deep.equal({});
   });
 
+  // The Main.js route wraps the result in checkForErrors, which calls .catch —
+  // so openModal must hand back a promise even though View.openModal is sync.
+  it("openModal returns a thenable", function () {
+    expect(nav.openModal("Academy")).to.have.property("then").that.is.a("function");
+  });
+
   it("closeModal delegates to View.closeModal", function () {
     nav.closeModal();
     expect(calls).to.deep.equal([{ fn: "closeModal" }]);
