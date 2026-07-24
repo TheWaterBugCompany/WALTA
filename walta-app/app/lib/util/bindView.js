@@ -12,6 +12,8 @@
 //
 // Keys inside each widget entry:
 //   <plain>          — widget property ← vm getter (re-applied on notify)
+//   <plain>: twoWay("prop") — as above, plus the widget's `change` event
+//                    writes back into the vm setter (two-way binding)
 //   on<EventName>    — widget event  → vm method (camelCase → lowercase)
 //
 // Event wiring feature-detects the target:
@@ -30,6 +32,18 @@
 
 const EVENT_KEY_RE = /^on([A-Z].*)$/;
 
+function twoWay(prop) {
+  return { __twoWay: true, prop };
+}
+
+function isTwoWay(ref) {
+  return ref !== null && typeof ref === "object" && ref.__twoWay === true;
+}
+
+function propOf(ref) {
+  return isTwoWay(ref) ? ref.prop : ref;
+}
+
 module.exports = function bindView($, vm, bindings, palette) {
   validate($, vm, bindings);
 
@@ -41,12 +55,13 @@ module.exports = function bindView($, vm, bindings, palette) {
       const widgetBindings = bindings[widgetId];
       for (const key in widgetBindings) {
         if (EVENT_KEY_RE.test(key)) continue;
-        let value = vm[widgetBindings[key]];
+        let value = vm[propOf(widgetBindings[key])];
         if (typeof value === "symbol" && palette) {
           value = palette[value.description];
         }
         // Only write on change: re-pushing an unchanged value into a text
-        // input on every notify would reset the cursor mid-edit.
+        // input on every notify would reset the cursor mid-edit. This same
+        // guard closes the two-way feedback loop (setter → notify → applyProps).
         if (widget[key] !== value) {
           widget[key] = value;
         }
@@ -54,17 +69,23 @@ module.exports = function bindView($, vm, bindings, palette) {
     }
   }
 
-  // One-time event wiring.
+  // One-time event wiring: on<Event> keys and two-way `change` write-back.
   for (const widgetId in bindings) {
     const widget = $[widgetId];
     const widgetBindings = bindings[widgetId];
     for (const key in widgetBindings) {
+      const ref = widgetBindings[key];
       const m = key.match(EVENT_KEY_RE);
-      if (!m) continue;
-      const eventName = m[1].toLowerCase();
-      const methodName = widgetBindings[key];
-      const handler = function () { vm[methodName](); };
-      eventTeardowns.push(attachEvent(widget, eventName, handler));
+      if (m) {
+        const eventName = m[1].toLowerCase();
+        const methodName = ref;
+        const handler = function () { vm[methodName](); };
+        eventTeardowns.push(attachEvent(widget, eventName, handler));
+      } else if (isTwoWay(ref)) {
+        const prop = ref.prop;
+        const handler = function (e) { vm[prop] = e.value; };
+        eventTeardowns.push(attachEvent(widget, "change", handler));
+      }
     }
   }
 
@@ -129,6 +150,13 @@ function validate($, vm, bindings) {
         if (typeof widget.addEventListener !== "function" && typeof widget.on !== "function") {
           throw new Error(`bindView: widget "${widgetId}" has no event mechanism for ${key}`);
         }
+      } else if (isTwoWay(ref)) {
+        if (!(ref.prop in vm)) {
+          throw new Error(`bindView: VM has no property "${ref.prop}" (bound two-way to ${widgetId}.${key})`);
+        }
+        if (typeof widget.addEventListener !== "function" && typeof widget.on !== "function") {
+          throw new Error(`bindView: widget "${widgetId}" has no event mechanism for two-way ${key}`);
+        }
       } else {
         if (!(ref in vm)) {
           throw new Error(`bindView: VM has no property "${ref}" (bound to ${widgetId}.${key})`);
@@ -137,3 +165,5 @@ function validate($, vm, bindings) {
     }
   }
 }
+
+module.exports.twoWay = twoWay;
