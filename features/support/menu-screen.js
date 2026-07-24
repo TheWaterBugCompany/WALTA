@@ -44,6 +44,10 @@ class MenuScreen extends BaseScreen {
       await this.click("Photo Gallery");
       await this.world.gallery.waitFor();
     }
+    async selectAcademy() {
+      await this.click("Academy");
+      await this.world.academy.waitFor();
+    }
     /*async selectMayflyMuster() {
       await this.click("menu_waterbug_survey_button");
       await this.world.siteDetails.waitFor();
