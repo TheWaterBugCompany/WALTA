@@ -23,14 +23,17 @@ function makeBackboneTarget() {
 }
 
 function makeView() {
-  return {
-    digit1: makeWidget({ value: "" }),
-    digit2: makeWidget({ value: "" }),
-    digit3: makeWidget({ value: "" }),
+  const view = {
+    digit1: makeWidget({ text: "" }),
+    digit2: makeWidget({ text: "" }),
+    digit3: makeWidget({ text: "" }),
+    digitPicker: makeWidget({ visible: null }),
     startButton: makeWidget({ enabled: null }),
     closeButton: makeBackboneTarget(),
     cancelButton: makeWidget({}),
   };
+  for (let d = 0; d <= 9; d++) view["keypad" + d] = makeWidget({});
+  return view;
 }
 
 describe("Academy controller", function () {
@@ -42,25 +45,48 @@ describe("Academy controller", function () {
     ctl = createAcademyController({ view, close: () => closed++, services: {} });
   });
 
-  function typeCode(a, b, c) {
-    view.digit1.fireEvent("change", { value: a });
-    view.digit2.fireEvent("change", { value: b });
-    view.digit3.fireEvent("change", { value: c });
+  // Tap a box, then tap a digit key — the picker flow that replaces typing.
+  function pick(boxIndex, digit) {
+    view["digit" + (boxIndex + 1)].fireEvent("click");
+    view["keypad" + digit].fireEvent("click");
   }
 
-  it("feeds typed digits into the ViewModel code", function () {
-    typeCode("1", "2", "3");
+  function pickCode(a, b, c) {
+    pick(0, a); pick(1, b); pick(2, c);
+  }
+
+  it("hides the picker until a box is tapped", function () {
+    expect(view.digitPicker.visible).to.equal(false);
+    view.digit1.fireEvent("click");
+    expect(view.digitPicker.visible).to.equal(true);
+  });
+
+  it("fills the tapped box with the picked digit and hides the picker", function () {
+    pick(0, 5);
+    expect(view.digit1.text).to.equal("5");
+    expect(view.digitPicker.visible).to.equal(false);
+  });
+
+  it("tapping the picker backdrop cancels editing without changing digits", function () {
+    view.digit1.fireEvent("click");
+    view.digitPicker.fireEvent("click");
+    expect(view.digitPicker.visible).to.equal(false);
+    expect(ctl.vm.code).to.equal("");
+  });
+
+  it("assembles the code from digits picked into each box", function () {
+    pickCode(1, 2, 3);
     expect(ctl.vm.code).to.equal("123");
   });
 
   it("disables Start until the code is complete", function () {
     expect(view.startButton.enabled).to.equal(false);
-    typeCode("1", "2", "3");
+    pickCode(1, 2, 3);
     expect(view.startButton.enabled).to.equal(true);
   });
 
   it("Start triggers the ViewModel start with the code", function () {
-    typeCode("7", "8", "9");
+    pickCode(7, 8, 9);
     let started = null;
     ctl.vm.on("start", (code) => { started = code; });
     view.startButton.fireEvent("click");
@@ -77,9 +103,9 @@ describe("Academy controller", function () {
     expect(closed).to.equal(1);
   });
 
-  it("dispose stops further widget→VM updates", function () {
+  it("dispose stops further box→VM updates", function () {
     ctl.dispose();
-    view.digit1.fireEvent("change", { value: "5" });
-    expect(ctl.vm.code).to.equal("");
+    view.digit1.fireEvent("click");
+    expect(ctl.vm.pickerVisible).to.equal(false);
   });
 });
