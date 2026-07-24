@@ -76,6 +76,8 @@ var topics = {
 
 	ABOUT: 'about',
 
+	ACADEMY: 'academy',
+
 	DIAGNOSTICS: 'diagnostics',
 
 	LOGIN: 'login',

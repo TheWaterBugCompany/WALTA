@@ -70,18 +70,11 @@ describe("MenuViewModel", function () {
 
   // The training feature it will launch isn't built yet, so the button is
   // owned by the ViewModel like every other but is deliberately inert for now.
-  it("does nothing observable when academy is pressed", function () {
+  it("opens the Academy modal when academy is pressed", function () {
     const vm = makeViewModel();
-    let anyTopic = false;
-    [Topics.HISTORY, Topics.GALLERY, Topics.ABOUT, Topics.DETAILED, Topics.LOGIN]
-      .forEach(t => Topics.subscribe(t, () => { anyTopic = true; }));
-    let anyEvent = false;
-    ["identify", "confirmLogout"].forEach(e => vm.on(e, () => { anyEvent = true; }));
-
+    const fired = recordTopic(Topics.ACADEMY);
     vm.academy();
-
-    expect(anyTopic, "fired a navigation topic").to.be.false;
-    expect(anyEvent, "triggered a view event").to.be.false;
+    expect(fired()).to.be.true;
   });
 
   it("asks the view to offer the identification methods when identify is pressed", function () {

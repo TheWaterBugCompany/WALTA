@@ -1,0 +1,72 @@
+".academyWindow": {
+	width: "72%",
+	height: "82%",
+	layout: "vertical"
+}
+
+".academyIntro": {
+	top: "4%",
+	left: "6%",
+	right: "6%",
+	color: Alloy.CFG.colors.primary,
+	font: { fontFamily: "Tahoma", fontSize: "13dp" }
+}
+
+".academyPrompt": {
+	top: "4%",
+	left: "6%",
+	right: "6%",
+	color: Alloy.CFG.colors.primary,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "13dp" }
+}
+
+".codeRow": {
+	top: "4%",
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE
+}
+
+".codeBox": {
+	width: "48dp",
+	height: "48dp",
+	left: "6dp",
+	right: "6dp",
+	borderColor: Alloy.CFG.colors.primary,
+	borderWidth: "2dp",
+	borderRadius: "8dp",
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+	maxLength: 1,
+	keyboardType: Ti.UI.KEYBOARD_TYPE_NUMBER_PAD,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
+}
+
+".codeBox[if=Alloy.Globals.isHighRes]": {
+	width: "64dp",
+	height: "64dp",
+	font: { fontSize: "28dp" }
+}
+
+".codeBox[if=Alloy.Globals.isXHighRes]": {
+	width: "96dp",
+	height: "96dp",
+	font: { fontSize: "40dp" }
+}
+
+".academyButtons": {
+	top: "6%",
+	bottom: "4%",
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE
+}
+
+".academyButtons > .actionButton": {
+	left: "8dp",
+	right: "8dp"
+}
+
+".startButton": {
+	color: Alloy.CFG.colors.white,
+	backgroundColor: Alloy.CFG.colors.success,
+	borderColor: Alloy.CFG.colors.success
+}

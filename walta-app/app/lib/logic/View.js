@@ -1,10 +1,12 @@
 
 var Topics = require('ui/Topics');
 const Logger = require("util/Logger");
+const modalControllers = require("controllers/registry");
 
 var debug = (m, tag = "ui") => Logger.log(m, tag);
 let currentController = null;
 let saveOrDiscard = null;
+let currentModal = null;
 
 function DialogCancelled() {
 }
@@ -24,6 +26,36 @@ View.prototype.openView = function(ctl,args) {
     currentController.open();
   });
 }
+
+// Overlay a modal on top of the current window. The Alloy controller builds the
+// Titanium widgets ($); when the modal has a lib/controllers/<name> screen
+// controller it is handed those widgets plus a `close` callback, keeping all the
+// non-Titanium wiring out of here. Modals without a lib controller just overlay.
+View.prototype.openModal = function (name, args, services) {
+  if (currentModal) this.closeModal();
+  debug(`opening modal="${name}"`);
+  const alloyCtl = Alloy.createController(name, args);
+  const host = currentController;
+  host.getView().add(alloyCtl.getView());
+
+  const make = modalControllers[name];
+  const close = () => this.closeModal();
+  currentModal = {
+    alloyCtl,
+    host,
+    lib: make ? make({ view: alloyCtl, close, services, palette: Alloy.CFG.colors }) : null,
+  };
+};
+
+View.prototype.closeModal = function () {
+  if (!currentModal) return;
+  const { alloyCtl, host, lib } = currentModal;
+  currentModal = null;
+  host.getView().remove(alloyCtl.getView());
+  if (lib) lib.dispose();
+  if (typeof alloyCtl.cleanUp === "function") alloyCtl.cleanUp();
+  else { alloyCtl.destroy(); alloyCtl.off(); }
+};
 
 View.prototype.askDiscardEdits = function () {
   var me = this;
