@@ -39,19 +39,23 @@ class SiteDetailsScreen extends BaseScreen {
         return el.getText();
     }
 
-    // Android only: the emulator's first GPS fix reports accuracy=100m, which
-    // the app rejects (gate is <100m), and it converges to a usable fix only
-    // after a few seconds of listening. Opening the gallery picker pauses GPS,
-    // so wait for the on-screen lock first to avoid racing convergence. iOS
-    // gets a usable fix during the normal dwell, and its location label masks
-    // its text behind accessibilityLabel="Location" so this poll can't read it
-    // — skip there.
+    // Android only. Opening the gallery picker pauses GPS, so wait for the
+    // on-screen lock first. iOS gets a usable fix during the normal dwell, and
+    // its location label hides its text behind accessibilityLabel="Location" so
+    // this poll can't read it — skip there.
+    //
+    // Poll for the lock (coords show a "°"), pushing a fresh fix each round: a
+    // single fixed wait loses to contention on CI, where the emulator's fix can
+    // be slow to arrive/converge and the 1Hz broadcaster's adb calls slow under
+    // load. Driving the fix from the wait means a starved broadcaster can't keep
+    // us from locking; the generous ceiling returns the moment the lock shows.
     async waitForLocationLock() {
         if ( this.isIos() ) return;
         await this.driver.waitUntil(async () => {
+            if ( this.world.pushGpsFix ) await this.world.pushGpsFix();
             let text = await this.getLocation();
             return text && text.includes("°");
-        }, { timeout: 30000, interval: 500, timeoutMsg: "GPS lock not obtained on Site Details" });
+        }, { timeout: 90000, interval: 1000, timeoutMsg: "GPS lock not obtained on Site Details" });
     }
 
     async getWaterbodyTypeElement() {
