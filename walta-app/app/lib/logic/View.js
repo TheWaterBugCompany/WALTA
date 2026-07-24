@@ -27,10 +27,8 @@ View.prototype.openView = function(ctl,args) {
   });
 }
 
-// Overlay a modal on top of the current window. The Alloy controller builds the
-// Titanium widgets ($); when the modal has a lib/controllers/<name> screen
-// controller it is handed those widgets plus a `close` callback, keeping all the
-// non-Titanium wiring out of here. Modals without a lib controller just overlay.
+// Overlay a modal on the current window, handing its widgets to an optional
+// lib/controllers/<name> screen controller. See docs/patterns/modals.md.
 View.prototype.openModal = function (name, args, services) {
   if (currentModal) this.closeModal();
   debug(`opening modal="${name}"`);
