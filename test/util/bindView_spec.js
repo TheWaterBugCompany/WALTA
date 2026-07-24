@@ -1,6 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
 const bindView = require("../../walta-app/app/lib/util/bindView");
+const twoWay = bindView.twoWay;
 const ChangeNotifier = require("../../walta-app/app/lib/util/ChangeNotifier");
 
 function makeWidget() {
@@ -37,6 +38,8 @@ class TestVM extends ChangeNotifier {
   get status() { return this._status; }
   get logVisible() { return this._log; }
   get greeting() { return this._status === "idle" ? "hi" : "bye"; }
+  get name() { return this._name === undefined ? "" : this._name; }
+  set name(v) { this._name = v; this.notifyListeners(); }
   toggle() { this.toggleCount++; }
   close() { this.closeCount++; }
 }
@@ -156,6 +159,62 @@ describe("bindView", function () {
       Object.defineProperty(vm, "palettedColor", { value: sym, configurable: true });
       bindView($, vm, { label: { backgroundColor: "palettedColor" } });
       expect($.label.backgroundColor).to.equal(sym);
+    });
+  });
+
+  describe("two-way binding", function () {
+    it("assigns the initial VM value to the widget (VM → widget)", function () {
+      vm._name = "seed";
+      bindView($, vm, { label: { text: twoWay("name") } });
+      expect($.label.text).to.equal("seed");
+    });
+
+    it("writes the widget's change value back into the VM (widget → VM)", function () {
+      bindView($, vm, { label: { text: twoWay("name") } });
+      $.label.fireEvent("change", { value: "typed" });
+      expect(vm.name).to.equal("typed");
+    });
+
+    it("still pushes VM changes to the widget after notify (VM → widget)", function () {
+      bindView($, vm, { label: { text: twoWay("name") } });
+      vm._name = "fromModel";
+      vm.notifyListeners();
+      expect($.label.text).to.equal("fromModel");
+    });
+
+    it("does not echo the just-typed value back into the widget (no feedback loop)", function () {
+      bindView($, vm, { label: { text: twoWay("name") } });
+      let sets = 0;
+      // A real text field already holds the typed text when it emits `change`.
+      let stored = "abc";
+      Object.defineProperty($.label, "text", {
+        get() { return stored; },
+        set(v) { sets++; stored = v; },
+        configurable: true,
+      });
+      // The setter notifies listeners; applyProps must see the widget already
+      // holds this value and skip the write (otherwise a text field resets its cursor).
+      $.label.fireEvent("change", { value: "abc" });
+      expect(vm.name).to.equal("abc");
+      expect(sets).to.equal(0);
+    });
+
+    it("unbind detaches the change listener", function () {
+      const unbind = bindView($, vm, { label: { text: twoWay("name") } });
+      unbind();
+      $.label.fireEvent("change", { value: "ignored" });
+      expect(vm.name).to.equal("");
+    });
+
+    it("throws when the two-way VM property doesn't exist", function () {
+      expect(() => bindView($, vm, { label: { text: twoWay("nope") } }))
+        .to.throw(/nope/);
+    });
+
+    it("throws when the two-way target has no event mechanism", function () {
+      $.plain = { text: null };
+      expect(() => bindView($, vm, { plain: { text: twoWay("name") } }))
+        .to.throw(/event/i);
     });
   });
 
