@@ -28,15 +28,22 @@ async function startGpsBroadcaster(world, lat, lng) {
     const broadcaster = { stopped: false, timer: null };
     world._gpsBroadcaster = broadcaster;
 
-    const tick = async () => {
-        if (broadcaster.stopped) return;
+    // A single push of the current location, best-effort. Exposed on the world
+    // so a wait that needs a lock *now* (SiteDetailsScreen.waitForLocationLock)
+    // can drive a fresh fix itself rather than betting the 1Hz broadcaster's
+    // next tick lands in time on a contended runner.
+    world.pushGpsFix = async () => {
         try {
             await global.launcher.setLocation(lat, lng);
         } catch (_) {
-            // Best-effort. A failed simctl/adb call doesn't kill the
-            // broadcaster — next tick may succeed once the simulator
-            // is less contended.
+            // Best-effort — a failed simctl/adb call doesn't matter; the caller
+            // retries, and the next tick may succeed once contention eases.
         }
+    };
+
+    const tick = async () => {
+        if (broadcaster.stopped) return;
+        await world.pushGpsFix();
         if (!broadcaster.stopped) {
             broadcaster.timer = setTimeout(tick, BROADCAST_INTERVAL_MS);
         }
@@ -53,6 +60,7 @@ function stopGpsBroadcaster(world) {
     broadcaster.stopped = true;
     if (broadcaster.timer) clearTimeout(broadcaster.timer);
     world._gpsBroadcaster = null;
+    world.pushGpsFix = null;
 }
 
 Given('the GPS has a fix', async function () {
