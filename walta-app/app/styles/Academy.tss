@@ -37,12 +37,12 @@
 	height: "48dp",
 	left: "6dp",
 	right: "6dp",
+	backgroundColor: Alloy.CFG.colors.white,
 	borderColor: Alloy.CFG.colors.primary,
 	borderWidth: "2dp",
 	borderRadius: "8dp",
 	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-	verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
 }
 
