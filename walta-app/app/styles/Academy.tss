@@ -1,5 +1,5 @@
 ".academyWindow": {
-	width: "72%",
+	width: "56%",
 	height: Ti.UI.SIZE,
 	layout: "vertical"
 }
@@ -7,7 +7,7 @@
 "#academyTitle": {
 	top: "12dp",
 	height: Ti.UI.SIZE,
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "26dp" }
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
 }
 
 ".academyIntro": {
@@ -42,8 +42,7 @@
 	borderRadius: "8dp",
 	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-	maxLength: 1,
-	keyboardType: Ti.UI.KEYBOARD_TYPE_NUMBER_PAD,
+	verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
 }
 
@@ -79,4 +78,54 @@
 	color: Alloy.CFG.colors.white,
 	backgroundColor: Alloy.CFG.colors.success,
 	borderColor: Alloy.CFG.colors.success
+}
+
+// The digit picker: a full-screen dim over the modal with a centered key grid.
+"#digitPicker": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL,
+	backgroundColor: "#80000000",
+	zIndex: 200
+}
+
+".digitPickerCard": {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.primary,
+	borderWidth: "2dp",
+	borderRadius: "12dp",
+	padding: { top: "8dp", bottom: "8dp", left: "8dp", right: "8dp" }
+}
+
+".keypadRow": {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE
+}
+
+".keypadKey": {
+	width: "52dp",
+	height: "52dp",
+	left: "6dp",
+	right: "6dp",
+	top: "6dp",
+	bottom: "6dp",
+	color: Alloy.CFG.colors.primary,
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.primary,
+	borderWidth: "2dp",
+	borderRadius: "8dp",
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "24dp" }
+}
+
+".keypadKey[if=Alloy.Globals.isHighRes]": {
+	width: "64dp",
+	height: "64dp",
+	font: { fontSize: "28dp" }
+}
+
+".keypadKey[if=Alloy.Globals.isXHighRes]": {
+	width: "96dp",
+	height: "96dp",
+	font: { fontSize: "40dp" }
 }

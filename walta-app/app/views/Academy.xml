@@ -8,13 +8,35 @@
 			<Label class="academyIntro">Test your macroinvertebrate identification chops: navigate to https://waterbugblitz.org/academy (on a separate device) and following along with the video tutorial.</Label>
 			<Label class="academyPrompt">When prompted enter the 3 digit code below:</Label>
 			<View class="codeRow" layout="horizontal">
-				<TextField id="digit1" class="codeBox" accessibilityLabel="academy_code_1"/>
-				<TextField id="digit2" class="codeBox" accessibilityLabel="academy_code_2"/>
-				<TextField id="digit3" class="codeBox" accessibilityLabel="academy_code_3"/>
+				<Label id="digit1" class="codeBox" accessibilityLabel="academy_code_1"/>
+				<Label id="digit2" class="codeBox" accessibilityLabel="academy_code_2"/>
+				<Label id="digit3" class="codeBox" accessibilityLabel="academy_code_3"/>
 			</View>
 			<View class="academyButtons" layout="horizontal">
 				<Button id="cancelButton" class="actionButton" accessibilityLabel="academy_close">Close</Button>
 				<Button id="startButton" class="actionButton startButton" accessibilityLabel="academy_start">Start</Button>
+			</View>
+		</View>
+		<View id="digitPicker" class="digitPicker" visible="false">
+			<View class="digitPickerCard" layout="vertical">
+				<View class="keypadRow" layout="horizontal">
+					<Button id="keypad1" class="keypadKey" accessibilityLabel="academy_key_1">1</Button>
+					<Button id="keypad2" class="keypadKey" accessibilityLabel="academy_key_2">2</Button>
+					<Button id="keypad3" class="keypadKey" accessibilityLabel="academy_key_3">3</Button>
+				</View>
+				<View class="keypadRow" layout="horizontal">
+					<Button id="keypad4" class="keypadKey" accessibilityLabel="academy_key_4">4</Button>
+					<Button id="keypad5" class="keypadKey" accessibilityLabel="academy_key_5">5</Button>
+					<Button id="keypad6" class="keypadKey" accessibilityLabel="academy_key_6">6</Button>
+				</View>
+				<View class="keypadRow" layout="horizontal">
+					<Button id="keypad7" class="keypadKey" accessibilityLabel="academy_key_7">7</Button>
+					<Button id="keypad8" class="keypadKey" accessibilityLabel="academy_key_8">8</Button>
+					<Button id="keypad9" class="keypadKey" accessibilityLabel="academy_key_9">9</Button>
+				</View>
+				<View class="keypadRow" layout="horizontal">
+					<Button id="keypad0" class="keypadKey" accessibilityLabel="academy_key_0">0</Button>
+				</View>
 			</View>
 		</View>
 	</View>

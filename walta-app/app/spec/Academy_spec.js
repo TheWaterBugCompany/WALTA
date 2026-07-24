@@ -23,4 +23,9 @@ describe('Academy modal', function() {
 		expect( ctl.startButton ).to.exist;
 		expect( ctl.cancelButton ).to.exist;
 	});
+
+	it('keeps the digit picker hidden until a box is tapped', function() {
+		expect( ctl.digitPicker.visible ).to.equal( false );
+		expect( ctl.keypad0 ).to.exist;
+	});
 });
