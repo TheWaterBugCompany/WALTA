@@ -5,7 +5,7 @@
 				<Label id="academyTitle" class="titleText" accessibilityLabel="Academy">Academy</Label>
 				<Require id="closeButton" src="CloseButton"/>
 			</View>
-			<Label class="academyIntro">Test your macroinvertebrate identification chops: navigate to https://waterbugblitz.org/academy (on a separate device) and following along with the video tutorial.</Label>
+			<Label class="academyIntro">Test your macroinvertebrate identification chops: navigate to https://waterbugblitz.org/academy (on a separate device) and follow along with the video tutorial.</Label>
 			<Label class="academyPrompt">When prompted enter the 3 digit code below:</Label>
 			<View class="codeRow" layout="horizontal">
 				<Button id="digit1" class="codeBox" accessibilityLabel="academy_code_1"/>
