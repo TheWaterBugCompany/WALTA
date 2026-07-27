@@ -40,6 +40,23 @@ function isTwoWay(ref) {
   return ref !== null && typeof ref === "object" && ref.__twoWay === true;
 }
 
+// Event-handler marker that binds a VM method with fixed arguments, so the
+// controller can wire e.g. onClick: call("pickDigit", 3) without reaching for
+// Titanium's addEventListener itself. Keeps all Ti wiring behind bindView.
+function call(method, ...args) {
+  return { __call: true, method, args };
+}
+
+function isCall(ref) {
+  return ref !== null && typeof ref === "object" && ref.__call === true;
+}
+
+// The VM method name an on<Event> binding targets, whether it's a plain
+// string handler or a call() marker.
+function methodOf(ref) {
+  return isCall(ref) ? ref.method : ref;
+}
+
 function propOf(ref) {
   return isTwoWay(ref) ? ref.prop : ref;
 }
@@ -78,8 +95,9 @@ module.exports = function bindView($, vm, bindings, palette) {
       const m = key.match(EVENT_KEY_RE);
       if (m) {
         const eventName = m[1].toLowerCase();
-        const methodName = ref;
-        const handler = function () { vm[methodName](); };
+        const handler = isCall(ref)
+          ? function () { vm[ref.method](...ref.args); }
+          : function () { vm[ref](); };
         eventTeardowns.push(attachEvent(widget, eventName, handler));
       } else if (isTwoWay(ref)) {
         const prop = ref.prop;
@@ -141,11 +159,12 @@ function validate($, vm, bindings) {
     for (const key in widgetBindings) {
       const ref = widgetBindings[key];
       if (EVENT_KEY_RE.test(key)) {
-        if (!(ref in vm)) {
-          throw new Error(`bindView: VM has no method "${ref}" (bound to ${widgetId}.${key})`);
+        const methodName = methodOf(ref);
+        if (!(methodName in vm)) {
+          throw new Error(`bindView: VM has no method "${methodName}" (bound to ${widgetId}.${key})`);
         }
-        if (typeof vm[ref] !== "function") {
-          throw new Error(`bindView: VM property "${ref}" is not a function (bound to ${widgetId}.${key})`);
+        if (typeof vm[methodName] !== "function") {
+          throw new Error(`bindView: VM property "${methodName}" is not a function (bound to ${widgetId}.${key})`);
         }
         if (typeof widget.addEventListener !== "function" && typeof widget.on !== "function") {
           throw new Error(`bindView: widget "${widgetId}" has no event mechanism for ${key}`);
@@ -167,3 +186,4 @@ function validate($, vm, bindings) {
 }
 
 module.exports.twoWay = twoWay;
+module.exports.call = call;
