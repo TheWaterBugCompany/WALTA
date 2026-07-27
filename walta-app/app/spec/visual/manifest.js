@@ -22,6 +22,34 @@ function speedbug() {
 	return Alloy.createController("Speedbug", { key: keyMock });
 }
 
+function cerdiApiGlobal() {
+	var CerdiApi = require("spec/mocks/MockCerdiApi");
+	Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi(Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret);
+}
+
+function logIn() {
+	cerdiApiGlobal();
+	return Alloy.createController("LogIn");
+}
+
+function register() {
+	cerdiApiGlobal();
+	return Alloy.createController("Register");
+}
+
+function taxonList() {
+	var KeyLoaderJson = require("logic/KeyLoaderJson");
+	var key = KeyLoaderJson.loadKey(Ti.Filesystem.resourcesDirectory + "/spec/resources/simpleKey1/");
+	return Alloy.createController("TaxonList", { key: key });
+}
+
+function gallery() {
+	var mediaResource = "spec/resources/simpleKey1/media/";
+	return Alloy.createController("Gallery", {
+		photos: [mediaResource + "amphipoda_01.jpg", mediaResource + "amphipoda_02.jpg", mediaResource + "amphipoda_03.jpg"]
+	});
+}
+
 function taxonDetails() {
 	return Alloy.createController("TaxonDetails", {
 		node: Taxon.createTaxon({
@@ -51,4 +79,11 @@ module.exports = [
 	{ name: "Menu", create: menu },
 	{ name: "Speedbug", create: speedbug },
 	{ name: "TaxonDetails", create: taxonDetails },
+	{ name: "TaxonList", create: taxonList },
+	{ name: "Gallery", create: gallery },
+	{ name: "LogIn", create: logIn },
+	{ name: "Register", create: register },
+	// WebView screens (About, Help) and native Video/Map screens are intentionally
+	// excluded: view.toImage() captures the native view tree, not WebView/Video
+	// content, so it only sees the loading spinner.
 ];

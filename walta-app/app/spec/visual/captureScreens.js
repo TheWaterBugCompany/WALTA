@@ -14,6 +14,13 @@ function outputDir() {
 	return dir;
 }
 
+// Wipe captures from a previous run so a screen dropped from the manifest doesn't
+// leave a stale PNG the host would pull and flag as an unexpected diff.
+function clearOutputDir() {
+	var dir = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, OUTPUT_SUBDIR);
+	if (dir.exists()) { dir.deleteDirectory(true); }
+}
+
 function writePng(name, blob) {
 	var file = Ti.Filesystem.getFile(outputDir().nativePath, name + ".png");
 	file.write(blob);
@@ -40,6 +47,7 @@ async function captureScreen(entry) {
 // Capture every screen (optionally filtered to one by name). Serial, so only one
 // window is on screen at a time — matching how the mocha runner opens screens.
 async function captureAll(entries, { grep } = {}) {
+	if (!grep) { clearOutputDir(); }
 	var results = [];
 	for (var i = 0; i < entries.length; i++) {
 		if (grep && entries[i].name.indexOf(grep) === -1) { continue; }

@@ -965,6 +965,9 @@ module.exports = function(grunt) {
         if (typeof launcher.pullCapturedScreenshots !== 'function') {
           throw new Error(`${launcher.constructor.name} does not implement pullCapturedScreenshots yet`);
         }
+        // Start from a clean actual dir so a screen dropped from the manifest
+        // doesn't leave a stale capture behind that reads as an unexpected diff.
+        require('fs').rmSync(actualDir, { recursive: true, force: true });
         // iOS resolves the dir from the app container via subdir; Android needs
         // the device-side path the runner reported (marker.dir).
         await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir, deviceDir: marker.dir });
