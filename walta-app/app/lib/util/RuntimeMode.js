@@ -8,17 +8,28 @@
 // `test_grep` / `test_manual` (Android intent extras, iOS argv
 // merged into NSUserDefaults via Ti.App.Properties).
 
-function isUnitTestRun(ti) {
+function readBooleanArg(ti, name) {
     try {
         if (ti.Platform.osname === "android") {
             var intent = ti.Android.currentActivity && ti.Android.currentActivity.intent;
-            return !!(intent && intent.getBooleanExtra("unit_test", false));
+            return !!(intent && intent.getBooleanExtra(name, false));
         }
-        var raw = ti.App.Properties.getString("unit_test");
+        var raw = ti.App.Properties.getString(name);
         return raw === "true" || raw === "1";
     } catch (e) {
         return false;
     }
 }
 
+function isUnitTestRun(ti) {
+    return readBooleanArg(ti, "unit_test");
+}
+
+// Routes to the on-device visual-regression capture runner (VisualCapture.js)
+// instead of the mocha runner or the real app.
+function isVisualCaptureRun(ti) {
+    return readBooleanArg(ti, "visual_capture");
+}
+
 exports.isUnitTestRun = isUnitTestRun;
+exports.isVisualCaptureRun = isVisualCaptureRun;

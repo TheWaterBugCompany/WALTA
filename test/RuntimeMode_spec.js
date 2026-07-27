@@ -90,3 +90,25 @@ describe("RuntimeMode.isUnitTestRun", function () {
         });
     });
 });
+
+describe("RuntimeMode.isVisualCaptureRun", function () {
+    it("returns true when the Android visual_capture intent extra is true", function () {
+        expect(RuntimeMode.isVisualCaptureRun(fakeAndroidTi({ visual_capture: true }))).to.be.true;
+    });
+
+    it("returns false when the Android intent has no visual_capture extra", function () {
+        expect(RuntimeMode.isVisualCaptureRun(fakeAndroidTi({}))).to.be.false;
+    });
+
+    it("returns true when iOS Ti.App.Properties returns 'true' for visual_capture", function () {
+        expect(RuntimeMode.isVisualCaptureRun(fakeIosTi({ visual_capture: "true" }))).to.be.true;
+    });
+
+    it("returns false when iOS Ti.App.Properties returns null", function () {
+        expect(RuntimeMode.isVisualCaptureRun(fakeIosTi({}))).to.be.false;
+    });
+
+    it("is independent of the unit_test flag", function () {
+        expect(RuntimeMode.isVisualCaptureRun(fakeIosTi({ unit_test: "true" }))).to.be.false;
+    });
+});

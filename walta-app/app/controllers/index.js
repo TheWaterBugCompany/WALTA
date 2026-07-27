@@ -5,12 +5,16 @@
 // - Production launch (no flag): `index-app` — the user-facing app.
 // - Test launch (`-unit_test true` on iOS / `--ez unit_test true` on
 //   Android): `UnitTest` — the on-device mocha runner.
+// - Visual capture (`-visual_capture true` / `--ez visual_capture true`):
+//   `VisualCapture` — the on-device visual-regression screenshot runner.
 //
 // `Ti` is read here and handed to RuntimeMode so the helper itself
 // stays node-testable.
 var RuntimeMode = require("util/RuntimeMode");
 
-if (RuntimeMode.isUnitTestRun(Ti)) {
+if (RuntimeMode.isVisualCaptureRun(Ti)) {
+    Alloy.createController("VisualCapture");
+} else if (RuntimeMode.isUnitTestRun(Ti)) {
     Alloy.createController("UnitTest");
 } else {
     Alloy.createController("index-app");
