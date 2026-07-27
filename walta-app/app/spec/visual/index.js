@@ -32,7 +32,10 @@ var window = Ti.UI.createWindow({ backgroundColor: "black" });
 window.addEventListener("open", function () {
 	capture.captureAll(manifest, { grep: readGrep() })
 		.then(function (results) {
-			Ti.API.info("VISUAL_CAPTURE_DONE count=" + results.length);
+			// dir tells the host where to pull the PNGs from — the Android app
+			// data dir isn't adb-pullable by a fixed path the way the iOS
+			// simulator container is.
+			Ti.API.info("VISUAL_CAPTURE_DONE count=" + results.length + " dir=" + capture.outputDir().nativePath);
 		})
 		.catch(function (err) {
 			Ti.API.error("VISUAL_CAPTURE_FAILED " + (err && err.message ? err.message : err));

@@ -30,7 +30,8 @@ async function captureScreen(entry) {
 	var blob = view.toImage();
 	var path = writePng(entry.name, blob);
 	Ti.API.info("VISUAL_CAPTURED name=" + entry.name +
-		" width=" + blob.width + " height=" + blob.height + " length=" + blob.length);
+		" width=" + blob.width + " height=" + blob.height + " length=" + blob.length +
+		" path=" + path);
 	await closeWindow(view);
 	if (typeof ctl.cleanUp === "function") { ctl.cleanUp(); }
 	return { name: entry.name, width: blob.width, height: blob.height, length: blob.length, path: path };

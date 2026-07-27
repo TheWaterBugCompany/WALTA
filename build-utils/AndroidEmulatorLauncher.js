@@ -95,6 +95,7 @@ class AndroidEmulatorLauncher {
   async launch(appId, apkPath, launchArgs) { await this.connect(); return this._inner.launch(appId, apkPath, launchArgs); }
   async terminate(appId) { await this.connect(); return this._inner.terminate(appId); }
   streamLogs(onLine) { return this._inner.streamLogs(onLine); }
+  async pullCapturedScreenshots(appId, opts) { await this.connect(); return this._inner.pullCapturedScreenshots(appId, opts); }
   async captureDiagnostics(appId) { await this.connect(); return this._inner.captureDiagnostics(appId); }
   getDriver() { return null; }
 }
