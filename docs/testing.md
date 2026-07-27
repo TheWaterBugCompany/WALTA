@@ -49,7 +49,15 @@ npx grunt --platform=android acceptance-test
 
 # Contract tests (API contract verification — see contract-tests/README.md)
 npx grunt contract-test
+
+# Visual regression (screenshot each screen, diff vs baseline)
+npx grunt --platform=ios --simulator visual-test
+npx grunt --platform=ios --simulator --update visual-test   # refresh baselines
 ```
+
+## Visual regression tests
+
+A separate suite that renders each screen on device, screenshots it once the display has settled, and pixel-diffs against a committed baseline — catching layout breaks (moved buttons, changed margins, missing assets) that the other layers don't assert on. It reuses the device-spec fixtures but does **not** drive the UI or check behaviour. See [patterns/visual-regression.md](patterns/visual-regression.md) for how it works, adding a screen, and the baseline model.
 
 ## Shared Appium orchestration
 
