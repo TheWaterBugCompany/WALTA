@@ -665,7 +665,14 @@ module.exports = function(grunt) {
       // launching the unit-test build path so the dispatcher routes to
       // UnitTest.js.
       if (buildType === 'unit-test' || buildType === 'unit-test-liveview') {
-        launchArgs.unit_test = true;
+        // The visual-regression runner reuses the test-sim binary but routes to
+        // VisualCapture.js instead of the mocha runner (index.js dispatches on
+        // this arg). `--grep` doubles as the screen filter via test_grep above.
+        if (grunt.option('visual')) {
+          launchArgs.visual_capture = true;
+        } else {
+          launchArgs.unit_test = true;
+        }
       }
       return launchArgs;
     }
