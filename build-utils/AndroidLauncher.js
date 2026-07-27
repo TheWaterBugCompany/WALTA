@@ -1,5 +1,7 @@
 import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_process";
+import fs from "fs";
 import path from "path";
+import * as tar from "tar";
 
 function defaultAdb() {
   if (process.env.ANDROID_SDK_ROOT) {
@@ -153,6 +155,38 @@ class AndroidLauncher {
 
   getDriver() {
     return null;
+  }
+
+  // Runs an adb command and resolves its raw stdout as a Buffer (execFile's
+  // utf8 default would corrupt binary payloads like a tar stream).
+  _execOutBinary(args) {
+    const fullArgs = this._serial ? ["-s", this._serial, ...args] : args;
+    return new Promise((resolve, reject) => {
+      const proc = this._spawn(this._adb, fullArgs);
+      const chunks = [];
+      proc.stdout.on("data", (d) => chunks.push(Buffer.from(d)));
+      proc.on("error", reject);
+      proc.on("close", (code) => {
+        if (code === 0 || code === null) resolve(Buffer.concat(chunks));
+        else reject(new Error(`adb ${args[0]} exited with code ${code}`));
+      });
+    });
+  }
+
+  // Pulls the visual-capture PNGs out of the app-private data dir. The dir isn't
+  // world-readable, so `run-as` (which the debuggable test build permits) streams
+  // it back as a tar archive — binary-safe and a single adb round-trip.
+  async pullCapturedScreenshots(appId, { deviceDir, destDir } = {}) {
+    const dir = String(deviceDir).replace(/^file:\/\//, "");
+    const tarBuffer = await this._execOutBinary(["exec-out", "run-as", appId, "tar", "c", "-C", dir, "."]);
+    fs.mkdirSync(destDir, { recursive: true });
+    const tmpTar = path.join(destDir, ".pull.tar");
+    fs.writeFileSync(tmpTar, tarBuffer);
+    await tar.x({ file: tmpTar, cwd: destDir });
+    fs.unlinkSync(tmpTar);
+    return fs.readdirSync(destDir)
+      .filter((f) => f.endsWith(".png"))
+      .map((f) => path.join(destDir, f));
   }
 }
 

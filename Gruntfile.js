@@ -965,7 +965,9 @@ module.exports = function(grunt) {
         if (typeof launcher.pullCapturedScreenshots !== 'function') {
           throw new Error(`${launcher.constructor.name} does not implement pullCapturedScreenshots yet`);
         }
-        await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir });
+        // iOS resolves the dir from the app container via subdir; Android needs
+        // the device-side path the runner reported (marker.dir).
+        await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir, deviceDir: marker.dir });
 
         const run = await compareRun({ baselineDir, actualDir, outDir, update });
         for (const res of run.results) {

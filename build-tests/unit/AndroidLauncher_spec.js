@@ -1,6 +1,10 @@
 import sinon from "sinon";
 import { expect } from "chai";
 import { EventEmitter } from "events";
+import fs from "fs";
+import os from "os";
+import path from "path";
+import * as tar from "tar";
 import AndroidLauncher from "../../build-utils/AndroidLauncher.js";
 
 function makeSpawn() {
@@ -412,6 +416,56 @@ describe("AndroidLauncher", function() {
       const report = await launcher.captureDiagnostics(APP_ID);
       expect(report).to.match(/4321/);
       expect(report).to.match(/device offline/);
+    });
+  });
+
+  describe("pullCapturedScreenshots()", function() {
+    const APP_ID = "net.thewaterbug.waterbug";
+    const DEVICE_DIR = "/data/data/net.thewaterbug.waterbug/files/visual";
+
+    // A spawn whose child streams a caller-supplied buffer on stdout then closes,
+    // standing in for `adb exec-out run-as … tar c` piping a tar archive back.
+    function makeBinarySpawn(streamBuffer) {
+      const proc = new EventEmitter();
+      proc.stdout = new EventEmitter();
+      proc.kill = sinon.stub();
+      const stub = sinon.stub().callsFake(() => {
+        setImmediate(() => {
+          proc.stdout.emit("data", streamBuffer);
+          proc.emit("close", 0);
+        });
+        return proc;
+      });
+      return { stub, proc };
+    }
+
+    it("extracts the captured PNGs from the run-as tar stream into destDir", async function() {
+      // Build a real tar of a fixture visual dir to feed through the fake spawn.
+      const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "android-visual-src-"));
+      fs.writeFileSync(path.join(fixture, "Menu.png"), "png-a");
+      fs.writeFileSync(path.join(fixture, "Speedbug.png"), "png-b");
+      const tarBuf = tar.c({ cwd: fixture, sync: true }, ["."]).read();
+
+      const { stub: fakeSpawn } = makeBinarySpawn(tarBuf);
+      const launcher = new AndroidLauncher({
+        execFile: makeExecFile({ "devices": DEVICES_OUTPUT }),
+        spawn: fakeSpawn,
+      });
+      await launcher.connect();
+
+      const dest = fs.mkdtempSync(path.join(os.tmpdir(), "android-visual-dest-"));
+      const pulled = await launcher.pullCapturedScreenshots(APP_ID, { deviceDir: DEVICE_DIR, destDir: dest });
+
+      expect(fs.readFileSync(path.join(dest, "Menu.png"), "utf8")).to.equal("png-a");
+      expect(fs.readFileSync(path.join(dest, "Speedbug.png"), "utf8")).to.equal("png-b");
+      expect(pulled).to.have.length(2);
+
+      // it runs `run-as <pkg> tar c -C <dir>` under the connected serial
+      const spawnArgs = fakeSpawn.firstCall.args[1];
+      expect(spawnArgs).to.include.members(["-s", "emulator-5554", "exec-out", "run-as", APP_ID]);
+
+      fs.rmSync(fixture, { recursive: true, force: true });
+      fs.rmSync(dest, { recursive: true, force: true });
     });
   });
 });
