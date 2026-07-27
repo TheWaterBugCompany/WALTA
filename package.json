@@ -32,7 +32,7 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@xmldom/xmldom": "^0.9.10",
     "alloy": "^3.0.1",
-    "appium": "^3.5.2",
+    "appium": "^3.6.0",
     "appium-uiautomator2-driver": "^7.6.1",
     "appium-xcuitest-driver": "^11.11.2",
     "backbone": "^1.6.1",
