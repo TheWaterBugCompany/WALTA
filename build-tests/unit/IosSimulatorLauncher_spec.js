@@ -1,6 +1,9 @@
 import sinon from "sinon";
 import { expect } from "chai";
 import { EventEmitter } from "events";
+import fs from "fs";
+import os from "os";
+import path from "path";
 import IosSimulatorLauncher from "../../build-utils/IosSimulatorLauncher.js";
 
 function makeSpawn() {
@@ -440,6 +443,35 @@ describe("IosSimulatorLauncher", function() {
     it("getDriver() returns null", function() {
       const launcher = new IosSimulatorLauncher({ udid: UDID });
       expect(launcher.getDriver()).to.be.null;
+    });
+  });
+
+  describe("pullCapturedScreenshots()", function() {
+    const APP_ID = "net.thewaterbug.waterbug";
+
+    it("copies the captured PNGs out of the app data container", async function() {
+      const container = fs.mkdtempSync(path.join(os.tmpdir(), "ios-container-"));
+      const src = path.join(container, "Documents", "visual");
+      fs.mkdirSync(src, { recursive: true });
+      fs.writeFileSync(path.join(src, "Menu.png"), "png-a");
+      fs.writeFileSync(path.join(src, "About.png"), "png-b");
+      fs.writeFileSync(path.join(src, "notes.txt"), "ignore me");
+      const dest = fs.mkdtempSync(path.join(os.tmpdir(), "ios-pulled-"));
+
+      const fakeExecFile = makeExecFile({
+        [`simctl get_app_container ${UDID} ${APP_ID} data`]: `${container}\n`,
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+
+      const pulled = await launcher.pullCapturedScreenshots(APP_ID, { subdir: "visual", destDir: dest });
+
+      expect(fs.existsSync(path.join(dest, "Menu.png"))).to.be.true;
+      expect(fs.existsSync(path.join(dest, "About.png"))).to.be.true;
+      expect(fs.existsSync(path.join(dest, "notes.txt")), "only PNGs are pulled").to.be.false;
+      expect(pulled).to.have.length(2);
+
+      fs.rmSync(container, { recursive: true, force: true });
+      fs.rmSync(dest, { recursive: true, force: true });
     });
   });
 });

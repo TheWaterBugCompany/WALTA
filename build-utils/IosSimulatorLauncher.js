@@ -1,4 +1,6 @@
 import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_process";
+import fs from "fs";
+import path from "path";
 
 function buildLaunchArgv(launchArgs) {
   if (!launchArgs) return [];
@@ -148,6 +150,21 @@ class IosSimulatorLauncher {
 
   getDriver() {
     return null;
+  }
+
+  // Copies the PNGs the visual-capture runner wrote to
+  // <app-data-container>/Documents/<subdir> out to destDir, so the host can diff
+  // them against baselines. Returns the destination paths.
+  async pullCapturedScreenshots(appId, { subdir = "visual", destDir } = {}) {
+    const container = (await this._exec(["simctl", "get_app_container", this._udid, appId, "data"])).trim();
+    const srcDir = path.join(container, "Documents", subdir);
+    fs.mkdirSync(destDir, { recursive: true });
+    const pngs = fs.readdirSync(srcDir).filter((f) => f.endsWith(".png"));
+    return pngs.map((f) => {
+      const target = path.join(destDir, f);
+      fs.copyFileSync(path.join(srcDir, f), target);
+      return target;
+    });
   }
 }
 

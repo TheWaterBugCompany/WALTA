@@ -892,6 +892,99 @@ module.exports = function(grunt) {
       }
     } );
 
+    // Visual regression: capture every screen on device via the VisualCapture
+    // run mode (no Appium — it only cares what the rendered layout looks like),
+    // pull the PNGs, and diff them against committed baselines. Mirrors the
+    // unit-test task's build/launch shape; `--visual` routes computeLaunchArgs to
+    // the visual_capture arg. Flags: --update (refresh baselines), --grep (one
+    // screen), --device=<label> (baseline set), --advisory (don't fail on diff).
+    grunt.registerTask('visual-test', function () {
+      const platform = grunt.option('platform');
+      const isSimulator = grunt.option('simulator');
+      pinAndroidToEmulator(platform, isSimulator);
+      grunt.option('visual', true);
+
+      if (grunt.option('liveview')) {
+        const done = this.async();
+        const reuseServer = grunt.option('reuse-server');
+        createLiveViewLauncher(platform, { isSimulator, unitTest: true }).then(async (liveview) => {
+          if (reuseServer) {
+            const reused = await liveview.ensureRunning();
+            if (reused) { grunt.log.writeln('LiveView server already running, reusing existing session'); }
+          } else {
+            await liveview.stop();
+            await liveview.start();
+          }
+          grunt.task.run(`launch:${platform}:unit-test-liveview`);
+          grunt.task.run(`visual-collect:${platform}`);
+          if (!grunt.option('manual')) { grunt.task.run(`terminate:${platform}`); }
+          done();
+        }).catch(err => { grunt.fail.fatal(err); done(); });
+      } else {
+        if (!grunt.option('skip-build')) { grunt.task.run('clean'); }
+        grunt.task.run(`newer:${isSimulator ? `test_sim_${platform}` : `unit_test_${platform}`}`);
+        grunt.task.run(`launch:${platform}:unit-test`);
+        grunt.task.run(`visual-collect:${platform}`);
+        if (!grunt.option('manual')) { grunt.task.run(`terminate:${platform}`); }
+      }
+    });
+
+    // Streams the device log until the capture runner signals done, pulls the
+    // PNGs, and diffs them against the baseline set. Runs after `launch`.
+    grunt.registerTask('visual-collect', function (platform) {
+      const done = this.async();
+      const path = require('path');
+      const isSimulator = grunt.option('simulator');
+      const update = grunt.option('update');
+      const device = grunt.option('device') || 'local';
+      const actualDir = path.join('builds', 'visual', platform, device, 'actual');
+      const baselineDir = path.join('visual', 'baselines', platform, device);
+      const outDir = path.join('builds', 'visual', platform, device, 'report');
+      const captureTimeoutMs = (grunt.option('capture-timeout') || 180) * 1000;
+
+      Promise.all([
+        getLauncher(platform, isSimulator),
+        import('./build-utils/parseVisualCaptureResult.js'),
+        import('./build-utils/visual/compareRun.js'),
+      ]).then(async ([launcher, { parseVisualCaptureResult }, { compareRun }]) => {
+        const marker = await new Promise((resolve, reject) => {
+          let stop;
+          const timer = setTimeout(() => {
+            if (stop) stop();
+            reject(new Error(`visual capture timed out after ${captureTimeoutMs / 1000}s with no VISUAL_CAPTURE_DONE`));
+          }, captureTimeoutMs);
+          stop = launcher.streamLogs((line) => {
+            grunt.log.writeln(line);
+            const result = parseVisualCaptureResult(line);
+            if (result) { clearTimeout(timer); stop(); resolve(result); }
+          }, { logLevel: 'info' });
+        });
+        if (marker.status === 'failed') { throw new Error(`on-device capture failed: ${marker.message}`); }
+        grunt.log.writeln(`Captured ${marker.count} screen(s); pulling from device…`);
+
+        if (typeof launcher.pullCapturedScreenshots !== 'function') {
+          throw new Error(`${launcher.constructor.name} does not implement pullCapturedScreenshots yet`);
+        }
+        await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir });
+
+        const run = await compareRun({ baselineDir, actualDir, outDir, update });
+        for (const res of run.results) {
+          grunt.log.writeln(`  ${res.status.padEnd(8)} ${res.name}${res.diffPixels != null ? ` (${res.diffPixels}px)` : ''}`);
+        }
+
+        if (update) {
+          grunt.log.writeln(`Baselines written to ${baselineDir}`);
+        } else if (run.pass) {
+          grunt.log.writeln('All screens match baseline.');
+        } else if (grunt.option('advisory')) {
+          grunt.log.writeln(`Visual diffs found (report in ${outDir}) — advisory mode, not failing the build.`);
+        } else {
+          grunt.fail.fatal(`Visual regression: screens differ from baseline. Diff images in ${outDir}.`);
+        }
+        done();
+      }).catch(err => { grunt.fail.fatal(err); done(); });
+    });
+
     grunt.registerTask('unit-test-node', ['exec:unit_test_node']);
     grunt.registerTask('contract-test',  ['exec:contract_test']);
     grunt.registerTask('build-test',     ['exec:build_test']);
