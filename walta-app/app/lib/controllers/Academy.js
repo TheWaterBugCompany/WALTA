@@ -1,35 +1,23 @@
 const AcademyViewModel = require("viewmodels/Academy");
 const bindView = require("util/bindView");
+const { call } = bindView;
 
 // Titanium-free screen controller for the Academy modal.
 // See docs/patterns/modals.md for the pattern.
 const BINDINGS = {
-  digit1:       { title: "digit1" },   // tap-to-edit boxes (Buttons, so they stay findable when empty)
-  digit2:       { title: "digit2" },
-  digit3:       { title: "digit3" },
+  digit1:       { title: "digit1", onClick: call("startEditing", 0) },  // tap-to-edit box → open picker
+  digit2:       { title: "digit2", onClick: call("startEditing", 1) },
+  digit3:       { title: "digit3", onClick: call("startEditing", 2) },
   digitPicker:  { visible: "pickerVisible", onClick: "cancelPicker" },  // tap backdrop to dismiss
   startButton:  { enabled: "startEnabled", onClick: "start" },
   closeButton:  { onClose: "close" },   // the ✕ (CloseButton Require)
   cancelButton: { onClick: "close" },   // the "Close" text button
 };
-
-// A box tap carries which box (0-2), a key tap carries which digit — arguments
-// bindView's arg-less event handlers can't pass, so wire them here.
-function wireDigitPicker(view, vm) {
-  const teardowns = [];
-  function onClick(id, handler) {
-    view[id].addEventListener("click", handler);
-    teardowns.push(() => view[id].removeEventListener("click", handler));
-  }
-  [0, 1, 2].forEach((i) => onClick("digit" + (i + 1), () => vm.startEditing(i)));
-  for (let d = 0; d <= 9; d++) onClick("keypad" + d, () => vm.pickDigit(d));
-  return () => teardowns.forEach((fn) => fn());
-}
+for (let d = 0; d <= 9; d++) BINDINGS["keypad" + d] = { onClick: call("pickDigit", d) };
 
 module.exports = function createAcademyController({ view, close, services }) {
   const vm = new AcademyViewModel();
   const unbind = bindView(view, vm, BINDINGS);
-  const unwire = wireDigitPicker(view, vm);
 
   // Inert for now — the training-session flow the code launches isn't built yet.
   vm.on("start", function () {});
@@ -38,7 +26,6 @@ module.exports = function createAcademyController({ view, close, services }) {
   return {
     vm,
     dispose() {
-      unwire();
       unbind();
       vm.dispose();
     },
