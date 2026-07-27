@@ -567,6 +567,198 @@ jobs:
             echo "Emulator booted"
             bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=android --simulator --skip-build unit-test
 
+  # ── 3b. iOS visual regression (advisory) ──────────────────────────────────
+  # Captures each screen on a *pinned* simulator (baselines are renderer-specific)
+  # and diffs against the committed baseline set. Advisory: --advisory keeps the
+  # task green on diffs and continue-on-error tolerates infra hiccups, so this
+  # never blocks a PR while coverage is still growing. The captures/diffs are
+  # uploaded so a reviewer can commit the CI-rendered baselines on the first run.
+  ios-visual:
+    name: iOS visual regression (advisory)
+    needs: [changes, ios-build]
+    if: needs.changes.outputs.relevant == 'true'
+    runs-on: macos-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    env:
+      XCODE_VERSION: "26.3"
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Select pinned Xcode
+        run: |
+          XCODE_APP="/Applications/Xcode_${XCODE_VERSION}.app"
+          if [ ! -d "$XCODE_APP" ]; then
+            echo "Xcode ${XCODE_VERSION} not installed on this runner. Available:" >&2
+            ls /Applications | grep -E '^Xcode_' >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+          xcodebuild -version
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Save node_modules cache
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Run install.sh
+        run: sh install.sh
+
+      - name: Download Waterbug.app artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: waterbug-ios-sim
+          path: /tmp
+
+      - name: Extract Waterbug.app to builds/test-sim
+        run: |
+          mkdir -p builds/test-sim
+          tar -xzf /tmp/waterbug-ios-sim.tgz -C builds/test-sim
+
+      - name: Select pinned iOS simulator (iPhone 17)
+        id: sim
+        run: |
+          # Baselines are tied to a specific device model, so pin iPhone 17 rather
+          # than "newest available". Pick the newest iOS runtime that hosts it.
+          SELECTED=$(xcrun simctl list devices available -j | jq -r '
+            [.devices | to_entries[]
+             | select(.key | test("iOS-[0-9]"))
+             | {runtime: (.key | capture("iOS-(?<v>[0-9-]+)").v),
+                devices: [.value[] | select(.name == "iPhone 17") | select(.isAvailable)]}]
+            | map(select(.devices | length > 0))
+            | sort_by(.runtime | split("-") | map(tonumber)) | reverse
+            | .[0].devices[0].udid // ""')
+          if [ -z "$SELECTED" ]; then
+            echo "Pinned simulator 'iPhone 17' not available on this runner:" >&2
+            xcrun simctl list devices available | grep iPhone >&2
+            exit 1
+          fi
+          echo "udid=$SELECTED" >> "$GITHUB_OUTPUT"
+          echo "Selected iPhone 17 ($SELECTED)"
+
+      - name: Boot iOS simulator
+        run: |
+          xcrun simctl boot ${{ steps.sim.outputs.udid }} || true
+          xcrun simctl bootstatus ${{ steps.sim.outputs.udid }}
+
+      - name: Capture screens and diff against baselines
+        env:
+          SIM_UDID: ${{ steps.sim.outputs.udid }}
+        run: npx grunt --platform=ios --simulator --skip-build --advisory --device=iphone-17 visual-test
+
+      - name: Upload visual captures and diffs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-ios
+          path: builds/visual/**
+          if-no-files-found: warn
+
+  # ── 3c. Android visual regression (advisory) ──────────────────────────────
+  android-visual:
+    name: Android visual regression (advisory)
+    needs: [changes, android-build]
+    if: needs.changes.outputs.relevant == 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Save node_modules cache
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Run install.sh
+        run: sh install.sh
+
+      - name: Download Waterbug.apk artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: waterbug-android-sim
+          path: builds/test-sim
+
+      - name: Enable KVM for hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Restore Android AVD cache
+        id: avd-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
+
+      - name: Capture screens and diff against baselines
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          avd-name: Medium_Phone_API_36.1
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            echo "Emulator booted"
+            npx grunt --platform=android --simulator --skip-build --advisory --device=medium_api36 visual-test
+
+      - name: Upload visual captures and diffs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-android
+          path: builds/visual/**
+          if-no-files-found: warn
+
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
   ios-simulator-acceptance-tests:
     name: iOS simulator acceptance tests
