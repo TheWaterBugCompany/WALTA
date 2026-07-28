@@ -707,27 +707,12 @@ jobs:
       - name: Run iOS acceptance tests
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        # WB-94: smart retry. The CucumberLauncher returns 75 (EX_TEMPFAIL
-        # from BSD sysexits.h) when cucumber-js exited non-zero without
-        # ever reaching scenario execution — Appium connect refused,
-        # BeforeAll crash, sim/WDA not ready, etc. — meaning the
-        # infrastructure was the problem and the run is retry-eligible.
-        # A real test failure surfaces as cucumber-js's own exit code
-        # (1, 2, ...) and is NOT retried — doubling the cost on a
-        # deterministic test failure was the cost we paid under the
-        # previous WB-54 retry-on-anything loop.
-        run: |
-          for attempt in 1 2; do
-            # `|| rc=$?` keeps the grunt failure inside a list so bash's
-            # default `set -e` doesn't abort the step before we can inspect
-            # the code and decide whether to retry (WB-102).
-            rc=0
-            npx grunt --platform=ios --simulator --skip-build acceptance-test || rc=$?
-            [ $rc -eq 0 ] && exit 0
-            [ $rc -ne 75 ] && exit $rc
-            echo "::warning ::iOS acceptance attempt $attempt returned EX_TEMPFAIL (75); retrying once (WB-94)"
-          done
-          exit 75
+        # Shared smart retry (WB-203): retry once, on a freshly-erased sim, only
+        # when CucumberLauncher returns EX_TEMPFAIL (75) — the run never reached
+        # scenarios, or every failure was infra/environmental. A real test
+        # failure exits 1/2/... and is never retried (no masking). Identical
+        # policy to the Android job below via the same script.
+        run: bash build-utils/run-acceptance-with-retry.sh ios
 
       - name: Upload per-scenario failure artifacts
         if: failure()
@@ -845,14 +830,15 @@ jobs:
           avd-name: Medium_Phone_API_36.1
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          # Retry once on failure — same rationale as the unit-test job
-          # above (WB-54). Wraps both preflight and acceptance so either
-          # phase being hit by the AAPT flake gets a second shot.
-          # Single-line form per the action's `sh -c`-per-line execution
-          # model.
+          # Shared smart retry (WB-203): identical policy to the iOS job via the
+          # same script — retry once, on a rebooted emulator, only when the run
+          # was infra/environmental (EX_TEMPFAIL 75); a real test failure exits
+          # 1/2/... and is never retried. Replaces the old WB-54 retry-on-any
+          # that re-ran in the same dirty emulator and couldn't clear an
+          # environmental flake (slow GPS fix, leaked app state).
           script: |
             echo "Emulator booted"
-            npx grunt --platform=android --simulator --skip-build acceptance-test || { echo "::warning ::Android acceptance first attempt failed; retrying once (WB-54)"; npx grunt --platform=android --simulator --skip-build acceptance-test; }
+            bash build-utils/run-acceptance-with-retry.sh android
 
       - name: Upload per-scenario failure artifacts
         if: failure()
