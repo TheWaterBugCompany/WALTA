@@ -37,6 +37,8 @@ Add one entry to [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/man
 
 A baseline rendered on one simulator/emulator won't match a differently-rendered one (fonts, GPU), so baselines are generated in the environment that verifies them (CI) and committed under `visual/baselines/<platform>/<device>/`. Titanium has no runtime window resize — different screen sizes require different devices, so each device keeps its own baseline set.
 
+CI runs a device matrix (advisory jobs in `.github/workflows/ci.yml`), one baseline set per device — currently iOS `iphone-17` / `iphone-17-pro-max` and Android `medium` / `small` (distinct logical widths). Each matrix leg uploads its captures/diffs as `visual-<platform>-<label>`. Add a device by adding a matrix entry (and committing that leg's first CI-rendered baselines).
+
 ## Why not Appium?
 
 The acceptance suite already drives the UI. Visual regression only cares about the rendered pixels, so it renders each screen in isolation from a fixture — faster, and free of the navigation/network/GPS flake that made pixel diffs unstable before. (The app runs immersive with the status bar hidden, so the framebuffer has no clock to flake on.)

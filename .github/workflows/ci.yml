@@ -580,6 +580,14 @@ jobs:
     runs-on: macos-latest
     continue-on-error: true
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # One baseline set per device — chosen for distinct logical widths + the
+        # Dynamic Island safe area (the framebuffer composites the cutout).
+        device:
+          - { label: iphone-17, name: "iPhone 17" }
+          - { label: iphone-17-pro-max, name: "iPhone 17 Pro Max" }
     env:
       XCODE_VERSION: "26.3"
     steps:
@@ -634,26 +642,26 @@ jobs:
           mkdir -p builds/test-sim
           tar -xzf /tmp/waterbug-ios-sim.tgz -C builds/test-sim
 
-      - name: Select pinned iOS simulator (iPhone 17)
+      - name: Select pinned iOS simulator (${{ matrix.device.name }})
         id: sim
         run: |
-          # Baselines are tied to a specific device model, so pin iPhone 17 rather
-          # than "newest available". Pick the newest iOS runtime that hosts it.
-          SELECTED=$(xcrun simctl list devices available -j | jq -r '
+          # Baselines are tied to a specific device model, so pin it rather than
+          # "newest available". Pick the newest iOS runtime that hosts it.
+          SELECTED=$(xcrun simctl list devices available -j | jq -r --arg name "${{ matrix.device.name }}" '
             [.devices | to_entries[]
              | select(.key | test("iOS-[0-9]"))
              | {runtime: (.key | capture("iOS-(?<v>[0-9-]+)").v),
-                devices: [.value[] | select(.name == "iPhone 17") | select(.isAvailable)]}]
+                devices: [.value[] | select(.name == $name) | select(.isAvailable)]}]
             | map(select(.devices | length > 0))
             | sort_by(.runtime | split("-") | map(tonumber)) | reverse
             | .[0].devices[0].udid // ""')
           if [ -z "$SELECTED" ]; then
-            echo "Pinned simulator 'iPhone 17' not available on this runner:" >&2
+            echo "Pinned simulator '${{ matrix.device.name }}' not available on this runner:" >&2
             xcrun simctl list devices available | grep iPhone >&2
             exit 1
           fi
           echo "udid=$SELECTED" >> "$GITHUB_OUTPUT"
-          echo "Selected iPhone 17 ($SELECTED)"
+          echo "Selected ${{ matrix.device.name }} ($SELECTED)"
 
       - name: Boot iOS simulator
         run: |
@@ -663,13 +671,13 @@ jobs:
       - name: Capture screens and diff against baselines
         env:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
-        run: npx grunt --platform=ios --simulator --skip-build --advisory --device=iphone-17 visual-test
+        run: npx grunt --platform=ios --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test
 
       - name: Upload visual captures and diffs
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: visual-ios
+          name: visual-ios-${{ matrix.device.label }}
           path: builds/visual/**
           if-no-files-found: warn
 
@@ -681,6 +689,13 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # One baseline set per device profile — distinct logical widths / density.
+        device:
+          - { label: medium, avd: Medium_Phone_API_36.1, profile: medium_phone }
+          - { label: small, avd: Nexus5_API34, profile: "Nexus 5" }
     steps:
       - uses: actions/checkout@v6
 
@@ -744,18 +759,18 @@ jobs:
           api-level: 34
           target: google_apis
           arch: x86_64
-          avd-name: Medium_Phone_API_36.1
-          force-avd-creation: false
+          avd-name: ${{ matrix.device.avd }}
+          profile: ${{ matrix.device.profile }}
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             echo "Emulator booted"
-            npx grunt --platform=android --simulator --skip-build --advisory --device=medium_api36 visual-test
+            npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test
 
       - name: Upload visual captures and diffs
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: visual-android
+          name: visual-android-${{ matrix.device.label }}
           path: builds/visual/**
           if-no-files-found: warn
 
