@@ -7,6 +7,20 @@
 // settle overrides the default frame-stability gate for screens that need longer
 // (lazy tiles, async photos). Omit for static screens.
 var Taxon = require("logic/Taxon");
+var { SURVEY_DETAILED } = require("logic/Sample");
+
+// A fixed completion date so the survey screens that render a date don't drift
+// day to day (which would read as a diff on every run).
+var FIXED_DATE = new Date("2020-01-02T00:00:00Z").getTime();
+
+function freshSample() {
+	// resetSample instantiates the sample + taxa Models/Collections that the
+	// survey screens bind to (SampleTray listens on Alloy.Collections.taxa).
+	require("spec/util/TestUtils").resetSample();
+	var sample = Alloy.Models.instance("sample");
+	sample.clear();
+	return sample;
+}
 
 function menu() {
 	var CerdiApi = require("spec/mocks/MockCerdiApi");
@@ -50,6 +64,63 @@ function gallery() {
 	});
 }
 
+function siteDetails() {
+	var sample = freshSample();
+	// fixed coords so the location label is deterministic
+	sample.set("lng", "147.671339");
+	sample.set("lat", "-42.890748");
+	sample.set("surveyType", SURVEY_DETAILED);
+	return Alloy.createController("SiteDetails");
+}
+
+function habitat() {
+	freshSample();
+	return Alloy.createController("Habitat");
+}
+
+function sampleTray() {
+	var { speedBugIndexMock } = require("spec/mocks/MockSpeedbug");
+	var { keyMock } = require("spec/mocks/MockKey");
+	keyMock.addSpeedbugIndex(speedBugIndexMock);
+	Alloy.Globals.Key = keyMock;
+	freshSample();
+	return Alloy.createController("SampleTray", { key: keyMock });
+}
+
+function notes() {
+	var sample = freshSample();
+	sample.set("complete", true);
+	sample.set("notes", "Sample notes for the visual baseline.");
+	sample.set("dateCompleted", FIXED_DATE);
+	sample.set("overrideDateCompleted", FIXED_DATE);
+	return Alloy.createController("Notes");
+}
+
+function summary() {
+	var sample = freshSample();
+	sample.set("waterbodyName", "Test Waterbody");
+	sample.set("nearbyFeature", "near the old bridge");
+	sample.set("dateCompleted", FIXED_DATE);
+	sample.set("surveyType", 0);
+	sample.calculateSignalScore = function () { return "3.0"; };
+	sample.calculateWeightedSignalScore = function () { return "3.5"; };
+	sample.saveCurrentSample = function () {};
+	sample.loadTaxa = function () { return []; };
+	cerdiApiGlobal();
+	return Alloy.createController("Summary");
+}
+
+// About/Help render their content in a WebView. Framebuffer capture (the default)
+// handles this — the host screenshots the real screen, which includes WebView
+// content view.toImage() can't see.
+function about() {
+	return Alloy.createController("About", { keyUrl: Ti.Filesystem.resourcesDirectory + "taxonomy/walta/" });
+}
+
+function help() {
+	return Alloy.createController("Help", { keyUrl: Ti.Filesystem.resourcesDirectory + "taxonomy/walta/" });
+}
+
 function taxonDetails() {
 	return Alloy.createController("TaxonDetails", {
 		node: Taxon.createTaxon({
@@ -83,7 +154,13 @@ module.exports = [
 	{ name: "Gallery", create: gallery },
 	{ name: "LogIn", create: logIn },
 	{ name: "Register", create: register },
-	// WebView screens (About, Help) and native Video/Map screens are intentionally
-	// excluded: view.toImage() captures the native view tree, not WebView/Video
-	// content, so it only sees the loading spinner.
+	{ name: "SiteDetails", create: siteDetails },
+	{ name: "Habitat", create: habitat },
+	{ name: "SampleTray", create: sampleTray },
+	{ name: "Notes", create: notes },
+	{ name: "Summary", create: summary },
+	// loadMs gives the WebView's local HTML time to render before the host grabs
+	// the frame (framebuffer is the default capture — see captureScreens.js).
+	{ name: "About", create: about, loadMs: 2000 },
+	{ name: "Help", create: help, loadMs: 2000 },
 ];
