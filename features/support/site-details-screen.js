@@ -1,4 +1,5 @@
 const BaseScreen = require('./base-screen');
+const { GPS_LOCK_NOT_OBTAINED } = require('./environmental-failures');
 
 class SiteDetailsScreen extends BaseScreen {
     constructor( world ) {
@@ -55,7 +56,7 @@ class SiteDetailsScreen extends BaseScreen {
             if ( this.world.pushGpsFix ) await this.world.pushGpsFix();
             let text = await this.getLocation();
             return text && text.includes("°");
-        }, { timeout: 90000, interval: 1000, timeoutMsg: "GPS lock not obtained on Site Details" });
+        }, { timeout: 90000, interval: 1000, timeoutMsg: GPS_LOCK_NOT_OBTAINED });
     }
 
     async getWaterbodyTypeElement() {

@@ -1,4 +1,5 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
+const { SAMPLE_TRAY_TILE_MISSING } = require('../support/environmental-failures');
 
 Given('a user has arrived at a site to sample', async function () {
     await this.menu.waitFor();
@@ -61,7 +62,7 @@ Then('the sample tray is filled with each identification', async function () {
         var el = await this.driver.$(selector);
         await el.waitForDisplayed({
             timeout: 10000,
-            timeoutMsg: `Sample tray is missing tile for "${expected}"`,
+            timeoutMsg: `${SAMPLE_TRAY_TILE_MISSING} for "${expected}"`,
         });
     }
 });

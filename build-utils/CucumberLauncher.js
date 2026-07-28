@@ -85,14 +85,22 @@ class CucumberLauncher {
     }
 
     if (code !== 0) {
-      // Scenarios ran and something failed. Re-run only the ones a contended
-      // runner killed via a dropped session (marked by the cucumber After
-      // hook), on a fresh session — but only if *every* failure was infra. A
-      // genuine defect alongside them must stay red and never be retried
-      // (WB-200).
+      // Scenarios ran and something failed. Recover only if *every* failure
+      // was infra (marked by the cucumber After hook) — a genuine defect
+      // alongside them must stay red and never be retried (WB-200).
       const infra = parseInfraFailures(output);
       if (infra.length > 0 && infra.length === failedCount(output)) {
-        const nameArgs = infra.flatMap(name => ["--name", `^${escapeRegExp(name)}$`]);
+        if (infra.some(f => f.reason === "environmental")) {
+          // An emulator/environment flake (slow GPS fix, sample tray not
+          // settled). A fresh Appium session on the same device can't cure it,
+          // so escalate to EX_TEMPFAIL and let the CI shell retry on a freshly
+          // booted device (WB-203).
+          this._stopServer();
+          return EX_TEMPFAIL;
+        }
+        // Only dropped sessions — cheaper to re-run those scenarios in-process
+        // on a fresh session than to reboot the whole device (WB-200).
+        const nameArgs = infra.flatMap(f => ["--name", `^${escapeRegExp(f.name)}$`]);
         ({ code } = await this._runCucumber(nameArgs));
       }
     }

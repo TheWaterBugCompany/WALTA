@@ -3,6 +3,7 @@ const { AfterAll, BeforeAll, Before, After, Status, setDefaultTimeout } = requir
 const { setUpWorld } = require('./all-screens');
 const { startMockServer, connectAndPrepareApp, resetApp, recoverSessionIfDead, sessionIsAlive, teardown } = require('./appium-world');
 const { markerLine } = require('./infra-failure-marker');
+const { isEnvironmentalFailure } = require('./environmental-failures');
 
 // Device interactions are slow, and contested CI runners run ~2x slower
 // (Android acceptance: ~5min off-peak vs ~9min at 10-15 UTC peak), so give
@@ -44,8 +45,15 @@ After(async function (scenario) {
     // fresh session, while genuine failures (session still alive) are left to
     // fail. This replaces the hard-coded @gallery retry with cause-based
     // handling that covers any scenario (WB-200).
-    if (scenario.result?.status === Status.FAILED && !(await sessionIsAlive())) {
-        console.log(markerLine(scenario.pickle.name));
+    if (scenario.result?.status !== Status.FAILED) return;
+    if (!(await sessionIsAlive())) {
+        // Contended runner dropped the session — a fresh session fixes it.
+        console.log(markerLine(scenario.pickle.name, "session-dead"));
+    } else if (isEnvironmentalFailure(scenario.result.message)) {
+        // Session's alive but a known emulator/environment wait timed out
+        // (slow GPS fix, sample tray not settled) — only a fresh device fixes
+        // it, so mark it so CucumberLauncher escalates to a fresh-device retry.
+        console.log(markerLine(scenario.pickle.name, "environmental"));
     }
 });
 

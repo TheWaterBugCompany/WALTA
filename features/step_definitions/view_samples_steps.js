@@ -2,6 +2,7 @@
 const { When, Then } = require('@cucumber/cucumber');
 const path = require('path');
 const { assertLooksSame } = require('../support/image-test');
+const { SAMPLE_TRAY_TILE_MISSING } = require('../support/environmental-failures');
 
 When('I open the sample tray for the downloaded sample', { timeout: 60000 }, async function () {
     // The preceding "close the sync popup" step leaves us on the Archive
@@ -28,7 +29,7 @@ Then('I can see each creature with its abundance', async function () {
         const el = await this.driver.$(selector);
         await el.waitForDisplayed({
             timeout: 30000,
-            timeoutMsg: `Sample tray is missing tile starting with "${fragment}"`,
+            timeoutMsg: `${SAMPLE_TRAY_TILE_MISSING} starting with "${fragment}"`,
         });
     }
 });
