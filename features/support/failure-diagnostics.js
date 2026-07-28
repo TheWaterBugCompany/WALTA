@@ -110,13 +110,20 @@ function captureDeviceLog(platform, dir) {
             const adb = process.env.ANDROID_SDK_ROOT
                 ? path.join(process.env.ANDROID_SDK_ROOT, 'platform-tools', 'adb')
                 : 'adb';
-            // Include AndroidRuntime + all error-level output, not just TiAPI:V
-            // — Ti.API debug output is quiet (or suppressed) in the test build,
-            // so `-s TiAPI:V` alone produced an empty device.log on a real
-            // failure. Mirror AndroidLauncher's proven filterspec so crashes and
-            // errors are always captured even when the app itself is silent.
-            const out = execFileSync(adb,
-                ['logcat', '-d', '-t', '500', 'TiAPI:V', 'AndroidRuntime:E', '*:E'], SPAWN_OPTS);
+            // Capture the app's own process (all levels) when we can resolve
+            // its pid: a broad `*:E` drowned the app in the emulator's Google-app
+            // error spam within the 500-line window. Fall back to the tag filter
+            // (+ AndroidRuntime crashes) if the app isn't running.
+            let pidFilter = null;
+            try {
+                const pid = execFileSync(adb, ['shell', 'pidof', 'net.thewaterbug.waterbug'], SPAWN_OPTS)
+                    .toString().trim().split(/\s+/)[0];
+                if (pid) pidFilter = pid;
+            } catch (_) { /* app not running — use the tag fallback below */ }
+            const args = pidFilter
+                ? ['logcat', '-d', '--pid', pidFilter, '-t', '3000']
+                : ['logcat', '-d', '-t', '500', 'TiAPI:V', 'AndroidRuntime:E'];
+            const out = execFileSync(adb, args, SPAWN_OPTS);
             fs.writeFileSync(path.join(dir, 'device.log'), out);
         } else if (platform === 'ios' && process.env.SIM_UDID) {
             // Shell-redirect to a file rather than capturing via Node — piping

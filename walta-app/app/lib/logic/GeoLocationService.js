@@ -70,7 +70,12 @@ function start() {
     if ( Alloy.Globals.GeoLocationState === "stopped" ) {
         debug("Starting geolocation service...");
         Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_HIGH;
-        Ti.Geolocation.distanceFilter = 10;
+        // distanceFilter 0 (was 10): a movement gate is wrong for a stationary
+        // site — at 10m the OS stops delivering updates once you stop moving,
+        // so the fix can't keep improving after the first (often poor) reading.
+        // Sampling happens standing still, so take every fix and let the
+        // accuracy settle. (The 10m default here was almost certainly a mistake.)
+        Ti.Geolocation.distanceFilter = 0;
         if (Ti.Geolocation.hasLocationPermissions(Ti.Geolocation.AUTHORIZATION_WHEN_IN_USE)) {
             debug("Got permissions");
             startListening();
