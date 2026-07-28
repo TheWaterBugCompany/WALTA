@@ -182,6 +182,7 @@ GeoLocationService.start();
 // Only allow automatic location updates if the location was
 // undefined when this screen was opened
 Topics.subscribe(Topics.GPSLOCK, function(coords) {
+    Ti.API.info(`WB204DIAG GPSLOCK accuracy=${coords.accuracy} latAlreadySet=${!!(sample.get('lat') || sample.get('lng'))} pass=${coords.accuracy < 100}`);
     // only set location if the accuracy is present and less than 100m
     if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
         if ( coords.accuracy < 100 ) {
