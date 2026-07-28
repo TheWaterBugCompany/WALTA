@@ -376,6 +376,53 @@ describe("CucumberLauncher", function() {
       expect(fakeSpawn.calledTwice, "should not re-run more than once").to.be.true;
     });
   });
+
+  // WB-203: an environmental emulator flake (slow GPS fix, sample tray not
+  // settled) can't be cured by a fresh Appium session on the same device, so
+  // instead of re-running in-process it escalates to EX_TEMPFAIL and lets the
+  // CI shell retry on a freshly-booted device.
+  describe("environmental-failure escalation (fresh-device retry)", function() {
+    const ENV_MARKER = "[infra-failure] environmental :: ";
+    const SESSION_MARKER = "[infra-failure] session-dead :: ";
+
+    it("returns EX_TEMPFAIL and does NOT re-run in-process when the only failure is environmental", async function() {
+      const launcher = new CucumberLauncher({ spawn: fakeSpawn, isAppiumRunning: fakeIsRunning });
+      const promise = launcher.run();
+      await exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: [`${ENV_MARKER}Sample collection\n`, "1 scenario (1 failed)\n"],
+        code: 1,
+      });
+      expect(await promise).to.equal(75);
+      expect(fakeSpawn.calledOnce, "a fresh session can't cure an emulator flake — must not re-run in-process").to.be.true;
+    });
+
+    it("escalates to EX_TEMPFAIL when environmental and session-dead failures mix (all infra)", async function() {
+      const launcher = new CucumberLauncher({ spawn: fakeSpawn, isAppiumRunning: fakeIsRunning });
+      const promise = launcher.run();
+      await exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: [
+          `${ENV_MARKER}Sample collection\n`,
+          `${SESSION_MARKER}Sync from history\n`,
+          "5 scenarios (3 passed, 2 failed)\n",
+        ],
+        code: 1,
+      });
+      expect(await promise).to.equal(75);
+      expect(fakeSpawn.calledOnce).to.be.true;
+    });
+
+    it("stays red (no retry) when a genuine failure sits alongside an environmental one", async function() {
+      const launcher = new CucumberLauncher({ spawn: fakeSpawn, isAppiumRunning: fakeIsRunning });
+      const promise = launcher.run();
+      // 2 failed, only 1 is environmental-marked → the other is a real defect.
+      await exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: [`${ENV_MARKER}Sample collection\n`, "5 scenarios (3 passed, 2 failed)\n"],
+        code: 1,
+      });
+      expect(await promise).to.equal(1);
+      expect(fakeSpawn.calledOnce).to.be.true;
+    });
+  });
 });
 
 // Helper: wait for the spawn at childIndex, emit any stdout/stderr chunks,
