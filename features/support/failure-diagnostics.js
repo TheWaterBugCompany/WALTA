@@ -110,7 +110,13 @@ function captureDeviceLog(platform, dir) {
             const adb = process.env.ANDROID_SDK_ROOT
                 ? path.join(process.env.ANDROID_SDK_ROOT, 'platform-tools', 'adb')
                 : 'adb';
-            const out = execFileSync(adb, ['logcat', '-d', '-t', '500', '-s', 'TiAPI:V'], SPAWN_OPTS);
+            // Include AndroidRuntime + all error-level output, not just TiAPI:V
+            // — Ti.API debug output is quiet (or suppressed) in the test build,
+            // so `-s TiAPI:V` alone produced an empty device.log on a real
+            // failure. Mirror AndroidLauncher's proven filterspec so crashes and
+            // errors are always captured even when the app itself is silent.
+            const out = execFileSync(adb,
+                ['logcat', '-d', '-t', '500', 'TiAPI:V', 'AndroidRuntime:E', '*:E'], SPAWN_OPTS);
             fs.writeFileSync(path.join(dir, 'device.log'), out);
         } else if (platform === 'ios' && process.env.SIM_UDID) {
             // Shell-redirect to a file rather than capturing via Node — piping
