@@ -60,7 +60,9 @@ async function captureScreen(entry) {
 	} else {
 		if (entry.loadMs) { await sleep(entry.loadMs); }
 		Ti.API.info("VISUAL_FRAMEBUFFER_READY name=" + entry.name);
-		await sleep(entry.holdMs || 1500);
+		// Hold long enough for the host to grab the frame while this screen is up,
+		// even on a contended CI runner where the host screenshots serially.
+		await sleep(entry.holdMs || 3000);
 		Ti.API.info("VISUAL_CAPTURED name=" + entry.name + " mode=framebuffer");
 		meta = { name: entry.name, mode: "framebuffer" };
 	}

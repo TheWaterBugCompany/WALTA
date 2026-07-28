@@ -764,6 +764,10 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             echo "Emulator booted"
+            # Fresh emulators show Android's one-time "Viewing full screen" immersive
+            # dialog on first fullscreen entry, which occludes the early screens.
+            # Pre-confirm it so it never appears.
+            adb shell settings put secure immersive_mode_confirmations confirmed
             npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test
 
       - name: Upload visual captures and diffs

@@ -940,7 +940,7 @@ module.exports = function(grunt) {
       const actualDir = path.join('builds', 'visual', platform, device, 'actual');
       const baselineDir = path.join('visual', 'baselines', platform, device);
       const outDir = path.join('builds', 'visual', platform, device, 'report');
-      const captureTimeoutMs = (grunt.option('capture-timeout') || 180) * 1000;
+      const captureTimeoutMs = (grunt.option('capture-timeout') || 600) * 1000;
 
       Promise.all([
         getLauncher(platform, isSimulator),
@@ -955,34 +955,45 @@ module.exports = function(grunt) {
 
         // Framebuffer screens (WebView/video/map, which toImage can't see) are
         // grabbed live: the runner holds the screen and emits a READY marker, and
-        // we screenshot the actual simulator/emulator frame on the spot.
+        // we screenshot the actual simulator/emulator frame on the spot. The shots
+        // run SERIALLY — firing 14 simctl/adb + jimp processes at once starves the
+        // CI runner (and the emulator itself), which stalls log delivery and hangs
+        // the capture.
         const framebufferShots = [];
-        const marker = await new Promise((resolve, reject) => {
-          let stop;
-          const timer = setTimeout(() => {
-            if (stop) stop();
-            reject(new Error(`visual capture timed out after ${captureTimeoutMs / 1000}s with no VISUAL_CAPTURE_DONE`));
-          }, captureTimeoutMs);
-          stop = launcher.streamLogs((line) => {
-            grunt.log.writeln(line);
-            const ready = /VISUAL_FRAMEBUFFER_READY name=(\S+)/.exec(line);
-            if (ready) {
-              const name = ready[1];
-              if (typeof launcher.screenshotFramebuffer !== 'function') {
-                grunt.log.writeln(`  (skipping framebuffer ${name}: ${launcher.constructor.name} has no screenshotFramebuffer)`);
-              } else {
-                framebufferShots.push(
-                  launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`))
-                    .catch((err) => grunt.log.writeln(`  framebuffer ${name} failed: ${err.message}`)));
+        let screenshotChain = Promise.resolve();
+        let marker;
+        try {
+          marker = await new Promise((resolve, reject) => {
+            let stop;
+            const timer = setTimeout(() => {
+              if (stop) stop();
+              reject(new Error(`visual capture timed out after ${captureTimeoutMs / 1000}s with no VISUAL_CAPTURE_DONE`));
+            }, captureTimeoutMs);
+            stop = launcher.streamLogs((line) => {
+              grunt.log.writeln(line);
+              const ready = /VISUAL_FRAMEBUFFER_READY name=(\S+)/.exec(line);
+              if (ready) {
+                const name = ready[1];
+                if (typeof launcher.screenshotFramebuffer !== 'function') {
+                  grunt.log.writeln(`  (skipping framebuffer ${name}: ${launcher.constructor.name} has no screenshotFramebuffer)`);
+                } else {
+                  screenshotChain = screenshotChain.then(() =>
+                    launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`))
+                      .catch((err) => grunt.log.writeln(`  framebuffer ${name} failed: ${err.message}`)));
+                  framebufferShots.push(screenshotChain);
+                }
+                return;
               }
-              return;
-            }
-            const result = parseVisualCaptureResult(line);
-            if (result) { clearTimeout(timer); stop(); resolve(result); }
-          }, { logLevel: 'info' });
-        });
+              const result = parseVisualCaptureResult(line);
+              if (result) { clearTimeout(timer); stop(); resolve(result); }
+            }, { logLevel: 'info' });
+          });
+        } finally {
+          // Flush completed shots even on timeout, so a failed run still uploads
+          // whatever it captured instead of an empty artifact.
+          await Promise.allSettled(framebufferShots);
+        }
         if (marker.status === 'failed') { throw new Error(`on-device capture failed: ${marker.message}`); }
-        await Promise.all(framebufferShots);
         grunt.log.writeln(`Captured ${marker.count} screen(s); pulling toImage screens from device…`);
 
         if (typeof launcher.pullCapturedScreenshots !== 'function') {
