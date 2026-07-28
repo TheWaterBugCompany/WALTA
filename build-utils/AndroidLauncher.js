@@ -2,6 +2,7 @@ import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_proces
 import fs from "fs";
 import path from "path";
 import * as tar from "tar";
+import { Jimp } from "jimp";
 
 function defaultAdb() {
   if (process.env.ANDROID_SDK_ROOT) {
@@ -171,6 +172,20 @@ class AndroidLauncher {
         else reject(new Error(`adb ${args[0]} exited with code ${code}`));
       });
     });
+  }
+
+  // Captures the actual emulator framebuffer (includes WebView / video / map
+  // content and the OS safe-area rendering, which toImage() can't show) to
+  // destPath. The landscape-locked app rotates the emulator display to landscape,
+  // so screencap already matches; if a frame comes back portrait we straighten it.
+  async screenshotFramebuffer(destPath) {
+    const png = await this._execOutBinary(["exec-out", "screencap", "-p"]);
+    const abs = path.resolve(destPath);
+    fs.mkdirSync(path.dirname(abs), { recursive: true });
+    const img = await Jimp.read(png);
+    if (img.bitmap.height > img.bitmap.width) { img.rotate(90); }
+    await img.write(abs);
+    return abs;
   }
 
   // Pulls the visual-capture PNGs out of the app-private data dir. The dir isn't

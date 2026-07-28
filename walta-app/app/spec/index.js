@@ -36,7 +36,6 @@ function readTestConfig() {
 var TEST_CONFIG = readTestConfig();
 
 var SPEC_FILES = [
-  "VisualCapture",
   "About",
   "Help",
   "CloseButton",

@@ -947,6 +947,16 @@ module.exports = function(grunt) {
         import('./build-utils/parseVisualCaptureResult.js'),
         import('./build-utils/visual/compareRun.js'),
       ]).then(async ([launcher, { parseVisualCaptureResult }, { compareRun }]) => {
+        const fs = require('fs');
+        // Start from a clean actual dir so a screen dropped from the manifest
+        // doesn't leave a stale capture behind that reads as an unexpected diff.
+        fs.rmSync(actualDir, { recursive: true, force: true });
+        fs.mkdirSync(actualDir, { recursive: true });
+
+        // Framebuffer screens (WebView/video/map, which toImage can't see) are
+        // grabbed live: the runner holds the screen and emits a READY marker, and
+        // we screenshot the actual simulator/emulator frame on the spot.
+        const framebufferShots = [];
         const marker = await new Promise((resolve, reject) => {
           let stop;
           const timer = setTimeout(() => {
@@ -955,19 +965,29 @@ module.exports = function(grunt) {
           }, captureTimeoutMs);
           stop = launcher.streamLogs((line) => {
             grunt.log.writeln(line);
+            const ready = /VISUAL_FRAMEBUFFER_READY name=(\S+)/.exec(line);
+            if (ready) {
+              const name = ready[1];
+              if (typeof launcher.screenshotFramebuffer !== 'function') {
+                grunt.log.writeln(`  (skipping framebuffer ${name}: ${launcher.constructor.name} has no screenshotFramebuffer)`);
+              } else {
+                framebufferShots.push(
+                  launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`))
+                    .catch((err) => grunt.log.writeln(`  framebuffer ${name} failed: ${err.message}`)));
+              }
+              return;
+            }
             const result = parseVisualCaptureResult(line);
             if (result) { clearTimeout(timer); stop(); resolve(result); }
           }, { logLevel: 'info' });
         });
         if (marker.status === 'failed') { throw new Error(`on-device capture failed: ${marker.message}`); }
-        grunt.log.writeln(`Captured ${marker.count} screen(s); pulling from device…`);
+        await Promise.all(framebufferShots);
+        grunt.log.writeln(`Captured ${marker.count} screen(s); pulling toImage screens from device…`);
 
         if (typeof launcher.pullCapturedScreenshots !== 'function') {
           throw new Error(`${launcher.constructor.name} does not implement pullCapturedScreenshots yet`);
         }
-        // Start from a clean actual dir so a screen dropped from the manifest
-        // doesn't leave a stale capture behind that reads as an unexpected diff.
-        require('fs').rmSync(actualDir, { recursive: true, force: true });
         // iOS resolves the dir from the app container via subdir; Android needs
         // the device-side path the runner reported (marker.dir).
         await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir, deviceDir: marker.dir });
