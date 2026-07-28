@@ -23,7 +23,13 @@ PLATFORM="${1:?usage: run-acceptance-with-retry.sh <android|ios>}"
 EX_TEMPFAIL=75
 
 run_attempt() {
-    npx grunt --platform="$PLATFORM" --simulator --skip-build acceptance-test
+    # Tee the run into the uploaded artifacts so the cucumber "Failed scenarios"
+    # summary + step + error survive even when the CI job log isn't retrievable
+    # (the emulator-runner job log often won't serve). pipefail keeps grunt's
+    # exit code as the function's result so the EX_TEMPFAIL logic still works.
+    mkdir -p /tmp/acceptance-artifacts
+    npx grunt --platform="$PLATFORM" --simulator --skip-build acceptance-test 2>&1 \
+        | tee -a /tmp/acceptance-artifacts/acceptance-output.log
 }
 
 reset_device() {
