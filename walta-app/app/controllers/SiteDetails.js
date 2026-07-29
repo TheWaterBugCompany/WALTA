@@ -18,6 +18,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.off();
     sample.off( null, updateLocation );
     sample.off( null, loadAttributes );
+    Topics.unsubscribe( Topics.GPSLOCK, onGpsLock );
     GeoLocationService.stop();
 });
 
@@ -179,20 +180,24 @@ loadAttributes();
 // Start location services only for this screen
 GeoLocationService.start();
 
-// Only allow automatic location updates if the location was
-// undefined when this screen was opened
-Topics.subscribe(Topics.GPSLOCK, function(coords) {
-    Ti.API.info(`WB204DIAG GPSLOCK accuracy=${coords.accuracy} latAlreadySet=${!!(sample.get('lat') || sample.get('lng'))} pass=${coords.accuracy < 100}`);
+// Only allow automatic location updates if the location was undefined when this
+// screen was opened. Named so the close handler can unsubscribe it — otherwise
+// every visit leaks a GPSLOCK subscriber that keeps firing (and floods the main
+// thread under distanceFilter=0's continuous fixes).
+function onGpsLock(coords) {
     // only set location if the accuracy is present and less than 100m
     if ( ! ( sample.get('lat') || sample.get('lng') ) ) {
         if ( coords.accuracy < 100 ) {
             var accuracy = sample.get("accuracy");
             if ( !accuracy || accuracy > coords.accuracy ) {
                 log(`set location`);
-                Alloy.Models.sample.setLocation(coords);
+                // the captured sample, not the Alloy.Models.sample global a new
+                // survey can reassign — else updateLocation never sees the change
+                sample.setLocation(coords);
             }
         }
     }
-} );
+}
+Topics.subscribe(Topics.GPSLOCK, onGpsLock);
 
 
