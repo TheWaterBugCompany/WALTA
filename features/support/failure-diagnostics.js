@@ -1,15 +1,25 @@
 'use strict';
 
-const { After, BeforeAll, Status } = require('@cucumber/cucumber');
+const { After, AfterStep, BeforeAll, Status } = require('@cucumber/cucumber');
 const fs = require('fs');
 const path = require('path');
 const { execFileSync, spawnSync } = require('child_process');
+const { formatFailureReport } = require('./failure-report');
 
 const ARTIFACTS_ROOT = '/tmp/acceptance-artifacts';
 
 BeforeAll(function () {
     fs.rmSync(ARTIFACTS_ROOT, { recursive: true, force: true });
     fs.mkdirSync(ARTIFACTS_ROOT, { recursive: true });
+});
+
+// Record each step's outcome on the World so the After hook can name the exact
+// step that failed. The World is per-scenario, so this resets each scenario.
+AfterStep(function ({ pickleStep, result }) {
+    (this._executedSteps = this._executedSteps || []).push({
+        text: pickleStep.text,
+        status: result.status,
+    });
 });
 
 After({ timeout: 30000 }, async function ({ pickle, result }) {
@@ -19,6 +29,7 @@ After({ timeout: 30000 }, async function ({ pickle, result }) {
     const dir = path.join(ARTIFACTS_ROOT, slug);
     fs.mkdirSync(dir, { recursive: true });
 
+    captureFailureReport(this._executedSteps, pickle, result, dir);
     await capturePageSource(this.driver, dir);
     await captureScreenshot(this.driver, dir);
     captureDeviceLog(this.platform, dir);
@@ -26,6 +37,24 @@ After({ timeout: 30000 }, async function ({ pickle, result }) {
     captureMockCerdiLog(dir);
     captureAppiumLog(dir);
 });
+
+// The failing step + cucumber error live only in the runner's stdout, which
+// the per-scenario artifact never captured — so a CI failure left you inferring
+// the cause from cumulative device logs. Write them alongside the other
+// diagnostics where the upload already reaches.
+function captureFailureReport(executedSteps, pickle, result, dir) {
+    try {
+        const report = formatFailureReport({
+            scenarioName: pickle.name,
+            steps: executedSteps || [],
+            message: result.message || '(no error message)',
+        });
+        fs.writeFileSync(path.join(dir, 'failure.txt'), report);
+    } catch (e) {
+        fs.writeFileSync(path.join(dir, 'failure.error.txt'),
+            `captureFailureReport threw: ${e && e.message}`);
+    }
+}
 
 // The appium server (grunt `appium` task, --log ./appium.log) carries the
 // WDA/xcode output (showXcodeLog) that pins down which driver command hung —
