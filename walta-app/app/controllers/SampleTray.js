@@ -525,17 +525,27 @@ $.TopLevelWindow.addEventListener("dragend", handleDragEnd );
 */
 
 $.content.addEventListener( "postlayout", function initEvent() {
-  // Guard the size-dependent tray layout: a postlayout that fires mid
-  // window-transition (transiently-null activity) throws on the .size read, which
-  // used to leave the tray — and its Add Sample button — unrendered. Keep the
-  // listener so the next postlayout retries; only remove it once layout completes.
-  if ( attemptLayout(function() {
+  $.content.removeEventListener( "postlayout", initEvent );
+  initTrayWhenAttached();
+});
+
+// content's 'postlayout' can fire mid window-transition, when the current
+// activity is transiently null and reading .size throws getWindow()-on-null.
+// attemptLayout swallows that, but content's postlayout is one-shot and won't
+// re-fire — so poll briefly until the activity is attached and the size-dependent
+// tray layout (and its Add Sample button) actually renders. initializeTray reads
+// a size on its first line before creating anything, so a swallowed attempt is a
+// no-op and retrying is safe.
+function initTrayWhenAttached( attempt ) {
+  attempt = attempt || 0;
+  var done = attemptLayout(function() {
     initializeTray();
     scrollToRightEdge();
-  }) ) {
-    $.content.removeEventListener( "postlayout", initEvent );
+  });
+  if ( !done && attempt < 30 ) {
+    setTimeout(function() { initTrayWhenAttached( attempt + 1 ); }, 100);
   }
-});
+}
 
 Alloy.Collections["taxa"].on("add change remove", () => {
   drawIcecubeTray();
