@@ -9,6 +9,7 @@
  */
 var Topics = require('ui/Topics');
 var { convertSystemToDip } = require("logic/PlatformSpecific");
+var { attemptLayout } = require("util/TiHacks");
 
 var eventHandlers = [];
 function cleanUp() {
@@ -24,14 +25,18 @@ function cleanUp() {
 }
 
 function updateTitleWidth() {
-
-	if ( $.rightTools.size.width > 0 ) {
-		var width = ($.AnchorBar.size.width);
-		var titleWidth = ($.title.size.width);
-		var left = ($.leftTools.rect.x) + ($.leftTools.rect.width);
-		var right = ($.AnchorBar.size.width - $.rightTools.rect.x - $.rightTools.rect.width) + ($.rightTools.rect.width);
-		$.title.left = left + (width-left-right-titleWidth)/2;
-	}
+	// Reads .size/.rect — guarded so a postlayout that fires mid window-transition
+	// (transiently-null activity → getWindow() throw) is skipped and retried on
+	// the next postlayout rather than aborting the header render.
+	attemptLayout(function() {
+		if ( $.rightTools.size.width > 0 ) {
+			var width = ($.AnchorBar.size.width);
+			var titleWidth = ($.title.size.width);
+			var left = ($.leftTools.rect.x) + ($.leftTools.rect.width);
+			var right = ($.AnchorBar.size.width - $.rightTools.rect.x - $.rightTools.rect.width) + ($.rightTools.rect.width);
+			$.title.left = left + (width-left-right-titleWidth)/2;
+		}
+	});
 }
 $.AnchorBar.addEventListener("postlayout", updateTitleWidth);
 
