@@ -186,7 +186,7 @@ describe("SiteDetails controller", function() {
         } );
     });
 
-    it('should NOT update coordinates when a new gps lock is obtained if location already set', function(done) {     
+    it('should NOT update coordinates when a new gps lock is obtained if location already set', function(done) {
         ctl = Alloy.createController("SiteDetails");
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
@@ -194,6 +194,22 @@ describe("SiteDetails controller", function() {
             setTimeout( () => checkTestResult( done, () =>  {
                 expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             }), 50 );
+        } );
+    });
+
+    it('stops responding to GPSLOCK once the window is closed (no subscriber leak)', function(done) {
+        ctl = Alloy.createController("SiteDetails");
+        controllerOpenTest( ctl, function() {
+            // Arm the handler: with no location set, a GPSLOCK would set one.
+            sample.unset("lng");
+            sample.unset("lat");
+            closeWindow( ctl.getView(), function() {
+                ctl = null; // afterEach must not close it again
+                Topics.fireTopicEvent(Topics.GPSLOCK, { latitude: -41.8907, longitude: 145.6713, accuracy: 1 });
+                setTimeout( () => checkTestResult( done, () => {
+                    expect( sample.get("lat"), "location must not be set after the window is closed" ).to.not.be.ok;
+                }), 50 );
+            });
         } );
     });
 
