@@ -7,3 +7,5 @@ Scenario: Enter a training session code
   Then the Academy training screen appears
   When I enter the session code "123"
   Then I can start the training session
+  When I close the Academy
+  Then the menu is shown
