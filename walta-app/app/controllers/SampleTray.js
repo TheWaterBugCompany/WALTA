@@ -4,6 +4,7 @@ var speedbugIndex = $.args.key.getSpeedbugIndex();
 var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
+var { attemptLayout } = require('util/TiHacks');
 var debug = (m, tag = "ui") => Logger.debug(m, tag);
 
 var DEBUG = false; // WARNING turning this on breaks unit tests
@@ -524,9 +525,16 @@ $.TopLevelWindow.addEventListener("dragend", handleDragEnd );
 */
 
 $.content.addEventListener( "postlayout", function initEvent() {
-  $.content.removeEventListener( "postlayout", initEvent );
-  initializeTray();
-  scrollToRightEdge();
+  // Guard the size-dependent tray layout: a postlayout that fires mid
+  // window-transition (transiently-null activity) throws on the .size read, which
+  // used to leave the tray — and its Add Sample button — unrendered. Keep the
+  // listener so the next postlayout retries; only remove it once layout completes.
+  if ( attemptLayout(function() {
+    initializeTray();
+    scrollToRightEdge();
+  }) ) {
+    $.content.removeEventListener( "postlayout", initEvent );
+  }
 });
 
 Alloy.Collections["taxa"].on("add change remove", () => {
