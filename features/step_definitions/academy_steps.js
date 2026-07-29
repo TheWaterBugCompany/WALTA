@@ -18,3 +18,11 @@ Then('I can start the training session', async function () {
   // the training-session flow it launches is built.
   await this.academy.start();
 });
+
+When('I close the Academy', async function () {
+  await this.academy.close();
+});
+
+Then('the menu is shown', async function () {
+  await this.menu.waitFor();
+});
