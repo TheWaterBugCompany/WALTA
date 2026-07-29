@@ -50,35 +50,42 @@ async function startMockServer() {
     }
 }
 
+// Wipe the app's data (DB, tokens, files) and re-grant the runtime permissions
+// pm clear revokes. Used both before the session's first launch and by the
+// per-scenario hard reset. Extras (cerdiServerUrl etc.) don't propagate to a
+// relaunch, so the caller relaunches via AppiumLauncher.launch (am start --es).
+function androidClearAndGrant() {
+    try {
+        const dev = adbDeviceArgs();
+        execFileSync(adb(), [...dev, 'shell', 'pm', 'clear', APP_ID]);
+        execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_FINE_LOCATION']);
+        execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_COARSE_LOCATION']);
+        // WB-10b: the sync nudge is a notification-dot; Android 13+ needs
+        // POST_NOTIFICATIONS granted before the notification (hence dot)
+        // shows. Pre-33 doesn't define the permission — `pm grant` throws
+        // "Unknown permission" there, which is expected and harmless.
+        try {
+            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.POST_NOTIFICATIONS']);
+        } catch (_) { /* pre-Android-13: no runtime notification permission */ }
+        // Android 13+ gallery import needs READ_MEDIA_IMAGES; pre-grant so
+        // openPhotoGallery goes straight to the picker. Pre-33 doesn't
+        // define it — `pm grant` throws there, which is expected.
+        try {
+            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.READ_MEDIA_IMAGES']);
+        } catch (_) { /* pre-Android-13: no runtime media-images permission */ }
+    } catch (e) {
+        console.warn(`[appium-world] adb pm clear/grant failed: ${e.message}`);
+    }
+}
+
 async function connectAndPrepareApp({ platform, isSimulator }) {
     global.platform = platform;
     global.isSimulator = !!isSimulator;
 
     // Clear app state before Appium creates the session: the auto-launch via
-    // appium:optionalIntentArguments must land on the cleared app, and extras
-    // don't propagate to a relaunch (a pm clear afterwards would negate it).
+    // appium:optionalIntentArguments must land on the cleared app.
     if (platform === 'android' && isSimulator) {
-        try {
-            const dev = adbDeviceArgs();
-            execFileSync(adb(), [...dev, 'shell', 'pm', 'clear', APP_ID]);
-            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_FINE_LOCATION']);
-            execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.ACCESS_COARSE_LOCATION']);
-            // WB-10b: the sync nudge is a notification-dot; Android 13+ needs
-            // POST_NOTIFICATIONS granted before the notification (hence dot)
-            // shows. Pre-33 doesn't define the permission — `pm grant` throws
-            // "Unknown permission" there, which is expected and harmless.
-            try {
-                execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.POST_NOTIFICATIONS']);
-            } catch (_) { /* pre-Android-13: no runtime notification permission */ }
-            // Android 13+ gallery import needs READ_MEDIA_IMAGES; pre-grant so
-            // openPhotoGallery goes straight to the picker. Pre-33 doesn't
-            // define it — `pm grant` throws there, which is expected.
-            try {
-                execFileSync(adb(), [...dev, 'shell', 'pm', 'grant', APP_ID, 'android.permission.READ_MEDIA_IMAGES']);
-            } catch (_) { /* pre-Android-13: no runtime media-images permission */ }
-        } catch (e) {
-            console.warn(`[appium-world] adb pm clear/grant failed: ${e.message}`);
-        }
+        androidClearAndGrant();
     }
 
     const { default: AppiumLauncher } = await import('../../build-utils/AppiumLauncher.js');
@@ -142,15 +149,33 @@ async function tapIfDisplayed(selector) {
     } catch (_) { /* not present or stale — the next poll retries */ }
 }
 
-// In-app reset via the `walta://reset` deeplink (lib/util/AppReset.js).
+// Per-scenario reset. Android gets a HARD reset — pm clear + relaunch to a fresh
+// process and DB — because the in-app walta://reset leaves process state (open
+// windows, GeoLocationService listeners, in-memory models) that leaks across
+// scenarios and the environmental-retry re-runs, destabilising the next scenario
+// (WB-207: leaked SiteDetails windows, stale GPS, ghost samples). iOS keeps the
+// in-app soft reset — its acceptance suite doesn't exhibit that leak and a
+// per-scenario reinstall would be far slower.
 async function resetApp() {
-    const appId = global.launcher.appId;
-    const url = 'walta://reset';
     if (global.platform === 'android') {
-        await global.driver.execute('mobile: deepLink', { url, package: appId, waitForLaunch: false });
+        await hardResetAndroid();
     } else {
-        await global.driver.execute('mobile: deepLink', { url, bundleId: appId });
+        await softResetInApp();
     }
+}
+
+// Wipe + relaunch the Android app to a clean process, then wait for the menu.
+async function hardResetAndroid() {
+    androidClearAndGrant();
+    await global.launcher.launch(APP_ID, launchArgs());
+    await global.driver.waitUntil(
+        () => isDisplayed('~Waterbug Survey.'),
+        { timeout: 30000, interval: 500, timeoutMsg: 'menu not shown after Android hard reset' });
+}
+
+// In-app reset via the `walta://reset` deeplink (lib/util/AppReset.js).
+async function softResetInApp() {
+    await global.driver.execute('mobile: deepLink', { url: 'walta://reset', bundleId: global.launcher.appId });
     // Reset announces the logout (menu shows "Log In") only *after* it has
     // quiesced any in-flight sync and cleared the token — so the Log In button
     // is a reliable "reset complete" signal. Polling for it (rather than a
