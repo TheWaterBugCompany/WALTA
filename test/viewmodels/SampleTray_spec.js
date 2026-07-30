@@ -147,6 +147,18 @@ describe("SampleTrayViewModel", function () {
       // scrollx 0 gives leftEdge -1; the window must start at tile 0, not -1.
       expect(vm.syncWindow(0).toAdd.map(t => t.tileNum)).to.deep.equal([0, 1, 2, 3]);
     });
+
+    // The controller clears every cached tile view when it rebuilds the tray;
+    // resetWindow drops the materialized bookkeeping so the next syncWindow
+    // re-adds the whole window from scratch.
+    it("re-adds the whole window after resetWindow", function () {
+      const vm = vmWithViewport(30);
+      vm.syncWindow(0);
+      vm.resetWindow();
+      const { toAdd, toUpdate } = vm.syncWindow(0);
+      expect(toAdd.map(t => t.tileNum)).to.deep.equal([0, 1, 2, 3]);
+      expect(toUpdate).to.deep.equal([]);
+    });
   });
 
 });

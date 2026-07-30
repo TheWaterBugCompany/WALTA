@@ -88,6 +88,12 @@ class SampleTrayViewModel extends ChangeNotifier {
     return { toAdd, toUpdate, toRelease };
   }
 
+  // The controller clears its cached tile views on a full rebuild; this drops
+  // the matching bookkeeping so the next syncWindow re-materializes the window.
+  resetWindow() {
+    this._materialized.clear();
+  }
+
   _tileDescriptor(n) {
     return {
       tileNum: n,

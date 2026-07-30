@@ -5,7 +5,17 @@ var PlatformSpecific = require('logic/PlatformSpecific');
 var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
 var { attemptLayout } = require('util/TiHacks');
+var SampleTrayViewModel = require('viewmodels/SampleTray');
 var debug = (m, tag = "ui") => Logger.debug(m, tag);
+
+// Spike 0: the VM owns the scroll windowing (which tiles are on screen) as a
+// pure per-scroll query; the controller keeps only the Ti view create/remove.
+var trayVm = new SampleTrayViewModel({
+  taxaSource: {
+    length: () => Alloy.Collections["taxa"].length,
+    at: (i) => Alloy.Collections["taxa"].at(i)
+  }
+});
 
 var DEBUG = false; // WARNING turning this on breaks unit tests
 
@@ -100,6 +110,7 @@ function clearTileCache() {
     }
   }
   tileIndex = [];
+  trayVm.resetWindow();
   if ( firstTwoTiles ) {
     $.endcap.remove(firstTwoTiles.container);
     firstTwoTiles = null;
@@ -321,59 +332,24 @@ function updateSampleTrayTile( tileNum ) {
   });
 }
 
-function releaseTiles( start_n, end_n ) {
-  if ( DEBUG ) {
-    debug(`releaseTiles(${start_n},${end_n})`);
-  }
-  for( var i = start_n; i<=end_n; i++ ) {
-    if ( i >=  0 ) {
-      var tile = tileIndex[i];
-      if ( typeof( tile ) !== "undefined" ) {
-        $.tray.remove( tile.container );
-        cleanUpTile( tile );
-        delete tileIndex[i];
-      }
-    }
+function releaseTile( n ) {
+  var tile = tileIndex[n];
+  if ( typeof( tile ) !== "undefined" ) {
+    $.tray.remove( tile.container );
+    cleanUpTile( tile );
+    delete tileIndex[n];
   }
 }
 
-function addTiles( start_n, end_n ) {
-  if ( DEBUG ) {
-    debug(`addTiles(${start_n},${end_n})`);
-  }
-  for( var i = start_n; i<=end_n; i++ ) {
-   if ( i >=  0 ) {
-     var tile;
-     if ( typeof( tileIndex[i] ) !== "undefined") {
-       updateSampleTrayTile( i );
-    } else {
-        tile = createSampleTrayTile( i );
-        tileIndex[i] = tile;
-        $.tray.add( tile.container );
-      }
-    }
-  }
-}
-
-function roundToTile( x ) {
-  var middleWidth = getMiddleWidth();
-  var endcapWidth = getEndcapWidth();
-  return Math.floor((x - endcapWidth) / middleWidth);
-}
-
-function updateVisibleTiles( scrollx) {
-  var viewWidth = getViewWidth();
-  var middleWidth = getMiddleWidth();
-  var endcapWidth = getEndcapWidth();
-
-  var rightEdge = roundToTile( scrollx + viewWidth + middleWidth - 1 );
-  var leftEdge = roundToTile( scrollx );
-  if ( DEBUG ) {
-    debug(`viewWidth=${viewWidth}, middleWidth=${middleWidth}, encapWidth=${endcapWidth}, endcapHeight=${getEndcapHeight()}, leftEdge=${leftEdge}, rightEdge=${rightEdge}`);
-  }
-  addTiles(leftEdge,rightEdge - 1);
-  releaseTiles( 0, leftEdge-1 );
-  releaseTiles( rightEdge, tileIndex.length );
+function updateVisibleTiles( scrollx ) {
+  var { toAdd, toUpdate, toRelease } = trayVm.syncWindow( scrollx );
+  toUpdate.forEach( function( t ) { updateSampleTrayTile( t.tileNum ); } );
+  toAdd.forEach( function( t ) {
+    var tile = createSampleTrayTile( t.tileNum );
+    tileIndex[t.tileNum] = tile;
+    $.tray.add( tile.container );
+  });
+  toRelease.forEach( releaseTile );
 }
 
 function drawIcecubeTray() {
@@ -392,6 +368,7 @@ function drawIcecubeTray() {
   }
   $.tray.width = `${getTrayWidth()}dp`;
   $.contentWidth = `${getTrayWidth()}dp`;
+  trayVm.setViewport({ width: getViewWidth(), height: getEndcapHeight() });
   updateFirstTwoSampleTrayIcons();
   updateVisibleTiles( getScrollOffset() );
   $.trigger("trayupdated");
