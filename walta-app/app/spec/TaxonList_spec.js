@@ -5,7 +5,6 @@ var { closeWindow, controllerOpenTest } = require("spec/util/TestUtils");
 
 describe('TaxonList controller', function() {
 	var key, ctl;
-	this.timeout(3000);
 	before( function(){
 		key = KeyLoaderJson.loadKey( Ti.Filesystem.resourcesDirectory + '/spec/resources/simpleKey1/' );
 		ctl = Alloy.createController("TaxonList", { key: key });

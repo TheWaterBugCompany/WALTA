@@ -7,7 +7,6 @@ describe('MethodSelect', function() {
 	var mnu, win;
 	context("no unknown bug", function() {
 		before( function(done) {
-			this.timeout(3000);
 			mnu = Alloy.createController("MethodSelect");
 			win = wrapViewInWindow( mnu.getView() );
 			windowOpenTest( win, done );
@@ -49,7 +48,6 @@ describe('MethodSelect', function() {
 	})
 	context("with unknown bug", function() {
 		before( function(done) {
-			this.timeout(3000);
 			mnu = Alloy.createController("MethodSelect", {unknownBug: true});
 			win = wrapViewInWindow( mnu.getView() );
 			windowOpenTest( win, done );

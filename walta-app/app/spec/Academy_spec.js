@@ -4,7 +4,6 @@ var { wrapViewInWindow, windowOpenTest, closeWindow } = require('spec/util/TestU
 
 describe('Academy modal', function() {
 	var ctl, win;
-	this.timeout(5000);
 
 	beforeEach( function(done) {
 		ctl = Alloy.createController("Academy");
