@@ -1,5 +1,7 @@
 var Topics = require('ui/Topics');
 var SampleHistoryViewModel = require('viewmodels/SampleHistory');
+var bindView = require('util/bindView');
+var collection = bindView.collection;
 
 exports.baseController = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
@@ -33,44 +35,32 @@ var sampleSource = {
 
 $.vm = new SampleHistoryViewModel({ sampleSource: sampleSource, topics: Topics });
 
-var rowControllers = new Map();
+// Rows are driven by the collection binding: bindView owns the keyed diff
+// (create / retain / dispose by sampleId) and re-applies the whole ordered list
+// to the TableView via the adapter's render (setData). The adapter injects the
+// Titanium row work — create + bind the row controller, and a per-row click by
+// stable sampleId (Android drops table-level dispatch on reused/reordered rows).
+var rowAdapter = {
+    key: function(rowVm) { return rowVm.sampleId; },
+    create: function(rowVm) {
+        var ctl = Alloy.createController("SampleHistoryRow");
+        var unbind = ctl.bind(rowVm);
+        var onClick = function() { openSampleMenu(rowVm.sampleId); };
+        ctl.getView().addEventListener("click", onClick);
+        return { view: ctl.getView(), ctl: ctl, unbind: unbind, onClick: onClick };
+    },
+    dispose: function(handle) {
+        handle.unbind();
+        handle.view.removeEventListener("click", handle.onClick);
+        if (handle.ctl && typeof handle.ctl.destroy === "function") handle.ctl.destroy();
+    },
+    render: function(container, handles) {
+        container.setData(handles.map(function(h) { return h.view; }));
+    }
+};
 
-function buildAndBindRow(rowVm) {
-    var ctl = Alloy.createController("SampleHistoryRow");
-    var unbind = ctl.bind(rowVm);
-    // Per-row click by stable sampleId — Android drops table-level dispatch on reused/reordered row proxies.
-    var onClick = function() { openSampleMenu(rowVm.sampleId); };
-    ctl.getView().addEventListener("click", onClick);
-    rowControllers.set(rowVm.sampleId, { ctl: ctl, unbind: unbind, onClick: onClick });
-    return ctl.getView();
-}
-
-function disposeRow(sampleId) {
-    var r = rowControllers.get(sampleId);
-    if (!r) return;
-    r.unbind();
-    r.ctl.getView().removeEventListener("click", r.onClick);
-    if (r.ctl && typeof r.ctl.destroy === "function") r.ctl.destroy();
-    rowControllers.delete(sampleId);
-}
-
-function renderRows() {
-    $.sampleTable.setData($.vm.rows.map(function(rowVm) {
-        if (rowControllers.has(rowVm.sampleId)) {
-            return rowControllers.get(rowVm.sampleId).ctl.getView();
-        }
-        return buildAndBindRow(rowVm);
-    }));
-}
-
-renderRows();
-
-$.vm.addListener(function () {
-    var newIds = new Set($.vm.rows.map(function(r) { return r.sampleId; }));
-    Array.from(rowControllers.keys()).forEach(function(id) {
-        if (!newIds.has(id)) disposeRow(id);
-    });
-    renderRows();
+var unbindRows = bindView($, $.vm, {
+    sampleTable: { children: collection("rows", rowAdapter) }
 });
 
 var acb = $.getAnchorBar();
@@ -84,7 +74,7 @@ acb.addTool($.syncButton.getView());
 Topics.subscribe(Topics.LOGGEDOUT, closeSyncFeedback);
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-    Array.from(rowControllers.keys()).forEach(disposeRow);
+    unbindRows();
     $.vm.dispose();
     if ($.sampleMenu) $.sampleMenu.cleanUp();
     Topics.unsubscribe(Topics.LOGGEDOUT, closeSyncFeedback);
