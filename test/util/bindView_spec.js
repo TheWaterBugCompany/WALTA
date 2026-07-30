@@ -408,6 +408,46 @@ describe("bindView collection binding", function () {
     get visible() { return [this._offset, this._offset + 1].map((i) => ({ id: i })); }
   }
 
+  // A TableView-style container renders its rows from a whole ordered list
+  // (setData), not incremental add/remove. When the adapter provides render(),
+  // the binding still owns the keyed diff (create/retain/dispose) but hands the
+  // adapter the full ordered handle list to apply, instead of add/remove.
+  function makeTableContainer() {
+    return {
+      data: [],
+      setData(views) { this.data = views.slice(); },
+      ids() { return this.data.map((v) => v.id); },
+      addEventListener() {}, removeEventListener() {},
+    };
+  }
+
+  function makeRenderAdapter() {
+    const disposed = [];
+    return {
+      disposed,
+      key: (it) => it.id,
+      create: (it) => ({ view: { id: it.id } }),
+      dispose: (h) => disposed.push(h.view.id),
+      render: (container, handles) => container.setData(handles.map((h) => h.view)),
+    };
+  }
+
+  it("render-mode: syncs the whole ordered list via the adapter, reusing retained children", function () {
+    const container = makeTableContainer();
+    const adapter = makeRenderAdapter();
+    const vm = new ListVM([{ id: 1 }, { id: 2 }]);
+    bindView({ table: container }, vm, { table: { children: collection("items", adapter) } });
+    expect(container.ids()).to.deep.equal([1, 2]);
+    const view2Before = container.data.find((v) => v.id === 2);
+
+    vm.items = [{ id: 2 }, { id: 3 }]; // drop 1, keep 2, add 3
+
+    expect(container.ids(), "order follows the VM list").to.deep.equal([2, 3]);
+    expect(adapter.disposed, "only the removed child is disposed").to.deep.equal([1]);
+    expect(container.data.find((v) => v.id === 2), "retained row is reused, not rebuilt")
+      .to.equal(view2Before);
+  });
+
   it("reconciles on the container's scroll event without broadcasting", function () {
     const container = makeContainer();
     const adapter = makeAdapter();
