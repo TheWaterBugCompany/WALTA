@@ -319,3 +319,110 @@ describe("bindView", function () {
     });
   });
 });
+
+// A collection binding drives the *children* of a container from a VM getter
+// that returns a keyed list — generalising the hand-rolled reconcile loops in
+// controllers/SampleHistory.js (Map of child controllers) and the SampleTray
+// windowing. bindView owns the keyed diff; the injected adapter owns the
+// Titanium-specific child create/attach/dispose.
+describe("bindView collection binding", function () {
+  const { collection } = bindView;
+
+  function makeContainer() {
+    const children = [];
+    const listeners = {};
+    return {
+      children,
+      add(v) { children.push(v); },
+      remove(v) { const i = children.indexOf(v); if (i >= 0) children.splice(i, 1); },
+      addEventListener(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
+      removeEventListener(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
+      fireEvent(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
+      ids() { return children.map((c) => c.id); },
+    };
+  }
+
+  class ListVM extends ChangeNotifier {
+    constructor(items) { super(); this._items = items || []; }
+    get items() { return this._items; }
+    set items(v) { this._items = v; this.notifyListeners(); }
+  }
+
+  // The adapter is where the Titanium-specific work is injected: create() makes
+  // a child view, dispose() tears it down. bindView never touches Ti.
+  function makeAdapter() {
+    const disposed = [];
+    return {
+      disposed,
+      key: (item) => item.id,
+      create: (item) => ({ view: { id: item.id, label: item.label } }),
+      dispose: (handle) => disposed.push(handle.view.id),
+    };
+  }
+
+  it("creates and attaches a child per item on bind", function () {
+    const container = makeContainer();
+    const vm = new ListVM([{ id: 1, label: "a" }, { id: 2, label: "b" }]);
+    bindView({ list: container }, vm, {
+      list: { children: collection("items", makeAdapter()) },
+    });
+    expect(container.ids()).to.deep.equal([1, 2]);
+  });
+
+  it("reconciles on notify: adds new, retains existing, disposes removed", function () {
+    const container = makeContainer();
+    const adapter = makeAdapter();
+    const vm = new ListVM([{ id: 1, label: "a" }, { id: 2, label: "b" }]);
+    bindView({ list: container }, vm, { list: { children: collection("items", adapter) } });
+    const child2Before = container.children.find((c) => c.id === 2);
+
+    vm.items = [{ id: 2, label: "b" }, { id: 3, label: "c" }]; // drop 1, keep 2, add 3
+
+    expect(container.ids()).to.deep.equal([2, 3]);
+    expect(adapter.disposed, "only the removed child is disposed").to.deep.equal([1]);
+    expect(container.children.find((c) => c.id === 2), "retained child is not recreated")
+      .to.equal(child2Before);
+  });
+
+  it("unbind disposes every child and stops reconciling", function () {
+    const container = makeContainer();
+    const adapter = makeAdapter();
+    const vm = new ListVM([{ id: 1, label: "a" }, { id: 2, label: "b" }]);
+    const unbind = bindView({ list: container }, vm, { list: { children: collection("items", adapter) } });
+
+    unbind();
+
+    expect(adapter.disposed.slice().sort()).to.deep.equal([1, 2]);
+    expect(container.children).to.deep.equal([]);
+    vm.items = [{ id: 9, label: "z" }]; // a notify after unbind must do nothing
+    expect(container.children).to.deep.equal([]);
+  });
+
+  // The tray's window changes on scroll, a high-frequency Titanium input. The
+  // collection binding reconciles from the container's own scroll event via the
+  // injected onScroll hook — WITHOUT a notifyListeners broadcast, so scrolling
+  // never re-pulls every other bound property (the fluidity contract).
+  class WindowVM extends ChangeNotifier {
+    constructor() { super(); this._offset = 0; }
+    set offset(x) { this._offset = x; } // deliberately does NOT notify
+    get visible() { return [this._offset, this._offset + 1].map((i) => ({ id: i })); }
+  }
+
+  it("reconciles on the container's scroll event without broadcasting", function () {
+    const container = makeContainer();
+    const adapter = makeAdapter();
+    adapter.scrollEvent = "scroll";
+    adapter.onScroll = (e) => { vm.offset = e.x; }; // injected Ti read/convert lives here
+    const vm = new WindowVM();
+    bindView({ list: container }, vm, { list: { children: collection("visible", adapter) } });
+    expect(container.ids(), "initial window").to.deep.equal([0, 1]);
+
+    let notifies = 0;
+    const realNotify = vm.notifyListeners.bind(vm);
+    vm.notifyListeners = () => { notifies++; realNotify(); };
+    container.fireEvent("scroll", { x: 5 });
+
+    expect(container.ids(), "window follows the scroll offset").to.deep.equal([5, 6]);
+    expect(notifies, "scroll must not trigger a broadcast").to.equal(0);
+  });
+});

@@ -51,6 +51,18 @@ function isCall(ref) {
   return ref !== null && typeof ref === "object" && ref.__call === true;
 }
 
+// Children-binding marker: drives a container's child views from a VM getter
+// that returns a keyed list. bindView owns the keyed diff (create new / retain
+// existing / dispose gone); the adapter injects the Titanium-specific child
+// work (key/create/attach/detach/dispose/update) so bindView stays Ti-free.
+function collection(getter, adapter) {
+  return { __collection: true, getter, adapter };
+}
+
+function isCollection(ref) {
+  return ref !== null && typeof ref === "object" && ref.__collection === true;
+}
+
 // The VM method name an on<Event> binding targets, whether it's a plain
 // string handler or a call() marker.
 function methodOf(ref) {
@@ -71,7 +83,7 @@ module.exports = function bindView($, vm, bindings, palette) {
       const widget = $[widgetId];
       const widgetBindings = bindings[widgetId];
       for (const key in widgetBindings) {
-        if (EVENT_KEY_RE.test(key)) continue;
+        if (EVENT_KEY_RE.test(key) || isCollection(widgetBindings[key])) continue;
         let value = vm[propOf(widgetBindings[key])];
         if (typeof value === "symbol" && palette) {
           value = palette[value.description];
@@ -103,6 +115,8 @@ module.exports = function bindView($, vm, bindings, palette) {
         const prop = ref.prop;
         const handler = function (e) { vm[prop] = e.value; };
         eventTeardowns.push(attachEvent(widget, "change", handler));
+      } else if (isCollection(ref)) {
+        eventTeardowns.push(setupCollection(vm, widget, ref));
       }
     }
   }
@@ -116,6 +130,70 @@ module.exports = function bindView($, vm, bindings, palette) {
     eventTeardowns.forEach(fn => fn());
   };
 };
+
+// Reconciles a container's children against vm[getter] by stable key, and
+// re-runs on every notifyListeners (a collection add/remove). The scroll-driven
+// window will trigger the same reconcile directly (not through notify) so the
+// per-frame path stays a cheap delta. Returns a teardown that stops listening
+// and disposes every child.
+function setupCollection(vm, container, marker) {
+  const adapter = marker.adapter;
+  const handles = new Map();
+
+  function attach(handle) {
+    if (adapter.attach) adapter.attach(container, handle);
+    else container.add(handle.view);
+  }
+  function detach(handle) {
+    if (adapter.detach) adapter.detach(container, handle);
+    else container.remove(handle.view);
+    if (adapter.dispose) adapter.dispose(handle);
+  }
+
+  function reconcile() {
+    const items = vm[marker.getter] || [];
+    const desired = new Map(items.map((it) => [adapter.key(it), it]));
+    for (const [k, handle] of handles) {
+      if (!desired.has(k)) {
+        detach(handle);
+        handles.delete(k);
+      }
+    }
+    items.forEach((it) => {
+      const k = adapter.key(it);
+      if (!handles.has(k)) {
+        const handle = adapter.create(it);
+        handles.set(k, handle);
+        attach(handle);
+      } else if (adapter.update) {
+        adapter.update(handles.get(k), it);
+      }
+    });
+  }
+
+  reconcile();
+  vm.addListener(reconcile);
+
+  // Scroll-driven windows (the tray) reconcile from the container's own scroll
+  // event, not through notifyListeners — so a fling never re-pulls every other
+  // bound property. onScroll injects the Titanium offset read/convert.
+  let detachScroll = () => {};
+  if (adapter.scrollEvent) {
+    const onScroll = (e) => {
+      if (adapter.onScroll) adapter.onScroll(e, container);
+      reconcile();
+    };
+    container.addEventListener(adapter.scrollEvent, onScroll);
+    detachScroll = () => container.removeEventListener(adapter.scrollEvent, onScroll);
+  }
+
+  return function teardown() {
+    vm.removeListener(reconcile);
+    detachScroll();
+    for (const handle of handles.values()) detach(handle);
+    handles.clear();
+  };
+}
 
 // iOS silently drops writes to some properties — accessibilityLabel is the
 // known one — when they are made before the view is realised. bindView runs at
@@ -176,6 +254,13 @@ function validate($, vm, bindings) {
         if (typeof widget.addEventListener !== "function" && typeof widget.on !== "function") {
           throw new Error(`bindView: widget "${widgetId}" has no event mechanism for two-way ${key}`);
         }
+      } else if (isCollection(ref)) {
+        if (!(ref.getter in vm)) {
+          throw new Error(`bindView: VM has no collection getter "${ref.getter}" (bound to ${widgetId}.${key})`);
+        }
+        if (typeof ref.adapter.key !== "function" || typeof ref.adapter.create !== "function") {
+          throw new Error(`bindView: collection adapter for ${widgetId}.${key} needs key() and create()`);
+        }
       } else {
         if (!(ref in vm)) {
           throw new Error(`bindView: VM has no property "${ref}" (bound to ${widgetId}.${key})`);
@@ -187,3 +272,4 @@ function validate($, vm, bindings) {
 
 module.exports.twoWay = twoWay;
 module.exports.call = call;
+module.exports.collection = collection;
