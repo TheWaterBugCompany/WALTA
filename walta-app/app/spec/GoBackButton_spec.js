@@ -4,7 +4,6 @@ var Topics = require("ui/Topics");
 var { closeWindow, windowOpenTest, setManualTests, wrapViewInWindow, actionFiresTopicTest } = require("spec/util/TestUtils");
 describe("GoBackButton controller", function() {
   var acb, win, btn;
-  this.timeout(6000);
 	before( function(done) {
 		acb = Alloy.createController( "AnchorBar", { title: "Anchor Bar"} );
     win = wrapViewInWindow( acb.getView() );

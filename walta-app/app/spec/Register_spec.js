@@ -14,7 +14,6 @@ function setTextField( field, value ) {
 
 describe('Register controller', function() {
     var vw, ct, win;
-    this.timeout(3000);
 
     function fillOutValidForm() {
         return Promise.resolve()

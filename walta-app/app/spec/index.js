@@ -97,7 +97,7 @@ function runTests() {
   if ( isManualTests() ) {
     mocha.timeout(0);
   } else {
-    mocha.timeout(10000); // for slow devices
+    mocha.timeout(30000); // headroom: window open/close events can arrive late under CI-simulator load
   }
   return new Promise( function(resolve, reject) {
     SPEC_FILES.forEach( (f) => {

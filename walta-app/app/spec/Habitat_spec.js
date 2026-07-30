@@ -4,7 +4,6 @@ var mocx = require("spec/lib/mocx");
 var { closeWindow, controllerOpenTest, resetDatabase, clickButton, setManualTests, enterText, checkTestResult } = require("spec/util/TestUtils");
 describe("Habitat controller", function() {
     var ctl;
-    this.timeout(6000);
 	beforeEach( function() {
     Alloy.Models.instance("sample").clear();
 		

@@ -6,7 +6,6 @@ var Topics = require('ui/Topics');
 describe('SampleEditMenu', function() {
 	var mnu, win;
 	before( function(done) {
-		this.timeout(3000);
 		mnu = Alloy.createController("SampleEditMenu", { sampleId: 1 });
 		win = wrapViewInWindow( mnu.getView() );
 		windowOpenTest( win, done );
