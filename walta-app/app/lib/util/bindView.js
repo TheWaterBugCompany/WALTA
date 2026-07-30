@@ -140,14 +140,17 @@ function setupCollection(vm, container, marker) {
   const adapter = marker.adapter;
   const handles = new Map();
 
-  function attach(handle) {
+  // Two container styles: incremental (ScrollView — add/remove each child) and
+  // render (TableView — the adapter re-applies the whole ordered list via
+  // setData). The keyed diff below is identical either way; only how the diff
+  // reaches the container differs.
+  function containerAdd(handle) {
     if (adapter.attach) adapter.attach(container, handle);
     else container.add(handle.view);
   }
-  function detach(handle) {
+  function containerRemove(handle) {
     if (adapter.detach) adapter.detach(container, handle);
     else container.remove(handle.view);
-    if (adapter.dispose) adapter.dispose(handle);
   }
 
   function reconcile() {
@@ -155,7 +158,8 @@ function setupCollection(vm, container, marker) {
     const desired = new Map(items.map((it) => [adapter.key(it), it]));
     for (const [k, handle] of handles) {
       if (!desired.has(k)) {
-        detach(handle);
+        if (!adapter.render) containerRemove(handle);
+        if (adapter.dispose) adapter.dispose(handle);
         handles.delete(k);
       }
     }
@@ -164,11 +168,14 @@ function setupCollection(vm, container, marker) {
       if (!handles.has(k)) {
         const handle = adapter.create(it);
         handles.set(k, handle);
-        attach(handle);
+        if (!adapter.render) containerAdd(handle);
       } else if (adapter.update) {
         adapter.update(handles.get(k), it);
       }
     });
+    if (adapter.render) {
+      adapter.render(container, items.map((it) => handles.get(adapter.key(it))));
+    }
   }
 
   reconcile();
@@ -190,8 +197,12 @@ function setupCollection(vm, container, marker) {
   return function teardown() {
     vm.removeListener(reconcile);
     detachScroll();
-    for (const handle of handles.values()) detach(handle);
+    for (const handle of handles.values()) {
+      if (!adapter.render) containerRemove(handle);
+      if (adapter.dispose) adapter.dispose(handle);
+    }
     handles.clear();
+    if (adapter.render) adapter.render(container, []);
   };
 }
 
