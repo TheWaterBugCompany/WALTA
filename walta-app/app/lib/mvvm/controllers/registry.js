@@ -5,5 +5,7 @@ module.exports = {
   Academy: require("./Academy"),
   Menu: require("./Menu"),
   MethodSelect: require("./MethodSelect"),
+  SampleHistory: require("./SampleHistory"),
   SampleHistoryRow: require("./SampleHistoryRow"),
+  SampleEditMenu: require("./SampleEditMenu"),
 };

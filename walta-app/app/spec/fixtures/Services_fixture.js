@@ -1,5 +1,6 @@
 var Topics = require("ui/Topics");
 var Dialogs = require("logic/Dialogs");
+var { View } = require("logic/View");
 
 // A complete-enough services bag for specs that boot the app through a screen on
 // the View seam. Screen controllers build their view-models from this bag, so it
@@ -27,6 +28,13 @@ function makeTestServices(overrides) {
       get: function () { return Alloy.Globals.CerdiApi; },
       enumerable: true,
     });
+  }
+
+  // Screens created via the View seam build child components through
+  // services.View (e.g. SampleHistory's rows), so the bag carries its own View —
+  // as index-app does. Specs that construct their own View can overwrite it.
+  if (!("View" in overrides)) {
+    services.View = new View(services);
   }
   return services;
 }

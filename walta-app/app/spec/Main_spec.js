@@ -22,8 +22,12 @@ describe("Main controller", function() {
     simple.mock(services.Survey.uploadNewSample).returnWith();
   })
   services.Navigation = new Navigation(services);
-  function currentController() { 
+  function currentController() {
     return services.View.getCurrentController();
+  }
+  // The sample edit menu is a modal now (row-select fires EDIT_SAMPLE).
+  function sampleMenu() {
+    return services.View.getCurrentModal().alloyCtl;
   }
   afterEach(function() {
     if ( ! isManualTests() ) {
@@ -56,7 +60,7 @@ describe("Main controller", function() {
     currentController().sampleTable.data[0].rows[0].fireEvent("click");
 
     await waitForTick(10)();
-    await actionFiresTopicTest( currentController().sampleMenu.edit, "click", Topics.PAGE_OPENED );
+    await actionFiresTopicTest( sampleMenu().edit, "click", Topics.PAGE_OPENED );
     currentController().waterbodyNameField.value = "changed by test edit";
     currentController().waterbodyNameField.fireEvent("change"); // simulate user entering text
 
@@ -88,7 +92,7 @@ describe("Main controller", function() {
    
     await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED);
     currentController().sampleTable.data[0].rows[0].fireEvent("click");
-    await actionFiresTopicTest( currentController().sampleMenu.edit, "click", Topics.PAGE_OPENED );
+    await actionFiresTopicTest( sampleMenu().edit, "click", Topics.PAGE_OPENED );
 
     // At this point the global sample SHOULD NOT be the original record but
     // a temporary copy instead. This a new sample with the DateSubmitted field blank.
@@ -117,7 +121,7 @@ describe("Main controller", function() {
     currentController().sampleTable.data[0].rows[0].fireEvent("click");
 
     
-    await actionFiresTopicTest( currentController().sampleMenu.view, "click", Topics.PAGE_OPENED );
+    await actionFiresTopicTest( sampleMenu().view, "click", Topics.PAGE_OPENED );
 
     // verify change has been persisted
     expect( currentController().waterbodyNameField.value ).to.equal("changed by test edit");
