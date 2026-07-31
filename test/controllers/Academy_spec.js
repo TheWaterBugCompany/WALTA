@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const createAcademyController = require("../../walta-app/app/lib/controllers/Academy");
+const createAcademyController = require("../../walta-app/app/lib/mvvm/controllers/Academy");
 
 // Fake Ti widget: settable props + addEventListener/fireEvent.
 function makeWidget(props) {

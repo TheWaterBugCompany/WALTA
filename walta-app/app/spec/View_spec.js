@@ -8,7 +8,7 @@ var { closeWindow } = require("spec/util/TestUtils");
 var ABOUT_ARGS = { keyUrl: Ti.Filesystem.resourcesDirectory + "taxonomy/walta/" };
 
 // View is the Titanium orchestration seam: it opens/closes windows and modals
-// and (for a registered name) instantiates the Ti-free lib/controllers/<name>
+// and (for a registered name) instantiates the Ti-free lib/mvvm/controllers/<name>
 // that drives the binding. These specs pin that behaviour before it grows to
 // drive windows too. See docs/patterns/modals.md and the north-star.
 describe("View seam", function () {
@@ -48,6 +48,10 @@ describe("View seam", function () {
       view.closeModal();
       expect(view.getCurrentModal(), "modal cleared after close").to.not.exist;
     });
+    // NB: the DEFAULT registry (hard require) resolving a lib controller is
+    // verified in a real bundle build, not here — LiveView can't reliably serve
+    // the mvvm/controllers require chain. The injected-registry tests below
+    // cover the seam robustly (and injection is the north-star path anyway).
   });
 
   // The registry is injectable so the seam can be tested with a fake lib

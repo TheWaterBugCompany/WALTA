@@ -21,7 +21,7 @@ work to `View.openModal` (`lib/logic/View.js`), which:
 
 1. `Alloy.createController(name, args)` — builds the overlay's widgets (`$`).
 2. adds the overlay view onto the current window.
-3. looks the modal up in `lib/controllers/registry.js` and, if present, hands its
+3. looks the modal up in `lib/mvvm/controllers/registry.js` and, if present, hands its
    Titanium-free screen controller the widgets plus a `close` callback.
 
 `View.closeModal()` reverses it: remove the overlay, `dispose()` the screen
@@ -36,13 +36,13 @@ A modal is split so that all logic is Titanium-free and portable:
 - **`controllers/<Name>.js` + `views/<Name>.xml`** — the Alloy presenter shell. The
   view is the overlay markup (reuse the `overlay` / `window` / `titlebar` classes and
   the `CloseButton` `<Require>`); the controller holds no logic.
-- **`lib/controllers/<Name>.js`** — a Titanium-free screen controller. It builds the
+- **`lib/mvvm/controllers/<Name>.js`** — a Titanium-free screen controller. It builds the
   ViewModel, `bindView`s it to the widgets it was handed, and routes the ViewModel's
   named events to injected orchestration. No `Ti.*` / `Alloy.*`. Node-testable with
   fake widgets (see `test/controllers/Academy_spec.js`).
 
 ```js
-// lib/controllers/Academy.js
+// lib/mvvm/controllers/Academy.js
 module.exports = function createAcademyController({ view, close, services }) {
   const vm = new AcademyViewModel();
   const unbind = bindView(view, vm, BINDINGS);
@@ -53,7 +53,7 @@ module.exports = function createAcademyController({ view, close, services }) {
 
 ## Registry and incremental migration
 
-`lib/controllers/registry.js` maps modal name → screen-controller factory. A modal
+`lib/mvvm/controllers/registry.js` maps modal name → screen-controller factory. A modal
 **absent** from the registry still opens as a plain Alloy overlay — so legacy modals
 (the identify `MethodSelect` overlay opened directly from `Menu.js`) keep working and
 move onto this pattern one at a time.
@@ -63,7 +63,7 @@ move onto this pattern one at a time.
 Modals used to be opened ad hoc inside controllers (`$.TopLevelWindow.add(ctl.getView())`),
 so the navigation layer had no idea they existed and each controller re-implemented
 open/close/teardown. Routing them through `Navigation` makes "open a modal" a named,
-reusable step (and leaves room to jump straight to one), while the `lib/controllers`
+reusable step (and leaves room to jump straight to one), while the `lib/mvvm/controllers`
 split keeps the decision logic Titanium-free — the north-star from
 [viewmodels.md](viewmodels.md) and [../architecture-vision.md](../architecture-vision.md).
 

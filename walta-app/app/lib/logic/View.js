@@ -1,7 +1,7 @@
 
 var Topics = require('ui/Topics');
 const Logger = require("util/Logger");
-const defaultScreenControllers = require("controllers/registry");
+const defaultScreenControllers = require("mvvm/controllers/registry");
 
 var debug = (m, tag = "ui") => Logger.log(m, tag);
 let currentController = null;
@@ -13,7 +13,7 @@ function DialogCancelled() {
 
 function View(services) {
   this.services = services;
-  // The screen-controller registry (name → lib/controllers/<name> factory) is
+  // The screen-controller registry (name → mvvm/controllers/<name> factory) is
   // injectable so the seam is testable with a fake controller; defaults to the
   // real registry.
   this.screenControllers = (services && services.screenControllers) || defaultScreenControllers;
@@ -33,7 +33,7 @@ View.prototype.openView = function(ctl,args) {
 }
 
 // Overlay a modal on the current window, handing its widgets to an optional
-// lib/controllers/<name> screen controller. See docs/patterns/modals.md.
+// lib/mvvm/controllers/<name> screen controller. See docs/patterns/modals.md.
 View.prototype.openModal = function (name, args, services) {
   if (currentModal) this.closeModal();
   debug(`opening modal="${name}"`);
