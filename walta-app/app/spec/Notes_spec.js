@@ -109,7 +109,14 @@ describe("Notes controller", function () {
       Survey: {
         uploadNewSample: function () { },
         startSurvey: function () { }
-      }
+      },
+      // Menu builds its view-model from the services bag now (see
+      // lib/mvvm/controllers/Menu). cerdiApi resolves lazily so it picks up the
+      // global the specs mock rather than its value at load time.
+      get cerdiApi() { return Alloy.Globals.CerdiApi; },
+      topics: Topics,
+      environment: Alloy.CFG.environment,
+      version: Ti.App.version
     }
     services.View = new View(services);
     Alloy.Collections.instance("taxa");
