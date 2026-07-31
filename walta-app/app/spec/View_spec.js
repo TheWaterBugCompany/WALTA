@@ -68,10 +68,18 @@ describe("View seam", function () {
       view.closeModal();
       expect(view.getCurrentModal(), "modal cleared after close").to.not.exist;
     });
-    // NB: the DEFAULT registry (hard require) resolving a lib controller is
-    // verified in a real bundle build, not here — LiveView can't reliably serve
-    // the mvvm/controllers require chain. The injected-registry tests below
-    // cover the seam robustly (and injection is the north-star path anyway).
+
+    // The DEFAULT registry is a hard require("mvvm/controllers/registry") →
+    // require("./Academy"). This pins that the require chain resolves to the
+    // real Ti-free lib controller (which builds a vm), not the Alloy shell —
+    // the case LiveView used to mis-resolve.
+    it("builds the real lib controller from the default registry", function () {
+      view.openModal("Academy", {}, {});
+      var modal = view.getCurrentModal();
+      expect(modal.lib, "default registry built a lib controller").to.exist;
+      expect(modal.lib.vm, "lib controller exposes its view-model").to.exist;
+      view.closeModal();
+    });
   });
 
   // The registry is injectable so the seam can be tested with a fake lib
