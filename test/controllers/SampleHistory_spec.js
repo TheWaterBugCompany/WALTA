@@ -78,6 +78,14 @@ describe("SampleHistory controller", function () {
     expect(fakeView.handles.some(h => h.rowVm.sampleId === "b")).to.equal(true);
   });
 
+  it("updates an existing row in place without recreating its component", function () {
+    build([R("a"), R("b")]);
+    const handlesBefore = fakeView.handles.length;
+    view.sampleSource.loadOne = (id) => (id === "a" ? R("a", { waterbodyName: "Changed" }) : undefined);
+    Topics.fireTopicEvent(Topics.UPLOAD_PROGRESS, { id: "a" });
+    expect(fakeView.handles.length, "no new row component created").to.equal(handlesBefore);
+  });
+
   it("disposes every row handle on dispose", function () {
     build([R("a"), R("b")]);
     const handles = fakeView.handles.slice();

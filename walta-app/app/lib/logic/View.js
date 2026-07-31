@@ -26,6 +26,9 @@ View.prototype.getCurrentModal = function() { return currentModal; }
 View.prototype.openView = function(ctl,args) {
   return new Promise( (resolve) => {
     debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
+    // Navigating to a new window dismisses any open modal (its host window is
+    // about to be replaced).
+    if (currentModal) this.closeModal();
     currentController = Alloy.createController(ctl,args);
     this.attachScreenController(ctl, currentController, args);
     currentController.on("window-opened", resolve);

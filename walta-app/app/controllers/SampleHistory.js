@@ -1,9 +1,13 @@
 var Topics = require('ui/Topics');
-var SampleHistoryViewModel = require('viewmodels/SampleHistory');
 
 exports.baseController = "TopLevelWindow";
 $.TopLevelWindow.title = "Survey History";
 
+// Residual Titanium. The Ti-free lib/mvvm/controllers/SampleHistory (built by
+// View.openView) owns the view-model and binds the table via the collection
+// binding; rows come through View.createComponent. This shell keeps only what
+// needs Alloy models or Ti: the sample-history source, the Sync button and the
+// SyncFeedback overlay. See docs/patterns/screen-controllers.md.
 var userId = Alloy.Globals.CerdiApi.retrieveUserId();
 $.samples = Alloy.createCollection("sample");
 
@@ -18,7 +22,8 @@ function toRowData(m) {
     };
 }
 
-var sampleSource = {
+// Alloy-model reads behind the source-adapter seam the view-model is built from.
+$.sampleSource = {
     loadAll: function() {
         $.samples.loadSampleHistory(userId);
         return $.samples.map(toRowData);
@@ -31,48 +36,6 @@ var sampleSource = {
     }
 };
 
-$.vm = new SampleHistoryViewModel({ sampleSource: sampleSource, topics: Topics });
-
-var rowControllers = new Map();
-
-function buildAndBindRow(rowVm) {
-    var ctl = Alloy.createController("SampleHistoryRow");
-    var unbind = ctl.bind(rowVm);
-    // Per-row click by stable sampleId — Android drops table-level dispatch on reused/reordered row proxies.
-    var onClick = function() { openSampleMenu(rowVm.sampleId); };
-    ctl.getView().addEventListener("click", onClick);
-    rowControllers.set(rowVm.sampleId, { ctl: ctl, unbind: unbind, onClick: onClick });
-    return ctl.getView();
-}
-
-function disposeRow(sampleId) {
-    var r = rowControllers.get(sampleId);
-    if (!r) return;
-    r.unbind();
-    r.ctl.getView().removeEventListener("click", r.onClick);
-    if (r.ctl && typeof r.ctl.destroy === "function") r.ctl.destroy();
-    rowControllers.delete(sampleId);
-}
-
-function renderRows() {
-    $.sampleTable.setData($.vm.rows.map(function(rowVm) {
-        if (rowControllers.has(rowVm.sampleId)) {
-            return rowControllers.get(rowVm.sampleId).ctl.getView();
-        }
-        return buildAndBindRow(rowVm);
-    }));
-}
-
-renderRows();
-
-$.vm.addListener(function () {
-    var newIds = new Set($.vm.rows.map(function(r) { return r.sampleId; }));
-    Array.from(rowControllers.keys()).forEach(function(id) {
-        if (!newIds.has(id)) disposeRow(id);
-    });
-    renderRows();
-});
-
 var acb = $.getAnchorBar();
 $.syncButton = Alloy.createController("NavButton");
 $.syncButton.setLabel("Sync");
@@ -84,14 +47,9 @@ acb.addTool($.syncButton.getView());
 Topics.subscribe(Topics.LOGGEDOUT, closeSyncFeedback);
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-    Array.from(rowControllers.keys()).forEach(disposeRow);
-    $.vm.dispose();
-    if ($.sampleMenu) $.sampleMenu.cleanUp();
     Topics.unsubscribe(Topics.LOGGEDOUT, closeSyncFeedback);
     closeSyncFeedback();
     $.syncButton.cleanUp();
-    $.destroy();
-    $.off();
     $.TopLevelWindow.removeEventListener('close', cleanUp);
 });
 
@@ -108,14 +66,4 @@ function closeSyncFeedback() {
     $.TopLevelWindow.remove($.syncFeedback.getView());
     $.syncFeedback.cleanUp();
     $.syncFeedback = null;
-}
-
-function openSampleMenu(sampleId) {
-    function closeSelectMethod() {
-        $.TopLevelWindow.remove($.sampleMenu.getView());
-        $.sampleMenu.cleanUp();
-    }
-    $.sampleMenu = Alloy.createController("SampleEditMenu", { sampleId: sampleId });
-    $.TopLevelWindow.add($.sampleMenu.getView());
-    $.sampleMenu.on("close", closeSelectMethod);
 }

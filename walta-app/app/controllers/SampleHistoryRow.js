@@ -1,10 +1,4 @@
-var bindView = require("util/bindView");
-
-exports.bind = function(rowVm) {
-    return bindView($, rowVm, {
-        idColumn:            { text: "serverId" },
-        dateCompletedColumn: { text: "dateCompleted" },
-        waterbodyName:       { text: "waterbodyName" },
-        boolColumn:          { text: "uploaded" }
-    });
-};
+// Presenter shell only — the Titanium-free lib/mvvm/controllers/SampleHistoryRow
+// screen controller (built by View.createComponent) binds the row view-model and
+// owns the tap. Nothing to wire here.
+// See docs/patterns/screen-controllers.md.
