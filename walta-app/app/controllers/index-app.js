@@ -125,8 +125,12 @@ Alloy.Models.instance("sample").loadCurrent();
 Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
 let services ={
   System: System,
-  Key: Alloy.Globals.Key, 
-  Survey: Survey
+  Key: Alloy.Globals.Key,
+  Survey: Survey,
+  cerdiApi: Alloy.Globals.CerdiApi,
+  topics: Topics,
+  environment: Alloy.CFG.environment,
+  version: Ti.App.version
 }
 
 services.View = new View(services);

@@ -1,41 +1,24 @@
 var Topics = require('ui/Topics');
-var MenuViewModel = require("viewmodels/Menu");
-var bindView = require("util/bindView");
 
 exports.baseController  = "TopLevelWindow";
 $.name = "home";
 
-var vm = new MenuViewModel({
-  cerdiApi: Alloy.Globals.CerdiApi,
-  topics: Topics,
-  environment: Alloy.CFG.environment,
-  version: Ti.App.version
-});
-
-bindView($, vm, {
-  appVersion:      { text: "versionLabel", color: "versionColor" },
-  logInLabel:      { text: "loginLabel", accessibilityLabel: "loginLabel" },
-  logInOrRegister: { onClick: "loginOrOut" },
-  detailed:        { onClick: "detailed" },
-  identify:        { onClick: "identify" },
-  history:         { onClick: "history" },
-  gallery:         { onClick: "gallery" },
-  academy:         { onClick: "academy" },
-  about:           { onClick: "about" }
-}, Alloy.CFG.colors);
-
-vm.on("identify", openSelectMethod);
-vm.on("confirmLogout", confirmLogout);
+// Residual-Titanium shell. The Menu screen controller
+// (lib/mvvm/controllers/Menu, instantiated by View.openView) builds the
+// view-model and binds it; it routes the identify / confirm-logout intents to
+// the two Ti actions exposed here — the MethodSelect overlay and the logout
+// alert. See docs/patterns/screen-controllers.md.
+$.openSelectMethod = openSelectMethod;
+$.confirmLogout = confirmLogout;
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
-  vm.dispose();
   $.destroy();
   $.off();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
   closeSelectMethod();
 });
 
-function confirmLogout() {
+function confirmLogout(onConfirm) {
   var dialog = Ti.UI.createAlertDialog({
     message: 'Are you sure you want to log out?',
     cancel: 1,
@@ -44,25 +27,10 @@ function confirmLogout() {
   });
   dialog.addEventListener('click', function(e) {
     if (e.index === 0) {
-      vm.logOut();
+      onConfirm();
     }
   });
   dialog.show();
-}
-
-function mayflyClick() {
-  $.mayflyMap = Alloy.createController("MayflyEmergenceMap");
-  $.TopLevelWindow.add($.mayflyMap.getView());
-  $.mayflyMap.on("close", function handler() {
-      $.mayflyMap.off("close", handler);
-      $.TopLevelWindow.remove($.mayflyMap.getView());
-      $.mayflyMap.cleanUp();
-      $.mayflyMap = null;
-  });
-}
-
-function helpClick() {
-  Topics.fireTopicEvent( Topics.HELP, null );
 }
 
 function closeSelectMethod() {

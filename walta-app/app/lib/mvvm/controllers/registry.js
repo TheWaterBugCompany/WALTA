@@ -3,4 +3,5 @@
 // open with no screen controller. See docs/patterns/modals.md.
 module.exports = {
   Academy: require("./Academy"),
+  Menu: require("./Menu"),
 };
