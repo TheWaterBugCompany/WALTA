@@ -24,7 +24,7 @@ Navigation.prototype.onCloseApp = function() {
 
 // Modals are overlaid on the current window rather than pushed onto the window
 // stack, so they live outside the history. View owns the Titanium glue (building
-// the overlay controller, handing it to an optional lib/controllers/<name>, and
+// the overlay controller, handing it to an optional lib/mvvm/controllers/<name>, and
 // teardown); Navigation just names the concept.
 // async so the Main.js route's checkForErrors receives a promise, like openController.
 Navigation.prototype.openModal = async function (name, args) {
