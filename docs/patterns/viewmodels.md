@@ -184,6 +184,66 @@ controllers don't need to call it — `vm.dispose()` in `cleanUp` is enough,
 because it clears the ViewModel's listener list and the view is about to be
 destroyed anyway.
 
+### Collection bindings — driving a container's children
+
+The bindings above set *properties* on fixed widgets. To drive a container's
+*children* — rows in a `TableView`, tiles in a custom `ScrollView` — from a VM
+that owns the list, use a `collection` binding. bindView owns the keyed diff
+(create new / retain existing / dispose removed); an injected **adapter** owns
+the Titanium-specific child work, so bindView stays Titanium-free.
+
+```js
+const { collection } = require("util/bindView");
+
+bindView($, vm, {
+  list: { children: collection("rows", rowAdapter) },
+});
+```
+
+`collection(getter, adapter)`:
+
+- **`getter`** — a VM getter returning the current ordered list of items (item
+  view-models or plain descriptors). Each item needs a stable key.
+- **`adapter`** — the injected Titanium glue:
+  - `key(item)` — stable identity, matched across reconciles. **Required.**
+  - `create(item)` → `handle` — build the child; return an object carrying at
+    least `{ view }` plus whatever `dispose` needs. **Required.**
+  - `dispose(handle)` — tear the child down (unbind, remove listeners, destroy).
+  - `update(handle, item)` — optional; for a retained child that isn't already
+    re-bound per-item through its own `bind`.
+
+The binding reconciles once at bind time and again on every `notifyListeners()`,
+so a **structural** change (an item added or removed) re-runs the diff. Per-item
+*content* changes are handled by each child's own binding (e.g. a row VM's
+`notifyListeners` re-applies that row's properties), not by the collection
+binding. `bindView`'s returned `unbind()` disposes every child and stops
+reconciling.
+
+**Two container styles** — how the diff reaches the container:
+
+- **Incremental** (default — a `ScrollView` / `View`): the binding calls
+  `container.add(handle.view)` for new children and `container.remove(...)` for
+  gone ones. Override with `adapter.attach(container, handle)` /
+  `adapter.detach(container, handle)` when the container needs a different call.
+- **Render-mode** (a `TableView`, which renders a whole ordered list): provide
+  `adapter.render(container, orderedHandles)` and the binding hands you the full
+  ordered handle list to apply — e.g.
+  `container.setData(orderedHandles.map(h => h.view))` — instead of add/remove.
+  The keyed diff is identical; only the container sync differs.
+
+**Scroll-driven windows.** A virtualized list changes its visible set on scroll,
+a high-frequency Titanium input. Set `adapter.scrollEvent` +
+`adapter.onScroll(e, container)` and the binding reconciles from the container's
+own scroll event — calling `onScroll` (where the Titanium offset read/convert
+lives) then re-running the diff — **without** a `notifyListeners()` broadcast.
+That is deliberate: routing every scroll frame through `notifyListeners` would
+re-pull every other bound property and cost fluidity. `onScroll` updates whatever
+VM state the collection getter reads (the scroll offset), and the getter returns
+the new visible window.
+
+See `test/util/bindView_spec.js` (`collection binding`) for worked incremental,
+render-mode, and scroll examples.
+
 ### Bindings are applied twice: at setup and after first layout
 
 iOS silently drops writes to some properties — `accessibilityLabel` is the
