@@ -71,6 +71,9 @@ var topics = {
 
 	HISTORY: 'history',
 
+	// Open the edit menu for a sample from the history list
+	EDIT_SAMPLE: 'editsample',
+
 	HELP: 'help',
 
 	BROWSE: 'browse',
