@@ -138,6 +138,17 @@ vm.on("diagnostics", function () { Topics.fireTopicEvent(Topics.DIAGNOSTICS); })
 exports.cleanUp = function () { vm.dispose(); };
 ```
 
+### Where the `bindView` call lives
+
+The example above hosts the ViewModel directly in the Alloy controller — the
+simplest form, and still fine for a screen not yet split. The current convention
+moves the `bindView` call out into a **Titanium-free screen controller** at
+`lib/mvvm/controllers/<Name>.js`, leaving the Alloy controller with only residual
+Titanium (the view tree plus any Ti-specific hacks). `View` instantiates the
+screen controller when it opens the window or modal. That is the portable tier —
+see [screen-controllers.md](screen-controllers.md). The `bindView` mechanics below
+are identical either way.
+
 ### The bindings map
 
 Each top-level key is an id from `$` (the Alloy widget map). Each nested key is

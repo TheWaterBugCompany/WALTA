@@ -65,19 +65,29 @@ This indirection is what lets `Navigation.js` decide between push / replace / tr
 
 ## View — the actual screen opener
 
-`lib/logic/View.js` is a thin wrapper around `Alloy.createController()` + `controller.open()`, returning a Promise that resolves on the controller's `window-opened` event:
+`lib/logic/View.js` builds the Alloy controller, attaches its Titanium-free
+screen controller (if one is registered), and opens the window — returning a
+Promise that resolves on the controller's `window-opened` event:
 
 ```js
 View.prototype.openView = function (ctl, args) {
   return new Promise((resolve) => {
     currentController = Alloy.createController(ctl, args);
+    this.attachScreenController(ctl, currentController);   // registered? build + dispose-on-close
     currentController.on("window-opened", resolve);
     currentController.open();
   });
 };
 ```
 
-It also exposes `askDiscardEdits()`, the unsaved-changes alert dialog used by Navigation when truncating past a `SiteDetails` with unsaved state.
+`attachScreenController` looks `ctl` up in `lib/mvvm/controllers/registry.js` and,
+if present, instantiates its screen controller to drive the binding, disposing it
+on the window's `close` event. This is the same registry `openModal` uses — see
+[screen-controllers.md](screen-controllers.md). A screen with no registered
+controller just opens as a plain Alloy window.
+
+`View` also exposes `askDiscardEdits()`, the unsaved-changes alert dialog used by
+Navigation when truncating past a `SiteDetails` with unsaved state.
 
 `Navigation` calls `View.openView(...)`; nothing else should.
 
