@@ -5,7 +5,8 @@ Architectural patterns and module summaries for the WALTA codebase. Each file is
 ## Conventions
 
 - [screen-plumbing.md](screen-plumbing.md) — how a tap turns into a screen change: Topics, Navigation, View, `Main.js` bootstrap, per-controller lifecycle, `$.args` over `Alloy.Globals`, `Ti.App.Properties` registry, `System.js` OS wrapper
-- [modals.md](modals.md) — opening overlay modals via `Navigation.openModal` + the Titanium-free `lib/mvvm/controllers/` screen-controller split
+- [screen-controllers.md](screen-controllers.md) — the Titanium-free `lib/mvvm/controllers/<name>` screen-controller tier: builds the VM, `bindView`s it, routed by `View` for windows and modals alike (MVVMC, the portable tier)
+- [modals.md](modals.md) — opening overlay modals via `Navigation.openModal` + the modal-specific overlay glue
 - [viewmodels.md](viewmodels.md) — MVVM convention: ViewModel class shape, `bindView` (incl. `twoWay` inputs), semantic palette colours via Symbols
 - [toolbar-buttons.md](toolbar-buttons.md) — anchor bar / `NavButton` pattern
 - [photo-paths.md](photo-paths.md) — relative vs absolute path conventions for user vs reference images
