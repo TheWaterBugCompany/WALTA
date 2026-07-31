@@ -28,6 +28,26 @@ describe("View seam", function () {
     });
   });
 
+  // A window gets the same treatment as a modal: if a screen controller is
+  // registered for it, openView instantiates it (driving the binding) and
+  // disposes it when the window closes.
+  describe("openView lib controller", function () {
+    it("builds the window's lib controller on open and disposes it on close", async function () {
+      var calls = [];
+      var fakeRegistry = {
+        About: function (deps) { calls.push(deps); return { dispose: function () { calls.disposed = true; } }; }
+      };
+      var view = new View({ screenControllers: fakeRegistry });
+      await view.openView("About", ABOUT_ARGS);
+      expect(calls.length, "lib controller built on open").to.equal(1);
+      expect(calls[0].view, "handed the window's Alloy controller").to.equal(view.getCurrentController());
+      expect(calls[0].services, "handed the services").to.exist;
+
+      await closeWindow(view.getCurrentController().getView());
+      expect(calls.disposed, "lib controller disposed on window close").to.equal(true);
+    });
+  });
+
   describe("openModal", function () {
     var view, host;
     beforeEach(async function () {

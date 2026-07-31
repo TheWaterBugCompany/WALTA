@@ -27,9 +27,27 @@ View.prototype.openView = function(ctl,args) {
   return new Promise( (resolve) => {
     debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
     currentController = Alloy.createController(ctl,args);
+    this.attachScreenController(ctl, currentController);
     currentController.on("window-opened", resolve);
     currentController.open();
   });
+}
+
+// A window gets the same Titanium-free screen controller as a modal: if one is
+// registered, instantiate it with the window's widgets to drive the binding,
+// and dispose it when the window closes (windows have no closeView — the
+// TopLevelWindow 'close' event is the teardown hook).
+View.prototype.attachScreenController = function(name, alloyCtl) {
+  const make = this.screenControllers[name];
+  if (!make) return;
+  const win = alloyCtl.getView();
+  const close = () => win.close();
+  const lib = make({ view: alloyCtl, close, services: this.services, palette: Alloy.CFG.colors });
+  function onClose() {
+    win.removeEventListener("close", onClose);
+    lib.dispose();
+  }
+  win.addEventListener("close", onClose);
 }
 
 // Overlay a modal on the current window, handing its widgets to an optional
