@@ -1,7 +1,7 @@
 
 var Topics = require('ui/Topics');
 const Logger = require("util/Logger");
-const modalControllers = require("controllers/registry");
+const defaultScreenControllers = require("controllers/registry");
 
 var debug = (m, tag = "ui") => Logger.log(m, tag);
 let currentController = null;
@@ -12,11 +12,16 @@ function DialogCancelled() {
 }
 
 function View(services) {
-  this.services = services
+  this.services = services;
+  // The screen-controller registry (name → lib/controllers/<name> factory) is
+  // injectable so the seam is testable with a fake controller; defaults to the
+  // real registry.
+  this.screenControllers = (services && services.screenControllers) || defaultScreenControllers;
 }
 
 View.prototype.getSaveOrDiscard = function() { return saveOrDiscard; }
 View.prototype.getCurrentController = function() { return currentController; }
+View.prototype.getCurrentModal = function() { return currentModal; }
 
 View.prototype.openView = function(ctl,args) {
   return new Promise( (resolve) => {
@@ -36,7 +41,7 @@ View.prototype.openModal = function (name, args, services) {
   const host = currentController;
   host.getView().add(alloyCtl.getView());
 
-  const make = modalControllers[name];
+  const make = this.screenControllers[name];
   const close = () => this.closeModal();
   currentModal = {
     alloyCtl,

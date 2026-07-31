@@ -79,6 +79,7 @@ var SPEC_FILES = [
   "LocationEntry",
   "Main",
   "Navigation",
+  "View",
   "util/repository/LogRepository",
   "DiagnosticsBundle",
   "AppReset",
