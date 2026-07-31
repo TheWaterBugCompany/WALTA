@@ -48,6 +48,33 @@ injected seams, never reaching for `Ti.*` itself:
   logout is `if (await services.dialogs.confirm(...)) vm.logOut();`. Fake the seam
   in tests.
 
+## Lists — the collection binding + `View.createComponent`
+
+For a list, bind the container with `collection(getter, adapter)` from `bindView`.
+`bindView` owns the keyed diff (create new / retain / dispose gone); the adapter is
+the irreducible Titanium seam. Rows are built through `services.View.createComponent`
+(never `Alloy.createController`), so the lib controller stays Ti-free, and each row
+is a **first-class component** that owns its own tap and lifecycle:
+
+```js
+// lib/mvvm/controllers/SampleHistory.js
+const rows = collection("rows", {
+  key:    (row) => row.sampleId,
+  create: (row) => {
+    const handle = services.View.createComponent("SampleHistoryRow", { rowVm: row });
+    handle.lib.on("selected", (id) => topics.fireTopicEvent(topics.EDIT_SAMPLE, { sampleId: id }));
+    return handle;
+  },
+  render:  (table, handles) => table.setData(handles.map((h) => h.view)),
+  dispose: (handle) => handle.dispose(),
+});
+bindView(view, vm, { sampleTable: { rows } });
+```
+
+The row (`lib/mvvm/controllers/SampleHistoryRow`) binds its own row view-model and
+fires `"selected"` on tap — the per-row-click ownership that fixes reused-row
+dispatch on Android (WB-168) lives in the row, not the list.
+
 ## Three tiers (MVVMC)
 
 A screen is split so all logic is Titanium-free and portable, with the residual
