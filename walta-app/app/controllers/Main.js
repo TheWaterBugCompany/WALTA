@@ -74,6 +74,7 @@ async function startApp(options) {
   routePromise(Topics.HELP,  (data) =>  Navigation.openController("Help", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ABOUT,  (data) =>  Navigation.openController("About", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ACADEMY,  () =>  Navigation.openModal("Academy"));
+  routePromise(Topics.SELECT_METHOD,  (data) =>  Navigation.openModal("MethodSelect", data));
   Topics.subscribe(Topics.FORCE_UPLOAD,  () => Survey.uploadNewSample());
   routePromise(Topics.NOTES,  (data) =>  Navigation.openController("Notes", data));
   routePromise(Topics.JUMPTO, async function (data) {

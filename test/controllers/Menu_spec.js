@@ -1,7 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
 const createMenuController = require("../../walta-app/app/lib/mvvm/controllers/Menu");
-const Palette = require("../../walta-app/app/lib/util/Palette");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 
 // Fake Ti widget: settable props + addEventListener/fireEvent.
@@ -14,10 +13,8 @@ function makeWidget(props) {
   }, props);
 }
 
-// The Menu widget map, plus the two residual-Titanium actions the Alloy shell
-// exposes for the screen controller to route VM events to.
 function makeView() {
-  const view = {
+  return {
     appVersion:      makeWidget({ text: "", color: null }),
     logInLabel:      makeWidget({ text: "", accessibilityLabel: "" }),
     logInOrRegister: makeWidget({}),
@@ -27,12 +24,7 @@ function makeView() {
     gallery:         makeWidget({}),
     academy:         makeWidget({}),
     about:           makeWidget({}),
-    openSelectMethodCalls: 0,
-    confirmLogoutOnConfirm: null,
-    openSelectMethod() { view.openSelectMethodCalls++; },
-    confirmLogout(onConfirm) { view.confirmLogoutOnConfirm = onConfirm; },
   };
-  return view;
 }
 
 function fakeCerdiApi(userToken) {
@@ -45,15 +37,22 @@ function fakeCerdiApi(userToken) {
 
 const PALETTE = { primary: "PRIMARY", errorDark: "ERRORDARK" };
 
-describe("Menu controller", function () {
-  let view, cerdiApi, ctl;
+// Let the async confirmLogout handler's awaited promise settle.
+function flush() { return new Promise(resolve => setImmediate(resolve)); }
 
-  function build({ userToken = null, environment = "production", version = "2.5.0.0" } = {}) {
+describe("Menu controller", function () {
+  let view, cerdiApi, dialogs, ctl;
+
+  function build({ userToken = null, environment = "production", version = "2.5.0.0", confirm = true } = {}) {
     view = makeView();
     cerdiApi = fakeCerdiApi(userToken);
+    dialogs = {
+      confirmCalls: [],
+      confirm(opts) { dialogs.confirmCalls.push(opts); return Promise.resolve(confirm); },
+    };
     ctl = createMenuController({
       view,
-      services: { cerdiApi, topics: Topics, environment, version },
+      services: { cerdiApi, topics: Topics, dialogs, environment, version },
       palette: PALETTE,
     });
   }
@@ -102,10 +101,11 @@ describe("Menu controller", function () {
     expect(fired()).to.deep.equal({ showPager: false });
   });
 
-  it("asks the shell to offer the identification methods when identify is tapped", function () {
+  it("opens the identification-method chooser as a fresh identification when identify is tapped", function () {
     build();
+    const fired = recordTopic(Topics.SELECT_METHOD);
     view.identify.fireEvent("click");
-    expect(view.openSelectMethodCalls).to.equal(1);
+    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null });
   });
 
   it("goes to the login screen when the login button is tapped logged out", function () {
@@ -115,26 +115,36 @@ describe("Menu controller", function () {
     expect(fired()).to.be.true;
   });
 
-  it("asks the shell to confirm before logging out when tapped logged in", function () {
+  it("asks the dialog seam to confirm before logging out when tapped logged in", function () {
     build({ userToken: "a-token" });
     view.logInOrRegister.fireEvent("click");
-    expect(view.confirmLogoutOnConfirm).to.be.a("function");
+    expect(dialogs.confirmCalls.length).to.equal(1);
+    expect(dialogs.confirmCalls[0].confirmLabel).to.equal("Log Out");
   });
 
-  it("logs out and relabels once the shell's confirm callback fires", function () {
-    build({ userToken: "a-token" });
+  it("logs out and relabels when the logout is confirmed", async function () {
+    build({ userToken: "a-token", confirm: true });
     const loggedOut = recordTopic(Topics.LOGGEDOUT);
     view.logInOrRegister.fireEvent("click");
-    view.confirmLogoutOnConfirm();
+    await flush();
     expect(cerdiApi.retrieveUserToken()).to.equal(null);
     expect(loggedOut()).to.be.true;
     expect(view.logInLabel.text).to.equal("Log In");
   });
 
+  it("keeps the user logged in when the logout is cancelled", async function () {
+    build({ userToken: "a-token", confirm: false });
+    const loggedOut = recordTopic(Topics.LOGGEDOUT);
+    view.logInOrRegister.fireEvent("click");
+    await flush();
+    expect(cerdiApi.retrieveUserToken()).to.equal("a-token");
+    expect(loggedOut()).to.equal(false);
+  });
+
   it("stops updating the widgets after dispose", function () {
     build({ userToken: null });
     ctl.dispose();
-    ctl = null;                       // already disposed; skip afterEach re-dispose
+    ctl = null;
     Topics.fireTopicEvent(Topics.LOGGEDIN);
     expect(view.logInLabel.text).to.equal("Log In");
   });

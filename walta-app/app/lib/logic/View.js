@@ -27,7 +27,7 @@ View.prototype.openView = function(ctl,args) {
   return new Promise( (resolve) => {
     debug(`opening controller="${ctl}" with args.readonly= ${args.readonly}`);
     currentController = Alloy.createController(ctl,args);
-    this.attachScreenController(ctl, currentController);
+    this.attachScreenController(ctl, currentController, args);
     currentController.on("window-opened", resolve);
     currentController.open();
   });
@@ -37,12 +37,12 @@ View.prototype.openView = function(ctl,args) {
 // registered, instantiate it with the window's widgets to drive the binding,
 // and dispose it when the window closes (windows have no closeView — the
 // TopLevelWindow 'close' event is the teardown hook).
-View.prototype.attachScreenController = function(name, alloyCtl) {
+View.prototype.attachScreenController = function(name, alloyCtl, args) {
   const make = this.screenControllers[name];
   if (!make) return;
   const win = alloyCtl.getView();
   const close = () => win.close();
-  const lib = make({ view: alloyCtl, close, services: this.services, palette: Alloy.CFG.colors });
+  const lib = make({ view: alloyCtl, close, services: this.services, palette: Alloy.CFG.colors, args });
   function onClose() {
     win.removeEventListener("close", onClose);
     lib.dispose();
@@ -64,7 +64,7 @@ View.prototype.openModal = function (name, args, services) {
   currentModal = {
     alloyCtl,
     host,
-    lib: make ? make({ view: alloyCtl, close, services, palette: Alloy.CFG.colors }) : null,
+    lib: make ? make({ view: alloyCtl, close, services, palette: Alloy.CFG.colors, args }) : null,
   };
 };
 

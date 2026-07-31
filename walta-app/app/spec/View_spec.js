@@ -103,14 +103,15 @@ describe("View seam", function () {
       if (host) { await closeWindow(host.getView()); host = null; }
     });
 
-    it("builds the lib controller from the injected registry, handing it the widgets, close, services and palette", function () {
+    it("builds the lib controller from the injected registry, handing it the widgets, close, services, palette and open args", function () {
       var services = { marker: "svc" };
-      view.openModal("Academy", {}, services);
+      view.openModal("Academy", { probe: "arg" }, services);
       expect(calls.length, "injected factory invoked once").to.equal(1);
       expect(calls[0].view, "handed the Alloy widgets").to.equal(view.getCurrentModal().alloyCtl);
       expect(calls[0].close, "handed a close callback").to.be.a("function");
       expect(calls[0].services, "handed the services").to.equal(services);
       expect(calls[0].palette, "handed the colour palette").to.exist;
+      expect(calls[0].args, "handed the open args").to.deep.equal({ probe: "arg" });
     });
 
     it("disposes the injected lib controller on closeModal", function () {

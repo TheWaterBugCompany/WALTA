@@ -28,9 +28,25 @@ The factory receives four things and returns `{ vm, dispose() }`:
   bag passed to `openModal`).
 - **`palette`** — `Alloy.CFG.colors`, forwarded to `bindView` so Symbol-valued
   getters resolve (see [viewmodels.md](viewmodels.md) "Semantic palette colours").
+- **`args`** — the open payload (`View.openView`/`openModal`'s `args`), so a modal
+  can read what it was opened with. `MethodSelect` reads `allowAddToSample` /
+  `surveyType` from here.
 
 No `Ti.*` / `Alloy.*` — it is Node-testable with fake widgets (see
 `test/controllers/Academy_spec.js`).
+
+## Routing intents out
+
+The screen controller keeps its view-model Titanium-free by routing intents to
+injected seams, never reaching for `Ti.*` itself:
+
+- **Navigation** — the view-model fires a `Topics` event (`Main.js` routes it to
+  `Navigation`); e.g. `MenuViewModel.identify()` fires `SELECT_METHOD`, which opens
+  the MethodSelect modal. Screen controllers don't import `Navigation`.
+- **Native dialogs** — inject the `Dialogs` seam (`lib/logic/Dialogs.js`) and
+  `await services.dialogs.confirm(...)`; the view-model owns the decision. Menu's
+  logout is `if (await services.dialogs.confirm(...)) vm.logOut();`. Fake the seam
+  in tests.
 
 ## Three tiers (MVVMC)
 

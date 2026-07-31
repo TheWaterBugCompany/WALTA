@@ -398,42 +398,8 @@ function drawIcecubeTray() {
 };
 
 function startIdentification(e) {
-
-  $.selectMethod = Alloy.createController("MethodSelect", {unknownBug: true});
-  function closeSelectMethod() {
-    $.TopLevelWindow.remove($.selectMethod.getView());
-  }
-
-  $.selectMethod.on("close", function() {
-    closeSelectMethod();
-  });
-
-  $.selectMethod.on("keysearch", function() {
-    closeSelectMethod();
-    var surveyType = parseInt( Alloy.Models.sample.get("surveyType") );
-    Topics.fireTopicEvent( Topics.KEYSEARCH, { allowAddToSample: true, surveyType: surveyType  }  );
-  });
-
-  $.selectMethod.on("speedbug", function() {
-    closeSelectMethod();
-    var surveyType = parseInt(Alloy.Models.sample.get("surveyType"));
-    Topics.fireTopicEvent( Topics.SPEEDBUG, { allowAddToSample: true, surveyType: surveyType  }  );
-  });
-
-  $.selectMethod.on("browselist", function() {
-    closeSelectMethod();
-    var surveyType = parseInt(Alloy.Models.sample.get("surveyType"));
-    Topics.fireTopicEvent( Topics.BROWSE, { allowAddToSample: true, surveyType: surveyType  }  );
-  });
-
-  $.selectMethod.on("unknownbug", function() {
-    closeSelectMethod();
-    debug("firing identify")
-    Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: null }  );
-  });
-
-  $.TopLevelWindow.add($.selectMethod.getView());
-
+  var surveyType = parseInt( Alloy.Models.sample.get("surveyType") );
+  Topics.fireTopicEvent( Topics.SELECT_METHOD, { allowAddToSample: true, surveyType: surveyType, unknownBug: true } );
   e.cancelBubble = true;
 };
 

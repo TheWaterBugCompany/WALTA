@@ -11,6 +11,7 @@ var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
 var MemoryMonitor = require("util/MemoryMonitor");
 var { System } = require("logic/System");
+var Dialogs = require("logic/Dialogs");
 var { View } = require("logic/View");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
@@ -129,6 +130,7 @@ let services ={
   Survey: Survey,
   cerdiApi: Alloy.Globals.CerdiApi,
   topics: Topics,
+  dialogs: Dialogs,
   environment: Alloy.CFG.environment,
   version: Ti.App.version
 }

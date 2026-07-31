@@ -24,11 +24,15 @@ module.exports = function createMenuController({ view, services, palette }) {
   });
   const unbind = bindView(view, vm, BINDINGS, palette);
 
-  // Route VM intents to the shell's residual-Titanium actions: identify opens
-  // the MethodSelect overlay; confirmLogout shows the alert and, on confirm,
-  // asks the VM to log out.
-  vm.on("identify", () => view.openSelectMethod());
-  vm.on("confirmLogout", () => view.confirmLogout(() => vm.logOut()));
+  // Confirm logout through the native-dialog seam; the VM owns the decision.
+  vm.on("confirmLogout", async () => {
+    const confirmed = await services.dialogs.confirm({
+      title: "Confirm Log Out",
+      message: "Are you sure you want to log out?",
+      confirmLabel: "Log Out",
+    });
+    if (confirmed) vm.logOut();
+  });
 
   return {
     vm,
