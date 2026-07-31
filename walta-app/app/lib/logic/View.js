@@ -50,6 +50,27 @@ View.prototype.attachScreenController = function(name, alloyCtl, args) {
   win.addEventListener("close", onClose);
 }
 
+// Build a reusable child component (e.g. a list row): its Alloy controller plus,
+// if one is registered, its Titanium-free lib/mvvm/controllers/<name>. Returns a
+// handle the caller adds to a container and disposes. This is the seam a
+// collection binding's `create` goes through, so it never calls Alloy directly.
+View.prototype.createComponent = function (name, args) {
+  const alloyCtl = Alloy.createController(name, args);
+  const make = this.screenControllers[name];
+  const lib = make
+    ? make({ view: alloyCtl, close: () => {}, services: this.services, palette: Alloy.CFG.colors, args })
+    : null;
+  return {
+    view: alloyCtl.getView(),
+    lib,
+    dispose() {
+      if (lib && typeof lib.dispose === "function") lib.dispose();
+      if (typeof alloyCtl.cleanUp === "function") alloyCtl.cleanUp();
+      else { alloyCtl.destroy(); alloyCtl.off(); }
+    },
+  };
+};
+
 // Overlay a modal on the current window, handing its widgets to an optional
 // lib/mvvm/controllers/<name> screen controller. See docs/patterns/modals.md.
 View.prototype.openModal = function (name, args, services) {

@@ -82,6 +82,33 @@ describe("View seam", function () {
     });
   });
 
+  // createComponent is the seam a collection binding's `create` goes through:
+  // it builds a child's Alloy controller + its lib controller and returns a
+  // handle the caller adds to a container and disposes — never calling Alloy.
+  describe("createComponent", function () {
+    it("builds a child's Alloy controller and lib controller, disposed together", function () {
+      var built = [];
+      var fakeRegistry = {
+        SampleHistoryRow: function (deps) {
+          built.push(deps);
+          return { marker: "row-lib", dispose: function () { built.disposed = true; } };
+        },
+      };
+      var services = { screenControllers: fakeRegistry, marker: "svc" };
+      var view = new View(services);
+      var handle = view.createComponent("SampleHistoryRow", { rowVm: { sampleId: 7 } });
+
+      expect(handle.view, "exposes the child view to add to a container").to.exist;
+      expect(handle.lib, "built the lib controller").to.exist;
+      expect(built.length, "lib factory invoked once").to.equal(1);
+      expect(built[0].args, "handed the create args").to.deep.equal({ rowVm: { sampleId: 7 } });
+      expect(built[0].services, "handed the services").to.equal(services);
+
+      handle.dispose();
+      expect(built.disposed, "disposed the lib controller").to.equal(true);
+    });
+  });
+
   // The registry is injectable so the seam can be tested with a fake lib
   // controller — the mechanism the generalized openView (windows) will reuse.
   describe("injectable screen-controller registry", function () {
