@@ -552,8 +552,11 @@ describe( 'SampleTray controller', function() {
           });
     });
 
-    it('should fire the Topics.KEYSEARCH when the plus icon is clicked and Key selected', function() {
-      // now opens MethodSelect open
+    // The plus icon opens the identification-method chooser for adding to the
+    // current sample. The selection -> topic routing (Key/Speedbug/Browse/
+    // Unknown) now lives in the MethodSelect modal — see
+    // test/controllers/MethodSelect_spec.js.
+    it('fires SELECT_METHOD for adding to the sample when the plus icon is clicked', function() {
       return Promise.resolve()
         .then( function() {
           Alloy.Collections.taxa = Alloy.createCollection("taxa");
@@ -565,77 +568,12 @@ describe( 'SampleTray controller', function() {
           var sampleTaxa = getTaxaIcons( tiles[0] );
           expect( sampleTaxa ).to.have.lengthOf(2);
           return new Promise( resolve => {
-            Topics.subscribe( Topics.KEYSEARCH, resolve );
+            Topics.subscribe( Topics.SELECT_METHOD, function(data) {
+              expect( data.allowAddToSample, "adds the selection to the current sample" ).to.equal(true);
+              expect( data.unknownBug, "offers the unknown-bug option from the tray" ).to.equal(true);
+              resolve();
+            });
             clickPlus( sampleTaxa[0] );
-            setTimeout( function() {
-              SampleTray.selectMethod.keysearch.getView().fireEvent('click');
-            }, 150);
-          });
-        });
-    });
-
-    it('should fire the Topics.BROWSE when the plus icon is clicked and Browse is selected', function() {
-      // now opens MethodSelect open
-      return Promise.resolve()
-        .then( function() {
-          Alloy.Collections.taxa = Alloy.createCollection("taxa");
-          setupSampleTray();
-        })
-        .then( openSampleTray )
-        .then( function() {
-          var tiles = SampleTray.tray.children;
-          var sampleTaxa = getTaxaIcons( tiles[0] );
-          expect( sampleTaxa ).to.have.lengthOf(2);
-          return new Promise( resolve => {
-            Topics.subscribe( Topics.BROWSE, resolve );
-            clickPlus( sampleTaxa[0] );
-            setTimeout( function() {
-              SampleTray.selectMethod.browselist.getView().fireEvent('click');
-            }, 100);
-          });
-        });
-    });
-
-    it('should fire the Topics.SPEEDBUG when the plus icon is clicked and Speedbug is selected', function() {
-      // now opens MethodSelect open
-      return Promise.resolve()
-        .then( function() {
-          Alloy.Collections.taxa = Alloy.createCollection("taxa");
-          setupSampleTray();
-        })
-        .then( openSampleTray )
-        .then( function() {
-          var tiles = SampleTray.tray.children;
-          var sampleTaxa = getTaxaIcons( tiles[0] );
-          expect( sampleTaxa ).to.have.lengthOf(2);
-          return new Promise( resolve => {
-            Topics.subscribe( Topics.SPEEDBUG, resolve );
-            clickPlus( sampleTaxa[0] );
-            setTimeout( function() {
-              SampleTray.selectMethod.speedbug.getView().fireEvent('click');
-            }, 100);
-          });
-        });
-    });
-
-    it('should fire the Topics.IDENTIFY when the plus icon is clicked and unkown bug is selected', function() {
-      // now opens MethodSelect open
-      return Promise.resolve()
-        .then( function() {
-          Alloy.Collections.taxa = Alloy.createCollection("taxa");
-          setupSampleTray();
-        })
-        .then( openSampleTray )
-        .then( function() {
-          var tiles = SampleTray.tray.children;
-          var sampleTaxa = getTaxaIcons( tiles[0] );
-          expect( sampleTaxa ).to.have.lengthOf(2);
-          return new Promise( resolve => {
-            Topics.subscribe( Topics.IDENTIFY, resolve );
-            clickPlus( sampleTaxa[0] );
-            setTimeout( function() {
-              SampleTray.selectMethod.unknownbug.getView().fireEvent('click');
-            }, 100);
           });
         });
     });

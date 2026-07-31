@@ -48,6 +48,9 @@ var topics = {
 	// Start the decision process from the beginning
 	KEYSEARCH: 'keysearch',
 
+	// Open the identification-method chooser (the MethodSelect modal)
+	SELECT_METHOD: 'selectmethod',
+
 	IDENTIFY: 'identify',
 
 	MAYFLY_EMERGENCE: 'mayfly',

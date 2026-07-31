@@ -3,19 +3,15 @@ var { expect } = require("spec/lib/chai");
 var { closeWindow, actionFiresTopicTest, clickButton } = require("spec/util/TestUtils");
 var Topics = require("ui/Topics");
 var { View } = require("logic/View");
+var { makeTestServices } = require("spec/fixtures/Services_fixture");
 var CerdiApi = require("spec/mocks/MockCerdiApi");
 Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi( Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret );
 describe('Menu controller', function() {
 	var view, mnu;
 	// Open through View so the Titanium-free lib/mvvm/controllers/Menu screen
-	// controller wires the view-model (bindView + identify/logout routing).
+	// controller wires the view-model.
 	beforeEach( async function() {
-		view = new View({
-			cerdiApi: Alloy.Globals.CerdiApi,
-			topics: Topics,
-			environment: Alloy.CFG.environment,
-			version: Ti.App.version
-		});
+		view = new View( makeTestServices() );
 		await view.openView("Menu", {unknown_bug:true});
 		mnu = view.getCurrentController();
 	});
@@ -47,22 +43,15 @@ describe('Menu controller', function() {
 		expect( buttons.indexOf( mnu.academy ) ).to.equal( buttons.indexOf( mnu.about ) - 1 );
 	});
 
-	it('should fire the KEYSEARCH topic', function(done) {
+	// Identify opens the MethodSelect chooser via the SELECT_METHOD topic; the
+	// selection -> topic routing lives in the MethodSelect modal (see
+	// test/controllers/MethodSelect_spec.js).
+	it('should open the identification-method chooser', function(done) {
+		Topics.subscribe(Topics.SELECT_METHOD, (data) => {
+			expect( data.allowAddToSample ).to.equal(false);
+			done();
+		});
 		clickButton( mnu.identify );
-		Topics.subscribe(Topics.KEYSEARCH, () => done() );
-		mnu.selectMethod.trigger("keysearch");
-	});
-
-	it('should fire the SPEEDBUG topic', function(done) {
-		clickButton( mnu.identify );
-		Topics.subscribe(Topics.SPEEDBUG, () => done() );
-		mnu.selectMethod.trigger("speedbug");
-	});
-
-	it('should fire the BROWSE topic', function(done) {
-		clickButton( mnu.identify );
-		Topics.subscribe(Topics.BROWSE, () => done()  );
-		mnu.selectMethod.trigger("browselist");
 	});
 
 });

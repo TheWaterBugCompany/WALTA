@@ -6,6 +6,7 @@ use( require('spec/lib/chai-falsy') );
 var { closeWindow, controllerOpenTest, waitForTick, isManualTests, waitForTopic } = require("spec/util/TestUtils");
 var { Navigation } = require('logic/Navigation');
 var { View } = require('logic/View');
+var { makeTestServices } = require('spec/fixtures/Services_fixture');
 describe("Notes controller", function () {
   beforeEach(function () {
     Alloy.Models.instance("sample").clear();
@@ -100,24 +101,13 @@ describe("Notes controller", function () {
 
   context("main integration", function () {
     let mockKey = { getSpeedbugIndex: function () { } };
-    let services = {
-      System: {
-        requestPermission: function () { return Promise.resolve({success:true}) },
-        closeApp: function () { },
-      },
+    let services = makeTestServices({
       Key: mockKey,
       Survey: {
         uploadNewSample: function () { },
         startSurvey: function () { }
-      },
-      // Menu builds its view-model from the services bag now (see
-      // lib/mvvm/controllers/Menu). cerdiApi resolves lazily so it picks up the
-      // global the specs mock rather than its value at load time.
-      get cerdiApi() { return Alloy.Globals.CerdiApi; },
-      topics: Topics,
-      environment: Alloy.CFG.environment,
-      version: Ti.App.version
-    }
+      }
+    })
     services.View = new View(services);
     Alloy.Collections.instance("taxa");
     services.Navigation = new Navigation(services);

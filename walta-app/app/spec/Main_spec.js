@@ -9,26 +9,13 @@ var { Survey } = require('logic/Survey');
 var { View } = require('logic/View');
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
+var { makeTestServices } = require('spec/fixtures/Services_fixture');
 describe("Main controller", function() {
 	let app;
   Alloy.Collections.instance("taxa");
   let keyUrl = Ti.Filesystem.resourcesDirectory + "taxonomy/walta/";
   let key = KeyLoader.loadKey(keyUrl);
-  let services = {
-      System: {
-          requestPermission: function(p) { return Promise.resolve({success:true})},
-          closeApp: function() {},
-      },
-      Key: key,
-      Survey: Survey,
-      // Menu builds its view-model from the services bag now (see
-      // lib/mvvm/controllers/Menu). cerdiApi resolves lazily so it picks up the
-      // global the specs mock in beforeEach rather than its value at load time.
-      get cerdiApi() { return Alloy.Globals.CerdiApi; },
-      topics: Topics,
-      environment: Alloy.CFG.environment,
-      version: Ti.App.version
-  }
+  let services = makeTestServices({ Key: key, Survey: Survey });
   services.View = new View(services);
   services.Survey.uploadNewSample = function() {};
   beforeEach(function() {

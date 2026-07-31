@@ -19,7 +19,7 @@ class MenuViewModel extends ChangeNotifier {
   }
 
   identify() {
-    this.trigger("identify");
+    this._topics.fireTopicEvent(this._topics.SELECT_METHOD, { allowAddToSample: false, surveyType: null });
   }
 
   loginOrOut() {

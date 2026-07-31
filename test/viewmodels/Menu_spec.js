@@ -77,12 +77,11 @@ describe("MenuViewModel", function () {
     expect(fired()).to.be.true;
   });
 
-  it("asks the view to offer the identification methods when identify is pressed", function () {
+  it("opens the identification-method chooser as a fresh identification when identify is pressed", function () {
     const vm = makeViewModel();
-    let asked = false;
-    vm.on("identify", () => { asked = true; });
+    const fired = recordTopic(Topics.SELECT_METHOD);
     vm.identify();
-    expect(asked).to.be.true;
+    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null });
   });
 
   it("goes to the login screen when the login button is pressed logged out", function () {
