@@ -34,6 +34,10 @@ function clearSlot(slot) {
     slot.container.removeEventListener("click", slot.clickHandler);
     slot.clickHandler = null;
   }
+  if (slot.plusButton) {
+    slot.plusButton.removeEventListener("click", fireSelectMethod);
+    slot.plusButton = null;
+  }
   if (slot.iconCtl) {
     slot.iconCtl.cleanUp();
     slot.iconCtl = null;
@@ -56,9 +60,13 @@ function renderTaxon(slot, iconVm, readonly) {
 
 function renderPlus(slot) {
   clearSlot(slot);
-  slot.container.add(createAddButton());
-  slot.clickHandler = fireSelectMethod;
-  slot.container.addEventListener("click", slot.clickHandler);
+  // The click lives on the button itself (as the old createAddIcon did): on
+  // Android a synthetic fireEvent on the button doesn't bubble to a container
+  // handler, so the plus tap would be lost.
+  var button = createAddButton();
+  button.addEventListener("click", fireSelectMethod);
+  slot.plusButton = button;
+  slot.container.add(button);
 }
 
 function renderAddBehind(slot) {
