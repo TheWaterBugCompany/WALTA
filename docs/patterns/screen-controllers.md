@@ -104,11 +104,6 @@ proxies) lives in the row, not the list.
 The row VM exposes a `key` getter — the identity the keyed diff reconciles on
 (the convention, mirroring a Flutter `ValueKey`).
 
-The explicit `collection(getter, adapter)` form — an object with
-`{ key, create, render, dispose }` — remains as the **escape hatch** for cases a
-name convention can't cover. Reach for it only there; anything the convention
-covers stays in the convention.
-
 ### Polymorphic lists and single fixed children
 
 Two arity variants cover the tray:
