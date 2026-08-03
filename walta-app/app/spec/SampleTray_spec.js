@@ -135,8 +135,9 @@ describe( 'SampleTray controller', function() {
         resolve(data);
       });
       // The tray's internal tile-index datastructure is gone with the VM port;
-      // fire the tap on the rendered endcap cell the spec already navigates.
-      getTaxaIcons( SampleTray.tray.children[0] )[0].fireEvent("click");
+      // fire the tap on the rendered endcap icon (children[0] of the hole) — the
+      // icon owns its own tap now.
+      getTaxaIcons( SampleTray.tray.children[0] )[0].children[0].fireEvent("click");
     });
   }
 
@@ -764,8 +765,8 @@ describe( 'SampleTray controller', function() {
 
             });
             // Fire on the first interior tile's first cell (the added taxon) —
-            // the tile-index reach-in is gone with the VM port.
-            getTaxaIcons( SampleTray.tray.children[1] )[0].fireEvent("click");
+            // the icon (children[0] of the hole) owns its own tap now.
+            getTaxaIcons( SampleTray.tray.children[1] )[0].children[0].fireEvent("click");
           });
         });
     });

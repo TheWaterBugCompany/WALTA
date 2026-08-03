@@ -48,14 +48,11 @@ function clearSlot(slot) {
 function renderTaxon(slot, iconVm, readonly) {
   clearSlot(slot);
   var iconCtl = Alloy.createController("SampleTaxaIcon", {});
+  // The icon owns its own tap (wired inside bind, on the view that carries the
+  // accessibilityLabel), so the hole container needs no click handler here.
   iconCtl.bind(iconVm, { readonly: readonly });
   slot.container.add(iconCtl.getView());
   slot.iconCtl = iconCtl;
-  slot.clickHandler = function (e) {
-    iconCtl.fireEditEvent();
-    e.cancelBubble = true;
-  };
-  slot.container.addEventListener("click", slot.clickHandler);
 }
 
 function renderPlus(slot) {
