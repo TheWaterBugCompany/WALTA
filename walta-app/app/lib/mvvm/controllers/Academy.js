@@ -1,6 +1,7 @@
 const AcademyViewModel = require("viewmodels/Academy");
-const bindView = require("util/bindView");
-const { call } = bindView;
+// Markers only — the binder itself is injected (pre-bound by the View seam);
+// call() is needed here at module scope to build BINDINGS.
+const { call } = require("util/bindView");
 
 // Titanium-free screen controller for the Academy modal.
 // See docs/patterns/modals.md for the pattern.
@@ -15,7 +16,7 @@ const BINDINGS = {
 };
 for (let d = 0; d <= 9; d++) BINDINGS["keypad" + d] = { onClick: call("pickDigit", d) };
 
-module.exports = function createAcademyController({ view, close, services }) {
+module.exports = function createAcademyController({ view, close, services, bindView }) {
   const vm = new AcademyViewModel();
   const unbind = bindView(view, vm, BINDINGS);
 

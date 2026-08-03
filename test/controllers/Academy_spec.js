@@ -1,6 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
 const createAcademyController = require("../../walta-app/app/lib/mvvm/controllers/Academy");
+const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 
 // Fake Ti widget: settable props + addEventListener/fireEvent.
 function makeWidget(props) {
@@ -42,7 +43,7 @@ describe("Academy controller", function () {
   beforeEach(function () {
     view = makeView();
     closed = 0;
-    ctl = createAcademyController({ view, close: () => closed++, services: {} });
+    ctl = createAcademyController({ view, close: () => closed++, services: {}, bindView: makeBinder() });
   });
 
   // Tap a box, then tap a digit key — the picker flow that replaces typing.
