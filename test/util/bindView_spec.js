@@ -541,4 +541,53 @@ describe("bindView collection binding", function () {
       })).to.throw(/createComponent/);
     });
   });
+
+  // makeBinder pre-binds the View-side dependencies (createComponent, palette)
+  // so a screen controller receives a ready binder and never wires a Titanium
+  // dependency itself — the DSL layer stays pure. The View seam builds one per
+  // controller; tests build one the same way.
+  describe("makeBinder: pre-bound binder from the View seam", function () {
+    it("injects createComponent so a named collection needs no per-call factory", function () {
+      const container = makeTableContainer();
+      const built = [];
+      const createComponent = (name, args) => {
+        built.push(name);
+        return { view: { id: args.rowVm.key }, dispose() {} };
+      };
+      const bind = bindView.makeBinder(createComponent);
+      const vm = new ListVM([{ key: 1 }]);
+      bind({ table: container }, vm, { table: { children: bind.collection("items", "MyRow") } });
+      expect(built).to.deep.equal(["MyRow"]);
+      expect(container.ids()).to.deep.equal([1]);
+    });
+
+    it("injects palette so a Symbol getter resolves without a per-call palette", function () {
+      const widget = { backgroundColor: null };
+      const vm = new ListVM([]);
+      Object.defineProperty(vm, "col", { value: Symbol("error") });
+      const bind = bindView.makeBinder(() => {}, { error: "#FF6161" });
+      bind({ w: widget }, vm, { w: { backgroundColor: "col" } });
+      expect(widget.backgroundColor).to.equal("#FF6161");
+    });
+
+    it("exposes the collection / twoWay / call markers", function () {
+      const bind = bindView.makeBinder(() => {});
+      expect(typeof bind.collection).to.equal("function");
+      expect(typeof bind.twoWay).to.equal("function");
+      expect(typeof bind.call).to.equal("function");
+    });
+
+    it("still honours a per-call option override", function () {
+      const container = makeTableContainer();
+      const seamFactory = () => { throw new Error("seam factory used"); };
+      const built = [];
+      const override = (name, args) => { built.push(name); return { view: { id: args.rowVm.key }, dispose() {} }; };
+      const bind = bindView.makeBinder(seamFactory);
+      const vm = new ListVM([{ key: 1 }]);
+      bind({ table: container }, vm, {
+        table: { children: bind.collection("items", "MyRow") },
+      }, { createComponent: override });
+      expect(built).to.deep.equal(["MyRow"]);
+    });
+  });
 });

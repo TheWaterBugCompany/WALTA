@@ -1,5 +1,4 @@
 const MenuViewModel = require("viewmodels/Menu");
-const bindView = require("util/bindView");
 
 // Titanium-free screen controller for the Menu window.
 // See docs/patterns/screen-controllers.md for the pattern.
@@ -15,14 +14,14 @@ const BINDINGS = {
   about:           { onClick: "about" },
 };
 
-module.exports = function createMenuController({ view, services, palette }) {
+module.exports = function createMenuController({ view, services, bindView }) {
   const vm = new MenuViewModel({
     cerdiApi: services.cerdiApi,
     topics: services.topics,
     environment: services.environment,
     version: services.version,
   });
-  const unbind = bindView(view, vm, BINDINGS, { palette });
+  const unbind = bindView(view, vm, BINDINGS);
 
   // Confirm logout through the native-dialog seam; the VM owns the decision.
   vm.on("confirmLogout", async () => {

@@ -315,6 +315,22 @@ function validate($, vm, bindings) {
   }
 }
 
+// Pre-bind the View-side dependencies (createComponent, palette) so a screen
+// controller receives a ready binder from the View seam and never wires a
+// Titanium dependency itself — keeping mvvm/controllers a pure DSL layer. The
+// returned binder carries the markers, so a controller can `const { collection }
+// = bindView` off it. A per-call options object still overrides the defaults.
+function makeBinder(createComponent, palette) {
+  const binder = function (view, vm, bindings, options) {
+    return module.exports(view, vm, bindings, Object.assign({ createComponent, palette }, options));
+  };
+  binder.twoWay = twoWay;
+  binder.call = call;
+  binder.collection = collection;
+  return binder;
+}
+
 module.exports.twoWay = twoWay;
 module.exports.call = call;
 module.exports.collection = collection;
+module.exports.makeBinder = makeBinder;

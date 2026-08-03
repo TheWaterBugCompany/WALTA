@@ -1,5 +1,3 @@
-const bindView = require("util/bindView");
-
 // Titanium-free first-class row component. Binds its row view-model into the
 // columns and owns its own tap, firing the EDIT_SAMPLE intent itself so the
 // parent list needs no per-row wiring. See docs/patterns/screen-controllers.md.
@@ -10,7 +8,7 @@ const ROW_BINDINGS = {
   boolColumn:          { text: "uploaded" },
 };
 
-module.exports = function createSampleHistoryRow({ view, args, services }) {
+module.exports = function createSampleHistoryRow({ view, args, services, bindView }) {
   const rowVm = args.rowVm;
   const topics = services.topics;
   const unbind = bindView(view, rowVm, ROW_BINDINGS);

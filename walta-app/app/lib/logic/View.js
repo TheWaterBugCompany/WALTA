@@ -1,6 +1,7 @@
 
 var Topics = require('ui/Topics');
 const Logger = require("util/Logger");
+const { makeBinder } = require("util/bindView");
 const defaultScreenControllers = require("mvvm/controllers/registry");
 
 var debug = (m, tag = "ui") => Logger.log(m, tag);
@@ -18,6 +19,20 @@ function View(services) {
   // real registry.
   this.screenControllers = (services && services.screenControllers) || defaultScreenControllers;
 }
+
+// The context every screen/row/modal controller is built with. Hands it a
+// bindView pre-bound with the View-side dependencies (createComponent, palette)
+// so the controller declares only its bindings and never wires a Titanium
+// dependency itself — mvvm/controllers stays a pure DSL layer.
+View.prototype.controllerContext = function (alloyCtl, close, args, services) {
+  return {
+    view: alloyCtl,
+    close,
+    services,
+    args,
+    bindView: makeBinder((name, a) => this.createComponent(name, a), Alloy.CFG.colors),
+  };
+};
 
 View.prototype.getSaveOrDiscard = function() { return saveOrDiscard; }
 View.prototype.getCurrentController = function() { return currentController; }
@@ -45,7 +60,7 @@ View.prototype.attachScreenController = function(name, alloyCtl, args) {
   if (!make) return;
   const win = alloyCtl.getView();
   const close = () => win.close();
-  const lib = make({ view: alloyCtl, close, services: this.services, palette: Alloy.CFG.colors, args });
+  const lib = make(this.controllerContext(alloyCtl, close, args, this.services));
   function onClose() {
     win.removeEventListener("close", onClose);
     lib.dispose();
@@ -61,7 +76,7 @@ View.prototype.createComponent = function (name, args) {
   const alloyCtl = Alloy.createController(name, args);
   const make = this.screenControllers[name];
   const lib = make
-    ? make({ view: alloyCtl, close: () => {}, services: this.services, palette: Alloy.CFG.colors, args })
+    ? make(this.controllerContext(alloyCtl, () => {}, args, this.services))
     : null;
   return {
     view: alloyCtl.getView(),
@@ -88,7 +103,7 @@ View.prototype.openModal = function (name, args, services) {
   currentModal = {
     alloyCtl,
     host,
-    lib: make ? make({ view: alloyCtl, close, services, palette: Alloy.CFG.colors, args }) : null,
+    lib: make ? make(this.controllerContext(alloyCtl, close, args, services)) : null,
   };
 };
 

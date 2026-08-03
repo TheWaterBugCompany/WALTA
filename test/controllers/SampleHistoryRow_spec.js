@@ -3,6 +3,7 @@ const { expect } = require("chai");
 const createSampleHistoryRow = require("../../walta-app/app/lib/mvvm/controllers/SampleHistoryRow");
 const { SampleRowViewModel } = require("../../walta-app/app/lib/viewmodels/SampleHistory");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
+const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 
 // Fake Ti widget: settable props.
 function makeWidget() { return { text: "" }; }
@@ -37,7 +38,7 @@ describe("SampleHistoryRow controller", function () {
   function build(data) {
     view = makeRowController();
     rowVm = new SampleRowViewModel(rowData(data));
-    ctl = createSampleHistoryRow({ view, args: { rowVm }, services: { topics: Topics } });
+    ctl = createSampleHistoryRow({ view, args: { rowVm }, services: { topics: Topics }, bindView: makeBinder() });
   }
 
   afterEach(function () {

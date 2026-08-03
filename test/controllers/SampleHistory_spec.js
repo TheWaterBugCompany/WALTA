@@ -2,6 +2,7 @@ require("mocha");
 const { expect } = require("chai");
 const createSampleHistoryController = require("../../walta-app/app/lib/mvvm/controllers/SampleHistory");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
+const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 
 function makeTable() {
   return { data: null, setData(d) { this.data = d; }, getView() { return undefined; } };
@@ -44,7 +45,11 @@ describe("SampleHistory controller", function () {
     table = makeTable();
     fakeView = makeFakeView();
     view = { sampleSource: makeSampleSource(rows), sampleTable: table, getView() { return undefined; } };
-    ctl = createSampleHistoryController({ view, services: { topics: Topics, View: fakeView } });
+    ctl = createSampleHistoryController({
+      view,
+      services: { topics: Topics },
+      bindView: makeBinder(fakeView.createComponent),
+    });
   }
 
   afterEach(function () {
