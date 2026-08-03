@@ -8,11 +8,17 @@ module.exports = function createSyncFeedback({ view, close, services }) {
   const topics = services.topics;
   view.start();
 
+  // The Alloy shell fires "close" when either close button is tapped
+  // (vm.close → $.trigger("close")); route it to the modal seam.
+  const onClose = () => close();
+  view.on("close", onClose);
+
   const onLoggedOut = () => close();
   topics.subscribe(topics.LOGGEDOUT, onLoggedOut);
 
   return {
     dispose() {
+      view.off("close", onClose);
       topics.unsubscribe(topics.LOGGEDOUT, onLoggedOut);
     },
   };
