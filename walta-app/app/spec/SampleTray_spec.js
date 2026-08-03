@@ -2,6 +2,7 @@ require('spec/lib/ti-mocha');
 var PlatformSpecific = require('logic/PlatformSpecific');
 var { expect } = require('spec/lib/chai');
 var { closeWindow, checkTestResult, actionFiresTopicTest, setManualTests, resetDatabase, waitFor } = require('spec/util/TestUtils');
+var { makeTestServices } = require('spec/fixtures/Services_fixture');
 
 var Topics = require('ui/Topics');
  
@@ -11,16 +12,19 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 
 describe( 'SampleTray controller', function() {
 
-  var SampleTray, SampleTrayWin;
+  var view, SampleTray, SampleTrayWin, openArgs;
 
   beforeEach( function() {
     resetDatabase();
   });
 
-  function setupSampleTray() {
+  // The tray now opens through the View seam so the Titanium-free
+  // lib/mvvm/controllers/SampleTray wires the view-model and the two tray
+  // collections; setup just records the args (create+open happen in openView).
+  function setupSampleTray( extraArgs ) {
     Alloy.Models.instance("sample");
-    SampleTray = Alloy.createController("SampleTray", { key: keyMock });
-    SampleTrayWin = SampleTray.getView();
+    view = makeTestServices().View;
+    openArgs = Object.assign({ key: keyMock }, extraArgs);
   }
 
   function updateSampleTrayOnce(resolve) {
@@ -30,24 +34,27 @@ describe( 'SampleTray controller', function() {
     });
   }
 
+  // openView creates the controller synchronously (before the returned promise
+  // resolves on window-opened), so we grab the shell and subscribe to the tray's
+  // init events (trayupdated / scrollrightend, fired on postlayout) before they
+  // can fire.
   function openSampleTray() {
+    view.openView("SampleTray", openArgs);
+    SampleTray = view.getCurrentController();
+    SampleTrayWin = SampleTray.getView();
     return new Promise( function( resolve, reject ) {
           var scrollDone = waitForScrollEnd();
-          SampleTrayWin.addEventListener("open", function openWin() {
-            SampleTrayWin.removeEventListener("open", openWin );
-            updateSampleTrayOnce(function() {
-              try {
-                var actualHeight = SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height;
-                var expectedHeight = SampleTray.getView().size.height;
-                expect( Math.abs(actualHeight - expectedHeight) ).to.be.at.most(1,
-                  `content (${SampleTray.content.size.height}) + anchorBar (${SampleTray.getAnchorBar().getView().size.height}) should equal window (${expectedHeight})`);
-                scrollDone.then(resolve, reject);
-              } catch( err ) {
-                  reject(err);
-              }
-            });
-          })
-          SampleTray.open();
+          updateSampleTrayOnce(function() {
+            try {
+              var actualHeight = SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height;
+              var expectedHeight = SampleTray.getView().size.height;
+              expect( Math.abs(actualHeight - expectedHeight) ).to.be.at.most(1,
+                `content (${SampleTray.content.size.height}) + anchorBar (${SampleTray.getAnchorBar().getView().size.height}) should equal window (${expectedHeight})`);
+              scrollDone.then(resolve, reject);
+            } catch( err ) {
+                reject(err);
+            }
+          });
         });
   }
 
@@ -123,12 +130,13 @@ describe( 'SampleTray controller', function() {
 
   async function simulateEditTaxonEvent() {
     return new Promise( (resolve) => {
-      var tileIndex = SampleTray.getTileIndex();
       Topics.subscribe( Topics.IDENTIFY, function handler(data) {
         Topics.unsubscribe(Topics.IDENTIFY,handler);
         resolve(data);
       });
-      tileIndex.firstTwoTiles.icons[0].view.fireEvent("click");
+      // The tray's internal tile-index datastructure is gone with the VM port;
+      // fire the tap on the rendered endcap cell the spec already navigates.
+      getTaxaIcons( SampleTray.tray.children[0] )[0].fireEvent("click");
     });
   }
 
@@ -755,8 +763,9 @@ describe( 'SampleTray controller', function() {
               });
 
             });
-            var tileIndex = SampleTray.getTileIndex();
-            tileIndex.tileIndex[0].icons[0].view.fireEvent("click");
+            // Fire on the first interior tile's first cell (the added taxon) —
+            // the tile-index reach-in is gone with the VM port.
+            getTaxaIcons( SampleTray.tray.children[1] )[0].fireEvent("click");
           });
         });
     });
@@ -800,15 +809,13 @@ describe( 'SampleTray controller', function() {
     
 
     async function openSampleTrayToEdit( taxonId ) {
-      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: taxonId });
-      SampleTrayWin = SampleTray.getView();
+      setupSampleTray({ taxonId: taxonId });
       await openSampleTray();
       await waitFor( () => SampleTray.editTaxon.photoSelect.getThumbnailImageUrl() );
     }
 
     async function openSampleTrayReadOnly( taxonId ) {
-      SampleTray = Alloy.createController("SampleTray", { key: keyMock, taxonId: taxonId, readonly: true });
-      SampleTrayWin = SampleTray.getView();
+      setupSampleTray({ taxonId: taxonId, readonly: true });
       await openSampleTray();
       await waitFor( () => SampleTray.editTaxon.photoSelect.getThumbnailImageUrl() );
     }

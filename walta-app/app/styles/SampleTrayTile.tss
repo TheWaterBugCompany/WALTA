@@ -1,0 +1,14 @@
+"#cell": {
+  top: 0
+}
+
+".trayBackground": {
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL
+}
+
+".tileHoles": {
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL,
+  layout: "horizontal"
+}
