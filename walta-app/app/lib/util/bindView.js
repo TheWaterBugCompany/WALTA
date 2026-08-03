@@ -133,18 +133,13 @@ function resolveArgs(vm, args) {
 //     adapter itself (key = item.key, create via the injected createComponent
 //     factory, dispose via the handle, render-vs-add/remove by feature-detecting
 //     setData). This is the common list case.
-//   - an explicit ADAPTER (object) — the escape hatch for the irreducible cases
-//     (scroll-windowed lists need scrollEvent/onScroll; anything bespoke).
 //   - omitted — the polymorphic convention: each item names its own component
 //     via item.component (the tray's slots: a SampleTaxaIcon or a SampleTrayPlus).
-function collection(getter, adapterOrName) {
-  if (adapterOrName === undefined) {
+function collection(getter, componentName) {
+  if (componentName === undefined) {
     return { __collection: true, getter, polymorphic: true };
   }
-  if (typeof adapterOrName === "string") {
-    return { __collection: true, getter, componentName: adapterOrName };
-  }
-  return { __collection: true, getter, adapter: adapterOrName };
+  return { __collection: true, getter, componentName };
 }
 
 function isCollection(ref) {
@@ -247,10 +242,10 @@ module.exports = function bindView($, vm, bindings, options) {
 };
 
 // Reconciles a container's children against vm[getter] by stable key, and
-// re-runs on every notifyListeners (a collection add/remove). The scroll-driven
-// window will trigger the same reconcile directly (not through notify) so the
-// per-frame path stays a cheap delta. Returns a teardown that stops listening
-// and disposes every child.
+// re-runs on every notifyListeners (a collection add/remove). Returns a teardown
+// that stops listening and disposes every child. A scroll-windowed list (the
+// SampleTray) drives its own reconcile Ti-side by feeding vm.setScrollOffset(),
+// which notifies — so it flows through this same path with no special casing.
 // The zero-glue convention: bindView builds the child adapter itself so a
 // Titanium-free screen controller declares only collection(getter, name). key
 // reads item.key; create goes through the injected createComponent factory —
@@ -294,30 +289,21 @@ function setupComponent(vm, container, marker, createComponent) {
 }
 
 function setupCollection(vm, container, marker, createComponent) {
-  const adapter = marker.adapter || conventionAdapter(marker, container, createComponent);
+  const adapter = conventionAdapter(marker, container, createComponent);
   const handles = new Map();
 
   // Two container styles: incremental (ScrollView — add/remove each child) and
   // render (TableView — the adapter re-applies the whole ordered list via
   // setData). The keyed diff below is identical either way; only how the diff
   // reaches the container differs.
-  function containerAdd(handle) {
-    if (adapter.attach) adapter.attach(container, handle);
-    else container.add(handle.view);
-  }
-  function containerRemove(handle) {
-    if (adapter.detach) adapter.detach(container, handle);
-    else container.remove(handle.view);
-  }
-
   function reconcile() {
     const items = vm[marker.getter] || [];
     const desired = new Map(items.map((it) => [adapter.key(it), it]));
     let membershipChanged = false;
     for (const [k, handle] of handles) {
       if (!desired.has(k)) {
-        if (!adapter.render) containerRemove(handle);
-        if (adapter.dispose) adapter.dispose(handle);
+        if (!adapter.render) container.remove(handle.view);
+        adapter.dispose(handle);
         handles.delete(k);
         membershipChanged = true;
       }
@@ -329,10 +315,8 @@ function setupCollection(vm, container, marker, createComponent) {
         handles.set(k, handle);
         // An ordered adapter re-attaches everything below so a swapped child lands
         // in position, not appended; others attach here.
-        if (!adapter.render && !adapter.ordered) containerAdd(handle);
+        if (!adapter.render && !adapter.ordered) container.add(handle.view);
         membershipChanged = true;
-      } else if (adapter.update) {
-        adapter.update(handles.get(k), it);
       }
     });
     if (adapter.render) {
@@ -341,33 +325,19 @@ function setupCollection(vm, container, marker, createComponent) {
       // Flow-laid children (the tray's polymorphic slots) must follow item order
       // even when a middle slot swaps component. Re-attach every child in order;
       // container.remove is a no-op on a not-yet-attached (freshly created) child.
-      for (const it of items) containerRemove(handles.get(adapter.key(it)));
-      for (const it of items) containerAdd(handles.get(adapter.key(it)));
+      for (const it of items) container.remove(handles.get(adapter.key(it)).view);
+      for (const it of items) container.add(handles.get(adapter.key(it)).view);
     }
   }
 
   reconcile();
   vm.addListener(reconcile);
 
-  // Scroll-driven windows (the tray) reconcile from the container's own scroll
-  // event, not through notifyListeners — so a fling never re-pulls every other
-  // bound property. onScroll injects the Titanium offset read/convert.
-  let detachScroll = () => {};
-  if (adapter.scrollEvent) {
-    const onScroll = (e) => {
-      if (adapter.onScroll) adapter.onScroll(e, container);
-      reconcile();
-    };
-    container.addEventListener(adapter.scrollEvent, onScroll);
-    detachScroll = () => container.removeEventListener(adapter.scrollEvent, onScroll);
-  }
-
   return function teardown() {
     vm.removeListener(reconcile);
-    detachScroll();
     for (const handle of handles.values()) {
-      if (!adapter.render) containerRemove(handle);
-      if (adapter.dispose) adapter.dispose(handle);
+      if (!adapter.render) container.remove(handle.view);
+      adapter.dispose(handle);
     }
     handles.clear();
     if (adapter.render) adapter.render(container, []);
@@ -473,12 +443,9 @@ function validate($, vm, bindings) {
         if (!(ref.getter in vm)) {
           throw new Error(`bindView: VM has no collection getter "${ref.getter}" (bound to ${widgetId}.${key})`);
         }
-        // A named-component marker's adapter is synthesised at setup (and its
-        // createComponent requirement checked there); only an explicit adapter
-        // is validated here.
-        if (ref.adapter && (typeof ref.adapter.key !== "function" || typeof ref.adapter.create !== "function")) {
-          throw new Error(`bindView: collection adapter for ${widgetId}.${key} needs key() and create()`);
-        }
+        // The adapter is synthesised from the component name (or item.component
+        // for a polymorphic list) at setup, where its createComponent requirement
+        // is checked.
       } else if (isComponent(ref)) {
         if (!(ref.getter in vm)) {
           throw new Error(`bindView: VM has no component getter "${ref.getter}" (bound to ${widgetId}.${key})`);
