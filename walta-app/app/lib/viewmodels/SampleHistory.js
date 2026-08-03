@@ -6,6 +6,8 @@ class SampleRowViewModel extends ChangeNotifier {
     this._data = data;
   }
 
+  // Stable identity for the collection binding's keyed diff (the convention).
+  get key()           { return this._data.sampleId; }
   get serverId()      { return this._data.serverId != null ? String(this._data.serverId) : ""; }
   get sampleId()      { return this._data.sampleId; }
   get dateCompleted() { return this._data.dateCompleted; }

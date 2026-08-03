@@ -22,7 +22,7 @@ module.exports = function createMenuController({ view, services, palette }) {
     environment: services.environment,
     version: services.version,
   });
-  const unbind = bindView(view, vm, BINDINGS, palette);
+  const unbind = bindView(view, vm, BINDINGS, { palette });
 
   // Confirm logout through the native-dialog seam; the VM owns the decision.
   vm.on("confirmLogout", async () => {

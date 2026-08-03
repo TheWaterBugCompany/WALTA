@@ -135,7 +135,7 @@ describe("bindView", function () {
       const sym = Symbol("error");
       Object.defineProperty(vm, "palettedColor", { value: sym, configurable: true });
       const palette = { error: "#FF6161", primary: "#26849D" };
-      bindView($, vm, { label: { backgroundColor: "palettedColor" } }, palette);
+      bindView($, vm, { label: { backgroundColor: "palettedColor" } }, { palette });
       expect($.label.backgroundColor).to.equal("#FF6161");
     });
 
@@ -143,7 +143,7 @@ describe("bindView", function () {
       let current = Symbol("primary");
       Object.defineProperty(vm, "palettedColor", { get() { return current; }, configurable: true });
       const palette = { error: "#FF6161", primary: "#26849D" };
-      bindView($, vm, { label: { backgroundColor: "palettedColor" } }, palette);
+      bindView($, vm, { label: { backgroundColor: "palettedColor" } }, { palette });
       expect($.label.backgroundColor).to.equal("#26849D");
       current = Symbol("error");
       vm.notifyListeners();
@@ -152,7 +152,7 @@ describe("bindView", function () {
 
     it("passes non-Symbol values through unchanged even when a palette is supplied", function () {
       const palette = { error: "#FF6161" };
-      bindView($, vm, { label: { text: "greeting" } }, palette);
+      bindView($, vm, { label: { text: "greeting" } }, { palette });
       expect($.label.text).to.equal("hi");
     });
 
@@ -464,5 +464,81 @@ describe("bindView collection binding", function () {
 
     expect(container.ids(), "window follows the scroll offset").to.deep.equal([5, 6]);
     expect(notifies, "scroll must not trigger a broadcast").to.equal(0);
+  });
+
+  // Naming a component instead of an adapter collapses the per-screen glue to
+  // zero: bindView synthesises the adapter from convention — key = item.key,
+  // create = the injected createComponent factory, dispose = the handle's own
+  // dispose, render-vs-add/remove chosen by feature-detecting setData.
+  describe("name convention: collection(getter, componentName)", function () {
+    function makeFactory() {
+      const built = [];
+      const disposed = [];
+      const createComponent = (name, args) => {
+        const handle = {
+          name,
+          rowVm: args.rowVm,
+          view: { id: args.rowVm.key },
+          dispose() { disposed.push(args.rowVm.key); },
+        };
+        built.push(handle);
+        return handle;
+      };
+      return { built, disposed, createComponent };
+    }
+
+    it("creates a child per item via the factory, keyed by item.key, rendered via setData", function () {
+      const container = makeTableContainer();
+      const { built, createComponent } = makeFactory();
+      const vm = new ListVM([{ key: 1 }, { key: 2 }]);
+      bindView({ table: container }, vm, {
+        table: { children: collection("items", "MyRow") },
+      }, { createComponent });
+      expect(built.map((h) => h.name)).to.deep.equal(["MyRow", "MyRow"]);
+      expect(container.ids()).to.deep.equal([1, 2]);
+    });
+
+    it("passes each item to the factory as { rowVm }", function () {
+      const container = makeTableContainer();
+      const { built, createComponent } = makeFactory();
+      const items = [{ key: 1 }, { key: 2 }];
+      const vm = new ListVM(items);
+      bindView({ table: container }, vm, {
+        table: { children: collection("items", "MyRow") },
+      }, { createComponent });
+      expect(built.map((h) => h.rowVm)).to.deep.equal(items);
+    });
+
+    it("falls back to add/remove for a container without setData", function () {
+      const container = makeContainer();
+      const { createComponent } = makeFactory();
+      const vm = new ListVM([{ key: 1 }, { key: 2 }]);
+      bindView({ list: container }, vm, {
+        list: { children: collection("items", "MyRow") },
+      }, { createComponent });
+      expect(container.ids()).to.deep.equal([1, 2]);
+    });
+
+    it("disposes a removed child via its own dispose()", function () {
+      const container = makeTableContainer();
+      const { disposed, createComponent } = makeFactory();
+      const vm = new ListVM([{ key: 1 }, { key: 2 }]);
+      bindView({ table: container }, vm, {
+        table: { children: collection("items", "MyRow") },
+      }, { createComponent });
+
+      vm.items = [{ key: 2 }]; // drop 1
+
+      expect(disposed).to.deep.equal([1]);
+      expect(container.ids()).to.deep.equal([2]);
+    });
+
+    it("throws if no createComponent factory is supplied", function () {
+      const container = makeTableContainer();
+      const vm = new ListVM([{ key: 1 }]);
+      expect(() => bindView({ table: container }, vm, {
+        table: { children: collection("items", "MyRow") },
+      })).to.throw(/createComponent/);
+    });
   });
 });

@@ -2,6 +2,7 @@ require("mocha");
 const { expect } = require("chai");
 const createSampleHistoryRow = require("../../walta-app/app/lib/mvvm/controllers/SampleHistoryRow");
 const { SampleRowViewModel } = require("../../walta-app/app/lib/viewmodels/SampleHistory");
+const Topics = require("../../walta-app/app/lib/ui/Topics");
 
 // Fake Ti widget: settable props.
 function makeWidget() { return { text: "" }; }
@@ -36,12 +37,13 @@ describe("SampleHistoryRow controller", function () {
   function build(data) {
     view = makeRowController();
     rowVm = new SampleRowViewModel(rowData(data));
-    ctl = createSampleHistoryRow({ view, args: { rowVm }, services: {} });
+    ctl = createSampleHistoryRow({ view, args: { rowVm }, services: { topics: Topics } });
   }
 
   afterEach(function () {
     if (ctl) ctl.dispose();
     ctl = null;
+    Topics.reset();
   });
 
   it("binds the row view-model's fields into the columns", function () {
@@ -58,23 +60,23 @@ describe("SampleHistoryRow controller", function () {
     expect(view.waterbodyName.text).to.equal("Merri Creek");
   });
 
-  it("fires 'selected' with its sampleId when tapped (owns the per-row click)", function () {
+  it("fires EDIT_SAMPLE with its sampleId when tapped (owns the per-row click)", function () {
     build({ sampleId: "abc" });
-    let selected = null;
-    ctl.on("selected", (id) => { selected = id; });
+    let fired = null;
+    Topics.subscribe(Topics.EDIT_SAMPLE, (data) => { fired = data; });
     view.getView().fireEvent("click");
-    expect(selected).to.equal("abc");
+    expect(fired).to.deep.equal({ sampleId: "abc" });
   });
 
   it("stops firing and updating after dispose", function () {
     build();
-    let selected = false;
-    ctl.on("selected", () => { selected = true; });
+    let fired = false;
+    Topics.subscribe(Topics.EDIT_SAMPLE, () => { fired = true; });
     ctl.dispose();
     ctl = null;
     view.getView().fireEvent("click");
     rowVm.update(rowData({ waterbodyName: "Gone" }));
-    expect(selected).to.equal(false);
+    expect(fired).to.equal(false);
     expect(view.waterbodyName.text).to.equal("Yarra");
   });
 });

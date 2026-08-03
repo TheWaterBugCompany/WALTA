@@ -2,24 +2,22 @@ require("mocha");
 const { expect } = require("chai");
 const createSampleHistoryController = require("../../walta-app/app/lib/mvvm/controllers/SampleHistory");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
-const ChangeNotifier = require("../../walta-app/app/lib/util/ChangeNotifier");
 
 function makeTable() {
   return { data: null, setData(d) { this.data = d; }, getView() { return undefined; } };
 }
 
-// Fake View.createComponent: returns a handle whose lib is a real emitter, so a
-// row's "selected" can be triggered; records every handle it builds.
+// Fake View seam: createComponent records every row handle it builds; the
+// handle exposes the view (for setData) and its own dispose. Row-tap routing is
+// the row's own concern now, exercised in SampleHistoryRow_spec.
 function makeFakeView() {
   const handles = [];
   return {
     handles,
     createComponent(name, args) {
-      const emitter = new ChangeNotifier();
       const handle = {
         rowVm: args.rowVm,
         view: { rowFor: args.rowVm.sampleId },
-        lib: { on: (e, cb) => emitter.on(e, cb), emit: (e, d) => emitter.trigger(e, d) },
         disposed: false,
         dispose() { this.disposed = true; },
       };
@@ -59,14 +57,6 @@ describe("SampleHistory controller", function () {
     build([R("a"), R("b")]);
     expect(fakeView.handles.map(h => h.rowVm.sampleId)).to.deep.equal(["a", "b"]);
     expect(table.data.length).to.equal(2);
-  });
-
-  it("routes a row's selection to the EDIT_SAMPLE topic with its sampleId", function () {
-    build([R("a"), R("b")]);
-    let fired = null;
-    Topics.subscribe(Topics.EDIT_SAMPLE, (data) => { fired = data; });
-    fakeView.handles[1].lib.emit("selected", "b");
-    expect(fired).to.deep.equal({ sampleId: "b" });
   });
 
   it("adds a row when an upload-progress event surfaces a new sample", function () {
