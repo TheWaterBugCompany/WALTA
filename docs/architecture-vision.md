@@ -21,6 +21,21 @@ When building a new screen, establish the ViewModel first and test it with Node.
 
 The first screen implemented this way serves as the reference pattern for the rest of the codebase.
 
+## The presentation DSL
+
+MVVM removes `Ti.*` from the ViewModel, but the *screen controller* — the layer wiring a ViewModel to its widgets — can still leak Titanium (a `setData` call, an `Alloy.createController`). The direction is to make that layer a **framework-agnostic DSL**: a screen controller declares *what* binds to *what*, and nothing about *how* Titanium realises it.
+
+Two rules carry the DSL:
+
+- **Declare, don't call.** A screen controller passes data to `bindView` — a bindings object, a `collection(getter, componentName)` marker — and never invokes a Titanium method. `bindView` translates the declarations into widget writes, event wiring, and a keyed collection diff.
+- **The binder is injected, not imported.** The `View` seam hands each controller a `bindView` pre-bound (via `makeBinder`) with its Titanium-side dependencies — the component factory for lists, the colour palette for Symbol getters. The controller writes zero wiring; see [screen-controllers.md](patterns/screen-controllers.md).
+
+`bindView` itself *is* Titanium-coupled — it calls `setData`, reads widget properties, drives the Alloy component factory. That is deliberate: **`bindView` is one implementation of the binder DSL, and a port reimplements it.** What ports unchanged is everything above it — the ViewModels and the screen controllers' declarations.
+
+The collection **reconciler** inside `bindView` (the keyed create/retain/dispose diff) is the clearest case: on a Flutter port you *delete* it, because Flutter's Element reconciler already does exactly that keyed diff. A seam whose implementation the target framework provides for free is a seam drawn in the right place — and its throwaway-ness is the proof. Likewise the injected component factory dissolves on Flutter, where you simply construct the widget.
+
+**The portability test for any screen controller:** *could you transcribe this file to a Flutter `build()` method without knowing it was ever Titanium?* If a `Ti.*` / `Alloy.*` / `setData` reference makes that impossible, the glue is in the wrong layer — push it down into `bindView`.
+
 ## Framework Direction
 
 The current Titanium/Alloy framework has served the project but its layout model requires frequent postlayout workarounds and the ecosystem is in decline. Flutter is the most promising candidate for an eventual UI layer replacement:
