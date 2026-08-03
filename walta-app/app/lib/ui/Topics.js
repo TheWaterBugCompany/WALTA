@@ -94,6 +94,9 @@ var topics = {
 
 	UPLOAD_PROGRESS: 'uploadprogress',
 
+	// user intent: open the SyncFeedback modal and kick off a sync
+	START_SYNC: 'startsync',
+
 	SYNC_STARTED: 'syncstarted',
 
 	SYNC_FINISHED: 'syncfinished', // payload: { success: boolean, error?: Error }

@@ -76,6 +76,7 @@ async function startApp(options) {
   routePromise(Topics.ACADEMY,  () =>  Navigation.openModal("Academy"));
   routePromise(Topics.SELECT_METHOD,  (data) =>  Navigation.openModal("MethodSelect", data));
   routePromise(Topics.EDIT_SAMPLE,  (data) =>  Navigation.openModal("SampleEditMenu", data));
+  routePromise(Topics.START_SYNC,  () =>  Navigation.openModal("SyncFeedback"));
   Topics.subscribe(Topics.FORCE_UPLOAD,  () => Survey.uploadNewSample());
   routePromise(Topics.NOTES,  (data) =>  Navigation.openController("Notes", data));
   routePromise(Topics.JUMPTO, async function (data) {

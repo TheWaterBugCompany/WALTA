@@ -6,7 +6,6 @@ var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
 var { clearDatabase, closeWindow, actionFiresTopicTest } = require("spec/util/TestUtils");
 var moment = require("lib/moment");
-var SampleSync = require('logic/SampleSync');
 
 describe("SampleHistory controller", function() {
 	var view, ctl;
@@ -45,20 +44,17 @@ describe("SampleHistory controller", function() {
     expect( ctl.syncButton.label.accessibilityLabel ).to.equal("Sync");
   });
 
-  it('clicking the Sync button opens the SyncFeedback popup', function() {
-    Alloy.Globals.CerdiApi.retrieveUserToken = function() { return null; };
-    simple.mock(SampleSync, "forceSync");
+  // The Sync button fires the START_SYNC intent; Main routes it to the
+  // SyncFeedback modal, which owns starting the sync and closing itself on
+  // logout (see test/controllers/SyncFeedback_spec.js). The window shell no
+  // longer opens or tracks the overlay.
+  it('clicking the Sync button fires the START_SYNC intent', function() {
+    var fired = 0;
+    function onSync() { fired++; }
+    Topics.subscribe( Topics.START_SYNC, onSync );
     ctl.syncButton.NavButton.fireEvent("click");
-    expect( ctl.syncFeedback ).to.exist;
-  });
-
-  it('closes the SyncFeedback popup when the session is logged out', function() {
-    Alloy.Globals.CerdiApi.retrieveUserToken = function() { return null; };
-    simple.mock(SampleSync, "forceSync");
-    ctl.syncButton.NavButton.fireEvent("click");
-    expect( ctl.syncFeedback, "popup should be open before logout" ).to.exist;
-    Topics.fireTopicEvent( Topics.LOGGEDOUT, null );
-    expect( ctl.syncFeedback, "popup should close on logout" ).to.not.exist;
+    Topics.unsubscribe( Topics.START_SYNC, onSync );
+    expect( fired, "Sync button fires the START_SYNC intent" ).to.equal(1);
   });
 
   it('a reused row still opens its menu after the list reorders during sync (WB-168)', async function() {
