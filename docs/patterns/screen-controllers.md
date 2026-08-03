@@ -54,6 +54,32 @@ injected seams, never reaching for `Ti.*` itself:
   logout is `if (await services.dialogs.confirm(...)) vm.logOut();`. Fake the seam
   in tests.
 
+## Data sources
+
+A screen's data comes through an injected **source**, not from the window shell or
+inline model access. The Alloy-model reads live in a lib module registered in the
+services bag; the screen controller builds its ViewModel from `services.<source>`:
+
+```js
+// lib/logic/SampleHistorySource.js  — Alloy models are allowed here, Ti views are not
+module.exports = ({ cerdiApi }) => ({
+  loadAll() { const c = Alloy.createCollection("sample"); c.loadSampleHistory(cerdiApi.retrieveUserId()); return c.map(toRowData); },
+  loadOne(id) { /* Alloy.createModel("sample")... */ },
+});
+
+// index-app.js — wired into the bag
+services.sampleSource = SampleHistorySource({ cerdiApi: services.cerdiApi });
+
+// lib/mvvm/controllers/SampleHistory.js — builds the VM from the injected source
+new SampleHistoryViewModel({ sampleSource: services.sampleSource, topics: services.topics });
+```
+
+Model access (`Alloy.createCollection` / `createModel`) *is* allowed in the mvvm
+layer — only Ti **views** are off-limits — but concentrating it in one injected
+source keeps the controller Node-testable (fake the source), gives a future model
+abstraction a single place to swap, and maps directly to a Flutter repository
+injected via DI.
+
 ## Lists — the collection convention
 
 Bind a list container with `collection(getter, "ComponentName")`. `bindView` owns

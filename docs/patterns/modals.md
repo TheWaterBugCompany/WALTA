@@ -35,6 +35,27 @@ Modals live **outside** the `Navigation` history stack — `openModal` /
 modal rather than a window (which `View.openView` opens through the history
 stack; see [screen-plumbing.md](screen-plumbing.md)).
 
+## A modal that owns its own lifecycle
+
+A modal's screen controller can own more than dismissal — it can start work on
+open and close itself on a domain event. The `SyncFeedback` modal starts the sync
+when it opens and closes itself when the session ends:
+
+```js
+// lib/mvvm/controllers/SyncFeedback.js
+module.exports = function ({ view, close, services }) {
+  view.start();                       // openModal built us after adding the overlay, so the view is ready
+  const onLoggedOut = () => close();  // close === View.closeModal — no Titanium here
+  services.topics.subscribe(services.topics.LOGGEDOUT, onLoggedOut);
+  return { dispose() { services.topics.unsubscribe(services.topics.LOGGEDOUT, onLoggedOut); } };
+};
+```
+
+The *opener* (SampleHistory) stays free of the modal's lifecycle — it just fires
+`START_SYNC`; the modal handles its own start and teardown. (`SyncFeedback` is
+mid-migration: this lib controller owns the lifecycle, while its Ti view + the
+`bindView` for it still live in the Alloy shell, which exposes `start()`/`cleanUp()`.)
+
 ## The Alloy overlay shell
 
 `controllers/<Name>.js` + `views/<Name>.xml` is the Alloy presenter. The view is
