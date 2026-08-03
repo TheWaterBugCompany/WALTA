@@ -53,10 +53,18 @@ function isCall(ref) {
 
 // Children-binding marker: drives a container's child views from a VM getter
 // that returns a keyed list. bindView owns the keyed diff (create new / retain
-// existing / dispose gone); the adapter injects the Titanium-specific child
-// work (key/create/attach/detach/dispose/update) so bindView stays Ti-free.
-function collection(getter, adapter) {
-  return { __collection: true, getter, adapter };
+// existing / dispose gone). The second arg is either:
+//   - a component NAME (string) — the zero-glue convention: bindView builds the
+//     adapter itself (key = item.key, create via the injected createComponent
+//     factory, dispose via the handle, render-vs-add/remove by feature-detecting
+//     setData). This is the common list case.
+//   - an explicit ADAPTER (object) — the escape hatch for the irreducible cases
+//     (scroll-windowed lists need scrollEvent/onScroll; anything bespoke).
+function collection(getter, adapterOrName) {
+  if (typeof adapterOrName === "string") {
+    return { __collection: true, getter, componentName: adapterOrName };
+  }
+  return { __collection: true, getter, adapter: adapterOrName };
 }
 
 function isCollection(ref) {
@@ -73,9 +81,11 @@ function propOf(ref) {
   return isTwoWay(ref) ? ref.prop : ref;
 }
 
-module.exports = function bindView($, vm, bindings, palette) {
+module.exports = function bindView($, vm, bindings, options) {
   validate($, vm, bindings);
 
+  const palette = options && options.palette;
+  const createComponent = options && options.createComponent;
   const eventTeardowns = [];
 
   function applyProps() {
@@ -116,7 +126,7 @@ module.exports = function bindView($, vm, bindings, palette) {
         const handler = function (e) { vm[prop] = e.value; };
         eventTeardowns.push(attachEvent(widget, "change", handler));
       } else if (isCollection(ref)) {
-        eventTeardowns.push(setupCollection(vm, widget, ref));
+        eventTeardowns.push(setupCollection(vm, widget, ref, createComponent));
       }
     }
   }
@@ -136,8 +146,29 @@ module.exports = function bindView($, vm, bindings, palette) {
 // window will trigger the same reconcile directly (not through notify) so the
 // per-frame path stays a cheap delta. Returns a teardown that stops listening
 // and disposes every child.
-function setupCollection(vm, container, marker) {
-  const adapter = marker.adapter;
+// The zero-glue convention: bindView builds the child adapter itself so a
+// Titanium-free screen controller declares only collection(getter, name). key
+// reads item.key; create goes through the injected createComponent factory —
+// the single seam that must reach Titanium, kept in bindView's options and out
+// of the controller. render vs add/remove is chosen by feature-detecting
+// setData (TableView renders the whole ordered list; ScrollView adds/removes).
+function conventionAdapter(name, container, createComponent) {
+  if (typeof createComponent !== "function") {
+    throw new Error(`bindView: collection("${name}") needs a createComponent factory in options`);
+  }
+  const usesSetData = typeof container.setData === "function";
+  return {
+    key: (item) => item.key,
+    create: (item) => createComponent(name, { rowVm: item }),
+    dispose: (handle) => handle.dispose(),
+    render: usesSetData
+      ? (c, handles) => c.setData(handles.map((h) => h.view))
+      : undefined,
+  };
+}
+
+function setupCollection(vm, container, marker, createComponent) {
+  const adapter = marker.adapter || conventionAdapter(marker.componentName, container, createComponent);
   const handles = new Map();
 
   // Two container styles: incremental (ScrollView — add/remove each child) and
@@ -269,7 +300,10 @@ function validate($, vm, bindings) {
         if (!(ref.getter in vm)) {
           throw new Error(`bindView: VM has no collection getter "${ref.getter}" (bound to ${widgetId}.${key})`);
         }
-        if (typeof ref.adapter.key !== "function" || typeof ref.adapter.create !== "function") {
+        // A named-component marker's adapter is synthesised at setup (and its
+        // createComponent requirement checked there); only an explicit adapter
+        // is validated here.
+        if (ref.adapter && (typeof ref.adapter.key !== "function" || typeof ref.adapter.create !== "function")) {
           throw new Error(`bindView: collection adapter for ${widgetId}.${key} needs key() and create()`);
         }
       } else {
