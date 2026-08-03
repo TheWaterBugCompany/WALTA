@@ -7,7 +7,7 @@ const SampleHistoryViewModel = require("viewmodels/SampleHistory");
 module.exports = function createSampleHistoryController({ view, services, bindView }) {
   const { collection } = bindView;
   const vm = new SampleHistoryViewModel({
-    sampleSource: view.sampleSource,
+    sampleSource: services.sampleSource,
     topics: services.topics,
   });
 

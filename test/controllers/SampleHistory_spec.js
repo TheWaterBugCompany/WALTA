@@ -39,15 +39,16 @@ const R = (sampleId, extra) => Object.assign(
   { sampleId, serverId: 1, dateCompleted: "", waterbodyName: "", uploaded: "" }, extra);
 
 describe("SampleHistory controller", function () {
-  let view, table, fakeView, ctl;
+  let view, table, fakeView, sampleSource, ctl;
 
   function build(rows) {
     table = makeTable();
     fakeView = makeFakeView();
-    view = { sampleSource: makeSampleSource(rows), sampleTable: table, getView() { return undefined; } };
+    sampleSource = makeSampleSource(rows);
+    view = { sampleTable: table, getView() { return undefined; } };
     ctl = createSampleHistoryController({
       view,
-      services: { topics: Topics },
+      services: { topics: Topics, sampleSource },
       bindView: makeBinder(fakeView.createComponent),
     });
   }
@@ -67,7 +68,7 @@ describe("SampleHistory controller", function () {
   it("adds a row when an upload-progress event surfaces a new sample", function () {
     build([R("a")]);
     // A new sample "b" appears in the source, then UPLOAD_PROGRESS for it.
-    view.sampleSource.loadOne = (id) => (id === "b" ? R("b") : undefined);
+    sampleSource.loadOne = (id) => (id === "b" ? R("b") : undefined);
     Topics.fireTopicEvent(Topics.UPLOAD_PROGRESS, { id: "b" });
     expect(table.data.length).to.equal(2);
     expect(fakeView.handles.some(h => h.rowVm.sampleId === "b")).to.equal(true);
@@ -76,7 +77,7 @@ describe("SampleHistory controller", function () {
   it("updates an existing row in place without recreating its component", function () {
     build([R("a"), R("b")]);
     const handlesBefore = fakeView.handles.length;
-    view.sampleSource.loadOne = (id) => (id === "a" ? R("a", { waterbodyName: "Changed" }) : undefined);
+    sampleSource.loadOne = (id) => (id === "a" ? R("a", { waterbodyName: "Changed" }) : undefined);
     Topics.fireTopicEvent(Topics.UPLOAD_PROGRESS, { id: "a" });
     expect(fakeView.handles.length, "no new row component created").to.equal(handlesBefore);
   });
