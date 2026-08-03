@@ -22,7 +22,7 @@ bindView($, vm, {
     logText:           { value: "logText" },
     closeBottomButton: { onClick: "close" },
     closeButton:       { onClose: "close" },
-}, Alloy.CFG.colors);
+}, { palette: Alloy.CFG.colors });
 
 // Ti-layout glue (not VM state): the top light-text label lives
 // inside a clip container sized to the fill. For the text to
