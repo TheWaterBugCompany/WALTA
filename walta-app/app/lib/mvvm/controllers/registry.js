@@ -8,4 +8,5 @@ module.exports = {
   SampleHistory: require("./SampleHistory"),
   SampleHistoryRow: require("./SampleHistoryRow"),
   SampleEditMenu: require("./SampleEditMenu"),
+  SyncFeedback: require("./SyncFeedback"),
 };
