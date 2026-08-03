@@ -231,21 +231,26 @@ get progressColor() {
 ```
 
 Each Symbol's `.description` matches the key in `config.json` (`"error"`,
-`"primary"`, …). bindView accepts an optional 4th `palette` argument; when a
-bound getter returns a Symbol, bindView resolves it through that palette.
-Controllers pass `Alloy.CFG.colors`:
+`"primary"`, …). bindView accepts an optional 4th `options` argument
+(`{ palette, createComponent }`); when a bound getter returns a Symbol, bindView
+resolves it through `options.palette`. A legacy Alloy controller passes it inline:
 
 ```js
 // controllers/SyncFeedback.js
 bindView($, vm, {
     progressFill: { backgroundColor: "progressColor", width: "progressWidth" },
     // ...
-}, Alloy.CFG.colors);
+}, { palette: Alloy.CFG.colors });
 ```
+
+A **screen controller** (`lib/mvvm/controllers/<Name>`) passes nothing — the
+`bindView` it is handed is already pre-bound with the palette (and the list
+component factory) by the `View` seam via `makeBinder`. See
+[screen-controllers.md](screen-controllers.md).
 
 The binding declaration looks the same as any other property binding — bindView
 detects the Symbol and does the lookup. The ViewModel stays Titanium-free and
-the only place that touches `Alloy.CFG.colors` is the controller.
+the only place that touches `Alloy.CFG.colors` is the `View` seam.
 
 Tests:
 

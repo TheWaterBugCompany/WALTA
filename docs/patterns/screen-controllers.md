@@ -10,7 +10,7 @@ registered — the same split serves both.
 
 ```js
 // lib/mvvm/controllers/Academy.js
-module.exports = function createAcademyController({ view, close, services, palette }) {
+module.exports = function createAcademyController({ view, close, services, bindView }) {
   const vm = new AcademyViewModel();
   const unbind = bindView(view, vm, BINDINGS);
   vm.on("close", () => close());
@@ -18,7 +18,7 @@ module.exports = function createAcademyController({ view, close, services, palet
 };
 ```
 
-The factory receives four things and returns `{ vm, dispose() }`:
+The factory receives its context and returns `{ vm, dispose() }`:
 
 - **`view`** — the Alloy controller (`$`), the widget map to bind against.
 - **`close`** — a Titanium-free way to dismiss the screen. For a window it closes
@@ -26,8 +26,14 @@ The factory receives four things and returns `{ vm, dispose() }`:
   to close without ever touching `Ti.*`.
 - **`services`** — the services bag (for a window, `View`'s own; for a modal, the
   bag passed to `openModal`).
-- **`palette`** — `Alloy.CFG.colors`, forwarded to `bindView` so Symbol-valued
-  getters resolve (see [viewmodels.md](viewmodels.md) "Semantic palette colours").
+- **`bindView`** — the binder, **pre-bound by `View`** (via `makeBinder`) with its
+  Titanium-side dependencies: the component factory for lists and the colour
+  palette for Symbol getters. The controller calls `bindView(view, vm, BINDINGS)`
+  and threads no Ti wiring of its own. The markers hang off it
+  (`const { collection } = bindView`); import them statically from `util/bindView`
+  only when a *module-scope* `BINDINGS` const needs one (Academy builds `call()`
+  markers at load time). See [architecture-vision.md](../architecture-vision.md)
+  "The presentation DSL".
 - **`args`** — the open payload (`View.openView`/`openModal`'s `args`), so a modal
   can read what it was opened with. `MethodSelect` reads `allowAddToSample` /
   `surveyType` from here.
@@ -48,32 +54,35 @@ injected seams, never reaching for `Ti.*` itself:
   logout is `if (await services.dialogs.confirm(...)) vm.logOut();`. Fake the seam
   in tests.
 
-## Lists — the collection binding + `View.createComponent`
+## Lists — the collection convention
 
-For a list, bind the container with `collection(getter, adapter)` from `bindView`.
-`bindView` owns the keyed diff (create new / retain / dispose gone); the adapter is
-the irreducible Titanium seam. Rows are built through `services.View.createComponent`
-(never `Alloy.createController`), so the lib controller stays Ti-free, and each row
-is a **first-class component** that owns its own tap and lifecycle:
+Bind a list container with `collection(getter, "ComponentName")`. `bindView` owns
+the keyed diff (create new / retain / dispose gone) **and** the row lifecycle: from
+a component name it synthesises the adapter — `key = item.key`, create via the
+injected component factory, dispose via the handle, and TableView `setData` vs
+ScrollView add/remove chosen by feature detection. The screen controller declares
+one line and no Titanium:
 
 ```js
 // lib/mvvm/controllers/SampleHistory.js
-const rows = collection("rows", {
-  key:    (row) => row.sampleId,
-  create: (row) => {
-    const handle = services.View.createComponent("SampleHistoryRow", { rowVm: row });
-    handle.lib.on("selected", (id) => topics.fireTopicEvent(topics.EDIT_SAMPLE, { sampleId: id }));
-    return handle;
-  },
-  render:  (table, handles) => table.setData(handles.map((h) => h.view)),
-  dispose: (handle) => handle.dispose(),
-});
-bindView(view, vm, { sampleTable: { rows } });
+const { collection } = bindView;
+bindView(view, vm, { sampleTable: { rows: collection("rows", "SampleHistoryRow") } });
 ```
 
-The row (`lib/mvvm/controllers/SampleHistoryRow`) binds its own row view-model and
-fires `"selected"` on tap — the per-row-click ownership that fixes reused-row
-dispatch on Android (WB-168) lives in the row, not the list.
+Each row is a **first-class component** (`lib/mvvm/controllers/SampleHistoryRow`)
+that binds its own row view-model and **fires its own intent** — a tap fires the
+`EDIT_SAMPLE` topic directly, so the list needs no per-row wiring. The per-row
+click ownership (which fixes dropped click dispatch on reused/reordered Android row
+proxies) lives in the row, not the list.
+
+The row VM exposes a `key` getter — the identity the keyed diff reconciles on
+(the convention, mirroring a Flutter `ValueKey`).
+
+The explicit `collection(getter, adapter)` form — an object with
+`{ key, create, render, dispose }` — remains as the **escape hatch** for cases a
+name convention can't cover, i.e. things Titanium won't do natively: the
+scroll-windowed tray drives its window from `scrollEvent`/`onScroll`. Reach for it
+only there; anything the convention covers stays in the convention.
 
 ## Three tiers (MVVMC)
 
@@ -115,6 +124,12 @@ residual Ti left in the Alloy presenters; the ViewModels and screen controllers
 come across untouched. That is the point of keeping the screen controller
 `Ti.*`-free.
 
+`bindView` is **one implementation** of the binder DSL: on a Flutter port its
+collection reconciler is *deleted*, because Flutter's Element reconciler already
+does the keyed diff, and the injected component factory dissolves into constructing
+a widget. See [architecture-vision.md](../architecture-vision.md) "The presentation
+DSL" for the portability test that keeps a controller transcribable to `build()`.
+
 ## Testing
 
 Node spec with fake widgets — no device, no emulator:
@@ -122,7 +137,9 @@ Node spec with fake widgets — no device, no emulator:
 ```js
 // test/controllers/Academy_spec.js
 const create = require("../../walta-app/app/lib/mvvm/controllers/Academy");
-const lib = create({ view: fakeWidgets(), close: () => {}, services: {}, palette: {} });
+const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
+const lib = create({ view: fakeWidgets(), close: () => {}, services: {}, bindView: makeBinder() });
+// A list controller passes the fake factory: makeBinder(fakeCreateComponent).
 ```
 
 The device-level rendering is covered separately by `walta-app/app/spec/`
