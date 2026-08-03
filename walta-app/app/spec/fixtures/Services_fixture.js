@@ -1,6 +1,7 @@
 var Topics = require("ui/Topics");
 var Dialogs = require("logic/Dialogs");
 var { View } = require("logic/View");
+var SampleHistorySource = require("logic/SampleHistorySource");
 
 // A complete-enough services bag for specs that boot the app through a screen on
 // the View seam. Screen controllers build their view-models from this bag, so it
@@ -28,6 +29,14 @@ function makeTestServices(overrides) {
       get: function () { return Alloy.Globals.CerdiApi; },
       enumerable: true,
     });
+  }
+
+  // The sample-history source reads Alloy models behind the seam the VM binds to
+  // — provided here so a screen opened through the bag's View gets its data, the
+  // same way index-app wires it. cerdiApi is read lazily inside loadAll, so the
+  // instance specs mock is honoured.
+  if (!("sampleSource" in overrides)) {
+    services.sampleSource = SampleHistorySource({ cerdiApi: { retrieveUserId: function () { return services.cerdiApi.retrieveUserId(); } } });
   }
 
   // Screens created via the View seam build child components through

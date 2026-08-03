@@ -13,6 +13,7 @@ var MemoryMonitor = require("util/MemoryMonitor");
 var { System } = require("logic/System");
 var Dialogs = require("logic/Dialogs");
 var { View } = require("logic/View");
+var SampleHistorySource = require("logic/SampleHistorySource");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
 var { checkForErrors } = require('util/PromiseUtils');
@@ -135,6 +136,7 @@ let services ={
   version: Ti.App.version
 }
 
+services.sampleSource = SampleHistorySource({ cerdiApi: services.cerdiApi });
 services.View = new View(services);
 services.Navigation = new Navigation(services);
 // glue the Main controller to the various
