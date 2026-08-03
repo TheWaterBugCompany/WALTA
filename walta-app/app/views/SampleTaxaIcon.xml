@@ -1,5 +1,5 @@
 <Alloy>
-	<View class="container">
+	<View id="SampleTaxaIcon" class="container">
 		<View class="padIcon">
 			<ImageView id="icon"/>
 			<Label id="abundance"/>
