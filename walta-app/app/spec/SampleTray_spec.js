@@ -123,30 +123,30 @@ describe( 'SampleTray controller', function() {
     return sorted[i];
   }
 
-  // Each cell is now a SampleTaxaIcon slot: children = [ padIcon, tapSurface ].
-  // padIcon holds [ icon, abundance ]; the tap surface (last child) is the single
-  // hit target and carries the plus background.
+  // Each cell is now a SampleTaxaIcon slot: children = [ padIcon, plus, tapSurface ].
+  // padIcon holds [ icon, abundance ]; plus is the (centred) add icon; the tap
+  // surface (last child) is the single transparent hit target.
   function assertSample( taxon, image, abundance ) {
     var [ icon, label ] = taxon.children[0].children;
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
     expect( label.text, `Expected the abundance label to be ${abundance}` ).to.equal( abundance );
   }
 
-  function tapSurface( square ) { return square.children[1]; }
+  function tapSurface( square ) { return square.children[square.children.length - 1]; }
+  function plusIcon( square ) { return square.children[1]; }
 
   function clickPlus( square ) {
     tapSurface( square ).fireEvent('click');
   }
 
   function assertPlus( square ) {
-    expect( tapSurface( square ).backgroundImage ).to.include('images/plus-icon.png');
+    expect( plusIcon( square ).image ).to.include('images/plus-icon.png');
   }
 
   // A blank cell keeps its (inert) slot views but shows neither the icon nor a plus.
   function assertSampleBlank( taxon ) {
     expect( taxon.children[0].visible, "blank cell hides the icon" ).to.equal(false);
-    expect( tapSurface( taxon ).backgroundImage || "", "blank cell has no plus" )
-      .to.not.include('plus-icon.png');
+    expect( plusIcon( taxon ).visible, "blank cell has no plus" ).to.equal(false);
   }
 
   function assertTaxaBackground( tile, image ) {

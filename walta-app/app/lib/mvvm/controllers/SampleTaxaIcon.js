@@ -9,7 +9,8 @@ const BINDINGS = {
   padIcon:        { visible: "iconVisible" },
   icon:           { image: "image" },
   abundance:      { text: "abundanceText", visible: "abundanceVisible" },
-  tap:            { backgroundImage: "tapBackground", accessibilityLabel: "accessibilityLabel", onClick: "tap" },
+  plus:           { image: "plusImage", visible: "plusVisible" },
+  tap:            { accessibilityLabel: "accessibilityLabel", onClick: "tap" },
 };
 
 module.exports = function createSampleTaxaIcon({ view, args, bindView }) {

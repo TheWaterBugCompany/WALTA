@@ -36,6 +36,14 @@
   height: "80%"
 }
 
+// The add icon, sized + positioned to match the old plus button.
+".plusIcon": {
+  top: "40%",
+  left: "25%",
+  width: "50%",
+  height: "36%"
+}
+
 // A transparent full-cell overlay: the only view carrying the tap listener, so a
 // tap is hit-tested onto it (not the listener-less icon beneath) on every kind.
 ".tapSurface": {
