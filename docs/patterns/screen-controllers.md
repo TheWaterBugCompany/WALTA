@@ -106,9 +106,41 @@ The row VM exposes a `key` getter — the identity the keyed diff reconciles on
 
 The explicit `collection(getter, adapter)` form — an object with
 `{ key, create, render, dispose }` — remains as the **escape hatch** for cases a
-name convention can't cover, i.e. things Titanium won't do natively: the
-scroll-windowed tray drives its window from `scrollEvent`/`onScroll`. Reach for it
-only there; anything the convention covers stays in the convention.
+name convention can't cover. Reach for it only there; anything the convention
+covers stays in the convention.
+
+## Inbound Titanium & commands
+
+`bindView` is not only outbound (VM → widget property). A screen with genuine
+Titanium *input* — a measured viewport, a scroll offset — or an imperative
+*output effect* declares those through `bindView` too, so the Alloy shell holds no
+view-model and no wiring. The scroll-windowed SampleTray is driven entirely this
+way:
+
+```js
+content: {
+  onScroll:     input("setScrollOffset", "contentOffset.x"),
+  onPostlayout: measure("setViewport", "size"),
+  snapRight:    command("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: true }),
+}
+```
+
+- **`input(vmMethod, propPath)`** — on a widget event, read a widget property
+  (dotted paths allowed) and push it into a VM setter. The reverse of a property
+  binding.
+- **`measure(vmMethod, propPath)`** — a one-shot inbound read that retries on a
+  timer until the VM setter returns truthy (readiness lives in the VM), absorbing
+  the Titanium quirk that `postlayout` can fire before the view is laid out.
+- **`command(vmEvent, widgetMethod, ...args)`** + **`ref("vmProp")`** — when the
+  VM fires a named event, reflectively call a widget method with literal /
+  VM-derived args. The inverse of `onClick`.
+
+`bindView` stays Titanium-agnostic — it only reads/writes properties and calls
+named methods; it never knows what `contentOffset` or `scrollTo` mean. Unit
+conversion (system-px ↔ dip) lives in the **view-model** behind injected
+converters, so the VM is still Node-testable with fakes. These bindings retire the
+inbound shell seam a hand-off method (`attachViewModel`) would otherwise need — the
+default is to grow `bindView`, not to escape it.
 
 ## Three tiers (MVVMC)
 

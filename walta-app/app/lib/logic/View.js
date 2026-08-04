@@ -6,6 +6,7 @@ const defaultScreenControllers = require("mvvm/controllers/registry");
 
 var debug = (m, tag = "ui") => Logger.log(m, tag);
 let currentController = null;
+let currentScreenController = null;
 let saveOrDiscard = null;
 let currentModal = null;
 
@@ -36,6 +37,10 @@ View.prototype.controllerContext = function (alloyCtl, close, args, services) {
 
 View.prototype.getSaveOrDiscard = function() { return saveOrDiscard; }
 View.prototype.getCurrentController = function() { return currentController; }
+// The current window's Titanium-free screen controller (with its view-model) —
+// the seam a device spec reaches through for view-model state now that the Alloy
+// shell holds none.
+View.prototype.getScreenController = function() { return currentScreenController; }
 View.prototype.getCurrentModal = function() { return currentModal; }
 
 View.prototype.openView = function(ctl,args) {
@@ -61,8 +66,10 @@ View.prototype.attachScreenController = function(name, alloyCtl, args) {
   const win = alloyCtl.getView();
   const close = () => win.close();
   const lib = make(this.controllerContext(alloyCtl, close, args, this.services));
+  currentScreenController = lib;
   function onClose() {
     win.removeEventListener("close", onClose);
+    currentScreenController = null;
     lib.dispose();
   }
   win.addEventListener("close", onClose);

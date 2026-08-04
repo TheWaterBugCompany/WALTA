@@ -27,17 +27,24 @@ describe( 'SampleTray controller', function() {
     openArgs = Object.assign({ key: keyMock }, extraArgs);
   }
 
+  // The Alloy shell no longer holds the view-model — reach it through the View
+  // seam. The tray is driven entirely by bindView now, so tests synchronise on the
+  // view-model's own notifications / scroll state, not shell-fired events.
+  function trayVm() { return view.getScreenController().vm; }
+
   function updateSampleTrayOnce(resolve) {
-    SampleTray.on("trayupdated", function trayUpdate() {
-        SampleTray.off("trayupdated", trayUpdate);
-        setTimeout( resolve, 10 );
-    });
+    var vm = trayVm();
+    function onNotify() {
+      vm.removeListener(onNotify);
+      setTimeout( resolve, 10 );
+    }
+    vm.addListener(onNotify);
   }
 
-  // openView creates the controller synchronously (before the returned promise
-  // resolves on window-opened), so we grab the shell and subscribe to the tray's
-  // init events (trayupdated / scrollrightend, fired on postlayout) before they
-  // can fire.
+  // openView creates the controller + screen controller synchronously (before the
+  // returned promise resolves on window-opened), so we grab the shell and subscribe
+  // to the view-model's first notify / the scroll settle before they can fire on
+  // the postlayout measurement.
   function openSampleTray() {
     view.openView("SampleTray", openArgs);
     SampleTray = view.getCurrentController();
@@ -58,8 +65,26 @@ describe( 'SampleTray controller', function() {
         });
   }
 
+  // The scroll-to-right is a bindView command now. It is edge-triggered like the
+  // shell's old `scrollrightend`: wait for the view-model's next scrollToRightEnd
+  // intent (fired on measure / refresh), then poll the ScrollView until it settles
+  // at the target — so a call made before an add waits for the post-add scroll, not
+  // the already-settled current edge.
   function waitForScrollEnd() {
-    return new Promise( (resolve) => SampleTray.on("scrollrightend", resolve) );
+    var vm = trayVm();
+    return new Promise(function(resolve, reject) {
+      function onIntent() {
+        vm.off("scrollToRightEnd", onIntent);
+        resolve(waitFor(function() {
+          var target = vm.scrollTargetX;
+          if ( target <= 0 ) return true;   // short tray: nothing to scroll
+          var off = SampleTray.content.contentOffset;
+          var cur = off ? (off.x || 0) : 0;
+          return Math.abs(cur - target) < 2.0;
+        }));
+      }
+      vm.on("scrollToRightEnd", onIntent);
+    });
   }
 
   function scrollSampleTray( x ) {
@@ -98,26 +123,30 @@ describe( 'SampleTray controller', function() {
     return sorted[i];
   }
 
+  // Each cell is now a SampleTaxaIcon slot: children = [ padIcon, tapSurface ].
+  // padIcon holds [ icon, abundance ]; the tap surface (last child) is the single
+  // hit target and carries the plus background.
   function assertSample( taxon, image, abundance ) {
-    var unwrapped = taxon.children[0].children[0];
-    var [ icon, label ] = unwrapped.children;
+    var [ icon, label ] = taxon.children[0].children;
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
     expect( label.text, `Expected the abundance label to be ${abundance}` ).to.equal( abundance );
   }
 
+  function tapSurface( square ) { return square.children[1]; }
+
   function clickPlus( square ) {
-    var unwrapped = square.children[0];
-    unwrapped.fireEvent('click');
+    tapSurface( square ).fireEvent('click');
   }
 
   function assertPlus( square ) {
-    var unwraped = square.children[0];
-    expect( unwraped.backgroundImage ).to.include('images/plus-icon.png');
+    expect( tapSurface( square ).backgroundImage ).to.include('images/plus-icon.png');
   }
-    
 
+  // A blank cell keeps its (inert) slot views but shows neither the icon nor a plus.
   function assertSampleBlank( taxon ) {
-    expect( taxon.children  ).to.be.empty;
+    expect( taxon.children[0].visible, "blank cell hides the icon" ).to.equal(false);
+    expect( tapSurface( taxon ).backgroundImage || "", "blank cell has no plus" )
+      .to.not.include('plus-icon.png');
   }
 
   function assertTaxaBackground( tile, image ) {
@@ -134,10 +163,9 @@ describe( 'SampleTray controller', function() {
         Topics.unsubscribe(Topics.IDENTIFY,handler);
         resolve(data);
       });
-      // The tray's internal tile-index datastructure is gone with the VM port;
-      // fire the tap on the rendered endcap icon (children[0] of the hole) — the
-      // icon owns its own tap now.
-      getTaxaIcons( SampleTray.tray.children[0] )[0].children[0].fireEvent("click");
+      // Fire the tap on the rendered endcap cell's tap surface (its last child) —
+      // the single hit target the slot owns.
+      tapSurface( getTaxaIcons( SampleTray.tray.children[0] )[0] ).fireEvent("click");
     });
   }
 
@@ -391,7 +419,7 @@ describe( 'SampleTray controller', function() {
       return Promise.resolve()
           .then( openSampleTray )
           .then( scrollSampleTray(0) )           // scroll back to left
-          .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
+          .then( () => trayVm().trayWidth - trayVm().viewWidth )
           .then( (width) => scrollSampleTray(width)() )
           .then( function() {
             var tiles = SampleTray.tray.children;
@@ -407,7 +435,7 @@ describe( 'SampleTray controller', function() {
     it('when scrolled to the left it should update the screen properly', function() {
       return Promise.resolve()
           .then( openSampleTray )
-          .then( () => SampleTray.getTrayWidth() - SampleTray.getViewWidth() )
+          .then( () => trayVm().trayWidth - trayVm().viewWidth )
           .then( (maxX) => scrollSampleTray(maxX)() )
           .then( scrollSampleTray(0) )
           .then( function() {
@@ -765,8 +793,8 @@ describe( 'SampleTray controller', function() {
 
             });
             // Fire on the first interior tile's first cell (the added taxon) —
-            // the icon (children[0] of the hole) owns its own tap now.
-            getTaxaIcons( SampleTray.tray.children[1] )[0].children[0].fireEvent("click");
+            // the slot's tap surface (last child).
+            tapSurface( getTaxaIcons( SampleTray.tray.children[1] )[0] ).fireEvent("click");
           });
         });
     });
