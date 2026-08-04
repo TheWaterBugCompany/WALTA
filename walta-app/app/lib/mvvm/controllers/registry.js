@@ -7,6 +7,7 @@ module.exports = {
   MethodSelect: require("./MethodSelect"),
   SampleHistory: require("./SampleHistory"),
   SampleHistoryRow: require("./SampleHistoryRow"),
+  SampleTaxaIcon: require("./SampleTaxaIcon"),
   SampleTray: require("./SampleTray"),
   SampleTrayTile: require("./SampleTrayTile"),
   SampleTrayEndcap: require("./SampleTrayEndcap"),

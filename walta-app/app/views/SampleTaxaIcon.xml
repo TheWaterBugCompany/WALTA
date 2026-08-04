@@ -1,8 +1,11 @@
 <Alloy>
-	<View id="SampleTaxaIcon" class="container">
-		<View class="padIcon">
+	<View id="SampleTaxaIcon">
+		<View id="padIcon" class="padIcon">
 			<ImageView id="icon"/>
 			<Label id="abundance"/>
 		</View>
+		<!-- Last child = topmost = the single hit target for every cell kind, so a
+		     tap always lands on a listener-bearing view (iOS) and never double-fires. -->
+		<View id="tap" class="tapSurface"/>
 	</View>
 </Alloy>
