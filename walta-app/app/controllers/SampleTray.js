@@ -1,14 +1,11 @@
 var Topics = require('ui/Topics');
-var measureView = require('ui/measureView');
 
 // Residual Titanium shell for the ice-cube tray. The Titanium-free
 // lib/mvvm/controllers/SampleTray (built by View.openView) owns the view-model and
-// declares the whole screen through bindView — the tray collections and the scroll
-// offset / scroll-to-right inputs. What is left here is the view tree, the
-// anchor-bar buttons (the nav seam is a later concern), the EditTaxon overlay (its
-// own port), and the one Titanium layout hack that can't be declarative: reliably
-// measuring the ScrollView (see measureViewport below).
-// See docs/patterns/screen-controllers.md.
+// declares the whole screen through bindView — the tray collections and the
+// viewport measurement / scroll offset / scroll-to-right inputs. What is left here
+// is the view tree, the anchor-bar buttons (the nav seam is a later concern), and
+// the EditTaxon overlay (its own port). See docs/patterns/screen-controllers.md.
 
 exports.baseController = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
@@ -58,11 +55,3 @@ if (!_.isUndefined($.args.taxonId) || !_.isUndefined($.args.sampleTaxonId)) {
 }
 
 exports.editTaxon = editTaxon;
-
-// The one Titanium-specific layout concern the portable screen controller can't
-// express declaratively: Titanium's `postlayout` fires before the ScrollView has
-// a usable frame, so the size must be polled. The hack stays here in the shell;
-// the screen controller just asks to be handed a clean viewport size.
-exports.measureViewport = function (onSize) {
-  return measureView($.content, onSize);
-};
