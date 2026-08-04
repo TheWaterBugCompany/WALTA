@@ -263,16 +263,19 @@ describe("SampleTrayViewModel", function () {
       expect(taxon.iconVisible).to.equal(true);
     });
 
-    it("hides the icon and abundance on a plus cell", function () {
+    it("hides the icon and abundance and shows the plus on a plus cell", function () {
       const vm = vmWithViewport(2);
       const plus = (vm.setScrollOffset(0), vm.visibleTiles[0].taxa[0]);
       expect(plus.iconVisible).to.equal(false);
       expect(plus.abundanceVisible).to.equal(false);
-      expect(plus.tapBackground, "the plus icon backs the tap surface").to.include("plus-icon.png");
+      expect(plus.plusVisible).to.equal(true);
+      expect(plus.plusImage, "the plus icon").to.include("plus-icon.png");
     });
 
-    it("has no tap background on a taxon cell", function () {
-      expect(cellOf(6, 0).tapBackground).to.equal(undefined);
+    it("hides the plus on a taxon cell", function () {
+      const taxon = cellOf(6, 0);
+      expect(taxon.plusVisible).to.equal(false);
+      expect(taxon.plusImage).to.equal(undefined);
     });
 
     it("composes an accessibility label from taxon id, name and abundance", function () {

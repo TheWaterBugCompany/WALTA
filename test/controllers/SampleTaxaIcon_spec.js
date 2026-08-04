@@ -19,6 +19,7 @@ function makeIconView() {
     padIcon: makeWidget(),
     icon: makeWidget(),
     abundance: makeWidget(),
+    plus: makeWidget(),
     tap: makeWidget(),
   };
 }
@@ -66,10 +67,11 @@ describe("SampleTaxaIcon controller", function () {
     expect($.tap.backgroundImage, "no plus background on a taxon").to.equal(undefined);
   });
 
-  it("shows the plus background and hides the icon on a plus cell", function () {
+  it("shows the plus icon and hides the taxon icon on a plus cell", function () {
     const $ = build(slotVm("plus"));
     expect($.padIcon.visible).to.equal(false);
-    expect($.tap.backgroundImage).to.include("plus-icon.png");
+    expect($.plus.visible).to.equal(true);
+    expect($.plus.image).to.include("plus-icon.png");
   });
 
   it("fires the edit intent when the tap surface is clicked (taxon)", function () {

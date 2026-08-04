@@ -267,9 +267,10 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
     return "";
   }
 
-  // The plus cell shows the add icon as its tap-surface background; other kinds
-  // are transparent.
-  get tapBackground() { return this._kind === "plus" ? PLUS_ICON : undefined; }
+  // The add cell shows the plus icon (a small centred image beneath the tap
+  // surface); every other kind hides it.
+  get plusVisible() { return this._kind === "plus"; }
+  get plusImage() { return this._kind === "plus" ? PLUS_ICON : undefined; }
 
   // Re-derive this slot's kind/content in place; notify iff something changed
   // (positional reuse for a taxon that stays a taxon).
