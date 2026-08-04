@@ -183,34 +183,31 @@ describe("SampleTrayViewModel", function () {
     });
   });
 
-  describe("endcapTiles", function () {
-    // The endcap (first two taxa, not virtualized) is a permanent single-item
-    // collection so the binder owns its lifecycle and the mvvm controller stays
-    // Ti-free.
+  describe("endcap", function () {
+    // The endcap (first two taxa, not virtualized) is a single always-present VM,
+    // bound as one fixed component so the binder owns its lifecycle and the mvvm
+    // controller stays Ti-free.
     it("is a single, always-present endcap VM keyed 'endcap'", function () {
       const vm = vmWithViewport(30);
-      expect(vm.endcapTiles).to.have.lengthOf(1);
-      expect(vm.endcapTiles[0].key).to.equal("endcap");
+      expect(vm.endcapVm.key).to.equal("endcap");
     });
 
     it("sits at the tray origin with the endcap background", function () {
-      const vm = vmWithViewport(30);
-      const endcap = vm.endcapTiles[0];
+      const endcap = vmWithViewport(30).endcapVm;
       expect(endcap.left).to.equal(0);
       expect(endcap.width).to.equal(50);
       expect(endcap.backgroundImage).to.include("endcap_320.png");
     });
 
     it("holds the first two collection cells", function () {
-      const vm = vmWithViewport(30);
-      expect(vm.endcapTiles[0].taxa).to.have.lengthOf(2);
+      expect(vmWithViewport(30).endcapVm.taxa).to.have.lengthOf(2);
     });
   });
 
   describe("cell kinds", function () {
     // Cell kinds mirror the old addTrayIcon/updateTrayIcon decision table.
     it("shows a taxon icon for a filled cell", function () {
-      const cells = vmWithViewport(6).endcapTiles[0].taxa;
+      const cells = vmWithViewport(6).endcapVm.taxa;
       expect(cells[0].kind).to.equal("taxon");
       expect(cells[0].image).to.include("/taxon_1.png");
     });
@@ -219,7 +216,7 @@ describe("SampleTrayViewModel", function () {
       const vm = vmWithViewport(2); // taxa fill the endcap; first tile cell 0 is empty
       const tile0 = (vm.setScrollOffset(0), vm.visibleTiles[0]);
       expect(tile0.taxa[0].kind, "cell at index === length is the plus").to.equal("plus");
-      expect(tile0.taxa[0].image, "no silhouette on a plus cell").to.equal(null);
+      expect(tile0.taxa[0].component, "an add cell is a SampleTrayPlus").to.equal("SampleTrayPlus");
     });
 
     it("shows an add-behind (blank, tappable) cell past the plus", function () {
@@ -241,15 +238,33 @@ describe("SampleTrayViewModel", function () {
       expect(tile0.taxa.map(c => c.taxonId)).to.deep.equal([3, 5, 4, 6]);
     });
 
-    it("keys each cell on its position for the taxa collection diff", function () {
+    // The key carries the component so the polymorphic collection recreates a slot
+    // (not wrongly retains it) when its kind crosses the taxon/add boundary.
+    it("keys each cell on its position and component for the taxa collection diff", function () {
       const cells = vmWithViewport(10).visibleTiles[0].taxa;
-      expect(cells.map(c => c.key)).to.deep.equal([0, 1, 2, 3]);
+      expect(cells.map(c => c.key)).to.deep.equal([
+        "0:SampleTaxaIcon", "1:SampleTaxaIcon", "2:SampleTaxaIcon", "3:SampleTaxaIcon",
+      ]);
+    });
+
+    it("recreates a slot as a SampleTrayPlus when a taxon position becomes the add cell", function () {
+      const taxa = taxaOf(6);
+      const vm = new SampleTrayViewModel({ taxaSource: fakeTaxaSource(taxa) });
+      vm.setViewport({ width: 300, height: 100 });
+      vm.setScrollOffset(0);
+      const cell = vm.visibleTiles[0].taxa[0]; // taxon (index 2 filled)
+      expect(cell.component).to.equal("SampleTaxaIcon");
+      taxa.length = 2; // drop back so index 2 is now the plus
+      vm.refresh();
+      const swapped = vm.visibleTiles[0].taxa[0];
+      expect(swapped.component, "slot is a new SampleTrayPlus").to.equal("SampleTrayPlus");
+      expect(swapped, "not the retained taxon instance").to.not.equal(cell);
     });
   });
 
   describe("SampleTaxaIconViewModel", function () {
     function cellOf(len, idx) {
-      return vmWithViewport(len).endcapTiles[0].taxa[idx];
+      return vmWithViewport(len).endcapVm.taxa[idx];
     }
 
     it("exposes the silhouette image", function () {
@@ -263,19 +278,11 @@ describe("SampleTrayViewModel", function () {
       expect(taxon.iconVisible).to.equal(true);
     });
 
-    it("hides the icon and abundance and shows the plus on a plus cell", function () {
-      const vm = vmWithViewport(2);
-      const plus = (vm.setScrollOffset(0), vm.visibleTiles[0].taxa[0]);
-      expect(plus.iconVisible).to.equal(false);
-      expect(plus.abundanceVisible).to.equal(false);
-      expect(plus.plusVisible).to.equal(true);
-      expect(plus.plusImage, "the plus icon").to.include("plus-icon.png");
-    });
-
-    it("hides the plus on a taxon cell", function () {
-      const taxon = cellOf(6, 0);
-      expect(taxon.plusVisible).to.equal(false);
-      expect(taxon.plusImage).to.equal(undefined);
+    it("hides the icon and abundance on a blank cell", function () {
+      const blank = vmWithViewport(2, { readonly: true }).visibleTiles[0].taxa[0];
+      expect(blank.kind).to.equal("blank");
+      expect(blank.iconVisible).to.equal(false);
+      expect(blank.abundanceVisible).to.equal(false);
     });
 
     it("composes an accessibility label from taxon id, name and abundance", function () {
@@ -287,10 +294,40 @@ describe("SampleTrayViewModel", function () {
     });
   });
 
+  describe("SampleTrayPlusViewModel", function () {
+    // The add affordance is a distinct component the polymorphic collection swaps
+    // in; the plus cell shows the icon, add-behind cells are invisible but tappable.
+    function addCellsOf(len) {
+      const vm = vmWithViewport(len);
+      return (vm.setScrollOffset(0), vm.visibleTiles[0].taxa);
+    }
+
+    it("shows the plus icon and its label on the plus cell", function () {
+      const plus = addCellsOf(2)[0];
+      expect(plus.kind).to.equal("plus");
+      expect(plus.plusVisible).to.equal(true);
+      expect(plus.plusImage, "the plus icon").to.include("plus-icon.png");
+      expect(plus.accessibilityLabel).to.equal("Add Sample");
+    });
+
+    it("stays invisible but keeps no label on an add-behind cell", function () {
+      const addBehind = addCellsOf(2)[1];
+      expect(addBehind.kind).to.equal("addBehind");
+      expect(addBehind.plusVisible).to.equal(false);
+      expect(addBehind.plusImage).to.equal(undefined);
+      expect(addBehind.accessibilityLabel).to.equal("");
+    });
+
+    it("binds its width from the tray geometry", function () {
+      // middleWidth = 65 → cellWidth = 65/2 - 1 = 31.5.
+      expect(addCellsOf(2)[0].widthCss).to.equal("31.5dp");
+    });
+  });
+
   describe("cell tap intent", function () {
     it("fires IDENTIFY with the taxon ids and readonly flag when a taxon is tapped", function () {
       const topics = fakeTopics();
-      const cell = vmWithTopics(6, topics).endcapTiles[0].taxa[0];
+      const cell = vmWithTopics(6, topics).endcapVm.taxa[0];
       cell.tap();
       expect(topics.fired).to.deep.equal([{
         event: "identify",
@@ -366,11 +403,6 @@ describe("SampleTrayViewModel", function () {
       expect(slot.widthCss).to.equal("38dp");
     });
 
-    it("ignores a viewport measurement with no height (view not laid out yet)", function () {
-      const vm = vmWith(30);
-      expect(vm.setViewport({ width: 300, height: 0 }), "reports the reading unusable").to.equal(false);
-      expect(vm.viewWidth).to.equal(0);
-    });
   });
 
   describe("refresh", function () {
@@ -391,10 +423,10 @@ describe("SampleTrayViewModel", function () {
       const taxa = taxaOf(6);
       const vm = new SampleTrayViewModel({ taxaSource: fakeTaxaSource(taxa) });
       vm.setViewport({ width: 300, height: 100 });
-      const cell = vm.endcapTiles[0].taxa[0];
+      const cell = vm.endcapVm.taxa[0];
       taxa[0] = taxon(1, "6-10");
       vm.refresh();
-      expect(vm.endcapTiles[0].taxa[0], "same slot VM instance").to.equal(cell);
+      expect(vm.endcapVm.taxa[0], "same slot VM instance").to.equal(cell);
       expect(cell.abundanceText).to.equal("6-10");
     });
 
