@@ -130,7 +130,7 @@ Technical docs live in `docs/` (only `README.md`, `CLAUDE.md`, and `CONTRIBUTORS
 
 - [docs/installation.md](docs/installation.md) — setup guide: prerequisites, Titanium SDK, signing, env vars
 - [docs/coding-style.md](docs/coding-style.md) — JS conventions and comment policy
-- [docs/architecture-vision.md](docs/architecture-vision.md) — long-term architectural direction
+- [docs/architecture-vision.md](docs/architecture-vision.md) — long-term architectural direction, incl. the presentation-DSL rule: **grow `bindView` to capture Titanium rather than escape it** — a residual Alloy-shell method or injected imperative effect is the exception you justify, not the default
 - [docs/testing.md](docs/testing.md) — five test layers and what to use when. Note the deliberate split between the two top layers: `features/` (Cucumber) is business-readable BDD tied to product requirements; `end-to-end-testing/` (Mocha+Appium) is for extensive, mechanism-heavy integration (e.g. sync interrupt/resume) that would clutter a business scenario. It runs in CI on both platforms — don't push low-level integration mechanics into `features/`. Also documents why iOS system permission alerts are dismissed by polling, not pre-granted (`simctl privacy` has no `notifications` service) — a lesson we keep rediscovering.
 - [docs/device-specs.md](docs/device-specs.md) — device-spec idioms and gotchas
 - [docs/pull-requests.md](docs/pull-requests.md) — PR template
