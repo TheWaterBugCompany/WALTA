@@ -24,7 +24,21 @@
   borderRadius: "16dp"
 }
 
+// The slot: one cell in the tray's hole grid. Its width is bound from the VM
+// (half the tile's middle width); height is half the tile so the 2x2 grid packs.
+"#SampleTaxaIcon": {
+  top: 0,
+  height: "50%"
+}
+
 ".padIcon": {
   width: "80%",
   height: "80%"
+}
+
+// A transparent full-cell overlay: the only view carrying the tap listener, so a
+// tap is hit-tested onto it (not the listener-less icon beneath) on every kind.
+".tapSurface": {
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL
 }
