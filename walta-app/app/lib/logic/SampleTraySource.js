@@ -6,7 +6,7 @@
 // Alloy shell constructs it and hands it to the screen controller.
 function toIconData(m, key) {
   var taxonId = m.get("taxonId");
-  var keyTaxon = key && taxonId ? key.findTaxonById(taxonId) : null;
+  var keyTaxon = key.findTaxonById(taxonId);
   return {
     taxonId: taxonId,
     sampleTaxonId: m.get("sampleTaxonId"),
@@ -20,8 +20,7 @@ module.exports = function createSampleTraySource(taxaCollection, key, readonly) 
   return {
     length: function () { return taxaCollection.length; },
     at: function (i) {
-      var m = taxaCollection.at(i);
-      return m ? toIconData(m, key) : undefined;
+      return toIconData(taxaCollection.at(i), key);
     },
     // The add-to-sample intent needs the current sample's survey type (a model
     // read, kept behind this seam so the VM stays Ti/Alloy-free).
