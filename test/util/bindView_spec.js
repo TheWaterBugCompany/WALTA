@@ -45,6 +45,9 @@ class TestVM extends ChangeNotifier {
   toggle() { this.toggleCount++; }
   close() { this.closeCount++; }
   pick(...args) { this.picks.push(args); }
+  // A plain viewport setter — measure() owns the "is the reading usable" gate, so
+  // the VM setter has no readiness signal to leak.
+  setViewport(v) { this.viewport = v; }
 }
 
 function makeVm() { return new TestVM(); }
@@ -307,6 +310,80 @@ describe("bindView", function () {
 
     it("throws when the input VM method doesn't exist", function () {
       expect(() => bindView($, vm, { label: { onScroll: input("nope", "contentOffset") } }))
+        .to.throw(/nope/);
+    });
+  });
+
+  describe("inbound measure binding (measure)", function () {
+    const { measure } = bindView;
+
+    // Polls the outcome (no fixed sleep) until it holds or the ceiling trips.
+    function eventually(fn, timeout = 800) {
+      return new Promise((resolve, reject) => {
+        const start = Date.now();
+        (function check() {
+          try { fn(); resolve(); }
+          catch (e) { Date.now() - start > timeout ? reject(e) : setTimeout(check, 10); }
+        })();
+      });
+    }
+
+    it("reads the property and calls the setter once when the reading is usable", function () {
+      $.label.size = { width: 10, height: 20 };
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      expect(vm.viewport).to.deep.equal({ width: 10, height: 20 });
+    });
+
+    it("re-measures on each layout so a later, corrected layout wins", function () {
+      $.label.size = { width: 10, height: 20 };
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      expect(vm.viewport).to.deep.equal({ width: 10, height: 20 });
+      $.label.size = { width: 30, height: 40 }; // Titanium's next layout corrects it
+      $.label.fireEvent("postlayout");
+      expect(vm.viewport).to.deep.equal({ width: 30, height: 40 });
+    });
+
+    it("waits — does not push — while the reading is a zero-sized (unsettled) frame", function () {
+      $.label.size = { width: 10, height: 0 };
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      expect(vm.viewport, "no push until the layout settles").to.equal(undefined);
+    });
+
+    it("retries until the reading settles (Titanium's layout takes time to converge)", async function () {
+      $.label.size = { width: 10, height: 0 }; // not laid out yet
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      $.label.size = { width: 10, height: 20 }; // becomes ready after the event
+      await eventually(() => expect(vm.viewport).to.deep.equal({ width: 10, height: 20 }));
+    });
+
+    it("tolerates a throwing read and keeps polling", async function () {
+      let ready = false;
+      Object.defineProperty($.label, "size", {
+        get() { if (!ready) throw new Error("activity detached"); return { width: 10, height: 20 }; },
+        configurable: true,
+      });
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      ready = true;
+      await eventually(() => expect(vm.viewport).to.deep.equal({ width: 10, height: 20 }));
+    });
+
+    it("unbind cancels a pending retry", async function () {
+      $.label.size = { width: 10, height: 0 };
+      const unbind = bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      unbind();
+      $.label.size = { width: 10, height: 20 };
+      await new Promise(r => setTimeout(r, 250));
+      expect(vm.viewport, "never pushed after unbind").to.equal(undefined);
+    });
+
+    it("throws when the measure VM method doesn't exist", function () {
+      expect(() => bindView($, vm, { label: { onPostlayout: measure("nope", "size") } }))
         .to.throw(/nope/);
     });
   });

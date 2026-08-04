@@ -70,6 +70,35 @@ function readPath(obj, path) {
   return path.split(".").reduce((o, k) => (o == null ? o : o[k]), obj);
 }
 
+// Inbound measurement: on each layout event, read a laid-out widget property and
+// push it into a VM setter once it is usable. Reading a laid-out property is a
+// portable idea (Flutter's LayoutBuilder, CSS's ResizeObserver); the Titanium
+// wrinkles are absorbed *here*, inside the binding, not in a screen's shell:
+// Titanium emits several postlayouts as a frame settles (measured — on iOS and
+// Android it fires twice), so measure re-reads on each and the last settled reading
+// wins; and a `postlayout` can arrive before layout has converged (a zero-sized or
+// throwing read), so an unsettled reading waits rather than pushing.
+//   content: { onPostlayout: measure("setViewport", "size") }
+const MEASURE_INTERVAL = 100;
+const MEASURE_MAX_ATTEMPTS = 30;
+
+function measure(method, prop) {
+  return { __measure: true, method, prop };
+}
+
+function isMeasure(ref) {
+  return ref !== null && typeof ref === "object" && ref.__measure === true;
+}
+
+// A reading is settled once it is present and, if it carries layout dimensions, has
+// a non-zero height — the shape of a laid-out frame. Non-dimensional readings are
+// settled as soon as they are present.
+function isSettled(value) {
+  if (value == null) return false;
+  if (typeof value === "object" && "height" in value && !(value.height > 0)) return false;
+  return true;
+}
+
 // Outbound command marker: when the VM fires a named event, reflectively call a
 // widget method with fixed args — the inverse of onClick, and the outbound
 // counterpart to input(). Args are literals or ref("vmProp") resolved off the VM
@@ -135,9 +164,9 @@ function isComponent(ref) {
 }
 
 // The VM method name an on<Event> binding targets — a plain string handler or a
-// call()/input() marker.
+// call()/input()/measure() marker.
 function methodOf(ref) {
-  if (isCall(ref) || isInput(ref)) return ref.method;
+  if (isCall(ref) || isInput(ref) || isMeasure(ref)) return ref.method;
   return ref;
 }
 
@@ -181,12 +210,16 @@ module.exports = function bindView($, vm, bindings, options) {
       const m = key.match(EVENT_KEY_RE);
       if (m) {
         const eventName = m[1].toLowerCase();
-        const handler = isCall(ref)
-          ? function () { vm[ref.method](...ref.args); }
-          : isInput(ref)
-          ? function () { vm[ref.method](readPath(widget, ref.prop)); }
-          : function () { vm[ref](); };
-        eventTeardowns.push(attachEvent(widget, eventName, handler));
+        if (isMeasure(ref)) {
+          eventTeardowns.push(attachMeasure(widget, eventName, vm, ref));
+        } else {
+          const handler = isCall(ref)
+            ? function () { vm[ref.method](...ref.args); }
+            : isInput(ref)
+            ? function () { vm[ref.method](readPath(widget, ref.prop)); }
+            : function () { vm[ref](); };
+          eventTeardowns.push(attachEvent(widget, eventName, handler));
+        }
       } else if (isTwoWay(ref)) {
         const prop = ref.prop;
         const handler = function (e) { vm[prop] = e.value; };
@@ -361,6 +394,35 @@ function reapplyOnFirstLayout($, applyProps) {
   return () => detach();
 }
 
+// Re-reads the widget property on every layout event and pushes the reading into
+// the VM setter once it is settled. Titanium emits several postlayouts as a frame
+// settles, so the last (settled) one wins — a later layout that corrects the size
+// simply overwrites the earlier reading. A settled read short-circuits; an
+// unsettled or throwing one starts a bounded timer fallback for the rare case where
+// a lone unsettled layout has no follow-up. Returns a teardown that cancels a
+// pending retry and detaches the event.
+function attachMeasure(widget, eventName, vm, ref) {
+  let timer = null;
+  function cancelTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+  function poll(attempt) {
+    let value;
+    try { value = readPath(widget, ref.prop); }
+    catch (e) { value = undefined; }
+    if (isSettled(value)) { vm[ref.method](value); return; }
+    if (attempt < MEASURE_MAX_ATTEMPTS) {
+      timer = setTimeout(function () { poll(attempt + 1); }, MEASURE_INTERVAL);
+    }
+  }
+  const detachEvent = attachEvent(widget, eventName, function () {
+    cancelTimer(); // a fresh layout supersedes any in-flight retry chain
+    poll(0);
+  });
+  return function () {
+    cancelTimer();
+    detachEvent();
+  };
+}
+
 function attachEvent(target, eventName, handler) {
   if (typeof target.addEventListener === "function") {
     target.addEventListener(eventName, handler);
@@ -442,6 +504,7 @@ function makeBinder(createComponent, palette) {
   binder.twoWay = twoWay;
   binder.call = call;
   binder.input = input;
+  binder.measure = measure;
   binder.command = command;
   binder.ref = ref;
   binder.collection = collection;
@@ -452,6 +515,7 @@ function makeBinder(createComponent, palette) {
 module.exports.twoWay = twoWay;
 module.exports.call = call;
 module.exports.input = input;
+module.exports.measure = measure;
 module.exports.command = command;
 module.exports.ref = ref;
 module.exports.collection = collection;
