@@ -71,7 +71,7 @@ class SampleTrayTileViewModel extends ChangeNotifier {
   _fill() {
     this._collectionIndices.forEach((collectionIndex, j) => {
       const kind = this._tray.cellKind(collectionIndex);
-      const data = this._tray.cellData(collectionIndex);
+      const data = kind === "taxon" ? this._tray.cellData(collectionIndex) : null;
       const existing = this._slots[j];
       if (!existing || existing.component !== componentForKind(kind)) {
         this._slots[j] = makeSlot(kind, this._tray, collectionIndex, j);
