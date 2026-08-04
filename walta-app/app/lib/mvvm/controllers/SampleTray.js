@@ -23,7 +23,7 @@ module.exports = function createSampleTray({ view, args, services, bindView }) {
   const unbind = bindView(view, vm, {
     tray: {
       width: "trayWidthCss",
-      endcap: component("endcapVm", "SampleTrayEndcap"),
+      endcap: component("endcapVm", "SampleTrayTile"),
       tiles: collection("visibleTiles", "SampleTrayTile"),
     },
     content: {

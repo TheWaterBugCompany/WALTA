@@ -11,7 +11,6 @@ module.exports = {
   SampleTrayPlus: require("./SampleTrayPlus"),
   SampleTray: require("./SampleTray"),
   SampleTrayTile: require("./SampleTrayTile"),
-  SampleTrayEndcap: require("./SampleTrayEndcap"),
   SampleEditMenu: require("./SampleEditMenu"),
   SyncFeedback: require("./SyncFeedback"),
 };

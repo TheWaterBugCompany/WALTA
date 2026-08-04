@@ -126,8 +126,9 @@ Two arity variants cover the tray:
   is always exactly one), instead of a fake single-item collection.
 
 ```js
-// tray: one endcap + a windowed list of tiles; each tile/endcap holds polymorphic slots
-tray:          { endcap: component("endcapVm", "SampleTrayEndcap"),
+// tray: one endcap + a windowed list of tiles — both the same SampleTrayTile
+// component (the endcap is just a tile whose spec caps it); each holds polymorphic slots
+tray:          { endcap: component("endcapVm", "SampleTrayTile"),
                  tiles:  collection("visibleTiles", "SampleTrayTile") },
 holeContainer: { taxa:  collection("taxa") },   // slots pick their own component
 ```
