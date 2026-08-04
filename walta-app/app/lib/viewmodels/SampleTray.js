@@ -1,6 +1,5 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
-const SampleTrayTileViewModel = require("./SampleTrayTile");
-const SampleTrayEndcapViewModel = require("./SampleTrayEndcap");
+const { endcapCell, tileCell } = require("./SampleTrayCell");
 
 const identity = (x) => x;
 
@@ -25,7 +24,7 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._viewportHeight = 0;
     this._scrollx = 0;
     this._tileCache = new Map();
-    this._endcapVm = new SampleTrayEndcapViewModel(this);
+    this._endcapVm = endcapCell(this);
     this._visibleTiles = [];
     this._onSourceChange = () => this.refresh();
     if (typeof taxaSource.onChange === "function") taxaSource.onChange(this._onSourceChange);
@@ -145,7 +144,7 @@ class SampleTrayViewModel extends ChangeNotifier {
   _tileVm(n) {
     let vm = this._tileCache.get(n);
     if (!vm) {
-      vm = new SampleTrayTileViewModel(this, n);
+      vm = tileCell(this, n);
       this._tileCache.set(n, vm);
     }
     return vm;

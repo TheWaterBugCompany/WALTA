@@ -133,17 +133,17 @@ describe("SampleTrayViewModel", function () {
   describe("visibleTiles", function () {
     // visibleTiles is the windowed set of interior tile VMs the collection
     // binding reconciles. Replaces the spike's syncWindow/_materialized: the
-    // binder's keyed diff (keyed on tileNum) does the add/update/release.
+    // binder's keyed diff (keyed on the tile number) does the add/update/release.
     it("materializes the tiles in the window [max(0,leftEdge)..rightEdge-1]", function () {
       const vm = vmWithViewport(30);
       vm.setScrollOffset(0);
-      expect(vm.visibleTiles.map(t => t.tileNum)).to.deep.equal([0, 1, 2, 3]);
+      expect(vm.visibleTiles.map(t => t.key)).to.deep.equal([0, 1, 2, 3]);
     });
 
     it("windows a scrolled offset without negative indices", function () {
       const vm = vmWithViewport(30);
       vm.setScrollOffset(200);
-      expect(vm.visibleTiles.map(t => t.tileNum)).to.deep.equal([2, 3, 4, 5, 6]);
+      expect(vm.visibleTiles.map(t => t.key)).to.deep.equal([2, 3, 4, 5, 6]);
     });
 
     it("keys each tile on its tile number", function () {
@@ -157,16 +157,16 @@ describe("SampleTrayViewModel", function () {
     it("returns the same tile VM instance for a tile that stays in the window", function () {
       const vm = vmWithViewport(30);
       vm.setScrollOffset(0);
-      const tile2a = vm.visibleTiles.find(t => t.tileNum === 2);
+      const tile2a = vm.visibleTiles.find(t => t.key === 2);
       vm.setScrollOffset(200);
-      const tile2b = vm.visibleTiles.find(t => t.tileNum === 2);
+      const tile2b = vm.visibleTiles.find(t => t.key === 2);
       expect(tile2b).to.equal(tile2a);
     });
 
     it("carries each tile's geometry for the component to bind", function () {
       const vm = vmWithViewport(30);
       vm.setScrollOffset(0);
-      const tile1 = vm.visibleTiles.find(t => t.tileNum === 1);
+      const tile1 = vm.visibleTiles.find(t => t.key === 1);
       expect(tile1.left).to.equal(115);
       expect(tile1.width).to.equal(66);
       expect(tile1.backgroundImage).to.include("tiling_interior_320.png");
@@ -175,7 +175,7 @@ describe("SampleTrayViewModel", function () {
     it("exposes geometry as dip css strings for Ti binding", function () {
       const vm = vmWithViewport(30);
       vm.setScrollOffset(0);
-      const tile1 = vm.visibleTiles.find(t => t.tileNum === 1);
+      const tile1 = vm.visibleTiles.find(t => t.key === 1);
       expect(tile1.leftCss).to.equal("115dp");
       expect(tile1.widthCss).to.equal("66dp");
       expect(tile1.heightCss, "height = viewport height").to.equal("100dp");
