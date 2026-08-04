@@ -1,5 +1,6 @@
 var Topics = require("ui/Topics");
 var Dialogs = require("logic/Dialogs");
+var PlatformSpecific = require("logic/PlatformSpecific");
 var { View } = require("logic/View");
 var SampleHistorySource = require("logic/SampleHistorySource");
 
@@ -20,6 +21,7 @@ function makeTestServices(overrides) {
     },
     topics: Topics,
     dialogs: Dialogs,
+    platform: PlatformSpecific,
     environment: Alloy.CFG.environment,
     version: Ti.App.version,
   }, overrides);

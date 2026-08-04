@@ -132,6 +132,7 @@ let services ={
   cerdiApi: Alloy.Globals.CerdiApi,
   topics: Topics,
   dialogs: Dialogs,
+  platform: PlatformSpecific,
   environment: Alloy.CFG.environment,
   version: Ti.App.version
 }

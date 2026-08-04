@@ -1,27 +1,14 @@
 // Shared Titanium-free binder for a tray cell (an interior tile or the endcap).
-// Both are the same shape: a positioned background with a hole container. This
-// declares the geometry binding and drives the residual hole rendering the Alloy
-// controller exposes; the endcap and tile differ only in their hole-container
-// layout (in TSS). See docs/patterns/screen-controllers.md.
+// Both are the same shape: a positioned background plus a hole container whose
+// cells are a bindView collection of SampleTaxaIcon slots. The cell VM
+// (TileViewModel / EndcapViewModel) differs only in geometry + background; the
+// binder is identical. See docs/patterns/screen-controllers.md.
 module.exports = function bindTrayCell({ view, args, bindView }) {
-  const cellVm = args.rowVm;
-
-  const unbind = bindView(view, cellVm, {
-    cell:       { left: "leftCss", width: "widthCss", height: "heightCss" },
-    background: { image: "backgroundImage" },
+  const { collection } = bindView;
+  const unbind = bindView(view, args.rowVm, {
+    cell:          { left: "leftCss", width: "widthCss", height: "heightCss" },
+    background:    { image: "backgroundImage" },
+    holeContainer: { taxa: collection("taxa", "SampleTaxaIcon") },
   });
-
-  const render = () => view.renderHoles(cellVm.holes, {
-    holeWidthCss: cellVm.holeWidthCss,
-    readonly: cellVm.readonly,
-  });
-  render();
-  cellVm.addListener(render);
-
-  return {
-    dispose() {
-      cellVm.removeListener(render);
-      unbind();
-    },
-  };
+  return { dispose: unbind };
 };
