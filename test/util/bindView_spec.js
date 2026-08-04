@@ -39,11 +39,15 @@ class TestVM extends ChangeNotifier {
   get status() { return this._status; }
   get logVisible() { return this._log; }
   get greeting() { return this._status === "idle" ? "hi" : "bye"; }
+  get scrollTargetX() { return this._scrollTargetX === undefined ? 0 : this._scrollTargetX; }
   get name() { return this._name === undefined ? "" : this._name; }
   set name(v) { this._name = v; this.notifyListeners(); }
   toggle() { this.toggleCount++; }
   close() { this.closeCount++; }
   pick(...args) { this.picks.push(args); }
+  // A measurement setter reports whether the reading was usable (truthy) so
+  // `measure` knows when to stop polling — readiness lives in the VM.
+  setViewport(v) { this.viewport = v; return !!(v && v.height > 0); }
 }
 
 function makeVm() { return new TestVM(); }
@@ -269,6 +273,135 @@ describe("bindView", function () {
       $.plain = { text: null };
       expect(() => bindView($, vm, { plain: { onClick: "toggle" } }))
         .to.throw(/event/i);
+    });
+  });
+
+  describe("inbound input binding (input)", function () {
+    const { input } = bindView;
+
+    it("reads the named widget property and calls the VM setter on the event", function () {
+      $.label.contentOffset = { x: 5, y: 0 };
+      bindView($, vm, { label: { onScroll: input("pick", "contentOffset") } });
+      $.label.fireEvent("scroll");
+      expect(vm.picks).to.deep.equal([[{ x: 5, y: 0 }]]);
+    });
+
+    it("reads the widget property fresh on each event (not once at bind)", function () {
+      $.label.contentOffset = { x: 1 };
+      bindView($, vm, { label: { onScroll: input("pick", "contentOffset") } });
+      $.label.contentOffset = { x: 9 };
+      $.label.fireEvent("scroll");
+      expect(vm.picks).to.deep.equal([[{ x: 9 }]]);
+    });
+
+    it("unbind removes the handler", function () {
+      const unbind = bindView($, vm, { label: { onScroll: input("pick", "contentOffset") } });
+      unbind();
+      $.label.fireEvent("scroll");
+      expect(vm.picks).to.deep.equal([]);
+    });
+
+    it("throws when the input VM method doesn't exist", function () {
+      expect(() => bindView($, vm, { label: { onScroll: input("nope", "contentOffset") } }))
+        .to.throw(/nope/);
+    });
+  });
+
+  describe("inbound measure binding (measure)", function () {
+    const { measure } = bindView;
+
+    // Polls the outcome (no fixed sleep) until it holds or the ceiling trips.
+    function eventually(fn, timeout = 800) {
+      return new Promise((resolve, reject) => {
+        const start = Date.now();
+        (function check() {
+          try { fn(); resolve(); }
+          catch (e) { Date.now() - start > timeout ? reject(e) : setTimeout(check, 10); }
+        })();
+      });
+    }
+
+    it("reads the property and calls the setter once, synchronously, when the reading is usable", function () {
+      $.label.size = { width: 10, height: 20 };
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      expect(vm.viewport).to.deep.equal({ width: 10, height: 20 });
+    });
+
+    it("retries until the VM setter accepts the reading (late layout)", async function () {
+      $.label.size = { width: 10, height: 0 }; // not laid out yet
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      $.label.size = { width: 10, height: 20 }; // becomes ready after the event
+      await eventually(() => expect(vm.viewport).to.deep.equal({ width: 10, height: 20 }));
+    });
+
+    it("tolerates a throwing read and keeps polling", async function () {
+      let ready = false;
+      Object.defineProperty($.label, "size", {
+        get() { if (!ready) throw new Error("activity detached"); return { width: 10, height: 20 }; },
+        configurable: true,
+      });
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      ready = true;
+      await eventually(() => expect(vm.viewport).to.deep.equal({ width: 10, height: 20 }));
+    });
+
+    it("unbind cancels a pending retry", async function () {
+      $.label.size = { width: 10, height: 0 };
+      const unbind = bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      $.label.fireEvent("postlayout");
+      unbind();
+      $.label.size = { width: 10, height: 20 };
+      await new Promise(r => setTimeout(r, 250));
+      expect(vm.viewport).to.deep.equal({ width: 10, height: 0 }); // last pre-unbind reading only
+    });
+
+    it("throws when the measure VM method doesn't exist", function () {
+      expect(() => bindView($, vm, { label: { onPostlayout: measure("nope", "size") } }))
+        .to.throw(/nope/);
+    });
+  });
+
+  describe("outbound command binding (command)", function () {
+    const { command, ref } = bindView;
+
+    function widgetWithCalls() {
+      const w = makeWidget();
+      w.calls = [];
+      w.scrollTo = (...a) => w.calls.push(a);
+      return w;
+    }
+
+    it("calls the widget method with literal + ref args when the VM fires the event", function () {
+      $.label = widgetWithCalls();
+      vm._scrollTargetX = 42;
+      bindView($, vm, { label: { snap: command("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: true }) } });
+      vm.trigger("scrollToRightEnd");
+      expect($.label.calls).to.deep.equal([[42, 0, { animate: true }]]);
+    });
+
+    it("resolves ref() args off the VM at fire time (fresh)", function () {
+      $.label = widgetWithCalls();
+      vm._scrollTargetX = 1;
+      bindView($, vm, { label: { snap: command("scrollToRightEnd", "scrollTo", ref("scrollTargetX")) } });
+      vm._scrollTargetX = 99;
+      vm.trigger("scrollToRightEnd");
+      expect($.label.calls).to.deep.equal([[99]]);
+    });
+
+    it("unbind unsubscribes from the VM event", function () {
+      $.label = widgetWithCalls();
+      const unbind = bindView($, vm, { label: { snap: command("scrollToRightEnd", "scrollTo") } });
+      unbind();
+      vm.trigger("scrollToRightEnd");
+      expect($.label.calls).to.deep.equal([]);
+    });
+
+    it("throws when the widget has no such method", function () {
+      expect(() => bindView($, vm, { label: { snap: command("scrollToRightEnd", "noSuchMethod") } }))
+        .to.throw(/noSuchMethod/);
     });
   });
 
