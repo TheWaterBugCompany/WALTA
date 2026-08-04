@@ -51,6 +51,64 @@ function isCall(ref) {
   return ref !== null && typeof ref === "object" && ref.__call === true;
 }
 
+// Inbound marker: on a widget event, read a named widget property and push it
+// into a VM setter — the reverse of a property binding. The Titanium-specific
+// read stays generic (bindView never knows what contentOffset/size mean); the
+// VM converts units (e.g. system-px → dip) behind its own injected converters.
+//   content: { onScroll: input("setScrollOffset", "contentOffset") }
+function input(method, prop) {
+  return { __input: true, method, prop };
+}
+
+function isInput(ref) {
+  return ref !== null && typeof ref === "object" && ref.__input === true;
+}
+
+// A one-shot inbound measurement that must survive a premature layout: on the
+// event, read a named widget property and push it into a VM setter that returns
+// truthy once the reading is usable (readiness lives in the VM, not a predicate
+// here). Retries on a timer while the setter rejects or the read throws — the
+// Titanium quirk that `postlayout` can fire mid window-transition, when reading
+// `.size` throws or returns zero. Generalises the old attemptLayout poll.
+//   content: { onPostlayout: measure("setViewport", "size") }
+const MEASURE_INTERVAL = 100;
+const MEASURE_MAX_ATTEMPTS = 30;
+
+function measure(method, prop) {
+  return { __measure: true, method, prop };
+}
+
+function isMeasure(ref) {
+  return ref !== null && typeof ref === "object" && ref.__measure === true;
+}
+
+// Outbound command marker: when the VM fires a named event, reflectively call a
+// widget method with fixed args — the inverse of onClick, and the outbound
+// counterpart to input(). Args are literals or ref("vmProp") resolved off the VM
+// at fire time; bindView stays Titanium-agnostic (it never knows the method).
+//   content: { snap: command("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: true }) }
+function command(vmEvent, method, ...args) {
+  return { __command: true, vmEvent, method, args };
+}
+
+function isCommand(ref) {
+  return ref !== null && typeof ref === "object" && ref.__command === true;
+}
+
+// A command argument sourced from the VM (vs a literal), resolved when the VM
+// event fires.
+function ref(prop) {
+  return { __ref: true, prop };
+}
+
+function isRef(a) {
+  return a !== null && typeof a === "object" && a.__ref === true;
+}
+
+function resolveArgs(vm, args) {
+  return args.map(a => (isRef(a) ? vm[a.prop] : a));
+}
+
 // Children-binding marker: drives a container's child views from a VM getter
 // that returns a keyed list. bindView owns the keyed diff (create new / retain
 // existing / dispose gone). The second arg is either:
@@ -71,10 +129,11 @@ function isCollection(ref) {
   return ref !== null && typeof ref === "object" && ref.__collection === true;
 }
 
-// The VM method name an on<Event> binding targets, whether it's a plain
-// string handler or a call() marker.
+// The VM method name an on<Event> binding targets — a plain string handler or a
+// call()/input()/measure() marker.
 function methodOf(ref) {
-  return isCall(ref) ? ref.method : ref;
+  if (isCall(ref) || isInput(ref) || isMeasure(ref)) return ref.method;
+  return ref;
 }
 
 function propOf(ref) {
@@ -93,7 +152,7 @@ module.exports = function bindView($, vm, bindings, options) {
       const widget = $[widgetId];
       const widgetBindings = bindings[widgetId];
       for (const key in widgetBindings) {
-        if (EVENT_KEY_RE.test(key) || isCollection(widgetBindings[key])) continue;
+        if (EVENT_KEY_RE.test(key) || isCollection(widgetBindings[key]) || isCommand(widgetBindings[key])) continue;
         let value = vm[propOf(widgetBindings[key])];
         if (typeof value === "symbol" && palette) {
           value = palette[value.description];
@@ -117,16 +176,26 @@ module.exports = function bindView($, vm, bindings, options) {
       const m = key.match(EVENT_KEY_RE);
       if (m) {
         const eventName = m[1].toLowerCase();
-        const handler = isCall(ref)
-          ? function () { vm[ref.method](...ref.args); }
-          : function () { vm[ref](); };
-        eventTeardowns.push(attachEvent(widget, eventName, handler));
+        if (isMeasure(ref)) {
+          eventTeardowns.push(attachMeasure(widget, eventName, vm, ref));
+        } else {
+          const handler = isCall(ref)
+            ? function () { vm[ref.method](...ref.args); }
+            : isInput(ref)
+            ? function () { vm[ref.method](widget[ref.prop]); }
+            : function () { vm[ref](); };
+          eventTeardowns.push(attachEvent(widget, eventName, handler));
+        }
       } else if (isTwoWay(ref)) {
         const prop = ref.prop;
         const handler = function (e) { vm[prop] = e.value; };
         eventTeardowns.push(attachEvent(widget, "change", handler));
       } else if (isCollection(ref)) {
         eventTeardowns.push(setupCollection(vm, widget, ref, createComponent));
+      } else if (isCommand(ref)) {
+        const handler = function () { widget[ref.method](...resolveArgs(vm, ref.args)); };
+        vm.on(ref.vmEvent, handler);
+        eventTeardowns.push(() => vm.off(ref.vmEvent, handler));
       }
     }
   }
@@ -257,6 +326,26 @@ function reapplyOnFirstLayout($, applyProps) {
   return () => detach();
 }
 
+// Starts a retrying measurement poll on `eventName`; returns a teardown that
+// cancels any pending retry and detaches the event.
+function attachMeasure(widget, eventName, vm, ref) {
+  let timer = null;
+  function poll(attempt) {
+    let value;
+    try { value = widget[ref.prop]; }
+    catch (e) { value = undefined; }
+    if (value !== undefined && vm[ref.method](value)) return;
+    if (attempt < MEASURE_MAX_ATTEMPTS) {
+      timer = setTimeout(function () { poll(attempt + 1); }, MEASURE_INTERVAL);
+    }
+  }
+  const detachEvent = attachEvent(widget, eventName, function () { poll(0); });
+  return function () {
+    if (timer) clearTimeout(timer);
+    detachEvent();
+  };
+}
+
 function attachEvent(target, eventName, handler) {
   if (typeof target.addEventListener === "function") {
     target.addEventListener(eventName, handler);
@@ -296,6 +385,13 @@ function validate($, vm, bindings) {
         if (typeof widget.addEventListener !== "function" && typeof widget.on !== "function") {
           throw new Error(`bindView: widget "${widgetId}" has no event mechanism for two-way ${key}`);
         }
+      } else if (isCommand(ref)) {
+        if (typeof widget[ref.method] !== "function") {
+          throw new Error(`bindView: widget "${widgetId}" has no method "${ref.method}" (bound to command ${widgetId}.${key})`);
+        }
+        if (typeof vm.on !== "function") {
+          throw new Error(`bindView: VM has no event mechanism for command ${widgetId}.${key}`);
+        }
       } else if (isCollection(ref)) {
         if (!(ref.getter in vm)) {
           throw new Error(`bindView: VM has no collection getter "${ref.getter}" (bound to ${widgetId}.${key})`);
@@ -326,11 +422,19 @@ function makeBinder(createComponent, palette) {
   };
   binder.twoWay = twoWay;
   binder.call = call;
+  binder.input = input;
+  binder.measure = measure;
+  binder.command = command;
+  binder.ref = ref;
   binder.collection = collection;
   return binder;
 }
 
 module.exports.twoWay = twoWay;
 module.exports.call = call;
+module.exports.input = input;
+module.exports.measure = measure;
+module.exports.command = command;
+module.exports.ref = ref;
 module.exports.collection = collection;
 module.exports.makeBinder = makeBinder;
