@@ -1,6 +1,6 @@
 <Alloy>
 	<View id="cell">
 		<ImageView id="background" class="trayBackground"/>
-		<View id="holeContainer" class="tileHoles"/>
+		<View id="holeContainer" class="holes"/>
 	</View>
 </Alloy>

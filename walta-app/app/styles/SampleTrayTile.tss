@@ -7,8 +7,9 @@
   height: Ti.UI.FILL
 }
 
-".tileHoles": {
-  width: Ti.UI.FILL,
-  height: Ti.UI.FILL,
-  layout: "horizontal"
+// The hole grid. Its layout (horizontal for a tile, vertical for the endcap) and
+// its width/left inset (full for a tile, off the endcap's lip) are bound from the
+// tile VM — the one view difference between the two shapes.
+".holes": {
+  height: Ti.UI.FILL
 }

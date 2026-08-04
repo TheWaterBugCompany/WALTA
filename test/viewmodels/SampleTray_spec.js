@@ -181,6 +181,13 @@ describe("SampleTrayViewModel", function () {
       expect(tile1.heightCss, "height = viewport height").to.equal("100dp");
       expect(tile1.taxa[0].widthCss, "half the middle width less 1: 65/2 - 1").to.equal("31.5dp");
     });
+
+    it("lays the hole grid out horizontally, filling the tile", function () {
+      const tile1 = vmWithViewport(30).visibleTiles.find(t => t.key === 1);
+      expect(tile1.holesLayout).to.equal("horizontal");
+      expect(tile1.holesWidthCss).to.equal("100%");
+      expect(tile1.holesLeftCss).to.equal("0%");
+    });
   });
 
   describe("endcap", function () {
@@ -201,6 +208,13 @@ describe("SampleTrayViewModel", function () {
 
     it("holds the first two collection cells", function () {
       expect(vmWithViewport(30).endcapVm.taxa).to.have.lengthOf(2);
+    });
+
+    it("stacks its hole grid vertically, inset off the cap's lip", function () {
+      const endcap = vmWithViewport(30).endcapVm;
+      expect(endcap.holesLayout).to.equal("vertical");
+      expect(endcap.holesWidthCss).to.equal("73%");
+      expect(endcap.holesLeftCss).to.equal("27%");
     });
   });
 

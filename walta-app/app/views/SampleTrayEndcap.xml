@@ -1,6 +1,0 @@
-<Alloy>
-	<View id="cell">
-		<ImageView id="background" class="trayBackground"/>
-		<View id="holeContainer" class="endcapHoles"/>
-	</View>
-</Alloy>

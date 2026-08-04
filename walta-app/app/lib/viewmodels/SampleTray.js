@@ -1,5 +1,5 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
-const { endcapCell, tileCell } = require("./SampleTrayCell");
+const { endcapTile, interiorTile } = require("./SampleTrayTile");
 
 const identity = (x) => x;
 
@@ -10,8 +10,9 @@ const identity = (x) => x;
 // through bindView; the VM converts with the injected toDip/toSystem so it stays
 // Node-testable. `taxaSource` is the injected SampleTraySource:
 // { length(), at(i) -> plain per-taxon data, surveyType(), onChange(cb), readonly }.
-// The cell + slot VMs (SampleTrayTile/Endcap, SampleTaxaIcon/SampleTrayPlus) read
-// their geometry, kinds and intent payload back through the public accessors here.
+// The tile + slot VMs (SampleTrayTile — endcap or interior — and its
+// SampleTaxaIcon/SampleTrayPlus slots) read their geometry, kinds and intent
+// payload back through the public accessors here.
 class SampleTrayViewModel extends ChangeNotifier {
   constructor({ taxaSource, topics, toDip, toSystem }) {
     super();
@@ -24,7 +25,7 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._viewportHeight = 0;
     this._scrollx = 0;
     this._tileCache = new Map();
-    this._endcapVm = endcapCell(this);
+    this._endcapVm = endcapTile(this);
     this._visibleTiles = [];
     this._onSourceChange = () => this.refresh();
     if (typeof taxaSource.onChange === "function") taxaSource.onChange(this._onSourceChange);
@@ -144,7 +145,7 @@ class SampleTrayViewModel extends ChangeNotifier {
   _tileVm(n) {
     let vm = this._tileCache.get(n);
     if (!vm) {
-      vm = tileCell(this, n);
+      vm = interiorTile(this, n);
       this._tileCache.set(n, vm);
     }
     return vm;
