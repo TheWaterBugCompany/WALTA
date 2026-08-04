@@ -123,9 +123,11 @@ describe( 'SampleTray controller', function() {
     return sorted[i];
   }
 
-  // Each cell is now a SampleTaxaIcon slot: children = [ padIcon, plus, tapSurface ].
-  // padIcon holds [ icon, abundance ]; plus is the (centred) add icon; the tap
-  // surface (last child) is the single transparent hit target.
+  // A cell is one of two polymorphic slot components: a SampleTaxaIcon (taxon/blank,
+  // children = [ padIcon, tapSurface ]; padIcon holds [ icon, abundance ]) or a
+  // SampleTrayPlus (add, children = [ plus, tapSurface ]). In both, the tap surface
+  // (last child) is the single transparent hit target and the first child carries
+  // the visible content.
   function assertSample( taxon, image, abundance ) {
     var [ icon, label ] = taxon.children[0].children;
     expect( icon.image, `Expected the the taxon to be ${image}` ).to.include( image );
@@ -133,7 +135,7 @@ describe( 'SampleTray controller', function() {
   }
 
   function tapSurface( square ) { return square.children[square.children.length - 1]; }
-  function plusIcon( square ) { return square.children[1]; }
+  function plusIcon( square ) { return square.children[0]; }
 
   function clickPlus( square ) {
     tapSurface( square ).fireEvent('click');
@@ -143,10 +145,10 @@ describe( 'SampleTray controller', function() {
     expect( plusIcon( square ).image ).to.include('images/plus-icon.png');
   }
 
-  // A blank cell keeps its (inert) slot views but shows neither the icon nor a plus.
-  function assertSampleBlank( taxon ) {
-    expect( taxon.children[0].visible, "blank cell hides the icon" ).to.equal(false);
-    expect( plusIcon( taxon ).visible, "blank cell has no plus" ).to.equal(false);
+  // An empty cell shows nothing — its first child (the icon pad on a blank
+  // SampleTaxaIcon, or the plus on an invisible add-behind SampleTrayPlus) is hidden.
+  function assertSampleBlank( cell ) {
+    expect( cell.children[0].visible, "an empty cell shows nothing" ).to.equal(false);
   }
 
   function assertTaxaBackground( tile, image ) {

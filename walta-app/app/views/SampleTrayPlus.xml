@@ -1,0 +1,10 @@
+<Alloy>
+	<View id="SampleTrayPlus">
+		<!-- The add icon: a small centred image (shown only on the plus cell; hidden
+		     on invisible add-behind cells), drawn beneath the tap surface. -->
+		<ImageView id="plus" class="plusIcon"/>
+		<!-- Last child = topmost = the single hit target, so a tap always lands on a
+		     listener-bearing view (iOS) and never double-fires. -->
+		<View id="tap" class="tapSurface"/>
+	</View>
+</Alloy>
