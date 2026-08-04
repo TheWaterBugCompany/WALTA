@@ -45,9 +45,6 @@ class TestVM extends ChangeNotifier {
   toggle() { this.toggleCount++; }
   close() { this.closeCount++; }
   pick(...args) { this.picks.push(args); }
-  // A measurement setter reports whether the reading was usable (truthy) so
-  // `measure` knows when to stop polling — readiness lives in the VM.
-  setViewport(v) { this.viewport = v; return !!(v && v.height > 0); }
 }
 
 function makeVm() { return new TestVM(); }
@@ -310,63 +307,6 @@ describe("bindView", function () {
 
     it("throws when the input VM method doesn't exist", function () {
       expect(() => bindView($, vm, { label: { onScroll: input("nope", "contentOffset") } }))
-        .to.throw(/nope/);
-    });
-  });
-
-  describe("inbound measure binding (measure)", function () {
-    const { measure } = bindView;
-
-    // Polls the outcome (no fixed sleep) until it holds or the ceiling trips.
-    function eventually(fn, timeout = 800) {
-      return new Promise((resolve, reject) => {
-        const start = Date.now();
-        (function check() {
-          try { fn(); resolve(); }
-          catch (e) { Date.now() - start > timeout ? reject(e) : setTimeout(check, 10); }
-        })();
-      });
-    }
-
-    it("reads the property and calls the setter once, synchronously, when the reading is usable", function () {
-      $.label.size = { width: 10, height: 20 };
-      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
-      $.label.fireEvent("postlayout");
-      expect(vm.viewport).to.deep.equal({ width: 10, height: 20 });
-    });
-
-    it("retries until the VM setter accepts the reading (late layout)", async function () {
-      $.label.size = { width: 10, height: 0 }; // not laid out yet
-      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
-      $.label.fireEvent("postlayout");
-      $.label.size = { width: 10, height: 20 }; // becomes ready after the event
-      await eventually(() => expect(vm.viewport).to.deep.equal({ width: 10, height: 20 }));
-    });
-
-    it("tolerates a throwing read and keeps polling", async function () {
-      let ready = false;
-      Object.defineProperty($.label, "size", {
-        get() { if (!ready) throw new Error("activity detached"); return { width: 10, height: 20 }; },
-        configurable: true,
-      });
-      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
-      $.label.fireEvent("postlayout");
-      ready = true;
-      await eventually(() => expect(vm.viewport).to.deep.equal({ width: 10, height: 20 }));
-    });
-
-    it("unbind cancels a pending retry", async function () {
-      $.label.size = { width: 10, height: 0 };
-      const unbind = bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
-      $.label.fireEvent("postlayout");
-      unbind();
-      $.label.size = { width: 10, height: 20 };
-      await new Promise(r => setTimeout(r, 250));
-      expect(vm.viewport).to.deep.equal({ width: 10, height: 0 }); // last pre-unbind reading only
-    });
-
-    it("throws when the measure VM method doesn't exist", function () {
-      expect(() => bindView($, vm, { label: { onPostlayout: measure("nope", "size") } }))
         .to.throw(/nope/);
     });
   });
@@ -678,6 +618,147 @@ describe("bindView collection binding", function () {
       const vm = new ListVM([{ key: 1 }]);
       expect(() => bindView({ table: container }, vm, {
         table: { children: collection("items", "MyRow") },
+      })).to.throw(/createComponent/);
+    });
+  });
+
+  // Polymorphic list: no component name is given, so each item names its own
+  // component. The tray's slots use this — a slot is a SampleTaxaIcon or a
+  // SampleTrayPlus depending on its kind.
+  describe("polymorphic collection: collection(getter) with per-item component", function () {
+    function makeFactory() {
+      const built = [];
+      const disposed = [];
+      const createComponent = (name, args) => {
+        const handle = {
+          name, rowVm: args.rowVm, view: { id: args.rowVm.key },
+          dispose() { disposed.push(args.rowVm.key); },
+        };
+        built.push(handle);
+        return handle;
+      };
+      return { built, disposed, createComponent };
+    }
+
+    it("builds each child from its own item.component", function () {
+      const container = makeContainer();
+      const { built, createComponent } = makeFactory();
+      const vm = new ListVM([
+        { key: "0:SampleTaxaIcon", component: "SampleTaxaIcon" },
+        { key: "1:SampleTrayPlus", component: "SampleTrayPlus" },
+      ]);
+      bindView({ list: container }, vm, {
+        list: { children: collection("items") },
+      }, { createComponent });
+      expect(built.map((h) => h.name)).to.deep.equal(["SampleTaxaIcon", "SampleTrayPlus"]);
+      expect(container.ids()).to.deep.equal(["0:SampleTaxaIcon", "1:SampleTrayPlus"]);
+    });
+
+    it("recreates a slot as a different component when its key changes", function () {
+      const container = makeContainer();
+      const { built, disposed, createComponent } = makeFactory();
+      const vm = new ListVM([{ key: "0:SampleTrayPlus", component: "SampleTrayPlus" }]);
+      bindView({ list: container }, vm, {
+        list: { children: collection("items") },
+      }, { createComponent });
+
+      vm.items = [{ key: "0:SampleTaxaIcon", component: "SampleTaxaIcon" }]; // slot 0 becomes a taxon
+
+      expect(disposed).to.deep.equal(["0:SampleTrayPlus"]);
+      expect(built.map((h) => h.name)).to.deep.equal(["SampleTrayPlus", "SampleTaxaIcon"]);
+      expect(container.ids()).to.deep.equal(["0:SampleTaxaIcon"]);
+    });
+
+    // The tray's slots are flow-laid, so container order must follow item order
+    // even when a middle slot swaps component (which otherwise appends the new
+    // child at the end).
+    it("keeps container order matching item order when a middle slot swaps", function () {
+      const container = makeContainer();
+      const { createComponent } = makeFactory();
+      const vm = new ListVM([
+        { key: "0:SampleTaxaIcon", component: "SampleTaxaIcon" },
+        { key: "1:SampleTaxaIcon", component: "SampleTaxaIcon" },
+        { key: "2:SampleTrayPlus", component: "SampleTrayPlus" },
+      ]);
+      bindView({ list: container }, vm, {
+        list: { children: collection("items") },
+      }, { createComponent });
+
+      // slot 1 becomes the add cell (its old taxon child is disposed, a plus built)
+      vm.items = [
+        { key: "0:SampleTaxaIcon", component: "SampleTaxaIcon" },
+        { key: "1:SampleTrayPlus", component: "SampleTrayPlus" },
+        { key: "2:SampleTrayPlus", component: "SampleTrayPlus" },
+      ];
+
+      expect(container.ids()).to.deep.equal([
+        "0:SampleTaxaIcon", "1:SampleTrayPlus", "2:SampleTrayPlus",
+      ]);
+    });
+  });
+
+  // A single fixed nested component (the tray endcap) bound to a sub-VM — the
+  // arity-1 sibling of collection, with no keyed diff.
+  describe("single-component binding: component(getter, name)", function () {
+    const { component } = bindView;
+
+    function makeFactory() {
+      const built = [];
+      const disposed = [];
+      const createComponent = (name, args) => {
+        const handle = {
+          name, rowVm: args.rowVm, view: { id: name },
+          dispose() { disposed.push(name); },
+        };
+        built.push(handle);
+        return handle;
+      };
+      return { built, disposed, createComponent };
+    }
+
+    function vmWithChild(child) {
+      const vm = new ChangeNotifier();
+      Object.defineProperty(vm, "endcapVm", { value: child, enumerable: true });
+      return vm;
+    }
+
+    it("builds one child from the sub-VM getter, passes it as { rowVm }, and attaches it", function () {
+      const container = makeContainer();
+      const { built, createComponent } = makeFactory();
+      const child = { key: "endcap" };
+      bindView({ pane: container }, vmWithChild(child), {
+        pane: { slot: component("endcapVm", "SampleTrayEndcap") },
+      }, { createComponent });
+      expect(built.map((h) => h.name)).to.deep.equal(["SampleTrayEndcap"]);
+      expect(built[0].rowVm).to.equal(child);
+      expect(container.ids()).to.deep.equal(["SampleTrayEndcap"]);
+    });
+
+    it("disposes and detaches the child on unbind", function () {
+      const container = makeContainer();
+      const { disposed, createComponent } = makeFactory();
+      const unbind = bindView({ pane: container }, vmWithChild({ key: "endcap" }), {
+        pane: { slot: component("endcapVm", "SampleTrayEndcap") },
+      }, { createComponent });
+
+      unbind();
+
+      expect(disposed).to.deep.equal(["SampleTrayEndcap"]);
+      expect(container.children).to.deep.equal([]);
+    });
+
+    it("throws when the component getter is missing on the VM", function () {
+      const container = makeContainer();
+      const { createComponent } = makeFactory();
+      expect(() => bindView({ pane: container }, new ChangeNotifier(), {
+        pane: { slot: component("endcapVm", "SampleTrayEndcap") },
+      }, { createComponent })).to.throw(/endcapVm/);
+    });
+
+    it("throws if no createComponent factory is supplied", function () {
+      const container = makeContainer();
+      expect(() => bindView({ pane: container }, vmWithChild({ key: "endcap" }), {
+        pane: { slot: component("endcapVm", "SampleTrayEndcap") },
       })).to.throw(/createComponent/);
     });
   });
