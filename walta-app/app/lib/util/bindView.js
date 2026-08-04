@@ -70,24 +70,6 @@ function readPath(obj, path) {
   return path.split(".").reduce((o, k) => (o == null ? o : o[k]), obj);
 }
 
-// A one-shot inbound measurement that must survive a premature layout: on the
-// event, read a named widget property and push it into a VM setter that returns
-// truthy once the reading is usable (readiness lives in the VM, not a predicate
-// here). Retries on a timer while the setter rejects or the read throws — the
-// Titanium quirk that `postlayout` can fire mid window-transition, when reading
-// `.size` throws or returns zero. Generalises the old attemptLayout poll.
-//   content: { onPostlayout: measure("setViewport", "size") }
-const MEASURE_INTERVAL = 100;
-const MEASURE_MAX_ATTEMPTS = 30;
-
-function measure(method, prop) {
-  return { __measure: true, method, prop };
-}
-
-function isMeasure(ref) {
-  return ref !== null && typeof ref === "object" && ref.__measure === true;
-}
-
 // Outbound command marker: when the VM fires a named event, reflectively call a
 // widget method with fixed args — the inverse of onClick, and the outbound
 // counterpart to input(). Args are literals or ref("vmProp") resolved off the VM
@@ -124,7 +106,12 @@ function resolveArgs(vm, args) {
 //     setData). This is the common list case.
 //   - an explicit ADAPTER (object) — the escape hatch for the irreducible cases
 //     (scroll-windowed lists need scrollEvent/onScroll; anything bespoke).
+//   - omitted — the polymorphic convention: each item names its own component
+//     via item.component (the tray's slots: a SampleTaxaIcon or a SampleTrayPlus).
 function collection(getter, adapterOrName) {
+  if (adapterOrName === undefined) {
+    return { __collection: true, getter, polymorphic: true };
+  }
   if (typeof adapterOrName === "string") {
     return { __collection: true, getter, componentName: adapterOrName };
   }
@@ -135,10 +122,22 @@ function isCollection(ref) {
   return ref !== null && typeof ref === "object" && ref.__collection === true;
 }
 
+// Single fixed nested component — the arity-1 sibling of collection. Mounts one
+// child (built via createComponent) bound to a sub-VM the parent exposes, with no
+// keyed diff (the child owns its own updates). The tray's endcap uses this.
+//   tray: { endcap: component("endcapVm", "SampleTrayEndcap") }
+function component(getter, name) {
+  return { __component: true, getter, componentName: name };
+}
+
+function isComponent(ref) {
+  return ref !== null && typeof ref === "object" && ref.__component === true;
+}
+
 // The VM method name an on<Event> binding targets — a plain string handler or a
-// call()/input()/measure() marker.
+// call()/input() marker.
 function methodOf(ref) {
-  if (isCall(ref) || isInput(ref) || isMeasure(ref)) return ref.method;
+  if (isCall(ref) || isInput(ref)) return ref.method;
   return ref;
 }
 
@@ -158,7 +157,7 @@ module.exports = function bindView($, vm, bindings, options) {
       const widget = $[widgetId];
       const widgetBindings = bindings[widgetId];
       for (const key in widgetBindings) {
-        if (EVENT_KEY_RE.test(key) || isCollection(widgetBindings[key]) || isCommand(widgetBindings[key])) continue;
+        if (EVENT_KEY_RE.test(key) || isCollection(widgetBindings[key]) || isCommand(widgetBindings[key]) || isComponent(widgetBindings[key])) continue;
         let value = vm[propOf(widgetBindings[key])];
         if (typeof value === "symbol" && palette) {
           value = palette[value.description];
@@ -182,22 +181,20 @@ module.exports = function bindView($, vm, bindings, options) {
       const m = key.match(EVENT_KEY_RE);
       if (m) {
         const eventName = m[1].toLowerCase();
-        if (isMeasure(ref)) {
-          eventTeardowns.push(attachMeasure(widget, eventName, vm, ref));
-        } else {
-          const handler = isCall(ref)
-            ? function () { vm[ref.method](...ref.args); }
-            : isInput(ref)
-            ? function () { vm[ref.method](readPath(widget, ref.prop)); }
-            : function () { vm[ref](); };
-          eventTeardowns.push(attachEvent(widget, eventName, handler));
-        }
+        const handler = isCall(ref)
+          ? function () { vm[ref.method](...ref.args); }
+          : isInput(ref)
+          ? function () { vm[ref.method](readPath(widget, ref.prop)); }
+          : function () { vm[ref](); };
+        eventTeardowns.push(attachEvent(widget, eventName, handler));
       } else if (isTwoWay(ref)) {
         const prop = ref.prop;
         const handler = function (e) { vm[prop] = e.value; };
         eventTeardowns.push(attachEvent(widget, "change", handler));
       } else if (isCollection(ref)) {
         eventTeardowns.push(setupCollection(vm, widget, ref, createComponent));
+      } else if (isComponent(ref)) {
+        eventTeardowns.push(setupComponent(vm, widget, ref, createComponent));
       } else if (isCommand(ref)) {
         const handler = function () { widget[ref.method](...resolveArgs(vm, ref.args)); };
         vm.on(ref.vmEvent, handler);
@@ -227,23 +224,44 @@ module.exports = function bindView($, vm, bindings, options) {
 // the single seam that must reach Titanium, kept in bindView's options and out
 // of the controller. render vs add/remove is chosen by feature-detecting
 // setData (TableView renders the whole ordered list; ScrollView adds/removes).
-function conventionAdapter(name, container, createComponent) {
+function conventionAdapter(marker, container, createComponent) {
   if (typeof createComponent !== "function") {
-    throw new Error(`bindView: collection("${name}") needs a createComponent factory in options`);
+    throw new Error(`bindView: collection("${marker.getter}") needs a createComponent factory in options`);
   }
   const usesSetData = typeof container.setData === "function";
+  // A fixed-name list uses one component; a polymorphic list lets each item name
+  // its own (item.component). A polymorphic list is also order-preserving: an item
+  // can change component in place, so container order must track item order (a
+  // fixed-name list's items keep their component, so append-only order is stable).
+  const nameFor = marker.polymorphic ? (item) => item.component : () => marker.componentName;
   return {
     key: (item) => item.key,
-    create: (item) => createComponent(name, { rowVm: item }),
+    create: (item) => createComponent(nameFor(item), { rowVm: item }),
     dispose: (handle) => handle.dispose(),
+    ordered: marker.polymorphic === true && !usesSetData,
     render: usesSetData
       ? (c, handles) => c.setData(handles.map((h) => h.view))
       : undefined,
   };
 }
 
+// Builds one fixed nested child from vm[getter] and adds it to the container;
+// disposes + detaches it on teardown. No keyed diff — the sub-VM is stable and
+// the child owns its own property updates.
+function setupComponent(vm, container, marker, createComponent) {
+  if (typeof createComponent !== "function") {
+    throw new Error(`bindView: component("${marker.componentName}") needs a createComponent factory in options`);
+  }
+  const handle = createComponent(marker.componentName, { rowVm: vm[marker.getter] });
+  container.add(handle.view);
+  return function teardown() {
+    container.remove(handle.view);
+    if (typeof handle.dispose === "function") handle.dispose();
+  };
+}
+
 function setupCollection(vm, container, marker, createComponent) {
-  const adapter = marker.adapter || conventionAdapter(marker.componentName, container, createComponent);
+  const adapter = marker.adapter || conventionAdapter(marker, container, createComponent);
   const handles = new Map();
 
   // Two container styles: incremental (ScrollView — add/remove each child) and
@@ -262,11 +280,13 @@ function setupCollection(vm, container, marker, createComponent) {
   function reconcile() {
     const items = vm[marker.getter] || [];
     const desired = new Map(items.map((it) => [adapter.key(it), it]));
+    let membershipChanged = false;
     for (const [k, handle] of handles) {
       if (!desired.has(k)) {
         if (!adapter.render) containerRemove(handle);
         if (adapter.dispose) adapter.dispose(handle);
         handles.delete(k);
+        membershipChanged = true;
       }
     }
     items.forEach((it) => {
@@ -274,13 +294,22 @@ function setupCollection(vm, container, marker, createComponent) {
       if (!handles.has(k)) {
         const handle = adapter.create(it);
         handles.set(k, handle);
-        if (!adapter.render) containerAdd(handle);
+        // An ordered adapter re-attaches everything below so a swapped child lands
+        // in position, not appended; others attach here.
+        if (!adapter.render && !adapter.ordered) containerAdd(handle);
+        membershipChanged = true;
       } else if (adapter.update) {
         adapter.update(handles.get(k), it);
       }
     });
     if (adapter.render) {
       adapter.render(container, items.map((it) => handles.get(adapter.key(it))));
+    } else if (adapter.ordered && membershipChanged) {
+      // Flow-laid children (the tray's polymorphic slots) must follow item order
+      // even when a middle slot swaps component. Re-attach every child in order;
+      // container.remove is a no-op on a not-yet-attached (freshly created) child.
+      for (const it of items) containerRemove(handles.get(adapter.key(it)));
+      for (const it of items) containerAdd(handles.get(adapter.key(it)));
     }
   }
 
@@ -330,26 +359,6 @@ function reapplyOnFirstLayout($, applyProps) {
   }
   view.addEventListener("postlayout", onFirstLayout);
   return () => detach();
-}
-
-// Starts a retrying measurement poll on `eventName`; returns a teardown that
-// cancels any pending retry and detaches the event.
-function attachMeasure(widget, eventName, vm, ref) {
-  let timer = null;
-  function poll(attempt) {
-    let value;
-    try { value = widget[ref.prop]; }
-    catch (e) { value = undefined; }
-    if (value !== undefined && vm[ref.method](value)) return;
-    if (attempt < MEASURE_MAX_ATTEMPTS) {
-      timer = setTimeout(function () { poll(attempt + 1); }, MEASURE_INTERVAL);
-    }
-  }
-  const detachEvent = attachEvent(widget, eventName, function () { poll(0); });
-  return function () {
-    if (timer) clearTimeout(timer);
-    detachEvent();
-  };
 }
 
 function attachEvent(target, eventName, handler) {
@@ -408,6 +417,10 @@ function validate($, vm, bindings) {
         if (ref.adapter && (typeof ref.adapter.key !== "function" || typeof ref.adapter.create !== "function")) {
           throw new Error(`bindView: collection adapter for ${widgetId}.${key} needs key() and create()`);
         }
+      } else if (isComponent(ref)) {
+        if (!(ref.getter in vm)) {
+          throw new Error(`bindView: VM has no component getter "${ref.getter}" (bound to ${widgetId}.${key})`);
+        }
       } else {
         if (!(ref in vm)) {
           throw new Error(`bindView: VM has no property "${ref}" (bound to ${widgetId}.${key})`);
@@ -429,18 +442,18 @@ function makeBinder(createComponent, palette) {
   binder.twoWay = twoWay;
   binder.call = call;
   binder.input = input;
-  binder.measure = measure;
   binder.command = command;
   binder.ref = ref;
   binder.collection = collection;
+  binder.component = component;
   return binder;
 }
 
 module.exports.twoWay = twoWay;
 module.exports.call = call;
 module.exports.input = input;
-module.exports.measure = measure;
 module.exports.command = command;
 module.exports.ref = ref;
 module.exports.collection = collection;
+module.exports.component = component;
 module.exports.makeBinder = makeBinder;
