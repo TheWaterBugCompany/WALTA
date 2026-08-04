@@ -109,28 +109,46 @@ The explicit `collection(getter, adapter)` form — an object with
 name convention can't cover. Reach for it only there; anything the convention
 covers stays in the convention.
 
+### Polymorphic lists and single fixed children
+
+Two arity variants cover the tray:
+
+- **`collection(getter)`** with *no* name is **polymorphic** — each item names its
+  own component via an `item.component` getter, so one list can mix component
+  types. The tray's cells use this: a slot is a `SampleTaxaIcon` (taxon/blank) or a
+  `SampleTrayPlus` (add), swapped by kind. The item `key` carries the component
+  (`"0:SampleTaxaIcon"`) so a slot that changes type is recreated, not wrongly
+  retained. A polymorphic list is also **order-preserving** — because an item can
+  change component in place, `bindView` re-attaches children in item order rather
+  than appending, so a flow-laid grid stays correctly ordered after a swap.
+- **`component(getter, "Name")`** mounts **one fixed child** bound to a sub-VM — the
+  arity-1 sibling of `collection`, no keyed diff. The tray's endcap uses it (there
+  is always exactly one), instead of a fake single-item collection.
+
+```js
+// tray: one endcap + a windowed list of tiles; each tile/endcap holds polymorphic slots
+tray:          { endcap: component("endcapVm", "SampleTrayEndcap"),
+                 tiles:  collection("visibleTiles", "SampleTrayTile") },
+holeContainer: { taxa:  collection("taxa") },   // slots pick their own component
+```
+
 ## Inbound Titanium & commands
 
 `bindView` is not only outbound (VM → widget property). A screen with genuine
-Titanium *input* — a measured viewport, a scroll offset — or an imperative
-*output effect* declares those through `bindView` too, so the Alloy shell holds no
-view-model and no wiring. The scroll-windowed SampleTray is driven entirely this
-way:
+Titanium *input* — a scroll offset — or an imperative *output effect* declares
+those through `bindView` too, so the Alloy shell holds no view-model and no wiring.
+The scroll-windowed SampleTray is driven this way:
 
 ```js
 content: {
-  onScroll:     input("setScrollOffset", "contentOffset.x"),
-  onPostlayout: measure("setViewport", "size"),
-  snapRight:    command("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: true }),
+  onScroll:  input("setScrollOffset", "contentOffset.x"),
+  snapRight: command("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: true }),
 }
 ```
 
 - **`input(vmMethod, propPath)`** — on a widget event, read a widget property
   (dotted paths allowed) and push it into a VM setter. The reverse of a property
   binding.
-- **`measure(vmMethod, propPath)`** — a one-shot inbound read that retries on a
-  timer until the VM setter returns truthy (readiness lives in the VM), absorbing
-  the Titanium quirk that `postlayout` can fire before the view is laid out.
 - **`command(vmEvent, widgetMethod, ...args)`** + **`ref("vmProp")`** — when the
   VM fires a named event, reflectively call a widget method with literal /
   VM-derived args. The inverse of `onClick`.
@@ -141,6 +159,33 @@ conversion (system-px ↔ dip) lives in the **view-model** behind injected
 converters, so the VM is still Node-testable with fakes. These bindings retire the
 inbound shell seam a hand-off method (`attachViewModel`) would otherwise need — the
 default is to grow `bindView`, not to escape it.
+
+### The line `bindView` doesn't cross: Titanium layout hacks
+
+A genuine *Titanium workaround* — behaviour that exists only to paper over a Ti
+quirk — is **not** a declarative binding and must not enter `bindView`'s
+vocabulary, because that vocabulary is meant to be portable (a Flutter port keeps
+the VM and the bindings, and throws the shell away). The tray needs the
+ScrollView's laid-out size, but Titanium fires `postlayout` before the view has a
+usable frame, so the size must be polled. That poll lives in `lib/ui/measureView`
+(a Ti presenter helper) and is exposed by the Alloy shell as a minimal capability:
+
+```js
+// controllers/SampleTray.js (Alloy shell)
+exports.measureViewport = onSize => measureView($.content, onSize);
+```
+
+```js
+// lib/mvvm/controllers/SampleTray.js — knows it needs the viewport, not the hack
+const stopMeasure = view.measureViewport(size => vm.setViewport(size));
+```
+
+The screen controller asks for a viewport size through a clean, portable-looking
+capability; it never sees the retry/`postlayout` hack, and the VM's `setViewport`
+is a plain setter. In a Flutter port, `measureView` and the shell are discarded and
+a `LayoutBuilder` calls the same `vm.setViewport` — the VM and screen controller
+are unchanged. Keep such hacks in the shell (behind a named, tested helper), not in
+`bindView` and not in the VM.
 
 ## Three tiers (MVVMC)
 
