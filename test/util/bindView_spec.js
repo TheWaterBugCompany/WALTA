@@ -286,6 +286,13 @@ describe("bindView", function () {
       expect(vm.picks).to.deep.equal([[{ x: 5, y: 0 }]]);
     });
 
+    it("reads a dotted sub-path off the widget property", function () {
+      $.label.contentOffset = { x: 7, y: 0 };
+      bindView($, vm, { label: { onScroll: input("pick", "contentOffset.x") } });
+      $.label.fireEvent("scroll");
+      expect(vm.picks).to.deep.equal([[7]]);
+    });
+
     it("reads the widget property fresh on each event (not once at bind)", function () {
       $.label.contentOffset = { x: 1 };
       bindView($, vm, { label: { onScroll: input("pick", "contentOffset") } });

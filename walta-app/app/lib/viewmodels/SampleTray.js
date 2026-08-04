@@ -2,16 +2,24 @@ const ChangeNotifier = require("../util/ChangeNotifier");
 
 const ENDCAP_BACKGROUND = "/images/endcap_320.png";
 const TILE_BACKGROUND = "/images/tiling_interior_320.png";
+const PLUS_ICON = "/images/plus-icon.png";
 
-// Titanium-free view-model for the ice-cube SampleTray. Owns all layout
-// geometry (derived from the measured viewport in dip), the scroll windowing,
-// and the hole/icon content — so the controller keeps only Titanium work
-// (measuring, scrolling, view create/remove). The `taxaSource` is the injected
-// SampleTraySource: { length(), at(i) -> plain per-taxon data, readonly }.
+const identity = (x) => x;
+
+// Titanium-free view-model for the ice-cube SampleTray. Owns all layout geometry
+// (derived from the measured viewport in dip), the scroll windowing, and the
+// per-cell content + intent — so the controller keeps no Titanium input wiring.
+// Titanium hands it raw system-px (scroll offset, viewport size) through bindView's
+// input/measure bindings; the VM converts with the injected toDip/toSystem so it
+// stays Node-testable. `taxaSource` is the injected SampleTraySource:
+// { length(), at(i) -> plain per-taxon data, surveyType(), onChange(cb), readonly }.
 class SampleTrayViewModel extends ChangeNotifier {
-  constructor({ taxaSource }) {
+  constructor({ taxaSource, topics, toDip, toSystem }) {
     super();
     this._taxaSource = taxaSource;
+    this._topics = topics;
+    this._toDip = toDip || identity;
+    this._toSystem = toSystem || identity;
     this._readonly = taxaSource.readonly === true;
     this._viewportWidth = 0;
     this._viewportHeight = 0;
@@ -19,25 +27,38 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._tileCache = new Map();
     this._endcapVm = new EndcapViewModel(this);
     this._visibleTiles = [];
+    this._onSourceChange = () => this.refresh();
+    if (typeof taxaSource.onChange === "function") taxaSource.onChange(this._onSourceChange);
   }
 
   // ── Geometry (bit-for-bit with the old controller's getters) ──────────────
 
-  setViewport({ width, height }) {
+  // Titanium hands the raw view size (system px) via a measure() binding; convert
+  // to dip and re-derive geometry. Returns whether the reading was usable, so the
+  // binding retries until the view is actually laid out.
+  setViewport(size) {
+    const width = this._toDip(size.width);
+    const height = this._toDip(size.height);
+    if (!height) return false;
     this._viewportWidth = width;
     this._viewportHeight = height;
-    // Two-level notification: cached children re-apply their geometry, then the
-    // screen re-applies its own (trayWidth) and reconciles.
-    this._tileCache.forEach(t => t.notifyListeners());
-    this._endcapVm.notifyListeners();
+    // Two-level cascade: cached cells re-apply their geometry (and their slots'),
+    // then the screen re-applies trayWidth + re-windows, then asks Ti to reveal the
+    // right edge.
+    this._tileCache.forEach(t => t.notifyGeometry());
+    this._endcapVm.notifyGeometry();
     this._recomputeWindow();
     this.notifyListeners();
+    this.trigger("scrollToRightEnd");
+    return true;
   }
 
   get viewWidth() { return this._viewportWidth; }
   get endcapHeight() { return this._viewportHeight; }
   get endcapWidth() { return this.endcapHeight * 0.5; }
   get middleWidth() { return this.endcapWidth * 1.3; }
+  // Each cell fills half the tile's middle width (two columns), less 1dp.
+  get cellWidth() { return this.middleWidth / 2 - 1; }
 
   get tileCount() {
     return Math.floor((this._taxaSource.length() - 2) / 4) + 1;
@@ -49,6 +70,9 @@ class SampleTrayViewModel extends ChangeNotifier {
   }
 
   get trayWidthCss() { return `${this.trayWidth}dp`; }
+
+  // The system-px offset the scroll command animates to — the far right edge.
+  get scrollTargetX() { return this._toSystem(this.trayWidth - this.viewWidth); }
 
   tileLeft(n) { return n * this.middleWidth + this.endcapWidth; }
   get tileWidth() { return this.middleWidth + 1; }
@@ -78,21 +102,29 @@ class SampleTrayViewModel extends ChangeNotifier {
   get endcapTiles() { return [this._endcapVm]; }
   get visibleTiles() { return this._visibleTiles; }
 
-  setScrollOffset(dip) {
-    this._scrollx = dip;
+  // Titanium hands the raw scroll offset (system px) via an input() binding.
+  setScrollOffset(px) {
+    this._scrollx = this._toDip(px);
     this._recomputeWindow();
     this.notifyListeners();
   }
 
-  // Re-derive hole content across every cached tile (a taxa add/change/remove),
-  // then re-window and notify. Positional icon reuse is preserved inside each
-  // cell VM's update().
+  // Re-derive cell content across every cached tile (a taxa add/change/remove),
+  // then re-window and reveal the right edge. Positional icon reuse is preserved
+  // inside each cell's slot VMs.
   refresh() {
     this._tileCache.forEach(t => t.update());
     this._endcapVm.update();
     this._recomputeWindow();
-    this.trigger("changed");
     this.notifyListeners();
+    this.trigger("scrollToRightEnd");
+  }
+
+  dispose() {
+    if (typeof this._taxaSource.offChange === "function") {
+      this._taxaSource.offChange(this._onSourceChange);
+    }
+    super.dispose();
   }
 
   _recomputeWindow() {
@@ -113,9 +145,9 @@ class SampleTrayViewModel extends ChangeNotifier {
     return vm;
   }
 
-  // ── Hole content (mirrors the old addTrayIcon / updateTrayIcon table) ──────
+  // ── Cell content (mirrors the old addTrayIcon / updateTrayIcon table) ──────
 
-  _holeKind(collectionIndex) {
+  _cellKind(collectionIndex) {
     const len = this._taxaSource.length();
     if (collectionIndex < len) {
       return this._taxaSource.at(collectionIndex) ? "taxon" : "blank";
@@ -124,28 +156,35 @@ class SampleTrayViewModel extends ChangeNotifier {
     return this._readonly ? "blank" : "addBehind";
   }
 
-  _iconData(collectionIndex) {
+  _cellData(collectionIndex) {
     return this._taxaSource.at(collectionIndex);
+  }
+
+  _surveyType() {
+    return typeof this._taxaSource.surveyType === "function"
+      ? this._taxaSource.surveyType()
+      : null;
   }
 }
 
-// A container of icon cells (the endcap's 2, an interior tile's 4). Holds a
-// stable array of hole slots so a taxon icon is reused in place across updates
-// (positional reuse — the position-correctness the spec pins). Structural
-// changes (a cell changing kind) notify so the component re-renders; an
-// abundance/silhouette change flows through the cell's own icon VM.
+// A container of taxa cells (the endcap's 2, an interior tile's 4). Holds a stable
+// array of SampleTaxaIconViewModel slots — one per position, retained across kind
+// changes so a taxon icon is reused in place (the positional correctness the spec
+// pins). Structural + content changes flow through each slot's own notify; the
+// cell notifies only its own geometry (on a viewport change).
 class CellsViewModel extends ChangeNotifier {
   constructor(tray, collectionIndices) {
     super();
     this._tray = tray;
     this._collectionIndices = collectionIndices;
-    this._holes = collectionIndices.map(() => null);
+    this._slots = collectionIndices.map((ci, j) => new SampleTaxaIconViewModel(tray, ci, j));
     this._fill();
   }
 
-  get holes() { return this._holes; }
-  // The screen's readonly mode, for the cell's edit-intent payload (hole kinds
-  // already encode it — plus/add-behind only appear when editable).
+  // The inner collection the SampleTaxaIcon components bind to.
+  get taxa() { return this._slots; }
+  // The screen's readonly mode, for the cell's edit-intent payload (kinds already
+  // encode it — plus/add-behind only appear when editable).
   get readonly() { return this._tray._readonly; }
 
   // dip css strings for the component to bind onto the Ti view. height is the
@@ -153,33 +192,24 @@ class CellsViewModel extends ChangeNotifier {
   get leftCss() { return `${this.left}dp`; }
   get widthCss() { return `${this.width}dp`; }
   get heightCss() { return `${this._tray.endcapHeight}dp`; }
-  // Each cell fills half the tile's middle width (two columns), less 1dp.
-  get holeWidthCss() { return `${this._tray.middleWidth / 2 - 1}dp`; }
 
   update() {
-    if (this._fill()) this.notifyListeners();
+    this._fill();
   }
 
-  // Returns true if a cell changed kind (a structural change).
+  // On a viewport change: re-apply this cell's geometry and each slot's width.
+  notifyGeometry() {
+    this.notifyListeners();
+    this._slots.forEach(s => s.notifyListeners());
+  }
+
   _fill() {
-    let structural = false;
     this._collectionIndices.forEach((collectionIndex, j) => {
-      const kind = this._tray._holeKind(collectionIndex);
-      const slot = this._holes[j];
-      if (kind === "taxon") {
-        const data = this._tray._iconData(collectionIndex);
-        if (slot && slot.kind === "taxon") {
-          slot.iconVm.update(data);
-        } else {
-          this._holes[j] = { kind, iconVm: new SampleTaxaIconViewModel(data) };
-          structural = true;
-        }
-      } else if (!slot || slot.kind !== kind) {
-        this._holes[j] = { kind, iconVm: null };
-        structural = true;
-      }
+      this._slots[j].update(
+        this._tray._cellKind(collectionIndex),
+        this._tray._cellData(collectionIndex)
+      );
     });
-    return structural;
   }
 }
 
@@ -204,32 +234,82 @@ class TileViewModel extends CellsViewModel {
   get backgroundImage() { return TILE_BACKGROUND; }
 }
 
+// One tray cell (a "slot"). Carries its own kind (taxon/plus/blank/addBehind),
+// its taxon content when filled, its geometry, and its own tap intent — so the
+// SampleTaxaIcon component binds it directly and needs no per-cell wiring.
 class SampleTaxaIconViewModel extends ChangeNotifier {
-  constructor(data) {
+  constructor(tray, collectionIndex, position) {
     super();
-    this._data = data;
+    this._tray = tray;
+    this._collectionIndex = collectionIndex;
+    this._position = position;
+    this._kind = null;
+    this._data = null;
   }
 
-  get image() { return this._data.silhouette; }
-  get abundanceText() { return this._data.abundance; }
-  get abundanceVisible() { return true; }
-  get sampleTaxonId() { return this._data.sampleTaxonId; }
-  get taxonId() { return this._data.taxonId; }
+  get key() { return this._position; }
+  get kind() { return this._kind; }
+  get widthCss() { return `${this._tray.cellWidth}dp`; }
+
+  // ── Taxon content (null/empty for non-taxon kinds) ────────────────────────
+  get iconVisible() { return this._kind === "taxon"; }
+  get image() { return this._data ? this._data.silhouette : null; }
+  get abundanceText() { return this._data ? this._data.abundance : ""; }
+  get abundanceVisible() { return this._kind === "taxon"; }
+  get sampleTaxonId() { return this._data ? this._data.sampleTaxonId : null; }
+  get taxonId() { return this._data ? this._data.taxonId : null; }
 
   get accessibilityLabel() {
-    return `Taxon ${this._data.taxonId}, ${this._data.name}, abundance ${this._data.abundance}`;
+    if (this._kind === "taxon") {
+      return `Taxon ${this._data.taxonId}, ${this._data.name}, abundance ${this._data.abundance}`;
+    }
+    if (this._kind === "plus") return "Add Sample";
+    return "";
   }
 
-  update(data) {
-    if (this._dataEquals(data)) return false;
-    this._data = data;
+  // The plus cell shows the add icon as its tap-surface background; other kinds
+  // are transparent.
+  get tapBackground() { return this._kind === "plus" ? PLUS_ICON : undefined; }
+
+  // Re-derive this slot's kind/content in place; notify iff something changed
+  // (positional reuse for a taxon that stays a taxon).
+  update(kind, data) {
+    if (kind === "taxon") {
+      if (this._kind === "taxon" && this._dataEquals(data)) return;
+      this._kind = "taxon";
+      this._data = data;
+      this.notifyListeners();
+      return;
+    }
+    if (kind === this._kind) return;
+    this._kind = kind;
+    this._data = null;
     this.notifyListeners();
-    return true;
+  }
+
+  // The cell owns its intent (like SampleHistoryRow): a taxon opens the editor,
+  // a plus / add-behind opens the add-to-sample chooser, a blank does nothing.
+  tap() {
+    const topics = this._tray._topics;
+    if (this._kind === "taxon") {
+      topics.fireTopicEvent(topics.IDENTIFY, {
+        sampleTaxonId: this.sampleTaxonId,
+        taxonId: this.taxonId,
+        readonly: this._tray._readonly,
+      });
+    } else if (this._kind === "plus" || this._kind === "addBehind") {
+      topics.fireTopicEvent(topics.SELECT_METHOD, {
+        allowAddToSample: true,
+        surveyType: this._tray._surveyType(),
+        unknownBug: true,
+      });
+    }
   }
 
   _dataEquals(o) {
     const a = this._data;
-    return a.silhouette === o.silhouette
+    return a && o
+      && a.silhouette === o.silhouette
       && a.abundance === o.abundance
       && a.taxonId === o.taxonId
       && a.sampleTaxonId === o.sampleTaxonId
