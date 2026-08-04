@@ -8,6 +8,7 @@ module.exports = {
   SampleHistory: require("./SampleHistory"),
   SampleHistoryRow: require("./SampleHistoryRow"),
   SampleTaxaIcon: require("./SampleTaxaIcon"),
+  SampleTrayPlus: require("./SampleTrayPlus"),
   SampleTray: require("./SampleTray"),
   SampleTrayTile: require("./SampleTrayTile"),
   SampleTrayEndcap: require("./SampleTrayEndcap"),

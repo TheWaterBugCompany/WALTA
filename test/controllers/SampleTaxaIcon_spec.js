@@ -19,7 +19,6 @@ function makeIconView() {
     padIcon: makeWidget(),
     icon: makeWidget(),
     abundance: makeWidget(),
-    plus: makeWidget(),
     tap: makeWidget(),
   };
 }
@@ -35,16 +34,15 @@ function fakeTopics() {
   };
 }
 
-// A slot VM straight from the tray, so the component binds exactly what it will
-// on-device. `kind` selects a taxon cell (filled) or the plus cell (empty).
-function slotVm(kind, topics) {
-  const taxa = kind === "taxon" ? [taxon(1, "3-5"), taxon(2, "1-2")] : [];
-  const source = { length: () => taxa.length, at: (i) => taxa[i], surveyType: () => 3, readonly: false };
+// A taxon slot VM straight from the tray, so the component binds exactly what it
+// will on-device. (The add affordance is a separate component — SampleTrayPlus.)
+function taxonSlotVm(topics, readonly) {
+  const taxa = [taxon(1, "3-5"), taxon(2, "1-2")];
+  const source = { length: () => taxa.length, at: (i) => taxa[i], surveyType: () => 3, readonly: readonly === true };
   const tray = new SampleTrayViewModel({ taxaSource: source, topics });
   tray.setViewport({ width: 300, height: 100 });
   tray.setScrollOffset(0);
-  // 0 taxa → the endcap's first cell is the plus (collectionIndex 0 === length).
-  return tray.endcapTiles[0].taxa[0];
+  return tray.endcapVm.taxa[0];
 }
 
 describe("SampleTaxaIcon controller", function () {
@@ -59,40 +57,25 @@ describe("SampleTaxaIcon controller", function () {
   afterEach(function () { if (ctl) ctl.dispose(); ctl = null; });
 
   it("binds a taxon cell's image, abundance and accessibility label", function () {
-    const $ = build(slotVm("taxon"));
+    const $ = build(taxonSlotVm());
     expect($.icon.image).to.include("/taxon_1.png");
     expect($.abundance.text).to.equal("3-5");
     expect($.padIcon.visible).to.equal(true);
     expect($.tap.accessibilityLabel).to.equal("Taxon 1, Species 1, abundance 3-5");
-    expect($.tap.backgroundImage, "no plus background on a taxon").to.equal(undefined);
-  });
-
-  it("shows the plus icon and hides the taxon icon on a plus cell", function () {
-    const $ = build(slotVm("plus"));
-    expect($.padIcon.visible).to.equal(false);
-    expect($.plus.visible).to.equal(true);
-    expect($.plus.image).to.include("plus-icon.png");
   });
 
   it("fires the edit intent when the tap surface is clicked (taxon)", function () {
     const topics = fakeTopics();
-    const $ = build(slotVm("taxon", topics));
+    const $ = build(taxonSlotVm(topics));
     $.tap.fireEvent("click");
     expect(topics.fired).to.deep.equal([{
       event: "identify", data: { sampleTaxonId: 1001, taxonId: 1, readonly: false },
     }]);
   });
 
-  it("fires the add-to-sample intent when the plus tap surface is clicked", function () {
-    const topics = fakeTopics();
-    const $ = build(slotVm("plus", topics));
-    $.tap.fireEvent("click");
-    expect(topics.fired[0].event).to.equal("select_method");
-  });
-
   it("stops binding and firing after dispose", function () {
     const topics = fakeTopics();
-    const $ = build(slotVm("taxon", topics));
+    const $ = build(taxonSlotVm(topics));
     ctl.dispose(); ctl = null;
     $.tap.fireEvent("click");
     expect(topics.fired).to.deep.equal([]);
