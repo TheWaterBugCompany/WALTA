@@ -23,6 +23,13 @@ module.exports = function createSampleTraySource(taxaCollection, key, readonly) 
       var m = taxaCollection.at(i);
       return m ? toIconData(m, key) : undefined;
     },
+    // The add-to-sample intent needs the current sample's survey type (a model
+    // read, kept behind this seam so the VM stays Ti/Alloy-free).
+    surveyType: function () { return parseInt(Alloy.Models.sample.get("surveyType")); },
+    // Collection observation lives behind the source so the VM subscribes to its
+    // data changing without the window shell wiring Alloy events.
+    onChange: function (cb) { taxaCollection.on("add change remove", cb); },
+    offChange: function (cb) { taxaCollection.off("add change remove", cb); },
     readonly: readonly === true,
   };
 };

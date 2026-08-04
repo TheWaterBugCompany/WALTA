@@ -9,7 +9,18 @@ function fakeTaxaSource(taxa, readonly) {
   return {
     length() { return taxa.length; },
     at(i) { return taxa[i]; },
+    surveyType() { return 3; },
     readonly: readonly === true,
+  };
+}
+
+// Records the topic events the cell's tap intent fires.
+function fakeTopics() {
+  return {
+    IDENTIFY: "identify",
+    SELECT_METHOD: "select_method",
+    fired: [],
+    fireTopicEvent(event, data) { this.fired.push({ event, data }); },
   };
 }
 
@@ -30,6 +41,10 @@ function taxaOf(n) {
 
 function vmWith(len, readonly) {
   return new SampleTrayViewModel({ taxaSource: fakeTaxaSource(taxaOf(len), readonly) });
+}
+
+function vmWithTopics(len, topics, readonly) {
+  return new SampleTrayViewModel({ taxaSource: fakeTaxaSource(taxaOf(len), readonly), topics });
 }
 
 // Viewport height 100, width 300 gives round geometry numbers:
@@ -164,7 +179,7 @@ describe("SampleTrayViewModel", function () {
       expect(tile1.leftCss).to.equal("115dp");
       expect(tile1.widthCss).to.equal("66dp");
       expect(tile1.heightCss, "height = viewport height").to.equal("100dp");
-      expect(tile1.holeWidthCss, "half the middle width less 1: 65/2 - 1").to.equal("31.5dp");
+      expect(tile1.taxa[0].widthCss, "half the middle width less 1: 65/2 - 1").to.equal("31.5dp");
     });
   });
 
@@ -188,68 +203,126 @@ describe("SampleTrayViewModel", function () {
 
     it("holds the first two collection cells", function () {
       const vm = vmWithViewport(30);
-      expect(vm.endcapTiles[0].holes).to.have.lengthOf(2);
+      expect(vm.endcapTiles[0].taxa).to.have.lengthOf(2);
     });
   });
 
-  describe("holes", function () {
-    // Hole kinds mirror the old addTrayIcon/updateTrayIcon decision table.
+  describe("cell kinds", function () {
+    // Cell kinds mirror the old addTrayIcon/updateTrayIcon decision table.
     it("shows a taxon icon for a filled cell", function () {
-      const vm = vmWithViewport(6);
-      const holes = vm.endcapTiles[0].holes;
-      expect(holes[0].kind).to.equal("taxon");
-      expect(holes[0].iconVm.image).to.include("/taxon_1.png");
+      const cells = vmWithViewport(6).endcapTiles[0].taxa;
+      expect(cells[0].kind).to.equal("taxon");
+      expect(cells[0].image).to.include("/taxon_1.png");
     });
 
     it("shows the plus (add) cell at the first empty position", function () {
       const vm = vmWithViewport(2); // taxa fill the endcap; first tile cell 0 is empty
       const tile0 = (vm.setScrollOffset(0), vm.visibleTiles[0]);
-      expect(tile0.holes[0].kind, "cell at index === length is the plus").to.equal("plus");
-      expect(tile0.holes[0].iconVm).to.equal(null);
+      expect(tile0.taxa[0].kind, "cell at index === length is the plus").to.equal("plus");
+      expect(tile0.taxa[0].image, "no silhouette on a plus cell").to.equal(null);
     });
 
     it("shows an add-behind (blank, tappable) cell past the plus", function () {
       const vm = vmWithViewport(2);
       const tile0 = (vm.setScrollOffset(0), vm.visibleTiles[0]);
-      expect(tile0.holes[1].kind, "cell past length is add-behind").to.equal("addBehind");
+      expect(tile0.taxa[1].kind, "cell past length is add-behind").to.equal("addBehind");
     });
 
     it("shows blank cells only (no plus / add-behind) in readonly mode", function () {
       const vm = vmWithViewport(2, { readonly: true });
       const tile0 = (vm.setScrollOffset(0), vm.visibleTiles[0]);
-      expect(tile0.holes.map(h => h.kind)).to.deep.equal(["blank", "blank", "blank", "blank"]);
+      expect(tile0.taxa.map(c => c.kind)).to.deep.equal(["blank", "blank", "blank", "blank"]);
     });
 
     it("orders a tile's cells column-major [base, base+2, base+1, base+3]", function () {
       const vm = vmWithViewport(10);
       const tile0 = (vm.setScrollOffset(0), vm.visibleTiles[0]);
       // tile 0 base = 2 → cells [2,4,3,5]; taxa 1..10 → all taxon
-      expect(tile0.holes.map(h => h.iconVm.taxonId)).to.deep.equal([3, 5, 4, 6]);
+      expect(tile0.taxa.map(c => c.taxonId)).to.deep.equal([3, 5, 4, 6]);
+    });
+
+    it("keys each cell on its position for the taxa collection diff", function () {
+      const cells = vmWithViewport(10).visibleTiles[0].taxa;
+      expect(cells.map(c => c.key)).to.deep.equal([0, 1, 2, 3]);
     });
   });
 
   describe("SampleTaxaIconViewModel", function () {
-    function iconVmOf(len, idx) {
-      const vm = vmWithViewport(len);
-      return vm.endcapTiles[0].holes[idx].iconVm;
+    function cellOf(len, idx) {
+      return vmWithViewport(len).endcapTiles[0].taxa[idx];
     }
 
     it("exposes the silhouette image", function () {
-      expect(iconVmOf(6, 0).image).to.include("/taxon_1.png");
+      expect(cellOf(6, 0).image).to.include("/taxon_1.png");
     });
 
-    it("exposes the abundance text, always visible (the !== 1 branch is dead)", function () {
-      const icon = iconVmOf(6, 0);
-      expect(icon.abundanceText).to.equal("1-2");
-      expect(icon.abundanceVisible).to.equal(true);
+    it("shows the abundance only for a taxon cell", function () {
+      const taxon = cellOf(6, 0);
+      expect(taxon.abundanceText).to.equal("1-2");
+      expect(taxon.abundanceVisible).to.equal(true);
+      expect(taxon.iconVisible).to.equal(true);
+    });
+
+    it("hides the icon and abundance on a plus cell", function () {
+      const vm = vmWithViewport(2);
+      const plus = (vm.setScrollOffset(0), vm.visibleTiles[0].taxa[0]);
+      expect(plus.iconVisible).to.equal(false);
+      expect(plus.abundanceVisible).to.equal(false);
+      expect(plus.tapBackground, "the plus icon backs the tap surface").to.include("plus-icon.png");
+    });
+
+    it("has no tap background on a taxon cell", function () {
+      expect(cellOf(6, 0).tapBackground).to.equal(undefined);
     });
 
     it("composes an accessibility label from taxon id, name and abundance", function () {
-      expect(iconVmOf(6, 0).accessibilityLabel).to.equal("Taxon 1, Species 1, abundance 1-2");
+      expect(cellOf(6, 0).accessibilityLabel).to.equal("Taxon 1, Species 1, abundance 1-2");
     });
 
     it("exposes the sample taxon id for the edit intent", function () {
-      expect(iconVmOf(6, 0).sampleTaxonId).to.equal(1001);
+      expect(cellOf(6, 0).sampleTaxonId).to.equal(1001);
+    });
+  });
+
+  describe("cell tap intent", function () {
+    it("fires IDENTIFY with the taxon ids and readonly flag when a taxon is tapped", function () {
+      const topics = fakeTopics();
+      const cell = vmWithTopics(6, topics).endcapTiles[0].taxa[0];
+      cell.tap();
+      expect(topics.fired).to.deep.equal([{
+        event: "identify",
+        data: { sampleTaxonId: 1001, taxonId: 1, readonly: false },
+      }]);
+    });
+
+    it("fires SELECT_METHOD to add to the sample when a plus cell is tapped", function () {
+      const topics = fakeTopics();
+      const vm = vmWithTopics(2, topics);
+      vm.setViewport({ width: 300, height: 100 });
+      const plus = (vm.setScrollOffset(0), vm.visibleTiles[0].taxa[0]);
+      plus.tap();
+      expect(topics.fired).to.deep.equal([{
+        event: "select_method",
+        data: { allowAddToSample: true, surveyType: 3, unknownBug: true },
+      }]);
+    });
+
+    it("fires SELECT_METHOD when an add-behind cell is tapped", function () {
+      const topics = fakeTopics();
+      const vm = vmWithTopics(2, topics);
+      vm.setViewport({ width: 300, height: 100 });
+      const addBehind = (vm.setScrollOffset(0), vm.visibleTiles[0].taxa[1]);
+      addBehind.tap();
+      expect(topics.fired[0].event).to.equal("select_method");
+    });
+
+    it("does nothing when a blank cell is tapped", function () {
+      const topics = fakeTopics();
+      const vm = vmWithTopics(2, topics, true); // readonly → all blank
+      vm.setViewport({ width: 300, height: 100 });
+      const blank = (vm.setScrollOffset(0), vm.visibleTiles[0].taxa[0]);
+      blank.tap();
+      expect(topics.fired).to.deep.equal([]);
     });
   });
 
@@ -274,41 +347,80 @@ describe("SampleTrayViewModel", function () {
       // so tile 0 now sits at left = 0*middleWidth + endcapWidth = 60.
       expect(tile0.left).to.equal(60);
     });
+
+    // Each cell binds its own widthCss, so a late viewport measurement must
+    // cascade to the slots or they render at a stale width (the geometry-cascade
+    // risk the plan flags).
+    it("notifies each cell's slots on a viewport change so their width re-applies", function () {
+      const vm = vmWithViewport(30);
+      vm.setScrollOffset(0);
+      const slot = vm.visibleTiles[0].taxa[0];
+      let slotNotified = 0;
+      slot.addListener(() => slotNotified++);
+      vm.setViewport({ width: 400, height: 120 });
+      expect(slotNotified).to.equal(1);
+      // middleWidth = (120*0.5)*1.3 = 78 → cellWidth = 78/2 - 1 = 38.
+      expect(slot.widthCss).to.equal("38dp");
+    });
+
+    it("ignores a viewport measurement with no height (view not laid out yet)", function () {
+      const vm = vmWith(30);
+      expect(vm.setViewport({ width: 300, height: 0 }), "reports the reading unusable").to.equal(false);
+      expect(vm.viewWidth).to.equal(0);
+    });
   });
 
   describe("refresh", function () {
-    // The controller calls refresh() when the taxa collection changes.
-    it("re-derives hole kinds after taxa are added", function () {
+    // The VM refreshes when the taxa collection changes (via source.onChange).
+    it("re-derives cell kinds after taxa are added", function () {
       const taxa = taxaOf(2);
-      const source = fakeTaxaSource(taxa);
+      const vm = new SampleTrayViewModel({ taxaSource: fakeTaxaSource(taxa) });
+      vm.setViewport({ width: 300, height: 100 });
+      vm.setScrollOffset(0);
+      expect(vm.visibleTiles[0].taxa[0].kind).to.equal("plus");
+      taxa.push(taxon(3, "3-5")); // now index 2 is filled
+      vm.refresh();
+      expect(vm.visibleTiles[0].taxa[0].kind).to.equal("taxon");
+      expect(vm.visibleTiles[0].taxa[0].taxonId).to.equal(3);
+    });
+
+    it("updates a retained taxon cell in place on an abundance change (positional reuse)", function () {
+      const taxa = taxaOf(6);
+      const vm = new SampleTrayViewModel({ taxaSource: fakeTaxaSource(taxa) });
+      vm.setViewport({ width: 300, height: 100 });
+      const cell = vm.endcapTiles[0].taxa[0];
+      taxa[0] = taxon(1, "6-10");
+      vm.refresh();
+      expect(vm.endcapTiles[0].taxa[0], "same slot VM instance").to.equal(cell);
+      expect(cell.abundanceText).to.equal("6-10");
+    });
+
+    it("fires 'scrollToRightEnd' so the scroll command reveals the newest taxon", function () {
+      const vm = vmWithViewport(6);
+      let fired = 0;
+      vm.on("scrollToRightEnd", () => fired++);
+      vm.refresh();
+      expect(fired).to.equal(1);
+    });
+
+    it("refreshes automatically when the source reports a change", function () {
+      const taxa = taxaOf(2);
+      let cb = null;
+      const source = Object.assign(fakeTaxaSource(taxa), { onChange(fn) { cb = fn; } });
       const vm = new SampleTrayViewModel({ taxaSource: source });
       vm.setViewport({ width: 300, height: 100 });
       vm.setScrollOffset(0);
-      expect(vm.visibleTiles[0].holes[0].kind).to.equal("plus");
-      taxa.push(taxon(3, "3-5")); // now index 2 is filled
-      vm.refresh();
-      expect(vm.visibleTiles[0].holes[0].kind).to.equal("taxon");
-      expect(vm.visibleTiles[0].holes[0].iconVm.taxonId).to.equal(3);
+      expect(vm.visibleTiles[0].taxa[0].kind).to.equal("plus");
+      taxa.push(taxon(3, "3-5"));
+      cb(); // the collection fired add/change/remove
+      expect(vm.visibleTiles[0].taxa[0].kind).to.equal("taxon");
     });
+  });
 
-    it("updates a retained taxon icon in place on an abundance change (positional reuse)", function () {
-      const taxa = taxaOf(6);
-      const source = fakeTaxaSource(taxa);
-      const vm = new SampleTrayViewModel({ taxaSource: source });
-      vm.setViewport({ width: 300, height: 100 });
-      const iconVm = vm.endcapTiles[0].holes[0].iconVm;
-      taxa[0] = taxon(1, "6-10");
-      vm.refresh();
-      expect(vm.endcapTiles[0].holes[0].iconVm, "same icon VM instance").to.equal(iconVm);
-      expect(iconVm.abundanceText).to.equal("6-10");
-    });
-
-    it("fires a 'changed' event so the controller can scroll to the right edge", function () {
-      const vm = vmWithViewport(6);
-      let changed = 0;
-      vm.on("changed", () => changed++);
-      vm.refresh();
-      expect(changed).to.equal(1);
+  describe("scroll target", function () {
+    it("reports the right-edge offset the scroll command animates to", function () {
+      // trayWidth 570 - viewWidth 300 = 270 (toSystem defaults to identity).
+      expect(vmWithViewport(30).scrollTargetX).to.equal(270);
     });
   });
 });

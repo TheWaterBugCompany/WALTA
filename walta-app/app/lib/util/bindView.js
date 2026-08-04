@@ -64,6 +64,12 @@ function isInput(ref) {
   return ref !== null && typeof ref === "object" && ref.__input === true;
 }
 
+// Reads a widget property, following a dotted path (e.g. "contentOffset.x") so a
+// scroll input can bind straight to the axis it needs.
+function readPath(obj, path) {
+  return path.split(".").reduce((o, k) => (o == null ? o : o[k]), obj);
+}
+
 // A one-shot inbound measurement that must survive a premature layout: on the
 // event, read a named widget property and push it into a VM setter that returns
 // truthy once the reading is usable (readiness lives in the VM, not a predicate
@@ -182,7 +188,7 @@ module.exports = function bindView($, vm, bindings, options) {
           const handler = isCall(ref)
             ? function () { vm[ref.method](...ref.args); }
             : isInput(ref)
-            ? function () { vm[ref.method](widget[ref.prop]); }
+            ? function () { vm[ref.method](readPath(widget, ref.prop)); }
             : function () { vm[ref](); };
           eventTeardowns.push(attachEvent(widget, eventName, handler));
         }
