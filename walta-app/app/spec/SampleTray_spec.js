@@ -80,7 +80,17 @@ describe( 'SampleTray controller', function() {
           if ( target <= 0 ) return true;   // short tray: nothing to scroll
           var off = SampleTray.content.contentOffset;
           var cur = off ? (off.x || 0) : 0;
-          return Math.abs(cur - target) < 2.0;
+          // The ScrollView clamps its offset to (contentWidth - viewportWidth).
+          // After a taxa add the VM's target jumps immediately, but the tray takes
+          // a layout pass to widen; two things follow. First, don't settle until
+          // the tray has actually laid out to its full new width (reachable reaches
+          // the target) — otherwise we'd settle on the stale pre-add edge before
+          // the new tile renders. Second, the tray's dip-derived width leaves the
+          // reachable max a rounding-pixel short of the dip-derived target, so
+          // settle cur against that reachable max, not the target.
+          var reachable = SampleTray.tray.size.width - SampleTray.content.size.width;
+          var TOL = 2;   // dip <-> system rounding across the geometry chain
+          return reachable >= target - TOL && Math.abs(cur - Math.min(target, reachable)) < TOL;
         }));
       }
       vm.on("scrollToRightEnd", onIntent);
