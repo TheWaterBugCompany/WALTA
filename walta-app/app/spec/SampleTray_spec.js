@@ -133,6 +133,15 @@ describe( 'SampleTray controller', function() {
     return sorted[i];
   }
 
+  // Poll the rendered tray until the content assertions hold. Settling the scroll
+  // only guarantees the offset; under load the windowed tile a scroll reveals is
+  // created — and its slot images bound — a beat later, so a one-shot assertion
+  // races the render. waitFor swallows the assertion throw and retries to the
+  // deadline, so a genuine mismatch still fails (as a timeout).
+  function assertEventually( assertFn ) {
+    return waitFor( function() { assertFn(); return true; } );
+  }
+
   // A cell is one of two polymorphic slot components: a SampleTaxaIcon (taxon/blank,
   // children = [ padIcon, tapSurface ]; padIcon holds [ icon, abundance ]) or a
   // SampleTrayPlus (add, children = [ plus, tapSurface ]). In both, the tap surface
@@ -433,14 +442,14 @@ describe( 'SampleTray controller', function() {
           .then( scrollSampleTray(0) )           // scroll back to left
           .then( () => trayVm().trayWidth - trayVm().viewWidth )
           .then( (width) => scrollSampleTray(width)() )
-          .then( function() {
+          .then( () => assertEventually( function() {
             var tiles = SampleTray.tray.children;
             var tile = findRightMost( tiles );
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
             assertPlus( sampleTaxa[0] );
-          });
+          }));
 
     });
 
@@ -450,36 +459,36 @@ describe( 'SampleTray controller', function() {
           .then( () => trayVm().trayWidth - trayVm().viewWidth )
           .then( (maxX) => scrollSampleTray(maxX)() )
           .then( scrollSampleTray(0) )
-          .then( function() {
+          .then( () => assertEventually( function() {
             var tiles = SampleTray.tray.children;
             expect( tiles.length ).to.be.at.least(4);
 
             tiles.shift(); // discard end cap since that is always static
-          
+
             // assert left most tile
             var tile = findLeftMost( tiles  );
             assertTaxaBackground( tile, "images/tiling_interior_320.png" );
-            
+
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
             assertSample( sampleTaxa[0], "/anisops_b.png", "3-5" );
             assertSample( sampleTaxa[1], "/atalophlebia_b.png", "1-2" );
             assertSample( sampleTaxa[2], "/anostraca_b.png", "1-2" );
             assertSample( sampleTaxa[3], "/aeshnidae_telephleb_b.png", "6-10" );
-          });
+          }));
     });
 
     it('should scroll to the far right upon opening', function() {
       return Promise.resolve()
           .then( openSampleTray )
-          .then( () => {
+          .then( () => assertEventually( () => {
             var tiles = SampleTray.tray.children;
             tiles.shift();
             var tile = findRightMost( tiles );
             var sampleTaxa = getTaxaIcons( tile );
             expect( sampleTaxa ).to.have.lengthOf(4);
             assertPlus( sampleTaxa[0] );
-          })
+          }))
     });
 
    
@@ -533,7 +542,7 @@ describe( 'SampleTray controller', function() {
             Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ) );
             return scrollDone;
            })
-          .then( () => {
+          .then( () => assertEventually( () => {
             var tiles = SampleTray.tray.children;
             tiles.shift();
             var tile = findRightMost( tiles );
@@ -541,7 +550,7 @@ describe( 'SampleTray controller', function() {
             expect( sampleTaxa ).to.have.lengthOf(4);
             assertPlus( sampleTaxa[0] );
             expect( SampleTray.tray.size.width ).to.be.above( SampleTray.content.size.width );
-          });
+          }));
     });
 
     it('should scroll to the far right after adding 27th taxon', function() {
@@ -590,7 +599,7 @@ describe( 'SampleTray controller', function() {
             Alloy.Collections["taxa"].add( Alloy.createModel( "taxa", { taxonId: "1", abundance: "3-5" } ) );
             return scrollDone;
            })
-          .then( () => {
+          .then( () => assertEventually( () => {
             var tiles = SampleTray.tray.children;
             tiles.shift();
             var tile = findRightMost( tiles );
@@ -598,7 +607,7 @@ describe( 'SampleTray controller', function() {
             expect( sampleTaxa ).to.have.lengthOf(4);
             assertPlus( sampleTaxa[2] );
             expect( SampleTray.tray.size.width ).to.be.above( SampleTray.content.size.width );
-          });
+          }));
     });
 
     // The plus icon opens the identification-method chooser for adding to the
