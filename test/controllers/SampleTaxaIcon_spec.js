@@ -19,6 +19,7 @@ function makeIconView() {
     padIcon: makeWidget(),
     icon: makeWidget(),
     abundance: makeWidget(),
+    verdict: makeWidget(),
     tap: makeWidget(),
   };
 }
@@ -62,6 +63,11 @@ describe("SampleTaxaIcon controller", function () {
     expect($.abundance.text).to.equal("3-5");
     expect($.padIcon.visible).to.equal(true);
     expect($.tap.accessibilityLabel).to.equal("Taxon 1, Species 1, abundance 3-5");
+  });
+
+  it("keeps the verdict overlay hidden until the tray is assessed", function () {
+    const $ = build(taxonSlotVm());
+    expect($.verdict.visible).to.equal(false);
   });
 
   it("fires the edit intent when the tap surface is clicked (taxon)", function () {

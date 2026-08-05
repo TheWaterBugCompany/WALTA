@@ -36,6 +36,14 @@
   height: "80%"
 }
 
+// The tick/cross overlay: centred over the silhouette, hidden until the tray is
+// assessed. Image + visibility are bound from the cell view-model.
+".verdict": {
+  width: "55%",
+  height: "55%",
+  visible: false
+}
+
 // A transparent full-cell overlay: the only view carrying the tap listener, so a
 // tap is hit-tested onto it (not the listener-less icon beneath) on every kind.
 ".tapSurface": {
