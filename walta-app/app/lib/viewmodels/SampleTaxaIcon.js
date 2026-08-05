@@ -30,6 +30,17 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
   get sampleTaxonId() { return this._data ? this._data.sampleTaxonId : null; }
   get taxonId() { return this._data ? this._data.taxonId : null; }
 
+  // The training tick/cross overlay. The verdict for this taxon comes from the
+  // tray (the assessor fills it, keyed by sampleTaxonId); blank/plus cells have
+  // no sampleTaxonId, so they never get one. Blank until assessed → hidden.
+  get verdict() { return this._tray.verdictFor(this.sampleTaxonId); }
+  get verdictImage() {
+    if (this.verdict === "correct") return "/images/tick-icon.png";
+    if (this.verdict === "incorrect") return "/images/cross-icon.png";
+    return null;
+  }
+  get verdictVisible() { return this.verdictImage !== null; }
+
   get accessibilityLabel() {
     if (this._kind === "taxon") {
       return `Taxon ${this._data.taxonId}, ${this._data.name}, abundance ${this._data.abundance}`;

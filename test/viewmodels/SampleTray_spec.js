@@ -1,6 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
 const SampleTrayViewModel = require("../../walta-app/app/lib/viewmodels/SampleTray");
+const SampleTaxaIconViewModel = require("../../walta-app/app/lib/viewmodels/SampleTaxaIcon");
 
 // A Titanium-free stand-in for the SampleTraySource the controller builds from
 // Alloy.Collections["taxa"] + the key: length() + at(i) returning the plain
@@ -305,6 +306,43 @@ describe("SampleTrayViewModel", function () {
 
     it("exposes the sample taxon id for the edit intent", function () {
       expect(cellOf(6, 0).sampleTaxonId).to.equal(1001);
+    });
+  });
+
+  describe("verdict overlay", function () {
+    // The training tick/cross overlay: a taxon cell reads its verdict from the
+    // tray by sampleTaxonId (the seam the assessor fills). PR-2 is the display
+    // capability only — map the verdict to the overlay image + visibility.
+    function iconWithVerdict(verdict) {
+      const tray = { cellWidth: 30, verdictFor: () => verdict };
+      const icon = new SampleTaxaIconViewModel(tray, 0, 0);
+      icon.update("taxon", taxon(1, "1-2"));
+      return icon;
+    }
+
+    it("shows the tick overlay for a correct taxon", function () {
+      const icon = iconWithVerdict("correct");
+      expect(icon.verdictImage).to.equal("/images/tick-icon.png");
+      expect(icon.verdictVisible).to.equal(true);
+    });
+
+    it("shows the cross overlay for an incorrect taxon", function () {
+      const icon = iconWithVerdict("incorrect");
+      expect(icon.verdictImage).to.equal("/images/cross-icon.png");
+      expect(icon.verdictVisible).to.equal(true);
+    });
+
+    it("hides the overlay when the taxon has no verdict", function () {
+      const icon = iconWithVerdict(null);
+      expect(icon.verdictImage).to.equal(null);
+      expect(icon.verdictVisible).to.equal(false);
+    });
+
+    it("has no verdict overlay before the tray is assessed (stub returns null)", function () {
+      // The real tray's verdictFor is the PR-2 stub — no assessor yet, so every
+      // taxon cell is verdict-free and the normal tray renders no overlays.
+      const cell = vmWithViewport(6).endcapVm.taxa[0];
+      expect(cell.verdictVisible).to.equal(false);
     });
   });
 

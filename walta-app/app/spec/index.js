@@ -55,6 +55,7 @@ var SPEC_FILES = [
   "Register",
   "QuestionController",
   "SampleTray",
+  "SampleTaxaIcon",
   "Sample",
   "Speedbug",
   "Summary",

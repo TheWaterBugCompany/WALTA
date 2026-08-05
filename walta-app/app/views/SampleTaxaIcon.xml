@@ -4,6 +4,9 @@
 			<ImageView id="icon"/>
 			<Label id="abundance"/>
 		</View>
+		<!-- Training tick/cross overlay, above the silhouette but below the tap
+		     surface so it never intercepts a tap. Hidden until assessed. -->
+		<ImageView id="verdict" class="verdict"/>
 		<!-- Last child = topmost = the single hit target, so a tap always lands on a
 		     listener-bearing view (iOS) and never double-fires. -->
 		<View id="tap" class="tapSurface"/>

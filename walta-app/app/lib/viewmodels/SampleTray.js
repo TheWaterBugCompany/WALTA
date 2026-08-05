@@ -34,6 +34,11 @@ class SampleTrayViewModel extends ChangeNotifier {
   // ── Accessors the cell + slot VMs read ────────────────────────────────────
   get topics() { return this._topics; }
   get readonly() { return this._readonly; }
+
+  // The training verdict for a taxon, keyed by sampleTaxonId — filled by the
+  // assessor once the tray is assessed. No assessor yet, so every cell is
+  // verdict-free and the normal tray renders no tick/cross overlay.
+  verdictFor(_sampleTaxonId) { return null; }
   surveyType() {
     return typeof this._taxaSource.surveyType === "function"
       ? this._taxaSource.surveyType()
