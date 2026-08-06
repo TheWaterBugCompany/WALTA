@@ -22,9 +22,15 @@ describe( 'SampleTray controller', function() {
   // lib/mvvm/controllers/SampleTray wires the view-model and the two tray
   // collections; setup just records the args (create+open happen in openView).
   function setupSampleTray( extraArgs ) {
-    Alloy.Models.instance("sample");
     view = makeTestServices().View;
-    openArgs = Object.assign({ key: keyMock }, extraArgs);
+    // Production threads the current sample+taxa into the tray's args via
+    // Navigation (seeded off SURVEY_STARTED); here we inject the collection the
+    // test just set up plus the sample singleton the same way.
+    openArgs = Object.assign({
+      key: keyMock,
+      taxa: Alloy.Collections.instance("taxa"),
+      sample: Alloy.Models.instance("sample"),
+    }, extraArgs);
   }
 
   // The Alloy shell no longer holds the view-model — reach it through the View
@@ -864,7 +870,12 @@ describe( 'SampleTray controller', function() {
         Alloy.createModel( "taxa", { taxonId: "10", sampleTaxonId: 10, abundance: "6-10" }),
       ]);
       view = makeTestServices({ assessor: mixedAssessor }).View;
-      openArgs = { key: keyMock, training: true };
+      openArgs = {
+        key: keyMock,
+        training: true,
+        taxa: Alloy.Collections.instance("taxa"),
+        sample: Alloy.Models.instance("sample"),
+      };
       return openSampleTray();
     });
 
