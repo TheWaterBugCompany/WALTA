@@ -120,6 +120,12 @@ describe("Notes controller", function () {
         Topics.reset(); // remove global events handlers
       }
     });
+    // In the app a survey root seeds the current sample onto Navigation (which
+    // threads it into each screen's args); this flow opens screens directly, so
+    // seed it here the same way.
+    beforeEach(function () {
+      services.Navigation.setCurrentSample(Alloy.Models.instance("sample"), Alloy.Collections.instance("taxa"));
+    });
     it('should move from the sample tray to the notes screen', async function () {
       let main = Alloy.createController("Main", services);
       await main.startApp();
