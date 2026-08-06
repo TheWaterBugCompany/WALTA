@@ -18,20 +18,20 @@ exports.Survey = {
         });
     },
 
-    isNewSurvey: function() {
-        return Alloy.Models.instance("sample").isNewSurvey();
+    isNewSurvey: function( sample ) {
+        return sample.isNewSurvey();
     },
 
-    hasUnsavedChanges: async function() {
-        return Alloy.Models.instance("sample").hasUnsavedChanges();
+    hasUnsavedChanges: async function( sample ) {
+        return sample.hasUnsavedChanges();
     },
 
-    discardSurvey: function() {
-        Alloy.Models.instance("sample").destroy();
+    discardSurvey: function( sample ) {
+        sample.destroy();
     },
 
-    submitSurvey: function() {
-        return Alloy.Models.instance("sample").saveCurrentSample()
+    submitSurvey: function( sample ) {
+        return sample.saveCurrentSample()
             .then( () => {
                 debug("forcing upload");
                 Topics.fireTopicEvent(Topics.FORCE_UPLOAD);

@@ -26,6 +26,7 @@ module.exports = [
   "Sample",
   "Speedbug",
   "Summary",
+  "Survey",
   "TaxonDetails",
   "SiteDetails",
   "ViewUtils",

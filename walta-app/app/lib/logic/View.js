@@ -124,7 +124,7 @@ View.prototype.closeModal = function () {
   else { alloyCtl.destroy(); alloyCtl.off(); }
 };
 
-View.prototype.askDiscardEdits = function () {
+View.prototype.askDiscardEdits = function ( sample ) {
   var me = this;
   return new Promise(function (resolve, reject) {
     var message;
@@ -133,7 +133,7 @@ View.prototype.askDiscardEdits = function () {
     var discard;
     var submit;
 
-    if ( me.services.Survey.isNewSurvey() ) {
+    if ( me.services.Survey.isNewSurvey( sample ) ) {
       message = "The current sample has unsaved edits, but is not yet ready to submit, do you want to discard this survey?";
       cancel = 0;
       discard = 1;

@@ -57,11 +57,11 @@ Navigation.prototype.closeModal = async function () {
 // implement me to open user dialogue
 Navigation.prototype.onDiscardEdits = async function () {
     // will reject if the user cancels
-    let result = await this.services.View.askDiscardEdits();
+    let result = await this.services.View.askDiscardEdits( this.currentSample );
     if ( result == "submit")
-        this.services.Survey.submitSurvey();
+        this.services.Survey.submitSurvey( this.currentSample );
     else if ( result == "discard")
-        this.services.Survey.discardSurvey();
+        this.services.Survey.discardSurvey( this.currentSample );
 }
 
 /*
@@ -101,7 +101,7 @@ Navigation.prototype.garbageCollectControllers = async function (page) {
     if (index >= 0) {
         let unloadingPages = this.history.slice(index+1);
         if (_.contains(_.pluck(unloadingPages,"ctl"), "SiteDetails")) {
-            let hasUnsavedChanges =  await this.services.Survey.hasUnsavedChanges();
+            let hasUnsavedChanges =  await this.services.Survey.hasUnsavedChanges( this.currentSample );
             if (hasUnsavedChanges) {
                 await this.onDiscardEdits();
             }

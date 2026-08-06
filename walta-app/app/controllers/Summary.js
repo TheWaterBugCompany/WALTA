@@ -44,7 +44,7 @@ var COMPLETE_NOT_REGISTERED = "The survey is complete. The next step is to regis
 var INCOMPLETE_NO_LOCK = "I haven't been able to obtain a GPS lock yet, please ensure you have location enabled and move to out into the open to allow the coordinates to be collected.";
 
 var saveSampleAndUpload = function() {
-    return Survey.submitSurvey()
+    return Survey.submitSurvey( sample )
         .then( setMessageText );
 };
 
