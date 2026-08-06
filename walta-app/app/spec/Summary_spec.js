@@ -11,7 +11,7 @@ describe("Summary controller", function() {
     var ctl;
     
     function doTest( done, assertitions ) {
-        ctl = Alloy.createController("Summary");
+        ctl = Alloy.createController("Summary", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             checkTestResult( done, function() {
                 assertitions(); 
@@ -20,7 +20,7 @@ describe("Summary controller", function() {
     }
 
     function doTestReadOnly( done, assertitions ) {
-        ctl = Alloy.createController("Summary", { readonly: true });
+        ctl = Alloy.createController("Summary", { readonly: true, sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             checkTestResult( done, function() {
                 assertitions(); 

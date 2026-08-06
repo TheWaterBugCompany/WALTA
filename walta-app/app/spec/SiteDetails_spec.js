@@ -31,12 +31,12 @@ describe("SiteDetails controller", function() {
     });
     
 	it('should display the SiteDetails view', function(done) {
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
 		controllerOpenTest( ctl, done );
     });
 
     it('should save the survey type field', function(done) {   
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
 		controllerOpenTest( ctl, function() {
             ctl.on("updated", () => checkTestResult( () => {
                 expect( parseInt( sample.get("surveyType") ) ).to.equal(SURVEY_ORDER);
@@ -46,7 +46,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should save the water body type field', function(done) {    
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
 		controllerOpenTest( ctl, function() {
             ctl.on("updated", () => checkTestResult( done, () => {
                 expect( parseInt( sample.get("surveyType") ) ).to.equal(WATERBODY_LAKE);
@@ -56,7 +56,7 @@ describe("SiteDetails controller", function() {
     });
  
     it('should save the photo field', function(done){
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl,  async ()=>{
             // set a photo as if taken by the user
             simulatePhotoCapture( ctl.photoSelect );
@@ -73,7 +73,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should save waterbody name field', function(done) { 
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             ctl.waterbodyNameField
                 .addEventListener("change", () => checkTestResult( done, function changeHandler() {
@@ -87,7 +87,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should save near by feature field', function(done) {    
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             ctl.nearByFeatureField
                 .addEventListener("change", function changeHandler() {
@@ -103,7 +103,7 @@ describe("SiteDetails controller", function() {
 
     
     it('should disable the next button if mandatory fields are unset', function(done) {    
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             expect( ctl.nextButton.button.enabled ).to.be.false;
             ctl.on("updated", function changeHandler() {
@@ -122,7 +122,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should fire Topics.Habitat if next button pressed', function(done) {      
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         Topics.subscribe( Topics.HABITAT, function handler() {
             Topics.unsubscribe( Topics.HABITAT, handler );
             // we recieved the signal so pass!
@@ -144,7 +144,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should display "unobtained location" with no lock', function(done) {       
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             // unset these here to avoid triggering the geolocation service
             sample.unset("lng");
@@ -155,7 +155,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should display location coordinates with a lock', function(done) {     
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             done();
@@ -163,7 +163,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should update coordinates when gps lock is obtained', function(done) {   
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             sample.unset("lng");
             sample.unset("lat");
@@ -175,7 +175,7 @@ describe("SiteDetails controller", function() {
     });
     
     it('should update coordinates when location is changed', function(done) {        
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             sample.set("lng", "145.671339");
@@ -187,7 +187,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should NOT update coordinates when a new gps lock is obtained if location already set', function(done) {
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             Topics.fireTopicEvent(Topics.GPSLOCK, { latitude: 23, longitude: 100, accuracy: 1 });
@@ -198,7 +198,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('stops responding to GPSLOCK once the window is closed (no subscriber leak)', function(done) {
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             // Arm the handler: with no location set, a GPSLOCK would set one.
             sample.unset("lng");
@@ -215,7 +215,7 @@ describe("SiteDetails controller", function() {
 
 
     it('should open a map viewer when location icon is clicked', function(done) {   
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             expect( ctl.locationStatus.text ).to.equal("42.8907°S 147.6713°E");
             ctl.locationIndicator.fireEvent("click");
@@ -227,7 +227,7 @@ describe("SiteDetails controller", function() {
     }); 
     
     it('should have editable fields', async function() {   
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         await controllerOpenTest( ctl );
         expect( ctl.surveyLevelSelect.isDisabled() ).to.be.false;
         expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.false;
@@ -241,7 +241,7 @@ describe("SiteDetails controller", function() {
     });
 
     it('should NOT have editable fields in read only mode', async function() {     
-        ctl = Alloy.createController("SiteDetails", { readonly: true });
+        ctl = Alloy.createController("SiteDetails", { readonly: true, sample: Alloy.Models.instance("sample") });
         await controllerOpenTest( ctl );
         expect( ctl.surveyLevelSelect.isDisabled() ).to.be.true;
         expect( ctl.waterbodyTypeSelect.isDisabled() ).to.be.true;
@@ -250,7 +250,7 @@ describe("SiteDetails controller", function() {
     });
 
     it("photo should be selectable", function(done) {
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             expect( ctl.photoSelect.camera.visible).to.be.true;
             done();
@@ -260,7 +260,7 @@ describe("SiteDetails controller", function() {
     // WB-28: #right must fit within the safe-area-padded viewport so the
     // camera icon stays on-screen on notched iPhones.
     it("right column should fit within the content area (WB-28)", function(done) {
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             setTimeout( function() {
                 var right = ctl.right;
@@ -279,7 +279,7 @@ describe("SiteDetails controller", function() {
     // horizontally and the rightmost (camera) icon is clipped off-screen.
     it("photo panel content must not overflow the ScrollView horizontally (WB-176)", async function() {
         if ( OS_ANDROID ) this.skip(); // no ScrollView wrap on Android
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         await controllerOpenTest( ctl );
         var loaded = new Promise( (resolve) => ctl.photoSelect.on("loaded", resolve) );
         simulatePhotoCapture( ctl.photoSelect );
@@ -299,7 +299,7 @@ describe("SiteDetails controller", function() {
     });
 
     it("photo should NOT be selectable when in read only mode", function(done) {
-        ctl = Alloy.createController("SiteDetails", { readonly: true });
+        ctl = Alloy.createController("SiteDetails", { readonly: true, sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             expect( ctl.photoSelect.camera.visible).to.be.false;
             done();
@@ -307,7 +307,7 @@ describe("SiteDetails controller", function() {
     });
 
     it("location should be selectable", function(done) {
-        ctl = Alloy.createController("SiteDetails");
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             ctl.locationIndicator.fireEvent("click");
             setTimeout( function() {
@@ -319,7 +319,7 @@ describe("SiteDetails controller", function() {
     }); 
 
     it("location should NOT be selectable when in read only mode", function(done) {
-        ctl = Alloy.createController("SiteDetails", { readonly: true });
+        ctl = Alloy.createController("SiteDetails", { readonly: true, sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {
             ctl.locationIndicator.fireEvent("click");
             setTimeout( function() {

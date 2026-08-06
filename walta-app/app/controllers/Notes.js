@@ -8,7 +8,7 @@ var bindView = require("util/bindView");
 var SurveyDatePicker = require("logic/SurveyDatePicker");
 
 var readOnlyMode = $.args.readonly === true;
-var vm = new NotesViewModel({ sample: Alloy.Models.sample, readonly: readOnlyMode });
+var vm = new NotesViewModel({ sample: $.args.sample, readonly: readOnlyMode });
 
 var { applyKeyboardTweaks } = require("ui/Layout");
 applyKeyboardTweaks( $, [ $.notesTextField ] );

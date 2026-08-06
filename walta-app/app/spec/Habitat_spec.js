@@ -12,12 +12,12 @@ describe("Habitat controller", function() {
 		closeWindow( ctl.getView(), done );
 	});
 	it('should display the Habitat view', function(done) { 
-    ctl = Alloy.createController("Habitat");
+    ctl = Alloy.createController("Habitat", { sample: Alloy.Models.instance("sample") });
     controllerOpenTest( ctl, done );
     
   });
   it('should persist habitat values', function(done) { 
-    ctl = Alloy.createController("Habitat");
+    ctl = Alloy.createController("Habitat", { sample: Alloy.Models.instance("sample") });
     controllerOpenTest( ctl, () => checkTestResult( done, function() {
       expect( Alloy.Models.sample.get("boulder") ).to.be.undefined;
       expect( Alloy.Models.sample.get("gravel") ).to.be.undefined;
@@ -49,7 +49,7 @@ describe("Habitat controller", function() {
   });
 
   it('should only allow data entry with 100% sum of habitats', function(done){
-    ctl = Alloy.createController("Habitat");
+    ctl = Alloy.createController("Habitat", { sample: Alloy.Models.instance("sample") });
     controllerOpenTest( ctl, () => checkTestResult( done, function() {
       expect( ctl.nextButton.isEnabled(), "nextButton should be enabled with sum to 100%" ).to.be.false;
       enterText( ctl.leaves, "17" );
@@ -70,7 +70,7 @@ describe("Habitat controller", function() {
     } ) );
   });
   it('should allow Next to be pressed in read only mode even with bad values', function(done){
-    ctl = Alloy.createController("Habitat", {readonly:true});
+    ctl = Alloy.createController("Habitat", {readonly:true, sample: Alloy.Models.instance("sample")});
     controllerOpenTest( ctl, () => checkTestResult( done, function() {
       expect( ctl.nextButton.isEnabled(), "nextButton should be enabled with sum to 100%" ).to.be.true;
       enterText( ctl.leaves, "17" );
@@ -92,7 +92,7 @@ describe("Habitat controller", function() {
 
   });
   it('should enable all the edit fields', function(done) {
-    ctl = Alloy.createController("Habitat");
+    ctl = Alloy.createController("Habitat", { sample: Alloy.Models.instance("sample") });
     controllerOpenTest( ctl, () => checkTestResult( done, function() {
       if ( Ti.Platform.osname === 'android') {
         expect( ctl.leaves.editable ).to.be.undefined;
@@ -116,7 +116,7 @@ describe("Habitat controller", function() {
     } ) );
   });
   it('should disable all the edit fields in readonly mode', function(done) {
-    ctl = Alloy.createController("Habitat",{ readonly:true });
+    ctl = Alloy.createController("Habitat",{ readonly:true, sample: Alloy.Models.instance("sample") });
     controllerOpenTest( ctl, () => checkTestResult( done, function() {
       expect( ctl.leaves.editable ).to.be.false;
       expect( ctl.plants.editable ).to.be.false;
