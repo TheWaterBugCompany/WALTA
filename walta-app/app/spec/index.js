@@ -1,5 +1,6 @@
 var Mocha = require("spec/lib/ti-mocha");
 var { setManualTests, isManualTests } = require('spec/util/TestUtils');
+var SPEC_FILES = require("spec/specFiles");
 
 // Runtime test config passed via launcher args:
 //   Android: intent extras (--es test_grep "…" --ez test_manual true)
@@ -35,58 +36,6 @@ function readTestConfig() {
 
 var TEST_CONFIG = readTestConfig();
 
-var SPEC_FILES = [
-  "About",
-  "Help",
-  "CloseButton",
-  "VideoView",
-  "AnchorBar",
-  "TaxonList",
-  "Habitat",
-  "KeyNode",
-  "KeySearch",
-  "LogIn",
-  "MediaUtil",
-  "MethodSelect",
-  "Academy",
-  "Menu",
-  "Notes",
-  "IosSurveyDatePicker",
-  "Register",
-  "QuestionController",
-  "SampleTray",
-  "SampleTaxaIcon",
-  "Sample",
-  "Speedbug",
-  "Summary",
-  "TaxonDetails",
-  "SiteDetails",
-  "ViewUtils",
-  //"LeafletMap",
-  "MayflyEmergenceMap",
-  "MayflyMusterSelect",
-  "SampleSync",
-  "SyncFeedback",
-  "UploadBadge",
-  "SampleEditMenu",
-  "SampleHistory",
-  "Gallery",
-  "PhotoSelect",
-  "PhotoPaths",
-  "EditTaxon",
-  "NavButton",
-  "GoBackButton",
-  "GoForwardButton",
-  "LocationEntry",
-  "Main",
-  "Navigation",
-  "View",
-  "util/repository/LogRepository",
-  "DiagnosticsBundle",
-  "AppReset",
-  //"Database"  - needs to run last, migrations are run in all database using test anyway
-];
-
 function runTests() {
   let mocha = new Mocha({
     ui: 'bdd',
@@ -101,13 +50,24 @@ function runTests() {
   } else {
     mocha.timeout(30000); // headroom: window open/close events can arrive late under CI-simulator load
   }
-  return new Promise( function(resolve, reject) {
+  return new Promise( function(resolve) {
     SPEC_FILES.forEach( (f) => {
       let specPath = `spec/${f}_spec`;
       try { __remove_module_from_preview_cache(specPath);} catch(e) {}
       mocha.addFile(specPath);
     });
-    return mocha.run(resolve);
+    try {
+      mocha.run(resolve);
+    } catch (e) {
+      // A spec that can't load — a dangling specFiles entry or a top-level throw
+      // in a spec — throws out of mocha.run's loadFiles() before any reporter
+      // output. Unhandled that's a silent hang the host idle-timeout treats as
+      // flake and retries; emit the failure marker so it's a deterministic
+      // failure instead. Marker contract: build-utils/parseUnitTestResult.js.
+      Ti.API.error(`SPEC LOAD FAILED — a spec could not be loaded: ${(e && e.stack) || (e && e.message) || e}`);
+      Ti.API.info("UNIT_TESTS_FAILED");
+      resolve();
+    }
   });
 }
 
@@ -133,6 +93,11 @@ backgroundWindow.addEventListener('open' , function() {
    if ( infinteLoopMode )
       forever( Promise.resolve(), runTests );
    else
-      runTests();
+      runTests().catch(function (e) {
+        // Belt-and-braces: any unexpected rejection becomes a deterministic
+        // failure marker rather than a silent hang.
+        Ti.API.error(`TEST RUNNER CRASHED — ${(e && e.stack) || e}`);
+        Ti.API.info("UNIT_TESTS_FAILED");
+      });
 } );
 backgroundWindow.open();
