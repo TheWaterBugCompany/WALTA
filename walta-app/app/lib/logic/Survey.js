@@ -12,6 +12,10 @@ exports.Survey = {
 
     startSurvey: function( surveyType ) {
         Alloy.Collections.instance("sample").startNewSurveyIfComplete(surveyType, Alloy.Globals.CerdiApi.retrieveUserId());
+        Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
+            sample: Alloy.Models.instance("sample"),
+            taxa: Alloy.Collections.instance("taxa"),
+        });
     },
 
     isNewSurvey: function() {

@@ -101,6 +101,11 @@ var topics = {
 
 	SYNC_FINISHED: 'syncfinished', // payload: { success: boolean, error?: Error }
 
+	// A survey session's current sample is now established (new survey, resume, or
+	// history view/edit). Payload: { sample, taxa }. Navigation seeds the sample it
+	// threads into every screen's args from this.
+	SURVEY_STARTED: 'surveystarted',
+
 	NOTES: 'notes',
 
 	// used to trap when a page is opened

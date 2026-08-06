@@ -2,26 +2,39 @@ require("mocha");
 const { expect } = require("chai");
 const { Navigation } = require("../../walta-app/app/lib/logic/Navigation");
 
-// The current sample/taxa thread through args the same way key/Survey already do
-// (see onOpenView), so screens receive the model by injection rather than reading
-// the Alloy.Models.sample global.
+// Minimal in-memory stand-in for the Topics bus (subscribe + fire).
+function fakeTopics() {
+  const subs = {};
+  return {
+    SURVEY_STARTED: "surveystarted",
+    subscribe(t, cb) { (subs[t] = subs[t] || []).push(cb); },
+    fire(t, data) { (subs[t] || []).forEach((cb) => cb(data)); },
+  };
+}
+
+// The roots that establish a survey's sample announce it on SURVEY_STARTED;
+// Navigation seeds itself from the bus and threads the sample/taxa through args
+// the same way key/Survey already do — so screens receive the model by injection
+// rather than reading the Alloy.Models.sample global.
 describe("Navigation sample threading", function () {
-  let opened, services, nav;
+  let opened, topics, services, nav;
 
   beforeEach(function () {
     opened = [];
+    topics = fakeTopics();
     services = {
       Key: { url: "k" },
       Survey: { name: "survey" },
+      topics,
       View: { openView(ctl, args) { opened.push({ ctl, args }); return Promise.resolve(); } },
     };
     nav = new Navigation(services);
   });
 
-  it("injects the current sample and taxa into an opened controller's args", function () {
+  it("threads the sample+taxa announced on SURVEY_STARTED into an opened controller's args", function () {
     const sample = { id: 1 };
     const taxa = { length: 3 };
-    nav.setCurrentSample(sample, taxa);
+    topics.fire(topics.SURVEY_STARTED, { sample, taxa });
 
     nav.onOpenView("SiteDetails", { slide: "none" });
 

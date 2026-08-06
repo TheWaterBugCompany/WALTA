@@ -140,6 +140,12 @@ let services ={
 services.sampleSource = SampleHistorySource({ cerdiApi: services.cerdiApi });
 services.View = new View(services);
 services.Navigation = new Navigation(services);
+// Seed the resumed in-progress sample the same way the runtime roots do — the
+// bus, now that Navigation is subscribed.
+Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
+  sample: Alloy.Models.instance("sample"),
+  taxa: Alloy.Collections.instance("taxa"),
+});
 // glue the Main controller to the various
 // objects that perform the logic
 checkForErrors( Alloy.createController("Main",services).startApp() ); 
