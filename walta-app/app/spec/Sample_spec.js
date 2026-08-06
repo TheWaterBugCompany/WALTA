@@ -522,14 +522,103 @@ describe("Sample model hasUnsavedChanges()", function() {
     let unsaved = await Alloy.Models.sample.hasUnsavedChanges();
     expect(unsaved).to.equal(false);
   });
-  it('should return false if is already saved');
+  it('should return false if is already saved', async function() {
+    Alloy.Models.sample = makeSampleData({ dateCompleted: moment().format() });
+    let unsaved = await Alloy.Models.sample.hasUnsavedChanges();
+    expect(unsaved).to.equal(false);
+  });
   it('should return true if not blank new survey', async function() {
     Alloy.Models.sample = makeSampleData({dateCompleted: null});
     let unsaved = await Alloy.Models.sample.hasUnsavedChanges();
     expect(unsaved).to.equal(true);
   });
-  it('should return true if edited survey is different to original');
-  it('should return false if edited survey is same as original');
+  it('should return true if edited survey is different to original', async function() {
+    let original = makeSampleData({ serverSampleId: 55 });
+    original.save();
+    let temp = original.createTemporaryForEdit();
+    temp.set("waterbodyName", "changed while editing");
+    temp.save();
+    expect(await temp.hasUnsavedChanges()).to.equal(true);
+  });
+  // GAP (unskip with the fix): createTemporaryForEdit round-trips through
+  // toCerdiApiJson, which loses fidelity — lat/lng/accuracy numeric precision
+  // ("-37.5622000" -> -37.5622) and complete (null -> 0). So equals() sees a
+  // freshly-opened, unedited edit as different and hasUnsavedChanges() returns
+  // true, giving a spurious discard/save prompt on immediate back-out.
+  it.skip('should return false if edited survey is same as original', async function() {
+    let original = makeSampleData({ serverSampleId: 55 });
+    original.save();
+    let temp = original.createTemporaryForEdit();
+    expect(await temp.hasUnsavedChanges()).to.equal(false);
+  });
+});
+
+// The in-progress edit must (a) survive an app restart, (b) never mutate the
+// original until saved, and (c) never be treated as a submittable sample.
+// loadCurrent is the boot-time resume seam (index-app.js).
+describe("Sample model in-progress edit durability", function() {
+  beforeEach( clearDatabase );
+
+  it('resumes a local (un-uploaded) edit after restart via loadCurrent', async function() {
+    let original = makeSampleData({ serverSampleId: null });
+    original.save();
+    let temp = original.createTemporaryForEdit();
+    temp.set("waterbodyName", "mid-edit");
+    temp.save();
+
+    let resumed = Alloy.createModel("sample");
+    await resumed.loadCurrent();
+    expect( resumed.get("originalSampleId"), "resumes the temp edit copy" ).to.equal( original.get("sampleId") );
+    expect( resumed.get("waterbodyName") ).to.equal("mid-edit");
+  });
+
+  // GAP (unskip with the fix): loadCurrent resumes `dateCompleted IS NULL AND
+  // serverSampleId IS NULL`, but the temp copy of an uploaded sample carries the
+  // original's serverSampleId — so the in-progress edit of an already-uploaded
+  // sample is NOT resumed after an app restart (it's stranded in the sample
+  // table). A separate drafts store keyed by "is a draft", not by serverSampleId,
+  // fixes this cleanly.
+  it.skip('resumes an uploaded-sample edit after restart via loadCurrent', async function() {
+    let original = makeSampleData({ serverSampleId: 88 });
+    original.save();
+    let temp = original.createTemporaryForEdit();
+    temp.set("waterbodyName", "mid-edit");
+    temp.save();
+
+    let resumed = Alloy.createModel("sample");
+    await resumed.loadCurrent();
+    expect( resumed.get("originalSampleId"), "resumes the temp edit copy" ).to.equal( original.get("sampleId") );
+    expect( resumed.get("waterbodyName") ).to.equal("mid-edit");
+  });
+
+  it('leaves the original record untouched while an edit is in progress', function() {
+    let original = makeSampleData({ serverSampleId: 88, waterbodyName: "original name" });
+    original.save();
+    let originalId = original.get("sampleId");
+    let temp = original.createTemporaryForEdit();
+    temp.set("waterbodyName", "mid-edit");
+    temp.save();
+
+    let reloaded = Alloy.createModel("sample");
+    reloaded.loadById( originalId );
+    expect( reloaded.get("waterbodyName"), "original unchanged until submit" ).to.equal("original name");
+  });
+
+  it('excludes the in-progress edit from the upload queue and history', function() {
+    let original = makeSampleData({ serverSampleId: 88, serverUserId: 38 });
+    original.save();
+    let temp = original.createTemporaryForEdit();
+    temp.set("waterbodyName", "mid-edit");
+    temp.save();
+
+    let queue = Alloy.createCollection("sample");
+    queue.loadUploadQueue(38);
+    expect( queue.pluck("originalSampleId").filter(Boolean), "no temp edit in the upload queue" ).to.be.empty;
+
+    let history = Alloy.createCollection("sample");
+    history.loadSampleHistory(38);
+    expect( history.pluck("originalSampleId").filter(Boolean), "no temp edit in history" ).to.be.empty;
+  });
 });
 
 describe("Sample model", function() { 
