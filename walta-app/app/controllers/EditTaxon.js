@@ -14,18 +14,19 @@ if ( readOnlyMode ) {
     disableControl($.abundanceValue);
 }
 
-let sample = Alloy.Models.instance("sample");
+let sample = $.args.sample;
+let taxa = $.args.taxa;
 let sampleId = sample.get("sampleId");
 let taxon = null;
 
 /* if we a referencing an existing taxon load the specific one by sampletaxonid */
 if (sampleTaxonId) {
     log(`calling with sampleTaxonId = ${sampleTaxonId}`)
-    taxon = Alloy.Collections["taxa"].findTaxonBySampleTaxonId(sampleTaxonId);
+    taxon = taxa.findTaxonBySampleTaxonId(sampleTaxonId);
     taxonId = taxon.get("taxonId");
 } else if ( taxonId != null )  {
     log("not calling with sampleTaxonId")
-    taxon = Alloy.Collections["taxa"].findTaxon(taxonId);
+    taxon = taxa.findTaxon(taxonId);
 }
 
 log(`taxonId = ${taxonId}`);
@@ -96,14 +97,14 @@ function updateAbundance() {
 }
 
 function saveEvent() {
-    Alloy.Collections.taxa.add( taxon );
+    taxa.add( taxon );
     taxon.save({ "updatedAt": moment().valueOf() });
     $.trigger("save", taxon );
     closeEvent();
 }
 
 function doDelete() {
-    Alloy.Collections.taxa.remove( taxon );
+    taxa.remove( taxon );
     taxon.flagForDeletion();
     closeEvent();
     $.trigger("delete", taxon );

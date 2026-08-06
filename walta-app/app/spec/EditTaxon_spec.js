@@ -11,9 +11,11 @@ describe("EditTaxon controller", function() {
     var ctl,win;
 
     function makeTaxonController(args) {
-        ctl = Alloy.createController("EditTaxon", _.extend(args,{ 
-            key: keyMock
-         }));
+        ctl = Alloy.createController("EditTaxon", _.extend(
+            { sample: Alloy.Models.sample, taxa: Alloy.Collections.taxa },
+            args,
+            { key: keyMock }
+         ));
          win = wrapViewInWindow( ctl.getView() );
 
          win.addEventListener( "close", function cleanUp() {
@@ -205,6 +207,17 @@ describe("EditTaxon controller", function() {
         expect( ctl.abundanceLabel.text ).to.equal("6-10");
         expect( ctl.photoSelect.getOriginalPhotoUrl() ).to.include("parastacide");
 
+    });
+
+    it("reads the taxon from the injected taxa collection, not the global", async function() {
+        let txn = createMockTaxon( { taxonId:"1", abundance:"6-10", taxonPhotoPath: "/spec/resources/simpleKey1/media/amphipoda_01.jpg" } );
+        let injected = Alloy.createCollection("taxa", [ txn ] );
+        Alloy.Collections.taxa = Alloy.createCollection("taxa", [] ); // global left empty — must be ignored
+        Alloy.Models.sample = Alloy.createModel("sample");
+        Alloy.Models.sample.save();
+        makeTaxonController( { sampleTaxonId: txn.get("sampleTaxonId"), taxa: injected, sample: Alloy.Models.sample } );
+        await windowOpenTest( win );
+        expect( ctl.abundanceLabel.text ).to.equal("6-10");
     });
 
     it.skip('should mark taxon for deletion when delete pressed', async function() {
