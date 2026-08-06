@@ -16,15 +16,15 @@ function toIconData(m, key) {
   };
 }
 
-module.exports = function createSampleTraySource(taxaCollection, key, readonly) {
+module.exports = function createSampleTraySource(taxaCollection, key, readonly, sample) {
   return {
     length: function () { return taxaCollection.length; },
     at: function (i) {
       return toIconData(taxaCollection.at(i), key);
     },
-    // The add-to-sample intent needs the current sample's survey type (a model
-    // read, kept behind this seam so the VM stays Ti/Alloy-free).
-    surveyType: function () { return parseInt(Alloy.Models.sample.get("surveyType")); },
+    // The add-to-sample intent needs the current sample's survey type. The sample
+    // is injected (not read from a global) so the source stays Ti/Alloy-free.
+    surveyType: function () { return parseInt(sample.get("surveyType")); },
     // Collection observation lives behind the source so the VM subscribes to its
     // data changing without the window shell wiring Alloy events.
     onChange: function (cb) { taxaCollection.on("add change remove", cb); },

@@ -13,7 +13,7 @@ module.exports = function createSampleTray({ view, args, services, bindView }) {
   const { collection, component, input, measure, command, ref } = bindView;
   const platform = services.platform;
 
-  const source = SampleTraySource(Alloy.Collections["taxa"], args.key, args.readonly === true);
+  const source = SampleTraySource(Alloy.Collections["taxa"], args.key, args.readonly === true, Alloy.Models.instance("sample"));
   const vm = new SampleTrayViewModel({
     taxaSource: source,
     topics: services.topics,
