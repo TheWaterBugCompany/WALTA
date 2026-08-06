@@ -20,8 +20,11 @@ describe("Main controller", function() {
   services.Survey.uploadNewSample = function() {};
   beforeEach(function() {
     simple.mock(services.Survey.uploadNewSample).returnWith();
+    // Re-create Navigation each test: the afterEach resets Topics (wiping its
+    // SURVEY_STARTED subscription), so a single load-time instance would stop
+    // seeding the current sample for every test after the first.
+    services.Navigation = new Navigation(services);
   })
-  services.Navigation = new Navigation(services);
   function currentController() {
     return services.View.getCurrentController();
   }
