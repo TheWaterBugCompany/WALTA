@@ -36,11 +36,13 @@
   height: "80%"
 }
 
-// The tick/cross overlay: centred over the silhouette, hidden until the tray is
-// assessed. Image + visibility are bound from the cell view-model.
+// The tick/cross overlay: a square badge inset into the cell's lower-left, hidden
+// until the tray is assessed. Its square size (dp) is bound from the cell
+// view-model so it scales with the cell; left/bottom inset it off the corner.
+// Image + visibility are also bound from the view-model.
 ".verdict": {
-  width: "55%",
-  height: "55%",
+  left: "12%",
+  bottom: "12%",
   visible: false
 }
 

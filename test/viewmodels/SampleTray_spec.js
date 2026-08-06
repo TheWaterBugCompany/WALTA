@@ -56,6 +56,22 @@ function vmWithViewport(len, { width = 300, height = 100, readonly } = {}) {
   return vm;
 }
 
+// Records the taxa it was handed and returns a canned verdict map keyed by
+// sampleTaxonId — the seam the real TrainingAssessor implements.
+function fakeAssessor(verdicts) {
+  return { calls: [], assess(taxa) { this.calls.push(taxa); return verdicts || {}; } };
+}
+
+function trainingVm(len, assessor) {
+  const vm = new SampleTrayViewModel({
+    taxaSource: fakeTaxaSource(taxaOf(len)),
+    training: true,
+    assessor: assessor || fakeAssessor({}),
+  });
+  vm.setViewport({ width: 300, height: 100 });
+  return vm;
+}
+
 describe("SampleTrayViewModel", function () {
 
   describe("tileCount", function () {
@@ -326,6 +342,12 @@ describe("SampleTrayViewModel", function () {
       expect(icon.verdictVisible).to.equal(true);
     });
 
+    it("sizes the overlay as a square dp scaled to the cell width", function () {
+      // cellWidth 30 → 0.45 * 30 = 13.5, bound to both width and height so the
+      // square tick/cross keeps its aspect and scales with the cell.
+      expect(iconWithVerdict("correct").verdictSizeCss).to.equal("13.5dp");
+    });
+
     it("shows the cross overlay for an incorrect taxon", function () {
       const icon = iconWithVerdict("incorrect");
       expect(icon.verdictImage).to.equal("/images/cross-icon.png");
@@ -508,6 +530,69 @@ describe("SampleTrayViewModel", function () {
     it("reports the right-edge offset the scroll command animates to", function () {
       // trayWidth 570 - viewWidth 300 = 270 (toSystem defaults to identity).
       expect(vmWithViewport(30).scrollTargetX).to.equal(270);
+    });
+  });
+
+  describe("training mode", function () {
+    // A training session hides the abundance badge, and the verdicts start blank
+    // — the tick/cross overlay only appears once the tray is assessed. The verdict
+    // itself comes from an injected assessor (stubbed here / real grader later),
+    // keyed by sampleTaxonId.
+
+    it("reports training mode from the constructor flag", function () {
+      expect(trainingVm(6).trainingMode).to.equal(true);
+      expect(vmWithViewport(6).trainingMode).to.equal(false);
+    });
+
+    it("hides the abundance badge but keeps the silhouette in training mode", function () {
+      const cell = trainingVm(6).endcapVm.taxa[0];
+      expect(cell.abundanceVisible).to.equal(false);
+      expect(cell.iconVisible).to.equal(true);
+    });
+
+    it("has no verdict until the tray is assessed", function () {
+      const vm = trainingVm(6, fakeAssessor({ 1001: "incorrect" }));
+      expect(vm.verdictFor(1001)).to.equal(null);
+    });
+
+    it("stores the assessor's verdicts on assess, keyed by sampleTaxonId", function () {
+      const vm = trainingVm(6, fakeAssessor({ 1001: "incorrect", 1002: "correct" }));
+      vm.assess();
+      expect(vm.verdictFor(1001)).to.equal("incorrect");
+      expect(vm.verdictFor(1002)).to.equal("correct");
+      expect(vm.verdictFor(9999), "unknown taxon").to.equal(null);
+    });
+
+    it("hands the assessor the current taxa", function () {
+      const assessor = fakeAssessor({});
+      const vm = trainingVm(6, assessor);
+      vm.assess();
+      expect(assessor.calls).to.have.lengthOf(1);
+      expect(assessor.calls[0].map(t => t.sampleTaxonId)).to.include(1001);
+    });
+
+    it("re-derives the cells on assess so the overlays reveal", function () {
+      const vm = trainingVm(6, fakeAssessor({ 1001: "incorrect" }));
+      const cell = vm.endcapVm.taxa[0];
+      let notified = 0;
+      cell.addListener(() => notified++);
+      vm.assess();
+      expect(notified, "cell re-applies its verdict binding").to.be.greaterThan(0);
+      expect(cell.verdictVisible).to.equal(true);
+    });
+
+    it("clears the assessment so a taxa edit drops the feedback", function () {
+      const vm = trainingVm(6, fakeAssessor({ 1001: "incorrect" }));
+      vm.assess();
+      vm.clearAssessment();
+      expect(vm.verdictFor(1001)).to.equal(null);
+    });
+
+    it("clears the assessment when the taxa collection changes", function () {
+      const vm = trainingVm(6, fakeAssessor({ 1001: "incorrect" }));
+      vm.assess();
+      vm.refresh();
+      expect(vm.verdictFor(1001)).to.equal(null);
     });
   });
 });

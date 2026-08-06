@@ -14,13 +14,16 @@ const identity = (x) => x;
 // SampleTaxaIcon/SampleTrayPlus slots) read their geometry, kinds and intent
 // payload back through the public accessors here.
 class SampleTrayViewModel extends ChangeNotifier {
-  constructor({ taxaSource, topics, toDip, toSystem }) {
+  constructor({ taxaSource, topics, toDip, toSystem, training, assessor }) {
     super();
     this._taxaSource = taxaSource;
     this._topics = topics;
     this._toDip = toDip || identity;
     this._toSystem = toSystem || identity;
     this._readonly = taxaSource.readonly === true;
+    this._training = training === true;
+    this._assessor = assessor;
+    this._verdicts = null; // null until assessed → blank tick/cross overlay
     this._viewportWidth = 0;
     this._viewportHeight = 0;
     this._scrollx = 0;
@@ -34,11 +37,18 @@ class SampleTrayViewModel extends ChangeNotifier {
   // ── Accessors the cell + slot VMs read ────────────────────────────────────
   get topics() { return this._topics; }
   get readonly() { return this._readonly; }
+  // A training session hides abundance and swaps Next for Assess; verdicts stay
+  // blank until assess() runs.
+  get trainingMode() { return this._training; }
 
   // The training verdict for a taxon, keyed by sampleTaxonId — filled by the
-  // assessor once the tray is assessed. No assessor yet, so every cell is
-  // verdict-free and the normal tray renders no tick/cross overlay.
-  verdictFor(_sampleTaxonId) { return null; }
+  // assessor on assess(). Blank (null) until then, so a taxon renders no
+  // tick/cross overlay.
+  verdictFor(sampleTaxonId) {
+    if (!this._verdicts || sampleTaxonId == null) return null;
+    const verdict = this._verdicts[sampleTaxonId];
+    return verdict == null ? null : verdict;
+  }
   surveyType() {
     return typeof this._taxaSource.surveyType === "function"
       ? this._taxaSource.surveyType()
@@ -56,11 +66,37 @@ class SampleTrayViewModel extends ChangeNotifier {
     // Two-level cascade: cached cells re-apply their geometry (and their slots'),
     // then the screen re-applies trayWidth + re-windows, then asks Ti to reveal the
     // right edge.
-    this._tileCache.forEach(t => t.notifyGeometry());
-    this._endcapVm.notifyGeometry();
+    this._reapplyCells();
     this._recomputeWindow();
     this.notifyListeners();
     this.trigger("scrollToRightEnd");
+  }
+
+  // ── Training assessment ────────────────────────────────────────────────────
+
+  // Run the injected assessor over the current taxa and reveal the verdicts. The
+  // cell re-application makes each slot re-read verdictFor so the overlays appear.
+  assess() {
+    const taxa = [];
+    for (let i = 0; i < this._taxaSource.length(); i++) {
+      taxa.push(this._taxaSource.at(i));
+    }
+    this._verdicts = this._assessor.assess(taxa);
+    this._reapplyCells();
+    this.notifyListeners();
+  }
+
+  // Drop the feedback (a taxa edit re-opens the key), re-rendering blank overlays.
+  clearAssessment() {
+    if (!this._verdicts) return;
+    this._verdicts = null;
+    this._reapplyCells();
+    this.notifyListeners();
+  }
+
+  _reapplyCells() {
+    this._tileCache.forEach(t => t.reapply());
+    this._endcapVm.reapply();
   }
 
   get viewWidth() { return this._viewportWidth; }
@@ -122,8 +158,9 @@ class SampleTrayViewModel extends ChangeNotifier {
 
   // Re-derive cell content across every cached tile (a taxa add/change/remove),
   // then re-window and reveal the right edge. Positional icon reuse is preserved
-  // inside each cell's slot VMs.
+  // inside each cell's slot VMs. A taxa change also drops any training feedback.
   refresh() {
+    this._verdicts = null;
     this._tileCache.forEach(t => t.update());
     this._endcapVm.update();
     this._recomputeWindow();
