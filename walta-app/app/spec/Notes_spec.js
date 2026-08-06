@@ -16,7 +16,7 @@ describe("Notes controller", function () {
   context("view test", function () {
     var ctl;
     beforeEach(function () {
-      ctl = Alloy.createController("Notes");
+      ctl = Alloy.createController("Notes", { sample: Alloy.Models.instance("sample") });
     });
     afterEach(function (done) {
       closeWindow(ctl.getView(), done);
@@ -61,13 +61,13 @@ describe("Notes controller", function () {
       expect(notes).to.equal("edit");
     });
     it('should not be able to edit partial or notes in read only mode', async function () {
-      ctl = Alloy.createController("Notes", { readonly: true });
+      ctl = Alloy.createController("Notes", { readonly: true, sample: Alloy.Models.instance("sample") });
       await controllerOpenTest(ctl);
       expect(ctl.partialToggle.enabled).to.be.false;
       expect(ctl.notesTextField.editable).to.be.false;
     });
     it('should not open the survey date picker in read only mode', async function () {
-      ctl = Alloy.createController("Notes", { readonly: true });
+      ctl = Alloy.createController("Notes", { readonly: true, sample: Alloy.Models.instance("sample") });
       await controllerOpenTest(ctl);
       ctl.surveyDateField.fireEvent("click");
       await waitForTick(10)();
@@ -82,7 +82,7 @@ describe("Notes controller", function () {
     var ctl;
     beforeEach(async function () {
       if (!OS_IOS) this.skip();
-      ctl = Alloy.createController("Notes");
+      ctl = Alloy.createController("Notes", { sample: Alloy.Models.instance("sample") });
       await controllerOpenTest(ctl);
     });
     afterEach(function (done) {
@@ -167,7 +167,7 @@ describe("WB-143: Notes screen does not flip complete on note-only edit", functi
   });
 
   it("(D) typing into notesTextField leaves sample.complete=false and toggle off", async function () {
-    ctl = Alloy.createController("Notes");
+    ctl = Alloy.createController("Notes", { sample: Alloy.Models.instance("sample") });
     await controllerOpenTest(ctl);
 
     expect(ctl.partialToggle.value,
@@ -197,7 +197,7 @@ describe("WB-143: Notes screen does not flip complete on note-only edit", functi
     Alloy.Models.sample.save();
     let id = Alloy.Models.sample.get("sampleId");
 
-    ctl = Alloy.createController("Notes");
+    ctl = Alloy.createController("Notes", { sample: Alloy.Models.instance("sample") });
     await controllerOpenTest(ctl);
     expect(ctl.partialToggle.value, "toggle starts on for a complete sample").to.equal(true);
 

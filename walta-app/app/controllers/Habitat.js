@@ -3,7 +3,7 @@ $.TopLevelWindow.title = "Habitat";
 $.name = "habitat";
 
 var Topics = require("ui/Topics");
-var sample = Alloy.Models.sample;
+var sample = $.args.sample;
 var readOnlyMode = $.args.readonly === true;
 
 if ( readOnlyMode ) {

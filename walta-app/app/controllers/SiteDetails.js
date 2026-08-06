@@ -5,7 +5,7 @@ exports.baseController  = "TopLevelWindow";
 var Topics = require("ui/Topics");
 var GeoLocationService = require('logic/GeoLocationService');
 
-var sample = Alloy.Models.sample;
+var sample = $.args.sample;
 var readOnlyMode = $.args.readonly === true;
 
 sample.on("change:lng change:lat", updateLocation );
@@ -151,7 +151,7 @@ function validateSubmit() {
 }
 
 function openLocationEntry() {
-    $.locationEntry = Alloy.createController("LocationEntry", {readonly: readOnlyMode});
+    $.locationEntry = Alloy.createController("LocationEntry", {readonly: readOnlyMode, sample: sample});
     $.TopLevelWindow.add($.locationEntry.getView());
     $.locationEntry.on("close", function handler() {
         $.locationEntry.off("close", handler);

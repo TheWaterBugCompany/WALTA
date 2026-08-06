@@ -6,6 +6,7 @@ $.name = "summary";
 
 var readOnlyMode = $.args.readonly === true;
 var Survey = $.args.Survey;
+var sample = $.args.sample;
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
@@ -48,7 +49,7 @@ var saveSampleAndUpload = function() {
 };
 
 function checkGpsLock() {
-    if ( !(Alloy.Models.sample.get("lat") && Alloy.Models.sample.get("lng") ) ) {
+    if ( !(sample.get("lat") && sample.get("lng") ) ) {
         $.nextButton.disable();
         $.message.text = INCOMPLETE_NO_LOCK;
         $.message.color = "red";
@@ -62,7 +63,7 @@ function checkGpsLock() {
 }
 
 function setMessageText() {
-    if ( Alloy.Models.sample.isComplete() ) {
+    if ( sample.isComplete() ) {
         if ( !Alloy.Globals.CerdiApi.retrieveUserToken() ) {
             $.message.text = COMPLETE_NOT_REGISTERED
         } else {
@@ -73,6 +74,6 @@ function setMessageText() {
 }
 
 
-Alloy.Models.sample.on("change", checkGpsLock );	
-Alloy.Models.sample.trigger("change");
+sample.on("change", checkGpsLock );	
+sample.trigger("change");
 

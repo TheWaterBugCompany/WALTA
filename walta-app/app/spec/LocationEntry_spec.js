@@ -6,7 +6,8 @@ describe("LocationEntry controller", function() {
 	var win, scr, view;
   var sample= Alloy.Models.sample;
   function createMap() {
-    scr = Alloy.createController("LocationEntry", { 
+    scr = Alloy.createController("LocationEntry", {
+      sample: sample,
       getCurrentPosition: function( callback ) {
         callback( { 
           coords: {

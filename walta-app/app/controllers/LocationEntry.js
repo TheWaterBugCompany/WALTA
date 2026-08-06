@@ -1,5 +1,5 @@
 var mapPoint;
-var sample = Alloy.Models.sample;
+var sample = $.args.sample;
 
 var { getCurrentPosition } = require("logic/GeoLocationService");
 var { disableControl, enableControl } = require("ui/ViewUtils");
