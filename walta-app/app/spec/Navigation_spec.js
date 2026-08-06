@@ -7,6 +7,7 @@ var Logger = require('util/Logger');
 describe("logic/Navigation service", function() {
   let services = {
     Key: {},
+    topics: { SURVEY_STARTED: "surveystarted", subscribe: function(){} },
     View: {
       openView: function(){},
       askDiscardEdits: function(){}
