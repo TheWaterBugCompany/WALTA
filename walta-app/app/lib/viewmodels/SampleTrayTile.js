@@ -62,8 +62,9 @@ class SampleTrayTileViewModel extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  // On a viewport change: re-apply this tile's geometry and each slot's width.
-  notifyGeometry() {
+  // Re-apply this tile's bindings and each slot's — used on a viewport change
+  // (geometry) and on assess (the slots re-read their verdict).
+  reapply() {
     this.notifyListeners();
     this._slots.forEach(s => s.notifyListeners());
   }

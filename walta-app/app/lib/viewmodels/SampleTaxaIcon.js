@@ -26,7 +26,7 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
   get iconVisible() { return this._kind === "taxon"; }
   get image() { return this._data ? this._data.silhouette : null; }
   get abundanceText() { return this._data ? this._data.abundance : ""; }
-  get abundanceVisible() { return this._kind === "taxon"; }
+  get abundanceVisible() { return this._kind === "taxon" && !this._tray.trainingMode; }
   get sampleTaxonId() { return this._data ? this._data.sampleTaxonId : null; }
   get taxonId() { return this._data ? this._data.taxonId : null; }
 
@@ -40,6 +40,9 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
     return null;
   }
   get verdictVisible() { return this.verdictImage !== null; }
+  // A square badge scaled to the cell so it keeps the tick/cross aspect; the tss
+  // insets it into the cell's lower-left.
+  get verdictSizeCss() { return `${this._tray.cellWidth * 0.45}dp`; }
 
   get accessibilityLabel() {
     if (this._kind === "taxon") {

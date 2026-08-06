@@ -178,6 +178,16 @@ describe( 'SampleTray controller', function() {
     return tile.children[1].children;
   }
 
+  // A taxon cell's children are [ padIcon, verdict, tapSurface ]; the verdict
+  // overlay is the middle child and the abundance badge is padIcon's 2nd child.
+  function verdictOf( cell ) { return cell.children[1]; }
+  function abundanceOf( cell ) { return cell.children[0].children[1]; }
+
+  function assertVerdict( cell, image ) {
+    expect( verdictOf( cell ).visible, "the verdict overlay should be visible" ).to.equal(true);
+    expect( verdictOf( cell ).image, `Expected the verdict to be ${image}` ).to.include(image);
+  }
+
   async function simulateEditTaxonEvent() {
     return new Promise( (resolve) => {
       Topics.subscribe( Topics.IDENTIFY, function handler(data) {
@@ -821,7 +831,81 @@ describe( 'SampleTray controller', function() {
     });
   });
 
-  context('editing taxon and model persistence',function() { 
+  context('training feedback', function() {
+    // Training mode (args.training) hides abundance and, once assessed, overlays a
+    // tick/cross on each taxon from the injected assessor (keyed by sampleTaxonId).
+    // A fake assessor marks even ids correct / odd incorrect for a visible mix.
+    // Runnable in --manual to eyeball the overlay placement against the design:
+    //   npx grunt --platform=ios --simulator --liveview --reuse-server \
+    //     --grep="training feedback reveals" --manual unit-test
+    var mixedAssessor = {
+      assess: function( taxa ) {
+        var verdicts = {};
+        taxa.forEach( function( t ) {
+          if ( t && t.sampleTaxonId != null )
+            verdicts[t.sampleTaxonId] = ( t.sampleTaxonId % 2 === 0 ) ? "correct" : "incorrect";
+        });
+        return verdicts;
+      },
+    };
+
+    beforeEach( function() {
+      Alloy.Models.instance("sample");
+      Alloy.Collections.taxa = Alloy.createCollection("taxa", [
+        Alloy.createModel( "taxa", { taxonId: "1", sampleTaxonId: 1, abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "2", sampleTaxonId: 2, abundance: "6-10" }),
+        Alloy.createModel( "taxa", { taxonId: "3", sampleTaxonId: 3, abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "4", sampleTaxonId: 4, abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "5", sampleTaxonId: 5, abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "6", sampleTaxonId: 6, abundance: "6-10" }),
+        Alloy.createModel( "taxa", { taxonId: "7", sampleTaxonId: 7, abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "8", sampleTaxonId: 8, abundance: "1-2" }),
+        Alloy.createModel( "taxa", { taxonId: "9", sampleTaxonId: 9, abundance: "3-5" }),
+        Alloy.createModel( "taxa", { taxonId: "10", sampleTaxonId: 10, abundance: "6-10" }),
+      ]);
+      view = makeTestServices({ assessor: mixedAssessor }).View;
+      openArgs = { key: keyMock, training: true };
+      return openSampleTray();
+    });
+
+    afterEach(cleanupSampleTray);
+
+    it('hides the abundance badge in training mode', function() {
+      var endcap = getTaxaIcons( SampleTray.tray.children[0] );
+      expect( abundanceOf( endcap[0] ).visible, "abundance is hidden in training" ).to.equal(false);
+      expect( endcap[0].children[0].visible, "the silhouette still shows" ).to.equal(true);
+    });
+
+    it('shows no verdict overlay until the tray is assessed', function() {
+      var endcap = getTaxaIcons( SampleTray.tray.children[0] );
+      expect( verdictOf( endcap[0] ).visible ).to.equal(false);
+    });
+
+    it('reveals a tick or cross on each taxon once assessed', function() {
+      trayVm().assess();
+      return assertEventually( function() {
+        var endcap = getTaxaIcons( SampleTray.tray.children[0] );
+        // endcap cells map to collection indices [0,1] → sampleTaxonId 1 (odd →
+        // cross) and 2 (even → tick).
+        assertVerdict( endcap[0], "cross-icon.png" );
+        assertVerdict( endcap[1], "tick-icon.png" );
+      });
+    });
+
+    it('clears the feedback when a taxon is edited', function() {
+      trayVm().assess();
+      return assertEventually( function() {
+        assertVerdict( getTaxaIcons( SampleTray.tray.children[0] )[0], "cross-icon.png" );
+      }).then( function() {
+        Alloy.Collections.taxa.at(0).set("abundance", "1-2");
+        return assertEventually( function() {
+          expect( verdictOf( getTaxaIcons( SampleTray.tray.children[0] )[0] ).visible ).to.equal(false);
+        });
+      });
+    });
+  });
+
+  context('editing taxon and model persistence',function() {
 
     function simulateUserEdit(value, photoPath ) {
       Ti.API.debug(`simulateUserEdit: ${photoPath}`);

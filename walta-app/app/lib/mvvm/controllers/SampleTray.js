@@ -1,5 +1,6 @@
 const SampleTrayViewModel = require("viewmodels/SampleTray");
 const SampleTraySource = require("logic/SampleTraySource");
+const TrainingAssessor = require("logic/TrainingAssessor");
 
 // Titanium-free screen controller for the ice-cube SampleTray. Declares the whole
 // screen through bindView: the tray width, the single fixed endcap component + the
@@ -18,6 +19,8 @@ module.exports = function createSampleTray({ view, args, services, bindView }) {
     topics: services.topics,
     toDip: platform.convertSystemToDip,
     toSystem: platform.convertDipToSystem,
+    training: args.training === true,
+    assessor: services.assessor || TrainingAssessor(),
   });
 
   const unbind = bindView(view, vm, {
