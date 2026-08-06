@@ -124,7 +124,7 @@ PlatformSpecific.appStartUp();
 GeoLocationService.init();
 
 Alloy.Models.instance("sample").loadCurrent();
-Alloy.Collections.taxa = Alloy.Models.instance("sample").loadTaxa();
+let taxa = Alloy.Models.instance("sample").loadTaxa();
 let services ={
   System: System,
   Key: Alloy.Globals.Key,
@@ -144,7 +144,7 @@ services.Navigation = new Navigation(services);
 // bus, now that Navigation is subscribed.
 Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
   sample: Alloy.Models.instance("sample"),
-  taxa: Alloy.Collections.instance("taxa"),
+  taxa: taxa,
 });
 // glue the Main controller to the various
 // objects that perform the logic

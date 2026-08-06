@@ -14,11 +14,9 @@ function onEditClick() {
     let sample = Alloy.Models.instance("sample");
     sample.loadById($.args.sampleId);
     let tempSample = sample.createTemporaryForEdit();
-    Alloy.Models.sample = tempSample;
-    Alloy.Collections.taxa = tempSample.loadTaxa();
     Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
         sample: tempSample,
-        taxa: Alloy.Collections.taxa,
+        taxa: tempSample.loadTaxa(),
     });
     Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right",readonly:false});
 }

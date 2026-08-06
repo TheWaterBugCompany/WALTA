@@ -89,18 +89,23 @@ describe("Main controller", function() {
       .returnWith({accessToken:"accessToken"});
     simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
       .returnWith(38);
-    makeSampleData({ serverSampleId: 666 }).save();
+    let original = makeSampleData({ serverSampleId: 666 });
+    original.save();
+    let originalId = original.get("sampleId");
     app = Alloy.createController("Main", services);
     await app.startApp();
-   
+
     await actionFiresTopicTest( currentController().history, "click", Topics.PAGE_OPENED);
     currentController().sampleTable.data[0].rows[0].fireEvent("click");
     await actionFiresTopicTest( sampleMenu().edit, "click", Topics.PAGE_OPENED );
 
-    // At this point the global sample SHOULD NOT be the original record but
-    // a temporary copy instead. This a new sample with the DateSubmitted field blank.
-    expect( Alloy.Models.instance("sample").get("serverSampleId")).to.equal(666);
-    expect( Alloy.Models.instance("sample").get("dateCompleted")).to.be.undefined;
+    // Editing operates on a temporary copy (threaded into the screens' args by
+    // SampleEditMenu), so the original persisted record must be left intact —
+    // its dateCompleted stays set — until the edit is submitted.
+    let persistedOriginal = Alloy.createModel("sample");
+    persistedOriginal.loadById( originalId );
+    expect( persistedOriginal.get("serverSampleId") ).to.equal(666);
+    expect( persistedOriginal.get("dateCompleted") ).to.not.be.undefined;
 
     currentController().waterbodyNameField.value = "changed by test edit";
     currentController().waterbodyNameField.fireEvent("change"); // simulate user entering text
