@@ -15,7 +15,11 @@
 // which migrations have applied.
 
 const logs_202605080000000 = require("./202605080000000_logs");
+const training_session_202608070000000 = require("./202608070000000_training_session");
+const training_taxa_202608070000001 = require("./202608070000001_training_taxa");
 
 module.exports = [
     { id: "202605080000000", table: "logs", up: logs_202605080000000.up, down: logs_202605080000000.down },
+    { id: "202608070000000", table: "training_session", up: training_session_202608070000000.up, down: training_session_202608070000000.down },
+    { id: "202608070000001", table: "training_taxa", up: training_taxa_202608070000001.up, down: training_taxa_202608070000001.down },
 ];
