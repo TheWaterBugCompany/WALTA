@@ -1,16 +1,18 @@
-// Placeholder training assessor. Real grading — comparing the taxa the user added
-// against the set expected for the site — lands later behind this same interface:
-//   assess(taxa) -> { [sampleTaxonId]: "correct" | "incorrect" }
-// Until then it marks every taxon correct so the feedback screen is wired end to
-// end without inventing wrong answers. The tray injects it and calls assess() when
-// the user taps Assess; tests inject a fake assessor with known verdicts.
-module.exports = function createTrainingAssessor() {
+// Grades a training attempt against the exercise's expected taxa, in order.
+// The tray hands assess() its taxa items ({ taxonId, sampleTaxonId, ... }) in
+// tray order; grading is strict-positional (position i is correct iff the taxon
+// there is expectedOrder[i]), and the verdict map is keyed by sampleTaxonId so
+// the tick/cross overlay reads it unchanged.
+//   createTrainingAssessor(expectedOrder).assess(taxa)
+//     -> { [sampleTaxonId]: "correct" | "incorrect" }
+module.exports = function createTrainingAssessor(expectedOrder = []) {
   return {
     assess(taxa) {
       const verdicts = {};
-      taxa.forEach(function (taxon) {
+      taxa.forEach(function (taxon, i) {
         if (taxon && taxon.sampleTaxonId != null) {
-          verdicts[taxon.sampleTaxonId] = "correct";
+          verdicts[taxon.sampleTaxonId] =
+            taxon.taxonId === expectedOrder[i] ? "correct" : "incorrect";
         }
       });
       return verdicts;
