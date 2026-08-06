@@ -13,8 +13,21 @@ Navigation.prototype.getHistory = function () {
     return this.history;
 }
 
+// The roots that establish a survey's sample (new survey, or view/edit from
+// history) set it here; onOpenView then threads it into every screen's args, so
+// components receive the model by injection rather than reading a global.
+Navigation.prototype.setCurrentSample = function(sample, taxa) {
+    this.currentSample = sample;
+    this.currentTaxa = taxa;
+}
+
 Navigation.prototype.onOpenView = function(ctl,args) {
-    _.extend(args, {key: this.services.Key, Survey: this.services.Survey});
+    Object.assign(args, {
+        key: this.services.Key,
+        Survey: this.services.Survey,
+        sample: this.currentSample,
+        taxa: this.currentTaxa,
+    });
     return this.services.View.openView(ctl,args);
 }
 
