@@ -3,6 +3,10 @@ var Topics = require('ui/Topics');
 function onViewClick() {
     Alloy.Models.instance("sample").loadById($.args.sampleId);
     Alloy.Collections.instance("taxa").load($.args.sampleId);
+    Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
+        sample: Alloy.Models.instance("sample"),
+        taxa: Alloy.Collections.instance("taxa"),
+    });
     Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right",readonly:true});
 }
 
@@ -12,6 +16,10 @@ function onEditClick() {
     let tempSample = sample.createTemporaryForEdit();
     Alloy.Models.sample = tempSample;
     Alloy.Collections.taxa = tempSample.loadTaxa();
+    Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
+        sample: tempSample,
+        taxa: Alloy.Collections.taxa,
+    });
     Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right",readonly:false});
 }
 

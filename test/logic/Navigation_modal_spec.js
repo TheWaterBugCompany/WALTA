@@ -8,6 +8,7 @@ describe("Navigation modals", function () {
   beforeEach(function () {
     calls = [];
     services = {
+      topics: { SURVEY_STARTED: "surveystarted", subscribe() {} },
       View: {
         openModal(name, args, svcs) { calls.push({ fn: "openModal", name, args, svcs }); },
         closeModal() { calls.push({ fn: "closeModal" }); },

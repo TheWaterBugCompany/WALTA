@@ -7,6 +7,12 @@ function Navigation(services) {
     this.history = [];
     this.controller = null;
     this.services = services;
+    this.currentSample = null;
+    this.currentTaxa = null;
+    // The roots that establish a survey's sample announce it on the bus; seed the
+    // sample threaded into every screen's args from there (see onOpenView).
+    services.topics.subscribe(services.topics.SURVEY_STARTED,
+        (data) => this.setCurrentSample(data.sample, data.taxa));
 }
 
 Navigation.prototype.getHistory = function () {
