@@ -16,6 +16,9 @@ var { View } = require("logic/View");
 var SampleHistorySource = require("logic/SampleHistorySource");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
+var TrainingRepository = require("repository/TrainingRepository");
+var createTrainingExercises = require("logic/TrainingExercises");
+var createTraining = require("logic/Training");
 var { checkForErrors } = require('util/PromiseUtils');
 var DiagnosticsBundle = require('util/DiagnosticsBundle');
 Topics.init();
@@ -125,10 +128,22 @@ GeoLocationService.init();
 
 Alloy.Models.instance("sample").loadCurrent();
 let taxa = Alloy.Models.instance("sample").loadTaxa();
+
+// Training session service — reads the bundled exercise data and drives the
+// training repo (tables already migrated into waterbug_data in alloy.js).
+let trainingExercises = createTrainingExercises(
+  JSON.parse(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "training-exercises.json").read().text));
+let training = createTraining({
+  topics: Topics,
+  repo: TrainingRepository.open("waterbug_data"),
+  exercises: trainingExercises,
+});
+
 let services ={
   System: System,
   Key: Alloy.Globals.Key,
   Survey: Survey,
+  Training: training,
   cerdiApi: Alloy.Globals.CerdiApi,
   topics: Topics,
   dialogs: Dialogs,
