@@ -15,12 +15,14 @@ When('I tap Show Logs in the sync popup', async function () {
 });
 
 Then('the log pane shows sync activity from the Logger', async function () {
-    // Assert a real-work milestone, not just a start/end marker: the pane must
-    // show the sync genuinely downloading. "Downloading site photo" is logged
-    // mid-sync (before completion), so it's reliably present when we look —
-    // unlike the final "Sync finished" line, which races the async SqlSink
-    // write. Sync completion itself is asserted by the preceding step.
-    await this.syncFeedback.expectLogsContain("Downloading site photo");
+    // Assert the completion line of the sync the popup itself ran. The VM
+    // subscribes to the Logger when the popup opens, before view.start() kicks
+    // off the sync, so this sync's "Sync finished" line is caught live — no
+    // dependency on the SqlSink snapshot. "Downloading site photo" can't be
+    // used: the LOGGEDIN auto-sync downloads the sample before the user taps
+    // Sync Now, so the observed Sync-Now sync has nothing to download and never
+    // logs it (a double-sync race that made this step flaky on iOS CI).
+    await this.syncFeedback.expectLogsContain("Sync finished");
 });
 
 When('I remember the first {int} lines of the log pane', async function (n) {
