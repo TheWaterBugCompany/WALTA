@@ -26,6 +26,10 @@ class MenuEntryViewModel extends ChangeNotifier {
   get disabled() { return this._disabled; }
   get size() { return this._size; }
 
+  // Fall back to description when title is null: iOS hides a nameless button
+  // and its children from the a11y tree, so a title-less card would vanish.
+  get accessibilityLabel() { return this._title || this._description; }
+
   get buttonColor() { return this._disabled ? DISABLED_COLOR : ENABLED_COLOR; }
   get buttonOpacity() { return this._disabled ? 0.5 : 1; }
 

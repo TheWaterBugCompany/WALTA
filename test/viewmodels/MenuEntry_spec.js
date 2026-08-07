@@ -48,6 +48,12 @@ describe("MenuEntryViewModel", function () {
     expect(on.buttonColor).to.equal("#cfdbf3");
   });
 
+  it("labels itself by title, falling back to description when title is null", function () {
+    expect(build({ title: "Key" }).accessibilityLabel).to.equal("Key");
+    expect(build({ title: null, description: "If you can't identify the bug." }).accessibilityLabel)
+      .to.equal("If you can't identify the bug.");
+  });
+
   it("is a ChangeNotifier so the row binder can subscribe", function () {
     expect(typeof build().addListener).to.equal("function");
   });

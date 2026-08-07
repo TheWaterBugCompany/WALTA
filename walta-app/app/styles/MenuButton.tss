@@ -1,4 +1,5 @@
 "#button" : {
+  width: "96%",
   borderRadius: "15dp",
   backgroundColor: "#cfdbf3",
   top: "2%",
@@ -15,18 +16,6 @@
 
 "#button[if=Alloy.Globals.isXLarge]" : {
   borderRadius: "20dp"
-}
-
-".large": {
-  width: "47.75%"
-}
-
-".fill" : {
-  width: "96%"
-}
-
-".small" : {
-  width: "31.34%"
 }
 
 "#icon" : {
