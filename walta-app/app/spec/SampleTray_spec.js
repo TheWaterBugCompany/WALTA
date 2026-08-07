@@ -906,6 +906,15 @@ describe( 'SampleTray controller', function() {
       });
     });
 
+    it('grades the tray when the Assess anchor button is tapped', function() {
+      SampleTray.assessButton.NavButton.fireEvent("click");
+      return assertEventually( function() {
+        var endcap = getTaxaIcons( SampleTray.tray.children[0] );
+        assertVerdict( endcap[0], "cross-icon.png" );
+        assertVerdict( endcap[1], "tick-icon.png" );
+      });
+    });
+
     it('clears the feedback when a taxon is edited', function() {
       trayVm().assess();
       return assertEventually( function() {

@@ -22,5 +22,11 @@ module.exports = function createTraining({ topics, repo, exercises }) {
     isActive() {
       return tray !== null;
     },
+
+    // Append an identified taxon to the session tray. Position is the caller's
+    // concern (the store takes it as given), so training appends at the end.
+    addTaxon(taxonId) {
+      return repo.addTaxon(tray, taxonId, tray.length);
+    },
   };
 };

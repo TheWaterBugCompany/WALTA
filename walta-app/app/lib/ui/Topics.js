@@ -109,6 +109,14 @@ var topics = {
 	// seeds the tray/assessor it threads into every screen's args from this.
 	TRAINING_STARTED: 'trainingstarted',
 
+	// Grade the current training tray (fired by the tray's Assess button; the tray
+	// VM listens and runs its assessor).
+	ASSESS: 'assess',
+
+	// The training tray graded every taxon correct. Payload: { correctCount }.
+	// Opens the TrainingSuccess modal.
+	TRAINING_SUCCESS: 'trainingsuccess',
+
 	NOTES: 'notes',
 
 	// used to trap when a page is opened

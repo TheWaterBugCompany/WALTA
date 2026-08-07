@@ -19,13 +19,24 @@ function fakeExercises(map) {
 // A tray that just records what the repo added, standing in for the domain
 // SampleTray (the real one is exercised in its own spec).
 function fakeTray() {
-  return { taxa: [], get length() { return this.taxa.length; } };
+  return {
+    taxa: [],
+    get length() { return this.taxa.length; },
+    add(t) { this.taxa.push(t); },
+  };
 }
 
 function fakeRepo(tray) {
   return {
     started: null,
+    added: [],
     startSession(code) { this.started = code; return tray; },
+    addTaxon(t, taxonId, position) {
+      this.added.push({ tray: t, taxonId, position });
+      const taxon = { id: this.added.length, taxonId, position };
+      t.add(taxon);
+      return taxon;
+    },
   };
 }
 
@@ -74,5 +85,17 @@ describe("logic/Training", function () {
     expect(training.isActive()).to.equal(false);
     training.startTraining("101");
     expect(training.isActive()).to.equal(true);
+  });
+
+  it("adds an identified taxon to the session tray, appended at the end", function () {
+    training.startTraining("101");
+    training.addTaxon(90);
+    training.addTaxon(198);
+
+    expect(repo.added).to.deep.equal([
+      { tray, taxonId: 90, position: 0 },
+      { tray, taxonId: 198, position: 1 },
+    ]);
+    expect(tray.length).to.equal(2);
   });
 });

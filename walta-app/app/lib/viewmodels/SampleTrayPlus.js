@@ -37,6 +37,7 @@ class SampleTrayPlusViewModel extends ChangeNotifier {
       allowAddToSample: true,
       surveyType: this._tray.surveyType(),
       unknownBug: true,
+      training: this._tray.trainingMode,
     });
   }
 }

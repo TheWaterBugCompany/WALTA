@@ -7,7 +7,7 @@ var Logger = require('util/Logger');
 
 var debug = (m, tag = "ui") => Logger.debug(m, tag);
 
-var { System, Key, Survey, Navigation } = $.args;
+var { System, Key, Survey, Training, Navigation } = $.args;
 async function siteDetailsWindow(args) {
     await Navigation.openController("SiteDetails", args);
 }
@@ -63,7 +63,17 @@ async function startApp(options) {
   });
   routePromise(Topics.BROWSE,  (data) =>   Navigation.openController("TaxonList", data));
   routePromise(Topics.SAMPLETRAY,  (data) =>   Navigation.openController("SampleTray", data));
-  routePromise(Topics.IDENTIFY,  (data) =>   Navigation.openController("SampleTray", data));
+  // A survey routes an identification through the EditTaxon overlay (data.taxonId
+  // opens it). Training has no per-taxon editor: a fresh identification (no
+  // sampleTaxonId) is added straight to the session tray, and the tray always
+  // opens without a taxonId so the survey-only overlay never appears.
+  routePromise(Topics.IDENTIFY,  (data) => {
+    if (Training.isActive()) {
+      if (data.sampleTaxonId == null) Training.addTaxon(data.taxonId);
+      return Navigation.openController("SampleTray", {});
+    }
+    return Navigation.openController("SampleTray", data);
+  });
   routePromise(Topics.SITEDETAILS,  (data) =>  siteDetailsWindow(data));
   routePromise(Topics.HABITAT,  (data) =>  Navigation.openController("Habitat", data));
   routePromise(Topics.COMPLETE,  (data) =>  Navigation.openController("Summary", data));
@@ -74,6 +84,7 @@ async function startApp(options) {
   routePromise(Topics.ABOUT,  (data) =>  Navigation.openController("About", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ACADEMY,  () =>  Navigation.openModal("Academy"));
   routePromise(Topics.SELECT_METHOD,  (data) =>  Navigation.openModal("MethodSelect", data));
+  routePromise(Topics.TRAINING_SUCCESS,  (data) =>  Navigation.openModal("TrainingSuccess", data));
   routePromise(Topics.EDIT_SAMPLE,  (data) =>  Navigation.openModal("SampleEditMenu", data));
   routePromise(Topics.START_SYNC,  () =>  Navigation.openModal("SyncFeedback"));
   Topics.subscribe(Topics.FORCE_UPLOAD,  () => Survey.uploadNewSample());

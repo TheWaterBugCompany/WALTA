@@ -30,6 +30,11 @@ module.exports = function createSampleTray({ view, args, services, bindView }) {
     assessor: args.assessor || services.assessor || TrainingAssessor(),
   });
 
+  // A clean training run opens the success modal — the VM announces it; the
+  // screen translates that into the navigation intent (Main routes it to the modal).
+  vm.on("allCorrect", (correctCount) =>
+    services.topics.fireTopicEvent(services.topics.TRAINING_SUCCESS, { correctCount }));
+
   const unbind = bindView(view, vm, {
     tray: {
       width: "trayWidthCss",
