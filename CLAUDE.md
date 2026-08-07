@@ -36,7 +36,7 @@ When the user asks to start work on a Trello card (e.g. "let's start work on `WB
 
 ### Iterating on a draft PR
 
-Once the draft PR exists, commit and push directly to the task branch as work progresses — review happens on the PR's Files Changed view, not by showing diffs in chat. This applies to `task/wb-<N>-...` branches only; direct commits to `main`, force pushes, and history rewrites still need explicit approval.
+Once the draft PR exists, commit and push directly to the task branch as work progresses — review happens on the PR's Files Changed view, not by showing diffs in chat. Force-pushing and rewriting history (e.g. rebasing onto `main`) is fine on a `task/wb-<N>-...` branch without asking — use `--force-with-lease`. This applies to `task/wb-<N>-...` branches only; direct commits to `main`, and any force push or history rewrite of `main`, still need explicit approval.
 
 ### One PR = one responsibility
 
