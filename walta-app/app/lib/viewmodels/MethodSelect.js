@@ -1,36 +1,46 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
+const MenuEntryViewModel = require("./MenuEntry");
 
-// State for the MethodSelect modal: which identification methods the caller may
-// pick, and where each one routes. In training mode only the Key is offered —
-// Speedbug, Browse and Unknown bug are disabled (the view greys them). Tapping a
-// disabled entry does nothing. Titanium-free.
+// State for the MethodSelect modal: the identification methods the caller may
+// pick, as a collection of MenuEntry row-VMs the view binds. In training mode
+// only the Key is offered — the rest are disabled (greyed) and route nowhere.
+// Titanium-free.
 class MethodSelectViewModel extends ChangeNotifier {
-  constructor({ topics, training = false, allowAddToSample = false, surveyType = null }) {
+  constructor({ topics, training = false, allowAddToSample = false, surveyType = null, unknownBug = false }) {
     super();
     this._topics = topics;
-    this._training = training;
-    this._payload = { allowAddToSample, surveyType };
+    const payload = { allowAddToSample, surveyType };
+
+    // Cards share the modal height: three at 30.67%, or four (with the unknown
+    // bug) at 25% plus a shorter 16% unknown-bug card.
+    const mainSize = unknownBug ? "25%" : "30.67%";
+
+    this._entries = [];
+    this._addEntry("keysearch", "/images/key-icon.png", "Key",
+      "Questions to help identify your waterbug.", false, mainSize,
+      () => this._route(topics.KEYSEARCH, payload));
+    this._addEntry("speedbug", "/images/icon-speedbug.png", "Speedbug",
+      "Look at silhouettes of waterbugs to choose the best match.", training, mainSize,
+      () => this._route(topics.SPEEDBUG, payload));
+    this._addEntry("browselist", "/images/browse-icon.png", "Browse",
+      "If you know the name or scientific name of your waterbug.", training, mainSize,
+      () => this._route(topics.BROWSE, payload));
+    if (unknownBug) {
+      this._addEntry("unknownbug", "/images/unknown-bug-icon.png", "Unknown bug",
+        "If you can't identify the bug.", training, "16%",
+        () => this._route(topics.IDENTIFY, { taxonId: null }));
+    }
   }
 
-  get keysearchEnabled() { return true; }
-  get speedbugEnabled() { return !this._training; }
-  get browseEnabled() { return !this._training; }
-  get unknownbugEnabled() { return !this._training; }
-
-  // Positive form for the view to bind — bindView has no negation in paths.
-  get speedbugDisabled() { return !this.speedbugEnabled; }
-  get browseDisabled() { return !this.browseEnabled; }
-  get unknownbugDisabled() { return !this.unknownbugEnabled; }
-
-  keysearch() { this._route(this.keysearchEnabled, this._topics.KEYSEARCH, this._payload); }
-  speedbug() { this._route(this.speedbugEnabled, this._topics.SPEEDBUG, this._payload); }
-  browselist() { this._route(this.browseEnabled, this._topics.BROWSE, this._payload); }
-  unknownbug() { this._route(this.unknownbugEnabled, this._topics.IDENTIFY, { taxonId: null }); }
+  get entries() { return this._entries; }
 
   close() { this.trigger("close"); }
 
-  _route(enabled, topic, data) {
-    if (!enabled) return;
+  _addEntry(key, icon, title, description, disabled, size, onSelect) {
+    this._entries.push(new MenuEntryViewModel({ key, icon, title, description, disabled, size, onSelect }));
+  }
+
+  _route(topic, data) {
     this.trigger("close");
     this._topics.fireTopicEvent(topic, data);
   }

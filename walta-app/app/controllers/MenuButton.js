@@ -1,60 +1,59 @@
 var Topics = require('ui/Topics');
 
-if ( $.args.icon) {
-  $.icon.image = $.args.icon;
-} else {
-  $.icon.width = "12%";
-}
+// Two ways in: a collection row-VM (bound reactively by
+// lib/mvvm/controllers/MenuButton) or legacy imperative args (menuEntry callers
+// like MayflyMusterSelect). The row-VM path leaves display / greying / tap to
+// the binder; the legacy path wires them here.
+var rowVm = $.args.rowVm;
 
-$.title.text = $.args.title;
-$.description.text = $.args.description;
-if ( $.args.small ) {
-  $.resetClass( $.button, ["small"] );
-}
-if ( $.args.fill ) {
+// Layout: collection entries are full-width cards sized by the row-VM; legacy
+// callers pass small / fill / size as args.
+var fill = rowVm ? true : $.args.fill;
+var size = rowVm ? rowVm.size : $.args.size;
+
+if ( fill ) {
   $.resetClass( $.button, ["fill"] );
   $.resetClass( $.text, ["margin"] );
+} else if ( $.args.small ) {
+  $.resetClass( $.button, ["small"] );
+}
+if ( size ) {
+  $.button.height = size;
 }
 
-if ( $.args.size ) {
-  $.button.height = $.args.size;
-  
-}
-
-// Fall back to description when title is null (e.g. SampleEditMenu's
-// View/Edit buttons). Without this, iOS Titanium treats the button as
-// a nameless a11y element and hides its children too — invisible to
-// Appium / XCUITest, even though the text renders visually.
-$.button.accessibilityLabel = $.args.title || $.args.description;
-
-// Bindable greyed-out state (MethodSelect greys the non-key options in
-// training mode). Behaviour — whether a tap does anything — stays with the
-// caller's view-model; this only controls appearance.
-var ENABLED_BACKGROUND = "#cfdbf3";
-var DISABLED_BACKGROUND = "#e6e6e6";
-var greyed = false;
-
-Object.defineProperty($, "disabled", {
-  configurable: true,
-  get: function () { return greyed; },
-  set: function (value) {
-    greyed = Boolean(value);
-    $.button.backgroundColor = greyed ? DISABLED_BACKGROUND : ENABLED_BACKGROUND;
-    $.button.opacity = greyed ? 0.5 : 1;
-  },
-});
-
-function onClick(e) {
-  if ( $.args.topic ) {
-    Topics.fireTopicEvent( $.args.topic, null );
+var onClick;
+if ( rowVm ) {
+  // Display, greying and tap are bound by the binder; only the a11y label is
+  // set here. Fall back to description when title is null (see legacy branch).
+  $.button.accessibilityLabel = rowVm.title || rowVm.description;
+} else {
+  if ( $.args.icon ) {
+    $.icon.image = $.args.icon;
+  } else {
+    $.icon.width = "12%";
   }
-  $.trigger('click');
-  e.cancelBubble = true;
+  $.title.text = $.args.title;
+  $.description.text = $.args.description;
+
+  // Fall back to description when title is null (e.g. SampleEditMenu's View/Edit
+  // buttons). Without this, iOS Titanium treats the button as a nameless a11y
+  // element and hides its children too — invisible to Appium / XCUITest.
+  $.button.accessibilityLabel = $.args.title || $.args.description;
+
+  onClick = function (e) {
+    if ( $.args.topic ) {
+      Topics.fireTopicEvent( $.args.topic, null );
+    }
+    $.trigger('click');
+    e.cancelBubble = true;
+  };
+  $.button.addEventListener( 'click', onClick );
 }
 
-$.button.addEventListener( 'click', onClick );
 function cleanUp() {
-  $.button.removeEventListener("click", onClick);
+  if ( onClick ) {
+    $.button.removeEventListener("click", onClick);
+  }
   $.destroy();
   $.off();
 }
