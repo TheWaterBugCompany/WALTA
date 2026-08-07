@@ -1,9 +1,9 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
 
-// State for the training Success modal, shown when Assess finds every creature
+// State for the training TrainingSuccess modal, shown when Assess finds every creature
 // correctly identified. Finish returns to the main menu; the ✕ just dismisses.
 // Titanium-free.
-class SuccessViewModel extends ChangeNotifier {
+class TrainingSuccessViewModel extends ChangeNotifier {
   constructor({ topics, correctCount = 0 }) {
     super();
     this._topics = topics;
@@ -27,4 +27,4 @@ class SuccessViewModel extends ChangeNotifier {
   }
 }
 
-module.exports = SuccessViewModel;
+module.exports = TrainingSuccessViewModel;

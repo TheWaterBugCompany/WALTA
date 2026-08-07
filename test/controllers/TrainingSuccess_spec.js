@@ -1,26 +1,9 @@
 require("mocha");
 const { expect } = require("chai");
-const createSuccessController = require("../../walta-app/app/lib/mvvm/controllers/Success");
+const createTrainingSuccessController = require("../../walta-app/app/lib/mvvm/controllers/TrainingSuccess");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
+const { makeWidget, makeBackboneTarget } = require("../fixtures/fakeWidgets");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
-
-function makeWidget(props) {
-  const listeners = {};
-  return Object.assign({
-    addEventListener(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    removeEventListener(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
-    fireEvent(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
-  }, props);
-}
-
-function makeBackboneTarget() {
-  const listeners = {};
-  return {
-    on(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    off(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
-    trigger(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
-  };
-}
 
 function makeView() {
   return {
@@ -30,13 +13,13 @@ function makeView() {
   };
 }
 
-describe("Success controller", function () {
+describe("TrainingSuccess controller", function () {
   let view, closed, ctl;
 
   function build(args) {
     view = makeView();
     closed = 0;
-    ctl = createSuccessController({
+    ctl = createTrainingSuccessController({
       view,
       close: () => closed++,
       services: { topics: Topics },

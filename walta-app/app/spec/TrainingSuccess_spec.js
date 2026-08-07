@@ -1,21 +1,21 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
 var { wrapViewInWindow, closeWindow, windowOpenTest } = require('spec/util/TestUtils');
-var createSuccess = require("mvvm/controllers/Success");
+var createTrainingSuccess = require("mvvm/controllers/TrainingSuccess");
 var { makeBinder } = require("util/bindView");
 var Topics = require("ui/Topics");
 
-// Drives the real Success modal — the Alloy presenter plus the Titanium-free
+// Drives the real TrainingSuccess modal — the Alloy presenter plus the Titanium-free
 // screen controller through bindView — so the message and confetti render
-// on-device. Finish/close routing is covered in Node (test/controllers/Success_spec.js).
-describe('Success modal', function() {
+// on-device. Finish/close routing is covered in Node (test/controllers/TrainingSuccess_spec.js).
+describe('TrainingSuccess modal', function() {
 	var mod, win, ctl;
 
 	function open(args) {
 		return new Promise(function(resolve) {
-			mod = Alloy.createController("Success");
+			mod = Alloy.createController("TrainingSuccess");
 			win = wrapViewInWindow( mod.getView() );
-			ctl = createSuccess({
+			ctl = createTrainingSuccess({
 				view: mod,
 				close: function() {},
 				services: { topics: Topics },
