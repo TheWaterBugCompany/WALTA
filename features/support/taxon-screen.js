@@ -18,5 +18,12 @@ class TaxonScreen extends BaseScreen {
       await this.click("Add to sample");
       await this.world.editTaxon.waitFor()
     }
-} 
+
+    // Training has no per-taxon editor: adding drops the taxon straight into the
+    // tray, so wait for the tray rather than the EditTaxon overlay.
+    async addToTrainingSample() {
+      await this.click("Add to sample");
+      await this.world.sample.waitFor();
+    }
+}
 module.exports = TaxonScreen;

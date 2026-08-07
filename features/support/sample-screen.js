@@ -21,6 +21,27 @@ class SampleScreen extends BaseScreen {
         await this.world.editTaxon.waitFor();
     }
 
+    // Training: grade the tray via the Assess anchor button.
+    async assess() {
+        await this.click("Assess");
+    }
+
+    // Training: an assessed taxon carries a "correct"/"incorrect" verdict overlay
+    // (its accessibilityLabel), so a cross is findable as ~incorrect.
+    async waitForIncorrectVerdict() {
+        await this.waitForLabel("incorrect");
+    }
+
+    // Training: tapping a taxon reopens the method chooser to re-identify it.
+    async reidentifyTaxon( id ) {
+        const fragment = `Taxon ${id}, `;
+        const selector = this.isIos()
+            ? `-ios predicate string:label BEGINSWITH '${fragment}'`
+            : `android=new UiSelector().descriptionStartsWith("${fragment}")`;
+        await this.clickRaw(selector);
+        await this.world.methodSelect.waitFor();
+    }
+
     async goNext() {
         await this.click("Next");
         // Between Sample tray and Summary there's a Notes screen
