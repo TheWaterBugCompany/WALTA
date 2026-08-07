@@ -104,6 +104,11 @@ var topics = {
 	// threads into every screen's args from this.
 	SURVEY_STARTED: 'surveystarted',
 
+	// A training session's tray is now established. Payload: { tray, assessor,
+	// training }. The training-mode counterpart to SURVEY_STARTED — Navigation
+	// seeds the tray/assessor it threads into every screen's args from this.
+	TRAINING_STARTED: 'trainingstarted',
+
 	NOTES: 'notes',
 
 	// used to trap when a page is opened
