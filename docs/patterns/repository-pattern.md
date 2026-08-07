@@ -1,10 +1,21 @@
 # Repository pattern (non-Alloy persistence)
 
-A small persistence convention for tables that don't fit Alloy's model
-machinery. Currently used by [logger-sinks.md](logger-sinks.md)
-(`LogRepository`); the same shape is meant to host future tables —
-sync queue, key cache, etc. — so they don't drag Backbone or Alloy's
-build-time wiring along just to talk to SQLite.
+A persistence convention for tables that don't fit Alloy's model
+machinery, so they don't drag Backbone or Alloy's build-time wiring
+along just to talk to SQLite. Two shapes live under
+`walta-app/app/lib/repository/` and it matters which one you're writing
+(see [Repository vs row-DAO](#two-shapes-repository-vs-row-dao)):
+
+- A **Repository** hydrates and persists **domain model objects** — the
+  controller calls the repository, the repository creates the models,
+  the models never call back. `TrainingRepository` (returns
+  `SampleTray`/`Taxon`) is the reference example.
+- A **row-DAO** returns plain row objects, for internal append-only or
+  query-only data with no domain model. `LogRepository` (returns log
+  rows for the "Show Logs" pane) is the reference example.
+
+Both share the same `Migrator` + migration-file plumbing below; they
+differ only in what `open()`'s methods return.
 
 ## Why not Alloy?
 
@@ -25,6 +36,56 @@ view updates and sync naturally. It's a poor fit for everything else:
 
 The repository pattern lets these tables coexist with Alloy without
 inheriting Alloy.
+
+## Two shapes: Repository vs row-DAO
+
+Both live in `lib/repository/`, but they play different roles — don't
+copy the wrong one. The question is: **does this table back a domain
+model the app mutates and observes?**
+
+| | Repository | row-DAO |
+|---|---|---|
+| Returns | domain model objects (aggregate/entity) | plain row objects `{ col: value }` |
+| For | data with behaviour + a live view (the tray) | internal append-only / query-only data (logs, a cache) |
+| Direction | controller → repository → models; models never touch the repo | caller → DAO → rows |
+| Example | `TrainingRepository` → `SampleTray`/`Taxon` | `LogRepository` → log rows |
+
+`LogRepository` returning row hashes is correct **because logs have no
+domain model** — they're written by a sink and read into a list pane,
+nothing mutates or observes them. That's a DAO. Don't take it as the
+template for a table that *does* have a domain model: returning hashes
+there leaks the DB schema into every caller and there's no object to
+attach behaviour or change-notification to.
+
+For a table with a domain model, the repository's job is to **create
+and persist the domain objects** — it depends on the models (data →
+domain, the correct inward direction), the models never depend on it
+(a model that calls its repository is a fat-model anti-pattern), and
+the models never import `Ti.Database` (decoupled from the persist
+engine, so the layer ports — e.g. to Flutter's `sqflite`/`drift` —
+behind the same interface). Change-notification lives on the model
+(a `ChangeNotifier`), never the repository.
+
+```js
+// TrainingRepository.js — a Repository: creates/persists/returns models
+exports.open = function (dbName) {
+    const db = Ti.Database.open(dbName);
+    return {
+        startSession: (code) => { /* wipe + INSERT */ return new SampleTray(); },
+        loadTray:     () => { /* SELECT → new Taxon per row */ return new SampleTray(taxa); },
+        addTaxon:     (tray, taxonId, position) => {
+            /* INSERT */
+            const taxon = new Taxon({ id: db.lastInsertRowId, taxonId, position });
+            tray.add(taxon);   // repo mutates the aggregate it created; the model emits change
+            return taxon;
+        },
+        // …
+    };
+};
+```
+
+The domain models are plain classes in `lib/models/`
+(`SampleTray extends ChangeNotifier`, `Taxon`), unaware of persistence.
 
 ## Anatomy
 
@@ -89,12 +150,13 @@ discovery time. No metadata in the file body beyond `up`/`down`.
 
 ### Repository module
 
-Plain CommonJS. Opens the db, returns an object with whatever
-operations make sense for the table. Shape is up to the repository —
-there's no enforced base class.
+Plain CommonJS. `open(dbName)` opens the db and returns an object with
+whatever operations make sense — no enforced base class. What those
+operations *return* is the [Repository-vs-DAO](#two-shapes-repository-vs-row-dao)
+choice: domain models, or rows.
 
 ```js
-// LogRepository.js
+// LogRepository.js — the row-DAO shape (logs have no domain model)
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
     return {
@@ -111,20 +173,39 @@ via `Migrator.migrate(dbName)` at app startup. Repositories don't run
 their own migrations on open; that would couple every consumer of the
 repo to an implicit "first call sets up the schema" behaviour.
 
-## Shared db: `waterbug_data`
+## Which db: shared `waterbug_data`, or an isolated one
 
-All non-Alloy tables live in one SQLite database, currently named
+Internal, low-stakes data (logs, a future cache) shares one SQLite db,
 `waterbug_data`. Lock contention isn't a concern at this app's scale
-(mobile, single user, low write volume), and a shared db keeps the
-Migrator API simple — one call covers every non-Alloy table.
+(mobile, single user, low write volume), and a shared db keeps things
+simple.
+
+**Isolated draft stores get their own db.** Training persists to
+`waterbug_training`, kept entirely apart from the real-sample archive
+so training data *can't* leak into sync/upload/history queries — those
+run against Alloy's `samples` db and structurally cannot see another
+file. Isolation-by-construction beats a discriminator column you have
+to remember to filter on. The survey/edit draft store will be a
+separate isolated db for the same reason.
+
+An isolated db is migrated with its own `Migrator.migrate(dbName)` call
+at startup (alongside the `waterbug_data` one). Note the current
+limitation: the migration manifest is global, so `migrate(dbName)`
+applies *every* migration to whichever db it's given — fine while the
+tables are harmless to co-create, but scoping the manifest per-db is
+the natural next step as more isolated dbs appear.
 
 Alloy's `samples` and `taxa` databases stay separate per Alloy's
 convention.
 
 ## Adding a new repository
 
-1. Create `walta-app/app/lib/repository/XxxRepository.js`. `open()`
-   takes a dbName, opens, returns operation methods.
+1. Decide the shape: does the table back a domain model? If yes, write
+   a **Repository** that returns domain models from `lib/models/` (see
+   [Repository vs row-DAO](#two-shapes-repository-vs-row-dao)); if it's
+   internal append-only/query-only data, a **row-DAO** returning rows
+   is right. Then create `walta-app/app/lib/repository/XxxRepository.js`
+   — `open()` takes a dbName, opens, returns operation methods.
 2. Add a migration file
    `walta-app/app/lib/repository/migrations/<timestamp>_<table>.js`
    creating the table. Use the current UTC time formatted as
@@ -137,7 +218,9 @@ convention.
 5. Tests against the repository call `Migrator.migrate(testDbName)`
    before opening the repository, so schema is in place.
 
-That's it — no model file, no compiler hooks, no `Alloy.M()` call.
+That's it — no *Alloy* model file, no compiler hooks, no `Alloy.M()`
+call. (A Repository still has its plain domain models in `lib/models/`;
+those are pure classes, not Alloy models.)
 
 ## Migrating FROM Alloy
 
