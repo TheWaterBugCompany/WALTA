@@ -10,37 +10,44 @@ describe("MethodSelectViewModel", function () {
     return new MethodSelectViewModel(Object.assign({ topics: Topics }, args));
   }
 
+  function entry(vm, key) {
+    return vm.entries.find(e => e.key === key);
+  }
+
   function recordTopic(topic) {
     let fired = false;
     Topics.subscribe(topic, data => { fired = data == null ? true : data; });
     return () => fired;
   }
 
-  it("enables every entry outside training mode", function () {
+  it("offers the key, speedbug and browse entries in order", function () {
     const vm = build();
-    expect(vm.keysearchEnabled).to.equal(true);
-    expect(vm.speedbugEnabled).to.equal(true);
-    expect(vm.browseEnabled).to.equal(true);
-    expect(vm.unknownbugEnabled).to.equal(true);
+    expect(vm.entries.map(e => e.key)).to.deep.equal(["keysearch", "speedbug", "browselist"]);
   });
 
-  it("enables only the key in training mode", function () {
-    const vm = build({ training: true });
-    expect(vm.keysearchEnabled).to.equal(true);
-    expect(vm.speedbugEnabled).to.equal(false);
-    expect(vm.browseEnabled).to.equal(false);
-    expect(vm.unknownbugEnabled).to.equal(false);
+  it("adds the unknown-bug entry only when asked", function () {
+    expect(build({ unknownBug: true }).entries.map(e => e.key))
+      .to.deep.equal(["keysearch", "speedbug", "browselist", "unknownbug"]);
   });
 
-  it("exposes disabled getters for the view to grey (positive, no negation in bindings)", function () {
-    const off = build({ training: true });
-    expect(off.speedbugDisabled).to.equal(true);
-    expect(off.browseDisabled).to.equal(true);
-    expect(off.unknownbugDisabled).to.equal(true);
-    const on = build();
-    expect(on.speedbugDisabled).to.equal(false);
-    expect(on.browseDisabled).to.equal(false);
-    expect(on.unknownbugDisabled).to.equal(false);
+  it("gives each entry its display data", function () {
+    const key = entry(build(), "keysearch");
+    expect(key.title).to.equal("Key");
+    expect(key.icon).to.equal("/images/key-icon.png");
+    expect(key.description).to.equal("Questions to help identify your waterbug.");
+  });
+
+  it("enables every entry outside training mode", function () {
+    const vm = build({ unknownBug: true });
+    expect(vm.entries.every(e => !e.disabled)).to.equal(true);
+  });
+
+  it("disables all but the key in training mode", function () {
+    const vm = build({ training: true, unknownBug: true });
+    expect(entry(vm, "keysearch").disabled).to.equal(false);
+    expect(entry(vm, "speedbug").disabled).to.equal(true);
+    expect(entry(vm, "browselist").disabled).to.equal(true);
+    expect(entry(vm, "unknownbug").disabled).to.equal(true);
   });
 
   it("routes the key to KEYSEARCH with the caller's payload and asks to close", function () {
@@ -48,15 +55,32 @@ describe("MethodSelectViewModel", function () {
     const fired = recordTopic(Topics.KEYSEARCH);
     let closed = 0;
     vm.on("close", () => closed++);
-    vm.keysearch();
+    entry(vm, "keysearch").select();
     expect(fired()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
     expect(closed).to.equal(1);
   });
 
-  it("routes the key even in training mode", function () {
+  it("routes speedbug and browse to their topics with the payload", function () {
+    const vm = build({ allowAddToSample: true, surveyType: 3 });
+    const speedbug = recordTopic(Topics.SPEEDBUG);
+    const browse = recordTopic(Topics.BROWSE);
+    entry(vm, "speedbug").select();
+    entry(vm, "browselist").select();
+    expect(speedbug()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
+    expect(browse()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
+  });
+
+  it("routes unknownbug to IDENTIFY with a null taxon", function () {
+    const vm = build({ unknownBug: true });
+    const fired = recordTopic(Topics.IDENTIFY);
+    entry(vm, "unknownbug").select();
+    expect(fired()).to.deep.equal({ taxonId: null });
+  });
+
+  it("still routes the key in training mode", function () {
     const vm = build({ training: true });
     const fired = recordTopic(Topics.KEYSEARCH);
-    vm.keysearch();
+    entry(vm, "keysearch").select();
     expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null });
   });
 
@@ -65,26 +89,9 @@ describe("MethodSelectViewModel", function () {
     const fired = recordTopic(Topics.SPEEDBUG);
     let closed = 0;
     vm.on("close", () => closed++);
-    vm.speedbug();
+    entry(vm, "speedbug").select();
     expect(fired()).to.equal(false);
     expect(closed).to.equal(0);
-  });
-
-  it("routes speedbug/browse to their topics outside training", function () {
-    const vm = build({ allowAddToSample: true, surveyType: 3 });
-    const speedbug = recordTopic(Topics.SPEEDBUG);
-    const browse = recordTopic(Topics.BROWSE);
-    vm.speedbug();
-    vm.browselist();
-    expect(speedbug()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
-    expect(browse()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
-  });
-
-  it("routes unknownbug to IDENTIFY with a null taxon", function () {
-    const vm = build();
-    const fired = recordTopic(Topics.IDENTIFY);
-    vm.unknownbug();
-    expect(fired()).to.deep.equal({ taxonId: null });
   });
 
   it("asks to close without navigating when close is called", function () {

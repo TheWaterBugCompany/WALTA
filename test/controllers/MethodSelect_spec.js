@@ -4,40 +4,53 @@ const createMethodSelectController = require("../../walta-app/app/lib/mvvm/contr
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 
-// Fake MenuButton entry: a settable `disabled` prop + Backbone-style click, as
-// the real MenuButton exposes to bindView.
-function makeEntry() {
-  const listeners = {};
+// Container the collection binder adds/removes child views into.
+function makeContainer() {
   return {
-    disabled: false,
-    on(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    off(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
-    trigger(name, data) { (listeners[name] || []).slice().forEach(cb => cb(data)); },
+    children: [],
+    add(v) { this.children.push(v); },
+    remove(v) { this.children = this.children.filter(c => c !== v); },
   };
 }
 
-function makeView({ unknownBug } = {}) {
-  const view = {
-    keysearch: makeEntry(),
-    speedbug: makeEntry(),
-    browselist: makeEntry(),
-    closeButton: makeEntry(),
+function makeBackboneTarget() {
+  const listeners = {};
+  return {
+    on(n, cb) { (listeners[n] = listeners[n] || []).push(cb); },
+    off(n, cb) { listeners[n] = (listeners[n] || []).filter(l => l !== cb); },
+    trigger(n, d) { (listeners[n] || []).forEach(cb => cb(d)); },
   };
-  if (unknownBug) view.unknownbug = makeEntry();
-  return view;
+}
+
+// Fake View seam: records every entry component built, exposing its row-VM.
+function makeFakeView() {
+  const handles = [];
+  return {
+    handles,
+    createComponent(name, args) {
+      const handle = {
+        name, rowVm: args.rowVm, view: { for: args.rowVm.key },
+        disposed: false, dispose() { this.disposed = true; },
+      };
+      handles.push(handle);
+      return handle;
+    },
+  };
 }
 
 describe("MethodSelect controller", function () {
-  let view, closed, ctl;
+  let view, closeButton, fakeView, closed, ctl;
 
-  function build(args, viewOpts) {
-    view = makeView(viewOpts);
+  function build(args) {
+    closeButton = makeBackboneTarget();
+    fakeView = makeFakeView();
     closed = 0;
+    view = { content: makeContainer(), closeButton, getView() { return undefined; } };
     ctl = createMethodSelectController({
       view,
       close: () => closed++,
       services: { topics: Topics },
-      bindView: makeBinder(),
+      bindView: makeBinder(fakeView.createComponent),
       args,
     });
   }
@@ -54,83 +67,45 @@ describe("MethodSelect controller", function () {
     return () => fired;
   }
 
-  it("routes the key tap to KEYSEARCH with the caller's payload and closes", function () {
+  const byKey = (k) => fakeView.handles.find(h => h.rowVm.key === k).rowVm;
+
+  it("renders a MenuButton per entry, in order", function () {
+    build({ unknownBug: true });
+    expect(fakeView.handles.map(h => h.name)).to.deep.equal(
+      ["MenuButton", "MenuButton", "MenuButton", "MenuButton"]);
+    expect(fakeView.handles.map(h => h.rowVm.key)).to.deep.equal(
+      ["keysearch", "speedbug", "browselist", "unknownbug"]);
+  });
+
+  it("passes the training greying through to the entry row-VMs", function () {
+    build({ training: true, unknownBug: true });
+    expect(byKey("keysearch").disabled).to.equal(false);
+    expect(byKey("speedbug").disabled).to.equal(true);
+    expect(byKey("browselist").disabled).to.equal(true);
+    expect(byKey("unknownbug").disabled).to.equal(true);
+  });
+
+  it("routes an entry's selection through its row-VM and closes", function () {
     build({ allowAddToSample: true, surveyType: 3 });
-    const fired = recordTopic(Topics.KEYSEARCH);
-    view.keysearch.trigger("click");
+    const fired = recordTopic(Topics.SPEEDBUG);
+    byKey("speedbug").select();
     expect(fired()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
     expect(closed).to.equal(1);
   });
 
-  it("routes speedbug and browse to their topics with the payload", function () {
-    build({ allowAddToSample: true, surveyType: 3 });
-    const speedbug = recordTopic(Topics.SPEEDBUG);
-    const browse = recordTopic(Topics.BROWSE);
-    view.speedbug.trigger("click");
-    view.browselist.trigger("click");
-    expect(speedbug()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
-    expect(browse()).to.deep.equal({ allowAddToSample: true, surveyType: 3 });
-  });
-
-  it("routes unknownbug to IDENTIFY with a null taxon when present", function () {
-    build({}, { unknownBug: true });
-    const fired = recordTopic(Topics.IDENTIFY);
-    view.unknownbug.trigger("click");
-    expect(fired()).to.deep.equal({ taxonId: null });
-    expect(closed).to.equal(1);
-  });
-
-  it("defaults to a fresh identification when no args are given", function () {
-    build();
-    const fired = recordTopic(Topics.KEYSEARCH);
-    view.keysearch.trigger("click");
-    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null });
-  });
-
-  it("greys the non-key entries in training mode", function () {
-    build({ training: true }, { unknownBug: true });
-    expect(view.keysearch.disabled).to.equal(false);
-    expect(view.speedbug.disabled).to.equal(true);
-    expect(view.browselist.disabled).to.equal(true);
-    expect(view.unknownbug.disabled).to.equal(true);
-  });
-
-  it("does not grey any entry outside training mode", function () {
-    build({}, { unknownBug: true });
-    expect(view.speedbug.disabled).to.equal(false);
-    expect(view.browselist.disabled).to.equal(false);
-    expect(view.unknownbug.disabled).to.equal(false);
-  });
-
-  it("swallows a tap on a greyed entry — no route, no close", function () {
-    build({ training: true });
-    const fired = recordTopic(Topics.SPEEDBUG);
-    view.speedbug.trigger("click");
-    expect(fired()).to.equal(false);
-    expect(closed).to.equal(0);
-  });
-
-  it("still routes the key in training mode", function () {
-    build({ training: true });
-    const fired = recordTopic(Topics.KEYSEARCH);
-    view.keysearch.trigger("click");
-    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null });
-  });
-
   it("closes without navigating when the close button is tapped", function () {
     build();
-    const fired = recordTopic(Topics.KEYSEARCH);
-    view.closeButton.trigger("close");
+    const key = recordTopic(Topics.KEYSEARCH);
+    closeButton.trigger("close");
     expect(closed).to.equal(1);
-    expect(fired()).to.equal(false);
+    expect(key()).to.equal(false);
   });
 
-  it("stops routing after dispose", function () {
-    build();
+  it("disposes every entry component on dispose", function () {
+    build({ unknownBug: true });
+    const handles = fakeView.handles.slice();
     ctl.dispose();
     ctl = null;
-    const fired = recordTopic(Topics.KEYSEARCH);
-    view.keysearch.trigger("click");
-    expect(fired()).to.equal(false);
+    expect(handles.every(h => h.disposed)).to.equal(true);
   });
 });

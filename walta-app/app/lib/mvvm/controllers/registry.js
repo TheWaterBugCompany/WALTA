@@ -4,6 +4,7 @@
 module.exports = {
   Academy: require("./Academy"),
   Menu: require("./Menu"),
+  MenuButton: require("./MenuButton"),
   MethodSelect: require("./MethodSelect"),
   SampleHistory: require("./SampleHistory"),
   SampleHistoryRow: require("./SampleHistoryRow"),
