@@ -965,9 +965,18 @@ module.exports = function(grunt) {
         try {
           marker = await new Promise((resolve, reject) => {
             let stop;
-            const timer = setTimeout(() => {
+            const timer = setTimeout(async () => {
               if (stop) stop();
-              reject(new Error(`visual capture timed out after ${captureTimeoutMs / 1000}s with no VISUAL_CAPTURE_DONE`));
+              // Nothing signalled done — probe the device (crashed? never
+              // started? running but silent?) so the hang is diagnosable rather
+              // than an opaque timeout. Best-effort; must not mask the timeout.
+              let diag = '';
+              try {
+                if (typeof launcher.captureDiagnostics === 'function') {
+                  diag = '\n' + await launcher.captureDiagnostics(APP_ID);
+                }
+              } catch (e) { diag = `\n(diagnostics probe failed: ${e && e.message})`; }
+              reject(new Error(`visual capture timed out after ${captureTimeoutMs / 1000}s with no VISUAL_CAPTURE_DONE${diag}`));
             }, captureTimeoutMs);
             stop = launcher.streamLogs((line) => {
               grunt.log.writeln(line);
