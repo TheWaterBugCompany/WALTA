@@ -32,6 +32,17 @@ describe("MethodSelectViewModel", function () {
     expect(vm.unknownbugEnabled).to.equal(false);
   });
 
+  it("exposes disabled getters for the view to grey (positive, no negation in bindings)", function () {
+    const off = build({ training: true });
+    expect(off.speedbugDisabled).to.equal(true);
+    expect(off.browseDisabled).to.equal(true);
+    expect(off.unknownbugDisabled).to.equal(true);
+    const on = build();
+    expect(on.speedbugDisabled).to.equal(false);
+    expect(on.browseDisabled).to.equal(false);
+    expect(on.unknownbugDisabled).to.equal(false);
+  });
+
   it("routes the key to KEYSEARCH with the caller's payload and asks to close", function () {
     const vm = build({ allowAddToSample: true, surveyType: 3 });
     const fired = recordTopic(Topics.KEYSEARCH);
