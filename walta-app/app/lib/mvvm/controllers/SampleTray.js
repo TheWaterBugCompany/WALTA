@@ -1,5 +1,6 @@
 const SampleTrayViewModel = require("viewmodels/SampleTray");
 const SampleTraySource = require("logic/SampleTraySource");
+const TrainingTraySource = require("logic/TrainingTraySource");
 const TrainingAssessor = require("logic/TrainingAssessor");
 
 // Titanium-free screen controller for the ice-cube SampleTray. Declares the whole
@@ -13,14 +14,20 @@ module.exports = function createSampleTray({ view, args, services, bindView }) {
   const { collection, component, input, measure, command, ref } = bindView;
   const platform = services.platform;
 
-  const source = SampleTraySource(args.taxa, args.key, args.readonly === true, args.sample);
+  // A training session threads its SampleTray domain aggregate as args.tray; a
+  // survey threads its Alloy taxa collection as args.taxa. The assessor rides in
+  // on args from the training session (via Navigation), falling back to the
+  // services bag and then an empty assessor for the survey path.
+  const source = args.tray
+    ? TrainingTraySource(args.tray, args.key, args.readonly === true)
+    : SampleTraySource(args.taxa, args.key, args.readonly === true, args.sample);
   const vm = new SampleTrayViewModel({
     taxaSource: source,
     topics: services.topics,
     toDip: platform.convertSystemToDip,
     toSystem: platform.convertDipToSystem,
     training: args.training === true,
-    assessor: services.assessor || TrainingAssessor(),
+    assessor: args.assessor || services.assessor || TrainingAssessor(),
   });
 
   const unbind = bindView(view, vm, {

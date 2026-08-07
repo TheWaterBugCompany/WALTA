@@ -10,6 +10,9 @@ var { speedBugIndexMock } = require('spec/mocks/MockSpeedbug');
 var { keyMock } = require('spec/mocks/MockKey');
 keyMock.addSpeedbugIndex( speedBugIndexMock );
 
+var SampleTrayModel = require('models/SampleTray');
+var Taxon = require('models/Taxon');
+
 describe( 'SampleTray controller', function() {
 
   var view, SampleTray, SampleTrayWin, openArgs;
@@ -911,6 +914,47 @@ describe( 'SampleTray controller', function() {
         Alloy.Collections.taxa.at(0).set("abundance", "1-2");
         return assertEventually( function() {
           expect( verdictOf( getTaxaIcons( SampleTray.tray.children[0] )[0] ).visible ).to.equal(false);
+        });
+      });
+    });
+  });
+
+  context('training tray (domain aggregate)', function() {
+    // A training session threads the SampleTray domain aggregate (args.tray), not
+    // the survey's Alloy taxa collection. The controller must build a
+    // TrainingTraySource over it — proven here by rendering with no args.taxa, and
+    // by the tray re-rendering when a taxon is added straight to the aggregate.
+    var trainingTray;
+
+    beforeEach(function() {
+      trainingTray = new SampleTrayModel([
+        new Taxon({ id: 1, taxonId: 1, position: 0 }),
+        new Taxon({ id: 2, taxonId: 2, position: 1 }),
+      ]);
+      view = makeTestServices().View;
+      openArgs = { key: keyMock, training: true, tray: trainingTray };
+      return openSampleTray();
+    });
+
+    afterEach(cleanupSampleTray);
+
+    function silhouetteOf( cell ) { return cell.children[0].children[0]; }
+
+    it('renders the tray taxa from the domain aggregate, with abundance hidden', function() {
+      var endcap = getTaxaIcons( SampleTray.tray.children[0] );
+      expect( endcap ).to.have.lengthOf(2);
+      expect( silhouetteOf( endcap[0] ).image ).to.include('/aeshnidae_telephleb_b.png');
+      expect( abundanceOf( endcap[0] ).visible, "abundance is hidden in training" ).to.equal(false);
+    });
+
+    it('re-renders when a taxon is added straight to the aggregate', function() {
+      return new Promise(function(resolve) {
+        updateSampleTrayOnce(resolve);
+        trainingTray.add( new Taxon({ id: 3, taxonId: 3, position: 2 }) );
+      }).then(function() {
+        return assertEventually(function() {
+          var sampleTaxa = getTaxaIcons( SampleTray.tray.children[1] );
+          expect( silhouetteOf( sampleTaxa[0] ).image ).to.include('/anisops_b.png');
         });
       });
     });
