@@ -32,6 +32,12 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._visibleTiles = [];
     this._onSourceChange = () => this.refresh();
     if (typeof taxaSource.onChange === "function") taxaSource.onChange(this._onSourceChange);
+    // In training the Assess intent arrives on the bus (fired by the anchor bar);
+    // the VM owns the behaviour, so it grades itself when asked.
+    this._onAssess = () => this.assess();
+    if (this._training && topics && typeof topics.subscribe === "function") {
+      topics.subscribe(topics.ASSESS, this._onAssess);
+    }
   }
 
   // ── Accessors the cell + slot VMs read ────────────────────────────────────
@@ -84,6 +90,13 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._verdicts = this._assessor.assess(taxa);
     this._reapplyCells();
     this.notifyListeners();
+    // A clean run — every graded taxon correct — is the training goal; announce it
+    // so the screen can open the success modal.
+    const verdicts = Object.keys(this._verdicts).map(k => this._verdicts[k]);
+    const correct = verdicts.filter(v => v === "correct").length;
+    if (verdicts.length > 0 && correct === verdicts.length) {
+      this.trigger("allCorrect", correct);
+    }
   }
 
   // Drop the feedback (a taxa edit re-opens the key), re-rendering blank overlays.
@@ -171,6 +184,9 @@ class SampleTrayViewModel extends ChangeNotifier {
   dispose() {
     if (typeof this._taxaSource.offChange === "function") {
       this._taxaSource.offChange(this._onSourceChange);
+    }
+    if (this._training && this._topics && typeof this._topics.unsubscribe === "function") {
+      this._topics.unsubscribe(this._topics.ASSESS, this._onAssess);
     }
     super.dispose();
   }

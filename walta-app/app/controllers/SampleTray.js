@@ -17,9 +17,15 @@ var readOnlyMode = $.args.readonly === true;
 
 var acb = $.getAnchorBar();
 $.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left", readonly: readOnlyMode });
-$.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.NOTES, slide: "right", readonly: readOnlyMode });
 acb.addTool($.backButton.getView());
-acb.addTool($.nextButton.getView());
+// Training grades the tray instead of moving on to Notes.
+if ( $.args.training ) {
+  $.assessButton = Alloy.createController("AssessButton", {});
+  acb.addTool($.assessButton.getView());
+} else {
+  $.nextButton = Alloy.createController("GoForwardButton", { topic: Topics.NOTES, slide: "right", readonly: readOnlyMode });
+  acb.addTool($.nextButton.getView());
+}
 
 function closeEditScreen() {
   if (typeof $.editTaxon === "object") {

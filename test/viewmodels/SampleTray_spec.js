@@ -62,11 +62,25 @@ function fakeAssessor(verdicts) {
   return { calls: [], assess(taxa) { this.calls.push(taxa); return verdicts || {}; } };
 }
 
-function trainingVm(len, assessor) {
+// A Topics stand-in with subscribe/unsubscribe so the training VM can listen for
+// the Assess intent fired by the anchor bar.
+function subscribableTopics() {
+  const subs = {};
+  return {
+    ASSESS: "assess",
+    subscribe(t, cb) { (subs[t] = subs[t] || []).push(cb); },
+    unsubscribe(t, cb) { subs[t] = (subs[t] || []).filter(x => x !== cb); },
+    fireTopicEvent(t) { (subs[t] || []).slice().forEach(cb => cb()); },
+    count(t) { return (subs[t] || []).length; },
+  };
+}
+
+function trainingVm(len, assessor, topics) {
   const vm = new SampleTrayViewModel({
     taxaSource: fakeTaxaSource(taxaOf(len)),
     training: true,
     assessor: assessor || fakeAssessor({}),
+    topics,
   });
   vm.setViewport({ width: 300, height: 100 });
   return vm;
@@ -417,7 +431,7 @@ describe("SampleTrayViewModel", function () {
       plus.tap();
       expect(topics.fired).to.deep.equal([{
         event: "select_method",
-        data: { allowAddToSample: true, surveyType: 3, unknownBug: true },
+        data: { allowAddToSample: true, surveyType: 3, unknownBug: true, training: false },
       }]);
     });
 
@@ -593,6 +607,43 @@ describe("SampleTrayViewModel", function () {
       vm.assess();
       vm.refresh();
       expect(vm.verdictFor(1001)).to.equal(null);
+    });
+
+    it("announces allCorrect with the taxon count when every taxon is correct", function () {
+      const vm = trainingVm(2, fakeAssessor({ 1001: "correct", 1002: "correct" }));
+      let count = null;
+      vm.on("allCorrect", (n) => { count = n; });
+      vm.assess();
+      expect(count).to.equal(2);
+    });
+
+    it("does not announce allCorrect when any taxon is incorrect", function () {
+      const vm = trainingVm(2, fakeAssessor({ 1001: "correct", 1002: "incorrect" }));
+      let fired = false;
+      vm.on("allCorrect", () => { fired = true; });
+      vm.assess();
+      expect(fired).to.equal(false);
+    });
+
+    it("assesses when the Assess intent is fired on the bus", function () {
+      const topics = subscribableTopics();
+      const vm = trainingVm(2, fakeAssessor({ 1001: "correct" }), topics);
+      topics.fireTopicEvent(topics.ASSESS);
+      expect(vm.verdictFor(1001)).to.equal("correct");
+    });
+
+    it("stops listening for the Assess intent on dispose", function () {
+      const topics = subscribableTopics();
+      const vm = trainingVm(2, fakeAssessor({}), topics);
+      expect(topics.count("assess")).to.equal(1);
+      vm.dispose();
+      expect(topics.count("assess")).to.equal(0);
+    });
+
+    it("does not listen for the Assess intent outside training mode", function () {
+      const topics = subscribableTopics();
+      new SampleTrayViewModel({ taxaSource: fakeTaxaSource(taxaOf(2)), topics });
+      expect(topics.count("assess")).to.equal(0);
     });
   });
 });
