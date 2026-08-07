@@ -1,70 +1,71 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
-var { wrapViewInWindow, setManualTests, closeWindow, windowOpenTest, waitForEvent } = require('spec/util/TestUtils');
-var Topics = require('ui/Topics');
+var { wrapViewInWindow, closeWindow, windowOpenTest } = require('spec/util/TestUtils');
+var createMethodSelect = require("mvvm/controllers/MethodSelect");
+var { makeBinder } = require("util/bindView");
+var Topics = require("ui/Topics");
 
-describe('MethodSelect', function() { 
-	var mnu, win;
-	context("no unknown bug", function() {
-		before( function(done) {
-			mnu = Alloy.createController("MethodSelect");
+// Drives the real modal — the Alloy presenter plus the Titanium-free screen
+// controller wired through bindView — so the on-device greying of the real
+// MenuButtons is exercised. Selection→topic routing is covered in Node
+// (test/controllers/MethodSelect_spec.js).
+describe('MethodSelect', function() {
+	var mnu, win, ctl;
+
+	function open(args) {
+		return new Promise(function(resolve) {
+			mnu = Alloy.createController("MethodSelect", { unknownBug: args.unknownBug });
 			win = wrapViewInWindow( mnu.getView() );
-			windowOpenTest( win, done );
-		});
-	
-		after( function(done) {
-			closeWindow( win, done );
-		});
-	
-		it('should fire the keysearch event', function(done) {
-			mnu.on("keysearch", function event() {
-				mnu.off("keysearch",event);
-				done();
+			ctl = createMethodSelect({
+				view: mnu,
+				close: function() {},
+				services: { topics: Topics },
+				bindView: makeBinder(),
+				args: args
 			});
-			mnu.keysearch.trigger("click");
+			windowOpenTest( win, resolve );
 		});
-	
-		it('should fire the speedbug event', function(done) {
-			mnu.on("speedbug", function event() {
-				mnu.off("speedbug",event);
-				done();
-			});
-			mnu.speedbug.trigger("click");
+	}
+
+	afterEach( async function() {
+		await closeWindow( win );
+		if ( ctl ) ctl.dispose();
+		mnu.cleanUp();
+	});
+
+	context("training mode", function() {
+		beforeEach(function() { return open({ training: true, unknownBug: true }); });
+
+		it('greys every option except the key', function() {
+			expect( mnu.keysearch.disabled ).to.equal(false);
+			expect( mnu.speedbug.disabled ).to.equal(true);
+			expect( mnu.browselist.disabled ).to.equal(true);
+			expect( mnu.unknownbug.disabled ).to.equal(true);
 		});
-	
-		it('should fire the browse event', function(done) {
-			mnu.on("browselist", function event() {
-				mnu.off("browselist",event);
-				done();
-			});
-			mnu.browselist.trigger("click");
+
+		it('dims the greyed options on screen', function() {
+			expect( mnu.speedbug.button.opacity ).to.equal(0.5);
+			expect( mnu.browselist.button.opacity ).to.equal(0.5);
+			expect( mnu.unknownbug.button.opacity ).to.equal(0.5);
 		});
-	
-		
-	
-		it('should not show unknownbug unless specified', function() {
+	});
+
+	context("normal mode", function() {
+		beforeEach(function() { return open({ unknownBug: true }); });
+
+		it('leaves every option enabled', function() {
+			expect( mnu.keysearch.disabled ).to.equal(false);
+			expect( mnu.speedbug.disabled ).to.equal(false);
+			expect( mnu.browselist.disabled ).to.equal(false);
+			expect( mnu.unknownbug.disabled ).to.equal(false);
+		});
+	});
+
+	context("without the unknown bug", function() {
+		beforeEach(function() { return open({}); });
+
+		it('omits the unknown-bug option', function() {
 			expect( mnu.unknownbug ).to.be.undefined;
-		})
-	})
-	context("with unknown bug", function() {
-		before( function(done) {
-			mnu = Alloy.createController("MethodSelect", {unknownBug: true});
-			win = wrapViewInWindow( mnu.getView() );
-			windowOpenTest( win, done );
 		});
-	
-		after( function(done) {
-			closeWindow( win, done );
-		});
-
-		it('should add an unknown bug', function(done) {
-			mnu.on("unknownbug", function event() {
-				mnu.off("unknownbug",event);
-				done();
-			});
-			mnu.unknownbug.trigger("click");
-		});
-	})
-	
-
+	});
 });
