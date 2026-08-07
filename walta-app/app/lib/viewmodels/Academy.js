@@ -1,14 +1,16 @@
 const ChangeNotifier = require("../util/ChangeNotifier");
+const Palette = require("../util/Palette");
 
 // State for the Academy training-session start modal. The three code boxes are
 // display-only: tapping one (startEditing) opens a 0-9 picker, and tapping a
 // digit (pickDigit) fills that box and closes the picker — so no system
 // keyboard is ever summoned. Titanium-free.
 class AcademyViewModel extends ChangeNotifier {
-  constructor() {
+  constructor({ isValidCode } = {}) {
     super();
     this._digits = ["", "", ""];
     this._editing = null;
+    this._isValidCode = isValidCode || (() => false);
   }
 
   get digit1() { return this._digits[0]; }
@@ -19,7 +21,10 @@ class AcademyViewModel extends ChangeNotifier {
 
   get pickerVisible() { return this._editing !== null; }
 
-  get startEnabled() { return this._digits.every((d) => d !== ""); }
+  // Start is offered only once the entered code maps to a real exercise — the
+  // green button is the "valid code" signal; it stays grey/disabled otherwise.
+  get startEnabled() { return this._isValidCode(this.code); }
+  get startColor() { return this.startEnabled ? Palette.success : Palette.disabled; }
 
   startEditing(index) {
     this._editing = index;

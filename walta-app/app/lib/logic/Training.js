@@ -8,6 +8,7 @@ const createTrainingAssessor = require("logic/TrainingAssessor");
 module.exports = function createTraining({ topics, repo, exercises }) {
   let tray = null;
   let assessor = null;
+  let pendingReplace = null;
 
   return {
     startTraining(code) {
@@ -19,13 +20,34 @@ module.exports = function createTraining({ topics, repo, exercises }) {
       return true;
     },
 
+    // Whether a code maps to a real exercise — the Academy gates Start on this.
+    isValidCode(code) {
+      return exercises.loadExercise(code) !== null;
+    },
+
     isActive() {
       return tray !== null;
     },
 
-    // Append an identified taxon to the session tray. Position is the caller's
-    // concern (the store takes it as given), so training appends at the end.
+    // Mark a taxon for re-identification: the next addTaxon replaces it in place
+    // (the trainee tapped it to correct a wrong pick). See addTaxon.
+    beginReplace(sampleTaxonId) {
+      pendingReplace = sampleTaxonId;
+    },
+
+    // Add an identified taxon. Normally it appends (position = current length —
+    // the store takes position as given). If a re-identification is pending, the
+    // marked taxon is dropped and the new one takes its slot, so positional
+    // grading is preserved.
     addTaxon(taxonId) {
+      if (pendingReplace !== null) {
+        const old = tray.taxa().find((t) => t.id === pendingReplace);
+        pendingReplace = null;
+        if (old) {
+          repo.removeTaxon(tray, old);
+          return repo.addTaxon(tray, taxonId, old.position);
+        }
+      }
       return repo.addTaxon(tray, taxonId, tray.length);
     },
   };

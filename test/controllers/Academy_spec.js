@@ -40,10 +40,12 @@ function makeView() {
 describe("Academy controller", function () {
   let view, closed, ctl, training, fired, services;
 
-  // Fake training service: records the started code and whether it's a known one.
+  // Fake training service: records the started code and validates against a known
+  // set (the Academy gates Start on isValidCode).
   function fakeTraining(knownCodes) {
     return {
       startedWith: null,
+      isValidCode(code) { return knownCodes.includes(code); },
       startTraining(code) { this.startedWith = code; return knownCodes.includes(code); },
     };
   }
@@ -94,9 +96,11 @@ describe("Academy controller", function () {
     expect(ctl.vm.code).to.equal("123");
   });
 
-  it("disables Start until the code is complete", function () {
+  it("keeps Start disabled until the code is a valid exercise", function () {
     expect(view.startButton.enabled).to.equal(false);
-    pickCode(1, 2, 3);
+    pickCode(1, 2, 3);   // not a known exercise
+    expect(view.startButton.enabled).to.equal(false);
+    pickCode(7, 8, 9);   // known
     expect(view.startButton.enabled).to.equal(true);
   });
 
@@ -116,10 +120,10 @@ describe("Academy controller", function () {
     expect(fired).to.deep.equal([{ t: "sampletray", d: {} }]);
   });
 
-  it("Start leaves the modal up for an unknown code — no navigation", function () {
-    pickCode(1, 2, 3);
+  it("does nothing when Start is tapped on an invalid (disabled) code", function () {
+    pickCode(1, 2, 3);   // invalid → Start stays disabled, start() is a no-op
     view.startButton.fireEvent("click");
-    expect(training.startedWith).to.equal("123");
+    expect(training.startedWith).to.equal(null);
     expect(closed).to.equal(0);
     expect(fired).to.have.length(0);
   });

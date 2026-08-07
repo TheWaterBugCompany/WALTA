@@ -10,14 +10,14 @@ const BINDINGS = {
   digit2:       { title: "digit2", onClick: call("startEditing", 1) },
   digit3:       { title: "digit3", onClick: call("startEditing", 2) },
   digitPicker:  { visible: "pickerVisible", onClick: "cancelPicker" },  // tap backdrop to dismiss
-  startButton:  { enabled: "startEnabled", onClick: "start" },
+  startButton:  { enabled: "startEnabled", backgroundColor: "startColor", borderColor: "startColor", onClick: "start" },
   closeButton:  { onClose: "close" },   // the ✕ (CloseButton Require)
   cancelButton: { onClick: "close" },   // the "Close" text button
 };
 for (let d = 0; d <= 9; d++) BINDINGS["keypad" + d] = { onClick: call("pickDigit", d) };
 
 module.exports = function createAcademyController({ view, close, services, bindView }) {
-  const vm = new AcademyViewModel();
+  const vm = new AcademyViewModel({ isValidCode: (code) => services.Training.isValidCode(code) });
   const unbind = bindView(view, vm, BINDINGS);
 
   // Starting a session launches training for the entered code (loads the

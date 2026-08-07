@@ -20,9 +20,11 @@ function fakeExercises(map) {
 // SampleTray (the real one is exercised in its own spec).
 function fakeTray() {
   return {
-    taxa: [],
-    get length() { return this.taxa.length; },
-    add(t) { this.taxa.push(t); },
+    _items: [],
+    get length() { return this._items.length; },
+    add(t) { this._items.push(t); },
+    remove(t) { this._items = this._items.filter((x) => x.id !== t.id); },
+    taxa() { return this._items.slice(); },
   };
 }
 
@@ -30,12 +32,18 @@ function fakeRepo(tray) {
   return {
     started: null,
     added: [],
+    removed: [],
+    _seq: 0,
     startSession(code) { this.started = code; return tray; },
     addTaxon(t, taxonId, position) {
       this.added.push({ tray: t, taxonId, position });
-      const taxon = { id: this.added.length, taxonId, position };
+      const taxon = { id: ++this._seq, taxonId, position };
       t.add(taxon);
       return taxon;
+    },
+    removeTaxon(t, taxon) {
+      this.removed.push({ tray: t, taxon });
+      t.remove(taxon);
     },
   };
 }
@@ -81,6 +89,12 @@ describe("logic/Training", function () {
     expect(topics.fired).to.have.length(0);
   });
 
+  it("recognises a code that maps to an exercise as valid", function () {
+    expect(training.isValidCode("101")).to.equal(true);
+    expect(training.isValidCode("999")).to.equal(false);
+    expect(training.isValidCode("")).to.equal(false);
+  });
+
   it("reports whether a session is active", function () {
     expect(training.isActive()).to.equal(false);
     training.startTraining("101");
@@ -97,5 +111,28 @@ describe("logic/Training", function () {
       { tray, taxonId: 198, position: 1 },
     ]);
     expect(tray.length).to.equal(2);
+  });
+
+  it("re-identifies a taxon in place, keeping its position", function () {
+    training.startTraining("101");
+    training.addTaxon(90);    // id 1, position 0
+    training.addTaxon(999);   // id 2, position 1 — the wrong one
+
+    training.beginReplace(2); // tap the wrong taxon (its sampleTaxonId/id)
+    training.addTaxon(198);   // pick the right one
+
+    // the wrong taxon was removed and the new one added at the same position
+    expect(repo.removed.map((r) => r.taxon.id)).to.deep.equal([2]);
+    expect(repo.added[repo.added.length - 1]).to.deep.include({ taxonId: 198, position: 1 });
+  });
+
+  it("only replaces once — a later add appends as normal", function () {
+    training.startTraining("101");
+    training.addTaxon(90);    // id 1, position 0
+    training.beginReplace(1);
+    training.addTaxon(198);   // replaces at position 0
+    training.addTaxon(176);   // appends
+
+    expect(repo.added[repo.added.length - 1]).to.deep.include({ taxonId: 176, position: 1 });
   });
 });

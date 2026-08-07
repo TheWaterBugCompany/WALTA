@@ -1,10 +1,13 @@
 require("mocha");
 const { expect } = require("chai");
 const AcademyViewModel = require("../../walta-app/app/lib/viewmodels/Academy");
+const Palette = require("../../walta-app/app/lib/util/Palette");
 
 describe("AcademyViewModel", function () {
   let vm;
-  beforeEach(function () { vm = new AcademyViewModel(); });
+  // Default validator treats any complete 3-digit code as valid, so the picker /
+  // start-trigger tests read naturally; the validity-specific tests inject their own.
+  beforeEach(function () { vm = new AcademyViewModel({ isValidCode: (code) => code.length === 3 }); });
 
   it("starts empty with the picker hidden and Start disabled", function () {
     expect(vm.digit1).to.equal("");
@@ -60,6 +63,26 @@ describe("AcademyViewModel", function () {
     expect(vm.startEnabled).to.equal(false);
     vm.startEditing(2); vm.pickDigit(3);
     expect(vm.startEnabled).to.equal(true);
+  });
+
+  it("enables Start only for a code that maps to a real exercise", function () {
+    vm = new AcademyViewModel({ isValidCode: (code) => code === "101" });
+    vm.startEditing(0); vm.pickDigit(1);
+    vm.startEditing(1); vm.pickDigit(0);
+    vm.startEditing(2); vm.pickDigit(2);   // "102" — not an exercise
+    expect(vm.startEnabled).to.equal(false);
+    vm.startEditing(2); vm.pickDigit(1);   // "101" — valid
+    expect(vm.startEnabled).to.equal(true);
+  });
+
+  it("shows the Start button green when the code is valid, grey when not", function () {
+    vm = new AcademyViewModel({ isValidCode: (code) => code === "101" });
+    vm.startEditing(0); vm.pickDigit(9);   // invalid so far
+    expect(vm.startColor).to.equal(Palette.disabled);
+    vm.startEditing(0); vm.pickDigit(1);
+    vm.startEditing(1); vm.pickDigit(0);
+    vm.startEditing(2); vm.pickDigit(1);   // "101"
+    expect(vm.startColor).to.equal(Palette.success);
   });
 
   it("notifies listeners when editing starts", function () {
