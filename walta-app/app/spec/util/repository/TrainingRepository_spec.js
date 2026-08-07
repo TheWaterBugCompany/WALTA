@@ -46,6 +46,16 @@ describe("TrainingRepository", function () {
         expect(repo.listTaxa().map(t => t.id)).to.deep.equal([a.id, b.id]);
     });
 
+    it("keeps the same taxonId entered twice as two distinct entries", function () {
+        // A trainee may misidentify the same taxon twice; the duplicate must stay
+        // visible (its own row + verdict key), not be silently deduped.
+        repo.startSession("101");
+        var a = repo.addTaxon(5, 0);
+        var b = repo.addTaxon(5, 1);
+        expect(a.id).to.not.equal(b.id);
+        expect(repo.listTaxa().map(t => t.taxonId)).to.deep.equal([5, 5]);
+    });
+
     it("resumes the persisted session and its taxa after the db is reopened", function () {
         repo.startSession("101");
         repo.addTaxon(5, 0);
