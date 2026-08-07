@@ -38,12 +38,26 @@ function makeView() {
 }
 
 describe("Academy controller", function () {
-  let view, closed, ctl;
+  let view, closed, ctl, training, fired, services;
+
+  // Fake training service: records the started code and whether it's a known one.
+  function fakeTraining(knownCodes) {
+    return {
+      startedWith: null,
+      startTraining(code) { this.startedWith = code; return knownCodes.includes(code); },
+    };
+  }
 
   beforeEach(function () {
     view = makeView();
     closed = 0;
-    ctl = createAcademyController({ view, close: () => closed++, services: {}, bindView: makeBinder() });
+    fired = [];
+    training = fakeTraining(["789"]);
+    services = {
+      Training: training,
+      topics: { SAMPLETRAY: "sampletray", fireTopicEvent: (t, d) => fired.push({ t, d }) },
+    };
+    ctl = createAcademyController({ view, close: () => closed++, services, bindView: makeBinder() });
   });
 
   // Tap a box, then tap a digit key — the picker flow that replaces typing.
@@ -92,6 +106,22 @@ describe("Academy controller", function () {
     ctl.vm.on("start", (code) => { started = code; });
     view.startButton.fireEvent("click");
     expect(started).to.equal("789");
+  });
+
+  it("Start launches training for a known code, then closes and opens the tray", function () {
+    pickCode(7, 8, 9);
+    view.startButton.fireEvent("click");
+    expect(training.startedWith).to.equal("789");
+    expect(closed).to.equal(1);
+    expect(fired).to.deep.equal([{ t: "sampletray", d: {} }]);
+  });
+
+  it("Start leaves the modal up for an unknown code — no navigation", function () {
+    pickCode(1, 2, 3);
+    view.startButton.fireEvent("click");
+    expect(training.startedWith).to.equal("123");
+    expect(closed).to.equal(0);
+    expect(fired).to.have.length(0);
   });
 
   it("the ✕ (closeButton) asks the host to close", function () {

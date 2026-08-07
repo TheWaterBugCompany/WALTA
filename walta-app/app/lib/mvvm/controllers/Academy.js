@@ -20,8 +20,17 @@ module.exports = function createAcademyController({ view, close, services, bindV
   const vm = new AcademyViewModel();
   const unbind = bindView(view, vm, BINDINGS);
 
-  // Inert for now — the training-session flow the code launches isn't built yet.
-  vm.on("start", function () {});
+  // Starting a session launches training for the entered code (loads the
+  // exercise, opens a session, announces the tray on the bus). On a known code we
+  // dismiss the modal and open the training tray — Navigation threads the session's
+  // tray/assessor from the TRAINING_STARTED it just fired. An unknown code is a
+  // no-op, leaving the modal up.
+  vm.on("start", function (code) {
+    if (services.Training.startTraining(code)) {
+      close();
+      services.topics.fireTopicEvent(services.topics.SAMPLETRAY, {});
+    }
+  });
   vm.on("close", function () { close(); });
 
   return {
