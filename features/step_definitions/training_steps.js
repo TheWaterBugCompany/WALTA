@@ -19,6 +19,8 @@ const MUSSEL = [   // Hyriidae, taxonId 179 — the correction
 ];
 
 async function chooseThroughKey(world, questions) {
+  // keySearch.choose waits for the screen to settle before tapping, so each tap
+  // lands on a fully-transitioned (interactive) screen — no retries.
   for (const q of questions) await world.keySearch.choose(q);
   await world.taxon.waitFor();
   await world.taxon.addToTrainingSample();

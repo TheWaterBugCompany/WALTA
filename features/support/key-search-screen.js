@@ -7,7 +7,8 @@ class KeySearchScreen extends BaseScreen {
     }
 
     async choose( questionText ) {
-      await this.clickByText( questionText );
+      // The decision window slides in; tap only once the option is stationary.
+      await this.clickByTextWhenStable( questionText );
     }
     
     async goBack() {

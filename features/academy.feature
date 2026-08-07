@@ -11,10 +11,6 @@ Scenario: A valid session code enables Start
   Then the menu is shown
 
 # The training flow is entirely local (no network calls), so it works offline.
-# @skip until the acceptance harness can tap a key row whose outcome is a taxon
-# leaf (clickByText taps the inner label, which doesn't fire the row's handler —
-# an untested path; survey tests reach taxa via Browse). Tracked as a follow-up.
-@skip
 Scenario: Complete a training exercise, correcting a mistake
   When I open the Academy from the menu
   And I start the training session "999"
