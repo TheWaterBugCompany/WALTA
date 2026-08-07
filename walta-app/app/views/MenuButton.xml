@@ -1,5 +1,5 @@
 <Alloy>
-	<View id="button" class="large">
+	<View id="button">
 		<View layout="horizontal" horizontalWrap="false" > <!-- inserting another View seems to workaround layout bugs -->
 			<ImageView id="icon" />
 			<View id="text">
