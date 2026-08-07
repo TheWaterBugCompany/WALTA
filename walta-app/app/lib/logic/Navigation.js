@@ -9,10 +9,16 @@ function Navigation(services) {
     this.services = services;
     this.currentSample = null;
     this.currentTaxa = null;
+    this.currentTraining = false;
+    this.currentTray = null;
+    this.currentAssessor = null;
     // The roots that establish a survey's sample announce it on the bus; seed the
     // sample threaded into every screen's args from there (see onOpenView).
     services.topics.subscribe(services.topics.SURVEY_STARTED,
         (data) => this.setCurrentSample(data.sample, data.taxa));
+    // Training's counterpart: a training session announces its tray/assessor here.
+    services.topics.subscribe(services.topics.TRAINING_STARTED,
+        (data) => this.setCurrentTraining(data.tray, data.assessor));
 }
 
 Navigation.prototype.getHistory = function () {
@@ -25,6 +31,21 @@ Navigation.prototype.getHistory = function () {
 Navigation.prototype.setCurrentSample = function(sample, taxa) {
     this.currentSample = sample;
     this.currentTaxa = taxa;
+    // A survey and a training session are mutually exclusive; establishing one
+    // clears the other so their refs never cross-contaminate a screen's args.
+    this.currentTraining = false;
+    this.currentTray = null;
+    this.currentAssessor = null;
+}
+
+// Training's counterpart to setCurrentSample: the training tray + its assessor,
+// threaded into every training screen's args by onOpenView.
+Navigation.prototype.setCurrentTraining = function(tray, assessor) {
+    this.currentTraining = true;
+    this.currentTray = tray;
+    this.currentAssessor = assessor;
+    this.currentSample = null;
+    this.currentTaxa = null;
 }
 
 Navigation.prototype.onOpenView = function(ctl,args) {
@@ -33,6 +54,9 @@ Navigation.prototype.onOpenView = function(ctl,args) {
         Survey: this.services.Survey,
         sample: this.currentSample,
         taxa: this.currentTaxa,
+        training: this.currentTraining,
+        tray: this.currentTray,
+        assessor: this.currentAssessor,
     });
     return this.services.View.openView(ctl,args);
 }
