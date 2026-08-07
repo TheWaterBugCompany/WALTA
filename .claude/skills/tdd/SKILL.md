@@ -67,6 +67,13 @@ expect(ctl.logScroll.contentOffset.y).to.be.greaterThan(0);
 
 For events, prefer event-driven helpers (`waitForTopic`, `waitForBackboneEvent`, `windowOpenTest`). For cucumber / Appium, use the framework's wait-for-selector helpers, not `await sleep(...)`.
 
+Two corollaries, both non-negotiable — a fixed delay or a retry hides real bugs:
+
+- **Never a fixed delay.** No `sleep(n)` / `waitForTick(n)`. Poll for the *actual expected state* with a built-in waiter (`waitForDisplayed`/`waitForExist`/`waitForClickable`, or `driver.waitUntil(predicate, {timeout, timeoutMsg})`) and proceed the moment it holds. If a tap flakes right after an animated transition, wait until the element is *stationary* before tapping (`base-screen.clickWhenStable`) — don't sleep. `wait-for-settled.js` is screenshot-timing only, not a functional wait.
+- **Never a retry to go green.** Retries are only for genuinely contended *infrastructure* (device/session/network — `recover-session.js`, `dismiss-permission-alert.js`). A retry around functional steps papers over a real defect. If one correctly-awaited action doesn't reach the expected state, diagnose it.
+
+See [fast-iteration](../fast-iteration/SKILL.md) "Flaky tests: poll for state, never delay, never retry-to-go-green" for the acceptance-layer detail and precedents.
+
 ## Hard-to-test code is a refactor signal
 
 If the test needs a huge `beforeEach`, five mocks, private fields exposed, or a magic delay because there's no observable signal of "done" — **stop and refactor the production code first.** Pain in the test mirrors structural problems in the code: tangled dependencies, hidden state, missing seams.
