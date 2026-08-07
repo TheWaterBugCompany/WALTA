@@ -31,8 +31,6 @@ module.exports = [
   "SiteDetails",
   "ViewUtils",
   //"LeafletMap",
-  "MayflyEmergenceMap",
-  "MayflyMusterSelect",
   "SampleSync",
   "SyncFeedback",
   "UploadBadge",

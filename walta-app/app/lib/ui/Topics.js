@@ -53,8 +53,6 @@ var topics = {
 
 	IDENTIFY: 'identify',
 
-	MAYFLY_EMERGENCE: 'mayfly',
-
 	ORDER: 'order',
 
 	DETAILED: 'detailed',

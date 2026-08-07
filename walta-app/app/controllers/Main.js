@@ -70,7 +70,6 @@ async function startApp(options) {
   routePromise(Topics.HISTORY,  (data) =>  Navigation.openController("SampleHistory", data));
   routePromise(Topics.SPEEDBUG,  (data) =>  Navigation.openController("Speedbug", data));
   routePromise(Topics.GALLERY,  (data) =>  Navigation.openController("Gallery", data));
-  // routePromise( Topics.MAYFLY_EMERGENCE, (data) => openController("MayflyEmergenceMap",data) );
   routePromise(Topics.HELP,  (data) =>  Navigation.openController("Help", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ABOUT,  (data) =>  Navigation.openController("About", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ACADEMY,  () =>  Navigation.openModal("Academy"));
@@ -86,12 +85,6 @@ async function startApp(options) {
     } else {
       debug("Topics.JUMPTO undefined node!");
     }
-  });
-
-  Topics.subscribe(Topics.MAYFLY,  function (data) {
-    if (!data) data = {};
-    Survey.startSurvey(Sample.SURVEY_MAYFLY);
-    Topics.fireTopicEvent(Topics.SITEDETAILS, _(data).extend({ slide: "right" }));
   });
 
   Topics.subscribe(Topics.ORDER, function (data) {
