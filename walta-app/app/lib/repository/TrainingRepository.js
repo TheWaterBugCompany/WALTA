@@ -3,56 +3,54 @@
 // training data can never leak into sync/upload/history. LogRepository-style:
 // `open()` expects the schema to already exist (Migrator.migrate has run).
 //
-// One active session at a time. Training does NOT resume across a process
-// restart: `open()` wipes any stale rows so every launch starts fresh. The
-// session code lives in memory for the current run only.
+// One active session at a time. The session persists so an app that the OS
+// reclaims while backgrounded resumes where it left off (currentSession +
+// listTaxa after a restart). Cleared only on an explicit new session or clear().
+//
+// This is a dumb persistence layer: `addTaxon` stores the caller-supplied
+// position rather than deciding placement itself — the tray's append policy
+// lives in the caller. `id` is a stable per-taxon key (the tray's verdict key);
+// `position` is the tray slot.
 
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
-    let sessionCode = null;
 
     function wipe() {
         db.execute("DELETE FROM training_taxa");
-        sessionCode = null;
+        db.execute("DELETE FROM training_session");
     }
-
-    function nextPosition() {
-        const rs = db.execute("SELECT COALESCE(MAX(position), -1) + 1 AS next FROM training_taxa");
-        const next = rs.fieldByName("next");
-        rs.close();
-        return next;
-    }
-
-    wipe();
 
     return {
-        startSession: function (code) {
+        startSession: function (sessionCode) {
             wipe();
-            sessionCode = code;
+            db.execute("INSERT INTO training_session (sessionCode) VALUES (?)", sessionCode);
         },
 
         currentSession: function () {
-            return sessionCode;
+            const rs = db.execute("SELECT sessionCode FROM training_session LIMIT 1");
+            let code = null;
+            if (rs.isValidRow()) code = rs.fieldByName("sessionCode");
+            rs.close();
+            return code;
         },
 
-        addTaxon: function (taxonId) {
-            const position = nextPosition();
+        addTaxon: function (taxonId, position) {
             db.execute(
-                "INSERT INTO training_taxa (position, taxonId) VALUES (?, ?)",
-                position, taxonId
+                "INSERT INTO training_taxa (taxonId, position) VALUES (?, ?)",
+                taxonId, position
             );
-            return { id: db.lastInsertRowId, position: position, taxonId: taxonId };
+            return { id: db.lastInsertRowId, taxonId: taxonId, position: position };
         },
 
-        list: function () {
-            const rs = db.execute("SELECT id, position, taxonId FROM training_taxa ORDER BY position");
+        listTaxa: function () {
+            const rs = db.execute("SELECT id, taxonId, position FROM training_taxa ORDER BY position");
             const rows = [];
             try {
                 while (rs.isValidRow()) {
                     rows.push({
                         id: rs.fieldByName("id"),
-                        position: rs.fieldByName("position"),
-                        taxonId: rs.fieldByName("taxonId")
+                        taxonId: rs.fieldByName("taxonId"),
+                        position: rs.fieldByName("position")
                     });
                     rs.next();
                 }

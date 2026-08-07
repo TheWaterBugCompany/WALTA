@@ -1,9 +1,7 @@
 exports.up = function (migrator) {
     migrator.createTable({
         columns: {
-            "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
-            "taxonId": "INTEGER",
-            "position": "INTEGER NOT NULL"
+            "sessionCode": "TEXT PRIMARY KEY"
         }
     });
 };
