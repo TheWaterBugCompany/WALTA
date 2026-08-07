@@ -22,73 +22,80 @@ describe("TrainingRepository", function () {
     });
 
     it("has no current session before one is started", function () {
-        expect(repo.currentSession()).to.equal(null);
+        expect(repo.currentSessionCode()).to.equal(null);
     });
 
-    it("records the started session as current", function () {
-        repo.startSession("101");
-        expect(repo.currentSession()).to.equal("101");
+    it("starts a session with an empty tray and records the code as current", function () {
+        var tray = repo.startSession("101");
+        expect(repo.currentSessionCode()).to.equal("101");
+        expect(tray.length).to.equal(0);
     });
 
-    it("lists taxa ordered by their caller-supplied position", function () {
-        repo.startSession("101");
-        repo.addTaxon(9, 1);
-        repo.addTaxon(5, 0);
-        expect(repo.listTaxa().map(t => t.taxonId)).to.deep.equal([5, 9]);
-        expect(repo.listTaxa().map(t => t.position)).to.deep.equal([0, 1]);
+    it("adds a taxon to the tray and returns it as a domain model", function () {
+        var tray = repo.startSession("101");
+        var taxon = repo.addTaxon(tray, 5, 0);
+        expect(taxon.taxonId).to.equal(5);
+        expect(taxon.position).to.equal(0);
+        expect(taxon.id).to.be.ok;
+        expect(tray.at(0)).to.equal(taxon);
+    });
+
+    it("orders the tray by position", function () {
+        var tray = repo.startSession("101");
+        repo.addTaxon(tray, 9, 1);
+        repo.addTaxon(tray, 5, 0);
+        expect(tray.taxa().map(t => t.taxonId)).to.deep.equal([5, 9]);
     });
 
     it("gives each taxon a stable, distinct id (the verdict key)", function () {
-        repo.startSession("101");
-        var a = repo.addTaxon(5, 0);
-        var b = repo.addTaxon(9, 1);
+        var tray = repo.startSession("101");
+        var a = repo.addTaxon(tray, 5, 0);
+        var b = repo.addTaxon(tray, 9, 1);
         expect(a.id).to.not.equal(b.id);
-        expect(repo.listTaxa().map(t => t.id)).to.deep.equal([a.id, b.id]);
     });
 
     it("keeps the same taxonId entered twice as two distinct entries", function () {
-        // A trainee may misidentify the same taxon twice; the duplicate must stay
-        // visible (its own row + verdict key), not be silently deduped.
-        repo.startSession("101");
-        var a = repo.addTaxon(5, 0);
-        var b = repo.addTaxon(5, 1);
+        var tray = repo.startSession("101");
+        var a = repo.addTaxon(tray, 5, 0);
+        var b = repo.addTaxon(tray, 5, 1);
         expect(a.id).to.not.equal(b.id);
-        expect(repo.listTaxa().map(t => t.taxonId)).to.deep.equal([5, 5]);
+        expect(tray.taxa().map(t => t.taxonId)).to.deep.equal([5, 5]);
     });
 
-    it("resumes the persisted session and its taxa after the db is reopened", function () {
-        repo.startSession("101");
-        repo.addTaxon(5, 0);
-        repo.addTaxon(9, 1);
+    it("resumes the persisted session and its tray after the db is reopened", function () {
+        var tray = repo.startSession("101");
+        repo.addTaxon(tray, 5, 0);
+        repo.addTaxon(tray, 9, 1);
         repo.close();
 
         var resumed = TrainingRepository.open(TEST_DB);
-        expect(resumed.currentSession()).to.equal("101");
-        expect(resumed.listTaxa().map(t => t.taxonId)).to.deep.equal([5, 9]);
+        expect(resumed.currentSessionCode()).to.equal("101");
+        expect(resumed.loadTray().taxa().map(t => t.taxonId)).to.deep.equal([5, 9]);
         resumed.close();
     });
 
     it("starting a new session clears the previous session's taxa", function () {
-        repo.startSession("101");
-        repo.addTaxon(5, 0);
+        var tray = repo.startSession("101");
+        repo.addTaxon(tray, 5, 0);
         repo.startSession("102");
-        expect(repo.currentSession()).to.equal("102");
-        expect(repo.listTaxa()).to.be.empty;
+        expect(repo.currentSessionCode()).to.equal("102");
+        expect(repo.loadTray().length).to.equal(0);
     });
 
-    it("removes a taxon by id, keeping the rest", function () {
-        repo.startSession("101");
-        var a = repo.addTaxon(5, 0);
-        repo.addTaxon(9, 1);
-        repo.removeTaxon(a.id);
-        expect(repo.listTaxa().map(t => t.taxonId)).to.deep.equal([9]);
+    it("removes a taxon from the tray and the store", function () {
+        var tray = repo.startSession("101");
+        var a = repo.addTaxon(tray, 5, 0);
+        repo.addTaxon(tray, 9, 1);
+        repo.removeTaxon(tray, a);
+        expect(tray.taxa().map(t => t.taxonId)).to.deep.equal([9]);
+        expect(repo.loadTray().taxa().map(t => t.taxonId)).to.deep.equal([9]);
     });
 
     it("clear() ends the session", function () {
-        repo.startSession("101");
-        repo.addTaxon(5, 0);
+        var tray = repo.startSession("101");
+        repo.addTaxon(tray, 5, 0);
         repo.clear();
-        expect(repo.currentSession()).to.equal(null);
-        expect(repo.listTaxa()).to.be.empty;
+        expect(repo.currentSessionCode()).to.equal(null);
+        expect(repo.loadTray().length).to.equal(0);
     });
 });
