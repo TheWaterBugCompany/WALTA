@@ -3,15 +3,17 @@
 // training data can never leak into sync/upload/history. LogRepository-style:
 // `open()` expects the schema to already exist (Migrator.migrate has run).
 //
-// One active session at a time. startSession begins a fresh one (clearing any
-// prior); currentSession + list resume the persisted one after a restart.
+// One active session at a time. Training does NOT resume across a process
+// restart: `open()` wipes any stale rows so every launch starts fresh. The
+// session code lives in memory for the current run only.
 
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
+    let sessionCode = null;
 
     function wipe() {
         db.execute("DELETE FROM training_taxa");
-        db.execute("DELETE FROM training_session");
+        sessionCode = null;
     }
 
     function nextPosition() {
@@ -21,29 +23,23 @@ exports.open = function (dbName) {
         return next;
     }
 
+    wipe();
+
     return {
-        startSession: function (sessionCode) {
+        startSession: function (code) {
             wipe();
-            db.execute(
-                "INSERT INTO training_session (sessionCode, startedAt) VALUES (?, ?)",
-                sessionCode, Date.now()
-            );
+            sessionCode = code;
         },
 
         currentSession: function () {
-            const rs = db.execute("SELECT sessionCode FROM training_session LIMIT 1");
-            let code = null;
-            if (rs.isValidRow()) code = rs.fieldByName("sessionCode");
-            rs.close();
-            return code;
+            return sessionCode;
         },
 
         addTaxon: function (taxonId) {
-            const code = this.currentSession();
             const position = nextPosition();
             db.execute(
-                "INSERT INTO training_taxa (sessionCode, position, taxonId) VALUES (?, ?, ?)",
-                code, position, taxonId
+                "INSERT INTO training_taxa (position, taxonId) VALUES (?, ?)",
+                position, taxonId
             );
             return { id: db.lastInsertRowId, position: position, taxonId: taxonId };
         },

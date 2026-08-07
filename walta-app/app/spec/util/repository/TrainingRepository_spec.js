@@ -46,16 +46,16 @@ describe("TrainingRepository", function () {
         expect(repo.list().map(t => t.id)).to.deep.equal([a.id, b.id]);
     });
 
-    it("resumes the session and its taxa after the db is reopened (restart)", function () {
+    it("starts fresh after the db is reopened — a killed session does not resume", function () {
         repo.startSession("101");
         repo.addTaxon(5);
         repo.addTaxon(9);
         repo.close();
 
-        var resumed = TrainingRepository.open(TEST_DB);
-        expect(resumed.currentSession()).to.equal("101");
-        expect(resumed.list().map(t => t.taxonId)).to.deep.equal([5, 9]);
-        resumed.close();
+        var reopened = TrainingRepository.open(TEST_DB);
+        expect(reopened.currentSession()).to.equal(null);
+        expect(reopened.list()).to.be.empty;
+        reopened.close();
     });
 
     it("starting a new session clears the previous session's taxa", function () {
