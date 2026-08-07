@@ -12,11 +12,10 @@ When('I enter the session code {string}', async function (code) {
   await this.academy.enterCode(code);
 });
 
-Then('I can start the training session', async function () {
+Then('the training session can be started', async function () {
+  // A valid code enables (greens) Start; the capstone scenario drives the actual
+  // launch via "I start the training session".
   await this.academy.waitForStartAvailable();
-  // Start is an inert seam for now — extend here (and this step's wording) when
-  // the training-session flow it launches is built.
-  await this.academy.start();
 });
 
 When('I close the Academy', async function () {
