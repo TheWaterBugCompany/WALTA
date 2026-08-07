@@ -1,24 +1,29 @@
-// Titanium-free screen controller for the MethodSelect modal.
-// Routes the shell's selection events to the navigation Topics, carrying the
-// caller's payload (allowAddToSample / surveyType), then closes.
+const MethodSelectViewModel = require("viewmodels/MethodSelect");
+
+// Titanium-free screen controller for the MethodSelect modal. Builds the
+// view-model from the caller's payload (allowAddToSample / surveyType / training)
+// and binds each entry: a tap routes through the VM (which no-ops a disabled
+// entry), and the VM's disabled getters grey the non-key options in training.
 // See docs/patterns/screen-controllers.md.
-module.exports = function createMethodSelectController({ view, close, services, args }) {
-  const topics = services.topics;
-  const { allowAddToSample = false, surveyType = null } = args || {};
-  const payload = { allowAddToSample, surveyType };
+module.exports = function createMethodSelectController({ view, close, services, bindView, args }) {
+  const { training = false, allowAddToSample = false, surveyType = null } = args || {};
+  const vm = new MethodSelectViewModel({ topics: services.topics, training, allowAddToSample, surveyType });
 
-  const route = (topic, data) => {
-    close();
-    topics.fireTopicEvent(topic, data);
+  const bindings = {
+    keysearch:   { onClick: "keysearch" },
+    speedbug:    { onClick: "speedbug",   disabled: "speedbugDisabled" },
+    browselist:  { onClick: "browselist", disabled: "browseDisabled" },
+    closeButton: { onClose: "close" },
   };
+  if (view.unknownbug) {
+    bindings.unknownbug = { onClick: "unknownbug", disabled: "unknownbugDisabled" };
+  }
 
-  view.on("keysearch",  () => route(topics.KEYSEARCH, payload));
-  view.on("speedbug",   () => route(topics.SPEEDBUG,  payload));
-  view.on("browselist", () => route(topics.BROWSE,    payload));
-  view.on("unknownbug", () => route(topics.IDENTIFY,  { taxonId: null }));
-  view.on("close",      () => close());
+  const unbind = bindView(view, vm, bindings);
+  vm.on("close", () => close());
 
   return {
-    dispose() { view.off(); },
+    vm,
+    dispose() { unbind(); vm.dispose(); },
   };
 };

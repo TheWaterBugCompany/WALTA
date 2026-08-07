@@ -27,6 +27,23 @@ if ( $.args.size ) {
 // Appium / XCUITest, even though the text renders visually.
 $.button.accessibilityLabel = $.args.title || $.args.description;
 
+// Bindable greyed-out state (MethodSelect greys the non-key options in
+// training mode). Behaviour — whether a tap does anything — stays with the
+// caller's view-model; this only controls appearance.
+var ENABLED_BACKGROUND = "#cfdbf3";
+var DISABLED_BACKGROUND = "#e6e6e6";
+var greyed = false;
+
+Object.defineProperty($, "disabled", {
+  configurable: true,
+  get: function () { return greyed; },
+  set: function (value) {
+    greyed = Boolean(value);
+    $.button.backgroundColor = greyed ? DISABLED_BACKGROUND : ENABLED_BACKGROUND;
+    $.button.opacity = greyed ? 0.5 : 1;
+  },
+});
+
 function onClick(e) {
   if ( $.args.topic ) {
     Topics.fireTopicEvent( $.args.topic, null );
