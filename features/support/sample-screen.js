@@ -27,9 +27,13 @@ class SampleScreen extends BaseScreen {
     }
 
     // Training: an assessed taxon carries a "correct"/"incorrect" verdict overlay
-    // (its accessibilityLabel), so a cross is findable as ~incorrect.
+    // (its accessibilityLabel). The overlay is a non-interactive ImageView, so WDA
+    // reports it visible=false — poll for its existence in the tree, not display.
     async waitForIncorrectVerdict() {
-        await this.waitForLabel("incorrect");
+        const sel = this.selector("incorrect");
+        await this.driver.waitUntil(
+            async () => await (await this.driver.$(sel)).isExisting(),
+            { timeout: 30000, timeoutMsg: "no incorrect verdict present" });
     }
 
     // Training: tapping a taxon reopens the method chooser to re-identify it.

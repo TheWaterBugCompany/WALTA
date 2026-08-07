@@ -20,9 +20,10 @@ class TaxonScreen extends BaseScreen {
     }
 
     // Training has no per-taxon editor: adding drops the taxon straight into the
-    // tray, so wait for the tray rather than the EditTaxon overlay.
+    // tray, so wait for the tray rather than the EditTaxon overlay. The detail
+    // window slides in, so tap the button only once it is stationary.
     async addToTrainingSample() {
-      await this.click("Add to sample");
+      await this.clickWhenStable( this.selector("Add to sample") );
       await this.world.sample.waitFor();
     }
 }

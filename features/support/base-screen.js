@@ -133,6 +133,31 @@ class BaseScreen {
         await el.click();
     }
 
+    // Tap an element only once it has stopped moving. A decision window slides in
+    // over ~200ms; a tap that lands while it translates hits a stale coordinate and
+    // is dropped. Poll the element's own position until it is stationary (two equal
+    // reads), then click. No fixed waits, no retries — it waits on the element's
+    // real settled state, so a genuinely dropped tap surfaces downstream, not here.
+    async clickWhenStable( sel ) {
+        const el = await this.driver.$( sel );
+        await el.waitForDisplayed({ timeout: 30000 });
+        let previous;
+        await this.driver.waitUntil( async () => {
+            const { x, y } = await el.getLocation();
+            const here = `${Math.round(x)},${Math.round(y)}`;
+            const stable = here === previous;
+            previous = here;
+            return stable;
+        }, { timeout: 15000, interval: 100, timeoutMsg: `element "${sel}" never stopped moving` } );
+        await el.click();
+    }
+
+    async clickByTextWhenStable( text ) {
+        await this.clickWhenStable( this.isIos()
+            ? `-ios predicate string:label CONTAINS '${text}'`
+            : `//android.widget.TextView[contains(@text,"${text}")]` );
+    }
+
     async click( sel ) {
         await this.clickRaw(this.selector( sel ) );
     }
