@@ -11,8 +11,10 @@ module.exports = function createTrainingAssessor(expectedOrder = []) {
       const verdicts = {};
       taxa.forEach(function (taxon, i) {
         if (taxon && taxon.sampleTaxonId != null) {
+          // The key yields string taxonIds ("181"); exercises are authored as
+          // numbers (181). Compare as strings so the two sources line up.
           verdicts[taxon.sampleTaxonId] =
-            taxon.taxonId === expectedOrder[i] ? "correct" : "incorrect";
+            String(taxon.taxonId) === String(expectedOrder[i]) ? "correct" : "incorrect";
         }
       });
       return verdicts;

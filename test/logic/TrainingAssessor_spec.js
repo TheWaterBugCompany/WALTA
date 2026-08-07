@@ -34,6 +34,14 @@ describe("logic/TrainingAssessor", function () {
     expect(verdicts).to.deep.equal({ 101: "correct", 102: "incorrect" });
   });
 
+  it("matches taxonIds regardless of string/number type", function () {
+    // The key yields string taxonIds ("181") while exercises are authored as
+    // numbers (181) — they must still grade as correct.
+    const assess = createTrainingAssessor([181, 179]).assess;
+    const verdicts = assess([taxon("181", 101), taxon("179", 102)]);
+    expect(verdicts).to.deep.equal({ 101: "correct", 102: "correct" });
+  });
+
   it("skips taxa without a sampleTaxonId (nothing to key a verdict on)", function () {
     const assess = createTrainingAssessor([1, 2]).assess;
     const verdicts = assess([taxon(1, 101), taxon(2, null)]);
