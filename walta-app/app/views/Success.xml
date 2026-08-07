@@ -1,0 +1,12 @@
+<Alloy>
+	<View class="overlay">
+		<View class="window successWindow" layout="vertical">
+			<View class="titlebar">
+				<Require id="closeButton" src="CloseButton"/>
+			</View>
+			<Label id="successMessage" class="successMessage" accessibilityLabel="training_success_message"/>
+			<ImageView id="successGraphic" class="successGraphic" image="/images/success-graphic.png"/>
+			<Button id="finishButton" class="actionButton finishButton" accessibilityLabel="training_success_finish">Finish</Button>
+		</View>
+	</View>
+</Alloy>

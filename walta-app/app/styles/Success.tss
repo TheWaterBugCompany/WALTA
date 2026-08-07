@@ -1,0 +1,43 @@
+".successWindow": {
+	width: "56%",
+	height: Ti.UI.SIZE,
+	borderWidth: "1dp",
+	borderRadius: "6dp",
+	layout: "vertical"
+}
+
+"#successMessage": {
+	top: "8dp",
+	// FILL + SIZE (not left/right margins alone): Android otherwise measures the
+	// label at an unconstrained width, wraps to fewer lines, and clips.
+	width: Ti.UI.FILL,
+	height: Ti.UI.SIZE,
+	left: "8%",
+	right: "8%",
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "20dp" }
+}
+
+"#successMessage[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "26dp" }
+}
+
+"#successMessage[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "38dp" }
+}
+
+".successGraphic": {
+	top: "20dp",
+	width: "38%",
+	height: Ti.UI.SIZE
+}
+
+".finishButton": {
+	top: "24dp",
+	bottom: "24dp",
+	color: Alloy.CFG.colors.primary,
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.primary,
+	borderWidth: "1dp"
+}
