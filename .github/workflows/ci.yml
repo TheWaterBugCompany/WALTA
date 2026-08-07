@@ -772,10 +772,10 @@ jobs:
             # or logcat stream, so the capture times out with no frames. Retry once
             # on the now-warm emulator — visual-test re-launches with `-S`, so it's
             # a clean re-capture. The first attempt's captureDiagnostics is logged
-            # either way (WB-210).
-            npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test \
-              || (echo "::warning::Android visual capture failed (likely cold-boot); retrying once on the warm emulator" \
-                  && npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test)
+            # either way (WB-210). Kept on one line: the emulator-runner passes the
+            # script line-by-line, so a `\`-continued command reaches grunt with a
+            # literal trailing backslash and aborts ("Task \ not found").
+            npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test || (echo "::warning::Android visual capture failed (likely cold-boot); retrying once on the warm emulator" && npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test)
 
       - name: Upload visual captures and diffs
         if: always()
