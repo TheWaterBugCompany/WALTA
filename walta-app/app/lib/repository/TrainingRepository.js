@@ -1,9 +1,10 @@
 const SampleTray = require("../models/SampleTray");
 const Taxon = require("../models/Taxon");
 
-// Persists and hydrates the training SampleTray, in its own `waterbug_training`
-// DB — kept entirely apart from the real-sample archive so training data can
-// never leak into sync/upload/history. LogRepository-style: `open()` expects
+// Persists and hydrates the training SampleTray. Its tables live in the shared
+// non-Alloy `waterbug_data` DB — a *different* DB from Alloy's `samples`
+// archive, which is what every sync/upload/history query runs against, so
+// training data can never leak into them. LogRepository-style: `open()` expects
 // the schema to already exist (Migrator.migrate has run).
 //
 // This is the persistence seam: it creates the domain models (SampleTray/Taxon)
