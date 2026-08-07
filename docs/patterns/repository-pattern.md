@@ -173,30 +173,27 @@ via `Migrator.migrate(dbName)` at app startup. Repositories don't run
 their own migrations on open; that would couple every consumer of the
 repo to an implicit "first call sets up the schema" behaviour.
 
-## Which db: shared `waterbug_data`, or an isolated one
+## Shared db: `waterbug_data`
 
-Internal, low-stakes data (logs, a future cache) shares one SQLite db,
-`waterbug_data`. Lock contention isn't a concern at this app's scale
-(mobile, single user, low write volume), and a shared db keeps things
-simple.
+All non-Alloy tables — logs, training, a future cache — live in one
+SQLite db, `waterbug_data`. Lock contention isn't a concern at this
+app's scale (mobile, single user, low write volume), one
+`Migrator.migrate("waterbug_data")` at startup covers every table, and
+the migration manifest is global precisely because there's one db.
 
-**Isolated draft stores get their own db.** Training persists to
-`waterbug_training`, kept entirely apart from the real-sample archive
-so training data *can't* leak into sync/upload/history queries — those
-run against Alloy's `samples` db and structurally cannot see another
-file. Isolation-by-construction beats a discriminator column you have
-to remember to filter on. The survey/edit draft store will be a
-separate isolated db for the same reason.
-
-An isolated db is migrated with its own `Migrator.migrate(dbName)` call
-at startup (alongside the `waterbug_data` one). Note the current
-limitation: the migration manifest is global, so `migrate(dbName)`
-applies *every* migration to whichever db it's given — fine while the
-tables are harmless to co-create, but scoping the manifest per-db is
-the natural next step as more isolated dbs appear.
+This already isolates draft/training data from the real-sample
+**archive**: Alloy's `sample`/`taxa` use a *separate* db (`samples`),
+and every sync/upload/history query — `loadCurrent` and friends — runs
+against `samples`. A table in `waterbug_data` is structurally invisible
+to them, so training can't leak into sync/history without any
+discriminator-column filtering. Isolation comes from being a different
+db than `samples` — not from a per-store db file, which would only add
+a second `migrate` call and force per-db manifest scoping for no real
+gain.
 
 Alloy's `samples` and `taxa` databases stay separate per Alloy's
-convention.
+convention — Alloy hardcodes their `db_name`, so they'd only join
+`waterbug_data` if they ever migrate off Alloy.
 
 ## Adding a new repository
 
