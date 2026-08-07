@@ -1,13 +1,13 @@
 require("mocha");
 const { expect } = require("chai");
-const SuccessViewModel = require("../../walta-app/app/lib/viewmodels/Success");
+const TrainingSuccessViewModel = require("../../walta-app/app/lib/viewmodels/TrainingSuccess");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 
-describe("SuccessViewModel", function () {
+describe("TrainingSuccessViewModel", function () {
   afterEach(function () { Topics.reset(); });
 
   function build(args) {
-    return new SuccessViewModel(Object.assign({ topics: Topics }, args));
+    return new TrainingSuccessViewModel(Object.assign({ topics: Topics }, args));
   }
 
   it("congratulates the trainee with the number of correct creatures", function () {

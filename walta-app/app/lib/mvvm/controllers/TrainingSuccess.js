@@ -1,6 +1,6 @@
-const SuccessViewModel = require("viewmodels/Success");
+const TrainingSuccessViewModel = require("viewmodels/TrainingSuccess");
 
-// Titanium-free screen controller for the training Success modal. Binds the
+// Titanium-free screen controller for the training TrainingSuccess modal. Binds the
 // congratulation message and routes Finish (→ main menu) / ✕ (dismiss).
 // See docs/patterns/screen-controllers.md.
 const BINDINGS = {
@@ -9,9 +9,9 @@ const BINDINGS = {
   closeButton:    { onClose: "close" },
 };
 
-module.exports = function createSuccessController({ view, close, services, bindView, args }) {
+module.exports = function createTrainingSuccessController({ view, close, services, bindView, args }) {
   const { correctCount = 0 } = args || {};
-  const vm = new SuccessViewModel({ topics: services.topics, correctCount });
+  const vm = new TrainingSuccessViewModel({ topics: services.topics, correctCount });
   const unbind = bindView(view, vm, BINDINGS);
   vm.on("close", () => close());
 
