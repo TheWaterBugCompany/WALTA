@@ -37,6 +37,7 @@ module.exports = [
   "SyncFeedback",
   "UploadBadge",
   "SampleEditMenu",
+  "Success",
   "SampleHistory",
   "Gallery",
   "PhotoSelect",
