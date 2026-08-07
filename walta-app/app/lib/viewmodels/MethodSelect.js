@@ -17,6 +17,11 @@ class MethodSelectViewModel extends ChangeNotifier {
   get browseEnabled() { return !this._training; }
   get unknownbugEnabled() { return !this._training; }
 
+  // Positive form for the view to bind — bindView has no negation in paths.
+  get speedbugDisabled() { return !this.speedbugEnabled; }
+  get browseDisabled() { return !this.browseEnabled; }
+  get unknownbugDisabled() { return !this.unknownbugEnabled; }
+
   keysearch() { this._route(this.keysearchEnabled, this._topics.KEYSEARCH, this._payload); }
   speedbug() { this._route(this.speedbugEnabled, this._topics.SPEEDBUG, this._payload); }
   browselist() { this._route(this.browseEnabled, this._topics.BROWSE, this._payload); }
