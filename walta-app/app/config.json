@@ -7,7 +7,8 @@
       "primaryLight": "#66CCCE",
       "error":        "#FF6161",
       "errorDark":    "#B80909",
-      "success":      "#64AC17"
+      "success":      "#64AC17",
+      "disabled":     "#e6e6e6"
     }
   },
   "autoStyle": true,

@@ -9,6 +9,7 @@ const Palette = {
   error:        Symbol("error"),
   errorDark:    Symbol("errorDark"),
   success:      Symbol("success"),
+  disabled:     Symbol("disabled"),
 };
 
 module.exports = Palette;

@@ -1,6 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
 const MenuEntryViewModel = require("../../walta-app/app/lib/viewmodels/MenuEntry");
+const Palette = require("../../walta-app/app/lib/util/Palette");
 
 describe("MenuEntryViewModel", function () {
   function build(over) {
@@ -42,7 +43,7 @@ describe("MenuEntryViewModel", function () {
     const off = build({ disabled: true });
     expect(off.disabled).to.equal(true);
     expect(off.buttonOpacity).to.equal(0.5);
-    expect(off.buttonColor).to.equal("#e6e6e6");
+    expect(off.buttonColor).to.equal(Palette.disabled);
     const on = build({ disabled: false });
     expect(on.buttonOpacity).to.equal(1);
     expect(on.buttonColor).to.equal("#cfdbf3");

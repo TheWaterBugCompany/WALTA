@@ -69,7 +69,13 @@ async function startApp(options) {
   // opens without a taxonId so the survey-only overlay never appears.
   routePromise(Topics.IDENTIFY,  (data) => {
     if (Training.isActive()) {
-      if (data.sampleTaxonId == null) Training.addTaxon(data.taxonId);
+      if (data.sampleTaxonId != null) {
+        // Tapping an existing taxon re-identifies it: mark it and reopen the
+        // method chooser; the resulting identification replaces it in place.
+        Training.beginReplace(data.sampleTaxonId);
+        return Navigation.openModal("MethodSelect", { training: true, allowAddToSample: true, surveyType: null, unknownBug: false });
+      }
+      Training.addTaxon(data.taxonId);
       return Navigation.openController("SampleTray", {});
     }
     return Navigation.openController("SampleTray", data);
