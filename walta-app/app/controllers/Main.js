@@ -70,12 +70,12 @@ async function startApp(options) {
   routePromise(Topics.IDENTIFY,  (data) => {
     if (Training.isActive()) {
       if (data.sampleTaxonId != null) {
-        // Tapping an existing taxon re-identifies it: mark it and reopen the
-        // method chooser; the resulting identification replaces it in place.
-        Training.beginReplace(data.sampleTaxonId);
-        return Navigation.openModal("MethodSelect", { training: true, allowAddToSample: true, surveyType: null, unknownBug: false });
+        // Tapping an existing taxon re-identifies it: reopen the method chooser
+        // carrying its tray position, which threads through the key so the new
+        // identification replaces it in that slot.
+        return Navigation.openModal("MethodSelect", { training: true, allowAddToSample: true, surveyType: null, unknownBug: false, position: data.position });
       }
-      Training.addTaxon(data.taxonId);
+      Training.addTaxon(data.taxonId, data.position);
       return Navigation.openController("SampleTray", {});
     }
     return Navigation.openController("SampleTray", data);

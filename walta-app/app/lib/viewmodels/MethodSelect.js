@@ -6,10 +6,12 @@ const MenuEntryViewModel = require("./MenuEntry");
 // only the Key is offered — the rest are disabled (greyed) and route nowhere.
 // Titanium-free.
 class MethodSelectViewModel extends ChangeNotifier {
-  constructor({ topics, training = false, allowAddToSample = false, surveyType = null, unknownBug = false }) {
+  constructor({ topics, training = false, allowAddToSample = false, surveyType = null, unknownBug = false, position = null }) {
     super();
     this._topics = topics;
-    const payload = { allowAddToSample, surveyType };
+    // position rides through to the key so a re-identification lands back in the
+    // same tray slot; null for a fresh identification (which appends).
+    const payload = { allowAddToSample, surveyType, position };
 
     // Cards share the modal height: three at 30.67%, or four (with the unknown
     // bug) at 25% plus a shorter 16% unknown-bug card.

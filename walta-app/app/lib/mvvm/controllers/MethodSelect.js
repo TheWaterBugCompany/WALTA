@@ -12,9 +12,9 @@ const BINDINGS = {
 };
 
 module.exports = function createMethodSelectController({ view, close, services, bindView, args }) {
-  const { training = false, allowAddToSample = false, surveyType = null, unknownBug = false } = args || {};
+  const { training = false, allowAddToSample = false, surveyType = null, unknownBug = false, position = null } = args || {};
   const vm = new MethodSelectViewModel({
-    topics: services.topics, training, allowAddToSample, surveyType, unknownBug,
+    topics: services.topics, training, allowAddToSample, surveyType, unknownBug, position,
   });
   const unbind = bindView(view, vm, BINDINGS);
   vm.on("close", () => close());

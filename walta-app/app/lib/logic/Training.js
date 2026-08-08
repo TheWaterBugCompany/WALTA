@@ -8,7 +8,6 @@ const createTrainingAssessor = require("logic/TrainingAssessor");
 module.exports = function createTraining({ topics, repo, exercises }) {
   let tray = null;
   let assessor = null;
-  let pendingReplace = null;
 
   return {
     startTraining(code) {
@@ -29,26 +28,18 @@ module.exports = function createTraining({ topics, repo, exercises }) {
       return tray !== null;
     },
 
-    // Mark a taxon for re-identification: the next addTaxon replaces it in place
-    // (the trainee tapped it to correct a wrong pick). See addTaxon.
-    beginReplace(sampleTaxonId) {
-      pendingReplace = sampleTaxonId;
-    },
-
-    // Add an identified taxon. Normally it appends (position = current length —
-    // the store takes position as given). If a re-identification is pending, the
-    // marked taxon is dropped and the new one takes its slot, so positional
-    // grading is preserved.
-    addTaxon(taxonId) {
-      if (pendingReplace !== null) {
-        const old = tray.taxa().find((t) => t.id === pendingReplace);
-        pendingReplace = null;
-        if (old) {
-          repo.removeTaxon(tray, old);
-          return repo.addTaxon(tray, taxonId, old.position);
-        }
+    // Add an identified taxon. With no position it appends (position = current
+    // length — the store takes position as given). Given a position, it drops the
+    // taxon already in that slot and puts the new one there, so re-identifying a
+    // wrong pick preserves positional grading. The position rides in from the tap
+    // through the key identification rather than being held as session state.
+    addTaxon(taxonId, position) {
+      if (position == null) {
+        return repo.addTaxon(tray, taxonId, tray.length);
       }
-      return repo.addTaxon(tray, taxonId, tray.length);
+      const old = tray.taxa().find((t) => t.position === position);
+      if (old) repo.removeTaxon(tray, old);
+      return repo.addTaxon(tray, taxonId, position);
     },
   };
 };

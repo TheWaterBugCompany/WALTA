@@ -419,7 +419,7 @@ describe("SampleTrayViewModel", function () {
       cell.tap();
       expect(topics.fired).to.deep.equal([{
         event: "identify",
-        data: { sampleTaxonId: 1001, taxonId: 1, readonly: false },
+        data: { sampleTaxonId: 1001, taxonId: 1, readonly: false, position: 0 },
       }]);
     });
 
