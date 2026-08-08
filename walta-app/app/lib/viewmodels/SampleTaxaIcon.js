@@ -67,7 +67,8 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  // A taxon opens the editor; a blank cell is inert.
+  // A taxon opens the editor; a blank cell is inert. The cell's tray position
+  // rides along so a training re-identification lands back in the same slot.
   tap() {
     if (this._kind !== "taxon") return;
     const topics = this._tray.topics;
@@ -75,6 +76,7 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
       sampleTaxonId: this.sampleTaxonId,
       taxonId: this.taxonId,
       readonly: this._tray.readonly,
+      position: this._position,
     });
   }
 

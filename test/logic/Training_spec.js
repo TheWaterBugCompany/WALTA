@@ -113,25 +113,23 @@ describe("logic/Training", function () {
     expect(tray.length).to.equal(2);
   });
 
-  it("re-identifies a taxon in place, keeping its position", function () {
+  it("re-identifies the taxon at a given position in place, keeping its position", function () {
     training.startTraining("101");
     training.addTaxon(90);    // id 1, position 0
     training.addTaxon(999);   // id 2, position 1 — the wrong one
 
-    training.beginReplace(2); // tap the wrong taxon (its sampleTaxonId/id)
-    training.addTaxon(198);   // pick the right one
+    training.addTaxon(198, 1); // re-identify the taxon at position 1
 
-    // the wrong taxon was removed and the new one added at the same position
+    // the taxon at that position was removed and the new one added in its slot
     expect(repo.removed.map((r) => r.taxon.id)).to.deep.equal([2]);
     expect(repo.added[repo.added.length - 1]).to.deep.include({ taxonId: 198, position: 1 });
   });
 
-  it("only replaces once — a later add appends as normal", function () {
+  it("appends when no position is given, even after a replace", function () {
     training.startTraining("101");
-    training.addTaxon(90);    // id 1, position 0
-    training.beginReplace(1);
-    training.addTaxon(198);   // replaces at position 0
-    training.addTaxon(176);   // appends
+    training.addTaxon(90);     // id 1, position 0
+    training.addTaxon(198, 0); // replaces at position 0
+    training.addTaxon(176);    // appends
 
     expect(repo.added[repo.added.length - 1]).to.deep.include({ taxonId: 176, position: 1 });
   });
