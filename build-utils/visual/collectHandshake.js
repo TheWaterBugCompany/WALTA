@@ -9,24 +9,40 @@ import path from "path";
 // (the 600s iOS timeout) or make the host screenshot the wrong screen.
 const DONE = "capture-done";
 
-export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, pollMs = 200, now, sleep }) {
+export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, pollMs = 200, now, sleep, log }) {
     const clock = now || (() => Date.now());
     const wait = sleep || ((ms) => new Promise((r) => setTimeout(r, ms)));
+    const note = log || (() => {});
     const shot = new Set();
     const deadline = clock() + timeoutMs;
 
     for (;;) {
-        const files = await launcher.listVisualCaptureFiles(appId);
+        // Listing can throw transiently — the app dir / simctl get_app_container
+        // isn't ready the instant the runner boots. Treat it as "nothing yet" and
+        // poll again rather than failing the whole capture (the 600s deadline is
+        // the real backstop).
+        let files = [];
+        try {
+            files = await launcher.listVisualCaptureFiles(appId);
+        } catch (e) {
+            note(`  visual: listing not ready yet (${e && e.message ? e.message : e})`);
+        }
         // Grab every screen that signalled ready and we haven't yet — before the
         // done check, so a screen whose .ready lands in the same poll as the
-        // sentinel is still captured.
+        // sentinel is still captured. A single screenshot/ack hiccup (contended
+        // simctl/adb) leaves the screen unshot to retry next poll, rather than
+        // killing the run — matching the old per-screen tolerance.
         for (const f of files) {
             const m = /^(.+)\.ready$/.exec(f);
             if (!m || shot.has(m[1])) continue;
             const name = m[1];
-            await launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`));
-            await launcher.writeVisualCaptureFile(appId, `${name}.shot`);
-            shot.add(name);
+            try {
+                await launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`));
+                await launcher.writeVisualCaptureFile(appId, `${name}.shot`);
+                shot.add(name);
+            } catch (e) {
+                note(`  visual: ${name} shot failed, will retry (${e && e.message ? e.message : e})`);
+            }
         }
         if (files.includes(DONE)) return { count: shot.size };
         if (clock() >= deadline) {
