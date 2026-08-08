@@ -50,6 +50,9 @@ describe("View seam", function () {
 
   describe("openModal", function () {
     var view, host;
+    // The real Academy controller gates Start on services.Training.isValidCode,
+    // so the seam must hand it a Training service to build.
+    var SERVICES = { Training: { isValidCode: () => false } };
     beforeEach(async function () {
       view = new View({});
       await view.openView("About", ABOUT_ARGS);
@@ -61,7 +64,7 @@ describe("View seam", function () {
     });
 
     it("overlays the modal on the current window and clears it on close", function () {
-      view.openModal("Academy", {}, {});
+      view.openModal("Academy", {}, SERVICES);
       var modal = view.getCurrentModal();
       expect(modal, "modal is tracked").to.exist;
       expect(modal.alloyCtl, "modal's Alloy controller").to.exist;
@@ -74,7 +77,7 @@ describe("View seam", function () {
     // real Ti-free lib controller (which builds a vm), not the Alloy shell —
     // the case LiveView used to mis-resolve.
     it("builds the real lib controller from the default registry", function () {
-      view.openModal("Academy", {}, {});
+      view.openModal("Academy", {}, SERVICES);
       var modal = view.getCurrentModal();
       expect(modal.lib, "default registry built a lib controller").to.exist;
       expect(modal.lib.vm, "lib controller exposes its view-model").to.exist;
