@@ -1,11 +1,11 @@
 // On-device visual-regression capture runner — the visual twin of spec/index.js.
 // Reached only when index.js dispatches on the `visual_capture` launch arg. Opens
-// a black window, captures every manifest screen to
-// applicationDataDirectory/visual/, and prints host-parseable markers so the
-// grunt visual-test task knows when to pull the PNGs.
-//
-//   VISUAL_CAPTURE_DONE count=<n>   — all screens captured
-//   VISUAL_CAPTURE_FAILED <message> — capture threw
+// a black window and captures every manifest screen into
+// applicationDataDirectory/visual/. The host↔runner protocol is a FILE HANDSHAKE
+// in that dir (see captureScreens.js): per-screen <name>.ready / <name>.shot and
+// a final capture-done sentinel — no device-log dependence, so simctl/logcat
+// dropping lines can't stall capture. The log lines below are for humans reading
+// CI output only; the host polls the files.
 //
 // A screen filter is passed through the same `test_grep` launch arg the mocha
 // runner uses, so `--grep=Menu` captures a single screen for fast iteration.

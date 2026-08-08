@@ -944,73 +944,42 @@ module.exports = function(grunt) {
 
       Promise.all([
         getLauncher(platform, isSimulator),
-        import('./build-utils/parseVisualCaptureResult.js'),
+        import('./build-utils/visual/collectHandshake.js'),
         import('./build-utils/visual/compareRun.js'),
-      ]).then(async ([launcher, { parseVisualCaptureResult }, { compareRun }]) => {
+      ]).then(async ([launcher, { collectHandshake }, { compareRun }]) => {
         const fs = require('fs');
         // Start from a clean actual dir so a screen dropped from the manifest
         // doesn't leave a stale capture behind that reads as an unexpected diff.
         fs.rmSync(actualDir, { recursive: true, force: true });
         fs.mkdirSync(actualDir, { recursive: true });
 
-        // Framebuffer screens (WebView/video/map, which toImage can't see) are
-        // grabbed live: the runner holds the screen and emits a READY marker, and
-        // we screenshot the actual simulator/emulator frame on the spot. The shots
-        // run SERIALLY — firing 14 simctl/adb + jimp processes at once starves the
-        // CI runner (and the emulator itself), which stalls log delivery and hangs
-        // the capture.
-        const framebufferShots = [];
-        let screenshotChain = Promise.resolve();
+        // Capture via a FILE HANDSHAKE, not the device log: the runner writes
+        // <name>.ready into its visual dir and holds the screen; we poll for it,
+        // screenshot the live framebuffer, write <name>.shot back, and finish on
+        // the runner's capture-done sentinel. No log-stream dependence, so the
+        // iOS simctl-log drops/batching that used to hang capture at 600s can't
+        // happen. Shots are serial inside collectHandshake so we don't starve the
+        // runner. On timeout, probe the device so the hang stays diagnosable.
         let marker;
         try {
-          marker = await new Promise((resolve, reject) => {
-            let stop;
-            const timer = setTimeout(async () => {
-              if (stop) stop();
-              // Nothing signalled done — probe the device (crashed? never
-              // started? running but silent?) so the hang is diagnosable rather
-              // than an opaque timeout. Best-effort; must not mask the timeout.
-              let diag = '';
-              try {
-                if (typeof launcher.captureDiagnostics === 'function') {
-                  diag = '\n' + await launcher.captureDiagnostics(APP_ID);
-                }
-              } catch (e) { diag = `\n(diagnostics probe failed: ${e && e.message})`; }
-              reject(new Error(`visual capture timed out after ${captureTimeoutMs / 1000}s with no VISUAL_CAPTURE_DONE${diag}`));
-            }, captureTimeoutMs);
-            stop = launcher.streamLogs((line) => {
-              grunt.log.writeln(line);
-              const ready = /VISUAL_FRAMEBUFFER_READY name=(\S+)/.exec(line);
-              if (ready) {
-                const name = ready[1];
-                if (typeof launcher.screenshotFramebuffer !== 'function') {
-                  grunt.log.writeln(`  (skipping framebuffer ${name}: ${launcher.constructor.name} has no screenshotFramebuffer)`);
-                } else {
-                  screenshotChain = screenshotChain.then(() =>
-                    launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`))
-                      .catch((err) => grunt.log.writeln(`  framebuffer ${name} failed: ${err.message}`)));
-                  framebufferShots.push(screenshotChain);
-                }
-                return;
-              }
-              const result = parseVisualCaptureResult(line);
-              if (result) { clearTimeout(timer); stop(); resolve(result); }
-            }, { logLevel: 'info' });
-          });
-        } finally {
-          // Flush completed shots even on timeout, so a failed run still uploads
-          // whatever it captured instead of an empty artifact.
-          await Promise.allSettled(framebufferShots);
+          marker = await collectHandshake({ launcher, appId: APP_ID, actualDir, timeoutMs: captureTimeoutMs, pollMs: 200 });
+        } catch (err) {
+          let diag = '';
+          try {
+            if (typeof launcher.captureDiagnostics === 'function') {
+              diag = '\n' + await launcher.captureDiagnostics(APP_ID);
+            }
+          } catch (e) { diag = `\n(diagnostics probe failed: ${e && e.message})`; }
+          throw new Error(err.message + diag);
         }
-        if (marker.status === 'failed') { throw new Error(`on-device capture failed: ${marker.message}`); }
-        grunt.log.writeln(`Captured ${marker.count} screen(s); pulling toImage screens from device…`);
+        grunt.log.writeln(`Captured ${marker.count} framebuffer screen(s); pulling toImage screens from device…`);
 
         if (typeof launcher.pullCapturedScreenshots !== 'function') {
           throw new Error(`${launcher.constructor.name} does not implement pullCapturedScreenshots yet`);
         }
-        // iOS resolves the dir from the app container via subdir; Android needs
-        // the device-side path the runner reported (marker.dir).
-        await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir, deviceDir: marker.dir });
+        // Both launchers resolve the app's visual dir themselves now (iOS via the
+        // container, Android via run-as), so no device path needs reporting.
+        await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir });
 
         const run = await compareRun({ baselineDir, actualDir, outDir, update });
         for (const res of run.results) {
