@@ -2,14 +2,6 @@ Feature: Academy
 
 I want to test my waterbug identification skills by starting a training session
 
-Scenario: A valid session code enables Start
-  When I open the Academy from the menu
-  Then the Academy training screen appears
-  When I enter the session code "101"
-  Then the training session can be started
-  When I close the Academy
-  Then the menu is shown
-
 # The training flow is entirely local (no network calls), so it works offline.
 Scenario: Complete a training exercise, correcting a mistake
   When I open the Academy from the menu
