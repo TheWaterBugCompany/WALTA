@@ -27,15 +27,27 @@
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "38dp" }
 }
 
+// Sized by height (width SIZE keeps the aspect) so the whole modal — titlebar,
+// message, graphic, button — fits the shortest landscape viewport without
+// scrolling. Scales up with the screen-height buckets; the base serves the
+// smallest screens.
 ".successGraphic": {
-	top: "20dp",
-	width: "38%",
-	height: Ti.UI.SIZE
+	top: "12dp",
+	width: Ti.UI.SIZE,
+	height: "44dp"
+}
+
+".successGraphic[if=Alloy.Globals.isHighRes]": {
+	height: "64dp"
+}
+
+".successGraphic[if=Alloy.Globals.isXHighRes]": {
+	height: "120dp"
 }
 
 ".finishButton": {
-	top: "24dp",
-	bottom: "24dp",
+	top: "12dp",
+	bottom: "12dp",
 	color: Alloy.CFG.colors.primary,
 	backgroundColor: Alloy.CFG.colors.white,
 	borderColor: Alloy.CFG.colors.primary,
