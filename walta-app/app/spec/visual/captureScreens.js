@@ -31,6 +31,34 @@ function sleep(ms) {
 	return new Promise(function (r) { setTimeout(r, ms); });
 }
 
+// Handshake markers live alongside the PNGs in the visual dir. The runner writes
+// <name>.ready; the host screenshots the held frame and writes <name>.shot back;
+// captureAll writes capture-done last. This is a file protocol precisely so it
+// doesn't depend on the device log stream, which drops/batches lines under load
+// (the iOS simctl flake that hung capture at the 600s timeout).
+var SHOT_TIMEOUT_MS = 30000;
+var SHOT_POLL_MS = 100;
+
+function writeMarker(name) {
+	Ti.Filesystem.getFile(outputDir().nativePath, name).write("");
+}
+
+function markerExists(name) {
+	return Ti.Filesystem.getFile(outputDir().nativePath, name).exists();
+}
+
+// Wait for the host to acknowledge a framebuffer screenshot by writing <name>.shot.
+// Returns whether it was acked; on timeout the runner logs and moves on so one
+// stuck screen doesn't strand the rest (the host flags it as a missing capture).
+async function waitForShot(name) {
+	var deadline = Date.now() + SHOT_TIMEOUT_MS;
+	while (Date.now() < deadline) {
+		if (markerExists(name + ".shot")) { return true; }
+		await sleep(SHOT_POLL_MS);
+	}
+	return false;
+}
+
 // Capture one screen and return metadata about it. The controller is torn down
 // before returning so screens don't leak state into each other.
 //
@@ -59,12 +87,12 @@ async function captureScreen(entry) {
 		meta = { name: entry.name, mode: "toimage", width: blob.width, height: blob.height, length: blob.length, path: path };
 	} else {
 		if (entry.loadMs) { await sleep(entry.loadMs); }
-		Ti.API.info("VISUAL_FRAMEBUFFER_READY name=" + entry.name);
-		// Hold long enough for the host to grab the frame while this screen is up,
-		// even on a contended CI runner where the host screenshots serially.
-		await sleep(entry.holdMs || 3000);
-		Ti.API.info("VISUAL_CAPTURED name=" + entry.name + " mode=framebuffer");
-		meta = { name: entry.name, mode: "framebuffer" };
+		// Signal the screen is up, then hold it until the host acks its shot — no
+		// fixed hold, no log marker. The screen stays open for the whole wait.
+		writeMarker(entry.name + ".ready");
+		var acked = await waitForShot(entry.name);
+		Ti.API.info("VISUAL_CAPTURED name=" + entry.name + " mode=framebuffer acked=" + acked);
+		meta = { name: entry.name, mode: "framebuffer", acked: acked };
 	}
 
 	await closeWindow(view);
@@ -88,6 +116,9 @@ async function captureAll(entries, { grep } = {}) {
 				" " + (e && e.message ? e.message : e));
 		}
 	}
+	// The sentinel the host polls for: capture is complete, pull the toImage PNGs.
+	// Written last so it can't appear before the final screen's .shot handshake.
+	writeMarker("capture-done");
 	return results;
 }
 

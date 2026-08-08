@@ -172,6 +172,32 @@ class IosSimulatorLauncher {
   // Copies the PNGs the visual-capture runner wrote to
   // <app-data-container>/Documents/<subdir> out to destDir, so the host can diff
   // them against baselines. Returns the destination paths.
+  // The app's visual dir on the host filesystem — the simulator container is
+  // directly readable/writable, which is what makes the file handshake possible
+  // without any log-stream dependence. Cached: the container path is stable for
+  // the life of an install.
+  async _visualDir(appId, subdir = "visual") {
+    if (!this._containerCache) {
+      this._containerCache = (await this._exec(["simctl", "get_app_container", this._udid, appId, "data"])).trim();
+    }
+    return path.join(this._containerCache, "Documents", subdir);
+  }
+
+  // List the handshake markers + PNGs the runner has written so far (empty until
+  // the dir exists). The collector polls this to see which screens are ready.
+  async listVisualCaptureFiles(appId, { subdir = "visual" } = {}) {
+    const dir = await this._visualDir(appId, subdir);
+    if (!fs.existsSync(dir)) return [];
+    return fs.readdirSync(dir);
+  }
+
+  // Ack a captured screen by dropping an (empty) marker file the runner polls for.
+  async writeVisualCaptureFile(appId, name, { subdir = "visual" } = {}) {
+    const dir = await this._visualDir(appId, subdir);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, name), "");
+  }
+
   async pullCapturedScreenshots(appId, { subdir = "visual", destDir } = {}) {
     const container = (await this._exec(["simctl", "get_app_container", this._udid, appId, "data"])).trim();
     const srcDir = path.join(container, "Documents", subdir);

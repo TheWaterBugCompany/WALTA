@@ -191,14 +191,53 @@ class AndroidLauncher {
   // Pulls the visual-capture PNGs out of the app-private data dir. The dir isn't
   // world-readable, so `run-as` (which the debuggable test build permits) streams
   // it back as a tar archive — binary-safe and a single adb round-trip.
+  // Locate the app-private visual dir (relative to run-as's cwd, the app data
+  // dir) so the host can read/write handshake markers without the app reporting
+  // its path over the log. Cached once the runner has created it.
+  async _visualDir(appId, subdir = "visual") {
+    if (this._visualDirCache) return this._visualDirCache;
+    let out;
+    try {
+      out = (await this._exec(["exec-out", "run-as", appId, "find", ".", "-type", "d", "-name", subdir])).trim();
+    } catch (e) {
+      return null; // app dir not accessible yet
+    }
+    const rel = out.split("\n").map((s) => s.trim()).filter(Boolean)[0];
+    if (rel) { this._visualDirCache = rel; }
+    return rel || null;
+  }
+
+  async listVisualCaptureFiles(appId, { subdir = "visual" } = {}) {
+    const dir = await this._visualDir(appId, subdir);
+    if (!dir) return [];
+    try {
+      const out = await this._exec(["exec-out", "run-as", appId, "ls", "-1", dir]);
+      return out.split("\n").map((s) => s.trim()).filter(Boolean);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async writeVisualCaptureFile(appId, name, { subdir = "visual" } = {}) {
+    const dir = await this._visualDir(appId, subdir);
+    if (!dir) throw new Error(`visual dir not found for ${appId}`);
+    // run-as sh runs on the device; ': > file' truncates/creates an empty file.
+    await this._exec(["exec-out", "run-as", appId, "sh", "-c", `: > ${dir}/${name}`]);
+  }
+
   async pullCapturedScreenshots(appId, { deviceDir, destDir } = {}) {
-    const dir = String(deviceDir).replace(/^file:\/\//, "");
+    const dir = deviceDir ? String(deviceDir).replace(/^file:\/\//, "") : (await this._visualDir(appId));
     const tarBuffer = await this._execOutBinary(["exec-out", "run-as", appId, "tar", "c", "-C", dir, "."]);
     fs.mkdirSync(destDir, { recursive: true });
     const tmpTar = path.join(destDir, ".pull.tar");
     fs.writeFileSync(tmpTar, tarBuffer);
     await tar.x({ file: tmpTar, cwd: destDir });
     fs.unlinkSync(tmpTar);
+    // The tar carries the whole visual dir, including the .ready/.shot/capture-done
+    // handshake markers — drop them so the uploaded artifact is just screenshots.
+    for (const f of fs.readdirSync(destDir)) {
+      if (!f.endsWith(".png")) { fs.rmSync(path.join(destDir, f), { force: true }); }
+    }
     return fs.readdirSync(destDir)
       .filter((f) => f.endsWith(".png"))
       .map((f) => path.join(destDir, f));
