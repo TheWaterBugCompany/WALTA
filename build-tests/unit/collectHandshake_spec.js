@@ -68,6 +68,54 @@ describe("collectHandshake", function () {
         expect(launcher.shots).to.deep.equal(["/out/Menu.png"]);
     });
 
+    it("keeps polling when listing throws (device/container not ready yet)", async function () {
+        // First two polls throw (e.g. simctl get_app_container hangs on a cold,
+        // contended runner), then the dir resolves.
+        let call = 0;
+        const shots = [];
+        const launcher = {
+            async listVisualCaptureFiles() {
+                call++;
+                if (call <= 2) throw new Error("get_app_container failed");
+                return call === 3 ? ["Menu.ready"] : ["Menu.ready", "capture-done"];
+            },
+            async screenshotFramebuffer(p) { shots.push(p); },
+            async writeVisualCaptureFile() {},
+        };
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+        });
+        expect(result).to.deep.equal({ count: 1 });
+        expect(shots).to.deep.equal(["/out/Menu.png"]);
+    });
+
+    it("retries a screen whose screenshot transiently fails, then captures it", async function () {
+        // done only lands after the screen has been acked (mirrors the runner,
+        // which holds the screen until .shot before writing capture-done).
+        let call = 0, attempts = 0;
+        const shots = [];
+        const launcher = {
+            async listVisualCaptureFiles() {
+                call++;
+                return call <= 2 ? ["Menu.ready"] : ["Menu.ready", "capture-done"];
+            },
+            async screenshotFramebuffer(p) {
+                attempts++;
+                if (attempts === 1) throw new Error("simctl io screenshot failed");
+                shots.push(p);
+            },
+            async writeVisualCaptureFile() {},
+        };
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+        });
+        // The failed first attempt didn't ack Menu; the next poll retried and got it.
+        expect(shots).to.deep.equal(["/out/Menu.png"]);
+        expect(result.count).to.equal(1);
+    });
+
     it("times out with a clear error when the done sentinel never arrives", async function () {
         const launcher = fakeLauncher([["Menu.ready"]]);
         const { now, sleep } = fakeClock();

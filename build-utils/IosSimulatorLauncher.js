@@ -178,15 +178,25 @@ class IosSimulatorLauncher {
   // the life of an install.
   async _visualDir(appId, subdir = "visual") {
     if (!this._containerCache) {
-      this._containerCache = (await this._exec(["simctl", "get_app_container", this._udid, appId, "data"])).trim();
+      // Shorter timeout than the default: right after launch on a contended
+      // runner get_app_container can hang; a tight timeout lets the caller poll
+      // again quickly instead of burning 60s per attempt. Cached once resolved.
+      this._containerCache = (await this._exec(["simctl", "get_app_container", this._udid, appId, "data"], { timeout: 15000 })).trim();
     }
     return path.join(this._containerCache, "Documents", subdir);
   }
 
-  // List the handshake markers + PNGs the runner has written so far (empty until
-  // the dir exists). The collector polls this to see which screens are ready.
+  // List the handshake markers + PNGs the runner has written so far. Returns []
+  // — not throwing — until the container resolves and the dir exists, so the
+  // collector just polls again (get_app_container hanging early was the flake
+  // that killed capture at the _exec timeout).
   async listVisualCaptureFiles(appId, { subdir = "visual" } = {}) {
-    const dir = await this._visualDir(appId, subdir);
+    let dir;
+    try {
+      dir = await this._visualDir(appId, subdir);
+    } catch (e) {
+      return [];
+    }
     if (!fs.existsSync(dir)) return [];
     return fs.readdirSync(dir);
   }

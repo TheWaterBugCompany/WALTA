@@ -962,7 +962,7 @@ module.exports = function(grunt) {
         // runner. On timeout, probe the device so the hang stays diagnosable.
         let marker;
         try {
-          marker = await collectHandshake({ launcher, appId: APP_ID, actualDir, timeoutMs: captureTimeoutMs, pollMs: 200 });
+          marker = await collectHandshake({ launcher, appId: APP_ID, actualDir, timeoutMs: captureTimeoutMs, pollMs: 200, log: (m) => grunt.log.writeln(m) });
         } catch (err) {
           let diag = '';
           try {
