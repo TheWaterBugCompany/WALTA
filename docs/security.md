@@ -56,7 +56,12 @@ None of these packages are bundled into the device app. The risk surface is "a m
 ## Maintenance policy
 
 1. **Dependabot grouped PRs land routinely.** The repo has Dependabot configured to open weekly grouped dev-dependency PRs (see `commit 54ac956c`). Merge these as they come.
-2. **Track major-version blockers as their own scoped tasks.** `vite` (pinned to 4.x), `Bugfender SDK` (2019-era module + bundled SDK), `chai` (capped at 4.x — 6 is ESM-only and breaks the device unit-test runner) — these need scoped upgrade work and don't belong in a sweeping audit.
+2. **Track major-version blockers as their own scoped tasks.** These are held back in `.github/dependabot.yml` and need scoped upgrade work rather than a routine bump:
+   - `vite` (pinned to 4.x — 5+ is ESM-only, breaks `require('vite')` in the LiveView config)
+   - `chai` (capped at 4.x — 6 is ESM-only, breaks the device unit-test runner)
+   - `@babel/preset-env` (held at 7.x — 8 needs `@babel/core` 8, but the bundled Titanium SDK ships an older core, so the native build's babel pass fails with `api.targets is not a function`)
+   - the Appium driver majors (`appium-uiautomator2-driver` <8, `appium-xcuitest-driver` <12 — the majors are ESM-only and change driver behaviour; need a harness/acceptance verification pass)
+   - `Bugfender SDK` (2019-era module + bundled SDK)
 3. **Dismiss inapplicable alerts in the GitHub UI with a comment linking here**, so the dashboard reflects actual risk rather than transitive-tree noise. The dismissal options to use:
    - **Vulnerable code is not actually used** — for `@xmldom/xmldom` (no serializer use) and `underscore` (no `_.template/flatten/isEqual` use).
    - **Vulnerability is in tests/build pipeline only** — for everything in the build-time-only cluster.

@@ -16,6 +16,17 @@ updates:
       # and Titanium's liveview loads it via CJS — same failure mode as chai.
       - dependency-name: "vite"
         versions: [">=5"]
+      # @babel/preset-env 8 needs @babel/core 8, but Titanium SDK 13.2.0.GA
+      # bundles an older core — the native build's babel pass over app.js dies
+      # with "api.targets is not a function". Needs a Ti SDK that ships core 8.
+      - dependency-name: "@babel/preset-env"
+        versions: [">=8"]
+      # Appium driver majors are now ESM-only and change driver behaviour; hold
+      # until a scoped Appium harness upgrade verifies the acceptance suite.
+      - dependency-name: "appium-uiautomator2-driver"
+        versions: [">=8"]
+      - dependency-name: "appium-xcuitest-driver"
+        versions: [">=12"]
     groups:
       dev-dependencies:
         dependency-type: "development"
