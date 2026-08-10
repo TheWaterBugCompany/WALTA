@@ -61,7 +61,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Install fastlane
-        run: gem install fastlane --no-document
+        # ubuntu-latest's system gem dir isn't writable without sudo.
+        run: sudo gem install fastlane --no-document
 
       - name: Assign build to its TestFlight group
         env:
