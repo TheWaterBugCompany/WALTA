@@ -47,10 +47,10 @@ on:
         default: test
         options: [test, production]
 
-# Share the release lock so a distribute can't race a release mid-flight.
-concurrency:
-  group: release
-  cancel-in-progress: false
+# No workflow-level concurrency: when called from release.yml (which already
+# holds the `release` group) a matching group here would deadlock the child on
+# its own parent. The caller's concurrency governs the chained case; the manual
+# workflow_dispatch one-off is rare enough not to need its own lock.
 
 jobs:
   distribute:
@@ -91,6 +91,9 @@ jobs:
           # submit_beta_review defaults to true in pilot and gates on
           # (groups || distribute_external) — pass it explicitly so an internal
           # assignment doesn't silently trigger review.
+          # "What to Test" notes are the only tester-visible test/prod signal in
+          # the aggregated TestFlight build list (iOS CFBundleVersion can't carry
+          # a -test suffix), so label both — test builds especially.
           if [ "${{ inputs.environment }}" = "production" ]; then
             GROUP="Production Api Testers"
             EXTERNAL=true
@@ -100,7 +103,7 @@ jobs:
             GROUP="Sandbox Api Testers"
             EXTERNAL=false
             SUBMIT_REVIEW=false
-            EXTRA=()
+            EXTRA=(--changelog "TEST BUILD - sandbox CERDI server (${{ inputs.build_number }})")
           fi
 
           # Poll for the build to become distributable. pilot distribute errors
