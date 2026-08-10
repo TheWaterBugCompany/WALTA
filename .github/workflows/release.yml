@@ -91,6 +91,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       display_version: ${{ steps.version.outputs.display_version }}
+      marketing_version: ${{ steps.version.outputs.marketing_version }}
       version_code: ${{ steps.version.outputs.version_code }}
       tag_name: ${{ steps.version.outputs.tag_name }}
     steps:
@@ -127,6 +128,11 @@ jobs:
           IFS='.' read -r major minor patch build <<< "$VERSION"
           VERSION_CODE=$(( major * 1000000000 + minor * 10000000 + patch * 10000 + build ))
 
+          # iOS marketing version (CFBundleShortVersionString) = the 3-part version
+          # without the build segment. pilot distribute needs it separate from the
+          # 4-part build number when assigning the build to its TestFlight group.
+          MARKETING_VERSION="${VERSION%.*}"
+
           # Test builds carry a -test suffix in DISPLAY_VERSION and the
           # git tag. Android versionName accepts alpha characters, so it
           # uses DISPLAY_VERSION. iOS CFBundleVersion / CFBundleShortVersionString
@@ -143,6 +149,7 @@ jobs:
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "display_version=$DISPLAY_VERSION" >> "$GITHUB_OUTPUT"
+          echo "marketing_version=$MARKETING_VERSION" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
           echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
           echo "Environment: $ENVIRONMENT"
@@ -443,27 +450,17 @@ jobs:
             npx grunt --platform=ios clean release
           fi
 
-      - name: Upload to TestFlight and assign to test group
+      - name: Upload to TestFlight
         env:
           ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
-          # pilot upload (single step): uploads the IPA via fastlane's
-          # transporter, waits for ASC processing, then assigns the
-          # build it just uploaded to the right group. Using upload rather
-          # than altool + pilot distribute avoids a version-string-match
-          # race — pilot knows the build it uploaded by internal ID, not
-          # by querying ASC for a build matching --app_version/--build_number
-          # (which was wedging with "No build to distribute!" because Apple
-          # stores/returns the version field differently than pilot queries
-          # for it).
-          #
-          # The Sandbox Api Testers internal group has "Enable automatic
-          # distribution" turned OFF in ASC, so this --groups assignment is
-          # the only thing that puts a build in front of internal testers.
-          # test → Sandbox Api Testers (internal, no review).
-          # production → Production Api Testers (external, submits to
-          # Beta App Review and notifies testers on approval).
+          # Upload only — exit as soon as the binary is delivered, instead of
+          # blocking this macOS runner through Apple's async processing (the wait
+          # that kept cancelling this job at its timeout). The chained distribute-ios
+          # job (cheap ubuntu — distribute-testflight.yml) then waits out processing
+          # and assigns the build to its TestFlight group. Upload path is otherwise
+          # unchanged (pilot upload, not altool).
           mkdir -p ~/private_keys
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode \
             > ~/private_keys/AuthKey_${ASC_KEY_ID}.p8
@@ -477,35 +474,12 @@ jobs:
             '{key_id: $key_id, issuer_id: $issuer_id, key: $key, in_house: false}' \
             > /tmp/asc_key.json
 
-          # `submit_beta_review` defaults to true in pilot and gates on
-          # `(groups || distribute_external)` (an OR), so just specifying
-          # --groups — even with an internal group like Sandbox Api Testers —
-          # silently submits the build to Beta App Review. Pass it explicitly:
-          # false for test (internal-only, no review needed), true for
-          # production (external, Apple review is the point).
-          VERSION="${{ needs.prepare.outputs.version }}"
-          if [ "${{ inputs.environment }}" = "test" ]; then
-            GROUP="Sandbox Api Testers"
-            EXTERNAL=false
-            SUBMIT_REVIEW=false
-            CHANGELOG_ARGS=()
-          else
-            GROUP="Production Api Testers"
-            EXTERNAL=true
-            SUBMIT_REVIEW=true
-            CHANGELOG_ARGS=(--changelog "Release ${VERSION}")
-          fi
-
           fastlane pilot upload \
             --api_key_path /tmp/asc_key.json \
             --app_identifier net.thewaterbug.waterbug \
             --app_platform ios \
             --ipa builds/release/Waterbug.ipa \
-            --groups "$GROUP" \
-            --distribute_external $EXTERNAL \
-            --notify_external_testers $EXTERNAL \
-            --submit_beta_review $SUBMIT_REVIEW \
-            "${CHANGELOG_ARGS[@]}"
+            --skip_waiting_for_build_processing true
 
       - name: Cleanup keychain
         if: always()
@@ -516,6 +490,23 @@ jobs:
         with:
           name: ios-release-${{ needs.prepare.outputs.display_version }}
           path: builds/release/Waterbug.ipa
+
+  # ── iOS distribute (chained, off the macOS runner) ─────────────────────
+  # The upload step above exits right after delivering the binary; this cheap
+  # ubuntu job waits out Apple's async processing and assigns the build to its
+  # TestFlight group (test → Sandbox Api Testers, prod → Production Api Testers).
+  # Splitting it out is what stops the macOS job being held — and cancelled —
+  # through processing. See distribute-testflight.yml.
+  distribute-ios:
+    name: Distribute iOS to TestFlight group
+    needs: [prepare, release-ios]
+    if: ${{ always() && needs.release-ios.result == 'success' && inputs.platforms != 'android' }}
+    uses: ./.github/workflows/distribute-testflight.yml
+    secrets: inherit
+    with:
+      app_version: ${{ needs.prepare.outputs.marketing_version }}
+      build_number: ${{ needs.prepare.outputs.version }}
+      environment: ${{ inputs.environment }}
 
   # ── Tag the release ────────────────────────────────────────────────────
   tag-release:
