@@ -60,6 +60,11 @@ jobs:
     # below is bounded well inside this.
     timeout-minutes: 60
     steps:
+      # For .github/whats-to-test.md — the human "What to Test" notes. On the
+      # chained call this is the release SHA's copy; on a manual dispatch it's the
+      # ref the dispatch ran against.
+      - uses: actions/checkout@v6
+
       - name: Install fastlane
         # ubuntu-latest's system gem dir isn't writable without sudo.
         run: sudo gem install fastlane --no-document
@@ -91,19 +96,28 @@ jobs:
           # submit_beta_review defaults to true in pilot and gates on
           # (groups || distribute_external) — pass it explicitly so an internal
           # assignment doesn't silently trigger review.
-          # "What to Test" notes are the only tester-visible test/prod signal in
-          # the aggregated TestFlight build list (iOS CFBundleVersion can't carry
-          # a -test suffix), so label both — test builds especially.
+          # A build identifier line — the only tester-visible test/prod signal in
+          # TestFlight's aggregated build list (iOS CFBundleVersion can't carry a
+          # -test suffix), so label both, test builds especially.
           if [ "${{ inputs.environment }}" = "production" ]; then
             GROUP="Production Api Testers"
             EXTERNAL=true
             SUBMIT_REVIEW=true
-            EXTRA=(--changelog "Release ${{ inputs.build_number }}")
+            LABEL="Release ${{ inputs.build_number }}"
           else
             GROUP="Sandbox Api Testers"
             EXTERNAL=false
             SUBMIT_REVIEW=false
-            EXTRA=(--changelog "TEST BUILD - sandbox CERDI server (${{ inputs.build_number }})")
+            LABEL="TEST BUILD - sandbox CERDI server (${{ inputs.build_number }})"
+          fi
+
+          # "What to Test" = the build label + the repo's release-focus notes, so
+          # testers know what changed. Edit .github/whats-to-test.md per release;
+          # a missing/empty file just falls back to the label alone.
+          CHANGELOG="$LABEL"
+          NOTES_FILE=".github/whats-to-test.md"
+          if [ -s "$NOTES_FILE" ]; then
+            CHANGELOG="$LABEL"$'\n\n'"$(cat "$NOTES_FILE")"
           fi
 
           # Poll for the build to become distributable. pilot distribute errors
@@ -122,7 +136,7 @@ jobs:
                  --distribute_external "$EXTERNAL" \
                  --notify_external_testers "$EXTERNAL" \
                  --submit_beta_review "$SUBMIT_REVIEW" \
-                 "${EXTRA[@]}"; then
+                 --changelog "$CHANGELOG"; then
               echo "Assigned build ${{ inputs.build_number }} to \"$GROUP\"."
               exit 0
             fi
