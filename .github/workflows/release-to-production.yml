@@ -50,10 +50,10 @@ on:
           validates the promotion edit and rolls it back. Use to rehearse safely.
         type: boolean
         default: false
-      asc_locale:
+      notes_locale:
         description: >
-          App Store Connect locale to write the "What's New" notes into (must
-          match the listing's primary locale). Default en-AU.
+          Store locale to publish the "What's New" notes under, for both App
+          Store and Play (must match each listing's primary locale). Default en-AU.
         required: false
         type: string
         default: en-AU
@@ -120,6 +120,17 @@ jobs:
             exit 1
           fi
 
+          # A real promotion must ship version-specific public notes. They live
+          # in .github/release-notes/<version>.md (per-version so main moving
+          # ahead can't leak features the promoted build doesn't have). Fail
+          # fast here rather than publish blank/stale "What's New". A dry run may
+          # rehearse before the notes exist.
+          NOTES_FILE=".github/release-notes/${VERSION}.md"
+          if [ "$DRY_RUN" != "true" ] && [ ! -s "$NOTES_FILE" ]; then
+            echo "::error::No release notes for ${VERSION} — create ${NOTES_FILE} (the public 'What's New') before promoting."
+            exit 1
+          fi
+
           # Derive outputs (same formulas as upload-build.yml's prepare job).
           IFS='.' read -r major minor patch build <<< "$VERSION"
           MARKETING_VERSION="${major}.${minor}.${patch}"
@@ -151,7 +162,7 @@ jobs:
           MARKETING_VERSION: ${{ needs.ci-gate.outputs.marketing_version }}
           BUILD_NUMBER: ${{ inputs.version }}
           DRY_RUN: ${{ inputs.dry_run }}
-          ASC_LOCALE: ${{ inputs.asc_locale }}
+          NOTES_LOCALE: ${{ inputs.notes_locale }}
         run: |
           set -euo pipefail
 
@@ -167,14 +178,15 @@ jobs:
             '{key_id: $key_id, issuer_id: $issuer_id, key: $key, in_house: false}' \
             > /tmp/asc_key.json
 
-          # "What's New" for the App Store version. If .github/release-notes.md
-          # is non-empty, stage it as the ONLY metadata file so deliver updates
-          # release notes and nothing else; otherwise skip metadata entirely and
-          # rely on notes already typed into App Store Connect.
+          # "What's New" for the App Store version comes from the per-version
+          # notes file (the guard already required it for a real run). Stage it
+          # as the ONLY metadata file so deliver updates release notes and
+          # nothing else; if absent (dry run) skip metadata and rely on ASC.
+          NOTES_FILE=".github/release-notes/${BUILD_NUMBER}.md"
           METADATA_ARGS=(--skip_metadata true)
-          if [ -s ".github/release-notes.md" ]; then
-            mkdir -p "fastlane/metadata/${ASC_LOCALE}"
-            cp .github/release-notes.md "fastlane/metadata/${ASC_LOCALE}/release_notes.txt"
+          if [ -s "$NOTES_FILE" ]; then
+            mkdir -p "fastlane/metadata/${NOTES_LOCALE}"
+            cp "$NOTES_FILE" "fastlane/metadata/${NOTES_LOCALE}/release_notes.txt"
             METADATA_ARGS=(--skip_metadata false)
           fi
 
@@ -238,12 +250,26 @@ jobs:
       - name: Promote beta build to production
         env:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          VERSION: ${{ inputs.version }}
           VERSION_CODE: ${{ needs.ci-gate.outputs.version_code }}
           DRY_RUN: ${{ inputs.dry_run }}
+          NOTES_LOCALE: ${{ inputs.notes_locale }}
         run: |
           set -euo pipefail
 
           echo "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" > /tmp/play-service-account.json
+
+          # Publish the SAME per-version notes as Play's "What's new" rather than
+          # inheriting the promoted build's beta changelog (which is its TestFlight/
+          # beta text, not the public wording). supply reads changelogs from
+          # <metadata_path>/<locale>/changelogs/<versionCode>.txt.
+          NOTES_FILE=".github/release-notes/${VERSION}.md"
+          CHANGELOG_ARGS=(--skip_upload_changelogs true)
+          if [ -s "$NOTES_FILE" ]; then
+            mkdir -p "fastlane/metadata/android/${NOTES_LOCALE}/changelogs"
+            cp "$NOTES_FILE" "fastlane/metadata/android/${NOTES_LOCALE}/changelogs/${VERSION_CODE}.txt"
+            CHANGELOG_ARGS=(--metadata_path fastlane/metadata/android --skip_upload_changelogs false)
+          fi
 
           # Promote the EXISTING versionCode from the beta track (Open Testing)
           # to production — no AAB re-upload. Play rejects re-using a versionCode,
@@ -267,9 +293,9 @@ jobs:
             --skip_upload_apk true \
             --skip_upload_aab true \
             --skip_upload_metadata true \
-            --skip_upload_changelogs true \
             --skip_upload_images true \
             --skip_upload_screenshots true \
+            "${CHANGELOG_ARGS[@]}" \
             --verbose
 
           if [ "$DRY_RUN" = "true" ]; then
