@@ -1,0 +1,316 @@
+name: Release to production
+
+# Promotes an ALREADY-BUILT, already-beta-tested build to the PUBLIC stores:
+# the App Store (iOS) and the Google Play production track (Android). It does
+# NOT rebuild — it publishes the exact binary testers ran on the beta channel
+# (upload-build.yml puts it there). No compiler, no signing, no macOS: both
+# promote jobs are cheap ubuntu that just make a guarded fastlane API call.
+#
+# Why this is separate from the beta uploader: "release" there means "push a
+# candidate to TestFlight / Play Open Testing". This is the real public
+# go-live, and it is guarded so a -test build can NEVER be promoted.
+#
+# The guard is deterministic. Every build number is cut exactly once, and test
+# and prod share one sequence, so the git tag records the environment:
+#   production build → tag v<ver>        (e.g. v2.0.4.50)
+#   test build       → tag v<ver>-test   (e.g. v2.0.4.51-test)
+# Requiring "v<ver> exists AND v<ver>-test does not" uniquely identifies a
+# promotable production build. iOS build numbers can't carry a -test suffix
+# (Apple rejects non-integer CFBundleVersion), so in the TestFlight list a
+# sandbox build and a prod build look identical — this git-tag guard is the
+# only thing that reliably tells them apart.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: >
+          EXACT 4-part production build number to promote, e.g. 2.0.4.50. Must
+          already exist as a production tag v<version> (never a -test build).
+        required: true
+        type: string
+      confirm:
+        description: >
+          Type PROMOTE to confirm this IRREVERSIBLE public release. Not required
+          for a dry run.
+        required: false
+        type: string
+      platforms:
+        description: Platforms to promote
+        type: choice
+        options:
+          - both
+          - android
+          - ios
+        default: both
+      dry_run:
+        description: >
+          Exercise the real store APIs WITHOUT going public — iOS prepares the
+          version + attaches the build but does not submit for review; Android
+          validates the promotion edit and rolls it back. Use to rehearse safely.
+        type: boolean
+        default: false
+      asc_locale:
+        description: >
+          App Store Connect locale to write the "What's New" notes into (must
+          match the listing's primary locale). Default en-AU.
+        required: false
+        type: string
+        default: en-AU
+
+# Only one production promotion at a time.
+concurrency:
+  group: release-to-production
+  cancel-in-progress: false
+
+jobs:
+  # ── Guard: only a real, production-tagged build may be promoted ─────────
+  ci-gate:
+    name: Guard — verify promotable production build
+    runs-on: ubuntu-latest
+    outputs:
+      marketing_version: ${{ steps.guard.outputs.marketing_version }}
+      version_code: ${{ steps.guard.outputs.version_code }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate input and resolve version
+        id: guard
+        # Inputs are passed via env (not inlined into the script) so free-text
+        # version/confirm values can't be shell-injected into the guard.
+        env:
+          VERSION: ${{ inputs.version }}
+          CONFIRM: ${{ inputs.confirm }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          # A real promotion needs the explicit PROMOTE confirmation; a dry run
+          # is safe (nothing goes public) so it doesn't.
+          if [ "$DRY_RUN" != "true" ] && [ "$CONFIRM" != "PROMOTE" ]; then
+            echo "::error::confirm must be exactly 'PROMOTE' to release to production. Aborting."
+            exit 1
+          fi
+
+          # Reject any -test build outright — belt to the tag checks below.
+          case "$VERSION" in
+            *-test*)
+              echo "::error::'$VERSION' is a -test build and can NEVER be promoted to production."
+              exit 1 ;;
+          esac
+
+          # Enforce strict 4-part numeric form (no suffixes, no v prefix).
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::'$VERSION' is not a 4-part numeric build number (major.minor.patch.build)."
+            exit 1
+          fi
+
+          # The production tag v<version> MUST exist on origin. Only a build
+          # that was cut as a production release can be promoted.
+          if ! git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}" >/dev/null 2>&1; then
+            echo "::error::Production tag v${VERSION} not found on origin — only tagged production builds can be promoted."
+            exit 1
+          fi
+
+          # The -test twin MUST NOT exist. Build numbers are cut exactly once,
+          # so a v<ver>-test alongside v<ver> would mean the number was reused;
+          # refuse rather than guess.
+          if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}-test" >/dev/null 2>&1; then
+            echo "::error::v${VERSION}-test exists on origin — build ${VERSION} was a TEST build, not promotable."
+            exit 1
+          fi
+
+          # Derive outputs (same formulas as upload-build.yml's prepare job).
+          IFS='.' read -r major minor patch build <<< "$VERSION"
+          MARKETING_VERSION="${major}.${minor}.${patch}"
+          VERSION_CODE=$(( major * 1000000000 + minor * 10000000 + patch * 10000 + build ))
+
+          echo "marketing_version=$MARKETING_VERSION" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "Promoting build ${VERSION} → marketing ${MARKETING_VERSION}, versionCode ${VERSION_CODE}${DRY_RUN:+ (dry run: $DRY_RUN)}"
+
+  # ── iOS: submit the existing TestFlight build to App Store review ───────
+  promote-ios:
+    name: Promote to App Store
+    needs: ci-gate
+    if: ${{ always() && needs.ci-gate.result == 'success' && inputs.platforms != 'android' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6  # for .github/release-notes.md
+
+      - name: Install fastlane
+        # ubuntu-latest's system gem dir isn't writable without sudo.
+        run: sudo gem install fastlane --no-document
+
+      - name: Submit existing build to App Store review
+        env:
+          ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+          MARKETING_VERSION: ${{ needs.ci-gate.outputs.marketing_version }}
+          BUILD_NUMBER: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          ASC_LOCALE: ${{ inputs.asc_locale }}
+        run: |
+          set -euo pipefail
+
+          # fastlane wants the ASC key as a JSON wrapper around the .p8
+          # (identical to distribute-testflight.yml).
+          mkdir -p ~/private_keys
+          echo "$ASC_KEY_BASE64" | base64 --decode > ~/private_keys/AuthKey_${ASC_KEY_ID}.p8
+          KEY_CONTENT=$(cat ~/private_keys/AuthKey_${ASC_KEY_ID}.p8)
+          jq -n \
+            --arg key_id "$ASC_KEY_ID" \
+            --arg issuer_id "$ASC_ISSUER_ID" \
+            --arg key "$KEY_CONTENT" \
+            '{key_id: $key_id, issuer_id: $issuer_id, key: $key, in_house: false}' \
+            > /tmp/asc_key.json
+
+          # "What's New" for the App Store version. If .github/release-notes.md
+          # is non-empty, stage it as the ONLY metadata file so deliver updates
+          # release notes and nothing else; otherwise skip metadata entirely and
+          # rely on notes already typed into App Store Connect.
+          METADATA_ARGS=(--skip_metadata true)
+          if [ -s ".github/release-notes.md" ]; then
+            mkdir -p "fastlane/metadata/${ASC_LOCALE}"
+            cp .github/release-notes.md "fastlane/metadata/${ASC_LOCALE}/release_notes.txt"
+            METADATA_ARGS=(--skip_metadata false)
+          fi
+
+          # A dry run prepares the version and attaches the build but does NOT
+          # submit for review — reversible in ASC. A real run submits and arms
+          # automatic release on approval.
+          if [ "$DRY_RUN" = "true" ]; then
+            SUBMIT_FOR_REVIEW=false
+          else
+            SUBMIT_FOR_REVIEW=true
+          fi
+
+          # skip_binary_upload: the build is already on TestFlight; deliver
+          #   selects it by app_version + build_number instead of uploading.
+          # force: skip deliver's interactive HTML preview confirmation (the
+          #   main way it hangs in CI).
+          # run_precheck_before_submit false: precheck audits the live listing
+          #   and needs extra ASC scopes — skip it for a promotion of already-
+          #   reviewed content.
+          # submission_information: auto-answers the export-compliance /
+          #   content-rights / IDFA questionnaires so review isn't held for
+          #   manual input. export_compliance_uses_encryption=false assumes only
+          #   exempt encryption (standard HTTPS); keep in sync with the app's
+          #   ITSAppUsesNonExemptEncryption declaration.
+          fastlane deliver \
+            --api_key_path /tmp/asc_key.json \
+            --app_identifier net.thewaterbug.waterbug \
+            --platform ios \
+            --app_version "$MARKETING_VERSION" \
+            --build_number "$BUILD_NUMBER" \
+            --skip_binary_upload true \
+            --skip_screenshots true \
+            "${METADATA_ARGS[@]}" \
+            --submit_for_review "$SUBMIT_FOR_REVIEW" \
+            --automatic_release true \
+            --force true \
+            --run_precheck_before_submit false \
+            --precheck_include_in_app_purchases false \
+            --submission_information '{"export_compliance_uses_encryption": false, "content_rights_contains_third_party_content": false, "add_id_info_uses_idfa": false}' \
+            --verbose
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Dry run: version ${MARKETING_VERSION} prepared with build ${BUILD_NUMBER} attached — NOT submitted for review."
+          else
+            echo "Submitted build ${BUILD_NUMBER} (version ${MARKETING_VERSION}) to App Store review, auto-release on approval."
+          fi
+
+  # ── Android: promote the existing beta build to the production track ────
+  promote-android:
+    name: Promote to Google Play production
+    needs: ci-gate
+    if: ${{ always() && needs.ci-gate.result == 'success' && inputs.platforms != 'ios' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install fastlane
+        run: sudo gem install fastlane --no-document
+
+      - name: Promote beta build to production
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          VERSION_CODE: ${{ needs.ci-gate.outputs.version_code }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          echo "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" > /tmp/play-service-account.json
+
+          # Promote the EXISTING versionCode from the beta track (Open Testing)
+          # to production — no AAB re-upload. Play rejects re-using a versionCode,
+          # so re-uploading isn't possible; supply-promote references the build
+          # already on the beta track and ships identical bytes.
+          # release_status completed = full public release (no staged rollout).
+          # A dry run validates the promotion edit against Play and rolls it back.
+          VALIDATE_ONLY=false
+          if [ "$DRY_RUN" = "true" ]; then
+            VALIDATE_ONLY=true
+          fi
+
+          fastlane supply \
+            --package_name net.thewaterbug.waterbug \
+            --json_key /tmp/play-service-account.json \
+            --track beta \
+            --track_promote_to production \
+            --version_code "$VERSION_CODE" \
+            --release_status completed \
+            --validate_only "$VALIDATE_ONLY" \
+            --skip_upload_apk true \
+            --skip_upload_aab true \
+            --skip_upload_metadata true \
+            --skip_upload_changelogs true \
+            --skip_upload_images true \
+            --skip_upload_screenshots true \
+            --verbose
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Dry run: validated promotion of versionCode ${VERSION_CODE} beta → production (rolled back, nothing published)."
+          else
+            echo "Promoted versionCode ${VERSION_CODE} to the production track at 100%."
+          fi
+
+  # ── Record that this build went public ─────────────────────────────────
+  record-release:
+    name: Record production release
+    needs: [ci-gate, promote-ios, promote-android]
+    # Real promotions only (never a dry run), when at least one platform
+    # succeeded (the other may have been skipped by the platforms filter).
+    if: >
+      always() && !inputs.dry_run &&
+      (needs.promote-ios.result == 'success' || needs.promote-android.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Tag production release
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          # Distinguish "beta-tested" (v<ver>) from "publicly released"
+          # (production-released/v<ver>) — a queryable in-repo audit trail of
+          # which builds went public and when.
+          MARKER="production-released/v${VERSION}"
+          if git ls-remote --exit-code --tags origin "refs/tags/${MARKER}" >/dev/null 2>&1; then
+            echo "${MARKER} already exists — skipping (single-platform retry)."
+            exit 0
+          fi
+          # The shallow checkout doesn't have the source tag locally — fetch it
+          # so the marker can point at the same commit as v<version>.
+          git fetch --no-tags origin "refs/tags/v${VERSION}:refs/tags/v${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${MARKER}" "v${VERSION}" \
+            -m "Promoted ${VERSION} to public App Store + Play production (run ${{ github.run_id }})"
+          git push origin "${MARKER}"
