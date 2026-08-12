@@ -83,6 +83,10 @@
 	left: "12dp",
 	color: Alloy.CFG.colors.white,
 	backgroundColor: Alloy.CFG.colors.success,
+	// Newer Android keeps a disabled Ti.UI.Button on its enabled backgroundColor
+	// (shows green) instead of the grey the VM binds — so an invalid code reads
+	// as a valid, tappable one. An explicit disabled background fixes the paint.
+	backgroundDisabledColor: Alloy.CFG.colors.disabled,
 	borderColor: Alloy.CFG.colors.success
 }
 
