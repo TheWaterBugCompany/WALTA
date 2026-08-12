@@ -1,4 +1,4 @@
-name: Release
+name: Upload build
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ on:
 
 # Only one release at a time
 concurrency:
-  group: release
+  group: upload-build
   cancel-in-progress: false
 
 env:

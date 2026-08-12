@@ -43,17 +43,24 @@ This produces `builds/release/Waterbug.{apk,aab,ipa}`.
 
 ## Making a release
 
-Releases are built and published by the **Release** GitHub Action. From the [Actions tab](https://github.com/TheWaterBugCompany/WALTA/actions/workflows/release.yml), click **Run workflow** and choose:
+Releases happen in two stages, each a GitHub Action you run from the [Actions tab](https://github.com/TheWaterBugCompany/WALTA/actions).
 
+### 1. Build and upload a candidate — **Upload build**
+
+The [**Upload build**](https://github.com/TheWaterBugCompany/WALTA/actions/workflows/upload-build.yml) action builds signed packages and pushes them to the beta channels. Click **Run workflow** and choose:
+
+- **Environment** — `test` (sandbox API, tagged `v<version>-test`) or `production` (real API, tagged `v<version>`).
 - **Version** — e.g. `2.0.5.1`. Leave empty to auto-increment the build number from the latest `v*` git tag.
 - **Platforms** — `both` (default), `android`, or `ios`.
 
 The workflow will:
 
 1. Build signed release packages for the selected platform(s).
-2. Upload the Android `.aab` to the Google Play **internal** track.
+2. Upload the Android `.aab` to Google Play — the **internal** track for `test`, **Open Testing** for `production`.
 3. Upload the iOS `.ipa` to **TestFlight**.
-4. Tag the commit with `v<version>` on success.
+4. Tag the commit with `v<version>` (or `v<version>-test`) on success.
 
-Promotion from the internal track / TestFlight to production is done manually in the Play Console and App Store Connect.
+### 2. Promote a tested build to the public stores — **Release to production**
+
+Once a `production` build has been validated on the beta channels, the [**Release to production**](https://github.com/TheWaterBugCompany/WALTA/actions/workflows/release-to-production.yml) action promotes that exact build (no rebuild) to the public App Store and the Google Play **production** track. It is guarded so only a production-tagged build (`v<version>`, never a `-test` build) can be promoted, and requires typing `PROMOTE` to confirm. Run it with `dry_run` first to validate against the store APIs without publishing.
 

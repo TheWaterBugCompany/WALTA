@@ -1,18 +1,18 @@
 name: Distribute TestFlight build
 
 # Assigns an already-uploaded iOS build to its TestFlight group once Apple has
-# finished processing it. Split out from release.yml so the macOS release job can
+# finished processing it. Split out from upload-build.yml so the macOS release job can
 # upload and exit (skip_waiting_for_build_processing) instead of holding an
 # expensive-to-rebuild runner through Apple's async processing — the wait that
 # kept cancelling the iOS job at its timeout (WB-171). Runs on cheap ubuntu.
 #
 # Two entry points:
-#   workflow_call  — release.yml chains this right after the iOS upload.
+#   workflow_call  — upload-build.yml chains this right after the iOS upload.
 #   workflow_dispatch — manual re-assign / one-off (e.g. a build whose in-CI
 #                       assignment was lost to a timeout).
 #
 # Selectivity (test vs prod) comes from `environment`, passed by the caller /
-# operator — the same signal release.yml already uses, and what the release tag
+# operator — the same signal upload-build.yml already uses, and what the release tag
 # (v<ver> vs v<ver>-test) encodes.
 
 on:
@@ -47,7 +47,7 @@ on:
         default: test
         options: [test, production]
 
-# No workflow-level concurrency: when called from release.yml (which already
+# No workflow-level concurrency: when called from upload-build.yml (which already
 # holds the `release` group) a matching group here would deadlock the child on
 # its own parent. The caller's concurrency governs the chained case; the manual
 # workflow_dispatch one-off is rare enough not to need its own lock.
