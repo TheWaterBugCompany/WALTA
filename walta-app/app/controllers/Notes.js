@@ -3,7 +3,7 @@ $.TopLevelWindow.title = "Notes";
 $.name = "notes";
 
 var Topics = require("ui/Topics");
-var NotesViewModel = require("viewmodels/Notes");
+var NotesViewModel = require("mvvm/viewmodels/Notes");
 var bindView = require("util/bindView");
 var SurveyDatePicker = require("logic/SurveyDatePicker");
 

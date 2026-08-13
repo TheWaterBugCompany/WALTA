@@ -1,4 +1,4 @@
-const MethodSelectViewModel = require("viewmodels/MethodSelect");
+const MethodSelectViewModel = require("mvvm/viewmodels/MethodSelect");
 // Marker for the module-scope BINDINGS; the binder itself is injected.
 const { collection } = require("util/bindView");
 

@@ -1,4 +1,4 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
+const ChangeNotifier = require("../../util/ChangeNotifier");
 
 // State for the training TrainingSuccess modal, shown when Assess finds every creature
 // correctly identified. Finish returns to the main menu; the ✕ just dismisses.

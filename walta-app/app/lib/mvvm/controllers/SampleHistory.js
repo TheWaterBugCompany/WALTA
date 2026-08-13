@@ -1,4 +1,4 @@
-const SampleHistoryViewModel = require("viewmodels/SampleHistory");
+const SampleHistoryViewModel = require("mvvm/viewmodels/SampleHistory");
 
 // Titanium-free screen controller for the SampleHistory window. Declares the
 // sample table as a collection of SampleHistoryRow components; the injected

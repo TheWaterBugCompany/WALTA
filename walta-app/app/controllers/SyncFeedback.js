@@ -1,4 +1,4 @@
-var SyncFeedbackViewModel = require("viewmodels/SyncFeedback");
+var SyncFeedbackViewModel = require("mvvm/viewmodels/SyncFeedback");
 var SampleSync = require("logic/SampleSync");
 var LogRepository = require("repository/LogRepository");
 var Topics = require("ui/Topics");

@@ -10,7 +10,7 @@ covers only the modal-specific overlay glue.
 Fire a Topic; `Main.js` routes it to `Navigation.openModal`:
 
 ```js
-// lib/viewmodels/Menu.js
+// lib/mvvm/viewmodels/Menu.js
 academy() { this._topics.fireTopicEvent(this._topics.ACADEMY); }
 
 // controllers/Main.js

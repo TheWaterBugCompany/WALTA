@@ -1,4 +1,4 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
+const ChangeNotifier = require("../../util/ChangeNotifier");
 const SampleTaxaIconViewModel = require("./SampleTaxaIcon");
 const SampleTrayPlusViewModel = require("./SampleTrayPlus");
 

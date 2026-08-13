@@ -1,5 +1,5 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
-const Palette = require("../util/Palette");
+const ChangeNotifier = require("../../util/ChangeNotifier");
+const Palette = require("../../util/Palette");
 
 class MenuViewModel extends ChangeNotifier {
   constructor({ cerdiApi, topics, environment, version }) {

@@ -1,5 +1,5 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
-const moment = require("../lib/moment");
+const ChangeNotifier = require("../../util/ChangeNotifier");
+const moment = require("../../lib/moment");
 
 const DATE_LABEL_FORMAT = "D MMMM YYYY";
 

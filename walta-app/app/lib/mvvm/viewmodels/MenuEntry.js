@@ -1,5 +1,5 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
-const Palette = require("../util/Palette");
+const ChangeNotifier = require("../../util/ChangeNotifier");
+const Palette = require("../../util/Palette");
 
 // One entry in a menu (the icon + title + description card). A first-class row
 // view-model for the collection binder: the screen builds one per option and

@@ -1,4 +1,4 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
+const ChangeNotifier = require("../../util/ChangeNotifier");
 const { endcapTile, interiorTile } = require("./SampleTrayTile");
 
 const identity = (x) => x;

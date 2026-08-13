@@ -4,7 +4,7 @@ var { closeWindow, wrapViewInWindow, windowOpenTest, waitFor } = require("spec/u
 var Topics = require("ui/Topics");
 var { View } = require("logic/View");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
-var SampleTaxaIconViewModel = require("viewmodels/SampleTaxaIcon");
+var SampleTaxaIconViewModel = require("mvvm/viewmodels/SampleTaxaIcon");
 
 // Renders the SampleTaxaIcon slot component and binds a cell view-model through
 // the View seam (createComponent → the Titanium-free mvvm controller's bind),

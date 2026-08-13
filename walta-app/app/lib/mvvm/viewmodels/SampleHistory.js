@@ -1,4 +1,4 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
+const ChangeNotifier = require("../../util/ChangeNotifier");
 
 class SampleRowViewModel extends ChangeNotifier {
   constructor(data) {

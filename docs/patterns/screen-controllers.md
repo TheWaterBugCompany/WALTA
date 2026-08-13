@@ -187,7 +187,7 @@ Titanium concentrated in one place:
 |---|---|---|
 | Alloy presenter | `controllers/<Name>.js` + `views/<Name>.xml` | **residual Titanium only** — the view tree, plus keyboard hacks, `Ti.UI.SIZE`, sub-controller creation. Not inert, but holds no decision logic. (Layout measurement is a `measure` binding now, not shell code.) |
 | Screen controller | `lib/mvvm/controllers/<Name>.js` | builds the VM, `bindView`s it, routes VM events. No `Ti.*`. |
-| ViewModel | `lib/viewmodels/<Name>.js` | screen state + actions, framework-free. |
+| ViewModel | `lib/mvvm/viewmodels/<Name>.js` | screen state + actions, framework-free. |
 
 The screen controller is deliberately **not** merged into the ViewModel: that
 would couple the VM to the widgets and the binder and break its portability and

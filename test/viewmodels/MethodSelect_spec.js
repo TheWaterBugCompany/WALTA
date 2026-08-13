@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const MethodSelectViewModel = require("../../walta-app/app/lib/viewmodels/MethodSelect");
+const MethodSelectViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/MethodSelect");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 
 describe("MethodSelectViewModel", function () {

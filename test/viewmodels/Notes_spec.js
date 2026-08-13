@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const NotesViewModel = require("../../walta-app/app/lib/viewmodels/Notes");
+const NotesViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/Notes");
 
 function fakeSample(initial = {}) {
   const state = { ...initial };

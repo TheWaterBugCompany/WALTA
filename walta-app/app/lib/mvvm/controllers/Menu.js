@@ -1,4 +1,4 @@
-const MenuViewModel = require("viewmodels/Menu");
+const MenuViewModel = require("mvvm/viewmodels/Menu");
 
 // Titanium-free screen controller for the Menu window.
 // See docs/patterns/screen-controllers.md for the pattern.

@@ -1,4 +1,4 @@
-const SampleTrayViewModel = require("viewmodels/SampleTray");
+const SampleTrayViewModel = require("mvvm/viewmodels/SampleTray");
 const SampleTraySource = require("logic/SampleTraySource");
 const TrainingTraySource = require("logic/TrainingTraySource");
 const TrainingAssessor = require("logic/TrainingAssessor");
