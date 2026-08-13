@@ -58,11 +58,12 @@ npm install
 
 ## Titanium SDK
 
-The app requires Titanium SDK **13.1.1.GA**. Install it and set it as the default:
+The required SDK version is whatever `walta-app/tiapp.xml.template` declares in its
+`<sdk-version>` tag — currently **13.4.0.GA**. Install it and set it as the default:
 
 ```bash
-npx titanium sdk install 13.1.1.GA
-npx titanium sdk select 13.1.1.GA
+npx titanium sdk install 13.4.0.GA
+npx titanium sdk select 13.4.0.GA
 ```
 
 Verify:
@@ -70,20 +71,41 @@ Verify:
 npx titanium sdk list
 ```
 
+> If `npx titanium sdk install` exits early under Node 24 with "Detected unsettled
+> top-level await" (exit code 13), download the SDK zip from the
+> [titanium-sdk releases](https://github.com/tidev/titanium-sdk/releases) and unzip it
+> into `~/Library/Application Support/Titanium/` (it extracts to `mobilesdk/osx/<ver>`).
+
 ### SDK Patches
 
-The SDK requires patches to fix an ioslib provisioning crash and Android namespace issues. Apply them after installing the SDK:
+**Required — run this after every SDK install or upgrade.** The build does *not* apply
+these patches automatically; only CI does (via `npm run patch-sdk`). Skip them locally
+and the build fails in ways that look like SDK bugs:
+
+- an ioslib provisioning crash (`removeProfile` reading `undefined.length`) — fires even
+  on Android builds, because environment detection scans iOS provisioning profiles;
+- `Namespace not specified` on prebuilt Android modules (e.g. Bugfender) — the SDK's
+  `lib.build.gradle` template omits the `namespace` the bundled Android Gradle Plugin
+  now requires.
 
 ```bash
-npm run patch-sdk
+npm run patch-sdk      # apply — do this after installing/selecting the SDK
+npm run unpatch-sdk    # reverse — do this before upgrading the SDK
 ```
 
-To reverse (e.g. before upgrading the SDK):
-```bash
-npm run unpatch-sdk
-```
+The patches live in `patches/titanium-sdk/` and are safe to re-apply — the script skips
+any already applied.
 
-The patches live in `patches/titanium-sdk/` and are safe to re-apply — the script skips any that are already applied.
+> **When upgrading the SDK, update the version in *two* places or CI breaks:**
+> `walta-app/tiapp.xml.template` (`<sdk-version>`) **and** `patches/titanium-sdk/apply.sh`
+> (`SDK_VERSION`). The patch script hard-codes the version and exits early if that SDK
+> isn't installed, so a mismatch makes CI's "Apply SDK patches" step fail. Also confirm
+> each patch still applies (`npm run patch-sdk`) — a new SDK may have moved the code.
+
+LiveView is provided by our custom `liveview` fork (pinned in `package.json`). SDK 13.4.0+
+loads it natively via the SDK's bundled `cli/hooks/liveview.js`, which re-exports
+`liveview/hook/lvhook.js` from the fork — so the fork overrides the default package. No
+patch is needed to disable the SDK's LiveView hook.
 
 ---
 

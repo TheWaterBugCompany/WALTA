@@ -66,6 +66,8 @@ export KEYSTORE_SUBKEY="<keystore alias>"
 
 > `tiapp.xml` is not committed — it is generated at build time by `injectSecrets()` in the Gruntfile from `tiapp.xml.template`.
 
+> **Run `npm run patch-sdk` after installing/upgrading the Titanium SDK.** The local build does *not* apply the SDK patches — only CI does — so without them a local build fails with an ioslib provisioning crash or `Namespace not specified` (Bugfender), which look like SDK bugs but aren't. When bumping the SDK, update the version in **both** `walta-app/tiapp.xml.template` and `patches/titanium-sdk/apply.sh`. See [docs/installation.md](docs/installation.md) "SDK Patches".
+
 ### Build
 
 ```bash
