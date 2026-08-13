@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const TrainingSuccessViewModel = require("../../walta-app/app/lib/viewmodels/TrainingSuccess");
+const TrainingSuccessViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/TrainingSuccess");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 
 describe("TrainingSuccessViewModel", function () {

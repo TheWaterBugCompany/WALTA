@@ -6,7 +6,7 @@ var Logger = require("util/Logger");
 var LogRepository = require("repository/LogRepository");
 var Migrator = require("repository/Migrator");
 var createSyncController = require("spec/fixtures/SyncController_fixture");
-var { LOG_LIMIT } = require("viewmodels/SyncFeedback");
+var { LOG_LIMIT } = require("mvvm/viewmodels/SyncFeedback");
 
 const TEST_LOG_DB = "waterbug_data_syncfeedback_test";
 

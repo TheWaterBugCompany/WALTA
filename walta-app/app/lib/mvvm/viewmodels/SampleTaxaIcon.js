@@ -1,4 +1,4 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
+const ChangeNotifier = require("../../util/ChangeNotifier");
 
 // A taxon (or blank) tray cell. Carries the silhouette + abundance for a taxon,
 // nothing for a blank, and its own edit intent. Its polymorphic sibling is

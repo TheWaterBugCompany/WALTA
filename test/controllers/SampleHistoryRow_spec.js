@@ -1,7 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
 const createSampleHistoryRow = require("../../walta-app/app/lib/mvvm/controllers/SampleHistoryRow");
-const { SampleRowViewModel } = require("../../walta-app/app/lib/viewmodels/SampleHistory");
+const { SampleRowViewModel } = require("../../walta-app/app/lib/mvvm/viewmodels/SampleHistory");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 

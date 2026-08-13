@@ -1,7 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
 const createSampleTrayPlus = require("../../walta-app/app/lib/mvvm/controllers/SampleTrayPlus");
-const SampleTrayViewModel = require("../../walta-app/app/lib/viewmodels/SampleTray");
+const SampleTrayViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/SampleTray");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 
 function makeWidget() {

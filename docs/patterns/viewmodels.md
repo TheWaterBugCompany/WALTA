@@ -18,7 +18,7 @@ unit-tested in Node in milliseconds.
 ## Folder layout
 
 ```
-walta-app/app/lib/viewmodels/         # ViewModel classes
+walta-app/app/lib/mvvm/viewmodels/    # ViewModel classes
 walta-app/app/lib/util/ChangeNotifier.js  # listener base class
 walta-app/app/lib/util/bindView.js    # declarative controller glue
 test/viewmodels/                      # Node-runnable specs (Mocha + Chai)
@@ -117,7 +117,7 @@ widget-to-ViewModel bindings map and handles both property updates (re-applied o
 
 ```js
 // controllers/Example.js
-var ExampleViewModel = require("viewmodels/Example");
+var ExampleViewModel = require("mvvm/viewmodels/Example");
 var Topics = require("ui/Topics");
 var bindView = require("util/bindView");
 
@@ -222,7 +222,7 @@ of which colour to use. The mechanism is `lib/util/Palette.js`: a plain object
 whose values are Symbols, one per palette key.
 
 ```js
-// lib/viewmodels/SyncFeedback.js
+// lib/mvvm/viewmodels/SyncFeedback.js
 const Palette = require("../util/Palette");
 
 get progressColor() {
@@ -303,7 +303,7 @@ loaded. Read state via the ViewModel's getters.
 // test/viewmodels/Example_spec.js
 require("mocha");
 const { expect } = require("chai");
-const ExampleViewModel = require("../../walta-app/app/lib/viewmodels/Example");
+const ExampleViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/Example");
 const ChangeNotifier = require("../../walta-app/app/lib/util/ChangeNotifier");
 
 describe("ExampleViewModel", function () {

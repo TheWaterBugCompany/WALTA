@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const SampleHistoryViewModel = require("../../walta-app/app/lib/viewmodels/SampleHistory");
+const SampleHistoryViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/SampleHistory");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 
 function fakeSampleSource(initial) {

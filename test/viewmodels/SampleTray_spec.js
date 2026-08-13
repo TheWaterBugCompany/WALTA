@@ -1,7 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
-const SampleTrayViewModel = require("../../walta-app/app/lib/viewmodels/SampleTray");
-const SampleTaxaIconViewModel = require("../../walta-app/app/lib/viewmodels/SampleTaxaIcon");
+const SampleTrayViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/SampleTray");
+const SampleTaxaIconViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/SampleTaxaIcon");
 
 // A Titanium-free stand-in for the SampleTraySource the controller builds from
 // Alloy.Collections["taxa"] + the key: length() + at(i) returning the plain

@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const MenuViewModel = require("../../walta-app/app/lib/viewmodels/Menu");
+const MenuViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/Menu");
 const Palette = require("../../walta-app/app/lib/util/Palette");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 

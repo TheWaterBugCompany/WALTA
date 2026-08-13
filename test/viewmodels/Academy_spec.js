@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const AcademyViewModel = require("../../walta-app/app/lib/viewmodels/Academy");
+const AcademyViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/Academy");
 const Palette = require("../../walta-app/app/lib/util/Palette");
 
 describe("AcademyViewModel", function () {

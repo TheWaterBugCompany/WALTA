@@ -1,4 +1,4 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
+const ChangeNotifier = require("../../util/ChangeNotifier");
 const MenuEntryViewModel = require("./MenuEntry");
 
 // State for the MethodSelect modal: the identification methods the caller may

@@ -1,5 +1,5 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
-const Palette = require("../util/Palette");
+const ChangeNotifier = require("../../util/ChangeNotifier");
+const Palette = require("../../util/Palette");
 
 // State for the Academy training-session start modal. The three code boxes are
 // display-only: tapping one (startEditing) opens a 0-9 picker, and tapping a

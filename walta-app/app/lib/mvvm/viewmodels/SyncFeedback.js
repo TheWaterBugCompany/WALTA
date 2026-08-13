@@ -1,6 +1,6 @@
-const ChangeNotifier = require("../util/ChangeNotifier");
-const Logger = require("../util/Logger");
-const Palette = require("../util/Palette");
+const ChangeNotifier = require("../../util/ChangeNotifier");
+const Logger = require("../../util/Logger");
+const Palette = require("../../util/Palette");
 
 const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.";
 

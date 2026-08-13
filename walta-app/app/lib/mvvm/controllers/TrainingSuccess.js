@@ -1,4 +1,4 @@
-const TrainingSuccessViewModel = require("viewmodels/TrainingSuccess");
+const TrainingSuccessViewModel = require("mvvm/viewmodels/TrainingSuccess");
 
 // Titanium-free screen controller for the training TrainingSuccess modal. Binds the
 // congratulation message and routes Finish (→ main menu) / ✕ (dismiss).

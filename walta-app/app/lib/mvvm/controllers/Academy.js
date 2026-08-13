@@ -1,4 +1,4 @@
-const AcademyViewModel = require("viewmodels/Academy");
+const AcademyViewModel = require("mvvm/viewmodels/Academy");
 // Markers only — the binder itself is injected (pre-bound by the View seam);
 // call() is needed here at module scope to build BINDINGS.
 const { call } = require("util/bindView");
