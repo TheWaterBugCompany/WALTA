@@ -28,6 +28,19 @@ class IosPhotoLibraryScreen extends BaseScreen {
     }
 
     async selectFirstPhoto() {
+        // The PHPicker runs out-of-process; on a contended runner a single
+        // synthesized tap can be dropped (WDA reports success but the picker
+        // doesn't dismiss). Tap the first cell and poll until the grid is gone,
+        // re-tapping if the touch didn't register — the same reason the
+        // permission alert is dismissed by polling rather than a one-shot tap.
+        await this.driver.waitUntil(async () => {
+            if ( !( await this.isDisplayedRaw( this.presenceSelector ) ) ) return true;
+            await this.tapFirstCell();
+            return false;
+        }, { timeout: 20000, interval: 1500, timeoutMsg: 'iOS photo picker did not dismiss after selecting the first photo' });
+    }
+
+    async tapFirstCell() {
         // Grid cells report visible=false but are accessible; tap the first
         // one's centre by coordinates rather than .click() (not "hittable").
         var photo = await this.driver.$("-ios class chain:**/XCUIElementTypeImage[`name == 'PXGGridLayout-Info'`][1]");
