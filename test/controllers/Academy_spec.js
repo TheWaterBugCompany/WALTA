@@ -2,26 +2,7 @@ require("mocha");
 const { expect } = require("chai");
 const createAcademyController = require("../../walta-app/app/lib/mvvm/controllers/Academy");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
-
-// Fake Ti widget: settable props + addEventListener/fireEvent.
-function makeWidget(props) {
-  const listeners = {};
-  return Object.assign({
-    addEventListener(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    removeEventListener(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
-    fireEvent(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
-  }, props);
-}
-
-// Fake Alloy <Require> sub-controller (CloseButton): Backbone-style on/off.
-function makeBackboneTarget() {
-  const listeners = {};
-  return {
-    on(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    off(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
-    trigger(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
-  };
-}
+const { makeWidget, makeBackboneTarget } = require("../fixtures/fakeWidgets");
 
 function makeView() {
   const view = {

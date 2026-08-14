@@ -3,16 +3,7 @@ const { expect } = require("chai");
 const createMenuController = require("../../walta-app/app/lib/mvvm/controllers/Menu");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
-
-// Fake Ti widget: settable props + addEventListener/fireEvent.
-function makeWidget(props) {
-  const listeners = {};
-  return Object.assign({
-    addEventListener(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    removeEventListener(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
-    fireEvent(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
-  }, props);
-}
+const { makeWidget } = require("../fixtures/fakeWidgets");
 
 function makeView() {
   return {

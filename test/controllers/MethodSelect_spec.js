@@ -3,6 +3,7 @@ const { expect } = require("chai");
 const createMethodSelectController = require("../../walta-app/app/lib/mvvm/controllers/MethodSelect");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
+const { makeBackboneTarget } = require("../fixtures/fakeWidgets");
 
 // Container the collection binder adds/removes child views into.
 function makeContainer() {
@@ -10,15 +11,6 @@ function makeContainer() {
     children: [],
     add(v) { this.children.push(v); },
     remove(v) { this.children = this.children.filter(c => c !== v); },
-  };
-}
-
-function makeBackboneTarget() {
-  const listeners = {};
-  return {
-    on(n, cb) { (listeners[n] = listeners[n] || []).push(cb); },
-    off(n, cb) { listeners[n] = (listeners[n] || []).filter(l => l !== cb); },
-    trigger(n, d) { (listeners[n] || []).forEach(cb => cb(d)); },
   };
 }
 
