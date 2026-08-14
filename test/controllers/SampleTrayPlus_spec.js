@@ -3,15 +3,7 @@ const { expect } = require("chai");
 const createSampleTrayPlus = require("../../walta-app/app/lib/mvvm/controllers/SampleTrayPlus");
 const SampleTrayViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/SampleTray");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
-
-function makeWidget() {
-  const listeners = {};
-  return {
-    addEventListener(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    removeEventListener(name, cb) { listeners[name] = (listeners[name] || []).filter(l => l !== cb); },
-    fireEvent(name, data) { (listeners[name] || []).slice().forEach(cb => cb(data)); },
-  };
-}
+const { makeWidget } = require("../fixtures/fakeWidgets");
 
 function makePlusView() {
   return { SampleTrayPlus: makeWidget(), plus: makeWidget(), tap: makeWidget() };

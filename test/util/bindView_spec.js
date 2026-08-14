@@ -3,29 +3,7 @@ const { expect } = require("chai");
 const bindView = require("../../walta-app/app/lib/util/bindView");
 const twoWay = bindView.twoWay;
 const ChangeNotifier = require("../../walta-app/app/lib/util/ChangeNotifier");
-
-function makeWidget() {
-  const listeners = {};
-  return {
-    visible: null, text: null, width: null, backgroundColor: null, title: null,
-    addEventListener(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    removeEventListener(name, cb) {
-      listeners[name] = (listeners[name] || []).filter(l => l !== cb);
-    },
-    fireEvent(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
-  };
-}
-
-function makeBackboneTarget() {
-  const listeners = {};
-  return {
-    on(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
-    off(name, cb) {
-      listeners[name] = (listeners[name] || []).filter(l => l !== cb);
-    },
-    trigger(name, data) { (listeners[name] || []).forEach(cb => cb(data)); },
-  };
-}
+const { makeWidget, makeBackboneTarget } = require("../fixtures/fakeWidgets");
 
 class TestVM extends ChangeNotifier {
   constructor() {
@@ -56,7 +34,7 @@ describe("bindView", function () {
   let $, vm;
 
   beforeEach(function () {
-    $ = { label: makeWidget(), pane: makeWidget() };
+    $ = { label: makeWidget({ visible: null, text: null, width: null, backgroundColor: null, title: null }), pane: makeWidget({ visible: null, text: null, width: null, backgroundColor: null, title: null }) };
     vm = makeVm();
   });
 
@@ -64,7 +42,7 @@ describe("bindView", function () {
   // the view is realised, so the first layout is the earliest point the values
   // are guaranteed to stick.
   it("re-applies bindings once the view completes its first layout", function () {
-    const view = makeWidget();
+    const view = makeWidget({ visible: null, text: null, width: null, backgroundColor: null, title: null });
     $.getView = () => view;
     bindView($, vm, { label: { text: "greeting" } });
 
@@ -392,7 +370,7 @@ describe("bindView", function () {
     const { command, ref } = bindView;
 
     function widgetWithCalls() {
-      const w = makeWidget();
+      const w = makeWidget({ visible: null, text: null, width: null, backgroundColor: null, title: null });
       w.calls = [];
       w.scrollTo = (...a) => w.calls.push(a);
       return w;

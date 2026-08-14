@@ -4,9 +4,7 @@ const createSampleHistoryRow = require("../../walta-app/app/lib/mvvm/controllers
 const { SampleRowViewModel } = require("../../walta-app/app/lib/mvvm/viewmodels/SampleHistory");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
-
-// Fake Ti widget: settable props.
-function makeWidget() { return { text: "" }; }
+const { makeWidget } = require("../fixtures/fakeWidgets");
 
 // Fake Alloy row controller: the bound columns plus a getView() returning a
 // view that records click listeners.
@@ -18,10 +16,10 @@ function makeRowController() {
     fireEvent(name, data) { (listeners[name] || []).slice().forEach(cb => cb(data)); },
   };
   return {
-    idColumn: makeWidget(),
-    dateCompletedColumn: makeWidget(),
-    waterbodyName: makeWidget(),
-    boolColumn: makeWidget(),
+    idColumn: makeWidget({ text: "" }),
+    dateCompletedColumn: makeWidget({ text: "" }),
+    waterbodyName: makeWidget({ text: "" }),
+    boolColumn: makeWidget({ text: "" }),
     getView() { return rowView; },
   };
 }
