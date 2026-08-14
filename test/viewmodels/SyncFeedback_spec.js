@@ -4,14 +4,17 @@ const SyncFeedbackViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/S
 const SyncStore = require("../../walta-app/app/lib/models/SyncStore");
 const Palette = require("../../walta-app/app/lib/util/Palette");
 const createSyncController = require("../../walta-app/app/spec/fixtures/SyncController_fixture");
+const LogEntry = require("../../walta-app/app/lib/models/LogEntry");
 
 // Fake LogRepository — only `query` and `close` are exercised by the
-// viewmodel; tests can seed it with prior-run entries via the arg.
+// viewmodel; tests can seed it with prior-run entries via the arg. Returns
+// LogEntry instances to match the real repository's contract.
 function fakeLogRepository(initialEntries = []) {
   return {
     query: (opts) => {
       const limit = (opts && opts.limit) || 200;
-      return initialEntries.slice().sort((a, b) => b.ts - a.ts).slice(0, limit);
+      return initialEntries.slice().sort((a, b) => b.ts - a.ts).slice(0, limit)
+        .map(e => new LogEntry(e));
     },
     close: () => {}
   };

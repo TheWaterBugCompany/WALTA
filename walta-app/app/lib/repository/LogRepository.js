@@ -9,6 +9,7 @@
 // `Migrator.migrate(testDbName)` against their test-named db.
 
 const { LEVEL_RANK } = require("../util/LogLevels");
+const LogEntry = require("../models/LogEntry");
 
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
@@ -42,12 +43,12 @@ exports.open = function (dbName) {
             const rows = [];
             try {
                 while (rs.isValidRow()) {
-                    rows.push({
+                    rows.push(new LogEntry({
                         ts: rs.fieldByName("ts"),
                         level: rs.fieldByName("level"),
                         facility: rs.fieldByName("facility"),
                         message: rs.fieldByName("message")
-                    });
+                    }));
                     rs.next();
                 }
             } finally {

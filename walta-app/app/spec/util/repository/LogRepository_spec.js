@@ -4,6 +4,7 @@ var { removeDatabase } = require("spec/util/TestUtils");
 
 var LogRepository = require("repository/LogRepository");
 var Migrator = require("repository/Migrator");
+var LogEntry = require("models/LogEntry");
 
 const TEST_DB = "waterbug_data_test";
 
@@ -26,9 +27,11 @@ describe("LogRepository", function () {
             repo.append({ ts: 100, level: "info", facility: "sync", message: "uploaded" });
             const rows = repo.query();
             expect(rows).to.have.length(1);
-            expect(rows[0]).to.deep.equal({
-                ts: 100, level: "info", facility: "sync", message: "uploaded"
-            });
+            expect(rows[0]).to.be.an.instanceOf(LogEntry);
+            expect(rows[0].ts).to.equal(100);
+            expect(rows[0].level).to.equal("info");
+            expect(rows[0].facility).to.equal("sync");
+            expect(rows[0].message).to.equal("uploaded");
         });
 
         it("returns rows in newest-first order (ts DESC)", function () {
