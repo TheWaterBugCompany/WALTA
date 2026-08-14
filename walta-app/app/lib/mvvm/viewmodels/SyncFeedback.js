@@ -1,6 +1,7 @@
 const ChangeNotifier = require("../../util/ChangeNotifier");
 const Logger = require("../../util/Logger");
 const Palette = require("../../util/Palette");
+const LogEntry = require("../../models/LogEntry");
 
 const OFFLINE_MESSAGE = "The mobile network is unavailable right now, the sample upload will be queued and retried in the background when the network becomes available again. Alternatively return to the Sync screen at any time to manually synchronise.";
 
@@ -44,7 +45,9 @@ class SyncFeedbackViewModel extends ChangeNotifier {
     // Live updates: subscribe directly to Logger, independent of any
     // sink. New matching entries get appended to the end (newest-last).
     this._unsubscribeLogger = Logger.subscribe(LOG_FILTER, (entry) => {
-      this._logEntries.push(entry);
+      // Wrap the live Logger hash so the pane holds one shape (LogEntry)
+      // whether entries came from the repository or arrived live.
+      this._logEntries.push(new LogEntry(entry));
       if (this._logEntries.length > LOG_LIMIT) this._logEntries.shift();
       this._logSeq++;
       this.notifyListeners();
