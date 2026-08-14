@@ -59,7 +59,14 @@ describe( 'SampleTray controller', function() {
     SampleTray = view.getCurrentController();
     SampleTrayWin = SampleTray.getView();
     return new Promise( function( resolve, reject ) {
-          var scrollDone = waitForScrollEnd();
+          // Poll the settled scroll state directly rather than waiting for the VM's
+          // scrollToRightEnd edge: on the Android emulator the initial measure can
+          // fire that event synchronously inside openView() above — before this
+          // listener would attach — leaving an event-gated wait hung to the 30s
+          // ceiling. The open path has no prior settled edge to confuse with (unlike
+          // an add, which must wait for the *post-add* scroll), so a direct poll is
+          // race-free.
+          var scrollDone = waitFor(scrollSettled);
           updateSampleTrayOnce(function() {
             try {
               var actualHeight = SampleTray.content.size.height + SampleTray.getAnchorBar().getView().size.height;
@@ -74,33 +81,36 @@ describe( 'SampleTray controller', function() {
         });
   }
 
+  // True once the ScrollView has settled at its right edge. The ScrollView clamps
+  // its offset to (contentWidth - viewportWidth). After a taxa add the VM's target
+  // jumps immediately, but the tray takes a layout pass to widen; two things follow.
+  // First, don't settle until the tray has actually laid out to its full new width
+  // (reachable reaches the target) — otherwise we'd settle on the stale pre-add edge
+  // before the new tile renders. Second, the tray's dip-derived width leaves the
+  // reachable max a rounding-pixel short of the dip-derived target, so settle cur
+  // against that reachable max, not the target.
+  function scrollSettled() {
+    var target = trayVm().scrollTargetX;
+    if ( target <= 0 ) return true;   // short tray: nothing to scroll
+    var off = SampleTray.content.contentOffset;
+    var cur = off ? (off.x || 0) : 0;
+    var reachable = SampleTray.tray.size.width - SampleTray.content.size.width;
+    var TOL = 2;   // dip <-> system rounding across the geometry chain
+    return reachable >= target - TOL && Math.abs(cur - Math.min(target, reachable)) < TOL;
+  }
+
   // The scroll-to-right is a bindView command now. It is edge-triggered like the
   // shell's old `scrollrightend`: wait for the view-model's next scrollToRightEnd
-  // intent (fired on measure / refresh), then poll the ScrollView until it settles
-  // at the target — so a call made before an add waits for the post-add scroll, not
-  // the already-settled current edge.
+  // intent (fired on measure / refresh), then poll (scrollSettled) — so a call made
+  // before an add waits for the post-add scroll, not the already-settled current
+  // edge. The open path can't use this (its measure may fire the intent before a
+  // listener attaches); it polls scrollSettled directly instead.
   function waitForScrollEnd() {
     var vm = trayVm();
     return new Promise(function(resolve, reject) {
       function onIntent() {
         vm.off("scrollToRightEnd", onIntent);
-        resolve(waitFor(function() {
-          var target = vm.scrollTargetX;
-          if ( target <= 0 ) return true;   // short tray: nothing to scroll
-          var off = SampleTray.content.contentOffset;
-          var cur = off ? (off.x || 0) : 0;
-          // The ScrollView clamps its offset to (contentWidth - viewportWidth).
-          // After a taxa add the VM's target jumps immediately, but the tray takes
-          // a layout pass to widen; two things follow. First, don't settle until
-          // the tray has actually laid out to its full new width (reachable reaches
-          // the target) — otherwise we'd settle on the stale pre-add edge before
-          // the new tile renders. Second, the tray's dip-derived width leaves the
-          // reachable max a rounding-pixel short of the dip-derived target, so
-          // settle cur against that reachable max, not the target.
-          var reachable = SampleTray.tray.size.width - SampleTray.content.size.width;
-          var TOL = 2;   // dip <-> system rounding across the geometry chain
-          return reachable >= target - TOL && Math.abs(cur - Math.min(target, reachable)) < TOL;
-        }));
+        resolve(waitFor(scrollSettled));
       }
       vm.on("scrollToRightEnd", onIntent);
     });
