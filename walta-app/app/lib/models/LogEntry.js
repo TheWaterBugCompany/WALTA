@@ -1,7 +1,4 @@
-// A single persisted log line: a domain entity, decoupled from any
-// persistence engine, mirroring the other repository-backed models.
-// Deliberately anemic — logs carry no behaviour — so the whole app uses
-// one repository shape rather than a Repository/row-DAO split.
+// A single persisted log line: a domain entity
 class LogEntry {
   constructor({ ts, level, facility, message }) {
     this._ts = ts;
