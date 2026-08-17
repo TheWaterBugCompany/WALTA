@@ -123,3 +123,39 @@ When('the user identifies a number of taxa', { timeout: 300000 }, async function
         await this.editTaxon.save();
     }
 });
+
+// The key path from the survey tray's + must reach a taxon and store it — proving
+// the identification methods stay enabled in a survey (training mode greys all but
+// the key; that mode must not leak into a real survey).
+When('the user identifies a taxon via the key', { timeout: 120000 }, async function () {
+    const GASTROPOD = [
+        "Animal with a shell (snails and mussels)",
+        "Animals look like snails or limpets.",
+        "Order level ID Gastropoda.",
+    ];
+    await this.sample.selectAddSample();
+    await this.methodSelect.viaKey();
+    for (const question of GASTROPOD) {
+        await this.keySearch.choose(question);
+    }
+    await this.taxon.selectAddToSample();
+    await this.editTaxon.openCamera();
+    await this.camera.takePhoto();
+    await this.editTaxon.waitFor();
+    await this.editTaxon.save();
+});
+
+Then('the sample tray shows the key-identified taxon', async function () {
+    await this.sample.waitFor();
+    // The key path "Order level ID Gastropoda." stores taxon 181, whose tray tile
+    // renders its name "gastropods" (SampleTaxaIcon accessibility label).
+    const expected = "gastropods";
+    const selector = this.platform === "ios"
+        ? `-ios predicate string:label CONTAINS '${expected}'`
+        : `android=new UiSelector().descriptionContains("${expected}")`;
+    const el = await this.driver.$(selector);
+    await el.waitForDisplayed({
+        timeout: 10000,
+        timeoutMsg: `${SAMPLE_TRAY_TILE_MISSING} for key-identified "${expected}"`,
+    });
+});
