@@ -14,6 +14,13 @@ class KeySearchScreen extends BaseScreen {
     async goBack() {
       await this.click("Back");
     }
+
+    // Whether the named anchor-bar shortcut (e.g. "Speedbug", "Browse") is on the
+    // key screen — used to prove training hides the shortcuts that would slip past
+    // the greyed Method Select.
+    async shortcutPresent( label ) {
+      return await (await this.driver.$( this.selector( label ) )).isExisting();
+    }
     async goBackAndExpect(text) {
       await this.goBack();
       await this.waitForText(text);

@@ -16,3 +16,13 @@ Scenario: Complete a training exercise, correcting a mistake
   Then the training success screen is shown
   When I finish the training
   Then the menu is shown
+
+# The key is the only identification path allowed in training — the anchor bar must
+# not offer the speedbug/browse shortcuts, which would otherwise slip past the
+# greyed Method Select and defeat the exercise.
+Scenario: Training keeps the key as the only identification path
+  When I open the Academy from the menu
+  And I start the training session "999"
+  Then an empty training tray is shown
+  When I begin identifying a creature via the key
+  Then the speedbug and browse shortcuts are not offered

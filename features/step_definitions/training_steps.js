@@ -1,4 +1,5 @@
 const { When, Then } = require('@cucumber/cucumber');
+const { expect } = require('chai');
 
 // Key question paths (verbatim from the taxonomy) for the exercise-999 taxa.
 const GASTROPOD = [
@@ -70,4 +71,16 @@ Then('the training success screen is shown', async function () {
 
 When('I finish the training', async function () {
   await this.trainingSuccess.finish();
+});
+
+When('I begin identifying a creature via the key', async function () {
+  await this.sample.selectAddSample();
+  await this.methodSelect.viaKey();
+});
+
+Then('the speedbug and browse shortcuts are not offered', async function () {
+  expect(await this.keySearch.shortcutPresent("Speedbug"),
+    "speedbug shortcut leaked into training — the key must be the only path").to.equal(false);
+  expect(await this.keySearch.shortcutPresent("Browse"),
+    "browse shortcut leaked into training — the key must be the only path").to.equal(false);
 });
