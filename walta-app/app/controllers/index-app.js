@@ -134,7 +134,6 @@ let taxa = Alloy.Models.instance("sample").loadTaxa();
 let trainingExercises = createTrainingExercises(
   JSON.parse(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "training-exercises.json").read().text));
 let training = createTraining({
-  topics: Topics,
   repo: TrainingRepository.open("waterbug_data"),
   exercises: trainingExercises,
 });

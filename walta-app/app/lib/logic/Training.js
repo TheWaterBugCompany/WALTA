@@ -2,10 +2,11 @@ const createTrainingAssessor = require("logic/TrainingAssessor");
 
 // Training-session service — the training-mode counterpart to Survey. Owns the
 // active session's SampleTray + assessor (per-session state, so a factory with a
-// closure rather than Survey's stateless module object), and announces it on
-// TRAINING_STARTED the way Survey announces SURVEY_STARTED. Navigation seeds the
-// tray/assessor it threads into every screen's args from that event. Titanium-free.
-module.exports = function createTraining({ topics, repo, exercises }) {
+// closure rather than Survey's stateless module object). The screens that open the
+// training tray look the session up here (currentTray/currentAssessor) and thread
+// it on in their args; training mode itself is a threaded parameter, not state held
+// by Navigation. Titanium-free.
+module.exports = function createTraining({ repo, exercises }) {
   let tray = null;
   let assessor = null;
 
@@ -15,9 +16,13 @@ module.exports = function createTraining({ topics, repo, exercises }) {
       if (!order) return false;
       tray = repo.startSession(code);
       assessor = createTrainingAssessor(order);
-      topics.fireTopicEvent(topics.TRAINING_STARTED, { tray, assessor, training: true });
       return true;
     },
+
+    // The active session's tray + assessor — the training screens thread these into
+    // their args (the session lives here, its owner, not in Navigation).
+    currentTray() { return tray; },
+    currentAssessor() { return assessor; },
 
     // Whether a code maps to a real exercise — the Academy gates Start on this.
     isValidCode(code) {
