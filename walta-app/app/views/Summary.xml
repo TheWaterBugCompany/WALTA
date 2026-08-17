@@ -1,10 +1,9 @@
 <Alloy>
-	<Model src="sample" />
 	<View id="content" class="container" layout="vertical">
 		<View id="siteInfoPanel" layout="vertical">
-			<Label id="heading" class="headingText" accessibilityLabel="Survey Heading" text="{sample.surveyType} Survey"/>
-			<Label class="labelText" text="{sample.siteInfo}"/>
-			<Label class="labelText" text="Date: {sample.dateCompleted}"/>
+			<Label id="heading" class="headingText" accessibilityLabel="Survey Heading"/>
+			<Label id="siteInfo" class="labelText"/>
+			<Label id="dateCompleted" class="labelText"/>
 			<Label id="message" class="labelText"/>
 		</View>
 		<View id="bottomFrame" layout="horizontal">
@@ -12,30 +11,30 @@
 				<View class="scoreContainer">
 					<Label class="labelText" text="SIGNAL score"/>
 					<View class="scoreWrapper">
-						<Label id="signalScore" class="labelText score" accessibilityLabel="SIGNAL Score" backgroundColor="{sample.scoreColor}" text="{sample.score}"/>
-					</View> 
+						<Label id="signalScore" class="labelText score" accessibilityLabel="SIGNAL Score"/>
+					</View>
 				</View>
 				<View class="scoreContainer">
 					<Label class="labelText" text="Weighted SIGNAL score"/>
 					<View class="scoreWrapper">
-						<Label id="weightedSignalScore" class="labelText score" backgroundColor="{sample.w_scoreColor}" text="{sample.w_score}"/>
+						<Label id="weightedSignalScore" class="labelText score"/>
 					</View>
             	</View>
 				<View class="scoreContainer">
 					<Label class="labelText" text="Number of different\nwaterbug taxa"/>
 					<View class="scoreWrapper">
-						<Label id="taxaCount" class="labelText" text="{sample.taxaCount}"/>
+						<Label id="taxaCount" class="labelText"/>
 					</View>
             	</View>
-		
+
 			</View>
 			<View id="rightFrame" layout="vertical">
 				<View id="interpretationFrame" layout="vertical">
 					<Label id="quickInterpretation" class="labelText" text="Quick Interpretation:"/>
-					<Label id="interpretation" class="labelText" text="{sample.impactText}"/>
+					<Label id="interpretation" class="labelText"/>
 				</View>
 			</View>
 		</View>
-		
+
 	</View>
 </Alloy>
