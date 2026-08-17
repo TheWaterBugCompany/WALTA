@@ -74,6 +74,52 @@ describe('TaxonDetails controller', function() {
 			actionFiresTopicTest( tv.header, 'click', Topics.UP, () => done() );
 		});
 	});
+	// The key is the only allowed path during a training assessment, so the taxon
+	// end screen must not offer the speedbug/browse anchor shortcuts in training —
+	// otherwise they slip past the greyed MethodSelect and cheat the exercise.
+	context('training gating', function() {
+		function anchorImages(ctl) {
+			return ctl.getAnchorBar().leftTools.children.map(function(c) { return c.image; });
+		}
+		function makeTaxon() {
+			return Taxon.createTaxon({
+				id: "t1", name: "Test", commonName: "Test bug", scientificName: [],
+				size: 1, habitat: "", movement: "", confusedWith: "", signalScore: 1,
+				description: "", mediaUrls: []
+			});
+		}
+
+		context('in a survey', function() {
+			var tv;
+			before( function(done) {
+				tv = Alloy.createController( "TaxonDetails", { node: makeTaxon() } );
+				controllerOpenTest( tv, done );
+			});
+			after( function(done) { closeWindow( tv.getView(), done ); });
+
+			it('offers the speedbug and browse shortcuts', function() {
+				var imgs = anchorImages( tv );
+				expect( imgs ).to.include( '/images/icon-speedbug-white.png' );
+				expect( imgs ).to.include( '/images/icon-browse-white.png' );
+			});
+		});
+
+		context('in training mode', function() {
+			var tv;
+			before( function(done) {
+				tv = Alloy.createController( "TaxonDetails", { node: makeTaxon(), training: true } );
+				controllerOpenTest( tv, done );
+			});
+			after( function(done) { closeWindow( tv.getView(), done ); });
+
+			it('hides the speedbug and browse shortcuts so the key is the only path', function() {
+				var imgs = anchorImages( tv );
+				expect( imgs ).to.not.include( '/images/icon-speedbug-white.png' );
+				expect( imgs ).to.not.include( '/images/icon-browse-white.png' );
+			});
+		});
+	});
+
 	it('should display only the relevant media icons');
 	it('should only display the add sample button during a survey');
 	it('should correctly pass the media to the gallery widget');

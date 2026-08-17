@@ -95,6 +95,11 @@ if ($.taxon.videoUrl) {
 var acb = $.getAnchorBar();
 $.args.name = "decision";
 var goBackBtn = Alloy.createController("GoBackButton", {slide: "left"});
-acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training } ), true );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training } ), true );
+// During a training assessment the key is the only allowed path, so omit the
+// speedbug/browse shortcuts — otherwise the anchor bar slips past the greyed
+// MethodSelect and defeats the exercise.
+if ( !$.args.training ) {
+  acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position }, "Speedbug" ), true );
+  acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position }, "Browse" ), true );
+}
 acb.addTool( goBackBtn.getView() );
