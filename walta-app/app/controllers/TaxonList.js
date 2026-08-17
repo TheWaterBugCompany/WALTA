@@ -6,12 +6,12 @@ $.name = "browse";
 $.noSwipeBack();
 
 var acb = $.getAnchorBar();
-acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample }  ) );
-acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample }  ) );
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample, training: $.args.training }  ) );
+acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample, training: $.args.training }  ) );
 
 function clickItem(e) {
     var item = $.content.sections[e.sectionIndex].getItemAt(e.itemIndex);
-    Topics.fireTopicEvent( Topics.JUMPTO, { id: item.properties.itemId, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample } );
+    Topics.fireTopicEvent( Topics.JUMPTO, { id: item.properties.itemId, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, training: $.args.training } );
 }
 
 // Create a data set that displays all the taxon species

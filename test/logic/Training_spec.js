@@ -95,12 +95,6 @@ describe("logic/Training", function () {
     expect(training.isValidCode("")).to.equal(false);
   });
 
-  it("reports whether a session is active", function () {
-    expect(training.isActive()).to.equal(false);
-    training.startTraining("101");
-    expect(training.isActive()).to.equal(true);
-  });
-
   it("adds an identified taxon to the session tray, appended at the end", function () {
     training.startTraining("101");
     training.addTaxon(90);

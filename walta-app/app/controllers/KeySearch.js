@@ -34,13 +34,13 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 var acb = $.getAnchorBar(); 
 $.args.name = "decision";
 var goBackBtn = Alloy.createController("GoBackButton", {slide: "left"} );
-acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position } ), true );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position }  ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training } ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training }  ), true );
 acb.addTool( goBackBtn.getView() );
 
 function goUp(e) {
   if ( !key.isRoot() && (PlatformSpecific.convertSystemToDip(e.x) < (PlatformSpecific.convertSystemToDip($.header.size.width)*0.2) ) ) {
-    Topics.fireTopicEvent( Topics.UP, { node: key.getCurrentNode().parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, slide: "left" } );
+    Topics.fireTopicEvent( Topics.UP, { node: key.getCurrentNode().parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training, slide: "left" } );
   }
 }
 if ( key.isRoot() ) {
@@ -55,7 +55,7 @@ _(keyNode.questions).each(
     $.content.add( _(qv.getView()).extend( { width: '95%', height: '44%', top: '1%', bottom: '1%' }) );
     qv.on("select",function() {
       key.choose( index );
-			Topics.fireTopicEvent( Topics.FORWARD, { node: key.getCurrentNode(), surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position } );
+			Topics.fireTopicEvent( Topics.FORWARD, { node: key.getCurrentNode(), surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training } );
 		});
 	}
 );

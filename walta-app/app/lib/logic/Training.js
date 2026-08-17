@@ -24,10 +24,6 @@ module.exports = function createTraining({ topics, repo, exercises }) {
       return exercises.loadExercise(code) !== null;
     },
 
-    isActive() {
-      return tray !== null;
-    },
-
     // Add an identified taxon. With no position it appends (position = current
     // length — the store takes position as given). Given a position, it drops the
     // taxon already in that slot and puts the new one there, so re-identifying a

@@ -66,9 +66,11 @@ async function startApp(options) {
   // A survey routes an identification through the EditTaxon overlay (data.taxonId
   // opens it). Training has no per-taxon editor: a fresh identification (no
   // sampleTaxonId) is added straight to the session tray, and the tray always
-  // opens without a taxonId so the survey-only overlay never appears.
+  // opens without a taxonId so the survey-only overlay never appears. Whether an
+  // identification belongs to a training session rides on the threaded data.training
+  // flag, so a finished training session can't leak into a later survey.
   routePromise(Topics.IDENTIFY,  (data) => {
-    if (Training.isActive()) {
+    if (data.training) {
       if (data.sampleTaxonId != null) {
         // Tapping an existing taxon re-identifies it: reopen the method chooser
         // carrying its tray position, which threads through the key so the new

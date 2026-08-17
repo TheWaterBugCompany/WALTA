@@ -77,6 +77,7 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
       taxonId: this.taxonId,
       readonly: this._tray.readonly,
       position: this._position,
+      training: this._tray.trainingMode,
     });
   }
 

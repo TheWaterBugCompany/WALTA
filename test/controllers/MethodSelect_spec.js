@@ -81,7 +81,7 @@ describe("MethodSelect controller", function () {
     build({ allowAddToSample: true, surveyType: 3 });
     const fired = recordTopic(Topics.SPEEDBUG);
     byKey("speedbug").select();
-    expect(fired()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null });
+    expect(fired()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null, training: false });
     expect(closed).to.equal(1);
   });
 
@@ -89,7 +89,7 @@ describe("MethodSelect controller", function () {
     build({ training: true, position: 1 });
     const fired = recordTopic(Topics.KEYSEARCH);
     byKey("keysearch").select();
-    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null, position: 1 });
+    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null, position: 1, training: true });
   });
 
   it("closes without navigating when the close button is tapped", function () {

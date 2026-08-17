@@ -56,7 +56,7 @@ describe("MethodSelectViewModel", function () {
     let closed = 0;
     vm.on("close", () => closed++);
     entry(vm, "keysearch").select();
-    expect(fired()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null });
+    expect(fired()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null, training: false });
     expect(closed).to.equal(1);
   });
 
@@ -66,29 +66,29 @@ describe("MethodSelectViewModel", function () {
     const browse = recordTopic(Topics.BROWSE);
     entry(vm, "speedbug").select();
     entry(vm, "browselist").select();
-    expect(speedbug()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null });
-    expect(browse()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null });
+    expect(speedbug()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null, training: false });
+    expect(browse()).to.deep.equal({ allowAddToSample: true, surveyType: 3, position: null, training: false });
   });
 
   it("threads a re-identification position into the key payload", function () {
     const vm = build({ training: true, position: 2 });
     const fired = recordTopic(Topics.KEYSEARCH);
     entry(vm, "keysearch").select();
-    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null, position: 2 });
+    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null, position: 2, training: true });
   });
 
   it("routes unknownbug to IDENTIFY with a null taxon", function () {
     const vm = build({ unknownBug: true });
     const fired = recordTopic(Topics.IDENTIFY);
     entry(vm, "unknownbug").select();
-    expect(fired()).to.deep.equal({ taxonId: null });
+    expect(fired()).to.deep.equal({ taxonId: null, training: false });
   });
 
-  it("still routes the key in training mode", function () {
+  it("threads training through the key payload so the identification routes to the training tray", function () {
     const vm = build({ training: true });
     const fired = recordTopic(Topics.KEYSEARCH);
     entry(vm, "keysearch").select();
-    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null, position: null });
+    expect(fired()).to.deep.equal({ allowAddToSample: false, surveyType: null, position: null, training: true });
   });
 
   it("does not route a disabled entry in training mode", function () {
