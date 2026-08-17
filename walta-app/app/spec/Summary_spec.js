@@ -58,6 +58,26 @@ describe("Summary controller", function() {
         });
     });
 
+    // In edit mode the sample being reviewed is a temp copy threaded via args, not
+    // the global singleton — the Summary must render the sample it is given (WB-243).
+    it('renders the SIGNAL score from the sample it is given, not the singleton', function(done) {
+        var edited = Alloy.createModel("sample");
+        edited.set("waterbodyName", "Edited Creek");
+        edited.set("surveyType", 2);
+        edited.set("overrideDateCompleted", Date.now());
+        edited.calculateSignalScore = function() { return "7.0"; };
+        edited.calculateWeightedSignalScore = function() { return "6.5"; };
+        edited.loadTaxa = function() { return []; };
+        // The singleton holds different data; binding to it (the bug) would show 3.0.
+        ctl = Alloy.createController("Summary", { sample: edited });
+        controllerOpenTest( ctl, function() {
+            checkTestResult( done, function() {
+                expect( ctl.signalScore.text ).to.equal("7.0");
+                expect( ctl.weightedSignalScore.text ).to.equal("6.5");
+            });
+        } );
+    });
+
 	it('should display the Summary view with lock not obtained message', function(done) {
         doTest( done, function() {
             expect( ctl.message.text ).to.include("GPS lock yet");

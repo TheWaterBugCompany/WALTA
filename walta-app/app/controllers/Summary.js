@@ -8,6 +8,23 @@ var readOnlyMode = $.args.readonly === true;
 var Survey = $.args.Survey;
 var sample = $.args.sample;
 
+// Render the summary from the sample threaded in (in edit mode that is a temp copy,
+// not the global singleton), so the scores, date and assessment aren't blank when
+// editing. transform() already resolves the edit date from overrideDateCompleted.
+function renderSummary() {
+    var s = sample.transform();
+    $.heading.text = `${s.surveyType} Survey`;
+    $.siteInfo.text = s.siteInfo;
+    $.dateCompleted.text = `Date: ${s.dateCompleted}`;
+    $.signalScore.text = s.score;
+    $.signalScore.backgroundColor = s.scoreColor;
+    $.weightedSignalScore.text = s.w_score;
+    $.weightedSignalScore.backgroundColor = s.w_scoreColor;
+    $.taxaCount.text = `${s.taxaCount}`;
+    $.interpretation.text = s.impactText;
+}
+renderSummary();
+
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.destroy();
     $.off();
