@@ -67,7 +67,7 @@ describe("SampleTaxaIcon controller", function () {
     const $ = build(taxonSlotVm(topics));
     $.tap.fireEvent("click");
     expect(topics.fired).to.deep.equal([{
-      event: "identify", data: { sampleTaxonId: 1001, taxonId: 1, readonly: false, position: 0 },
+      event: "identify", data: { sampleTaxonId: 1001, taxonId: 1, readonly: false, position: 0, training: false },
     }]);
   });
 

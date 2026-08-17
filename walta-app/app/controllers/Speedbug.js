@@ -30,8 +30,8 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 });
 
 var acb = $.getAnchorBar();
-acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample }  ) );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample }  ) );
+acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample, training: $.args.training }  ) );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample, training: $.args.training }  ) );
 
 
 var tileWidth = 0;
@@ -84,7 +84,7 @@ function _drawSpeedBug(sbug) {
         
         _(sbug).each( function( sg ) {
             var group = Alloy.createController("SpeedbugGroup", { tileWidth: tileWidth, tileHeight: tileHeight, tileGap: tileGap, refId: sg.refId, speedbugs: sg.bugs, index: speedbugTileIndex } );
-            group.on("select", (refId) => Topics.fireTopicEvent( Topics.JUMPTO, { id: refId, allowAddToSample: $.args.allowAddToSample } ) );
+            group.on("select", (refId) => Topics.fireTopicEvent( Topics.JUMPTO, { id: refId, allowAddToSample: $.args.allowAddToSample, training: $.args.training } ) );
             groups.push(group);
             scrollView.add( group.getView() );
         } ); 

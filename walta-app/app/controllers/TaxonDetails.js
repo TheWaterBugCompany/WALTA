@@ -50,7 +50,7 @@ $.description.text = $.taxon.description;
 
 function goUp(e) {
 	if (PlatformSpecific.convertSystemToDip(e.x) < (PlatformSpecific.convertSystemToDip($.header.size.width)*0.2)) {
-		Topics.fireTopicEvent( Topics.UP, { node: $.taxon.parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, slide: "left" } );
+		Topics.fireTopicEvent( Topics.UP, { node: $.taxon.parentLink, surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training, slide: "left" } );
 	}
 }
 
@@ -65,7 +65,7 @@ function goUp(e) {
 if ( $.args.allowAddToSample !== false ) {
 	addActionButton("/images/plus-icon.png", "Add to sample",
 			function(e) {
-				Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId, position: $.args.position } );
+				Topics.fireTopicEvent( Topics.IDENTIFY, { taxonId: $.taxon.taxonId, position: $.args.position, training: $.args.training } );
 				e.cancelBubble = true;
 	});
 }
@@ -95,6 +95,6 @@ if ($.taxon.videoUrl) {
 var acb = $.getAnchorBar();
 $.args.name = "decision";
 var goBackBtn = Alloy.createController("GoBackButton", {slide: "left"});
-acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position } ), true );
-acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position } ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training } ), true );
+acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position, training: $.args.training } ), true );
 acb.addTool( goBackBtn.getView() );

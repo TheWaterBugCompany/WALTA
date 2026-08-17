@@ -10,8 +10,9 @@ class MethodSelectViewModel extends ChangeNotifier {
     super();
     this._topics = topics;
     // position rides through to the key so a re-identification lands back in the
-    // same tray slot; null for a fresh identification (which appends).
-    const payload = { allowAddToSample, surveyType, position };
+    // same tray slot; null for a fresh identification (which appends). training
+    // rides through so the eventual identification routes to the training tray.
+    const payload = { allowAddToSample, surveyType, position, training };
 
     // Cards share the modal height: three at 30.67%, or four (with the unknown
     // bug) at 25% plus a shorter 16% unknown-bug card.
@@ -30,7 +31,7 @@ class MethodSelectViewModel extends ChangeNotifier {
     if (unknownBug) {
       this._addEntry("unknownbug", "/images/unknown-bug-icon.png", "Unknown bug",
         "If you can't identify the bug.", training, "16%",
-        () => this._route(topics.IDENTIFY, { taxonId: null }));
+        () => this._route(topics.IDENTIFY, { taxonId: null, training }));
     }
   }
 

@@ -413,13 +413,13 @@ describe("SampleTrayViewModel", function () {
   });
 
   describe("cell tap intent", function () {
-    it("fires IDENTIFY with the taxon ids and readonly flag when a taxon is tapped", function () {
+    it("fires IDENTIFY with the taxon ids, readonly and training flags when a taxon is tapped", function () {
       const topics = fakeTopics();
       const cell = vmWithTopics(6, topics).endcapVm.taxa[0];
       cell.tap();
       expect(topics.fired).to.deep.equal([{
         event: "identify",
-        data: { sampleTaxonId: 1001, taxonId: 1, readonly: false, position: 0 },
+        data: { sampleTaxonId: 1001, taxonId: 1, readonly: false, position: 0, training: false },
       }]);
     });
 
