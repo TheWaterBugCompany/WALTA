@@ -17,6 +17,17 @@ Scenario: Sample collection
    And a sample id is automatically created for the user
    And a sample is stored and sample tray is cleared
 
+# Identifying via the key is one of the method paths that must stay enabled in a
+# real survey (training mode greys all but the key; that mode must not leak here).
+Scenario: Identify a creature via the key in a survey
+  Given I am logged in as "test@example.com"
+    And the GPS has a fix
+    And a user has arrived at a site to sample
+  When the user fills out the site details
+   And the user fills out the habitat screen
+   And the user identifies a taxon via the key
+  Then the sample tray shows the key-identified taxon
+
 @skip
 Scenario: Cancel sample
   Given the user has identified a number of taxa
