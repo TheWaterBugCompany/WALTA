@@ -20,15 +20,19 @@ module.exports = function createAcademyController({ view, close, services, bindV
   const vm = new AcademyViewModel({ isValidCode: (code) => services.Training.isValidCode(code) });
   const unbind = bindView(view, vm, BINDINGS);
 
-  // Starting a session launches training for the entered code (loads the
-  // exercise, opens a session, announces the tray on the bus). On a known code we
-  // dismiss the modal and open the training tray — Navigation threads the session's
-  // tray/assessor from the TRAINING_STARTED it just fired. An unknown code is a
-  // no-op, leaving the modal up.
+  // Starting a session launches training for the entered code (loads the exercise,
+  // opens a session). On a known code we dismiss the modal and open the training
+  // tray, threading training:true plus the session's tray/assessor (looked up from
+  // the Training service) — training mode rides in the args, it is not Navigation
+  // state. An unknown code is a no-op, leaving the modal up.
   vm.on("start", function (code) {
     if (services.Training.startTraining(code)) {
       close();
-      services.topics.fireTopicEvent(services.topics.SAMPLETRAY, {});
+      services.topics.fireTopicEvent(services.topics.SAMPLETRAY, {
+        training: true,
+        tray: services.Training.currentTray(),
+        assessor: services.Training.currentAssessor(),
+      });
     }
   });
   vm.on("close", function () { close(); });

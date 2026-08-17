@@ -9,16 +9,15 @@ function Navigation(services) {
     this.services = services;
     this.currentSample = null;
     this.currentTaxa = null;
-    this.currentTraining = false;
-    this.currentTray = null;
-    this.currentAssessor = null;
     // The roots that establish a survey's sample announce it on the bus; seed the
     // sample threaded into every screen's args from there (see onOpenView).
     services.topics.subscribe(services.topics.SURVEY_STARTED,
         (data) => this.setCurrentSample(data.sample, data.taxa));
-    // Training's counterpart: a training session announces its tray/assessor here.
-    services.topics.subscribe(services.topics.TRAINING_STARTED,
-        (data) => this.setCurrentTraining(data.tray, data.assessor));
+    // Training mode is NOT held here: it rides through each transition as an args
+    // parameter (like a URL query), so a screen is training-mode only when opened
+    // with training:true. A finished session can't leak into a later survey — there
+    // is no state to go stale — and the training session's tray/assessor live in
+    // their owner, the Training service, looked up by the screens that open it.
 }
 
 Navigation.prototype.getHistory = function () {
@@ -31,32 +30,17 @@ Navigation.prototype.getHistory = function () {
 Navigation.prototype.setCurrentSample = function(sample, taxa) {
     this.currentSample = sample;
     this.currentTaxa = taxa;
-    // A survey and a training session are mutually exclusive; establishing one
-    // clears the other so their refs never cross-contaminate a screen's args.
-    this.currentTraining = false;
-    this.currentTray = null;
-    this.currentAssessor = null;
 }
 
-// Training's counterpart to setCurrentSample: the training tray + its assessor,
-// threaded into every training screen's args by onOpenView.
-Navigation.prototype.setCurrentTraining = function(tray, assessor) {
-    this.currentTraining = true;
-    this.currentTray = tray;
-    this.currentAssessor = assessor;
-    this.currentSample = null;
-    this.currentTaxa = null;
-}
-
+// The survey sample/taxa are threaded in from the single active survey; training
+// mode and the training session's tray/assessor are NOT injected here — they ride
+// through in the caller's args so each screen keeps the context it was opened in.
 Navigation.prototype.onOpenView = function(ctl,args) {
     Object.assign(args, {
         key: this.services.Key,
         Survey: this.services.Survey,
         sample: this.currentSample,
         taxa: this.currentTaxa,
-        training: this.currentTraining,
-        tray: this.currentTray,
-        assessor: this.currentAssessor,
     });
     return this.services.View.openView(ctl,args);
 }

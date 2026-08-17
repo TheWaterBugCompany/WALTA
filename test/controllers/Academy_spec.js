@@ -21,13 +21,19 @@ function makeView() {
 describe("Academy controller", function () {
   let view, closed, ctl, training, fired, services;
 
-  // Fake training service: records the started code and validates against a known
-  // set (the Academy gates Start on isValidCode).
+  // Fake training service: records the started code, validates against a known set
+  // (the Academy gates Start on isValidCode), and owns the session's tray/assessor
+  // that the controller threads into the tray it opens.
   function fakeTraining(knownCodes) {
+    const tray = { length: 0, taxa: () => [] };
+    const assessor = { assess: () => ({}) };
     return {
       startedWith: null,
+      tray, assessor,
       isValidCode(code) { return knownCodes.includes(code); },
       startTraining(code) { this.startedWith = code; return knownCodes.includes(code); },
+      currentTray() { return tray; },
+      currentAssessor() { return assessor; },
     };
   }
 
@@ -98,7 +104,7 @@ describe("Academy controller", function () {
     view.startButton.fireEvent("click");
     expect(training.startedWith).to.equal("789");
     expect(closed).to.equal(1);
-    expect(fired).to.deep.equal([{ t: "sampletray", d: {} }]);
+    expect(fired).to.deep.equal([{ t: "sampletray", d: { training: true, tray: training.tray, assessor: training.assessor } }]);
   });
 
   it("does nothing when Start is tapped on an invalid (disabled) code", function () {
