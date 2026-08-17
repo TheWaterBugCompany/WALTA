@@ -30,7 +30,7 @@
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@xmldom/xmldom": "^0.9.10",
+    "@xmldom/xmldom": "^0.9.11",
     "alloy": "^3.0.1",
     "appium": "^3.6.0",
     "appium-uiautomator2-driver": "^7.6.2",
