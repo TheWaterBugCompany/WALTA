@@ -60,7 +60,8 @@ A few rules of thumb regardless of length:
 1. Don't paraphrase what the code already says.
 2. Don't narrate the change you're making — that context belongs in the commit message. Commits don't rot; source comments do.
 3. Don't recap the bug you just fixed for the same reason.
-4. Keep comments self-contained — no references to Trello cards (`WB-XXX`), PR numbers, GitHub issues, or any other external identifier. External coordinates rot, churn, or disappear; a comment that requires a reader to leave the codebase to make sense of it has already failed. Put that context in the commit message and PR description.
+4. Describe the code as it is in the present tense, not the design it isn't. Don't justify the present shape by contrasting it with what the code used to do, or an alternative it could have taken ("rides through *rather than being held as state*", "*not* stored on X", "a closure *rather than* a module object"). The reader has no mental model of the roads you didn't take, so the contrast only puzzles — and it rots the moment the alternative it argues against stops being relevant. State what is, plainly and briefly.
+5. Keep comments self-contained — no references to Trello cards (`WB-XXX`), PR numbers, GitHub issues, or any other external identifier. External coordinates rot, churn, or disappear; a comment that requires a reader to leave the codebase to make sense of it has already failed. Put that context in the commit message and PR description.
 
 ### Long comments belong in `docs/`
 
