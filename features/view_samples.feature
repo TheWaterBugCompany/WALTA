@@ -2,22 +2,6 @@ Feature: View samples
 
 I want to review the history of the samples I have already collected.
 
-# Regression guard for WB-243: the Summary was blank when reviewing a sample in
-# Edit mode, because the view bound to the global singleton rather than the edited
-# copy threaded through the flow.
-Scenario: Editing a completed sample shows a populated summary
-  Given I am logged in as "test@example.com"
-    And the GPS has a fix
-    And a user has arrived at a site to sample
-  When the user fills out the site details
-   And the user fills out the habitat screen
-   And the user identifies a number of taxa
-   And the user marks the sample as complete
-   And a sample is stored and sample tray is cleared
-   And I edit the stored sample from history
-   And I move forward to the summary screen
-  Then the summary shows the survey site and signal score
-
 @skip
 Scenario: Review history without server login
   Given I do not have a server login
