@@ -9,15 +9,9 @@ function Navigation(services) {
     this.services = services;
     this.currentSample = null;
     this.currentTaxa = null;
-    // The roots that establish a survey's sample announce it on the bus; seed the
-    // sample threaded into every screen's args from there (see onOpenView).
+    // Seed currentSample from the survey root that announces it on the bus.
     services.topics.subscribe(services.topics.SURVEY_STARTED,
         (data) => this.setCurrentSample(data.sample, data.taxa));
-    // Training mode is NOT held here: it rides through each transition as an args
-    // parameter (like a URL query), so a screen is training-mode only when opened
-    // with training:true. A finished session can't leak into a later survey — there
-    // is no state to go stale — and the training session's tray/assessor live in
-    // their owner, the Training service, looked up by the screens that open it.
 }
 
 Navigation.prototype.getHistory = function () {
@@ -32,9 +26,7 @@ Navigation.prototype.setCurrentSample = function(sample, taxa) {
     this.currentTaxa = taxa;
 }
 
-// The survey sample/taxa are threaded in from the single active survey; training
-// mode and the training session's tray/assessor are NOT injected here — they ride
-// through in the caller's args so each screen keeps the context it was opened in.
+// Thread the active survey's sample/taxa into every screen's args.
 Navigation.prototype.onOpenView = function(ctl,args) {
     Object.assign(args, {
         key: this.services.Key,
