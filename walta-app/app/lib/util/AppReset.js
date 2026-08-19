@@ -62,11 +62,7 @@ async function reset() {
   Topics.fireTopicEvent(Topics.LOGGEDOUT, null);
   Topics.fireTopicEvent(Topics.HOME);
 
-  // Wipe persisted diagnostic logs last — after the logout line this reset
-  // itself emits — so the next scenario's Show Logs pane starts empty. The
-  // logs live in the waterbug_data DB, separate from the samples DB cleared
-  // above; leaking them let a prior scenario's lines crowd the current sync's
-  // "Sync finished" line past the iOS accessibility value cap.
+  // Reset the logs
   const logRepo = LogRepository.open('waterbug_data');
   logRepo.clear();
   logRepo.close();
