@@ -43,6 +43,16 @@ async function reset() {
   Alloy.Models.instance('sample');
   Alloy.Models.instance('taxa');
 
+  // Re-seed Navigation's in-memory current sample with the fresh models, the
+  // same way index-app does at startup. Navigation caches the sample from
+  // SURVEY_STARTED and never re-reads the DB, so without this it keeps the
+  // previous scenario's dirty sample — and the navigation home below then trips
+  // the unsaved-changes guard, wedging the reset behind that dialog.
+  Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
+    sample: Alloy.Models.instance('sample'),
+    taxa: Alloy.Collections.instance('taxa'),
+  });
+
   // Announce the logout last — now that the token is cleared, this flips the
   // menu to its logged-out state (the harness's reset-complete signal) and
   // clears the sync-recommended badge. Topics.HOME → openController("Menu")
