@@ -10,11 +10,11 @@
 
 const { startGpsBroadcaster, stopGpsBroadcaster } = require('../features/support/gps-broadcaster');
 const { loginViaDeepLink } = require('../features/support/deep-link-login');
-const { completeTrainingSession } = require('../features/support/training-driver');
+const { completeTrainingSession } = require('../features/support/drivers/training-driver');
 const {
     SURVEY_TAXA, FULL_HABITAT,
     reachSampleTray, addTaxaViaBrowse, expectTrayTile,
-} = require('../features/support/survey-driver');
+} = require('../features/support/drivers/survey-driver');
 
 describe('E2E: a survey after a training session still records identifications', function () {
     this.timeout(600000);

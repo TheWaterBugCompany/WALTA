@@ -1,5 +1,5 @@
 var { expect } = require('chai');
-var isSessionDeadError = require('./is-session-dead-error');
+var isSessionDeadError = require('../is-session-dead-error');
 class BaseScreen {
     constructor( world ) {
         this.driver = world.driver;

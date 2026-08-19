@@ -5,7 +5,7 @@
 // real screen stack to prove the shortcuts are absent, so it lives in the
 // end-to-end layer rather than the business-readable acceptance suite.
 
-const { startTrainingSession } = require('../features/support/training-driver');
+const { startTrainingSession } = require('../features/support/drivers/training-driver');
 
 async function beginTrainingIdentifyViaKey(world) {
     await world.menu.selectAcademy();

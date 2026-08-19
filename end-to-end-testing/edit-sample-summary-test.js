@@ -10,7 +10,7 @@ const { loginViaDeepLink } = require('../features/support/deep-link-login');
 const {
     SURVEY_TAXA, FULL_HABITAT,
     reachSampleTray, addTaxaViaBrowse, markSurveyComplete, submitFromSummary,
-} = require('../features/support/survey-driver');
+} = require('../features/support/drivers/survey-driver');
 
 async function reopenFromHistoryToSummary(world) {
     await world.menu.selectArchive();

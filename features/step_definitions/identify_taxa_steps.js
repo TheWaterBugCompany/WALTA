@@ -1,5 +1,5 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
-const { reachSampleTray, addTaxonViaSpeedBug }  = require('../support/survey-driver');
+const { reachSampleTray, addTaxonViaSpeedBug }  = require('../support/drivers/survey-driver');
 
 Given('I have found a species to identify', function(){
   /* @current_page = page(MenuScreen).await */

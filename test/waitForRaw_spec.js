@@ -1,6 +1,6 @@
 require("mocha");
 const { expect } = require("chai");
-const BaseScreen = require("../features/support/base-screen");
+const BaseScreen = require("../features/support/screens/base-screen");
 
 // Builds a BaseScreen over a fake driver whose $().isDisplayed() is scripted
 // per call: each entry is either a boolean (displayed?) or an Error to throw.
