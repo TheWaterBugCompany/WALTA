@@ -52,12 +52,7 @@ describe("AppReset", function () {
             "the re-seeded sample must be clean").to.be.false;
     });
 
-    // The SyncFeedback "Show Logs" pane preloads persisted sync-log lines from
-    // the waterbug_data db. That db is separate from the samples db reset wipes,
-    // so a prior scenario's log lines leaked into the next scenario's pane —
-    // enough of them pushed the current sync's "Sync finished" line past the
-    // iOS accessibility value cap, so the acceptance assertion couldn't see it.
-    // Reset must wipe persisted logs too, the same way it wipes samples.
+    // Make sure when the app is reset that th elogs are also reset.
     it("clears persisted diagnostic logs so a prior scenario's lines don't leak into the next sync pane", async function () {
         var repo = LogRepository.open("waterbug_data");
         repo.append({ ts: Date.now(), level: "info", facility: "sync", message: "stale line from a prior scenario" });
