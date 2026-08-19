@@ -7,6 +7,7 @@
 
 const Topics = require('ui/Topics');
 const SampleSync = require('logic/SampleSync');
+const LogRepository = require('repository/LogRepository');
 
 async function reset() {
   // Cancel any in-flight sync and wait for it to actually stop *before*
@@ -60,6 +61,15 @@ async function reset() {
   // controllers clean themselves up.
   Topics.fireTopicEvent(Topics.LOGGEDOUT, null);
   Topics.fireTopicEvent(Topics.HOME);
+
+  // Wipe persisted diagnostic logs last — after the logout line this reset
+  // itself emits — so the next scenario's Show Logs pane starts empty. The
+  // logs live in the waterbug_data DB, separate from the samples DB cleared
+  // above; leaking them let a prior scenario's lines crowd the current sync's
+  // "Sync finished" line past the iOS accessibility value cap.
+  const logRepo = LogRepository.open('waterbug_data');
+  logRepo.clear();
+  logRepo.close();
 }
 
 exports.reset = reset;

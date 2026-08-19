@@ -74,6 +74,10 @@ exports.open = function (dbName) {
             }
         },
 
+        clear: function () {
+            db.execute("DELETE FROM logs");
+        },
+
         close: function () {
             db.close();
         }
