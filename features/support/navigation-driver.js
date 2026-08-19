@@ -1,4 +1,5 @@
 const BaseScreen = require('./base-screen.js');
+const { reachSampleTray } = require('./survey-driver');
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -6,20 +7,10 @@ async function asyncForEach(array, callback) {
   }
 }
 
+// The short-form survey fill (waterbody "a", sand-only, no site photo) — enough
+// to land on the sample tray. Delegates to the unified survey-driver.
 async function navigateToSampleTray( world ) {
-  await world.menu.selectWaterbugSurvey();
-  
-  // site details
-  await world.siteDetails.selectDetailed();
-  await world.siteDetails.selectRiver();
-  await world.siteDetails.setWaterbodyName("a");
-  await world.siteDetails.goNext();
-
-  // habitat
-  await world.habitat.setSandOrSilt("100");
-  await world.habitat.goNext();
-
-  await world.sample.waitFor();
+  await reachSampleTray( world );
 }
 
 async function navigateKeyViaIdentify( world, questions ) {
