@@ -5,11 +5,11 @@
 // real screen stack to prove the shortcuts are absent, so it lives in the
 // end-to-end layer rather than the business-readable acceptance suite.
 
+const { startTrainingSession } = require('../features/support/training-driver');
+
 async function beginTrainingIdentifyViaKey(world) {
     await world.menu.selectAcademy();
-    await world.academy.enterCode("999");
-    await world.academy.waitForStartAvailable();
-    await world.academy.start();
+    await startTrainingSession(world, "999");
     await world.sample.waitFor();   // the empty training tray
     await world.sample.selectAddSample();
     await world.methodSelect.viaKey();

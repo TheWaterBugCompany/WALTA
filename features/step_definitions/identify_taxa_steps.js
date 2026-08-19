@@ -1,5 +1,5 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
-const { startSurvey, addTaxonViaSpeedBug }  = require('../support/sample-driver');
+const { reachSampleTray, addTaxonViaSpeedBug }  = require('../support/survey-driver');
 
 Given('I have found a species to identify', function(){
   /* @current_page = page(MenuScreen).await */
@@ -42,7 +42,7 @@ Given('A leaf node of the ALT is displayed', function(){
 });
 
 Given('I identify and store a Taxon', {timeout: 60000}, async function(){
-  await startSurvey( this );
+  await reachSampleTray( this );
   await addTaxonViaSpeedBug( this, "hyriidae" )
 });
 
