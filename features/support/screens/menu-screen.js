@@ -1,6 +1,6 @@
 'use strict';
 const BaseScreen = require('./base-screen');
-const waitForSettled = require('./wait-for-settled');
+const waitForSettled = require('../wait-for-settled');
 class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );

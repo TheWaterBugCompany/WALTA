@@ -6,7 +6,7 @@ const { navigateGoBack,
         navigateBrowseViaIdentify, 
         navigateSpeedbugViaIdentify, 
         navigateSpeedbugNotSureViaIdentify,
-        navigateTakePhoto } = require('../features/support/navigation-driver');
+        navigateTakePhoto } = require('../features/support/drivers/navigation-driver');
         
 describe('Back button tests', function() {
     this.timeout(18000);

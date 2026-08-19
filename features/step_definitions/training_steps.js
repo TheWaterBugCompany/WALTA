@@ -4,7 +4,7 @@ const {
   startTrainingSession,
   identifyTrainingTaxonViaKey,
   reidentifyTrainingTaxonViaKey,
-} = require('../support/training-driver');
+} = require('../support/drivers/training-driver');
 
 When('I start the training session {string}', async function (code) {
   await startTrainingSession(this, code);

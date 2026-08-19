@@ -1,5 +1,5 @@
 const BaseScreen = require('./base-screen');
-const { GPS_LOCK_NOT_OBTAINED } = require('./environmental-failures');
+const { GPS_LOCK_NOT_OBTAINED } = require('../environmental-failures');
 
 class SiteDetailsScreen extends BaseScreen {
     constructor( world ) {

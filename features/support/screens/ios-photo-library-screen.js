@@ -1,5 +1,5 @@
 const BaseScreen = require('./base-screen');
-const dismissPermissionAlert = require('./dismiss-permission-alert');
+const dismissPermissionAlert = require('../dismiss-permission-alert');
 
 // Drives the real iOS photo picker presented by Ti.Media.openPhotoGallery.
 // The first open shows the photo-library permission alert; we grant full

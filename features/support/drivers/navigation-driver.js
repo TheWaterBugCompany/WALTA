@@ -1,4 +1,4 @@
-const BaseScreen = require('./base-screen.js');
+const BaseScreen = require('../screens/base-screen.js');
 const { reachSampleTray } = require('./survey-driver');
 
 async function asyncForEach(array, callback) {

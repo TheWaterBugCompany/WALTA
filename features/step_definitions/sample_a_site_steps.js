@@ -4,8 +4,8 @@ const {
     SURVEY_TAXA, FULL_HABITAT,
     fillSiteDetails, fillHabitat, addTaxaViaBrowse, addTaxonViaKeyToSample,
     markSurveyComplete, submitFromSummary, expectTrayTile,
-} = require('../support/survey-driver');
-const { GASTROPOD } = require('../support/training-driver');
+} = require('../support/drivers/survey-driver');
+const { GASTROPOD } = require('../support/drivers/training-driver');
 
 Given('a user has arrived at a site to sample', async function () {
     await this.menu.waitFor();
