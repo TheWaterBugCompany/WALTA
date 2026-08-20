@@ -68,9 +68,7 @@ describe("MenuViewModel", function () {
     expect(fired()).to.be.true;
   });
 
-  // The training feature it will launch isn't built yet, so the button is
-  // owned by the ViewModel like every other but is deliberately inert for now.
-  it("opens the Academy modal when academy is pressed", function () {
+  it("opens the Academy code-entry modal when academy is pressed", function () {
     const vm = makeViewModel();
     const fired = recordTopic(Topics.ACADEMY);
     vm.academy();
