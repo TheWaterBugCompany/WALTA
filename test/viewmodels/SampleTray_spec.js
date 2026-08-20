@@ -625,6 +625,22 @@ describe("SampleTrayViewModel", function () {
       expect(fired).to.equal(false);
     });
 
+    it("announces someIncorrect when at least one taxon is incorrect", function () {
+      const vm = trainingVm(2, fakeAssessor({ 1001: "correct", 1002: "incorrect" }));
+      let fired = false;
+      vm.on("someIncorrect", () => { fired = true; });
+      vm.assess();
+      expect(fired).to.equal(true);
+    });
+
+    it("does not announce someIncorrect when every taxon is correct", function () {
+      const vm = trainingVm(2, fakeAssessor({ 1001: "correct", 1002: "correct" }));
+      let fired = false;
+      vm.on("someIncorrect", () => { fired = true; });
+      vm.assess();
+      expect(fired).to.equal(false);
+    });
+
     it("assesses when the Assess intent is fired on the bus", function () {
       const topics = subscribableTopics();
       const vm = trainingVm(2, fakeAssessor({ 1001: "correct" }), topics);

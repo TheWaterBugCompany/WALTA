@@ -91,11 +91,14 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._reapplyCells();
     this.notifyListeners();
     // A clean run — every graded taxon correct — is the training goal; announce it
-    // so the screen can open the success modal.
+    // so the screen can open the success modal. Otherwise, if any taxon is wrong,
+    // announce that so the screen can surface the "some incorrect" notice.
     const verdicts = Object.keys(this._verdicts).map(k => this._verdicts[k]);
     const correct = verdicts.filter(v => v === "correct").length;
     if (verdicts.length > 0 && correct === verdicts.length) {
       this.trigger("allCorrect", correct);
+    } else if (verdicts.some(v => v === "incorrect")) {
+      this.trigger("someIncorrect");
     }
   }
 
