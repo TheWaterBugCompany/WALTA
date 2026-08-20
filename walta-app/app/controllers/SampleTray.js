@@ -27,6 +27,35 @@ if ( $.args.training ) {
   acb.addTool($.nextButton.getView());
 }
 
+// The assessment notice: fade in, dwell, fade out. Dwell is overridable via args
+// so a spec can poll the auto-hide without a real 4-second wait. visible is driven
+// off timers, not the animate() completion callback — that callback is unreliable
+// for opacity on iOS, so the notice would fade to transparent but never hide.
+var NOTICE_DWELL_MS = $.args.noticeDwellMs || 4000;
+var NOTICE_FADE_MS = 400;
+$.incorrectNoticeLabel.text = "One or more of the expected taxa are incorrect.\nPlease select incorrect identifications below for details.";
+var noticeTimers = [];
+
+function clearNoticeTimers() {
+  noticeTimers.forEach(clearTimeout);
+  noticeTimers = [];
+}
+
+function showIncorrectNotice() {
+  clearNoticeTimers();
+  $.incorrectNotice.opacity = 0;
+  $.incorrectNotice.visible = true;
+  $.incorrectNotice.animate({ opacity: 1, duration: 200 });
+  noticeTimers.push(setTimeout(function () {
+    $.incorrectNotice.animate({ opacity: 0, duration: NOTICE_FADE_MS });
+    noticeTimers.push(setTimeout(function () { $.incorrectNotice.visible = false; }, NOTICE_FADE_MS));
+  }, NOTICE_DWELL_MS));
+}
+exports.showIncorrectNotice = showIncorrectNotice;
+// The base controller only adds $.content + the anchor bar to the window, so the
+// notice (a second top-level view) has to be added as a window overlay itself.
+$.TopLevelWindow.add($.incorrectNotice);
+
 function closeEditScreen() {
   if (typeof $.editTaxon === "object") {
     $.getView().remove($.editTaxon.getView());
@@ -49,6 +78,7 @@ function editTaxon() {
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   closeEditScreen();
+  clearNoticeTimers();
   $.TopLevelWindow.removeEventListener('close', cleanUp);
 });
 

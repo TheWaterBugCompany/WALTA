@@ -2,4 +2,9 @@
 	<ScrollView id="content" class="container" scrollType="horizontal">
 		<View id="tray"/>
 	</ScrollView>
+	<!-- Non-modal assessment notice: touchEnabled false so taps reach the taxa
+	     underneath; shown + auto-faded by the controller on a wrong assessment. -->
+	<View id="incorrectNotice" touchEnabled="false" visible="false">
+		<Label id="incorrectNoticeLabel"/>
+	</View>
 </Alloy>
