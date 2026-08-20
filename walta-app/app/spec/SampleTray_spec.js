@@ -235,6 +235,10 @@ describe( 'SampleTray controller', function() {
     it('should fire the NOTES topic', function(done) {
       actionFiresTopicTest( SampleTray.nextButton.NavButton, 'click', Topics.NOTES, () => done() );
     });
+
+    it('returns to Habitat when Back is tapped in a survey', function(done) {
+      actionFiresTopicTest( SampleTray.backButton.NavButton, 'click', Topics.HABITAT, () => done() );
+    });
   });
 
   context( 'rendering', function() {
@@ -923,6 +927,10 @@ describe( 'SampleTray controller', function() {
         assertVerdict( endcap[0], "cross-icon.png" );
         assertVerdict( endcap[1], "tick-icon.png" );
       });
+    });
+
+    it('returns to the training code-entry screen when Back is tapped', function(done) {
+      actionFiresTopicTest( SampleTray.backButton.NavButton, 'click', Topics.ACADEMY, () => done() );
     });
 
     it('clears the feedback when a taxon is edited', function() {
