@@ -35,6 +35,10 @@ module.exports = function createSampleTray({ view, args, services, bindView }) {
   vm.on("allCorrect", (correctCount) =>
     services.topics.fireTopicEvent(services.topics.TRAINING_SUCCESS, { correctCount }));
 
+  // A wrong assessment surfaces the non-modal notice; the fade is a view effect the
+  // Alloy shell owns (a timed animation, not view-model state).
+  vm.on("someIncorrect", () => view.showIncorrectNotice());
+
   const unbind = bindView(view, vm, {
     tray: {
       width: "trayWidthCss",

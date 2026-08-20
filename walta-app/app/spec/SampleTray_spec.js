@@ -946,6 +946,68 @@ describe( 'SampleTray controller', function() {
     });
   });
 
+  context('incorrect-assessment notice', function() {
+    // After Assess, a wrong identification surfaces a non-modal notice near the top
+    // that fades away on its own. The notice must let taps through to the taxa.
+    function verdictAssessor(verdict) {
+      return { assess: function (taxa) {
+        var v = {};
+        taxa.forEach(function (t) { if (t && t.sampleTaxonId != null) v[t.sampleTaxonId] = verdict; });
+        return v;
+      } };
+    }
+
+    function openWithAssessor(assessor, noticeDwellMs) {
+      Alloy.Models.instance("sample");
+      Alloy.Collections.taxa = Alloy.createCollection("taxa", [
+        Alloy.createModel("taxa", { taxonId: "1", sampleTaxonId: 1, abundance: "3-5" }),
+        Alloy.createModel("taxa", { taxonId: "2", sampleTaxonId: 2, abundance: "6-10" }),
+      ]);
+      view = makeTestServices({ assessor: assessor }).View;
+      openArgs = {
+        key: keyMock,
+        training: true,
+        taxa: Alloy.Collections.instance("taxa"),
+        sample: Alloy.Models.instance("sample"),
+        noticeDwellMs: noticeDwellMs,
+      };
+      return openSampleTray();
+    }
+
+    afterEach(cleanupSampleTray);
+
+    it('shows the notice when an assessment has an incorrect taxon', function () {
+      return openWithAssessor(verdictAssessor("incorrect"), 4000).then(function () {
+        trayVm().assess();
+        return waitFor(function () { return SampleTray.incorrectNotice.visible === true; });
+      });
+    });
+
+    it('keeps the notice hidden when every taxon is correct', function () {
+      return openWithAssessor(verdictAssessor("correct"), 4000).then(function () {
+        trayVm().assess();
+        expect(SampleTray.incorrectNotice.visible).to.equal(false);
+      });
+    });
+
+    it('lets taps through to the taxa underneath (non-modal)', function () {
+      return openWithAssessor(verdictAssessor("incorrect"), 4000).then(function () {
+        expect(SampleTray.incorrectNotice.touchEnabled).to.equal(false);
+      });
+    });
+
+    it('fades the notice away after its dwell', function () {
+      // Short dwell so the auto-hide is observable quickly (production dwell is 4s).
+      return openWithAssessor(verdictAssessor("incorrect"), 300).then(function () {
+        trayVm().assess();
+        return waitFor(function () { return SampleTray.incorrectNotice.visible === true; })
+          .then(function () {
+            return waitFor(function () { return SampleTray.incorrectNotice.visible === false; });
+          });
+      });
+    });
+  });
+
   context('training tray (domain aggregate)', function() {
     // A training session threads the SampleTray domain aggregate (args.tray), not
     // the survey's Alloy taxa collection. The controller must build a
