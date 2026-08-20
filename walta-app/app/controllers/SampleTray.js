@@ -16,7 +16,10 @@ $.noSwipeBack();
 var readOnlyMode = $.args.readonly === true;
 
 var acb = $.getAnchorBar();
-$.backButton = Alloy.createController("GoBackButton", { topic: Topics.HABITAT, slide: "left", readonly: readOnlyMode });
+// Training has no survey stack behind it — Back returns to the session-code entry
+// screen rather than the survey's Habitat.
+var backTopic = $.args.training ? Topics.ACADEMY : Topics.HABITAT;
+$.backButton = Alloy.createController("GoBackButton", { topic: backTopic, slide: "left", readonly: readOnlyMode });
 acb.addTool($.backButton.getView());
 // Training grades the tray instead of moving on to Notes.
 if ( $.args.training ) {
