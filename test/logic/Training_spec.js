@@ -25,7 +25,9 @@ function fakeRepo(tray) {
     added: [],
     removed: [],
     _seq: 0,
-    startSession(code) { this.started = code; return tray; },
+    startSession(code) { this.started = code; tray._items = []; return tray; },
+    currentSessionCode() { return this.started; },
+    loadTray() { return tray; },
     addTaxon(t, taxonId, position) {
       this.added.push({ tray: t, taxonId, position });
       const taxon = { id: ++this._seq, taxonId, position };
@@ -45,7 +47,7 @@ describe("logic/Training", function () {
   beforeEach(function () {
     tray = fakeTray();
     repo = fakeRepo(tray);
-    exercises = fakeExercises({ "101": [90, 198, 176, 131] });
+    exercises = fakeExercises({ "101": [90, 198, 176, 131], "202": [3, 4] });
     training = createTraining({ repo, exercises });
   });
 
@@ -112,5 +114,28 @@ describe("logic/Training", function () {
     training.addTaxon(176);    // appends
 
     expect(repo.added[repo.added.length - 1]).to.deep.include({ taxonId: 176, position: 1 });
+  });
+
+  it("retains the in-progress tray when the same code is re-entered", function () {
+    training.startTraining("101");
+    training.addTaxon(90);
+
+    // A fresh Training over the same repo stands in for leaving and re-entering.
+    const resumed = createTraining({ repo, exercises });
+    expect(resumed.startTraining("101")).to.equal(true);
+    expect(resumed.currentTray()).to.equal(tray);
+    expect(resumed.currentTray().length, "existing taxon retained").to.equal(1);
+    expect(resumed.currentAssessor().assess([{ taxonId: 90, sampleTaxonId: 1 }]))
+      .to.deep.equal({ 1: "correct" });
+  });
+
+  it("clears the tray when a different code is entered", function () {
+    training.startTraining("101");
+    training.addTaxon(90);
+
+    const switched = createTraining({ repo, exercises });
+    expect(switched.startTraining("202")).to.equal(true);
+    expect(repo.started, "started a fresh session for the new code").to.equal("202");
+    expect(switched.currentTray().length, "old taxa cleared").to.equal(0);
   });
 });

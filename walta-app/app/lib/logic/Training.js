@@ -10,7 +10,9 @@ module.exports = function createTraining({ repo, exercises }) {
     startTraining(code) {
       const order = exercises.loadExercise(code);
       if (!order) return false;
-      tray = repo.startSession(code);
+      // Re-entering the same code retains the in-progress tray where the user left
+      // off; a different code starts a fresh session (wiping the old one).
+      tray = repo.currentSessionCode() === code ? repo.loadTray() : repo.startSession(code);
       assessor = createTrainingAssessor(order);
       return true;
     },
