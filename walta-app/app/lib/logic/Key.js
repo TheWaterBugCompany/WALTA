@@ -11,6 +11,15 @@ if ( typeof(_) == "undefined") _ = require('underscore')._;
 var Logger = require('util/Logger');
 var error = (m, tag = "key") => Logger.error(m, tag);
 
+// The chain of nodes from the root down to the given node (root first, leaf last).
+function pathFromRoot( node ) {
+	var path = [];
+	for ( var cur = node; cur; cur = cur.parentLink ) {
+		path.unshift( cur );
+	}
+	return path;
+}
+
 function createKeyNode( args ) {
 	var obj = _(args).defaults({
 		id: '',				// The string id of the this node
@@ -218,6 +227,20 @@ function createKey( args ) {
 
 		getRootNode: function() {
 			return this.root;
+		},
+
+		// The refId of the couplet where the user's path first diverged from
+		// the expected path — i.e. the decision they answered incorrectly.
+		findIncorrectDecision: function( selectedRef, expectedRef ) {
+			var selectedPath = pathFromRoot( this.findTaxon( selectedRef ) );
+			var expectedPath = pathFromRoot( this.findTaxon( expectedRef ) );
+			var limit = Math.min( selectedPath.length, expectedPath.length );
+			for ( var i = 0; i < limit; i++ ) {
+				if ( selectedPath[i] !== expectedPath[i] ) {
+					return selectedPath[i-1].id;
+				}
+			}
+			return null;
 		}
 	});
 	
