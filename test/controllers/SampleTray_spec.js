@@ -17,6 +17,9 @@ function stubBindView() {
 
 function fakeKey() { return { findTaxonById: () => ({ name: "x", bluebug: ["/x.png"] }) }; }
 function fakePlatform() { return { convertSystemToDip: (x) => x, convertDipToSystem: (x) => x }; }
+// The shell exposes showIncorrectNotice (the notice's fade lives in Titanium); the
+// controller calls it on a wrong assess, so the fake view records the calls.
+function fakeView() { return { noticeShown: 0, showIncorrectNotice() { this.noticeShown++; } }; }
 
 describe("SampleTray controller (training)", function () {
   it("opens the success modal when the tray assesses all-correct", function () {
@@ -29,8 +32,9 @@ describe("SampleTray controller (training)", function () {
     };
     const tray = new SampleTray([new Taxon({ id: 1, taxonId: 90, position: 0 })]);
     const assessor = { assess: () => ({ 1: "correct" }) };
+    const view = fakeView();
     const ctl = createSampleTray({
-      view: {},
+      view,
       args: { tray, key: fakeKey(), training: true, assessor },
       services: { topics, platform: fakePlatform() },
       bindView: stubBindView(),
@@ -39,6 +43,7 @@ describe("SampleTray controller (training)", function () {
     ctl.vm.assess();
 
     expect(fired).to.deep.equal([{ t: "trainingsuccess", d: { correctCount: 1 } }]);
+    expect(view.noticeShown, "no incorrect notice on a clean run").to.equal(0);
   });
 
   it("does not open the success modal when a taxon is incorrect", function () {
@@ -54,8 +59,9 @@ describe("SampleTray controller (training)", function () {
       new Taxon({ id: 2, taxonId: 99, position: 1 }),
     ]);
     const assessor = { assess: () => ({ 1: "correct", 2: "incorrect" }) };
+    const view = fakeView();
     const ctl = createSampleTray({
-      view: {},
+      view,
       args: { tray, key: fakeKey(), training: true, assessor },
       services: { topics, platform: fakePlatform() },
       bindView: stubBindView(),
@@ -64,5 +70,6 @@ describe("SampleTray controller (training)", function () {
     ctl.vm.assess();
 
     expect(fired).to.have.length(0);
+    expect(view.noticeShown, "surfaces the incorrect notice instead").to.equal(1);
   });
 });
