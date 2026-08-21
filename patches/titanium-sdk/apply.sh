@@ -37,15 +37,8 @@ apply_patch() {
   local target_file="$2"
   local description="$3"
 
-  local reverse_flag=""
   local action="Applying"
-  local skipped_msg="already applied"
-  if [ "$REVERSE" = true ]; then
-    reverse_flag="-R"
-    action="Reversing"
-    skipped_msg="already reversed"
-  fi
-
+  [ "$REVERSE" = true ] && action="Reversing"
   echo "$action: $description"
 
   # Rewrite patch paths from /tmp/... to just the target filename,
@@ -58,11 +51,30 @@ apply_patch() {
   local target_dir
   target_dir="$(dirname "$target_file")"
 
-  if patch --dry-run $reverse_flag -p1 -d "$target_dir" < "$rewritten" > /dev/null 2>&1; then
-    patch $reverse_flag -p1 -d "$target_dir" < "$rewritten"
-    echo "  OK"
+  # Detect whether the patch is already applied. A plain `patch --dry-run`
+  # succeeds in BOTH directions on Apple's `patch` regardless of state (it
+  # offers to reverse an already-applied patch), which made repeated runs
+  # toggle. `--forward` refuses an already-applied patch, so it is a reliable
+  # signal: it succeeds only when the patch is NOT yet applied.
+  local applied=false
+  patch --forward --dry-run -p1 -d "$target_dir" < "$rewritten" > /dev/null 2>&1 || applied=true
+
+  if [ "$REVERSE" = true ]; then
+    if ! $applied; then
+      echo "  SKIPPED (already reversed)"
+    elif patch -R -p1 -d "$target_dir" < "$rewritten" > /dev/null 2>&1; then
+      echo "  OK"
+    else
+      echo "  SKIPPED (conflicts)"
+    fi
   else
-    echo "  SKIPPED ($skipped_msg or conflicts)"
+    if $applied; then
+      echo "  SKIPPED (already applied)"
+    elif patch --forward -p1 -d "$target_dir" < "$rewritten" > /dev/null 2>&1; then
+      echo "  OK"
+    else
+      echo "  SKIPPED (conflicts)"
+    fi
   fi
 }
 
