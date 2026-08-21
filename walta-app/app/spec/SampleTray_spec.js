@@ -929,8 +929,8 @@ describe( 'SampleTray controller', function() {
       });
     });
 
-    it('returns to the training code-entry screen when Back is tapped', function(done) {
-      actionFiresTopicTest( SampleTray.backButton.NavButton, 'click', Topics.ACADEMY, () => done() );
+    it('returns to the menu when Back is tapped in training', function(done) {
+      actionFiresTopicTest( SampleTray.backButton.NavButton, 'click', Topics.HOME, () => done() );
     });
 
     it('clears the feedback when a taxon is edited', function() {
