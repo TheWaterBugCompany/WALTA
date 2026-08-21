@@ -93,9 +93,67 @@ apply_patch \
   "$SDK_BASE/android/templates/build/lib.build.gradle" \
   "Android: add namespace to module lib.build.gradle template"
 
-# Note: SDK 13.4.0's bundled liveview hook (cli/hooks/liveview.js) is left in
-# place. It re-exports 'liveview/hook/lvhook.js', which our custom liveview fork
-# now provides, so the SDK loads our LiveView natively — no duplicate --liveview.
+# LiveView is our custom fork (pinned in package.json). Two symlinks wire the
+# SDK to it, both idempotent and both reversed by `npm run unpatch-sdk`.
+PROJECT_ROOT="$(cd "$PATCHES_DIR/../.." && pwd)"
+
+# 1. Point the SDK's bundled liveview at the fork. SDK 13.4.0 ships an old
+# liveview 1.5.6 whose hook injects a legacy client that resolves relative
+# requires against the compile stack (wrong for a require() in a deferred
+# callback — it drops the parent dir, e.g. "sinks/ConsoleSink") and runs a
+# separate file server the fork's single-port vite server never provides. The
+# SDK's cli/hooks/liveview.js is `export * from 'liveview/hook/lvhook.js'`, which
+# resolves `liveview` to <sdk>/node_modules/liveview — so symlinking that dir to
+# the fork makes the SDK load the fork's v2 hook and inject its v2 client
+# (single vite port, require resolved against the calling module).
+LV_TARGET="$SDK_BASE/node_modules/liveview"
+LV_SOURCE="$PROJECT_ROOT/node_modules/liveview"
+LV_BACKUP="$SDK_BASE/node_modules/liveview.sdk-bundled"
+if [ "$REVERSE" = true ]; then
+  echo "Reversing: LiveView fork symlink (node_modules/liveview)"
+  if [ -L "$LV_TARGET" ]; then
+    rm -f "$LV_TARGET"
+    [ -d "$LV_BACKUP" ] && mv "$LV_BACKUP" "$LV_TARGET"
+    echo "  OK"
+  else
+    echo "  SKIPPED (not a symlink)"
+  fi
+else
+  echo "Applying: LiveView fork symlink (node_modules/liveview)"
+  if [ ! -e "$LV_SOURCE" ]; then
+    echo "  SKIPPED (liveview not installed at $LV_SOURCE — run npm install first)"
+  elif [ -L "$LV_TARGET" ]; then
+    echo "  SKIPPED (already applied)"
+  else
+    [ -e "$LV_TARGET" ] && mv "$LV_TARGET" "$LV_BACKUP"
+    ln -sfn "$LV_SOURCE" "$LV_TARGET"
+    echo "  OK"
+  fi
+fi
+
+# 2. The `titanium serve` command (LiveView dev server) is hardcoded in CLI v9's
+# sdkCommands map, so the CLI resolves it to <sdk>/cli/commands/serve.js and
+# ignores our liveview fork's paths.commands. The SDK doesn't ship serve.js, so
+# symlink the fork's implementation into place.
+SERVE_TARGET="$SDK_BASE/cli/commands/serve.js"
+SERVE_SOURCE="$PROJECT_ROOT/node_modules/liveview/dist/node/commands/serve.js"
+if [ "$REVERSE" = true ]; then
+  echo "Reversing: LiveView serve.js symlink"
+  if [ -L "$SERVE_TARGET" ]; then
+    rm -f "$SERVE_TARGET"
+    echo "  OK"
+  else
+    echo "  SKIPPED (not a symlink)"
+  fi
+else
+  echo "Applying: LiveView serve.js symlink"
+  if [ -e "$SERVE_SOURCE" ]; then
+    ln -sf "$SERVE_SOURCE" "$SERVE_TARGET"
+    echo "  OK"
+  else
+    echo "  SKIPPED (liveview not installed at $SERVE_SOURCE — run npm install first)"
+  fi
+fi
 
 echo ""
 if [ "$REVERSE" = true ]; then
