@@ -87,6 +87,9 @@ and the build fails in ways that look like SDK bugs:
 - `Namespace not specified` on prebuilt Android modules (e.g. Bugfender) — the SDK's
   `lib.build.gradle` template omits the `namespace` the bundled Android Gradle Plugin
   now requires.
+- LiveView (`--liveview`) failing to serve or start: `titanium serve` reporting an
+  unknown command, or the app aborting at startup with `Requested module not found` for a
+  module in a subdirectory (e.g. `sinks/ConsoleSink`). See the LiveView note below.
 
 ```bash
 npm run patch-sdk      # apply — do this after installing/selecting the SDK
@@ -107,7 +110,33 @@ loads it natively via the SDK's bundled `cli/hooks/liveview.js`, which re-export
 `liveview/hook/lvhook.js` from the fork — so the fork overrides the default package. No
 patch is needed to disable the SDK's LiveView hook.
 
----
+The `export * from 'liveview/hook/lvhook.js'` shim only works if `liveview` resolves to
+the fork — but from `<sdk>/cli/hooks/` Node resolves it to the SDK's own bundled
+`node_modules/liveview` (an old **1.5.6**) first, so the fork never loads. That 1.5.6 hook
+injects a legacy client into `app.js` that (a) resolves relative requires against a global
+*compile stack* rather than the calling module — correct at module load but wrong for a
+`require()` in a deferred callback (e.g. `Logger.configure()` calling
+`require("./sinks/ConsoleSink")` at startup drops the parent dir → app aborts with
+`Requested module not found: sinks/ConsoleSink`), and (b) expects a separate file server on
+a second port that the fork's single-port vite server never provides.
+
+Two SDK-side symlinks (both applied by `npm run patch-sdk`, both needing `npm install`
+first, both reversed by `npm run unpatch-sdk`) fix this:
+
+- **`node_modules/liveview` → the fork.** Symlinking the SDK's bundled liveview to our
+  fork makes the `lvhook` shim load the fork's **v2** hook, which injects the v2 client:
+  single vite port, and relative requires resolved against the calling module (so the
+  deferred-`require` bug simply doesn't exist). The real 1.5.6 is moved aside to
+  `node_modules/liveview.sdk-bundled` and restored on reverse.
+- **`cli/commands/serve.js` → the fork's `serve.js`.** The Titanium CLI (v9) hard-codes
+  `serve` in its `sdkCommands` map, resolving it to `<sdk>/cli/commands/serve.js` and
+  ignoring the fork's `paths.commands`; the SDK ships no `serve.js`.
+
+The `liveview` fork declares `vite@^5`, but the project pins `vite` to `^4.5.0`
+everywhere else (vite 5 is ESM-only and breaks `require('vite')` in the LiveView config —
+see [security.md](security.md)). `package.json` carries an `overrides` entry forcing
+liveview's transitive `vite` down to `^4.5.0`; without it a clean install nests vite 5
+under liveview, which npm flags as `invalid` and which contradicts the documented pin.
 
 ## Android Setup
 
