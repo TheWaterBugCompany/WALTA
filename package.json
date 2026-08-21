@@ -4,7 +4,7 @@
   "description": "The Waterbug App parent project",
   "main": "index.js",
   "optionalDependencies": {
-    "liveview": "github:TheCodeSharman/liveview#fix/android-emulator-unit-test-support"
+    "liveview": "github:TheCodeSharman/liveview#cead7a2"
   },
   "scripts": {
     "install": "sh install.sh",
@@ -72,5 +72,10 @@
     "webpack": "^5.109.2",
     "webpack-cli": "^7.2.2",
     "xmlhttprequest": "^1.8.0"
+  },
+  "overrides": {
+    "liveview": {
+      "vite": "^4.5.0"
+    }
   }
 }
