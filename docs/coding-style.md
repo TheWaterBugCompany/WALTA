@@ -23,6 +23,16 @@ The Alloy constraint only applies to module syntax. `async`/`await` is just Java
 
 `const` by default, `let` when reassigning. Never `var` — block scoping avoids the hoisting and function-scope surprises of `var`. Convert opportunistically when you touch existing `var` declarations; don't undertake bulk rewrites.
 
+## User interface — MVVM, not Alloy controllers
+
+**Every new user-interface element goes through the MVVM model.** State and behaviour live in a `ChangeNotifier` ViewModel (`lib/mvvm/viewmodels/`); the Titanium-free screen controller (`lib/mvvm/controllers/`) declares the view through `bindView` — property bindings, `command(...)` for imperative one-shots (including animations via a widget's `animate`), `input`/`measure` for inbound Titanium, `collection`/`component` for child views. This is testable at the Node layer and keeps Titanium behind one seam.
+
+**Alloy controllers (`app/controllers/*.js`) are a residual Titanium shell — put no UI logic there.** Timers, animation sequencing, show/hide state, text, event wiring, conditionals on view state: all of that is ViewModel + `bindView`, never the shell. The *only* code that belongs in an Alloy controller is glue that is genuinely impossible to express through the ViewModel because it is a Titanium quirk — e.g. attaching a view the base controller doesn't add, a native window/orientation workaround. Each such line earns a short *why*-comment explaining the quirk. "It was easier to write it here" is not a Titanium quirk.
+
+**If `bindView` can't yet express what you need, extend `bindView` — don't escape to the shell.** A fade, a transition, a new inbound measurement: add the binding type to `bindView` (with its own unit test) so the next screen gets it for free. This is the architecture-vision rule — *grow `bindView` to capture Titanium rather than escape it* (see [architecture-vision.md](architecture-vision.md)). The residual-shell exception is the thing you justify, not the default.
+
+The test for "does this belong in the shell?": *could this be written against the ViewModel + `bindView` instead?* If yes — even if it takes a new `bindView` feature — it does not go in the Alloy controller.
+
 ## Defensive code
 
 **Trust inputs from systems you control.** When parsing values from our own backend, our own config, or our own storage, default to the simplest correct parse — `parseInt`, `JSON.parse`, plain destructuring — and let downstream fallback paths catch malformed values. Strict parsers (round-trip-string equality, regex pre-validation, exhaustive type guards) belong at *untrusted* boundaries — direct user input, third-party APIs we don't own, files chosen from the filesystem. If our own backend sends garbage, that's a server bug; the fix is on the server, not a stricter parser on the client.

@@ -3,6 +3,12 @@ const { endcapTile, interiorTile } = require("./SampleTrayTile");
 
 const identity = (x) => x;
 
+// The non-modal "some incorrect" assessment notice.
+const NOTICE_TEXT =
+  "One or more of the expected taxa are incorrect.\nPlease select incorrect identifications below for details.";
+const NOTICE_DWELL_MS = 4000;   // how long it dwells before fading
+const NOTICE_FADE_OUT_MS = 400; // must match the fadeOutNotice command's duration
+
 // Titanium-free view-model for the ice-cube SampleTray. Owns all layout geometry
 // (derived from the measured viewport in dip), the scroll windowing, and the
 // per-cell content + intent — so the controller keeps no Titanium input wiring.
@@ -14,7 +20,7 @@ const identity = (x) => x;
 // SampleTaxaIcon/SampleTrayPlus slots) read their geometry, kinds and intent
 // payload back through the public accessors here.
 class SampleTrayViewModel extends ChangeNotifier {
-  constructor({ taxaSource, topics, toDip, toSystem, training, assessor }) {
+  constructor({ taxaSource, topics, toDip, toSystem, training, assessor, setTimer, clearTimer, noticeDwellMs }) {
     super();
     this._taxaSource = taxaSource;
     this._topics = topics;
@@ -23,6 +29,12 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._readonly = taxaSource.readonly === true;
     this._training = training === true;
     this._assessor = assessor;
+    // Injected so the notice's dwell/fade is Node-testable without real waits.
+    this._setTimer = setTimer || ((fn, ms) => setTimeout(fn, ms));
+    this._clearTimer = clearTimer || ((id) => clearTimeout(id));
+    this._noticeDwellMs = noticeDwellMs || NOTICE_DWELL_MS;
+    this._noticeVisible = false;
+    this._noticeTimers = [];
     this._verdicts = null; // null until assessed → blank tick/cross overlay
     this._viewportWidth = 0;
     this._viewportHeight = 0;
@@ -98,8 +110,34 @@ class SampleTrayViewModel extends ChangeNotifier {
     if (verdicts.length > 0 && correct === verdicts.length) {
       this.trigger("allCorrect", correct);
     } else if (verdicts.some(v => v === "incorrect")) {
-      this.trigger("someIncorrect");
+      this._showIncorrectNotice();
     }
+  }
+
+  // ── "Some incorrect" notice ─────────────────────────────────────────────────
+  // Visibility + text are bound (bindView); the fade is a bindView command
+  // (fadeInNotice/fadeOutNotice → animate). The VM owns the dwell → fade-out →
+  // hide lifecycle on injected timers, so the Alloy shell holds none of it.
+  get noticeVisible() { return this._noticeVisible; }
+  get noticeText() { return NOTICE_TEXT; }
+
+  _showIncorrectNotice() {
+    this._clearNoticeTimers();
+    this._noticeVisible = true;
+    this.notifyListeners();
+    this.trigger("fadeInNotice");
+    this._noticeTimers.push(this._setTimer(() => {
+      this.trigger("fadeOutNotice");
+      this._noticeTimers.push(this._setTimer(() => {
+        this._noticeVisible = false;
+        this.notifyListeners();
+      }, NOTICE_FADE_OUT_MS));
+    }, this._noticeDwellMs));
+  }
+
+  _clearNoticeTimers() {
+    this._noticeTimers.forEach((t) => this._clearTimer(t));
+    this._noticeTimers = [];
   }
 
   // Drop the feedback (a taxa edit re-opens the key), re-rendering blank overlays.
@@ -185,6 +223,7 @@ class SampleTrayViewModel extends ChangeNotifier {
   }
 
   dispose() {
+    this._clearNoticeTimers();
     if (typeof this._taxaSource.offChange === "function") {
       this._taxaSource.offChange(this._onSourceChange);
     }

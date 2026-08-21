@@ -10,6 +10,8 @@ WALTA (Waterbug App) is a cross-platform mobile app for iOS and Android that ena
 
 Before writing or editing code, consult [docs/coding-style.md](docs/coding-style.md) — module system per directory, async/await direction, the defensive-code policy (trust inputs from systems we control; extract helpers for intent, not size; question cargo-culted defensiveness; let it error on unexpected input), and the comment policy (default to none; short *why* comments only — single line; never narrate the change, recap the bug, replay hypotheses, or include external refs like `WB-XXX` — that belongs in the commit message; architectural narrative belongs in `docs/`, not source headers).
 
+**Every new user-interface element goes through the MVVM model — never put UI logic in an Alloy controller.** State/behaviour live in a ViewModel (`lib/mvvm/viewmodels/`) declared through `bindView` in the Titanium-free screen controller (`lib/mvvm/controllers/`). Alloy controllers (`app/controllers/`) hold only genuine Titanium glue that `bindView` cannot express (and if it can't yet — e.g. an animation — extend `bindView` rather than escape to the shell). See [docs/coding-style.md](docs/coding-style.md) "User interface — MVVM, not Alloy controllers".
+
 ## Methodology
 
 This project follows test-driven development (Kent Beck style): each behavioural change starts with a small failing test, then the minimal code to make it pass, then a tidy-up pass. Work in small increments and prefer small commits focused on a single change. The point is to drive design with tests and refactor continuously so tech debt doesn't accumulate — coverage is a byproduct of good tests, not the target.
