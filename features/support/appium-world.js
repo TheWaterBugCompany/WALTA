@@ -164,13 +164,50 @@ async function resetApp() {
     }
 }
 
+// Poll until the app process is actually gone. `pm clear` force-stops the app
+// but ActivityManager tears the task down asynchronously; launching before that
+// settles lets a second force-stop's "remove task" kill the freshly-started
+// process on a slow emulator. pidof exits non-zero when no process matches.
+async function waitForAppProcessGone({ timeoutMs = 10000, intervalMs = 250 } = {}) {
+    const dev = adbDeviceArgs();
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+        let running;
+        try {
+            running = !!execFileSync(adb(), [...dev, 'shell', 'pidof', APP_ID]).toString().trim();
+        } catch (_) {
+            running = false;
+        }
+        if (!running) return;
+        await new Promise((r) => setTimeout(r, intervalMs));
+    }
+}
+
 // Wipe + relaunch the Android app to a clean process, then wait for the menu.
 async function hardResetAndroid() {
     androidClearAndGrant();
-    await global.launcher.launch(APP_ID, launchArgs());
-    await global.driver.waitUntil(
-        () => isDisplayed('~Waterbug Survey.'),
-        { timeout: 30000, interval: 500, timeoutMsg: 'menu not shown after Android hard reset' });
+    // pm clear already force-stopped the app; wait for that to settle, then
+    // launch WITHOUT a second force-stop (-S) — the double force-stop's task
+    // teardown races its own start on a contended emulator and kills the
+    // launching process, after which `am start -W` blocks ~160s. Launch with
+    // wait:false so a killed launch fails fast (~2s) instead of hanging.
+    await waitForAppProcessGone();
+    await launchAndroidAndWaitForMenu({ restart: false });
+}
+
+// Launch and poll for the menu; if it doesn't appear the launch may have raced
+// the pm-clear teardown and been killed, so relaunch once WITH a force-stop
+// (the app is fully settled by now) before giving up.
+async function launchAndroidAndWaitForMenu({ restart }) {
+    await global.launcher.launch(APP_ID, launchArgs(), { restart, wait: false });
+    try {
+        await global.driver.waitUntil(
+            () => isDisplayed('~Waterbug Survey.'),
+            { timeout: 30000, interval: 500, timeoutMsg: 'menu not shown after Android hard reset' });
+    } catch (e) {
+        if (restart) throw e;
+        await launchAndroidAndWaitForMenu({ restart: true });
+    }
 }
 
 // In-app reset via the `walta://reset` deeplink (lib/util/AppReset.js).

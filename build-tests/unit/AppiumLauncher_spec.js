@@ -287,6 +287,33 @@ describe("AppiumLauncher", function() {
       expect(joined).to.include("--ez debug true");
     });
 
+    it("omits -S (no force-stop) when restart is false", async function() {
+      const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.launch("net.thewaterbug.waterbug", null, { restart: false });
+      const args = fakeSpawn.firstCall.args[1];
+      expect(args).to.not.include("-S");
+      expect(args).to.include("start");
+    });
+
+    it("omits -W (no wait-for-launch) when wait is false", async function() {
+      const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.launch("net.thewaterbug.waterbug", null, { wait: false });
+      const args = fakeSpawn.firstCall.args[1];
+      expect(args).to.not.include("-W");
+      expect(args).to.include("start");
+    });
+
+    it("defaults to -W -S (force-stop + wait) when no options are given", async function() {
+      const fakeSpawn = sinon.stub().callsFake(() => makeFakeChildExitingZero());
+      const launcher = new AppiumLauncher("android", { startAppium: fakeStartAppium, spawn: fakeSpawn, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.launch("net.thewaterbug.waterbug");
+      const args = fakeSpawn.firstCall.args[1];
+      expect(args).to.include("-W");
+      expect(args).to.include("-S");
+    });
+
     it("launches the iOS app via mobile: launchApp with bundleId and arguments", async function() {
       const launcher = new AppiumLauncher("ios", { startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
       await launcher.launch("net.thewaterbug.waterbug", { userEmail: "test@example.com" });

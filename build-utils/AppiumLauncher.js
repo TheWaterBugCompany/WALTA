@@ -266,21 +266,27 @@ class AppiumLauncher {
     }
   }
 
-  async launch(appId, launchArgs) {
+  async launch(appId, launchArgs, { restart = true, wait = true } = {}) {
     const driver = await this.connect();
     if (this.platform === "android") {
       // Bypass Appium's `mobile: startActivity` for the launch — its
       // `optionalIntentArguments` parameter is silently ignored under
       // uiautomator2 (verified empirically: per-scenario re-launches
       // arrive with `intent.getStringExtra("cerdiServerUrl") == null`).
-      // Drop straight to `adb shell am start -S` instead; -S force-stops
-      // the app first so JS re-runs at init and Alloy.CFG picks up new
-      // extras, and `am start` honours --es directly.
+      // Drop straight to `adb shell am start` instead; `am start` honours
+      // --es directly. `-S` force-stops the app first so JS re-runs at init
+      // and Alloy.CFG picks up new extras — but a caller that has already
+      // force-stopped (e.g. `pm clear`) passes restart:false to avoid a second
+      // force-stop whose task teardown races its own start on a slow emulator.
+      // `-W` waits for the launch; wait:false returns immediately so a killed
+      // launch fails fast instead of blocking ~160s.
       const adbBin = process.env.ANDROID_SDK_ROOT
         ? `${process.env.ANDROID_SDK_ROOT}/platform-tools/adb`
         : "adb";
-      const args = ["shell", "am", "start", "-W", "-S",
-        "-n", `${appId}/${this.appActivity}`];
+      const args = ["shell", "am", "start"];
+      if (wait) args.push("-W");
+      if (restart) args.push("-S");
+      args.push("-n", `${appId}/${this.appActivity}`);
       const extras = buildOptionalIntentArguments(launchArgs);
       if (extras) args.push(...extras.split(" "));
       await new Promise((resolve, reject) => {
