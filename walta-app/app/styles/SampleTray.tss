@@ -11,14 +11,16 @@
   height: Ti.UI.FILL
 }
 
-// The incorrect-assessment notice: a white rounded card near the top, primary
-// teal text. Starts transparent (the controller fades it in on a wrong assess).
+// The incorrect-assessment notice: a slightly translucent white rounded card
+// near the top, primary teal text. It hugs its text (width SIZE) so the
+// horizontal padding matches the vertical. Starts transparent (the controller
+// fades it in on a wrong assess).
 "#incorrectNotice": {
   top: "10dp",
-  width: "80%",
+  width: Ti.UI.SIZE,
   height: Ti.UI.SIZE,
   layout: "vertical",
-  backgroundColor: Alloy.CFG.colors.white,
+  backgroundColor: "#E6FFFFFF",
   borderRadius: "12dp",
   opacity: 0,
   zIndex: 100,
@@ -30,9 +32,9 @@
 "#incorrectNoticeLabel": {
   top: "14dp",
   bottom: "14dp",
-  left: "16dp",
-  right: "16dp",
-  width: Ti.UI.FILL,
+  left: "14dp",
+  right: "14dp",
+  width: Ti.UI.SIZE,
   height: Ti.UI.SIZE,
   color: Alloy.CFG.colors.primary,
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
