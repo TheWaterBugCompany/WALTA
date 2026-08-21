@@ -26,6 +26,10 @@ When building or restyling a screen (view/TSS work), **always drive it from a de
 
 When a code smell surfaces mid-session — tangled deps, hidden state, a function doing two things, a workaround stacking on a workaround — pause and flag it for review rather than silently restructuring or pressing on. Code happens fast in these sessions; the human reviewer is the project's refactor-detector, and surfacing smells gives them a checkpoint to decide refactor-now vs. carry-on.
 
+### No flakes
+
+**A flaky CI failure is a defect, not noise — it gets a prompt fix, never a merge-past or a green-until-it-retries.** When a test fails for a timing/environment/ordering reason rather than a real regression, treat it as the top-priority bug on that branch: diagnose the root cause (load [diagnose-bug](.claude/skills/diagnose-bug/SKILL.md)) and fix it before the feature work merges. "It's just a flake, re-run it" is not an outcome — a test that can go red without the code being wrong is broken, and every retry-to-green normalises ignoring CI. This is the enforcement half of the "poll for state, never delay, never retry-to-go-green" rule the [tdd](.claude/skills/tdd/SKILL.md) and [fast-iteration](.claude/skills/fast-iteration/SKILL.md) skills already state for writing tests: here it also means you don't get to *ship* past one. Retries exist only to absorb genuinely contended infrastructure (a dropped device session), and even those are marked and re-run by a cause-based mechanism — never a blind retry bolted on to force a pass.
+
 ## Workflow
 
 ### Starting a Trello task
