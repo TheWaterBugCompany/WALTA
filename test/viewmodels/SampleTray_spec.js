@@ -75,12 +75,26 @@ function subscribableTopics() {
   };
 }
 
-function trainingVm(len, assessor, topics) {
+// Controllable timers so the notice's dwell/fade run synchronously in tests (no
+// real setTimeout leaking past the run). runAll fires every uncleared callback in
+// order, including ones a callback schedules.
+function fakeTimers() {
+  const scheduled = [];
+  return {
+    setTimer(fn) { scheduled.push({ fn, cleared: false }); return scheduled.length - 1; },
+    clearTimer(id) { if (scheduled[id]) scheduled[id].cleared = true; },
+    runAll() { for (let i = 0; i < scheduled.length; i++) if (!scheduled[i].cleared) scheduled[i].fn(); },
+  };
+}
+
+function trainingVm(len, assessor, topics, timers = fakeTimers()) {
   const vm = new SampleTrayViewModel({
     taxaSource: fakeTaxaSource(taxaOf(len)),
     training: true,
     assessor: assessor || fakeAssessor({}),
     topics,
+    setTimer: timers.setTimer,
+    clearTimer: timers.clearTimer,
   });
   vm.setViewport({ width: 300, height: 100 });
   return vm;
@@ -625,20 +639,36 @@ describe("SampleTrayViewModel", function () {
       expect(fired).to.equal(false);
     });
 
-    it("announces someIncorrect when at least one taxon is incorrect", function () {
+    it("shows the incorrect notice when at least one taxon is wrong", function () {
       const vm = trainingVm(2, fakeAssessor({ 1001: "correct", 1002: "incorrect" }));
-      let fired = false;
-      vm.on("someIncorrect", () => { fired = true; });
       vm.assess();
-      expect(fired).to.equal(true);
+      expect(vm.noticeVisible).to.equal(true);
     });
 
-    it("does not announce someIncorrect when every taxon is correct", function () {
+    it("keeps the notice hidden when every taxon is correct", function () {
       const vm = trainingVm(2, fakeAssessor({ 1001: "correct", 1002: "correct" }));
-      let fired = false;
-      vm.on("someIncorrect", () => { fired = true; });
       vm.assess();
-      expect(fired).to.equal(false);
+      expect(vm.noticeVisible).to.equal(false);
+    });
+
+    it("hides the notice after its dwell and fade", function () {
+      const timers = fakeTimers();
+      const vm = trainingVm(2, fakeAssessor({ 1002: "incorrect" }), undefined, timers);
+      vm.assess();
+      expect(vm.noticeVisible, "shown during the dwell").to.equal(true);
+      timers.runAll();
+      expect(vm.noticeVisible, "hidden after the dwell + fade").to.equal(false);
+    });
+
+    it("fires the fade-in then fade-out commands around the dwell", function () {
+      const timers = fakeTimers();
+      const vm = trainingVm(2, fakeAssessor({ 1002: "incorrect" }), undefined, timers);
+      const events = [];
+      vm.on("fadeInNotice", () => events.push("in"));
+      vm.on("fadeOutNotice", () => events.push("out"));
+      vm.assess();
+      timers.runAll();
+      expect(events).to.deep.equal(["in", "out"]);
     });
 
     it("assesses when the Assess intent is fired on the bus", function () {

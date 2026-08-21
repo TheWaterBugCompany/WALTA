@@ -971,7 +971,12 @@ describe( 'SampleTray controller', function() {
     it('shows the notice when an assessment has an incorrect taxon', function () {
       return openWithAssessor(verdictAssessor("incorrect"), 4000).then(function () {
         trayVm().assess();
-        return waitFor(function () { return SampleTray.incorrectNotice.visible === true; });
+        // visible is the bound VM state; opacity > 0.9 confirms the fadeInNotice
+        // command actually animated it up (not just left it transparent).
+        return waitFor(function () {
+          return SampleTray.incorrectNotice.visible === true
+            && SampleTray.incorrectNotice.opacity > 0.9;
+        });
       });
     });
 
