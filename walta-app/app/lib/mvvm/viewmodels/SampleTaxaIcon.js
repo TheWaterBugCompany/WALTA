@@ -67,19 +67,10 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  // A taxon opens the editor; a blank cell is inert. The cell's tray position
-  // rides along so a training re-identification lands back in the same slot.
-  tap() {
-    if (this._kind !== "taxon") return;
-    const topics = this._tray.topics;
-    topics.fireTopicEvent(topics.IDENTIFY, {
-      sampleTaxonId: this.sampleTaxonId,
-      taxonId: this.taxonId,
-      readonly: this._tray.readonly,
-      position: this._position,
-      training: this._tray.trainingMode,
-    });
-  }
+  // Report the tap to the tray by collection index; the tray decides what a
+  // taxon/blank cell tap means (a blank cell is inert — the tray's own
+  // selectCell gates on that), not this purely-presentational cell.
+  tap() { this._tray.selectCell(this._collectionIndex); }
 
   _dataEquals(o) {
     const a = this._data;

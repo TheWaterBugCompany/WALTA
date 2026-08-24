@@ -31,15 +31,9 @@ class SampleTrayPlusViewModel extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  tap() {
-    const topics = this._tray.topics;
-    topics.fireTopicEvent(topics.SELECT_METHOD, {
-      allowAddToSample: true,
-      surveyType: this._tray.surveyType(),
-      unknownBug: true,
-      training: this._tray.trainingMode,
-    });
-  }
+  // Report the tap to the tray by collection index; the tray decides what a
+  // plus/add-behind cell tap means, not this purely-presentational cell.
+  tap() { this._tray.selectCell(this._collectionIndex); }
 }
 
 module.exports = SampleTrayPlusViewModel;
