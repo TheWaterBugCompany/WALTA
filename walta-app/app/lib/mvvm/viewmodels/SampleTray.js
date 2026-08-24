@@ -3,21 +3,20 @@ const IceCubeTrayViewModel = require("./IceCubeTray");
 
 const identity = (x) => x;
 
-// The non-modal "some incorrect" assessment notice.
-const NOTICE_TEXT =
-  "One or more of the expected taxa are incorrect.\nPlease select incorrect identifications below for details.";
-const NOTICE_DWELL_MS = 4000;   // how long it dwells before fading
-const NOTICE_FADE_OUT_MS = 400; // must match the fadeOutNotice command's duration
-
-// Titanium-free view-model for the ice-cube SampleTray. Composes an
+// Titanium-free view-model for the survey ice-cube SampleTray. Composes an
 // IceCubeTrayViewModel (the shared geometry/windowing/cell-content engine —
 // see lib/mvvm/viewmodels/IceCubeTray.js) as `this._tray`, delegating the
 // tile/slot components' surface to it with `owner: this` so those components
 // report back here, not to the engine directly. `taxaSource` is the injected
 // SampleTraySource: { length(), at(i) -> plain per-taxon data, surveyType(),
 // onChange(cb), readonly }.
+//
+// No training-shaped member at all — no verdicts, no assessor, no notice —
+// that machinery lives wholly in the peer TrainingTrayViewModel
+// (lib/mvvm/viewmodels/TrainingTray.js), which composes its own
+// IceCubeTrayViewModel independently rather than this class carrying it.
 class SampleTrayViewModel extends ChangeNotifier {
-  constructor({ taxaSource, topics, toDip, toSystem, training, assessor, setTimer, clearTimer, noticeDwellMs }) {
+  constructor({ taxaSource, topics, toDip, toSystem }) {
     super();
     this._taxaSource = taxaSource;
     this._topics = topics;
@@ -28,46 +27,16 @@ class SampleTrayViewModel extends ChangeNotifier {
     // composed engine, so its state-change/command events have to pass through.
     this._tray.addListener(() => this.notifyListeners());
     this._tray.on("scrollToRightEnd", () => this.trigger("scrollToRightEnd"));
-    // A taxa add/change/remove drops any training feedback (an edit re-opens
-    // the key) — must clear *before* the engine's tile/slot cells re-derive
-    // and re-read verdictFor via their own notifyListeners cascade below.
-    this._tray.on("refreshing", () => { this._verdicts = null; });
     // A cell tap reports through the engine as a neutral "this collection
     // index was selected" — this VM decides what that means (IDENTIFY vs
     // SELECT_METHOD), not the tile/slot components.
     this._tray.on("iceCubeTrayCellSelected", (idx) => this._onCellSelected(idx));
-    this._training = training === true;
-    this._assessor = assessor;
-    // Injected so the notice's dwell/fade is Node-testable without real waits.
-    this._setTimer = setTimer || ((fn, ms) => setTimeout(fn, ms));
-    this._clearTimer = clearTimer || ((id) => clearTimeout(id));
-    this._noticeDwellMs = noticeDwellMs || NOTICE_DWELL_MS;
-    this._noticeVisible = false;
-    this._noticeTimers = [];
-    this._verdicts = null; // null until assessed → blank tick/cross overlay
-    // In training the Assess intent arrives on the bus (fired by the anchor bar);
-    // the VM owns the behaviour, so it grades itself when asked.
-    this._onAssess = () => this.assess();
-    if (this._training && topics && typeof topics.subscribe === "function") {
-      topics.subscribe(topics.ASSESS, this._onAssess);
-    }
   }
 
   // ── Accessors the cell + slot VMs read ────────────────────────────────────
   get topics() { return this._topics; }
   get readonly() { return this._tray.readonly; }
-  // A training session hides abundance and swaps Next for Assess; verdicts stay
-  // blank until assess() runs.
-  get trainingMode() { return this._training; }
 
-  // The training verdict for a taxon, keyed by sampleTaxonId — filled by the
-  // assessor on assess(). Blank (null) until then, so a taxon renders no
-  // tick/cross overlay.
-  verdictFor(sampleTaxonId) {
-    if (!this._verdicts || sampleTaxonId == null) return null;
-    const verdict = this._verdicts[sampleTaxonId];
-    return verdict == null ? null : verdict;
-  }
   surveyType() {
     return typeof this._taxaSource.surveyType === "function"
       ? this._taxaSource.surveyType()
@@ -81,64 +50,6 @@ class SampleTrayViewModel extends ChangeNotifier {
   // constructor forwards its notifyListeners/scrollToRightEnd.
   setViewport(size) {
     this._tray.setViewport(size);
-  }
-
-  // ── Training assessment ────────────────────────────────────────────────────
-
-  // Run the injected assessor over the current taxa and reveal the verdicts. The
-  // cell re-application makes each slot re-read verdictFor so the overlays appear.
-  assess() {
-    const taxa = [];
-    for (let i = 0; i < this._taxaSource.length(); i++) {
-      taxa.push(this._taxaSource.at(i));
-    }
-    this._verdicts = this._assessor.assess(taxa);
-    this._tray.reapplyCells();
-    this.notifyListeners();
-    // A clean run — every graded taxon correct — is the training goal; announce it
-    // so the screen can open the success modal. Otherwise, if any taxon is wrong,
-    // announce that so the screen can surface the "some incorrect" notice.
-    const verdicts = Object.keys(this._verdicts).map(k => this._verdicts[k]);
-    const correct = verdicts.filter(v => v === "correct").length;
-    if (verdicts.length > 0 && correct === verdicts.length) {
-      this.trigger("allCorrect", correct);
-    } else if (verdicts.some(v => v === "incorrect")) {
-      this._showIncorrectNotice();
-    }
-  }
-
-  // ── "Some incorrect" notice ─────────────────────────────────────────────────
-  // Visibility + text are bound (bindView); the fade is a bindView command
-  // (fadeInNotice/fadeOutNotice → animate). The VM owns the dwell → fade-out →
-  // hide lifecycle on injected timers, so the Alloy shell holds none of it.
-  get noticeVisible() { return this._noticeVisible; }
-  get noticeText() { return NOTICE_TEXT; }
-
-  _showIncorrectNotice() {
-    this._clearNoticeTimers();
-    this._noticeVisible = true;
-    this.notifyListeners();
-    this.trigger("fadeInNotice");
-    this._noticeTimers.push(this._setTimer(() => {
-      this.trigger("fadeOutNotice");
-      this._noticeTimers.push(this._setTimer(() => {
-        this._noticeVisible = false;
-        this.notifyListeners();
-      }, NOTICE_FADE_OUT_MS));
-    }, this._noticeDwellMs));
-  }
-
-  _clearNoticeTimers() {
-    this._noticeTimers.forEach((t) => this._clearTimer(t));
-    this._noticeTimers = [];
-  }
-
-  // Drop the feedback (a taxa edit re-opens the key), re-rendering blank overlays.
-  clearAssessment() {
-    if (!this._verdicts) return;
-    this._verdicts = null;
-    this._tray.reapplyCells();
-    this.notifyListeners();
   }
 
   get viewWidth() { return this._tray.viewWidth; }
@@ -167,18 +78,14 @@ class SampleTrayViewModel extends ChangeNotifier {
   }
 
   // Re-derive cell content across every cached tile (a taxa add/change/remove),
-  // then re-window and reveal the right edge. The relay's "refreshed" handler
-  // drops any training feedback and forwards notifyListeners/scrollToRightEnd.
+  // then re-window and reveal the right edge. The relay forwards
+  // notifyListeners/scrollToRightEnd.
   refresh() {
     this._tray.refresh();
   }
 
   dispose() {
-    this._clearNoticeTimers();
     this._tray.dispose();
-    if (this._training && this._topics && typeof this._topics.unsubscribe === "function") {
-      this._topics.unsubscribe(this._topics.ASSESS, this._onAssess);
-    }
     super.dispose();
   }
 
@@ -200,7 +107,7 @@ class SampleTrayViewModel extends ChangeNotifier {
         taxonId: data.taxonId,
         readonly: this.readonly,
         position: collectionIndex,
-        training: this._training,
+        training: false,
       });
       return;
     }
@@ -208,7 +115,7 @@ class SampleTrayViewModel extends ChangeNotifier {
       allowAddToSample: true,
       surveyType: this.surveyType(),
       unknownBug: true,
-      training: this._training,
+      training: false,
     });
   }
 }

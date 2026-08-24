@@ -1,0 +1,12 @@
+
+"#content" : {
+  disableBounce: true,
+  canCancelEvents: true,
+  backgroundColor: "#aaa",
+  top: 0
+}
+
+"tray": {
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL
+}

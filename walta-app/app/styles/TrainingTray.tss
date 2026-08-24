@@ -1,16 +1,4 @@
 
-"#content" : {
-  disableBounce: true,
-  canCancelEvents: true,
-  backgroundColor: "#aaa",
-  top: 0
-}
-
-"tray": {
-  width: Ti.UI.FILL,
-  height: Ti.UI.FILL
-}
-
 // The incorrect-assessment notice: a slightly translucent white rounded card
 // near the top, primary teal text. It hugs its text (width SIZE) so the
 // horizontal padding matches the vertical. Starts transparent (the controller

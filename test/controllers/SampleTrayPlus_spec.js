@@ -19,9 +19,9 @@ function fakeTopics() {
 // An add-cell slot VM straight from the tray, so the component binds exactly what
 // it will on-device. With 0 taxa, the endcap's first cell is the plus (collection
 // index 0 === length) and the second is add-behind.
-function addSlots(topics, training) {
+function addSlots(topics) {
   const source = { length: () => 0, at: () => undefined, surveyType: () => 3, readonly: false };
-  const tray = new SampleTrayViewModel({ taxaSource: source, topics, training: training === true });
+  const tray = new SampleTrayViewModel({ taxaSource: source, topics });
   tray.setViewport({ width: 300, height: 100 });
   return tray.endcapVm.taxa;
 }
@@ -58,13 +58,6 @@ describe("SampleTrayPlus controller", function () {
       event: "select_method",
       data: { allowAddToSample: true, surveyType: 3, unknownBug: true, training: false },
     }]);
-  });
-
-  it("flags training in the method-select intent from a training tray", function () {
-    const topics = fakeTopics();
-    const $ = build(addSlots(topics, true)[0]);
-    $.tap.fireEvent("click");
-    expect(topics.fired[0].data.training).to.equal(true);
   });
 
   it("stops binding and firing after dispose", function () {

@@ -45,7 +45,7 @@ describe('Academy start button state', function() {
 		win = wrapViewInWindow( ctl.getView() );
 		windowOpenTest( win, function() {
 			var exercises = createTrainingExercises({ "101": [90,198,176,131], "999": [181,179] });
-			var topics = { fireTopicEvent: function(){}, TRAINING_STARTED: "t", SAMPLETRAY: "s" };
+			var topics = { fireTopicEvent: function(){}, TRAINING_STARTED: "t", TRAININGTRAY: "s" };
 			var repo = { startSession: function(){ return { length: 0, taxa: function(){ return []; } }; } };
 			var services = { Training: createTraining({ topics: topics, repo: repo, exercises: exercises }), topics: topics };
 			lib = createAcademy({ view: ctl, close: function(){}, services: services, bindView: makeBinder(function(){}, Alloy.CFG.colors) });

@@ -63,6 +63,7 @@ async function startApp(options) {
   });
   routePromise(Topics.BROWSE,  (data) =>   Navigation.openController("TaxonList", data));
   routePromise(Topics.SAMPLETRAY,  (data) =>   Navigation.openController("SampleTray", data));
+  routePromise(Topics.TRAININGTRAY,  (data) =>   Navigation.openController("TrainingTray", data));
   // A survey routes an identification through the EditTaxon overlay (data.taxonId
   // opens it). Training has no per-taxon editor: a fresh identification (no
   // sampleTaxonId) is added straight to the session tray, and the tray always
@@ -78,8 +79,7 @@ async function startApp(options) {
         return Navigation.openModal("MethodSelect", { training: true, allowAddToSample: true, surveyType: null, unknownBug: false, position: data.position });
       }
       Training.addTaxon(data.taxonId, data.position);
-      return Navigation.openController("SampleTray", {
-        training: true,
+      return Navigation.openController("TrainingTray", {
         tray: Training.currentTray(),
         assessor: Training.currentAssessor(),
       });

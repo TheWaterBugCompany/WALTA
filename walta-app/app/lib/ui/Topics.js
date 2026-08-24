@@ -58,6 +58,7 @@ var topics = {
 	DETAILED: 'detailed',
 
 	SAMPLETRAY: 'sampletray',
+	TRAININGTRAY: 'trainingtray',
 
 	SPEEDBUG: 'speedbug',
 

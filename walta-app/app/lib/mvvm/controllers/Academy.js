@@ -25,8 +25,7 @@ module.exports = function createAcademyController({ view, close, services, bindV
   vm.on("start", function (code) {
     if (services.Training.startTraining(code)) {
       close();
-      services.topics.fireTopicEvent(services.topics.SAMPLETRAY, {
-        training: true,
+      services.topics.fireTopicEvent(services.topics.TRAININGTRAY, {
         tray: services.Training.currentTray(),
         assessor: services.Training.currentAssessor(),
       });
