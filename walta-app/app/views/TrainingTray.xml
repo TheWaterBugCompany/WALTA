@@ -1,0 +1,8 @@
+<Alloy>
+	<Require type="view" src="IceCubeTray" id="iceCubeTray"/>
+	<!-- Non-modal assessment notice: touchEnabled false so taps reach the taxa
+	     underneath; shown + auto-faded by the controller on a wrong assessment. -->
+	<View id="incorrectNotice" touchEnabled="false" visible="false">
+		<Label id="incorrectNoticeLabel"/>
+	</View>
+</Alloy>

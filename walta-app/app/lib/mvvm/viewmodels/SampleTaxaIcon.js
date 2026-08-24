@@ -26,14 +26,21 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
   get iconVisible() { return this._kind === "taxon"; }
   get image() { return this._data ? this._data.silhouette : null; }
   get abundanceText() { return this._data ? this._data.abundance : ""; }
-  get abundanceVisible() { return this._kind === "taxon" && !this._tray.trainingMode; }
+  // Training taxa carry no abundance (TrainingTraySource always supplies
+  // null), so this is data-driven rather than asking the tray whether it's a
+  // training session — the survey/training distinction never has to reach
+  // this purely-presentational cell.
+  get abundanceVisible() { return this._kind === "taxon" && this._data.abundance != null; }
   get sampleTaxonId() { return this._data ? this._data.sampleTaxonId : null; }
   get taxonId() { return this._data ? this._data.taxonId : null; }
 
-  // The training tick/cross overlay. The verdict for this taxon comes from the
-  // tray (the assessor fills it, keyed by sampleTaxonId); blank/plus cells have
-  // no sampleTaxonId, so they never get one. Blank until assessed → hidden.
-  get verdict() { return this._tray.verdictFor(this.sampleTaxonId); }
+  // The training tick/cross overlay. Only TrainingTrayViewModel implements
+  // verdictFor — the survey tray doesn't, so this is a capability check
+  // (mirrors the `typeof taxaSource.onChange === "function"` idiom in
+  // IceCubeTrayViewModel) rather than a training flag.
+  get verdict() {
+    return typeof this._tray.verdictFor === "function" ? this._tray.verdictFor(this.sampleTaxonId) : null;
+  }
   get verdictImage() {
     if (this.verdict === "correct") return "/images/tick-icon.png";
     if (this.verdict === "incorrect") return "/images/cross-icon.png";

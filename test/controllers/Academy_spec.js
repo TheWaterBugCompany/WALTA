@@ -44,7 +44,7 @@ describe("Academy controller", function () {
     training = fakeTraining(["789"]);
     services = {
       Training: training,
-      topics: { SAMPLETRAY: "sampletray", fireTopicEvent: (t, d) => fired.push({ t, d }) },
+      topics: { TRAININGTRAY: "trainingtray", fireTopicEvent: (t, d) => fired.push({ t, d }) },
     };
     ctl = createAcademyController({ view, close: () => closed++, services, bindView: makeBinder() });
   });
@@ -104,7 +104,7 @@ describe("Academy controller", function () {
     view.startButton.fireEvent("click");
     expect(training.startedWith).to.equal("789");
     expect(closed).to.equal(1);
-    expect(fired).to.deep.equal([{ t: "sampletray", d: { training: true, tray: training.tray, assessor: training.assessor } }]);
+    expect(fired).to.deep.equal([{ t: "trainingtray", d: { tray: training.tray, assessor: training.assessor } }]);
   });
 
   it("does nothing when Start is tapped on an invalid (disabled) code", function () {
