@@ -32,6 +32,10 @@ class SampleTrayViewModel extends ChangeNotifier {
     // the key) — must clear *before* the engine's tile/slot cells re-derive
     // and re-read verdictFor via their own notifyListeners cascade below.
     this._tray.on("refreshing", () => { this._verdicts = null; });
+    // A cell tap reports through the engine as a neutral "this collection
+    // index was selected" — this VM decides what that means (IDENTIFY vs
+    // SELECT_METHOD), not the tile/slot components.
+    this._tray.on("iceCubeTrayCellSelected", (idx) => this._onCellSelected(idx));
     this._training = training === true;
     this._assessor = assessor;
     // Injected so the notice's dwell/fade is Node-testable without real waits.
@@ -182,6 +186,31 @@ class SampleTrayViewModel extends ChangeNotifier {
 
   cellKind(collectionIndex) { return this._tray.cellKind(collectionIndex); }
   cellData(collectionIndex) { return this._tray.cellData(collectionIndex); }
+
+  // ── Cell selection — the slot components report a tap here; this VM decides
+  // what it means ──────────────────────────────────────────────────────────
+
+  selectCell(collectionIndex) { this._tray.selectCell(collectionIndex); }
+
+  _onCellSelected(collectionIndex) {
+    if (this.cellKind(collectionIndex) === "taxon") {
+      const data = this.cellData(collectionIndex);
+      this._topics.fireTopicEvent(this._topics.IDENTIFY, {
+        sampleTaxonId: data.sampleTaxonId,
+        taxonId: data.taxonId,
+        readonly: this.readonly,
+        position: collectionIndex,
+        training: this._training,
+      });
+      return;
+    }
+    this._topics.fireTopicEvent(this._topics.SELECT_METHOD, {
+      allowAddToSample: true,
+      surveyType: this.surveyType(),
+      unknownBug: true,
+      training: this._training,
+    });
+  }
 }
 
 module.exports = SampleTrayViewModel;

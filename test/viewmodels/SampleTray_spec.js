@@ -466,6 +466,25 @@ describe("SampleTrayViewModel", function () {
       blank.tap();
       expect(topics.fired).to.deep.equal([]);
     });
+
+    it("targets the tapped taxon's own collection index outside the endcap, not a tile-relative slot number that collides across tiles", function () {
+      // 6 taxa fills the endcap [0,1] and the first interior tile [2,4,3,5].
+      // This cell is tile 0's first slot: tile-relative position 0, but its
+      // collection index is 2 — distinct values, unlike the endcap where they
+      // coincide. Re-identifying via this taxon's collection index is what lets
+      // Training.addTaxon(taxonId, position) find the right taxon by its stored
+      // (collection-index-space) position rather than colliding with whatever
+      // else happens to sit at tile-relative slot 0.
+      const topics = fakeTopics();
+      const vm = vmWithTopics(6, topics);
+      vm.setViewport({ width: 300, height: 100 });
+      const cell = (vm.setScrollOffset(0), vm.visibleTiles[0].taxa[0]);
+      cell.tap();
+      expect(topics.fired).to.deep.equal([{
+        event: "identify",
+        data: { sampleTaxonId: 1003, taxonId: 3, readonly: false, position: 2, training: false },
+      }]);
+    });
   });
 
   describe("notification", function () {
