@@ -1,5 +1,5 @@
 const ChangeNotifier = require("../../util/ChangeNotifier");
-const { endcapTile, interiorTile } = require("./SampleTrayTile");
+const IceCubeTrayViewModel = require("./IceCubeTray");
 
 const identity = (x) => x;
 
@@ -9,16 +9,13 @@ const NOTICE_TEXT =
 const NOTICE_DWELL_MS = 4000;   // how long it dwells before fading
 const NOTICE_FADE_OUT_MS = 400; // must match the fadeOutNotice command's duration
 
-// Titanium-free view-model for the ice-cube SampleTray. Owns all layout geometry
-// (derived from the measured viewport in dip), the scroll windowing, and the
-// per-cell content + intent — so the controller keeps no Titanium input wiring.
-// The presenter hands it a clean viewport size (system px) and the scroll offset
-// through bindView; the VM converts with the injected toDip/toSystem so it stays
-// Node-testable. `taxaSource` is the injected SampleTraySource:
-// { length(), at(i) -> plain per-taxon data, surveyType(), onChange(cb), readonly }.
-// The tile + slot VMs (SampleTrayTile — endcap or interior — and its
-// SampleTaxaIcon/SampleTrayPlus slots) read their geometry, kinds and intent
-// payload back through the public accessors here.
+// Titanium-free view-model for the ice-cube SampleTray. Composes an
+// IceCubeTrayViewModel (the shared geometry/windowing/cell-content engine —
+// see lib/mvvm/viewmodels/IceCubeTray.js) as `this._tray`, delegating the
+// tile/slot components' surface to it with `owner: this` so those components
+// report back here, not to the engine directly. `taxaSource` is the injected
+// SampleTraySource: { length(), at(i) -> plain per-taxon data, surveyType(),
+// onChange(cb), readonly }.
 class SampleTrayViewModel extends ChangeNotifier {
   constructor({ taxaSource, topics, toDip, toSystem, training, assessor, setTimer, clearTimer, noticeDwellMs }) {
     super();
@@ -26,7 +23,15 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._topics = topics;
     this._toDip = toDip || identity;
     this._toSystem = toSystem || identity;
-    this._readonly = taxaSource.readonly === true;
+    this._tray = new IceCubeTrayViewModel({ taxaSource, toDip: this._toDip, toSystem: this._toSystem, owner: this });
+    // Relay the engine's own broadcasts — bindView watches this VM, not the
+    // composed engine, so its state-change/command events have to pass through.
+    this._tray.addListener(() => this.notifyListeners());
+    this._tray.on("scrollToRightEnd", () => this.trigger("scrollToRightEnd"));
+    // A taxa add/change/remove drops any training feedback (an edit re-opens
+    // the key) — must clear *before* the engine's tile/slot cells re-derive
+    // and re-read verdictFor via their own notifyListeners cascade below.
+    this._tray.on("refreshing", () => { this._verdicts = null; });
     this._training = training === true;
     this._assessor = assessor;
     // Injected so the notice's dwell/fade is Node-testable without real waits.
@@ -36,14 +41,6 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._noticeVisible = false;
     this._noticeTimers = [];
     this._verdicts = null; // null until assessed → blank tick/cross overlay
-    this._viewportWidth = 0;
-    this._viewportHeight = 0;
-    this._scrollx = 0;
-    this._tileCache = new Map();
-    this._endcapVm = endcapTile(this);
-    this._visibleTiles = [];
-    this._onSourceChange = () => this.refresh();
-    if (typeof taxaSource.onChange === "function") taxaSource.onChange(this._onSourceChange);
     // In training the Assess intent arrives on the bus (fired by the anchor bar);
     // the VM owns the behaviour, so it grades itself when asked.
     this._onAssess = () => this.assess();
@@ -54,7 +51,7 @@ class SampleTrayViewModel extends ChangeNotifier {
 
   // ── Accessors the cell + slot VMs read ────────────────────────────────────
   get topics() { return this._topics; }
-  get readonly() { return this._readonly; }
+  get readonly() { return this._tray.readonly; }
   // A training session hides abundance and swaps Next for Assess; verdicts stay
   // blank until assess() runs.
   get trainingMode() { return this._training; }
@@ -73,21 +70,13 @@ class SampleTrayViewModel extends ChangeNotifier {
       : null;
   }
 
-  // ── Geometry (bit-for-bit with the old controller's getters) ──────────────
+  // ── Geometry — delegated to the composed IceCubeTrayViewModel ─────────────
 
-  // The presenter hands a clean, laid-out viewport size (system px) — the
-  // Titanium measurement hack lives in measureView, not here. Convert to dip and
-  // re-derive geometry.
+  // The presenter hands a clean, laid-out viewport size (system px); the
+  // engine converts to dip and re-derives geometry. The relay set up in the
+  // constructor forwards its notifyListeners/scrollToRightEnd.
   setViewport(size) {
-    this._viewportWidth = this._toDip(size.width);
-    this._viewportHeight = this._toDip(size.height);
-    // Two-level cascade: cached cells re-apply their geometry (and their slots'),
-    // then the screen re-applies trayWidth + re-windows, then asks Ti to reveal the
-    // right edge.
-    this._reapplyCells();
-    this._recomputeWindow();
-    this.notifyListeners();
-    this.trigger("scrollToRightEnd");
+    this._tray.setViewport(size);
   }
 
   // ── Training assessment ────────────────────────────────────────────────────
@@ -100,7 +89,7 @@ class SampleTrayViewModel extends ChangeNotifier {
       taxa.push(this._taxaSource.at(i));
     }
     this._verdicts = this._assessor.assess(taxa);
-    this._reapplyCells();
+    this._tray.reapplyCells();
     this.notifyListeners();
     // A clean run — every graded taxon correct — is the training goal; announce it
     // so the screen can open the success modal. Otherwise, if any taxon is wrong,
@@ -144,127 +133,55 @@ class SampleTrayViewModel extends ChangeNotifier {
   clearAssessment() {
     if (!this._verdicts) return;
     this._verdicts = null;
-    this._reapplyCells();
+    this._tray.reapplyCells();
     this.notifyListeners();
   }
 
-  _reapplyCells() {
-    this._tileCache.forEach(t => t.reapply());
-    this._endcapVm.reapply();
-  }
+  get viewWidth() { return this._tray.viewWidth; }
+  get endcapHeight() { return this._tray.endcapHeight; }
+  get endcapWidth() { return this._tray.endcapWidth; }
+  get middleWidth() { return this._tray.middleWidth; }
+  get cellWidth() { return this._tray.cellWidth; }
+  get tileCount() { return this._tray.tileCount; }
+  get trayWidth() { return this._tray.trayWidth; }
+  get trayWidthCss() { return this._tray.trayWidthCss; }
+  get scrollTargetX() { return this._tray.scrollTargetX; }
+  tileLeft(n) { return this._tray.tileLeft(n); }
+  get tileWidth() { return this._tray.tileWidth; }
+  mapTileNumToCollection(n) { return this._tray.mapTileNumToCollection(n); }
+  collectionIndicesForTile(n) { return this._tray.collectionIndicesForTile(n); }
+  roundToTile(x) { return this._tray.roundToTile(x); }
+  visibleRange(scrollx) { return this._tray.visibleRange(scrollx); }
 
-  get viewWidth() { return this._viewportWidth; }
-  get endcapHeight() { return this._viewportHeight; }
-  get endcapWidth() { return this.endcapHeight * 0.5; }
-  get middleWidth() { return this.endcapWidth * 1.3; }
-  // Each cell fills half the tile's middle width (two columns), less 1dp.
-  get cellWidth() { return this.middleWidth / 2 - 1; }
-
-  get tileCount() {
-    return Math.floor((this._taxaSource.length() - 2) / 4) + 1;
-  }
-
-  get trayWidth() {
-    const width = this.tileCount * this.middleWidth + this.endcapWidth;
-    return width < this.viewWidth ? this.viewWidth : width;
-  }
-
-  get trayWidthCss() { return `${this.trayWidth}dp`; }
-
-  // The system-px offset the scroll command animates to — the far right edge.
-  get scrollTargetX() { return this._toSystem(this.trayWidth - this.viewWidth); }
-
-  tileLeft(n) { return n * this.middleWidth + this.endcapWidth; }
-  get tileWidth() { return this.middleWidth + 1; }
-
-  mapTileNumToCollection(n) { return n * 4 + 2; }
-
-  // The 2x2 ice-cube grid, filled column-major: visual cells map to collection
-  // offsets [0, 2, 1, 3] from the tile's base index.
-  collectionIndicesForTile(n) {
-    const base = this.mapTileNumToCollection(n);
-    return [0, 2, 1, 3].map(offset => base + offset);
-  }
-
-  roundToTile(x) {
-    return Math.floor((x - this.endcapWidth) / this.middleWidth);
-  }
-
-  visibleRange(scrollx) {
-    return {
-      leftEdge: this.roundToTile(scrollx),
-      rightEdge: this.roundToTile(scrollx + this.viewWidth + this.middleWidth - 1),
-    };
-  }
-
-  // ── Windowing (the binder's keyed diff subsumes the spike's materialized set)
-
-  // The single, always-present endcap VM — bound as one fixed component.
-  get endcapVm() { return this._endcapVm; }
-  get visibleTiles() { return this._visibleTiles; }
+  get endcapVm() { return this._tray.endcapVm; }
+  get visibleTiles() { return this._tray.visibleTiles; }
 
   // Titanium hands the raw scroll offset (system px) via an input() binding.
+  // The relay forwards the engine's notifyListeners.
   setScrollOffset(px) {
-    this._scrollx = this._toDip(px);
-    this._recomputeWindow();
-    this.notifyListeners();
+    this._tray.setScrollOffset(px);
   }
 
   // Re-derive cell content across every cached tile (a taxa add/change/remove),
-  // then re-window and reveal the right edge. Positional icon reuse is preserved
-  // inside each cell's slot VMs. A taxa change also drops any training feedback.
+  // then re-window and reveal the right edge. The relay's "refreshed" handler
+  // drops any training feedback and forwards notifyListeners/scrollToRightEnd.
   refresh() {
-    this._verdicts = null;
-    this._tileCache.forEach(t => t.update());
-    this._endcapVm.update();
-    this._recomputeWindow();
-    this.notifyListeners();
-    this.trigger("scrollToRightEnd");
+    this._tray.refresh();
   }
 
   dispose() {
     this._clearNoticeTimers();
-    if (typeof this._taxaSource.offChange === "function") {
-      this._taxaSource.offChange(this._onSourceChange);
-    }
+    this._tray.dispose();
     if (this._training && this._topics && typeof this._topics.unsubscribe === "function") {
       this._topics.unsubscribe(this._topics.ASSESS, this._onAssess);
     }
     super.dispose();
   }
 
-  _recomputeWindow() {
-    const { leftEdge, rightEdge } = this.visibleRange(this._scrollx);
-    const tiles = [];
-    for (let n = Math.max(0, leftEdge); n <= rightEdge - 1; n++) {
-      tiles.push(this._tileVm(n));
-    }
-    this._visibleTiles = tiles;
-  }
-
-  _tileVm(n) {
-    let vm = this._tileCache.get(n);
-    if (!vm) {
-      vm = interiorTile(this, n);
-      this._tileCache.set(n, vm);
-    }
-    return vm;
-  }
-
   // ── Cell content (mirrors the old addTrayIcon / updateTrayIcon table) ──────
 
-  cellKind(collectionIndex) {
-    const len = this._taxaSource.length();
-    if (collectionIndex < len) {
-      return this._taxaSource.at(collectionIndex) ? "taxon" : "blank";
-    }
-    if (collectionIndex === len) return this._readonly ? "blank" : "plus";
-    return this._readonly ? "blank" : "addBehind";
-  }
-
-  cellData(collectionIndex) {
-    return this._taxaSource.at(collectionIndex);
-  }
+  cellKind(collectionIndex) { return this._tray.cellKind(collectionIndex); }
+  cellData(collectionIndex) { return this._tray.cellData(collectionIndex); }
 }
 
 module.exports = SampleTrayViewModel;
