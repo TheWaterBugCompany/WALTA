@@ -3,18 +3,6 @@ const IceCubeTrayViewModel = require("./IceCubeTray");
 
 const identity = (x) => x;
 
-// Titanium-free view-model for the survey ice-cube SampleTray. Composes an
-// IceCubeTrayViewModel (the shared geometry/windowing/cell-content engine —
-// see lib/mvvm/viewmodels/IceCubeTray.js) as `this._tray`, delegating the
-// tile/slot components' surface to it with `owner: this` so those components
-// report back here, not to the engine directly. `taxaSource` is the injected
-// SampleTraySource: { length(), at(i) -> plain per-taxon data, surveyType(),
-// onChange(cb), readonly }.
-//
-// No training-shaped member at all — no verdicts, no assessor, no notice —
-// that machinery lives wholly in the peer TrainingTrayViewModel
-// (lib/mvvm/viewmodels/TrainingTray.js), which composes its own
-// IceCubeTrayViewModel independently rather than this class carrying it.
 class SampleTrayViewModel extends ChangeNotifier {
   constructor({ taxaSource, topics, toDip, toSystem }) {
     super();
