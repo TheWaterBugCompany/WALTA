@@ -66,7 +66,7 @@ describe("logic/Training", function () {
       { taxonId: 90, sampleTaxonId: 1 },
       { taxonId: 999, sampleTaxonId: 2 },
     ]);
-    expect(verdicts).to.deep.equal({ 1: "correct", 2: "incorrect" });
+    expect(verdicts).to.deep.equal(["correct", "incorrect", "incorrect", "incorrect"]);
   });
 
   it("refuses an unknown code — no session", function () {
@@ -125,8 +125,8 @@ describe("logic/Training", function () {
     expect(resumed.startTraining("101")).to.equal(true);
     expect(resumed.currentTray()).to.equal(tray);
     expect(resumed.currentTray().length, "existing taxon retained").to.equal(1);
-    expect(resumed.currentAssessor().assess([{ taxonId: 90, sampleTaxonId: 1 }]))
-      .to.deep.equal({ 1: "correct" });
+    expect(resumed.currentAssessor().assess([{ taxonId: 90, sampleTaxonId: 1 }])[0])
+      .to.equal("correct");
   });
 
   it("clears the tray when a different code is entered", function () {
