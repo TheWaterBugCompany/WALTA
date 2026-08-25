@@ -89,9 +89,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
   }
 
   // ── "Some incorrect" notice ─────────────────────────────────────────────────
-  // Visibility + text are bound (bindView); the fade is a bindView command
-  // (fadeInNotice/fadeOutNotice → animate). The VM owns the dwell → fade-out →
-  // hide lifecycle on injected timers, so the Alloy shell holds none of it.
   get noticeVisible() { return this._noticeVisible; }
   get noticeText() { return NOTICE_TEXT; }
 
