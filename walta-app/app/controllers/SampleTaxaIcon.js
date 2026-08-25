@@ -20,6 +20,9 @@ function strokedNumber( text ) {
 }
 
 function applyNumber() {
+  // Every tray cell is a SampleTaxaIcon, but only training's numbered ones ever
+  // show a numeral.
+  if ( ! vm.numberVisible ) return;
   if ( OS_IOS ) {
     $.number.attributedString = strokedNumber( vm.numberText );
     return;

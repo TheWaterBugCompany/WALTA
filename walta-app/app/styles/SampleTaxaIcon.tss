@@ -51,8 +51,8 @@
 // The offset is what makes it draw at all — a zero offset renders nothing.
 ".cellNumber[platform=android]": {
   shadowColor: Alloy.CFG.colors.primary,
-  shadowOffset: { x: 2, y: 2 },
-  shadowRadius: 4
+  shadowOffset: { x: 3, y: 3 },
+  shadowRadius: 1
 }
 
 // The tick/cross overlay: a square badge inset into the cell's lower-left, hidden
