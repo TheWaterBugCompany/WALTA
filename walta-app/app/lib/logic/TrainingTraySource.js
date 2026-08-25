@@ -18,8 +18,10 @@ function toIconData(taxon, key) {
 module.exports = function createTrainingTraySource(tray, key, readonly) {
   return {
     length: function () { return tray.length; },
+    // Cells are addressed by tray position, not insertion order: a taxon can be
+    // identified into any numbered slot, so the tray is sparse.
     at: function (i) {
-      const taxon = tray.at(i);
+      const taxon = tray.taxa().find((t) => t.position === i);
       return taxon ? toIconData(taxon, key) : undefined;
     },
     // Training has no survey type; null routes the key to its root — the full

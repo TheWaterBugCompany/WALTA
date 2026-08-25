@@ -35,6 +35,15 @@ describe("logic/TrainingTraySource", function () {
     });
   });
 
+  it("addresses cells by tray position, not insertion order", function () {
+    // Numbered cells let a taxon be identified into any slot, so the tray can be
+    // sparse — cell 3 holds the taxon whose position is 3, and cell 0 is empty.
+    const tray = trayWith(new Taxon({ id: 7, taxonId: 90, position: 3 }));
+    const source = createTrainingTraySource(tray, key, false);
+    expect(source.at(0)).to.equal(undefined);
+    expect(source.at(3)).to.include({ sampleTaxonId: 7, taxonId: 90 });
+  });
+
   it("returns null surveyType so the key opens at its root (the full key)", function () {
     expect(createTrainingTraySource(trayWith(), key, false).surveyType()).to.equal(null);
   });
