@@ -34,8 +34,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
     this._noticeVisible = false;
     this._noticeTimers = [];
     this._verdicts = null; // null until assessed → blank tick/cross overlay
-    // The Assess intent arrives on the bus (fired by the anchor bar); the VM
-    // owns the behaviour, so it grades itself when asked.
     this._onAssess = () => this.assess();
     if (topics && typeof topics.subscribe === "function") {
       topics.subscribe(topics.ASSESS, this._onAssess);
