@@ -36,23 +36,18 @@
   height: "80%"
 }
 
-// The training tray's cell number.
+// The training tray's cell number: a shadow lifts the white numeral off the
+// white tray. The offset is what makes it draw — a zero offset renders nothing.
 ".cellNumber": {
   color: Alloy.CFG.colors.white,
   width: Ti.UI.FILL,
   height: Ti.UI.FILL,
   textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-  visible: false
-}
-
-// Android has no glyph stroke, so it settles for a shadow to lift the white
-// numeral off the white tray; iOS strokes it properly in the shell controller.
-// The offset is what makes it draw at all — a zero offset renders nothing.
-".cellNumber[platform=android]": {
   shadowColor: Alloy.CFG.colors.primary,
   shadowOffset: { x: 3, y: 3 },
-  shadowRadius: 1
+  shadowRadius: 1,
+  visible: false
 }
 
 // The tick/cross overlay: a square badge inset into the cell's lower-left, hidden
