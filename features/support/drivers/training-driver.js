@@ -36,11 +36,12 @@ async function startTrainingSession(world, code = "999") {
     await world.academy.start();
 }
 
-// Walk the key to a taxon and add it to the training tray. keySearch.choose
-// waits for the screen to settle before tapping, so each tap lands on a fully
-// transitioned (interactive) screen — no retries.
-async function identifyTrainingTaxonViaKey(world, questions) {
-    await world.sample.selectAddSample();
+// Walk the key to a taxon and add it to the training tray cell the caller names
+// (the tray is numbered, and the number carries the position through the key).
+// keySearch.choose waits for the screen to settle before tapping, so each tap
+// lands on a fully transitioned (interactive) screen — no retries.
+async function identifyTrainingTaxonViaKey(world, questions, cell) {
+    await world.sample.selectCell(cell);
     await world.methodSelect.viaKey();
     await chooseThroughKeyToTraining(world, questions);
 }
@@ -65,8 +66,8 @@ async function chooseThroughKeyToTraining(world, questions) {
 async function completeTrainingSession(world) {
     await world.menu.selectAcademy();
     await startTrainingSession(world, "999");
-    await identifyTrainingTaxonViaKey(world, GASTROPOD);
-    await identifyTrainingTaxonViaKey(world, LIMPET);
+    await identifyTrainingTaxonViaKey(world, GASTROPOD, 1);
+    await identifyTrainingTaxonViaKey(world, LIMPET, 2);
     await world.sample.assess();
     await reidentifyTrainingTaxonViaKey(world, 184, MUSSEL);   // 184 = the wrong Ancylidae
     await world.sample.assess();

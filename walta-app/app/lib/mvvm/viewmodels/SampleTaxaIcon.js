@@ -52,6 +52,7 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
     if (this._kind === "taxon") {
       return `Taxon ${this._data.taxonId}, ${this._data.name}, abundance ${this._data.abundance}`;
     }
+    if (this._kind === "number") return `Cell ${this.numberText}`;
     return "";
   }
 

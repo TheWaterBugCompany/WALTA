@@ -11,7 +11,7 @@ async function beginTrainingIdentifyViaKey(world) {
     await world.menu.selectAcademy();
     await startTrainingSession(world, "999");
     await world.sample.waitFor();   // the empty training tray
-    await world.sample.selectAddSample();
+    await world.sample.selectCell(1);
     await world.methodSelect.viaKey();
 }
 

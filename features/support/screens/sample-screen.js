@@ -8,6 +8,14 @@ class SampleScreen extends BaseScreen {
         await this.click("Add Sample");
         await this.world.methodSelect.waitFor();
     }
+
+    // Training: a cell still waiting to be identified is labelled by its number;
+    // tapping it opens the method chooser for that position. Training has no
+    // add-to-sample plus — the number is how a taxon gets added.
+    async selectCell( number ) {
+        await this.click(`Cell ${number}`);
+        await this.world.methodSelect.waitFor();
+    }
     async openTaxon( id ) {
         // SampleTaxaIcon's accessibilityLabel is
         // "Taxon <id>, <species name>, abundance <abundance>" — the

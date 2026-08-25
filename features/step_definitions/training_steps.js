@@ -15,11 +15,11 @@ Then('an empty training tray is shown', async function () {
 });
 
 When('I identify a gastropod through the key', async function () {
-  await identifyTrainingTaxonViaKey(this, GASTROPOD);
+  await identifyTrainingTaxonViaKey(this, GASTROPOD, 1);
 });
 
 When('I identify a freshwater limpet through the key', async function () {
-  await identifyTrainingTaxonViaKey(this, LIMPET);
+  await identifyTrainingTaxonViaKey(this, LIMPET, 2);
 });
 
 When('I assess the training tray', async function () {
