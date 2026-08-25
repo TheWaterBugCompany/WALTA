@@ -12,7 +12,7 @@ function makeIconView() {
     padIcon: makeWidget(),
     icon: makeWidget(),
     abundance: makeWidget(),
-    numberOutline: makeWidget(),
+    number: makeWidget(),
     number: makeWidget(),
     verdict: makeWidget(),
     tap: makeWidget(),
@@ -74,10 +74,12 @@ describe("SampleTaxaIcon controller", function () {
     expect($.tap.accessibilityLabel).to.equal("Taxon 1, Species 1, abundance 3-5");
   });
 
-  it("binds a numbered cell's number in place of the taxon", function () {
+  // The numeral's text is applied by the Alloy shell (a stroked attributed string
+  // on iOS), so what the binding layer owns is showing it and sizing it.
+  it("shows a numbered cell's numeral in place of the taxon", function () {
     const $ = build(numberedSlotVm(1));
-    expect($.number.text).to.equal("2");
     expect($.number.visible).to.equal(true);
+    expect($.number.font.fontSize).to.match(/dp$/);
     expect($.padIcon.visible).to.equal(false);
   });
 

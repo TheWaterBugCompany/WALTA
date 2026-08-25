@@ -79,11 +79,16 @@ describe( 'TrainingTray controller', function() {
     return tile.children[1].children;
   }
 
-  // A cell's children are [ padIcon, numberOutline, number, verdict, tapSurface ];
-  // the abundance badge is padIcon's 2nd child and the tap surface is always the
-  // last child.
-  function numberOf( cell ) { return cell.children[2]; }
-  function verdictOf( cell ) { return cell.children[3]; }
+  // A cell's children are [ padIcon, number, verdict, tapSurface ]; the abundance
+  // badge is padIcon's 2nd child and the tap surface is always the last child.
+  function numberOf( cell ) { return cell.children[1]; }
+  function verdictOf( cell ) { return cell.children[2]; }
+
+  // iOS carries the numeral as a stroked attributed string, Android as plain text.
+  function numberTextOf( cell ) {
+    var label = numberOf( cell );
+    return label.attributedString ? label.attributedString.text : label.text;
+  }
   function abundanceOf( cell ) { return cell.children[0].children[1]; }
   function silhouetteOf( cell ) { return cell.children[0].children[0]; }
   function tapSurface( cell ) { return cell.children[cell.children.length - 1]; }
@@ -260,7 +265,7 @@ describe( 'TrainingTray controller', function() {
       var endcap = getTaxaIcons( TrainingTray.tray.children[0] );
       expect( numberOf( endcap[0] ).visible, "an identified cell shows its taxon" ).to.equal(false);
       expect( numberOf( endcap[1] ).visible ).to.equal(true);
-      expect( numberOf( endcap[1] ).text ).to.equal("2");
+      expect( numberTextOf( endcap[1] ) ).to.equal("2");
     });
 
     it('leaves a cell past the exercise unnumbered', function() {
