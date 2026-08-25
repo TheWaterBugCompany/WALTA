@@ -31,8 +31,6 @@ class SampleTrayPlusViewModel extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  // Report the tap to the tray by collection index; the tray decides what a
-  // plus/add-behind cell tap means, not this purely-presentational cell.
   tap() { this._tray.selectCell(this._collectionIndex); }
 }
 
