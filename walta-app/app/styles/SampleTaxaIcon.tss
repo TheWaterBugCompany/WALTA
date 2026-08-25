@@ -36,16 +36,23 @@
   height: "80%"
 }
 
-// Ti has no text stroke and a Label shadow only ever draws to one side, so the
-// outline is a larger primary-coloured numeral behind the white one.
-".cellNumberOutline": {
-  color: Alloy.CFG.colors.primary,
+// The training tray's cell number.
+".cellNumber": {
+  color: Alloy.CFG.colors.white,
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL,
+  textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+  verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
   visible: false
 }
 
-".cellNumber": {
-  color: Alloy.CFG.colors.white,
-  visible: false
+// Android has no glyph stroke, so it settles for a shadow to lift the white
+// numeral off the white tray; iOS strokes it properly in the shell controller.
+// The offset is what makes it draw at all — a zero offset renders nothing.
+".cellNumber[platform=android]": {
+  shadowColor: Alloy.CFG.colors.primary,
+  shadowOffset: { x: 2, y: 2 },
+  shadowRadius: 4
 }
 
 // The tick/cross overlay: a square badge inset into the cell's lower-left, hidden

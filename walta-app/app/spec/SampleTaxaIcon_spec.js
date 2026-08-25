@@ -13,9 +13,9 @@ var SampleTaxaIconViewModel = require("mvvm/viewmodels/SampleTaxaIcon");
 describe("SampleTaxaIcon verdict overlay", function () {
   var view, comp, win;
 
-  // children = [ padIcon, numberOutline, number, verdict, tapSurface ] — the
-  // verdict ImageView sits above the silhouette, below the tap surface.
-  function verdictImageView() { return comp.view.children[3]; }
+  // children = [ padIcon, number, verdict, tapSurface ] — the verdict ImageView
+  // sits above the silhouette, below the tap surface.
+  function verdictImageView() { return comp.view.children[2]; }
 
   function fakeTray(verdict) {
     return { cellWidth: 60, verdictFor: function () { return verdict; }, topics: Topics, readonly: false };
