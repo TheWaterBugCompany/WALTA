@@ -77,8 +77,6 @@ class SampleTrayViewModel extends ChangeNotifier {
 
   get cellCount() { return this._tray.cellCount; }
 
-  // Taxa first, then the add affordance: the plus on the first free cell and
-  // invisible add-behind cells past it. A readonly sample offers neither.
   cellKind(collectionIndex) {
     const len = this._taxaSource.length();
     if (collectionIndex < len) {

@@ -18,8 +18,7 @@ function toIconData(taxon, key) {
 module.exports = function createTrainingTraySource(tray, key, readonly) {
   return {
     length: function () { return tray.length; },
-    // Cells are addressed by tray position, not insertion order: a taxon can be
-    // identified into any numbered slot, so the tray is sparse.
+    // Sparse: a taxon can be identified into any numbered cell.
     at: function (i) {
       const taxon = tray.taxa().find((t) => t.position === i);
       return taxon ? toIconData(taxon, key) : undefined;
