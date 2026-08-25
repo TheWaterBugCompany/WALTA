@@ -13,13 +13,6 @@ keyMock.addSpeedbugIndex( speedBugIndexMock );
 var SampleTrayModel = require('models/SampleTray');
 var Taxon = require('models/Taxon');
 
-// Training's peer spec is SampleTray_spec.js — the survey screen. This file
-// covers exactly what's distinct about the training screen: hidden abundance,
-// the verdict overlay + assess flow, the "some incorrect" notice, and building
-// its source over the training domain aggregate (args.tray) rather than an
-// Alloy taxa collection. Shared tray geometry/windowing/rendering is proven
-// once, through the survey screen, since both compose the same
-// IceCubeTrayViewModel engine.
 describe( 'TrainingTray controller', function() {
 
   var view, TrainingTray, TrainingTrayWin, openArgs;
