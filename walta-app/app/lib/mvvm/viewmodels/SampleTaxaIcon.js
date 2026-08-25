@@ -29,7 +29,8 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
   // next. The number is the cell's own place in the tray.
   get numberVisible() { return this._kind === "number"; }
   get numberText() { return `${this._collectionIndex + 1}`; }
-  get numberFont() { return { fontSize: `${this._tray.cellWidth * 0.7}dp`, fontWeight: "bold" }; }
+  get numberFont() { return { fontSize: `${this._tray.cellWidth * 0.9}dp`, fontWeight: "bold" }; }
+  get numberOutlineFont() { return { fontSize: `${this._tray.cellWidth * 0.96}dp`, fontWeight: "bold" }; }
   get image() { return this._data ? this._data.silhouette : null; }
   get abundanceText() { return this._data ? this._data.abundance : ""; }
   get abundanceVisible() { return this._kind === "taxon" && this._data.abundance != null; }

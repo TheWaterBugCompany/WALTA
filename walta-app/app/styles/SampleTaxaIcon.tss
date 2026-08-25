@@ -36,14 +36,18 @@
   height: "80%"
 }
 
-// The training tray's cell number: white numerals outlined against the white
-// tray by a primary-coloured shadow. Font size is bound from the view-model so
-// it scales with the cell.
+// The training tray's cell number: white numerals over a slightly larger
+// primary-coloured copy, which shows through as an outline against the white
+// tray. Both font sizes are bound from the view-model so they scale with the
+// cell. Ti has no text stroke, and a Label shadow only ever draws offset to one
+// side.
+".cellNumberOutline": {
+  color: Alloy.CFG.colors.primary,
+  visible: false
+}
+
 ".cellNumber": {
   color: Alloy.CFG.colors.white,
-  shadowColor: Alloy.CFG.colors.primary,
-  shadowOffset: { x: 0, y: 0 },
-  shadowRadius: 3,
   visible: false
 }
 
