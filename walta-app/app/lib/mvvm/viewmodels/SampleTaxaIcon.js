@@ -67,9 +67,6 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  // Report the tap to the tray by collection index; the tray decides what a
-  // taxon/blank cell tap means (a blank cell is inert — the tray's own
-  // selectCell gates on that), not this purely-presentational cell.
   tap() { this._tray.selectCell(this._collectionIndex); }
 
   _dataEquals(o) {
