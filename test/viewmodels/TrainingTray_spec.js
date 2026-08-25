@@ -120,6 +120,11 @@ describe("TrainingTrayViewModel", function () {
       expect(vm.cellKind(2)).to.equal("blank");
     });
 
+    it("names a numbered cell so it can be found and tapped", function () {
+      const vm = trainingVm({ expectedCount: 4 });
+      expect(vm.endcapVm.taxa[1].accessibilityLabel).to.equal("Cell 2");
+    });
+
     it("offers no add-to-sample cell — a taxon is added by tapping its number", function () {
       const vm = trainingVm({ cells: identified(2), expectedCount: 4 });
       vm.setScrollOffset(0);
