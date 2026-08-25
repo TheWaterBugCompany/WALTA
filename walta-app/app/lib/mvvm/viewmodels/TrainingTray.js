@@ -25,9 +25,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
     // the key) — must clear *before* the engine's tile/slot cells re-derive
     // and re-read verdictFor via their own notifyListeners cascade below.
     this._tray.on("refreshing", () => { this._verdicts = null; });
-    // A cell tap reports through the engine as a neutral "this collection
-    // index was selected" — this VM decides what that means (IDENTIFY vs
-    // SELECT_METHOD), not the tile/slot components.
     this._tray.on("iceCubeTrayCellSelected", (idx) => this._onCellSelected(idx));
     this._assessor = assessor;
     // Injected so the notice's dwell/fade is Node-testable without real waits.
