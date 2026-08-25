@@ -13,9 +13,6 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._tray = new IceCubeTrayViewModel({ taxaSource, toDip: this._toDip, toSystem: this._toSystem, owner: this });
     this._tray.addListener(() => this.notifyListeners());
     this._tray.on("scrollToRightEnd", () => this.trigger("scrollToRightEnd"));
-    // A cell tap reports through the engine as a neutral "this collection
-    // index was selected" — this VM decides what that means (IDENTIFY vs
-    // SELECT_METHOD), not the tile/slot components.
     this._tray.on("iceCubeTrayCellSelected", (idx) => this._onCellSelected(idx));
   }
 
