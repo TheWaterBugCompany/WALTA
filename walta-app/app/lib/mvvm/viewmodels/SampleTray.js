@@ -11,8 +11,6 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._toDip = toDip || identity;
     this._toSystem = toSystem || identity;
     this._tray = new IceCubeTrayViewModel({ taxaSource, toDip: this._toDip, toSystem: this._toSystem, owner: this });
-    // Relay the engine's own broadcasts — bindView watches this VM, not the
-    // composed engine, so its state-change/command events have to pass through.
     this._tray.addListener(() => this.notifyListeners());
     this._tray.on("scrollToRightEnd", () => this.trigger("scrollToRightEnd"));
     // A cell tap reports through the engine as a neutral "this collection
