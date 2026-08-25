@@ -32,9 +32,6 @@ module.exports = function createTrainingTray({ view, args, services, bindView })
       onScroll: input("setScrollOffset", "contentOffset.x"),
       snapRight: command("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: true }),
     },
-    // The "some incorrect" notice: visibility + text are bound; the fade in/out is
-    // a pair of commands the VM fires around its dwell (Ti animation stays behind
-    // bindView, no Alloy-shell logic).
     incorrectNotice: {
       visible: "noticeVisible",
       fadeIn: command("fadeInNotice", "animate", { opacity: 1, duration: 200 }),
