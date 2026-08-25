@@ -9,14 +9,6 @@ const NOTICE_TEXT =
 const NOTICE_DWELL_MS = 4000;   // how long it dwells before fading
 const NOTICE_FADE_OUT_MS = 400; // must match the fadeOutNotice command's duration
 
-// Titanium-free view-model for the training ice-cube tray. Composes an
-// IceCubeTrayViewModel (the shared geometry/windowing/cell-content engine —
-// see lib/mvvm/viewmodels/IceCubeTray.js) as `this._tray`, delegating the
-// tile/slot components' surface to it with `owner: this` so those components
-// report back here, not to the engine directly, and owns the verdict/
-// assessment machinery entirely itself — the survey peer (SampleTrayViewModel)
-// carries none of it. `taxaSource` is the injected TrainingTraySource:
-// { length(), at(i) -> plain per-taxon data, onChange(cb) }.
 class TrainingTrayViewModel extends ChangeNotifier {
   constructor({ taxaSource, topics, toDip, toSystem, assessor, setTimer, clearTimer, noticeDwellMs }) {
     super();
