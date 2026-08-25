@@ -27,7 +27,7 @@ class TrainingTrayViewModel extends ChangeNotifier {
     this._tray.on("refreshing", () => { this._verdicts = null; });
     this._tray.on("iceCubeTrayCellSelected", (idx) => this._onCellSelected(idx));
     this._assessor = assessor;
-    this._expectedCount = assessor && assessor.expectedCount ? assessor.expectedCount : 0;
+    this._expectedCount = assessor.expectedCount;
     // Injected so the notice's dwell/fade is Node-testable without real waits.
     this._setTimer = setTimer || ((fn, ms) => setTimeout(fn, ms));
     this._clearTimer = clearTimer || ((id) => clearTimeout(id));
@@ -48,7 +48,7 @@ class TrainingTrayViewModel extends ChangeNotifier {
   // The training verdict for a cell, by its position — filled by the assessor on
   // assess(). Blank (null) until then, so a cell renders no tick/cross overlay.
   verdictFor(collectionIndex) {
-    if (!this._verdicts || collectionIndex == null) return null;
+    if (!this._verdicts) return null;
     const verdict = this._verdicts[collectionIndex];
     return verdict == null ? null : verdict;
   }
@@ -69,10 +69,7 @@ class TrainingTrayViewModel extends ChangeNotifier {
   // Run the injected assessor over the current taxa and reveal the verdicts. The
   // cell re-application makes each slot re-read verdictFor so the overlays appear.
   assess() {
-    const cells = [];
-    for (let i = 0; i < this._expectedCount; i++) {
-      cells.push(this._taxaSource.at(i));
-    }
+    const cells = Array.from({ length: this._expectedCount }, (_, i) => this._taxaSource.at(i));
     this._verdicts = this._assessor.assess(cells);
     this._tray.reapplyCells();
     this.notifyListeners();
