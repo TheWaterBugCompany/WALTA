@@ -2,13 +2,6 @@ const TrainingTrayViewModel = require("mvvm/viewmodels/TrainingTray");
 const TrainingTraySource = require("logic/TrainingTraySource");
 const TrainingAssessor = require("logic/TrainingAssessor");
 
-// Titanium-free screen controller for the training ice-cube tray. Declares the
-// whole screen through bindView, same shape as its survey peer
-// (lib/mvvm/controllers/SampleTray.js) plus the "some incorrect" notice — that
-// chrome is training-only. See docs/patterns/screen-controllers.md.
-//
-// Training is always editable — an isolated part of the database, not a
-// historical record being viewed — so no readonly is threaded into the source.
 module.exports = function createTrainingTray({ view, args, services, bindView }) {
   const { collection, component, input, measure, command, ref } = bindView;
   const platform = services.platform;
