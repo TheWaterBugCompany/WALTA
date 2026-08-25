@@ -10,6 +10,7 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._topics = topics;
     this._toDip = toDip || identity;
     this._toSystem = toSystem || identity;
+    this._readonly = taxaSource.readonly === true;
     this._tray = new IceCubeTrayViewModel({ taxaSource, toDip: this._toDip, toSystem: this._toSystem, owner: this });
     this._tray.addListener(() => this.notifyListeners());
     this._tray.on("scrollToRightEnd", () => this.trigger("scrollToRightEnd"));
@@ -18,7 +19,7 @@ class SampleTrayViewModel extends ChangeNotifier {
 
   // ── Accessors the cell + slot VMs read ────────────────────────────────────
   get topics() { return this._topics; }
-  get readonly() { return this._tray.readonly; }
+  get readonly() { return this._readonly; }
 
   surveyType() {
     return typeof this._taxaSource.surveyType === "function"
@@ -74,7 +75,19 @@ class SampleTrayViewModel extends ChangeNotifier {
 
   // ── Cell content (mirrors the old addTrayIcon / updateTrayIcon table) ──────
 
-  cellKind(collectionIndex) { return this._tray.cellKind(collectionIndex); }
+  get cellCount() { return this._tray.cellCount; }
+
+  // Taxa first, then the add affordance: the plus on the first free cell and
+  // invisible add-behind cells past it. A readonly sample offers neither.
+  cellKind(collectionIndex) {
+    const len = this._taxaSource.length();
+    if (collectionIndex < len) {
+      return this._taxaSource.at(collectionIndex) ? "taxon" : "blank";
+    }
+    if (collectionIndex === len) return this._readonly ? "blank" : "plus";
+    return this._readonly ? "blank" : "addBehind";
+  }
+
   cellData(collectionIndex) { return this._tray.cellData(collectionIndex); }
 
 

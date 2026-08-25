@@ -42,7 +42,7 @@ class TrainingTrayViewModel extends ChangeNotifier {
 
   // ── Accessors the cell + slot VMs read ────────────────────────────────────
   get topics() { return this._topics; }
-  get readonly() { return this._tray.readonly; }
+  get readonly() { return this._taxaSource.readonly === true; }
 
   // The training verdict for a taxon, keyed by sampleTaxonId — filled by the
   // assessor on assess(). Blank (null) until then, so a taxon renders no
@@ -157,7 +157,17 @@ class TrainingTrayViewModel extends ChangeNotifier {
 
   // ── Cell content (mirrors the old addTrayIcon / updateTrayIcon table) ──────
 
-  cellKind(collectionIndex) { return this._tray.cellKind(collectionIndex); }
+  get cellCount() { return this._tray.cellCount; }
+
+  cellKind(collectionIndex) {
+    const len = this._taxaSource.length();
+    if (collectionIndex < len) {
+      return this._taxaSource.at(collectionIndex) ? "taxon" : "blank";
+    }
+    if (collectionIndex === len) return "plus";
+    return "addBehind";
+  }
+
   cellData(collectionIndex) { return this._tray.cellData(collectionIndex); }
 
   // ── Cell selection — the slot components report a tap here; this VM decides

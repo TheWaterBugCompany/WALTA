@@ -14,7 +14,6 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     this._taxaSource = taxaSource;
     this._toDip = toDip || identity;
     this._toSystem = toSystem || identity;
-    this._readonly = taxaSource.readonly === true;
     this._owner = owner || this;
     this._viewportWidth = 0;
     this._viewportHeight = 0;
@@ -29,9 +28,6 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     this._onSourceChange = () => this.refresh();
     if (typeof taxaSource.onChange === "function") taxaSource.onChange(this._onSourceChange);
   }
-
-  // ── Accessors the cell + slot VMs read ────────────────────────────────────
-  get readonly() { return this._readonly; }
 
   // ── Geometry (bit-for-bit with the old controller's getters) ──────────────
 
@@ -66,7 +62,7 @@ class IceCubeTrayViewModel extends ChangeNotifier {
   get cellWidth() { return this.middleWidth / 2 - 1; }
 
   get tileCount() {
-    return Math.floor((this._taxaSource.length() - 2) / 4) + 1;
+    return Math.floor((this._owner.cellCount - 2) / 4) + 1;
   }
 
   get trayWidth() {
@@ -161,16 +157,10 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     return vm;
   }
 
-  // ── Cell content (mirrors the old addTrayIcon / updateTrayIcon table) ──────
+  // ── Cell content — what a cell holds is the owner's call; the engine only
+  // resolves the data behind it ─────────────────────────────────────────────
 
-  cellKind(collectionIndex) {
-    const len = this._taxaSource.length();
-    if (collectionIndex < len) {
-      return this._taxaSource.at(collectionIndex) ? "taxon" : "blank";
-    }
-    if (collectionIndex === len) return this._readonly ? "blank" : "plus";
-    return this._readonly ? "blank" : "addBehind";
-  }
+  get cellCount() { return this._taxaSource.length(); }
 
   cellData(collectionIndex) {
     return this._taxaSource.at(collectionIndex);
@@ -181,7 +171,7 @@ class IceCubeTrayViewModel extends ChangeNotifier {
   // A blank cell is inert; anything else (taxon/plus/addBehind) reports its
   // collection index so the owner can look up what's there and act.
   selectCell(collectionIndex) {
-    if (this.cellKind(collectionIndex) === "blank") return;
+    if (this._owner.cellKind(collectionIndex) === "blank") return;
     this.trigger("iceCubeTrayCellSelected", collectionIndex);
   }
 }
