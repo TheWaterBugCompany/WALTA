@@ -79,11 +79,14 @@ describe( 'TrainingTray controller', function() {
     return tile.children[1].children;
   }
 
-  // A taxon cell's children are [ padIcon, verdict, tapSurface ]; the verdict
-  // overlay is the middle child and the abundance badge is padIcon's 2nd child.
-  function verdictOf( cell ) { return cell.children[1]; }
+  // A cell's children are [ padIcon, numberOutline, number, verdict, tapSurface ];
+  // the abundance badge is padIcon's 2nd child and the tap surface is always the
+  // last child.
+  function numberOf( cell ) { return cell.children[2]; }
+  function verdictOf( cell ) { return cell.children[3]; }
   function abundanceOf( cell ) { return cell.children[0].children[1]; }
   function silhouetteOf( cell ) { return cell.children[0].children[0]; }
+  function tapSurface( cell ) { return cell.children[cell.children.length - 1]; }
 
   function assertVerdict( cell, image ) {
     expect( verdictOf( cell ).visible, "the verdict overlay should be visible" ).to.equal(true);
@@ -91,17 +94,13 @@ describe( 'TrainingTray controller', function() {
   }
 
   context('training feedback', function() {
-    // Hides abundance and, once assessed, overlays a tick/cross on each taxon
-    // from the injected assessor (keyed by sampleTaxonId). A fake assessor
-    // marks even ids correct / odd incorrect for a visible mix.
+    // Hides abundance and, once assessed, overlays a tick/cross on each cell from
+    // the injected assessor. A fake assessor crosses the even cells and ticks the
+    // odd ones for a visible mix.
     var mixedAssessor = {
-      assess: function( taxa ) {
-        var verdicts = {};
-        taxa.forEach( function( t ) {
-          if ( t && t.sampleTaxonId != null )
-            verdicts[t.sampleTaxonId] = ( t.sampleTaxonId % 2 === 0 ) ? "correct" : "incorrect";
-        });
-        return verdicts;
+      expectedCount: 10,
+      assess: function( cells ) {
+        return cells.map( function( _, i ) { return i % 2 === 0 ? "incorrect" : "correct"; } );
       },
     };
 
@@ -181,11 +180,10 @@ describe( 'TrainingTray controller', function() {
     // After Assess, a wrong identification surfaces a non-modal notice near the top
     // that fades away on its own. The notice must let taps through to the taxa.
     function verdictAssessor(verdict) {
-      return { assess: function (taxa) {
-        var v = {};
-        taxa.forEach(function (t) { if (t && t.sampleTaxonId != null) v[t.sampleTaxonId] = verdict; });
-        return v;
-      } };
+      return {
+        expectedCount: 2,
+        assess: function (cells) { return cells.map(function () { return verdict; }); },
+      };
     }
 
     function twoTaxaTray() {
@@ -240,6 +238,55 @@ describe( 'TrainingTray controller', function() {
     });
   });
 
+  context('numbered cells', function() {
+    // The exercise expects 4 taxa and one has been identified, so cells 2-4 carry
+    // their number and everything past cell 4 is inert.
+    var numberedAssessor = {
+      expectedCount: 4,
+      assess: function( cells ) {
+        return cells.map( function( c ) { return c ? "correct" : "incorrect"; } );
+      },
+    };
+
+    beforeEach( function() {
+      view = makeTestServices({ assessor: numberedAssessor }).View;
+      openArgs = { key: keyMock, tray: new SampleTrayModel([ new Taxon({ id: 1, taxonId: 1, position: 0 }) ]) };
+      return openTrainingTray();
+    });
+
+    afterEach(cleanupTrainingTray);
+
+    it('numbers each cell still waiting to be identified', function() {
+      var endcap = getTaxaIcons( TrainingTray.tray.children[0] );
+      expect( numberOf( endcap[0] ).visible, "an identified cell shows its taxon" ).to.equal(false);
+      expect( numberOf( endcap[1] ).visible ).to.equal(true);
+      expect( numberOf( endcap[1] ).text ).to.equal("2");
+    });
+
+    it('leaves a cell past the exercise unnumbered', function() {
+      var interior = getTaxaIcons( TrainingTray.tray.children[1] );
+      // Cells map to collection indices [2,4,3,5]; index 4 is past the last
+      // expected cell.
+      expect( numberOf( interior[1] ).visible ).to.equal(false);
+    });
+
+    it('opens the method chooser for the cell whose number was tapped', function(done) {
+      var endcap = getTaxaIcons( TrainingTray.tray.children[0] );
+      actionFiresTopicTest( tapSurface( endcap[1] ), 'click', Topics.SELECT_METHOD, function( data ) {
+        expect( data.position ).to.equal(1);
+        done();
+      });
+    });
+
+    it('crosses a cell nobody identified once assessed', function() {
+      trayVm().assess();
+      return assertEventually( function() {
+        var endcap = getTaxaIcons( TrainingTray.tray.children[0] );
+        assertVerdict( endcap[1], "cross-icon.png" );
+      });
+    });
+  });
+
   context('training tray (domain aggregate)', function() {
     // The screen threads the training domain aggregate (args.tray), not a
     // survey Alloy taxa collection — proven here by rendering with no
@@ -252,7 +299,7 @@ describe( 'TrainingTray controller', function() {
         new Taxon({ id: 1, taxonId: 1, position: 0 }),
         new Taxon({ id: 2, taxonId: 2, position: 1 }),
       ]);
-      view = makeTestServices().View;
+      view = makeTestServices({ assessor: { expectedCount: 6, assess: function () { return []; } } }).View;
       openArgs = { key: keyMock, tray: trainingTray };
       return openTrainingTray();
     });

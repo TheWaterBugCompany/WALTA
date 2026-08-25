@@ -12,6 +12,7 @@ function makeIconView() {
     padIcon: makeWidget(),
     icon: makeWidget(),
     abundance: makeWidget(),
+    numberOutline: makeWidget(),
     number: makeWidget(),
     verdict: makeWidget(),
     tap: makeWidget(),

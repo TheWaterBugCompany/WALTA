@@ -194,15 +194,8 @@ describe( 'SampleTray controller', function() {
     return tile.children[1].children;
   }
 
-  // A taxon cell's children are [ padIcon, verdict, tapSurface ]; the verdict
-  // overlay is the middle child and the abundance badge is padIcon's 2nd child.
-  function verdictOf( cell ) { return cell.children[1]; }
+  // The abundance badge is padIcon's 2nd child.
   function abundanceOf( cell ) { return cell.children[0].children[1]; }
-
-  function assertVerdict( cell, image ) {
-    expect( verdictOf( cell ).visible, "the verdict overlay should be visible" ).to.equal(true);
-    expect( verdictOf( cell ).image, `Expected the verdict to be ${image}` ).to.include(image);
-  }
 
   async function simulateEditTaxonEvent() {
     return new Promise( (resolve) => {

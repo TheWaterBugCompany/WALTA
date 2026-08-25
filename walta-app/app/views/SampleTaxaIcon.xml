@@ -4,6 +4,7 @@
 			<ImageView id="icon"/>
 			<Label id="abundance"/>
 		</View>
+		<Label id="numberOutline" class="cellNumberOutline"/>
 		<Label id="number" class="cellNumber"/>
 		<!-- Training tick/cross overlay, above the silhouette but below the tap
 		     surface so it never intercepts a tap. Hidden until assessed. -->
