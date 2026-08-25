@@ -77,8 +77,6 @@ class SampleTrayViewModel extends ChangeNotifier {
   cellKind(collectionIndex) { return this._tray.cellKind(collectionIndex); }
   cellData(collectionIndex) { return this._tray.cellData(collectionIndex); }
 
-  // ── Cell selection — the slot components report a tap here; this VM decides
-  // what it means ──────────────────────────────────────────────────────────
 
   selectCell(collectionIndex) { this._tray.selectCell(collectionIndex); }
 
