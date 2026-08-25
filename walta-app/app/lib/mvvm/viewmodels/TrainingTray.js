@@ -60,9 +60,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
 
   // ── Geometry — delegated to the composed IceCubeTrayViewModel ─────────────
 
-  // The presenter hands a clean, laid-out viewport size (system px); the
-  // engine converts to dip and re-derives geometry. The relay set up in the
-  // constructor forwards its notifyListeners/scrollToRightEnd.
   setViewport(size) {
     this._tray.setViewport(size);
   }
