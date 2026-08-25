@@ -94,9 +94,6 @@ describe( 'TrainingTray controller', function() {
     // Hides abundance and, once assessed, overlays a tick/cross on each taxon
     // from the injected assessor (keyed by sampleTaxonId). A fake assessor
     // marks even ids correct / odd incorrect for a visible mix.
-    // Runnable in --manual to eyeball the overlay placement against the design:
-    //   npx grunt --platform=ios --simulator --liveview --reuse-server \
-    //     --grep="training feedback reveals" --manual unit-test
     var mixedAssessor = {
       assess: function( taxa ) {
         var verdicts = {};
