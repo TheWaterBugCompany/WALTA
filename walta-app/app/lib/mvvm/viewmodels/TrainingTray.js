@@ -142,9 +142,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
     this._tray.setScrollOffset(px);
   }
 
-  // Re-derive cell content across every cached tile (a taxa add/change/remove),
-  // then re-window and reveal the right edge. The relay's "refreshing" handler
-  // drops any training feedback and forwards notifyListeners/scrollToRightEnd.
   refresh() {
     this._tray.refresh();
   }
