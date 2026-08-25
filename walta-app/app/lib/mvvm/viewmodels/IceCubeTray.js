@@ -3,22 +3,6 @@ const { endcapTile, interiorTile } = require("./SampleTrayTile");
 
 const identity = (x) => x;
 
-// Titanium-free view-model for the ice-cube tray geometry, windowing and cell
-// content — shared by the survey and training screens (SampleTrayViewModel /
-// TrainingTrayViewModel), each of which composes an instance of this rather
-// than subclassing it. Owns all layout geometry (derived from the measured
-// viewport in dip), the scroll windowing, and per-cell kind/content — so
-// neither screen's view-model re-derives any of it. The presenter hands it a
-// clean viewport size (system px) and the scroll offset through bindView; the
-// VM converts with the injected toDip/toSystem so it stays Node-testable.
-// `taxaSource` is the injected source: { length(), at(i) -> plain per-taxon
-// data, onChange(cb), readonly }.
-//
-// Deliberately neutral: no notion of training/survey, no verdicts, no topics.
-// Cell taps report through `selectCell`/the `iceCubeTrayCellSelected` event
-// (see cell selection below) rather than firing any app-level intent
-// themselves — the owning screen view-model decides what a tap means.
-//
 // The tile + slot VMs (SampleTrayTile — endcap or interior — and its
 // SampleTaxaIcon/SampleTrayPlus slots) read their geometry, kind and content
 // back through the public accessors here — but they're handed `owner` (which
