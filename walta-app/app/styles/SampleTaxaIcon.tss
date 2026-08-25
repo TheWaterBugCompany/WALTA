@@ -36,11 +36,8 @@
   height: "80%"
 }
 
-// The training tray's cell number: white numerals over a slightly larger
-// primary-coloured copy, which shows through as an outline against the white
-// tray. Both font sizes are bound from the view-model so they scale with the
-// cell. Ti has no text stroke, and a Label shadow only ever draws offset to one
-// side.
+// Ti has no text stroke and a Label shadow only ever draws to one side, so the
+// outline is a larger primary-coloured numeral behind the white one.
 ".cellNumberOutline": {
   color: Alloy.CFG.colors.primary,
   visible: false

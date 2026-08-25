@@ -157,9 +157,6 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     return vm;
   }
 
-  // ── Cell content — what a cell holds is the owner's call; the engine only
-  // resolves the data behind it ─────────────────────────────────────────────
-
   get cellCount() { return this._taxaSource.length(); }
 
   cellData(collectionIndex) {

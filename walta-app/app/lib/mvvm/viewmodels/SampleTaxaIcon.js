@@ -25,8 +25,6 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
 
   get iconVisible() { return this._kind === "taxon"; }
 
-  // A numbered cell — the training tray's prompt for which taxon to identify
-  // next. The number is the cell's own place in the tray.
   get numberVisible() { return this._kind === "number"; }
   get numberText() { return `${this._collectionIndex + 1}`; }
   get numberFont() { return { fontSize: `${this._tray.cellWidth * 0.9}dp`, fontWeight: "bold" }; }

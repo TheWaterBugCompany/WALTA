@@ -73,8 +73,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
     this._verdicts = this._assessor.assess(cells);
     this._tray.reapplyCells();
     this.notifyListeners();
-    // Success is every expected cell correct — an unidentified cell grades as
-    // incorrect, so a half-finished tray can't announce it.
     const correct = this._verdicts.filter(v => v === "correct").length;
     if (this._verdicts.length > 0 && correct === this._verdicts.length) {
       this.trigger("allCorrect", correct);
@@ -155,8 +153,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
   // The tray is as long as the exercise, however much of it has been identified.
   get cellCount() { return this._expectedCount; }
 
-  // Every cell the exercise expects shows either its taxon or its number; cells
-  // past the last expected one are inert.
   cellKind(collectionIndex) {
     if (this._taxaSource.at(collectionIndex)) return "taxon";
     return collectionIndex < this._expectedCount ? "number" : "blank";
@@ -181,8 +177,7 @@ class TrainingTrayViewModel extends ChangeNotifier {
       });
       return;
     }
-    // The tapped number's position rides through the key so the identification
-    // lands back in that cell.
+    // The position rides through the key so the identification lands back here.
     this._topics.fireTopicEvent(this._topics.SELECT_METHOD, {
       allowAddToSample: true,
       surveyType: this.surveyType(),
