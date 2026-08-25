@@ -26,10 +26,6 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
   get iconVisible() { return this._kind === "taxon"; }
   get image() { return this._data ? this._data.silhouette : null; }
   get abundanceText() { return this._data ? this._data.abundance : ""; }
-  // Training taxa carry no abundance (TrainingTraySource always supplies
-  // null), so this is data-driven rather than asking the tray whether it's a
-  // training session — the survey/training distinction never has to reach
-  // this purely-presentational cell.
   get abundanceVisible() { return this._kind === "taxon" && this._data.abundance != null; }
   get sampleTaxonId() { return this._data ? this._data.sampleTaxonId : null; }
   get taxonId() { return this._data ? this._data.taxonId : null; }
