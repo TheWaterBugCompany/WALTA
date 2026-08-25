@@ -24,6 +24,12 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
   get widthCss() { return `${this._tray.cellWidth}dp`; }
 
   get iconVisible() { return this._kind === "taxon"; }
+
+  // A numbered cell — the training tray's prompt for which taxon to identify
+  // next. The number is the cell's own place in the tray.
+  get numberVisible() { return this._kind === "number"; }
+  get numberText() { return `${this._collectionIndex + 1}`; }
+  get numberFont() { return { fontSize: `${this._tray.cellWidth * 0.7}dp`, fontWeight: "bold" }; }
   get image() { return this._data ? this._data.silhouette : null; }
   get abundanceText() { return this._data ? this._data.abundance : ""; }
   get abundanceVisible() { return this._kind === "taxon" && this._data.abundance != null; }
@@ -32,7 +38,7 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
 
   // The training tick/cross overlay. Optional, only displyed if the source has a `verdictFor` method.
   get verdict() {
-    return typeof this._tray.verdictFor === "function" ? this._tray.verdictFor(this.sampleTaxonId) : null;
+    return typeof this._tray.verdictFor === "function" ? this._tray.verdictFor(this._collectionIndex) : null;
   }
   get verdictImage() {
     if (this.verdict === "correct") return "/images/tick-icon.png";
@@ -62,7 +68,7 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
       return;
     }
     if (kind === this._kind) return;
-    this._kind = kind; // "blank"
+    this._kind = kind; // "blank" or "number"
     this._data = null;
     this.notifyListeners();
   }

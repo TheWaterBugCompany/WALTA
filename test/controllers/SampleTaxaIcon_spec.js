@@ -2,6 +2,7 @@ require("mocha");
 const { expect } = require("chai");
 const createSampleTaxaIcon = require("../../walta-app/app/lib/mvvm/controllers/SampleTaxaIcon");
 const SampleTrayViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/SampleTray");
+const TrainingTrayViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/TrainingTray");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 const { makeWidget } = require("../fixtures/fakeWidgets");
 
@@ -11,6 +12,7 @@ function makeIconView() {
     padIcon: makeWidget(),
     icon: makeWidget(),
     abundance: makeWidget(),
+    number: makeWidget(),
     verdict: makeWidget(),
     tap: makeWidget(),
   };
@@ -38,6 +40,20 @@ function taxonSlotVm(topics, readonly) {
   return tray.endcapVm.taxa[0];
 }
 
+// The same component renders a training tray's numbered cell, so build that one
+// from a real TrainingTrayViewModel too.
+function numberedSlotVm(collectionIndex) {
+  const source = { length: () => 0, at: () => undefined, surveyType: () => null, readonly: false };
+  const tray = new TrainingTrayViewModel({
+    taxaSource: source,
+    assessor: { expectedCount: 4, assess: () => [] },
+    topics: fakeTopics(),
+  });
+  tray.setViewport({ width: 300, height: 100 });
+  tray.setScrollOffset(0);
+  return tray.endcapVm.taxa[collectionIndex];
+}
+
 describe("SampleTaxaIcon controller", function () {
   let view, ctl;
 
@@ -55,6 +71,13 @@ describe("SampleTaxaIcon controller", function () {
     expect($.abundance.text).to.equal("3-5");
     expect($.padIcon.visible).to.equal(true);
     expect($.tap.accessibilityLabel).to.equal("Taxon 1, Species 1, abundance 3-5");
+  });
+
+  it("binds a numbered cell's number in place of the taxon", function () {
+    const $ = build(numberedSlotVm(1));
+    expect($.number.text).to.equal("2");
+    expect($.number.visible).to.equal(true);
+    expect($.padIcon.visible).to.equal(false);
   });
 
   it("keeps the verdict overlay hidden until the tray is assessed", function () {
