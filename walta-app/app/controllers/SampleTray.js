@@ -14,10 +14,6 @@ $.name = "sampletray";
 $.TopLevelWindow.useUnSafeArea = true;
 $.noSwipeBack();
 
-// The tray's ScrollView/windowing markup is a shared fragment (views/IceCubeTray.xml)
-// required in, not duplicated — promote its named views onto this controller's own
-// $ so the mvvm controller's bindView calls (and the EditTaxon overlay below) can
-// keep reaching $.content/$.tray exactly as if they were declared inline.
 $.content = $.iceCubeTray.content;
 $.tray = $.iceCubeTray.tray;
 
