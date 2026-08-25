@@ -138,8 +138,6 @@ class TrainingTrayViewModel extends ChangeNotifier {
   get endcapVm() { return this._tray.endcapVm; }
   get visibleTiles() { return this._tray.visibleTiles; }
 
-  // Titanium hands the raw scroll offset (system px) via an input() binding.
-  // The relay forwards the engine's notifyListeners.
   setScrollOffset(px) {
     this._tray.setScrollOffset(px);
   }
