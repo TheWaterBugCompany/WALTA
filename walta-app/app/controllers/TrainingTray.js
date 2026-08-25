@@ -2,13 +2,8 @@ var Topics = require('ui/Topics');
 
 // Residual Titanium shell for the training ice-cube tray. The Titanium-free
 // lib/mvvm/controllers/TrainingTray (built by View.openView) owns the view-model
-// and declares the whole screen through bindView — the tray collections, the
-// viewport measurement / scroll offset / scroll-to-right inputs, and the
-// "some incorrect" notice. What is left here is the view tree and the
-// anchor-bar buttons; there is no EditTaxon overlay — a training re-identify
-// goes through the MethodSelect modal (see Main.js's IDENTIFY routing), not an
-// in-place overlay. Survey's peer screen is SampleTray.js — a separate screen,
-// not a branch of this one. See docs/patterns/screen-controllers.md.
+// and declares the whole screen through bindView.
+// See docs/patterns/screen-controllers.md.
 
 exports.baseController = "TopLevelWindow";
 $.TopLevelWindow.title = "Sample";
