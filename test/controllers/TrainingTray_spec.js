@@ -3,6 +3,7 @@ const { expect } = require("chai");
 const createTrainingTray = require("../../walta-app/app/lib/mvvm/controllers/TrainingTray");
 const SampleTray = require("../../walta-app/app/lib/models/SampleTray");
 const Taxon = require("../../walta-app/app/lib/models/Taxon");
+const createTrainingAssessor = require("../../walta-app/app/lib/logic/TrainingAssessor");
 
 // A bindView stub: carries the marker helpers the controller destructures and
 // returns a noop unbind — the real view binding is exercised in the device spec
@@ -28,7 +29,7 @@ describe("TrainingTray controller", function () {
       fireTopicEvent: (t, d) => fired.push({ t, d }),
     };
     const tray = new SampleTray([new Taxon({ id: 1, taxonId: 90, position: 0 })]);
-    const assessor = { assess: () => ({ 1: "correct" }) };
+    const assessor = createTrainingAssessor([90]);
     const ctl = createTrainingTray({
       view: {},
       args: { tray, key: fakeKey(), assessor },
@@ -55,7 +56,7 @@ describe("TrainingTray controller", function () {
       new Taxon({ id: 1, taxonId: 90, position: 0 }),
       new Taxon({ id: 2, taxonId: 99, position: 1 }),
     ]);
-    const assessor = { assess: () => ({ 1: "correct", 2: "incorrect" }) };
+    const assessor = createTrainingAssessor([90, 90]);
     const ctl = createTrainingTray({
       view: {},
       args: { tray, key: fakeKey(), assessor },

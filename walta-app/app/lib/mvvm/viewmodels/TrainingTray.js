@@ -27,6 +27,7 @@ class TrainingTrayViewModel extends ChangeNotifier {
     this._tray.on("refreshing", () => { this._verdicts = null; });
     this._tray.on("iceCubeTrayCellSelected", (idx) => this._onCellSelected(idx));
     this._assessor = assessor;
+    this._expectedCount = assessor && assessor.expectedCount ? assessor.expectedCount : 0;
     // Injected so the notice's dwell/fade is Node-testable without real waits.
     this._setTimer = setTimer || ((fn, ms) => setTimeout(fn, ms));
     this._clearTimer = clearTimer || ((id) => clearTimeout(id));
@@ -44,12 +45,11 @@ class TrainingTrayViewModel extends ChangeNotifier {
   get topics() { return this._topics; }
   get readonly() { return this._taxaSource.readonly === true; }
 
-  // The training verdict for a taxon, keyed by sampleTaxonId — filled by the
-  // assessor on assess(). Blank (null) until then, so a taxon renders no
-  // tick/cross overlay.
-  verdictFor(sampleTaxonId) {
-    if (!this._verdicts || sampleTaxonId == null) return null;
-    const verdict = this._verdicts[sampleTaxonId];
+  // The training verdict for a cell, by its position — filled by the assessor on
+  // assess(). Blank (null) until then, so a cell renders no tick/cross overlay.
+  verdictFor(collectionIndex) {
+    if (!this._verdicts || collectionIndex == null) return null;
+    const verdict = this._verdicts[collectionIndex];
     return verdict == null ? null : verdict;
   }
   surveyType() {
@@ -69,21 +69,19 @@ class TrainingTrayViewModel extends ChangeNotifier {
   // Run the injected assessor over the current taxa and reveal the verdicts. The
   // cell re-application makes each slot re-read verdictFor so the overlays appear.
   assess() {
-    const taxa = [];
-    for (let i = 0; i < this._taxaSource.length(); i++) {
-      taxa.push(this._taxaSource.at(i));
+    const cells = [];
+    for (let i = 0; i < this._expectedCount; i++) {
+      cells.push(this._taxaSource.at(i));
     }
-    this._verdicts = this._assessor.assess(taxa);
+    this._verdicts = this._assessor.assess(cells);
     this._tray.reapplyCells();
     this.notifyListeners();
-    // A clean run — every graded taxon correct — is the training goal; announce it
-    // so the screen can open the success modal. Otherwise, if any taxon is wrong,
-    // announce that so the screen can surface the "some incorrect" notice.
-    const verdicts = Object.keys(this._verdicts).map(k => this._verdicts[k]);
-    const correct = verdicts.filter(v => v === "correct").length;
-    if (verdicts.length > 0 && correct === verdicts.length) {
+    // Success is every expected cell correct — an unidentified cell grades as
+    // incorrect, so a half-finished tray can't announce it.
+    const correct = this._verdicts.filter(v => v === "correct").length;
+    if (this._verdicts.length > 0 && correct === this._verdicts.length) {
       this.trigger("allCorrect", correct);
-    } else if (verdicts.some(v => v === "incorrect")) {
+    } else if (this._verdicts.some(v => v === "incorrect")) {
       this._showIncorrectNotice();
     }
   }
@@ -157,15 +155,14 @@ class TrainingTrayViewModel extends ChangeNotifier {
 
   // ── Cell content (mirrors the old addTrayIcon / updateTrayIcon table) ──────
 
-  get cellCount() { return this._tray.cellCount; }
+  // The tray is as long as the exercise, however much of it has been identified.
+  get cellCount() { return this._expectedCount; }
 
+  // Every cell the exercise expects shows either its taxon or its number; cells
+  // past the last expected one are inert.
   cellKind(collectionIndex) {
-    const len = this._taxaSource.length();
-    if (collectionIndex < len) {
-      return this._taxaSource.at(collectionIndex) ? "taxon" : "blank";
-    }
-    if (collectionIndex === len) return "plus";
-    return "addBehind";
+    if (this._taxaSource.at(collectionIndex)) return "taxon";
+    return collectionIndex < this._expectedCount ? "number" : "blank";
   }
 
   cellData(collectionIndex) { return this._tray.cellData(collectionIndex); }
@@ -187,11 +184,14 @@ class TrainingTrayViewModel extends ChangeNotifier {
       });
       return;
     }
+    // The tapped number's position rides through the key so the identification
+    // lands back in that cell.
     this._topics.fireTopicEvent(this._topics.SELECT_METHOD, {
       allowAddToSample: true,
       surveyType: this.surveyType(),
       unknownBug: true,
       training: true,
+      position: collectionIndex,
     });
   }
 }

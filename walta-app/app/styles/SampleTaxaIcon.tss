@@ -36,6 +36,17 @@
   height: "80%"
 }
 
+// The training tray's cell number: white numerals outlined against the white
+// tray by a primary-coloured shadow. Font size is bound from the view-model so
+// it scales with the cell.
+".cellNumber": {
+  color: Alloy.CFG.colors.white,
+  shadowColor: Alloy.CFG.colors.primary,
+  shadowOffset: { x: 0, y: 0 },
+  shadowRadius: 3,
+  visible: false
+}
+
 // The tick/cross overlay: a square badge inset into the cell's lower-left, hidden
 // until the tray is assessed. Its square size (dp) is bound from the cell
 // view-model so it scales with the cell; left/bottom inset it off the corner.

@@ -10,6 +10,7 @@ const BINDINGS = {
   padIcon:        { visible: "iconVisible" },
   icon:           { image: "image" },
   abundance:      { text: "abundanceText", visible: "abundanceVisible" },
+  number:         { text: "numberText", visible: "numberVisible", font: "numberFont" },
   verdict:        { image: "verdictImage", visible: "verdictVisible", width: "verdictSizeCss", height: "verdictSizeCss", accessibilityLabel: "verdict" },
   tap:            { accessibilityLabel: "accessibilityLabel", onClick: "tap" },
 };
