@@ -30,10 +30,7 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
   get sampleTaxonId() { return this._data ? this._data.sampleTaxonId : null; }
   get taxonId() { return this._data ? this._data.taxonId : null; }
 
-  // The training tick/cross overlay. Only TrainingTrayViewModel implements
-  // verdictFor — the survey tray doesn't, so this is a capability check
-  // (mirrors the `typeof taxaSource.onChange === "function"` idiom in
-  // IceCubeTrayViewModel) rather than a training flag.
+  // The training tick/cross overlay. Optional, only displyed if the source has a `verdictFor` method.
   get verdict() {
     return typeof this._tray.verdictFor === "function" ? this._tray.verdictFor(this.sampleTaxonId) : null;
   }
