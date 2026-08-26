@@ -2,6 +2,7 @@ require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
 var capture = require("spec/visual/captureScreens");
 var manifest = require("spec/visual/manifest");
+var { CAPTURE_LANDSCAPE } = require("spec/visual/openEntry");
 
 // The capture runner's output dir is a handshake surface, not just a place PNGs
 // land: the host polls it and treats `capture-done` as "this run has finished".
@@ -44,12 +45,12 @@ describe("visual capture runner", function () {
 				return entry.args();
 			} }]);
 
-			expect(pinnedWhenOpened).to.equal(capture.CAPTURE_LANDSCAPE);
+			expect(pinnedWhenOpened).to.equal(CAPTURE_LANDSCAPE);
 		});
 	}
 
 	function otherLandscape() {
-		return capture.CAPTURE_LANDSCAPE === Ti.UI.LANDSCAPE_RIGHT ? Ti.UI.LANDSCAPE_LEFT : Ti.UI.LANDSCAPE_RIGHT;
+		return CAPTURE_LANDSCAPE === Ti.UI.LANDSCAPE_RIGHT ? Ti.UI.LANDSCAPE_LEFT : Ti.UI.LANDSCAPE_RIGHT;
 	}
 
 	// The real manifest entry, so the spec exercises the shape the suite captures
