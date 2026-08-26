@@ -1,4 +1,5 @@
 import path from "path";
+import { parseReadyMarker, rotationFor } from "./orientation.js";
 
 // Drives file-handshake visual capture: polls the app's visual dir for per-screen
 // <name>.ready markers the runner writes, screenshots each framebuffer on the
@@ -33,11 +34,11 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
         // simctl/adb) leaves the screen unshot to retry next poll, rather than
         // killing the run — matching the old per-screen tolerance.
         for (const f of files) {
-            const m = /^(.+)\.ready$/.exec(f);
-            if (!m || shot.has(m[1])) continue;
-            const name = m[1];
+            const marker = parseReadyMarker(f);
+            if (!marker || shot.has(marker.name)) continue;
+            const { name, orientation } = marker;
             try {
-                await launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`));
+                await launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`), { orientation });
                 await launcher.writeVisualCaptureFile(appId, `${name}.shot`);
                 shot.add(name);
             } catch (e) {
