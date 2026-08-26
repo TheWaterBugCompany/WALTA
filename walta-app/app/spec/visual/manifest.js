@@ -18,6 +18,10 @@ var { SURVEY_DETAILED } = require("logic/Sample");
 var FIXED_DATE = new Date("2020-01-02T00:00:00Z").getTime();
 var FIXED_DATE_VALUE = new Date(2020, 0, 2);
 
+// Longer than any capture run, so a timed overlay stays put rather than fading
+// out part-way through one.
+var NOTICE_HELD_MS = 600000;
+
 function freshSample() {
 	// resetSample instantiates the sample + taxa Models/Collections that the
 	// survey screens bind to (SampleTray listens on Alloy.Collections.taxa).
@@ -180,11 +184,10 @@ function trainingTray() {
 	var tray = new SampleTrayModel(
 		[1, 2, 3, 4, 5].map(function (id, i) { return new TaxonModel({ id: id, taxonId: id, position: i }); })
 	);
-	// The assessment notice fades in, dwells on a timer and fades out again — a
-	// race for the capture, and it sits over the top row of cells. Cut the dwell
-	// so the capture can wait it out (see assessTrainingTray) instead of either
-	// racing it or holding the run open for its full dwell.
-	return { key: keyMock, tray: tray, noticeDwellMs: 1 };
+	// The assessment notice fades in, dwells on a timer and fades out again, so
+	// whether it lands in a capture is a race. Hold it up for far longer than any
+	// capture takes, so the notice is reliably in frame rather than sometimes.
+	return { key: keyMock, tray: tray, noticeDwellMs: NOTICE_HELD_MS };
 }
 
 // Verdicts only appear once the tray is assessed, and the tray's whole point in
@@ -217,7 +220,7 @@ function assessTrainingTray(opened) {
 	var ctl = opened.seam.getCurrentController();
 	return waitFor(function () {
 		return verdictOverlays(ctl).some(function (v) { return v.visible; })
-			&& ctl.incorrectNotice.visible === false;
+			&& ctl.incorrectNotice.visible === true;
 	});
 }
 
