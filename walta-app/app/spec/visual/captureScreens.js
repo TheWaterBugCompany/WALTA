@@ -3,8 +3,7 @@
 // and diff. The settle gate (waitForStable on toImage().length) is the whole
 // reason this is reliable: postlayout fires before lazy tiles / async photos
 // finish drawing, so capturing on postlayout alone yields blank frames.
-var { closeWindow } = require("spec/util/TestUtils");
-var { makeTestServices } = require("spec/fixtures/Services_fixture");
+var { openEntry, runsHere } = require("spec/visual/openEntry");
 var waitForStable = require("util/waitForStable");
 
 var OUTPUT_SUBDIR = "visual";
@@ -72,14 +71,11 @@ async function waitForShot(name) {
 // READY marker for the host to screenshot on, then hold briefly so the shot lands
 // before the next screen opens. `capture: "toimage"` opts a screen back into the
 // in-app snapshot (faster, no host handshake) where the notch doesn't matter.
-async function captureScreen(entry) {
-	// Open through the View seam, as the app and the device specs do, so a screen
-	// with a Titanium-free screen controller gets its view-model. Alloy.createController
-	// alone builds the shell, and a view-model-driven screen then renders nothing.
-	var seam = makeTestServices().View;
-	await seam.openView(entry.screen || entry.name, entry.args());
-	var ctl = seam.getCurrentController();
-	var view = ctl.getView();
+async function captureScreen(entry, entries) {
+	// openEntry opens the screen the way the app does — through the View seam for a
+	// window, overlaid on its host for a modal — and owns the teardown.
+	var opened = await openEntry(entry, entries);
+	var view = opened.view;
 	await waitForStable(function () { return view.toImage().length; }, entry.settle);
 
 	var meta;
@@ -100,8 +96,7 @@ async function captureScreen(entry) {
 		meta = { name: entry.name, mode: "framebuffer", acked: acked };
 	}
 
-	await closeWindow(view);
-	if (typeof ctl.cleanUp === "function") { ctl.cleanUp(); }
+	await opened.dispose();
 	return meta;
 }
 
@@ -112,10 +107,11 @@ async function captureAll(entries, { grep } = {}) {
 	var results = [];
 	for (var i = 0; i < entries.length; i++) {
 		if (grep && entries[i].name.indexOf(grep) === -1) { continue; }
+		if (!runsHere(entries[i])) { continue; }
 		// One screen's fixture blowing up must not lose every other capture — log
 		// it and carry on. The host flags the screen as missing.
 		try {
-			results.push(await captureScreen(entries[i]));
+			results.push(await captureScreen(entries[i], entries));
 		} catch (e) {
 			Ti.API.error("VISUAL_CAPTURE_SCREEN_FAILED name=" + entries[i].name +
 				" " + (e && e.message ? e.message : e));

@@ -1,24 +1,25 @@
 require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
-var { closeWindow, resetDatabase } = require("spec/util/TestUtils");
-var { makeTestServices } = require("spec/fixtures/Services_fixture");
+var { resetDatabase } = require("spec/util/TestUtils");
 var manifest = require("spec/visual/manifest");
+var { openEntry, runsHere } = require("spec/visual/openEntry");
 
 // The visual suite is only as good as the screens it actually renders. A fixture
 // that builds a bare Alloy shell captures an empty window and the diff still
 // passes, so the manifest's own contract is worth pinning here: every entry opens
 // a real screen, and the screens that exist to show data are seeded with some.
 describe("visual capture manifest", function () {
-	var view;
+	var view, opened;
 
 	beforeEach(function () {
 		resetDatabase();
 	});
 
 	afterEach(async function () {
-		var ctl = view && view.getCurrentController();
+		var toClose = opened;
+		opened = null;
 		view = null;
-		if (ctl) { await closeWindow(ctl.getView()); }
+		if (toClose) { await toClose.dispose(); }
 	});
 
 	function entryNamed(name) {
@@ -26,9 +27,9 @@ describe("visual capture manifest", function () {
 	}
 
 	async function open(entry) {
-		view = makeTestServices().View;
-		await view.openView(entry.screen || entry.name, entry.args());
-		return view;
+		opened = await openEntry(entry, manifest);
+		view = opened.seam;
+		return opened;
 	}
 
 	// A screen whose fixture throws is logged and skipped by the capture runner, so
@@ -37,9 +38,39 @@ describe("visual capture manifest", function () {
 	// broken fixture names itself.
 	manifest.forEach(function (entry) {
 		it("opens the " + entry.name + " screen", async function () {
-			await open(entry);
-			expect(view.getCurrentController(), entry.name + " built no controller").to.exist;
+			if (!runsHere(entry)) { this.skip(); }
+			var opened = await open(entry);
+			expect(opened.view, entry.name + " rendered no view").to.exist;
 		});
+	});
+
+	// A modal is overlaid on the window it is opened from, not pushed as one — so
+	// capturing it means standing up its host screen first, exactly as the app does.
+	it("overlays a modal entry on its host screen", async function () {
+		await open(entryNamed("MethodSelect"));
+		
+		expect(view.getCurrentModal(), "MethodSelect opened no modal").to.exist;
+		expect(view.getCurrentController(), "MethodSelect opened no host window").to.exist;
+	});
+
+	// Components have no window of their own — they render inside a screen. Hosting
+	// one in a full-size window is how their device specs render them, and it is the
+	// only way to get a capture of a piece of UI the app never opens on its own.
+	it("hosts a component entry in a window of its own", async function () {
+		var opened = await open(entryNamed("PhotoSelect"));
+		expect(opened.view.children.length, "PhotoSelect rendered nothing").to.be.greaterThan(0);
+	});
+
+	// The runner opens every screen against one long-lived app, and three entries
+	// run the sample-history fixture (the screen plus the two modals hosted on it).
+	// A fixture that only appends would grow the table each time and drift the
+	// capture — so seeding has to leave the same rows however often it runs.
+	it("seeds the sample history with the same rows however often its fixture runs", async function () {
+		var entry = entryNamed("SampleHistory");
+		entry.args();
+		entry.args();
+		await open(entry);
+		expect(view.getCurrentController().sampleTable.data[0].rows.length).to.equal(3);
 	});
 
 	it("opens the sample tray with the taxa its fixture seeded", async function () {
