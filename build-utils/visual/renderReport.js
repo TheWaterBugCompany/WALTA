@@ -41,7 +41,8 @@ function renderCell(cell) {
     }
     return `<td class="cell is-${esc(cell.status)}"><figure class="shot" tabindex="0"`
         + ` data-screen="${esc(cell.name)}" data-run="${esc(cell.runId)}" data-status="${esc(cell.status)}"${sources}>`
-        + `<img loading="lazy" src="${esc(preferred)}" alt="${esc(cell.name)} on ${esc(cell.runId)}">`
+        + `<img loading="lazy" src="${esc(preferred)}" alt="${esc(cell.name)} on ${esc(cell.runId)}"`
+        + ` onerror="this.closest('.shot').classList.add('is-broken')">`
         + `</figure>`
         + (note ? `<p class="note">${esc(note)}</p>` : "")
         + `</td>`;
@@ -54,11 +55,24 @@ function renderRow(screen) {
         + `</tr>`;
 }
 
+// A column names the baseline set, the device that actually rendered it and when
+// — so a run left over from an earlier session is obvious rather than read as
+// part of the same matrix.
 function renderHead(runs) {
     return `<tr><th class="corner" scope="col">Screen</th>`
         + runs.map((run) => `<th scope="col"><span class="platform">${esc(run.platform)}</span>`
-            + `<span class="device">${esc(run.device)}</span></th>`).join("")
+            + `<span class="device">${esc(run.device)}</span>`
+            + (run.deviceName ? `<span class="rendered-on">${esc(run.deviceName)}</span>` : "")
+            + (run.capturedAt ? `<span class="captured-at">${esc(shortTime(run.capturedAt))}</span>` : "")
+            + `</th>`).join("")
         + `</tr>`;
+}
+
+// "2026-08-26T02:39:47.801Z" -> "26 Aug 02:39"
+function shortTime(iso) {
+    const at = new Date(iso);
+    if (Number.isNaN(at.getTime())) { return iso; }
+    return at.toISOString().replace(/^\d{4}-(\d{2})-(\d{2})T(\d{2}:\d{2}).*$/, "$2/$1 $3");
 }
 
 function renderChips(summary) {
@@ -127,13 +141,14 @@ const STYLE = `
   --bg: #f6f7f9; --panel: #fff; --ink: #14181d; --muted: #5f6b7a; --line: #dfe3e8;
   --pass: #2f9e5e; --fail: #d64545; --new: #2f6fd0; --missing: #b9761f; --absent: #8a94a2; --updated: #6b4fd0;
   --shadow: 0 1px 3px rgba(16,22,30,.12);
-  --w: 240px; --head-h: 52px;
+  --w: 240px; --head-h: 84px; --letterbox: #e9edf1;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #14181d; --panel: #1b2027; --ink: #e8ecf1; --muted: #97a2b0; --line: #2b323b;
     --pass: #4cc07d; --fail: #ff6b6b; --new: #6ba4ff; --missing: #e0a34c; --absent: #7d879a; --updated: #a98cff;
     --shadow: 0 1px 3px rgba(0,0,0,.45);
+    --letterbox: #10141a;
   }
 }
 * { box-sizing: border-box; }
@@ -169,7 +184,17 @@ h1 { margin: 0; font-size: 16px; letter-spacing: .01em; }
 .zoom { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
 /* main is the scroll container in both axes, so the sticky header row and the
    sticky screen-name column both anchor to it rather than to the page. */
-main { flex: 1; overflow: auto; padding: 0 20px 64px; }
+main { flex: 1; overflow: auto; padding: 0 20px 8px; }
+/* macOS hides overlay scrollbars until you scroll, which leaves no hint that the
+   matrix continues off-screen — styling the pseudo-elements forces the classic
+   always-on pair, with the horizontal one pinned to the bottom of the frame.
+   Deliberately not paired with the standard scrollbar-color/scrollbar-width:
+   setting either makes Chrome ignore these rules and fall back to overlay. */
+main::-webkit-scrollbar { width: 14px; height: 14px; }
+main::-webkit-scrollbar-track { background: var(--bg); }
+main::-webkit-scrollbar-thumb { background: var(--muted); border: 4px solid var(--bg); border-radius: 7px; }
+main::-webkit-scrollbar-thumb:hover { background: var(--ink); }
+main::-webkit-scrollbar-corner { background: var(--bg); }
 .gallery { border-collapse: separate; border-spacing: 0; }
 .gallery th { font-weight: 600; text-align: left; }
 thead th {
@@ -178,21 +203,34 @@ thead th {
 }
 thead .platform { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 thead .device { display: block; font-size: 13px; }
+thead .rendered-on, thead .captured-at { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
 thead th.corner, tbody th { position: sticky; left: 0; z-index: 2; background: var(--bg); }
 thead th.corner { z-index: 4; }
 tbody th { padding: 8px 14px 8px 0; vertical-align: top; white-space: nowrap; }
 tbody th span { position: sticky; top: var(--head-h); display: block; }
 tbody tr[data-status="fail"] th span { color: var(--fail); }
 td.cell { padding: 4px 4px 10px; vertical-align: top; }
+/* Every cell is the same box, whatever the device's aspect ratio — a ragged grid
+   is much harder to scan than a letterboxed one, and letterboxing keeps each
+   capture undistorted. */
 .shot {
-  margin: 0; display: block; cursor: zoom-in; border-radius: 6px;
-  border: 2px solid transparent; background: var(--panel); box-shadow: var(--shadow); overflow: hidden;
+  margin: 0; display: grid; place-items: center; cursor: zoom-in; border-radius: 6px;
+  width: var(--w); aspect-ratio: 16 / 9;
+  border: 2px solid transparent; background: var(--letterbox); box-shadow: var(--shadow); overflow: hidden;
 }
 .shot:focus-visible { outline: 2px solid var(--new); outline-offset: 2px; }
-.shot img { display: block; width: var(--w); height: auto; }
+.shot img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
 /* Dimmed when the chosen layer doesn't exist for this screen and we fell back —
    on the Diff layer that leaves only the screens that actually differ lit up. */
 .shot.is-fallback img { opacity: .25; }
+/* A page opened away from its captures (a half-downloaded artifact, a moved
+   folder) would otherwise show the browser's broken-image glyph, which reads as
+   "this screen rendered wrong" rather than "this file isn't here". */
+.shot.is-broken img { display: none; }
+.shot.is-broken::after {
+  content: "image not in this folder"; padding: 0 8px; text-align: center;
+  color: var(--muted); font-size: 11px;
+}
 .is-fail .shot { border-color: var(--fail); }
 .is-new .shot { border-color: var(--new); }
 .is-missing .shot { border-color: var(--missing); }
@@ -204,7 +242,7 @@ td.cell { padding: 4px 4px 10px; vertical-align: top; }
 .is-missing .note { color: var(--missing); }
 .nothing { padding: 40px 0; color: var(--muted); }
 .empty {
-  display: flex; align-items: center; justify-content: center; width: var(--w); height: calc(var(--w) * .46);
+  display: grid; place-items: center; width: var(--w); aspect-ratio: 16 / 9;
   border: 1px dashed var(--line); border-radius: 6px; color: var(--muted); font-size: 12px;
 }
 .lightbox {
@@ -234,7 +272,9 @@ const SCRIPT = `
       // Fall back to whatever the screen does have: only mismatches carry a diff,
       // and a screen with no baseline has only a capture.
       var fallback = shot.dataset.srcActual || shot.dataset.srcBaseline;
-      shot.querySelector("img").src = src || fallback;
+      var img = shot.querySelector("img");
+      shot.classList.remove("is-broken");
+      img.src = src || fallback;
       shot.classList.toggle("is-fallback", !src);
     });
   }

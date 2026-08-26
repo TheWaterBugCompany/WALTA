@@ -35,6 +35,12 @@ describe("visual report page", function () {
         expect(html).to.contain("42");
     });
 
+    // A downloaded artifact can be missing a leg's PNGs; the browser's broken-image
+    // glyph reads as a rendering fault rather than an absent file.
+    it("says so when an image is not there, rather than showing a broken image", function () {
+        expect(html).to.contain("onerror").and.to.contain("is-broken");
+    });
+
     it("loads nothing off the network so it opens from a downloaded artifact", function () {
         expect(html).to.not.match(/(src|href)="https?:/);
     });

@@ -34,7 +34,16 @@ describe("visual report model", function () {
 
     it("names each run column by its platform and device", function () {
         const model = buildReportModel([run("ios", "iphone-17-pro-max", [])]);
-        expect(model.runs).to.deep.equal([{ platform: "ios", device: "iphone-17-pro-max", id: "ios/iphone-17-pro-max" }]);
+        expect(model.runs[0]).to.include({ platform: "ios", device: "iphone-17-pro-max", id: "ios/iphone-17-pro-max" });
+    });
+
+    // The device label is whatever --device the caller typed ("local" by default),
+    // so the column also carries what actually rendered it and when.
+    it("carries the device a run was actually rendered on, and when", function () {
+        const model = buildReportModel([
+            { platform: "ios", device: "local", deviceName: "iPhone 17 Pro · iOS 26.3", capturedAt: "2026-08-26T02:39:47.801Z", results: [] },
+        ]);
+        expect(model.runs[0]).to.include({ deviceName: "iPhone 17 Pro · iOS 26.3", capturedAt: "2026-08-26T02:39:47.801Z" });
     });
 
     it("points a differing cell at its baseline, capture and diff images", function () {

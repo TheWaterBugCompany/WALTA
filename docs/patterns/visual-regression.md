@@ -18,6 +18,8 @@ npx grunt --platform=ios --simulator --grep=Menu --device=iphone-16 --advisory v
 
 Flags: `--update` writes captures over the baselines, `--grep=<Name>` captures one screen, `--device=<label>` selects the baseline set (baselines are renderer-specific — see below), `--advisory` reports diffs without failing.
 
+Without `--device` the label is **derived from the device that rendered the run** (`iPhone 17 Pro Max` → `iphone-17-pro-max`), so a local run lands in the same baseline set CI uses for that device and two simulators never share one. The OS version is deliberately dropped — a point release doesn't warrant a fresh baseline set.
+
 ## How it works
 
 1. A dedicated run mode. `index.js` dispatches on the `visual_capture` launch arg (set by `--visual`/the `visual-test` task) to [`VisualCapture.js`](../../walta-app/app/controllers/VisualCapture.js) instead of the app or the mocha runner — reusing the test-sim binary. See [`RuntimeMode`](../../walta-app/app/lib/util/RuntimeMode.js).
@@ -31,9 +33,10 @@ Flags: `--update` writes captures over the baselines, `--grep=<Name>` captures o
 Every run writes `builds/visual/report.html` — pass or fail, since a failing run is the one whose report you want to open. It is a **gallery**: one row per screen, one column per platform/device, so a whole matrix can be scanned side by side for anything that looks odd rather than opened one PNG at a time.
 
 - **Layer switch** — flip the whole gallery between Capture, Baseline and Diff. On the Diff layer only the screens that actually differ stay lit; the rest dim to their capture.
+- **Column headers** carry the baseline set, the device that actually rendered it and when — so a run left over from an earlier session is obvious rather than read as part of the same matrix.
 - **Needs a look** — hides rows where every device matched.
 - **Click a cell** for baseline / capture / diff side by side, then `←` `→` across devices and `↑` `↓` across screens. The open cell goes in the URL hash, so a link points at exactly the cell you are asking about.
-- Statuses are `pass`, `fail`, `new` (no baseline yet), `missing` (the run failed to capture it), `updated` (`--update` wrote it), and `absent` (that leg never captured this screen — a coverage gap, shown rather than hidden).
+- Statuses are `pass`, `fail`, `new` (no baseline yet), `missing` (the run failed to capture it), `updated` (`--update` wrote it), and `absent` (that leg never captured this screen — a coverage gap, shown rather than hidden). Across one CI run `absent` should be rare; a wall of it means the columns come from different runs, which the capture times in the headers will show.
 
 The page links its images by relative path and sits at the root of the captures tree, so it travels with them as one artifact; open the downloaded folder's `report.html`, not the file alone.
 
