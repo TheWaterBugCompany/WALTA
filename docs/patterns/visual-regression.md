@@ -52,7 +52,7 @@ To re-render after unpacking artifacts by hand: `npx grunt visual-report`.
 
 ## Adding a screen
 
-Add one entry to [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/manifest.js), then `--update` to generate its baseline. An entry owns its whole world: `args()` seeds whatever the screen binds to and returns its open arguments, and `services()` contributes the collaborators its screen controller builds a view-model from. Reuse the setup from the screen's existing `*_spec.js`.
+**Every new screen gets an entry, in the same change that adds the screen** — and so does any state of it worth looking at, since a screen is only ever captured in the state the manifest puts it in. Add one entry to [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/manifest.js), then `--update` to generate its baseline. An entry owns its whole world: `args()` seeds whatever the screen binds to and returns its open arguments, and `services()` contributes the collaborators its screen controller builds a view-model from. Reuse the setup from the screen's existing `*_spec.js`.
 
 The app presents UI in three ways, and [`openEntry`](../../walta-app/app/spec/visual/openEntry.js) opens each the way the app does — the manifest spec and the capture runner share it, so the contract test exercises the real opening path:
 
