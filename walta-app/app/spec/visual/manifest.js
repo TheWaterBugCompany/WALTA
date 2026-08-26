@@ -16,6 +16,7 @@ var { SURVEY_DETAILED } = require("logic/Sample");
 // A fixed completion date so the survey screens that render a date don't drift
 // day to day (which would read as a diff on every run).
 var FIXED_DATE = new Date("2020-01-02T00:00:00Z").getTime();
+var FIXED_DATE_VALUE = new Date(2020, 0, 2);
 
 function freshSample() {
 	// resetSample instantiates the sample + taxa Models/Collections that the
@@ -30,6 +31,11 @@ function menu() {
 	var CerdiApi = require("spec/mocks/MockCerdiApi");
 	Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi(Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret);
 	return { unknown_bug: true };
+}
+
+// A modal is captured over the screen it is reached from — see openEntry.js.
+function methodSelect() {
+	return { unknownBug: true };
 }
 
 function speedbug() {
@@ -130,6 +136,159 @@ function summary() {
 	return { sample: sample };
 }
 
+// --- Windows reached from a route -----------------------------------------
+
+function keySearch() {
+	var KeyLoaderJson = require("logic/KeyLoaderJson");
+	var key = KeyLoaderJson.loadKey(Ti.Filesystem.resourcesDirectory + "/spec/resources/simpleKey1/");
+	return { key: key, node: key.getCurrentNode() };
+}
+
+function sampleHistory() {
+	var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
+	var { clearDatabase } = require("spec/util/TestUtils");
+	var moment = require("lib/moment");
+	// Three entries seed this — the screen plus the two modals hosted on it — and
+	// earlier screens leave samples of their own behind. Clear first so the table
+	// holds the same rows however often the fixture runs.
+	clearDatabase();
+	// Fixed completion dates: the rows render them, so a live clock would read as
+	// a diff on every run.
+	[
+		{ serverSampleId: 666, dateCompleted: "2021-06-21T20:23" },
+		{ serverSampleId: 667, dateCompleted: "2021-06-21T22:23" },
+		{ serverSampleId: 668, dateCompleted: "2021-06-21T23:23" },
+	].forEach(function (s) {
+		makeSampleData({ serverSampleId: s.serverSampleId, dateCompleted: moment(s.dateCompleted).format() }).save();
+	});
+	// The rows resolve their owner through the API client; the mock has no user
+	// lookup of its own, so pin one rather than reach the network.
+	cerdiApiGlobal();
+	Alloy.Globals.CerdiApi.retrieveUserId = function () { return 38; };
+	return {};
+}
+
+function trainingTray() {
+	var SampleTrayModel = require("models/SampleTray");
+	var TaxonModel = require("models/Taxon");
+	var { speedBugIndexMock } = require("spec/mocks/MockSpeedbug");
+	var { keyMock } = require("spec/mocks/MockKey");
+	keyMock.addSpeedbugIndex(speedBugIndexMock);
+	Alloy.Globals.Key = keyMock;
+	// A part-filled tray is the interesting one: it shows both identified cells and
+	// the empty numbered slots the exercise still expects.
+	var tray = new SampleTrayModel(
+		[1, 2, 3, 4, 5].map(function (id, i) { return new TaxonModel({ id: id, taxonId: id, position: i }); })
+	);
+	return { key: keyMock, tray: tray };
+}
+
+function videoPlayer() {
+	return { url: "/spec/resources/simpleKey1/media/test_clip.mp4" };
+}
+
+// --- Modals, captured over the screen they are reached from ----------------
+
+function academy() {
+	return {};
+}
+
+// The real Training service over the real repo and the real bundled exercises —
+// the Academy screen greys its Start button from them, so a stub would render a
+// screen the app never shows.
+function academyServices() {
+	var TrainingRepository = require("repository/TrainingRepository");
+	var createTrainingExercises = require("logic/TrainingExercises");
+	var createTraining = require("logic/Training");
+	var exercises = createTrainingExercises(
+		JSON.parse(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "training-exercises.json").read().text));
+	return { Training: createTraining({ repo: TrainingRepository.open("waterbug_data"), exercises: exercises }) };
+}
+
+function trainingSuccess() {
+	return { correctCount: 6 };
+}
+
+function sampleEditMenu() {
+	return { sampleId: 1 };
+}
+
+function syncFeedback() {
+	var SyncStore = require("models/SyncStore");
+	var LogRepository = require("repository/LogRepository");
+	var Migrator = require("repository/Migrator");
+	var createSyncController = require("spec/fixtures/SyncController_fixture");
+	// An isolated, empty log db: the real one carries whatever the device happened
+	// to log, which would drift the capture run to run.
+	var db = "waterbug_data_visual_syncfeedback";
+	Migrator.migrate(db);
+	return {
+		syncController: createSyncController(SyncStore).syncController,
+		logRepository: LogRepository.open(db),
+	};
+}
+
+// --- Components, hosted in a window of their own ---------------------------
+
+function question() {
+	var Question = require("logic/Question");
+	return {
+		question: Question.createQuestion({
+			text: "This is a test question text! With a longer question text that needs to wrap plus a couple of media images",
+			mediaUrls: [
+				"/spec/resources/simpleKey1/media/amphipoda_01.jpg",
+				"/spec/resources/simpleKey1/media/amphipoda_02.jpg",
+				"/spec/resources/simpleKey1/media/amphipoda_03.jpg",
+			],
+		}),
+	};
+}
+
+function photoSelect() {
+	return {
+		readonly: true,
+		cropPhoto: true,
+		aspectFit: false,
+		image: [
+			"/spec/resources/simpleKey1/media/amphipoda_01.jpg",
+			"/spec/resources/simpleKey1/media/amphipoda_02.jpg",
+			"/spec/resources/simpleKey1/media/amphipoda_03.jpg",
+		],
+	};
+}
+
+function editTaxon() {
+	var { speedBugIndexMock } = require("spec/mocks/MockSpeedbug");
+	var { createMockTaxon } = require("spec/mocks/MockTaxon");
+	var { keyMock } = require("spec/mocks/MockKey");
+	keyMock.addSpeedbugIndex(speedBugIndexMock);
+	var taxon = createMockTaxon({ taxonId: "1", abundance: "3-5" });
+	Alloy.Collections.taxa = Alloy.createCollection("taxa", [taxon]);
+	Alloy.Models.sample = Alloy.createModel("sample");
+	Alloy.Models.sample.save();
+	return { key: keyMock, sample: Alloy.Models.sample, taxa: Alloy.Collections.taxa, taxonId: "1" };
+}
+
+function locationEntry() {
+	var sample = freshSample();
+	return {
+		sample: sample,
+		// Inject the fix rather than wait on the host's GPS, which would drift the
+		// accuracy readout — and never lock at all on a headless CI emulator.
+		getCurrentPosition: function (callback) {
+			callback({ coords: { accuracy: 100, latitude: -42.890734, longitude: 147.671216 } });
+		},
+	};
+}
+
+function leafletMap() {
+	return {};
+}
+
+function iosSurveyDatePicker() {
+	return { date: FIXED_DATE_VALUE };
+}
+
 // About/Help render their content in a WebView. Framebuffer capture (the default)
 // handles this — the host screenshots the real screen, which includes WebView
 // content view.toImage() can't see.
@@ -168,6 +327,7 @@ function taxonDetails() {
 
 module.exports = [
 	{ name: "Menu", args: menu },
+	{ name: "MethodSelect", args: methodSelect, host: "Menu" },
 	{ name: "Speedbug", args: speedbug },
 	{ name: "TaxonDetails", args: taxonDetails },
 	{ name: "TaxonList", args: taxonList },
@@ -179,8 +339,29 @@ module.exports = [
 	{ name: "SampleTray", args: sampleTray },
 	{ name: "Notes", args: notes },
 	{ name: "Summary", args: summary },
-	// loadMs gives the WebView's local HTML time to render before the host grabs
-	// the frame (framebuffer is the default capture — see captureScreens.js).
+	{ name: "KeySearch", args: keySearch },
+	{ name: "SampleHistory", args: sampleHistory },
+	{ name: "TrainingTray", args: trainingTray },
+	// loadMs gives the WebView's local HTML, the map tiles and the video's first
+	// frame time to render before the host grabs the frame (framebuffer is the
+	// default capture — see captureScreens.js).
 	{ name: "About", args: about, loadMs: 2000 },
 	{ name: "Help", args: help, loadMs: 2000 },
+	{ name: "VideoPlayer", args: videoPlayer, loadMs: 2000 },
+
+	// Modals — captured over the screen a user reaches them from.
+	{ name: "Academy", args: academy, services: academyServices, host: "Menu" },
+	{ name: "TrainingSuccess", args: trainingSuccess, host: "TrainingTray" },
+	{ name: "SampleEditMenu", args: sampleEditMenu, host: "SampleHistory" },
+	{ name: "SyncFeedback", args: syncFeedback, host: "SampleHistory" },
+
+	// Components — no window of their own, hosted in one to be captured.
+	{ name: "Question", args: question, wrap: true },
+	{ name: "PhotoSelect", args: photoSelect, wrap: true },
+	{ name: "EditTaxon", args: editTaxon, wrap: true },
+	{ name: "LocationEntry", args: locationEntry, wrap: true, loadMs: 2000 },
+	{ name: "LeafletMap", args: leafletMap, wrap: true, loadMs: 2000 },
+	// iOS only: the inline date picker crashes Titanium's Android
+	// TextInputLayout, so Android never instantiates this modal.
+	{ name: "IosSurveyDatePicker", args: iosSurveyDatePicker, wrap: true, platform: "ios" },
 ];
