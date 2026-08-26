@@ -191,15 +191,21 @@ function trainingTray() {
 }
 
 // Verdicts only appear once the tray is assessed, and the tray's whole point in
-// training is that feedback — so the capture assesses it. A fixed alternating
-// assessor gives a visible mix of ticks and crosses rather than whatever the
-// real exercise would grade these five taxa as.
+// training is that feedback — so the capture assesses it. The identified taxa
+// get a mixed verdict and every cell the exercise still expects is incorrect: an
+// empty cell is a taxon the trainee never found, so a tick on one reads as
+// nonsense. The mix is a fixed pattern, not a real draw — a baseline that varies
+// between runs is a baseline that can't be diffed.
+var IDENTIFIED_VERDICTS = ["correct", "incorrect", "correct", "correct", "incorrect"];
+
 function trainingTrayServices() {
 	return {
 		assessor: {
 			expectedCount: 10,
 			assess: function (cells) {
-				return cells.map(function (_, i) { return i % 2 === 0 ? "incorrect" : "correct"; });
+				return cells.map(function (cell, i) {
+					return cell ? IDENTIFIED_VERDICTS[i % IDENTIFIED_VERDICTS.length] : "incorrect";
+				});
 			},
 		},
 	};
