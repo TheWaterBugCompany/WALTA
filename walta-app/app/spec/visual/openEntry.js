@@ -74,17 +74,25 @@ function servicesFor(entry, hostEntry) {
 	return makeTestServices(overrides);
 }
 
+// A screen whose interesting state is reached by doing something (the training
+// tray's verdicts only appear once it is assessed) declares it as after(), which
+// runs before the frame is settled and grabbed.
+async function withEntryState(entry, opened) {
+	if (entry.after) { await entry.after(opened); }
+	return opened;
+}
+
 async function openEntry(entry, entries) {
 	// A component has no seam: it is built directly and hosted in a window.
-	if (entry.wrap) { return openComponent(entry); }
+	if (entry.wrap) { return withEntryState(entry, await openComponent(entry)); }
 
 	var hostEntry = entry.host ? entryNamed(entries, entry.host) : entry;
 	var seam = servicesFor(entry, hostEntry).View;
 	var host = await openWindow(seam, hostEntry);
-	if (!entry.host) { return Object.assign(host, { seam: seam }); }
+	if (!entry.host) { return withEntryState(entry, Object.assign(host, { seam: seam })); }
 
 	seam.openModal(entry.name, entry.args(), seam.services);
-	return {
+	return withEntryState(entry, {
 		// The host window is what gets captured — the modal is a child of it.
 		view: host.view,
 		seam: seam,
@@ -92,7 +100,7 @@ async function openEntry(entry, entries) {
 			seam.closeModal();
 			await host.dispose();
 		},
-	};
+	});
 }
 
 exports.openEntry = openEntry;

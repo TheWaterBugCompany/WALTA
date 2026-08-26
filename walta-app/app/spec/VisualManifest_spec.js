@@ -65,6 +65,17 @@ describe("visual capture manifest", function () {
 	// run the sample-history fixture (the screen plus the two modals hosted on it).
 	// A fixture that only appends would grow the table each time and drift the
 	// capture — so seeding has to leave the same rows however often it runs.
+	// The tray's whole point in training is the feedback, so the capture is worth
+	// nothing without it — an entry can put its screen into the state worth
+	// showing before the frame is grabbed.
+	it("reveals the training tray's tick and cross verdicts", async function () {
+		await open(entryNamed("TrainingTray"));
+		var cells = view.getCurrentController().tray.children[0].children[1].children;
+		var verdicts = cells.map(function (cell) { return cell.children[2]; });
+		expect(verdicts.filter(function (v) { return v.visible; }), "no verdict overlay is showing")
+			.to.have.length.greaterThan(0);
+	});
+
 	it("seeds the sample history with the same rows however often its fixture runs", async function () {
 		var entry = entryNamed("SampleHistory");
 		entry.args();
