@@ -3,7 +3,8 @@
 // and diff. The settle gate (waitForStable on toImage().length) is the whole
 // reason this is reliable: postlayout fires before lazy tiles / async photos
 // finish drawing, so capturing on postlayout alone yields blank frames.
-var { controllerOpenTest, closeWindow } = require("spec/util/TestUtils");
+var { closeWindow } = require("spec/util/TestUtils");
+var { makeTestServices } = require("spec/fixtures/Services_fixture");
 var waitForStable = require("util/waitForStable");
 
 var OUTPUT_SUBDIR = "visual";
@@ -72,8 +73,12 @@ async function waitForShot(name) {
 // before the next screen opens. `capture: "toimage"` opts a screen back into the
 // in-app snapshot (faster, no host handshake) where the notch doesn't matter.
 async function captureScreen(entry) {
-	var ctl = entry.create();
-	await controllerOpenTest(ctl);
+	// Open through the View seam, as the app and the device specs do, so a screen
+	// with a Titanium-free screen controller gets its view-model. Alloy.createController
+	// alone builds the shell, and a view-model-driven screen then renders nothing.
+	var seam = makeTestServices().View;
+	await seam.openView(entry.screen || entry.name, entry.args());
+	var ctl = seam.getCurrentController();
 	var view = ctl.getView();
 	await waitForStable(function () { return view.toImage().length; }, entry.settle);
 

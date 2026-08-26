@@ -22,6 +22,7 @@ module.exports = [
   "Register",
   "QuestionController",
   "SampleTray",
+  "VisualManifest",
   "TrainingTray",
   "SampleTaxaIcon",
   "Sample",
