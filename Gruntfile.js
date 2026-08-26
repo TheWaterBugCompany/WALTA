@@ -929,6 +929,35 @@ module.exports = function(grunt) {
       }
     });
 
+    // Renders the HTML review page covering every run captured under builds/visual/
+    // — one row per screen, one column per platform/device. Written on every run,
+    // pass or fail, so reviewing a capture set means opening one page rather than
+    // clicking through loose PNGs.
+    const VISUAL_ROOT = 'builds/visual';
+
+    async function writeVisualReport(grunt) {
+      const { buildReport } = await import('./build-utils/visual/buildReport.js');
+      // --all-devices seeds the report with the whole declared matrix, so a leg
+      // that captured nothing is a visible column of gaps rather than a column
+      // that silently isn't there. The CI aggregate job wants that; a local run
+      // capturing one device does not.
+      const { expectedRuns } = await import('./build-utils/visual/devices.js');
+      const expected = grunt.option('all-devices') ? expectedRuns() : [];
+      const report = buildReport({ root: VISUAL_ROOT, generatedAt: new Date().toISOString(), expected });
+      grunt.log.writeln(`Review page: ${report.file} (${report.screens} screens x ${report.runs} devices)`);
+      for (const missing of report.missingRuns) {
+        grunt.log.writeln(`  no captures for ${missing} — that leg produced nothing`);
+      }
+      return report;
+    }
+
+    // Standalone entry point for the CI aggregate job, which unpacks each matrix
+    // leg's artifact into builds/visual/ and renders the whole-matrix gallery.
+    grunt.registerTask('visual-report', function () {
+      const done = this.async();
+      writeVisualReport(grunt).then(() => done()).catch(err => { grunt.fail.fatal(err); done(); });
+    });
+
     // Streams the device log until the capture runner signals done, pulls the
     // PNGs, and diffs them against the baseline set. Runs after `launch`.
     grunt.registerTask('visual-collect', function (platform) {
@@ -936,18 +965,26 @@ module.exports = function(grunt) {
       const path = require('path');
       const isSimulator = grunt.option('simulator');
       const update = grunt.option('update');
-      const device = grunt.option('device') || 'local';
-      const actualDir = path.join('builds', 'visual', platform, device, 'actual');
-      const baselineDir = path.join('visual', 'baselines', platform, device);
-      const outDir = path.join('builds', 'visual', platform, device, 'report');
       const captureTimeoutMs = (grunt.option('capture-timeout') || 600) * 1000;
 
       Promise.all([
         getLauncher(platform, isSimulator),
         import('./build-utils/visual/collectHandshake.js'),
         import('./build-utils/visual/compareRun.js'),
-      ]).then(async ([launcher, { collectHandshake }, { compareRun }]) => {
+        import('./build-utils/visual/persistRun.js'),
+        import('./build-utils/visual/deviceLabel.js'),
+      ]).then(async ([launcher, { collectHandshake }, { compareRun }, { persistRun }, { deviceLabel }]) => {
         const fs = require('fs');
+        // Baselines are renderer-specific, so absent an explicit --device the
+        // device that rendered the run decides which set it belongs to — a
+        // catch-all directory would mix captures from every simulator used.
+        const deviceName = await launcher.describeDevice();
+        const device = grunt.option('device') || deviceLabel(deviceName);
+        const deviceDir = path.join('builds', 'visual', platform, device);
+        const actualDir = path.join(deviceDir, 'actual');
+        const baselineDir = path.join('visual', 'baselines', platform, device);
+        const outDir = path.join(deviceDir, 'report');
+        grunt.log.writeln(`Capturing on ${deviceName} (baseline set "${device}")`);
         // Start from a clean actual dir so a screen dropped from the manifest
         // doesn't leave a stale capture behind that reads as an unexpected diff.
         fs.rmSync(actualDir, { recursive: true, force: true });
@@ -985,6 +1022,10 @@ module.exports = function(grunt) {
         for (const res of run.results) {
           grunt.log.writeln(`  ${res.status.padEnd(8)} ${res.name}${res.diffPixels != null ? ` (${res.diffPixels}px)` : ''}`);
         }
+        // Persist and re-render the review page before the pass/fail verdict —
+        // a failing run is exactly the one whose report you want to open.
+        persistRun({ platform, device, deviceName, deviceDir, baselineDir, results: run.results, capturedAt: new Date().toISOString() });
+        await writeVisualReport(grunt);
 
         if (update) {
           grunt.log.writeln(`Baselines written to ${baselineDir}`);

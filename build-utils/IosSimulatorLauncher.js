@@ -18,6 +18,12 @@ function buildLaunchArgv(launchArgs) {
   return argv;
 }
 
+// "com.apple.CoreSimulator.SimRuntime.iOS-26-3" -> "iOS 26.3"
+function runtimeName(runtime) {
+  const match = /SimRuntime\.([A-Za-z]+)-([0-9-]+)$/.exec(runtime);
+  return match ? `${match[1]} ${match[2].replace(/-/g, ".")}` : runtime;
+}
+
 class IosSimulatorLauncher {
   constructor({ execFile = defaultExecFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)", sleep = (ms) => new Promise(r => setTimeout(r, ms)) } = {}) {
     this._execFile = execFile;
@@ -152,6 +158,19 @@ class IosSimulatorLauncher {
 
   getDriver() {
     return null;
+  }
+
+  // The simulator the captures were rendered on. A visual run is labelled by
+  // whatever --device the caller typed ("local" by default), which says nothing
+  // about what actually rendered it — so the run records this and the report
+  // names it, and two runs from different simulators can't be read as one.
+  async describeDevice() {
+    const listed = JSON.parse(await this._exec(["simctl", "list", "devices", "-j"]));
+    for (const [runtime, devices] of Object.entries(listed.devices)) {
+      const device = devices.find((d) => d.udid === this._udid);
+      if (device) { return `${device.name} · ${runtimeName(runtime)}`; }
+    }
+    return this._udid;
   }
 
   // Captures the actual simulator framebuffer (unlike toImage(), this includes

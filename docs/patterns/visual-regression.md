@@ -18,12 +18,32 @@ npx grunt --platform=ios --simulator --grep=Menu --device=iphone-16 --advisory v
 
 Flags: `--update` writes captures over the baselines, `--grep=<Name>` captures one screen, `--device=<label>` selects the baseline set (baselines are renderer-specific — see below), `--advisory` reports diffs without failing.
 
+Without `--device` the label is **derived from the device that rendered the run** (`iPhone 17 Pro Max` → `iphone-17-pro-max`), so a local run lands in the same baseline set CI uses for that device and two simulators never share one. The OS version is deliberately dropped — a point release doesn't warrant a fresh baseline set.
+
 ## How it works
 
 1. A dedicated run mode. `index.js` dispatches on the `visual_capture` launch arg (set by `--visual`/the `visual-test` task) to [`VisualCapture.js`](../../walta-app/app/controllers/VisualCapture.js) instead of the app or the mocha runner — reusing the test-sim binary. See [`RuntimeMode`](../../walta-app/app/lib/util/RuntimeMode.js).
 2. Capture. [`spec/visual/captureScreens.js`](../../walta-app/app/spec/visual/captureScreens.js) renders each entry in [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/manifest.js) with its spec fixtures (no live GPS/network/navigation) and settles. By default the **host** then grabs the actual simulator/emulator **framebuffer** (the runner holds the screen and emits a `VISUAL_FRAMEBUFFER_READY` marker). A screen can opt into an in-app `view.toImage()` snapshot instead with `capture: "toimage"`.
 3. Settle gate. [`waitForStable`](../../walta-app/app/lib/util/waitForStable.js) re-captures until two consecutive `toImage()` blobs are the same size. This is essential: `postlayout` fires *before* lazy tiles (Speedbug) and async photos (TaxonDetails) finish drawing, so capturing on `postlayout` alone yields blank frames. (`toImage()` is used only as the settle signal here — it reflects native layout cheaply.)
 4. Collect + diff. The `visual-collect` grunt task streams the device log: on each `VISUAL_FRAMEBUFFER_READY` it screenshots the frame (iOS `simctl io`; Android `adb screencap`) and rotates it upright (see below), and on `VISUAL_CAPTURE_DONE` it pulls any `toimage` PNGs (iOS `simctl get_app_container`; Android `run-as` tar stream, since the app dir isn't world-readable). Each is diffed against the baseline with [`compareScreenshots`](../../build-utils/visual/compareScreenshots.js) (pixelmatch); mismatches get a baseline/actual diff image for the CI artifact.
+
+5. Report. The run is recorded as `results.json` and its baselines copied in beside the captures ([`persistRun`](../../build-utils/visual/persistRun.js)), then [`buildReport`](../../build-utils/visual/buildReport.js) renders `builds/visual/report.html` — see below.
+
+## The review page
+
+Every run writes `builds/visual/report.html` — pass or fail, since a failing run is the one whose report you want to open. It is a **gallery**: one row per screen, one column per platform/device, so a whole matrix can be scanned side by side for anything that looks odd rather than opened one PNG at a time.
+
+- **Layer switch** — flip the whole gallery between Capture, Baseline and Diff. On the Diff layer only the screens that actually differ stay lit; the rest dim to their capture.
+- **Column headers** carry the baseline set, the device that actually rendered it and when — so a run left over from an earlier session is obvious rather than read as part of the same matrix.
+- **Needs a look** — hides rows where every device matched.
+- **Click a cell** for baseline / capture / diff side by side, then `←` `→` across devices and `↑` `↓` across screens. The open cell goes in the URL hash, so a link points at exactly the cell you are asking about.
+- Statuses are `pass`, `fail`, `new` (no baseline yet), `missing` (the run failed to capture it), `updated` (`--update` wrote it), and `absent` (that leg never captured this screen — a coverage gap, shown rather than hidden). Across one CI run `absent` should be rare; a wall of it means the columns come from different runs, which the capture times in the headers will show.
+
+The page links its images by relative path and sits at the root of the captures tree, so it travels with them as one artifact; open the downloaded folder's `report.html`, not the file alone.
+
+**In CI** each matrix leg renders its own page into its `visual-<platform>-<label>` artifact, and the `visual-report` job merges every leg into one tree and uploads the whole-matrix gallery as **`visual-review`** — that is the one to download to review a PR's rendering across both platforms and all screen sizes at once. The root-level `report.html` is also what pins each leg's artifact root at `builds/visual/`, which is what lets the legs merge back with their platform/device paths intact.
+
+To re-render after unpacking artifacts by hand: `npx grunt visual-report`.
 
 ## Rotating the frame upright
 
@@ -55,7 +75,9 @@ Other fields: `settle` (a longer frame-stability gate for lazy tiles / async pho
 
 A baseline rendered on one simulator/emulator won't match a differently-rendered one (fonts, GPU), so baselines are generated in the environment that verifies them (CI) and committed under `visual/baselines/<platform>/<device>/`. Titanium has no runtime window resize — different screen sizes require different devices, so each device keeps its own baseline set.
 
-CI runs a device matrix (advisory jobs in `.github/workflows/ci.yml`), one baseline set per device — currently iOS `iphone-17` / `iphone-17-pro-max` and Android `medium` / `small` (distinct logical widths). Each matrix leg uploads its captures/diffs as `visual-<platform>-<label>`. Add a device by adding a matrix entry (and committing that leg's first CI-rendered baselines).
+The devices CI covers are declared **once**, in [`visual/devices.json`](../../visual/devices.json) — currently iOS `iphone-17` / `iphone-17-pro-max` and Android `medium` / `small` (distinct logical widths). The `visual-devices` job publishes it, the two capture jobs build their matrices from it with `fromJSON`, and the report reads it to know which columns to expect. **Add a device there, not in the workflow** (then commit that leg's first CI-rendered baselines). Each leg uploads its captures/diffs as `visual-<platform>-<label>`.
+
+That single declaration is what lets the report notice a leg that produced *nothing*: without it a dead leg's column would simply vanish, leaving a report that looked complete. Declared devices are always columns, so a leg that captured nothing reads as a column of gaps marked **no captures**. (A run on an undeclared device — a local capture on your own simulator — is still shown; it just isn't expected.)
 
 ## Why not Appium?
 
