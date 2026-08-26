@@ -56,7 +56,9 @@ Add one entry to [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/man
 
 A baseline rendered on one simulator/emulator won't match a differently-rendered one (fonts, GPU), so baselines are generated in the environment that verifies them (CI) and committed under `visual/baselines/<platform>/<device>/`. Titanium has no runtime window resize — different screen sizes require different devices, so each device keeps its own baseline set.
 
-CI runs a device matrix (advisory jobs in `.github/workflows/ci.yml`), one baseline set per device — currently iOS `iphone-17` / `iphone-17-pro-max` and Android `medium` / `small` (distinct logical widths). Each matrix leg uploads its captures/diffs as `visual-<platform>-<label>`. Add a device by adding a matrix entry (and committing that leg's first CI-rendered baselines).
+The devices CI covers are declared **once**, in [`visual/devices.json`](../../visual/devices.json) — currently iOS `iphone-17` / `iphone-17-pro-max` and Android `medium` / `small` (distinct logical widths). The `visual-devices` job publishes it, the two capture jobs build their matrices from it with `fromJSON`, and the report reads it to know which columns to expect. **Add a device there, not in the workflow** (then commit that leg's first CI-rendered baselines). Each leg uploads its captures/diffs as `visual-<platform>-<label>`.
+
+That single declaration is what lets the report notice a leg that produced *nothing*: without it a dead leg's column would simply vanish, leaving a report that looked complete. Declared devices are always columns, so a leg that captured nothing reads as a column of gaps marked **no captures**. (A run on an undeclared device — a local capture on your own simulator — is still shown; it just isn't expected.)
 
 ## Why not Appium?
 

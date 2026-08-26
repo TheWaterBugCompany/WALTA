@@ -63,6 +63,7 @@ function renderHead(runs) {
         + runs.map((run) => `<th scope="col"><span class="platform">${esc(run.platform)}</span>`
             + `<span class="device">${esc(run.device)}</span>`
             + (run.deviceName ? `<span class="rendered-on">${esc(run.deviceName)}</span>` : "")
+            + (run.uncaptured ? `<span class="uncaptured">no captures</span>` : "")
             + (run.capturedAt ? `<span class="captured-at">${esc(shortTime(run.capturedAt))}</span>` : "")
             + `</th>`).join("")
         + `</tr>`;
@@ -184,7 +185,10 @@ h1 { margin: 0; font-size: 16px; letter-spacing: .01em; }
 .zoom { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
 /* main is the scroll container in both axes, so the sticky header row and the
    sticky screen-name column both anchor to it rather than to the page. */
-main { flex: 1; overflow: auto; padding: 0 20px 8px; }
+/* min-height/min-width:0 because a flex item defaults to min-size:auto, which
+   would let main grow to the table's full size instead of scrolling it — taking
+   the horizontal scrollbar off the bottom of the frame with it. */
+main { flex: 1; min-height: 0; min-width: 0; overflow: auto; padding: 0 20px 8px; }
 /* macOS hides overlay scrollbars until you scroll, which leaves no hint that the
    matrix continues off-screen — styling the pseudo-elements forces the classic
    always-on pair, with the horizontal one pinned to the bottom of the frame.
@@ -204,6 +208,7 @@ thead th {
 thead .platform { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 thead .device { display: block; font-size: 13px; }
 thead .rendered-on, thead .captured-at { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
+thead .uncaptured { display: block; font-size: 11px; font-weight: 600; color: var(--missing); }
 thead th.corner, tbody th { position: sticky; left: 0; z-index: 2; background: var(--bg); }
 thead th.corner { z-index: 4; }
 tbody th { padding: 8px 14px 8px 0; vertical-align: top; white-space: nowrap; }
