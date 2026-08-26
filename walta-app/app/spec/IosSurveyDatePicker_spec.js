@@ -1,6 +1,6 @@
 require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
-var { closeWindow, wrapViewInWindow, windowOpenTest, actionFiresEventTest } = require("spec/util/TestUtils");
+var { closeWindow, wrapViewInWindow, windowOpenTest, actionFiresEventTest, waitFor } = require("spec/util/TestUtils");
 
 // iOS only: the inline date picker this modal embeds crashes Titanium's
 // Android Material TextInputLayout, so Android uses the native date dialog
@@ -20,6 +20,16 @@ describe("IosSurveyDatePicker controller", function () {
     if (OS_IOS) {
       expect(ctl.datePicker.datePickerStyle).to.equal(Ti.UI.DATE_PICKER_STYLE_INLINE);
     }
+  });
+
+  // The inline picker draws a fixed-height calendar, and on a phone in landscape
+  // it was tall enough to push the button bar past the bottom of the card — the
+  // Done button came out sliced in half by the edge of the screen.
+  it("keeps the Done button inside the card, clear of the bottom edge", async function () {
+    await waitFor(function () { return ctl.pickerWindow.rect.height > 0; });
+
+    var bar = ctl.buttonBar.rect;
+    expect(bar.y + bar.height).to.be.at.most(ctl.pickerWindow.rect.height - 8);
   });
 
   it("triggers 'selected' with the chosen date when Done is tapped", function (done) {
