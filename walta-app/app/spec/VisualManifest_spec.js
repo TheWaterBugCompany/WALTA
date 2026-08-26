@@ -76,6 +76,15 @@ describe("visual capture manifest", function () {
 			.to.have.length.greaterThan(0);
 	});
 
+	// The assessment notice fades in, dwells on a timer and fades out again, so
+	// whether it lands in a capture is a race — and it sits over the top row of
+	// cells. The capture waits it out instead, for the tray unobstructed.
+	it("captures the training tray after its assessment notice has gone", async function () {
+		await open(entryNamed("TrainingTray"));
+		expect(view.getCurrentController().incorrectNotice.visible,
+			"the assessment notice is still over the tray").to.equal(false);
+	});
+
 	it("seeds the sample history with the same rows however often its fixture runs", async function () {
 		var entry = entryNamed("SampleHistory");
 		entry.args();
