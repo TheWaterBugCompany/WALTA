@@ -236,6 +236,16 @@ function videoPlayer() {
 
 // --- Modals, captured over the screen they are reached from ----------------
 
+// The keypad is the whole point of the screen and only appears once a digit box
+// is tapped, so the capture taps one — the same way the training tray assesses
+// itself to bring its verdicts up.
+function openDigitPicker(opened) {
+	var { waitFor } = require("spec/util/TestUtils");
+	var academy = opened.seam.getCurrentModal().alloyCtl;
+	academy.digit1.fireEvent("click");
+	return waitFor(function () { return academy.digitPicker.visible === true; });
+}
+
 function academy() {
 	return {};
 }
@@ -398,6 +408,7 @@ module.exports = [
 
 	// Modals — captured over the screen a user reaches them from.
 	{ name: "Academy", args: academy, services: academyServices, host: "Menu" },
+	{ name: "AcademyDigitPicker", screen: "Academy", args: academy, services: academyServices, host: "Menu", after: openDigitPicker },
 	{ name: "TrainingSuccess", args: trainingSuccess, host: "TrainingTray" },
 	{ name: "SampleEditMenu", args: sampleEditMenu, host: "SampleHistory" },
 	{ name: "SyncFeedback", args: syncFeedback, host: "SampleHistory" },

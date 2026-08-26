@@ -108,7 +108,7 @@ async function openEntry(entry, entries) {
 	var host = await openWindow(seam, hostEntry);
 	if (!entry.host) { return withEntryState(entry, Object.assign(host, { seam: seam })); }
 
-	seam.openModal(entry.name, entry.args(), seam.services);
+	seam.openModal(screenOf(entry), entry.args(), seam.services);
 	return withEntryState(entry, {
 		// The host window is what gets captured — the modal is a child of it.
 		view: host.view,
