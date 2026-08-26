@@ -419,6 +419,37 @@ describe("AndroidLauncher", function() {
     });
   });
 
+  // See IosSimulatorLauncher for why this exists: a previous run's capture-done
+  // marker outlives the app and makes the host finish before this run has begun.
+  describe("clearVisualCaptureFiles()", function() {
+    const APP_ID = "net.thewaterbug.waterbug";
+
+    it("removes the handshake dir a previous run left behind", async function() {
+      const fakeExecFile = makeExecFile({
+        "devices": DEVICES_OUTPUT,
+        [`-s emulator-5554 exec-out run-as ${APP_ID} find . -type d -name visual`]: "./files/visual\n",
+        [`-s emulator-5554 exec-out run-as ${APP_ID} rm -rf ./files/visual`]: "",
+      });
+      const launcher = new AndroidLauncher({ execFile: fakeExecFile });
+      await launcher.connect();
+
+      await launcher.clearVisualCaptureFiles(APP_ID, { subdir: "visual" });
+
+      expect(fakeExecFile.lastCall.args[1]).to.deep.equal(
+        ["-s", "emulator-5554", "exec-out", "run-as", APP_ID, "rm", "-rf", "./files/visual"]);
+    });
+
+    // It runs before the app is installed, so there is nothing to find, and
+    // nothing to clear is success.
+    it("is happy when the app has written no handshake dir yet", async function() {
+      const fakeExecFile = makeExecFile({ "devices": DEVICES_OUTPUT });
+      const launcher = new AndroidLauncher({ execFile: fakeExecFile });
+      await launcher.connect();
+
+      await launcher.clearVisualCaptureFiles(APP_ID, { subdir: "visual" });
+    });
+  });
+
   describe("pullCapturedScreenshots()", function() {
     const APP_ID = "net.thewaterbug.waterbug";
     const DEVICE_DIR = "/data/data/net.thewaterbug.waterbug/files/visual";

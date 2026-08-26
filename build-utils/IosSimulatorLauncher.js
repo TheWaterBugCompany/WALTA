@@ -224,6 +224,24 @@ class IosSimulatorLauncher {
     return fs.readdirSync(dir);
   }
 
+  // Clear the handshake dir before the app starts. It survives a reinstall, so a
+  // previous run's markers — a capture-done above all — are still sitting there
+  // when the host begins polling, which it reads as this run having already
+  // finished. The runner wipes the dir itself, but not before the host has read
+  // it; clearing it while nothing is running is the only race-free moment.
+  // Nothing to clear (no container until the app is first installed) is success.
+  async clearVisualCaptureFiles(appId, { subdir = "visual" } = {}) {
+    try {
+      fs.rmSync(await this._visualDir(appId, subdir), { recursive: true, force: true });
+    } catch (e) {
+      // No container until the app is first installed — nothing to clear.
+    }
+    // Installing the app moves its data container, so the path resolved here is
+    // a dead one by the time the host polls for markers — and polling a dead
+    // directory just runs the capture deadline out.
+    this._containerCache = null;
+  }
+
   // Ack a captured screen by dropping an (empty) marker file the runner polls for.
   async writeVisualCaptureFile(appId, name, { subdir = "visual" } = {}) {
     const dir = await this._visualDir(appId, subdir);

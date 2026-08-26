@@ -240,6 +240,18 @@ class AndroidLauncher {
     }
   }
 
+  // Clear the handshake dir before the app starts. It outlives the app, so a
+  // previous run's markers — a capture-done above all — are still there when the
+  // host begins polling, which reads them as this run having already finished.
+  // The runner wipes the dir itself, but not before the host has read it;
+  // clearing it while nothing is running is the only race-free moment.
+  async clearVisualCaptureFiles(appId, { subdir = "visual" } = {}) {
+    const dir = await this._visualDir(appId, subdir);
+    if (!dir) return;
+    await this._exec(["exec-out", "run-as", appId, "rm", "-rf", dir]);
+    this._visualDirCache = null;
+  }
+
   async writeVisualCaptureFile(appId, name, { subdir = "visual" } = {}) {
     const dir = await this._visualDir(appId, subdir);
     if (!dir) throw new Error(`visual dir not found for ${appId}`);
