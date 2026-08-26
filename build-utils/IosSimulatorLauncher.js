@@ -2,6 +2,7 @@ import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_proces
 import fs from "fs";
 import path from "path";
 import { Jimp } from "jimp";
+import { rotationFor } from "./visual/orientation.js";
 
 function buildLaunchArgv(launchArgs) {
   if (!launchArgs) return [];
@@ -156,14 +157,16 @@ class IosSimulatorLauncher {
   // Captures the actual simulator framebuffer (unlike toImage(), this includes
   // WebView / video / map content) and writes it upright-landscape to destPath.
   // The simulator screenshots in the device's physical portrait orientation, so
-  // it's rotated to match the landscape-locked app.
-  async screenshotFramebuffer(destPath) {
+  // it's rotated to match the landscape-locked app — by the orientation the
+  // capture runner reported, since the two landscapes are a half-turn apart.
+  async screenshotFramebuffer(destPath, { orientation } = {}) {
     // simctl resolves relative paths against its own cwd, not ours — pass absolute.
     const abs = path.resolve(destPath);
     const raw = `${abs}.portrait.png`;
     await this._exec(["simctl", "io", this._udid, "screenshot", raw]);
     const img = await Jimp.read(raw);
-    img.rotate(90);
+    const turn = rotationFor(orientation, img.bitmap);
+    if (turn) img.rotate(turn);
     await img.write(abs);
     fs.unlinkSync(raw);
     return abs;

@@ -39,6 +39,17 @@ function sleep(ms) {
 var SHOT_TIMEOUT_MS = 30000;
 var SHOT_POLL_MS = 100;
 
+// The host has to rotate the portrait framebuffer upright and can't tell the two
+// landscape orientations apart on its own, so the ready marker carries ours.
+// Sent in the marker's name because the host already lists the directory.
+function currentOrientation() {
+	return Ti.Gesture.orientation === Ti.UI.LANDSCAPE_RIGHT ? "landscape-right" : "landscape-left";
+}
+
+function readyMarker(name, orientation) {
+	return name + ".ready-" + orientation;
+}
+
 function writeMarker(name) {
 	Ti.Filesystem.getFile(outputDir().nativePath, name).write("");
 }
@@ -90,7 +101,7 @@ async function captureScreen(entry, entries) {
 		if (entry.loadMs) { await sleep(entry.loadMs); }
 		// Signal the screen is up, then hold it until the host acks its shot — no
 		// fixed hold, no log marker. The screen stays open for the whole wait.
-		writeMarker(entry.name + ".ready");
+		writeMarker(readyMarker(entry.name, currentOrientation()));
 		var acked = await waitForShot(entry.name);
 		Ti.API.info("VISUAL_CAPTURED name=" + entry.name + " mode=framebuffer acked=" + acked);
 		meta = { name: entry.name, mode: "framebuffer", acked: acked };

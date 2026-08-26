@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import * as tar from "tar";
 import { Jimp } from "jimp";
+import { rotationFor } from "./visual/orientation.js";
 
 function defaultAdb() {
   if (process.env.ANDROID_SDK_ROOT) {
@@ -178,12 +179,13 @@ class AndroidLauncher {
   // content and the OS safe-area rendering, which toImage() can't show) to
   // destPath. The landscape-locked app rotates the emulator display to landscape,
   // so screencap already matches; if a frame comes back portrait we straighten it.
-  async screenshotFramebuffer(destPath) {
+  async screenshotFramebuffer(destPath, { orientation } = {}) {
     const png = await this._execOutBinary(["exec-out", "screencap", "-p"]);
     const abs = path.resolve(destPath);
     fs.mkdirSync(path.dirname(abs), { recursive: true });
     const img = await Jimp.read(png);
-    if (img.bitmap.height > img.bitmap.width) { img.rotate(90); }
+    const turn = rotationFor(orientation, img.bitmap);
+    if (turn) img.rotate(turn);
     await img.write(abs);
     return abs;
   }
