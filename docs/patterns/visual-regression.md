@@ -50,7 +50,19 @@ To re-render after unpacking artifacts by hand: `npx grunt visual-report`.
 
 ## Adding a screen
 
-Add one entry to [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/manifest.js) — `{ name, create, settle?, loadMs?, capture? }`, where `create()` builds the controller with its fixtures (reuse the setup from the screen's existing `*_spec.js`). Give WebView/video/map screens a `loadMs` so their async content renders before the host grabs the frame. Then `--update` to generate its baseline.
+Add one entry to [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/manifest.js), then `--update` to generate its baseline. An entry owns its whole world: `args()` seeds whatever the screen binds to and returns its open arguments, and `services()` contributes the collaborators its screen controller builds a view-model from. Reuse the setup from the screen's existing `*_spec.js`.
+
+The app presents UI in three ways, and [`openEntry`](../../walta-app/app/spec/visual/openEntry.js) opens each the way the app does — the manifest spec and the capture runner share it, so the contract test exercises the real opening path:
+
+| Entry | Shape | Opened as |
+|---|---|---|
+| Window | `{ name, args }` | Through the **View seam**, so a view-model-driven screen gets its screen controller. `Alloy.createController` alone builds the shell, and the window renders empty. |
+| Modal | `{ name, args, host: "Menu" }` | The named host entry's window first, then the modal overlaid on it — so the capture shows the modal over the screen a user reaches it from. The host window is what gets captured. |
+| Component | `{ name, args, wrap: true }` | Built directly and hosted in a full-size window, as its device spec does. For UI with no window of its own — the photo panel, the map, a question card. |
+
+Other fields: `settle` (a longer frame-stability gate for lazy tiles / async photos), `loadMs` (time for WebView, map-tile or video content to render before the host grabs the frame), `capture: "toimage"` (in-app snapshot instead of the framebuffer), `screen` (the controller name, when it differs from the entry name), and `platform: "ios" | "android"` for a screen only one platform ever instantiates.
+
+**Fixtures must be idempotent.** The runner opens every screen against one long-lived app and several entries share a fixture (three seed the sample history — the screen plus the two modals hosted on it). A fixture that only appends grows its data each time it runs and the capture drifts, so seed from a cleared state. `VisualManifest_spec.js` pins this.
 
 ## Baselines are renderer-specific
 
