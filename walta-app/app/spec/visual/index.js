@@ -28,7 +28,7 @@ Ti.App.idleTimerDisabled = true;
 var manifest = require("spec/visual/manifest");
 var capture = require("spec/visual/captureScreens");
 
-var window = Ti.UI.createWindow({ backgroundColor: "black" });
+var window = Ti.UI.createWindow({ backgroundColor: "black", orientationModes: [capture.CAPTURE_LANDSCAPE] });
 window.addEventListener("open", function () {
 	capture.captureAll(manifest, { grep: readGrep() })
 		.then(function (results) {

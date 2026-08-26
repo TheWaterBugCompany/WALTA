@@ -66,6 +66,19 @@ Other fields: `settle` (a longer frame-stability gate for lazy tiles / async pho
 
 **Fixtures must be idempotent.** The runner opens every screen against one long-lived app and several entries share a fixture (three seed the sample history — the screen plus the two modals hosted on it). A fixture that only appends grows its data each time it runs and the capture drifts, so seed from a cleared state. `VisualManifest_spec.js` pins this.
 
+## Every screen is captured in one landscape (iOS)
+
+The app is landscape-locked, but iOS re-resolves *which* landscape per window while the device is flat — as a simulator always is. So screens in a single run settle in **different** landscapes, and two runs on the same device disagree. That has two consequences: the framebuffer has to be turned the other way to come out upright (a screen captured the wrong way round is a half-turn out), and the safe-area insets mirror, so the notch changes sides and no baseline holds.
+
+The runner therefore pins the landscape it captures in (`CAPTURE_LANDSCAPE` in [`captureScreens.js`](../../walta-app/app/spec/visual/captureScreens.js)) rather than accepting whichever one a window picks. `TopLevelWindow` already pins each window it opens to the landscape in use, via `Alloy.Globals.lastLandscapeOrientation`, so the runner seeds that before opening each screen — re-seeded every time, because each window writes back the orientation it read once laid out. The capture runner's own window carries the same pin, for the first screen and for anything hosted outside `TopLevelWindow`.
+
+**Don't try to detect the orientation instead.** Two properties look like they would say which way a screen went, and neither does:
+
+- `Ti.Gesture.orientation` is the *physical* device orientation, which a simulator that has never been rotated reports as `UNKNOWN`.
+- a window's `orientation` reports the *interface* orientation, which stays put while the window itself renders rotated — measured directly: with the runner's root window pinned to `LANDSCAPE_LEFT`, the first screen demonstrably rendered left (its capture came out a half-turn from the baseline) while reporting `LANDSCAPE_RIGHT`, as did every other screen in the run.
+
+Because the landscape is pinned, the host's turn is a **constant** (`img.rotate(90)` in [`IosSimulatorLauncher`](../../build-utils/IosSimulatorLauncher.js)). Both directions produce a landscape image of the right size, so neither the shape nor code review can tell a wrong constant from a right one — only the pixels can. The direction is covered by a spec that marks a corner of the frame and asserts where it lands, and the run-to-run stability by comparing a capture against the reference *and* against the reference turned 180°.
+
 ## Baselines are renderer-specific
 
 A baseline rendered on one simulator/emulator won't match a differently-rendered one (fonts, GPU), so baselines are generated in the environment that verifies them (CI) and committed under `visual/baselines/<platform>/<device>/`. Titanium has no runtime window resize — different screen sizes require different devices, so each device keeps its own baseline set.
