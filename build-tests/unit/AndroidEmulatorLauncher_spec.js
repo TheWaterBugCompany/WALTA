@@ -151,3 +151,17 @@ describe("AndroidEmulatorLauncher", function() {
     });
   });
 });
+
+// The emulator launcher wraps a device launcher rather than extending it, so
+// every call the visual host makes has to be forwarded by hand. CI drives this
+// launcher, not AndroidLauncher, so the visual surface is pinned here.
+describe("AndroidEmulatorLauncher visual capture", function() {
+  it("names the device the captures were rendered on", async function() {
+    const describeDevice = sinon.stub().resolves("sdk_gphone64_arm64 · Android 14");
+    const launcher = new AndroidEmulatorLauncher({
+      execFile: makeExecFile({ "devices": EMULATOR_DEVICES }),
+      innerLauncher: { connect: sinon.stub().resolves(), describeDevice },
+    });
+    expect(await launcher.describeDevice()).to.equal("sdk_gphone64_arm64 · Android 14");
+  });
+});

@@ -100,6 +100,7 @@ class AndroidEmulatorLauncher {
   async writeVisualCaptureFile(appId, name, opts) { await this.connect(); return this._inner.writeVisualCaptureFile(appId, name, opts); }
   async screenshotFramebuffer(destPath) { await this.connect(); return this._inner.screenshotFramebuffer(destPath); }
   async captureDiagnostics(appId) { await this.connect(); return this._inner.captureDiagnostics(appId); }
+  async describeDevice() { await this.connect(); return this._inner.describeDevice(); }
   getDriver() { return null; }
 }
 
