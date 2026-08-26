@@ -180,7 +180,11 @@ function trainingTray() {
 	var tray = new SampleTrayModel(
 		[1, 2, 3, 4, 5].map(function (id, i) { return new TaxonModel({ id: id, taxonId: id, position: i }); })
 	);
-	return { key: keyMock, tray: tray };
+	// The assessment notice fades in, dwells on a timer and fades out again — a
+	// race for the capture, and it sits over the top row of cells. Cut the dwell
+	// so the capture can wait it out (see assessTrainingTray) instead of either
+	// racing it or holding the run open for its full dwell.
+	return { key: keyMock, tray: tray, noticeDwellMs: 1 };
 }
 
 // Verdicts only appear once the tray is assessed, and the tray's whole point in
@@ -212,7 +216,8 @@ function assessTrainingTray(opened) {
 	// settle on the frame before them.
 	var ctl = opened.seam.getCurrentController();
 	return waitFor(function () {
-		return verdictOverlays(ctl).some(function (v) { return v.visible; });
+		return verdictOverlays(ctl).some(function (v) { return v.visible; })
+			&& ctl.incorrectNotice.visible === false;
 	});
 }
 
