@@ -915,6 +915,7 @@ module.exports = function(grunt) {
             await liveview.stop();
             await liveview.start();
           }
+          grunt.task.run(`visual-clear:${platform}`);
           grunt.task.run(`launch:${platform}:unit-test-liveview`);
           grunt.task.run(`visual-collect:${platform}`);
           if (!grunt.option('manual')) { grunt.task.run(`terminate:${platform}`); }
@@ -923,6 +924,7 @@ module.exports = function(grunt) {
       } else {
         if (!grunt.option('skip-build')) { grunt.task.run('clean'); }
         grunt.task.run(`newer:${isSimulator ? `test_sim_${platform}` : `unit_test_${platform}`}`);
+        grunt.task.run(`visual-clear:${platform}`);
         grunt.task.run(`launch:${platform}:unit-test`);
         grunt.task.run(`visual-collect:${platform}`);
         if (!grunt.option('manual')) { grunt.task.run(`terminate:${platform}`); }
@@ -956,6 +958,23 @@ module.exports = function(grunt) {
     grunt.registerTask('visual-report', function () {
       const done = this.async();
       writeVisualReport(grunt).then(() => done()).catch(err => { grunt.fail.fatal(err); done(); });
+    });
+
+    // Clears the app's handshake dir before the app starts. It outlives the app,
+    // so a previous run's markers are still there when `visual-collect` begins
+    // polling — and a leftover capture-done reads as "this run has finished",
+    // making the host pull the previous run's screenshots, report them as this
+    // run's, and terminate the app part-way through capturing. The runner wipes
+    // the dir too, but not before the host has read it; here nothing is running.
+    grunt.registerTask('visual-clear', function (platform) {
+      const done = this.async();
+      getLauncher(platform, grunt.option('simulator'))
+        .then(async (launcher) => {
+          await launcher.connect();
+          await launcher.clearVisualCaptureFiles(APP_ID, { subdir: 'visual' });
+        })
+        .then(done)
+        .catch(err => { grunt.fail.fatal(err); done(); });
     });
 
     // Streams the device log until the capture runner signals done, pulls the
