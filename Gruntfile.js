@@ -956,11 +956,6 @@ module.exports = function(grunt) {
       const path = require('path');
       const isSimulator = grunt.option('simulator');
       const update = grunt.option('update');
-      const device = grunt.option('device') || 'local';
-      const deviceDir = path.join('builds', 'visual', platform, device);
-      const actualDir = path.join(deviceDir, 'actual');
-      const baselineDir = path.join('visual', 'baselines', platform, device);
-      const outDir = path.join(deviceDir, 'report');
       const captureTimeoutMs = (grunt.option('capture-timeout') || 600) * 1000;
 
       Promise.all([
@@ -968,8 +963,19 @@ module.exports = function(grunt) {
         import('./build-utils/visual/collectHandshake.js'),
         import('./build-utils/visual/compareRun.js'),
         import('./build-utils/visual/persistRun.js'),
-      ]).then(async ([launcher, { collectHandshake }, { compareRun }, { persistRun }]) => {
+        import('./build-utils/visual/deviceLabel.js'),
+      ]).then(async ([launcher, { collectHandshake }, { compareRun }, { persistRun }, { deviceLabel }]) => {
         const fs = require('fs');
+        // Baselines are renderer-specific, so absent an explicit --device the
+        // device that rendered the run decides which set it belongs to — a
+        // catch-all directory would mix captures from every simulator used.
+        const deviceName = await launcher.describeDevice();
+        const device = grunt.option('device') || deviceLabel(deviceName);
+        const deviceDir = path.join('builds', 'visual', platform, device);
+        const actualDir = path.join(deviceDir, 'actual');
+        const baselineDir = path.join('visual', 'baselines', platform, device);
+        const outDir = path.join(deviceDir, 'report');
+        grunt.log.writeln(`Capturing on ${deviceName} (baseline set "${device}")`);
         // Start from a clean actual dir so a screen dropped from the manifest
         // doesn't leave a stale capture behind that reads as an unexpected diff.
         fs.rmSync(actualDir, { recursive: true, force: true });
@@ -1009,7 +1015,7 @@ module.exports = function(grunt) {
         }
         // Persist and re-render the review page before the pass/fail verdict —
         // a failing run is exactly the one whose report you want to open.
-        persistRun({ platform, device, deviceDir, baselineDir, results: run.results, capturedAt: new Date().toISOString() });
+        persistRun({ platform, device, deviceName, deviceDir, baselineDir, results: run.results, capturedAt: new Date().toISOString() });
         await writeVisualReport(grunt);
 
         if (update) {

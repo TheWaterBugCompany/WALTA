@@ -60,6 +60,14 @@ class AndroidLauncher {
     return exec(this._execFile, this._adb, fullArgs);
   }
 
+  // The device the captures were rendered on — see IosSimulatorLauncher's
+  // describeDevice for why a run records this rather than trusting its label.
+  async describeDevice() {
+    const model = (await this._exec(["shell", "getprop", "ro.product.model"])).trim();
+    const release = (await this._exec(["shell", "getprop", "ro.build.version.release"])).trim();
+    return `${model} · Android ${release}`;
+  }
+
   async connect() {
     if (this._connected) return this;
     if (!this._serial) {
