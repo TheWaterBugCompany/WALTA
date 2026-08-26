@@ -2,10 +2,12 @@
 	<View class="overlay">
 		<View id="pickerWindow" class="window">
 			<View id="pickerCard" layout="vertical">
-				<View class="titlebar">
+				<View id="titleBar" class="titlebar">
 					<Require id="closeButton" src="CloseButton"/>
 				</View>
-				<Picker id="datePicker"/>
+				<View id="pickerFrame">
+					<Picker id="datePicker"/>
+				</View>
 				<View id="buttonBar">
 					<Button id="doneButton" class="actionButton" title="  Done  " onClick="doneClick"/>
 				</View>
