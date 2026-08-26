@@ -27,7 +27,12 @@ class SampleTaxaIconViewModel extends ChangeNotifier {
 
   get numberVisible() { return this._kind === "number"; }
   get numberText() { return `${this._collectionIndex + 1}`; }
-  get numberFont() { return { fontSize: `${this._tray.cellWidth * 0.9}dp`, fontWeight: "bold" }; }
+  // Each extra digit gets a proportionally smaller numeral, so the number takes
+  // the same room whatever its length. At one size for all, two digits overflow
+  // a label one cell wide and Titanium ellipsizes them.
+  get numberFont() {
+    return { fontSize: `${this._tray.cellWidth * 0.9 / this.numberText.length}dp`, fontWeight: "bold" };
+  }
   get image() { return this._data ? this._data.silhouette : null; }
   get abundanceText() { return this._data ? this._data.abundance : ""; }
   get abundanceVisible() { return this._kind === "taxon" && this._data.abundance != null; }
