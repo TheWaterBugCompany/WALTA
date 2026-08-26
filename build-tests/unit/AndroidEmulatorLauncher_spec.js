@@ -154,8 +154,9 @@ describe("AndroidEmulatorLauncher", function() {
 
 // The emulator launcher wraps a device launcher rather than extending it, so
 // every call the visual host makes has to be forwarded by hand — and a forward
-// that drops its options is invisible until a capture comes out wrong. CI drives
-// this launcher, not AndroidLauncher, so the visual surface is pinned here.
+// that is missing, or that drops its options, is invisible until a capture comes
+// out wrong. CI drives this launcher, not AndroidLauncher, so the visual surface
+// is pinned here.
 describe("AndroidEmulatorLauncher visual capture", function() {
   function launcherWith(inner) {
     return new AndroidEmulatorLauncher({
@@ -170,5 +171,10 @@ describe("AndroidEmulatorLauncher visual capture", function() {
     await launcher.screenshotFramebuffer("/out/Menu.png", { orientation: "landscape-right" });
     expect(screenshotFramebuffer.firstCall.args)
       .to.deep.equal(["/out/Menu.png", { orientation: "landscape-right" }]);
+  });
+
+  it("names the device the captures were rendered on", async function() {
+    const launcher = launcherWith({ describeDevice: sinon.stub().resolves("sdk_gphone64_arm64 · Android 14") });
+    expect(await launcher.describeDevice()).to.equal("sdk_gphone64_arm64 · Android 14");
   });
 });
