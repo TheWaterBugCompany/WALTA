@@ -55,6 +55,23 @@ function numberedSlotVm(collectionIndex) {
   return tray.endcapVm.taxa[collectionIndex];
 }
 
+// A cell showing a particular number, from a real tray so the component binds
+// what it will on-device.
+function numberedCellShowing(text, expectedCount) {
+  const source = { length: () => 0, at: () => undefined, surveyType: () => null, readonly: false };
+  const tray = new TrainingTrayViewModel({
+    taxaSource: source,
+    assessor: { expectedCount, assess: () => [] },
+    topics: fakeTopics(),
+  });
+  tray.setViewport({ width: 300, height: 100 });
+  tray.setScrollOffset(0);
+  const cells = tray.visibleTiles.reduce((all, t) => all.concat(t.taxa), []).concat(tray.endcapVm.taxa);
+  const cell = cells.filter(c => c.numberText === text)[0];
+  if (!cell) throw new Error(`no cell numbered ${text} among ${cells.map(c => c.numberText)}`);
+  return cell;
+}
+
 describe("SampleTaxaIcon controller", function () {
   let view, ctl;
 
@@ -79,6 +96,17 @@ describe("SampleTaxaIcon controller", function () {
     expect($.number.text).to.equal("2");
     expect($.number.visible).to.equal(true);
     expect($.padIcon.visible).to.equal(false);
+  });
+
+  // Sized for one digit, a two-digit number overflows a label one cell wide and
+  // Titanium ellipsizes it — cell 10 rendered as "...". Each extra digit gets a
+  // proportionally smaller numeral, so the number takes the same room whatever
+  // its length.
+  it("sizes a number to fit its cell however many digits it has", function () {
+    const oneDigit = parseFloat(build(numberedCellShowing("9", 12)).number.font.fontSize);
+    const twoDigits = parseFloat(build(numberedCellShowing("10", 12)).number.font.fontSize);
+
+    expect(twoDigits * 2).to.equal(oneDigit);
   });
 
   it("keeps the verdict overlay hidden until the tray is assessed", function () {
