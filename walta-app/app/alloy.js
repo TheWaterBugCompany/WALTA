@@ -72,25 +72,14 @@ Alloy.Globals.Key = null;
 debug("Determining device screen parameters...")
 log(`platform display caps: width = ${Ti.Platform.displayCaps.platformWidth}, height = ${Ti.Platform.displayCaps.platformHeight}, density = ${Ti.Platform.displayCaps.density}, logicalDensityFactor  = ${Ti.Platform.displayCaps.logicalDensityFactor},`);
 
-var relWidth = Ti.Platform.displayCaps.platformWidth / Ti.Platform.displayCaps.logicalDensityFactor;
-var relHeight= Ti.Platform.displayCaps.platformHeight / Ti.Platform.displayCaps.logicalDensityFactor;
+var screen = require("util/screenMetrics")(Ti.Platform.displayCaps, Ti.Platform.osname);
 
-if ( relHeight > relWidth ) {
-  debug(`Ugh we got portrait sized dimensions width = ${relWidth} height = ${relHeight} :-( swapping...`)
-    var tmp = relHeight;
-    relHeight = relWidth;
-    relWidth = tmp;    
-    // we are reporting protrait mode
-}
+log(`relWidth=${screen.relWidth}, relHeight=${screen.relHeight}, aspectRatio=${screen.aspectRatio}`);
 
-var aspectRatio = relWidth/relHeight; 
- 
-log(`relWidth=${relWidth}, relHeight=${relHeight}, aspectRatio=${aspectRatio}`);
+Alloy.Globals.isSquare = screen.isSquare;
 
-Alloy.Globals.isSquare = aspectRatio < 1.5;
-
-Alloy.Globals.isLowRes = relHeight < 300; 
-Alloy.Globals.isHighRes = (relHeight >= 300) && (relHeight < 700);
-Alloy.Globals.isXHighRes=  relHeight >= 700;
+Alloy.Globals.isLowRes = screen.isLowRes;
+Alloy.Globals.isHighRes = screen.isHighRes;
+Alloy.Globals.isXHighRes = screen.isXHighRes;
 
 log(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);
