@@ -98,6 +98,7 @@ class AndroidEmulatorLauncher {
   async pullCapturedScreenshots(appId, opts) { await this.connect(); return this._inner.pullCapturedScreenshots(appId, opts); }
   async listVisualCaptureFiles(appId, opts) { await this.connect(); return this._inner.listVisualCaptureFiles(appId, opts); }
   async writeVisualCaptureFile(appId, name, opts) { await this.connect(); return this._inner.writeVisualCaptureFile(appId, name, opts); }
+  async clearVisualCaptureFiles(appId, opts) { await this.connect(); return this._inner.clearVisualCaptureFiles(appId, opts); }
   async screenshotFramebuffer(destPath) { await this.connect(); return this._inner.screenshotFramebuffer(destPath); }
   async captureDiagnostics(appId) { await this.connect(); return this._inner.captureDiagnostics(appId); }
   async describeDevice() { await this.connect(); return this._inner.describeDevice(); }

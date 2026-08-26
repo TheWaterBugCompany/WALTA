@@ -446,6 +446,67 @@ describe("IosSimulatorLauncher", function() {
     });
   });
 
+  // The handshake dir survives a reinstall, so a previous run's markers are still
+  // there when the next app launches. The host polls that dir and reads a
+  // leftover capture-done as "this run has finished" — pulling the previous
+  // run's screenshots, reporting them as this run's, and killing the app
+  // mid-capture. The runner wipes the dir too, but not before the host has read
+  // it: only clearing it while nothing is running is race-free.
+  describe("clearVisualCaptureFiles()", function() {
+    const APP_ID = "net.thewaterbug.waterbug";
+
+    it("removes what a previous run left in the handshake dir", async function() {
+      const container = fs.mkdtempSync(path.join(os.tmpdir(), "ios-container-"));
+      const dir = path.join(container, "Documents", "visual");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, "capture-done"), "");
+      fs.writeFileSync(path.join(dir, "Menu.png"), "last run");
+      const launcher = new IosSimulatorLauncher({
+        execFile: makeExecFile({ [`simctl get_app_container ${UDID} ${APP_ID} data`]: `${container}\n` }),
+        udid: UDID,
+      });
+
+      await launcher.clearVisualCaptureFiles(APP_ID, { subdir: "visual" });
+
+      expect(fs.existsSync(dir), "the previous run's handshake dir survived").to.be.false;
+
+      fs.rmSync(container, { recursive: true, force: true });
+    });
+
+    // It runs before the app is installed, and installing moves the data
+    // container — so anything it resolved beforehand is a dead path by the time
+    // the host polls for markers, and polling it just runs out the clock.
+    it("does not leave the pre-install data container cached", async function() {
+      const before = fs.mkdtempSync(path.join(os.tmpdir(), "ios-container-old-"));
+      const after = fs.mkdtempSync(path.join(os.tmpdir(), "ios-container-new-"));
+      fs.mkdirSync(path.join(after, "Documents", "visual"), { recursive: true });
+      fs.writeFileSync(path.join(after, "Documents", "visual", "Menu.ready"), "");
+      let container = before;
+      const execFile = sinon.stub().callsFake((_cmd, _args, _opts, cb) => cb(null, `${container}\n`, ""));
+      const launcher = new IosSimulatorLauncher({ execFile, udid: UDID });
+
+      await launcher.clearVisualCaptureFiles(APP_ID, { subdir: "visual" });
+      container = after; // the install between the two calls moved it
+
+      expect(await launcher.listVisualCaptureFiles(APP_ID, { subdir: "visual" })).to.deep.equal(["Menu.ready"]);
+
+      fs.rmSync(before, { recursive: true, force: true });
+      fs.rmSync(after, { recursive: true, force: true });
+    });
+
+    // It runs before the app is installed, so on a fresh simulator there is no
+    // container to resolve — nothing to clear is success, not an error.
+    it("is happy when the app has no data container yet", async function() {
+      const notInstalled = new Error("No such file or directory");
+      const launcher = new IosSimulatorLauncher({
+        execFile: makeExecFile({ "simctl get_app_container": notInstalled }),
+        udid: UDID,
+      });
+
+      await launcher.clearVisualCaptureFiles(APP_ID, { subdir: "visual" });
+    });
+  });
+
   describe("pullCapturedScreenshots()", function() {
     const APP_ID = "net.thewaterbug.waterbug";
 

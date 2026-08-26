@@ -20,6 +20,8 @@ Flags: `--update` writes captures over the baselines, `--grep=<Name>` captures o
 
 Without `--device` the label is **derived from the device that rendered the run** (`iPhone 17 Pro Max` → `iphone-17-pro-max`), so a local run lands in the same baseline set CI uses for that device and two simulators never share one. The OS version is deliberately dropped — a point release doesn't warrant a fresh baseline set.
 
+The handshake directory is cleared by the **host, before the app is launched**. It outlives the app, so a previous run's markers are still there when the host starts polling — and a leftover `capture-done` reads as "this run has finished", making the host pull the previous run's screenshots, report them as this run's, and terminate the app part-way through capturing. The runner wipes the dir at startup too, but that can't prevent it on its own: the host can read the dir before the app gets to it, and does. Clearing it while nothing is running is the only race-free moment.
+
 ## How it works
 
 1. A dedicated run mode. `index.js` dispatches on the `visual_capture` launch arg (set by `--visual`/the `visual-test` task) to [`VisualCapture.js`](../../walta-app/app/controllers/VisualCapture.js) instead of the app or the mocha runner — reusing the test-sim binary. See [`RuntimeMode`](../../walta-app/app/lib/util/RuntimeMode.js).
