@@ -596,7 +596,7 @@ jobs:
   # never blocks a PR while coverage is still growing. The captures/diffs are
   # uploaded so a reviewer can commit the CI-rendered baselines on the first run.
   ios-visual:
-    name: iOS visual regression (advisory)
+    name: iOS visual regression (advisory) — ${{ matrix.device.label }}
     needs: [changes, ios-build, visual-devices]
     if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
@@ -712,7 +712,7 @@ jobs:
 
   # ── 3c. Android visual regression (advisory) ──────────────────────────────
   android-visual:
-    name: Android visual regression (advisory)
+    name: Android visual regression (advisory) — ${{ matrix.device.label }}
     needs: [changes, android-build, visual-devices]
     if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
