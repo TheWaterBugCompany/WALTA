@@ -189,6 +189,27 @@ describe("AppiumLauncher", function() {
       expect(caps["appium:usePrebuiltWDA"]).to.equal(true);
       expect(caps["appium:derivedDataPath"]).to.equal("/tmp/wda-derived");
     });
+
+    // Steps that only drive the host (xcrun simctl addmedia/location) send no
+    // WebDriver traffic, and a cold simulator can leave the driver silent for
+    // minutes. Appium's 60s default reaps the session mid-scenario, which
+    // surfaces as "A session is either terminated or not started".
+    it("never reaps the session while the driver is idle", async function() {
+      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      const caps = fakeStartAppium.firstCall.args[0];
+      expect(caps["appium:newCommandTimeout"]).to.equal(0);
+    });
+
+    // waitForQuiescence is ignored by xcuitest-driver 11.x; waitForIdleTimeout
+    // is the honoured knob. Without it a command issued while the out-of-process
+    // photo picker is up blocks until the session is reaped.
+    it("does not block commands waiting for the app to report idle", async function() {
+      const launcher = new AppiumLauncher("ios", { isSimulator: true, startAppium: fakeStartAppium, isAppiumRunning: fakeIsAppiumRunning });
+      await launcher.connect();
+      const caps = fakeStartAppium.firstCall.args[0];
+      expect(caps["appium:waitForIdleTimeout"]).to.equal(0);
+    });
   });
 
   describe("iOS device capabilities", function() {

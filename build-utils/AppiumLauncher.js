@@ -113,6 +113,14 @@ class AppiumLauncher {
         // explicitly in BaseScreen.clickRaw — auto-dismiss could race
         // with the explicit handling.
         "appium:waitForQuiescence": false,
+        // waitForQuiescence is ignored in xcuitest-driver 11.x; waitForIdleTimeout
+        // is the honoured knob, and 0 disables the idle wait that the
+        // out-of-process photo picker never satisfies. newCommandTimeout 0 stops
+        // Appium reaping the session across steps that only drive the host
+        // (xcrun simctl addmedia/location send no WebDriver traffic at all).
+        // Matches Android below.
+        "appium:waitForIdleTimeout": 0,
+        "appium:newCommandTimeout": 0,
         "appium:useJSONSource": true,
         "appium:showXcodeLog": true,
         "appium:usePrebuiltWDA": !!wdaDerivedPath,
