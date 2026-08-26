@@ -8,22 +8,6 @@ var waitForStable = require("util/waitForStable");
 
 var OUTPUT_SUBDIR = "visual";
 
-// Every screen is captured in one landscape. iOS re-resolves a window's
-// orientation while the device is flat, so screens otherwise settle in either —
-// which turns the captured frame the other way up and mirrors the safe-area
-// insets, so the notch changes sides between runs and no baseline holds. Asking
-// the device which way it went doesn't work: a window reports the interface
-// orientation, which stays put while the window renders rotated.
-var CAPTURE_LANDSCAPE = Ti.UI.LANDSCAPE_RIGHT;
-
-// TopLevelWindow pins each window it opens to the landscape already in use, so
-// seeding that with the capture landscape pins the screen about to open. It has
-// to be re-seeded per screen: each window writes back the orientation it read
-// once laid out.
-function pinToCaptureLandscape() {
-	Alloy.Globals.lastLandscapeOrientation = CAPTURE_LANDSCAPE;
-}
-
 function outputDir() {
 	var dir = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, OUTPUT_SUBDIR);
 	if (!dir.exists()) { dir.createDirectory(); }
@@ -88,7 +72,6 @@ async function waitForShot(name) {
 // before the next screen opens. `capture: "toimage"` opts a screen back into the
 // in-app snapshot (faster, no host handshake) where the notch doesn't matter.
 async function captureScreen(entry, entries) {
-	pinToCaptureLandscape();
 	// openEntry opens the screen the way the app does — through the View seam for a
 	// window, overlaid on its host for a modal — and owns the teardown.
 	var opened = await openEntry(entry, entries);
@@ -147,4 +130,3 @@ async function captureAll(entries, { grep } = {}) {
 exports.captureScreen = captureScreen;
 exports.captureAll = captureAll;
 exports.outputDir = outputDir;
-exports.CAPTURE_LANDSCAPE = CAPTURE_LANDSCAPE;
