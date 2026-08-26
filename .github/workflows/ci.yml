@@ -673,6 +673,14 @@ jobs:
           SIM_UDID: ${{ steps.sim.outputs.udid }}
         run: npx grunt --platform=ios --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test
 
+      # Renders builds/visual/report.html even when the capture step failed, so the
+      # artifact is always openable — and so its root-level file pins the artifact
+      # root at builds/visual/, which is what lets the legs merge back into one
+      # tree (with their platform/device paths intact) in visual-report below.
+      - name: Render this leg's review page
+        if: always()
+        run: npx grunt visual-report
+
       - name: Upload visual captures and diffs
         if: always()
         uses: actions/upload-artifact@v7
@@ -777,11 +785,65 @@ jobs:
             # literal trailing backslash and aborts ("Task \ not found").
             npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test || (echo "::warning::Android visual capture failed (likely cold-boot); retrying once on the warm emulator" && npx grunt --platform=android --simulator --skip-build --advisory --device=${{ matrix.device.label }} visual-test)
 
+      # See the iOS leg: the root-level report.html is what pins the artifact root.
+      - name: Render this leg's review page
+        if: always()
+        run: npx grunt visual-report
+
       - name: Upload visual captures and diffs
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: visual-android-${{ matrix.device.label }}
+          path: builds/visual/**
+          if-no-files-found: warn
+
+  # ── 3d. Combined visual review gallery (advisory) ──────────────────────────
+  # Merges every matrix leg's captures into one tree and renders a single page
+  # with a row per screen and a column per platform/device, so the whole matrix
+  # can be scanned side by side. Download the `visual-review` artifact and open
+  # report.html. Advisory like the legs it summarises.
+  visual-report:
+    name: Visual review gallery (advisory)
+    needs: [changes, ios-visual, android-visual]
+    if: always() && needs.changes.outputs.relevant == 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Restore node_modules cache
+        id: node-modules-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install --ignore-scripts
+
+      - name: Download every visual leg's captures
+        uses: actions/download-artifact@v8
+        with:
+          pattern: visual-*
+          path: builds/visual
+          merge-multiple: true
+
+      - name: Render the combined gallery
+        run: npx grunt visual-report
+
+      - name: Upload the combined gallery
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-review
           path: builds/visual/**
           if-no-files-found: warn
 
