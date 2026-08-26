@@ -24,6 +24,22 @@ Flags: `--update` writes captures over the baselines, `--grep=<Name>` captures o
 2. Capture. [`spec/visual/captureScreens.js`](../../walta-app/app/spec/visual/captureScreens.js) renders each entry in [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/manifest.js) with its spec fixtures (no live GPS/network/navigation) and settles. By default the **host** then grabs the actual simulator/emulator **framebuffer** (the runner holds the screen and emits a `VISUAL_FRAMEBUFFER_READY` marker). A screen can opt into an in-app `view.toImage()` snapshot instead with `capture: "toimage"`.
 3. Settle gate. [`waitForStable`](../../walta-app/app/lib/util/waitForStable.js) re-captures until two consecutive `toImage()` blobs are the same size. This is essential: `postlayout` fires *before* lazy tiles (Speedbug) and async photos (TaxonDetails) finish drawing, so capturing on `postlayout` alone yields blank frames. (`toImage()` is used only as the settle signal here — it reflects native layout cheaply.)
 4. Collect + diff. The `visual-collect` grunt task streams the device log: on each `VISUAL_FRAMEBUFFER_READY` it screenshots the frame (iOS `simctl io`, rotated to landscape; Android `adb screencap`), and on `VISUAL_CAPTURE_DONE` it pulls any `toimage` PNGs (iOS `simctl get_app_container`; Android `run-as` tar stream, since the app dir isn't world-readable). Each is diffed against the baseline with [`compareScreenshots`](../../build-utils/visual/compareScreenshots.js) (pixelmatch); mismatches get a baseline/actual diff image for the CI artifact.
+5. Report. The run is recorded as `results.json` and its baselines copied in beside the captures ([`persistRun`](../../build-utils/visual/persistRun.js)), then [`buildReport`](../../build-utils/visual/buildReport.js) renders `builds/visual/report.html` — see below.
+
+## The review page
+
+Every run writes `builds/visual/report.html` — pass or fail, since a failing run is the one whose report you want to open. It is a **gallery**: one row per screen, one column per platform/device, so a whole matrix can be scanned side by side for anything that looks odd rather than opened one PNG at a time.
+
+- **Layer switch** — flip the whole gallery between Capture, Baseline and Diff. On the Diff layer only the screens that actually differ stay lit; the rest dim to their capture.
+- **Needs a look** — hides rows where every device matched.
+- **Click a cell** for baseline / capture / diff side by side, then `←` `→` across devices and `↑` `↓` across screens. The open cell goes in the URL hash, so a link points at exactly the cell you are asking about.
+- Statuses are `pass`, `fail`, `new` (no baseline yet), `missing` (the run failed to capture it), `updated` (`--update` wrote it), and `absent` (that leg never captured this screen — a coverage gap, shown rather than hidden).
+
+The page links its images by relative path and sits at the root of the captures tree, so it travels with them as one artifact; open the downloaded folder's `report.html`, not the file alone.
+
+**In CI** each matrix leg renders its own page into its `visual-<platform>-<label>` artifact, and the `visual-report` job merges every leg into one tree and uploads the whole-matrix gallery as **`visual-review`** — that is the one to download to review a PR's rendering across both platforms and all screen sizes at once. The root-level `report.html` is also what pins each leg's artifact root at `builds/visual/`, which is what lets the legs merge back with their platform/device paths intact.
+
+To re-render after unpacking artifacts by hand: `npx grunt visual-report`.
 
 ## Why framebuffer by default (not `toImage()`)
 
