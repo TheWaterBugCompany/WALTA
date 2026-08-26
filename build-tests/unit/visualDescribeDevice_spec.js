@@ -19,13 +19,32 @@ describe("visual run device identity", function () {
         expect(await launcher.describeDevice()).to.equal("iPhone 17 Pro · iOS 26.3");
     });
 
-    it("names the Android device the captures were rendered on", async function () {
-        const props = { "ro.product.model": "sdk_gphone64_arm64", "ro.build.version.release": "14" };
-        const execFile = (cmd, args, cb) => {
-            const prop = args[args.length - 1];
-            cb(null, prop in props ? props[prop] + "\n" : "device\n");
+    // Two Android legs can run the same emulator image at different screen
+    // profiles, so the model alone reads identically for both — the geometry is
+    // what actually distinguishes them, and it is what the baselines key on.
+    it("names the Android device and the geometry that distinguishes its profile", async function () {
+        const responses = {
+            "shell getprop ro.product.model": "sdk_gphone64_arm64",
+            "shell getprop ro.build.version.release": "14",
+            "shell wm size": "Physical size: 1080x2400",
+            "shell wm density": "Physical density: 420",
         };
+        const execFile = (cmd, args, cb) => cb(null, (responses[args.join(" ")] || "") + "\n");
         const launcher = new AndroidLauncher({ execFile });
-        expect(await launcher.describeDevice()).to.equal("sdk_gphone64_arm64 · Android 14");
+        expect(await launcher.describeDevice())
+            .to.equal("sdk_gphone64_arm64 · Android 14 · 1080x2400 @420dpi");
+    });
+
+    it("reports an overridden screen size rather than the physical one", async function () {
+        const responses = {
+            "shell getprop ro.product.model": "sdk_gphone64_arm64",
+            "shell getprop ro.build.version.release": "14",
+            "shell wm size": "Physical size: 1080x2400\nOverride size: 1080x1920",
+            "shell wm density": "Physical density: 420\nOverride density: 480",
+        };
+        const execFile = (cmd, args, cb) => cb(null, (responses[args.join(" ")] || "") + "\n");
+        const launcher = new AndroidLauncher({ execFile });
+        expect(await launcher.describeDevice())
+            .to.equal("sdk_gphone64_arm64 · Android 14 · 1080x1920 @480dpi");
     });
 });

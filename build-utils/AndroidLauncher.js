@@ -11,6 +11,14 @@ function defaultAdb() {
   return "adb";
 }
 
+// `wm size` / `wm density` report the physical value and, when one is set, an
+// override on a second line. The override is what is actually being rendered.
+function wmValue(output) {
+  const lines = output.trim().split("\n").filter(Boolean);
+  const last = lines[lines.length - 1] || "";
+  return last.split(":").pop().trim();
+}
+
 function exec(execFile, adb, args) {
   return new Promise((resolve, reject) => {
     execFile(adb, args, (err, stdout) => err ? reject(err) : resolve(stdout));
@@ -62,10 +70,16 @@ class AndroidLauncher {
 
   // The device the captures were rendered on — see IosSimulatorLauncher's
   // describeDevice for why a run records this rather than trusting its label.
+  //
+  // The geometry is part of the identity here: two Android legs can run the same
+  // emulator image at different screen profiles, so the model alone reads
+  // identically for both, and geometry is what the baselines actually key on.
   async describeDevice() {
     const model = (await this._exec(["shell", "getprop", "ro.product.model"])).trim();
     const release = (await this._exec(["shell", "getprop", "ro.build.version.release"])).trim();
-    return `${model} · Android ${release}`;
+    const size = wmValue(await this._exec(["shell", "wm", "size"]));
+    const density = wmValue(await this._exec(["shell", "wm", "density"]));
+    return `${model} · Android ${release} · ${size} @${density}dpi`;
   }
 
   async connect() {
