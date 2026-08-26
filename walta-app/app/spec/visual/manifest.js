@@ -349,6 +349,31 @@ function iosSurveyDatePicker() {
 // About/Help render their content in a WebView. Framebuffer capture (the default)
 // handles this — the host screenshots the real screen, which includes WebView
 // content view.toImage() can't see.
+// A WebView screen is ready when its page has finished loading. The fixed wait
+// this replaces was long enough locally and not on a slower CI runner, which
+// captured About and Help blank — and a blank capture blessed as a baseline
+// makes every later run of that screen pass while showing nothing.
+//
+// Both signals are needed. The load event never comes if the page beat us here,
+// and document.readyState only reads back synchronously on iOS — Android hands
+// it to the callback and returns null.
+function htmlLoaded(opened) {
+	var ctl = opened.seam.getCurrentController();
+	// About is the WebView; Help nests one inside its content view.
+	var webview = ctl.htmlView || ctl.content;
+	return new Promise(function (resolve) {
+		function ready() {
+			webview.removeEventListener("load", ready);
+			resolve();
+		}
+		webview.addEventListener("load", ready);
+		var loadedAlready = webview.evalJS("document.readyState", function (state) {
+			if (/complete/.test(state)) { ready(); }
+		});
+		if (/complete/.test(loadedAlready)) { ready(); }
+	});
+}
+
 function about() {
 	return { keyUrl: Ti.Filesystem.resourcesDirectory + "taxonomy/walta/" };
 }
@@ -399,11 +424,11 @@ module.exports = [
 	{ name: "KeySearch", args: keySearch },
 	{ name: "SampleHistory", args: sampleHistory },
 	{ name: "TrainingTray", args: trainingTray, services: trainingTrayServices, after: assessTrainingTray },
-	// loadMs gives the WebView's local HTML, the map tiles and the video's first
-	// frame time to render before the host grabs the frame (framebuffer is the
-	// default capture — see captureScreens.js).
-	{ name: "About", args: about, loadMs: 2000 },
-	{ name: "Help", args: help, loadMs: 2000 },
+	// The WebView screens wait for their page to load; the rest still use loadMs
+	// to give map tiles and the video's first frame time to render before the host
+	// grabs the frame (framebuffer is the default capture — see captureScreens.js).
+	{ name: "About", args: about, after: htmlLoaded },
+	{ name: "Help", args: help, after: htmlLoaded },
 	{ name: "VideoPlayer", args: videoPlayer, loadMs: 2000 },
 
 	// Modals — captured over the screen a user reaches them from.
