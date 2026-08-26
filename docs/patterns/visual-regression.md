@@ -20,6 +20,8 @@ Flags: `--update` writes captures over the baselines, `--grep=<Name>` captures o
 
 Without `--device` the label is **derived from the device that rendered the run** (`iPhone 17 Pro Max` → `iphone-17-pro-max`), so a local run lands in the same baseline set CI uses for that device and two simulators never share one. The OS version is deliberately dropped — a point release doesn't warrant a fresh baseline set.
 
+The runner wipes its output directory at the start of **every** run, filtered or not. That directory is a handshake surface, not just where PNGs land: the host treats a `capture-done` sentinel in it as "this run has finished", so one left over from a previous run makes it pull the *previous* run's screenshots, report them as this run's, and terminate the app part-way through actually capturing.
+
 ## How it works
 
 1. A dedicated run mode. `index.js` dispatches on the `visual_capture` launch arg (set by `--visual`/the `visual-test` task) to [`VisualCapture.js`](../../walta-app/app/controllers/VisualCapture.js) instead of the app or the mocha runner — reusing the test-sim binary. See [`RuntimeMode`](../../walta-app/app/lib/util/RuntimeMode.js).

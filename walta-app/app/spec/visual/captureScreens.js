@@ -103,7 +103,11 @@ async function captureScreen(entry, entries) {
 // Capture every screen (optionally filtered to one by name). Serial, so only one
 // window is on screen at a time — matching how the mocha runner opens screens.
 async function captureAll(entries, { grep } = {}) {
-	if (!grep) { clearOutputDir(); }
+	// Always, filtered or not. The dir is a handshake surface, not just where PNGs
+	// land: a surviving capture-done sentinel is read by the host as "this run has
+	// finished", so it pulls the previous run's screenshots and reports them as
+	// this one's — while terminating the app part-way through actually capturing.
+	clearOutputDir();
 	var results = [];
 	for (var i = 0; i < entries.length; i++) {
 		if (grep && entries[i].name.indexOf(grep) === -1) { continue; }
