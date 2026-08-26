@@ -151,3 +151,24 @@ describe("AndroidEmulatorLauncher", function() {
     });
   });
 });
+
+// The emulator launcher wraps a device launcher rather than extending it, so
+// every call the visual host makes has to be forwarded by hand — and a forward
+// that drops its options is invisible until a capture comes out wrong. CI drives
+// this launcher, not AndroidLauncher, so the visual surface is pinned here.
+describe("AndroidEmulatorLauncher visual capture", function() {
+  function launcherWith(inner) {
+    return new AndroidEmulatorLauncher({
+      execFile: makeExecFile({ "devices": EMULATOR_DEVICES }),
+      innerLauncher: { connect: sinon.stub().resolves(), ...inner },
+    });
+  }
+
+  it("forwards the orientation a screenshot has to be rotated by", async function() {
+    const screenshotFramebuffer = sinon.stub().resolves("/out/Menu.png");
+    const launcher = launcherWith({ screenshotFramebuffer });
+    await launcher.screenshotFramebuffer("/out/Menu.png", { orientation: "landscape-right" });
+    expect(screenshotFramebuffer.firstCall.args)
+      .to.deep.equal(["/out/Menu.png", { orientation: "landscape-right" }]);
+  });
+});
