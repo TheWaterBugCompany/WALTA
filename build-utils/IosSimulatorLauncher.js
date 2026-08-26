@@ -174,15 +174,19 @@ class IosSimulatorLauncher {
 
   // Captures the actual simulator framebuffer (unlike toImage(), this includes
   // WebView / video / map content) and writes it upright-landscape to destPath.
-  // The simulator screenshots in the device's physical portrait orientation, so
-  // it's rotated to match the landscape-locked app.
+  // The simulator screenshots the device's *physical* framebuffer, which is
+  // portrait, while the app is landscape-locked — so it is turned a quarter to
+  // match. Which quarter depends on the landscape the app rendered in, and the
+  // capture runner pins that (Ti.UI.LANDSCAPE_RIGHT) precisely so this is a
+  // constant: nothing here can tell the two apart from the pixels, and neither
+  // can code review, since both give a landscape image of the right size.
   async screenshotFramebuffer(destPath) {
     // simctl resolves relative paths against its own cwd, not ours — pass absolute.
     const abs = path.resolve(destPath);
     const raw = `${abs}.portrait.png`;
     await this._exec(["simctl", "io", this._udid, "screenshot", raw]);
     const img = await Jimp.read(raw);
-    img.rotate(90);
+    if (img.bitmap.height > img.bitmap.width) img.rotate(90);
     await img.write(abs);
     fs.unlinkSync(raw);
     return abs;

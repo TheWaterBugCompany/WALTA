@@ -28,6 +28,30 @@ describe("visual capture runner", function () {
 		expect(outputFile("Menu.png").exists(), "this run's capture is missing").to.equal(true);
 	});
 
+	// iOS re-resolves a window's orientation while the device is flat, so screens
+	// otherwise settle in either landscape — which turns the captured frame the
+	// other way up *and* mirrors the safe-area insets, so the notch changes sides.
+	// TopLevelWindow pins each window it opens to the landscape already in use, so
+	// the runner seeds that with the one landscape it captures in, before the
+	// screen opens.
+	if (OS_IOS) {
+		it("pins a screen to the capture landscape even when the last one settled in the other", async function () {
+			Alloy.Globals.lastLandscapeOrientation = otherLandscape();
+			var entry = menuEntry(), pinnedWhenOpened;
+
+			await capture.captureAll([{ name: entry.name, capture: "toimage", args: function () {
+				pinnedWhenOpened = Alloy.Globals.lastLandscapeOrientation;
+				return entry.args();
+			} }]);
+
+			expect(pinnedWhenOpened).to.equal(capture.CAPTURE_LANDSCAPE);
+		});
+	}
+
+	function otherLandscape() {
+		return capture.CAPTURE_LANDSCAPE === Ti.UI.LANDSCAPE_RIGHT ? Ti.UI.LANDSCAPE_LEFT : Ti.UI.LANDSCAPE_RIGHT;
+	}
+
 	// The real manifest entry, so the spec exercises the shape the suite captures
 	// rather than a hand-rolled stand-in — captured as a toImage snapshot, which
 	// needs no host on the other end of the handshake.
