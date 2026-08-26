@@ -1,15 +1,22 @@
 "#pickerWindow": {
     width: "380dp",
-    height: Ti.UI.SIZE,
+    top: "12dp",
+    bottom: "12dp",
     borderWidth: "1dp",
     borderRadius: "12dp"
 }
 "#pickerCard": {
     width: Ti.UI.FILL,
+    height: Ti.UI.FILL
+}
+"#pickerFrame": {
+    width: Ti.UI.FILL,
     height: Ti.UI.SIZE
 }
 "#datePicker": {
-    type: Ti.UI.PICKER_TYPE_DATE,
+    type: Ti.UI.PICKER_TYPE_DATE
+}
+"#datePicker[platform=android]": {
     top: 0
 }
 "#datePicker[platform=ios]": {
