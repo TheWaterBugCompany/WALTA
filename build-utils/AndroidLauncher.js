@@ -74,12 +74,18 @@ class AndroidLauncher {
   // The geometry is part of the identity here: two Android legs can run the same
   // emulator image at different screen profiles, so the model alone reads
   // identically for both, and geometry is what the baselines actually key on.
+  // Only ever a label, so it must not be able to fail a run: losing the
+  // description is not worth losing the captures already taken.
   async describeDevice() {
-    const model = (await this._exec(["shell", "getprop", "ro.product.model"])).trim();
-    const release = (await this._exec(["shell", "getprop", "ro.build.version.release"])).trim();
-    const size = wmValue(await this._exec(["shell", "wm", "size"]));
-    const density = wmValue(await this._exec(["shell", "wm", "density"]));
-    return `${model} · Android ${release} · ${size} @${density}dpi`;
+    try {
+      const model = (await this._exec(["shell", "getprop", "ro.product.model"])).trim();
+      const release = (await this._exec(["shell", "getprop", "ro.build.version.release"])).trim();
+      const size = wmValue(await this._exec(["shell", "wm", "size"]));
+      const density = wmValue(await this._exec(["shell", "wm", "density"]));
+      return `${model} · Android ${release} · ${size} @${density}dpi`;
+    } catch (e) {
+      return this._serial;
+    }
   }
 
   async connect() {

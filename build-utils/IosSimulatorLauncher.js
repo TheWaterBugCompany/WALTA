@@ -163,8 +163,16 @@ class IosSimulatorLauncher {
   // whatever --device the caller typed ("local" by default), which says nothing
   // about what actually rendered it — so the run records this and the report
   // names it, and two runs from different simulators can't be read as one.
+  // Only ever a label, so it must not be able to fail a run: a cold-booted
+  // simulator can leave CoreSimulator slow enough that the listing overruns the
+  // exec timeout, and losing the label is not worth losing the captures.
   async describeDevice() {
-    const listed = JSON.parse(await this._exec(["simctl", "list", "devices", "-j"]));
+    let listed;
+    try {
+      listed = JSON.parse(await this._exec(["simctl", "list", "devices", "-j"]));
+    } catch (e) {
+      return this._udid;
+    }
     for (const [runtime, devices] of Object.entries(listed.devices)) {
       const device = devices.find((d) => d.udid === this._udid);
       if (device) { return `${device.name} · ${runtimeName(runtime)}`; }

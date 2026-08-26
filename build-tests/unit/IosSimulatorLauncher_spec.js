@@ -28,6 +28,30 @@ function makeExecFile(responses) {
 }
 
 describe("IosSimulatorLauncher", function() {
+  describe("describeDevice()", function() {
+    const LISTING = JSON.stringify({
+      devices: { "com.apple.CoreSimulator.SimRuntime.iOS-26-3": [{ udid: UDID, name: "iPhone 17" }] },
+    });
+
+    it("names the simulator the captures were rendered on", async function() {
+      const launcher = new IosSimulatorLauncher({
+        execFile: makeExecFile({ "simctl list devices -j": LISTING }), udid: UDID,
+      });
+      expect(await launcher.describeDevice()).to.contain("iPhone 17");
+    });
+
+    // The listing is only a label for the run. A cold-booted simulator can leave
+    // CoreSimulator slow enough that it overruns the exec timeout, and losing the
+    // label must not cost the captures that have already been taken.
+    it("falls back to the udid when the listing cannot be read", async function() {
+      const launcher = new IosSimulatorLauncher({
+        execFile: makeExecFile({ "simctl list devices -j": new Error("Command failed: xcrun simctl list devices -j") }),
+        udid: UDID,
+      });
+      expect(await launcher.describeDevice()).to.equal(UDID);
+    });
+  });
+
   describe("connect()", function() {
     it("boots the simulator via xcrun simctl boot", async function() {
       const fakeExecFile = makeExecFile({

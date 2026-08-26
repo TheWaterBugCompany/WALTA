@@ -34,6 +34,32 @@ const STAY_AWAKE_RESPONSES = {
 };
 
 describe("AndroidLauncher", function() {
+  describe("describeDevice()", function() {
+    const PROPS = {
+      "devices": DEVICES_OUTPUT,
+      "-s emulator-5554 shell getprop ro.product.model": "sdk_gphone64_arm64\n",
+      "-s emulator-5554 shell getprop ro.build.version.release": "16\n",
+      "-s emulator-5554 shell wm size": "Physical size: 1080x2400\n",
+      "-s emulator-5554 shell wm density": "Physical density: 420\n",
+    };
+
+    it("names the device the captures were rendered on", async function() {
+      const launcher = new AndroidLauncher({ execFile: makeExecFile(PROPS) });
+      await launcher.connect();
+      expect(await launcher.describeDevice()).to.equal("sdk_gphone64_arm64 · Android 16 · 1080x2400 @420dpi");
+    });
+
+    // The description is only a label for the run; losing it must not cost the
+    // captures that have already been taken.
+    it("falls back to the serial when a property cannot be read", async function() {
+      const launcher = new AndroidLauncher({ execFile: makeExecFile({
+        ...PROPS, "-s emulator-5554 shell wm density": new Error("device offline"),
+      }) });
+      await launcher.connect();
+      expect(await launcher.describeDevice()).to.equal("emulator-5554");
+    });
+  });
+
   describe("connect()", function() {
     it("runs adb devices and resolves when a device is found", async function() {
       const fakeExecFile = makeExecFile({ "devices": DEVICES_OUTPUT });
