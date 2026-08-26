@@ -1,0 +1,10 @@
+{
+  "ios": [
+    { "label": "iphone-17",           "name": "iPhone 17" },
+    { "label": "iphone-17-pro-max",   "name": "iPhone 17 Pro Max" }
+  ],
+  "android": [
+    { "label": "medium", "avd": "Medium_Phone_API_34", "profile": "medium_phone", "api": 34 },
+    { "label": "small",  "avd": "Nexus5_API34",        "profile": "Nexus 5",      "api": 34 }
+  ]
+}

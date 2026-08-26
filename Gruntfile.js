@@ -937,8 +937,17 @@ module.exports = function(grunt) {
 
     async function writeVisualReport(grunt) {
       const { buildReport } = await import('./build-utils/visual/buildReport.js');
-      const report = buildReport({ root: VISUAL_ROOT, generatedAt: new Date().toISOString() });
+      // --all-devices seeds the report with the whole declared matrix, so a leg
+      // that captured nothing is a visible column of gaps rather than a column
+      // that silently isn't there. The CI aggregate job wants that; a local run
+      // capturing one device does not.
+      const { expectedRuns } = await import('./build-utils/visual/devices.js');
+      const expected = grunt.option('all-devices') ? expectedRuns() : [];
+      const report = buildReport({ root: VISUAL_ROOT, generatedAt: new Date().toISOString(), expected });
       grunt.log.writeln(`Review page: ${report.file} (${report.screens} screens x ${report.runs} devices)`);
+      for (const missing of report.missingRuns) {
+        grunt.log.writeln(`  no captures for ${missing} — that leg produced nothing`);
+      }
       return report;
     }
 

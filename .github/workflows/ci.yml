@@ -523,8 +523,8 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-34
-          key: avd-34-google_apis-x86_64
+            /usr/local/lib/android/sdk/system-images/android-${{ matrix.device.api }}
+          key: avd-${{ matrix.device.api }}-google_apis-x86_64
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -567,6 +567,28 @@ jobs:
             echo "Emulator booted"
             bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=android --simulator --skip-build unit-test
 
+  # ── 3a2. The declared visual device matrix ────────────────────────────────
+  # visual/devices.json is the single declaration of what the visual suite covers
+  # — the two jobs below build their matrices from it, and the report reads it to
+  # know which columns to expect. Two copies would drift, and a leg that stopped
+  # running would quietly disappear from a report that still looked complete.
+  visual-devices:
+    name: Visual device matrix
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      ios: ${{ steps.read.outputs.ios }}
+      android: ${{ steps.read.outputs.android }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: read
+        run: |
+          echo "ios=$(jq -c '.ios' visual/devices.json)" >> "$GITHUB_OUTPUT"
+          echo "android=$(jq -c '.android' visual/devices.json)" >> "$GITHUB_OUTPUT"
+          jq -c '.' visual/devices.json
+
   # ── 3b. iOS visual regression (advisory) ──────────────────────────────────
   # Captures each screen on a *pinned* simulator (baselines are renderer-specific)
   # and diffs against the committed baseline set. Advisory: --advisory keeps the
@@ -575,19 +597,18 @@ jobs:
   # uploaded so a reviewer can commit the CI-rendered baselines on the first run.
   ios-visual:
     name: iOS visual regression (advisory)
-    needs: [changes, ios-build]
+    needs: [changes, ios-build, visual-devices]
     if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
     continue-on-error: true
     timeout-minutes: 30
     strategy:
       fail-fast: false
+      # One baseline set per device — chosen for distinct logical widths + the
+      # Dynamic Island safe area (the framebuffer composites the cutout).
+      # Declared in visual/devices.json; add a device there, not here.
       matrix:
-        # One baseline set per device — chosen for distinct logical widths + the
-        # Dynamic Island safe area (the framebuffer composites the cutout).
-        device:
-          - { label: iphone-17, name: "iPhone 17" }
-          - { label: iphone-17-pro-max, name: "iPhone 17 Pro Max" }
+        device: ${{ fromJSON(needs.visual-devices.outputs.ios) }}
     env:
       XCODE_VERSION: "26.3"
     steps:
@@ -692,18 +713,17 @@ jobs:
   # ── 3c. Android visual regression (advisory) ──────────────────────────────
   android-visual:
     name: Android visual regression (advisory)
-    needs: [changes, android-build]
+    needs: [changes, android-build, visual-devices]
     if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
     continue-on-error: true
     timeout-minutes: 30
     strategy:
       fail-fast: false
+      # One baseline set per device profile — distinct logical widths / density.
+      # Declared in visual/devices.json; add a device there, not here.
       matrix:
-        # One baseline set per device profile — distinct logical widths / density.
-        device:
-          - { label: medium, avd: Medium_Phone_API_36.1, profile: medium_phone }
-          - { label: small, avd: Nexus5_API34, profile: "Nexus 5" }
+        device: ${{ fromJSON(needs.visual-devices.outputs.android) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -764,7 +784,7 @@ jobs:
       - name: Capture screens and diff against baselines
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: ${{ matrix.device.api }}
           target: google_apis
           arch: x86_64
           avd-name: ${{ matrix.device.avd }}
@@ -838,7 +858,9 @@ jobs:
           merge-multiple: true
 
       - name: Render the combined gallery
-        run: npx grunt visual-report
+        # --all-devices seeds every declared device as a column, so a leg that
+        # captured nothing shows as a column of gaps rather than vanishing.
+        run: npx grunt --all-devices visual-report
 
       - name: Upload the combined gallery
         uses: actions/upload-artifact@v7
