@@ -183,6 +183,39 @@ function trainingTray() {
 	return { key: keyMock, tray: tray };
 }
 
+// Verdicts only appear once the tray is assessed, and the tray's whole point in
+// training is that feedback — so the capture assesses it. A fixed alternating
+// assessor gives a visible mix of ticks and crosses rather than whatever the
+// real exercise would grade these five taxa as.
+function trainingTrayServices() {
+	return {
+		assessor: {
+			expectedCount: 10,
+			assess: function (cells) {
+				return cells.map(function (_, i) { return i % 2 === 0 ? "incorrect" : "correct"; });
+			},
+		},
+	};
+}
+
+// A tile's taxa icons are its 2nd child's children, and a cell's verdict overlay
+// is its 3rd child — the same accessors TrainingTray_spec uses.
+function verdictOverlays(ctl) {
+	return ctl.tray.children[0].children[1].children.map(function (cell) { return cell.children[2]; });
+}
+
+function assessTrainingTray(opened) {
+	var { waitFor } = require("spec/util/TestUtils");
+	opened.seam.getScreenController().vm.assess();
+	// Wait for the overlays to render, not just for the verdicts to exist: the
+	// cells re-apply asynchronously, and the frame-stability gate could otherwise
+	// settle on the frame before them.
+	var ctl = opened.seam.getCurrentController();
+	return waitFor(function () {
+		return verdictOverlays(ctl).some(function (v) { return v.visible; });
+	});
+}
+
 function videoPlayer() {
 	return { url: "/spec/resources/simpleKey1/media/test_clip.mp4" };
 }
@@ -341,7 +374,7 @@ module.exports = [
 	{ name: "Summary", args: summary },
 	{ name: "KeySearch", args: keySearch },
 	{ name: "SampleHistory", args: sampleHistory },
-	{ name: "TrainingTray", args: trainingTray },
+	{ name: "TrainingTray", args: trainingTray, services: trainingTrayServices, after: assessTrainingTray },
 	// loadMs gives the WebView's local HTML, the map tiles and the video's first
 	// frame time to render before the host grabs the frame (framebuffer is the
 	// default capture — see captureScreens.js).
