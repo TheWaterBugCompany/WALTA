@@ -12,14 +12,6 @@ var { disableControl, enableControl, setError, clearError } = require("ui/ViewUt
 var safeAreaApplied = false;
 function isSafeAreaApplied() { return safeAreaApplied; }
 function openWindow() {
-	if ( OS_IOS && isLandscape( Alloy.Globals.lastLandscapeOrientation ) ) {
-		// SDK 13.4.0 on iOS 26 re-resolves orientation per window when the device
-		// orientation is ambiguous (portrait/flat), so a new modal can open in the
-		// opposite landscape from the screen beneath it (180°-rotated). Pin each
-		// window to the landscape already in use to keep them consistent, while the
-		// first window still adopts whichever landscape the device launched in.
-		$.TopLevelWindow.orientationModes = [ Alloy.Globals.lastLandscapeOrientation ];
-	}
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.content.width = Ti.UI.FILL;
@@ -43,17 +35,10 @@ function openWindow() {
 	$.TopLevelWindow.addEventListener('postlayout', updateSafeArea);
 	PlatformSpecific.transitionWindows( $.TopLevelWindow, $.args.slide );
 	$.TopLevelWindow.addEventListener('postlayout',function() {
-		if ( OS_IOS && isLandscape( $.TopLevelWindow.orientation ) ) {
-			Alloy.Globals.lastLandscapeOrientation = $.TopLevelWindow.orientation;
-		}
 		$.trigger("window-opened");
 		Topics.fireTopicEvent( Topics.PAGE_OPENED, { name: getName() } );
 	})
 
-}
-
-function isLandscape( o ) {
-	return o === Ti.UI.LANDSCAPE_LEFT || o === Ti.UI.LANDSCAPE_RIGHT;
 }
 
 function backEvent(e) {

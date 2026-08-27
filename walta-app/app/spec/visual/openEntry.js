@@ -23,20 +23,19 @@
 var { wrapViewInWindow, windowOpenTest, closeWindow } = require("spec/util/TestUtils");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
 
-// Every screen is opened in one landscape. iOS re-resolves a window's
+// Every screen is captured in one landscape. iOS re-resolves a window's
 // orientation while the device is flat, as a simulator always is, so screens
-// otherwise settle in either — which turns the captured frame the other way up
-// and mirrors the safe-area insets, so the notch changes sides between runs and
-// no baseline holds. Asking the device which way it went doesn't work: a window
-// reports the interface orientation, which stays put while it renders rotated.
+// would otherwise settle in either — which turns the captured frame the other way
+// up and mirrors the safe-area insets, so the notch changes sides between runs
+// and no baseline holds.
+//
+// Nothing here has to arrange that any more: a capture build's tiapp.xml declares
+// this landscape and no other (see build-utils/tiappConfig.js), so there is no
+// second orientation for iOS to choose. The app itself supports both landscapes
+// and knows nothing about capture — an earlier attempt to pin the orientation
+// from inside the app left the running app locked to whichever landscape it
+// launched in, however the phone was then held.
 var CAPTURE_LANDSCAPE = Ti.UI.LANDSCAPE_RIGHT;
-
-// TopLevelWindow pins each window it opens to the landscape already in use, so
-// seeding that pins the screen about to open. It has to be re-seeded per screen:
-// each window writes back the orientation it read once laid out.
-function pinToCaptureLandscape() {
-	Alloy.Globals.lastLandscapeOrientation = CAPTURE_LANDSCAPE;
-}
 
 // A screen only one platform ever instantiates (the iOS inline date picker
 // crashes Titanium's Android TextInputLayout, so Android uses the native dialog).
@@ -99,7 +98,6 @@ async function withEntryState(entry, opened) {
 }
 
 async function openEntry(entry, entries) {
-	pinToCaptureLandscape();
 	// A component has no seam: it is built directly and hosted in a window.
 	if (entry.wrap) { return withEntryState(entry, await openComponent(entry)); }
 
