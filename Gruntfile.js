@@ -1029,6 +1029,16 @@ module.exports = function(grunt) {
           throw new Error(err.message + diag);
         }
         grunt.log.writeln(`Captured ${marker.count} framebuffer screen(s); pulling toImage screens from device…`);
+        // A screen that came back with nothing drawn on it is a failed capture,
+        // not a look the baseline should record — blessing one makes every later
+        // run of that screen pass while showing nothing.
+        if (marker.blank.length) {
+          const blanks = marker.blank.join(', ');
+          if (update) {
+            grunt.fail.fatal(`Refusing to update baselines: captured blank for ${blanks}.`);
+          }
+          grunt.log.writeln(`  ${marker.blank.length} screen(s) captured blank: ${blanks}`);
+        }
 
         if (typeof launcher.pullCapturedScreenshots !== 'function') {
           throw new Error(`${launcher.constructor.name} does not implement pullCapturedScreenshots yet`);

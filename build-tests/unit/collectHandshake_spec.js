@@ -37,8 +37,9 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
         });
-        expect(result).to.deep.equal({ count: 2 });
+        expect(result).to.deep.equal({ count: 2, blank: [] });
         expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Speedbug.png"]);
         expect(launcher.written).to.deep.equal(["Menu.shot", "Speedbug.shot"]);
     });
@@ -50,8 +51,9 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
         });
-        expect(result).to.deep.equal({ count: 1 });
+        expect(result).to.deep.equal({ count: 1, blank: [] });
         expect(launcher.shots).to.deep.equal(["/out/Menu.png"]);
     });
 
@@ -64,6 +66,7 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
         });
         expect(launcher.shots).to.deep.equal(["/out/Menu.png"]);
     });
@@ -85,8 +88,9 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
         });
-        expect(result).to.deep.equal({ count: 1 });
+        expect(result).to.deep.equal({ count: 1, blank: [] });
         expect(shots).to.deep.equal(["/out/Menu.png"]);
     });
 
@@ -110,6 +114,7 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
         });
         // The failed first attempt didn't ack Menu; the next poll retried and got it.
         expect(shots).to.deep.equal(["/out/Menu.png"]);
@@ -122,10 +127,59 @@ describe("collectHandshake", function () {
         let err;
         try {
             await collectHandshake({
-                launcher, appId: "app", actualDir: "/out", timeoutMs: 500, pollMs: 100, now, sleep,
+                launcher, appId: "app", actualDir: "/out", timeoutMs: 500, pollMs: 100, now, sleep, looksBlank: async () => false,
             });
         } catch (e) { err = e; }
         expect(err).to.be.an("error");
         expect(err.message).to.match(/timed out after 1s with no capture-done/);
+    });
+});
+
+// A frame checker driven by a script of verdicts per screen name: each entry is
+// consumed in turn, so ["blank", "drawn"] means the first grab came back blank
+// and the re-grab had content.
+function fakeFrames(script) {
+    const seen = {};
+    return async (file) => {
+        const name = file.split("/").pop().replace(/\.png$/, "");
+        const verdicts = script[name] || ["drawn"];
+        const i = Math.min(seen[name] || 0, verdicts.length - 1);
+        seen[name] = (seen[name] || 0) + 1;
+        return verdicts[i] === "blank";
+    };
+}
+
+describe("collectHandshake blank frames", function () {
+    it("grabs a blank frame again rather than acking it, and acks once it has content", async function () {
+        const launcher = fakeLauncher([
+            ["Menu.ready"],
+            ["Menu.ready"],
+            ["Menu.ready", "capture-done"],
+        ]);
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: fakeFrames({ Menu: ["blank", "drawn"] }),
+        });
+        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
+        expect(launcher.written).to.deep.equal(["Menu.shot"]);
+        expect(result.count).to.equal(1);
+        expect(result.blank).to.deep.equal([]);
+    });
+
+    it("gives up on a screen that stays blank, acking it so the runner isn't stranded, and reports it", async function () {
+        const launcher = fakeLauncher([
+            ["Menu.ready"], ["Menu.ready"], ["Menu.ready"], ["Menu.ready"],
+            ["Menu.ready", "capture-done"],
+        ]);
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            blankAttempts: 3,
+            looksBlank: fakeFrames({ Menu: ["blank"] }),
+        });
+        expect(launcher.shots).to.have.length(3);
+        expect(launcher.written).to.deep.equal(["Menu.shot"]);
+        expect(result.blank).to.deep.equal(["Menu"]);
     });
 });
