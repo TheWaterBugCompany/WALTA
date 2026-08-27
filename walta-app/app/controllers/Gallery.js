@@ -75,7 +75,7 @@ function buildPhotoView(urlObj) {
                 top: "50dp"
             });
         label.addEventListener("click", function() {
-            Topics.fireTopicEvent(Topics.JUMPTO,{id: urlObj.taxon.id});
+            Topics.fireTopicEvent(Topics.JUMPTO, {id: urlObj.taxon.id, allowAddToSample: false});
         });
         
         
