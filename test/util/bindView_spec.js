@@ -112,6 +112,43 @@ describe("bindView", function () {
       .to.throw(/nonExistentProp/);
   });
 
+  describe("setter bindings", function () {
+    // Some Alloy sub-controllers take their state through a method rather than a
+    // property — PhotoSelect's photos arrive via setImage(urls).
+    class PhotoVM extends ChangeNotifier {
+      constructor() { super(); this._urls = ["a.jpg"]; }
+      get photoUrls() { return this._urls; }
+      show(urls) { this._urls = urls; this.notifyListeners(); }
+    }
+
+    function makeTarget() {
+      const calls = [];
+      return { calls, setImage(v) { calls.push(v); } };
+    }
+
+    it("calls the setter with the VM value on setup", function () {
+      const target = makeTarget();
+      bindView({ photoSelect: target }, new PhotoVM(), { photoSelect: { setImage: bindView.apply("photoUrls") } });
+      expect(target.calls).to.deep.equal([["a.jpg"]]);
+    });
+
+    it("calls the setter again when the value changes", function () {
+      const target = makeTarget();
+      const photoVm = new PhotoVM();
+      bindView({ photoSelect: target }, photoVm, { photoSelect: { setImage: bindView.apply("photoUrls") } });
+      photoVm.show(["b.jpg"]);
+      expect(target.calls).to.deep.equal([["a.jpg"], ["b.jpg"]]);
+    });
+
+    it("does not call the setter again for an unchanged value", function () {
+      const target = makeTarget();
+      const photoVm = new PhotoVM();
+      bindView({ photoSelect: target }, photoVm, { photoSelect: { setImage: bindView.apply("photoUrls") } });
+      photoVm.notifyListeners();
+      expect(target.calls).to.have.length(1);
+    });
+  });
+
   describe("palette resolution", function () {
     it("resolves a Symbol VM value through the palette object", function () {
       const sym = Symbol("error");

@@ -158,6 +158,19 @@ function isComponent(ref) {
   return ref !== null && typeof ref === "object" && ref.__component === true;
 }
 
+// Outbound setter binding: some Alloy sub-controllers take their state through a
+// method rather than a property (PhotoSelect's photos arrive via setImage(urls)).
+// apply() drives one from a VM getter — called on bind and whenever the value
+// changes, so it reads like any other property binding at the call site.
+//   photoSelect: { setImage: apply("photoUrls") }
+function apply(getter) {
+  return { __apply: true, getter };
+}
+
+function isApply(ref) {
+  return ref !== null && typeof ref === "object" && ref.__apply === true;
+}
+
 // The VM method name an on<Event> binding targets — a plain string handler or a
 // call()/input()/measure() marker.
 function methodOf(ref) {
@@ -175,13 +188,26 @@ module.exports = function bindView($, vm, bindings, options) {
   const palette = options && options.palette;
   const createComponent = options && options.createComponent;
   const eventTeardowns = [];
+  // Last value pushed through each setter binding: unlike a property, a setter
+  // can't be read back to see whether it would change anything.
+  const applied = new Map();
 
   function applyProps() {
     for (const widgetId in bindings) {
       const widget = $[widgetId];
       const widgetBindings = bindings[widgetId];
       for (const key in widgetBindings) {
-        if (EVENT_KEY_RE.test(key) || isCollection(widgetBindings[key]) || isCommand(widgetBindings[key]) || isComponent(widgetBindings[key])) continue;
+        const binding = widgetBindings[key];
+        if (EVENT_KEY_RE.test(key) || isCollection(binding) || isCommand(binding) || isComponent(binding)) continue;
+        if (isApply(binding)) {
+          const next = vm[binding.getter];
+          const seen = `${widgetId}.${key}`;
+          if (applied.get(seen) !== next) {
+            applied.set(seen, next);
+            widget[key](next);
+          }
+          continue;
+        }
         let value = vm[propOf(widgetBindings[key])];
         if (typeof value === "symbol" && palette) {
           value = palette[value.description];
@@ -432,6 +458,13 @@ function validate($, vm, bindings) {
         if (typeof widget.addEventListener !== "function" && typeof widget.on !== "function") {
           throw new Error(`bindView: widget "${widgetId}" has no event mechanism for two-way ${key}`);
         }
+      } else if (isApply(ref)) {
+        if (!(ref.getter in vm)) {
+          throw new Error(`bindView: VM has no property "${ref.getter}" (bound to setter ${widgetId}.${key})`);
+        }
+        if (typeof widget[key] !== "function") {
+          throw new Error(`bindView: widget "${widgetId}" has no setter "${key}"`);
+        }
       } else if (isCommand(ref)) {
         if (typeof widget[ref.method] !== "function") {
           throw new Error(`bindView: widget "${widgetId}" has no method "${ref.method}" (bound to command ${widgetId}.${key})`);
@@ -484,6 +517,7 @@ module.exports.call = call;
 module.exports.input = input;
 module.exports.measure = measure;
 module.exports.command = command;
+module.exports.apply = apply;
 module.exports.ref = ref;
 module.exports.collection = collection;
 module.exports.component = component;
