@@ -1,0 +1,15 @@
+<Alloy>
+	<View class="overlay">
+		<View class="window comparisonWindow" layout="vertical">
+			<View class="titlebar">
+				<Require id="closeButton" src="CloseButton"/>
+			</View>
+			<View id="verdictRow" class="verdictRow">
+				<ImageView id="verdictIcon" class="verdictIcon"/>
+				<Label id="comparisonMessage" class="comparisonMessage" accessibilityLabel="taxon_comparison_message"/>
+			</View>
+			<View id="photos" class="comparisonPhotos"/>
+			<Button id="action" class="comparisonAction" accessibilityLabel="taxon_comparison_action"/>
+		</View>
+	</View>
+</Alloy>

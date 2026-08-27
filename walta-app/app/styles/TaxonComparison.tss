@@ -1,0 +1,102 @@
+// Feedback on one identification from a training assessment. Wider than the
+// other modals because the incorrect state sets two photos side by side and the
+// reader is comparing them — that comparison is the whole point of the screen.
+".comparisonWindow": {
+	width: "72%",
+	height: Ti.UI.SIZE,
+	borderWidth: "1dp",
+	borderRadius: "6dp",
+	layout: "vertical"
+}
+
+// The verdict icon sits beside the message rather than above it, so the tick or
+// cross reads as part of the sentence.
+".verdictRow": {
+	top: "4dp",
+	width: Ti.UI.FILL,
+	height: Ti.UI.SIZE,
+	left: "6%",
+	right: "6%",
+	layout: "horizontal"
+}
+
+".verdictIcon": {
+	width: "32dp",
+	height: "32dp",
+	left: 0,
+	top: "2dp",
+	// Titanium paints a hairline for a border colour set at zero width, so the
+	// icon needs no colour rather than a hidden one — the same quirk the key's
+	// hinted branches hit.
+	borderColor: "transparent"
+}
+
+".verdictIcon[if=Alloy.Globals.isHighRes]": {
+	width: "44dp",
+	height: "44dp"
+}
+
+".verdictIcon[if=Alloy.Globals.isXHighRes]": {
+	width: "64dp",
+	height: "64dp"
+}
+
+// FILL + SIZE rather than margins alone: Android otherwise measures the label at
+// an unconstrained width, wraps to fewer lines and clips (see TrainingSuccess).
+".comparisonMessage": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.SIZE,
+	left: "8dp",
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "16dp" }
+}
+
+".comparisonMessage[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
+}
+
+".comparisonMessage[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "32dp" }
+}
+
+// Horizontal so one card centres itself and two sit side by side without the
+// screen knowing which state it is in.
+".comparisonPhotos": {
+	top: "10dp",
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
+	layout: "horizontal",
+	// Defaults to true, which wraps the second card onto a row of its own inside a
+	// SIZE-wide container — the two must stay side by side to be compared.
+	horizontalWrap: false
+}
+
+// No left/right: setting both against a SIZE width over-constrains the button
+// (it pins to the left and truncates its title). A vertical layout centres its
+// children on its own.
+// Not the shared .actionButton: that pins width to 100dp, which truncates this
+// screen's long title. Carries its own font so it still reads as one of the set.
+".comparisonAction": {
+	top: "12dp",
+	bottom: "12dp",
+	width: Ti.UI.SIZE,
+	height: "36dp",
+	color: Alloy.CFG.colors.primary,
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.primary,
+	borderWidth: "1dp",
+	borderRadius: "4dp",
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
+}
+
+".comparisonAction[if=Alloy.Globals.isHighRes]": {
+	height: "48dp",
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "20dp" }
+}
+
+".comparisonAction[if=Alloy.Globals.isXHighRes]": {
+	height: "64dp",
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "28dp" }
+}
