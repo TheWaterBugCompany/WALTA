@@ -2,8 +2,10 @@ const ChangeNotifier = require("../../util/ChangeNotifier");
 const Palette = require("../../util/Palette");
 
 // Wide enough to read as an outline around the whole branch rather than a hairline
-// on its edge — the hint is meant to be seen at a glance.
-const VERDICT_BORDER = 8;
+// on its edge — the hint is meant to be seen at a glance. It carries its unit
+// because ti.ui.defaultunit is "system", which means points on iOS but raw pixels
+// on Android — a bare number drew this three times thinner there.
+const VERDICT_BORDER = "8dp";
 
 // One branch of a couplet: the text and photo the reader chooses between, and
 // the verdict a hint puts on it ("correct" / "incorrect", or null when this
@@ -40,7 +42,7 @@ class QuestionViewModel extends ChangeNotifier {
 
   get borderColor() {
     if (this._verdict === "correct") { return Palette.success; }
-    if (this._verdict === "incorrect") { return Palette.errorDark; }
+    if (this._verdict === "incorrect") { return Palette.failure; }
     // Titanium paints a hairline for a colour set at zero width, so an unhinted
     // branch needs no colour rather than a hidden one.
     return "transparent";

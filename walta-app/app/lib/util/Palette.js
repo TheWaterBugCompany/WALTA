@@ -9,6 +9,7 @@ const Palette = {
   error:        Symbol("error"),
   errorDark:    Symbol("errorDark"),
   success:      Symbol("success"),
+  failure:      Symbol("failure"),
   disabled:     Symbol("disabled"),
 };
 
