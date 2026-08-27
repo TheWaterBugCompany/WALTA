@@ -1,0 +1,44 @@
+// One taxon card: the photo with its name across the bottom. Alloy resolves TSS
+// per controller, so these live here rather than with the screen that hosts them.
+
+".comparisonCard": {
+	width: "150dp",
+	height: "112dp",
+	left: "6dp",
+	right: "6dp"
+}
+
+".comparisonCard[if=Alloy.Globals.isHighRes]": {
+	width: "200dp",
+	height: "150dp"
+}
+
+".comparisonCard[if=Alloy.Globals.isXHighRes]": {
+	width: "280dp",
+	height: "210dp"
+}
+
+// A fixed box rather than SIZE: an ImageView asked for its intrinsic size takes
+// the source's full pixel dimensions, and these photos are several thousand
+// pixels wide. Scales with the screen-height buckets so the modal still fits the
+// shortest landscape viewport.
+".comparisonPhoto": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL
+}
+
+// Across the bottom of its own photo, as in the designs.
+".comparisonCaption": {
+	bottom: "6dp",
+	left: "8dp",
+	color: Alloy.CFG.colors.white,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontStyle: "italic", fontSize: "13dp" }
+}
+
+".comparisonCaption[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontStyle: "italic", fontSize: "17dp" }
+}
+
+".comparisonCaption[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontStyle: "italic", fontSize: "25dp" }
+}

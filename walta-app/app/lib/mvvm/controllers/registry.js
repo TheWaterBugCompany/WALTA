@@ -18,4 +18,6 @@ module.exports = {
   TrainingSuccess: require("./TrainingSuccess"),
   TrainingTray: require("./TrainingTray"),
   SyncFeedback: require("./SyncFeedback"),
+  TaxonComparison: require("./TaxonComparison"),
+  TaxonComparisonPhoto: require("./TaxonComparisonPhoto"),
 };

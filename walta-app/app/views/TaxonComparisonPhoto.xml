@@ -1,0 +1,6 @@
+<Alloy>
+	<View id="TaxonComparisonPhoto" class="comparisonCard">
+		<ImageView id="photo" class="comparisonPhoto"/>
+		<Label id="caption" class="comparisonCaption"/>
+	</View>
+</Alloy>
