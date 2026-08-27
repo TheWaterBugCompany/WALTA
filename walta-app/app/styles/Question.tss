@@ -1,4 +1,39 @@
 
+// 48% of the branch container is the 44% of the whole screen the cards had when
+// KeySearch sized them itself — the container excludes the heading strip.
+"#hintFrame": {
+  width: "95%",
+  height: "48%",
+  top: "1%",
+  bottom: "1%",
+  borderRadius: "31dp",
+  borderColor: "transparent",
+  borderWidth: 0
+}
+
+"#hintFrame[if=Alloy.Globals.isHighRes]": {
+  borderRadius: "33dp"
+}
+
+"#hintFrame[if=Alloy.Globals.isXHighRes]": {
+  borderRadius: "56dp"
+}
+
+// The verdict sits in the gutter the outline leaves to the left of the card, so
+// a hinted row is the same size as an unhinted one.
+"#verdictIcon": {
+  left: "1%",
+  width: "5%",
+  height: "40%",
+  visible: false
+}
+
+"#card": {
+  left: "0%",
+  right: "0%",
+  height: "92%"
+}
+
 ".container" : {
   backgroundColor:"#cfdbf3",
   horizontalWrap: false,

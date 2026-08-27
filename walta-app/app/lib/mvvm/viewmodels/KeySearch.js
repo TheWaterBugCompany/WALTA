@@ -33,6 +33,8 @@ class KeySearchViewModel extends ChangeNotifier {
 
   get isRoot() { return this._key.isRoot(); }
 
+  get canGoUp() { return !this.isRoot; }
+
   goUp() {
     if (this.isRoot) { return; }
     this._navigate(this._topics.UP, { node: this._node.parentLink, slide: "left" });

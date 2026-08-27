@@ -91,7 +91,12 @@ describe("KeySearchViewModel", function () {
     });
 
     it("has nowhere to go up from the root couplet", function () {
-        expect(build().isRoot).to.equal(true);
+        expect(build().canGoUp).to.equal(false);
+    });
+
+    it("can go up from a couplet below the root", function () {
+        const { key, n2 } = buildKey();
+        expect(new KeySearchViewModel({ key, node: n2, topics: Topics }).canGoUp).to.equal(true);
     });
 
     it("advances the key to the chosen branch", function () {
