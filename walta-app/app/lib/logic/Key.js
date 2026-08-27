@@ -232,12 +232,25 @@ function createKey( args ) {
 		// The refId of the couplet where the user's path first diverged from
 		// the expected path — i.e. the decision they answered incorrectly.
 		findIncorrectDecision: function( selectedRef, expectedRef ) {
+			var hint = this.hintForIncorrectDecision( selectedRef, expectedRef );
+			return hint && hint.nodeId;
+		},
+
+		// The couplet where the two paths part, plus the outcome on either side of
+		// it — everything the key search needs to mark one branch right and the
+		// other wrong. The refs name the nodes the branches lead to, which is what
+		// a question's outcome carries.
+		hintForIncorrectDecision: function( selectedRef, expectedRef ) {
 			var selectedPath = pathFromRoot( this.findTaxon( selectedRef ) );
 			var expectedPath = pathFromRoot( this.findTaxon( expectedRef ) );
 			var limit = Math.min( selectedPath.length, expectedPath.length );
 			for ( var i = 0; i < limit; i++ ) {
 				if ( selectedPath[i] !== expectedPath[i] ) {
-					return selectedPath[i-1].id;
+					return {
+						nodeId: selectedPath[i-1].id,
+						correctRef: expectedPath[i].id,
+						incorrectRef: selectedPath[i].id
+					};
 				}
 			}
 			return null;

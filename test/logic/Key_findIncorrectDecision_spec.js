@@ -64,3 +64,34 @@ describe("Key.findIncorrectDecision", function () {
 		expect(key.findIncorrectDecision("t1", "t1")).to.equal(null);
 	});
 });
+
+// The hint the key search shows over a couplet: which couplet, and which of its
+// two outcomes was right. KeySearch matches these against question.outcome.id,
+// so they name the nodes either side of where the two paths part — the ones
+// findIncorrectDecision walks past on its way to the couplet itself.
+describe("Key.hintForIncorrectDecision", function () {
+	it("names the couplet and both of its outcomes when the leaves are siblings", function () {
+		const { key } = buildKey();
+		expect(key.hintForIncorrectDecision("t1", "t2"))
+			.to.deep.equal({ nodeId: "n2", correctRef: "t2", incorrectRef: "t1" });
+	});
+
+	it("names the couplet higher up when the paths part earlier", function () {
+		const { key } = buildKey();
+		expect(key.hintForIncorrectDecision("t1", "t3"))
+			.to.deep.equal({ nodeId: "n1", correctRef: "t3", incorrectRef: "n2" });
+	});
+
+	// The refs are not interchangeable: which one is correct depends on which
+	// taxon was expected, and swapping them would mark the wrong branch green.
+	it("swaps the outcomes when the answers are swapped", function () {
+		const { key } = buildKey();
+		expect(key.hintForIncorrectDecision("t3", "t1"))
+			.to.deep.equal({ nodeId: "n1", correctRef: "n2", incorrectRef: "t3" });
+	});
+
+	it("has no hint to give when the identification was right", function () {
+		const { key } = buildKey();
+		expect(key.hintForIncorrectDecision("t1", "t1")).to.equal(null);
+	});
+});
