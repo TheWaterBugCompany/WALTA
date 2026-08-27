@@ -357,10 +357,7 @@ function iosSurveyDatePicker() {
 // Both signals are needed. The load event never comes if the page beat us here,
 // and document.readyState only reads back synchronously on iOS — Android hands
 // it to the callback and returns null.
-function htmlLoaded(opened) {
-	var ctl = opened.seam.getCurrentController();
-	// About is the WebView; Help nests one inside its content view.
-	var webview = ctl.htmlView || ctl.content;
+function pageLoaded(webview) {
 	return new Promise(function (resolve) {
 		function ready() {
 			webview.removeEventListener("load", ready);
@@ -372,6 +369,51 @@ function htmlLoaded(opened) {
 		});
 		if (/complete/.test(loadedAlready)) { ready(); }
 	});
+}
+
+// A loaded document is not a drawn one. On Android the WebView reports its page
+// complete while its layer is still blank, and the frame then holds an empty page
+// with only its scrollbars — About and Help each captured blank on roughly two
+// runs in five. Holding the screen longer doesn't heal it (a three second hold
+// blanked just as often), so the wait has to be for the renderer, not the clock:
+// a page that has advanced two animation frames has drawn.
+var COUNT_FRAMES =
+	"(function(){" +
+		"if (window.__visualFrames === undefined) {" +
+			"window.__visualFrames = 0;" +
+			"(function tick(){ window.__visualFrames++; requestAnimationFrame(tick); })();" +
+		"}" +
+		"return String(window.__visualFrames);" +
+	"})()";
+
+// Android hands evalJS results back JSON-encoded (a count of 3 arrives as "\"3\"")
+// and only through the callback; iOS returns the bare value synchronously.
+function framesDrawn(webview) {
+	function count(value) { return Number(String(value).replace(/"/g, "")); }
+	return new Promise(function (resolve) {
+		var sync = webview.evalJS(COUNT_FRAMES, function (value) { resolve(count(value)); });
+		if (sync !== null && sync !== undefined && sync !== "") { resolve(count(sync)); }
+	});
+}
+
+// Bounded so a page whose frames never advance gives up rather than stranding the
+// run — the host then captures whatever is on screen, as it did before this gate.
+async function pageDrawn(webview) {
+	var start = await framesDrawn(webview);
+	var deadline = Date.now() + 5000;
+	while (Date.now() < deadline) {
+		if (await framesDrawn(webview) >= start + 2) { return; }
+		await new Promise(function (r) { setTimeout(r, 50); });
+	}
+	Ti.API.error("VISUAL_WEBVIEW_NOT_DRAWN frames stalled at " + start);
+}
+
+async function htmlLoaded(opened) {
+	var ctl = opened.seam.getCurrentController();
+	// About is the WebView; Help nests one inside its content view.
+	var webview = ctl.htmlView || ctl.content;
+	await pageLoaded(webview);
+	await pageDrawn(webview);
 }
 
 function about() {
