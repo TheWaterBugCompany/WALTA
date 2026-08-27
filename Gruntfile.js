@@ -270,8 +270,10 @@ module.exports = function(grunt) {
       const tasks = [];
 
       if ( ! grunt.option('skip-build') ) {
-        // Regenerate tiapp.xml from template if it changed
-        tasks.push('newer:tiapp');
+        // Always regenerated, never cached against the template's mtime: what it
+        // should contain depends on whether this run is capturing screens, which
+        // an mtime can't see.
+        tasks.push('generate-tiapp');
         tasks.push(`exec:build:${platform}:${build_type}`);
       }
       return {
@@ -421,11 +423,6 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
-          generate_tiapp: {
-            command: 'sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" walta-app/tiapp.xml.template > walta-app/tiapp.xml',
-            stdout: "inherit", stderr: "inherit"
-          },
-
           clean_integration_fixtures_ios: {
             command: `rm -rf build-tests/integration/fixtures/HelloWorld-ios/build build-tests/integration/fixtures/HelloWorld-ios/sim-v* build-tests/integration/fixtures/HelloWorld-ios/v*`,
             stdout: "inherit", stderr: "inherit"
@@ -465,12 +462,6 @@ module.exports = function(grunt) {
         },
 
         newer: {
-          tiapp: {
-            src: ['./walta-app/tiapp.xml.template'],
-            dest: './walta-app/tiapp.xml',
-            options: { tasks: ['exec:generate_tiapp'] }
-          },
-
           unit_test_android: build_if_newer_options("android", "unit-test"),
           unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
@@ -952,6 +943,29 @@ module.exports = function(grunt) {
       }
       return report;
     }
+
+    // Writes walta-app/tiapp.xml from the committed template: the maps key goes
+    // in, and a build the visual suite captures from is narrowed to one landscape
+    // so iOS has no ambiguity to re-resolve. See build-utils/tiappConfig.js.
+    grunt.registerTask('generate-tiapp', function () {
+      const done = this.async();
+      const fs = require('fs');
+      // Keyed on --visual rather than the build type: `test-sim` is what both the
+      // visual suite and a plain `--simulator debug` run build, and only the
+      // former should have its orientations narrowed. Read at run time because
+      // visual-test sets the option after this task's config is built.
+      const singleLandscape = !!grunt.option('visual');
+      import('./build-utils/tiappConfig.js').then(({ renderTiapp }) => {
+        fs.writeFileSync('./walta-app/tiapp.xml', renderTiapp(
+          fs.readFileSync('./walta-app/tiapp.xml.template', 'utf8'),
+          { mapsApiKey: process.env.GOOGLE_MAPS_API_KEY, singleLandscape },
+        ));
+        if (singleLandscape) {
+          grunt.log.writeln('tiapp.xml: capture build declares one landscape');
+        }
+        done();
+      }).catch(err => { grunt.fail.fatal(err); done(); });
+    });
 
     // Standalone entry point for the CI aggregate job, which unpacks each matrix
     // leg's artifact into builds/visual/ and renders the whole-matrix gallery.
