@@ -200,3 +200,63 @@ describe("collectHandshake blank frames", function () {
         expect(result.blank).to.deep.equal(["Menu"]);
     });
 });
+
+// A launcher that also answers which window the OS currently has focused,
+// reading a scripted sequence — one entry per query.
+function fakeLauncherWithWindows(snapshots, windows) {
+    const launcher = fakeLauncher(snapshots);
+    let call = 0;
+    launcher.foregroundWindow = async () => windows[Math.min(call++, windows.length - 1)];
+    return launcher;
+}
+
+const APP_WINDOW = "Window{a1 u0 com.thewaterbugcompany.walta/org.appcelerator.titanium.TiActivity}";
+const ANR_DIALOG = "Window{b2 u0 Application Not Responding: com.google.android.apps.nexuslauncher}";
+
+describe("collectHandshake foreign windows", function () {
+    it("grabs a screen again rather than acking one shot behind a system dialog", async function () {
+        const launcher = fakeLauncherWithWindows([
+            ["Menu.ready"],
+            ["Menu.ready"],
+            ["Menu.ready", "capture-done"],
+        ], [ANR_DIALOG, APP_WINDOW]);
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
+        });
+        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
+        expect(launcher.acks).to.deep.equal(["Menu.shot"]);
+        expect(result.count).to.equal(1);
+    });
+
+    it("fails the run and names the window when the dialog never clears", async function () {
+        const launcher = fakeLauncherWithWindows([["Menu.ready"]], [ANR_DIALOG]);
+        const { now, sleep } = fakeClock();
+        let err;
+        try {
+            await collectHandshake({
+                launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+                obscuredAttempts: 3,
+                looksBlank: async () => false,
+            });
+        } catch (e) { err = e; }
+        expect(err).to.be.an("error");
+        expect(err.message).to.match(/Menu was shot behind another window 3 times/);
+        expect(err.message).to.contain("Application Not Responding: com.google.android.apps.nexuslauncher");
+        expect(launcher.acks).to.be.empty;
+    });
+
+    // iOS has no equivalent of dumpsys, so its launcher answers nothing and the
+    // check stays off rather than guessing from pixels.
+    it("captures normally when the launcher cannot say what is on top", async function () {
+        const launcher = fakeLauncher([["Menu.ready", "capture-done"]]);
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
+        });
+        expect(result.count).to.equal(1);
+        expect(launcher.acks).to.deep.equal(["Menu.shot"]);
+    });
+});
