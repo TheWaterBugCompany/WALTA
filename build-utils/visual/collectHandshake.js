@@ -10,6 +10,12 @@ import { looksBlank as frameLooksBlank } from "./blankFrame.js";
 // (the 600s iOS timeout) or make the host screenshot the wrong screen.
 const DONE = "capture-done";
 
+// The runner opens no screen until it can see this. Rewritten on every poll
+// rather than once, so the runner wiping the dir at the start of a run — which
+// it does before its first screen — can't strand it waiting for a marker that
+// was written and then deleted.
+const COLLECTOR_READY = "collector-ready";
+
 // How many times to re-grab a screen that comes back blank. The runner holds the
 // screen until we ack it, so a re-grab sees the same screen rather than the next
 // one — this is waiting for a frame to arrive, not retrying the screen.
@@ -24,17 +30,28 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
     const blank = [];
     const attempts = new Map();
     const deadline = clock() + timeoutMs;
+    let reachable = null;
 
     for (;;) {
-        // Listing can throw transiently — the app dir / simctl get_app_container
-        // isn't ready the instant the runner boots. Treat it as "nothing yet" and
-        // poll again rather than failing the whole capture (the 600s deadline is
-        // the real backstop).
+        // Reaching the container can throw transiently — the app dir / simctl
+        // get_app_container isn't ready the instant the runner boots. Treat it as
+        // "not yet" and poll again rather than failing the whole capture (the 600s
+        // deadline is the real backstop). The runner is waiting on our marker, so
+        // it holds its first screen until we get through.
         let files = [];
         try {
+            await launcher.writeVisualCaptureFile(appId, COLLECTOR_READY);
             files = await launcher.listVisualCaptureFiles(appId);
+            if (reachable === false) { note("  visual: app container reachable, collecting"); }
+            reachable = true;
         } catch (e) {
-            note(`  visual: listing not ready yet (${e && e.message ? e.message : e})`);
+            // Noted on the transition, not every poll: a run that spends a minute
+            // waiting for the container is the condition that used to corrupt the
+            // first screens silently, and it should say so exactly once.
+            if (reachable !== false) {
+                note(`  visual: waiting for the app container (${e && e.message ? e.message : e})`);
+            }
+            reachable = false;
         }
         // Grab every screen that signalled ready and we haven't yet — before the
         // done check, so a screen whose .ready lands in the same poll as the

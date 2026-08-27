@@ -7,17 +7,22 @@ import { collectHandshake } from "../../build-utils/visual/collectHandshake.js";
 function fakeLauncher(snapshots) {
     const shots = [];
     const written = [];
+    const acks = [];
     let call = 0;
     return {
         shots,
         written,
+        acks,
         async listVisualCaptureFiles() {
             const snap = snapshots[Math.min(call, snapshots.length - 1)];
             call++;
             return snap.slice();
         },
         async screenshotFramebuffer(p) { shots.push(p); },
-        async writeVisualCaptureFile(appId, name) { written.push(name); },
+        async writeVisualCaptureFile(appId, name) {
+            written.push(name);
+            if (name.endsWith(".shot")) { acks.push(name); }
+        },
     };
 }
 
@@ -41,7 +46,7 @@ describe("collectHandshake", function () {
         });
         expect(result).to.deep.equal({ count: 2, blank: [] });
         expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Speedbug.png"]);
-        expect(launcher.written).to.deep.equal(["Menu.shot", "Speedbug.shot"]);
+        expect(launcher.acks).to.deep.equal(["Menu.shot", "Speedbug.shot"]);
     });
 
     it("captures a screen whose .ready lands in the same poll as the done sentinel", async function () {
@@ -133,6 +138,18 @@ describe("collectHandshake", function () {
         expect(err).to.be.an("error");
         expect(err.message).to.match(/timed out after 1s with no capture-done/);
     });
+
+    // The runner opens no screen until it sees this marker, and it wipes the dir
+    // at the start of a run — so announcing once would let a wipe strand it.
+    it("announces itself on every poll, so the runner's wipe can't strand it", async function () {
+        const launcher = fakeLauncher([[], [], ["capture-done"]]);
+        const { now, sleep } = fakeClock();
+        await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
+        });
+        expect(launcher.written.filter((n) => n === "collector-ready")).to.have.length(3);
+    });
 });
 
 // A frame checker driven by a script of verdicts per screen name: each entry is
@@ -162,7 +179,7 @@ describe("collectHandshake blank frames", function () {
             looksBlank: fakeFrames({ Menu: ["blank", "drawn"] }),
         });
         expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
-        expect(launcher.written).to.deep.equal(["Menu.shot"]);
+        expect(launcher.acks).to.deep.equal(["Menu.shot"]);
         expect(result.count).to.equal(1);
         expect(result.blank).to.deep.equal([]);
     });
@@ -179,7 +196,7 @@ describe("collectHandshake blank frames", function () {
             looksBlank: fakeFrames({ Menu: ["blank"] }),
         });
         expect(launcher.shots).to.have.length(3);
-        expect(launcher.written).to.deep.equal(["Menu.shot"]);
+        expect(launcher.acks).to.deep.equal(["Menu.shot"]);
         expect(result.blank).to.deep.equal(["Menu"]);
     });
 });
