@@ -43,9 +43,12 @@ describe("QuestionViewModel", function () {
         expect(Number.parseFloat(build({ verdict: "correct" }).cardLeft)).to.be.greaterThan(0);
     });
 
+    // The outline restates the verdict the tick/cross already gives, so it has to
+    // be the same colour as the icon it sits around — see verdictColours_spec,
+    // which pins each palette entry to its icon.
     it("outlines the branch in the colour of its verdict", function () {
         expect(build({ verdict: "correct" }).borderColor).to.equal(Palette.success);
-        expect(build({ verdict: "incorrect" }).borderColor).to.equal(Palette.errorDark);
+        expect(build({ verdict: "incorrect" }).borderColor).to.equal(Palette.failure);
     });
 
     it("draws no outline on a branch with no verdict", function () {
@@ -53,6 +56,12 @@ describe("QuestionViewModel", function () {
         // unhinted branch has to have no colour rather than a hidden one.
         expect(build().borderColor).to.equal("transparent");
         expect(build().borderWidth).to.equal(0);
-        expect(build({ verdict: "correct" }).borderWidth).to.be.greaterThan(0);
+    });
+
+    // ti.ui.defaultunit is "system", which is points on iOS but raw pixels on
+    // Android — a bare number drew the outline three times thinner there.
+    it("measures the outline in units that mean the same on both platforms", function () {
+        expect(build({ verdict: "correct" }).borderWidth).to.match(/^\d+dp$/);
+        expect(build({ verdict: "incorrect" }).borderWidth).to.match(/^\d+dp$/);
     });
 });

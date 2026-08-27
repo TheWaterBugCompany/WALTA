@@ -8,6 +8,7 @@
       "error":        "#FF6161",
       "errorDark":    "#B80909",
       "success":      "#64AC17",
+      "failure":      "#FF0000",
       "disabled":     "#e6e6e6"
     }
   },

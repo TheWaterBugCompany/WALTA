@@ -98,7 +98,7 @@ describe('KeySearch controller', function() {
 
 	it('outlines the hinted branches in the verdict colours', async function() {
 		await open({ hint: { nodeId: 'root', correctRef: 'unshelled', incorrectRef: 'shelled' } });
-		expect( branches()[0].borderColor ).to.equal(Alloy.CFG.colors.errorDark);
+		expect( branches()[0].borderColor ).to.equal(Alloy.CFG.colors.failure);
 		expect( branches()[1].borderColor ).to.equal(Alloy.CFG.colors.success);
 	});
 
