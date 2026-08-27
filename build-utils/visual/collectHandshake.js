@@ -1,4 +1,5 @@
 import path from "path";
+import { looksBlank as frameLooksBlank } from "./blankFrame.js";
 
 // Drives file-handshake visual capture: polls the app's visual dir for per-screen
 // <name>.ready markers the runner writes, screenshots each framebuffer on the
@@ -9,11 +10,19 @@ import path from "path";
 // (the 600s iOS timeout) or make the host screenshot the wrong screen.
 const DONE = "capture-done";
 
-export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, pollMs = 200, now, sleep, log }) {
+// How many times to re-grab a screen that comes back blank. The runner holds the
+// screen until we ack it, so a re-grab sees the same screen rather than the next
+// one — this is waiting for a frame to arrive, not retrying the screen.
+const BLANK_ATTEMPTS = 3;
+
+export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, pollMs = 200, now, sleep, log,
+    looksBlank = frameLooksBlank, blankAttempts = BLANK_ATTEMPTS }) {
     const clock = now || (() => Date.now());
     const wait = sleep || ((ms) => new Promise((r) => setTimeout(r, ms)));
     const note = log || (() => {});
     const shot = new Set();
+    const blank = [];
+    const attempts = new Map();
     const deadline = clock() + timeoutMs;
 
     for (;;) {
@@ -37,14 +46,28 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
             if (!m || shot.has(m[1])) continue;
             const name = m[1];
             try {
-                await launcher.screenshotFramebuffer(path.join(actualDir, `${name}.png`));
+                const file = path.join(actualDir, `${name}.png`);
+                await launcher.screenshotFramebuffer(file);
+                // A frame with nothing drawn on it isn't a capture of the screen —
+                // the app is still holding it, so grab again rather than ack a
+                // blank that would go on to be blessed as a baseline.
+                const tries = (attempts.get(name) || 0) + 1;
+                attempts.set(name, tries);
+                if (await looksBlank(file)) {
+                    if (tries < blankAttempts) {
+                        note(`  visual: ${name} came back blank, grabbing again`);
+                        continue;
+                    }
+                    note(`  visual: ${name} still blank after ${tries} grabs — keeping the empty frame`);
+                    blank.push(name);
+                }
                 await launcher.writeVisualCaptureFile(appId, `${name}.shot`);
                 shot.add(name);
             } catch (e) {
                 note(`  visual: ${name} shot failed, will retry (${e && e.message ? e.message : e})`);
             }
         }
-        if (files.includes(DONE)) return { count: shot.size };
+        if (files.includes(DONE)) return { count: shot.size, blank };
         if (clock() >= deadline) {
             throw new Error(`visual capture timed out after ${Math.round(timeoutMs / 1000)}s with no ${DONE} (captured ${shot.size})`);
         }
