@@ -148,6 +148,16 @@ function keySearch() {
 	return { key: key, node: key.getCurrentNode() };
 }
 
+// The same couplet with a hint applied: the branch that leads on is marked
+// wrong, the other right — the state a reader is shown after a wrong turn.
+function keySearchHinted() {
+	var args = keySearch();
+	var outcomes = args.node.questions.map(function (q) { return q.outcome && q.outcome.id; });
+	return Object.assign({}, args, {
+		hint: { nodeId: args.node.id, correctRef: outcomes[1], incorrectRef: outcomes[0] },
+	});
+}
+
 function sampleHistory() {
 	var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
 	var { clearDatabase } = require("spec/util/TestUtils");
@@ -464,6 +474,7 @@ module.exports = [
 	{ name: "Notes", args: notes },
 	{ name: "Summary", args: summary },
 	{ name: "KeySearch", args: keySearch },
+	{ name: "KeySearchHinted", screen: "KeySearch", args: keySearchHinted },
 	{ name: "SampleHistory", args: sampleHistory },
 	{ name: "TrainingTray", args: trainingTray, services: trainingTrayServices, after: assessTrainingTray },
 	// The WebView screens wait for their page to load; the rest still use loadMs

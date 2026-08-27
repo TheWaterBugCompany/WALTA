@@ -12,9 +12,17 @@
   height: "8.5%"
 }
 
+"#questions": {
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL,
+  layout: "vertical"
+}
+
+// The tap target spans the header's left edge — the reach the old hit-test
+// geometry gave it, without measuring the click.
 "#upButton": { 
   horizontalWrap: false,
-  width: "50dp",
+  width: "20%",
   height: Ti.UI.FILL,
   left: "6dp",
   top: "6dp"

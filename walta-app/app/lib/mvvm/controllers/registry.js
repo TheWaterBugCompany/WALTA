@@ -3,9 +3,11 @@
 // open with no screen controller. See docs/patterns/modals.md.
 module.exports = {
   Academy: require("./Academy"),
+  KeySearch: require("./KeySearch"),
   Menu: require("./Menu"),
   MenuButton: require("./MenuButton"),
   MethodSelect: require("./MethodSelect"),
+  Question: require("./Question"),
   SampleHistory: require("./SampleHistory"),
   SampleHistoryRow: require("./SampleHistoryRow"),
   SampleTaxaIcon: require("./SampleTaxaIcon"),
