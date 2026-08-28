@@ -4,17 +4,14 @@ const TaxonComparisonPhotoViewModel = require("./TaxonComparisonPhoto");
 // Feedback on one identification made during a training assessment: what was
 // chosen, what it should have been, and the photos side by side when they differ.
 // Titanium-free.
-//
-// It reports the "which question did I get wrong?" request rather than acting on
-// it — walking the reader back to the couplet they went astray at is the caller's
-// job, so this screen stays usable from anywhere that can assess an answer.
 class TaxonComparisonViewModel extends ChangeNotifier {
-  constructor({ key, topics, selectedTaxonId, correctTaxonId }) {
+  constructor({ key, topics, selectedTaxonId, correctTaxonId, position = null }) {
     super();
     this._key = key;
     this._topics = topics;
     this._selectedTaxonId = selectedTaxonId;
     this._correctTaxonId = correctTaxonId;
+    this._position = position;
     // Built once: bindView re-reads a collection getter on every change, and
     // rebuilding these would remount the photos for nothing.
     this._cards = this._taxonIds().map((id) => this._card(id));
@@ -30,6 +27,10 @@ class TaxonComparisonViewModel extends ChangeNotifier {
   }
 
   _nameOf(taxonId) { return this._key.findTaxonById(taxonId).name; }
+
+  // A hint is found by the taxon's place in the key, not by its taxonId — the
+  // two are separate id spaces and the wrong one silently finds nothing.
+  _refOf(taxonId) { return this._key.findTaxonById(taxonId).id; }
 
   get cards() { return this._cards; }
 
@@ -52,7 +53,20 @@ class TaxonComparisonViewModel extends ChangeNotifier {
     if (this.isCorrect) { this.close(); } else { this.whichQuestion(); }
   }
 
-  whichQuestion() { this.trigger("which-question"); }
+  // Back to the couplet the two taxa part at, with the branch that should have
+  // been taken marked. The tray position rides along so a corrected
+  // identification lands back in the slot it was graded in.
+  whichQuestion() {
+    const hint = this._key.hintForIncorrectDecision(this._refOf(this._selectedTaxonId), this._refOf(this._correctTaxonId));
+    this.close();
+    this._topics.fireTopicEvent(this._topics.JUMPTO, {
+      id: hint.nodeId,
+      hint,
+      allowAddToSample: true,
+      position: this._position,
+      training: true,
+    });
+  }
 
   close() { this.trigger("close"); }
 
