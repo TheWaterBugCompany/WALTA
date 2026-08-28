@@ -29,12 +29,11 @@ var { makeTestServices } = require("spec/fixtures/Services_fixture");
 // up and mirrors the safe-area insets, so the notch changes sides between runs
 // and no baseline holds.
 //
-// Nothing here has to arrange that any more: a capture build's tiapp.xml declares
-// this landscape and no other (see build-utils/tiappConfig.js), so there is no
-// second orientation for iOS to choose. The app itself supports both landscapes
-// and knows nothing about capture — an earlier attempt to pin the orientation
-// from inside the app left the running app locked to whichever landscape it
-// launched in, however the phone was then held.
+// Each window the runner opens is pinned to it, so the build stays exactly the
+// one the app ships: the plist declares both landscapes and no app code knows
+// anything about capture. Pinning from inside the app instead is what left the
+// running app locked to whichever landscape it launched in, however the phone
+// was then held.
 var CAPTURE_LANDSCAPE = Ti.UI.LANDSCAPE_RIGHT;
 
 // A screen only one platform ever instantiates (the iOS inline date picker
@@ -71,6 +70,7 @@ async function openComponent(entry) {
 async function openWindow(seam, entry) {
 	await seam.openView(screenOf(entry), entry.args());
 	var ctl = seam.getCurrentController();
+	ctl.getView().orientationModes = [CAPTURE_LANDSCAPE];
 	return {
 		view: ctl.getView(),
 		dispose: async function () {

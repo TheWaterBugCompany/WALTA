@@ -2,7 +2,7 @@ require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
 var { resetDatabase } = require("spec/util/TestUtils");
 var manifest = require("spec/visual/manifest");
-var { openEntry, runsHere } = require("spec/visual/openEntry");
+var { openEntry, runsHere, CAPTURE_LANDSCAPE } = require("spec/visual/openEntry");
 
 // The visual suite is only as good as the screens it actually renders. A fixture
 // that builds a bare Alloy shell captures an empty window and the diff still
@@ -43,6 +43,24 @@ describe("visual capture manifest", function () {
 			expect(opened.view, entry.name + " rendered no view").to.exist;
 		});
 	});
+
+	// iOS re-resolves a window's orientation while the device is flat, as a
+	// simulator always is, so screens otherwise settle in either landscape — which
+	// turns the captured frame the other way up and mirrors the safe-area insets,
+	// so the notch changes sides between runs and no baseline holds. The runner
+	// pins each window it captures; the app declares both landscapes and knows
+	// nothing about capture.
+	if (OS_IOS) {
+		it("pins every captured window to the one landscape it captures in", async function () {
+			var opened = await open(entryNamed("Menu"));
+			expect(opened.view.orientationModes).to.deep.equal([CAPTURE_LANDSCAPE]);
+		});
+
+		it("pins a component's host window too", async function () {
+			var opened = await open(entryNamed("PhotoSelect"));
+			expect(opened.view.orientationModes).to.deep.equal([CAPTURE_LANDSCAPE]);
+		});
+	}
 
 	// A modal is overlaid on the window it is opened from, not pushed as one — so
 	// capturing it means standing up its host screen first, exactly as the app does.
