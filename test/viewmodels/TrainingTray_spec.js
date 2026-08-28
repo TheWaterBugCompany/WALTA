@@ -20,6 +20,7 @@ function fakeTopics() {
   return {
     IDENTIFY: "identify",
     SELECT_METHOD: "select_method",
+    TAXON_COMPARISON: "taxon_comparison",
     fired: [],
     fireTopicEvent(event, data) { this.fired.push({ event, data }); },
   };
@@ -45,11 +46,12 @@ function identified(n) {
 
 // Records the cells it was handed and returns canned per-position verdicts —
 // the seam the real TrainingAssessor implements.
-function fakeAssessor(verdicts, expectedCount) {
+function fakeAssessor(verdicts, expectedCount, expectedOrder) {
   return {
     expectedCount: expectedCount != null ? expectedCount : (verdicts || []).length,
     calls: [],
     assess(cells) { this.calls.push(cells); return verdicts || []; },
+    expectedAt(i) { return (expectedOrder || [])[i]; },
   };
 }
 
@@ -78,10 +80,10 @@ function fakeTimers() {
   };
 }
 
-function trainingVm({ cells = {}, expectedCount = 6, verdicts, assessor, topics, timers = fakeTimers() } = {}) {
+function trainingVm({ cells = {}, expectedCount = 6, verdicts, expectedOrder, assessor, topics, timers = fakeTimers() } = {}) {
   const vm = new TrainingTrayViewModel({
     taxaSource: fakeTaxaSource(cells),
-    assessor: assessor || fakeAssessor(verdicts, expectedCount),
+    assessor: assessor || fakeAssessor(verdicts, expectedCount, expectedOrder),
     topics,
     setTimer: timers.setTimer,
     clearTimer: timers.clearTimer,
@@ -309,6 +311,51 @@ describe("TrainingTrayViewModel", function () {
       vm.setScrollOffset(0);
       vm.visibleTiles[0].taxa[0].tap();
       expect(topics.fired).to.deep.equal([]);
+    });
+  });
+
+  // Once an attempt has been graded, a taxon cell stops being something to edit
+  // and becomes something to explain: the comparison screen puts what the reader
+  // chose beside what the exercise expected. Before grading there is nothing to
+  // compare against, so the cell still opens for editing.
+  describe("cell tap intent after assessment", function () {
+    function assessed(verdicts, expectedOrder) {
+      const topics = fakeTopics();
+      const vm = trainingVm({ cells: identified(6), topics, verdicts, expectedOrder });
+      vm.assess();
+      topics.fired.length = 0;
+      return { vm, topics };
+    }
+
+    it("opens the comparison for a taxon graded incorrect, naming both taxa", function () {
+      const { vm, topics } = assessed(
+        ["incorrect", "correct", "correct", "correct", "correct", "correct"],
+        [99, 2, 3, 4, 5, 6]);
+      vm.endcapVm.taxa[0].tap();
+      expect(topics.fired).to.deep.equal([{
+        event: "taxon_comparison",
+        data: { selectedTaxonId: 1, correctTaxonId: 99, position: 0, training: true },
+      }]);
+    });
+
+    // Both verdicts are reachable — the screen renders a correct one too, and a
+    // reader who got it right can still want to see what they matched.
+    it("opens the comparison for a taxon graded correct, with the same taxon on both sides", function () {
+      const { vm, topics } = assessed(
+        ["correct", "correct", "correct", "correct", "correct", "correct"],
+        [1, 2, 3, 4, 5, 6]);
+      vm.endcapVm.taxa[0].tap();
+      expect(topics.fired).to.deep.equal([{
+        event: "taxon_comparison",
+        data: { selectedTaxonId: 1, correctTaxonId: 1, position: 0, training: true },
+      }]);
+    });
+
+    it("still opens an ungraded taxon for editing", function () {
+      const topics = fakeTopics();
+      const vm = trainingVm({ cells: identified(6), topics });
+      vm.endcapVm.taxa[0].tap();
+      expect(topics.fired[0].event).to.equal("identify");
     });
   });
 });

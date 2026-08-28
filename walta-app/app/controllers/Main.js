@@ -92,6 +92,9 @@ async function startApp(options) {
   routePromise(Topics.HISTORY,  (data) =>  Navigation.openController("SampleHistory", data));
   routePromise(Topics.SPEEDBUG,  (data) =>  Navigation.openController("Speedbug", data));
   routePromise(Topics.GALLERY,  (data) =>  Navigation.openController("Gallery", data));
+  // openModal does not thread the survey context the way onOpenView does, so the
+  // key this screen resolves both taxa through is supplied here.
+  routePromise(Topics.TAXON_COMPARISON, (data) => Navigation.openModal("TaxonComparison", extend(data, { key: Key })));
   routePromise(Topics.HELP,  (data) =>  Navigation.openController("Help", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ABOUT,  (data) =>  Navigation.openController("About", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ACADEMY,  () =>  Navigation.openModal("Academy"));
