@@ -3,6 +3,7 @@
 // open with no screen controller. See docs/patterns/modals.md.
 module.exports = {
   Academy: require("./Academy"),
+  GalleryPhoto: require("./GalleryPhoto"),
   KeySearch: require("./KeySearch"),
   Menu: require("./Menu"),
   MenuButton: require("./MenuButton"),
