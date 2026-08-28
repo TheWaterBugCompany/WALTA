@@ -299,6 +299,21 @@ function conventionAdapter(marker, container, createComponent) {
   };
 }
 
+// A container takes its children either the ordinary way or, for a paged surface
+// like ScrollableView, through addView/removeView. Feature-detected the same way
+// setData is, so a pager is just another container rather than its own binding.
+function attachTo(container) {
+  return typeof container.addView === "function"
+    ? (view) => container.addView(view)
+    : (view) => container.add(view);
+}
+
+function detachFrom(container) {
+  return typeof container.removeView === "function"
+    ? (view) => container.removeView(view)
+    : (view) => container.remove(view);
+}
+
 // Builds one fixed nested child from vm[getter] and adds it to the container;
 // disposes + detaches it on teardown. No keyed diff — the sub-VM is stable and
 // the child owns its own property updates.
@@ -307,9 +322,9 @@ function setupComponent(vm, container, marker, createComponent) {
     throw new Error(`bindView: component("${marker.componentName}") needs a createComponent factory in options`);
   }
   const handle = createComponent(marker.componentName, { rowVm: vm[marker.getter] });
-  container.add(handle.view);
+  attachTo(container)(handle.view);
   return function teardown() {
-    container.remove(handle.view);
+    detachFrom(container)(handle.view);
     if (typeof handle.dispose === "function") handle.dispose();
   };
 }
@@ -317,6 +332,8 @@ function setupComponent(vm, container, marker, createComponent) {
 function setupCollection(vm, container, marker, createComponent) {
   const adapter = conventionAdapter(marker, container, createComponent);
   const handles = new Map();
+  const attach = attachTo(container);
+  const detach = detachFrom(container);
 
   // Two container styles: incremental (ScrollView — add/remove each child) and
   // render (TableView — the adapter re-applies the whole ordered list via
@@ -328,7 +345,7 @@ function setupCollection(vm, container, marker, createComponent) {
     let membershipChanged = false;
     for (const [k, handle] of handles) {
       if (!desired.has(k)) {
-        if (!adapter.render) container.remove(handle.view);
+        if (!adapter.render) detach(handle.view);
         adapter.dispose(handle);
         handles.delete(k);
         membershipChanged = true;
@@ -341,7 +358,7 @@ function setupCollection(vm, container, marker, createComponent) {
         handles.set(k, handle);
         // An ordered adapter re-attaches everything below so a swapped child lands
         // in position, not appended; others attach here.
-        if (!adapter.render && !adapter.ordered) container.add(handle.view);
+        if (!adapter.render && !adapter.ordered) attach(handle.view);
         membershipChanged = true;
       }
     });
@@ -351,8 +368,8 @@ function setupCollection(vm, container, marker, createComponent) {
       // Flow-laid children (the tray's polymorphic slots) must follow item order
       // even when a middle slot swaps component. Re-attach every child in order;
       // container.remove is a no-op on a not-yet-attached (freshly created) child.
-      for (const it of items) container.remove(handles.get(adapter.key(it)).view);
-      for (const it of items) container.add(handles.get(adapter.key(it)).view);
+      for (const it of items) detach(handles.get(adapter.key(it)).view);
+      for (const it of items) attach(handles.get(adapter.key(it)).view);
     }
   }
 
@@ -362,7 +379,7 @@ function setupCollection(vm, container, marker, createComponent) {
   return function teardown() {
     vm.removeListener(reconcile);
     for (const handle of handles.values()) {
-      if (!adapter.render) container.remove(handle.view);
+      if (!adapter.render) detach(handle.view);
       adapter.dispose(handle);
     }
     handles.clear();

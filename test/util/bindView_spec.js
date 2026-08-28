@@ -533,6 +533,21 @@ describe("bindView collection binding", function () {
     };
   }
 
+  // A ScrollableView takes its children through views/addView/removeView rather
+  // than add/remove — the same shape of difference as the TableView's setData,
+  // so the binding feature-detects it the same way and a paged surface is just
+  // another container.
+  function makePagedContainer() {
+    const views = [];
+    return {
+      views,
+      addView(v) { views.push(v); },
+      removeView(v) { const i = views.indexOf(v); if (i >= 0) views.splice(i, 1); },
+      addEventListener() {}, removeEventListener() {},
+      ids() { return views.map((v) => v.id); },
+    };
+  }
+
   // Naming a component instead of an adapter collapses the per-screen glue to
   // zero: bindView synthesises the adapter from convention — key = item.key,
   // create = the injected createComponent factory, dispose = the handle's own
@@ -553,6 +568,24 @@ describe("bindView collection binding", function () {
       };
       return { built, disposed, createComponent };
     }
+
+    it("mounts children into a container that only takes them through addView", function () {
+      const container = makePagedContainer();
+      const { createComponent } = makeFactory();
+      const vm = new ListVM([{ key: "a" }, { key: "b" }]);
+      bindView({ pager: container }, vm, { pager: { views: collection("items", "Photo") } }, { createComponent });
+      expect(container.ids()).to.deep.equal(["a", "b"]);
+    });
+
+    it("removes a child from an addView container when its item goes", function () {
+      const container = makePagedContainer();
+      const { createComponent, disposed } = makeFactory();
+      const vm = new ListVM([{ key: "a" }, { key: "b" }]);
+      bindView({ pager: container }, vm, { pager: { views: collection("items", "Photo") } }, { createComponent });
+      vm.items = [{ key: "b" }];
+      expect(container.ids()).to.deep.equal(["b"]);
+      expect(disposed).to.deep.equal(["a"]);
+    });
 
     it("creates a child per item via the factory, keyed by item.key, rendered via setData", function () {
       const container = makeTableContainer();
