@@ -270,10 +270,8 @@ module.exports = function(grunt) {
       const tasks = [];
 
       if ( ! grunt.option('skip-build') ) {
-        // Regenerated every build rather than cached against the template's
-        // mtime: the old newer: task compared the generated file to the template
-        // and so could not see the maps key change.
-        tasks.push('generate-tiapp');
+        // Regenerate tiapp.xml from template if it changed
+        tasks.push('newer:tiapp');
         tasks.push(`exec:build:${platform}:${build_type}`);
       }
       return {
@@ -423,6 +421,11 @@ module.exports = function(grunt) {
             stdout: "inherit", stderr: "inherit"
           },
 
+          generate_tiapp: {
+            command: 'sed "s/GOOGLE_MAPS_API_KEY_PLACEHOLDER/$GOOGLE_MAPS_API_KEY/" walta-app/tiapp.xml.template > walta-app/tiapp.xml',
+            stdout: "inherit", stderr: "inherit"
+          },
+
           clean_integration_fixtures_ios: {
             command: `rm -rf build-tests/integration/fixtures/HelloWorld-ios/build build-tests/integration/fixtures/HelloWorld-ios/sim-v* build-tests/integration/fixtures/HelloWorld-ios/v*`,
             stdout: "inherit", stderr: "inherit"
@@ -462,6 +465,12 @@ module.exports = function(grunt) {
         },
 
         newer: {
+          tiapp: {
+            src: ['./walta-app/tiapp.xml.template'],
+            dest: './walta-app/tiapp.xml',
+            options: { tasks: ['exec:generate_tiapp'] }
+          },
+
           unit_test_android: build_if_newer_options("android", "unit-test"),
           unit_test_ios: build_if_newer_options("ios", "unit-test"),
 
@@ -943,21 +952,6 @@ module.exports = function(grunt) {
       }
       return report;
     }
-
-    // Writes walta-app/tiapp.xml from the committed template, substituting the
-    // maps key. Every build gets the same plist — the visual suite pins the
-    // orientation it captures in from the runner, not from the build.
-    grunt.registerTask('generate-tiapp', function () {
-      const done = this.async();
-      const fs = require('fs');
-      import('./build-utils/tiappConfig.js').then(({ renderTiapp }) => {
-        fs.writeFileSync('./walta-app/tiapp.xml', renderTiapp(
-          fs.readFileSync('./walta-app/tiapp.xml.template', 'utf8'),
-          { mapsApiKey: process.env.GOOGLE_MAPS_API_KEY },
-        ));
-        done();
-      }).catch(err => { grunt.fail.fatal(err); done(); });
-    });
 
     // Standalone entry point for the CI aggregate job, which unpacks each matrix
     // leg's artifact into builds/visual/ and renders the whole-matrix gallery.
