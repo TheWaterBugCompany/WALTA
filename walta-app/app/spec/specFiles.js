@@ -38,6 +38,7 @@ module.exports = [
   "UploadBadge",
   "SampleEditMenu",
   "TrainingSuccess",
+  "TaxonComparison",
   "SampleHistory",
   "Gallery",
   "PhotoSelect",
