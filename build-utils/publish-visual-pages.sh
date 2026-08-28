@@ -13,19 +13,19 @@ set -euo pipefail
 CAPTURED_AT="${CAPTURED_AT:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 SITE_DIR="${SITE_DIR:-/tmp/visual-pages}"
 KEEP="${KEEP:-10}"
+# Overridable so the whole flow can be exercised against a local bare repo.
+REMOTE_URL="${REMOTE_URL:-https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git}"
 
 rm -rf "$SITE_DIR"
 # A shallow fetch of just the tip: we rewrite history anyway, so the rest of it
 # is bandwidth spent on something we are about to discard.
-if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
-    git clone --branch gh-pages --single-branch --depth 1 \
-        "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$SITE_DIR"
+if git ls-remote --exit-code --heads "$REMOTE_URL" gh-pages >/dev/null 2>&1; then
+    git clone --branch gh-pages --single-branch --depth 1 "$REMOTE_URL" "$SITE_DIR"
 else
     echo "gh-pages does not exist yet — starting the site from empty"
     mkdir -p "$SITE_DIR"
     git -C "$SITE_DIR" init -q
-    git -C "$SITE_DIR" remote add origin \
-        "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+    git -C "$SITE_DIR" remote add origin "$REMOTE_URL"
 fi
 
 node build-utils/visual/publishPages.js \
@@ -38,4 +38,4 @@ git checkout -q --orphan publish
 git add -A
 git commit -q -m "Visual review galleries (latest: run ${RUN_ID}, ${BRANCH})"
 git push -q --force origin publish:gh-pages
-echo "Published https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/${RUN_ID}/report.html"
+echo "Published ${PAGES_BASE:-https://${GITHUB_REPOSITORY_OWNER:-owner}.github.io/${GITHUB_REPOSITORY#*/}}/${RUN_ID}/report.html"

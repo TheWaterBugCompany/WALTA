@@ -48,6 +48,17 @@ describe("publishPages", function () {
         expect(fs.existsSync(path.join(siteDir, "103"))).to.equal(true);
     });
 
+    // The site is a git checkout — the caller commits and pushes it straight
+    // after. Pruning by "directory that is not a kept run" swallowed .git, and
+    // the publish died on the next git command with "not in a git directory".
+    it("leaves the git checkout it was handed alone", function () {
+        fs.mkdirSync(path.join(siteDir, ".git", "refs"), { recursive: true });
+        fs.writeFileSync(path.join(siteDir, ".git", "HEAD"), "ref: refs/heads/gh-pages");
+        publish({ siteDir, captureDir, run: RUN("101"), limit: 1 });
+        publish({ siteDir, captureDir, run: RUN("102"), limit: 1 });
+        expect(fs.existsSync(path.join(siteDir, ".git", "HEAD")), ".git was pruned").to.equal(true);
+    });
+
     // Pages serves through Jekyll unless told not to, which silently drops any
     // directory whose name starts with an underscore.
     it("disables Jekyll so no capture directory is swallowed", function () {
