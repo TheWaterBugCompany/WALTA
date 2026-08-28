@@ -8,7 +8,8 @@ const BINDINGS = {
   verdictIcon:       { image: "verdictImage" },
   comparisonMessage: { text: "message" },
   photos:            { cards: collection("cards", "TaxonComparisonPhoto") },
-  action:            { title: "actionLabel", onClick: "activate" },
+  action:            { onClick: "activate" },
+  actionText:        { text: "actionLabel" },
   closeButton:       { onClose: "close" },
 };
 

@@ -17,7 +17,11 @@
 	height: Ti.UI.SIZE,
 	left: "6%",
 	right: "6%",
-	layout: "horizontal"
+	layout: "horizontal",
+	// The message below is FILL, which in a horizontal row claims the whole row
+	// rather than what is left of it — wrapping the icon onto a line of its own.
+	// Same reason .comparisonPhotos disables it.
+	horizontalWrap: false
 }
 
 ".verdictIcon": {
@@ -75,28 +79,49 @@
 // No left/right: setting both against a SIZE width over-constrains the button
 // (it pins to the left and truncates its title). A vertical layout centres its
 // children on its own.
-// Not the shared .actionButton: that pins width to 100dp, which truncates this
-// screen's long title. Carries its own font so it still reads as one of the set.
+// A View rather than a Button: Titanium sizes a Button to its title and ignores
+// padding on iOS, so the border sat on the glyphs. Chrome here, text in
+// .comparisonActionLabel, whose margins are the padding — the NavButton idiom.
 ".comparisonAction": {
 	top: "12dp",
 	bottom: "12dp",
 	width: Ti.UI.SIZE,
 	height: "36dp",
-	color: Alloy.CFG.colors.primary,
 	backgroundColor: Alloy.CFG.colors.white,
 	borderColor: Alloy.CFG.colors.primary,
 	borderWidth: "1dp",
-	borderRadius: "4dp",
+	borderRadius: "4dp"
+}
+
+// The left/right margins are what hold the border clear of the title. Carries its
+// own font rather than .actionButton, whose 100dp width truncates this screen's
+// long title, so it still reads as one of the set.
+".comparisonActionLabel": {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
+	left: "16dp",
+	right: "16dp",
+	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
 }
 
 ".comparisonAction[if=Alloy.Globals.isHighRes]": {
-	height: "48dp",
+	height: "48dp"
+}
+
+".comparisonActionLabel[if=Alloy.Globals.isHighRes]": {
+	left: "22dp",
+	right: "22dp",
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "20dp" }
 }
 
 ".comparisonAction[if=Alloy.Globals.isXHighRes]": {
-	height: "64dp",
+	height: "64dp"
+}
+
+".comparisonActionLabel[if=Alloy.Globals.isXHighRes]": {
+	left: "30dp",
+	right: "30dp",
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "28dp" }
 }

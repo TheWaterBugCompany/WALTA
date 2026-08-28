@@ -9,7 +9,11 @@
 				<Label id="comparisonMessage" class="comparisonMessage" accessibilityLabel="taxon_comparison_message"/>
 			</View>
 			<View id="photos" class="comparisonPhotos"/>
-			<Button id="action" class="comparisonAction" accessibilityLabel="taxon_comparison_action"/>
+			<!-- A Titanium Button sizes to its title and ignores padding on iOS, so the
+			     chrome and the text are separate views — the NavButton idiom. -->
+			<View id="action" class="comparisonAction" accessibilityLabel="taxon_comparison_action">
+				<Label id="actionText" class="comparisonActionLabel"/>
+			</View>
 		</View>
 	</View>
 </Alloy>
