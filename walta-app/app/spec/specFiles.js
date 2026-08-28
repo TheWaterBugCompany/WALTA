@@ -41,6 +41,7 @@ module.exports = [
   "TaxonComparison",
   "SampleHistory",
   "Gallery",
+  "GalleryPhoto",
   "PhotoSelect",
   "PhotoPaths",
   "EditTaxon",

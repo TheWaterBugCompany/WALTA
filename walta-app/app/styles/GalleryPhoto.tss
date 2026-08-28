@@ -1,0 +1,47 @@
+// One page of the photo pager. The platform split is the zoom mechanism and
+// nothing else: iOS zooms by scrolling a scaled surface, Android zooms inside the
+// ImageView, so the wrapper is inert there rather than absent — one structure
+// keeps the bindings addressing one set of ids.
+".galleryZoom": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL
+}
+
+".galleryZoom[platform=ios]": {
+	disableBounce: true,
+	minZoomScale: 1.0,
+	maxZoomScale: 10.0
+}
+
+// Android pinch-zooms in the ImageView, so the wrapper must not take the gesture
+// or pan the page out from under the pager.
+".galleryZoom[platform=android]": {
+	scrollingEnabled: false
+}
+
+".galleryFrame": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL
+}
+
+".galleryPhoto": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL
+}
+
+".galleryPhoto[platform=android]": {
+	enableZoomControls: true
+}
+
+// White on an arbitrary photo needs the shadow to stay legible — the photo behind
+// it can be any colour.
+".galleryTaxonLabel": {
+	top: "50dp",
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
+	color: "white",
+	shadowColor: Alloy.CFG.colors.black,
+	shadowOffset: { x: 5, y: 5 },
+	shadowRadius: "3dp",
+	font: { fontSize: "20dp" }
+}
