@@ -99,6 +99,7 @@ describe("AndroidEmulatorLauncher", function() {
         terminate: sinon.stub().resolves(),
         streamLogs: sinon.stub().returns(() => {}),
         captureDiagnostics: sinon.stub().resolves("device state"),
+        foregroundWindow: sinon.stub().resolves("Window{1 u0 net.thewaterbug.waterbug/x}"),
       };
       launcher = new AndroidEmulatorLauncher({ execFile: fakeExecFile, innerLauncher: fakeLauncher });
       await launcher.connect();
@@ -144,6 +145,14 @@ describe("AndroidEmulatorLauncher", function() {
       const report = await launcher.captureDiagnostics("com.example.app");
       expect(fakeLauncher.captureDiagnostics.calledWith("com.example.app")).to.be.true;
       expect(report).to.equal("device state");
+    });
+
+    // Without this the visual collector's foreign-window check silently stays
+    // off on the emulator, which is the only place it has ever been needed.
+    it("delegates foregroundWindow() to the inner launcher", async function() {
+      const window = await launcher.foregroundWindow();
+      expect(fakeLauncher.foregroundWindow.called).to.be.true;
+      expect(window).to.equal("Window{1 u0 net.thewaterbug.waterbug/x}");
     });
 
     it("getDriver() returns null", function() {

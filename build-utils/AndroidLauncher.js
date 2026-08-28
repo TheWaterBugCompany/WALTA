@@ -216,6 +216,19 @@ class AndroidLauncher {
     return abs;
   }
 
+  // The window the device currently has focused, as `Window{... pkg/Activity}`.
+  // A system dialog — an ANR, a crash report, a permission prompt — takes focus
+  // from the app, which is how a screenshot of "the app" can hold something else
+  // entirely. Null when nothing is focused.
+  async foregroundWindow() {
+    await this.connect();
+    const out = await this._exec(["shell", "dumpsys", "window"]);
+    const focus = /mCurrentFocus=(.+)/.exec(out);
+    if (!focus) return null;
+    const window = focus[1].trim();
+    return window === "null" ? null : window;
+  }
+
   // Pulls the visual-capture PNGs out of the app-private data dir. The dir isn't
   // world-readable, so `run-as` (which the debuggable test build permits) streams
   // it back as a tar archive — binary-safe and a single adb round-trip.

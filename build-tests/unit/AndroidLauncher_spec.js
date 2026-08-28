@@ -526,3 +526,33 @@ describe("AndroidLauncher", function() {
     });
   });
 });
+
+// Verbatim from `adb shell dumpsys window | grep mCurrentFocus` on an API 36
+// emulator — leading whitespace and all.
+const FOCUS_CMD = "-s emulator-5554 shell dumpsys window";
+const LAUNCHER_FOCUS = "  mCurrentFocus=Window{4301d29 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n";
+const APP_FOCUS = "  mCurrentFocus=Window{2b1f9a4 u0 net.thewaterbug.waterbug/org.appcelerator.titanium.TiActivity}\n";
+
+describe("AndroidLauncher.foregroundWindow()", function() {
+  function launcherWith(focusOutput) {
+    const execFile = makeExecFile({ "devices": DEVICES_OUTPUT, [FOCUS_CMD]: focusOutput });
+    return { launcher: new AndroidLauncher({ execFile }), execFile };
+  }
+
+  it("names the window the device currently has focused", async function() {
+    const { launcher } = launcherWith(APP_FOCUS);
+    expect(await launcher.foregroundWindow()).to.contain("net.thewaterbug.waterbug");
+  });
+
+  it("names a foreign window when something else has taken focus", async function() {
+    const { launcher } = launcherWith(LAUNCHER_FOCUS);
+    const win = await launcher.foregroundWindow();
+    expect(win).to.contain("com.google.android.apps.nexuslauncher");
+    expect(win).to.not.contain("net.thewaterbug.waterbug");
+  });
+
+  it("answers nothing when the device reports no focused window", async function() {
+    const { launcher } = launcherWith("  mCurrentFocus=null\n");
+    expect(await launcher.foregroundWindow()).to.equal(null);
+  });
+});
