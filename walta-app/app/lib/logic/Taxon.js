@@ -1,6 +1,13 @@
 
 var LAST_TAXON_ID_NUM = 0;
 
+// Genus and species are italicised, family and above are not — binomial
+// nomenclature rather than decoration, which is why it lives with the taxon and
+// not with whatever happens to be drawing a name.
+function isItalicisedRank( taxonomicLevel ) {
+	return taxonomicLevel === 'genus' || taxonomicLevel === 'species';
+}
+
 function createTaxon( args ) {
 	if ( typeof(_) == "undefined") _ = require('underscore')._;
 	var MediaUtil = ( typeof( Titanium ) !== "undefined" ) ? require('logic/MediaUtil') : require('./MediaUtil');
@@ -28,6 +35,15 @@ function createTaxon( args ) {
 		parentLink: null,		// A link to the parent key question
 		taxonParent: null, // a link to parent taxon
 
+		// The displayed `name` is sometimes one of this taxon's scientific names and
+		// sometimes a plain word ('gastropods'), so it is matched against them
+		// rather than assumed to be one.
+		isNameItalicised: function() {
+			var self = this;
+			var entry = _.find( this.scientificName, function( n ) { return n.name === self.name; } );
+			return !!entry && isItalicisedRank( entry.taxonomicLevel );
+		},
+
 		getScientificName: function() {
 			var name = "";
 			_.each( this.scientificName, function( n ) {
@@ -45,7 +61,7 @@ function createTaxon( args ) {
 
 			_.each( this.scientificName, function( n ) {
 				  var styledName = n.name;
-				  if ( n.taxonomicLevel == 'genus' || n.taxonomicLevel == 'species' )
+				  if ( isItalicisedRank( n.taxonomicLevel ) )
 				     styledName = "<i>" + styledName + "</i>";
 				  htmlNames += n.taxonomicLevel + ": " + styledName + "<br>";
 			});
@@ -68,3 +84,4 @@ function createTaxon( args ) {
 };
 
 exports.createTaxon = createTaxon;
+exports.isItalicisedRank = isItalicisedRank;
