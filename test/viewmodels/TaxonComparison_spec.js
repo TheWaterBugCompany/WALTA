@@ -3,15 +3,20 @@ const { expect } = require("chai");
 const TaxonComparisonViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/TaxonComparison");
 const Topics = require("../../walta-app/app/lib/ui/Topics");
 
-// A key stand-in: only findTaxonById is needed to turn an id into what the
-// screen shows, so the spec runs against a real view-model and a fake key.
+// A key stand-in. A taxon's ref and its taxonId are different id spaces in the
+// real key — "184" finds the taxon, "ancylidae" is what a hint is looked up by —
+// so the fixture keeps them apart and answers nothing to the wrong one.
+const TAXA = {
+    "WB1": { id: "caddis-ref", name: "Sleeping bag caddis", photoUrls: ["/photos/caddis.jpg"] },
+    "WB2": { id: "anisops-ref", name: "Anisops", photoUrls: ["/photos/anisops.jpg", "/photos/anisops-2.jpg"] },
+    "WB3": { id: "nameless-ref", name: "Nameless", photoUrls: [] },
+};
+const REFS = Object.keys(TAXA).map((id) => TAXA[id].id);
 const KEY = {
-    findTaxonById(id) {
-        return {
-            "WB1": { id: "WB1", name: "Sleeping bag caddis", photoUrls: ["/photos/caddis.jpg"] },
-            "WB2": { id: "WB2", name: "Anisops", photoUrls: ["/photos/anisops.jpg", "/photos/anisops-2.jpg"] },
-            "WB3": { id: "WB3", name: "Nameless", photoUrls: [] },
-        }[id];
+    findTaxonById(id) { return TAXA[id]; },
+    hintForIncorrectDecision(selectedRef, expectedRef) {
+        if (REFS.indexOf(selectedRef) < 0 || REFS.indexOf(expectedRef) < 0) { return null; }
+        return { nodeId: "couplet-7", correctRef: expectedRef, incorrectRef: selectedRef };
     },
 };
 
@@ -89,22 +94,42 @@ describe("TaxonComparisonViewModel", function () {
             expect(incorrect().actionLabel).to.equal("Which question did I get wrong?");
         });
 
-        it("asks which question when the action is taken", function () {
-            const vm = incorrect();
-            let asked = 0;
-            vm.on("which-question", () => asked++);
-            vm.activate();
-            expect(asked).to.equal(1);
+        it("opens the key at the couplet it went astray at, with the hint applied", function () {
+            const jumps = [];
+            Topics.subscribe(Topics.JUMPTO, (e) => jumps.push(e));
+            incorrect().whichQuestion();
+            expect(jumps).to.deep.equal([{
+                id: "couplet-7",
+                hint: { nodeId: "couplet-7", correctRef: "caddis-ref", incorrectRef: "anisops-ref" },
+                allowAddToSample: true,
+                position: null,
+                training: true,
+            }]);
         });
 
-        // Wiring the button to the key is WB-253's job; this screen only says it
-        // was pressed, so whatever opened it decides where that goes.
-        it("reports the request rather than acting on it", function () {
+        // A modal that navigates dismisses itself first, or the key opens behind it.
+        it("dismisses itself on the way to the key", function () {
             const vm = incorrect();
-            let asked = 0;
-            vm.on("which-question", () => asked++);
+            let closed = 0;
+            vm.on("close", () => closed++);
             vm.whichQuestion();
-            expect(asked).to.equal(1);
+            expect(closed).to.equal(1);
+        });
+
+        // The corrected identification has to land back in the slot it was graded
+        // in, not appended to the end of the tray.
+        it("carries the tray position it was opened for", function () {
+            const jumps = [];
+            Topics.subscribe(Topics.JUMPTO, (e) => jumps.push(e));
+            build({ selectedTaxonId: "WB2", correctTaxonId: "WB1", position: 3 }).whichQuestion();
+            expect(jumps[0].position).to.equal(3);
+        });
+
+        it("asks which question when the action is taken", function () {
+            const jumps = [];
+            Topics.subscribe(Topics.JUMPTO, (e) => jumps.push(e));
+            incorrect().activate();
+            expect(jumps).to.have.length(1);
         });
     });
 

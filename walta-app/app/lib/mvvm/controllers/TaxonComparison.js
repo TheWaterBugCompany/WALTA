@@ -14,18 +14,16 @@ const BINDINGS = {
 };
 
 module.exports = function createTaxonComparisonController({ view, close, services, bindView, args }) {
-  const { key, selectedTaxonId, correctTaxonId, onWhichQuestion } = args || {};
+  const { key, selectedTaxonId, correctTaxonId, position } = args || {};
   const vm = new TaxonComparisonViewModel({
     key: key,
     topics: services.topics,
     selectedTaxonId,
     correctTaxonId,
+    position,
   });
   const unbind = bindView(view, vm, BINDINGS);
   vm.on("close", () => close());
-  // Walking back to the couplet is the caller's job (WB-253); this screen only
-  // says the reader asked.
-  if (onWhichQuestion) { vm.on("which-question", onWhichQuestion); }
 
   return {
     vm,
