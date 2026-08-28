@@ -40,6 +40,7 @@ module.exports = [
   "TrainingSuccess",
   "SampleHistory",
   "Gallery",
+  "GalleryPhoto",
   "PhotoSelect",
   "PhotoPaths",
   "EditTaxon",

@@ -1,0 +1,14 @@
+<Alloy>
+	<!-- The zoom surface. iOS has no pinch-zoom on an ImageView, so a ScrollView
+	     with min/max zoom scales provides it; Android zooms in the ImageView itself
+	     and the wrapper only has to stay out of the way. Both platforms keep the
+	     same shape so the bindings address one set of ids. -->
+	<ScrollView id="zoom" class="galleryZoom">
+		<View id="frame" class="galleryFrame">
+			<ImageView id="photo" class="galleryPhoto"/>
+			<!-- Only a key-browsing owner names the taxon; a media viewer leaves this
+			     hidden, so it is also the only tappable thing on the page. -->
+			<Label id="taxonLabel" class="galleryTaxonLabel"/>
+		</View>
+	</ScrollView>
+</Alloy>
