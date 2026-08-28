@@ -11,7 +11,11 @@ Scenario: Complete a training exercise, correcting a mistake
   And I identify a freshwater limpet through the key
   And I assess the training tray
   Then an incorrect taxon is highlighted
-  When I re-identify the limpet as a mussel
+  When I select the incorrect taxon
+  Then the comparison shows the mussel beside the limpet I chose
+  When I ask which question I got wrong
+  Then the key marks the branch I should have taken
+  When I choose the mussel instead
   And I assess the training tray
   Then the training success screen is shown
   When I finish the training

@@ -162,6 +162,17 @@ class BaseScreen {
         await this.clickRaw(this.selector( sel ) );
     }
 
+    // Training marks a verdict ("correct"/"incorrect") with an overlay icon — on a
+    // graded tray slot, and on the branch a key hint points at. The overlay is a
+    // non-interactive ImageView, so WDA reports it visible=false: poll for its
+    // existence in the tree, not for display.
+    async waitForVerdict( verdict ) {
+        const sel = this.selector( verdict );
+        await this.driver.waitUntil(
+            async () => await (await this.driver.$(sel)).isExisting(),
+            { timeout: 30000, timeoutMsg: `no ${verdict} verdict present` });
+    }
+
     // Non-throwing probe/tap for a full selector — building blocks for a
     // poll-and-dismiss loop, where a missing or stale element just means "try
     // again next round", not a failure.

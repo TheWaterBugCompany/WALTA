@@ -16,16 +16,19 @@ class SampleScreen extends BaseScreen {
         await this.click(`Cell ${number}`);
         await this.world.methodSelect.waitFor();
     }
-    async openTaxon( id ) {
-        // SampleTaxaIcon's accessibilityLabel is
-        // "Taxon <id>, <species name>, abundance <abundance>" — the
-        // bare "Taxon <id>" id doesn't exist as a discrete a11y element.
-        // BEGINSWITH on "Taxon <id>, " disambiguates 12 from 121, 123, ...
+    // SampleTaxaIcon's accessibilityLabel is
+    // "Taxon <id>, <species name>, abundance <abundance>" — the bare "Taxon <id>"
+    // doesn't exist as a discrete a11y element. BEGINSWITH on "Taxon <id>, "
+    // disambiguates 12 from 121, 123, ...
+    async clickTaxon( id ) {
         const fragment = `Taxon ${id}, `;
-        const selector = this.isIos()
+        await this.clickRaw( this.isIos()
             ? `-ios predicate string:label BEGINSWITH '${fragment}'`
-            : `android=new UiSelector().descriptionStartsWith("${fragment}")`;
-        await this.clickRaw(selector);
+            : `android=new UiSelector().descriptionStartsWith("${fragment}")` );
+    }
+
+    async openTaxon( id ) {
+        await this.clickTaxon( id );
         await this.world.editTaxon.waitFor();
     }
 
@@ -34,24 +37,11 @@ class SampleScreen extends BaseScreen {
         await this.click("Assess");
     }
 
-    // Training: an assessed taxon carries a "correct"/"incorrect" verdict overlay
-    // (its accessibilityLabel). The overlay is a non-interactive ImageView, so WDA
-    // reports it visible=false — poll for its existence in the tree, not display.
-    async waitForIncorrectVerdict() {
-        const sel = this.selector("incorrect");
-        await this.driver.waitUntil(
-            async () => await (await this.driver.$(sel)).isExisting(),
-            { timeout: 30000, timeoutMsg: "no incorrect verdict present" });
-    }
-
-    // Training: tapping a taxon reopens the method chooser to re-identify it.
-    async reidentifyTaxon( id ) {
-        const fragment = `Taxon ${id}, `;
-        const selector = this.isIos()
-            ? `-ios predicate string:label BEGINSWITH '${fragment}'`
-            : `android=new UiSelector().descriptionStartsWith("${fragment}")`;
-        await this.clickRaw(selector);
-        await this.world.methodSelect.waitFor();
+    // Training: once graded, tapping a taxon explains it rather than editing it —
+    // what the reader chose beside what the exercise expected.
+    async openComparison( id ) {
+        await this.clickTaxon( id );
+        await this.world.taxonComparison.waitFor();
     }
 
     async goNext() {
