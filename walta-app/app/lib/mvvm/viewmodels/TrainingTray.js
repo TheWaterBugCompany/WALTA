@@ -168,6 +168,17 @@ class TrainingTrayViewModel extends ChangeNotifier {
   _onCellSelected(collectionIndex) {
     if (this.cellKind(collectionIndex) === "taxon") {
       const data = this.cellData(collectionIndex);
+      // Once graded, a taxon cell stops being something to edit and becomes
+      // something to explain — what the reader chose, beside what was expected.
+      if (this.verdictFor(collectionIndex)) {
+        this._topics.fireTopicEvent(this._topics.TAXON_COMPARISON, {
+          selectedTaxonId: data.taxonId,
+          correctTaxonId: this._assessor.expectedAt(collectionIndex),
+          position: collectionIndex,
+          training: true,
+        });
+        return;
+      }
       this._topics.fireTopicEvent(this._topics.IDENTIFY, {
         sampleTaxonId: data.sampleTaxonId,
         taxonId: data.taxonId,

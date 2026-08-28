@@ -79,6 +79,9 @@ var topics = {
 
 	GALLERY: 'gallery',
 
+	// A graded training taxon: what the reader chose, beside what was expected.
+	TAXON_COMPARISON: 'taxoncomparison',
+
 	ABOUT: 'about',
 
 	ACADEMY: 'academy',

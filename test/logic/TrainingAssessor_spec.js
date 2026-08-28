@@ -46,4 +46,17 @@ describe("logic/TrainingAssessor", function () {
     const assess = createTrainingAssessor([181, 179]).assess;
     expect(assess([taxon("181", 101), taxon("179", 102)])).to.deep.equal(["correct", "correct"]);
   });
+
+  // Grading says a cell is wrong; the comparison screen has to say what the right
+  // answer was, so the expected order is readable by position and not just
+  // consumed internally.
+  describe("the expected taxon at a position", function () {
+    it("names the taxon the exercise expected there", function () {
+      expect(createTrainingAssessor([181, 179]).expectedAt(1)).to.equal(179);
+    });
+
+    it("has nothing to name beyond the exercise", function () {
+      expect(createTrainingAssessor([181]).expectedAt(5)).to.be.undefined;
+    });
+  });
 });
