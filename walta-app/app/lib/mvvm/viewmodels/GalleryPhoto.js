@@ -3,12 +3,6 @@ const ChangeNotifier = require("../../util/ChangeNotifier");
 // One page of the photo pager, built for whichever owner mounted it: the
 // key-browsing Gallery or the media-zooming PhotoViewer. Titanium-free.
 //
-// Navigation belongs to the owner, not to the photo. Gallery.js decides it today
-// with `typeof(urlObj) == "object"` per photo — an invariant resting on the shape
-// of a value produced three functions away, which is how the browse route came to
-// offer an action that route had no business offering. An owner that navigates
-// implements navigateTo; the PhotoViewer has none, so no photo shape can reach
-// the key from there. Same feature-detect as SampleTaxaIcon's verdictFor.
 class GalleryPhotoViewModel extends ChangeNotifier {
   constructor(owner, page) {
     super();
