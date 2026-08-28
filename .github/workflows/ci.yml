@@ -830,6 +830,9 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     timeout-minutes: 10
+    permissions:
+      contents: write        # push the gh-pages branch
+      pull-requests: write   # keep the gallery link comment up to date
     steps:
       - uses: actions/checkout@v6
 
@@ -868,6 +871,41 @@ jobs:
           name: visual-review
           path: builds/visual/**
           if-no-files-found: warn
+
+      # A fork's GITHUB_TOKEN is read-only on pull_request, so it can neither
+      # push gh-pages nor comment. Those runs keep the artifact above.
+      - name: Publish the gallery to GitHub Pages
+        id: pages
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          bash build-utils/publish-visual-pages.sh
+          echo "url=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/${RUN_ID}/report.html" >> "$GITHUB_OUTPUT"
+
+      # Updated in place rather than appended to, so a PR that runs CI twenty
+      # times carries one link to the newest gallery, not twenty stale ones.
+      - name: Link the gallery from the pull request
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v8
+        env:
+          REPORT_URL: ${{ steps.pages.outputs.url }}
+        with:
+          script: |
+            const marker = '<!-- visual-review-gallery -->';
+            const body = `${marker}\n### Visual review gallery\n\n[Open the gallery for run \`${context.runId}\`](${process.env.REPORT_URL}) — every screen, every device, side by side.\n\nUpdated on each run; the site keeps the ten most recent.`;
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo, issue_number: context.issue.number, per_page: 100,
+            });
+            const existing = comments.find((c) => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
+            }
 
   # ── 4. iOS simulator acceptance tests ─────────────────────────────────────
   ios-simulator-acceptance-tests:
