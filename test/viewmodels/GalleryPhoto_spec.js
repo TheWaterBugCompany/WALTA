@@ -5,12 +5,6 @@ const GalleryPhotoViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/G
 // One page of the photo pager, shared by both owners: the key-browsing Gallery
 // and the media-zooming PhotoViewer.
 //
-// Whether a photo can be navigated from is the owner's to say, not the photo's.
-// Gallery.js decides it today with `typeof(urlObj) == "object"` — a test against a
-// value shaped three functions away, which is how the browse route came to offer
-// "Add to sample" on a path that had no sample. Here the Gallery offers a
-// navigateTo and the PhotoViewer simply has none, so the viewer route cannot reach
-// the key however its photos happen to be shaped.
 describe("GalleryPhotoViewModel", function () {
     const TAXON = { id: "t1", name: "Anisops" };
 
