@@ -1,6 +1,6 @@
 require("spec/lib/ti-mocha");
 var { expect } = require("spec/lib/chai");
-var { closeWindow, actionFiresEventTest, wrapViewInWindow, windowOpenTest, checkTestResult, waitForTick } = require("spec/util/TestUtils");
+var { closeWindow, actionFiresEventTest, wrapViewInWindow, windowOpenTest, checkTestResult, waitForTick, waitFor } = require("spec/util/TestUtils");
 
 var { speedBugIndexMock } = require('spec/mocks/MockSpeedbug');
 var { createMockTaxon } = require('spec/mocks/MockTaxon');
@@ -49,6 +49,29 @@ describe("EditTaxon controller", function() {
                     expect( ctl.abundanceLabel.text ).to.equal("3-5");
                 } );
         } );
+    });
+
+    // The button row was sized as a percentage of the dialog while the buttons
+    // themselves are a fixed dp height, so on a denser screen they outgrew the
+    // row and Android clipped their bottom edge off mid-glyph.
+    it('keeps the action buttons inside their row', async () => {
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
+        await windowOpenTest( win );
+        await waitFor( () => ctl.buttons.rect.height > 0 && ctl.deleteButton.rect.height > 0 );
+        var row = ctl.buttons.rect;
+        [ ctl.deleteButton, ctl.saveButton ].forEach( function( button ) {
+            expect( button.rect.y + button.rect.height, button.title + " bottom" ).to.be.at.most( row.height );
+        } );
+    });
+
+    // The row sits below a topContainer pinned to 85% of the dialog, so the
+    // fixed-dp buttons have only the remainder to fit into.
+    it('keeps the button row inside the dialog', async () => {
+        makeEditTaxon( { taxonId:"1", abundance:"3-5" } );
+        await windowOpenTest( win );
+        await waitFor( () => ctl.buttons.rect.height > 0 );
+        var row = ctl.buttons.rect;
+        expect( row.y + row.height, "button row bottom" ).to.be.at.most( ctl.window.rect.height );
     });
 
     it('should trigger close event when close button clicked', async () => {

@@ -48,11 +48,13 @@
   height: "98%"
 }
 
+// The buttons are a fixed dp height, so a percentage row is a bet on density
+// that a denser screen loses — Android clips their bottom edge off mid-glyph.
 "#buttons": {
   top: "2%",
   left: "8%",
   right: "8%",
-  height: "10%",
+  height: Ti.UI.SIZE,
   width: "84%"
 }
 "#deleteButton": {
