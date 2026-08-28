@@ -98,6 +98,14 @@ async function connectAndPrepareApp({ platform, isSimulator }) {
     return { launcher: global.launcher, driver: global.driver };
 }
 
+// A simulator reports no device orientation, so iOS re-resolves which landscape
+// each window opens in and two screens can settle 180° apart — after which every
+// coordinate Appium sends is inverted and swipes scroll the wrong way. Giving the
+// device a definite orientation leaves nothing to re-resolve.
+async function pinSimulatorLandscape() {
+    await global.driver.setOrientation('LANDSCAPE');
+}
+
 async function prepareIosSimApp() {
     const appId = global.launcher.appId;
     const appPath = path.resolve(process.cwd(), 'builds/test-sim/Waterbug.app');
@@ -107,6 +115,7 @@ async function prepareIosSimApp() {
     } catch (e) {
         console.warn(`[appium-world] simctl keychain reset failed: ${e.message}`);
     }
+    await pinSimulatorLandscape();
     try { await global.driver.removeApp(appId); } catch (_) {}
     await global.driver.installApp(appPath);
     // "location" not "location-always": the app requests WHEN_IN_USE and
