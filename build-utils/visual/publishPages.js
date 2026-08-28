@@ -29,7 +29,9 @@ export function publish({ siteDir, captureDir, run, limit = DEFAULT_LIMIT }) {
     const kept = retainedRuns(readRuns(siteDir), run, limit);
     const keptIds = new Set(kept.map((r) => r.id));
     for (const entry of fs.readdirSync(siteDir, { withFileTypes: true })) {
-        if (entry.isDirectory() && !keptIds.has(entry.name)) {
+        // Dot directories are not runs — .git above all, since the caller commits
+        // and pushes this checkout the moment we hand it back.
+        if (entry.isDirectory() && !entry.name.startsWith(".") && !keptIds.has(entry.name)) {
             fs.rmSync(path.join(siteDir, entry.name), { recursive: true, force: true });
         }
     }
