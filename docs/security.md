@@ -38,16 +38,37 @@ A full grep of `walta-app/app/` for `_.` calls returns zero uses of `_.template`
 
 The vendored 1.8.3 file is dated 2015, which is a hygiene concern independent of the alerts (and a candidate for a separate cleanup PR — bump to 1.13.x to match npm). It is *not* a security issue because the vulnerable surface isn't called.
 
+## Checking whether a package actually ships
+
+Grep `walta-app/app/` for a `require()` of it, and grep the compiled
+`walta-app/Resources/` tree. Two false positives have cost time and will again:
+
+- **`form-data`** appears in `Resources/.../CerdiApi.js` — as the MIME string
+  `"multipart/form-data"`. The app speaks HTTP through `Ti.Network`, not through any
+  npm HTTP client.
+- **`js-yaml`** appears in `Resources/.../spec/lib/mocha.js` — inside a `package.json`
+  fragment bundled into mocha itself. That file is the test harness and is not in a
+  release build either way.
+
+A string match is not a dependency. Confirm with `npm ls <package>` that something in
+the app's own require graph pulls it, not just that the name appears in bundled text.
+
 ## Build-time-only packages
 
-The remaining ~65 alerts fall into these clusters, ordered by alert count:
+Everything not listed above is a build or test transitive. The clusters shift as the
+tree moves, so what matters is not the list but where each one enters from — and
+every one of them enters through the toolchain, never through `walta-app/app/`:
 
-- **`xmldom` (legacy, 7 alerts)** — pulled in by `liveview → alloy-compiler` and `node-titanium-sdk`. Build-time only.
-- **`elliptic` (7)** — dev-tree crypto. Build-time only.
-- **`vite` (5)** — used by LiveView fast-iteration. We are pinned to 4.x (5+ is ESM-only and breaks `require('vite')` in the LiveView config). Build-time only.
-- **`qs` (3), `undici` (3)** — HTTP request internals used by Appium / build tooling. Build/test only.
-- **`ansi-regex`, `ejs`, `express`, `lodash`, `minimatch`, `semver`, `serialize-javascript`, `tmp` (2 each)** — all build/test transitives.
-- **18 single-alert packages** (`body-parser`, `browserify-sign`, `cipher-base`, `cookie`, `esbuild`, `eventsource`, `form-data`, `images`, `js-yaml`, `json-schema`, `lodash.set`, `node-extend`, `react-dev-utils`, `request`, `send`, `serve-static`, `tough-cookie`, `uuid`, `xml2js`, `yauzl`) — all build/test transitives, none reachable from `walta-app/app/`.
+| Package | Enters through | Why it can't just be bumped |
+|---|---|---|
+| `undici` | `node-gyp`, `titanium` | Nested copies; lifting them needs the parents to move |
+| `@babel/core` (7.11.x) | `node-titanium-sdk` | The Titanium SDK bundles its own core — see the blockers below |
+| `form-data` (2.x) | `liveview → node-titanium-sdk → node-appc → request` | `request` is deprecated and unmaintained; it leaves when `node-titanium-sdk` does |
+| `shell-quote` | `@appium/support`, `teen_process` | Held with the Appium driver majors |
+| `ip-address` | `socks` | Deep transitive of the Appium tree |
+| `brace-expansion` | `minimatch` | Several majors coexist in the tree |
+| `extract-zip` | Puppeteer/Appium tree | **No patched version published** |
+| `vite` | LiveView fast-iteration | Pinned to 4.x deliberately — see the blockers below |
 
 None of these packages are bundled into the device app. The risk surface is "a malicious peer dependency could compromise a developer machine during install/build", which is mitigated by:
 - `npm install --ignore-scripts` in CI (see `ci.yml`)
