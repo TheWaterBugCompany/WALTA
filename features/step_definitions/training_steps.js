@@ -1,10 +1,12 @@
 const { When, Then } = require('@cucumber/cucumber');
 const {
-  GASTROPOD, LIMPET, MUSSEL,
+  GASTROPOD, LIMPET, MUSSEL_FROM_HINT,
   startTrainingSession,
   identifyTrainingTaxonViaKey,
-  reidentifyTrainingTaxonViaKey,
+  chooseThroughKeyToTraining,
 } = require('../support/drivers/training-driver');
+
+const WRONG_LIMPET = 184;   // Ancylidae — what the exercise expects to be corrected
 
 When('I start the training session {string}', async function (code) {
   await startTrainingSession(this, code);
@@ -27,11 +29,31 @@ When('I assess the training tray', async function () {
 });
 
 Then('an incorrect taxon is highlighted', async function () {
-  await this.sample.waitForIncorrectVerdict();
+  await this.sample.waitForVerdict('incorrect');
 });
 
-When('I re-identify the limpet as a mussel', async function () {
-  await reidentifyTrainingTaxonViaKey(this, 184, MUSSEL);   // 184 = the wrong Ancylidae
+When('I select the incorrect taxon', async function () {
+  await this.sample.openComparison(WRONG_LIMPET);
+});
+
+Then('the comparison shows the mussel beside the limpet I chose', async function () {
+  await this.taxonComparison.waitForText('Ancylidae');
+  await this.taxonComparison.waitForText('Hyriidae');
+});
+
+When('I ask which question I got wrong', async function () {
+  await this.taxonComparison.whichQuestion();
+});
+
+Then('the key marks the branch I should have taken', async function () {
+  await this.keySearch.waitForVerdict('correct');
+  await this.keySearch.waitForVerdict('incorrect');
+});
+
+// The key reopened at the couplet that went wrong, so the correction is walked
+// from there rather than from the root.
+When('I choose the mussel instead', async function () {
+  await chooseThroughKeyToTraining(this, MUSSEL_FROM_HINT);
 });
 
 Then('the training success screen is shown', async function () {

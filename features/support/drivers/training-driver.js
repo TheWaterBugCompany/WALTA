@@ -26,6 +26,10 @@ const MUSSEL = [   // Hyriidae, taxonId 179 — the correction
     "Animals look like mussels.",
     "Class level ID. Bivalvia (mussels).",
 ];
+// A correction does not start at the root: "Which question did I get wrong?"
+// drops the reader at the couplet the limpet and mussel paths part at, which is
+// the one the first question above leads to.
+const MUSSEL_FROM_HINT = MUSSEL.slice(1);
 
 // Enter the academy exercise code and start the session (leaves the caller on
 // the empty training tray). The academy-screen navigation is the caller's, so
@@ -46,11 +50,12 @@ async function identifyTrainingTaxonViaKey(world, questions, cell) {
     await chooseThroughKeyToTraining(world, questions);
 }
 
-// Re-open an already-trayed taxon (the assessor flagged it wrong) and correct it
-// by re-walking the key.
+// Re-open an already-graded taxon the assessor flagged wrong: the comparison
+// explains it, and its follow-up reopens the key at the couplet that went wrong
+// — so the corrected walk starts there rather than at the root.
 async function reidentifyTrainingTaxonViaKey(world, taxonId, questions) {
-    await world.sample.reidentifyTaxon(taxonId);
-    await world.methodSelect.viaKey();
+    await world.sample.openComparison(taxonId);
+    await world.taxonComparison.whichQuestion();
     await chooseThroughKeyToTraining(world, questions);
 }
 
@@ -69,7 +74,7 @@ async function completeTrainingSession(world) {
     await identifyTrainingTaxonViaKey(world, GASTROPOD, 1);
     await identifyTrainingTaxonViaKey(world, LIMPET, 2);
     await world.sample.assess();
-    await reidentifyTrainingTaxonViaKey(world, 184, MUSSEL);   // 184 = the wrong Ancylidae
+    await reidentifyTrainingTaxonViaKey(world, 184, MUSSEL_FROM_HINT);   // 184 = the wrong Ancylidae
     await world.sample.assess();
     await world.trainingSuccess.waitFor();
     await world.trainingSuccess.finish();
@@ -77,8 +82,8 @@ async function completeTrainingSession(world) {
 
 exports.GASTROPOD = GASTROPOD;
 exports.LIMPET = LIMPET;
-exports.MUSSEL = MUSSEL;
+exports.MUSSEL_FROM_HINT = MUSSEL_FROM_HINT;
 exports.startTrainingSession = startTrainingSession;
 exports.identifyTrainingTaxonViaKey = identifyTrainingTaxonViaKey;
-exports.reidentifyTrainingTaxonViaKey = reidentifyTrainingTaxonViaKey;
+exports.chooseThroughKeyToTraining = chooseThroughKeyToTraining;
 exports.completeTrainingSession = completeTrainingSession;
