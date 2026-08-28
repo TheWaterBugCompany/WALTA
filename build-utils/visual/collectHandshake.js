@@ -21,11 +21,6 @@ const COLLECTOR_READY = "collector-ready";
 // one — this is waiting for a frame to arrive, not retrying the screen.
 const BLANK_ATTEMPTS = 3;
 
-// How many times to re-grab a screen the OS is showing something else over. A
-// toast or a transition clears well inside this; an ANR dialog never does, and
-// waiting out the 600s capture timeout would report the wrong cause.
-const OBSCURED_ATTEMPTS = 25;
-
 // The window the OS has focused, when it belongs to something other than the app
 // under capture. Launchers that can't answer (iOS has no equivalent of dumpsys)
 // leave the check off rather than guessing.
@@ -36,14 +31,14 @@ async function foreignWindow(launcher, appId) {
 }
 
 export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, pollMs = 200, now, sleep, log,
-    looksBlank = frameLooksBlank, blankAttempts = BLANK_ATTEMPTS, obscuredAttempts = OBSCURED_ATTEMPTS }) {
+    looksBlank = frameLooksBlank, blankAttempts = BLANK_ATTEMPTS }) {
     const clock = now || (() => Date.now());
     const wait = sleep || ((ms) => new Promise((r) => setTimeout(r, ms)));
     const note = log || (() => {});
     const shot = new Set();
     const blank = [];
     const attempts = new Map();
-    const obscured = new Map();
+    let obscuredBy = null;
     const deadline = clock() + timeoutMs;
     let reachable = null;
 
@@ -73,7 +68,6 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
         // sentinel is still captured. A single screenshot/ack hiccup (contended
         // simctl/adb) leaves the screen unshot to retry next poll, rather than
         // killing the run — matching the old per-screen tolerance.
-        let aborted = null;
         for (const f of files) {
             const m = /^(.+)\.ready$/.exec(f);
             if (!m || shot.has(m[1])) continue;
@@ -87,15 +81,16 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
                 // has focused and grab again rather than ack it.
                 const intruder = await foreignWindow(launcher, appId);
                 if (intruder) {
-                    const seen = (obscured.get(name) || 0) + 1;
-                    obscured.set(name, seen);
-                    if (seen >= obscuredAttempts) {
-                        aborted = `${name} was shot behind another window ${seen} times — ${intruder}`;
-                        break;
+                    // Reported on the transition, not every poll: the runner holds
+                    // the screen, so this can legitimately repeat for as long as
+                    // the app takes to reach the foreground.
+                    if (obscuredBy !== intruder) {
+                        note(`  visual: ${name} came back behind ${intruder}, holding until it clears`);
+                        obscuredBy = intruder;
                     }
-                    note(`  visual: ${name} was shot behind ${intruder}, grabbing again`);
                     continue;
                 }
+                obscuredBy = null;
                 // A frame with nothing drawn on it isn't a capture of the screen —
                 // the app is still holding it, so grab again rather than ack a
                 // blank that would go on to be blessed as a baseline.
@@ -115,13 +110,12 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
                 note(`  visual: ${name} shot failed, will retry (${e && e.message ? e.message : e})`);
             }
         }
-        // Raised out here rather than in the loop: the per-screen catch absorbs
-        // transient adb/simctl failures, and a window that will not go away is
-        // not one of those.
-        if (aborted) throw new Error(`visual capture aborted: ${aborted}`);
         if (files.includes(DONE)) return { count: shot.size, blank };
         if (clock() >= deadline) {
-            throw new Error(`visual capture timed out after ${Math.round(timeoutMs / 1000)}s with no ${DONE} (captured ${shot.size})`);
+            // The window in the way is the cause worth naming: without it this
+            // reads as "the app never finished", which is a different bug.
+            throw new Error(`visual capture timed out after ${Math.round(timeoutMs / 1000)}s with no ${DONE} (captured ${shot.size})`
+                + (obscuredBy ? `; the screen was behind ${obscuredBy}` : ""));
         }
         await wait(pollMs);
     }
