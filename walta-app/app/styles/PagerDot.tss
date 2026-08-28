@@ -1,0 +1,7 @@
+".pagerDot": {
+	backgroundImage: "/images/dot.png",
+	width: "12dip",
+	height: "12dip",
+	left: "8dip",
+	bottom: "2dip"
+}

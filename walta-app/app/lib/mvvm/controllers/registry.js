@@ -8,6 +8,8 @@ module.exports = {
   Menu: require("./Menu"),
   MenuButton: require("./MenuButton"),
   MethodSelect: require("./MethodSelect"),
+  PagerDot: require("./PagerDot"),
+  PhotoViewer: require("./PhotoViewer"),
   Question: require("./Question"),
   SampleHistory: require("./SampleHistory"),
   SampleHistoryRow: require("./SampleHistoryRow"),

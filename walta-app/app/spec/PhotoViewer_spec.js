@@ -1,0 +1,71 @@
+require("spec/lib/ti-mocha");
+var { expect } = require("spec/lib/chai");
+var { closeWindow, actionFiresTopicTest, waitFor } = require("spec/util/TestUtils");
+var { makeTestServices } = require("spec/fixtures/Services_fixture");
+var { View } = require("logic/View");
+var Topics = require("ui/Topics");
+
+var mediaResource = "/spec/resources/simpleKey1/media/";
+var PHOTOS = [
+	mediaResource + "amphipoda_01.jpg",
+	mediaResource + "amphipoda_02.jpg",
+	mediaResource + "amphipoda_03.jpg",
+];
+
+// The media-zooming screen: a pager over photo files the caller hands it. The
+// windowing and the no-navigation rule are covered in Node
+// (test/viewmodels/PhotoViewer_spec.js); here it is the real screen — that the
+// pages mount into the ScrollableView at all, that the dots track the reader, and
+// that no page can reach the key.
+describe("PhotoViewer controller", function () {
+	var view, ctl;
+
+	function vm() { return view.getScreenController().vm; }
+
+	function open(photos) {
+		view = new View(makeTestServices());
+		var opened = view.openView("PhotoViewer", { photos: photos });
+		ctl = view.getCurrentController();
+		return opened;
+	}
+
+	afterEach(async function () {
+		if (ctl) await closeWindow(ctl.getView());
+		ctl = null;
+	});
+
+	it("mounts a page for each photo it was handed", async () => {
+		await open(PHOTOS);
+		await waitFor(function () { return ctl.scrollView.views.length === PHOTOS.length; });
+		expect(ctl.scrollView.views.length).to.equal(PHOTOS.length);
+	});
+
+	it("shows one dot per photo", async () => {
+		await open(PHOTOS);
+		await waitFor(function () { return ctl.pager.children.length === PHOTOS.length; });
+		expect(ctl.pager.children.length).to.equal(PHOTOS.length);
+	});
+
+	// A single photo has nowhere to page to, so the indicator would be a lie.
+	it("hides the dots when there is only one photo", async () => {
+		await open([PHOTOS[0]]);
+		await waitFor(function () { return ctl.scrollView.views.length === 1; });
+		expect(ctl.pager.visible).to.be.false;
+	});
+
+	// The reader's own photos are not taxa, so no page here names one — the
+	// guarantee the owner split exists to make.
+	it("offers no way into the key from any page", async () => {
+		await open(PHOTOS);
+		await waitFor(function () { return ctl.scrollView.views.length === PHOTOS.length; });
+		vm().pages.forEach(function (page) {
+			expect(page.labelVisible, "a viewer page must not offer navigation").to.be.false;
+		});
+	});
+
+	it("fires BACK when the close button is clicked", async () => {
+		await open(PHOTOS);
+		await waitFor(function () { return ctl.scrollView.views.length === PHOTOS.length; });
+		await actionFiresTopicTest(ctl.closeButton.closeButton, "click", Topics.BACK);
+	});
+});

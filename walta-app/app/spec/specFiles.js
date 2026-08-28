@@ -43,6 +43,7 @@ module.exports = [
   "Gallery",
   "GalleryPhoto",
   "PhotoSelect",
+  "PhotoViewer",
   "PhotoPaths",
   "EditTaxon",
   "NavButton",

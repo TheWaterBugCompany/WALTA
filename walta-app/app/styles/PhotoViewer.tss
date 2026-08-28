@@ -1,0 +1,22 @@
+"#content": {
+	backgroundColor: "black",
+	height: Ti.UI.FILL
+}
+
+"#scrollView": {
+	cacheSize: 3,
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL,
+	bottom: "16dip"
+}
+
+// The position indicator sits under the photo rather than over it, so a dot is
+// never lost against a pale image.
+".photoPager": {
+	width: Ti.UI.SIZE,
+	height: "16dip",
+	bottom: 0,
+	backgroundColor: "black",
+	layout: "horizontal",
+	horizontalWrap: false
+}
