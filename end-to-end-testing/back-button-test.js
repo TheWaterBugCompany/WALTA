@@ -162,7 +162,7 @@ describe('Back button tests', function() {
             await world.keySearch.goMagnifyTop();
         });
         it('should return to key search', async function() {
-            await world.gallery.close();
+            await world.photoViewer.close();
             await world.keySearch.waitFor();
         });
     });
@@ -178,7 +178,7 @@ describe('Back button tests', function() {
             await world.taxon.goMagnifyTop();
         });
         it('should return to taxon', async function() {
-            await world.gallery.close();
+            await world.photoViewer.close();
             await world.taxon.waitFor();
         });
     });
@@ -199,7 +199,7 @@ describe('Back button tests', function() {
             await world.editTaxon.goMagnify();
         });
         it('should return to taxon', async function() {
-            await world.gallery.close();
+            await world.photoViewer.close();
             await world.editTaxon.waitFor();
         });
     });

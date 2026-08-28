@@ -11,7 +11,7 @@ class TaxonScreen extends BaseScreen {
 
     async goMagnify() {
       await this.click("Photo gallery");
-      await this.world.gallery.waitFor();
+      await this.world.photoViewer.waitFor();
     }
 
     async selectAddToSample() {

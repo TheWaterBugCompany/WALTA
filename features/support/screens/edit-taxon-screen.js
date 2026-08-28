@@ -6,7 +6,7 @@ class EditTaxonScreen extends BaseScreen {
     }
     async goMagnify() {
       await this.click("Magnify");
-      await this.world.gallery.waitFor();
+      await this.world.photoViewer.waitFor();
     }
     async openCamera() {
       await this.click("Take Photo");

@@ -71,7 +71,21 @@ function taxonList() {
 	return { key: key };
 }
 
+// Browsing the key: the screen shuffles the key's own media, so the capture is of
+// a key whose every taxon carries the one photo — otherwise the page it opens on
+// would differ run to run and read as a diff.
 function gallery() {
+	var Key = require("logic/Key");
+	var mediaResource = "spec/resources/simpleKey1/media/";
+	var key = Key.createKey({ url: "https://example.com", name: "WALTA" });
+	key.attachTaxon(Taxon.createTaxon({
+		id: "amphipoda", taxonId: "2", name: "Amphipoda",
+		mediaUrls: [mediaResource + "amphipoda_01.jpg"]
+	}));
+	return { key: key };
+}
+
+function photoViewer() {
 	var mediaResource = "spec/resources/simpleKey1/media/";
 	return {
 		photos: [mediaResource + "amphipoda_01.jpg", mediaResource + "amphipoda_02.jpg", mediaResource + "amphipoda_03.jpg"]
@@ -493,6 +507,7 @@ module.exports = [
 	{ name: "TaxonDetails", args: taxonDetails },
 	{ name: "TaxonList", args: taxonList },
 	{ name: "Gallery", args: gallery },
+	{ name: "PhotoViewer", args: photoViewer },
 	{ name: "LogIn", args: logIn },
 	{ name: "Register", args: register },
 	{ name: "SiteDetails", args: siteDetails },

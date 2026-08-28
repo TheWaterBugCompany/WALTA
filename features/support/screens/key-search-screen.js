@@ -29,13 +29,13 @@ class KeySearchScreen extends BaseScreen {
     async goMagnifyTop() {
       var el = await this.driver.$(this.selector("Magnify"));
       await el.click();
-      await this.world.gallery.waitFor();
+      await this.world.photoViewer.waitFor();
     }
 
     async goMagnifyBottom() {
       var el = await this.driver.$(this.selector("Magnify"));
       await el.click();
-      await this.world.gallery.waitFor();
+      await this.world.photoViewer.waitFor();
     }
  } 
 module.exports = KeySearchScreen;

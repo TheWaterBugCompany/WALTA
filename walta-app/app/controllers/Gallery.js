@@ -4,52 +4,29 @@ var debug = (m, tag = "ui") => Logger.debug(m, tag);
 /*
  * Controller: Gallery
  *
- * Shows a thumbnail of a list of photos, then if the zoom icon is pressed
- * opens a modal view displaying a gallery of all the images.
+ * Browse the key: a random handful of its taxon photos, extended as the reader
+ * pages on, each naming its taxon and leading into the key. Photos the reader
+ * took are the PhotoViewer's job — this screen only ever shows the key's.
  *
  */
 var Topics = require('ui/Topics');
 exports.baseController  = "TopLevelWindow";
 $.name = "gallery";
-var Topics = require('ui/Topics');
-var Layout = require('ui/Layout');
 
 $.TopLevelWindow.useUnSafeArea = true;
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
-var key = $.args.key;
-var photos = $.args.photos;
-var showPager = $.args.showPager;
 var startPhotoIndex = 0;
-var allPhotos;
-if ( _.isUndefined( showPager ) ) showPager = true;
+var allPhotos = _.shuffle( $.args.key.findAllMedia('photoUrls') );
+var photos = allPhotos.slice(0,5);
 
-log(`Photo gallery pased photos: ${JSON.stringify(photos)}`);
-if ( !photos && key ) {
-    allPhotos = _.shuffle( key.findAllMedia('photoUrls') );
-    photos = allPhotos.slice(0,5);
-}
-
-
+// Every photo here belongs to a taxon — findAllMedia pairs them — so every page
+// names one and leads into the key.
 function buildPhotoView(urlObj) {
-    /* urlObj can be a string or an object with the shape:
-]   {
-        url: "...." # url string
-        taxon: "...." # taxon or question object
-
-    }*/
-    var imageUrl;
-    if ( typeof(urlObj) == "object" ) {
-        log(`taxon = ${urlObj.taxon.taxonId}`)
-        imageUrl=urlObj.url;
-
-    } else {
-        imageUrl=urlObj;
-    }
+    var imageUrl = urlObj.url;
     debug(`creating tile for url = ${imageUrl}`);
-    var needsPostLayout = !$.scrollView.size.height;
     var container = Ti.UI.createView({
         width: Ti.UI.FILL,
         height: Ti.UI.SIZE
@@ -61,27 +38,22 @@ function buildPhotoView(urlObj) {
     } );
     container.add(imageView);
 
-    if ( typeof(urlObj) == "object") {
-        
-        var label = Ti.UI.createLabel({ 
-                color: "white",
-                font: { fontSize:"20dp" },
-                shadowColor: Alloy.CFG.colors.black,
-                shadowOffset: {x:"5", y:"5"},
-                shadowRadius: "3dp",
-                text: urlObj.taxon.name, 
-                width: Ti.UI.SIZE, 
-                height: Ti.UI.SIZE,
-                top: "50dp"
-            });
-        label.addEventListener("click", function() {
-            Topics.fireTopicEvent(Topics.JUMPTO, {id: urlObj.taxon.id, allowAddToSample: false});
-        });
-        
-        
-        container.add(label);
-    } 
-   
+    var label = Ti.UI.createLabel({
+        color: "white",
+        font: { fontSize:"20dp" },
+        shadowColor: Alloy.CFG.colors.black,
+        shadowOffset: {x:"5", y:"5"},
+        shadowRadius: "3dp",
+        text: urlObj.taxon.name,
+        width: Ti.UI.SIZE,
+        height: Ti.UI.SIZE,
+        top: "50dp"
+    });
+    label.addEventListener("click", function() {
+        Topics.fireTopicEvent(Topics.JUMPTO, {id: urlObj.taxon.id, allowAddToSample: false});
+    });
+    container.add(label);
+
     imageView.addEventListener("postlayout", function setSize() {
         imageView.height = $.scrollView.size.height;
     });
@@ -135,57 +107,13 @@ photos.forEach( (url => {
     $.scrollView.addView(view);
 }));
 
-$.scrollView.bottom = ( showPager && photos.length > 1 ? Layout.PAGER_HEIGHT : 0 );
-
-// Create a dot view
-function createDot(i) {
-	var dot = Ti.UI.createView( {
-        accessibilityLabel: `Jump To Photo ${i}`,
-		backgroundImage: '/images/dot.png',
-		width: Layout.PAGER_DOT_SIZE,
-		height: Layout.PAGER_DOT_SIZE,
-		left: Layout.WHITESPACE_GAP,
-		bottom: '2dip',
-		opacity: 0.5} );
-	return dot;
-}
-
-// Update current page
-function updateCurrentPage( dots, selPage ) {
-    $.scrollView.accessibilityLabel = `Photo ${selPage+1}`;
-	for( var i = 0; i < dots.length; i++ ) {
-		dots[i].opacity = ( selPage === i ? 1.0 : 0.5 );
-	}
-}
-function scrollEvent(e) {
-    if (allPhotos)
-        updatePhotoView();
-    if ( e.currentPage !== lastPage && dots ) {
-        updateCurrentPage( dots, e.currentPage );
-        lastPage = e.currentPage;
-    }
-}
-
-if ( showPager && photos.length > 1 ) {
-    var pager = Ti.UI.createView({
-        width: Ti.UI.SIZE,
-        height: Layout.PAGER_HEIGHT,
-        backgroundColor: 'black',
-        bottom: 0,
-        layout: 'horizontal',
-        horizontalWrap: 'false'
-    });
-
-    var dots = [];
-    _(photos).each( function(p,i) {
-        var dot = createDot(i);
-        dots.push( dot );
-        pager.add( dot );
-    });
-    $.content.add( pager );
-
-    var lastPage = $.scrollView.currentPage;
-    updateCurrentPage( dots, lastPage );
+// No dot row, and no page number in the accessibility label: the window keeps
+// growing and sliding as the reader pages on, so an index into it names a
+// different photo from one moment to the next. The label stays the screen's name
+// (set in the view); the PhotoViewer, which knows how many photos it has, is the
+// one that counts them.
+function scrollEvent() {
+    updatePhotoView();
 }
 
 $.closeButton.on("close", () => Topics.fireTopicEvent( Topics.BACK ) );

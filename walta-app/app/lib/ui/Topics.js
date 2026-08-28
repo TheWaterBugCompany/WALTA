@@ -82,6 +82,8 @@ var topics = {
 	// A graded training taxon: what the reader chose, beside what was expected.
 	TAXON_COMPARISON: 'taxoncomparison',
 
+	PHOTO_VIEWER: 'photoviewer',
+
 	ABOUT: 'about',
 
 	ACADEMY: 'academy',

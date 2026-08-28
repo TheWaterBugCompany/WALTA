@@ -353,8 +353,8 @@ function chooseFromGallery(e) {
 function openGallery(e) {
     e.cancelBubble = true;
     if ( $.magnify.visible ) {
-        info(`opening gallery photoUrls: ${JSON.stringify($.photoUrls)}`);
-        Topics.fireTopicEvent( Topics.GALLERY, { photos: $.photoUrls, showPager: true }  );
+        info(`opening photo viewer photoUrls: ${JSON.stringify($.photoUrls)}`);
+        Topics.fireTopicEvent( Topics.PHOTO_VIEWER, { photos: $.photoUrls } );
     }
 }
 
