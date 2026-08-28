@@ -101,6 +101,7 @@ class AndroidEmulatorLauncher {
   async clearVisualCaptureFiles(appId, opts) { await this.connect(); return this._inner.clearVisualCaptureFiles(appId, opts); }
   async screenshotFramebuffer(destPath) { await this.connect(); return this._inner.screenshotFramebuffer(destPath); }
   async captureDiagnostics(appId) { await this.connect(); return this._inner.captureDiagnostics(appId); }
+  async foregroundWindow() { await this.connect(); return this._inner.foregroundWindow(); }
   async describeDevice() { await this.connect(); return this._inner.describeDevice(); }
   getDriver() { return null; }
 }
