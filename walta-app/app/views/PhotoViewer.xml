@@ -1,0 +1,7 @@
+<Alloy>
+	<View id="content">
+		<Require id="closeButton" src="CloseButton"/>
+		<ScrollableView id="scrollView" showPagingControl="false"/>
+		<View id="pager" class="photoPager"/>
+	</View>
+</Alloy>
