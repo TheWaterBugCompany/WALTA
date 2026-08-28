@@ -270,9 +270,9 @@ module.exports = function(grunt) {
       const tasks = [];
 
       if ( ! grunt.option('skip-build') ) {
-        // Always regenerated, never cached against the template's mtime: what it
-        // should contain depends on whether this run is capturing screens, which
-        // an mtime can't see.
+        // Regenerated every build rather than cached against the template's
+        // mtime: the old newer: task compared the generated file to the template
+        // and so could not see the maps key change.
         tasks.push('generate-tiapp');
         tasks.push(`exec:build:${platform}:${build_type}`);
       }
@@ -944,25 +944,17 @@ module.exports = function(grunt) {
       return report;
     }
 
-    // Writes walta-app/tiapp.xml from the committed template: the maps key goes
-    // in, and a build the visual suite captures from is narrowed to one landscape
-    // so iOS has no ambiguity to re-resolve. See build-utils/tiappConfig.js.
+    // Writes walta-app/tiapp.xml from the committed template, substituting the
+    // maps key. Every build gets the same plist — the visual suite pins the
+    // orientation it captures in from the runner, not from the build.
     grunt.registerTask('generate-tiapp', function () {
       const done = this.async();
       const fs = require('fs');
-      // Keyed on --visual rather than the build type: `test-sim` is what both the
-      // visual suite and a plain `--simulator debug` run build, and only the
-      // former should have its orientations narrowed. Read at run time because
-      // visual-test sets the option after this task's config is built.
-      const singleLandscape = !!grunt.option('visual');
       import('./build-utils/tiappConfig.js').then(({ renderTiapp }) => {
         fs.writeFileSync('./walta-app/tiapp.xml', renderTiapp(
           fs.readFileSync('./walta-app/tiapp.xml.template', 'utf8'),
-          { mapsApiKey: process.env.GOOGLE_MAPS_API_KEY, singleLandscape },
+          { mapsApiKey: process.env.GOOGLE_MAPS_API_KEY },
         ));
-        if (singleLandscape) {
-          grunt.log.writeln('tiapp.xml: capture build declares one landscape');
-        }
         done();
       }).catch(err => { grunt.fail.fatal(err); done(); });
     });
