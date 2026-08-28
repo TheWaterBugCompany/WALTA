@@ -230,21 +230,40 @@ describe("collectHandshake foreign windows", function () {
         expect(result.count).to.equal(1);
     });
 
-    it("fails the run and names the window when the dialog never clears", async function () {
+    // The runner holds the screen until it is acked, so there is nothing to race:
+    // the host's own timeout is the only clock. An earlier version had a second
+    // one — a fixed attempt budget — which failed a leg five seconds in while an
+    // emulator was still bringing the app to the foreground.
+    it("keeps grabbing while a window is in the way, and names it when the run times out", async function () {
         const launcher = fakeLauncherWithWindows([["Menu.ready"]], [ANR_DIALOG]);
         const { now, sleep } = fakeClock();
         let err;
         try {
             await collectHandshake({
-                launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-                obscuredAttempts: 3,
+                launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 3000, pollMs: 100, now, sleep,
                 looksBlank: async () => false,
             });
         } catch (e) { err = e; }
         expect(err).to.be.an("error");
-        expect(err.message).to.match(/Menu was shot behind another window 3 times/);
+        expect(err.message).to.match(/timed out after 3s/);
         expect(err.message).to.contain("Application Not Responding: com.google.android.apps.nexuslauncher");
         expect(launcher.acks).to.be.empty;
+        expect(launcher.shots.length, "should have kept grabbing, not stopped at a budget").to.be.greaterThan(5);
+    });
+
+    // A 600s run polling five times a second would otherwise write 3000 identical
+    // lines; the transition is the part worth reading.
+    it("reports the window once rather than on every poll", async function () {
+        const launcher = fakeLauncherWithWindows([["Menu.ready"]], [ANR_DIALOG]);
+        const { now, sleep } = fakeClock();
+        const lines = [];
+        try {
+            await collectHandshake({
+                launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 3000, pollMs: 100, now, sleep,
+                looksBlank: async () => false, log: (m) => lines.push(m),
+            });
+        } catch (_) { /* expected */ }
+        expect(lines.filter((l) => l.includes("behind"))).to.have.length(1);
     });
 
     // iOS has no equivalent of dumpsys, so its launcher answers nothing and the
