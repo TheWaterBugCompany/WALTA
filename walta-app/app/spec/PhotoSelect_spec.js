@@ -2,6 +2,8 @@ require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
 var { wrapViewInWindow, waitForTick, waitForEvent, waitFor, closeWindow, windowOpenTest, checkTestResult } = require('spec/util/TestUtils');
 var { simulatePhotoCapture } = require("spec/mocks/MockCamera");
+var { actionFiresTopicTest } = require('spec/util/TestUtils');
+var Topics = require('ui/Topics');
 
 describe('PhotoSelect controller', function() { 
 	var win, vw, pv;
@@ -127,6 +129,23 @@ describe('PhotoSelect controller', function() {
 			expect( pv.photoSelectOptionalLabel.visible, "photoSelectOptionalLabel visible"  ).to.be.true;
 			expect( pv.photoSelectLabel.visible, "photoSelectLabel invisible"  ).to.be.false;
 		}) );
+	});
+
+	// Zooming a photo the user is looking at opens the viewer, not the key-browsing
+	// gallery — the two screens stopped sharing a topic so neither can reach the
+	// other's behaviour.
+	it('should open the photo viewer on the photos it is showing', async function() {
+		makePhotoSelect( true, [
+			'/spec/resources/simpleKey1/media/amphipoda_01.jpg',
+			'/spec/resources/simpleKey1/media/amphipoda_02.jpg'
+		]);
+		// Registered before the window opens: the photos are processed as it opens,
+		// and the magnify is visible before they are ready to hand over.
+		var loaded = new Promise( (resolve) => pv.on("loaded", resolve) );
+		await windowOpenTest( win );
+		await loaded;
+		var data = await actionFiresTopicTest( pv.magnify, 'click', Topics.PHOTO_VIEWER );
+		expect( data.photos ).to.have.length( 2 );
 	});
 
 	it('should show a gallery import button alongside the camera when editable', function(done) {

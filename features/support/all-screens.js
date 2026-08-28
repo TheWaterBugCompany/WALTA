@@ -9,6 +9,7 @@ const SampleScreen = require('./screens/sample-screen.js');
 const SiteDetailsScreen = require('./screens/site-details-screen.js');
 const HabitatScreen = require('./screens/habitat-screen.js');
 const GalleryScreen = require('./screens/gallery-screen.js');
+const PhotoViewerScreen = require('./screens/photo-viewer-screen.js');
 const EditTaxonScreen = require('./screens/edit-taxon-screen.js');
 const PhotoSelectScreen = require('./screens/photo-select-screen.js');
 const CameraScreen = require('./screens/camera-screen.js');
@@ -37,6 +38,7 @@ function setUpWorld(world) {
     world.siteDetails = new SiteDetailsScreen( world );
     world.habitat = new HabitatScreen( world );
     world.gallery = new GalleryScreen( world );
+    world.photoViewer = new PhotoViewerScreen( world );
     world.editTaxon = new EditTaxonScreen( world) ;
     world.photoSelect = new PhotoSelectScreen( world );
     world.camera = new CameraScreen( world );

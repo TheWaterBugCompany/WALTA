@@ -95,6 +95,7 @@ async function startApp(options) {
   // openModal does not thread the survey context the way onOpenView does, so the
   // key this screen resolves both taxa through is supplied here.
   routePromise(Topics.TAXON_COMPARISON, (data) => Navigation.openModal("TaxonComparison", extend(data, { key: Key })));
+  routePromise(Topics.PHOTO_VIEWER,  (data) =>  Navigation.openController("PhotoViewer", data));
   routePromise(Topics.HELP,  (data) =>  Navigation.openController("Help", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ABOUT,  (data) =>  Navigation.openController("About", extend(data, { keyUrl: Key.url })));
   routePromise(Topics.ACADEMY,  () =>  Navigation.openModal("Academy"));

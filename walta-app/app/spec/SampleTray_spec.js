@@ -866,8 +866,8 @@ describe( 'SampleTray controller', function() {
 
     async function openGallery() {
       return new Promise( (resolve) => {
-        Topics.subscribe( Topics.GALLERY, function handler(data) {
-          Topics.unsubscribe( Topics.GALLERY, handler);
+        Topics.subscribe( Topics.PHOTO_VIEWER, function handler(data) {
+          Topics.unsubscribe( Topics.PHOTO_VIEWER, handler);
           resolve(data.photos[0]);
             
         });
@@ -956,7 +956,7 @@ describe( 'SampleTray controller', function() {
       expect( SampleTray.editTaxon.isDefaultPhoto() ).to.be.true;
     });
 
-    it('should open the gallery with the correct temporary image url', async function() { 
+    it('should open the photo viewer with the correct temporary image url', async function() { 
       await openSampleTrayToEdit(1);
       await simulateUserEdit(21, "/spec/resources/simpleKey1/media/amphipoda_01.jpg");
       var photoUrl = await openGallery();
