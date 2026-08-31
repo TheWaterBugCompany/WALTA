@@ -7,7 +7,7 @@
 		<View id="frame" class="galleryFrame">
 			<ImageView id="photo" class="galleryPhoto"/>
 			<!-- Only a key-browsing owner names the taxon; a media viewer leaves this
-			     hidden, so it is also the only tappable thing on the page. -->
+			     hidden. The photo carries the same tap, being the larger target. -->
 			<Label id="taxonLabel" class="galleryTaxonLabel"/>
 		</View>
 	</ScrollView>

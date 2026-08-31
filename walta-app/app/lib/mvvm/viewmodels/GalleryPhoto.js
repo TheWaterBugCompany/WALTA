@@ -61,16 +61,18 @@ class GalleryPhotoViewModel extends ChangeNotifier {
 
   // Both halves matter: an owner willing to navigate and a photo that carries
   // somewhere to navigate to.
-  get labelVisible() {
+  get navigable() {
     return typeof this._owner.navigateTo === "function" && this._page.taxon != null;
   }
 
+  get labelVisible() { return this.navigable; }
+
   get accessibilityLabel() {
-    return this.labelVisible ? `Show ${this.taxonName}` : "";
+    return this.navigable ? `Show ${this.taxonName}` : "";
   }
 
   tap() {
-    if (!this.labelVisible) { return; }
+    if (!this.navigable) { return; }
     this._owner.navigateTo(this._page.taxon);
   }
 }
