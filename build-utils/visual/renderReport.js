@@ -142,14 +142,13 @@ const STYLE = `
   --bg: #f6f7f9; --panel: #fff; --ink: #14181d; --muted: #5f6b7a; --line: #dfe3e8;
   --pass: #2f9e5e; --fail: #d64545; --new: #2f6fd0; --missing: #b9761f; --absent: #8a94a2; --updated: #6b4fd0;
   --shadow: 0 1px 3px rgba(16,22,30,.12);
-  --w: 240px; --head-h: 84px; --letterbox: #e9edf1;
+  --w: 240px; --head-h: 84px; --matte: #8c8c8c;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #14181d; --panel: #1b2027; --ink: #e8ecf1; --muted: #97a2b0; --line: #2b323b;
     --pass: #4cc07d; --fail: #ff6b6b; --new: #6ba4ff; --missing: #e0a34c; --absent: #7d879a; --updated: #a98cff;
     --shadow: 0 1px 3px rgba(0,0,0,.45);
-    --letterbox: #10141a;
   }
 }
 * { box-sizing: border-box; }
@@ -217,11 +216,13 @@ tbody tr[data-status="fail"] th span { color: var(--fail); }
 td.cell { padding: 4px 4px 10px; vertical-align: top; }
 /* Every cell is the same box, whatever the device's aspect ratio — a ragged grid
    is much harder to scan than a letterboxed one, and letterboxing keeps each
-   capture undistorted. */
+   capture undistorted. The padding keeps the matte showing even when a capture's
+   aspect matches the cell, so a device's own black bars end somewhere visible
+   rather than reading as a black border on the screenshot. */
 .shot {
   margin: 0; display: grid; place-items: center; cursor: zoom-in; border-radius: 6px;
-  width: var(--w); aspect-ratio: 16 / 9;
-  border: 2px solid transparent; background: var(--letterbox); box-shadow: var(--shadow); overflow: hidden;
+  width: var(--w); aspect-ratio: 16 / 9; padding: 6px;
+  border: 2px solid transparent; background: var(--matte); box-shadow: var(--shadow); overflow: hidden;
 }
 .shot:focus-visible { outline: 2px solid var(--new); outline-offset: 2px; }
 .shot img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -261,7 +262,7 @@ td.cell { padding: 4px 4px 10px; vertical-align: top; }
 .lightbox-panes { flex: 1; display: flex; align-items: center; gap: 12px; padding: 16px; overflow: auto; }
 .pane { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .pane h2 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: #97a2b0; }
-.pane img { width: 100%; height: auto; border-radius: 4px; background: #000; }
+.pane img { width: 100%; height: auto; border-radius: 4px; background: var(--matte); padding: 8px; }
 `;
 
 const SCRIPT = `
