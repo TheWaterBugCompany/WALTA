@@ -3,6 +3,7 @@ var Dialogs = require("logic/Dialogs");
 var PlatformSpecific = require("logic/PlatformSpecific");
 var { View } = require("logic/View");
 var SampleHistorySource = require("logic/SampleHistorySource");
+var PhotoUtils = require("util/PhotoUtils");
 
 // A complete-enough services bag for specs that boot the app through a screen on
 // the View seam. Screen controllers build their view-models from this bag, so it
@@ -22,6 +23,7 @@ function makeTestServices(overrides) {
     topics: Topics,
     dialogs: Dialogs,
     platform: PlatformSpecific,
+    photoSize: PhotoUtils.photoSize,
     environment: Alloy.CFG.environment,
     version: Ti.App.version,
   }, overrides);

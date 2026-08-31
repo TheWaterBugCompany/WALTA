@@ -11,7 +11,7 @@ describe("PhotoViewerViewModel", function () {
     const PHOTOS = ["/a.jpg", "/b.jpg", "/c.jpg"];
 
     function build(photos) {
-        return new PhotoViewerViewModel({ photos: photos || PHOTOS });
+        return new PhotoViewerViewModel({ photos: photos || PHOTOS, photoSize: () => ({ width: 1024, height: 683 }) });
     }
 
     it("shows a page per photo", function () {

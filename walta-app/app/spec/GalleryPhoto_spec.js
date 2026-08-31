@@ -4,6 +4,7 @@ var { closeWindow, wrapViewInWindow, windowOpenTest, waitFor } = require("spec/u
 var { View } = require("logic/View");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
 var GalleryPhotoViewModel = require("mvvm/viewmodels/GalleryPhoto");
+var PhotoUtils = require("util/PhotoUtils");
 
 // Renders one page of the photo pager through the View seam (createComponent →
 // the Titanium-free component controller's bind). Which owner mounted the page
@@ -22,7 +23,7 @@ describe("GalleryPhoto component", function () {
 	function taxonLabel() { return frame().children[1]; }
 
 	function render(owner, taxon) {
-		var vm = new GalleryPhotoViewModel(owner, { key: PHOTO, url: PHOTO, taxon: taxon });
+		var vm = new GalleryPhotoViewModel(owner, { key: PHOTO, url: PHOTO, taxon: taxon }, PhotoUtils.photoSize);
 		view = new View(makeTestServices());
 		comp = view.createComponent("GalleryPhoto", { rowVm: vm });
 		win = wrapViewInWindow(comp.view);

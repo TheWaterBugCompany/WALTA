@@ -4,24 +4,47 @@ const ChangeNotifier = require("../../util/ChangeNotifier");
 // key-browsing Gallery or the media-zooming PhotoViewer. Titanium-free.
 //
 class GalleryPhotoViewModel extends ChangeNotifier {
-  constructor(owner, page) {
+  constructor(owner, page, photoSize) {
     super();
     this._owner = owner;
     this._page = page;
+    this._photoSize = photoSize;
     this._viewport = null;
   }
 
-  // Titanium will not fit a photo to a box: an ImageView given both dimensions
-  // stretches to them. Given a *number* for one and left to work out the other it
-  // keeps the photo's proportions — so the page reports the height it has and the
-  // photo takes it, which is what the screen did before it was a component.
+  // Titanium will not fit a photo to a box: given both dimensions it stretches to
+  // them, and what it does with only one set varies by platform and by what the
+  // page happens to be mounted in. So the scaling is arithmetic here rather than
+  // a layout Titanium is asked to infer — the same sum PhotoSelect.fitToView does.
   setViewport(size) {
-    if (!size || !(size.height > 0) || (this._viewport && this._viewport.height === size.height)) { return; }
+    if (!size || !(size.width > 0) || !(size.height > 0)) { return; }
+    if (this._viewport && this._viewport.width === size.width && this._viewport.height === size.height) { return; }
     this._viewport = size;
     this.notifyListeners();
   }
 
-  get photoHeight() { return this._viewport ? this._viewport.height : "100%"; }
+  // Scaled to fill the screen without cropping or distorting: the smaller of the
+  // two ratios, so the photo grows until one dimension runs out. For a specimen
+  // photo on a landscape-locked screen that is nearly always the height, but a
+  // photo wider in proportion than the screen would run off its sides at full
+  // height, and then the width is what binds.
+  get _fitted() {
+    if (!this._viewport) { return null; }
+    var source = this._sourceSize();
+    var scale = Math.min(this._viewport.width / source.width, this._viewport.height / source.height);
+    return { width: Math.round(source.width * scale), height: Math.round(source.height * scale) };
+  }
+
+  // Read once: a page is memoised against its photo, so its proportions never change.
+  _sourceSize() {
+    if (!this._source) { this._source = this._photoSize(this._page.url); }
+    return this._source;
+  }
+
+  // Before the page has been measured it fills what it is in — a photo that has
+  // not been laid out yet is better full-bleed for an instant than absent.
+  get photoWidth() { return this._fitted ? this._fitted.width : "100%"; }
+  get photoHeight() { return this._fitted ? this._fitted.height : "100%"; }
 
   // The component the collection builds for this page, and the key it diffs on —
   // the photo's own url, so a window that slides keeps the views it still holds.
