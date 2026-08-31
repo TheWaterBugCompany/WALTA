@@ -23,6 +23,39 @@ describe("GalleryPhotoViewModel", function () {
         return Object.assign({ key: "/photos/a.jpg", url: "/photos/a.jpg", taxon: null }, overrides);
     }
 
+    // Titanium will not fit a photo to a box: given both dimensions it stretches to
+    // them, and given a number for one it works the other out from the photo's own
+    // proportions. So the page takes the height it is measured at and lets the
+    // width follow.
+    describe("sizing", function () {
+        it("fills its box until it has been measured", function () {
+            expect(new GalleryPhotoViewModel(viewingOwner(), page()).photoHeight).to.equal("100%");
+        });
+
+        it("takes the height it is told", function () {
+            const vm = new GalleryPhotoViewModel(viewingOwner(), page());
+            vm.setViewport({ width: 874, height: 402 });
+            expect(vm.photoHeight).to.equal(402);
+        });
+
+        // Titanium emits a postlayout before the frame has converged; a zero-height
+        // reading would collapse the photo rather than size it.
+        it("ignores a reading taken before the frame has a height", function () {
+            const vm = new GalleryPhotoViewModel(viewingOwner(), page());
+            vm.setViewport({ width: 874, height: 0 });
+            expect(vm.photoHeight).to.equal("100%");
+        });
+
+        it("does not redraw for a repeated reading of the same height", function () {
+            const vm = new GalleryPhotoViewModel(viewingOwner(), page());
+            vm.setViewport({ width: 874, height: 402 });
+            let notified = 0;
+            vm.addListener(() => notified++);
+            vm.setViewport({ width: 874, height: 402 });
+            expect(notified).to.equal(0);
+        });
+    });
+
     it("shows the photo it was given", function () {
         const vm = new GalleryPhotoViewModel(viewingOwner(), page({ url: "/photos/b.jpg" }));
         expect(vm.image).to.equal("/photos/b.jpg");

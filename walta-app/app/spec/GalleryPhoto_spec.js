@@ -61,6 +61,23 @@ describe("GalleryPhoto component", function () {
 		expect(taxonLabel().visible).to.be.false;
 	});
 
+	// Two ways to get this wrong, and the component had both: a page laid out at the
+	// image's own pixel size overflows the window and is clipped, and a photo given
+	// both dimensions is stretched to them. amphipoda_01.jpg is 1024x683.
+	it("fits the whole photo on the screen, in its own proportions", async () => {
+		await render(viewingOwner(), null);
+		await waitFor(function () { return photo().rect.height > 0; });
+		var shown = photo().rect, screen = win.rect;
+		expect(shown.x + shown.width, "photo fits within the screen").to.be.at.most(screen.width + 1);
+		expect(shown.width / shown.height, "photo keeps its source proportions").to.be.closeTo(1024 / 683, 0.05);
+	});
+
+	it("uses the full height of the screen it is on", async () => {
+		await render(viewingOwner(), null);
+		await waitFor(function () { return photo().rect.height > 0; });
+		expect(photo().rect.height, "photo is as tall as the window").to.be.closeTo(win.rect.height, 1);
+	});
+
 	// The zoom mechanism is the only thing that differs by platform, and it is
 	// declared in TSS rather than built in JS — so it is worth proving the
 	// qualifiers actually applied on the platform running this.
