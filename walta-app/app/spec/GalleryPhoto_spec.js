@@ -73,7 +73,9 @@ describe("GalleryPhoto component", function () {
 	// both dimensions is stretched to them. amphipoda_01.jpg is 1024x683.
 	it("fits the whole photo on the screen, in its own proportions", async () => {
 		await render(viewingOwner(), null);
-		await waitFor(function () { return photo().rect.height > 0; });
+		// The page asks for a size and Titanium lays it out; assert on what was
+		// drawn, once it has caught up with what was asked for.
+		await waitFor(function () { return Math.abs(photo().rect.width - vm.photoWidth) <= 1; });
 		var shown = photo().rect, screen = win.rect;
 		// The numbers go in the message: a bare ratio says the layout is wrong
 		// without saying which of the frame, the measurement or the sum produced it.
@@ -87,7 +89,7 @@ describe("GalleryPhoto component", function () {
 
 	it("uses the full height of the screen it is on", async () => {
 		await render(viewingOwner(), null);
-		await waitFor(function () { return photo().rect.height > 0; });
+		await waitFor(function () { return Math.abs(photo().rect.height - vm.photoHeight) <= 1; });
 		expect(photo().rect.height, `photo is as tall as the window — asked for ${vm.photoWidth}x${vm.photoHeight}`).to.be.closeTo(win.rect.height, 1);
 	});
 
