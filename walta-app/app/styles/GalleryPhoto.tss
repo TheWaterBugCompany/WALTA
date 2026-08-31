@@ -2,9 +2,16 @@
 // nothing else: iOS zooms by scrolling a scaled surface, Android zooms inside the
 // ImageView, so the wrapper is inert there rather than absent — one structure
 // keeps the bindings addressing one set of ids.
+// contentWidth/contentHeight are not decoration: inside a ScrollView, a FILL
+// child resolves against the *content* size, and with no content size declared
+// the content takes its measure from the image's own pixels — so the page laid
+// itself out at 1024x683 and the window clipped it. Pinning the content to the
+// viewport is what gives FILL a screen to fill.
 ".galleryZoom": {
 	width: Ti.UI.FILL,
-	height: Ti.UI.FILL
+	height: Ti.UI.FILL,
+	contentWidth: Ti.UI.FILL,
+	contentHeight: Ti.UI.FILL
 }
 
 ".galleryZoom[platform=ios]": {
@@ -24,9 +31,9 @@
 	height: Ti.UI.FILL
 }
 
+// No width: with a number for the height, Titanium works the width out from the
+// photo's own proportions. Setting both stretches it.
 ".galleryPhoto": {
-	width: Ti.UI.FILL,
-	height: Ti.UI.FILL
 }
 
 ".galleryPhoto[platform=android]": {
