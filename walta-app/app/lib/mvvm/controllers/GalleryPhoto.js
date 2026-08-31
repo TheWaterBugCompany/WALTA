@@ -7,7 +7,7 @@ const { measure } = require("util/bindView");
 
 const BINDINGS = {
   zoom:       { onPostlayout: measure("setViewport", "size") },
-  photo:      { image: "image", height: "photoHeight" },
+  photo:      { image: "image", width: "photoWidth", height: "photoHeight" },
   taxonLabel: { text: "taxonName", visible: "labelVisible", accessibilityLabel: "accessibilityLabel", onClick: "tap" },
 };
 

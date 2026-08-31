@@ -10,6 +10,7 @@ var AndroidNotificationBadge = require("logic/AndroidNotificationBadge");
 var PlatformSpecific = require("logic/PlatformSpecific");
 var UrlActions = require("UrlActions");
 var MemoryMonitor = require("util/MemoryMonitor");
+var PhotoUtils = require("util/PhotoUtils");
 var { System } = require("logic/System");
 var Dialogs = require("logic/Dialogs");
 var { View } = require("logic/View");
@@ -147,6 +148,7 @@ let services ={
   topics: Topics,
   dialogs: Dialogs,
   platform: PlatformSpecific,
+  photoSize: PhotoUtils.photoSize,
   environment: Alloy.CFG.environment,
   version: Ti.App.version
 }

@@ -31,6 +31,14 @@ function loadPhoto(path) {
     return absolutePath(path).read();
 }
 
+// The photo's own pixel dimensions. Titanium will not fit an image to a box, so
+// anything that wants to scale one has to do the arithmetic itself — and the
+// arithmetic needs these two numbers. PhotoSelect.fitToView reads them the same way.
+function photoSize(path) {
+    var photo = loadPhoto(path);
+    return { width: photo.width, height: photo.height };
+}
+
 function savePhoto( blob, filename  ) {
     var photoPath = absolutePath(filename);
     info(`saving photo to ${photoPath.nativePath}`);
@@ -107,4 +115,5 @@ exports.absolutePath = absolutePath;
 exports.optimisePhoto = optimisePhoto;
 exports.savePhoto = savePhoto;
 exports.loadPhoto = loadPhoto;
+exports.photoSize = photoSize;
 exports.needsOptimising = needsOptimising;

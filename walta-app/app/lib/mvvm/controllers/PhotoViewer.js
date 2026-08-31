@@ -22,7 +22,7 @@ const BINDINGS = {
 };
 
 module.exports = function createPhotoViewerController({ view, services, bindView, args }) {
-  const vm = new PhotoViewerViewModel({ photos: args.photos, topics: services.topics });
+  const vm = new PhotoViewerViewModel({ photos: args.photos, topics: services.topics, photoSize: services.photoSize });
   const unbind = bindView(view, vm, BINDINGS);
   return {
     vm,

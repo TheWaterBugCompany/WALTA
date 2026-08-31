@@ -11,9 +11,10 @@ const PagerDotViewModel = require("./PagerDot");
 // can offer a way into the key, whatever shape its photos arrive in. The
 // key-browsing screen is the one that offers it.
 class PhotoViewerViewModel extends ChangeNotifier {
-  constructor({ photos, topics }) {
+  constructor({ photos, topics, photoSize }) {
     super();
     this._topics = topics;
+    this._photoSize = photoSize;
     this._pager = new PhotoPagerViewModel({ photos });
     this._pagesByKey = new Map();
     this._dots = photos.map((_, i) => new PagerDotViewModel(i));
@@ -25,7 +26,7 @@ class PhotoViewerViewModel extends ChangeNotifier {
   get pages() {
     return this._pager.pages.map((page) => {
       if (!this._pagesByKey.has(page.key)) {
-        this._pagesByKey.set(page.key, new GalleryPhotoViewModel(this, page));
+        this._pagesByKey.set(page.key, new GalleryPhotoViewModel(this, page, this._photoSize));
       }
       return this._pagesByKey.get(page.key);
     });
