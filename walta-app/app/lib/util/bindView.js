@@ -430,6 +430,12 @@ function attachMeasure(widget, eventName, vm, ref) {
     cancelTimer(); // a fresh layout supersedes any in-flight retry chain
     poll(0);
   });
+  // A widget can already be laid out by the time its bindings are wired, and
+  // Android does not fire postlayout again for one that has — so waiting only for
+  // the event means never reading it at all. Start from whatever is on screen now;
+  // an unsettled reading falls through to the same retry chain, and a real layout
+  // event supersedes it.
+  poll(0);
   return function () {
     cancelTimer();
     detachEvent();

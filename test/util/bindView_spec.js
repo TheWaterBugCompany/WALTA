@@ -343,6 +343,14 @@ describe("bindView", function () {
       });
     }
 
+    // Android does not fire postlayout again for a widget that was already laid out
+    // when its bindings were wired, so a binding that only listens never reads it.
+    it("reads a widget that was already laid out before it was bound", function () {
+      $.label.size = { width: 10, height: 20 };
+      bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
+      expect(vm.viewport).to.deep.equal({ width: 10, height: 20 });
+    });
+
     it("reads the property and calls the setter once when the reading is usable", function () {
       $.label.size = { width: 10, height: 20 };
       bindView($, vm, { label: { onPostlayout: measure("setViewport", "size") } });
