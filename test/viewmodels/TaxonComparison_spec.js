@@ -131,6 +131,7 @@ describe("TaxonComparisonViewModel", function () {
             incorrect().activate();
             expect(jumps).to.have.length(1);
         });
+
     });
 
     it("closes when dismissed", function () {
@@ -141,15 +142,22 @@ describe("TaxonComparisonViewModel", function () {
         expect(closed).to.equal(1);
     });
 
-    // Browsing out to a taxon from here must not offer to add it to the sample:
-    // this screen is feedback on an assessment, not an identification step.
     // Tapping a card browses to that taxon — feedback on an assessment, not a
     // step in an identification, so it must not offer to add it to the sample.
     it("browses to the tapped taxon without offering to add it to the sample", function () {
         const jumps = [];
         Topics.subscribe(Topics.JUMPTO, (e) => jumps.push(e));
         incorrect().cards[0].open();
-        expect(jumps).to.deep.equal([{ id: "WB2", allowAddToSample: false }]);
+        expect(jumps[0].allowAddToSample).to.be.false;
+    });
+
+    // The key browses by ref, not by taxonId — the two are separate id spaces, and
+    // handed the wrong one the key finds neither a node nor a taxon and throws.
+    it("browses out by the taxon's ref, not its taxonId", function () {
+        const jumps = [];
+        Topics.subscribe(Topics.JUMPTO, (e) => jumps.push(e));
+        incorrect().cards[0].open();
+        expect(jumps[0].id).to.equal("anisops-ref");
     });
 
     it("shows no photo for a taxon that has none, rather than a broken one", function () {
