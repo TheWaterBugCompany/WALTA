@@ -86,7 +86,7 @@ class TaxonComparisonViewModel extends ChangeNotifier {
       photoUrl: taxon.photoUrls.length > 0 ? taxon.photoUrls[0] : null,
       // Feedback on an assessment, not a step in an identification — so browsing
       // out to a taxon from here must not offer to add it to the sample.
-      onOpen: () => this._topics.fireTopicEvent(this._topics.JUMPTO, { id: taxonId, allowAddToSample: false }),
+      onOpen: () => this._topics.fireTopicEvent(this._topics.JUMPTO, { id: this._refOf(taxonId), allowAddToSample: false }),
     });
   }
 }
