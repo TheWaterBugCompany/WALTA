@@ -365,10 +365,6 @@ function locationEntry() {
 	};
 }
 
-function leafletMap() {
-	return {};
-}
-
 function iosSurveyDatePicker() {
 	return { date: FIXED_DATE_VALUE };
 }
@@ -545,7 +541,6 @@ module.exports = [
 	{ name: "PhotoSelect", args: photoSelect, wrap: true },
 	{ name: "EditTaxon", args: editTaxon, wrap: true },
 	{ name: "LocationEntry", args: locationEntry, wrap: true, loadMs: 2000 },
-	{ name: "LeafletMap", args: leafletMap, wrap: true, loadMs: 2000 },
 	// iOS only: the inline date picker crashes Titanium's Android
 	// TextInputLayout, so Android never instantiates this modal.
 	{ name: "IosSurveyDatePicker", args: iosSurveyDatePicker, wrap: true, platform: "ios" },
