@@ -12,7 +12,7 @@ var PhotoUtils = require("util/PhotoUtils");
 // (test/viewmodels/GalleryPhoto_spec.js) — here it is the on-device rendering and
 // the platform split of the zoom surface.
 describe("GalleryPhoto component", function () {
-	var view, comp, win;
+	var view, comp, win, vm;
 
 	var PHOTO = "/spec/resources/simpleKey1/media/amphipoda_01.jpg";
 	var TAXON = { id: "t1", name: "Anisops" };
@@ -23,7 +23,7 @@ describe("GalleryPhoto component", function () {
 	function taxonLabel() { return frame().children[1]; }
 
 	function render(owner, taxon) {
-		var vm = new GalleryPhotoViewModel(owner, { key: PHOTO, url: PHOTO, taxon: taxon }, PhotoUtils.photoSize);
+		vm = new GalleryPhotoViewModel(owner, { key: PHOTO, url: PHOTO, taxon: taxon }, PhotoUtils.photoSize);
 		view = new View(makeTestServices());
 		comp = view.createComponent("GalleryPhoto", { rowVm: vm });
 		win = wrapViewInWindow(comp.view);
@@ -69,14 +69,20 @@ describe("GalleryPhoto component", function () {
 		await render(viewingOwner(), null);
 		await waitFor(function () { return photo().rect.height > 0; });
 		var shown = photo().rect, screen = win.rect;
-		expect(shown.x + shown.width, "photo fits within the screen").to.be.at.most(screen.width + 1);
-		expect(shown.width / shown.height, "photo keeps its source proportions").to.be.closeTo(1024 / 683, 0.05);
+		// The numbers go in the message: a bare ratio says the layout is wrong
+		// without saying which of the frame, the measurement or the sum produced it.
+		var seen = `window ${screen.width}x${screen.height}`
+			+ `, frame ${frame().rect.width}x${frame().rect.height}`
+			+ `, photo ${shown.width}x${shown.height}`
+			+ `, asked for ${vm.photoWidth}x${vm.photoHeight}`;
+		expect(shown.x + shown.width, `photo fits within the screen — ${seen}`).to.be.at.most(screen.width + 1);
+		expect(shown.width / shown.height, `photo keeps its source proportions — ${seen}`).to.be.closeTo(1024 / 683, 0.05);
 	});
 
 	it("uses the full height of the screen it is on", async () => {
 		await render(viewingOwner(), null);
 		await waitFor(function () { return photo().rect.height > 0; });
-		expect(photo().rect.height, "photo is as tall as the window").to.be.closeTo(win.rect.height, 1);
+		expect(photo().rect.height, `photo is as tall as the window — asked for ${vm.photoWidth}x${vm.photoHeight}`).to.be.closeTo(win.rect.height, 1);
 	});
 
 	// The zoom mechanism is the only thing that differs by platform, and it is
