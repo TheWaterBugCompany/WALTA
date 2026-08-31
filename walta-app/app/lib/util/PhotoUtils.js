@@ -34,9 +34,13 @@ function loadPhoto(path) {
 // The photo's own pixel dimensions. Titanium will not fit an image to a box, so
 // anything that wants to scale one has to do the arithmetic itself — and the
 // arithmetic needs these two numbers. PhotoSelect.fitToView reads them the same way.
+// A stored path can outlive the file it names — a stale data-container prefix, a
+// photo that never finished downloading — and the caller is only asking so it can
+// scale something it is about to fail to draw anyway. So an unreadable photo has
+// no size rather than an exception.
 function photoSize(path) {
     var photo = loadPhoto(path);
-    return { width: photo.width, height: photo.height };
+    return photo ? { width: photo.width, height: photo.height } : null;
 }
 
 function savePhoto( blob, filename  ) {

@@ -24,6 +24,22 @@ describe("PhotoViewerViewModel", function () {
 
     // The whole reason this screen is separate: no page can name a taxon or lead
     // anywhere, because the screen that owns them offers nowhere to go.
+    // Every page is fitted to the same box, and one built after the measurement
+    // must not be left unfitted just because it arrived late.
+    it("fits the pages it has to the box it was measured at", function () {
+        const vm = build();
+        vm.setViewport({ width: 874, height: 402 });
+        expect(vm.pages.map((p) => p.photoHeight)).to.deep.equal(vm.pages.map(() => 402));
+    });
+
+    it("fits a page built after the measurement too", function () {
+        const vm = build();
+        vm.setViewport({ width: 874, height: 402 });
+        void vm.pages;
+        vm.setPage(1);
+        expect(vm.pages[vm.pages.length - 1].photoHeight).to.equal(402);
+    });
+
     it("builds pages that lead nowhere", function () {
         build().pages.forEach(function (page) {
             expect(page.labelVisible, "a viewer page must not offer navigation").to.be.false;

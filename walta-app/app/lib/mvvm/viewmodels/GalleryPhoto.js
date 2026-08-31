@@ -4,18 +4,22 @@ const ChangeNotifier = require("../../util/ChangeNotifier");
 // key-browsing Gallery or the media-zooming PhotoViewer. Titanium-free.
 //
 class GalleryPhotoViewModel extends ChangeNotifier {
-  constructor(owner, page, photoSize) {
+  constructor(owner, page, photoSize, viewport) {
     super();
     this._owner = owner;
     this._page = page;
     this._photoSize = photoSize;
-    this._viewport = null;
+    this._viewport = viewport || null;
   }
 
   // Titanium will not fit a photo to a box: given both dimensions it stretches to
   // them, and what it does with only one set varies by platform and by what the
   // page happens to be mounted in. So the scaling is arithmetic here rather than
   // a layout Titanium is asked to infer — the same sum PhotoSelect.fitToView does.
+  //
+  // The box comes from the pager, not from the page's own frame. A page measuring
+  // the surface it sits in and then resizing inside it feeds its own next reading:
+  // on iOS that never settled and the screen never finished laying out.
   setViewport(size) {
     if (!size || !(size.width > 0) || !(size.height > 0)) { return; }
     if (this._viewport && this._viewport.width === size.width && this._viewport.height === size.height) { return; }
@@ -29,8 +33,8 @@ class GalleryPhotoViewModel extends ChangeNotifier {
   // photo wider in proportion than the screen would run off its sides at full
   // height, and then the width is what binds.
   get _fitted() {
-    if (!this._viewport) { return null; }
     var source = this._sourceSize();
+    if (!this._viewport || !source) { return null; }
     var scale = Math.min(this._viewport.width / source.width, this._viewport.height / source.height);
     return { width: Math.round(source.width * scale), height: Math.round(source.height * scale) };
   }

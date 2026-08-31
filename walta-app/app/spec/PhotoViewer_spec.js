@@ -63,6 +63,21 @@ describe("PhotoViewer controller", function () {
 		});
 	});
 
+	// The screen measures its pager once and fits every page to it. amphipoda_01.jpg
+	// is 1024x683; the pager is the window less the dot strip.
+	it("fits each photo to the pager it measured", async () => {
+		await open(PHOTOS);
+		await waitFor(function () { return ctl.scrollView.views.length === PHOTOS.length; });
+		var box = ctl.scrollView.rect;
+		await waitFor(function () { return vm().pages[0].photoHeight !== "100%"; });
+		var page = vm().pages[0];
+		var seen = `pager ${box.width}x${box.height}, asked for ${page.photoWidth}x${page.photoHeight}`;
+		expect(page.photoWidth / page.photoHeight, `photo keeps its source proportions — ${seen}`)
+			.to.be.closeTo(1024 / 683, 0.05);
+		expect(page.photoHeight, `photo fits the pager — ${seen}`).to.be.at.most(box.height + 1);
+		expect(page.photoWidth, `photo fits the pager — ${seen}`).to.be.at.most(box.width + 1);
+	});
+
 	it("fires BACK when the close button is clicked", async () => {
 		await open(PHOTOS);
 		await waitFor(function () { return ctl.scrollView.views.length === PHOTOS.length; });

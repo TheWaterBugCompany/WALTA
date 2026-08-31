@@ -22,12 +22,18 @@ describe("GalleryPhoto component", function () {
 	function photo() { return frame().children[0]; }
 	function taxonLabel() { return frame().children[1]; }
 
+	// A page is fitted to the box its pager measured, so the spec plays the pager:
+	// open the window, then hand the page the size it settled at.
 	function render(owner, taxon) {
 		vm = new GalleryPhotoViewModel(owner, { key: PHOTO, url: PHOTO, taxon: taxon }, PhotoUtils.photoSize);
 		view = new View(makeTestServices());
 		comp = view.createComponent("GalleryPhoto", { rowVm: vm });
 		win = wrapViewInWindow(comp.view);
-		return windowOpenTest(win);
+		return windowOpenTest(win).then(function () {
+			return waitFor(function () { return win.rect.height > 0; });
+		}).then(function () {
+			vm.setViewport({ width: win.rect.width, height: win.rect.height });
+		});
 	}
 
 	function browsingOwner() {
