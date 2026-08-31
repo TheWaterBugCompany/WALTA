@@ -3,10 +3,7 @@
 // owner leaves the label hidden, so the page has nothing to tap. The VM owns the
 // navigation intent, so neither screen wires anything per photo.
 // See docs/patterns/screen-controllers.md.
-const { measure } = require("util/bindView");
-
 const BINDINGS = {
-  zoom:       { onPostlayout: measure("setViewport", "size") },
   photo:      { image: "image", width: "photoWidth", height: "photoHeight" },
   taxonLabel: { text: "taxonName", visible: "labelVisible", accessibilityLabel: "accessibilityLabel", onClick: "tap" },
 };

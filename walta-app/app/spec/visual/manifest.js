@@ -85,8 +85,11 @@ function gallery() {
 	return { key: key };
 }
 
+// Leading slash: a photo path without one resolves against the data directory,
+// not resources (PhotoUtils.resolvePhotoLocation), and this screen reads the file
+// to size the photo.
 function photoViewer() {
-	var mediaResource = "spec/resources/simpleKey1/media/";
+	var mediaResource = "/spec/resources/simpleKey1/media/";
 	return {
 		photos: [mediaResource + "amphipoda_01.jpg", mediaResource + "amphipoda_02.jpg", mediaResource + "amphipoda_03.jpg"]
 	};

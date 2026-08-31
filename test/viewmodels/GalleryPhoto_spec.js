@@ -89,6 +89,14 @@ describe("GalleryPhotoViewModel", function () {
             expect(notified).to.equal(0);
         });
 
+        // A stored path can outlive its file. The page then has nothing to scale, and
+        // filling the box is better than taking the screen down with it.
+        it("fills its box when the photo cannot be read", function () {
+            const vm = new GalleryPhotoViewModel(viewingOwner(), page(), function () { return null; });
+            vm.setViewport({ width: 874, height: 402 });
+            expect(vm.photoHeight).to.equal("100%");
+        });
+
         // A page is memoised against its photo, so its proportions never change —
         // and reading them means reading the file.
         it("reads the photo's dimensions once", function () {

@@ -1,4 +1,4 @@
-const { collection, input } = require("util/bindView");
+const { collection, input, measure } = require("util/bindView");
 const PhotoViewerViewModel = require("mvvm/viewmodels/PhotoViewer");
 
 // Titanium-free screen controller for the photo viewer: a pager over the photos
@@ -13,6 +13,7 @@ const BINDINGS = {
     currentPage:        "currentPage",
     accessibilityLabel: "accessibilityLabel",
     onScrollend:        input("setPage", "currentPage"),
+    onPostlayout:       measure("setViewport", "size"),
   },
   pager: {
     dots:    collection("dots", "PagerDot"),
