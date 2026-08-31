@@ -33,11 +33,24 @@ class IosPhotoLibraryScreen extends BaseScreen {
         // doesn't dismiss). Tap the first cell and poll until the grid is gone,
         // re-tapping if the touch didn't register — the same reason the
         // permission alert is dismissed by polling rather than a one-shot tap.
-        await this.driver.waitUntil(async () => {
-            if ( !( await this.isDisplayedRaw( this.presenceSelector ) ) ) return true;
-            await this.tapFirstCell();
-            return false;
-        }, { timeout: 20000, interval: 1500, timeoutMsg: 'iOS photo picker did not dismiss after selecting the first photo' });
+        //
+        // The budget has to fit several of those taps. One measured 12.4s on a
+        // CI runner, which a 20s ceiling spent entirely on the first attempt: the
+        // re-tap this loop exists for never ran, and the failure read as "the tap
+        // did not work" when it meant "we only ever tried once".
+        var taps = 0;
+        try {
+            await this.driver.waitUntil(async () => {
+                if ( !( await this.isDisplayedRaw( this.presenceSelector ) ) ) return true;
+                await this.tapFirstCell();
+                taps++;
+                return false;
+            }, { timeout: 90000, interval: 1500, timeoutMsg: 'grid still up' });
+        } catch (e) {
+            // Say how many taps were spent: one means the budget was the problem,
+            // several means the taps themselves are not landing.
+            throw new Error(`iOS photo picker did not dismiss after ${taps} tap(s) over 90s`);
+        }
     }
 
     async tapFirstCell() {
@@ -51,6 +64,9 @@ class IosPhotoLibraryScreen extends BaseScreen {
             actions: [
                 { type: 'pointerMove', duration: 0, x: Math.round(loc.x + size.width / 2), y: Math.round(loc.y + size.height / 2) },
                 { type: 'pointerDown', button: 0 },
+                // A touch that goes down and straight back up is not always read
+                // as a tap; the dwell is part of the gesture, not a wait for state.
+                { type: 'pause', duration: 120 },
                 { type: 'pointerUp', button: 0 },
             ],
         }]);
