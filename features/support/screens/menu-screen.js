@@ -35,9 +35,12 @@ class MenuScreen extends BaseScreen {
     async selectWaterbugSurvey() {
         // The menu is only waited on for *presence* (menu.waitFor), and on iOS it
         // is still sliding/re-rendering when this fires; a one-shot tap lands on a
-        // moving/stale element and is silently dropped, leaving the app on the menu
-        // until siteDetails.waitFor times out. Tap once it is stationary.
-        await this.clickWhenStable( this.selector("Waterbug Survey") );
+        // moving/stale element and is silently dropped. Waiting for it to stop
+        // moving was not enough — a stationary menu has swallowed the tap too, and
+        // the app then sits here until SiteDetails' own waitFor fails, minutes
+        // later and blaming the wrong screen. Tap until the survey actually opens.
+        await this.clickUntil( this.selector("Waterbug Survey"),
+            () => this.world.siteDetails.isPresent() );
         await this.world.siteDetails.waitFor();
     }
     async selectArchive() {
