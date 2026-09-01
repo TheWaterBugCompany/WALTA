@@ -32,6 +32,7 @@ describe("View seam", function () {
     // still phone through a cold launch sends none, so a screen's first open
     // comes up a half turn out. See lib/ui/WindowOrientation.
     it("opens held to the landscape the interface is already in", async function () {
+      if (!OS_IOS) this.skip(); // Android pins its activities to sensorLandscape
       await view.openView("About", ABOUT_ARGS);
       opened = view.getCurrentController();
       var win = opened.getView();
