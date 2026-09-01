@@ -18,6 +18,8 @@ class TestVM extends ChangeNotifier {
   get logVisible() { return this._log; }
   get greeting() { return this._status === "idle" ? "hi" : "bye"; }
   get scrollTargetX() { return this._scrollTargetX === undefined ? 0 : this._scrollTargetX; }
+  get buttonColor() { return "#26849c"; }
+  get buttonPressedColor() { return "#17576a"; }
   get name() { return this._name === undefined ? "" : this._name; }
   set name(v) { this._name = v; this.notifyListeners(); }
   toggle() { this.toggleCount++; }
@@ -577,6 +579,89 @@ describe("bindView", function () {
     it("throws when the called name is not a function", function () {
       expect(() => bindView($, vm, { label: { onClick: call("greeting") } }))
         .to.throw(/greeting.*function/);
+    });
+  });
+
+  describe("pressed-state binding (pressable)", function () {
+    const { pressable } = bindView;
+
+    it("shows the pressed value while the widget is held down", function () {
+      bindView($, vm, { label: { backgroundColor: pressable("buttonColor", "buttonPressedColor") } });
+
+      $.label.fireEvent("touchstart");
+
+      expect($.label.backgroundColor).to.equal("#17576a");
+    });
+
+    it("returns to the resting value when the touch ends", function () {
+      bindView($, vm, { label: { backgroundColor: pressable("buttonColor", "buttonPressedColor") } });
+
+      $.label.fireEvent("touchstart");
+      $.label.fireEvent("touchend");
+
+      expect($.label.backgroundColor).to.equal("#26849c");
+    });
+
+    // A finger that slides off the control gets a touchcancel and no touchend —
+    // without it the control would stay stuck looking pressed.
+    it("returns to the resting value when the touch is cancelled", function () {
+      bindView($, vm, { label: { backgroundColor: pressable("buttonColor", "buttonPressedColor") } });
+
+      $.label.fireEvent("touchstart");
+      $.label.fireEvent("touchcancel");
+
+      expect($.label.backgroundColor).to.equal("#26849c");
+    });
+
+    it("drives every pressable property on a control from the one press", function () {
+      bindView($, vm, {
+        label: {
+          backgroundColor: pressable("buttonColor", "buttonPressedColor"),
+          title: pressable("buttonColor", "buttonPressedColor"),
+        },
+      });
+
+      $.label.fireEvent("touchstart");
+
+      expect([$.label.backgroundColor, $.label.title]).to.deep.equal(["#17576a", "#17576a"]);
+    });
+
+    it("holds the pressed value through a notify that lands mid-press", function () {
+      bindView($, vm, { label: { backgroundColor: pressable("buttonColor", "buttonPressedColor") } });
+      $.label.fireEvent("touchstart");
+
+      vm.notifyListeners();
+
+      expect($.label.backgroundColor).to.equal("#17576a");
+    });
+
+    it("leaves a plain property binding on the same control alone", function () {
+      bindView($, vm, {
+        label: { text: "greeting", backgroundColor: pressable("buttonColor", "buttonPressedColor") },
+      });
+
+      $.label.fireEvent("touchstart");
+
+      expect($.label.text).to.equal("hi");
+    });
+
+    it("unbind stops the control responding to touches", function () {
+      const unbind = bindView($, vm, { label: { backgroundColor: pressable("buttonColor", "buttonPressedColor") } });
+
+      unbind();
+      $.label.fireEvent("touchstart");
+
+      expect($.label.backgroundColor).to.equal("#26849c");
+    });
+
+    it("throws when the pressed getter doesn't exist on the VM", function () {
+      expect(() => bindView($, vm, { label: { backgroundColor: pressable("buttonColor", "nope") } }))
+        .to.throw(/nope/);
+    });
+
+    it("throws when the resting getter doesn't exist on the VM", function () {
+      expect(() => bindView($, vm, { label: { backgroundColor: pressable("nope", "buttonPressedColor") } }))
+        .to.throw(/nope/);
     });
   });
 });

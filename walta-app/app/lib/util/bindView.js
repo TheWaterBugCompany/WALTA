@@ -171,6 +171,18 @@ function isApply(ref) {
   return ref !== null && typeof ref === "object" && ref.__apply === true;
 }
 
+// Pressed-state marker: a property that takes one VM getter at rest and another
+// while the control is held down. bindView owns the touch wiring, so a control
+// can acknowledge a touch without its Alloy shell reaching for Titanium.
+//   button: { backgroundColor: pressable("buttonColor", "buttonPressedColor") }
+function pressable(getter, pressedGetter) {
+  return { __pressable: true, getter, pressedGetter };
+}
+
+function isPressable(ref) {
+  return ref !== null && typeof ref === "object" && ref.__pressable === true;
+}
+
 // The VM method name an on<Event> binding targets — a plain string handler or a
 // call()/input()/measure() marker.
 function methodOf(ref) {
@@ -178,8 +190,10 @@ function methodOf(ref) {
   return ref;
 }
 
-function propOf(ref) {
-  return isTwoWay(ref) ? ref.prop : ref;
+function propOf(ref, isPressed) {
+  if (isTwoWay(ref)) return ref.prop;
+  if (isPressable(ref)) return isPressed ? ref.pressedGetter : ref.getter;
+  return ref;
 }
 
 module.exports = function bindView($, vm, bindings, options) {
@@ -191,6 +205,11 @@ module.exports = function bindView($, vm, bindings, options) {
   // Last value pushed through each setter binding: unlike a property, a setter
   // can't be read back to see whether it would change anything.
   const applied = new Map();
+  // Widgets currently held down, so a pressable property knows which getter to read.
+  const pressed = new Set();
+  // Touch wiring is per widget, not per property: two pressable properties on one
+  // control share a single press.
+  const pressWired = new Set();
 
   function applyProps() {
     for (const widgetId in bindings) {
@@ -208,7 +227,7 @@ module.exports = function bindView($, vm, bindings, options) {
           }
           continue;
         }
-        let value = vm[propOf(widgetBindings[key])];
+        let value = vm[propOf(widgetBindings[key], pressed.has(widgetId))];
         if (typeof value === "symbol" && palette) {
           value = palette[value.description];
         }
@@ -263,6 +282,13 @@ module.exports = function bindView($, vm, bindings, options) {
           held.forEach(clearTimeout);
           held.clear();
         });
+      } else if (isPressable(ref) && !pressWired.has(widgetId)) {
+        pressWired.add(widgetId);
+        const hold = function () { pressed.add(widgetId); applyProps(); };
+        const release = function () { pressed.delete(widgetId); applyProps(); };
+        eventTeardowns.push(attachEvent(widget, "touchstart", hold));
+        eventTeardowns.push(attachEvent(widget, "touchend", release));
+        eventTeardowns.push(attachEvent(widget, "touchcancel", release));
       }
     }
   }
@@ -529,6 +555,15 @@ function validate($, vm, bindings) {
         if (!(ref.getter in vm)) {
           throw new Error(`bindView: VM has no component getter "${ref.getter}" (bound to ${widgetId}.${key})`);
         }
+      } else if (isPressable(ref)) {
+        for (const getter of [ref.getter, ref.pressedGetter]) {
+          if (!(getter in vm)) {
+            throw new Error(`bindView: VM has no property "${getter}" (bound to pressable ${widgetId}.${key})`);
+          }
+        }
+        if (typeof widget.addEventListener !== "function" && typeof widget.on !== "function") {
+          throw new Error(`bindView: widget "${widgetId}" has no event mechanism for pressable ${key}`);
+        }
       } else {
         if (!(ref in vm)) {
           throw new Error(`bindView: VM has no property "${ref}" (bound to ${widgetId}.${key})`);
@@ -555,6 +590,7 @@ function makeBinder(createComponent, palette) {
   binder.ref = ref;
   binder.collection = collection;
   binder.component = component;
+  binder.pressable = pressable;
   return binder;
 }
 
@@ -567,4 +603,5 @@ module.exports.apply = apply;
 module.exports.ref = ref;
 module.exports.collection = collection;
 module.exports.component = component;
+module.exports.pressable = pressable;
 module.exports.makeBinder = makeBinder;
