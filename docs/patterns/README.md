@@ -12,6 +12,7 @@ Architectural patterns and module summaries for the WALTA codebase. Each file is
 - [photo-paths.md](photo-paths.md) — relative vs absolute path conventions for user vs reference images
 - [repository-pattern.md](repository-pattern.md) — non-Alloy persistence: the Repository pattern (returns domain models from `lib/models/`), `Migrator`, migration file convention, shared vs isolated dbs
 - [visual-regression.md](visual-regression.md) — on-device `toImage()` screenshot capture, settle gate, pixel-diff vs committed baselines, the `visual-test` task
+- [window-orientation.md](window-orientation.md) — holding a window to the orientation the interface is already in, so Titanium does not force-rotate it a half turn on cold launch
 
 ## Module summaries
 
