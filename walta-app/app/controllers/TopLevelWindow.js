@@ -4,6 +4,7 @@ var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
 var debug = (m, tag = "ui") => Logger.debug(m, tag);
 var anchorBar = Alloy.createController("AnchorBar" );
+var BAR_FRACTION = Alloy.Globals.isSquare ? 0.05 : 0.10;
 var { disableControl, enableControl, setError, clearError } = require("ui/ViewUtils");
 
 // Tracks whether the first postlayout has happened and safeAreaPadding
@@ -20,11 +21,10 @@ function openWindow() {
 		if ( Alloy.Globals.isSquare ) {
 			$.content.top = "10%";
 			$.content.height = "80%";
-			anchorBar.getView().height = "5%";
 		} else {
 			$.content.height = "90%";
-			anchorBar.getView().height = "10%";
 		}
+		anchorBar.getView().height = `${BAR_FRACTION * 100}%`;
 		anchorBar.getView().width = Ti.UI.FILL;
 		$.TopLevelWindow.add( $.content );
 		$.TopLevelWindow.add( anchorBar.getView() );
@@ -55,9 +55,15 @@ function updateSafeArea() {
 	anchorBar.leftTools.left = padding.left;
 	anchorBar.rightTools.right = padding.right;
 	// Android takes the bottom edge for the home gesture before the app sees the
-	// touch, and reserves more of it than the safe area reports.
+	// touch, and reserves more of it than the safe area reports. The bar still
+	// reaches the screen edge — it grows instead, and its controls sit above the
+	// strip. Sized from the window so repeated layouts don't compound it.
 	if ( OS_ANDROID ) {
-		anchorBar.getView().bottom = bottomClearance( padding, PlatformSpecific.convertDipToSystem );
+		let clearance = bottomClearance( padding, PlatformSpecific.convertDipToSystem );
+		anchorBar.getView().height = $.TopLevelWindow.rect.height * BAR_FRACTION + clearance;
+		anchorBar.leftTools.bottom = clearance;
+		anchorBar.rightTools.bottom = clearance;
+		anchorBar.title.bottom = clearance;
 	}
 	if ( !$.TopLevelWindow.useUnSafeArea ) {
 		$.content.applyProperties(padding);
