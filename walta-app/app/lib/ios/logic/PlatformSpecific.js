@@ -1,3 +1,4 @@
+var { holdCurrentOrientation } = require("ui/WindowOrientation");
 
 function appStartUp() {
 
@@ -12,6 +13,8 @@ var windowStack = [];
 
 function transitionWindows( win, effect ) {
 	var tx1, tx2;
+
+	holdCurrentOrientation( win, Ti.Gesture );
 
 	windowStack.push( win ); // remember new window
 

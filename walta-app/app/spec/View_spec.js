@@ -26,6 +26,17 @@ describe("View seam", function () {
       expect(opened, "current controller is tracked").to.exist;
       expect(opened.getName()).to.equal("About");
     });
+
+    // Titanium force-rotates a window away from the landscape the interface is
+    // already in when no device-orientation notification has arrived yet — a
+    // still phone through a cold launch sends none, so a screen's first open
+    // comes up a half turn out. See lib/ui/WindowOrientation.
+    it("opens held to the landscape the interface is already in", async function () {
+      await view.openView("About", ABOUT_ARGS);
+      opened = view.getCurrentController();
+      var win = opened.getView();
+      expect(win.orientationModes).to.deep.equal([win.orientation]);
+    });
   });
 
   // A window gets the same treatment as a modal: if a screen controller is
