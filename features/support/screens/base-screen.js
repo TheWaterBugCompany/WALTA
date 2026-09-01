@@ -176,6 +176,41 @@ class BaseScreen {
     // Non-throwing probe/tap for a full selector — building blocks for a
     // poll-and-dismiss loop, where a missing or stale element just means "try
     // again next round", not a failure.
+    async isPresent() {
+        return this.isDisplayedRaw( this.presenceSelector );
+    }
+
+    // Poll a predicate for a bounded window. Returns whether it came true rather
+    // than throwing, so a caller can decide what to do about it.
+    async becomesTrue( predicate, timeout, pollMs = 500 ) {
+        const deadline = Date.now() + timeout;
+        do {
+            if ( await predicate() ) return true;
+            await this.sleep( pollMs );
+        } while ( Date.now() < deadline );
+        return false;
+    }
+
+    // Tap, then watch for what the tap was for — and tap again if it did not take.
+    //
+    // A stationary element can still swallow a tap: delivered during a re-render
+    // the position poll cannot see, or onto a view that is not yet interactive.
+    // clickWhenStable deliberately lets that "surface downstream", which in
+    // practice means the app sits where it was and some later screen's waitFor
+    // fails minutes away, naming the wrong screen. Verify the effect here, where
+    // the tap was, and say how many attempts it took.
+    //
+    // settleMs has to be generous: a slow-but-successful navigation must not be
+    // tapped a second time, or the extra tap lands on the screen we just reached.
+    async clickUntil( sel, isDone, { attempts = 3, settleMs = 15000 } = {} ) {
+        for ( let taps = 1; taps <= attempts; taps++ ) {
+            if ( await isDone() ) return;
+            await this.clickWhenStable( sel );
+            if ( await this.becomesTrue( isDone, settleMs ) ) return;
+        }
+        throw new Error( `"${sel}" did not take effect after ${attempts} taps` );
+    }
+
     async isDisplayedRaw( sel ) {
         try {
             return await (await this.driver.$( sel )).isDisplayed();
