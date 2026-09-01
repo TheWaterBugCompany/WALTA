@@ -5,5 +5,7 @@
   fullscreen: true,
   width: Ti.UI.FILL,
   height: Ti.UI.FILL,
-  backgroundColor: "white"
+  backgroundColor: "white",
+  // Either landscape, whichever way up the phone is held.
+  orientationModes: [ Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT ]
 }
