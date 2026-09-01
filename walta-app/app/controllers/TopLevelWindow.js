@@ -1,4 +1,5 @@
 var PlatformSpecific = require('logic/PlatformSpecific');
+var { bottomClearance } = require('ui/AnchorBarInsets');
 var Topics = require('ui/Topics');
 var Logger = require('util/Logger');
 var debug = (m, tag = "ui") => Logger.debug(m, tag);
@@ -53,6 +54,11 @@ function updateSafeArea() {
 	//Ti.API.info(`safeAreaPadding = ${JSON.stringify(padding)}`)
 	anchorBar.leftTools.left = padding.left;
 	anchorBar.rightTools.right = padding.right;
+	// Android takes the bottom edge for the home gesture before the app sees the
+	// touch, and reserves more of it than the safe area reports.
+	if ( OS_ANDROID ) {
+		anchorBar.getView().bottom = bottomClearance( padding, PlatformSpecific.convertDipToSystem );
+	}
 	if ( !$.TopLevelWindow.useUnSafeArea ) {
 		$.content.applyProperties(padding);
 	}
