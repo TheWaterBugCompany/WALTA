@@ -8,13 +8,15 @@ function setLabel( s ) {
     $.label.accessibilityLabel = s; 
 }
 
+// Height follows the image so the arrow keeps the proportions it was drawn in;
+// pinning both dimensions stretches the arrowhead to the button's height.
 function setIconLeft( img ) {
-    $.icon = Ti.UI.createImageView( { image: img, id: "icon", left: "4dp", width: "18%", height: "100%" } );
+    $.icon = Ti.UI.createImageView( { image: img, left: "4dp", width: "18%", height: Ti.UI.SIZE } );
     $.button.insertAt( { view: $.icon, position: 0 } );
 }
 
 function setIconRight( img ) {
-    $.icon = Ti.UI.createImageView( { image: img, id: "icon", right: "4dp", width: "18%", height: "100%" } );
+    $.icon = Ti.UI.createImageView( { image: img, right: "4dp", width: "18%", height: Ti.UI.SIZE } );
     $.button.add( $.icon );
 }
 
