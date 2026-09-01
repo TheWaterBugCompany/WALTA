@@ -39,5 +39,14 @@ describe("NavButton controller", function() {
     expect( acb.rightTools.children[1].children[0].children[0].text ).to.equal("RIGHT");
   });
 
+  // icon-go-back.png is 50x25, so a faithfully drawn arrow is twice as wide as
+  // it is tall. Pinning both dimensions of the ImageView discards that and
+  // elongates the arrowhead.
+  it('draws the icon in the proportions of the image', function() {
+    var icon = acb.rightTools.children[0].children[0].children[0];
+    var aspect = icon.rect.width / icon.rect.height;
+    expect( aspect ).to.be.closeTo( 2, 0.2 );
+  });
+
 
 });
