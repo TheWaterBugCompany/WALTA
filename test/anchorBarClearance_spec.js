@@ -17,11 +17,14 @@ describe("AnchorBarInsets.bottomClearance", function () {
         expect(bottomClearance({ bottom: 200 }, dpToPx)).to.equal(200);
     });
 
-    it("still clears the gesture strip when there is no safe area at all", function () {
-        expect(bottomClearance({ bottom: 0 }, dpToPx)).to.equal(112);
+    // Three-button navigation in landscape puts the bar on the right edge and
+    // reports no bottom source at all — there is no strip to clear, so reserving
+    // one would be dead space.
+    it("reserves nothing when there is no inset at the bottom", function () {
+        expect(bottomClearance({ bottom: 0 }, dpToPx)).to.equal(0);
     });
 
-    it("treats a missing bottom as none", function () {
-        expect(bottomClearance({}, dpToPx)).to.equal(112);
+    it("treats a missing bottom the same as none", function () {
+        expect(bottomClearance({}, dpToPx)).to.equal(0);
     });
 });
