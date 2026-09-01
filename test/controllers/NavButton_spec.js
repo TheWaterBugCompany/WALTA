@@ -14,7 +14,8 @@ describe("NavButton controller", function () {
 
   function build(over) {
     view = {
-      button: makeWidget({ backgroundColor: null, borderColor: null, accessibilityLabel: null }),
+      NavButton: makeWidget({ touchEnabled: null }),
+      button: makeWidget({ backgroundColor: null, borderColor: null, accessibilityLabel: null, enabled: null }),
       label: makeWidget({ text: null, color: null }),
     };
     vm = new NavButtonViewModel(Object.assign({ label: "Next", onSelect: () => {} }, over));
@@ -61,11 +62,11 @@ describe("NavButton controller", function () {
     expect(view.label.text).to.equal("NEXT");
   });
 
-  it("routes a tap through the view-model", function () {
+  it("takes the tap on the whole control, not just the painted chrome", function () {
     let taps = 0;
     build({ onSelect: () => taps++ });
 
-    view.button.fireEvent("click");
+    view.NavButton.fireEvent("click");
 
     expect(taps).to.equal(1);
   });

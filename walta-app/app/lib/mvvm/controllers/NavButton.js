@@ -4,12 +4,18 @@
 // See docs/patterns/screen-controllers.md.
 const { pressable } = require("../../util/bindView");
 
+// The tap is taken on the root, which is the control's whole hit area and where
+// it has always been taken; the chrome that paints is the button inside it.
 const BINDINGS = {
+  NavButton: {
+    onClick: "select",
+    touchEnabled: "touchEnabled",
+  },
   button: {
     backgroundColor: pressable("buttonColor", "buttonPressedColor"),
     borderColor: pressable("buttonColor", "buttonPressedColor"),
     accessibilityLabel: "accessibilityLabel",
-    onClick: "select",
+    enabled: "enabled",
   },
   label: {
     text: "label",
