@@ -6,6 +6,7 @@ const Palette = {
   black:        Symbol("black"),
   primary:      Symbol("primary"),
   primaryLight: Symbol("primaryLight"),
+  primaryDark:  Symbol("primaryDark"),
   error:        Symbol("error"),
   errorDark:    Symbol("errorDark"),
   success:      Symbol("success"),

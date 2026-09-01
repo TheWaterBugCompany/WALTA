@@ -5,6 +5,7 @@
       "black":        "#000000",
       "primary":      "#26849D",
       "primaryLight": "#66CCCE",
+      "primaryDark":  "#1A5C6E",
       "error":        "#FF6161",
       "errorDark":    "#B80909",
       "success":      "#64AC17",
