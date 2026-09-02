@@ -452,57 +452,84 @@ describe("bindView", function () {
     });
   });
 
-  // Titanium ignores some calls made in the same frame as the layout that
-  // provoked them — a ScrollView asked to scroll in the turn its content was
-  // resized silently stays where it is. A deferred command hands the call to
-  // the next turn, after Titanium has finished laying the widget out.
-  describe("outbound commands deferred to the next turn (deferredCommand)", function () {
-    const { deferredCommand, ref } = bindView;
+  // Titanium ignores some calls made in the frame of the layout that provoked
+  // them — a ScrollView asked to scroll in the turn its content was resized
+  // silently stays where it is. Call sites do not say so: bindView owns the
+  // layout callbacks, so it knows when a command is being raised from inside
+  // one and holds it back until the layout is over.
+  describe("outbound commands raised from a layout callback", function () {
+    const { command, measure, ref } = bindView;
 
     function widgetWithCalls() {
       const w = makeWidget({ visible: null, text: null, width: null, backgroundColor: null, title: null });
       w.calls = [];
       w.scrollTo = (...a) => w.calls.push(a);
+      w.size = { width: 100, height: 20 };
       return w;
     }
 
-    it("does not call the widget method in the turn the VM fires the event", function () {
+    // The VM reveals an edge in response to being told the widget's new size —
+    // which is what a screen does, and which lands inside Titanium's layout pass.
+    function vmThatRevealsOnMeasure() {
+      const target = { _x: 7 };
+      Object.assign(target, makeBackboneTarget());
+      target.setSize = function () { target.trigger("reveal"); };
+      Object.defineProperty(target, "x", { get: () => target._x });
+      target.addListener = () => {};
+      target.removeListener = () => {};
+      return target;
+    }
+
+    it("does not call the widget while the layout callback is still running", function () {
       $.label = widgetWithCalls();
-      bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo", 42, 0) } });
-      vm.trigger("scrollToRightEnd");
+      const vm = vmThatRevealsOnMeasure();
+      bindView($, vm, {
+        label: { onPostlayout: measure("setSize", "size"), snap: command("reveal", "scrollTo", ref("x"), 0) },
+      });
+      $.label.calls.length = 0;
+
+      $.label.fireEvent("postlayout");
+
       expect($.label.calls).to.deep.equal([]);
     });
 
-    it("calls the widget method on the next turn", async function () {
+    it("calls the widget once the layout callback is over", async function () {
       $.label = widgetWithCalls();
-      bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo", 42, 0) } });
-      vm.trigger("scrollToRightEnd");
+      const vm = vmThatRevealsOnMeasure();
+      bindView($, vm, {
+        label: { onPostlayout: measure("setSize", "size"), snap: command("reveal", "scrollTo", ref("x"), 0) },
+      });
+      $.label.calls.length = 0;
+
+      $.label.fireEvent("postlayout");
       await new Promise(r => setTimeout(r, 0));
-      expect($.label.calls).to.deep.equal([[42, 0]]);
+
+      expect($.label.calls).to.deep.equal([[7, 0]]);
     });
 
-    it("resolves ref() args when the call is made, not when it is queued", async function () {
+    it("calls the widget straight away when no layout is in progress", function () {
       $.label = widgetWithCalls();
-      vm._scrollTargetX = 1;
-      bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo", ref("scrollTargetX")) } });
-      vm.trigger("scrollToRightEnd");
-      vm._scrollTargetX = 99;
-      await new Promise(r => setTimeout(r, 0));
-      expect($.label.calls).to.deep.equal([[99]]);
+      const vm = vmThatRevealsOnMeasure();
+      bindView($, vm, { label: { snap: command("reveal", "scrollTo", ref("x"), 0) } });
+
+      vm.trigger("reveal");
+
+      expect($.label.calls).to.deep.equal([[7, 0]]);
     });
 
-    it("drops a queued call when the binding is torn down before it runs", async function () {
+    it("drops a held-back call when the binding is torn down before it runs", async function () {
       $.label = widgetWithCalls();
-      const unbind = bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo") } });
-      vm.trigger("scrollToRightEnd");
+      const vm = vmThatRevealsOnMeasure();
+      const unbind = bindView($, vm, {
+        label: { onPostlayout: measure("setSize", "size"), snap: command("reveal", "scrollTo", ref("x"), 0) },
+      });
+      $.label.calls.length = 0;
+
+      $.label.fireEvent("postlayout");
       unbind();
       await new Promise(r => setTimeout(r, 0));
-      expect($.label.calls).to.deep.equal([]);
-    });
 
-    it("throws when the widget has no such method", function () {
-      expect(() => bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "noSuchMethod") } }))
-        .to.throw(/noSuchMethod/);
+      expect($.label.calls).to.deep.equal([]);
     });
   });
 
