@@ -24,12 +24,21 @@ describe("QuestionViewModel", function () {
         expect(build({ mediaUrls: ["snail.jpg"] }).hasPhoto).to.equal(true);
     });
 
-    it("gives the text the whole row when there is no photo beside it", function () {
+    it("shows the photo panel only when there is a photo for it", function () {
+        expect(build({ mediaUrls: ["snail.jpg"] }).photoVisible).to.equal(true);
+        expect(build().photoVisible).to.equal(false);
+    });
+
+    // The card is sized by the widths its children ask for, so the text has to
+    // take on exactly what the photo panel gives up. Anything less and a branch
+    // without a photo makes a narrower card than the one above it, and their
+    // right edges and arrows stop lining up.
+    it("hands the text the whole share the photo panel gives up", function () {
         const withPhoto = build({ mediaUrls: ["snail.jpg"] });
         const without = build();
-        expect(withPhoto.photoVisible).to.equal(true);
-        expect(without.photoVisible).to.equal(false);
-        expect(Number.parseFloat(without.textWidth)).to.be.greaterThan(Number.parseFloat(withPhoto.textWidth));
+        const pct = (w) => Number.parseFloat(w);
+
+        expect(pct(without.textWidth) - pct(withPhoto.textWidth)).to.equal(pct(withPhoto.photoWidth));
     });
 
     it("shows a tick on the correct branch and a cross on the incorrect one", function () {

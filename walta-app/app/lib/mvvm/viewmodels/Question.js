@@ -7,6 +7,12 @@ const Palette = require("../../util/Palette");
 // on Android — a bare number drew this three times thinner there.
 const VERDICT_BORDER = "8dp";
 
+// The card's row is divided between the text and the photo panel beside it.
+// Naming both shares keeps them a pair: whatever the panel gives up, the text
+// takes on, so a branch with no photo makes a card the same width as one with.
+const TEXT_SHARE = 58;
+const PHOTO_SHARE = 35;
+
 // One branch of a couplet: the text and photo the reader chooses between, and
 // the verdict a hint puts on it ("correct" / "incorrect", or null when this
 // couplet carries no hint). Titanium-free.
@@ -25,10 +31,12 @@ class QuestionViewModel extends ChangeNotifier {
   get hasPhoto() { return this._question.photoUrls.length > 0; }
 
   // A branch with no photo hands the panel's share of the row back to its text,
-  // rather than leaving a gap where the photo would have been.
+  // rather than leaving a gap where the photo would have been. The text has to
+  // take on all of it: the card is sized by what its children ask for, so a
+  // short measure here makes a narrower card than the branch above it.
   get photoVisible() { return this.hasPhoto; }
-  get photoWidth() { return this.hasPhoto ? "35%" : "0%"; }
-  get textWidth() { return this.hasPhoto ? "58%" : "88%"; }
+  get photoWidth() { return this.hasPhoto ? `${PHOTO_SHARE}%` : "0%"; }
+  get textWidth() { return this.hasPhoto ? `${TEXT_SHARE}%` : `${TEXT_SHARE + PHOTO_SHARE}%`; }
   get verdict() { return this._verdict; }
 
   // The same tick/cross vocabulary the training tray marks its slots with.

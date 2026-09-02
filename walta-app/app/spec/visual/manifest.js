@@ -175,6 +175,16 @@ function keySearchHinted() {
 	});
 }
 
+// A couplet whose second branch carries no photo. The two cards have to come out
+// the same width even though only one of them has a panel to fill.
+function keySearchMixedMedia() {
+	var Question = require("logic/Question");
+	var args = keySearch();
+	var bare = args.node.questions[1];
+	args.node.questions[1] = Question.createQuestion({ text: bare.text, outcome: bare.outcome });
+	return args;
+}
+
 function sampleHistory() {
 	var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
 	var { clearDatabase } = require("spec/util/TestUtils");
@@ -516,6 +526,7 @@ module.exports = [
 	{ name: "Summary", args: summary },
 	{ name: "KeySearch", args: keySearch },
 	{ name: "KeySearchHinted", screen: "KeySearch", args: keySearchHinted },
+	{ name: "KeySearchMixedMedia", screen: "KeySearch", args: keySearchMixedMedia },
 	{ name: "SampleHistory", args: sampleHistory },
 	{ name: "TrainingTray", args: trainingTray, services: trainingTrayServices, after: assessTrainingTray },
 	// The WebView screens wait for their page to load; the rest still use loadMs
