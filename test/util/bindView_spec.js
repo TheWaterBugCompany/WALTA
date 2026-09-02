@@ -452,6 +452,60 @@ describe("bindView", function () {
     });
   });
 
+  // Titanium ignores some calls made in the same frame as the layout that
+  // provoked them — a ScrollView asked to scroll in the turn its content was
+  // resized silently stays where it is. A deferred command hands the call to
+  // the next turn, after Titanium has finished laying the widget out.
+  describe("outbound commands deferred to the next turn (deferredCommand)", function () {
+    const { deferredCommand, ref } = bindView;
+
+    function widgetWithCalls() {
+      const w = makeWidget({ visible: null, text: null, width: null, backgroundColor: null, title: null });
+      w.calls = [];
+      w.scrollTo = (...a) => w.calls.push(a);
+      return w;
+    }
+
+    it("does not call the widget method in the turn the VM fires the event", function () {
+      $.label = widgetWithCalls();
+      bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo", 42, 0) } });
+      vm.trigger("scrollToRightEnd");
+      expect($.label.calls).to.deep.equal([]);
+    });
+
+    it("calls the widget method on the next turn", async function () {
+      $.label = widgetWithCalls();
+      bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo", 42, 0) } });
+      vm.trigger("scrollToRightEnd");
+      await new Promise(r => setTimeout(r, 0));
+      expect($.label.calls).to.deep.equal([[42, 0]]);
+    });
+
+    it("resolves ref() args when the call is made, not when it is queued", async function () {
+      $.label = widgetWithCalls();
+      vm._scrollTargetX = 1;
+      bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo", ref("scrollTargetX")) } });
+      vm.trigger("scrollToRightEnd");
+      vm._scrollTargetX = 99;
+      await new Promise(r => setTimeout(r, 0));
+      expect($.label.calls).to.deep.equal([[99]]);
+    });
+
+    it("drops a queued call when the binding is torn down before it runs", async function () {
+      $.label = widgetWithCalls();
+      const unbind = bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "scrollTo") } });
+      vm.trigger("scrollToRightEnd");
+      unbind();
+      await new Promise(r => setTimeout(r, 0));
+      expect($.label.calls).to.deep.equal([]);
+    });
+
+    it("throws when the widget has no such method", function () {
+      expect(() => bindView($, vm, { label: { snap: deferredCommand("scrollToRightEnd", "noSuchMethod") } }))
+        .to.throw(/noSuchMethod/);
+    });
+  });
+
   describe("argument-carrying event handlers (call)", function () {
     const { call } = bindView;
 
@@ -869,11 +923,15 @@ describe("bindView collection binding", function () {
       expect(widget.backgroundColor).to.equal("#FF6161");
     });
 
-    it("exposes the collection / twoWay / call markers", function () {
+    // Every marker, not a hand-picked few: a controller destructures its markers
+    // off the pre-bound binder, so one the seam forgets to carry is undefined at
+    // the call site and the screen fails to build.
+    it("carries every marker the module exports", function () {
       const bind = bindView.makeBinder(() => {});
-      expect(typeof bind.collection).to.equal("function");
-      expect(typeof bind.twoWay).to.equal("function");
-      expect(typeof bind.call).to.equal("function");
+      const markers = Object.keys(bindView).filter(k => k !== "makeBinder");
+      expect(markers).to.not.be.empty;
+      markers.forEach(name =>
+        expect(typeof bind[name], `binder is missing the ${name} marker`).to.equal("function"));
     });
 
     it("still honours a per-call option override", function () {
