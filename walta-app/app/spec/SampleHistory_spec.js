@@ -4,7 +4,7 @@ var Topics = require('ui/Topics');
 var { expect } = require("spec/lib/chai");
 var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
-var { clearDatabase, closeWindow, actionFiresTopicTest } = require("spec/util/TestUtils");
+var { clearDatabase, closeWindow, actionFiresTopicTest, waitFor } = require("spec/util/TestUtils");
 var moment = require("lib/moment");
 
 describe("SampleHistory controller", function() {
@@ -38,10 +38,15 @@ describe("SampleHistory controller", function() {
     expect( result.sampleId ).to.exist;
   });
 
-  it('places a Sync button on the anchor bar toolbar', function() {
+  // The caption is on the button as soon as it is built; the label it announces
+  // itself by is not. iOS drops an accessibilityLabel written to a view it has
+  // not realised yet — a direct assignment is dropped just the same — so the
+  // binding's re-apply on first layout is what puts it there. Wait for the value
+  // the button actually carries once it is on screen.
+  it('places a Sync button on the anchor bar toolbar', async function() {
     expect( ctl.syncButton ).to.exist;
     expect( ctl.syncButton.label.text ).to.equal("SYNC");
-    expect( ctl.syncButton.label.accessibilityLabel ).to.equal("Sync");
+    await waitFor( () => ctl.syncButton.label.accessibilityLabel === "Sync" );
   });
 
   // The Sync button fires the START_SYNC intent; Main routes it to the
