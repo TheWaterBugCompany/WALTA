@@ -36,6 +36,16 @@ describe('Register controller', function() {
 		closeWindow( ct.getView() );
 	});
     
+    // Each row is sized by its label, and the switch asks for a percentage of that
+    // row rather than contributing its own height. A one-line label leaves the row
+    // shorter than the switch, which iOS then draws clipped top and bottom.
+    it('gives every consent switch a row tall enough to draw it in', function() {
+        var rows = [ ct.registerAsGroup, ct.surveyConsent, ct.dataConsent ];
+        var toggles = [ ct.groupToggle, ct.surveyToggle, ct.dataToggle ];
+        var overflow = rows.map( ( row, i ) => Math.max( 0, toggles[i].rect.height - row.rect.height ) );
+        expect( overflow ).to.deep.equal( [ 0, 0, 0 ] );
+    });
+
     it('should disable submit if email is invalid', function() {
         return fillOutValidForm()
             .then( setTextField( ct.emailTextField, "notanemailaddress" ) )
