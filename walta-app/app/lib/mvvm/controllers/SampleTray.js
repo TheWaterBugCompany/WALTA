@@ -2,7 +2,7 @@ const SampleTrayViewModel = require("mvvm/viewmodels/SampleTray");
 const SampleTraySource = require("logic/SampleTraySource");
 
 module.exports = function createSampleTray({ view, args, services, bindView }) {
-  const { collection, component, input, measure, command, deferredCommand, ref } = bindView;
+  const { collection, component, input, measure, command, ref } = bindView;
   const platform = services.platform;
 
   const source = SampleTraySource(args.taxa, args.key, args.readonly === true, args.sample);
@@ -27,10 +27,7 @@ module.exports = function createSampleTray({ view, args, services, bindView }) {
       // feed the VM; the scroll-to-right command animates the ScrollView when asked.
       onPostlayout: measure("setViewport", "size"),
       onScroll: input("setScrollOffset", "contentOffset.x"),
-      // Deferred: Titanium ignores a scroll asked for in the same turn as the
-      // layout that widened the tray, and then reports the offset it was asked
-      // for as though it had moved.
-      snapRight: deferredCommand("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: false }),
+      snapRight: command("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0, { animate: false }),
     },
   });
 

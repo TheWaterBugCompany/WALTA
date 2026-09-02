@@ -108,16 +108,6 @@ function command(vmEvent, method, ...args) {
   return { __command: true, vmEvent, method, args };
 }
 
-// Same, but handed to the widget on the next turn of the event loop. Titanium
-// ignores some calls made in the frame of the layout that provoked them — a
-// ScrollView asked to scroll in the turn its content was resized silently stays
-// put, and then reports the offset it was asked for as though it had moved. The
-// call has to wait until Titanium has finished laying the widget out.
-//   content: { snap: deferredCommand("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0) }
-function deferredCommand(vmEvent, method, ...args) {
-  return { __command: true, deferred: true, vmEvent, method, args };
-}
-
 function isCommand(ref) {
   return ref !== null && typeof ref === "object" && ref.__command === true;
 }
@@ -261,14 +251,17 @@ module.exports = function bindView($, vm, bindings, options) {
         eventTeardowns.push(setupComponent(vm, widget, ref, createComponent));
       } else if (isCommand(ref)) {
         const invoke = function () { widget[ref.method](...resolveArgs(vm, ref.args)); };
-        let queued = null;
-        const handler = ref.deferred
-          ? function () { queued = setTimeout(function () { queued = null; invoke(); }, 0); }
-          : invoke;
+        const held = new Set();
+        const handler = function () {
+          if (!isLayingOut()) return invoke();
+          const held_id = setTimeout(function () { held.delete(held_id); invoke(); }, 0);
+          held.add(held_id);
+        };
         vm.on(ref.vmEvent, handler);
         eventTeardowns.push(() => {
           vm.off(ref.vmEvent, handler);
-          if (queued) clearTimeout(queued);
+          held.forEach(clearTimeout);
+          held.clear();
         });
       }
     }
@@ -404,6 +397,19 @@ function setupCollection(vm, container, marker, createComponent) {
   };
 }
 
+// Titanium ignores some calls made in the frame of the layout that provoked
+// them: a ScrollView asked to scroll in the turn its content was resized stays
+// where it is, and then reports the offset it was asked for as though it had
+// moved. Only bindView is in a position to notice — the layout callbacks are its
+// own — so it tracks when it is inside one and holds outbound commands raised
+// there until the layout is over, rather than making every call site say so.
+let layoutCallbackDepth = 0;
+function isLayingOut() { return layoutCallbackDepth > 0; }
+function duringLayoutCallback(fn) {
+  layoutCallbackDepth++;
+  try { return fn(); } finally { layoutCallbackDepth--; }
+}
+
 // iOS silently drops writes to some properties — accessibilityLabel is the
 // known one — when they are made before the view is realised. bindView runs at
 // controller construction, which is exactly that window, so the values are
@@ -418,7 +424,7 @@ function reapplyOnFirstLayout($, applyProps) {
   };
   function onFirstLayout() {
     detach();
-    applyProps();
+    duringLayoutCallback(applyProps);
   }
   view.addEventListener("postlayout", onFirstLayout);
   return () => detach();
@@ -445,7 +451,7 @@ function attachMeasure(widget, eventName, vm, ref) {
   }
   const detachEvent = attachEvent(widget, eventName, function () {
     cancelTimer(); // a fresh layout supersedes any in-flight retry chain
-    poll(0);
+    duringLayoutCallback(function () { poll(0); });
   });
   // A widget can already be laid out by the time its bindings are wired, and
   // Android does not fire postlayout again for one that has — so waiting only for
@@ -546,7 +552,6 @@ function makeBinder(createComponent, palette) {
   binder.input = input;
   binder.measure = measure;
   binder.command = command;
-  binder.deferredCommand = deferredCommand;
   binder.ref = ref;
   binder.collection = collection;
   binder.component = component;
@@ -558,7 +563,6 @@ module.exports.call = call;
 module.exports.input = input;
 module.exports.measure = measure;
 module.exports.command = command;
-module.exports.deferredCommand = deferredCommand;
 module.exports.apply = apply;
 module.exports.ref = ref;
 module.exports.collection = collection;
