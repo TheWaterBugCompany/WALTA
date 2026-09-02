@@ -64,6 +64,10 @@ class TrainingTrayViewModel extends ChangeNotifier {
     this._tray.setViewport(size);
   }
 
+  setTrayWidth(size) {
+    this._tray.setTrayWidth(size);
+  }
+
   // ── Training assessment ────────────────────────────────────────────────────
 
   // Run the injected assessor over the current taxa and reveal the verdicts. The

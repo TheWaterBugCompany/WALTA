@@ -17,6 +17,8 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     this._owner = owner || this;
     this._viewportWidth = 0;
     this._viewportHeight = 0;
+    this._viewportWidthPx = 0;
+    this._trayWidthPx = 0;
     this._scrollx = 0;
     this._tileCache = new Map();
     // Lazy, not built here: an owner (e.g. SampleTrayViewModel) constructs its
@@ -35,13 +37,32 @@ class IceCubeTrayViewModel extends ChangeNotifier {
   // Titanium measurement hack lives in measureView, not here. Convert to dip and
   // re-derive geometry.
   setViewport(size) {
-    this._viewportWidth = this._toDip(size.width);
-    this._viewportHeight = this._toDip(size.height);
+    const width = this._toDip(size.width);
+    const height = this._toDip(size.height);
+    const changed = width !== this._viewportWidth || height !== this._viewportHeight;
+    this._viewportWidth = width;
+    this._viewportHeight = height;
+    this._viewportWidthPx = size.width;
     // Two-level cascade: cached cells re-apply their geometry (and their slots'),
     // then the screen re-applies trayWidth + re-windows, then asks Ti to reveal the
     // right edge.
     this.reapplyCells();
     this._recomputeWindow();
+    this.notifyListeners();
+    // Only when the viewport actually moved the edge: a layout pass that changes
+    // nothing must leave the tray where it was scrolled to.
+    if (changed) this.trigger("scrollToRightEnd");
+  }
+
+  // The width Titanium actually laid the tray out at, reported back from its own
+  // postlayout. It arrives a layout pass behind the width this model asks for, and
+  // until it does the ScrollView has nothing to scroll: a reveal issued in the same
+  // turn as the new width is clamped to the width the tray still has, and Titanium
+  // then reports the offset that was *asked* for, so nothing notices. Asking again
+  // when the reported width changes is what puts the right edge on screen.
+  setTrayWidth(size) {
+    if (size.width === this._trayWidthPx) return;
+    this._trayWidthPx = size.width;
     this.notifyListeners();
     this.trigger("scrollToRightEnd");
   }
@@ -73,7 +94,9 @@ class IceCubeTrayViewModel extends ChangeNotifier {
   get trayWidthCss() { return `${this.trayWidth}dp`; }
 
   // The system-px offset the scroll command animates to — the far right edge.
-  get scrollTargetX() { return this._toSystem(this.trayWidth - this.viewWidth); }
+  // Both lengths are measured, not derived: the dip-to-system conversion of their
+  // difference lands a pixel past what the ScrollView can reach.
+  get scrollTargetX() { return Math.max(0, this._trayWidthPx - this._viewportWidthPx); }
 
   tileLeft(n) { return n * this.middleWidth + this.endcapWidth; }
   get tileWidth() { return this.middleWidth + 1; }
