@@ -36,6 +36,10 @@ class SampleTrayViewModel extends ChangeNotifier {
     this._tray.setViewport(size);
   }
 
+  setTrayWidth(size) {
+    this._tray.setTrayWidth(size);
+  }
+
   get viewWidth() { return this._tray.viewWidth; }
   get endcapHeight() { return this._tray.endcapHeight; }
   get endcapWidth() { return this._tray.endcapWidth; }

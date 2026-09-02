@@ -533,7 +533,75 @@ describe("SampleTrayViewModel", function () {
   describe("scroll target", function () {
     it("reports the right-edge offset the scroll command animates to", function () {
       // trayWidth 570 - viewWidth 300 = 270 (toSystem defaults to identity).
-      expect(vmWithViewport(30).scrollTargetX).to.equal(270);
+      const vm = vmWithViewport(30);
+      vm.setTrayWidth({ width: 570 });
+      expect(vm.scrollTargetX).to.equal(270);
+    });
+
+    // The model's dip-derived tray width is what it *asks* Titanium for; the
+    // width Titanium reports back is what the ScrollView can actually reach.
+    // Asking for an offset past that leaves the tray short of its right edge.
+    it("measures the right edge against the width Titanium laid the tray out at", function () {
+      const vm = vmWithViewport(30);
+      vm.setTrayWidth({ width: 565 });
+      expect(vm.scrollTargetX).to.equal(265);
+    });
+
+    it("has nowhere to scroll before the tray has been laid out", function () {
+      expect(vmWithViewport(30).scrollTargetX).to.equal(0);
+    });
+  });
+
+  describe("revealing the right edge", function () {
+    function revealsOf(vm) {
+      const seen = { count: 0 };
+      vm.on("scrollToRightEnd", () => seen.count++);
+      return seen;
+    }
+
+    // The reveal is issued in the same turn as the tray's new width, so Titanium
+    // has not laid the tray out yet and clamps the scroll to the width it still
+    // has. The tray reporting its new width is the signal that the offset asked
+    // for is now reachable.
+    it("asks again once the tray reports the width it was widened to", function () {
+      const vm = vmWithViewport(30);
+      const reveals = revealsOf(vm);
+
+      vm.setTrayWidth({ width: 570 });
+
+      expect(reveals.count).to.equal(1);
+    });
+
+    it("tells its listeners the right edge moved when the tray is laid out", function () {
+      const vm = vmWithViewport(30);
+      let notified = 0;
+      vm.addListener(() => notified++);
+
+      vm.setTrayWidth({ width: 570 });
+
+      expect(notified).to.equal(1);
+    });
+
+    it("does not ask again for a layout that leaves the tray the same width", function () {
+      const vm = vmWithViewport(30);
+      vm.setTrayWidth({ width: 570 });
+      const reveals = revealsOf(vm);
+
+      vm.setTrayWidth({ width: 570 });
+
+      expect(reveals.count).to.equal(0);
+    });
+
+    // A layout pass that changes nothing must leave the tray where the user put
+    // it — otherwise scrolling left is undone by the next postlayout.
+    it("does not ask again for a layout that leaves the viewport the same size", function () {
+      const vm = vmWithViewport(30);
+      vm.setTrayWidth({ width: 570 });
+      const reveals = revealsOf(vm);
+
+      vm.setViewport({ width: 300, height: 100 });
+
+      expect(reveals.count).to.equal(0);
     });
   });
 
