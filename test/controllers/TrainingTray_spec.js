@@ -11,7 +11,7 @@ const createTrainingAssessor = require("../../walta-app/app/lib/logic/TrainingAs
 // wiring (source selection + the success translation).
 function stubBindView() {
   const fn = function () { return function unbind() {}; };
-  ["collection", "component", "input", "measure", "command", "ref", "call", "twoWay"].forEach(
+  ["collection", "component", "input", "measure", "command", "deferredCommand", "ref", "call", "twoWay"].forEach(
     (m) => { fn[m] = () => ({}); });
   return fn;
 }

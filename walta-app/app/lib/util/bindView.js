@@ -108,6 +108,16 @@ function command(vmEvent, method, ...args) {
   return { __command: true, vmEvent, method, args };
 }
 
+// Same, but handed to the widget on the next turn of the event loop. Titanium
+// ignores some calls made in the frame of the layout that provoked them — a
+// ScrollView asked to scroll in the turn its content was resized silently stays
+// put, and then reports the offset it was asked for as though it had moved. The
+// call has to wait until Titanium has finished laying the widget out.
+//   content: { snap: deferredCommand("scrollToRightEnd", "scrollTo", ref("scrollTargetX"), 0) }
+function deferredCommand(vmEvent, method, ...args) {
+  return { __command: true, deferred: true, vmEvent, method, args };
+}
+
 function isCommand(ref) {
   return ref !== null && typeof ref === "object" && ref.__command === true;
 }
@@ -250,9 +260,16 @@ module.exports = function bindView($, vm, bindings, options) {
       } else if (isComponent(ref)) {
         eventTeardowns.push(setupComponent(vm, widget, ref, createComponent));
       } else if (isCommand(ref)) {
-        const handler = function () { widget[ref.method](...resolveArgs(vm, ref.args)); };
+        const invoke = function () { widget[ref.method](...resolveArgs(vm, ref.args)); };
+        let queued = null;
+        const handler = ref.deferred
+          ? function () { queued = setTimeout(function () { queued = null; invoke(); }, 0); }
+          : invoke;
         vm.on(ref.vmEvent, handler);
-        eventTeardowns.push(() => vm.off(ref.vmEvent, handler));
+        eventTeardowns.push(() => {
+          vm.off(ref.vmEvent, handler);
+          if (queued) clearTimeout(queued);
+        });
       }
     }
   }
@@ -529,6 +546,7 @@ function makeBinder(createComponent, palette) {
   binder.input = input;
   binder.measure = measure;
   binder.command = command;
+  binder.deferredCommand = deferredCommand;
   binder.ref = ref;
   binder.collection = collection;
   binder.component = component;
@@ -540,6 +558,7 @@ module.exports.call = call;
 module.exports.input = input;
 module.exports.measure = measure;
 module.exports.command = command;
+module.exports.deferredCommand = deferredCommand;
 module.exports.apply = apply;
 module.exports.ref = ref;
 module.exports.collection = collection;
