@@ -9,16 +9,18 @@ const { pressable } = require("../../util/bindView");
 const BINDINGS = {
   NavButton: {
     onClick: "select",
-    touchEnabled: "touchEnabled",
   },
   button: {
     backgroundColor: pressable("buttonColor", "buttonPressedColor"),
     borderColor: pressable("buttonColor", "buttonPressedColor"),
-    accessibilityLabel: "accessibilityLabel",
+    touchEnabled: "touchEnabled",
     enabled: "enabled",
   },
   label: {
     text: "label",
+    // The a11y label rides on the label, not the chrome: iOS `~id` locators and
+    // the device specs both read it from there.
+    accessibilityLabel: "accessibilityLabel",
     color: "labelColor",
   },
 };

@@ -14,9 +14,9 @@ describe("NavButton controller", function () {
 
   function build(over) {
     view = {
-      NavButton: makeWidget({ touchEnabled: null }),
-      button: makeWidget({ backgroundColor: null, borderColor: null, accessibilityLabel: null, enabled: null }),
-      label: makeWidget({ text: null, color: null }),
+      NavButton: makeWidget({}),
+      button: makeWidget({ backgroundColor: null, borderColor: null, touchEnabled: null, enabled: null }),
+      label: makeWidget({ text: null, color: null, accessibilityLabel: null }),
     };
     vm = new NavButtonViewModel(Object.assign({ label: "Next", onSelect: () => {} }, over));
     ctl = createNavButton({ view, args: { rowVm: vm }, bindView: makeBinder(undefined, PALETTE) });
@@ -77,6 +77,21 @@ describe("NavButton controller", function () {
     vm.disabled = true;
 
     expect(view.button.backgroundColor).to.equal("#5ca1b1");
+  });
+
+  // Device specs and iOS `~id` locators read the a11y label off the label view,
+  // and touchEnabled off the button — where the imperative shell used to put them.
+  it("announces itself through the label, not the chrome", function () {
+    build({ label: "Sync" });
+    expect(view.label.accessibilityLabel).to.equal("Sync");
+  });
+
+  it("stops the button taking touches when it is disabled", function () {
+    build();
+
+    vm.disabled = true;
+
+    expect(view.button.touchEnabled).to.equal(false);
   });
 
   it("stops responding to touches once disposed", function () {
