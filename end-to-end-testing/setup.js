@@ -1,10 +1,9 @@
 'use strict';
 // Mocha root hooks for the end-to-end suite — see docs/testing.md.
 const { expect } = require('chai');
-const fs = require('fs');
-const path = require('path');
 const { setUpWorld } = require('../features/support/all-screens');
 const { startMockServer, connectAndPrepareApp, resetApp, teardown } = require('../features/support/appium-world');
+const { captureFailure } = require('./capture-failure');
 
 global.world = {};
 global.expect = expect;
@@ -40,33 +39,21 @@ beforeEach(async function () {
 });
 
 afterEach(async function () {
+    this.timeout(120000);
     if (!this.currentTest || this.currentTest.state !== 'failed') return;
-    await captureFailure(this.currentTest.title);
+    try {
+        await captureFailure({
+            driver: global.driver,
+            platform: global.platform,
+            title: this.currentTest.title,
+            root: ARTIFACTS_ROOT,
+        });
+    } catch (e) {
+        console.warn(`[e2e] captureFailure failed: ${e && e.message}`);
+    }
 });
 
 after(async function () {
     this.timeout(60000);
     await teardown();
 });
-
-async function captureFailure(title) {
-    try {
-        const slug = title.replace(/[^a-zA-Z0-9-]+/g, '_').slice(0, 80);
-        const dir = path.join(ARTIFACTS_ROOT, slug);
-        fs.mkdirSync(dir, { recursive: true });
-        try {
-            const png = await global.driver.takeScreenshot();
-            fs.writeFileSync(path.join(dir, 'screenshot.png'), png, 'base64');
-        } catch (e) {
-            fs.writeFileSync(path.join(dir, 'screenshot.error.txt'), String(e && e.message));
-        }
-        try {
-            const src = await global.driver.getPageSource();
-            fs.writeFileSync(path.join(dir, 'page-source.xml'), src);
-        } catch (e) {
-            fs.writeFileSync(path.join(dir, 'page-source.error.txt'), String(e && e.message));
-        }
-    } catch (e) {
-        console.warn(`[e2e] captureFailure failed: ${e && e.message}`);
-    }
-}
