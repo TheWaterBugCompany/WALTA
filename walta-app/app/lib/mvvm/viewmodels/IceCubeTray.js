@@ -3,6 +3,10 @@ const { endcapTile, interiorTile } = require("./SampleTrayTile");
 
 const identity = (x) => x;
 
+// Dip-to-system rounding across the geometry chain leaves the reported offset a
+// pixel or so either side of the one that was asked for.
+const OFFSET_TOLERANCE = 2;
+
 // The tile + slot VMs (SampleTrayTile — endcap or interior — and its
 // SampleTaxaIcon/SampleTrayPlus slots) read their geometry, kind and content
 // back through the public accessors here — but they're handed `owner` (which
@@ -19,6 +23,7 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     this._viewportHeight = 0;
     this._viewportWidthPx = 0;
     this._trayWidthPx = 0;
+    this._revealPending = true;   // the tray opens showing its newest taxon
     this._scrollx = 0;
     this._tileCache = new Map();
     // Lazy, not built here: an owner (e.g. SampleTrayViewModel) constructs its
@@ -37,11 +42,8 @@ class IceCubeTrayViewModel extends ChangeNotifier {
   // Titanium measurement hack lives in measureView, not here. Convert to dip and
   // re-derive geometry.
   setViewport(size) {
-    const width = this._toDip(size.width);
-    const height = this._toDip(size.height);
-    const changed = width !== this._viewportWidth || height !== this._viewportHeight;
-    this._viewportWidth = width;
-    this._viewportHeight = height;
+    this._viewportWidth = this._toDip(size.width);
+    this._viewportHeight = this._toDip(size.height);
     this._viewportWidthPx = size.width;
     // Two-level cascade: cached cells re-apply their geometry (and their slots'),
     // then the screen re-applies trayWidth + re-windows, then asks Ti to reveal the
@@ -49,22 +51,28 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     this.reapplyCells();
     this._recomputeWindow();
     this.notifyListeners();
-    // Only when the viewport actually moved the edge: a layout pass that changes
-    // nothing must leave the tray where it was scrolled to.
-    if (changed) this.trigger("scrollToRightEnd");
+    this._askForRightEdge();
   }
 
   // The width Titanium actually laid the tray out at, reported back from its own
   // postlayout. It arrives a layout pass behind the width this model asks for, and
-  // until it does the ScrollView has nothing to scroll: a reveal issued in the same
-  // turn as the new width is clamped to the width the tray still has, and Titanium
-  // then reports the offset that was *asked* for, so nothing notices. Asking again
-  // when the reported width changes is what puts the right edge on screen.
+  // until it does the ScrollView has nothing to scroll: a reveal issued in the turn
+  // the tray is still being laid out is clamped to the width it still has.
   setTrayWidth(size) {
     if (size.width === this._trayWidthPx) return;
     this._trayWidthPx = size.width;
     this.notifyListeners();
-    this.trigger("scrollToRightEnd");
+    this._askForRightEdge();
+  }
+
+  // Revealing the right edge is an intent, not a one-shot. Titanium reports the
+  // offset it was *asked* for whether or not the scroll landed, so the model can
+  // never tell a landed scroll from a clamped one and cannot know how many layout
+  // passes the tray will take to reach the width it has been given. So it keeps
+  // asking on each pass — and stops the moment the tray is somewhere it did not
+  // ask for, which is the only evidence it gets that a finger has taken over.
+  _askForRightEdge() {
+    if (this._revealPending) this.trigger("scrollToRightEnd");
   }
 
   // Re-apply every cached cell's bindings (and its slots') without re-deriving
@@ -134,6 +142,7 @@ class IceCubeTrayViewModel extends ChangeNotifier {
 
   // Titanium hands the raw scroll offset (system px) via an input() binding.
   setScrollOffset(px) {
+    if (Math.abs(px - this.scrollTargetX) > OFFSET_TOLERANCE) this._revealPending = false;
     this._scrollx = this._toDip(px);
     this._recomputeWindow();
     this.notifyListeners();
@@ -152,6 +161,9 @@ class IceCubeTrayViewModel extends ChangeNotifier {
     this._endcap().update();
     this._recomputeWindow();
     this.notifyListeners();
+    // New taxa are the whole point of the reveal: the newest bug comes into view
+    // wherever the tray had been scrolled to.
+    this._revealPending = true;
     this.trigger("scrollToRightEnd");
   }
 
