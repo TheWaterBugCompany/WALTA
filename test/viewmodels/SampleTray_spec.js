@@ -592,44 +592,17 @@ describe("SampleTrayViewModel", function () {
       expect(reveals.count).to.equal(0);
     });
 
-    // Titanium reports the offset it was *asked* for whether or not the scroll
-    // landed, so the model cannot tell a landed scroll from a clamped one. The
-    // ask therefore stays outstanding across layout passes rather than being
-    // spent on the first one, which on a slow device is the one that is ignored.
-    it("keeps asking on each layout pass until something moves the tray", function () {
+    // A tray the user has scrolled left stays where it was put: nothing but a new
+    // width or new taxa reveals the right edge, and neither happens on its own.
+    it("does not ask again for a layout pass that leaves the tray as it was", function () {
       const vm = vmWithViewport(30);
       vm.setTrayWidth({ width: 570 });
       const reveals = revealsOf(vm);
 
       vm.setViewport({ width: 300, height: 100 });
-      vm.setViewport({ width: 300, height: 100 });
-
-      expect(reveals.count).to.equal(2);
-    });
-
-    // The tray sitting somewhere the reveal did not put it is the only evidence
-    // the model gets that something else — a finger — has taken over. From then
-    // on a layout pass must leave the tray where it was scrolled to.
-    it("stops asking once the tray is somewhere it did not ask for", function () {
-      const vm = vmWithViewport(30);
-      vm.setTrayWidth({ width: 570 });
-      vm.setScrollOffset(0);            // scrolled back to the left
-      const reveals = revealsOf(vm);
-
       vm.setViewport({ width: 300, height: 100 });
 
       expect(reveals.count).to.equal(0);
-    });
-
-    it("keeps asking while the tray reports the offset the reveal asked for", function () {
-      const vm = vmWithViewport(30);
-      vm.setTrayWidth({ width: 570 });
-      vm.setScrollOffset(270);          // where the reveal asked it to go
-      const reveals = revealsOf(vm);
-
-      vm.setViewport({ width: 300, height: 100 });
-
-      expect(reveals.count).to.equal(1);
     });
 
     // New taxa are the whole point of the reveal — the newest bug has to come
