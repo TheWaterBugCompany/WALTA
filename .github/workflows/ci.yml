@@ -48,6 +48,9 @@ jobs:
               - 'plugins/**'
               # Build utilities
               - 'build-utils/**'
+              # Visual baselines — a baselines-only change is exactly the one the
+              # visual jobs need to run on, to prove the new captures match
+              - 'visual/**'
               # Test infrastructure
               - 'build-tests/**'
               - 'test/**'
