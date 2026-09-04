@@ -229,13 +229,20 @@ module.exports = function bindView($, vm, bindings, options) {
   const createComponent = options && options.createComponent;
   const measureImage = options && options.measureImage;
   // A widget's image keeps its proportions, so each one is measured once however
-  // often the box it is fitted into changes.
+  // often the box it is fitted into changes. Only a reading that worked is
+  // remembered: the first read of a freshly-mounted page comes back empty on
+  // Android, and caching that would leave the image stretched to its box for the
+  // life of the screen.
   const naturals = new Map();
 
   function naturalSize(binding, vm) {
     const url = vm[binding.getter];
     if (!url || typeof measureImage !== "function") return null;
-    if (!naturals.has(url)) naturals.set(url, measureImage(url));
+    if (!naturals.has(url)) {
+      const measured = measureImage(url);
+      if (!measured) return null;
+      naturals.set(url, measured);
+    }
     return naturals.get(url);
   }
   const eventTeardowns = [];
