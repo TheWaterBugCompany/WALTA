@@ -176,6 +176,13 @@ describe('KeySearch tray button', function() {
 		expect( trayButton( ctl ).visible ).to.equal( false );
 	});
 
+	// The anchor bar centres its title between the two tool groups, so a tool that
+	// is merely hidden still pushes the title off centre by half its width.
+	it('takes back its space when there is no tray to return to', async function() {
+		await open({ allowAddToSample: false });
+		expect( trayButton( ctl ).rect.width ).to.equal( 0 );
+	});
+
 	it('returns to the survey tray during a survey', function(done) {
 		open({ allowAddToSample: true }).then( function() {
 			actionFiresTopicTest( trayButton( ctl ), 'click', Topics.SAMPLETRAY, () => done() );

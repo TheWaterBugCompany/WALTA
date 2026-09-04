@@ -152,6 +152,22 @@ function fittedSize(natural, box) {
   return { width: Math.round(natural.width * scale), height: Math.round(natural.height * scale) };
 }
 
+// Presence marker: a widget that is there or is not, as opposed to `visible`,
+// which hides it where it stands and leaves its space behind. A row of tools laid
+// out in a flow closes up around one that is absent, and anything centred against
+// that row is measured off what is left.
+//
+// The size to restore is read off the widget at bind time, so the stylesheet stays
+// the only place the widget's dimensions are written.
+//   icon: { visible: present("hasTray") }
+function present(getter) {
+  return { __present: true, getter };
+}
+
+function isPresent(ref) {
+  return ref !== null && typeof ref === "object" && ref.__present === true;
+}
+
 // Children-binding marker: drives a container's child views from a VM getter
 // that returns a keyed list. bindView owns the keyed diff (create new / retain
 // existing / dispose gone). The second arg is either:
@@ -251,6 +267,16 @@ module.exports = function bindView($, vm, bindings, options) {
   const applied = new Map();
   // Widgets currently held down, so a pressable property knows which getter to read.
   const pressed = new Set();
+  // The size the stylesheet gave each present()-bound widget, captured before the
+  // first apply so an absent one can be given it back.
+  const sizes = new Map();
+  for (const widgetId in bindings) {
+    for (const key in bindings[widgetId]) {
+      if (isPresent(bindings[widgetId][key])) {
+        sizes.set(widgetId, { width: $[widgetId].width, height: $[widgetId].height });
+      }
+    }
+  }
   // Touch wiring is per widget, not per property: two pressable properties on one
   // control share a single press.
   const pressWired = new Set();
@@ -262,6 +288,14 @@ module.exports = function bindView($, vm, bindings, options) {
       for (const key in widgetBindings) {
         const binding = widgetBindings[key];
         if (EVENT_KEY_RE.test(key) || isCollection(binding) || isCommand(binding) || isComponent(binding)) continue;
+        if (isPresent(binding)) {
+          const here = !!vm[binding.getter];
+          const size = sizes.get(widgetId);
+          widget[key] = here;
+          widget.width = here ? size.width : 0;
+          widget.height = here ? size.height : 0;
+          continue;
+        }
         if (isFit(binding)) {
           const size = fittedSize(naturalSize(binding, vm), binding.box);
           // Full-bleed for the instant before there is a box: a photo that has not
@@ -644,6 +678,10 @@ function validate($, vm, bindings) {
         if (!(ref.getter in vm)) {
           throw new Error(`bindView: VM has no property "${ref.getter}" (bound to fit ${widgetId}.${key})`);
         }
+      } else if (isPresent(ref)) {
+        if (!(ref.getter in vm)) {
+          throw new Error(`bindView: VM has no property "${ref.getter}" (bound to present ${widgetId}.${key})`);
+        }
       } else if (isPressable(ref)) {
         for (const getter of [ref.getter, ref.pressedGetter]) {
           if (!(getter in vm)) {
@@ -681,6 +719,7 @@ function makeBinder(createComponent, palette, measureImage) {
   binder.component = component;
   binder.pressable = pressable;
   binder.fit = fit;
+  binder.present = present;
   return binder;
 }
 
@@ -695,4 +734,5 @@ module.exports.collection = collection;
 module.exports.component = component;
 module.exports.pressable = pressable;
 module.exports.fit = fit;
+module.exports.present = present;
 module.exports.makeBinder = makeBinder;

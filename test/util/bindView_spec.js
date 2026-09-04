@@ -784,6 +784,43 @@ function makeObservableBox(size) {
   };
 }
 
+// Hiding a widget leaves its space behind, so a row of tools laid out in a flow
+// keeps a gap where an absent one would have been — and anything centred against
+// that row is measured off the gap. Presence is the other thing "not shown" can
+// mean, and the one a toolbar wants.
+describe("presence binding (present)", function () {
+  const { present } = bindView;
+
+  class ToolVM extends ChangeNotifier {
+    constructor(shown) { super(); this._shown = shown; }
+    get shown() { return this._shown; }
+    set shown(v) { this._shown = v; this.notifyListeners(); }
+  }
+
+  function bind(shown) {
+    const $ = { icon: makeWidget({ visible: null, width: "35dp", height: "20dp" }) };
+    const vm = new ToolVM(shown);
+    bindView($, vm, { icon: { visible: present("shown") } });
+    return { $, vm };
+  }
+
+  it("leaves a present widget the size its style gave it", function () {
+    const { $ } = bind(true);
+    expect([$.icon.visible, $.icon.width, $.icon.height]).to.deep.equal([true, "35dp", "20dp"]);
+  });
+
+  it("takes back the space of a widget that is not present", function () {
+    const { $ } = bind(false);
+    expect([$.icon.visible, $.icon.width, $.icon.height]).to.deep.equal([false, 0, 0]);
+  });
+
+  it("gives the space back when the widget becomes present again", function () {
+    const { $, vm } = bind(false);
+    vm.shown = true;
+    expect([$.icon.visible, $.icon.width, $.icon.height]).to.deep.equal([true, "35dp", "20dp"]);
+  });
+});
+
 describe("bindView collection binding", function () {
   const { collection } = bindView;
 
