@@ -4,7 +4,6 @@ var { closeWindow, wrapViewInWindow, windowOpenTest, waitFor } = require("spec/u
 var { View } = require("logic/View");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
 var GalleryPhotoViewModel = require("mvvm/viewmodels/GalleryPhoto");
-var PhotoUtils = require("util/PhotoUtils");
 
 // Renders one page of the photo pager through the View seam (createComponent →
 // the Titanium-free component controller's bind). Which owner mounted the page
@@ -12,7 +11,7 @@ var PhotoUtils = require("util/PhotoUtils");
 // (test/viewmodels/GalleryPhoto_spec.js) — here it is the on-device rendering and
 // the platform split of the zoom surface.
 describe("GalleryPhoto component", function () {
-	var view, comp, win, vm;
+	var view, comp, win, vm, box;
 
 	var PHOTO = "/spec/resources/simpleKey1/media/amphipoda_01.jpg";
 	var TAXON = { id: "t1", name: "Anisops" };
@@ -22,17 +21,32 @@ describe("GalleryPhoto component", function () {
 	function photo() { return frame().children[0]; }
 	function taxonLabel() { return frame().children[1]; }
 
-	// A page is fitted to the box its pager measured, so the spec plays the pager:
-	// open the window, then hand the page the size it settled at.
+	// A page is fitted to the box its pager hands it, so the spec plays the pager:
+	// open the window, then publish the size it settled at. The shape here is the
+	// one bindView's collection() gives a real page.
+	function makeBox() {
+		var listeners = [];
+		return {
+			width: 0, height: 0,
+			set: function (size) {
+				this.width = size.width; this.height = size.height;
+				listeners.slice().forEach(function (l) { l(); });
+			},
+			addListener: function (l) { listeners.push(l); },
+			removeListener: function (l) { listeners = listeners.filter(function (x) { return x !== l; }); },
+		};
+	}
+
 	function render(owner, taxon) {
-		vm = new GalleryPhotoViewModel(owner, { key: PHOTO, url: PHOTO, taxon: taxon }, PhotoUtils.photoSize);
+		vm = new GalleryPhotoViewModel(owner, { key: PHOTO, url: PHOTO, taxon: taxon });
+		box = makeBox();
 		view = new View(makeTestServices());
-		comp = view.createComponent("GalleryPhoto", { rowVm: vm });
+		comp = view.createComponent("GalleryPhoto", { rowVm: vm, box: box });
 		win = wrapViewInWindow(comp.view);
 		return windowOpenTest(win).then(function () {
 			return waitFor(function () { return win.rect.height > 0; });
 		}).then(function () {
-			vm.setViewport({ width: win.rect.width, height: win.rect.height });
+			box.set({ width: win.rect.width, height: win.rect.height });
 		});
 	}
 
@@ -73,24 +87,24 @@ describe("GalleryPhoto component", function () {
 	// both dimensions is stretched to them. amphipoda_01.jpg is 1024x683.
 	it("fits the whole photo on the screen, in its own proportions", async () => {
 		await render(viewingOwner(), null);
-		// The page asks for a size and Titanium lays it out; assert on what was
-		// drawn, once it has caught up with what was asked for.
-		await waitFor(function () { return Math.abs(photo().rect.width - vm.photoWidth) <= 1; });
+		// bindView asks for a size and Titanium lays it out; assert on what was
+		// drawn, once it has caught up with the box.
+		await waitFor(function () { return photo().rect.width > 0 && photo().rect.width < box.width + 2; });
 		var shown = photo().rect, screen = win.rect;
 		// The numbers go in the message: a bare ratio says the layout is wrong
 		// without saying which of the frame, the measurement or the sum produced it.
 		var seen = `window ${screen.width}x${screen.height}`
 			+ `, frame ${frame().rect.width}x${frame().rect.height}`
 			+ `, photo ${shown.width}x${shown.height}`
-			+ `, asked for ${vm.photoWidth}x${vm.photoHeight}`;
+			+ `, box ${box.width}x${box.height}`;
 		expect(shown.x + shown.width, `photo fits within the screen — ${seen}`).to.be.at.most(screen.width + 1);
 		expect(shown.width / shown.height, `photo keeps its source proportions — ${seen}`).to.be.closeTo(1024 / 683, 0.05);
 	});
 
 	it("uses the full height of the screen it is on", async () => {
 		await render(viewingOwner(), null);
-		await waitFor(function () { return Math.abs(photo().rect.height - vm.photoHeight) <= 1; });
-		expect(photo().rect.height, `photo is as tall as the window — asked for ${vm.photoWidth}x${vm.photoHeight}`).to.be.closeTo(win.rect.height, 1);
+		await waitFor(function () { return Math.abs(photo().rect.height - win.rect.height) <= 1; });
+		expect(photo().rect.height, `photo is as tall as the window — box ${box.width}x${box.height}`).to.be.closeTo(win.rect.height, 1);
 	});
 
 	// The zoom mechanism is the only thing that differs by platform, and it is

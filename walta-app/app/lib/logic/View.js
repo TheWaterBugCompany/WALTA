@@ -22,16 +22,17 @@ function View(services) {
 }
 
 // The context every screen/row/modal controller is built with. Hands it a
-// bindView pre-bound with the View-side dependencies (createComponent, palette)
-// so the controller declares only its bindings and never wires a Titanium
-// dependency itself — mvvm/controllers stays a pure DSL layer.
+// bindView pre-bound with the View-side dependencies (createComponent, palette,
+// the image measurer fit() sizes from) so the controller declares only its
+// bindings and never wires a Titanium dependency itself — mvvm/controllers stays
+// a pure DSL layer.
 View.prototype.controllerContext = function (alloyCtl, close, args, services) {
   return {
     view: alloyCtl,
     close,
     services,
     args,
-    bindView: makeBinder((name, a) => this.createComponent(name, a), Alloy.CFG.colors),
+    bindView: makeBinder((name, a) => this.createComponent(name, a), Alloy.CFG.colors, this.services.photoSize),
   };
 };
 
