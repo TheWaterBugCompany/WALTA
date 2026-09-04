@@ -185,6 +185,12 @@ function keySearchMixedMedia() {
 	return args;
 }
 
+// The same couplet reached from a tray, so the anchor bar carries the way back
+// to it — the state every screen deep in the key is in during a survey.
+function keySearchFromTray() {
+	return Object.assign({}, keySearch(), { allowAddToSample: true });
+}
+
 function sampleHistory() {
 	var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
 	var { clearDatabase } = require("spec/util/TestUtils");
@@ -527,6 +533,7 @@ module.exports = [
 	{ name: "KeySearch", args: keySearch },
 	{ name: "KeySearchHinted", screen: "KeySearch", args: keySearchHinted },
 	{ name: "KeySearchMixedMedia", screen: "KeySearch", args: keySearchMixedMedia },
+	{ name: "KeySearchFromTray", screen: "KeySearch", args: keySearchFromTray },
 	{ name: "SampleHistory", args: sampleHistory },
 	{ name: "TrainingTray", args: trainingTray, services: trainingTrayServices, after: assessTrainingTray },
 	// The WebView screens wait for their page to load; the rest still use loadMs

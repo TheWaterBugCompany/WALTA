@@ -26,12 +26,17 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
     $.off();
     groups.forEach( (g) => g.cleanUp() );
     speedbugTileIndex.cleanUp();
+    $.trayButton.cleanUp();
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
 var acb = $.getAnchorBar();
 acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample, training: $.args.training }  ) );
 acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: surveyType, allowAddToSample: $.args.allowAddToSample, training: $.args.training }  ) );
+// A way back to the tray the identification started from; the button hides
+// itself when there is no tray waiting.
+$.trayButton = Alloy.createController("TrayButton", $.args);
+acb.addTool( $.trayButton.getView() );
 
 
 var tileWidth = 0;
