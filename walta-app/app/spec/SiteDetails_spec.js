@@ -298,6 +298,20 @@ describe("SiteDetails controller", function() {
         expect( ctl.content.contentWidth ).to.be.at.most( ctl.content.size.width );
     });
 
+
+    // WB-302: the fields must not resize when applyKeyboardTweaks re-parents
+    // the content into its ScrollView — a Ti.UI.SIZE wrapper whose child carries
+    // percentage margins resolves differently in the two measurement contexts.
+    it("text fields keep their height when the content is wrapped for the keyboard", async function() {
+        if ( OS_ANDROID ) this.skip(); // no ScrollView wrap on Android
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
+        await controllerOpenTest( ctl );
+        expect( ctl.content.apiName, "must sample the heights before the wrap" ).to.equal("Ti.UI.View");
+        var unwrapped = [ ctl.waterbodyNameField.rect.height, ctl.nearByFeatureField.rect.height ];
+        await waitFor( () => ctl.content.apiName === "Ti.UI.ScrollView" );
+        expect( [ ctl.waterbodyNameField.rect.height, ctl.nearByFeatureField.rect.height ] ).to.eql( unwrapped );
+    });
+
     it("photo should NOT be selectable when in read only mode", function(done) {
         ctl = Alloy.createController("SiteDetails", { readonly: true, sample: Alloy.Models.instance("sample") });
         controllerOpenTest( ctl, function() {

@@ -9,11 +9,11 @@
 			<View id="waterbodyTypeError" class="errorWrap shrinkWrap">
 				<Widget id="waterbodyTypeSelect" class="tabs labelText" src="com.skypanther.segmentedcontrol"/>
 			</View>
-			<View id="waterbodyName" layout="vertical" class="shrinkWrap">
+			<View id="waterbodyName" layout="vertical" class="fieldGroup">
 				<Label id="waterbodyNameLabel" class="labelText" text="Waterbody name:"/>
 				<TextField id="waterbodyNameField" class="textField" accessibilityLabel="Waterbody Name" onChange="checkValidity" />
 			</View>
-			<View id="nearByFeature" layout="vertical" class="shrinkWrap">
+			<View id="nearByFeature" layout="vertical" class="fieldGroup">
 				<Label id="nearByFeatureLabel" class="labelText" text="Near by feature:"/>
 				<TextField id="nearByFeatureField" class="textField"  accessibilityLabel="Near By Feature" onChange="checkValidity"/>
 			</View>
