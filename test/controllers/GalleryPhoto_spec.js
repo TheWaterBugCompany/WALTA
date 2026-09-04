@@ -26,12 +26,14 @@ describe("GalleryPhoto component", function () {
         owner = pageOwner;
         const vm = new GalleryPhotoViewModel(
             owner,
-            { key: "/photos/a.jpg", url: "/photos/a.jpg", taxon: taxon || null },
-            function () { return { width: 1024, height: 683 }; },
-            { width: 800, height: 400 }
+            { key: "/photos/a.jpg", url: "/photos/a.jpg", taxon: taxon || null }
         );
         view = { photo: makeWidget(), taxonLabel: makeWidget() };
-        ctl = createGalleryPhoto({ view, args: { rowVm: vm }, bindView: makeBinder() });
+        ctl = createGalleryPhoto({
+            view,
+            args: { rowVm: vm, box: { width: 800, height: 400 } },
+            bindView: makeBinder(undefined, undefined, () => ({ width: 1024, height: 683 })),
+        });
         return view;
     }
 
@@ -47,6 +49,13 @@ describe("GalleryPhoto component", function () {
     it("opens the taxon when the photo is tapped", function () {
         build(browsingOwner(), TAXON).photo.fireEvent("click");
         expect(owner.went).to.deep.equal([TAXON]);
+    });
+
+    // The page is sized from the box the pager handed it, not from anything it
+    // measures itself.
+    it("fits the photo to the box the pager handed it", function () {
+        const v = build(viewingOwner(), TAXON);
+        expect([v.photo.width, v.photo.height]).to.deep.equal([600, 400]);
     });
 
     it("goes nowhere when a media-viewing owner's photo is tapped", function () {

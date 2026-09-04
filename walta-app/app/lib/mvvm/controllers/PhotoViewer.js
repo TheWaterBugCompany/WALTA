@@ -1,4 +1,4 @@
-const { collection, input, measure } = require("util/bindView");
+const { collection, input } = require("util/bindView");
 const PhotoViewerViewModel = require("mvvm/viewmodels/PhotoViewer");
 
 // Titanium-free screen controller for the photo viewer: a pager over the photos
@@ -9,11 +9,12 @@ const PhotoViewerViewModel = require("mvvm/viewmodels/PhotoViewer");
 // view-model offers none. See docs/patterns/screen-controllers.md.
 const BINDINGS = {
   scrollView: {
-    pages:              collection("pages", "GalleryPhoto"),
+    // The pager's own frame is the box each page is fitted to: measured above the
+    // pages, so a page resizing inside it cannot feed its own next reading.
+    pages:              collection("pages", "GalleryPhoto", "size"),
     currentPage:        "currentPage",
     accessibilityLabel: "accessibilityLabel",
     onScrollend:        input("setPage", "currentPage"),
-    onPostlayout:       measure("setViewport", "size"),
   },
   pager: {
     dots:    collection("dots", "PagerDot"),
@@ -23,7 +24,7 @@ const BINDINGS = {
 };
 
 module.exports = function createPhotoViewerController({ view, services, bindView, args }) {
-  const vm = new PhotoViewerViewModel({ photos: args.photos, topics: services.topics, photoSize: services.photoSize });
+  const vm = new PhotoViewerViewModel({ photos: args.photos, topics: services.topics });
   const unbind = bindView(view, vm, BINDINGS);
   return {
     vm,
