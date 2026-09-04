@@ -72,7 +72,13 @@ describe("PhotoViewer controller", function () {
 		var box = ctl.scrollView.rect;
 		// zoom > frame > [ photo, taxonLabel ]
 		function photo() { return ctl.scrollView.views[0].children[0].children[0]; }
-		await waitFor(function () { return photo().rect.height > 0 && photo().rect.height <= box.height + 1; });
+		// Not "fits inside the pager" — an unfitted photo fills it exactly, so that
+		// bound holds in the state this test exists to catch. Wait for the drawn
+		// photo to reach the size bindView asked for.
+		await waitFor(function () {
+			var asked = photo().width;
+			return typeof asked === "number" && Math.abs(photo().rect.width - asked) <= 1;
+		});
 		var shown = photo().rect;
 		var seen = `pager ${box.width}x${box.height}, photo ${shown.width}x${shown.height}`;
 		expect(shown.width / shown.height, `photo keeps its source proportions — ${seen}`)

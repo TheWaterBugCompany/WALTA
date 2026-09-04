@@ -57,6 +57,13 @@ describe("GalleryPhoto component", function () {
 
 	function viewingOwner() { return {}; }
 
+	// The photo has been laid out at the size bindView asked for. Before that its
+	// width is the "100%" it fills with, so the numeric check is half the predicate.
+	function fittedYet() {
+		var asked = photo().width;
+		return typeof asked === "number" && Math.abs(photo().rect.width - asked) <= 1;
+	}
+
 	afterEach(async function () {
 		if (comp) comp.dispose();
 		await closeWindow(win);
@@ -87,9 +94,12 @@ describe("GalleryPhoto component", function () {
 	// both dimensions is stretched to them. amphipoda_01.jpg is 1024x683.
 	it("fits the whole photo on the screen, in its own proportions", async () => {
 		await render(viewingOwner(), null);
-		// bindView asks for a size and Titanium lays it out; assert on what was
-		// drawn, once it has caught up with the box.
-		await waitFor(function () { return photo().rect.width > 0 && photo().rect.width < box.width + 2; });
+		// bindView asks for a size and Titanium lays it out a frame later; wait for
+		// the drawn photo to catch up with what was asked for, not merely for it to
+		// fit inside the box — an unfitted photo fills the box exactly, so a bound
+		// of box.width would be satisfied by the very state this test exists to
+		// catch.
+		await waitFor(fittedYet);
 		var shown = photo().rect, screen = win.rect;
 		// The numbers go in the message: a bare ratio says the layout is wrong
 		// without saying which of the frame, the measurement or the sum produced it.
@@ -103,7 +113,7 @@ describe("GalleryPhoto component", function () {
 
 	it("uses the full height of the screen it is on", async () => {
 		await render(viewingOwner(), null);
-		await waitFor(function () { return Math.abs(photo().rect.height - win.rect.height) <= 1; });
+		await waitFor(fittedYet);
 		expect(photo().rect.height, `photo is as tall as the window — box ${box.width}x${box.height}`).to.be.closeTo(win.rect.height, 1);
 	});
 

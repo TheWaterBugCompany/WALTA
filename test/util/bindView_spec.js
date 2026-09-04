@@ -742,6 +742,23 @@ describe("fitted-size binding (fit)", function () {
     expect([$.photo.width, $.photo.height]).to.deep.equal(["100%", "100%"]);
   });
 
+  // A photo is not always readable the instant the binding first runs — on Android
+  // the first read of a freshly-mounted page comes back empty. Remembering that as
+  // the answer leaves the photo stretched to its box for the life of the screen.
+  it("tries again after a reading that failed, rather than remembering the failure", function () {
+    let readable = false;
+    const $ = { photo: makeWidget({ width: null, height: null, image: null }) };
+    const vm = new PhotoVM("/late.jpg");
+    bindView($, vm, { photo: { image: "image", size: fit("image", { width: 800, height: 400 }) } },
+      { measureImage: () => (readable ? { width: 1000, height: 500 } : null) });
+    expect([$.photo.width, $.photo.height]).to.deep.equal(["100%", "100%"]);
+
+    readable = true;
+    vm.notifyListeners();
+
+    expect([$.photo.width, $.photo.height]).to.deep.equal([800, 400]);
+  });
+
   it("reads the natural size once per photo, however often it re-fits", function () {
     let reads = 0;
     const $ = { photo: makeWidget({ width: null, height: null, image: null }) };
