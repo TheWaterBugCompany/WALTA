@@ -2,7 +2,7 @@ require("spec/lib/ti-mocha");
 var simple = require("spec/lib/simple-mock");
 var { expect } = require("spec/lib/chai");
 var { makeSampleData } = require("spec/fixtures/SampleData_fixture");
-var { clearDatabase, actionFiresTopicTest, waitForTick, isManualTests } = require("spec/util/TestUtils");
+var { clearDatabase, actionFiresTopicTest, waitForTick, waitFor, isManualTests } = require("spec/util/TestUtils");
 var { areWeSyncing } = require("logic/SampleSync");
 var { Navigation } = require('logic/Navigation');
 var { Survey } = require('logic/Survey');
@@ -10,6 +10,8 @@ var { View } = require('logic/View');
 var Topics = require('ui/Topics');
 var KeyLoader = require('logic/KeyLoaderJson');
 var { makeTestServices } = require('spec/fixtures/Services_fixture');
+var SampleTrayModel = require('models/SampleTray');
+var TrainingTaxon = require('models/Taxon');
 describe("Main controller", function() {
 	let app;
   Alloy.Collections.instance("taxa");
@@ -38,6 +40,24 @@ describe("Main controller", function() {
     }
     Topics.reset(); // remove global events handlers
     simple.restore();
+  });
+
+  // The anchor-bar tray button knows only that it wants the training tray back;
+  // the session's tray and assessor come from the Training service Main owns.
+  it('opens the training tray from the session for a caller that supplies neither', async function() {
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserToken")
+      .returnWith({accessToken:"accessToken"});
+    simple.mock(Alloy.Globals.CerdiApi,"retrieveUserId")
+      .returnWith(38);
+    var tray = new SampleTrayModel([ new TrainingTaxon({ id: 1, taxonId: 1, position: 0 }) ]);
+    services.Training = { currentTray: () => tray, currentAssessor: () => null };
+    app = Alloy.createController("Main", services);
+    await app.startApp();
+
+    Topics.fireTopicEvent(Topics.TRAININGTRAY);
+
+    await waitFor( () => _.last( services.Navigation.getHistory() ).ctl === "TrainingTray" );
+    expect( _.last( services.Navigation.getHistory() ).args.tray ).to.equal( tray );
   });
 
 	it('should display the Main view', async function() {

@@ -20,15 +20,12 @@ module.exports = function createAcademyController({ view, close, services, bindV
   const vm = new AcademyViewModel({ isValidCode: (code) => services.Training.isValidCode(code) });
   const unbind = bindView(view, vm, BINDINGS);
 
-  // On a known code, dismiss the modal and open the training tray with the
-  // session's tray/assessor. An unknown code leaves the modal up.
+  // On a known code, dismiss the modal and open the training tray. An unknown
+  // code leaves the modal up.
   vm.on("start", function (code) {
     if (services.Training.startTraining(code)) {
       close();
-      services.topics.fireTopicEvent(services.topics.TRAININGTRAY, {
-        tray: services.Training.currentTray(),
-        assessor: services.Training.currentAssessor(),
-      });
+      services.topics.fireTopicEvent(services.topics.TRAININGTRAY);
     }
   });
   vm.on("close", function () { close(); });

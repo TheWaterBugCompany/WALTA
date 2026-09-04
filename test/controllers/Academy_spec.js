@@ -104,7 +104,8 @@ describe("Academy controller", function () {
     view.startButton.fireEvent("click");
     expect(training.startedWith).to.equal("789");
     expect(closed).to.equal(1);
-    expect(fired).to.deep.equal([{ t: "trainingtray", d: { tray: training.tray, assessor: training.assessor } }]);
+    // The session's tray and assessor are the route's business, not the modal's.
+    expect(fired).to.deep.equal([{ t: "trainingtray", d: undefined }]);
   });
 
   it("does nothing when Start is tapped on an invalid (disabled) code", function () {
