@@ -47,6 +47,24 @@
     right: "1%"
 }
 
+// Definite sizes both ways: a Ti.UI.SIZE group whose field carries percentage
+// margins resolves against a parent derived from the field, and Ti Classic
+// settles that circle differently either side of the keyboard ScrollView wrap.
+".fieldGroup": {
+    width: Ti.UI.FILL,
+    height: Ti.UI.SIZE
+}
+
+".textField": {
+    top: "2dp",
+    bottom: "2dp",
+    height: "40dp"
+}
+
+".textField[if=Alloy.Globals.isXHighRes]": {
+    height: "80dp"
+}
+
 ".labelText": {
     left: "1%",
     bottom: "1%",
