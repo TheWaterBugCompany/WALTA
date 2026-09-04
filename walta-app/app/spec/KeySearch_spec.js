@@ -1,6 +1,6 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
-var { closeWindow, controllerOpenTest, waitForTopic } = require('spec/util/TestUtils');
+var { closeWindow, controllerOpenTest, waitForTopic, actionFiresTopicTest } = require('spec/util/TestUtils');
 var { View } = require("logic/View");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
 var { makeBinder } = require("util/bindView");
@@ -141,5 +141,50 @@ describe('KeySearch training gating', function() {
 		var imgs = anchorImages( ctl );
 		expect( imgs ).to.not.include( '/images/icon-speedbug-white.png' );
 		expect( imgs ).to.not.include( '/images/icon-browse-white.png' );
+	});
+});
+
+// Deep in the key there is no other way back to the tray the identification
+// started from, so the anchor bar offers one — but only when there is a tray
+// waiting, which is what allowAddToSample says.
+describe('KeySearch tray button', function() {
+	var ctl;
+
+	function trayButton(c) {
+		return c.getAnchorBar().leftTools.children.find( function(child) {
+			return child.image === '/images/icon-icecube-white.png';
+		});
+	}
+
+	function open(args) {
+		return new Promise(function(resolve) {
+			var key = makeTestKey();
+			ctl = Alloy.createController("KeySearch", _({ node: key.getRootNode(), key: key }).extend(args || {}));
+			controllerOpenTest( ctl, resolve );
+		});
+	}
+
+	afterEach( async function() { await closeWindow( ctl.getView() ); });
+
+	it('offers a way back to the tray the identification started from', async function() {
+		await open({ allowAddToSample: true });
+		expect( trayButton( ctl ).visible ).to.equal( true );
+	});
+
+	it('offers none when the key was not opened from a tray', async function() {
+		await open({ allowAddToSample: false });
+		expect( trayButton( ctl ).visible ).to.equal( false );
+	});
+
+	it('returns to the survey tray during a survey', function(done) {
+		open({ allowAddToSample: true }).then( function() {
+			actionFiresTopicTest( trayButton( ctl ), 'click', Topics.SAMPLETRAY, () => done() );
+		});
+	});
+
+	it('returns to the training tray during a training session', function(done) {
+		open({ allowAddToSample: true, training: true }).then( function() {
+			actionFiresTopicTest( trayButton( ctl ), 'click', Topics.TRAININGTRAY, () => done() );
+		});
 	});
 });

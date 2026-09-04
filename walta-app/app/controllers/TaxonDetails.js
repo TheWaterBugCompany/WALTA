@@ -16,6 +16,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.destroy();
 	$.off();
 	actions.forEach( (a) => a.cleanUp() );
+	$.trayButton.cleanUp();
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
 
@@ -102,4 +103,8 @@ if ( !$.args.training ) {
   acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position }, "Speedbug" ), true );
   acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position }, "Browse" ), true );
 }
+// A way back to the tray the identification started from; the button hides
+// itself when there is no tray waiting.
+$.trayButton = Alloy.createController("TrayButton", $.args);
+acb.addTool( $.trayButton.getView(), true );
 acb.addTool( goBackBtn.getView() );

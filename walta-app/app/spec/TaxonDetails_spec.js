@@ -120,6 +120,42 @@ describe('TaxonDetails controller', function() {
 		});
 	});
 
+	// The end of the key is the furthest point from the tray, so the taxon screen
+	// offers a way back to the one the identification started from.
+	context('tray button', function() {
+		function trayButton(ctl) {
+			return ctl.getAnchorBar().leftTools.children.find( function(c) {
+				return c.image === '/images/icon-icecube-white.png';
+			});
+		}
+		function makeTaxon() {
+			return Taxon.createTaxon({
+				id: "t1", name: "Test", commonName: "Test bug", scientificName: [],
+				size: 1, habitat: "", movement: "", confusedWith: "", signalScore: 1,
+				description: "", mediaUrls: []
+			});
+		}
+		var tv;
+		afterEach( function(done) { closeWindow( tv.getView(), done ); });
+
+		function open(args) {
+			return new Promise( function(resolve) {
+				tv = Alloy.createController( "TaxonDetails", _({ node: makeTaxon() }).extend(args) );
+				controllerOpenTest( tv, resolve );
+			});
+		}
+
+		it('offers a way back to the tray the identification started from', async function() {
+			await open({ allowAddToSample: true });
+			expect( trayButton( tv ).visible ).to.equal( true );
+		});
+
+		it('offers none when the taxon was not reached from a tray', async function() {
+			await open({ allowAddToSample: false });
+			expect( trayButton( tv ).visible ).to.equal( false );
+		});
+	});
+
 	it('should display only the relevant media icons');
 	it('should only display the add sample button during a survey');
 	it('should correctly pass the media to the gallery widget');

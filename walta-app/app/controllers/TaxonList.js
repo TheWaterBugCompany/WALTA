@@ -8,6 +8,17 @@ $.noSwipeBack();
 var acb = $.getAnchorBar();
 acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample, training: $.args.training }  ) );
 acb.addTool( acb.createToolBarButton( '/images/key-icon-white.png', Topics.KEYSEARCH, null, { surveyType: $.args.surveyType, allowAddToSample:  $.args.allowAddToSample, training: $.args.training }  ) );
+// A way back to the tray the identification started from; the button hides
+// itself when there is no tray waiting.
+$.trayButton = Alloy.createController("TrayButton", $.args);
+acb.addTool( $.trayButton.getView() );
+
+$.TopLevelWindow.addEventListener('close', function cleanUp() {
+    $.trayButton.cleanUp();
+    $.destroy();
+    $.off();
+    $.TopLevelWindow.removeEventListener('close', cleanUp );
+});
 
 function clickItem(e) {
     var item = $.content.sections[e.sectionIndex].getItemAt(e.itemIndex);

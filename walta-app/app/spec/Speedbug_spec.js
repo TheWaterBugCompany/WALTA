@@ -42,3 +42,34 @@ describe('Speedbug controller', function() {
 		controllerOpenTest( SpeedBug, function() {});
 	});
 });
+
+// Speedbug is a way into an identification, so it offers a way back to the tray
+// it was reached from — and none when it was reached from the menu.
+describe('Speedbug tray button', function() {
+	var ctl;
+
+	function trayButton(c) {
+		return c.getAnchorBar().rightTools.children.find( function(child) {
+			return child.image === '/images/icon-icecube-white.png';
+		});
+	}
+
+	function open(args) {
+		return new Promise( function(resolve) {
+			ctl = Alloy.createController("Speedbug", _({ key: keyMock }).extend(args || {}));
+			controllerOpenTest( ctl, resolve );
+		});
+	}
+
+	afterEach( function() { closeWindow( ctl.getView() ); });
+
+	it('offers a way back to the tray the identification started from', async function() {
+		await open({ allowAddToSample: true });
+		expect( trayButton( ctl ).visible ).to.equal( true );
+	});
+
+	it('offers none when speedbug was not reached from a tray', async function() {
+		await open({ allowAddToSample: false });
+		expect( trayButton( ctl ).visible ).to.equal( false );
+	});
+});

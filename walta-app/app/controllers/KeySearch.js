@@ -25,10 +25,15 @@ if ( !$.args.training ) {
   acb.addTool( acb.createToolBarButton( '/images/icon-speedbug-white.png', Topics.SPEEDBUG, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position }, "Speedbug" ), true );
   acb.addTool( acb.createToolBarButton( '/images/icon-browse-white.png', Topics.BROWSE, null, { surveyType: $.args.surveyType, allowAddToSample: $.args.allowAddToSample, position: $.args.position }, "Browse"  ), true );
 }
+// Deep in the key there is no other way back to the tray the identification
+// started from; the button hides itself when there is no tray waiting.
+$.trayButton = Alloy.createController("TrayButton", $.args);
+acb.addTool( $.trayButton.getView(), true );
 acb.addTool( goBackBtn.getView() );
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {
   goBackBtn.cleanUp();
+  $.trayButton.cleanUp();
   $.destroy();
   $.off();
   $.TopLevelWindow.removeEventListener('close', cleanUp );
