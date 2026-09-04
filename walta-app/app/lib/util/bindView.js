@@ -157,8 +157,10 @@ function fittedSize(natural, box) {
 // out in a flow closes up around one that is absent, and anything centred against
 // that row is measured off what is left.
 //
-// The size to restore is read off the widget at bind time, so the stylesheet stays
-// the only place the widget's dimensions are written.
+// Margins count as space: a zero-sized view still pushes its neighbours over by
+// its own, so an absent widget gives those back too. The footprint to restore is
+// read off the widget at bind time, so the stylesheet stays the only place the
+// widget's dimensions are written.
 //   icon: { visible: present("hasTray") }
 function present(getter) {
   return { __present: true, getter };
@@ -167,6 +169,10 @@ function present(getter) {
 function isPresent(ref) {
   return ref !== null && typeof ref === "object" && ref.__present === true;
 }
+
+// Everything a widget takes up in a flow layout, and so everything an absent one
+// has to give back.
+const FOOTPRINT = ["width", "height", "left", "right", "top", "bottom"];
 
 // Children-binding marker: drives a container's child views from a VM getter
 // that returns a keyed list. bindView owns the keyed diff (create new / retain
@@ -267,13 +273,15 @@ module.exports = function bindView($, vm, bindings, options) {
   const applied = new Map();
   // Widgets currently held down, so a pressable property knows which getter to read.
   const pressed = new Set();
-  // The size the stylesheet gave each present()-bound widget, captured before the
-  // first apply so an absent one can be given it back.
-  const sizes = new Map();
+  // The footprint the stylesheet gave each present()-bound widget, captured before
+  // the first apply so an absent one can be given it back.
+  const footprints = new Map();
   for (const widgetId in bindings) {
     for (const key in bindings[widgetId]) {
       if (isPresent(bindings[widgetId][key])) {
-        sizes.set(widgetId, { width: $[widgetId].width, height: $[widgetId].height });
+        const styled = {};
+        FOOTPRINT.forEach((p) => { styled[p] = $[widgetId][p]; });
+        footprints.set(widgetId, styled);
       }
     }
   }
@@ -290,10 +298,9 @@ module.exports = function bindView($, vm, bindings, options) {
         if (EVENT_KEY_RE.test(key) || isCollection(binding) || isCommand(binding) || isComponent(binding)) continue;
         if (isPresent(binding)) {
           const here = !!vm[binding.getter];
-          const size = sizes.get(widgetId);
+          const styled = footprints.get(widgetId);
           widget[key] = here;
-          widget.width = here ? size.width : 0;
-          widget.height = here ? size.height : 0;
+          FOOTPRINT.forEach((p) => { widget[p] = here ? styled[p] : 0; });
           continue;
         }
         if (isFit(binding)) {

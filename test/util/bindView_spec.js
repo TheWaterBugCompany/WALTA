@@ -797,27 +797,37 @@ describe("presence binding (present)", function () {
     set shown(v) { this._shown = v; this.notifyListeners(); }
   }
 
+  const STYLED = { visible: null, width: "35dp", height: "20dp", left: "8dp" };
+
   function bind(shown) {
-    const $ = { icon: makeWidget({ visible: null, width: "35dp", height: "20dp" }) };
+    const $ = { icon: makeWidget(Object.assign({}, STYLED)) };
     const vm = new ToolVM(shown);
     bindView($, vm, { icon: { visible: present("shown") } });
     return { $, vm };
   }
 
+  function footprint(icon) {
+    return [icon.visible, icon.width, icon.height, icon.left];
+  }
+
   it("leaves a present widget the size its style gave it", function () {
-    const { $ } = bind(true);
-    expect([$.icon.visible, $.icon.width, $.icon.height]).to.deep.equal([true, "35dp", "20dp"]);
+    expect(footprint(bind(true).$.icon)).to.deep.equal([true, "35dp", "20dp", "8dp"]);
   });
 
   it("takes back the space of a widget that is not present", function () {
-    const { $ } = bind(false);
-    expect([$.icon.visible, $.icon.width, $.icon.height]).to.deep.equal([false, 0, 0]);
+    expect(footprint(bind(false).$.icon)).to.deep.equal([false, 0, 0, 0]);
+  });
+
+  // A zero-sized view still pushes its neighbours over by its margin — the same
+  // defect as leaving the whole footprint behind, just half the size.
+  it("takes back the margin too, not only the size", function () {
+    expect(bind(false).$.icon.left).to.equal(0);
   });
 
   it("gives the space back when the widget becomes present again", function () {
     const { $, vm } = bind(false);
     vm.shown = true;
-    expect([$.icon.visible, $.icon.width, $.icon.height]).to.deep.equal([true, "35dp", "20dp"]);
+    expect(footprint($.icon)).to.deep.equal([true, "35dp", "20dp", "8dp"]);
   });
 });
 
