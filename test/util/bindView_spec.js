@@ -671,6 +671,102 @@ describe("bindView", function () {
 // controllers/SampleHistory.js (Map of child controllers) and the SampleTray
 // windowing. bindView owns the keyed diff; the injected adapter owns the
 // Titanium-specific child create/attach/dispose.
+// Titanium will not fit a photo to a box: given both dimensions it stretches to
+// them, and what it does with only one set varies by platform and by what the
+// widget is mounted in. So the scaling is arithmetic, and it belongs here rather
+// than in a view-model that would otherwise have to know that about Titanium.
+describe("fitted-size binding (fit)", function () {
+  const { fit } = bindView;
+  const NATURAL = {
+    "/wide.jpg": { width: 1000, height: 500 },
+    "/tall.jpg": { width: 500, height: 1000 },
+  };
+  const measureImage = (url) => NATURAL[url];
+
+  class PhotoVM extends ChangeNotifier {
+    constructor(url) { super(); this._url = url; }
+    get image() { return this._url; }
+    set image(v) { this._url = v; this.notifyListeners(); }
+  }
+
+  function bind(url, box) {
+    const $ = { photo: makeWidget({ width: null, height: null, image: null }) };
+    const vm = new PhotoVM(url);
+    const unbind = bindView($, vm, { photo: { image: "image", size: fit("image", box) } }, { measureImage });
+    return { $, vm, unbind };
+  }
+
+  // The smaller of the two ratios, so the photo grows until one dimension runs
+  // out — anything larger would crop, anything else would distort.
+  it("grows the photo until its width runs out", function () {
+    const { $ } = bind("/wide.jpg", { width: 800, height: 400 });
+    expect([$.photo.width, $.photo.height]).to.deep.equal([800, 400]);
+  });
+
+  it("grows the photo until its height runs out", function () {
+    const { $ } = bind("/tall.jpg", { width: 800, height: 400 });
+    expect([$.photo.width, $.photo.height]).to.deep.equal([200, 400]);
+  });
+
+  // A photo that has not been given a box yet is better full-bleed for an instant
+  // than absent.
+  it("fills what it is in until there is a box to fit into", function () {
+    const { $ } = bind("/wide.jpg", null);
+    expect([$.photo.width, $.photo.height]).to.deep.equal(["100%", "100%"]);
+  });
+
+  it("re-fits when the box it was given changes", function () {
+    const box = makeObservableBox({ width: 800, height: 400 });
+    const { $ } = bind("/wide.jpg", box);
+    box.set({ width: 400, height: 400 });
+    expect([$.photo.width, $.photo.height]).to.deep.equal([400, 200]);
+  });
+
+  // A photo small enough to sit inside the box is scaled up to it, not left
+  // stranded at its own pixel size in the middle of the window.
+  it("grows a photo smaller than its box rather than leaving it small", function () {
+    const $ = { photo: makeWidget({ width: null, height: null, image: null }) };
+    const vm = new PhotoVM("/small.jpg");
+    bindView($, vm, { photo: { image: "image", size: fit("image", { width: 800, height: 400 }) } },
+      { measureImage: () => ({ width: 200, height: 100 }) });
+    expect([$.photo.width, $.photo.height]).to.deep.equal([800, 400]);
+  });
+
+  // A stored path can outlive its file. There is then nothing to scale, and
+  // filling the box beats taking the screen down.
+  it("fills its box when the photo cannot be read", function () {
+    const $ = { photo: makeWidget({ width: null, height: null, image: null }) };
+    const vm = new PhotoVM("/gone.jpg");
+    bindView($, vm, { photo: { image: "image", size: fit("image", { width: 800, height: 400 }) } },
+      { measureImage: () => null });
+    expect([$.photo.width, $.photo.height]).to.deep.equal(["100%", "100%"]);
+  });
+
+  it("reads the natural size once per photo, however often it re-fits", function () {
+    let reads = 0;
+    const $ = { photo: makeWidget({ width: null, height: null, image: null }) };
+    const vm = new PhotoVM("/wide.jpg");
+    bindView($, vm, { photo: { image: "image", size: fit("image", { width: 800, height: 400 }) } },
+      { measureImage: (url) => { reads++; return NATURAL[url]; } });
+    vm.notifyListeners();
+    vm.notifyListeners();
+    expect(reads).to.equal(1);
+  });
+});
+
+// A stand-in for the box a collection hands its children — the shape fit()
+// subscribes to.
+function makeObservableBox(size) {
+  const listeners = [];
+  return {
+    width: size.width,
+    height: size.height,
+    set(next) { this.width = next.width; this.height = next.height; listeners.slice().forEach((l) => l()); },
+    addListener(l) { listeners.push(l); },
+    removeListener(l) { const i = listeners.indexOf(l); if (i >= 0) listeners.splice(i, 1); },
+  };
+}
+
 describe("bindView collection binding", function () {
   const { collection } = bindView;
 
@@ -713,11 +809,14 @@ describe("bindView collection binding", function () {
   // another container.
   function makePagedContainer() {
     const views = [];
+    const listeners = {};
     return {
       views,
       addView(v) { views.push(v); },
       removeView(v) { const i = views.indexOf(v); if (i >= 0) views.splice(i, 1); },
-      addEventListener() {}, removeEventListener() {},
+      addEventListener(name, cb) { (listeners[name] = listeners[name] || []).push(cb); },
+      removeEventListener(name, cb) { listeners[name] = (listeners[name] || []).filter((l) => l !== cb); },
+      fireEvent(name, data) { (listeners[name] || []).slice().forEach((cb) => cb(data)); },
       ids() { return views.map((v) => v.id); },
     };
   }
@@ -734,6 +833,7 @@ describe("bindView collection binding", function () {
         const handle = {
           name,
           rowVm: args.rowVm,
+          box: args.box,
           view: { id: args.rowVm.key },
           dispose() { disposed.push(args.rowVm.key); },
         };
@@ -742,6 +842,56 @@ describe("bindView collection binding", function () {
       };
       return { built, disposed, createComponent };
     }
+
+    // A page cannot take its box from its own frame: it would be measuring the
+    // surface it is about to resize inside, and feed its own next reading. The
+    // measurement has to come from the container above it.
+    it("hands each child the container's measured box", function () {
+      const container = makePagedContainer();
+      const { createComponent, built } = makeFactory();
+      const vm = new ListVM([{ key: "a" }]);
+      bindView({ pager: container }, vm, { pager: { views: collection("items", "Photo", "size") } }, { createComponent });
+      container.size = { width: 800, height: 400 };
+      container.fireEvent("postlayout");
+      expect([built[0].box.width, built[0].box.height]).to.deep.equal([800, 400]);
+    });
+
+    // Titanium emits a postlayout before the frame has converged; a zero-sized
+    // reading would collapse every child rather than size it.
+    it("withholds a box read before the container frame has a size", function () {
+      const container = makePagedContainer();
+      const { createComponent, built } = makeFactory();
+      const vm = new ListVM([{ key: "a" }]);
+      bindView({ pager: container }, vm, { pager: { views: collection("items", "Photo", "size") } }, { createComponent });
+      container.size = { width: 800, height: 0 };
+      container.fireEvent("postlayout");
+      expect([built[0].box.width, built[0].box.height]).to.deep.equal([0, 0]);
+    });
+
+    it("does not disturb its children when the container is measured at the same size again", function () {
+      const container = makePagedContainer();
+      const { createComponent, built } = makeFactory();
+      const vm = new ListVM([{ key: "a" }]);
+      bindView({ pager: container }, vm, { pager: { views: collection("items", "Photo", "size") } }, { createComponent });
+      container.size = { width: 800, height: 400 };
+      container.fireEvent("postlayout");
+      let refits = 0;
+      built[0].box.addListener(() => refits++);
+      container.fireEvent("postlayout");
+      expect(refits).to.equal(0);
+    });
+
+    it("keeps a child's box current when the container is measured again", function () {
+      const container = makePagedContainer();
+      const { createComponent, built } = makeFactory();
+      const vm = new ListVM([{ key: "a" }]);
+      bindView({ pager: container }, vm, { pager: { views: collection("items", "Photo", "size") } }, { createComponent });
+      container.size = { width: 800, height: 400 };
+      container.fireEvent("postlayout");
+      container.size = { width: 400, height: 400 };
+      container.fireEvent("postlayout");
+      expect([built[0].box.width, built[0].box.height]).to.deep.equal([400, 400]);
+    });
 
     it("mounts children into a container that only takes them through addView", function () {
       const container = makePagedContainer();

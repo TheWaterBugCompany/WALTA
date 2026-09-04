@@ -126,6 +126,32 @@ function resolveArgs(vm, args) {
   return args.map(a => (isRef(a) ? vm[a.prop] : a));
 }
 
+// Fitted-size marker: sizes a widget to its image's own proportions inside a box
+// measured elsewhere. Titanium will not do this itself — given both dimensions it
+// stretches to them, and what it does with only one set varies by platform and by
+// what the widget is mounted in — so the sum lives here rather than in a view-model
+// that would otherwise have to carry that knowledge.
+//
+// The box must come from above the widget: one that measures the surface it sits
+// in and then resizes inside it feeds its own next reading, and on iOS the screen
+// never finishes laying out. collection() hands one down for exactly this.
+//   photo: { image: "image", size: fit("image", args.box) }
+function fit(getter, box) {
+  return { __fit: true, getter, box };
+}
+
+function isFit(ref) {
+  return ref !== null && typeof ref === "object" && ref.__fit === true;
+}
+
+// Scaled to fill the box without cropping or distorting: the smaller of the two
+// ratios, so the image grows until one dimension runs out.
+function fittedSize(natural, box) {
+  if (!natural || !box || !(box.width > 0) || !(box.height > 0)) return null;
+  const scale = Math.min(box.width / natural.width, box.height / natural.height);
+  return { width: Math.round(natural.width * scale), height: Math.round(natural.height * scale) };
+}
+
 // Children-binding marker: drives a container's child views from a VM getter
 // that returns a keyed list. bindView owns the keyed diff (create new / retain
 // existing / dispose gone). The second arg is either:
@@ -135,11 +161,11 @@ function resolveArgs(vm, args) {
 //     setData). This is the common list case.
 //   - omitted — the polymorphic convention: each item names its own component
 //     via item.component (the tray's slots: a SampleTaxaIcon or a SampleTrayPlus).
-function collection(getter, componentName) {
+function collection(getter, componentName, boxProp) {
   if (componentName === undefined) {
     return { __collection: true, getter, polymorphic: true };
   }
-  return { __collection: true, getter, componentName };
+  return { __collection: true, getter, componentName, boxProp };
 }
 
 function isCollection(ref) {
@@ -201,6 +227,17 @@ module.exports = function bindView($, vm, bindings, options) {
 
   const palette = options && options.palette;
   const createComponent = options && options.createComponent;
+  const measureImage = options && options.measureImage;
+  // A widget's image keeps its proportions, so each one is measured once however
+  // often the box it is fitted into changes.
+  const naturals = new Map();
+
+  function naturalSize(binding, vm) {
+    const url = vm[binding.getter];
+    if (!url || typeof measureImage !== "function") return null;
+    if (!naturals.has(url)) naturals.set(url, measureImage(url));
+    return naturals.get(url);
+  }
   const eventTeardowns = [];
   // Last value pushed through each setter binding: unlike a property, a setter
   // can't be read back to see whether it would change anything.
@@ -218,6 +255,14 @@ module.exports = function bindView($, vm, bindings, options) {
       for (const key in widgetBindings) {
         const binding = widgetBindings[key];
         if (EVENT_KEY_RE.test(key) || isCollection(binding) || isCommand(binding) || isComponent(binding)) continue;
+        if (isFit(binding)) {
+          const size = fittedSize(naturalSize(binding, vm), binding.box);
+          // Full-bleed for the instant before there is a box: a photo that has not
+          // been laid out yet is better filling its parent than absent.
+          widget.width = size ? size.width : "100%";
+          widget.height = size ? size.height : "100%";
+          continue;
+        }
         if (isApply(binding)) {
           const next = vm[binding.getter];
           const seen = `${widgetId}.${key}`;
@@ -282,6 +327,12 @@ module.exports = function bindView($, vm, bindings, options) {
           held.forEach(clearTimeout);
           held.clear();
         });
+      } else if (isFit(ref)) {
+        const box = ref.box;
+        if (box && typeof box.addListener === "function") {
+          box.addListener(applyProps);
+          eventTeardowns.push(() => box.removeListener(applyProps));
+        }
       } else if (isPressable(ref) && !pressWired.has(widgetId)) {
         pressWired.add(widgetId);
         const hold = function () { pressed.add(widgetId); applyProps(); };
@@ -314,7 +365,7 @@ module.exports = function bindView($, vm, bindings, options) {
 // the single seam that must reach Titanium, kept in bindView's options and out
 // of the controller. render vs add/remove is chosen by feature-detecting
 // setData (TableView renders the whole ordered list; ScrollView adds/removes).
-function conventionAdapter(marker, container, createComponent) {
+function conventionAdapter(marker, container, createComponent, box) {
   if (typeof createComponent !== "function") {
     throw new Error(`bindView: collection("${marker.getter}") needs a createComponent factory in options`);
   }
@@ -326,7 +377,7 @@ function conventionAdapter(marker, container, createComponent) {
   const nameFor = marker.polymorphic ? (item) => item.component : () => marker.componentName;
   return {
     key: (item) => item.key,
-    create: (item) => createComponent(nameFor(item), { rowVm: item }),
+    create: (item) => createComponent(nameFor(item), { rowVm: item, box }),
     dispose: (handle) => handle.dispose(),
     ordered: marker.polymorphic === true && !usesSetData,
     render: usesSetData
@@ -365,8 +416,31 @@ function setupComponent(vm, container, marker, createComponent) {
   };
 }
 
+// The box a collection hands its children: the container's own measured frame,
+// which is above them and so is not disturbed by what they do with it. Children
+// subscribe through fit(); a re-measure re-fits them without rebuilding a view.
+function makeBox() {
+  const listeners = [];
+  return {
+    width: 0,
+    height: 0,
+    set(size) {
+      if (!size || !(size.width > 0) || !(size.height > 0)) return;
+      if (this.width === size.width && this.height === size.height) return;
+      this.width = size.width;
+      this.height = size.height;
+      listeners.slice().forEach((l) => l());
+    },
+    addListener(l) { listeners.push(l); },
+    removeListener(l) { const i = listeners.indexOf(l); if (i >= 0) listeners.splice(i, 1); },
+  };
+}
+
 function setupCollection(vm, container, marker, createComponent) {
-  const adapter = conventionAdapter(marker, container, createComponent);
+  // A container named a box property, so every child is fitted to the frame the
+  // container settles at — measured through the same gate as measure().
+  const box = marker.boxProp ? makeBox() : undefined;
+  const adapter = conventionAdapter(marker, container, createComponent, box);
   const handles = new Map();
   const attach = attachTo(container);
   const detach = detachFrom(container);
@@ -411,8 +485,12 @@ function setupCollection(vm, container, marker, createComponent) {
 
   reconcile();
   vm.addListener(reconcile);
+  const detachBox = box
+    ? attachMeasure(container, "postlayout", { setBox: (size) => box.set(size) }, measure("setBox", marker.boxProp))
+    : () => {};
 
   return function teardown() {
+    detachBox();
     vm.removeListener(reconcile);
     for (const handle of handles.values()) {
       if (!adapter.render) detach(handle.view);
@@ -555,6 +633,10 @@ function validate($, vm, bindings) {
         if (!(ref.getter in vm)) {
           throw new Error(`bindView: VM has no component getter "${ref.getter}" (bound to ${widgetId}.${key})`);
         }
+      } else if (isFit(ref)) {
+        if (!(ref.getter in vm)) {
+          throw new Error(`bindView: VM has no property "${ref.getter}" (bound to fit ${widgetId}.${key})`);
+        }
       } else if (isPressable(ref)) {
         for (const getter of [ref.getter, ref.pressedGetter]) {
           if (!(getter in vm)) {
@@ -578,9 +660,9 @@ function validate($, vm, bindings) {
 // Titanium dependency itself — keeping mvvm/controllers a pure DSL layer. The
 // returned binder carries the markers, so a controller can `const { collection }
 // = bindView` off it. A per-call options object still overrides the defaults.
-function makeBinder(createComponent, palette) {
+function makeBinder(createComponent, palette, measureImage) {
   const binder = function (view, vm, bindings, options) {
-    return module.exports(view, vm, bindings, Object.assign({ createComponent, palette }, options));
+    return module.exports(view, vm, bindings, Object.assign({ createComponent, palette, measureImage }, options));
   };
   binder.twoWay = twoWay;
   binder.call = call;
@@ -591,6 +673,7 @@ function makeBinder(createComponent, palette) {
   binder.collection = collection;
   binder.component = component;
   binder.pressable = pressable;
+  binder.fit = fit;
   return binder;
 }
 
@@ -604,4 +687,5 @@ module.exports.ref = ref;
 module.exports.collection = collection;
 module.exports.component = component;
 module.exports.pressable = pressable;
+module.exports.fit = fit;
 module.exports.makeBinder = makeBinder;
