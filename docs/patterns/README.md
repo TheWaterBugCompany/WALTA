@@ -8,6 +8,7 @@ Architectural patterns and module summaries for the WALTA codebase. Each file is
 - [screen-controllers.md](screen-controllers.md) — the Titanium-free `lib/mvvm/controllers/<name>` screen-controller tier: builds the VM, `bindView`s it, routed by `View` for windows and modals alike (MVVMC, the portable tier)
 - [modals.md](modals.md) — opening overlay modals via `Navigation.openModal` + the modal-specific overlay glue
 - [viewmodels.md](viewmodels.md) — MVVM convention: ViewModel class shape, `bindView` (incl. `twoWay` inputs), semantic palette colours via Symbols
+- [classic-layout-sizing.md](classic-layout-sizing.md) — why a `Ti.UI.SIZE` parent whose child carries percentage margins renders at two different sizes, and the other Classic layout traps
 - [toolbar-buttons.md](toolbar-buttons.md) — anchor bar / `NavButton` pattern
 - [photo-paths.md](photo-paths.md) — relative vs absolute path conventions for user vs reference images
 - [repository-pattern.md](repository-pattern.md) — non-Alloy persistence: the Repository pattern (returns domain models from `lib/models/`), `Migrator`, migration file convention, shared vs isolated dbs
