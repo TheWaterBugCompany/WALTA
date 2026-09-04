@@ -1,0 +1,62 @@
+[
+  {
+    "id": "33842679274",
+    "branch": "main",
+    "sha": "ddc072dfb4f4e50ecbd7c8f32d98f8071743c68d",
+    "capturedAt": "2026-09-04T06:24:00Z"
+  },
+  {
+    "id": "33839879172",
+    "branch": "task/wb-303-icecube-tray-button",
+    "sha": "674b1e46ce8792e00e064b69bf45609ab65aaaf6",
+    "capturedAt": "2026-09-04T05:51:18Z"
+  },
+  {
+    "id": "33839652968",
+    "branch": "main",
+    "sha": "d15186e9445b121da0e0c8072ee6a6874923a958",
+    "capturedAt": "2026-09-04T05:44:37Z"
+  },
+  {
+    "id": "33839494738",
+    "branch": "main",
+    "sha": "c4cdc3932d9ef5cc909514c09a4e0d1ce9567e51",
+    "capturedAt": "2026-09-04T05:17:45Z"
+  },
+  {
+    "id": "33837128568",
+    "branch": "task/wb-303-icecube-tray-button",
+    "sha": "0bf96cd0709ce8ea451ce2a76f575337d3511f8b",
+    "capturedAt": "2026-09-04T04:51:45Z"
+  },
+  {
+    "id": "33834907781",
+    "branch": "task/wb-304-fit-marker",
+    "sha": "5f4e0c3f926c76f5a369d7084b5aa769e96ca7b1",
+    "capturedAt": "2026-09-04T04:43:49Z"
+  },
+  {
+    "id": "33834988112",
+    "branch": "task/wb-303-icecube-tray-button",
+    "sha": "2b48724c048e878daad8aece7457283e2432ea2c",
+    "capturedAt": "2026-09-04T04:17:45Z"
+  },
+  {
+    "id": "33830913947",
+    "branch": "task/wb-303-icecube-tray-button",
+    "sha": "590ac3a0ec22edfd6b2b760252945868b796c67a",
+    "capturedAt": "2026-09-04T03:33:16Z"
+  },
+  {
+    "id": "33828879885",
+    "branch": "task/wb-304-fit-marker",
+    "sha": "d1d6372dd8885ac9c75bcf717634743daf737bf2",
+    "capturedAt": "2026-09-04T03:04:25Z"
+  },
+  {
+    "id": "33828959020",
+    "branch": "task/wb-302-site-details-field-sizing",
+    "sha": "67f52038fa6df8d0bfb690e7690da6c8b425d894",
+    "capturedAt": "2026-09-04T02:57:29Z"
+  }
+]

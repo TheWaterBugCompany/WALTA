@@ -1,0 +1,228 @@
+{
+  "platform": "ios",
+  "device": "iphone-17",
+  "deviceName": "iPhone 17 · iOS 26.5",
+  "capturedAt": "2026-09-04T03:27:51.918Z",
+  "results": [
+    {
+      "name": "About",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Academy",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "AcademyDigitPicker",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "EditTaxon",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Gallery",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Habitat",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Help",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "IosSurveyDatePicker",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearch",
+      "status": "fail",
+      "diffRatio": 0.0010391723052674588,
+      "diffPixels": 3286,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/KeySearch.diff.png"
+    },
+    {
+      "name": "KeySearchFromTray",
+      "status": "new"
+    },
+    {
+      "name": "KeySearchHinted",
+      "status": "fail",
+      "diffRatio": 0.0010391723052674588,
+      "diffPixels": 3286,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/KeySearchHinted.diff.png"
+    },
+    {
+      "name": "KeySearchMixedMedia",
+      "status": "fail",
+      "diffRatio": 0.0010391723052674588,
+      "diffPixels": 3286,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/KeySearchMixedMedia.diff.png"
+    },
+    {
+      "name": "LocationEntry",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "LogIn",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Menu",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "MethodSelect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Notes",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "PhotoSelect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "PhotoViewer",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Question",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Register",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleEditMenu",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleHistory",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SiteDetails",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Speedbug",
+      "status": "fail",
+      "diffRatio": 0.003015686884671481,
+      "diffPixels": 9536,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/Speedbug.diff.png"
+    },
+    {
+      "name": "Summary",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SyncFeedback",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TaxonComparisonCorrect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TaxonComparisonIncorrect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TaxonDetails",
+      "status": "fail",
+      "diffRatio": 0.0008453157553195123,
+      "diffPixels": 2673,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/TaxonDetails.diff.png"
+    },
+    {
+      "name": "TaxonList",
+      "status": "fail",
+      "diffRatio": 0.002446134443470418,
+      "diffPixels": 7735,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/TaxonList.diff.png"
+    },
+    {
+      "name": "TrainingSuccess",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TrainingTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "VideoPlayer",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    }
+  ]
+}
