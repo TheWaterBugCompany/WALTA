@@ -1,20 +1,22 @@
 const AcademyViewModel = require("mvvm/viewmodels/Academy");
 // Markers only — the binder itself is injected (pre-bound by the View seam);
-// call() is needed here at module scope to build BINDINGS.
-const { call } = require("util/bindView");
+// these are needed here at module scope to build BINDINGS.
+const { twoWay, command } = require("util/bindView");
 
 // Titanium-free screen controller for the Academy modal.
 // See docs/patterns/modals.md for the pattern.
+// Each box takes the keyboard when the VM hands entry to it, so typing the code
+// runs through all three boxes in one keyboard session; the last box gives the
+// keyboard back once the code is complete, uncovering Start.
 const BINDINGS = {
-  digit1:       { title: "digit1", onClick: call("startEditing", 0) },  // tap-to-edit box → open picker
-  digit2:       { title: "digit2", onClick: call("startEditing", 1) },
-  digit3:       { title: "digit3", onClick: call("startEditing", 2) },
-  digitPicker:  { visible: "pickerVisible", onClick: "cancelPicker" },  // tap backdrop to dismiss
+  digit1:       { value: twoWay("digit1"), takeKeyboard: command("focusDigit1", "focus") },
+  digit2:       { value: twoWay("digit2"), takeKeyboard: command("focusDigit2", "focus") },
+  digit3:       { value: twoWay("digit3"), takeKeyboard: command("focusDigit3", "focus"),
+                  releaseKeyboard: command("codeComplete", "blur") },
   startButton:  { enabled: "startEnabled", backgroundColor: "startColor", borderColor: "startColor", onClick: "start" },
   closeButton:  { onClose: "close" },   // the ✕ (CloseButton Require)
   cancelButton: { onClick: "close" },   // the "Close" text button
 };
-for (let d = 0; d <= 9; d++) BINDINGS["keypad" + d] = { onClick: call("pickDigit", d) };
 
 module.exports = function createAcademyController({ view, close, services, bindView }) {
   const vm = new AcademyViewModel({ isValidCode: (code) => services.Training.isValidCode(code) });

@@ -279,14 +279,14 @@ function videoPlayer() {
 
 // --- Modals, captured over the screen they are reached from ----------------
 
-// The keypad is the whole point of the screen and only appears once a digit box
-// is tapped, so the capture taps one — the same way the training tray assesses
-// itself to bring its verdicts up.
-function openDigitPicker(opened) {
+// Drive the code in through the ViewModel rather than the keyboard, so the
+// capture is of the filled boxes and the green Start — not of whichever
+// keyboard the host happens to raise.
+function enterAcademyCode(opened) {
 	var { waitFor } = require("spec/util/TestUtils");
-	var academy = opened.seam.getCurrentModal().alloyCtl;
-	academy.digit1.fireEvent("click");
-	return waitFor(function () { return academy.digitPicker.visible === true; });
+	var modal = opened.seam.getCurrentModal();
+	"101".split("").forEach(function (d, i) { modal.lib.vm["digit" + (i + 1)] = d; });
+	return waitFor(function () { return modal.alloyCtl.startButton.enabled === true; });
 }
 
 function academy() {
@@ -545,7 +545,7 @@ module.exports = [
 
 	// Modals — captured over the screen a user reaches them from.
 	{ name: "Academy", args: academy, services: academyServices, host: "Menu" },
-	{ name: "AcademyDigitPicker", screen: "Academy", args: academy, services: academyServices, host: "Menu", after: openDigitPicker },
+	{ name: "AcademyCodeEntered", screen: "Academy", args: academy, services: academyServices, host: "Menu", after: enterAcademyCode },
 	{ name: "TrainingSuccess", args: trainingSuccess, host: "TrainingTray" },
 	// Both verdicts: one photo and a way out when the answer was right, two photos
 	// to compare and a follow-up when it wasn't.

@@ -41,7 +41,7 @@ function isTwoWay(ref) {
 }
 
 // Event-handler marker that binds a VM method with fixed arguments, so the
-// controller can wire e.g. onClick: call("pickDigit", 3) without reaching for
+// controller can wire e.g. onClick: call("selectTab", 3) without reaching for
 // Titanium's addEventListener itself. Keeps all Ti wiring behind bindView.
 function call(method, ...args) {
   return { __call: true, method, args };
