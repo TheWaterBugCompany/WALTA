@@ -73,7 +73,12 @@ function waitForTopic( topicName, fireEvent, done, result ) {
 }
 // END TODO: convert to promises
 function wrapViewInWindow( view ) {
-	var win = Ti.UI.createWindow( { backgroundColor: 'white', width: Ti.UI.FILL, height: Ti.UI.FILL } );
+	var props = { backgroundColor: 'white', width: Ti.UI.FILL, height: Ti.UI.FILL };
+	// app.tss sets this on every Alloy <Window>, but that style never reaches a
+	// window built here — without it the keyboard covers the screen under test
+	// instead of panning it, which no spec could then tell apart from a bug.
+	if ( OS_ANDROID ) props.windowSoftInputMode = Ti.UI.Android.SOFT_INPUT_ADJUST_PAN;
+	var win = Ti.UI.createWindow( props );
 	win.add( view );
 	return win;
 }
