@@ -1,6 +1,6 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
-var { wrapViewInWindow, windowOpenTest, closeWindow } = require('spec/util/TestUtils');
+var { wrapViewInWindow, windowOpenTest, closeWindow, waitFor } = require('spec/util/TestUtils');
 
 describe('Academy modal', function() {
 	var ctl, win;
@@ -23,10 +23,6 @@ describe('Academy modal', function() {
 		expect( ctl.cancelButton ).to.exist;
 	});
 
-	it('keeps the digit picker hidden until a box is tapped', function() {
-		expect( ctl.digitPicker.visible ).to.equal( false );
-		expect( ctl.keypad0 ).to.exist;
-	});
 });
 
 // Drives the real ViewModel + bindView onto the Alloy widgets the way
@@ -59,7 +55,7 @@ describe('Academy start button state', function() {
 	});
 
 	function enter( code ) {
-		String(code).split("").forEach( function(d, i){ lib.vm.startEditing(i); lib.vm.pickDigit(d); });
+		String(code).split("").forEach( function(d, i){ lib.vm["digit" + (i+1)] = d; });
 	}
 
 	it('greys and disables Start for an invalid full code', function() {
@@ -72,6 +68,15 @@ describe('Academy start button state', function() {
 		expect( ctl.startButton.backgroundDisabledColor ).to.equal( Alloy.CFG.colors.disabled );
 	});
 
+	// The real proof that one keyboard session fills the whole code: a digit in
+	// the first box moves the caret on, so the next keystroke lands in the second.
+	it('hands the keyboard to the next box once a digit is typed', function(done) {
+		var advanced = false;
+		ctl.digit2.addEventListener("focus", function(){ advanced = true; });
+		enter("1");
+		waitFor( function(){ return advanced; } ).then( function(){ done(); }, done );
+	});
+
 	it('greens and enables Start for a valid code', function() {
 		enter("101");
 		Ti.API.info("[AcademyBtn] valid enabled=" + ctl.startButton.enabled + " bg=" + ctl.startButton.backgroundColor);
@@ -80,8 +85,8 @@ describe('Academy start button state', function() {
 	});
 
 	it('reverts Start to the disabled look when a valid code is edited to an invalid one', function() {
-		enter("101");                          // valid → green + enabled
-		lib.vm.startEditing(2); lib.vm.pickDigit(2);   // "101" → "102" (invalid)
+		enter("101");            // valid → green + enabled
+		lib.vm.digit3 = "2";     // "101" → "102" (invalid)
 		Ti.API.info("[AcademyBtn] valid→invalid enabled=" + ctl.startButton.enabled + " bg=" + ctl.startButton.backgroundColor);
 		expect( ctl.startButton.enabled ).to.equal( false );
 		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.disabled );

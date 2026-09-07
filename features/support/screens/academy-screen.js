@@ -12,9 +12,7 @@ class AcademyScreen extends BaseScreen {
     async enterCode( code ) {
         const digits = String(code).split("");
         for ( let i = 0; i < digits.length; i++ ) {
-            // Tapping a box opens the digit picker; tap the digit to fill it.
-            await this.click("academy_code_" + (i + 1));
-            await this.click("academy_key_" + digits[i]);
+            await this.enter("academy_code_" + (i + 1), digits[i]);
         }
     }
 

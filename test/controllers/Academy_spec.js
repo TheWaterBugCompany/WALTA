@@ -4,22 +4,29 @@ const createAcademyController = require("../../walta-app/app/lib/mvvm/controller
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 const { makeWidget, makeBackboneTarget } = require("../fixtures/fakeWidgets");
 
-function makeView() {
-  const view = {
-    digit1: makeWidget({ title: "" }),
-    digit2: makeWidget({ title: "" }),
-    digit3: makeWidget({ title: "" }),
-    digitPicker: makeWidget({ visible: null }),
+// A code box: a text field the keyboard can be handed to, recording the focus
+// and blur the controller drives it with.
+function makeCodeBox(keyboard, name) {
+  return makeWidget({
+    value: "",
+    focus() { keyboard.push(name); },
+    blur() { keyboard.push("dismissed"); },
+  });
+}
+
+function makeView(keyboard) {
+  return {
+    digit1: makeCodeBox(keyboard, "digit1"),
+    digit2: makeCodeBox(keyboard, "digit2"),
+    digit3: makeCodeBox(keyboard, "digit3"),
     startButton: makeWidget({ enabled: null }),
     closeButton: makeBackboneTarget(),
     cancelButton: makeWidget({}),
   };
-  for (let d = 0; d <= 9; d++) view["keypad" + d] = makeWidget({});
-  return view;
 }
 
 describe("Academy controller", function () {
-  let view, closed, ctl, training, fired, services;
+  let view, closed, ctl, training, fired, services, keyboard;
 
   // Fake training service: records the started code, validates against a known set
   // (the Academy gates Start on isValidCode), and owns the session's tray/assessor
@@ -38,7 +45,8 @@ describe("Academy controller", function () {
   }
 
   beforeEach(function () {
-    view = makeView();
+    keyboard = [];
+    view = makeView(keyboard);
     closed = 0;
     fired = [];
     training = fakeTraining(["789"]);
@@ -49,50 +57,50 @@ describe("Academy controller", function () {
     ctl = createAcademyController({ view, close: () => closed++, services, bindView: makeBinder() });
   });
 
-  // Tap a box, then tap a digit key — the picker flow that replaces typing.
-  function pick(boxIndex, digit) {
-    view["digit" + (boxIndex + 1)].fireEvent("click");
-    view["keypad" + digit].fireEvent("click");
+  // A digit typed into a box: the native keyboard writes it and fires change.
+  function typeInto(boxIndex, digit) {
+    const box = view["digit" + (boxIndex + 1)];
+    box.value = String(digit);
+    box.fireEvent("change", { value: box.value });
   }
 
-  function pickCode(a, b, c) {
-    pick(0, a); pick(1, b); pick(2, c);
+  function typeCode(a, b, c) {
+    typeInto(0, a); typeInto(1, b); typeInto(2, c);
   }
 
-  it("hides the picker until a box is tapped", function () {
-    expect(view.digitPicker.visible).to.equal(false);
-    view.digit1.fireEvent("click");
-    expect(view.digitPicker.visible).to.equal(true);
-  });
-
-  it("fills the tapped box with the picked digit and hides the picker", function () {
-    pick(0, 5);
-    expect(view.digit1.title).to.equal("5");
-    expect(view.digitPicker.visible).to.equal(false);
-  });
-
-  it("tapping the picker backdrop cancels editing without changing digits", function () {
-    view.digit1.fireEvent("click");
-    view.digitPicker.fireEvent("click");
-    expect(view.digitPicker.visible).to.equal(false);
-    expect(ctl.vm.code).to.equal("");
-  });
-
-  it("assembles the code from digits picked into each box", function () {
-    pickCode(1, 2, 3);
+  it("assembles the code from the digits typed into each box", function () {
+    typeCode(1, 2, 3);
     expect(ctl.vm.code).to.equal("123");
+  });
+
+  it("hands the keyboard to the next box as each digit is typed", function () {
+    typeInto(0, 1);
+    typeInto(1, 2);
+    expect(keyboard).to.deep.equal(["digit2", "digit3"]);
+  });
+
+  it("hands the keyboard back a box when a digit is deleted", function () {
+    typeCode(1, 2, 3);
+    keyboard.length = 0;
+    typeInto(1, "");
+    expect(keyboard).to.deep.equal(["digit1"]);
+  });
+
+  it("dismisses the keyboard once the last box is filled", function () {
+    typeCode(1, 2, 3);
+    expect(keyboard).to.deep.equal(["digit2", "digit3", "dismissed"]);
   });
 
   it("keeps Start disabled until the code is a valid exercise", function () {
     expect(view.startButton.enabled).to.equal(false);
-    pickCode(1, 2, 3);   // not a known exercise
+    typeCode(1, 2, 3);   // not a known exercise
     expect(view.startButton.enabled).to.equal(false);
-    pickCode(7, 8, 9);   // known
+    typeCode(7, 8, 9);   // known
     expect(view.startButton.enabled).to.equal(true);
   });
 
   it("Start triggers the ViewModel start with the code", function () {
-    pickCode(7, 8, 9);
+    typeCode(7, 8, 9);
     let started = null;
     ctl.vm.on("start", (code) => { started = code; });
     view.startButton.fireEvent("click");
@@ -100,7 +108,7 @@ describe("Academy controller", function () {
   });
 
   it("Start launches training for a known code, then closes and opens the tray", function () {
-    pickCode(7, 8, 9);
+    typeCode(7, 8, 9);
     view.startButton.fireEvent("click");
     expect(training.startedWith).to.equal("789");
     expect(closed).to.equal(1);
@@ -109,7 +117,7 @@ describe("Academy controller", function () {
   });
 
   it("does nothing when Start is tapped on an invalid (disabled) code", function () {
-    pickCode(1, 2, 3);   // invalid → Start stays disabled, start() is a no-op
+    typeCode(1, 2, 3);   // invalid → Start stays disabled, start() is a no-op
     view.startButton.fireEvent("click");
     expect(training.startedWith).to.equal(null);
     expect(closed).to.equal(0);
@@ -128,7 +136,7 @@ describe("Academy controller", function () {
 
   it("dispose stops further box→VM updates", function () {
     ctl.dispose();
-    view.digit1.fireEvent("click");
-    expect(ctl.vm.pickerVisible).to.equal(false);
+    typeInto(0, 7);
+    expect(ctl.vm.code).to.equal("");
   });
 });

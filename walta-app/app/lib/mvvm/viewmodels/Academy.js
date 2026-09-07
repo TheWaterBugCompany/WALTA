@@ -1,48 +1,53 @@
 const ChangeNotifier = require("../../util/ChangeNotifier");
 const Palette = require("../../util/Palette");
 
+const LAST = 2;
+
 // State for the Academy training-session start modal. The three code boxes are
-// display-only: tapping one (startEditing) opens a 0-9 picker, and tapping a
-// digit (pickDigit) fills that box and closes the picker — so no system
-// keyboard is ever summoned. Titanium-free.
+// single-digit inputs the native numeric keyboard fills: each digit typed hands
+// the keyboard to the next box, so one keyboard session enters the whole code.
+// Titanium-free.
 class AcademyViewModel extends ChangeNotifier {
   constructor({ isValidCode } = {}) {
     super();
     this._digits = ["", "", ""];
-    this._editing = null;
     this._isValidCode = isValidCode || (() => false);
   }
 
   get digit1() { return this._digits[0]; }
+  set digit1(v) { this._setDigit(0, v); }
   get digit2() { return this._digits[1]; }
+  set digit2(v) { this._setDigit(1, v); }
   get digit3() { return this._digits[2]; }
+  set digit3(v) { this._setDigit(2, v); }
+
+  _setDigit(index, value) {
+    const next = value == null ? "" : String(value);
+    if (this._digits[index] === next) return;
+    this._digits[index] = next;
+    this._moveEntryOn(index, next);
+    this.notifyListeners();
+  }
+
+  // Typing a digit hands the keyboard to the next box, deleting one hands it
+  // back, and filling the last box ends entry so the keyboard stops covering
+  // Start.
+  _moveEntryOn(index, digit) {
+    if (digit === "") {
+      if (index > 0) this.trigger("focusDigit" + index);
+    } else if (index < LAST) {
+      this.trigger("focusDigit" + (index + 2));
+    } else {
+      this.trigger("codeComplete");
+    }
+  }
 
   get code() { return this._digits.join(""); }
-
-  get pickerVisible() { return this._editing !== null; }
 
   // Start is offered only once the entered code maps to a real exercise — the
   // green button is the "valid code" signal; it stays grey/disabled otherwise.
   get startEnabled() { return this._isValidCode(this.code); }
   get startColor() { return this.startEnabled ? Palette.success : Palette.disabled; }
-
-  startEditing(index) {
-    this._editing = index;
-    this.notifyListeners();
-  }
-
-  pickDigit(digit) {
-    if (this._editing === null) return;
-    this._digits[this._editing] = String(digit);
-    this._editing = null;
-    this.notifyListeners();
-  }
-
-  cancelPicker() {
-    if (this._editing === null) return;
-    this._editing = null;
-    this.notifyListeners();
-  }
 
   start() {
     if (this.startEnabled) this.trigger("start", this.code);
