@@ -27,6 +27,9 @@ function makeExecFile(responses) {
 
 const DEVICES_OUTPUT = "List of devices attached\nemulator-5554\tdevice\n";
 const NO_DEVICES_OUTPUT = "List of devices attached\n";
+// A phone plugged in alongside the emulator: adb lists it first, so an
+// unpinned run picks the phone.
+const TWO_DEVICES_OUTPUT = "List of devices attached\n21241FDEE003VH\tdevice\nemulator-5554\tdevice\n";
 // Common responses for the stay-awake commands added in launch()
 const STAY_AWAKE_RESPONSES = {
   "-s emulator-5554 shell svc power stayon usb": "",
@@ -34,6 +37,14 @@ const STAY_AWAKE_RESPONSES = {
 };
 
 describe("AndroidLauncher", function() {
+  // The pin is read from the environment, so each test starts without one.
+  let savedSerial;
+  beforeEach(function() { savedSerial = process.env.ANDROID_SERIAL; delete process.env.ANDROID_SERIAL; });
+  afterEach(function() {
+    if (savedSerial === undefined) delete process.env.ANDROID_SERIAL;
+    else process.env.ANDROID_SERIAL = savedSerial;
+  });
+
   describe("describeDevice()", function() {
     const PROPS = {
       "devices": DEVICES_OUTPUT,
@@ -84,6 +95,30 @@ describe("AndroidLauncher", function() {
         throw new Error("should have rejected");
       } catch(err) {
         expect(err.message).to.match(/No Android device/);
+      }
+    });
+
+    it("sends its commands to the ANDROID_SERIAL pin, not the first device listed", async function() {
+      process.env.ANDROID_SERIAL = "emulator-5554";
+      const fakeExecFile = makeExecFile({
+        "devices": TWO_DEVICES_OUTPUT,
+        "-s emulator-5554 shell getprop ro.product.model": "sdk_gphone64_arm64\n",
+      });
+      const launcher = new AndroidLauncher({ execFile: fakeExecFile });
+      await launcher.connect();
+      await launcher.describeDevice();
+      expect(fakeExecFile.secondCall.args[1]).to.deep.equal(
+        ["-s", "emulator-5554", "shell", "getprop", "ro.product.model"]);
+    });
+
+    it("rejects when the ANDROID_SERIAL pin names a device that is not connected", async function() {
+      process.env.ANDROID_SERIAL = "emulator-9999";
+      const launcher = new AndroidLauncher({ execFile: makeExecFile({ "devices": TWO_DEVICES_OUTPUT }) });
+      try {
+        await launcher.connect();
+        throw new Error("should have rejected");
+      } catch(err) {
+        expect(err.message).to.match(/emulator-9999/);
       }
     });
 

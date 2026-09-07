@@ -92,9 +92,19 @@ class AndroidLauncher {
     if (this._connected) return this;
     if (!this._serial) {
       const output = await exec(this._execFile, this._adb, ["devices"]);
-      const devices = output.split("\n").slice(1).filter(l => l.includes("\tdevice"));
+      const devices = output.split("\n").slice(1).filter(l => l.includes("\tdevice"))
+        .map(l => l.split("\t")[0].trim());
       if (devices.length === 0) throw new Error("No Android device connected");
-      this._serial = devices[0].split("\t")[0].trim();
+      // Every adb call below carries an explicit -s, which beats the
+      // ANDROID_SERIAL adb would otherwise honour — so the pin has to be read
+      // here too. Without it a phone plugged in alongside the emulator wins,
+      // because adb lists it first.
+      const pinned = process.env.ANDROID_SERIAL;
+      if (pinned && !devices.includes(pinned)) {
+        throw new Error(
+          `ANDROID_SERIAL is pinned to "${pinned}", which is not connected (adb sees: ${devices.join(", ")})`);
+      }
+      this._serial = pinned || devices[0];
     }
     this._connected = true;
     return this;
