@@ -1,5 +1,6 @@
 <Alloy>
 	<View class="overlay">
+		<ScrollView id="entryScroll" class="entryScroll">
 		<View class="window academyWindow" layout="vertical">
 			<View class="titlebar">
 				<Label id="academyTitle" class="titleText" accessibilityLabel="Academy">Academy</Label>
@@ -17,5 +18,6 @@
 				<Button id="startButton" class="actionButton startButton" accessibilityLabel="academy_start">Start</Button>
 			</View>
 		</View>
+		</ScrollView>
 	</View>
 </Alloy>

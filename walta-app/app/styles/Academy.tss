@@ -1,3 +1,16 @@
+// The modal sits in a ScrollView so iOS can slide it clear of the keyboard, the
+// same regime the entry screens get from applyKeyboardTweaks. contentHeight FILL
+// keeps the resting layout centred rather than pinned to the top of the scroll.
+".entryScroll": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL,
+	contentWidth: Ti.UI.FILL,
+	contentHeight: Ti.UI.FILL,
+	horizontalBounce: false,
+	showHorizontalScrollIndicator: false,
+	showVerticalScrollIndicator: false
+}
+
 ".academyWindow": {
 	width: "56%",
 	height: Ti.UI.SIZE,
