@@ -65,6 +65,10 @@
 	maxLength: 1,
 	keyboardType: Ti.UI.KEYBOARD_TYPE_NUMBER_PAD,
 	returnKeyType: Ti.UI.RETURNKEY_DONE,
+	// Android's landscape IME defaults to "extract mode": it replaces the whole
+	// app with its own full-screen editor, which is what made typing the code
+	// unworkable before. This is the property that turns it off.
+	fullscreen: false,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
 }
 
