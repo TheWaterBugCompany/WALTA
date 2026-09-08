@@ -2,11 +2,23 @@ import sinon from "sinon";
 import { expect } from "chai";
 import AndroidEmulatorLauncher from "../../build-utils/AndroidEmulatorLauncher.js";
 
+// A response may be an array, meaning "this per successive call for that
+// command, the last one sticking" — `adb devices` reads differently before and
+// after an emulator boots, and a fixture that ignores that describes a device
+// list no real run can produce.
 function makeExecFile(responses) {
+  const calls = {};
   return sinon.stub().callsFake((_cmd, args, callback) => {
     const key = args.join(" ");
-    const response = responses[key] ??
-      Object.entries(responses).find(([k]) => key.startsWith(k))?.[1];
+    const matched = key in responses
+      ? key
+      : Object.keys(responses).find((k) => key.startsWith(k));
+    let response = matched === undefined ? undefined : responses[matched];
+    if (Array.isArray(response)) {
+      const n = calls[matched] = (calls[matched] || 0);
+      calls[matched] = n + 1;
+      response = response[Math.min(n, response.length - 1)];
+    }
     if (response instanceof Error) {
       callback(response, "", response.message);
     } else {
@@ -17,6 +29,9 @@ function makeExecFile(responses) {
 
 const EMULATOR_DEVICES = "List of devices attached\nemulator-5554\tdevice\n";
 const NO_DEVICES = "List of devices attached\n";
+// A phone plugged in with no emulator running: adb has a device to offer, but
+// not the one --simulator asked for.
+const PHONE_ONLY = "List of devices attached\n21241FDEE003VH\tdevice\n";
 const AVD_NAME = "Test_AVD";
 
 function makeSpawn() {
@@ -36,7 +51,7 @@ describe("AndroidEmulatorLauncher", function() {
 
     it("spawns emulator and waits for boot when no emulator is running", async function() {
       const fakeExecFile = makeExecFile({
-        "devices": NO_DEVICES,
+        "devices": [NO_DEVICES, EMULATOR_DEVICES],
         "wait-for-device": "",
         "shell getprop sys.boot_completed": "1",
       });
@@ -53,6 +68,27 @@ describe("AndroidEmulatorLauncher", function() {
       expect(fakeSpawn.calledOnce).to.be.true;
       expect(fakeSpawn.firstCall.args[1]).to.deep.equal(["-avd", AVD_NAME, "-no-boot-anim", "-no-audio"]);
       expect(fakeLauncher.connect.calledOnce).to.be.true;
+    });
+
+    it("rejects rather than handing an attached phone to the inner launcher", async function() {
+      const fakeExecFile = makeExecFile({
+        "devices": PHONE_ONLY,
+        "wait-for-device": "",
+        "shell getprop sys.boot_completed": "1",
+      });
+      const { stub: fakeSpawn } = makeSpawn();
+      const fakeLauncher = { connect: sinon.stub().resolves() };
+      const launcher = new AndroidEmulatorLauncher({
+        avdName: AVD_NAME,
+        execFile: fakeExecFile,
+        spawn: fakeSpawn,
+        bootPollIntervalMs: 0,
+        innerLauncher: fakeLauncher
+      });
+      let message = "connect() resolved";
+      try { await launcher.connect(); } catch (err) { message = err.message; }
+      expect(message).to.match(/emulator/i);
+      expect(fakeLauncher.connect.called, "must not hand off to the inner launcher").to.be.false;
     });
 
     it("rejects with a clear error if the emulator does not finish booting within the timeout", async function() {

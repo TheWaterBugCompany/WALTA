@@ -68,7 +68,13 @@ class AndroidEmulatorLauncher {
     await this._waitForBoot();
     const output = await exec(this._execFile, this._adb, ["devices"]);
     const emulatorLine = output.split("\n").find(l => /emulator-\d+\tdevice/.test(l));
-    if (emulatorLine) this._inner._serial = emulatorLine.split("\t")[0].trim();
+    // Without a serial the inner launcher falls back to the first device adb
+    // lists, which with a phone plugged in is the phone — so a --simulator run
+    // silently lands on hardware. Refuse instead.
+    if (!emulatorLine) {
+      throw new Error(`No emulator in "adb devices" after booting ${this._avdName}:\n${output.trim()}`);
+    }
+    this._inner._serial = emulatorLine.split("\t")[0].trim();
   }
 
   _waitForBoot() {
