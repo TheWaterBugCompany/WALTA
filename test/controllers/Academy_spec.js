@@ -91,6 +91,21 @@ describe("Academy controller", function () {
     expect(keyboard).to.deep.equal(["digit2", "digit3", "dismissed"]);
   });
 
+  // The keyboard appends into a full box, so the box briefly holds two
+  // characters; it has to be put back to the single digit it stands for.
+  it("replaces the digit when one is typed into a box that is already full", function () {
+    typeInto(0, 1);
+    typeInto(0, "15");
+    expect(view.digit1.value).to.equal("5");
+    expect(ctl.vm.code).to.equal("5");
+  });
+
+  it("puts the box back to one digit when the same digit is retyped into it", function () {
+    typeInto(0, 1);
+    typeInto(0, "11");
+    expect(view.digit1.value).to.equal("1");
+  });
+
   it("keeps Start disabled until the code is a valid exercise", function () {
     expect(view.startButton.enabled).to.equal(false);
     typeCode(1, 2, 3);   // not a known exercise

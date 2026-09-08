@@ -75,6 +75,15 @@ describe("AcademyViewModel", function () {
     expect(vm.code).to.equal("13");
   });
 
+  // Typing into a box that already holds a digit appends to it, so the box has
+  // to take the digit just typed rather than keeping the one already there.
+  it("replaces the digit when one is typed into a box that is already full", function () {
+    type(vm, "1");
+    vm.digit1 = "15";
+    expect(vm.digit1).to.equal("5");
+    expect(vm.code).to.equal("5");
+  });
+
   it("retyping a box replaces its digit", function () {
     type(vm, "1");
     vm.digit1 = "9";
