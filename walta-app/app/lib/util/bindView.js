@@ -40,17 +40,6 @@ function isTwoWay(ref) {
   return ref !== null && typeof ref === "object" && ref.__twoWay === true;
 }
 
-// Event-handler marker that binds a VM method with fixed arguments, so the
-// controller can wire e.g. onClick: call("selectTab", 3) without reaching for
-// Titanium's addEventListener itself. Keeps all Ti wiring behind bindView.
-function call(method, ...args) {
-  return { __call: true, method, args };
-}
-
-function isCall(ref) {
-  return ref !== null && typeof ref === "object" && ref.__call === true;
-}
-
 // Inbound marker: on a widget event, read a named widget property and push it
 // into a VM setter — the reverse of a property binding. The Titanium-specific
 // read stays generic (bindView never knows what contentOffset/size mean); the
@@ -231,10 +220,10 @@ function isPressable(ref) {
   return ref !== null && typeof ref === "object" && ref.__pressable === true;
 }
 
-// The VM method name an on<Event> binding targets — a plain string handler or a
-// call()/input()/measure() marker.
+// The VM method name an on<Event> binding targets — a plain string handler or an
+// input()/measure() marker.
 function methodOf(ref) {
-  if (isCall(ref) || isInput(ref) || isMeasure(ref)) return ref.method;
+  if (isInput(ref) || isMeasure(ref)) return ref.method;
   return ref;
 }
 
@@ -346,9 +335,7 @@ module.exports = function bindView($, vm, bindings, options) {
         if (isMeasure(ref)) {
           eventTeardowns.push(attachMeasure(widget, eventName, vm, ref));
         } else {
-          const handler = isCall(ref)
-            ? function () { vm[ref.method](...ref.args); }
-            : isInput(ref)
+          const handler = isInput(ref)
             ? function () { vm[ref.method](readPath(widget, ref.prop)); }
             : function () { vm[ref](); };
           eventTeardowns.push(attachEvent(widget, eventName, handler));
@@ -717,7 +704,6 @@ function makeBinder(createComponent, palette, measureImage) {
     return module.exports(view, vm, bindings, Object.assign({ createComponent, palette, measureImage }, options));
   };
   binder.twoWay = twoWay;
-  binder.call = call;
   binder.input = input;
   binder.measure = measure;
   binder.command = command;
@@ -731,7 +717,6 @@ function makeBinder(createComponent, palette, measureImage) {
 }
 
 module.exports.twoWay = twoWay;
-module.exports.call = call;
 module.exports.input = input;
 module.exports.measure = measure;
 module.exports.command = command;
