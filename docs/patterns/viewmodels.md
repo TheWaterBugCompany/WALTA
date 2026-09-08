@@ -160,16 +160,6 @@ either:
 - **An `on<Event>` key** (e.g. `onClick`, `onClose`) — value is the name of a
   ViewModel method. The event name is lower-cased (`onClick` → `click`) and bound
   once; the handler calls the method with no arguments.
-- **An `on<Event>` key bound to `call("method", ...args)`** — same event wiring,
-  but the handler calls the ViewModel method with the fixed arguments. Use it when
-  several widgets differ only by a constant (a set of tabs, a numbered grid) so
-  the controller stays declarative instead of hand-wiring `addEventListener`:
-
-  ```js
-  const { call } = require("util/bindView");
-  const BINDINGS = {};
-  TABS.forEach((tab, i) => { BINDINGS["tab" + i] = { onClick: call("selectTab", i) }; });
-  ```
 - **A `twoWay("prop")` property** — the same VM-getter → widget flow as a plain
   property, plus a `change` listener that writes the widget's `e.value` back into
   the VM setter. Use it for inputs (text fields, switches) instead of hand-wiring

@@ -535,53 +535,6 @@ describe("bindView", function () {
     });
   });
 
-  describe("argument-carrying event handlers (call)", function () {
-    const { call } = bindView;
-
-    it("invokes the VM method with the bound argument on the event", function () {
-      bindView($, vm, { label: { onClick: call("pick", 5) } });
-      $.label.fireEvent("click");
-      expect(vm.picks).to.deep.equal([[5]]);
-    });
-
-    it("passes multiple bound arguments through", function () {
-      bindView($, vm, { label: { onClick: call("pick", 1, 2) } });
-      $.label.fireEvent("click");
-      expect(vm.picks).to.deep.equal([[1, 2]]);
-    });
-
-    it("mixes an arg-carrying handler with a property binding under one widget", function () {
-      bindView($, vm, { label: { text: "greeting", onClick: call("pick", 3) } });
-      expect($.label.text).to.equal("hi");
-      $.label.fireEvent("click");
-      expect(vm.picks).to.deep.equal([[3]]);
-    });
-
-    it("unbind removes the handler", function () {
-      const unbind = bindView($, vm, { label: { onClick: call("pick", 5) } });
-      unbind();
-      $.label.fireEvent("click");
-      expect(vm.picks).to.deep.equal([]);
-    });
-
-    it("falls back to .on/.off for Backbone-style targets", function () {
-      $.bbTarget = makeBackboneTarget();
-      bindView($, vm, { bbTarget: { onClose: call("pick", 9) } });
-      $.bbTarget.trigger("close");
-      expect(vm.picks).to.deep.equal([[9]]);
-    });
-
-    it("throws when the called method doesn't exist", function () {
-      expect(() => bindView($, vm, { label: { onClick: call("nope", 1) } }))
-        .to.throw(/nope/);
-    });
-
-    it("throws when the called name is not a function", function () {
-      expect(() => bindView($, vm, { label: { onClick: call("greeting") } }))
-        .to.throw(/greeting.*function/);
-    });
-  });
-
   describe("pressed-state binding (pressable)", function () {
     const { pressable } = bindView;
 
