@@ -62,7 +62,6 @@
 	borderRadius: "8dp",
 	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-	maxLength: 1,
 	keyboardType: Ti.UI.KEYBOARD_TYPE_NUMBER_PAD,
 	returnKeyType: Ti.UI.RETURNKEY_DONE,
 	// Every other entry field in the app gets this from the shared .textField

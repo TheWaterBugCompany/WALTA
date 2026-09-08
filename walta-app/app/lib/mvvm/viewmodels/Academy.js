@@ -22,8 +22,16 @@ class AcademyViewModel extends ChangeNotifier {
   set digit3(v) { this._setDigit(2, v); }
 
   _setDigit(index, value) {
-    const next = value == null ? "" : String(value);
-    if (this._digits[index] === next) return;
+    // A box that already holds a digit appends the one just typed, so the last
+    // character is the one the user means.
+    const typed = value == null ? "" : String(value);
+    const next = typed.slice(-1);
+    if (this._digits[index] === next) {
+      // Same digit, but the box is still showing what was typed into it —
+      // notify anyway so the binding puts the single digit back.
+      if (typed !== next) this.notifyListeners();
+      return;
+    }
     this._digits[index] = next;
     this._moveEntryOn(index, next);
     this.notifyListeners();
