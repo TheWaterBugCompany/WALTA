@@ -16,6 +16,8 @@ function makeView() {
     gallery:         makeWidget({}),
     academy:         makeWidget({}),
     about:           makeWidget({}),
+    belt:            makeWidget({ visible: false, backgroundColor: null }),
+    beltTip:         makeWidget({ backgroundColor: null }),
   };
 }
 
@@ -35,7 +37,7 @@ function flush() { return new Promise(resolve => setImmediate(resolve)); }
 describe("Menu controller", function () {
   let view, cerdiApi, dialogs, ctl;
 
-  function build({ userToken = null, environment = "production", version = "2.5.0.0", confirm = true } = {}) {
+  function build({ userToken = null, environment = "production", version = "2.5.0.0", confirm = true, belt = null } = {}) {
     view = makeView();
     cerdiApi = fakeCerdiApi(userToken);
     dialogs = {
@@ -44,7 +46,7 @@ describe("Menu controller", function () {
     };
     ctl = createMenuController({
       view,
-      services: { cerdiApi, topics: Topics, dialogs, environment, version },
+      services: { cerdiApi, topics: Topics, dialogs, environment, version, belt },
       bindView: makeBinder(undefined, PALETTE),
     });
   }
@@ -77,6 +79,18 @@ describe("Menu controller", function () {
     build({ userToken: "a-token" });
     expect(view.logInLabel.text).to.equal("You are Logged in");
     expect(view.logInLabel.accessibilityLabel).to.equal("You are Logged in");
+  });
+
+  it("keeps the belt off the home screen until one is held", function () {
+    build({ belt: null });
+    expect(view.belt.visible).to.equal(false);
+  });
+
+  it("wears the held belt's two colours on the home screen", function () {
+    build({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
+    expect(view.belt.visible).to.equal(true);
+    expect(view.belt.backgroundColor).to.equal("#ffe11a");
+    expect(view.beltTip.backgroundColor).to.equal("#ffffff");
   });
 
   it("fires the DETAILED topic when the survey button is tapped", function () {

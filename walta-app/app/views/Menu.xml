@@ -1,5 +1,8 @@
 <Alloy> 
 	<View id="content" class="container">
+			<View id="belt">
+				<View id="beltTip"/>
+			</View>
 			<View id="bigOptions">
 				<Label id="appVersion"/>
 				<View id="logInOrRegister">

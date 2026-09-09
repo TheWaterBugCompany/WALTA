@@ -5,6 +5,8 @@ const MenuViewModel = require("mvvm/viewmodels/Menu");
 const BINDINGS = {
   appVersion:      { text: "versionLabel", color: "versionColor" },
   logInLabel:      { text: "loginLabel", accessibilityLabel: "loginLabel" },
+  belt:            { visible: "beltVisible", backgroundColor: "beltColor" },
+  beltTip:         { backgroundColor: "beltTipColor" },
   logInOrRegister: { onClick: "loginOrOut" },
   detailed:        { onClick: "detailed" },
   identify:        { onClick: "identify" },
@@ -20,6 +22,7 @@ module.exports = function createMenuController({ view, services, bindView }) {
     topics: services.topics,
     environment: services.environment,
     version: services.version,
+    belt: services.belt,
   });
   const unbind = bindView(view, vm, BINDINGS);
 

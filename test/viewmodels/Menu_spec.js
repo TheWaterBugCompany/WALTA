@@ -123,6 +123,26 @@ describe("MenuViewModel", function () {
     expect(notified).to.be.true;
   });
 
+  it("hides the belt until the user holds one", function () {
+    const vm = makeViewModel({ belt: null });
+    expect(vm.beltVisible).to.be.false;
+  });
+
+  it("shows the belt once the user holds one", function () {
+    const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
+    expect(vm.beltVisible).to.be.true;
+  });
+
+  it("wears the belt's own colour along its length", function () {
+    const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
+    expect(vm.beltColor).to.equal("#ffe11a");
+  });
+
+  it("wears the belt's tip colour at the tip", function () {
+    const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
+    expect(vm.beltTipColor).to.equal("#ffffff");
+  });
+
 });
 
 // Returns a probe reporting the topic payload, or `true` when it fired
@@ -133,12 +153,13 @@ function recordTopic(topic) {
   return () => fired;
 }
 
-function makeViewModel({ userToken = null, environment = "production", version = "0.0.0.0", cerdiApi = fakeCerdiApi(userToken) } = {}) {
+function makeViewModel({ userToken = null, environment = "production", version = "0.0.0.0", belt = null, cerdiApi = fakeCerdiApi(userToken) } = {}) {
   return new MenuViewModel({
     cerdiApi,
     topics: Topics,
     environment,
     version,
+    belt,
   });
 }
 

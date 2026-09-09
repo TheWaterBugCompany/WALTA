@@ -9,6 +9,27 @@
   height: "60%" 
 }
 
+// A corner ribbon: a horizontal bar laid across the top-right corner and
+// rotated 45 degrees about its centre, so both ends run off screen.
+"#belt": {
+  width: "420dp",
+  height: "56dp",
+  top: "35dp",
+  right: "-146dp",
+  visible: false,
+  zIndex: "0",
+  transform: Alloy.Globals.diagonalRibbon
+}
+
+// Positioned along the bar, not the screen: the bar is anchored to the right
+// edge, so the rotated tip lands the same distance in from the corner on any
+// screen width.
+"#beltTip": {
+  width: "26dp",
+  height: Ti.UI.FILL,
+  right: "137dp"
+}
+
 "#logInOrRegister" : {
   height: Ti.UI.SIZE,
   width: Ti.UI.SIZE,

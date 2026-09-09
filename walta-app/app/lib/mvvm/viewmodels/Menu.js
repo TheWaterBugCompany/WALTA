@@ -2,12 +2,13 @@ const ChangeNotifier = require("../../util/ChangeNotifier");
 const Palette = require("../../util/Palette");
 
 class MenuViewModel extends ChangeNotifier {
-  constructor({ cerdiApi, topics, environment, version }) {
+  constructor({ cerdiApi, topics, environment, version, belt }) {
     super();
     this._cerdiApi = cerdiApi;
     this._topics = topics;
     this._environment = environment;
     this._version = version;
+    this._belt = belt;
 
     this._onLoggedIn = () => this.notifyListeners();
     topics.subscribe(topics.LOGGEDIN, this._onLoggedIn);
@@ -74,6 +75,18 @@ class MenuViewModel extends ChangeNotifier {
 
   get loginLabel() {
     return this.loggedIn ? "You are Logged in" : "Log In";
+  }
+
+  get beltVisible() {
+    return Boolean(this._belt);
+  }
+
+  get beltColor() {
+    return this._belt && this._belt.color;
+  }
+
+  get beltTipColor() {
+    return this._belt && this._belt.tipColor;
   }
 }
 

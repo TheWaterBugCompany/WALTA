@@ -55,3 +55,29 @@ describe('Menu controller', function() {
 	});
 
 });
+
+// Named distinctly from 'Menu controller' so --grep can open just this state.
+describe('Menu belt', function() {
+	var view, mnu;
+	afterEach( async function() {
+		await closeWindow( mnu.getView() );
+	});
+
+	async function openWith( belt ) {
+		view = new View( makeTestServices({ belt: belt }) );
+		await view.openView("Menu", {unknown_bug:true});
+		mnu = view.getCurrentController();
+	}
+
+	it('should keep the belt off the home screen until one is held', async function() {
+		await openWith( null );
+		expect( mnu.belt.visible ).to.equal( false );
+	});
+
+	it('should wear the held belt in its own two colours', async function() {
+		await openWith({ color: "#FFE11A", tipColor: "#FFFFFF" });
+		expect( mnu.belt.visible ).to.equal( true );
+		expect( mnu.belt.backgroundColor ).to.equal( "#FFE11A" );
+		expect( mnu.beltTip.backgroundColor ).to.equal( "#FFFFFF" );
+	});
+});
