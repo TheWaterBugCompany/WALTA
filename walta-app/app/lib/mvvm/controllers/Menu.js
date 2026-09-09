@@ -22,7 +22,7 @@ module.exports = function createMenuController({ view, services, bindView }) {
     topics: services.topics,
     environment: services.environment,
     version: services.version,
-    belt: services.belt,
+    belt: services.belts && services.belts.currentBelt(),
   });
   const unbind = bindView(view, vm, BINDINGS);
 

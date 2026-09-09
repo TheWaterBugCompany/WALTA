@@ -46,7 +46,7 @@ describe("Menu controller", function () {
     };
     ctl = createMenuController({
       view,
-      services: { cerdiApi, topics: Topics, dialogs, environment, version, belt },
+      services: { cerdiApi, topics: Topics, dialogs, environment, version, belts: { currentBelt: () => belt } },
       bindView: makeBinder(undefined, PALETTE),
     });
   }

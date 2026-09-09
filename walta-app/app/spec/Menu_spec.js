@@ -64,7 +64,7 @@ describe('Menu belt', function() {
 	});
 
 	async function openWith( belt ) {
-		view = new View( makeTestServices({ belt: belt }) );
+		view = new View( makeTestServices({ belts: { currentBelt: function () { return belt; } } }) );
 		await view.openView("Menu", {unknown_bug:true});
 		mnu = view.getCurrentController();
 	}
