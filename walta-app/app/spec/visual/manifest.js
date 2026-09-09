@@ -37,6 +37,12 @@ function menu() {
 	return { unknown_bug: true };
 }
 
+// The belt is parameterised, so the screen only renders one when a belt is
+// supplied — this is the state a user with a belt sees.
+function menuWithBeltServices() {
+	return { belt: { color: "#FFE11A", tipColor: "#FFFFFF" } };
+}
+
 // A modal is captured over the screen it is reached from — see openEntry.js.
 function methodSelect() {
 	return { unknownBug: true };
@@ -517,6 +523,7 @@ function taxonComparisonIncorrect() {
 
 module.exports = [
 	{ name: "Menu", args: menu },
+	{ name: "MenuWithBelt", screen: "Menu", args: menu, services: menuWithBeltServices },
 	{ name: "MethodSelect", args: methodSelect, host: "Menu" },
 	{ name: "Speedbug", args: speedbug },
 	{ name: "TaxonDetails", args: taxonDetails },

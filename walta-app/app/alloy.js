@@ -83,3 +83,7 @@ Alloy.Globals.isHighRes = screen.isHighRes;
 Alloy.Globals.isXHighRes = screen.isXHighRes;
 
 log(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}`);
+
+// Alloy's TSS parser takes values, not call expressions, so a matrix a style
+// needs has to be built here and referenced by name.
+Alloy.Globals.diagonalRibbon = Ti.UI.createMatrix2D().rotate(45);
