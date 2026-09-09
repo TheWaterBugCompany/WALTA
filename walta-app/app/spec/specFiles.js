@@ -53,6 +53,7 @@ module.exports = [
   "Main",
   "Navigation",
   "View",
+  "util/repository/BeltRepository",
   "util/repository/LogRepository",
   "util/repository/TrainingRepository",
   "DiagnosticsBundle",
