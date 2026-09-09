@@ -38,9 +38,11 @@ function menu() {
 }
 
 // The belt is parameterised, so the screen only renders one when a belt is
-// supplied — this is the state a user with a belt sees.
+// supplied. Captured wearing the first belt a user can earn, from the real
+// table rather than a colour invented for the fixture.
 function menuWithBeltServices() {
-	return { belt: { color: "#FEFF46", tipColor: "#FFFFFF" } };
+	var Belts = require("logic/Belts");
+	return { belts: { currentBelt: function () { return Belts.at(1); } } };
 }
 
 // A modal is captured over the screen it is reached from — see openEntry.js.

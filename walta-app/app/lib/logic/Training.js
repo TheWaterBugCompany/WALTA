@@ -17,6 +17,9 @@ module.exports = function createTraining({ repo, exercises }) {
       return true;
     },
 
+    // The code of the session in progress — what earned belt is looked up by.
+    currentSessionCode() { return repo.currentSessionCode(); },
+
     // The active session's tray + assessor — the training screens thread these into
     // their args (the session lives here, its owner, not in Navigation).
     currentTray() { return tray; },

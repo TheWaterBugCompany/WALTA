@@ -138,4 +138,9 @@ describe("logic/Training", function () {
     expect(repo.started, "started a fresh session for the new code").to.equal("202");
     expect(switched.currentTray().length, "old taxa cleared").to.equal(0);
   });
+
+  it("reports the code of the session in progress", function () {
+    training.startTraining("101");
+    expect(training.currentSessionCode()).to.equal("101");
+  });
 });

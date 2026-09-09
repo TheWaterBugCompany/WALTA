@@ -20,6 +20,8 @@ var { Navigation } = require('logic/Navigation');
 var TrainingRepository = require("repository/TrainingRepository");
 var createTrainingExercises = require("logic/TrainingExercises");
 var createTraining = require("logic/Training");
+var BeltRepository = require("repository/BeltRepository");
+var createBeltAwards = require("logic/BeltAwards");
 var { checkForErrors } = require('util/PromiseUtils');
 var DiagnosticsBundle = require('util/DiagnosticsBundle');
 Topics.init();
@@ -111,7 +113,6 @@ UploadBadge.init({
 function setUserId() {
   Logger.setUserId( Alloy.Globals.CerdiApi.retrieveUsername() );
 }
-Topics.subscribe( Topics.LOGGEDIN, (data) => setUserId() );
 if ( Alloy.Globals.CerdiApi.retrieveUserToken() ) {
   setUserId();
 }
@@ -139,6 +140,20 @@ let training = createTraining({
   exercises: trainingExercises,
 });
 
+// Belts earned by completing those exercises, kept per user in the same DB.
+let beltAwards = createBeltAwards({
+  repository: BeltRepository.open("waterbug_data"),
+  exercises: trainingExercises,
+  cerdiApi: Alloy.Globals.CerdiApi,
+});
+
+// Subscribed here rather than with the other login wiring above because it
+// needs beltAwards: a belt earned before signing in belongs to whoever signs in.
+Topics.subscribe( Topics.LOGGEDIN, (data) => {
+  setUserId();
+  beltAwards.claimAnonymousBelt();
+} );
+
 let services ={
   System: System,
   Key: Alloy.Globals.Key,
@@ -150,7 +165,8 @@ let services ={
   platform: PlatformSpecific,
   photoSize: PhotoUtils.photoSize,
   environment: Alloy.CFG.environment,
-  version: Ti.App.version
+  version: Ti.App.version,
+  belts: beltAwards
 }
 
 services.sampleSource = SampleHistorySource({ cerdiApi: services.cerdiApi });

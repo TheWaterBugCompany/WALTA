@@ -84,4 +84,58 @@ describe("TrainingTray controller", function () {
     expect(ctl.vm.readonly).to.equal(false);
     ctl.dispose();
   });
+
+  it("awards the belt the completed session carries when the tray is all-correct", function () {
+    const awarded = [];
+    const topics = {
+      ASSESS: "assess",
+      TRAINING_SUCCESS: "trainingsuccess",
+      subscribe() {}, unsubscribe() {},
+      fireTopicEvent: () => {},
+    };
+    const tray = new SampleTray([new Taxon({ id: 1, taxonId: 90, position: 0 })]);
+    const ctl = createTrainingTray({
+      view: {},
+      args: { tray, key: fakeKey(), assessor: createTrainingAssessor([90]) },
+      services: {
+        topics,
+        platform: fakePlatform(),
+        Training: { currentSessionCode: () => "101" },
+        belts: { awardFor: (code) => awarded.push(code) },
+      },
+      bindView: stubBindView(),
+    });
+
+    ctl.vm.assess();
+
+    expect(awarded).to.deep.equal(["101"]);
+    ctl.dispose();
+  });
+
+  it("awards no belt when the tray is not all-correct", function () {
+    const awarded = [];
+    const topics = {
+      ASSESS: "assess",
+      TRAINING_SUCCESS: "trainingsuccess",
+      subscribe() {}, unsubscribe() {},
+      fireTopicEvent: () => {},
+    };
+    const tray = new SampleTray([new Taxon({ id: 1, taxonId: 90, position: 0 })]);
+    const ctl = createTrainingTray({
+      view: {},
+      args: { tray, key: fakeKey(), assessor: createTrainingAssessor([77]) },
+      services: {
+        topics,
+        platform: fakePlatform(),
+        Training: { currentSessionCode: () => "101" },
+        belts: { awardFor: (code) => awarded.push(code) },
+      },
+      bindView: stubBindView(),
+    });
+
+    ctl.vm.assess();
+
+    expect(awarded).to.have.length(0);
+    ctl.dispose();
+  });
 });

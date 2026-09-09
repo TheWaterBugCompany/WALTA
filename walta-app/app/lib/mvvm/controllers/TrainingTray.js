@@ -16,8 +16,10 @@ module.exports = function createTrainingTray({ view, args, services, bindView })
     noticeDwellMs: args.noticeDwellMs,
   });
 
-  vm.on("allCorrect", (correctCount) =>
-    services.topics.fireTopicEvent(services.topics.TRAINING_SUCCESS, { correctCount }));
+  vm.on("allCorrect", (correctCount) => {
+    if (services.belts) services.belts.awardFor(services.Training.currentSessionCode());
+    services.topics.fireTopicEvent(services.topics.TRAINING_SUCCESS, { correctCount });
+  });
 
   const unbind = bindView(view, vm, {
     tray: {
