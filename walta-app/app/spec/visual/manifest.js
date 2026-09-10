@@ -40,7 +40,7 @@ function menu() {
 // The belt is parameterised, so the screen only renders one when a belt is
 // supplied — this is the state a user with a belt sees.
 function menuWithBeltServices() {
-	return { belt: { color: "#FFE11A", tipColor: "#FFFFFF" } };
+	return { belt: { color: "#FEFF46", tipColor: "#FFFFFF" } };
 }
 
 // A modal is captured over the screen it is reached from — see openEntry.js.
