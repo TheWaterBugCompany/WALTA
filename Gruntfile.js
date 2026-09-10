@@ -1039,6 +1039,16 @@ module.exports = function(grunt) {
           }
           grunt.log.writeln(`  ${marker.blank.length} screen(s) captured blank: ${blanks}`);
         }
+        // A frame still changing when the grabs ran out is a capture of a
+        // moment, not of the screen — the shape of a diff that turns up on a
+        // screen nobody touched.
+        if (marker.unsettled.length) {
+          const moving = marker.unsettled.join(', ');
+          if (update) {
+            grunt.fail.fatal(`Refusing to update baselines: the frame never held still for ${moving}.`);
+          }
+          grunt.log.writeln(`  ${marker.unsettled.length} screen(s) never held still: ${moving}`);
+        }
 
         if (typeof launcher.pullCapturedScreenshots !== 'function') {
           throw new Error(`${launcher.constructor.name} does not implement pullCapturedScreenshots yet`);
