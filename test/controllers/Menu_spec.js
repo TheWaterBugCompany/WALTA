@@ -16,7 +16,7 @@ function makeView() {
     gallery:         makeWidget({}),
     academy:         makeWidget({}),
     about:           makeWidget({}),
-    belt:            makeWidget({ visible: false, backgroundColor: null }),
+    belt:            makeWidget({ visible: false, backgroundColor: null, borderColor: null }),
     beltTip:         makeWidget({ backgroundColor: null }),
   };
 }
@@ -87,10 +87,11 @@ describe("Menu controller", function () {
   });
 
   it("wears the held belt's two colours on the home screen", function () {
-    build({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
+    build({ belt: { color: "#FEFF46", tipColor: "#FFFFFF" } });
     expect(view.belt.visible).to.equal(true);
-    expect(view.belt.backgroundColor).to.equal("#ffe11a");
-    expect(view.beltTip.backgroundColor).to.equal("#ffffff");
+    expect(view.belt.backgroundColor).to.equal("#FEFF46");
+    expect(view.beltTip.backgroundColor).to.equal("#FFFFFF");
+    expect(view.belt.borderColor, "outlined so the tip doesn't read as a break").to.equal("#E5E63F");
   });
 
   it("fires the DETAILED topic when the survey button is tapped", function () {
