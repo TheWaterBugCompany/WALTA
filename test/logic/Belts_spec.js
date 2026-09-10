@@ -37,4 +37,23 @@ describe("Belts", function () {
     expect(Belts.HIGHEST).to.equal(8);
   });
 
+  it("names a belt whose tip matches it by its colour alone", function () {
+    expect(Belts.describe(Belts.at(2))).to.equal("Yellow belt");
+    expect(Belts.describe(Belts.at(5))).to.equal("Orange belt");
+    expect(Belts.describe(Belts.at(8))).to.equal("Green belt");
+  });
+
+  it("names the tip when it differs from the belt", function () {
+    expect(Belts.describe(Belts.at(3))).to.equal("Yellow belt with an orange tip");
+    expect(Belts.describe(Belts.at(7))).to.equal("Green belt with an orange tip");
+  });
+
+  it("calls a bare tip white, as it is drawn", function () {
+    expect(Belts.describe(Belts.at(1))).to.equal("Yellow belt with a white tip");
+  });
+
+  it("has nothing to say about no belt", function () {
+    expect(Belts.describe(null)).to.equal(null);
+  });
+
 });

@@ -1,5 +1,6 @@
 const ChangeNotifier = require("../../util/ChangeNotifier");
 const Palette = require("../../util/Palette");
+const Belts = require("../../logic/Belts");
 
 class MenuViewModel extends ChangeNotifier {
   constructor({ cerdiApi, topics, environment, version, belt }) {
@@ -87,6 +88,10 @@ class MenuViewModel extends ChangeNotifier {
 
   get beltTipColor() {
     return this._belt && this._belt.tipColor;
+  }
+
+  get beltLabel() {
+    return Belts.describe(this._belt);
   }
 
   // The belt is outlined so the tip reads as part of it rather than a break in

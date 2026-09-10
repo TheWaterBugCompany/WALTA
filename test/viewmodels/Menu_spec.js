@@ -153,6 +153,16 @@ describe("MenuViewModel", function () {
     expect(vm.beltOutlineColor).to.equal(null);
   });
 
+  it("names the belt it is wearing", function () {
+    const vm = makeViewModel({ belt: { color: "#FEFF46", tipColor: "#F4C437" } });
+    expect(vm.beltLabel).to.equal("Yellow belt with an orange tip");
+  });
+
+  it("has no belt name when there is no belt", function () {
+    const vm = makeViewModel({ belt: null });
+    expect(vm.beltLabel).to.equal(null);
+  });
+
   it("wears the belt's tip colour at the tip", function () {
     const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
     expect(vm.beltTipColor).to.equal("#ffffff");
