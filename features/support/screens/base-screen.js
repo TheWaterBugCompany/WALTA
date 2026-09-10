@@ -173,6 +173,17 @@ class BaseScreen {
             { timeout: 30000, timeoutMsg: `no ${verdict} verdict present` });
     }
 
+    // An element whose frame extends past the window — a rotated one, say — is
+    // reported visible=false by WDA even while it is plainly on screen, so poll
+    // the tree for it and hand it back for the caller to inspect.
+    async waitForExisting( label ) {
+        const sel = this.selector( label );
+        await this.driver.waitUntil(
+            async () => await (await this.driver.$(sel)).isExisting(),
+            { timeout: 30000, timeoutMsg: `${label} not present` });
+        return this.driver.$( sel );
+    }
+
     // Non-throwing probe/tap for a full selector — building blocks for a
     // poll-and-dismiss loop, where a missing or stale element just means "try
     // again next round", not a failure.
