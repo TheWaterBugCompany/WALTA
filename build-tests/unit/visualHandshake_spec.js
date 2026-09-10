@@ -82,6 +82,10 @@ describe("visual capture handshake", function () {
         return collectHandshake({
             launcher, appId: "app", actualDir, timeoutMs: 10000, pollMs: 5,
             looksBlank: async () => false,
+            // These fakes write empty frames, so they fingerprint as one
+            // unchanging frame: this spec is about which screen was held when
+            // each grab happened, not about settling.
+            fingerprint: async () => "still",
         });
     }
 
@@ -107,7 +111,7 @@ describe("visual capture handshake", function () {
         const [, result] = await Promise.all([runCapture(SCREENS, live), collect(launcher)]);
 
         expect(result.count).to.equal(SCREENS.length);
-        expect(launcher.grabs.map((g) => g.named)).to.deep.equal(SCREENS);
+        expect(launcher.grabs.map((g) => g.named)).to.deep.equal(SCREENS.flatMap((s) => [s, s]));
         expect(launcher.grabs.filter((g) => g.named !== g.held)).to.deep.equal([]);
     });
 

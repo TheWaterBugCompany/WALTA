@@ -1,5 +1,6 @@
 import path from "path";
 import { looksBlank as frameLooksBlank } from "./blankFrame.js";
+import { fingerprint as frameFingerprint } from "./frameFingerprint.js";
 
 // Drives file-handshake visual capture: polls the app's visual dir for per-screen
 // <name>.ready markers the runner writes, screenshots each framebuffer on the
@@ -21,6 +22,17 @@ const COLLECTOR_READY = "collector-ready";
 // one — this is waiting for a frame to arrive, not retrying the screen.
 const BLANK_ATTEMPTS = 3;
 
+// How many times to re-grab a screen whose frame keeps changing. A frame is
+// only acked once two grabs in a row are identical, because a screen can be
+// fully drawn and still not be finished: chrome that fades on its own schedule
+// (a web view's scroll indicator), a modal still arriving over its host,
+// content that draws late. Each of those makes a frame that looks complete and
+// then diffs against the baseline for a reason nobody caused.
+//
+// Bounded, because some screens never hold still — a playing video — and one of
+// those must not strand the runner or lose the screens queued behind it.
+const SETTLE_ATTEMPTS = 4;
+
 // The window the OS has focused, when it belongs to something other than the app
 // under capture. Launchers that can't answer (iOS has no equivalent of dumpsys)
 // leave the check off rather than guessing.
@@ -31,13 +43,17 @@ async function foreignWindow(launcher, appId) {
 }
 
 export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, pollMs = 200, now, sleep, log,
-    looksBlank = frameLooksBlank, blankAttempts = BLANK_ATTEMPTS }) {
+    looksBlank = frameLooksBlank, blankAttempts = BLANK_ATTEMPTS,
+    fingerprint = frameFingerprint, settleAttempts = SETTLE_ATTEMPTS }) {
     const clock = now || (() => Date.now());
     const wait = sleep || ((ms) => new Promise((r) => setTimeout(r, ms)));
     const note = log || (() => {});
     const shot = new Set();
     const blank = [];
+    const unsettled = [];
     const attempts = new Map();
+    const settleTries = new Map();
+    const lastFrame = new Map();
     let obscuredBy = null;
     const deadline = clock() + timeoutMs;
     let reachable = null;
@@ -101,8 +117,24 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
                         note(`  visual: ${name} came back blank, grabbing again`);
                         continue;
                     }
-                    note(`  visual: ${name} still blank after ${tries} grabs — keeping the empty frame`);
-                    blank.push(name);
+                    if (!blank.includes(name)) {
+                        note(`  visual: ${name} still blank after ${tries} grabs — keeping the empty frame`);
+                        blank.push(name);
+                    }
+                }
+                // Hold until the frame stops changing between grabs. The runner
+                // is holding this screen until we ack it, so a re-grab sees the
+                // same screen — this is waiting for it to finish drawing, not
+                // retrying the screen.
+                const frame = await fingerprint(file);
+                const previous = lastFrame.get(name);
+                lastFrame.set(name, frame);
+                const settling = (settleTries.get(name) || 0) + 1;
+                settleTries.set(name, settling);
+                if (frame !== previous) {
+                    if (settling < settleAttempts) { continue; }
+                    note(`  visual: ${name} never held still after ${settling} grabs — keeping the last frame`);
+                    unsettled.push(name);
                 }
                 await launcher.writeVisualCaptureFile(appId, `${name}.shot`);
                 shot.add(name);
@@ -110,7 +142,14 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
                 note(`  visual: ${name} shot failed, will retry (${e && e.message ? e.message : e})`);
             }
         }
-        if (files.includes(DONE)) return { count: shot.size, blank };
+        // Done means the runner has finished opening screens, not that we have
+        // finished grabbing them: a screen whose .ready lands in the same poll
+        // still owes us a second grab to know its frame has stopped moving.
+        const outstanding = files.some((f) => {
+            const m = /^(.+)\.ready$/.exec(f);
+            return m && !shot.has(m[1]);
+        });
+        if (files.includes(DONE) && !outstanding) { return { count: shot.size, blank, unsettled }; }
         if (clock() >= deadline) {
             // The window in the way is the cause worth naming: without it this
             // reads as "the app never finished", which is a different bug.

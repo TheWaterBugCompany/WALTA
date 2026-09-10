@@ -32,6 +32,10 @@ function fakeClock() {
     return { now: () => t, sleep: (ms) => { t += ms; return Promise.resolve(); } };
 }
 
+// A screen that has finished drawing: every grab of it fingerprints the same,
+// so the second grab settles it.
+const stillFrame = async () => "still";
+
 describe("collectHandshake", function () {
     it("screenshots each ready screen, acks it with a .shot, and returns the count when done appears", async function () {
         const launcher = fakeLauncher([
@@ -42,10 +46,10 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
-        expect(result).to.deep.equal({ count: 2, blank: [] });
-        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Speedbug.png"]);
+        expect(result).to.deep.equal({ count: 2, blank: [], unsettled: [] });
+        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png", "/out/Speedbug.png", "/out/Speedbug.png"]);
         expect(launcher.acks).to.deep.equal(["Menu.shot", "Speedbug.shot"]);
     });
 
@@ -56,10 +60,10 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
-        expect(result).to.deep.equal({ count: 1, blank: [] });
-        expect(launcher.shots).to.deep.equal(["/out/Menu.png"]);
+        expect(result).to.deep.equal({ count: 1, blank: [], unsettled: [] });
+        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
     });
 
     it("never re-screenshots a screen it has already grabbed", async function () {
@@ -71,9 +75,9 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
-        expect(launcher.shots).to.deep.equal(["/out/Menu.png"]);
+        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
     });
 
     it("keeps polling when listing throws (device/container not ready yet)", async function () {
@@ -93,10 +97,10 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
-        expect(result).to.deep.equal({ count: 1, blank: [] });
-        expect(shots).to.deep.equal(["/out/Menu.png"]);
+        expect(result).to.deep.equal({ count: 1, blank: [], unsettled: [] });
+        expect(shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
     });
 
     it("retries a screen whose screenshot transiently fails, then captures it", async function () {
@@ -119,10 +123,10 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
         // The failed first attempt didn't ack Menu; the next poll retried and got it.
-        expect(shots).to.deep.equal(["/out/Menu.png"]);
+        expect(shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
         expect(result.count).to.equal(1);
     });
 
@@ -132,7 +136,7 @@ describe("collectHandshake", function () {
         let err;
         try {
             await collectHandshake({
-                launcher, appId: "app", actualDir: "/out", timeoutMs: 500, pollMs: 100, now, sleep, looksBlank: async () => false,
+                launcher, appId: "app", actualDir: "/out", timeoutMs: 500, pollMs: 100, now, sleep, looksBlank: async () => false, fingerprint: stillFrame,
             });
         } catch (e) { err = e; }
         expect(err).to.be.an("error");
@@ -146,7 +150,7 @@ describe("collectHandshake", function () {
         const { now, sleep } = fakeClock();
         await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
         expect(launcher.written.filter((n) => n === "collector-ready")).to.have.length(3);
     });
@@ -176,9 +180,9 @@ describe("collectHandshake blank frames", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: fakeFrames({ Menu: ["blank", "drawn"] }),
+            looksBlank: fakeFrames({ Menu: ["blank", "drawn"] }), fingerprint: stillFrame,
         });
-        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
+        expect(launcher.shots).to.have.length(3);
         expect(launcher.acks).to.deep.equal(["Menu.shot"]);
         expect(result.count).to.equal(1);
         expect(result.blank).to.deep.equal([]);
@@ -193,9 +197,9 @@ describe("collectHandshake blank frames", function () {
         const result = await collectHandshake({
             launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
             blankAttempts: 3,
-            looksBlank: fakeFrames({ Menu: ["blank"] }),
+            looksBlank: fakeFrames({ Menu: ["blank"] }), fingerprint: stillFrame,
         });
-        expect(launcher.shots).to.have.length(3);
+        expect(launcher.shots).to.have.length(4);
         expect(launcher.acks).to.deep.equal(["Menu.shot"]);
         expect(result.blank).to.deep.equal(["Menu"]);
     });
@@ -223,9 +227,10 @@ describe("collectHandshake foreign windows", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
-        expect(launcher.shots).to.deep.equal(["/out/Menu.png", "/out/Menu.png"]);
+        // One grab behind the dialog, then a settling pair once it clears.
+        expect(launcher.shots).to.have.length(3);
         expect(launcher.acks).to.deep.equal(["Menu.shot"]);
         expect(result.count).to.equal(1);
     });
@@ -241,7 +246,7 @@ describe("collectHandshake foreign windows", function () {
         try {
             await collectHandshake({
                 launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 3000, pollMs: 100, now, sleep,
-                looksBlank: async () => false,
+                looksBlank: async () => false, fingerprint: stillFrame,
             });
         } catch (e) { err = e; }
         expect(err).to.be.an("error");
@@ -260,7 +265,7 @@ describe("collectHandshake foreign windows", function () {
         try {
             await collectHandshake({
                 launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 3000, pollMs: 100, now, sleep,
-                looksBlank: async () => false, log: (m) => lines.push(m),
+                looksBlank: async () => false, fingerprint: stillFrame, log: (m) => lines.push(m),
             });
         } catch (_) { /* expected */ }
         expect(lines.filter((l) => l.includes("behind"))).to.have.length(1);
@@ -273,9 +278,77 @@ describe("collectHandshake foreign windows", function () {
         const { now, sleep } = fakeClock();
         const result = await collectHandshake({
             launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
-            looksBlank: async () => false,
+            looksBlank: async () => false, fingerprint: stillFrame,
         });
         expect(result.count).to.equal(1);
         expect(launcher.acks).to.deep.equal(["Menu.shot"]);
+    });
+});
+
+// A fingerprinter driven by a script of frame identities per screen: each entry
+// is consumed in turn, so ["fading", "settled", "settled"] means the frame was
+// still moving once and then held still.
+function fakeFingerprints(script) {
+    const seen = {};
+    return async (file) => {
+        const name = file.split("/").pop().replace(/\.png$/, "");
+        const frames = script[name] || ["still"];
+        const i = Math.min(seen[name] || 0, frames.length - 1);
+        seen[name] = (seen[name] || 0) + 1;
+        return frames[i];
+    };
+}
+
+describe("collectHandshake unsettled frames", function () {
+    it("grabs again while the frame is still changing, and acks once two in a row match", async function () {
+        const launcher = fakeLauncher([
+            ["About.ready"], ["About.ready"], ["About.ready"],
+            ["About.ready", "capture-done"],
+        ]);
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
+            fingerprint: fakeFingerprints({ About: ["fading", "settled", "settled"] }),
+        });
+        expect(launcher.shots).to.have.length(3);
+        expect(launcher.acks).to.deep.equal(["About.shot"]);
+        expect(result.count).to.equal(1);
+        expect(result.unsettled).to.deep.equal([]);
+    });
+
+    it("acks a screen that is already still on its second grab", async function () {
+        const launcher = fakeLauncher([
+            ["Menu.ready"],
+            ["Menu.ready", "capture-done"],
+        ]);
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
+            fingerprint: fakeFingerprints({ Menu: ["same", "same"] }),
+        });
+        expect(launcher.shots).to.have.length(2);
+        expect(launcher.acks).to.deep.equal(["Menu.shot"]);
+        expect(result.unsettled).to.deep.equal([]);
+    });
+
+    // A playing video never holds still, and must not strand the runner or lose
+    // the screens queued behind it.
+    it("gives up on a screen that never settles, acking it, and reports it", async function () {
+        const launcher = fakeLauncher([
+            ["VideoPlayer.ready"], ["VideoPlayer.ready"], ["VideoPlayer.ready"],
+            ["VideoPlayer.ready"], ["VideoPlayer.ready", "capture-done"],
+        ]);
+        const { now, sleep } = fakeClock();
+        const result = await collectHandshake({
+            launcher, appId: "app", actualDir: "/out", timeoutMs: 10000, pollMs: 100, now, sleep,
+            looksBlank: async () => false,
+            settleAttempts: 3,
+            fingerprint: fakeFingerprints({ VideoPlayer: ["a", "b", "c", "d"] }),
+        });
+        expect(launcher.shots).to.have.length(3);
+        expect(launcher.acks).to.deep.equal(["VideoPlayer.shot"]);
+        expect(result.unsettled).to.deep.equal(["VideoPlayer"]);
     });
 });
