@@ -88,6 +88,21 @@ class MenuViewModel extends ChangeNotifier {
   get beltTipColor() {
     return this._belt && this._belt.tipColor;
   }
+
+  // The belt is outlined so the tip reads as part of it rather than a break in
+  // it. A shade of the belt's own colour, so a belt still only has to say what
+  // two colours it is made of.
+  get beltOutlineColor() {
+    return this._belt ? darken(this._belt.color) : null;
+  }
+}
+
+const OUTLINE_SHADE = 0.9;
+
+function darken(hex) {
+  const channels = [1, 3, 5].map((at) =>
+    Math.round(parseInt(hex.substr(at, 2), 16) * OUTLINE_SHADE));
+  return "#" + channels.map((c) => c.toString(16).padStart(2, "0").toUpperCase()).join("");
 }
 
 module.exports = MenuViewModel;

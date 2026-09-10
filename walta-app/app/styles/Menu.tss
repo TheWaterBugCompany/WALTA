@@ -13,21 +13,24 @@
 // rotated 45 degrees about its centre, so both ends run off screen.
 "#belt": {
   width: "420dp",
-  height: "56dp",
+  height: "46dp",
   top: "35dp",
-  right: "-146dp",
+  right: "-118dp",
   visible: false,
   zIndex: "0",
+  borderWidth: "2dp",
   transform: Alloy.Globals.diagonalRibbon
 }
 
 // Positioned along the bar, not the screen: the bar is anchored to the right
 // edge, so the rotated tip lands the same distance in from the corner on any
-// screen width.
+// screen width. Inset by the border so the outline runs unbroken past it and
+// the tip reads as part of the belt rather than a gap in it.
 "#beltTip": {
   width: "26dp",
-  height: Ti.UI.FILL,
-  right: "137dp"
+  top: "2dp",
+  bottom: "2dp",
+  right: "110dp"
 }
 
 "#logInOrRegister" : {

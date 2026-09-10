@@ -138,6 +138,21 @@ describe("MenuViewModel", function () {
     expect(vm.beltColor).to.equal("#ffe11a");
   });
 
+  it("outlines the belt in a darker shade of its own colour", function () {
+    const vm = makeViewModel({ belt: { color: "#FEFF46", tipColor: "#FFFFFF" } });
+    expect(vm.beltOutlineColor).to.equal("#E5E63F");
+  });
+
+  it("cannot darken an outline past black", function () {
+    const vm = makeViewModel({ belt: { color: "#000000", tipColor: "#FFFFFF" } });
+    expect(vm.beltOutlineColor).to.equal("#000000");
+  });
+
+  it("has no outline when there is no belt", function () {
+    const vm = makeViewModel({ belt: null });
+    expect(vm.beltOutlineColor).to.equal(null);
+  });
+
   it("wears the belt's tip colour at the tip", function () {
     const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
     expect(vm.beltTipColor).to.equal("#ffffff");
