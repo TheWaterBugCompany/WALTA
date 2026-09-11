@@ -1,0 +1,1232 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2940" height="2930" viewBox="0 0 2940 2930" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker>
+<marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#fbfbf9"/>
+<text x="70" y="46" font-size="30" font-weight="700" fill="#1c1917">WALTA dichotomous key — structure and convergence points</text>
+<text x="70" y="74" font-size="15" fill="#57534e">321 nodes (165 couplets, 156 taxa) · max depth 19 · generated from key.json</text>
+<text x="70" y="99" font-size="15" fill="#9a3412" font-weight="600">No cycles. But 10 extra edges make this a DAG: 8 nodes are reachable by more than one route.</text>
+<text x="70" y="121" font-size="14" fill="#57534e">Grey = the single route <tspan font-family="monospace" font-size="13">parentLink</tspan> records. Orange = a second route into the same node, invisible to <tspan font-family="monospace" font-size="13">pathFromRoot()</tspan>.</text>
+<g transform="translate(2380,30)">
+<rect x="-14" y="-14" width="500" height="104" rx="8" fill="#fff" stroke="#e7e5e4"/>
+<line x1="0" y1="4" x2="30" y2="4" stroke="#a8a29e" stroke-width="1.6"/><text x="40" y="8" font-size="13" fill="#44403c">canonical edge (the one parentLink walks back up)</text>
+<line x1="0" y1="30" x2="30" y2="30" stroke="#c2410c" stroke-width="2.4"/><text x="40" y="34" font-size="13" fill="#44403c">convergence edge — a second way into the same node</text>
+<circle cx="15" cy="56" r="5" fill="#c2410c"/><text x="40" y="60" font-size="13" fill="#44403c">node with more than one parent</text>
+<rect x="10" y="74" width="10" height="10" fill="#7c3aed"/><text x="40" y="84" font-size="13" fill="#44403c">one taxonId at two key positions</text></g>
+<path d="M76,887.663125038147 C137,887.663125038147 137,225.68359375 198,225.68359375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal with a shell (snails and mussels)</title></path>
+<path d="M76,887.663125038147 C137,887.663125038147 137,1549.642656326294 198,1549.642656326294" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal without a shell</title></path>
+<path d="M208,225.68359375 C269,225.68359375 269,181.2421875 330,181.2421875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals look like snails or limpets.</title></path>
+<path d="M208,225.68359375 C269,225.68359375 269,270.125 330,270.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals look like mussels.</title></path>
+<path d="M340,181.2421875 C401,181.2421875 401,150 462,150" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Gastropoda.</title></path>
+<path d="M340,181.2421875 C401,181.2421875 401,212.484375 462,212.484375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M472,212.484375 C533,212.484375 533,181.96875 594,181.96875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals look like snails.</title></path>
+<path d="M472,212.484375 C533,212.484375 533,243 594,243" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals look like limpets.</title></path>
+<path d="M604,181.96875 C665,181.96875 665,165.5 726,165.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Snails with flat shells.</title></path>
+<path d="M604,181.96875 C665,181.96875 665,198.4375 726,198.4375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Shells are not flat, have normal spire.</title></path>
+<path d="M736,198.4375 C797,198.4375 797,181 858,181" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Snails are coiled, small (less than 10mm), often black or dark brown and occur in large numbers.</title></path>
+<path d="M736,198.4375 C797,198.4375 797,215.875 858,215.875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Snails not as above.</title></path>
+<path d="M868,215.875 C929,215.875 929,204.25 990,204.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Shell sinistral (left handed - or footed)</title></path>
+<path d="M868,215.875 C929,215.875 929,227.5 990,227.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Shell dextral (right handed)</title></path>
+<path d="M1000,204.25 C1061,204.25 1061,196.5 1122,196.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Mottled pattern visible through the shell. You might need good light to see this</title></path>
+<path d="M1000,204.25 C1061,204.25 1061,212 1122,212" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Snail without obvious mottling.</title></path>
+<path d="M340,270.125 C401,270.125 401,258.5 462,258.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Class level ID. Bivalvia (mussels).</title></path>
+<path d="M340,270.125 C401,270.125 401,281.75 462,281.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M472,281.75 C533,281.75 533,274 594,274" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Shell halves are large (longer than 25 mm), dark, thick and usually not symmetrical.</title></path>
+<path d="M472,281.75 C533,281.75 533,289.5 594,289.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Shell halves are small (less than 25 mm); light coloured, relatively thin and symmetrical.</title></path>
+<path d="M208,1549.642656326294 C269,1549.642656326294 269,591.2948341369629 330,591.2948341369629" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal with legs</title></path>
+<path d="M208,1549.642656326294 C269,1549.642656326294 269,2507.990478515625 330,2507.990478515625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal without legs</title></path>
+<path d="M340,591.2948341369629 C401,591.2948341369629 401,339.26953125 462,339.26953125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>With more than eight legs</title></path>
+<path d="M340,591.2948341369629 C401,591.2948341369629 401,843.3201370239258 462,843.3201370239258" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>With eight legs or less</title></path>
+<path d="M472,339.26953125 C533,339.26953125 533,312.75 594,312.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Robust animals, freshwater crayfish or yabbies with obvious front pincers, movement walking or sometimes 'flips' of the tail that propel the animal backwards.</title></path>
+<path d="M472,339.26953125 C533,339.26953125 533,365.7890625 594,365.7890625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M604,312.75 C665,312.75 665,305 726,305" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Oder level ID Decapoda (decapods)</title></path>
+<path d="M604,312.75 C665,312.75 665,320.5 726,320.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M604,365.7890625 C665,365.7890625 665,343.75 726,343.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Shrimp or prawn-like animals.</title></path>
+<path d="M604,365.7890625 C665,365.7890625 665,387.828125 726,387.828125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M736,343.75 C797,343.75 797,343.75 858,343.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M868,343.75 C929,343.75 929,336 990,336" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Second leg with pincers and noticeably longer than others. Body translucent/opaque.</title></path>
+<path d="M868,343.75 C929,343.75 929,351.5 990,351.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Transparent (or at least translucent) front pairs of legs similar sized.</title></path>
+<path d="M736,387.828125 C797,387.828125 797,367 858,367" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Round body, slow-moving, obviously crab-like (see image).</title></path>
+<path d="M736,387.828125 C797,387.828125 797,408.65625 858,408.65625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M868,367 C929,367 929,367 990,367" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M868,408.65625 C929,408.65625 929,390.25 990,390.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals strongly flattened from the sides (like dogs and cats); often lying on their side or moving with their side flat against the substrate.</title></path>
+<path d="M868,408.65625 C929,408.65625 929,427.0625 990,427.0625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals not flattened or flattened 'front to back' (like humans or cockroaches).</title></path>
+<path d="M1000,390.25 C1061,390.25 1061,382.5 1122,382.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal rests on its side, swims in swift bursts.</title></path>
+<path d="M1000,390.25 C1061,390.25 1061,398 1122,398" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal slow moving, walks, relatively robust looking animal, bovine.</title></path>
+<path d="M1000,427.0625 C1061,427.0625 1061,413.5 1122,413.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small, pale (white to light brown or grey) crustacean, final segments as broad or broader than head, slow moving and slater-like.</title></path>
+<path d="M1000,427.0625 C1061,427.0625 1061,440.625 1122,440.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1132,440.625 C1193,440.625 1193,429 1254,429" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal looks like this.</title></path>
+<path d="M1132,440.625 C1193,440.625 1193,452.25 1254,452.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above</title></path>
+<path d="M1264,452.25 C1325,452.25 1325,444.5 1386,444.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal looks like this.</title></path>
+<path d="M1264,452.25 C1325,452.25 1325,460 1386,460" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M472,843.3201370239258 C533,843.3201370239258 533,483.25 594,483.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with eight legs</title></path>
+<path d="M472,843.3201370239258 C533,843.3201370239258 533,1203.3902740478516 594,1203.3902740478516" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with six legs</title></path>
+<path d="M604,483.25 C665,483.25 665,475.5 726,475.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>found under water</title></path>
+<path d="M604,483.25 C665,483.25 665,491 726,491" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>found on the surface of the water, or if underneath, it is covered in a silvery bubble of air.</title></path>
+<path d="M604,1203.3902740478516 C665,1203.3902740478516 665,709.271484375 726,709.271484375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with wing covers (beetles and bugs)</title></path>
+<path d="M604,1203.3902740478516 C665,1203.3902740478516 665,1697.5090637207031 726,1697.5090637207031" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with no wing covers, possibly with wing buds</title></path>
+<path d="M736,709.271484375 C797,709.271484375 797,580.791015625 858,580.791015625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>hard wingcovers, symmetrical, animal rounded on top (beetles)</title></path>
+<path d="M736,709.271484375 C797,709.271484375 797,837.751953125 858,837.751953125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>leathery wingcovers, asymmetrical, animal flattened on top (true bugs)</title></path>
+<path d="M868,580.791015625 C929,580.791015625 929,506.5 990,506.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Coleoptera (beetles)</title></path>
+<path d="M868,580.791015625 C929,580.791015625 929,655.08203125 990,655.08203125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1000,655.08203125 C1061,655.08203125 1061,557.6015625 1122,557.6015625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles active swimmers</title></path>
+<path d="M1000,655.08203125 C1061,655.08203125 1061,752.5625 1122,752.5625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles crawl (or don't move much).</title></path>
+<path d="M1132,557.6015625 C1193,557.6015625 1193,522 1254,522" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles swim rapidly in circular patterns on the water surface as well as below, shiny beetles with legs tucked neatly under body, often found in groups.</title></path>
+<path d="M1132,557.6015625 C1193,557.6015625 1193,593.203125 1254,593.203125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles swim submerged, with obvious legs.</title></path>
+<path d="M1264,593.203125 C1325,593.203125 1325,545.25 1386,545.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles move with all 3 or at least 2 pairs of legs. Legs move alternately.</title></path>
+<path d="M1264,593.203125 C1325,593.203125 1325,641.15625 1386,641.15625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles appear to swim smoothly with only the rear pair of legs, legs move in unison; motion is like breast stroke. Rear swimming legs held upwards when beetle rests.</title></path>
+<path d="M1396,545.25 C1457,545.25 1457,537.5 1518,537.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Always with a black head and a brown body; may screech when in net or tray. Distinctively 'lumpy' appearance; Rare.</title></path>
+<path d="M1396,545.25 C1457,545.25 1457,553 1518,553" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Often black but may be green or brown. Flat on the underside, sometimes with a bubble vest; head bent downwards; Common.</title></path>
+<path d="M1396,641.15625 C1457,641.15625 1457,601.4375 1518,601.4375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>less than 10mm</title></path>
+<path d="M1396,641.15625 C1457,641.15625 1457,680.875 1518,680.875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>larger than 10mm</title></path>
+<path d="M1528,601.4375 C1589,601.4375 1589,580.125 1650,580.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>less than 4mm</title></path>
+<path d="M1528,601.4375 C1589,601.4375 1589,622.75 1650,622.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>greater than 4mm</title></path>
+<path d="M1660,580.125 C1721,580.125 1721,568.5 1782,568.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Body segment associated with first pair of legs constricted to give the beetle a distinctly waisted look.</title></path>
+<path d="M1660,580.125 C1721,580.125 1721,591.75 1782,591.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1792,591.75 C1853,591.75 1853,584 1914,584" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Conspicuous lateral stripes, water-drop shaped beetles.</title></path>
+<path d="M1792,591.75 C1853,591.75 1853,599.5 1914,599.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1660,622.75 C1721,622.75 1721,615 1782,615" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles with some form of colour pattern (variable patterns: mottled, brindled, stripes or patches.)</title></path>
+<path d="M1660,622.75 C1721,622.75 1721,630.5 1782,630.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetles totally lack colour. Black.</title></path>
+<path d="M1528,680.875 C1589,680.875 1589,657.625 1650,657.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>less than 15mm</title></path>
+<path d="M1528,680.875 C1589,680.875 1589,704.125 1650,704.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>larger than 15mm</title></path>
+<path d="M1660,657.625 C1721,657.625 1721,646 1782,646" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle with distinctive longitudinal stripes (like a pin-stripe).</title></path>
+<path d="M1660,657.625 C1721,657.625 1721,669.25 1782,669.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle without longitudinal stripes</title></path>
+<path d="M1792,669.25 C1853,669.25 1853,661.5 1914,661.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle with dark patch in middle of head, body pale underneath.</title></path>
+<path d="M1792,669.25 C1853,669.25 1853,677 1914,677" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle with light patch in middle of head, body dark underneath.</title></path>
+<path d="M1660,704.125 C1721,704.125 1721,692.5 1782,692.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle black / dark.</title></path>
+<path d="M1660,704.125 C1721,704.125 1721,715.75 1782,715.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle green.</title></path>
+<path d="M1792,715.75 C1853,715.75 1853,708 1914,708" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle with dark undersides. Never larger than 20mm.</title></path>
+<path d="M1792,715.75 C1853,715.75 1853,723.5 1914,723.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle with orange undersides. Often larger than 20mm.</title></path>
+<path d="M1132,752.5625 C1193,752.5625 1193,739 1254,739" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle has a distinct 'nose' or snout.</title></path>
+<path d="M1132,752.5625 C1193,752.5625 1193,766.125 1254,766.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle has no 'nose'. (How does it smell?)</title></path>
+<path d="M1264,766.125 C1325,766.125 1325,754.5 1386,754.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small to tiny beetles with well-developed claws, usually black, sometimes dark brown or red, with a shiny plastron or bubble vest; slow moving, sometimes hang motionless mid-water.</title></path>
+<path d="M1264,766.125 C1325,766.125 1325,777.75 1386,777.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above, may crawl on the underside of the water surface.</title></path>
+<path d="M1396,777.75 C1457,777.75 1457,770 1518,770" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small to tiny, elongate, often metallic beetles.</title></path>
+<path d="M1396,777.75 C1457,777.75 1457,785.5 1518,785.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larger dull coloured beetles sometimes with prominent yellow egg sac.</title></path>
+<path d="M868,837.751953125 C929,837.751953125 929,801 990,801" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Hemiptera (true bugs).</title></path>
+<path d="M868,837.751953125 C929,837.751953125 929,874.50390625 990,874.50390625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1000,874.50390625 C1061,874.50390625 1061,835.875 1122,835.875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bugs walking/running on the water surface.</title></path>
+<path d="M1000,874.50390625 C1061,874.50390625 1061,913.1328125 1122,913.1328125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bugs swimming below the surface.</title></path>
+<path d="M1132,835.875 C1193,835.875 1193,824.25 1254,824.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Short bodied bugs that move quickly on the water surface.</title></path>
+<path d="M1132,835.875 C1193,835.875 1193,847.5 1254,847.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Elongate bugs with antennae at the very tip of the head. Walk slowly on water surface.</title></path>
+<path d="M1264,824.25 C1325,824.25 1325,816.5 1386,816.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bugs with very long hind and middle legs. Move with a skating/sculling motion.</title></path>
+<path d="M1264,824.25 C1325,824.25 1325,832 1386,832" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small to tiny bugs with shorter legs, running on the water surface.</title></path>
+<path d="M1132,913.1328125 C1193,913.1328125 1193,874.625 1254,874.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bugs walk or swim awkwardly.</title></path>
+<path d="M1132,913.1328125 C1193,913.1328125 1193,951.640625 1254,951.640625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bugs swim well.</title></path>
+<path d="M1264,874.625 C1325,874.625 1325,863 1386,863" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Ugly dark brown bugs with wide heads and a warty appearance. Pointed, grasping front legs. Semi-aquatic.</title></path>
+<path d="M1264,874.625 C1325,874.625 1325,886.25 1386,886.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large (&gt;20mm), elongate bugs with front legs for grabbing prey. Body stick or leaf like. Long legs. Long breathing tube at hind end.</title></path>
+<path d="M1396,886.25 C1457,886.25 1457,878.5 1518,878.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Long, thin, skinny bug, pale coloured. Looks like a stick or a piece of sedge.</title></path>
+<path d="M1396,886.25 C1457,886.25 1457,894 1518,894" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Long flattened bug, dark or black. Looks like a leaf.</title></path>
+<path d="M1264,951.640625 C1325,951.640625 1325,921.125 1386,921.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bugs swim upside down, with legs uppermost, dark on upper surface, lighter coloured underneath.</title></path>
+<path d="M1264,951.640625 C1325,951.640625 1325,982.15625 1386,982.15625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bugs swim the right way up, with legs beneath them, wings on the upper surface if present.</title></path>
+<path d="M1396,921.125 C1457,921.125 1457,909.5 1518,909.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Tiny orange bugs with a highly convex humped back. No prominent swimming legs. Look a bit like a tiny, mobile jelly bean.</title></path>
+<path d="M1396,921.125 C1457,921.125 1457,932.75 1518,932.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Elongate bugs with two prominent, narrow swimming legs. Swim with a jerky motion. Very active. Obviously dark on one side (top) and light on the other (underneath).</title></path>
+<path d="M1528,932.75 C1589,932.75 1589,925 1650,925" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Robust, chunky, fast moving. Either at water surface or holding onto something. Triangular when viewed from above (animal on left of image).</title></path>
+<path d="M1528,932.75 C1589,932.75 1589,940.5 1650,940.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Slender, relaxed, unhurried movement. Able to stay still mid-water (thanks to buoyancy regulation). Thinner and parallel sided when viewed from above (animal on right of image).</title></path>
+<path d="M1396,982.15625 C1457,982.15625 1457,963.75 1518,963.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larger 10-30mm bugs. Front legs pointed for piercing prey. Do not flick swimming legs when at rest.</title></path>
+<path d="M1396,982.15625 C1457,982.15625 1457,1000.5625 1518,1000.5625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small (&lt;10mm) active bugs with two broad paddle like swimming legs which they flick back and forth when at rest. Streamlined body, blunt head. An air bubble may be visible under the body. May make buzzing or squeaking sounds in the tray.</title></path>
+<path d="M1528,963.75 C1589,963.75 1589,956 1650,956" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Medium sized bugs (10-15mm) with broad heads and light/dark checks (taxi stripes) along their sides.</title></path>
+<path d="M1528,963.75 C1589,963.75 1589,971.5 1650,971.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larger bugs (up to 30mm) without checks. Flattened body, narrower heads.</title></path>
+<path d="M1528,1000.5625 C1589,1000.5625 1589,987 1650,987" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small boatmen (&lt;4mm), mottled or brindle wing covers (see photo). By far the commonest corixid.</title></path>
+<path d="M1528,1000.5625 C1589,1000.5625 1589,1014.125 1650,1014.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1660,1014.125 C1721,1014.125 1721,1002.5 1782,1002.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Segment after the head (pronotum) with distinctive stripes or bands (see photo) you need a hand lens to see this.</title></path>
+<path d="M1660,1014.125 C1721,1014.125 1721,1025.75 1782,1025.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1792,1025.75 C1853,1025.75 1853,1018 1914,1018" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Head with 'nostrils' (Ocelli, they are more like eyes - see photo). Usually distinctly orange or yellow coloured head and underneath.</title></path>
+<path d="M1792,1025.75 C1853,1025.75 1853,1033.5 1914,1033.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large boatmen (&gt;4mm) brown /yellow /grey, markings are not distinctive, looks a lot like television static (pre-digital telly). Unlike all of the above. Rare.</title></path>
+<path d="M736,1697.5090637207031 C797,1697.5090637207031 797,1398.8530883789062 858,1398.8530883789062" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>no obvious tails</title></path>
+<path d="M736,1697.5090637207031 C797,1697.5090637207031 797,1996.1650390625 858,1996.1650390625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with obvious tails. Check they are not abdominal pro-legs (like a pair of hooks on short prolegs at the end of the abdomen)</title></path>
+<path d="M868,1398.8530883789062 C929,1398.8530883789062 929,1252.9937744140625 990,1252.9937744140625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with a case. Sometimes the case may be lost. Look for small, terminal, lateral hooks on the abdomen or ventral pro-legs on the abdomen.</title></path>
+<path d="M868,1398.8530883789062 C929,1398.8530883789062 929,1544.71240234375 990,1544.71240234375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>without a case</title></path>
+<path d="M1000,1252.9937744140625 C1061,1252.9937744140625 1061,1131.487548828125 1122,1131.487548828125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>long legs,case never with coarse vegetation badly attached lengthways</title></path>
+<path d="M1000,1252.9937744140625 C1061,1252.9937744140625 1061,1374.5 1122,1374.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>short, stumpy legs, case with coarse vegetation badly attached lengthways</title></path>
+<path d="M1132,1131.487548828125 C1193,1131.487548828125 1193,1049 1254,1049" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Trichoptera (caddisflies)</title></path>
+<path d="M1132,1131.487548828125 C1193,1131.487548828125 1193,1213.97509765625 1254,1213.97509765625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1264,1213.97509765625 C1325,1213.97509765625 1325,1092.2001953125 1386,1092.2001953125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Caddis living in a portable case. Most crawl slowly, some swim by head-thrashing or arm-waving; if out of case, body blunt ending with tiny prolegs and hooks.</title></path>
+<path d="M1264,1213.97509765625 C1325,1213.97509765625 1325,1335.75 1386,1335.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Free-living caddis, body with abdominal pro-legs (like a pair of hooks on short prolegs at the end of the abdomen, these may look like tails without magnification).</title></path>
+<path d="M1396,1092.2001953125 C1457,1092.2001953125 1457,1064.5 1518,1064.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Tiny larvae &lt;5mm long. Abdomen yellow, swollen, thicker than thorax. Purse shaped case of translucent silk, sometimes with sand or algae. Slow moving, hard to see.</title></path>
+<path d="M1396,1092.2001953125 C1457,1092.2001953125 1457,1119.900390625 1518,1119.900390625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1528,1119.900390625 C1589,1119.900390625 1589,1080 1650,1080" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Fang-shaped case made from fine particles, sometimes with a groove. Hind legs curved like talons, head pointy, all body segments covered in hairs.</title></path>
+<path d="M1528,1119.900390625 C1589,1119.900390625 1589,1159.80078125 1650,1159.80078125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1660,1159.80078125 C1721,1159.80078125 1721,1110.03125 1782,1110.03125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case made mainly from sand.</title></path>
+<path d="M1660,1159.80078125 C1721,1159.80078125 1721,1209.5703125 1782,1209.5703125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case made from plant material or silk secretion but may incorporate some mineral particles.</title></path>
+<path d="M1792,1110.03125 C1853,1110.03125 1853,1095.5 1914,1095.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case like a messy ‘sand igloo’. Larvae fall out easily. Slow moving.</title></path>
+<path d="M1792,1110.03125 C1853,1110.03125 1853,1124.5625 1914,1124.5625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case not like a messy sand igloo.</title></path>
+<path d="M1924,1124.5625 C1985,1124.5625 1985,1111 2046,1111" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case appears round but is actually coiled like a snail shell. Active but slow moving.</title></path>
+<path d="M1924,1124.5625 C1985,1124.5625 1985,1138.125 2046,1138.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case not like a snail shell.</title></path>
+<path d="M2056,1138.125 C2117,1138.125 2117,1126.5 2178,1126.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case triangular, often with larger particles down each side. Eyes of larvae protrude when viewed from above.</title></path>
+<path d="M2056,1138.125 C2117,1138.125 2117,1149.75 2178,1149.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case tubular, legs sharp, for grabbing prey. Fast deliberate movement.</title></path>
+<path d="M2188,1149.75 C2249,1149.75 2249,1142 2310,1142" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal found in highland site</title></path>
+<path d="M2188,1149.75 C2249,1149.75 2249,1157.5 2310,1157.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal found in a lowland site</title></path>
+<path d="M1792,1209.5703125 C1853,1209.5703125 1853,1184.625 1914,1184.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case made from flat pieces of leaf, giving it a flat appearance overall.</title></path>
+<path d="M1792,1209.5703125 C1853,1209.5703125 1853,1234.515625 1914,1234.515625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case made from all sorts, including: silk secretion, sticks, or other plant material and sometimes sand (never leaf plates by themselves). Case not flat.</title></path>
+<path d="M1924,1184.625 C1985,1184.625 1985,1173 2046,1173" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case built from 2 flat pieces of leaf, the dorsal piece is slightly larger forming a 'veranda'.</title></path>
+<path d="M1924,1184.625 C1985,1184.625 1985,1196.25 2046,1196.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above</title></path>
+<path d="M2056,1196.25 C2117,1196.25 2117,1188.5 2178,1188.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case built from many round, shingle-like bits of leaf, in two distinct rows.</title></path>
+<path d="M2056,1196.25 C2117,1196.25 2117,1204 2178,1204" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case built from a messy assortment of leaf plates, but still flat. Sometimes tapered quite severely.</title></path>
+<path d="M1924,1234.515625 C1985,1234.515625 1985,1219.5 2046,1219.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae with short legs, head compact, bullet like. Case often made with rings of different colours, sometimes with sand or may look like orange plastic. Slow moving, never swimming.</title></path>
+<path d="M1924,1234.515625 C1985,1234.515625 1985,1249.53125 2046,1249.53125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae with long legs; may swim by thrashing their head about. Case variable.</title></path>
+<path d="M2056,1249.53125 C2117,1249.53125 2117,1235 2178,1235" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case constructed from a single stick or piece of aquatic plant.</title></path>
+<path d="M2056,1249.53125 C2117,1249.53125 2117,1264.0625 2178,1264.0625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M2188,1264.0625 C2249,1264.0625 2249,1250.5 2310,1250.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case constructed like a log cabin, square in cross section (see photo).</title></path>
+<path d="M2188,1264.0625 C2249,1264.0625 2249,1277.625 2310,1277.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M2320,1277.625 C2381,1277.625 2381,1266 2442,1266" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case with sand or fine gravel at the opening (front) and the rest of the case made from pieces of vegetation.</title></path>
+<path d="M2320,1277.625 C2381,1277.625 2381,1289.25 2442,1289.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M2452,1289.25 C2513,1289.25 2513,1281.5 2574,1281.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Case made from a variety of materials, may be arranged spirally (but not always). When disturbed animal flails its body in a head-banging motion.</title></path>
+<path d="M2452,1289.25 C2513,1289.25 2513,1297 2574,1297" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above. Generally a mix of caddis with long hind legs and mixed messy cases</title></path>
+<path d="M1396,1335.75 C1457,1335.75 1457,1335.75 1518,1335.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1528,1335.75 C1589,1335.75 1589,1320.25 1650,1320.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>All three thoracic segments (leg-bearing segments after the head) hard or sclerotised, they appear darker or different in colour to the soft unsclerotised abdomen.</title></path>
+<path d="M1528,1335.75 C1589,1335.75 1589,1351.25 1650,1351.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Only the first thoracic segment sclerotised.</title></path>
+<path d="M1660,1320.25 C1721,1320.25 1721,1312.5 1782,1312.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Abdominal gills present (hairy chest), slow moving. May undulate abdomen to ventilate gills. To 15mm.</title></path>
+<path d="M1660,1320.25 C1721,1320.25 1721,1328 1782,1328" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Abdominal gills absent, often with a pattern on the head like a bandits mask.</title></path>
+<path d="M1660,1351.25 C1721,1351.25 1721,1343.5 1782,1343.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae can be green when alive. Forelegs modified into a pincer, scissors, or broad with a large spine. Larvae hunt from side to side with the forelegs.</title></path>
+<path d="M1660,1351.25 C1721,1351.25 1721,1359 1782,1359" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae without pincers, body not green. Often pale, head brown or yellow. Don't tend to hunt actively.</title></path>
+<path d="M1000,1544.71240234375 C1061,1544.71240234375 1061,1428.38671875 1122,1428.38671875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with wingbuds and well developed compound eyes</title></path>
+<path d="M1000,1544.71240234375 C1061,1544.71240234375 1061,1661.0380859375 1122,1661.0380859375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>without wing buds, eyes simple dots</title></path>
+<path d="M1132,1428.38671875 C1193,1428.38671875 1193,1390 1254,1390" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Odonata (dragonflies and damselflies).</title></path>
+<path d="M1132,1428.38671875 C1193,1428.38671875 1193,1466.7734375 1254,1466.7734375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1264,1466.7734375 C1325,1466.7734375 1325,1420.515625 1386,1420.515625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Slender larvae, with 3 long tails (terminal gills). These can break off. Swim by undulating (snake-like).</title></path>
+<path d="M1264,1466.7734375 C1325,1466.7734375 1325,1513.03125 1386,1513.03125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Robust larvae, without tails. Swim by jetting water out of their bums.</title></path>
+<path d="M1396,1420.515625 C1457,1420.515625 1457,1405.5 1518,1405.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>sub order ID Zygoptera (damselfly nymphs)</title></path>
+<path d="M1396,1420.515625 C1457,1420.515625 1457,1435.53125 1518,1435.53125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1528,1435.53125 C1589,1435.53125 1589,1421 1650,1421" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Leaf-like terminal gills held flat and fanned out horizontally.</title></path>
+<path d="M1528,1435.53125 C1589,1435.53125 1589,1450.0625 1650,1450.0625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills different in shape or orientation.</title></path>
+<path d="M1660,1450.0625 C1721,1450.0625 1721,1436.5 1782,1436.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills shorter than last 3 abdominal segments</title></path>
+<path d="M1660,1450.0625 C1721,1450.0625 1721,1463.625 1782,1463.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills equal in length or longer than last 3 abdominal segments.</title></path>
+<path d="M1792,1463.625 C1853,1463.625 1853,1452 1914,1452" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills divided into two parts by constriction.</title></path>
+<path d="M1792,1463.625 C1853,1463.625 1853,1475.25 1914,1475.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills complete, without constriction.</title></path>
+<path d="M1924,1475.25 C1985,1475.25 1985,1467.5 2046,1467.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills sack-like, with hairy ends.</title></path>
+<path d="M1924,1475.25 C1985,1475.25 1985,1483 2046,1483" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills leaf like.</title></path>
+<path d="M1396,1513.03125 C1457,1513.03125 1457,1498.5 1518,1498.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>sub order ID Epiproctophora (dragonfly nymphs)</title></path>
+<path d="M1396,1513.03125 C1457,1513.03125 1457,1527.5625 1518,1527.5625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1528,1527.5625 C1589,1527.5625 1589,1514 1650,1514" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Medium sized nymphs with club or sausage shaped antennae. Sluggish, often green or brown. No obvious spines on the edges of abdominal segments.</title></path>
+<path d="M1528,1527.5625 C1589,1527.5625 1589,1541.125 1650,1541.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large nymphs with tiny antennae</title></path>
+<path d="M1660,1541.125 C1721,1541.125 1721,1529.5 1782,1529.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Fat, round ended body and long legs make them look spider-like. Mouthparts form a ladle-shaped mask in front of face.</title></path>
+<path d="M1660,1541.125 C1721,1541.125 1721,1552.75 1782,1552.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Relatively elongate body, NOT spider-like. Mouthparts flat, folded under 'chin'</title></path>
+<path d="M1792,1552.75 C1853,1552.75 1853,1545 1914,1545" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Dark mottled nymphs usually with large spines on the edges of the abdominal segments. Central bum-spine pointed.</title></path>
+<path d="M1792,1552.75 C1853,1552.75 1853,1560.5 1914,1560.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Green or brown nymphs. Central bum-spine with a cut-off end. This can be seen even on small nymphs.</title></path>
+<path d="M1132,1661.0380859375 C1193,1661.0380859375 1193,1576 1254,1576" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>mouthparts straight and longer than head</title></path>
+<path d="M1132,1661.0380859375 C1193,1661.0380859375 1193,1746.076171875 1254,1746.076171875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>mouthparts short and curved or too small to see</title></path>
+<path d="M1264,1746.076171875 C1325,1746.076171875 1325,1652.65234375 1386,1652.65234375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>animals with a single row of projections along the sides of the abdomen</title></path>
+<path d="M1264,1746.076171875 C1325,1746.076171875 1325,1839.5 1386,1839.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>animals without a single row of projections (may have a mess of gills)</title></path>
+<path d="M1396,1652.65234375 C1457,1652.65234375 1457,1603.125 1518,1603.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>7 or 8 abdominal projections (dangly bits), found in rivers</title></path>
+<path d="M1396,1652.65234375 C1457,1652.65234375 1457,1702.1796875 1518,1702.1796875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>9 or 10 abdominal projections (dangly bits), found in pools and wetlands</title></path>
+<path d="M1528,1603.125 C1589,1603.125 1589,1591.5 1650,1591.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Megaloptera (Dobson flies and Alderflies)</title></path>
+<path d="M1528,1603.125 C1589,1603.125 1589,1614.75 1650,1614.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1660,1614.75 C1721,1614.75 1721,1607 1782,1607" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>robust animal, distinctive, abdominal projections robust (see image), found in cobbly rivers</title></path>
+<path d="M1660,1614.75 C1721,1614.75 1721,1622.5 1782,1622.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>slender animal, or with slender abdominal projections (dangly bits), found in pools and wetlands</title></path>
+<path d="M1528,1702.1796875 C1589,1702.1796875 1589,1702.1796875 1650,1702.1796875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1660,1702.1796875 C1721,1702.1796875 1721,1663.1875 1782,1663.1875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle larvae swim actively with all legs; usually with wide flat heads and prominent mandibles; middle of the head sometimes projected forwards like a nose on smaller examples; may be biting and killing other animals in the tray.</title></path>
+<path d="M1660,1702.1796875 C1721,1702.1796875 1721,1741.171875 1782,1741.171875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Beetle larvae crawl slowly, or, may propel themselves by longitudinal thrashing of the body.</title></path>
+<path d="M1792,1663.1875 C1853,1663.1875 1853,1645.75 1914,1645.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae larger than 12mm long.</title></path>
+<path d="M1792,1663.1875 C1853,1663.1875 1853,1680.625 1914,1680.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae shorter than 12mm long.</title></path>
+<path d="M1924,1645.75 C1985,1645.75 1985,1638 2046,1638" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae without a pair of tails. Last segment tapers to a point and is fringed with swimming hairs.</title></path>
+<path d="M1924,1645.75 C1985,1645.75 1985,1653.5 2046,1653.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae with two distinct tails</title></path>
+<path d="M1924,1680.625 C1985,1680.625 1985,1669 2046,1669" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae with a strong 'nose'.</title></path>
+<path d="M1924,1680.625 C1985,1680.625 1985,1692.25 2046,1692.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae without a nose.</title></path>
+<path d="M2056,1692.25 C2117,1692.25 2117,1684.5 2178,1684.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae strong swimmers, constantly moving, obvious tails.</title></path>
+<path d="M2056,1692.25 C2117,1692.25 2117,1700 2178,1700" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae crawl slowly, tails minute.</title></path>
+<path d="M1792,1741.171875 C1853,1741.171875 1853,1715.5 1914,1715.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Strongly flattened, round, slater-like larvae, on rocks.</title></path>
+<path d="M1792,1741.171875 C1853,1741.171875 1853,1766.84375 1914,1766.84375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1924,1766.84375 C1985,1766.84375 1985,1742.625 2046,1742.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Elongate slow moving larvae with hard bodies and short legs; often dark coloured, flowing water.</title></path>
+<path d="M1924,1766.84375 C1985,1766.84375 1985,1791.0625 2046,1791.0625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Soft bodied larvae, still and flowing water.</title></path>
+<path d="M2056,1742.625 C2117,1742.625 2117,1731 2178,1731" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Flattened, cockroach-like larvae with simple bodies and long antennae. Yellow, brown to black.</title></path>
+<path d="M2056,1742.625 C2117,1742.625 2117,1754.25 2178,1754.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larvae with short antennae, not obviously flattened.</title></path>
+<path d="M2188,1754.25 C2249,1754.25 2249,1746.5 2310,1746.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small to tiny and often comma shaped.</title></path>
+<path d="M2188,1754.25 C2249,1754.25 2249,1762 2310,1762" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larger more elongate larvae shiny, water repellent skin. Sometimes stuck in water surface tension.</title></path>
+<path d="M2056,1791.0625 C2117,1791.0625 2117,1777.5 2178,1777.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Elongate, slender larvae with feathery lateral gills and terminal anal claws (see picture); head dark, body pale.</title></path>
+<path d="M2056,1791.0625 C2117,1791.0625 2117,1804.625 2178,1804.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Robust larvae, without feathery gills but may have long lateral filaments; large head with prominent mandibles.</title></path>
+<path d="M2188,1804.625 C2249,1804.625 2249,1793 2310,1793" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Abdomen with long lateral filaments.</title></path>
+<path d="M2188,1804.625 C2249,1804.625 2249,1816.25 2310,1816.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M2320,1816.25 C2381,1816.25 2381,1808.5 2442,1808.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large beetle larvae (up to 50mm). Dark head that is angled upwards.</title></path>
+<path d="M2320,1816.25 C2381,1816.25 2381,1824 2442,1824" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M868,1996.1650390625 C929,1996.1650390625 929,1883.45703125 990,1883.45703125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with two tails</title></path>
+<path d="M868,1996.1650390625 C929,1996.1650390625 929,2108.873046875 990,2108.873046875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with three tails</title></path>
+<path d="M1000,1883.45703125 C1061,1883.45703125 1061,1883.45703125 1122,1883.45703125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with compound eyes (like a mirror ball upclose) and wing buds (except on very young animals)</title></path>
+<path d="M1132,1883.45703125 C1193,1883.45703125 1193,1855 1254,1855" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Plecoptera (Stoneflies)</title></path>
+<path d="M1132,1883.45703125 C1193,1883.45703125 1193,1911.9140625 1254,1911.9140625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1264,1911.9140625 C1325,1911.9140625 1325,1870.5 1386,1870.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large nymphs up to 40mm usually bright green, orange or blue. Animals have gills along the side of the abdomen.</title></path>
+<path d="M1264,1911.9140625 C1325,1911.9140625 1325,1953.328125 1386,1953.328125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Smaller nymphs, less flamboyantly coloured, with gills on the tip of the abdomen or with no visible gills.</title></path>
+<path d="M1396,1953.328125 C1457,1953.328125 1457,1923.78125 1518,1923.78125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs with two long tails. (These could be broken leaving only ‘stumps’). Gills either absent or look like a tuft or pom-pom at the end of the abdomen.</title></path>
+<path d="M1396,1953.328125 C1457,1953.328125 1457,1982.875 1518,1982.875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs with short tails, shorter than half the length of the abdomen. Only 3 or 5 gills, which are similar in length and thickness to the tails.</title></path>
+<path d="M1528,1923.78125 C1589,1923.78125 1589,1899.5625 1650,1899.5625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>External gills form tuft at the tip of the abdomen earning them the common name of 'fluffy bums'. Often wag their abdomen to oxygenate the gills.</title></path>
+<path d="M1528,1923.78125 C1589,1923.78125 1589,1948 1650,1948" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Smaller nymphs with no gills on the tip of the abdomen. May also wag, but don't have fluffy gills.</title></path>
+<path d="M1660,1899.5625 C1721,1899.5625 1721,1886 1782,1886" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Smaller nymphs, brown or black with a single row or ridge of triangular projections along their back.</title></path>
+<path d="M1660,1899.5625 C1721,1899.5625 1721,1913.125 1782,1913.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>No triangular projections along their back.</title></path>
+<path d="M1792,1913.125 C1853,1913.125 1853,1901.5 1914,1901.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large, sprawling nymphs with hairy legs, hairs dark and conspicuous. Often with high contrast patterns</title></path>
+<path d="M1792,1913.125 C1853,1913.125 1853,1924.75 1914,1924.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1924,1924.75 C1985,1924.75 1985,1917 2046,1917" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large, sprawling nymphs, hairs pale if present. Blond, never darkly patterned.</title></path>
+<path d="M1924,1924.75 C1985,1924.75 1985,1932.5 2046,1932.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1528,1982.875 C1589,1982.875 1589,1971.25 1650,1971.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs with a double row of spines along their backs.</title></path>
+<path d="M1528,1982.875 C1589,1982.875 1589,1994.5 1650,1994.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs without a double row of spines.</title></path>
+<path d="M1660,1971.25 C1721,1971.25 1721,1963.5 1782,1963.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Mainland.</title></path>
+<path d="M1660,1971.25 C1721,1971.25 1721,1979 1782,1979" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Tasmania.</title></path>
+<path d="M1000,2108.873046875 C1061,2108.873046875 1061,2057.46875 1122,2057.46875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>adult mayfly with obvious wings, found out of the water, or on the surface</title></path>
+<path d="M1000,2108.873046875 C1061,2108.873046875 1061,2160.27734375 1122,2160.27734375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>without obvious wings.  may have wing buds; mostly found underwater</title></path>
+<path d="M1132,2057.46875 C1193,2057.46875 1193,2023.5625 1254,2023.5625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>hind wing obviously greater than 1/3 the length of the forewing</title></path>
+<path d="M1132,2057.46875 C1193,2057.46875 1193,2091.375 1254,2091.375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>hind wing 1/3 the length of the forewing, smaller, or absent</title></path>
+<path d="M1264,2023.5625 C1325,2023.5625 1325,2010 1386,2010" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>wings pink-purple, and/or with a cluster of cells near the apex that have more than 5 sides</title></path>
+<path d="M1264,2023.5625 C1325,2023.5625 1325,2037.125 1386,2037.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>wings clear, grey, yellow or brown, and all cells with a maximum of five sides</title></path>
+<path d="M1396,2037.125 C1457,2037.125 1457,2025.5 1518,2025.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>3 tails (2 cerci and one terminal filament)</title></path>
+<path d="M1396,2037.125 C1457,2037.125 1457,2048.75 1518,2048.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>2 tails</title></path>
+<path d="M1528,2048.75 C1589,2048.75 1589,2041 1650,2041" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>small mayfly (found near lakes and slow flowing parts rivers)</title></path>
+<path d="M1528,2048.75 C1589,2048.75 1589,2056.5 1650,2056.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>large mayfly (found near pebble /cobble streams and rivers)</title></path>
+<path d="M1264,2091.375 C1325,2091.375 1325,2079.75 1386,2079.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with hind wings</title></path>
+<path d="M1264,2091.375 C1325,2091.375 1325,2103 1386,2103" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>without hindwings</title></path>
+<path d="M1396,2079.75 C1457,2079.75 1457,2072 1518,2072" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>hind wings very small, margin of forewing with numerous unconnected ends of veins</title></path>
+<path d="M1396,2079.75 C1457,2079.75 1457,2087.5 1518,2087.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>hind wings 1/3 the length of forewing, margin veins all connected</title></path>
+<path d="M1396,2103 C1457,2103 1457,2103 1518,2103" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>forewings with very few cross veins, all marginal veins well connected</title></path>
+<path d="M1132,2160.27734375 C1193,2160.27734375 1193,2160.27734375 1254,2160.27734375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>tails thin, round in cross section</title></path>
+<path d="M1264,2160.27734375 C1325,2160.27734375 1325,2118.5 1386,2118.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Ephemeroptera (mayflies)</title></path>
+<path d="M1264,2160.27734375 C1325,2160.27734375 1325,2202.0546875 1386,2202.0546875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M1396,2202.0546875 C1457,2202.0546875 1457,2153.859375 1518,2153.859375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs with gills along the side of the abdomen.</title></path>
+<path d="M1396,2202.0546875 C1457,2202.0546875 1457,2250.25 1518,2250.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs with gill covers over part of the abdomen; gill covers can look like wing buds but are always behind the last pair of legs.</title></path>
+<path d="M1528,2153.859375 C1589,2153.859375 1589,2134 1650,2134" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Robust dark brown nymphs with alternating spiny V-shaped gills and smaller feathery gills. Move with a distinct rocking horse motion. Large thorax giving a hunched appearance.</title></path>
+<path d="M1528,2153.859375 C1589,2153.859375 1589,2173.71875 1650,2173.71875" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1660,2173.71875 C1721,2173.71875 1721,2149.5 1782,2149.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large nymphs with helmet-like heads and prominent eyes; two different types of gill which are flicked in sync; crawl slowly but can swim rapidly.</title></path>
+<path d="M1660,2173.71875 C1721,2173.71875 1721,2197.9375 1782,2197.9375" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above head not helmet like, upper and lower gills similar.</title></path>
+<path d="M1792,2197.9375 C1853,2197.9375 1853,2176.625 1914,2176.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs usually run rather than swim, but can 'dolphin' clumsily if disturbed. Conspicuously flattened nymphs, head square. Legs sprawling with wide, flat femurs.</title></path>
+<path d="M1792,2197.9375 C1853,2197.9375 1853,2219.25 1914,2219.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Nymphs are fast swimmers, but swim in bursts like tiny fish. Nymphs not flattened or sprawling, head bullet shaped. Tails fringed with hairs.</title></path>
+<path d="M1924,2176.625 C1985,2176.625 1985,2165 2046,2165" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>With a conspicuous set of horns.</title></path>
+<path d="M1924,2176.625 C1985,2176.625 1985,2188.25 2046,2188.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M2056,2188.25 C2117,2188.25 2117,2180.5 2178,2180.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Gills fluffy, each one ending in many fingers making them look like tinsel.</title></path>
+<path d="M2056,2188.25 C2117,2188.25 2117,2196 2178,2196" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1924,2219.25 C1985,2219.25 1985,2211.5 2046,2211.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Large nymphs up to 17mm. Antennae shorter than head. Rare.</title></path>
+<path d="M1924,2219.25 C1985,2219.25 1985,2227 2046,2227" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Small nymphs less than 10mm. Antennae longer than head. Common.</title></path>
+<path d="M1528,2250.25 C1589,2250.25 1589,2242.5 1650,2242.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Very small &lt;5mm grey brown nymphs with a fuzzy silt covered appearance. Slow moving but may swim lazily. Flat gill covers large, meeting along the midline like a mini skirt.</title></path>
+<path d="M1528,2250.25 C1589,2250.25 1589,2258 1650,2258" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Larger nymphs with a camouflage pattern and eyes which may appear to shine in bright light. Rarely crawl but swim rapidly. Gill covers small, elliptical, not meeting in the middle.</title></path>
+<path d="M340,2507.990478515625 C401,2507.990478515625 401,2467.35595703125 462,2467.35595703125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>segmented</title></path>
+<path d="M340,2507.990478515625 C401,2507.990478515625 401,2548.625 462,2548.625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>not segmented</title></path>
+<path d="M472,2467.35595703125 C533,2467.35595703125 533,2413.2119140625 594,2413.2119140625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>without suction cups</title></path>
+<path d="M472,2467.35595703125 C533,2467.35595703125 533,2521.5 594,2521.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with suction cups on either end of the body</title></path>
+<path d="M604,2413.2119140625 C665,2413.2119140625 665,2320.423828125 726,2320.423828125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>with hard mouthparts (these can be inside the head and difficult to see)</title></path>
+<path d="M604,2413.2119140625 C665,2413.2119140625 665,2506 726,2506" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>without hard mouthparts</title></path>
+<path d="M736,2320.423828125 C797,2320.423828125 797,2273.5 858,2273.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Order level ID Diptera (maggots or true fly larvae)</title></path>
+<path d="M736,2320.423828125 C797,2320.423828125 797,2367.34765625 858,2367.34765625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Identify further.</title></path>
+<path d="M868,2367.34765625 C929,2367.34765625 929,2320 990,2320" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Maggots break the surface of the water to breathe; their bodies are buoyant in deeper water (floaters).</title></path>
+<path d="M868,2367.34765625 C929,2367.34765625 929,2414.6953125 990,2414.6953125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Maggots don't need contact with the water surface, bodies are not buoyant in deeper water, may still be active and swim past the surface (sinkers).</title></path>
+<path d="M1000,2320 C1061,2320 1061,2296.75 1122,2296.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal has obviously sclerotised (armoured or hardened) body plates, either the whole body or bands on all segments.</title></path>
+<path d="M1000,2320 C1061,2320 1061,2343.25 1122,2343.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal mostly soft bodied, although it may have sclerotised plates on its head and abdomen.</title></path>
+<path d="M1132,2296.75 C1193,2296.75 1193,2289 1254,2289" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>All of body sclerotised (darkened and toughened skin), animal can grow to 20mm.</title></path>
+<path d="M1132,2296.75 C1193,2296.75 1193,2304.5 1254,2304.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Only bands of the upper surface of the body are sclerotised, smaller than 6mm.</title></path>
+<path d="M1132,2343.25 C1193,2343.25 1193,2327.75 1254,2327.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals with obviously sclerotised (dark) head capsule and final segments.</title></path>
+<path d="M1132,2343.25 C1193,2343.25 1193,2358.75 1254,2358.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1264,2327.75 C1325,2327.75 1325,2320 1386,2320" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal restricted to the water surface, bent 'U' posture at rest, final segments usually out of the water so they distort the surface.</title></path>
+<path d="M1264,2327.75 C1325,2327.75 1325,2335.5 1386,2335.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Often dive when disturbed, leaving the surface quite readily, move in a rapid tumbling or wriggling motion.</title></path>
+<path d="M1264,2358.75 C1325,2358.75 1325,2351 1386,2351" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal with a distinctive elongate tail (a snorkel).</title></path>
+<path d="M1264,2358.75 C1325,2358.75 1325,2366.5 1386,2366.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal with very few characteristics of note, maggot-like in appearance.</title></path>
+<path d="M1000,2414.6953125 C1061,2414.6953125 1061,2382 1122,2382" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Bleffs (very distinctive, see picture), only found in fast flowing water.</title></path>
+<path d="M1000,2414.6953125 C1061,2414.6953125 1061,2447.390625 1122,2447.390625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not a bleff.</title></path>
+<path d="M1132,2447.390625 C1193,2447.390625 1193,2412.03125 1254,2412.03125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal with a head capsule; long, thin, worm-like or leech-like body form and movement.</title></path>
+<path d="M1132,2447.390625 C1193,2447.390625 1193,2482.75 1254,2482.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal without a head capsule; traditionally maggot-like in body form and movement.</title></path>
+<path d="M1264,2412.03125 C1325,2412.03125 1325,2397.5 1386,2397.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal moves like a leech, rarely losing hold of the substrate, abdomen broadly swollen giving a 'chicken drumstick' appearance, expandable antennae modified to form broad 'antlers' for filter feeding; typical of fast flowing waters with solid surfaces.</title></path>
+<path d="M1264,2412.03125 C1325,2412.03125 1325,2426.5625 1386,2426.5625" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal moves by coiling and uncoiling, or by rapid undulations. Unattached to the substrate; abdomen may be swollen but only the very end; antennae small and simple if present.</title></path>
+<path d="M1396,2426.5625 C1457,2426.5625 1457,2413 1518,2413" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animals obviously red.</title></path>
+<path d="M1396,2426.5625 C1457,2426.5625 1457,2440.125 1518,2440.125" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Colour variable but not red.</title></path>
+<path d="M1528,2440.125 C1589,2440.125 1589,2428.5 1650,2428.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal looks like a swimming eyelash, with stiff, snake-like movements.</title></path>
+<path d="M1528,2440.125 C1589,2440.125 1589,2451.75 1650,2451.75" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Not as above.</title></path>
+<path d="M1660,2451.75 C1721,2451.75 1721,2444 1782,2444" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Head capsule obvious, small prolegs at both ends of the animal, rarely longer than 7mm.</title></path>
+<path d="M1660,2451.75 C1721,2451.75 1721,2459.5 1782,2459.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Head capsule retractable, no pro-legs, sometimes with a set of hairy, feathered or fleshy appendages at the posterior end, may be covered in downy hairs, often longer than 5mm.</title></path>
+<path d="M1264,2482.75 C1325,2482.75 1325,2475 1386,2475" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Appendages along both sides of the animal (see picture).</title></path>
+<path d="M1264,2482.75 C1325,2482.75 1325,2490.5 1386,2490.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>Animal without appendages or only present on the final segments of the animal.</title></path>
+<path d="M604,2521.5 C665,2521.5 665,2521.5 726,2521.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>without a hardened head capsule</title></path>
+<path d="M472,2548.625 C533,2548.625 533,2537 594,2537" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>flattened, short and slimy</title></path>
+<path d="M472,2548.625 C533,2548.625 533,2560.25 594,2560.25" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>not flattened, long and thin</title></path>
+<path d="M604,2560.25 C665,2560.25 665,2552.5 726,2552.5" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>shorter than 1.5cm, tapering</title></path>
+<path d="M604,2560.25 C665,2560.25 665,2568 726,2568" fill="none" stroke="#b7b3ae" stroke-width="1.1"><title>longer than 1.5cm</title></path>
+<path d="M736,343.75 C826,343.75 634,305 724,305" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>decapoda_intercept_2 → decapoda
+Oder level ID Decapoda (decapods)</title></path>
+<path d="M868,367 C958,367 634,305 724,305" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>decapoda_intercept_3 → decapoda
+Oder level ID Decapoda (decapods)</title></path>
+<path d="M1396,1335.75 C1487.76,1335.75 1160.24,1049 1252,1049" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>k_freeliving → trichoptera
+Order level ID Trichoptera (caddisflies)</title></path>
+<path d="M1528,1702.1796875 C1910.6175,1702.1796875 605.3824999999999,506.5 988,506.5" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>k_coleoptera_larvae → coleoptera
+Order level ID Coleoptera (beetles)</title></path>
+<path d="M1396,1839.5 C1557.2,1839.5 1222.8,1335.75 1384,1335.75" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>node_44c → k_freeliving
+animals with robust posterior prolegs (like a pair of hooks on short prolegs at the end of the abdomen)</title></path>
+<path d="M1396,1839.5 C1486,1839.5 1426,1702.1796875 1516,1702.1796875" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>node_44c → k_coleoptera_larvae
+animals without robust posterior prolegs</title></path>
+<path d="M1000,1883.45703125 C1090,1883.45703125 1426,1702.1796875 1516,1702.1796875" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>node_75 → k_coleoptera_larvae
+simple eyes (several dots), never with wing pads</title></path>
+<path d="M1396,2103 C1486,2103 1426,2072 1516,2072" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>node_117 → adult_baetidae
+forewings with many cross veins, some marginal veins unconnected</title></path>
+<path d="M1132,2160.27734375 C1353.92125,2160.27734375 1030.07875,1466.7734375 1252,1466.7734375" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>old_mayfly_start_point → k_odonata
+tails flattened, leaf-like or broad, jaw large and folded away under head</title></path>
+<path d="M604,2521.5 C694,2521.5 634,2320.423828125 724,2320.423828125" fill="none" stroke="#c2410c" stroke-width="2.1" stroke-opacity="0.8" marker-end="url(#ar)"><title>node_92 → order_diptera
+with a head capsule</title></path>
+<path d="M466,258.5 C640.65,258.5 772.65,274 598,274" fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ar2)"><title>bivalvia and hyriidae share taxonId 179 — findTaxonById() returns only one</title></path>
+<g><circle cx="70" cy="887.663125038147" r="3" fill="#78716c"/>
+<text x="61" y="891.263125038147" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">root</text>
+<title>root</title></g>
+<g><circle cx="202" cy="225.68359375" r="3" fill="#78716c"/>
+<text x="193" y="229.28359375" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_mollusca</text>
+<title>k_mollusca</title></g>
+<g><circle cx="334" cy="181.2421875" r="3" fill="#78716c"/>
+<text x="325" y="184.8421875" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_gastropoda</text>
+<title>order_gastropoda</title></g>
+<g><circle cx="466" cy="150" r="3.4" fill="#0f766e"/>
+<text x="474" y="153.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">gastropods <tspan fill="#a8a29e">#181</tspan></text>
+<title>gastropoda · taxonId 181</title></g>
+<g><circle cx="466" cy="212.484375" r="3" fill="#78716c"/>
+<text x="457" y="216.084375" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_2</text>
+<title>node_2</title></g>
+<g><circle cx="598" cy="181.96875" r="3" fill="#78716c"/>
+<title>k_gastropoda</title></g>
+<g><circle cx="730" cy="165.5" r="3.4" fill="#0f766e"/>
+<text x="738" y="169.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">flat snails <tspan fill="#a8a29e">#189</tspan></text>
+<title>flat_snails · taxonId 189</title></g>
+<g><circle cx="730" cy="198.4375" r="3" fill="#78716c"/>
+<title>node_3</title></g>
+<g><circle cx="862" cy="181" r="3.4" fill="#0f766e"/>
+<text x="870" y="184.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">New Zealand mud snail <tspan fill="#a8a29e">#193</tspan></text>
+<title>potamopyrgus_antipodarum · taxonId 193</title></g>
+<g><circle cx="862" cy="215.875" r="3" fill="#78716c"/>
+<title>node_4</title></g>
+<g><circle cx="994" cy="204.25" r="3" fill="#78716c"/>
+<title>node_5</title></g>
+<g><circle cx="1126" cy="196.5" r="3.4" fill="#0f766e"/>
+<text x="1134" y="200.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Physa acuta <tspan fill="#a8a29e">#187</tspan></text>
+<title>physa_acuta · taxonId 187</title></g>
+<g><circle cx="1126" cy="212" r="3.4" fill="#0f766e"/>
+<text x="1134" y="215.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Planorbids <tspan fill="#a8a29e">#190</tspan></text>
+<title>planorbids · taxonId 190</title></g>
+<g><circle cx="994" cy="227.5" r="3.4" fill="#0f766e"/>
+<text x="1002" y="231.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Lim nay ids <tspan fill="#a8a29e">#185</tspan></text>
+<title>lymnaeidae · taxonId 185</title></g>
+<g><circle cx="598" cy="243" r="3.4" fill="#0f766e"/>
+<text x="606" y="246.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Freshwater limpets <tspan fill="#a8a29e">#184</tspan></text>
+<title>ancylidae · taxonId 184</title></g>
+<g><circle cx="334" cy="270.125" r="3" fill="#78716c"/>
+<text x="325" y="273.725" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_bivalvia</text>
+<title>order_bivalvia</title></g>
+<g><circle cx="466" cy="258.5" r="3.4" fill="#0f766e"/>
+<text x="474" y="262.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">mussels <tspan fill="#a8a29e">#179</tspan></text>
+<title>bivalvia · taxonId 179</title></g>
+<g><circle cx="466" cy="281.75" r="3" fill="#78716c"/>
+<text x="457" y="285.35" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_bivalvia</text>
+<title>k_bivalvia</title></g>
+<g><circle cx="598" cy="274" r="3.4" fill="#0f766e"/>
+<text x="606" y="277.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Freshwater mussels <tspan fill="#a8a29e">#179</tspan></text>
+<title>hyriidae · taxonId 179</title></g>
+<g><circle cx="598" cy="289.5" r="3.4" fill="#0f766e"/>
+<text x="606" y="293.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Basket and pea shells <tspan fill="#a8a29e">#180</tspan></text>
+<title>sphaeriidae_and_corbiculidae · taxonId 180</title></g>
+<g><circle cx="202" cy="1549.642656326294" r="3" fill="#78716c"/>
+<text x="193" y="1553.2426563262939" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_1</text>
+<title>node_1</title></g>
+<g><circle cx="334" cy="591.2948341369629" r="3" fill="#78716c"/>
+<text x="325" y="594.8948341369629" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_arthropoda</text>
+<title>k_arthropoda</title></g>
+<g><circle cx="466" cy="339.26953125" r="3" fill="#78716c"/>
+<text x="457" y="342.86953125" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_crustacea</text>
+<title>k_crustacea</title></g>
+<g><circle cx="598" cy="312.75" r="3" fill="#78716c"/>
+<title>decapoda_intercept_1</title></g>
+<g><circle cx="730" cy="305" r="5.5" fill="#c2410c"/>
+<circle cx="730" cy="305" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="730" y="290" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">Decapods #3 <tspan fill="#c2410c">(3 ways in)</tspan></text>
+<title>decapoda · taxonId 3
+PARENTS: decapoda_intercept_1, decapoda_intercept_2, decapoda_intercept_3</title></g>
+<g><circle cx="730" cy="320.5" r="3.4" fill="#0f766e"/>
+<text x="738" y="324.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">freshwater crayfish or yabbies <tspan fill="#a8a29e">#4</tspan></text>
+<title>parastacidae · taxonId 4</title></g>
+<g><circle cx="598" cy="365.7890625" r="3" fill="#78716c"/>
+<title>node_7</title></g>
+<g><circle cx="730" cy="343.75" r="3" fill="#78716c"/>
+<title>decapoda_intercept_2</title></g>
+<g><circle cx="862" cy="343.75" r="3" fill="#78716c"/>
+<title>k_shrimpandprawns</title></g>
+<g><circle cx="994" cy="336" r="3.4" fill="#0f766e"/>
+<text x="1002" y="339.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">freshwater prawn <tspan fill="#a8a29e">#7</tspan></text>
+<title>macrobrachium · taxonId 7</title></g>
+<g><circle cx="994" cy="351.5" r="3.4" fill="#0f766e"/>
+<text x="1002" y="355.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">glass shrimp <tspan fill="#a8a29e">#8</tspan></text>
+<title>atyidae · taxonId 8</title></g>
+<g><circle cx="730" cy="387.828125" r="3" fill="#78716c"/>
+<title>node_8</title></g>
+<g><circle cx="862" cy="367" r="3" fill="#78716c"/>
+<title>decapoda_intercept_3</title></g>
+<g><circle cx="994" cy="367" r="3.4" fill="#0f766e"/>
+<text x="1002" y="370.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">five cent crab, false spider crab <tspan fill="#a8a29e">#5</tspan></text>
+<title>hymenosomatidae · taxonId 5</title></g>
+<g><circle cx="862" cy="408.65625" r="3" fill="#78716c"/>
+<title>node_9</title></g>
+<g><circle cx="994" cy="390.25" r="3" fill="#78716c"/>
+<title>node_10</title></g>
+<g><circle cx="1126" cy="382.5" r="3.4" fill="#0f766e"/>
+<text x="1134" y="386.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">scuds, sideswimmers <tspan fill="#a8a29e">#12</tspan></text>
+<title>amphipoda · taxonId 12</title></g>
+<g><circle cx="1126" cy="398" r="3.4" fill="#0f766e"/>
+<text x="1134" y="401.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">phreatoicids, cow shrimp <tspan fill="#a8a29e">#11</tspan></text>
+<title>phreatoicidae · taxonId 11</title></g>
+<g><circle cx="994" cy="427.0625" r="3" fill="#78716c"/>
+<title>node_11</title></g>
+<g><circle cx="1126" cy="413.5" r="3.4" fill="#0f766e"/>
+<text x="1134" y="417.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">water slaters <tspan fill="#a8a29e">#10</tspan></text>
+<title>janiridae · taxonId 10</title></g>
+<g><circle cx="1126" cy="440.625" r="3" fill="#78716c"/>
+<title>node_12</title></g>
+<g><circle cx="1258" cy="429" r="3.4" fill="#0f766e"/>
+<text x="1266" y="432.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">fairy shrimp <tspan fill="#a8a29e">#13</tspan></text>
+<title>anostraca · taxonId 13</title></g>
+<g><circle cx="1258" cy="452.25" r="3" fill="#78716c"/>
+<title>node_13</title></g>
+<g><circle cx="1390" cy="444.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="448.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">shield shrimp, tadpole shrimp <tspan fill="#a8a29e">#15</tspan></text>
+<title>notostraca · taxonId 15</title></g>
+<g><circle cx="1390" cy="460" r="3.4" fill="#0f766e"/>
+<text x="1398" y="463.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">clam shrimp <tspan fill="#a8a29e">#14</tspan></text>
+<title>conchostraca · taxonId 14</title></g>
+<g><circle cx="466" cy="843.3201370239258" r="3" fill="#78716c"/>
+<text x="457" y="846.9201370239258" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_6</text>
+<title>node_6</title></g>
+<g><circle cx="598" cy="483.25" r="3" fill="#78716c"/>
+<title>k_chelicerata</title></g>
+<g><circle cx="730" cy="475.5" r="3.4" fill="#0f766e"/>
+<text x="738" y="479.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">water mites <tspan fill="#a8a29e">#19</tspan></text>
+<title>acarina · taxonId 19</title></g>
+<g><circle cx="730" cy="491" r="3.4" fill="#0f766e"/>
+<text x="738" y="494.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">fishing and wolf spiders <tspan fill="#a8a29e">#18</tspan></text>
+<title>pisauridae_and_lycosidae · taxonId 18</title></g>
+<g><circle cx="598" cy="1203.3902740478516" r="3" fill="#78716c"/>
+<title>k_hexapoda</title></g>
+<g><circle cx="730" cy="709.271484375" r="3" fill="#78716c"/>
+<title>node_14</title></g>
+<g><circle cx="862" cy="580.791015625" r="3" fill="#78716c"/>
+<title>order_coleoptera</title></g>
+<g><circle cx="994" cy="506.5" r="5.5" fill="#c2410c"/>
+<circle cx="994" cy="506.5" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="994" y="491.5" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">Beetles #26 <tspan fill="#c2410c">(2 ways in)</tspan></text>
+<title>coleoptera · taxonId 26
+PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
+<g><circle cx="994" cy="655.08203125" r="3" fill="#78716c"/>
+<title>k_coleoptera</title></g>
+<g><circle cx="1126" cy="557.6015625" r="3" fill="#78716c"/>
+<title>node_16</title></g>
+<g><circle cx="1258" cy="522" r="3.4" fill="#0f766e"/>
+<text x="1266" y="525.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Whirligig beetle <tspan fill="#a8a29e">#50</tspan></text>
+<title>gyrinidae_adult · taxonId 50</title></g>
+<g><circle cx="1258" cy="593.203125" r="3" fill="#78716c"/>
+<title>node_18</title></g>
+<g><circle cx="1390" cy="545.25" r="3" fill="#78716c"/>
+<title>node_19</title></g>
+<g><circle cx="1522" cy="537.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="541.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Screetch beetle adult <tspan fill="#a8a29e">#62</tspan></text>
+<title>hygrobia_adult · taxonId 62</title></g>
+<g><circle cx="1522" cy="553" r="3.4" fill="#0f766e"/>
+<text x="1530" y="556.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water scavenger beetle adult <tspan fill="#a8a29e">#59</tspan></text>
+<title>hydrophilidae_adult · taxonId 59</title></g>
+<g><circle cx="1390" cy="641.15625" r="3" fill="#78716c"/>
+<title>k_dytiscidae</title></g>
+<g><circle cx="1522" cy="601.4375" r="3" fill="#78716c"/>
+<title>node_20</title></g>
+<g><circle cx="1654" cy="580.125" r="3" fill="#78716c"/>
+<title>node_22</title></g>
+<g><circle cx="1786" cy="568.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="572.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">waisted diving beetle <tspan fill="#a8a29e">#30</tspan></text>
+<title>carabhydrus · taxonId 30</title></g>
+<g><circle cx="1786" cy="591.75" r="3" fill="#78716c"/>
+<title>node_24</title></g>
+<g><circle cx="1918" cy="584" r="3.4" fill="#0f766e"/>
+<text x="1926" y="587.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Australphilus <tspan fill="#a8a29e">#29</tspan></text>
+<title>australphilus · taxonId 29</title></g>
+<g><circle cx="1918" cy="599.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="603.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">little diving beetles <tspan fill="#a8a29e">#37</tspan></text>
+<title>little_diving_beetles · taxonId 37</title></g>
+<g><circle cx="1654" cy="622.75" r="3" fill="#78716c"/>
+<title>node_23</title></g>
+<g><circle cx="1786" cy="615" r="3.4" fill="#0f766e"/>
+<text x="1794" y="618.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">mixed diving beetles <tspan fill="#a8a29e">#38</tspan></text>
+<title>mixed_diving_beetles · taxonId 38</title></g>
+<g><circle cx="1786" cy="630.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="634.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">stealth diving beetles <tspan fill="#a8a29e">#39</tspan></text>
+<title>stealth_diving_beetles · taxonId 39</title></g>
+<g><circle cx="1522" cy="680.875" r="3" fill="#78716c"/>
+<title>node_21</title></g>
+<g><circle cx="1654" cy="657.625" r="3" fill="#78716c"/>
+<title>node_25</title></g>
+<g><circle cx="1786" cy="646" r="3.4" fill="#0f766e"/>
+<text x="1794" y="649.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Lancetes <tspan fill="#a8a29e">#33</tspan></text>
+<title>lancetes · taxonId 33</title></g>
+<g><circle cx="1786" cy="669.25" r="3" fill="#78716c"/>
+<title>node_27</title></g>
+<g><circle cx="1918" cy="661.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="665.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Eretes <tspan fill="#a8a29e">#31</tspan></text>
+<title>eretes · taxonId 31</title></g>
+<g><circle cx="1918" cy="677" r="3.4" fill="#0f766e"/>
+<text x="1926" y="680.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Rhantus <tspan fill="#a8a29e">#35</tspan></text>
+<title>rhantus · taxonId 35</title></g>
+<g><circle cx="1654" cy="704.125" r="3" fill="#78716c"/>
+<title>node_26</title></g>
+<g><circle cx="1786" cy="692.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="696.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Hyderodes <tspan fill="#a8a29e">#32</tspan></text>
+<title>hyderodes · taxonId 32</title></g>
+<g><circle cx="1786" cy="715.75" r="3" fill="#78716c"/>
+<title>node_28</title></g>
+<g><circle cx="1918" cy="708" r="3.4" fill="#0f766e"/>
+<text x="1926" y="711.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Spencerhydrus <tspan fill="#a8a29e">#36</tspan></text>
+<title>spencerhydrus · taxonId 36</title></g>
+<g><circle cx="1918" cy="723.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="727.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Onychohydrus <tspan fill="#a8a29e">#34</tspan></text>
+<title>onychohydrus · taxonId 34</title></g>
+<g><circle cx="1126" cy="752.5625" r="3" fill="#78716c"/>
+<title>node_17</title></g>
+<g><circle cx="1258" cy="739" r="3.4" fill="#0f766e"/>
+<text x="1266" y="742.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">weevils <tspan fill="#a8a29e">#27</tspan></text>
+<title>curculionidae · taxonId 27</title></g>
+<g><circle cx="1258" cy="766.125" r="3" fill="#78716c"/>
+<title>node_29</title></g>
+<g><circle cx="1390" cy="754.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="758.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Riffle beetle <tspan fill="#a8a29e">#47</tspan></text>
+<title>elmidae_adult · taxonId 47</title></g>
+<g><circle cx="1390" cy="777.75" r="3" fill="#78716c"/>
+<title>node_30</title></g>
+<g><circle cx="1522" cy="770" r="3.4" fill="#0f766e"/>
+<text x="1530" y="773.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Crawling water beetle <tspan fill="#a8a29e">#54</tspan></text>
+<title>hydraenidae_and_hydrochidae · taxonId 54</title></g>
+<g><circle cx="1522" cy="785.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="789.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Helochares <tspan fill="#a8a29e">#57</tspan></text>
+<title>helochares · taxonId 57</title></g>
+<g><circle cx="862" cy="837.751953125" r="3" fill="#78716c"/>
+<title>order_hemiptera</title></g>
+<g><circle cx="994" cy="801" r="3.4" fill="#0f766e"/>
+<text x="1002" y="804.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">hemiptera <tspan fill="#a8a29e">#101</tspan></text>
+<title>hemiptera · taxonId 101</title></g>
+<g><circle cx="994" cy="874.50390625" r="3" fill="#78716c"/>
+<title>k_hemiptera</title></g>
+<g><circle cx="1126" cy="835.875" r="3" fill="#78716c"/>
+<title>node_31</title></g>
+<g><circle cx="1258" cy="824.25" r="3" fill="#78716c"/>
+<title>node_33</title></g>
+<g><circle cx="1390" cy="816.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="820.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water striders <tspan fill="#a8a29e">#110</tspan></text>
+<title>gerridae · taxonId 110</title></g>
+<g><circle cx="1390" cy="832" r="3.4" fill="#0f766e"/>
+<text x="1398" y="835.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water treader <tspan fill="#a8a29e">#121</tspan></text>
+<title>veliidae_mesoveliidae_and_hebridae · taxonId 121</title></g>
+<g><circle cx="1258" cy="847.5" r="3.4" fill="#0f766e"/>
+<text x="1266" y="851.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water measurers <tspan fill="#a8a29e">#111</tspan></text>
+<title>hydrometridae · taxonId 111</title></g>
+<g><circle cx="1126" cy="913.1328125" r="3" fill="#78716c"/>
+<title>node_32</title></g>
+<g><circle cx="1258" cy="874.625" r="3" fill="#78716c"/>
+<title>node_34</title></g>
+<g><circle cx="1390" cy="863" r="3.4" fill="#0f766e"/>
+<text x="1398" y="866.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Toad bug <tspan fill="#a8a29e">#109</tspan></text>
+<title>gelastocoridae · taxonId 109</title></g>
+<g><circle cx="1390" cy="886.25" r="3" fill="#78716c"/>
+<title>k_nepidae</title></g>
+<g><circle cx="1522" cy="878.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="882.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Slender water scorpions/stick bug <tspan fill="#a8a29e">#116</tspan></text>
+<title>ranatra · taxonId 116</title></g>
+<g><circle cx="1522" cy="894" r="3.4" fill="#0f766e"/>
+<text x="1530" y="897.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leafy water scorpion <tspan fill="#a8a29e">#115</tspan></text>
+<title>laccotrephes · taxonId 115</title></g>
+<g><circle cx="1258" cy="951.640625" r="3" fill="#78716c"/>
+<title>node_35</title></g>
+<g><circle cx="1390" cy="921.125" r="3" fill="#78716c"/>
+<title>node_36</title></g>
+<g><circle cx="1522" cy="909.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="913.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Pygmy backswimmer <tspan fill="#a8a29e">#120</tspan></text>
+<title>pleidae · taxonId 120</title></g>
+<g><circle cx="1522" cy="932.75" r="3" fill="#78716c"/>
+<title>k_notonectidae</title></g>
+<g><circle cx="1654" cy="925" r="3.4" fill="#0f766e"/>
+<text x="1662" y="928.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Robust backswimmer <tspan fill="#a8a29e">#119</tspan></text>
+<title>enithares · taxonId 119</title></g>
+<g><circle cx="1654" cy="940.5" r="3.4" fill="#0f766e"/>
+<text x="1662" y="944.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Slender backswimmer <tspan fill="#a8a29e">#118</tspan></text>
+<title>anisops · taxonId 118</title></g>
+<g><circle cx="1390" cy="982.15625" r="3" fill="#78716c"/>
+<title>k_bugs</title></g>
+<g><circle cx="1522" cy="963.75" r="3" fill="#78716c"/>
+<title>node_37</title></g>
+<g><circle cx="1654" cy="956" r="3.4" fill="#0f766e"/>
+<text x="1662" y="959.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Creeping water bugs <tspan fill="#a8a29e">#113</tspan></text>
+<title>naucoris · taxonId 113</title></g>
+<g><circle cx="1654" cy="971.5" r="3.4" fill="#0f766e"/>
+<text x="1662" y="975.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Giant water bug <tspan fill="#a8a29e">#103</tspan></text>
+<title>diplonychus · taxonId 103</title></g>
+<g><circle cx="1522" cy="1000.5625" r="3" fill="#78716c"/>
+<title>k_corixidae</title></g>
+<g><circle cx="1654" cy="987" r="3.4" fill="#0f766e"/>
+<text x="1662" y="990.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Little brindle boatman <tspan fill="#a8a29e">#107</tspan></text>
+<title>micronecta · taxonId 107</title></g>
+<g><circle cx="1654" cy="1014.125" r="3" fill="#78716c"/>
+<title>node_38</title></g>
+<g><circle cx="1786" cy="1002.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1006.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Striped boatman <tspan fill="#a8a29e">#108</tspan></text>
+<title>sigara · taxonId 108</title></g>
+<g><circle cx="1786" cy="1025.75" r="3" fill="#78716c"/>
+<title>node_39</title></g>
+<g><circle cx="1918" cy="1018" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1021.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Barry four-eyes <tspan fill="#a8a29e">#106</tspan></text>
+<title>diaprepocoris_barycephala · taxonId 106</title></g>
+<g><circle cx="1918" cy="1033.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1037.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Static boatmen <tspan fill="#a8a29e">#105</tspan></text>
+<title>agraptocorixa · taxonId 105</title></g>
+<g><circle cx="730" cy="1697.5090637207031" r="3" fill="#78716c"/>
+<title>node_15</title></g>
+<g><circle cx="862" cy="1398.8530883789062" r="3" fill="#78716c"/>
+<title>node_40</title></g>
+<g><circle cx="994" cy="1252.9937744140625" r="3" fill="#78716c"/>
+<title>node_42</title></g>
+<g><circle cx="1126" cy="1131.487548828125" r="3" fill="#78716c"/>
+<title>order_trichoptera</title></g>
+<g><circle cx="1258" cy="1049" r="5.5" fill="#c2410c"/>
+<circle cx="1258" cy="1049" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="1258" y="1034" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">caddis larvae #145 <tspan fill="#c2410c">(2 ways in)</tspan></text>
+<title>trichoptera · taxonId 145
+PARENTS: order_trichoptera, k_freeliving</title></g>
+<g><circle cx="1258" cy="1213.97509765625" r="3" fill="#78716c"/>
+<title>k_trichoptera</title></g>
+<g><circle cx="1390" cy="1092.2001953125" r="3" fill="#78716c"/>
+<title>k_cased</title></g>
+<g><circle cx="1522" cy="1064.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="1068.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Micro caddis <tspan fill="#a8a29e">#161</tspan></text>
+<title>hydroptilidae · taxonId 161</title></g>
+<g><circle cx="1522" cy="1119.900390625" r="3" fill="#78716c"/>
+<title>node_45</title></g>
+<g><circle cx="1654" cy="1080" r="3.4" fill="#0f766e"/>
+<text x="1662" y="1083.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Vulture caddis <tspan fill="#a8a29e">#147</tspan></text>
+<title>atriplectides · taxonId 147</title></g>
+<g><circle cx="1654" cy="1159.80078125" r="3" fill="#78716c"/>
+<title>node_46</title></g>
+<g><circle cx="1786" cy="1110.03125" r="3" fill="#78716c"/>
+<title>node_47</title></g>
+<g><circle cx="1918" cy="1095.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1099.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Igloo caddis <tspan fill="#a8a29e">#156</tspan></text>
+<title>agapetus · taxonId 156</title></g>
+<g><circle cx="1918" cy="1124.5625" r="3" fill="#78716c"/>
+<title>node_49</title></g>
+<g><circle cx="2050" cy="1111" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1114.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Snail caddis <tspan fill="#a8a29e">#158</tspan></text>
+<title>helicopsyche · taxonId 158</title></g>
+<g><circle cx="2050" cy="1138.125" r="3" fill="#78716c"/>
+<title>node_50</title></g>
+<g><circle cx="2182" cy="1126.5" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1130.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Tasimiids <tspan fill="#a8a29e">#173</tspan></text>
+<title>tasimiidae · taxonId 173</title></g>
+<g><circle cx="2182" cy="1149.75" r="3" fill="#78716c"/>
+<title>node_51</title></g>
+<g><circle cx="2314" cy="1142" r="3.4" fill="#0f766e"/>
+<text x="2322" y="1145.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Attack caddis - Highlander <tspan fill="#a8a29e">#172</tspan></text>
+<title>philorheithridae · taxonId 172</title></g>
+<g><circle cx="2314" cy="1157.5" r="3.4" fill="#0f766e"/>
+<text x="2322" y="1161.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Attack caddis - lowlander <tspan fill="#a8a29e">#166</tspan></text>
+<title>attack_caddis_lowlander · taxonId 166</title></g>
+<g><circle cx="1786" cy="1209.5703125" r="3" fill="#78716c"/>
+<title>node_48</title></g>
+<g><circle cx="1918" cy="1184.625" r="3" fill="#78716c"/>
+<title>node_52</title></g>
+<g><circle cx="2050" cy="1173" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1176.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Sleeping bag caddis <tspan fill="#a8a29e">#149</tspan></text>
+<title>anisocentropus · taxonId 149</title></g>
+<g><circle cx="2050" cy="1196.25" r="3" fill="#78716c"/>
+<title>node_54</title></g>
+<g><circle cx="2182" cy="1188.5" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1192.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Shingle caddis <tspan fill="#a8a29e">#151</tspan></text>
+<title>caenota_plicata · taxonId 151</title></g>
+<g><circle cx="2182" cy="1204" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1207.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Flat shack caddis <tspan fill="#a8a29e">#163</tspan></text>
+<title>lectrides_varians · taxonId 163</title></g>
+<g><circle cx="1918" cy="1234.515625" r="3" fill="#78716c"/>
+<title>node_53</title></g>
+<g><circle cx="2050" cy="1219.5" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1223.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Bullet caddis <tspan fill="#a8a29e">#152</tspan></text>
+<title>conoesucidae_calocidae_and_helicophidae · taxonId 152</title></g>
+<g><circle cx="2050" cy="1249.53125" r="3" fill="#78716c"/>
+<title>k_leptoceridae</title></g>
+<g><circle cx="2182" cy="1235" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1238.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Stick caddis <tspan fill="#a8a29e">#169</tspan></text>
+<title>triplectides · taxonId 169</title></g>
+<g><circle cx="2182" cy="1264.0625" r="3" fill="#78716c"/>
+<title>node_55</title></g>
+<g><circle cx="2314" cy="1250.5" r="3.4" fill="#0f766e"/>
+<text x="2322" y="1254.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Log cabin caddis <tspan fill="#a8a29e">#167</tspan></text>
+<title>log_cabin_caddis · taxonId 167</title></g>
+<g><circle cx="2314" cy="1277.625" r="3" fill="#78716c"/>
+<title>node_56</title></g>
+<g><circle cx="2446" cy="1266" r="3.4" fill="#0f766e"/>
+<text x="2454" y="1269.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Dart caddis <tspan fill="#a8a29e">#168</tspan></text>
+<title>symphitoneuria · taxonId 168</title></g>
+<g><circle cx="2446" cy="1289.25" r="3" fill="#78716c"/>
+<title>node_57</title></g>
+<g><circle cx="2578" cy="1281.5" r="3.4" fill="#0f766e"/>
+<text x="2586" y="1285.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Headbanger caddis <tspan fill="#a8a29e">#164</tspan></text>
+<title>notalina · taxonId 164</title></g>
+<g><circle cx="2578" cy="1297" r="3.4" fill="#0f766e"/>
+<text x="2586" y="1300.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leptocerids <tspan fill="#a8a29e">#170</tspan></text>
+<title>leptocerids · taxonId 170</title></g>
+<g><circle cx="1390" cy="1335.75" r="5.5" fill="#c2410c"/>
+<circle cx="1390" cy="1335.75" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="1390" y="1320.75" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">k_freeliving <tspan fill="#c2410c">(2 ways in)</tspan></text>
+<title>k_freeliving
+PARENTS: k_trichoptera, node_44c</title></g>
+<g><circle cx="1522" cy="1335.75" r="3" fill="#78716c"/>
+<title>node_44b</title></g>
+<g><circle cx="1654" cy="1320.25" r="3" fill="#78716c"/>
+<title>node_58</title></g>
+<g><circle cx="1786" cy="1312.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1316.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Net spinning caddis <tspan fill="#a8a29e">#160</tspan></text>
+<title>hydropsychidae · taxonId 160</title></g>
+<g><circle cx="1786" cy="1328" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1331.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Bandit caddis <tspan fill="#a8a29e">#154</tspan></text>
+<title>ecnomus · taxonId 154</title></g>
+<g><circle cx="1654" cy="1351.25" r="3" fill="#78716c"/>
+<title>node_59</title></g>
+<g><circle cx="1786" cy="1343.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1347.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Hunter caddis <tspan fill="#a8a29e">#159</tspan></text>
+<title>hydrobiosidae · taxonId 159</title></g>
+<g><circle cx="1786" cy="1359" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1362.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Ginger nuts <tspan fill="#a8a29e">#171</tspan></text>
+<title>philopotamidae_polycentropodidae_and_ecnomidae · taxonId 171</title></g>
+<g><circle cx="1126" cy="1374.5" r="3.4" fill="#0f766e"/>
+<text x="1134" y="1378.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">caterpillars <tspan fill="#a8a29e">#25</tspan></text>
+<title>lepidoptera · taxonId 25</title></g>
+<g><circle cx="994" cy="1544.71240234375" r="3" fill="#78716c"/>
+<title>node_43</title></g>
+<g><circle cx="1126" cy="1428.38671875" r="3" fill="#78716c"/>
+<title>order_odonata</title></g>
+<g><circle cx="1258" cy="1390" r="3.4" fill="#0f766e"/>
+<text x="1266" y="1393.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">dragonflies and damselflies <tspan fill="#a8a29e">#122</tspan></text>
+<title>odonata · taxonId 122</title></g>
+<g><circle cx="1258" cy="1466.7734375" r="5.5" fill="#c2410c"/>
+<circle cx="1258" cy="1466.7734375" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="1258" y="1451.7734375" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">k_odonata <tspan fill="#c2410c">(2 ways in)</tspan></text>
+<title>k_odonata
+PARENTS: order_odonata, old_mayfly_start_point</title></g>
+<g><circle cx="1390" cy="1420.515625" r="3" fill="#78716c"/>
+<title>k_prezygoptera</title></g>
+<g><circle cx="1522" cy="1405.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="1409.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">damselflies <tspan fill="#a8a29e">#128</tspan></text>
+<title>zygoptera · taxonId 128</title></g>
+<g><circle cx="1522" cy="1435.53125" r="3" fill="#78716c"/>
+<title>k_zygoptera</title></g>
+<g><circle cx="1654" cy="1421" r="3.4" fill="#0f766e"/>
+<text x="1662" y="1424.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Megapodagrionidae <tspan fill="#a8a29e">#132</tspan></text>
+<title>megapodagrionidae · taxonId 132</title></g>
+<g><circle cx="1654" cy="1450.0625" r="3" fill="#78716c"/>
+<title>node_60</title></g>
+<g><circle cx="1786" cy="1436.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1440.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Synlestidae <tspan fill="#a8a29e">#133</tspan></text>
+<title>synlestidae · taxonId 133</title></g>
+<g><circle cx="1786" cy="1463.625" r="3" fill="#78716c"/>
+<title>node_61</title></g>
+<g><circle cx="1918" cy="1452" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1455.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Isostictidae <tspan fill="#a8a29e">#130</tspan></text>
+<title>isostictidae · taxonId 130</title></g>
+<g><circle cx="1918" cy="1475.25" r="3" fill="#78716c"/>
+<title>node_62</title></g>
+<g><circle cx="2050" cy="1467.5" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1471.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Diphlebiidae <tspan fill="#a8a29e">#129</tspan></text>
+<title>diphlebiidae · taxonId 129</title></g>
+<g><circle cx="2050" cy="1483" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1486.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Lestidae and Coenagrionidae <tspan fill="#a8a29e">#131</tspan></text>
+<title>lestidae_and_coenagrionidae · taxonId 131</title></g>
+<g><circle cx="1390" cy="1513.03125" r="3" fill="#78716c"/>
+<title>k_preepiproctophora</title></g>
+<g><circle cx="1522" cy="1498.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="1502.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">dragonflies <tspan fill="#a8a29e">#123</tspan></text>
+<title>epiproctophora · taxonId 123</title></g>
+<g><circle cx="1522" cy="1527.5625" r="3" fill="#78716c"/>
+<title>k_epiproctophora</title></g>
+<g><circle cx="1654" cy="1514" r="3.4" fill="#0f766e"/>
+<text x="1662" y="1517.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Gomphids <tspan fill="#a8a29e">#125</tspan></text>
+<title>gomphidae · taxonId 125</title></g>
+<g><circle cx="1654" cy="1541.125" r="3" fill="#78716c"/>
+<title>node_63</title></g>
+<g><circle cx="1786" cy="1529.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1533.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Spider mud eye <tspan fill="#a8a29e">#127</tspan></text>
+<title>spider_mud_eye · taxonId 127</title></g>
+<g><circle cx="1786" cy="1552.75" r="3" fill="#78716c"/>
+<title>node_64</title></g>
+<g><circle cx="1918" cy="1545" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1548.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Telephlebs <tspan fill="#a8a29e">#126</tspan></text>
+<title>telephlebiidae · taxonId 126</title></g>
+<g><circle cx="1918" cy="1560.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1564.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Couta mud eye <tspan fill="#a8a29e">#124</tspan></text>
+<title>aeshnidae · taxonId 124</title></g>
+<g><circle cx="1126" cy="1661.0380859375" r="3" fill="#78716c"/>
+<title>k_larval</title></g>
+<g><circle cx="1258" cy="1576" r="3.4" fill="#0f766e"/>
+<text x="1266" y="1579.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">lacewing larvae <tspan fill="#a8a29e">#24</tspan></text>
+<title>neuroptera · taxonId 24</title></g>
+<g><circle cx="1258" cy="1746.076171875" r="3" fill="#78716c"/>
+<title>node_104</title></g>
+<g><circle cx="1390" cy="1652.65234375" r="3" fill="#78716c"/>
+<title>node_65</title></g>
+<g><circle cx="1522" cy="1603.125" r="3" fill="#78716c"/>
+<title>order_megaloptera</title></g>
+<g><circle cx="1654" cy="1591.5" r="3.4" fill="#0f766e"/>
+<text x="1662" y="1595.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">toebiters <tspan fill="#a8a29e">#22</tspan></text>
+<title>megaloptera · taxonId 22</title></g>
+<g><circle cx="1654" cy="1614.75" r="3" fill="#78716c"/>
+<title>k_megaloptera_larvae</title></g>
+<g><circle cx="1786" cy="1607" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1610.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">toebiters <tspan fill="#a8a29e">#23</tspan></text>
+<title>corydalidae · taxonId 23</title></g>
+<g><circle cx="1786" cy="1622.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1626.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">toebiters <tspan fill="#a8a29e">#201</tspan></text>
+<title>sialidae · taxonId 201</title></g>
+<g><circle cx="1522" cy="1702.1796875" r="5.5" fill="#c2410c"/>
+<circle cx="1522" cy="1702.1796875" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="1522" y="1687.1796875" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">k_coleoptera_larvae <tspan fill="#c2410c">(3 ways in)</tspan></text>
+<title>k_coleoptera_larvae
+PARENTS: node_65, node_44c, node_75</title></g>
+<g><circle cx="1654" cy="1702.1796875" r="3" fill="#78716c"/>
+<title>k_coleoptera_larvae_b</title></g>
+<g><circle cx="1786" cy="1663.1875" r="3" fill="#78716c"/>
+<title>k_dytiscidae_L</title></g>
+<g><circle cx="1918" cy="1645.75" r="3" fill="#78716c"/>
+<title>node_67</title></g>
+<g><circle cx="2050" cy="1638" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1641.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">taper-tailed tigers larvae <tspan fill="#a8a29e">#41</tspan></text>
+<title>taper_tailed_tiger_larvae · taxonId 41</title></g>
+<g><circle cx="2050" cy="1653.5" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1657.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">two-tailed tigers larvae <tspan fill="#a8a29e">#42</tspan></text>
+<title>two_tailed_tiger_larvae · taxonId 42</title></g>
+<g><circle cx="1918" cy="1680.625" r="3" fill="#78716c"/>
+<title>node_68</title></g>
+<g><circle cx="2050" cy="1669" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1672.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">nosey tigers larvae <tspan fill="#a8a29e">#43</tspan></text>
+<title>nosey_tiger_larvae · taxonId 43</title></g>
+<g><circle cx="2050" cy="1692.25" r="3" fill="#78716c"/>
+<title>node_69</title></g>
+<g><circle cx="2182" cy="1684.5" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1688.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">swimming water tiger larvae <tspan fill="#a8a29e">#45</tspan></text>
+<title>swimming_water_tiger_larvae · taxonId 45</title></g>
+<g><circle cx="2182" cy="1700" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1703.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">crawling water tiger larvae <tspan fill="#a8a29e">#44</tspan></text>
+<title>crawling_water_tiger_larvae · taxonId 44</title></g>
+<g><circle cx="1786" cy="1741.171875" r="3" fill="#78716c"/>
+<title>node_66</title></g>
+<g><circle cx="1918" cy="1715.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1719.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water penny <tspan fill="#a8a29e">#65</tspan></text>
+<title>sclerocyphon · taxonId 65</title></g>
+<g><circle cx="1918" cy="1766.84375" r="3" fill="#78716c"/>
+<title>node_70</title></g>
+<g><circle cx="2050" cy="1742.625" r="3" fill="#78716c"/>
+<title>k_crunchy_beetle_larvae</title></g>
+<g><circle cx="2182" cy="1731" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1734.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Marsh beetle larvae <tspan fill="#a8a29e">#68</tspan></text>
+<title>scirtidae · taxonId 68</title></g>
+<g><circle cx="2182" cy="1754.25" r="3" fill="#78716c"/>
+<title>node_72</title></g>
+<g><circle cx="2314" cy="1746.5" r="3.4" fill="#0f766e"/>
+<text x="2322" y="1750.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Riffle beetle larvae <tspan fill="#a8a29e">#48</tspan></text>
+<title>elmidae_larvae · taxonId 48</title></g>
+<g><circle cx="2314" cy="1762" r="3.4" fill="#0f766e"/>
+<text x="2322" y="1765.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Byrrocryptus <tspan fill="#a8a29e">#67</tspan></text>
+<title>byrrocryptus · taxonId 67</title></g>
+<g><circle cx="2050" cy="1791.0625" r="3" fill="#78716c"/>
+<title>node_71</title></g>
+<g><circle cx="2182" cy="1777.5" r="3.4" fill="#0f766e"/>
+<text x="2190" y="1781.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Whirligig beetle larvae <tspan fill="#a8a29e">#51</tspan></text>
+<title>gyrinidae_larvae · taxonId 51</title></g>
+<g><circle cx="2182" cy="1804.625" r="3" fill="#78716c"/>
+<title>node_73</title></g>
+<g><circle cx="2314" cy="1793" r="3.4" fill="#0f766e"/>
+<text x="2322" y="1796.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Tasselled scavenger <tspan fill="#a8a29e">#56</tspan></text>
+<title>berosus · taxonId 56</title></g>
+<g><circle cx="2314" cy="1816.25" r="3" fill="#78716c"/>
+<title>node_74</title></g>
+<g><circle cx="2446" cy="1808.5" r="3.4" fill="#0f766e"/>
+<text x="2454" y="1812.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Ugly Bob <tspan fill="#a8a29e">#58</tspan></text>
+<title>hydrophilus · taxonId 58</title></g>
+<g><circle cx="2446" cy="1824" r="3.4" fill="#0f766e"/>
+<text x="2454" y="1827.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water scavenger beetle larvae <tspan fill="#a8a29e">#60</tspan></text>
+<title>water_scavenger_beetle_larvae · taxonId 60</title></g>
+<g><circle cx="1390" cy="1839.5" r="3" fill="#78716c"/>
+<text x="1398" y="1843.1" font-size="10" text-anchor="start" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_44c</text>
+<title>node_44c</title></g>
+<g><circle cx="862" cy="1996.1650390625" r="3" fill="#78716c"/>
+<title>node_41</title></g>
+<g><circle cx="994" cy="1883.45703125" r="3" fill="#78716c"/>
+<title>node_75</title></g>
+<g><circle cx="1126" cy="1883.45703125" r="3" fill="#78716c"/>
+<title>order_plecoptera</title></g>
+<g><circle cx="1258" cy="1855" r="3.4" fill="#0f766e"/>
+<text x="1266" y="1858.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Stoneflies <tspan fill="#a8a29e">#134</tspan></text>
+<title>plecoptera · taxonId 134</title></g>
+<g><circle cx="1258" cy="1911.9140625" r="3" fill="#78716c"/>
+<title>k_plecoptera</title></g>
+<g><circle cx="1390" cy="1870.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="1874.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">U sthenids <tspan fill="#a8a29e">#138</tspan></text>
+<title>eustheniidae · taxonId 138</title></g>
+<g><circle cx="1390" cy="1953.328125" r="3" fill="#78716c"/>
+<title>node_77</title></g>
+<g><circle cx="1522" cy="1923.78125" r="3" fill="#78716c"/>
+<title>node_78</title></g>
+<g><circle cx="1654" cy="1899.5625" r="3" fill="#78716c"/>
+<title>node_80</title></g>
+<g><circle cx="1786" cy="1886" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1889.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Spiky reek o perla <tspan fill="#a8a29e">#141</tspan></text>
+<title>riekoperla · taxonId 141</title></g>
+<g><circle cx="1786" cy="1913.125" r="3" fill="#78716c"/>
+<title>node_81</title></g>
+<g><circle cx="1918" cy="1901.5" r="3.4" fill="#0f766e"/>
+<text x="1926" y="1905.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Hairy sprawler <tspan fill="#a8a29e">#142</tspan></text>
+<title>hairy_sprawler · taxonId 142</title></g>
+<g><circle cx="1918" cy="1924.75" r="3" fill="#78716c"/>
+<title>node_82</title></g>
+<g><circle cx="2050" cy="1917" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1920.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Blond sprawler <tspan fill="#a8a29e">#140</tspan></text>
+<title>illiesoperla · taxonId 140</title></g>
+<g><circle cx="2050" cy="1932.5" r="3.4" fill="#0f766e"/>
+<text x="2058" y="1936.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Gripops or Fluffy bums <tspan fill="#a8a29e">#143</tspan></text>
+<title>gripops_or_fluffy_bums · taxonId 143</title></g>
+<g><circle cx="1654" cy="1948" r="3.4" fill="#0f766e"/>
+<text x="1662" y="1951.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Noto nemoor ids <tspan fill="#a8a29e">#144</tspan></text>
+<title>notonemouridae · taxonId 144</title></g>
+<g><circle cx="1522" cy="1982.875" r="3" fill="#78716c"/>
+<title>node_79</title></g>
+<g><circle cx="1654" cy="1971.25" r="3" fill="#78716c"/>
+<title>acruroperla_crypturoperla</title></g>
+<g><circle cx="1786" cy="1963.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1967.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Acruroperla atra <tspan fill="#a8a29e">#136</tspan></text>
+<title>acruroperla_atra · taxonId 136</title></g>
+<g><circle cx="1786" cy="1979" r="3.4" fill="#0f766e"/>
+<text x="1794" y="1982.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Crypturoperla paradoxa <tspan fill="#a8a29e">#205</tspan></text>
+<title>crypturoperla_paradoxa · taxonId 205</title></g>
+<g><circle cx="1654" cy="1994.5" r="3.4" fill="#0f766e"/>
+<text x="1662" y="1998.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Austroperlids <tspan fill="#a8a29e">#137</tspan></text>
+<title>austroperlids · taxonId 137</title></g>
+<g><circle cx="994" cy="2108.873046875" r="3" fill="#78716c"/>
+<title>mayfly_start_point</title></g>
+<g><circle cx="1126" cy="2057.46875" r="3" fill="#78716c"/>
+<title>k_adult_mayflies</title></g>
+<g><circle cx="1258" cy="2023.5625" r="3" fill="#78716c"/>
+<title>node_112</title></g>
+<g><circle cx="1390" cy="2010" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2013.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">killer mayflies/purple perils <tspan fill="#a8a29e">#256</tspan></text>
+<title>adult_ameletopsidae · taxonId 256</title></g>
+<g><circle cx="1390" cy="2037.125" r="3" fill="#78716c"/>
+<title>node_113</title></g>
+<g><circle cx="1522" cy="2025.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="2029.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">siphlonurids <tspan fill="#a8a29e">#250</tspan></text>
+<title>adult_siphlonuridae · taxonId 250</title></g>
+<g><circle cx="1522" cy="2048.75" r="3" fill="#78716c"/>
+<title>node_114</title></g>
+<g><circle cx="1654" cy="2041" r="3.4" fill="#0f766e"/>
+<text x="1662" y="2044.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">oniscigastrids <tspan fill="#a8a29e">#251</tspan></text>
+<title>adult_oniscigastridae · taxonId 251</title></g>
+<g><circle cx="1654" cy="2056.5" r="3.4" fill="#0f766e"/>
+<text x="1662" y="2060.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">stream horses <tspan fill="#a8a29e">#252</tspan></text>
+<title>adult_coloburiscidae · taxonId 252</title></g>
+<g><circle cx="1258" cy="2091.375" r="3" fill="#78716c"/>
+<title>node_115</title></g>
+<g><circle cx="1390" cy="2079.75" r="3" fill="#78716c"/>
+<title>node_116</title></g>
+<g><circle cx="1522" cy="2072" r="5.5" fill="#c2410c"/>
+<circle cx="1522" cy="2072" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="1522" y="2057" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">Baetids #253 <tspan fill="#c2410c">(2 ways in)</tspan></text>
+<title>adult_baetidae · taxonId 253
+PARENTS: node_116, node_117</title></g>
+<g><circle cx="1522" cy="2087.5" r="3.4" fill="#0f766e"/>
+<text x="1530" y="2091.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leptophlebs <tspan fill="#a8a29e">#254</tspan></text>
+<title>adult_leptophlebiidae · taxonId 254</title></g>
+<g><circle cx="1390" cy="2103" r="3" fill="#78716c"/>
+<title>node_117</title></g>
+<g><circle cx="1522" cy="2103" r="3.4" fill="#0f766e"/>
+<text x="1530" y="2106.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Caenids <tspan fill="#a8a29e">#255</tspan></text>
+<title>adult_caenidae_prosopistomatidae · taxonId 255</title></g>
+<g><circle cx="1126" cy="2160.27734375" r="3" fill="#78716c"/>
+<title>old_mayfly_start_point</title></g>
+<g><circle cx="1258" cy="2160.27734375" r="3" fill="#78716c"/>
+<title>order_ephemeroptera</title></g>
+<g><circle cx="1390" cy="2118.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2122.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Mayflies <tspan fill="#a8a29e">#87</tspan></text>
+<title>ephemeroptera · taxonId 87</title></g>
+<g><circle cx="1390" cy="2202.0546875" r="3" fill="#78716c"/>
+<title>k_ephemeroptera</title></g>
+<g><circle cx="1522" cy="2153.859375" r="3" fill="#78716c"/>
+<title>node_83</title></g>
+<g><circle cx="1654" cy="2134" r="3.4" fill="#0f766e"/>
+<text x="1662" y="2137.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">stream horses <tspan fill="#a8a29e">#93</tspan></text>
+<title>coloburiscoides · taxonId 93</title></g>
+<g><circle cx="1654" cy="2173.71875" r="3" fill="#78716c"/>
+<title>node_85</title></g>
+<g><circle cx="1786" cy="2149.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="2153.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">killer mayflies/purple perils <tspan fill="#a8a29e">#89</tspan></text>
+<title>mirawara · taxonId 89</title></g>
+<g><circle cx="1786" cy="2197.9375" r="3" fill="#78716c"/>
+<title>node_86</title></g>
+<g><circle cx="1918" cy="2176.625" r="3" fill="#78716c"/>
+<title>k_leptophlebiidae</title></g>
+<g><circle cx="2050" cy="2165" r="3.4" fill="#0f766e"/>
+<text x="2058" y="2168.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Jappa <tspan fill="#a8a29e">#96</tspan></text>
+<title>jappa · taxonId 96</title></g>
+<g><circle cx="2050" cy="2188.25" r="3" fill="#78716c"/>
+<title>node_88</title></g>
+<g><circle cx="2182" cy="2180.5" r="3.4" fill="#0f766e"/>
+<text x="2190" y="2184.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Atalophlebia <tspan fill="#a8a29e">#95</tspan></text>
+<title>atalophlebia · taxonId 95</title></g>
+<g><circle cx="2182" cy="2196" r="3.4" fill="#0f766e"/>
+<text x="2190" y="2199.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leptophlebs <tspan fill="#a8a29e">#97</tspan></text>
+<title>leptophlebs · taxonId 97</title></g>
+<g><circle cx="1918" cy="2219.25" r="3" fill="#78716c"/>
+<title>node_87</title></g>
+<g><circle cx="2050" cy="2211.5" r="3.4" fill="#0f766e"/>
+<text x="2058" y="2215.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">siphlonurids <tspan fill="#a8a29e">#100</tspan></text>
+<title>siphlonuridae · taxonId 100</title></g>
+<g><circle cx="2050" cy="2227" r="3.4" fill="#0f766e"/>
+<text x="2058" y="2230.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Baetids <tspan fill="#a8a29e">#90</tspan></text>
+<title>baetidae · taxonId 90</title></g>
+<g><circle cx="1522" cy="2250.25" r="3" fill="#78716c"/>
+<title>node_84</title></g>
+<g><circle cx="1654" cy="2242.5" r="3.4" fill="#0f766e"/>
+<text x="1662" y="2246.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Caenids <tspan fill="#a8a29e">#91</tspan></text>
+<title>caenidae · taxonId 91</title></g>
+<g><circle cx="1654" cy="2258" r="3.4" fill="#0f766e"/>
+<text x="1662" y="2261.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">oniscigastrids <tspan fill="#a8a29e">#99</tspan></text>
+<title>tasmanophlebia · taxonId 99</title></g>
+<g><circle cx="334" cy="2507.990478515625" r="3" fill="#78716c"/>
+<text x="325" y="2511.590478515625" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_worm_like</text>
+<title>k_worm_like</title></g>
+<g><circle cx="466" cy="2467.35595703125" r="3" fill="#78716c"/>
+<text x="457" y="2470.95595703125" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_89</text>
+<title>node_89</title></g>
+<g><circle cx="598" cy="2413.2119140625" r="3" fill="#78716c"/>
+<title>node_91</title></g>
+<g><circle cx="730" cy="2320.423828125" r="5.5" fill="#c2410c"/>
+<circle cx="730" cy="2320.423828125" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
+<text x="730" y="2305.423828125" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">order_diptera <tspan fill="#c2410c">(2 ways in)</tspan></text>
+<title>order_diptera
+PARENTS: node_91, node_92</title></g>
+<g><circle cx="862" cy="2273.5" r="3.4" fill="#0f766e"/>
+<text x="870" y="2277.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">maggots <tspan fill="#a8a29e">#69</tspan></text>
+<title>diptera · taxonId 69</title></g>
+<g><circle cx="862" cy="2367.34765625" r="3" fill="#78716c"/>
+<title>k_diptera</title></g>
+<g><circle cx="994" cy="2320" r="3" fill="#78716c"/>
+<title>node_93</title></g>
+<g><circle cx="1126" cy="2296.75" r="3" fill="#78716c"/>
+<title>node_94</title></g>
+<g><circle cx="1258" cy="2289" r="3.4" fill="#0f766e"/>
+<text x="1266" y="2292.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Soldier fly larvae <tspan fill="#a8a29e">#83</tspan></text>
+<title>stratiomyidae · taxonId 83</title></g>
+<g><circle cx="1258" cy="2304.5" r="3.4" fill="#0f766e"/>
+<text x="1266" y="2308.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Moth fly larvae <tspan fill="#a8a29e">#81</tspan></text>
+<title>psychodidae · taxonId 81</title></g>
+<g><circle cx="1126" cy="2343.25" r="3" fill="#78716c"/>
+<title>node_95</title></g>
+<g><circle cx="1258" cy="2327.75" r="3" fill="#78716c"/>
+<title>node_96</title></g>
+<g><circle cx="1390" cy="2320" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2323.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">'U' bent midges <tspan fill="#a8a29e">#79</tspan></text>
+<title>dixidae · taxonId 79</title></g>
+<g><circle cx="1390" cy="2335.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2339.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Mosquito larvae, wrigglers <tspan fill="#a8a29e">#78</tspan></text>
+<title>culicidae · taxonId 78</title></g>
+<g><circle cx="1258" cy="2358.75" r="3" fill="#78716c"/>
+<title>node_97</title></g>
+<g><circle cx="1390" cy="2351" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2354.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Rat tailed maggot <tspan fill="#a8a29e">#84</tspan></text>
+<title>syrphidae · taxonId 84</title></g>
+<g><circle cx="1390" cy="2366.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2370.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Wetland maggots <tspan fill="#a8a29e">#80</tspan></text>
+<title>ephydridae_and_sciomyzidae · taxonId 80</title></g>
+<g><circle cx="994" cy="2414.6953125" r="3" fill="#78716c"/>
+<title>k_maggots</title></g>
+<g><circle cx="1126" cy="2382" r="3.4" fill="#0f766e"/>
+<text x="1134" y="2385.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Bleff <tspan fill="#a8a29e">#71</tspan></text>
+<title>blephariceridae · taxonId 71</title></g>
+<g><circle cx="1126" cy="2447.390625" r="3" fill="#78716c"/>
+<title>node_98</title></g>
+<g><circle cx="1258" cy="2412.03125" r="3" fill="#78716c"/>
+<title>node_99</title></g>
+<g><circle cx="1390" cy="2397.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2401.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Black fly larvae <tspan fill="#a8a29e">#82</tspan></text>
+<title>simuliidae · taxonId 82</title></g>
+<g><circle cx="1390" cy="2426.5625" r="3" fill="#78716c"/>
+<title>k_chironomid</title></g>
+<g><circle cx="1522" cy="2413" r="3.4" fill="#0f766e"/>
+<text x="1530" y="2416.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Blood worm <tspan fill="#a8a29e">#76</tspan></text>
+<title>chironomus · taxonId 76</title></g>
+<g><circle cx="1522" cy="2440.125" r="3" fill="#78716c"/>
+<title>node_101</title></g>
+<g><circle cx="1654" cy="2428.5" r="3.4" fill="#0f766e"/>
+<text x="1662" y="2432.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Pog <tspan fill="#a8a29e">#72</tspan></text>
+<title>ceratopogonidae · taxonId 72</title></g>
+<g><circle cx="1654" cy="2451.75" r="3" fill="#78716c"/>
+<title>node_102</title></g>
+<g><circle cx="1786" cy="2444" r="3.4" fill="#0f766e"/>
+<text x="1794" y="2447.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Chironomid <tspan fill="#a8a29e">#77</tspan></text>
+<title>chironomid · taxonId 77</title></g>
+<g><circle cx="1786" cy="2459.5" r="3.4" fill="#0f766e"/>
+<text x="1794" y="2463.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Crane fly larvae <tspan fill="#a8a29e">#86</tspan></text>
+<title>tipulidae · taxonId 86</title></g>
+<g><circle cx="1258" cy="2482.75" r="3" fill="#78716c"/>
+<title>node_100</title></g>
+<g><circle cx="1390" cy="2475" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2478.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Tasselled maggot <tspan fill="#a8a29e">#70</tspan></text>
+<title>athericidae · taxonId 70</title></g>
+<g><circle cx="1390" cy="2490.5" r="3.4" fill="#0f766e"/>
+<text x="1398" y="2494.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">River maggots <tspan fill="#a8a29e">#85</tspan></text>
+<title>tabanidae_dolichopodidae_empididae_some_tipulidae · taxonId 85</title></g>
+<g><circle cx="730" cy="2506" r="3.4" fill="#0f766e"/>
+<text x="738" y="2509.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Worms <tspan fill="#a8a29e">#176</tspan></text>
+<title>oligochaeta · taxonId 176</title></g>
+<g><circle cx="598" cy="2521.5" r="3" fill="#78716c"/>
+<title>node_92</title></g>
+<g><circle cx="730" cy="2521.5" r="3.4" fill="#0f766e"/>
+<text x="738" y="2525.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leeches <tspan fill="#a8a29e">#175</tspan></text>
+<title>hirudinea · taxonId 175</title></g>
+<g><circle cx="466" cy="2548.625" r="3" fill="#78716c"/>
+<text x="457" y="2552.225" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_90</text>
+<title>node_90</title></g>
+<g><circle cx="598" cy="2537" r="3.4" fill="#0f766e"/>
+<text x="606" y="2540.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">flatworms <tspan fill="#a8a29e">#198</tspan></text>
+<title>turbellaria · taxonId 198</title></g>
+<g><circle cx="598" cy="2560.25" r="3" fill="#78716c"/>
+<title>node_103</title></g>
+<g><circle cx="730" cy="2552.5" r="3.4" fill="#0f766e"/>
+<text x="738" y="2556.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Roundworms <tspan fill="#a8a29e">#196</tspan></text>
+<title>nematoda · taxonId 196</title></g>
+<g><circle cx="730" cy="2568" r="3.4" fill="#0f766e"/>
+<text x="738" y="2571.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Gordian worms <tspan fill="#a8a29e">#197</tspan></text>
+<title>nematomorpha · taxonId 197</title></g>
+<g transform="translate(70,2682)">
+<rect x="-16" y="-30" width="2832" height="262" rx="10" fill="#fff" stroke="#e7e5e4"/>
+<text x="0" y="-6" font-size="17" font-weight="700" fill="#1c1917">Convergence points — where a node has more than one way in</text>
+<text x="0" y="16" font-size="13" fill="#57534e">pathFromRoot() follows <tspan font-family="monospace">parentLink</tspan>, which stores exactly one parent. Reach one of these nodes by any other route and the reconstructed path is the KEPT one, not the one the user walked.</text>
+<text x="0" y="46" font-size="11.5" font-weight="700" fill="#78716c">NODE</text><text x="210" y="46" font-size="11.5" font-weight="700" fill="#78716c">KEPT BY parentLink</text><text x="470" y="46" font-size="11.5" font-weight="700" fill="#78716c">OTHER WAY(S) IN — LOST</text><text x="900" y="46" font-size="11.5" font-weight="700" fill="#78716c">PATH parentLink REBUILDS</text>
+<rect x="-8" y="54" width="2816" height="21" fill="#faf8f5"/>
+<text x="0" y="68" font-size="12" font-weight="600" fill="#9a3412">decapoda <tspan font-weight="400" fill="#a8a29e">#3</tspan></text>
+<text x="210" y="68" font-size="12" fill="#166534">decapoda_intercept_1</text>
+<text x="470" y="68" font-size="12" fill="#b91c1c">decapoda_intercept_2, decapoda_intercept_3</text>
+<text x="900" y="68" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_arthropoda &gt; k_crustacea &gt; decapoda_intercept_1 &gt; decapoda</text>
+<text x="0" y="91" font-size="12" font-weight="600" fill="#9a3412">coleoptera <tspan font-weight="400" fill="#a8a29e">#26</tspan></text>
+<text x="210" y="91" font-size="12" fill="#166534">order_coleoptera</text>
+<text x="470" y="91" font-size="12" fill="#b91c1c">k_coleoptera_larvae</text>
+<text x="900" y="91" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_arthropoda &gt; node_6 &gt; k_hexapoda &gt; node_14 &gt; order_coleoptera &gt; coleoptera</text>
+<rect x="-8" y="100" width="2816" height="21" fill="#faf8f5"/>
+<text x="0" y="114" font-size="12" font-weight="600" fill="#9a3412">trichoptera <tspan font-weight="400" fill="#a8a29e">#145</tspan></text>
+<text x="210" y="114" font-size="12" fill="#166534">order_trichoptera</text>
+<text x="470" y="114" font-size="12" fill="#b91c1c">k_freeliving</text>
+<text x="900" y="114" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_arthropoda &gt; node_6 &gt; k_hexapoda &gt; node_15 &gt; node_40 &gt; node_42 &gt; order_trichoptera &gt; trichoptera</text>
+<text x="0" y="137" font-size="12" font-weight="600" fill="#9a3412">k_freeliving</text>
+<text x="210" y="137" font-size="12" fill="#166534">k_trichoptera</text>
+<text x="470" y="137" font-size="12" fill="#b91c1c">node_44c</text>
+<text x="900" y="137" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_arthropoda &gt; node_6 &gt; k_hexapoda &gt; node_15 &gt; node_40 &gt; node_42 &gt; order_trichoptera &gt; k_trichoptera &gt; k_freeliving</text>
+<rect x="-8" y="146" width="2816" height="21" fill="#faf8f5"/>
+<text x="0" y="160" font-size="12" font-weight="600" fill="#9a3412">k_odonata</text>
+<text x="210" y="160" font-size="12" fill="#166534">order_odonata</text>
+<text x="470" y="160" font-size="12" fill="#b91c1c">old_mayfly_start_point</text>
+<text x="900" y="160" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_arthropoda &gt; node_6 &gt; k_hexapoda &gt; node_15 &gt; node_40 &gt; node_43 &gt; order_odonata &gt; k_odonata</text>
+<text x="0" y="183" font-size="12" font-weight="600" fill="#9a3412">k_coleoptera_larvae</text>
+<text x="210" y="183" font-size="12" fill="#166534">node_65</text>
+<text x="470" y="183" font-size="12" fill="#b91c1c">node_44c, node_75</text>
+<text x="900" y="183" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_arthropoda &gt; node_6 &gt; k_hexapoda &gt; node_15 &gt; node_40 &gt; node_43 &gt; k_larval &gt; node_104 &gt; node_65 &gt; k_coleoptera_larvae</text>
+<rect x="-8" y="192" width="2816" height="21" fill="#faf8f5"/>
+<text x="0" y="206" font-size="12" font-weight="600" fill="#9a3412">adult_baetidae <tspan font-weight="400" fill="#a8a29e">#253</tspan></text>
+<text x="210" y="206" font-size="12" fill="#166534">node_116</text>
+<text x="470" y="206" font-size="12" fill="#b91c1c">node_117</text>
+<text x="900" y="206" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_arthropoda &gt; node_6 &gt; k_hexapoda &gt; node_15 &gt; node_41 &gt; mayfly_start_point &gt; k_adult_mayflies &gt; node_115 &gt; node_116 &gt; adult_baetidae</text>
+<text x="0" y="229" font-size="12" font-weight="600" fill="#9a3412">order_diptera</text>
+<text x="210" y="229" font-size="12" fill="#166534">node_91</text>
+<text x="470" y="229" font-size="12" fill="#b91c1c">node_92</text>
+<text x="900" y="229" font-size="11" font-family="monospace" fill="#57534e">root &gt; node_1 &gt; k_worm_like &gt; node_89 &gt; node_91 &gt; order_diptera</text>
+</g>
+</svg>
