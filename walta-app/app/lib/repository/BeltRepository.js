@@ -29,7 +29,19 @@ exports.open = function (dbName) {
     }
 
     function setLevel(key, level) {
-        db.execute("INSERT OR REPLACE INTO user (userId, beltLevel) VALUES (?, ?)", key, level);
+        db.execute("INSERT INTO user (userId, beltLevel) VALUES (?, ?) " +
+                   "ON CONFLICT(userId) DO UPDATE SET beltLevel = excluded.beltLevel", key, level);
+    }
+
+    function syncedLevelFor(key) {
+        const rs = db.execute("SELECT syncedBeltLevel FROM user WHERE userId = ?", key);
+        let level = null;
+        try {
+            if (rs.isValidRow()) level = rs.fieldByName("syncedBeltLevel");
+        } finally {
+            rs.close();
+        }
+        return level;
     }
 
     return {
@@ -39,6 +51,20 @@ exports.open = function (dbName) {
 
         awardBeltLevel: function (userId, level) {
             setLevel(keyFor(userId), level);
+        },
+
+        // The level waiting to reach the server, or null when it is already
+        // there. Derived from the two columns rather than a flag of its own,
+        // so there is no second record to fall out of step.
+        beltNeedingPush: function (userId) {
+            const key = keyFor(userId);
+            const held = levelFor(key);
+            if (held === null) return null;
+            return held === syncedLevelFor(key) ? null : held;
+        },
+
+        markBeltPushed: function (userId, level) {
+            db.execute("UPDATE user SET syncedBeltLevel = ? WHERE userId = ?", level, keyFor(userId));
         },
 
         // Hands the signed-out user's belt to the account that just signed in,
