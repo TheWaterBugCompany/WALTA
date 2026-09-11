@@ -147,12 +147,34 @@ let beltAwards = createBeltAwards({
   cerdiApi: Alloy.Globals.CerdiApi,
 });
 
+// A belt is earned without a network and reaches the server whenever it next
+// can: on finishing a session, when the network returns, and at startup.
+// pushPendingBelt reads the server first, so a belt earned offline here can
+// never demote an account another device has already promoted.
+function pushBeltWhenPossible() {
+  beltAwards.pushPendingBelt()
+    .catch((err) => log(`Belt still waiting to reach the server: ${err}`));
+}
+
 // Subscribed here rather than with the other login wiring above because it
 // needs beltAwards: a belt earned before signing in belongs to whoever signs in.
+// Signing in also reads the account's belt, so a fresh install wears the one
+// earned elsewhere.
 Topics.subscribe( Topics.LOGGEDIN, (data) => {
   setUserId();
   beltAwards.claimAnonymousBelt();
+  beltAwards.reconcileWithServer()
+    .then(pushBeltWhenPossible)
+    .catch((err) => log(`Belt not reconciled with the server: ${err}`));
 } );
+
+Topics.subscribe( Topics.TRAINING_SUCCESS, pushBeltWhenPossible );
+
+Ti.Network.addEventListener("change", (e) => {
+  if (e.networkType !== Ti.Network.NETWORK_NONE) pushBeltWhenPossible();
+});
+
+pushBeltWhenPossible();
 
 let services ={
   System: System,
