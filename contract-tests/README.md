@@ -28,9 +28,9 @@ npx grunt contract-test
 
 Requires network access to `api-sandbox.waterbugblitz.org.au` and a test account on the sandbox (`testlogin@example.com` / `tstPassw0rd!` is what the existing tests use). Run time is around 2 minutes against a healthy sandbox.
 
-## Expected output (as of 2026-07-02)
+## Expected output (as of 2026-09-11)
 
-- 22 passing, 0 pending, 0 failing against a healthy sandbox.
+- 26 passing, 0 pending, 0 failing against a healthy sandbox.
 
 The image-comparison tests are active and assert fidelity via the shared jimp
 colour-histogram helper (`features/support/image-test.js`). Two previously
@@ -38,6 +38,12 @@ tracked failures — token-expiration timing and an unknown-creature count drift
 — no longer reproduce. The token-expiration tests use fake timers and stay
 timing-sensitive, so an occasional flake there is a machine-speed artefact, not
 a contract break.
+
+The `#updateUser` tests pin the user-profile contract that belt-level
+persistence rests on: `PUT /user` takes a `belt_level` integer, the server
+stores it as `qaqc_level`, a partial body leaves the rest of the profile
+untouched, and the `PUT` response already carries the new level — so a caller
+does not need to read the profile back.
 
 Run to investigate the sandbox; not part of regular CI because the suite would hammer CERDI's sandbox on every push.
 

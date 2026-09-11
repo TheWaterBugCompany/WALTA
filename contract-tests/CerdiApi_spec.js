@@ -348,6 +348,60 @@ describe('CerdiApi', function() {
         });
     });
 
+    describe( '#updateUser', function() {
+        const PROFILE_FIELDS = ['name', 'email', 'group', 'survey_consent', 'share_name_consent'];
+
+        // The account keeps its level between runs, so asserting a level it
+        // already holds would pass even if the server ignored the write.
+        function aDifferentLevel(current) {
+            return current === 4 ? 3 : 4;
+        }
+
+        async function loginAndMoveBeltLevel() {
+            await cerdi.loginUser('testlogin@example.com', 'tstPassw0rd!');
+            const before = await cerdi.retrieveUser();
+            return { before, level: aDifferentLevel(before.qaqc_level) };
+        }
+
+        // `belt_level` is documented as a write-only alias for `qaqc_level`.
+        it("should persist belt_level and read it back as qaqc_level", async function() {
+            const { level } = await loginAndMoveBeltLevel();
+
+            await cerdi.updateUser({ belt_level: level });
+
+            const after = await cerdi.retrieveUser();
+            expect(
+                after.qaqc_level,
+                `expected server to persist belt_level ${level} as qaqc_level, got ${after.qaqc_level}`
+            ).to.equal(level);
+        });
+
+        // Whether a partial body is accepted decides whether pushing a belt
+        // has to read the profile back and merge it first.
+        it("should leave the rest of the profile alone", async function() {
+            const { before, level } = await loginAndMoveBeltLevel();
+
+            await cerdi.updateUser({ belt_level: level });
+
+            const after = await cerdi.retrieveUser();
+            expect(_(after).pick(...PROFILE_FIELDS)).to.deep.equal(_(before).pick(...PROFILE_FIELDS));
+        });
+
+        it("should return the updated level in the response", async function() {
+            const { level } = await loginAndMoveBeltLevel();
+
+            const updated = await cerdi.updateUser({ belt_level: level });
+
+            expect(updated.qaqc_level).to.equal(level);
+        });
+
+        it("should not return belt_level", async function() {
+            await cerdi.loginUser('testlogin@example.com', 'tstPassw0rd!');
+
+            expect(await cerdi.retrieveUser()).to.not.have.property('belt_level');
+        });
+    });
+
     describe( '#submitSample', function() {
         it("should submit a sample", function() {
             return expect( 
