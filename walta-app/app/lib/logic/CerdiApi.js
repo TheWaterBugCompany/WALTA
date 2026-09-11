@@ -276,6 +276,16 @@ function createCerdiApi(serverUrl, client_secret, opts = {}) {
                 .then((resp) => ({ id: resp.id, accessToken: resp.accessToken }));
         },
 
+        retrieveUser() {
+            let accessToken = this._requireAccessToken();
+            return http.makeJsonGetRequest(this.serverUrl + '/user', accessToken);
+        },
+
+        updateUser(userInfo) {
+            let accessToken = this._requireAccessToken();
+            return http.makeJsonPutRequest(this.serverUrl + '/user', userInfo, accessToken);
+        },
+
         loginUser(email, password) {
             return this.withServerAccessToken((accessToken) =>
                 http.makeJsonPostRequest(this.serverUrl + '/token/create', {
