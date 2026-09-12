@@ -28,8 +28,9 @@ class TaxonComparisonViewModel extends ChangeNotifier {
 
   _nameOf(taxonId) { return this._key.findTaxonById(taxonId).name; }
 
-  // A hint is found by the taxon's place in the key, not by its taxonId — the
-  // two are separate id spaces and the wrong one silently finds nothing.
+  // Browsing out to a taxon is a jump to its place in the key, so it needs the
+  // ref — a separate id space from the taxonId, and the wrong one silently
+  // finds nothing.
   _refOf(taxonId) { return this._key.findTaxonById(taxonId).id; }
 
   get cards() { return this._cards; }
@@ -57,7 +58,10 @@ class TaxonComparisonViewModel extends ChangeNotifier {
   // been taken marked. The tray position rides along so a corrected
   // identification lands back in the slot it was graded in.
   whichQuestion() {
-    const hint = this._key.hintForIncorrectDecision(this._refOf(this._selectedTaxonId), this._refOf(this._correctTaxonId));
+    const hint = this._key.hintForIncorrectDecision({
+      selectedTaxonId: this._selectedTaxonId,
+      expectedTaxonId: this._correctTaxonId,
+    });
     this.close();
     this._topics.fireTopicEvent(this._topics.JUMPTO, {
       id: hint.nodeId,
