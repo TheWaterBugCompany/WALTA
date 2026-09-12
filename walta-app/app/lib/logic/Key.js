@@ -11,13 +11,30 @@ if ( typeof(_) == "undefined") _ = require('underscore')._;
 var Logger = require('util/Logger');
 var error = (m, tag = "key") => Logger.error(m, tag);
 
-// The chain of nodes from the root down to the given node (root first, leaf last).
-function pathFromRoot( node ) {
-	var path = [];
-	for ( var cur = node; cur; cur = cur.parentLink ) {
-		path.unshift( cur );
+// Every route from the root down to a taxon (root first, taxon last). The key is
+// a DAG rather than a tree — several nodes have more than one parent — so a taxon
+// can sit at the end of more than one route, and a node's single `parentLink`
+// names only whichever one the loader happened to store last.
+function routesToTaxa( root ) {
+	var routes = [];
+	(function walk( node, trail ) {
+		// A node already on this trail would be a cycle; the key has none today,
+		// and skipping makes that a missing route rather than a hang.
+		if ( _(trail).contains( node ) ) return;
+		trail = trail.concat( node );
+		if ( _.isUndefined( node.questions ) ) { routes.push( trail ); return; }
+		node.questions.forEach( ( q ) => walk( q.outcome, trail ) );
+	})( root, [] );
+	return routes;
+}
+
+// The index at which two routes part, or -1 if one is a prefix of the other.
+function firstDivergence( a, b ) {
+	var limit = Math.min( a.length, b.length );
+	for ( var i = 0; i < limit; i++ ) {
+		if ( a[i] !== b[i] ) return i;
 	}
-	return path;
+	return -1;
 }
 
 function createKeyNode( args ) {
@@ -229,31 +246,31 @@ function createKey( args ) {
 			return this.root;
 		},
 
-		// The refId of the couplet where the user's path first diverged from
-		// the expected path — i.e. the decision they answered incorrectly.
-		findIncorrectDecision: function( selectedRef, expectedRef ) {
-			var hint = this.hintForIncorrectDecision( selectedRef, expectedRef );
-			return hint && hint.nodeId;
-		},
-
-		// The couplet where the two paths part, plus the outcome on either side of
-		// it — everything the key search needs to mark one branch right and the
-		// other wrong. The refs name the nodes the branches lead to, which is what
-		// a question's outcome carries.
-		hintForIncorrectDecision: function( selectedRef, expectedRef ) {
-			var selectedPath = pathFromRoot( this.findTaxon( selectedRef ) );
-			var expectedPath = pathFromRoot( this.findTaxon( expectedRef ) );
-			var limit = Math.min( selectedPath.length, expectedPath.length );
-			for ( var i = 0; i < limit; i++ ) {
-				if ( selectedPath[i] !== expectedPath[i] ) {
-					return {
-						nodeId: selectedPath[i-1].id,
-						correctRef: expectedPath[i].id,
-						incorrectRef: selectedPath[i].id
-					};
-				}
-			}
-			return null;
+		// The couplet where the two identifications part, plus the outcome on either
+		// side of it — everything the key search needs to mark one branch right and
+		// the other wrong. The refs name the nodes the branches lead to, which is
+		// what a question's outcome carries.
+		//
+		// Both taxa are looked up by taxonId rather than ref because a taxonId can
+		// sit at more than one place in the key, and either place is a legitimate
+		// answer. Of every route to either, the pair that parts *latest* names the
+		// question the reader actually had to tell the two animals apart on.
+		hintForIncorrectDecision: function( { selectedTaxonId, expectedTaxonId } ) {
+			var routes = routesToTaxa( this.root );
+			var routesFor = ( taxonId ) => routes.filter(
+				( r ) => String( _.last( r ).taxonId ) === String( taxonId ) );
+			var expected = routesFor( expectedTaxonId );
+			var best = null;
+			routesFor( selectedTaxonId ).forEach( ( s ) => expected.forEach( ( e ) => {
+				var i = firstDivergence( s, e );
+				if ( i > 0 && ( best === null || i > best.i ) ) best = { i, s, e };
+			}));
+			if ( ! best ) return null;
+			return {
+				nodeId: best.s[best.i-1].id,
+				correctRef: best.e[best.i].id,
+				incorrectRef: best.s[best.i].id
+			};
 		}
 	});
 	
