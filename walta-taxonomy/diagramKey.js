@@ -145,7 +145,7 @@ function renderHeader(width, graph, maxDepth) {
 <text x="${PAD_LEFT}" y="46" font-size="30" font-weight="700" fill="#1c1917">WALTA dichotomous key — structure and convergence points</text>
 <text x="${PAD_LEFT}" y="74" font-size="15" fill="#57534e">${graph.vertices.length} nodes (${couplets} couplets, ${taxa} taxa) · max depth ${maxDepth} · generated from key.json</text>
 <text x="${PAD_LEFT}" y="99" font-size="15" fill="#9a3412" font-weight="600">No cycles. But ${graph.convergenceEdges.length} extra edges make this a DAG: ${new Set(graph.convergenceEdges.map((e) => e.to)).size} nodes are reachable by more than one route.</text>
-<text x="${PAD_LEFT}" y="121" font-size="14" fill="#57534e">Grey = the single route <tspan font-family="monospace" font-size="13">parentLink</tspan> records. Orange = a second route into the same node, invisible to <tspan font-family="monospace" font-size="13">pathFromRoot()</tspan>.</text>
+<text x="${PAD_LEFT}" y="121" font-size="14" fill="#57534e">Grey = the single route <tspan font-family="monospace" font-size="13">parentLink</tspan> records. Orange = a second route into the same node, invisible to anything that walks <tspan font-family="monospace" font-size="13">parentLink</tspan> back up.</text>
 <g transform="translate(${legendX},30)">
 <rect x="-14" y="-14" width="500" height="104" rx="8" fill="#fff" stroke="#e7e5e4"/>
 <line x1="0" y1="4" x2="30" y2="4" stroke="#a8a29e" stroke-width="1.6"/><text x="40" y="8" font-size="13" fill="#44403c">canonical edge (the one parentLink walks back up)</text>
@@ -160,7 +160,7 @@ function renderFooter(width, top, converged) {
 		`<g transform="translate(${PAD_LEFT},${top})">`,
 		`<rect x="-16" y="-30" width="${width - PAD_LEFT * 2 + 32}" height="262" rx="10" fill="#fff" stroke="#e7e5e4"/>`,
 		`<text x="0" y="-6" font-size="17" font-weight="700" fill="#1c1917">Convergence points — where a node has more than one way in</text>`,
-		`<text x="0" y="16" font-size="13" fill="#57534e">pathFromRoot() follows <tspan font-family="monospace">parentLink</tspan>, which stores exactly one parent. Reach one of these nodes by any other route and the reconstructed path is the KEPT one, not the one the user walked.</text>`,
+		`<text x="0" y="16" font-size="13" fill="#57534e">A walk back up <tspan font-family="monospace">parentLink</tspan> — which stores exactly one parent — rebuilds the KEPT route. Reach one of these nodes any other way and that is not the route the reader took.</text>`,
 		`<text x="0" y="46" font-size="11.5" font-weight="700" fill="#78716c">NODE</text><text x="210" y="46" font-size="11.5" font-weight="700" fill="#78716c">KEPT BY parentLink</text><text x="470" y="46" font-size="11.5" font-weight="700" fill="#78716c">OTHER WAY(S) IN — LOST</text><text x="900" y="46" font-size="11.5" font-weight="700" fill="#78716c">PATH parentLink REBUILDS</text>`,
 	];
 	rows.forEach((v, i) => {

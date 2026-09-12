@@ -11,12 +11,18 @@ const TAXA = {
     "WB2": { id: "anisops-ref", name: "Anisops", photoUrls: ["/photos/anisops.jpg", "/photos/anisops-2.jpg"] },
     "WB3": { id: "nameless-ref", name: "Nameless", photoUrls: [] },
 };
-const REFS = Object.keys(TAXA).map((id) => TAXA[id].id);
 const KEY = {
     findTaxonById(id) { return TAXA[id]; },
-    hintForIncorrectDecision(selectedRef, expectedRef) {
-        if (REFS.indexOf(selectedRef) < 0 || REFS.indexOf(expectedRef) < 0) { return null; }
-        return { nodeId: "couplet-7", correctRef: expectedRef, incorrectRef: selectedRef };
+    // The hint is asked for by taxonId, not by ref: one taxonId can sit at more
+    // than one place in the key, so which position to hint from is the key's
+    // decision, not the caller's. The refs it answers with name the branches.
+    hintForIncorrectDecision({ selectedTaxonId, expectedTaxonId }) {
+        if (!TAXA[selectedTaxonId] || !TAXA[expectedTaxonId]) { return null; }
+        return {
+            nodeId: "couplet-7",
+            correctRef: TAXA[expectedTaxonId].id,
+            incorrectRef: TAXA[selectedTaxonId].id,
+        };
     },
 };
 
