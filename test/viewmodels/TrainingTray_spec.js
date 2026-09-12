@@ -334,7 +334,7 @@ describe("TrainingTrayViewModel", function () {
       vm.endcapVm.taxa[0].tap();
       expect(topics.fired).to.deep.equal([{
         event: "taxon_comparison",
-        data: { selectedTaxonId: 1, correctTaxonId: 99, position: 0, training: true },
+        data: { selectedTaxonId: 1, selectedRoute: null, correctTaxonId: 99, position: 0, training: true },
       }]);
     });
 
@@ -347,7 +347,7 @@ describe("TrainingTrayViewModel", function () {
       vm.endcapVm.taxa[0].tap();
       expect(topics.fired).to.deep.equal([{
         event: "taxon_comparison",
-        data: { selectedTaxonId: 1, correctTaxonId: 1, position: 0, training: true },
+        data: { selectedTaxonId: 1, selectedRoute: null, correctTaxonId: 1, position: 0, training: true },
       }]);
     });
 

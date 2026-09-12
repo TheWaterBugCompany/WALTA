@@ -14,7 +14,8 @@ const BINDINGS = {
 module.exports = function createKeySearchController({ view, services, bindView, args }) {
   const { key, node, hint = null, surveyType = null, allowAddToSample = false, position = null, training = false } = args || {};
   const vm = new KeySearchViewModel({
-    key, node, topics: services.topics, hint, surveyType, allowAddToSample, position, training,
+    key, node, topics: services.topics, trail: services.keyTrail, hint,
+    surveyType, allowAddToSample, position, training,
   });
   const unbind = bindView(view, vm, BINDINGS);
 

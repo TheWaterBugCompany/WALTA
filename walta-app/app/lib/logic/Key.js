@@ -28,6 +28,17 @@ function routesToTaxa( root ) {
 	return routes;
 }
 
+// Keep only the routes the reader is recorded as having walked. A route stored
+// before a taxonomy edit no longer traces real edges and simply matches nothing,
+// so a stale one needs no validating — it falls back to every route, which is
+// the best guess available without knowing how the reader got there.
+function narrowToWalked( routes, walkedRefs ) {
+	if ( ! walkedRefs ) return routes;
+	var walked = routes.filter( ( r ) =>
+		r.length === walkedRefs.length && r.every( ( n, i ) => n.id === walkedRefs[i] ) );
+	return walked.length ? walked : routes;
+}
+
 // The index at which two routes part, or -1 if one is a prefix of the other.
 function firstDivergence( a, b ) {
 	var limit = Math.min( a.length, b.length );
@@ -255,21 +266,23 @@ function createKey( args ) {
 		// sit at more than one place in the key, and either place is a legitimate
 		// answer. Of every route to either, the pair that parts *latest* names the
 		// question the reader actually had to tell the two animals apart on.
-		hintForIncorrectDecision: function( { selectedTaxonId, expectedTaxonId } ) {
+		hintForIncorrectDecision: function( { selectedTaxonId, expectedTaxonId, selectedRoute = null } ) {
 			var routes = routesToTaxa( this.root );
 			var routesFor = ( taxonId ) => routes.filter(
 				( r ) => String( _.last( r ).taxonId ) === String( taxonId ) );
 			var expected = routesFor( expectedTaxonId );
 			var best = null;
-			routesFor( selectedTaxonId ).forEach( ( s ) => expected.forEach( ( e ) => {
-				var i = firstDivergence( s, e );
-				if ( i > 0 && ( best === null || i > best.i ) ) best = { i, s, e };
-			}));
+			narrowToWalked( routesFor( selectedTaxonId ), selectedRoute )
+				.forEach( ( s ) => expected.forEach( ( e ) => {
+					var i = firstDivergence( s, e );
+					if ( i > 0 && ( best === null || i > best.i ) ) best = { i, s, e };
+				}));
 			if ( ! best ) return null;
 			return {
 				nodeId: best.s[best.i-1].id,
 				correctRef: best.e[best.i].id,
-				incorrectRef: best.s[best.i].id
+				incorrectRef: best.s[best.i].id,
+				route: best.s.slice( 0, best.i ).map( ( n ) => n.id )
 			};
 		}
 	});

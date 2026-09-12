@@ -9,6 +9,7 @@ function toIconData(taxon, key) {
   return {
     taxonId: taxon.taxonId,
     sampleTaxonId: taxon.id,
+    route: taxon.route,
     abundance: null,
     silhouette: keyTaxon ? keyTaxon.bluebug[0] : "/images/unknown-bug-icon.png",
     name: keyTaxon ? keyTaxon.name : "unknown",
