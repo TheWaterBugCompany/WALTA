@@ -1,0 +1,62 @@
+[
+  {
+    "id": "34686163475",
+    "branch": "task/wb-344-walked-route",
+    "sha": "e485d7091faa3580a76561a8bd9cf4dc681c366a",
+    "capturedAt": "2026-09-12T09:46:31Z"
+  },
+  {
+    "id": "34683177851",
+    "branch": "task/wb-343-hint-couplet",
+    "sha": "4a9f2fac9385888fc9ab581514306d49801e8e4a",
+    "capturedAt": "2026-09-12T08:42:04Z"
+  },
+  {
+    "id": "34566623688",
+    "branch": "main",
+    "sha": "2373bc79855f937126e04de0faa798c8781b3681",
+    "capturedAt": "2026-09-11T06:01:14Z"
+  },
+  {
+    "id": "34565268903",
+    "branch": "task/wb-342-key-graph-diagram",
+    "sha": "08f35a817df8ab4edee1a4eecca463700bc1a691",
+    "capturedAt": "2026-09-11T05:41:30Z"
+  },
+  {
+    "id": "34564835957",
+    "branch": "task/wb-341-belt-sync",
+    "sha": "71061e872bd2ca19be30fc617100a9fb89daad9e",
+    "capturedAt": "2026-09-11T05:26:32Z"
+  },
+  {
+    "id": "34561006212",
+    "branch": "main",
+    "sha": "c6613011775836807215eb15f497ddfd611f2811",
+    "capturedAt": "2026-09-11T04:26:43Z"
+  },
+  {
+    "id": "34559764943",
+    "branch": "main",
+    "sha": "be3182888942eed68da3c96fb9f48af4d8636088",
+    "capturedAt": "2026-09-11T04:02:20Z"
+  },
+  {
+    "id": "34557201493",
+    "branch": "task/wb-341-belt-level-persistence",
+    "sha": "527e5dafa571a88b6c21020c6465ee47be465cdf",
+    "capturedAt": "2026-09-11T03:18:59Z"
+  },
+  {
+    "id": "34473166895",
+    "branch": "task/wb-338-webview-scrollbar-capture-flake",
+    "sha": "8c421d57d175d116ac84a73c5b35056b4d3df21c",
+    "capturedAt": "2026-09-10T12:01:15Z"
+  },
+  {
+    "id": "34469712572",
+    "branch": "task/wb-338-webview-scrollbar-capture-flake",
+    "sha": "b32bd3e00467c14bc91dd4815b6244bba264e1d9",
+    "capturedAt": "2026-09-10T11:46:02Z"
+  }
+]
