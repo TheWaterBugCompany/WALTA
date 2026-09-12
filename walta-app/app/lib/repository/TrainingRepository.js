@@ -15,6 +15,13 @@ const Taxon = require("../models/Taxon");
 // while backgrounded resumes where it left off (currentSessionCode + loadTray
 // after a restart). Cleared only on an explicit new session or clear().
 
+// A route stored before a taxonomy edit is no longer readable as one; an
+// unreadable route is simply no route, and the key falls back to guessing.
+function parseRoute(stored) {
+    if (!stored) return null;
+    try { return JSON.parse(stored); } catch (e) { return null; }
+}
+
 exports.open = function (dbName) {
     const db = Ti.Database.open(dbName);
 
@@ -39,14 +46,15 @@ exports.open = function (dbName) {
         },
 
         loadTray: function () {
-            const rs = db.execute("SELECT id, taxonId, position FROM training_taxa ORDER BY position");
+            const rs = db.execute("SELECT id, taxonId, position, route FROM training_taxa ORDER BY position");
             const taxa = [];
             try {
                 while (rs.isValidRow()) {
                     taxa.push(new Taxon({
                         id: rs.fieldByName("id"),
                         taxonId: rs.fieldByName("taxonId"),
-                        position: rs.fieldByName("position")
+                        position: rs.fieldByName("position"),
+                        route: parseRoute(rs.fieldByName("route"))
                     }));
                     rs.next();
                 }
@@ -56,12 +64,12 @@ exports.open = function (dbName) {
             return new SampleTray(taxa);
         },
 
-        addTaxon: function (tray, taxonId, position) {
+        addTaxon: function (tray, taxonId, position, route) {
             db.execute(
-                "INSERT INTO training_taxa (taxonId, position) VALUES (?, ?)",
-                taxonId, position
+                "INSERT INTO training_taxa (taxonId, position, route) VALUES (?, ?, ?)",
+                taxonId, position, route ? JSON.stringify(route) : null
             );
-            const taxon = new Taxon({ id: db.lastInsertRowId, taxonId: taxonId, position: position });
+            const taxon = new Taxon({ id: db.lastInsertRowId, taxonId: taxonId, position: position, route: route || null });
             tray.add(taxon);
             return taxon;
         },

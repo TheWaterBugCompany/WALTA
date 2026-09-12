@@ -18,6 +18,7 @@ var SampleHistorySource = require("logic/SampleHistorySource");
 var { Survey } = require("logic/Survey");
 var { Navigation } = require('logic/Navigation');
 var TrainingRepository = require("repository/TrainingRepository");
+var createKeyTrail = require("logic/KeyTrail");
 var createTrainingExercises = require("logic/TrainingExercises");
 var createTraining = require("logic/Training");
 var BeltRepository = require("repository/BeltRepository");
@@ -131,6 +132,11 @@ GeoLocationService.init();
 Alloy.Models.instance("sample").loadCurrent();
 let taxa = Alloy.Models.instance("sample").loadTaxa();
 
+// The couplets the reader walks through, which the key needs to tell them which
+// question they got wrong — a taxon can be reached more than one way, and a
+// node records only one parent.
+let keyTrail = createKeyTrail({ key: Alloy.Globals.Key });
+
 // Training session service — reads the bundled exercise data and drives the
 // training repo (tables already migrated into waterbug_data in alloy.js).
 let trainingExercises = createTrainingExercises(
@@ -138,6 +144,7 @@ let trainingExercises = createTrainingExercises(
 let training = createTraining({
   repo: TrainingRepository.open("waterbug_data"),
   exercises: trainingExercises,
+  keyTrail: keyTrail,
 });
 
 // Belts earned by completing those exercises, kept per user in the same DB.
@@ -161,6 +168,7 @@ let services ={
   Training: training,
   cerdiApi: Alloy.Globals.CerdiApi,
   topics: Topics,
+  keyTrail: keyTrail,
   dialogs: Dialogs,
   platform: PlatformSpecific,
   photoSize: PhotoUtils.photoSize,

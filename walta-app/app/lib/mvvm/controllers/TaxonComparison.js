@@ -14,12 +14,13 @@ const BINDINGS = {
 };
 
 module.exports = function createTaxonComparisonController({ view, close, services, bindView, args }) {
-  const { key, selectedTaxonId, correctTaxonId, position } = args || {};
+  const { key, selectedTaxonId, correctTaxonId, selectedRoute, position } = args || {};
   const vm = new TaxonComparisonViewModel({
     key: key,
     topics: services.topics,
     selectedTaxonId,
     correctTaxonId,
+    selectedRoute,
     position,
   });
   const unbind = bindView(view, vm, BINDINGS);
