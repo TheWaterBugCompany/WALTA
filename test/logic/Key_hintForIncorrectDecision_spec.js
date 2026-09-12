@@ -50,13 +50,13 @@ describe("Key.hintForIncorrectDecision", function () {
 	it("names the couplet and both of its outcomes when the leaves are siblings", function () {
 		const { key } = buildKey();
 		expect(key.hintForIncorrectDecision({ selectedTaxonId: "1", expectedTaxonId: "2" }))
-			.to.deep.equal({ nodeId: "n2", correctRef: "t2", incorrectRef: "t1" });
+			.to.deep.equal({ nodeId: "n2", correctRef: "t2", incorrectRef: "t1", route: ["n1", "n2"] });
 	});
 
 	it("names the couplet higher up when the paths part earlier", function () {
 		const { key } = buildKey();
 		expect(key.hintForIncorrectDecision({ selectedTaxonId: "1", expectedTaxonId: "3" }))
-			.to.deep.equal({ nodeId: "n1", correctRef: "t3", incorrectRef: "n2" });
+			.to.deep.equal({ nodeId: "n1", correctRef: "t3", incorrectRef: "n2", route: ["n1"] });
 	});
 
 	// The refs are not interchangeable: which one is correct depends on which
@@ -64,7 +64,7 @@ describe("Key.hintForIncorrectDecision", function () {
 	it("swaps the outcomes when the answers are swapped", function () {
 		const { key } = buildKey();
 		expect(key.hintForIncorrectDecision({ selectedTaxonId: "3", expectedTaxonId: "1" }))
-			.to.deep.equal({ nodeId: "n1", correctRef: "n2", incorrectRef: "t3" });
+			.to.deep.equal({ nodeId: "n1", correctRef: "n2", incorrectRef: "t3", route: ["n1"] });
 	});
 
 	it("returns null when the selected and expected taxa are the same", function () {
@@ -76,7 +76,7 @@ describe("Key.hintForIncorrectDecision", function () {
 	it("matches taxonIds across the two id spaces", function () {
 		const { key } = buildKey();
 		expect(key.hintForIncorrectDecision({ selectedTaxonId: 1, expectedTaxonId: 2 }))
-			.to.deep.equal({ nodeId: "n2", correctRef: "t2", incorrectRef: "t1" });
+			.to.deep.equal({ nodeId: "n2", correctRef: "t2", incorrectRef: "t1", route: ["n1", "n2"] });
 	});
 });
 
@@ -131,14 +131,14 @@ describe("Key.hintForIncorrectDecision where a node has two parents", function (
 	it("names the couplet on the route the reader could have taken, not the one parentLink holds", function () {
 		const { key } = buildTwoParents();
 		expect(key.hintForIncorrectDecision({ selectedTaxonId: "1", expectedTaxonId: "2" }))
-			.to.deep.equal({ nodeId: "n2", correctRef: "shared", incorrectRef: "t1" });
+			.to.deep.equal({ nodeId: "n2", correctRef: "shared", incorrectRef: "t1", route: ["n1", "n2"] });
 	});
 
 	// Coming at it from n3 instead, the couplet that matters is n3's.
 	it("names the other parent's couplet for a reader who came that way", function () {
 		const { key } = buildTwoParents();
 		expect(key.hintForIncorrectDecision({ selectedTaxonId: "4", expectedTaxonId: "2" }))
-			.to.deep.equal({ nodeId: "n3", correctRef: "shared", incorrectRef: "t4" });
+			.to.deep.equal({ nodeId: "n3", correctRef: "shared", incorrectRef: "t4", route: ["n1", "n3"] });
 	});
 });
 
@@ -167,6 +167,6 @@ describe("Key.hintForIncorrectDecision where one taxonId sits at two places", fu
 	it("prefers the position nearest the reader's own answer", function () {
 		const { key } = buildDuplicate();
 		expect(key.hintForIncorrectDecision({ selectedTaxonId: "1", expectedTaxonId: "2" }))
-			.to.deep.equal({ nodeId: "n2", correctRef: "t2", incorrectRef: "t1" });
+			.to.deep.equal({ nodeId: "n2", correctRef: "t2", incorrectRef: "t1", route: ["n1", "n2"] });
 	});
 });

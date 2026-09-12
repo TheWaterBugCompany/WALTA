@@ -74,6 +74,31 @@ describe("TrainingRepository", function () {
         resumed.close();
     });
 
+    // The route walked to an identification is what lets the key name the
+    // question the reader got wrong, so it has to survive the app being
+    // reclaimed mid-session the same way the identification itself does.
+    it("resumes the route walked to each identification", function () {
+        var tray = repo.startSession("101");
+        repo.addTaxon(tray, 5, 0, ["root", "k_mollusca", "gastropoda"]);
+        repo.close();
+
+        var resumed = TrainingRepository.open(TEST_DB);
+        expect(resumed.loadTray().taxa()[0].route).to.deep.equal(["root", "k_mollusca", "gastropoda"]);
+        resumed.close();
+    });
+
+    // Sessions started before the column existed have none, and identifications
+    // not reached by walking never had one.
+    it("hydrates a taxon stored without a route", function () {
+        var tray = repo.startSession("101");
+        repo.addTaxon(tray, 5, 0);
+        repo.close();
+
+        var resumed = TrainingRepository.open(TEST_DB);
+        expect(resumed.loadTray().taxa()[0].route).to.equal(null);
+        resumed.close();
+    });
+
     it("starting a new session clears the previous session's taxa", function () {
         var tray = repo.startSession("101");
         repo.addTaxon(tray, 5, 0);

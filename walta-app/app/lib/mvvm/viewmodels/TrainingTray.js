@@ -177,6 +177,9 @@ class TrainingTrayViewModel extends ChangeNotifier {
       if (this.verdictFor(collectionIndex)) {
         this._topics.fireTopicEvent(this._topics.TAXON_COMPARISON, {
           selectedTaxonId: data.taxonId,
+          // Which couplets were walked to reach this answer — the key needs them
+          // to name a question the reader was actually asked.
+          selectedRoute: data.route || null,
           correctTaxonId: this._assessor.expectedAt(collectionIndex),
           position: collectionIndex,
           training: true,

@@ -5,12 +5,13 @@ const TaxonComparisonPhotoViewModel = require("./TaxonComparisonPhoto");
 // chosen, what it should have been, and the photos side by side when they differ.
 // Titanium-free.
 class TaxonComparisonViewModel extends ChangeNotifier {
-  constructor({ key, topics, selectedTaxonId, correctTaxonId, position = null }) {
+  constructor({ key, topics, selectedTaxonId, correctTaxonId, selectedRoute = null, position = null }) {
     super();
     this._key = key;
     this._topics = topics;
     this._selectedTaxonId = selectedTaxonId;
     this._correctTaxonId = correctTaxonId;
+    this._selectedRoute = selectedRoute;
     this._position = position;
     // Built once: bindView re-reads a collection getter on every change, and
     // rebuilding these would remount the photos for nothing.
@@ -61,6 +62,7 @@ class TaxonComparisonViewModel extends ChangeNotifier {
     const hint = this._key.hintForIncorrectDecision({
       selectedTaxonId: this._selectedTaxonId,
       expectedTaxonId: this._correctTaxonId,
+      selectedRoute: this._selectedRoute,
     });
     this.close();
     this._topics.fireTopicEvent(this._topics.JUMPTO, {

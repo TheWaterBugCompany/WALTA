@@ -106,4 +106,59 @@ describe("KeySearchViewModel", function () {
         vm.questions[0].select();
         expect(forwarded.node.id).to.equal("n2");
     });
+
+    // The trail is what lets the key tell which question a reader got wrong when
+    // the same taxon can be reached more than one way.
+    describe("recording the walk", function () {
+        function recorder() {
+            const calls = [];
+            return {
+                calls,
+                enter(node, seed) { calls.push(["enter", node.id, seed || null]); },
+                step(node) { calls.push(["step", node.id]); },
+                parentOf() { return null; },
+                route() { return null; },
+                reset() {},
+            };
+        }
+
+        it("anchors the trail on the couplet it opens", function () {
+            const { key, n2 } = buildKey();
+            const trail = recorder();
+            new KeySearchViewModel({ key, node: n2, topics: Topics, trail });
+            expect(trail.calls).to.deep.equal([["enter", "n2", null]]);
+        });
+
+        it("records the branch the reader takes", function () {
+            const { key, n1 } = buildKey();
+            const trail = recorder();
+            const vm = new KeySearchViewModel({ key, node: n1, topics: Topics, trail });
+            vm.questions[0].select();
+            expect(trail.calls).to.deep.equal([["enter", "n1", null], ["step", "n2"]]);
+        });
+
+        // A correction jump lands mid-key, so the hint hands over the route that
+        // got there — otherwise the corrected walk has no history above it.
+        it("seeds the trail from the hint on the couplet the hint names", function () {
+            const { key, n1 } = buildKey();
+            const trail = recorder();
+            const hint = { nodeId: "n1", correctRef: "t3", incorrectRef: "n2", route: ["n1"] };
+            new KeySearchViewModel({ key, node: n1, topics: Topics, hint, trail });
+            expect(trail.calls).to.deep.equal([["enter", "n1", ["n1"]]]);
+        });
+
+        // The hint is carried onward through every navigation, so it must only
+        // seed where it belongs — walking on from the couplet must not re-seed.
+        it("does not seed on a couplet the hint does not name", function () {
+            const { key, n2 } = buildKey();
+            const trail = recorder();
+            const hint = { nodeId: "n1", correctRef: "t3", incorrectRef: "n2", route: ["n1"] };
+            new KeySearchViewModel({ key, node: n2, topics: Topics, hint, trail });
+            expect(trail.calls).to.deep.equal([["enter", "n2", null]]);
+        });
+
+        it("records nothing when no trail is being kept", function () {
+            expect(() => build().questions[0].select()).to.not.throw();
+        });
+    });
 });
