@@ -19,6 +19,7 @@ const training_session_202608070000000 = require("./202608070000000_training_ses
 const training_taxa_202608070000001 = require("./202608070000001_training_taxa");
 const user_202609090000000 = require("./202609090000000_user");
 const user_202609110000000 = require("./202609110000000_user");
+const training_taxa_202609120000000 = require("./202609120000000_training_taxa");
 
 module.exports = [
     { id: "202605080000000", table: "logs", up: logs_202605080000000.up, down: logs_202605080000000.down },
@@ -26,4 +27,5 @@ module.exports = [
     { id: "202608070000001", table: "training_taxa", up: training_taxa_202608070000001.up, down: training_taxa_202608070000001.down },
     { id: "202609090000000", table: "user", up: user_202609090000000.up, down: user_202609090000000.down },
     { id: "202609110000000", table: "user", up: user_202609110000000.up, down: user_202609110000000.down },
+    { id: "202609120000000", table: "training_taxa", up: training_taxa_202609120000000.up, down: training_taxa_202609120000000.down },
 ];

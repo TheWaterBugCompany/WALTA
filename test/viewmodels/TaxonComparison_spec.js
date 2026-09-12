@@ -16,12 +16,15 @@ const KEY = {
     // The hint is asked for by taxonId, not by ref: one taxonId can sit at more
     // than one place in the key, so which position to hint from is the key's
     // decision, not the caller's. The refs it answers with name the branches.
-    hintForIncorrectDecision({ selectedTaxonId, expectedTaxonId }) {
+    asked: null,
+    hintForIncorrectDecision({ selectedTaxonId, expectedTaxonId, selectedRoute }) {
+        this.asked = { selectedTaxonId, expectedTaxonId, selectedRoute };
         if (!TAXA[selectedTaxonId] || !TAXA[expectedTaxonId]) { return null; }
         return {
             nodeId: "couplet-7",
             correctRef: TAXA[expectedTaxonId].id,
             incorrectRef: TAXA[selectedTaxonId].id,
+            route: ["root", "couplet-7"],
         };
     },
 };
@@ -106,7 +109,7 @@ describe("TaxonComparisonViewModel", function () {
             incorrect().whichQuestion();
             expect(jumps).to.deep.equal([{
                 id: "couplet-7",
-                hint: { nodeId: "couplet-7", correctRef: "caddis-ref", incorrectRef: "anisops-ref" },
+                hint: { nodeId: "couplet-7", correctRef: "caddis-ref", incorrectRef: "anisops-ref", route: ["root", "couplet-7"] },
                 allowAddToSample: true,
                 position: null,
                 training: true,
@@ -184,5 +187,40 @@ describe("TaxonComparisonViewModel", function () {
     it("gives each card a key of its own so both are mounted", function () {
         const keys = incorrect().cards.map((c) => c.key);
         expect(keys).to.deep.equal(["WB2", "WB1"]);
+    });
+});
+
+// A taxon can sit at the end of more than one route, so the couplet the reader
+// got wrong is only answerable from the route they actually walked.
+describe("TaxonComparisonViewModel asking for a hint", function () {
+    afterEach(function () { Topics.reset(); });
+
+    it("asks from the route the reader walked", function () {
+        const vm = new TaxonComparisonViewModel({
+            topics: Topics, key: KEY,
+            selectedTaxonId: "WB2", correctTaxonId: "WB1",
+            selectedRoute: ["root", "couplet-7", "anisops-ref"],
+        });
+        vm.whichQuestion();
+        expect(KEY.asked.selectedRoute).to.deep.equal(["root", "couplet-7", "anisops-ref"]);
+    });
+
+    it("asks without one when no route was recorded", function () {
+        const vm = new TaxonComparisonViewModel({
+            topics: Topics, key: KEY, selectedTaxonId: "WB2", correctTaxonId: "WB1",
+        });
+        vm.whichQuestion();
+        expect(KEY.asked.selectedRoute).to.equal(null);
+    });
+
+    // The corrected walk restarts mid-key, so the route that reached the couplet
+    // rides along in the hint for the key screen to pick up.
+    it("hands the reaching route forward in the hint", function () {
+        const jumps = [];
+        Topics.subscribe(Topics.JUMPTO, (e) => jumps.push(e));
+        new TaxonComparisonViewModel({
+            topics: Topics, key: KEY, selectedTaxonId: "WB2", correctTaxonId: "WB1",
+        }).whichQuestion();
+        expect(jumps[0].hint.route).to.deep.equal(["root", "couplet-7"]);
     });
 });

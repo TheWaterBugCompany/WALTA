@@ -29,6 +29,7 @@ describe("logic/TrainingTraySource", function () {
     expect(createTrainingTraySource(tray, key, false).at(0)).to.deep.equal({
       taxonId: 90,
       sampleTaxonId: 7,
+      route: null,
       abundance: null,
       silhouette: "/images/baetidae.png",
       name: "Baetidae",

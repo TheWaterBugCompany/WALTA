@@ -19,6 +19,10 @@ function fakeTray() {
   };
 }
 
+// Training always has a trail to read in the app — the key is the only path to
+// an identification — so specs about other things still have to supply one.
+const noTrail = { route: () => null };
+
 function fakeRepo(tray) {
   return {
     started: null,
@@ -28,9 +32,9 @@ function fakeRepo(tray) {
     startSession(code) { this.started = code; tray._items = []; return tray; },
     currentSessionCode() { return this.started; },
     loadTray() { return tray; },
-    addTaxon(t, taxonId, position) {
-      this.added.push({ tray: t, taxonId, position });
-      const taxon = { id: ++this._seq, taxonId, position };
+    addTaxon(t, taxonId, position, route) {
+      this.added.push({ tray: t, taxonId, position, route });
+      const taxon = { id: ++this._seq, taxonId, position, route };
       t.add(taxon);
       return taxon;
     },
@@ -48,7 +52,7 @@ describe("logic/Training", function () {
     tray = fakeTray();
     repo = fakeRepo(tray);
     exercises = fakeExercises({ "101": [90, 198, 176, 131], "202": [3, 4] });
-    training = createTraining({ repo, exercises });
+    training = createTraining({ repo, exercises, keyTrail: noTrail });
   });
 
   it("starts a session for a known code and exposes the tray + assessor", function () {
@@ -89,8 +93,8 @@ describe("logic/Training", function () {
     training.addTaxon(198);
 
     expect(repo.added).to.deep.equal([
-      { tray, taxonId: 90, position: 0 },
-      { tray, taxonId: 198, position: 1 },
+      { tray, taxonId: 90, position: 0, route: null },
+      { tray, taxonId: 198, position: 1, route: null },
     ]);
     expect(tray.length).to.equal(2);
   });
@@ -121,7 +125,7 @@ describe("logic/Training", function () {
     training.addTaxon(90);
 
     // A fresh Training over the same repo stands in for leaving and re-entering.
-    const resumed = createTraining({ repo, exercises });
+    const resumed = createTraining({ repo, exercises, keyTrail: noTrail });
     expect(resumed.startTraining("101")).to.equal(true);
     expect(resumed.currentTray()).to.equal(tray);
     expect(resumed.currentTray().length, "existing taxon retained").to.equal(1);
@@ -133,7 +137,7 @@ describe("logic/Training", function () {
     training.startTraining("101");
     training.addTaxon(90);
 
-    const switched = createTraining({ repo, exercises });
+    const switched = createTraining({ repo, exercises, keyTrail: noTrail });
     expect(switched.startTraining("202")).to.equal(true);
     expect(repo.started, "started a fresh session for the new code").to.equal("202");
     expect(switched.currentTray().length, "old taxa cleared").to.equal(0);
@@ -142,5 +146,51 @@ describe("logic/Training", function () {
   it("reports the code of the session in progress", function () {
     training.startTraining("101");
     expect(training.currentSessionCode()).to.equal("101");
+  });
+});
+
+// Which couplets the reader walked to reach an identification is what lets the
+// key name the question they got wrong when a taxon has more than one way in.
+describe("Training records the route walked to an identification", function () {
+  function build(route) {
+    const tray = fakeTray();
+    const repo = fakeRepo(tray);
+    const training = createTraining({
+      repo,
+      exercises: fakeExercises({ 101: { beltLevel: 1, taxa: [90, 198] } }),
+      keyTrail: { route: () => route },
+    });
+    training.startTraining(101);
+    return { training, repo };
+  }
+
+  it("stores the route the reader walked", function () {
+    const { training, repo } = build(["root", "n1", "t1"]);
+    training.addTaxon(90);
+    expect(repo.added[0].route).to.deep.equal(["root", "n1", "t1"]);
+  });
+
+  it("stores no route when none was walked", function () {
+    const { training, repo } = build(null);
+    training.addTaxon(90);
+    expect(repo.added[0].route).to.equal(null);
+  });
+
+  // Re-identifying a slot replaces the row, so the route has to replace with it
+  // rather than the old walk lingering against the new answer.
+  it("replaces the route when the slot is re-identified", function () {
+    const tray = fakeTray();
+    const repo = fakeRepo(tray);
+    let walked = ["root", "wrong-way"];
+    const training = createTraining({
+      repo,
+      exercises: fakeExercises({ 101: { beltLevel: 1, taxa: [90, 198] } }),
+      keyTrail: { route: () => walked },
+    });
+    training.startTraining(101);
+    training.addTaxon(999, 0);
+    walked = ["root", "right-way"];
+    training.addTaxon(90, 0);
+    expect(repo.added[repo.added.length - 1].route).to.deep.equal(["root", "right-way"]);
   });
 });
