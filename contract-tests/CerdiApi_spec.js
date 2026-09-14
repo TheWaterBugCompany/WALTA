@@ -363,16 +363,18 @@ describe('CerdiApi', function() {
             return { before, level: aDifferentLevel(before.qaqc_level) };
         }
 
-        // `belt_level` is documented as a write-only alias for `qaqc_level`.
-        it("should persist belt_level and read it back as qaqc_level", async function() {
+        // The API also accepts `belt_level` as a submission-only alias, which we
+        // deliberately don't use — one name read and written leaves CERDI free
+        // to drop the alias.
+        it("should persist qaqc_level", async function() {
             const { level } = await loginAndMoveBeltLevel();
 
-            await cerdi.updateUser({ belt_level: level });
+            await cerdi.updateUser({ qaqc_level: level });
 
             const after = await cerdi.retrieveUser();
             expect(
                 after.qaqc_level,
-                `expected server to persist belt_level ${level} as qaqc_level, got ${after.qaqc_level}`
+                `expected server to persist qaqc_level ${level}, got ${after.qaqc_level}`
             ).to.equal(level);
         });
 
@@ -381,7 +383,7 @@ describe('CerdiApi', function() {
         it("should leave the rest of the profile alone", async function() {
             const { before, level } = await loginAndMoveBeltLevel();
 
-            await cerdi.updateUser({ belt_level: level });
+            await cerdi.updateUser({ qaqc_level: level });
 
             const after = await cerdi.retrieveUser();
             expect(_(after).pick(...PROFILE_FIELDS)).to.deep.equal(_(before).pick(...PROFILE_FIELDS));
@@ -390,7 +392,7 @@ describe('CerdiApi', function() {
         it("should return the updated level in the response", async function() {
             const { level } = await loginAndMoveBeltLevel();
 
-            const updated = await cerdi.updateUser({ belt_level: level });
+            const updated = await cerdi.updateUser({ qaqc_level: level });
 
             expect(updated.qaqc_level).to.equal(level);
         });

@@ -33,7 +33,7 @@ module.exports = function createBeltAwards({ repository, exercises, cerdiApi }) 
     function sendPendingLevel(userId) {
         const level = repository.beltNeedingPush(userId);
         if (level === null) return Promise.resolve();
-        return cerdiApi.updateUser({ belt_level: level })
+        return cerdiApi.updateUser({ qaqc_level: level })
             .then(() => repository.markBeltPushed(userId, level));
     }
 
