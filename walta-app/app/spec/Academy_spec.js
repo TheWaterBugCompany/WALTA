@@ -60,7 +60,6 @@ describe('Academy start button state', function() {
 
 	it('greys and disables Start for an invalid full code', function() {
 		enter("123");
-		Ti.API.info("[AcademyBtn] invalid enabled=" + ctl.startButton.enabled + " bg=" + ctl.startButton.backgroundColor);
 		expect( ctl.startButton.enabled ).to.equal( false );
 		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.disabled );
 		// Newer Android paints a disabled button its enabled backgroundColor unless
@@ -79,7 +78,6 @@ describe('Academy start button state', function() {
 
 	it('greens and enables Start for a valid code', function() {
 		enter("101");
-		Ti.API.info("[AcademyBtn] valid enabled=" + ctl.startButton.enabled + " bg=" + ctl.startButton.backgroundColor);
 		expect( ctl.startButton.enabled ).to.equal( true );
 		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.success );
 	});
@@ -87,7 +85,6 @@ describe('Academy start button state', function() {
 	it('reverts Start to the disabled look when a valid code is edited to an invalid one', function() {
 		enter("101");            // valid → green + enabled
 		lib.vm.digit3 = "2";     // "101" → "102" (invalid)
-		Ti.API.info("[AcademyBtn] valid→invalid enabled=" + ctl.startButton.enabled + " bg=" + ctl.startButton.backgroundColor);
 		expect( ctl.startButton.enabled ).to.equal( false );
 		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.disabled );
 	});
