@@ -40,10 +40,12 @@ timing-sensitive, so an occasional flake there is a machine-speed artefact, not
 a contract break.
 
 The `#updateUser` tests pin the user-profile contract that belt-level
-persistence rests on: `PUT /user` takes a `belt_level` integer, the server
-stores it as `qaqc_level`, a partial body leaves the rest of the profile
+persistence rests on: `PUT /user` takes a `qaqc_level` integer under the same
+name the `GET` returns it by, a partial body leaves the rest of the profile
 untouched, and the `PUT` response already carries the new level — so a caller
-does not need to read the profile back.
+does not need to read the profile back. The API also accepts `belt_level` as a
+submission-only alias for the same field; nothing here uses it, so it can be
+retired without touching the app.
 
 Run to investigate the sandbox; not part of regular CI because the suite would hammer CERDI's sandbox on every push.
 

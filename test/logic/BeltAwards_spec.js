@@ -55,7 +55,7 @@ describe("logic/BeltAwards", function () {
     const { awards, cerdiApi } = make();
     awards.awardFor("101");
     await awards.pushPendingBelt();
-    expect(cerdiApi.updates).to.deep.equal([{ belt_level: 3 }]);
+    expect(cerdiApi.updates).to.deep.equal([{ qaqc_level: 3 }]);
   });
 
   it("does not push a belt the server already has", async function () {
@@ -72,7 +72,7 @@ describe("logic/BeltAwards", function () {
     await awards.pushPendingBelt();
     awards.awardFor("202");
     await awards.pushPendingBelt();
-    expect(cerdiApi.updates).to.deep.equal([{ belt_level: 3 }, { belt_level: 6 }]);
+    expect(cerdiApi.updates).to.deep.equal([{ qaqc_level: 3 }, { qaqc_level: 6 }]);
   });
 
   it("pushes nothing when no belt has been earned", async function () {
@@ -91,7 +91,7 @@ describe("logic/BeltAwards", function () {
     expect(rejected, "a failed push rejects so the caller can log it").to.be.true;
     cerdiApi.updateUserRejects = false;
     await awards.pushPendingBelt();
-    expect(cerdiApi.updates).to.deep.equal([{ belt_level: 3 }, { belt_level: 3 }]);
+    expect(cerdiApi.updates).to.deep.equal([{ qaqc_level: 3 }, { qaqc_level: 3 }]);
   });
 
   it("does not push a belt earned while signed out", async function () {
@@ -122,7 +122,7 @@ describe("logic/BeltAwards", function () {
     await awards.reconcileWithServer();
     expect(repository.beltLevelFor("38")).to.equal(6);
     await awards.pushPendingBelt();
-    expect(cerdiApi.updates).to.deep.equal([{ belt_level: 6 }]);
+    expect(cerdiApi.updates).to.deep.equal([{ qaqc_level: 6 }]);
   });
 
   it("takes the server's belt on a device that has earned none", async function () {
