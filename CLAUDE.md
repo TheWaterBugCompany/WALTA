@@ -127,7 +127,7 @@ adb logcat -s "TiAPI:*"   # Android
 - `walta-app/app/lib/logic/` — Business logic: `CerdiApi.js` (API client), `KeyLoader*.js` (taxonomy loading), `SampleUploader/Downloader.js` (sync)
 - `walta-app/app/lib/util/` — Shared utilities (Logger, PhotoUtils, etc.)
 - `walta-app/app/assets/` — Static assets and taxonomy data
-- `walta-taxonomy/walta/` — Compiled taxonomy files (`key.json`, `key.ink.json`)
+- `walta-taxonomy/walta/` — Taxonomy source (`key.ink`, `taxa.ink`) and the compiled `key.json`; build with `npx grunt build-key`
 - `test/` — Node.js unit test specs (`*_spec.js`)
 - `features/` — Cucumber BDD acceptance tests
 - `end-to-end-testing/` — Appium integration tests

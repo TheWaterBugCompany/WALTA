@@ -22,13 +22,13 @@ Run the full pipeline: `npx grunt build-key`. That runs `build-key-from-ink` (pa
 
 ## Prerequisites
 
-`npm install` is the only setup step. The build-time parser is pure Node — no `.NET`, no `inklecate` binary, no `ink` git submodule. (The empty `ink/` directory and `.gitmodules` entry are left for a future cleanup along with the other legacy `walta-taxonomy/` scripts.)
+`npm install` is the only setup step. The build-time parser is pure Node — no `.NET`, no `inklecate` binary, no `ink` git submodule.
 
 ## The loaders
 
 - `KeyLoaderInk.js` — **build-time only.** Reads `key.ink` (resolving `INCLUDE` directives), tokenises lines into knots / choices / tags, and emits a `Key` / `Question` / `Taxon` / `SpeedbugIndex` tree which is then serialised to `key.json` via `CircularJSON`. The implicit smoke test is that the resulting `key.json` lets the app launch and the dichotomous key behaves correctly in features; `verify-media` adds a build-time check that every media reference resolves.
 - `KeyLoaderJson.js` — **runtime.** Reads `key.json` via `CircularJSON.parse` and rehydrates the prototypes back into `Key` / `Question` / `Taxon` instances. Exercised by [Main_spec.js](../../walta-app/app/spec/Main_spec.js) and [TaxonList_spec.js](../../walta-app/app/spec/TaxonList_spec.js), which load test-fixture keys.
-- `KeyLoaderXml.js` — legacy XML loader, retained for the old key format. See [KeyLoaderXml_spec.js](../../walta-app/app/spec/KeyLoaderXml_spec.js).
+- `KeyLoaderXml.js` — loader for the XML key format that predated `.ink`. **Nothing in the app or the build uses it**, and the taxonomy no longer ships an XML source; the only XML left in the repo is the `simpleKey1` test fixture its own spec reads. See [KeyLoaderXml_spec.js](../../walta-app/app/spec/KeyLoaderXml_spec.js).
 
 ## Ink subset
 
