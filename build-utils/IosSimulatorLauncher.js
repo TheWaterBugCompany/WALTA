@@ -82,6 +82,12 @@ class IosSimulatorLauncher {
     if (appPath) {
       await this._exec(["simctl", "install", this._udid, appPath], { timeout: 180000 });
     }
+    // Grant location before launching. Asked for at runtime instead, the system
+    // location alert lands over whatever window a spec is waiting to lay out and
+    // the spec hangs until its timeout. Tolerate a refusal — an older runtime
+    // that doesn't know the service just leaves the app asking, as it does today.
+    await this._exec(["simctl", "privacy", this._udid, "grant", "location", appId])
+      .catch(() => {});
     const argv = buildLaunchArgv(launchArgs);
     // Match the Android `-S` behaviour — when launch args are present we
     // want a fresh JS runtime so the spec runner re-evaluates with the new
