@@ -237,10 +237,12 @@ function render(graph) {
 				`<circle cx="${v.x}" cy="${v.y}" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>`,
 				`<text x="${v.x}" y="${v.y - 15}" font-size="12" font-weight="700" text-anchor="middle" fill="#9a3412" paint-order="stroke" stroke="#fbfbf9" stroke-width="4">${escapeXml(v.label)}${v.taxonId ? ` #${v.taxonId}` : ""} <tspan fill="#c2410c">(${v.parents.length} ways in)</tspan></text>`
 			);
-		} else if (v.isTaxon || v.treeChildren.length === 0 || v.depth <= 3) {
+		} else {
+			// Every node carries its id, couplets included: without one there is no
+			// way back from a dot on the page to the knot in the .ink source.
 			const branching = v.treeChildren.length > 0;
 			out.push(
-				`<text x="${v.x + (branching ? -9 : 8)}" y="${v.y + 3.6}" font-size="10" text-anchor="${branching ? "end" : "start"}" fill="${v.isTaxon ? "#115e59" : "#57534e"}" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">${escapeXml(v.label)}${v.taxonId ? ` <tspan fill="#a8a29e">#${v.taxonId}</tspan>` : ""}</text>`
+				`<text x="${v.x + (branching ? -9 : 8)}" y="${v.y + 3.6}" font-size="${v.isTaxon ? 10 : 8.5}" text-anchor="${branching ? "end" : "start"}" fill="${v.isTaxon ? "#115e59" : "#8a857f"}" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">${escapeXml(v.label)}${v.taxonId ? ` <tspan fill="#a8a29e">#${v.taxonId}</tspan>` : ""}</text>`
 			);
 		}
 		const parentList = v.parents.length > 1 ? "\nPARENTS: " + v.parents.map((p) => p.vertex.id).join(", ") : "";
