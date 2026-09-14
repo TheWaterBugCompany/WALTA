@@ -169,6 +169,41 @@ describe("IosSimulatorLauncher", function() {
       expect(launcher._pid).to.equal(1234);
     });
 
+    // Without a grant the app asks at runtime, and the system location alert
+    // lands over the window a spec is waiting to lay out — the spec then hangs
+    // until its timeout. Granting up front means the app never asks.
+    it("grants location before launching so no permission alert can appear", async function() {
+      const APP_PATH = "./builds/unit-test/Waterbug.app";
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl install ${UDID} ${APP_PATH}`]: "",
+        [`simctl privacy ${UDID} grant location net.thewaterbug.waterbug`]: "",
+        [`simctl launch ${UDID} net.thewaterbug.waterbug`]: "net.thewaterbug.waterbug: 1234\n",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.launch("net.thewaterbug.waterbug", APP_PATH);
+      const calls = fakeExecFile.getCalls().map(c => c.args[1]);
+      const grantAt = calls.findIndex(a => a[1] === "privacy");
+      const launchAt = calls.findIndex(a => a[1] === "launch");
+      expect(calls[grantAt]).to.deep.equal(
+        ["simctl", "privacy", UDID, "grant", "location", "net.thewaterbug.waterbug"]);
+      expect(grantAt).to.be.lessThan(launchAt);
+    });
+
+    // An older simulator runtime may not know the service; the app still runs,
+    // it just asks — which is no worse than today.
+    it("launches anyway when the grant is refused", async function() {
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl privacy ${UDID} grant location net.thewaterbug.waterbug`]:
+          new Error("Command failed: xcrun simctl privacy"),
+        [`simctl launch ${UDID} net.thewaterbug.waterbug`]: "net.thewaterbug.waterbug: 7\n",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.launch("net.thewaterbug.waterbug");
+      expect(launcher._pid).to.equal(7);
+    });
+
     it("launches without installing when no appPath is given", async function() {
       const fakeExecFile = makeExecFile({
         [`simctl boot ${UDID}`]: "",
