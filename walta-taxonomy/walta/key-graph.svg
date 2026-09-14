@@ -356,33 +356,37 @@ tails flattened, leaf-like or broad, jaw large and folded away under head</title
 with a head capsule</title></path>
 <path d="M466,258.5 C640.65,258.5 772.65,274 598,274" fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ar2)"><title>bivalvia and hyriidae share taxonId 179 — findTaxonById() returns only one</title></path>
 <g><circle cx="70" cy="887.663125038147" r="3" fill="#78716c"/>
-<text x="61" y="891.263125038147" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">root</text>
+<text x="61" y="891.263125038147" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">root</text>
 <title>root</title></g>
 <g><circle cx="202" cy="225.68359375" r="3" fill="#78716c"/>
-<text x="193" y="229.28359375" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_mollusca</text>
+<text x="193" y="229.28359375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_mollusca</text>
 <title>k_mollusca</title></g>
 <g><circle cx="334" cy="181.2421875" r="3" fill="#78716c"/>
-<text x="325" y="184.8421875" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_gastropoda</text>
+<text x="325" y="184.8421875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_gastropoda</text>
 <title>order_gastropoda</title></g>
 <g><circle cx="466" cy="150" r="3.4" fill="#0f766e"/>
 <text x="474" y="153.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">gastropods <tspan fill="#a8a29e">#181</tspan></text>
 <title>gastropoda · taxonId 181</title></g>
 <g><circle cx="466" cy="212.484375" r="3" fill="#78716c"/>
-<text x="457" y="216.084375" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_2</text>
+<text x="457" y="216.084375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_2</text>
 <title>node_2</title></g>
 <g><circle cx="598" cy="181.96875" r="3" fill="#78716c"/>
+<text x="589" y="185.56875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_gastropoda</text>
 <title>k_gastropoda</title></g>
 <g><circle cx="730" cy="165.5" r="3.4" fill="#0f766e"/>
 <text x="738" y="169.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">flat snails <tspan fill="#a8a29e">#189</tspan></text>
 <title>flat_snails · taxonId 189</title></g>
 <g><circle cx="730" cy="198.4375" r="3" fill="#78716c"/>
+<text x="721" y="202.0375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_3</text>
 <title>node_3</title></g>
 <g><circle cx="862" cy="181" r="3.4" fill="#0f766e"/>
 <text x="870" y="184.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">New Zealand mud snail <tspan fill="#a8a29e">#193</tspan></text>
 <title>potamopyrgus_antipodarum · taxonId 193</title></g>
 <g><circle cx="862" cy="215.875" r="3" fill="#78716c"/>
+<text x="853" y="219.475" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_4</text>
 <title>node_4</title></g>
 <g><circle cx="994" cy="204.25" r="3" fill="#78716c"/>
+<text x="985" y="207.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_5</text>
 <title>node_5</title></g>
 <g><circle cx="1126" cy="196.5" r="3.4" fill="#0f766e"/>
 <text x="1134" y="200.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Physa acuta <tspan fill="#a8a29e">#187</tspan></text>
@@ -397,13 +401,13 @@ with a head capsule</title></path>
 <text x="606" y="246.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Freshwater limpets <tspan fill="#a8a29e">#184</tspan></text>
 <title>ancylidae · taxonId 184</title></g>
 <g><circle cx="334" cy="270.125" r="3" fill="#78716c"/>
-<text x="325" y="273.725" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_bivalvia</text>
+<text x="325" y="273.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_bivalvia</text>
 <title>order_bivalvia</title></g>
 <g><circle cx="466" cy="258.5" r="3.4" fill="#0f766e"/>
 <text x="474" y="262.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">mussels <tspan fill="#a8a29e">#179</tspan></text>
 <title>bivalvia · taxonId 179</title></g>
 <g><circle cx="466" cy="281.75" r="3" fill="#78716c"/>
-<text x="457" y="285.35" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_bivalvia</text>
+<text x="457" y="285.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_bivalvia</text>
 <title>k_bivalvia</title></g>
 <g><circle cx="598" cy="274" r="3.4" fill="#0f766e"/>
 <text x="606" y="277.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Freshwater mussels <tspan fill="#a8a29e">#179</tspan></text>
@@ -412,15 +416,16 @@ with a head capsule</title></path>
 <text x="606" y="293.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Basket and pea shells <tspan fill="#a8a29e">#180</tspan></text>
 <title>sphaeriidae_and_corbiculidae · taxonId 180</title></g>
 <g><circle cx="202" cy="1549.642656326294" r="3" fill="#78716c"/>
-<text x="193" y="1553.2426563262939" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_1</text>
+<text x="193" y="1553.2426563262939" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_1</text>
 <title>node_1</title></g>
 <g><circle cx="334" cy="591.2948341369629" r="3" fill="#78716c"/>
-<text x="325" y="594.8948341369629" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_arthropoda</text>
+<text x="325" y="594.8948341369629" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_arthropoda</text>
 <title>k_arthropoda</title></g>
 <g><circle cx="466" cy="339.26953125" r="3" fill="#78716c"/>
-<text x="457" y="342.86953125" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_crustacea</text>
+<text x="457" y="342.86953125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_crustacea</text>
 <title>k_crustacea</title></g>
 <g><circle cx="598" cy="312.75" r="3" fill="#78716c"/>
+<text x="589" y="316.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">decapoda_intercept_1</text>
 <title>decapoda_intercept_1</title></g>
 <g><circle cx="730" cy="305" r="5.5" fill="#c2410c"/>
 <circle cx="730" cy="305" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
@@ -431,10 +436,13 @@ PARENTS: decapoda_intercept_1, decapoda_intercept_2, decapoda_intercept_3</title
 <text x="738" y="324.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">freshwater crayfish or yabbies <tspan fill="#a8a29e">#4</tspan></text>
 <title>parastacidae · taxonId 4</title></g>
 <g><circle cx="598" cy="365.7890625" r="3" fill="#78716c"/>
+<text x="589" y="369.3890625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_7</text>
 <title>node_7</title></g>
 <g><circle cx="730" cy="343.75" r="3" fill="#78716c"/>
+<text x="721" y="347.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">decapoda_intercept_2</text>
 <title>decapoda_intercept_2</title></g>
 <g><circle cx="862" cy="343.75" r="3" fill="#78716c"/>
+<text x="853" y="347.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_shrimpandprawns</text>
 <title>k_shrimpandprawns</title></g>
 <g><circle cx="994" cy="336" r="3.4" fill="#0f766e"/>
 <text x="1002" y="339.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">freshwater prawn <tspan fill="#a8a29e">#7</tspan></text>
@@ -443,15 +451,19 @@ PARENTS: decapoda_intercept_1, decapoda_intercept_2, decapoda_intercept_3</title
 <text x="1002" y="355.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">glass shrimp <tspan fill="#a8a29e">#8</tspan></text>
 <title>atyidae · taxonId 8</title></g>
 <g><circle cx="730" cy="387.828125" r="3" fill="#78716c"/>
+<text x="721" y="391.428125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_8</text>
 <title>node_8</title></g>
 <g><circle cx="862" cy="367" r="3" fill="#78716c"/>
+<text x="853" y="370.6" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">decapoda_intercept_3</text>
 <title>decapoda_intercept_3</title></g>
 <g><circle cx="994" cy="367" r="3.4" fill="#0f766e"/>
 <text x="1002" y="370.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">five cent crab, false spider crab <tspan fill="#a8a29e">#5</tspan></text>
 <title>hymenosomatidae · taxonId 5</title></g>
 <g><circle cx="862" cy="408.65625" r="3" fill="#78716c"/>
+<text x="853" y="412.25625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_9</text>
 <title>node_9</title></g>
 <g><circle cx="994" cy="390.25" r="3" fill="#78716c"/>
+<text x="985" y="393.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_10</text>
 <title>node_10</title></g>
 <g><circle cx="1126" cy="382.5" r="3.4" fill="#0f766e"/>
 <text x="1134" y="386.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">scuds, sideswimmers <tspan fill="#a8a29e">#12</tspan></text>
@@ -460,16 +472,19 @@ PARENTS: decapoda_intercept_1, decapoda_intercept_2, decapoda_intercept_3</title
 <text x="1134" y="401.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">phreatoicids, cow shrimp <tspan fill="#a8a29e">#11</tspan></text>
 <title>phreatoicidae · taxonId 11</title></g>
 <g><circle cx="994" cy="427.0625" r="3" fill="#78716c"/>
+<text x="985" y="430.6625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_11</text>
 <title>node_11</title></g>
 <g><circle cx="1126" cy="413.5" r="3.4" fill="#0f766e"/>
 <text x="1134" y="417.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">water slaters <tspan fill="#a8a29e">#10</tspan></text>
 <title>janiridae · taxonId 10</title></g>
 <g><circle cx="1126" cy="440.625" r="3" fill="#78716c"/>
+<text x="1117" y="444.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_12</text>
 <title>node_12</title></g>
 <g><circle cx="1258" cy="429" r="3.4" fill="#0f766e"/>
 <text x="1266" y="432.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">fairy shrimp <tspan fill="#a8a29e">#13</tspan></text>
 <title>anostraca · taxonId 13</title></g>
 <g><circle cx="1258" cy="452.25" r="3" fill="#78716c"/>
+<text x="1249" y="455.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_13</text>
 <title>node_13</title></g>
 <g><circle cx="1390" cy="444.5" r="3.4" fill="#0f766e"/>
 <text x="1398" y="448.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">shield shrimp, tadpole shrimp <tspan fill="#a8a29e">#15</tspan></text>
@@ -478,9 +493,10 @@ PARENTS: decapoda_intercept_1, decapoda_intercept_2, decapoda_intercept_3</title
 <text x="1398" y="463.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">clam shrimp <tspan fill="#a8a29e">#14</tspan></text>
 <title>conchostraca · taxonId 14</title></g>
 <g><circle cx="466" cy="843.3201370239258" r="3" fill="#78716c"/>
-<text x="457" y="846.9201370239258" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_6</text>
+<text x="457" y="846.9201370239258" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_6</text>
 <title>node_6</title></g>
 <g><circle cx="598" cy="483.25" r="3" fill="#78716c"/>
+<text x="589" y="486.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_chelicerata</text>
 <title>k_chelicerata</title></g>
 <g><circle cx="730" cy="475.5" r="3.4" fill="#0f766e"/>
 <text x="738" y="479.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">water mites <tspan fill="#a8a29e">#19</tspan></text>
@@ -489,10 +505,13 @@ PARENTS: decapoda_intercept_1, decapoda_intercept_2, decapoda_intercept_3</title
 <text x="738" y="494.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">fishing and wolf spiders <tspan fill="#a8a29e">#18</tspan></text>
 <title>pisauridae_and_lycosidae · taxonId 18</title></g>
 <g><circle cx="598" cy="1203.3902740478516" r="3" fill="#78716c"/>
+<text x="589" y="1206.9902740478515" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_hexapoda</text>
 <title>k_hexapoda</title></g>
 <g><circle cx="730" cy="709.271484375" r="3" fill="#78716c"/>
+<text x="721" y="712.871484375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_14</text>
 <title>node_14</title></g>
 <g><circle cx="862" cy="580.791015625" r="3" fill="#78716c"/>
+<text x="853" y="584.391015625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_coleoptera</text>
 <title>order_coleoptera</title></g>
 <g><circle cx="994" cy="506.5" r="5.5" fill="#c2410c"/>
 <circle cx="994" cy="506.5" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
@@ -500,15 +519,19 @@ PARENTS: decapoda_intercept_1, decapoda_intercept_2, decapoda_intercept_3</title
 <title>coleoptera · taxonId 26
 PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <g><circle cx="994" cy="655.08203125" r="3" fill="#78716c"/>
+<text x="985" y="658.68203125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_coleoptera</text>
 <title>k_coleoptera</title></g>
 <g><circle cx="1126" cy="557.6015625" r="3" fill="#78716c"/>
+<text x="1117" y="561.2015625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_16</text>
 <title>node_16</title></g>
 <g><circle cx="1258" cy="522" r="3.4" fill="#0f766e"/>
 <text x="1266" y="525.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Whirligig beetle <tspan fill="#a8a29e">#50</tspan></text>
 <title>gyrinidae_adult · taxonId 50</title></g>
 <g><circle cx="1258" cy="593.203125" r="3" fill="#78716c"/>
+<text x="1249" y="596.803125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_18</text>
 <title>node_18</title></g>
 <g><circle cx="1390" cy="545.25" r="3" fill="#78716c"/>
+<text x="1381" y="548.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_19</text>
 <title>node_19</title></g>
 <g><circle cx="1522" cy="537.5" r="3.4" fill="#0f766e"/>
 <text x="1530" y="541.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Screetch beetle adult <tspan fill="#a8a29e">#62</tspan></text>
@@ -517,15 +540,19 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1530" y="556.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water scavenger beetle adult <tspan fill="#a8a29e">#59</tspan></text>
 <title>hydrophilidae_adult · taxonId 59</title></g>
 <g><circle cx="1390" cy="641.15625" r="3" fill="#78716c"/>
+<text x="1381" y="644.75625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_dytiscidae</text>
 <title>k_dytiscidae</title></g>
 <g><circle cx="1522" cy="601.4375" r="3" fill="#78716c"/>
+<text x="1513" y="605.0375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_20</text>
 <title>node_20</title></g>
 <g><circle cx="1654" cy="580.125" r="3" fill="#78716c"/>
+<text x="1645" y="583.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_22</text>
 <title>node_22</title></g>
 <g><circle cx="1786" cy="568.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="572.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">waisted diving beetle <tspan fill="#a8a29e">#30</tspan></text>
 <title>carabhydrus · taxonId 30</title></g>
 <g><circle cx="1786" cy="591.75" r="3" fill="#78716c"/>
+<text x="1777" y="595.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_24</text>
 <title>node_24</title></g>
 <g><circle cx="1918" cy="584" r="3.4" fill="#0f766e"/>
 <text x="1926" y="587.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Australphilus <tspan fill="#a8a29e">#29</tspan></text>
@@ -534,6 +561,7 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1926" y="603.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">little diving beetles <tspan fill="#a8a29e">#37</tspan></text>
 <title>little_diving_beetles · taxonId 37</title></g>
 <g><circle cx="1654" cy="622.75" r="3" fill="#78716c"/>
+<text x="1645" y="626.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_23</text>
 <title>node_23</title></g>
 <g><circle cx="1786" cy="615" r="3.4" fill="#0f766e"/>
 <text x="1794" y="618.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">mixed diving beetles <tspan fill="#a8a29e">#38</tspan></text>
@@ -542,13 +570,16 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1794" y="634.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">stealth diving beetles <tspan fill="#a8a29e">#39</tspan></text>
 <title>stealth_diving_beetles · taxonId 39</title></g>
 <g><circle cx="1522" cy="680.875" r="3" fill="#78716c"/>
+<text x="1513" y="684.475" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_21</text>
 <title>node_21</title></g>
 <g><circle cx="1654" cy="657.625" r="3" fill="#78716c"/>
+<text x="1645" y="661.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_25</text>
 <title>node_25</title></g>
 <g><circle cx="1786" cy="646" r="3.4" fill="#0f766e"/>
 <text x="1794" y="649.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Lancetes <tspan fill="#a8a29e">#33</tspan></text>
 <title>lancetes · taxonId 33</title></g>
 <g><circle cx="1786" cy="669.25" r="3" fill="#78716c"/>
+<text x="1777" y="672.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_27</text>
 <title>node_27</title></g>
 <g><circle cx="1918" cy="661.5" r="3.4" fill="#0f766e"/>
 <text x="1926" y="665.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Eretes <tspan fill="#a8a29e">#31</tspan></text>
@@ -557,11 +588,13 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1926" y="680.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Rhantus <tspan fill="#a8a29e">#35</tspan></text>
 <title>rhantus · taxonId 35</title></g>
 <g><circle cx="1654" cy="704.125" r="3" fill="#78716c"/>
+<text x="1645" y="707.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_26</text>
 <title>node_26</title></g>
 <g><circle cx="1786" cy="692.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="696.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Hyderodes <tspan fill="#a8a29e">#32</tspan></text>
 <title>hyderodes · taxonId 32</title></g>
 <g><circle cx="1786" cy="715.75" r="3" fill="#78716c"/>
+<text x="1777" y="719.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_28</text>
 <title>node_28</title></g>
 <g><circle cx="1918" cy="708" r="3.4" fill="#0f766e"/>
 <text x="1926" y="711.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Spencerhydrus <tspan fill="#a8a29e">#36</tspan></text>
@@ -570,16 +603,19 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1926" y="727.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Onychohydrus <tspan fill="#a8a29e">#34</tspan></text>
 <title>onychohydrus · taxonId 34</title></g>
 <g><circle cx="1126" cy="752.5625" r="3" fill="#78716c"/>
+<text x="1117" y="756.1625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_17</text>
 <title>node_17</title></g>
 <g><circle cx="1258" cy="739" r="3.4" fill="#0f766e"/>
 <text x="1266" y="742.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">weevils <tspan fill="#a8a29e">#27</tspan></text>
 <title>curculionidae · taxonId 27</title></g>
 <g><circle cx="1258" cy="766.125" r="3" fill="#78716c"/>
+<text x="1249" y="769.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_29</text>
 <title>node_29</title></g>
 <g><circle cx="1390" cy="754.5" r="3.4" fill="#0f766e"/>
 <text x="1398" y="758.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Riffle beetle <tspan fill="#a8a29e">#47</tspan></text>
 <title>elmidae_adult · taxonId 47</title></g>
 <g><circle cx="1390" cy="777.75" r="3" fill="#78716c"/>
+<text x="1381" y="781.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_30</text>
 <title>node_30</title></g>
 <g><circle cx="1522" cy="770" r="3.4" fill="#0f766e"/>
 <text x="1530" y="773.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Crawling water beetle <tspan fill="#a8a29e">#54</tspan></text>
@@ -588,15 +624,19 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1530" y="789.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Helochares <tspan fill="#a8a29e">#57</tspan></text>
 <title>helochares · taxonId 57</title></g>
 <g><circle cx="862" cy="837.751953125" r="3" fill="#78716c"/>
+<text x="853" y="841.351953125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_hemiptera</text>
 <title>order_hemiptera</title></g>
 <g><circle cx="994" cy="801" r="3.4" fill="#0f766e"/>
 <text x="1002" y="804.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">hemiptera <tspan fill="#a8a29e">#101</tspan></text>
 <title>hemiptera · taxonId 101</title></g>
 <g><circle cx="994" cy="874.50390625" r="3" fill="#78716c"/>
+<text x="985" y="878.10390625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_hemiptera</text>
 <title>k_hemiptera</title></g>
 <g><circle cx="1126" cy="835.875" r="3" fill="#78716c"/>
+<text x="1117" y="839.475" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_31</text>
 <title>node_31</title></g>
 <g><circle cx="1258" cy="824.25" r="3" fill="#78716c"/>
+<text x="1249" y="827.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_33</text>
 <title>node_33</title></g>
 <g><circle cx="1390" cy="816.5" r="3.4" fill="#0f766e"/>
 <text x="1398" y="820.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water striders <tspan fill="#a8a29e">#110</tspan></text>
@@ -608,13 +648,16 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1266" y="851.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water measurers <tspan fill="#a8a29e">#111</tspan></text>
 <title>hydrometridae · taxonId 111</title></g>
 <g><circle cx="1126" cy="913.1328125" r="3" fill="#78716c"/>
+<text x="1117" y="916.7328125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_32</text>
 <title>node_32</title></g>
 <g><circle cx="1258" cy="874.625" r="3" fill="#78716c"/>
+<text x="1249" y="878.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_34</text>
 <title>node_34</title></g>
 <g><circle cx="1390" cy="863" r="3.4" fill="#0f766e"/>
 <text x="1398" y="866.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Toad bug <tspan fill="#a8a29e">#109</tspan></text>
 <title>gelastocoridae · taxonId 109</title></g>
 <g><circle cx="1390" cy="886.25" r="3" fill="#78716c"/>
+<text x="1381" y="889.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_nepidae</text>
 <title>k_nepidae</title></g>
 <g><circle cx="1522" cy="878.5" r="3.4" fill="#0f766e"/>
 <text x="1530" y="882.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Slender water scorpions/stick bug <tspan fill="#a8a29e">#116</tspan></text>
@@ -623,13 +666,16 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1530" y="897.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leafy water scorpion <tspan fill="#a8a29e">#115</tspan></text>
 <title>laccotrephes · taxonId 115</title></g>
 <g><circle cx="1258" cy="951.640625" r="3" fill="#78716c"/>
+<text x="1249" y="955.240625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_35</text>
 <title>node_35</title></g>
 <g><circle cx="1390" cy="921.125" r="3" fill="#78716c"/>
+<text x="1381" y="924.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_36</text>
 <title>node_36</title></g>
 <g><circle cx="1522" cy="909.5" r="3.4" fill="#0f766e"/>
 <text x="1530" y="913.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Pygmy backswimmer <tspan fill="#a8a29e">#120</tspan></text>
 <title>pleidae · taxonId 120</title></g>
 <g><circle cx="1522" cy="932.75" r="3" fill="#78716c"/>
+<text x="1513" y="936.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_notonectidae</text>
 <title>k_notonectidae</title></g>
 <g><circle cx="1654" cy="925" r="3.4" fill="#0f766e"/>
 <text x="1662" y="928.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Robust backswimmer <tspan fill="#a8a29e">#119</tspan></text>
@@ -638,8 +684,10 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1662" y="944.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Slender backswimmer <tspan fill="#a8a29e">#118</tspan></text>
 <title>anisops · taxonId 118</title></g>
 <g><circle cx="1390" cy="982.15625" r="3" fill="#78716c"/>
+<text x="1381" y="985.75625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_bugs</text>
 <title>k_bugs</title></g>
 <g><circle cx="1522" cy="963.75" r="3" fill="#78716c"/>
+<text x="1513" y="967.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_37</text>
 <title>node_37</title></g>
 <g><circle cx="1654" cy="956" r="3.4" fill="#0f766e"/>
 <text x="1662" y="959.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Creeping water bugs <tspan fill="#a8a29e">#113</tspan></text>
@@ -648,16 +696,19 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1662" y="975.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Giant water bug <tspan fill="#a8a29e">#103</tspan></text>
 <title>diplonychus · taxonId 103</title></g>
 <g><circle cx="1522" cy="1000.5625" r="3" fill="#78716c"/>
+<text x="1513" y="1004.1625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_corixidae</text>
 <title>k_corixidae</title></g>
 <g><circle cx="1654" cy="987" r="3.4" fill="#0f766e"/>
 <text x="1662" y="990.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Little brindle boatman <tspan fill="#a8a29e">#107</tspan></text>
 <title>micronecta · taxonId 107</title></g>
 <g><circle cx="1654" cy="1014.125" r="3" fill="#78716c"/>
+<text x="1645" y="1017.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_38</text>
 <title>node_38</title></g>
 <g><circle cx="1786" cy="1002.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1006.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Striped boatman <tspan fill="#a8a29e">#108</tspan></text>
 <title>sigara · taxonId 108</title></g>
 <g><circle cx="1786" cy="1025.75" r="3" fill="#78716c"/>
+<text x="1777" y="1029.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_39</text>
 <title>node_39</title></g>
 <g><circle cx="1918" cy="1018" r="3.4" fill="#0f766e"/>
 <text x="1926" y="1021.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Barry four-eyes <tspan fill="#a8a29e">#106</tspan></text>
@@ -666,12 +717,16 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <text x="1926" y="1037.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Static boatmen <tspan fill="#a8a29e">#105</tspan></text>
 <title>agraptocorixa · taxonId 105</title></g>
 <g><circle cx="730" cy="1697.5090637207031" r="3" fill="#78716c"/>
+<text x="721" y="1701.109063720703" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_15</text>
 <title>node_15</title></g>
 <g><circle cx="862" cy="1398.8530883789062" r="3" fill="#78716c"/>
+<text x="853" y="1402.4530883789062" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_40</text>
 <title>node_40</title></g>
 <g><circle cx="994" cy="1252.9937744140625" r="3" fill="#78716c"/>
+<text x="985" y="1256.5937744140624" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_42</text>
 <title>node_42</title></g>
 <g><circle cx="1126" cy="1131.487548828125" r="3" fill="#78716c"/>
+<text x="1117" y="1135.087548828125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_trichoptera</text>
 <title>order_trichoptera</title></g>
 <g><circle cx="1258" cy="1049" r="5.5" fill="#c2410c"/>
 <circle cx="1258" cy="1049" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
@@ -679,35 +734,43 @@ PARENTS: order_coleoptera, k_coleoptera_larvae</title></g>
 <title>trichoptera · taxonId 145
 PARENTS: order_trichoptera, k_freeliving</title></g>
 <g><circle cx="1258" cy="1213.97509765625" r="3" fill="#78716c"/>
+<text x="1249" y="1217.57509765625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_trichoptera</text>
 <title>k_trichoptera</title></g>
 <g><circle cx="1390" cy="1092.2001953125" r="3" fill="#78716c"/>
+<text x="1381" y="1095.8001953125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_cased</text>
 <title>k_cased</title></g>
 <g><circle cx="1522" cy="1064.5" r="3.4" fill="#0f766e"/>
 <text x="1530" y="1068.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Micro caddis <tspan fill="#a8a29e">#161</tspan></text>
 <title>hydroptilidae · taxonId 161</title></g>
 <g><circle cx="1522" cy="1119.900390625" r="3" fill="#78716c"/>
+<text x="1513" y="1123.500390625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_45</text>
 <title>node_45</title></g>
 <g><circle cx="1654" cy="1080" r="3.4" fill="#0f766e"/>
 <text x="1662" y="1083.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Vulture caddis <tspan fill="#a8a29e">#147</tspan></text>
 <title>atriplectides · taxonId 147</title></g>
 <g><circle cx="1654" cy="1159.80078125" r="3" fill="#78716c"/>
+<text x="1645" y="1163.40078125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_46</text>
 <title>node_46</title></g>
 <g><circle cx="1786" cy="1110.03125" r="3" fill="#78716c"/>
+<text x="1777" y="1113.63125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_47</text>
 <title>node_47</title></g>
 <g><circle cx="1918" cy="1095.5" r="3.4" fill="#0f766e"/>
 <text x="1926" y="1099.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Igloo caddis <tspan fill="#a8a29e">#156</tspan></text>
 <title>agapetus · taxonId 156</title></g>
 <g><circle cx="1918" cy="1124.5625" r="3" fill="#78716c"/>
+<text x="1909" y="1128.1625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_49</text>
 <title>node_49</title></g>
 <g><circle cx="2050" cy="1111" r="3.4" fill="#0f766e"/>
 <text x="2058" y="1114.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Snail caddis <tspan fill="#a8a29e">#158</tspan></text>
 <title>helicopsyche · taxonId 158</title></g>
 <g><circle cx="2050" cy="1138.125" r="3" fill="#78716c"/>
+<text x="2041" y="1141.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_50</text>
 <title>node_50</title></g>
 <g><circle cx="2182" cy="1126.5" r="3.4" fill="#0f766e"/>
 <text x="2190" y="1130.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Tasimiids <tspan fill="#a8a29e">#173</tspan></text>
 <title>tasimiidae · taxonId 173</title></g>
 <g><circle cx="2182" cy="1149.75" r="3" fill="#78716c"/>
+<text x="2173" y="1153.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_51</text>
 <title>node_51</title></g>
 <g><circle cx="2314" cy="1142" r="3.4" fill="#0f766e"/>
 <text x="2322" y="1145.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Attack caddis - Highlander <tspan fill="#a8a29e">#172</tspan></text>
@@ -716,13 +779,16 @@ PARENTS: order_trichoptera, k_freeliving</title></g>
 <text x="2322" y="1161.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Attack caddis - lowlander <tspan fill="#a8a29e">#166</tspan></text>
 <title>attack_caddis_lowlander · taxonId 166</title></g>
 <g><circle cx="1786" cy="1209.5703125" r="3" fill="#78716c"/>
+<text x="1777" y="1213.1703125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_48</text>
 <title>node_48</title></g>
 <g><circle cx="1918" cy="1184.625" r="3" fill="#78716c"/>
+<text x="1909" y="1188.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_52</text>
 <title>node_52</title></g>
 <g><circle cx="2050" cy="1173" r="3.4" fill="#0f766e"/>
 <text x="2058" y="1176.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Sleeping bag caddis <tspan fill="#a8a29e">#149</tspan></text>
 <title>anisocentropus · taxonId 149</title></g>
 <g><circle cx="2050" cy="1196.25" r="3" fill="#78716c"/>
+<text x="2041" y="1199.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_54</text>
 <title>node_54</title></g>
 <g><circle cx="2182" cy="1188.5" r="3.4" fill="#0f766e"/>
 <text x="2190" y="1192.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Shingle caddis <tspan fill="#a8a29e">#151</tspan></text>
@@ -731,26 +797,31 @@ PARENTS: order_trichoptera, k_freeliving</title></g>
 <text x="2190" y="1207.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Flat shack caddis <tspan fill="#a8a29e">#163</tspan></text>
 <title>lectrides_varians · taxonId 163</title></g>
 <g><circle cx="1918" cy="1234.515625" r="3" fill="#78716c"/>
+<text x="1909" y="1238.115625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_53</text>
 <title>node_53</title></g>
 <g><circle cx="2050" cy="1219.5" r="3.4" fill="#0f766e"/>
 <text x="2058" y="1223.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Bullet caddis <tspan fill="#a8a29e">#152</tspan></text>
 <title>conoesucidae_calocidae_and_helicophidae · taxonId 152</title></g>
 <g><circle cx="2050" cy="1249.53125" r="3" fill="#78716c"/>
+<text x="2041" y="1253.13125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_leptoceridae</text>
 <title>k_leptoceridae</title></g>
 <g><circle cx="2182" cy="1235" r="3.4" fill="#0f766e"/>
 <text x="2190" y="1238.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Stick caddis <tspan fill="#a8a29e">#169</tspan></text>
 <title>triplectides · taxonId 169</title></g>
 <g><circle cx="2182" cy="1264.0625" r="3" fill="#78716c"/>
+<text x="2173" y="1267.6625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_55</text>
 <title>node_55</title></g>
 <g><circle cx="2314" cy="1250.5" r="3.4" fill="#0f766e"/>
 <text x="2322" y="1254.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Log cabin caddis <tspan fill="#a8a29e">#167</tspan></text>
 <title>log_cabin_caddis · taxonId 167</title></g>
 <g><circle cx="2314" cy="1277.625" r="3" fill="#78716c"/>
+<text x="2305" y="1281.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_56</text>
 <title>node_56</title></g>
 <g><circle cx="2446" cy="1266" r="3.4" fill="#0f766e"/>
 <text x="2454" y="1269.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Dart caddis <tspan fill="#a8a29e">#168</tspan></text>
 <title>symphitoneuria · taxonId 168</title></g>
 <g><circle cx="2446" cy="1289.25" r="3" fill="#78716c"/>
+<text x="2437" y="1292.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_57</text>
 <title>node_57</title></g>
 <g><circle cx="2578" cy="1281.5" r="3.4" fill="#0f766e"/>
 <text x="2586" y="1285.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Headbanger caddis <tspan fill="#a8a29e">#164</tspan></text>
@@ -764,8 +835,10 @@ PARENTS: order_trichoptera, k_freeliving</title></g>
 <title>k_freeliving
 PARENTS: k_trichoptera, node_44c</title></g>
 <g><circle cx="1522" cy="1335.75" r="3" fill="#78716c"/>
+<text x="1513" y="1339.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_44b</text>
 <title>node_44b</title></g>
 <g><circle cx="1654" cy="1320.25" r="3" fill="#78716c"/>
+<text x="1645" y="1323.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_58</text>
 <title>node_58</title></g>
 <g><circle cx="1786" cy="1312.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1316.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Net spinning caddis <tspan fill="#a8a29e">#160</tspan></text>
@@ -774,6 +847,7 @@ PARENTS: k_trichoptera, node_44c</title></g>
 <text x="1794" y="1331.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Bandit caddis <tspan fill="#a8a29e">#154</tspan></text>
 <title>ecnomus · taxonId 154</title></g>
 <g><circle cx="1654" cy="1351.25" r="3" fill="#78716c"/>
+<text x="1645" y="1354.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_59</text>
 <title>node_59</title></g>
 <g><circle cx="1786" cy="1343.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1347.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Hunter caddis <tspan fill="#a8a29e">#159</tspan></text>
@@ -785,8 +859,10 @@ PARENTS: k_trichoptera, node_44c</title></g>
 <text x="1134" y="1378.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">caterpillars <tspan fill="#a8a29e">#25</tspan></text>
 <title>lepidoptera · taxonId 25</title></g>
 <g><circle cx="994" cy="1544.71240234375" r="3" fill="#78716c"/>
+<text x="985" y="1548.31240234375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_43</text>
 <title>node_43</title></g>
 <g><circle cx="1126" cy="1428.38671875" r="3" fill="#78716c"/>
+<text x="1117" y="1431.98671875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_odonata</text>
 <title>order_odonata</title></g>
 <g><circle cx="1258" cy="1390" r="3.4" fill="#0f766e"/>
 <text x="1266" y="1393.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">dragonflies and damselflies <tspan fill="#a8a29e">#122</tspan></text>
@@ -797,26 +873,31 @@ PARENTS: k_trichoptera, node_44c</title></g>
 <title>k_odonata
 PARENTS: order_odonata, old_mayfly_start_point</title></g>
 <g><circle cx="1390" cy="1420.515625" r="3" fill="#78716c"/>
+<text x="1381" y="1424.115625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_prezygoptera</text>
 <title>k_prezygoptera</title></g>
 <g><circle cx="1522" cy="1405.5" r="3.4" fill="#0f766e"/>
 <text x="1530" y="1409.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">damselflies <tspan fill="#a8a29e">#128</tspan></text>
 <title>zygoptera · taxonId 128</title></g>
 <g><circle cx="1522" cy="1435.53125" r="3" fill="#78716c"/>
+<text x="1513" y="1439.13125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_zygoptera</text>
 <title>k_zygoptera</title></g>
 <g><circle cx="1654" cy="1421" r="3.4" fill="#0f766e"/>
 <text x="1662" y="1424.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Megapodagrionidae <tspan fill="#a8a29e">#132</tspan></text>
 <title>megapodagrionidae · taxonId 132</title></g>
 <g><circle cx="1654" cy="1450.0625" r="3" fill="#78716c"/>
+<text x="1645" y="1453.6625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_60</text>
 <title>node_60</title></g>
 <g><circle cx="1786" cy="1436.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1440.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Synlestidae <tspan fill="#a8a29e">#133</tspan></text>
 <title>synlestidae · taxonId 133</title></g>
 <g><circle cx="1786" cy="1463.625" r="3" fill="#78716c"/>
+<text x="1777" y="1467.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_61</text>
 <title>node_61</title></g>
 <g><circle cx="1918" cy="1452" r="3.4" fill="#0f766e"/>
 <text x="1926" y="1455.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Isostictidae <tspan fill="#a8a29e">#130</tspan></text>
 <title>isostictidae · taxonId 130</title></g>
 <g><circle cx="1918" cy="1475.25" r="3" fill="#78716c"/>
+<text x="1909" y="1478.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_62</text>
 <title>node_62</title></g>
 <g><circle cx="2050" cy="1467.5" r="3.4" fill="#0f766e"/>
 <text x="2058" y="1471.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Diphlebiidae <tspan fill="#a8a29e">#129</tspan></text>
@@ -825,21 +906,25 @@ PARENTS: order_odonata, old_mayfly_start_point</title></g>
 <text x="2058" y="1486.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Lestidae and Coenagrionidae <tspan fill="#a8a29e">#131</tspan></text>
 <title>lestidae_and_coenagrionidae · taxonId 131</title></g>
 <g><circle cx="1390" cy="1513.03125" r="3" fill="#78716c"/>
+<text x="1381" y="1516.63125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_preepiproctophora</text>
 <title>k_preepiproctophora</title></g>
 <g><circle cx="1522" cy="1498.5" r="3.4" fill="#0f766e"/>
 <text x="1530" y="1502.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">dragonflies <tspan fill="#a8a29e">#123</tspan></text>
 <title>epiproctophora · taxonId 123</title></g>
 <g><circle cx="1522" cy="1527.5625" r="3" fill="#78716c"/>
+<text x="1513" y="1531.1625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_epiproctophora</text>
 <title>k_epiproctophora</title></g>
 <g><circle cx="1654" cy="1514" r="3.4" fill="#0f766e"/>
 <text x="1662" y="1517.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Gomphids <tspan fill="#a8a29e">#125</tspan></text>
 <title>gomphidae · taxonId 125</title></g>
 <g><circle cx="1654" cy="1541.125" r="3" fill="#78716c"/>
+<text x="1645" y="1544.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_63</text>
 <title>node_63</title></g>
 <g><circle cx="1786" cy="1529.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1533.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Spider mud eye <tspan fill="#a8a29e">#127</tspan></text>
 <title>spider_mud_eye · taxonId 127</title></g>
 <g><circle cx="1786" cy="1552.75" r="3" fill="#78716c"/>
+<text x="1777" y="1556.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_64</text>
 <title>node_64</title></g>
 <g><circle cx="1918" cy="1545" r="3.4" fill="#0f766e"/>
 <text x="1926" y="1548.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Telephlebs <tspan fill="#a8a29e">#126</tspan></text>
@@ -848,20 +933,25 @@ PARENTS: order_odonata, old_mayfly_start_point</title></g>
 <text x="1926" y="1564.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Couta mud eye <tspan fill="#a8a29e">#124</tspan></text>
 <title>aeshnidae · taxonId 124</title></g>
 <g><circle cx="1126" cy="1661.0380859375" r="3" fill="#78716c"/>
+<text x="1117" y="1664.6380859375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_larval</text>
 <title>k_larval</title></g>
 <g><circle cx="1258" cy="1576" r="3.4" fill="#0f766e"/>
 <text x="1266" y="1579.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">lacewing larvae <tspan fill="#a8a29e">#24</tspan></text>
 <title>neuroptera · taxonId 24</title></g>
 <g><circle cx="1258" cy="1746.076171875" r="3" fill="#78716c"/>
+<text x="1249" y="1749.676171875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_104</text>
 <title>node_104</title></g>
 <g><circle cx="1390" cy="1652.65234375" r="3" fill="#78716c"/>
+<text x="1381" y="1656.25234375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_65</text>
 <title>node_65</title></g>
 <g><circle cx="1522" cy="1603.125" r="3" fill="#78716c"/>
+<text x="1513" y="1606.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_megaloptera</text>
 <title>order_megaloptera</title></g>
 <g><circle cx="1654" cy="1591.5" r="3.4" fill="#0f766e"/>
 <text x="1662" y="1595.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">toebiters <tspan fill="#a8a29e">#22</tspan></text>
 <title>megaloptera · taxonId 22</title></g>
 <g><circle cx="1654" cy="1614.75" r="3" fill="#78716c"/>
+<text x="1645" y="1618.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_megaloptera_larvae</text>
 <title>k_megaloptera_larvae</title></g>
 <g><circle cx="1786" cy="1607" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1610.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">toebiters <tspan fill="#a8a29e">#23</tspan></text>
@@ -875,10 +965,13 @@ PARENTS: order_odonata, old_mayfly_start_point</title></g>
 <title>k_coleoptera_larvae
 PARENTS: node_65, node_44c, node_75</title></g>
 <g><circle cx="1654" cy="1702.1796875" r="3" fill="#78716c"/>
+<text x="1645" y="1705.7796875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_coleoptera_larvae_b</text>
 <title>k_coleoptera_larvae_b</title></g>
 <g><circle cx="1786" cy="1663.1875" r="3" fill="#78716c"/>
+<text x="1777" y="1666.7875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_dytiscidae_L</text>
 <title>k_dytiscidae_L</title></g>
 <g><circle cx="1918" cy="1645.75" r="3" fill="#78716c"/>
+<text x="1909" y="1649.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_67</text>
 <title>node_67</title></g>
 <g><circle cx="2050" cy="1638" r="3.4" fill="#0f766e"/>
 <text x="2058" y="1641.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">taper-tailed tigers larvae <tspan fill="#a8a29e">#41</tspan></text>
@@ -887,11 +980,13 @@ PARENTS: node_65, node_44c, node_75</title></g>
 <text x="2058" y="1657.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">two-tailed tigers larvae <tspan fill="#a8a29e">#42</tspan></text>
 <title>two_tailed_tiger_larvae · taxonId 42</title></g>
 <g><circle cx="1918" cy="1680.625" r="3" fill="#78716c"/>
+<text x="1909" y="1684.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_68</text>
 <title>node_68</title></g>
 <g><circle cx="2050" cy="1669" r="3.4" fill="#0f766e"/>
 <text x="2058" y="1672.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">nosey tigers larvae <tspan fill="#a8a29e">#43</tspan></text>
 <title>nosey_tiger_larvae · taxonId 43</title></g>
 <g><circle cx="2050" cy="1692.25" r="3" fill="#78716c"/>
+<text x="2041" y="1695.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_69</text>
 <title>node_69</title></g>
 <g><circle cx="2182" cy="1684.5" r="3.4" fill="#0f766e"/>
 <text x="2190" y="1688.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">swimming water tiger larvae <tspan fill="#a8a29e">#45</tspan></text>
@@ -900,18 +995,22 @@ PARENTS: node_65, node_44c, node_75</title></g>
 <text x="2190" y="1703.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">crawling water tiger larvae <tspan fill="#a8a29e">#44</tspan></text>
 <title>crawling_water_tiger_larvae · taxonId 44</title></g>
 <g><circle cx="1786" cy="1741.171875" r="3" fill="#78716c"/>
+<text x="1777" y="1744.771875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_66</text>
 <title>node_66</title></g>
 <g><circle cx="1918" cy="1715.5" r="3.4" fill="#0f766e"/>
 <text x="1926" y="1719.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water penny <tspan fill="#a8a29e">#65</tspan></text>
 <title>sclerocyphon · taxonId 65</title></g>
 <g><circle cx="1918" cy="1766.84375" r="3" fill="#78716c"/>
+<text x="1909" y="1770.44375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_70</text>
 <title>node_70</title></g>
 <g><circle cx="2050" cy="1742.625" r="3" fill="#78716c"/>
+<text x="2041" y="1746.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_crunchy_beetle_larvae</text>
 <title>k_crunchy_beetle_larvae</title></g>
 <g><circle cx="2182" cy="1731" r="3.4" fill="#0f766e"/>
 <text x="2190" y="1734.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Marsh beetle larvae <tspan fill="#a8a29e">#68</tspan></text>
 <title>scirtidae · taxonId 68</title></g>
 <g><circle cx="2182" cy="1754.25" r="3" fill="#78716c"/>
+<text x="2173" y="1757.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_72</text>
 <title>node_72</title></g>
 <g><circle cx="2314" cy="1746.5" r="3.4" fill="#0f766e"/>
 <text x="2322" y="1750.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Riffle beetle larvae <tspan fill="#a8a29e">#48</tspan></text>
@@ -920,16 +1019,19 @@ PARENTS: node_65, node_44c, node_75</title></g>
 <text x="2322" y="1765.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Byrrocryptus <tspan fill="#a8a29e">#67</tspan></text>
 <title>byrrocryptus · taxonId 67</title></g>
 <g><circle cx="2050" cy="1791.0625" r="3" fill="#78716c"/>
+<text x="2041" y="1794.6625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_71</text>
 <title>node_71</title></g>
 <g><circle cx="2182" cy="1777.5" r="3.4" fill="#0f766e"/>
 <text x="2190" y="1781.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Whirligig beetle larvae <tspan fill="#a8a29e">#51</tspan></text>
 <title>gyrinidae_larvae · taxonId 51</title></g>
 <g><circle cx="2182" cy="1804.625" r="3" fill="#78716c"/>
+<text x="2173" y="1808.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_73</text>
 <title>node_73</title></g>
 <g><circle cx="2314" cy="1793" r="3.4" fill="#0f766e"/>
 <text x="2322" y="1796.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Tasselled scavenger <tspan fill="#a8a29e">#56</tspan></text>
 <title>berosus · taxonId 56</title></g>
 <g><circle cx="2314" cy="1816.25" r="3" fill="#78716c"/>
+<text x="2305" y="1819.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_74</text>
 <title>node_74</title></g>
 <g><circle cx="2446" cy="1808.5" r="3.4" fill="#0f766e"/>
 <text x="2454" y="1812.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Ugly Bob <tspan fill="#a8a29e">#58</tspan></text>
@@ -938,37 +1040,46 @@ PARENTS: node_65, node_44c, node_75</title></g>
 <text x="2454" y="1827.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Water scavenger beetle larvae <tspan fill="#a8a29e">#60</tspan></text>
 <title>water_scavenger_beetle_larvae · taxonId 60</title></g>
 <g><circle cx="1390" cy="1839.5" r="3" fill="#78716c"/>
-<text x="1398" y="1843.1" font-size="10" text-anchor="start" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_44c</text>
+<text x="1398" y="1843.1" font-size="8.5" text-anchor="start" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_44c</text>
 <title>node_44c</title></g>
 <g><circle cx="862" cy="1996.1650390625" r="3" fill="#78716c"/>
+<text x="853" y="1999.7650390625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_41</text>
 <title>node_41</title></g>
 <g><circle cx="994" cy="1883.45703125" r="3" fill="#78716c"/>
+<text x="985" y="1887.05703125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_75</text>
 <title>node_75</title></g>
 <g><circle cx="1126" cy="1883.45703125" r="3" fill="#78716c"/>
+<text x="1117" y="1887.05703125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_plecoptera</text>
 <title>order_plecoptera</title></g>
 <g><circle cx="1258" cy="1855" r="3.4" fill="#0f766e"/>
 <text x="1266" y="1858.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Stoneflies <tspan fill="#a8a29e">#134</tspan></text>
 <title>plecoptera · taxonId 134</title></g>
 <g><circle cx="1258" cy="1911.9140625" r="3" fill="#78716c"/>
+<text x="1249" y="1915.5140625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_plecoptera</text>
 <title>k_plecoptera</title></g>
 <g><circle cx="1390" cy="1870.5" r="3.4" fill="#0f766e"/>
 <text x="1398" y="1874.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">U sthenids <tspan fill="#a8a29e">#138</tspan></text>
 <title>eustheniidae · taxonId 138</title></g>
 <g><circle cx="1390" cy="1953.328125" r="3" fill="#78716c"/>
+<text x="1381" y="1956.928125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_77</text>
 <title>node_77</title></g>
 <g><circle cx="1522" cy="1923.78125" r="3" fill="#78716c"/>
+<text x="1513" y="1927.38125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_78</text>
 <title>node_78</title></g>
 <g><circle cx="1654" cy="1899.5625" r="3" fill="#78716c"/>
+<text x="1645" y="1903.1625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_80</text>
 <title>node_80</title></g>
 <g><circle cx="1786" cy="1886" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1889.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Spiky reek o perla <tspan fill="#a8a29e">#141</tspan></text>
 <title>riekoperla · taxonId 141</title></g>
 <g><circle cx="1786" cy="1913.125" r="3" fill="#78716c"/>
+<text x="1777" y="1916.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_81</text>
 <title>node_81</title></g>
 <g><circle cx="1918" cy="1901.5" r="3.4" fill="#0f766e"/>
 <text x="1926" y="1905.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Hairy sprawler <tspan fill="#a8a29e">#142</tspan></text>
 <title>hairy_sprawler · taxonId 142</title></g>
 <g><circle cx="1918" cy="1924.75" r="3" fill="#78716c"/>
+<text x="1909" y="1928.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_82</text>
 <title>node_82</title></g>
 <g><circle cx="2050" cy="1917" r="3.4" fill="#0f766e"/>
 <text x="2058" y="1920.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Blond sprawler <tspan fill="#a8a29e">#140</tspan></text>
@@ -980,8 +1091,10 @@ PARENTS: node_65, node_44c, node_75</title></g>
 <text x="1662" y="1951.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Noto nemoor ids <tspan fill="#a8a29e">#144</tspan></text>
 <title>notonemouridae · taxonId 144</title></g>
 <g><circle cx="1522" cy="1982.875" r="3" fill="#78716c"/>
+<text x="1513" y="1986.475" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_79</text>
 <title>node_79</title></g>
 <g><circle cx="1654" cy="1971.25" r="3" fill="#78716c"/>
+<text x="1645" y="1974.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">acruroperla_crypturoperla</text>
 <title>acruroperla_crypturoperla</title></g>
 <g><circle cx="1786" cy="1963.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="1967.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Acruroperla atra <tspan fill="#a8a29e">#136</tspan></text>
@@ -993,20 +1106,25 @@ PARENTS: node_65, node_44c, node_75</title></g>
 <text x="1662" y="1998.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Austroperlids <tspan fill="#a8a29e">#137</tspan></text>
 <title>austroperlids · taxonId 137</title></g>
 <g><circle cx="994" cy="2108.873046875" r="3" fill="#78716c"/>
+<text x="985" y="2112.473046875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">mayfly_start_point</text>
 <title>mayfly_start_point</title></g>
 <g><circle cx="1126" cy="2057.46875" r="3" fill="#78716c"/>
+<text x="1117" y="2061.06875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_adult_mayflies</text>
 <title>k_adult_mayflies</title></g>
 <g><circle cx="1258" cy="2023.5625" r="3" fill="#78716c"/>
+<text x="1249" y="2027.1625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_112</text>
 <title>node_112</title></g>
 <g><circle cx="1390" cy="2010" r="3.4" fill="#0f766e"/>
 <text x="1398" y="2013.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">killer mayflies/purple perils <tspan fill="#a8a29e">#256</tspan></text>
 <title>adult_ameletopsidae · taxonId 256</title></g>
 <g><circle cx="1390" cy="2037.125" r="3" fill="#78716c"/>
+<text x="1381" y="2040.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_113</text>
 <title>node_113</title></g>
 <g><circle cx="1522" cy="2025.5" r="3.4" fill="#0f766e"/>
 <text x="1530" y="2029.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">siphlonurids <tspan fill="#a8a29e">#250</tspan></text>
 <title>adult_siphlonuridae · taxonId 250</title></g>
 <g><circle cx="1522" cy="2048.75" r="3" fill="#78716c"/>
+<text x="1513" y="2052.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_114</text>
 <title>node_114</title></g>
 <g><circle cx="1654" cy="2041" r="3.4" fill="#0f766e"/>
 <text x="1662" y="2044.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">oniscigastrids <tspan fill="#a8a29e">#251</tspan></text>
@@ -1015,8 +1133,10 @@ PARENTS: node_65, node_44c, node_75</title></g>
 <text x="1662" y="2060.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">stream horses <tspan fill="#a8a29e">#252</tspan></text>
 <title>adult_coloburiscidae · taxonId 252</title></g>
 <g><circle cx="1258" cy="2091.375" r="3" fill="#78716c"/>
+<text x="1249" y="2094.975" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_115</text>
 <title>node_115</title></g>
 <g><circle cx="1390" cy="2079.75" r="3" fill="#78716c"/>
+<text x="1381" y="2083.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_116</text>
 <title>node_116</title></g>
 <g><circle cx="1522" cy="2072" r="5.5" fill="#c2410c"/>
 <circle cx="1522" cy="2072" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
@@ -1027,37 +1147,46 @@ PARENTS: node_116, node_117</title></g>
 <text x="1530" y="2091.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leptophlebs <tspan fill="#a8a29e">#254</tspan></text>
 <title>adult_leptophlebiidae · taxonId 254</title></g>
 <g><circle cx="1390" cy="2103" r="3" fill="#78716c"/>
+<text x="1381" y="2106.6" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_117</text>
 <title>node_117</title></g>
 <g><circle cx="1522" cy="2103" r="3.4" fill="#0f766e"/>
 <text x="1530" y="2106.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Caenids <tspan fill="#a8a29e">#255</tspan></text>
 <title>adult_caenidae_prosopistomatidae · taxonId 255</title></g>
 <g><circle cx="1126" cy="2160.27734375" r="3" fill="#78716c"/>
+<text x="1117" y="2163.87734375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">old_mayfly_start_point</text>
 <title>old_mayfly_start_point</title></g>
 <g><circle cx="1258" cy="2160.27734375" r="3" fill="#78716c"/>
+<text x="1249" y="2163.87734375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">order_ephemeroptera</text>
 <title>order_ephemeroptera</title></g>
 <g><circle cx="1390" cy="2118.5" r="3.4" fill="#0f766e"/>
 <text x="1398" y="2122.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Mayflies <tspan fill="#a8a29e">#87</tspan></text>
 <title>ephemeroptera · taxonId 87</title></g>
 <g><circle cx="1390" cy="2202.0546875" r="3" fill="#78716c"/>
+<text x="1381" y="2205.6546875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_ephemeroptera</text>
 <title>k_ephemeroptera</title></g>
 <g><circle cx="1522" cy="2153.859375" r="3" fill="#78716c"/>
+<text x="1513" y="2157.459375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_83</text>
 <title>node_83</title></g>
 <g><circle cx="1654" cy="2134" r="3.4" fill="#0f766e"/>
 <text x="1662" y="2137.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">stream horses <tspan fill="#a8a29e">#93</tspan></text>
 <title>coloburiscoides · taxonId 93</title></g>
 <g><circle cx="1654" cy="2173.71875" r="3" fill="#78716c"/>
+<text x="1645" y="2177.31875" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_85</text>
 <title>node_85</title></g>
 <g><circle cx="1786" cy="2149.5" r="3.4" fill="#0f766e"/>
 <text x="1794" y="2153.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">killer mayflies/purple perils <tspan fill="#a8a29e">#89</tspan></text>
 <title>mirawara · taxonId 89</title></g>
 <g><circle cx="1786" cy="2197.9375" r="3" fill="#78716c"/>
+<text x="1777" y="2201.5375" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_86</text>
 <title>node_86</title></g>
 <g><circle cx="1918" cy="2176.625" r="3" fill="#78716c"/>
+<text x="1909" y="2180.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_leptophlebiidae</text>
 <title>k_leptophlebiidae</title></g>
 <g><circle cx="2050" cy="2165" r="3.4" fill="#0f766e"/>
 <text x="2058" y="2168.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Jappa <tspan fill="#a8a29e">#96</tspan></text>
 <title>jappa · taxonId 96</title></g>
 <g><circle cx="2050" cy="2188.25" r="3" fill="#78716c"/>
+<text x="2041" y="2191.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_88</text>
 <title>node_88</title></g>
 <g><circle cx="2182" cy="2180.5" r="3.4" fill="#0f766e"/>
 <text x="2190" y="2184.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Atalophlebia <tspan fill="#a8a29e">#95</tspan></text>
@@ -1066,6 +1195,7 @@ PARENTS: node_116, node_117</title></g>
 <text x="2190" y="2199.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leptophlebs <tspan fill="#a8a29e">#97</tspan></text>
 <title>leptophlebs · taxonId 97</title></g>
 <g><circle cx="1918" cy="2219.25" r="3" fill="#78716c"/>
+<text x="1909" y="2222.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_87</text>
 <title>node_87</title></g>
 <g><circle cx="2050" cy="2211.5" r="3.4" fill="#0f766e"/>
 <text x="2058" y="2215.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">siphlonurids <tspan fill="#a8a29e">#100</tspan></text>
@@ -1074,6 +1204,7 @@ PARENTS: node_116, node_117</title></g>
 <text x="2058" y="2230.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Baetids <tspan fill="#a8a29e">#90</tspan></text>
 <title>baetidae · taxonId 90</title></g>
 <g><circle cx="1522" cy="2250.25" r="3" fill="#78716c"/>
+<text x="1513" y="2253.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_84</text>
 <title>node_84</title></g>
 <g><circle cx="1654" cy="2242.5" r="3.4" fill="#0f766e"/>
 <text x="1662" y="2246.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Caenids <tspan fill="#a8a29e">#91</tspan></text>
@@ -1082,12 +1213,13 @@ PARENTS: node_116, node_117</title></g>
 <text x="1662" y="2261.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">oniscigastrids <tspan fill="#a8a29e">#99</tspan></text>
 <title>tasmanophlebia · taxonId 99</title></g>
 <g><circle cx="334" cy="2507.990478515625" r="3" fill="#78716c"/>
-<text x="325" y="2511.590478515625" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_worm_like</text>
+<text x="325" y="2511.590478515625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_worm_like</text>
 <title>k_worm_like</title></g>
 <g><circle cx="466" cy="2467.35595703125" r="3" fill="#78716c"/>
-<text x="457" y="2470.95595703125" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_89</text>
+<text x="457" y="2470.95595703125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_89</text>
 <title>node_89</title></g>
 <g><circle cx="598" cy="2413.2119140625" r="3" fill="#78716c"/>
+<text x="589" y="2416.8119140625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_91</text>
 <title>node_91</title></g>
 <g><circle cx="730" cy="2320.423828125" r="5.5" fill="#c2410c"/>
 <circle cx="730" cy="2320.423828125" r="10" fill="none" stroke="#c2410c" stroke-width="1.4" stroke-opacity="0.45"/>
@@ -1098,10 +1230,13 @@ PARENTS: node_91, node_92</title></g>
 <text x="870" y="2277.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">maggots <tspan fill="#a8a29e">#69</tspan></text>
 <title>diptera · taxonId 69</title></g>
 <g><circle cx="862" cy="2367.34765625" r="3" fill="#78716c"/>
+<text x="853" y="2370.94765625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_diptera</text>
 <title>k_diptera</title></g>
 <g><circle cx="994" cy="2320" r="3" fill="#78716c"/>
+<text x="985" y="2323.6" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_93</text>
 <title>node_93</title></g>
 <g><circle cx="1126" cy="2296.75" r="3" fill="#78716c"/>
+<text x="1117" y="2300.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_94</text>
 <title>node_94</title></g>
 <g><circle cx="1258" cy="2289" r="3.4" fill="#0f766e"/>
 <text x="1266" y="2292.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Soldier fly larvae <tspan fill="#a8a29e">#83</tspan></text>
@@ -1110,8 +1245,10 @@ PARENTS: node_91, node_92</title></g>
 <text x="1266" y="2308.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Moth fly larvae <tspan fill="#a8a29e">#81</tspan></text>
 <title>psychodidae · taxonId 81</title></g>
 <g><circle cx="1126" cy="2343.25" r="3" fill="#78716c"/>
+<text x="1117" y="2346.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_95</text>
 <title>node_95</title></g>
 <g><circle cx="1258" cy="2327.75" r="3" fill="#78716c"/>
+<text x="1249" y="2331.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_96</text>
 <title>node_96</title></g>
 <g><circle cx="1390" cy="2320" r="3.4" fill="#0f766e"/>
 <text x="1398" y="2323.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">'U' bent midges <tspan fill="#a8a29e">#79</tspan></text>
@@ -1120,6 +1257,7 @@ PARENTS: node_91, node_92</title></g>
 <text x="1398" y="2339.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Mosquito larvae, wrigglers <tspan fill="#a8a29e">#78</tspan></text>
 <title>culicidae · taxonId 78</title></g>
 <g><circle cx="1258" cy="2358.75" r="3" fill="#78716c"/>
+<text x="1249" y="2362.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_97</text>
 <title>node_97</title></g>
 <g><circle cx="1390" cy="2351" r="3.4" fill="#0f766e"/>
 <text x="1398" y="2354.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Rat tailed maggot <tspan fill="#a8a29e">#84</tspan></text>
@@ -1128,28 +1266,34 @@ PARENTS: node_91, node_92</title></g>
 <text x="1398" y="2370.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Wetland maggots <tspan fill="#a8a29e">#80</tspan></text>
 <title>ephydridae_and_sciomyzidae · taxonId 80</title></g>
 <g><circle cx="994" cy="2414.6953125" r="3" fill="#78716c"/>
+<text x="985" y="2418.2953125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_maggots</text>
 <title>k_maggots</title></g>
 <g><circle cx="1126" cy="2382" r="3.4" fill="#0f766e"/>
 <text x="1134" y="2385.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Bleff <tspan fill="#a8a29e">#71</tspan></text>
 <title>blephariceridae · taxonId 71</title></g>
 <g><circle cx="1126" cy="2447.390625" r="3" fill="#78716c"/>
+<text x="1117" y="2450.990625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_98</text>
 <title>node_98</title></g>
 <g><circle cx="1258" cy="2412.03125" r="3" fill="#78716c"/>
+<text x="1249" y="2415.63125" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_99</text>
 <title>node_99</title></g>
 <g><circle cx="1390" cy="2397.5" r="3.4" fill="#0f766e"/>
 <text x="1398" y="2401.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Black fly larvae <tspan fill="#a8a29e">#82</tspan></text>
 <title>simuliidae · taxonId 82</title></g>
 <g><circle cx="1390" cy="2426.5625" r="3" fill="#78716c"/>
+<text x="1381" y="2430.1625" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">k_chironomid</text>
 <title>k_chironomid</title></g>
 <g><circle cx="1522" cy="2413" r="3.4" fill="#0f766e"/>
 <text x="1530" y="2416.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Blood worm <tspan fill="#a8a29e">#76</tspan></text>
 <title>chironomus · taxonId 76</title></g>
 <g><circle cx="1522" cy="2440.125" r="3" fill="#78716c"/>
+<text x="1513" y="2443.725" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_101</text>
 <title>node_101</title></g>
 <g><circle cx="1654" cy="2428.5" r="3.4" fill="#0f766e"/>
 <text x="1662" y="2432.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Pog <tspan fill="#a8a29e">#72</tspan></text>
 <title>ceratopogonidae · taxonId 72</title></g>
 <g><circle cx="1654" cy="2451.75" r="3" fill="#78716c"/>
+<text x="1645" y="2455.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_102</text>
 <title>node_102</title></g>
 <g><circle cx="1786" cy="2444" r="3.4" fill="#0f766e"/>
 <text x="1794" y="2447.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Chironomid <tspan fill="#a8a29e">#77</tspan></text>
@@ -1158,6 +1302,7 @@ PARENTS: node_91, node_92</title></g>
 <text x="1794" y="2463.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Crane fly larvae <tspan fill="#a8a29e">#86</tspan></text>
 <title>tipulidae · taxonId 86</title></g>
 <g><circle cx="1258" cy="2482.75" r="3" fill="#78716c"/>
+<text x="1249" y="2486.35" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_100</text>
 <title>node_100</title></g>
 <g><circle cx="1390" cy="2475" r="3.4" fill="#0f766e"/>
 <text x="1398" y="2478.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Tasselled maggot <tspan fill="#a8a29e">#70</tspan></text>
@@ -1169,17 +1314,19 @@ PARENTS: node_91, node_92</title></g>
 <text x="738" y="2509.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Worms <tspan fill="#a8a29e">#176</tspan></text>
 <title>oligochaeta · taxonId 176</title></g>
 <g><circle cx="598" cy="2521.5" r="3" fill="#78716c"/>
+<text x="589" y="2525.1" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_92</text>
 <title>node_92</title></g>
 <g><circle cx="730" cy="2521.5" r="3.4" fill="#0f766e"/>
 <text x="738" y="2525.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Leeches <tspan fill="#a8a29e">#175</tspan></text>
 <title>hirudinea · taxonId 175</title></g>
 <g><circle cx="466" cy="2548.625" r="3" fill="#78716c"/>
-<text x="457" y="2552.225" font-size="10" text-anchor="end" fill="#57534e" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_90</text>
+<text x="457" y="2552.225" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_90</text>
 <title>node_90</title></g>
 <g><circle cx="598" cy="2537" r="3.4" fill="#0f766e"/>
 <text x="606" y="2540.6" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">flatworms <tspan fill="#a8a29e">#198</tspan></text>
 <title>turbellaria · taxonId 198</title></g>
 <g><circle cx="598" cy="2560.25" r="3" fill="#78716c"/>
+<text x="589" y="2563.85" font-size="8.5" text-anchor="end" fill="#8a857f" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">node_103</text>
 <title>node_103</title></g>
 <g><circle cx="730" cy="2552.5" r="3.4" fill="#0f766e"/>
 <text x="738" y="2556.1" font-size="10" text-anchor="start" fill="#115e59" paint-order="stroke" stroke="#fbfbf9" stroke-width="2.6">Roundworms <tspan fill="#a8a29e">#196</tspan></text>
