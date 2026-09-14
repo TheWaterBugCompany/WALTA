@@ -21,11 +21,11 @@ function unresolvedRegistrations(names) {
 //
 // Deliberately not loaded on-device — kept off the list on purpose:
 //   Database, LeafletMap                       disabled inline in specFiles.js (see comments there)
-//   CerdiApi, Key, KeyLoaderXml, QuestionLogic, Taxon   pure-logic specs run under Node in test/
+//   CerdiApi, Key, QuestionLogic, Taxon         pure-logic specs run under Node in test/
 //   _template                                  the new-spec scaffold, not a real spec
 const INTENTIONALLY_UNREGISTERED = new Set([
   "Database", "LeafletMap",
-  "CerdiApi", "Key", "KeyLoaderXml", "QuestionLogic", "Taxon",
+  "CerdiApi", "Key", "QuestionLogic", "Taxon",
   "_template",
 ]);
 
