@@ -10,18 +10,14 @@
 }
 
 // The verdict icon sits beside the message rather than above it, so the tick or
-// cross reads as part of the sentence.
+// cross reads as part of the sentence. Composite rather than horizontal: a
+// horizontal row measures a FILL child against the whole row but lays it out in
+// what is left of it, one line short of what the sentence wraps to.
 ".verdictRow": {
 	top: "4dp",
-	width: Ti.UI.FILL,
 	height: Ti.UI.SIZE,
 	left: "6%",
-	right: "6%",
-	layout: "horizontal",
-	// The message below is FILL, which in a horizontal row claims the whole row
-	// rather than what is left of it — wrapping the icon onto a line of its own.
-	// Same reason .comparisonPhotos disables it.
-	horizontalWrap: false
+	right: "6%"
 }
 
 ".verdictIcon": {
@@ -45,22 +41,26 @@
 	height: "64dp"
 }
 
-// FILL + SIZE rather than margins alone: Android otherwise measures the label at
-// an unconstrained width, wraps to fewer lines and clips (see TrainingSuccess).
+// Anchored left and right rather than given a width, so the text wraps to
+// exactly the line it is laid out in. The left inset is the icon above plus an
+// 8dp gap, and has to follow it through the buckets: 32+8, 44+8, 64+8.
 ".comparisonMessage": {
-	width: Ti.UI.FILL,
 	height: Ti.UI.SIZE,
-	left: "8dp",
+	top: 0,
+	left: "40dp",
+	right: 0,
 	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "16dp" }
 }
 
 ".comparisonMessage[if=Alloy.Globals.isHighRes]": {
+	left: "52dp",
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
 }
 
 ".comparisonMessage[if=Alloy.Globals.isXHighRes]": {
+	left: "72dp",
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "32dp" }
 }
 
