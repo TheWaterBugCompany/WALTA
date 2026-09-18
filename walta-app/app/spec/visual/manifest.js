@@ -499,16 +499,16 @@ function taxonDetails() {
 // A key with just the two taxa the comparison shows. The screen asks a key for
 // nothing but findTaxonById, so a whole key would only add ways for the fixture
 // to drift.
-function comparisonKey() {
+function comparisonKey(correctName, chosenName) {
 	var taxa = {
 		WBcorrect: Taxon.createTaxon({
 			id: "WBcorrect",
-			name: "Sleeping bag caddis",
+			name: correctName || "Sleeping bag caddis",
 			mediaUrls: ["/spec/resources/simpleKey1/media/parastacide_01.jpg"]
 		}),
 		WBchosen: Taxon.createTaxon({
 			id: "WBchosen",
-			name: "Anisops",
+			name: chosenName || "Anisops",
 			mediaUrls: ["/spec/resources/simpleKey1/media/amphipoda_01.jpg"]
 		})
 	};
@@ -521,6 +521,17 @@ function taxonComparisonCorrect() {
 
 function taxonComparisonIncorrect() {
 	return { key: comparisonKey(), selectedTaxonId: "WBchosen", correctTaxonId: "WBcorrect" };
+}
+
+// The two longest names the real key carries, both at once — a whole group of
+// families reads as one taxon here, and the verdict sentence names two of them.
+function taxonComparisonLongNames() {
+	return {
+		key: comparisonKey("Some Oecetis sp. (Leptoceridae) and Odontoceridae",
+			"Tabanidae, Dolichopodidae, Empididae & some Tipulidae"),
+		selectedTaxonId: "WBchosen",
+		correctTaxonId: "WBcorrect"
+	};
 }
 
 module.exports = [
@@ -560,6 +571,7 @@ module.exports = [
 	// to compare and a follow-up when it wasn't.
 	{ name: "TaxonComparisonCorrect", screen: "TaxonComparison", args: taxonComparisonCorrect, host: "TrainingTray" },
 	{ name: "TaxonComparisonIncorrect", screen: "TaxonComparison", args: taxonComparisonIncorrect, host: "TrainingTray" },
+	{ name: "TaxonComparisonLongNames", screen: "TaxonComparison", args: taxonComparisonLongNames, host: "TrainingTray" },
 	{ name: "SampleEditMenu", args: sampleEditMenu, host: "SampleHistory" },
 	{ name: "SyncFeedback", args: syncFeedback, host: "SampleHistory" },
 
