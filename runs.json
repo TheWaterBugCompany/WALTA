@@ -1,0 +1,62 @@
+[
+  {
+    "id": "35308533380",
+    "branch": "task/wb-350-long-taxon-names",
+    "sha": "abc133b10c599113e981e0ad5a7cc835af3874b4",
+    "capturedAt": "2026-09-18T05:08:48Z"
+  },
+  {
+    "id": "34842669521",
+    "branch": "dependabot/npm_and_yarn/dev-dependencies-ee731d0e4f",
+    "sha": "8ebcdbeb915dbba6f9b874def602906b7320c99d",
+    "capturedAt": "2026-09-14T12:20:23Z"
+  },
+  {
+    "id": "34823478328",
+    "branch": "main",
+    "sha": "813c1a3fd99b793cc639192ab610126331b4866f",
+    "capturedAt": "2026-09-14T08:54:08Z"
+  },
+  {
+    "id": "34819251494",
+    "branch": "task/wb-347-academy-spec-blocking-log",
+    "sha": "056974bdd4e8166735f528798da81d9ac51c5699",
+    "capturedAt": "2026-09-14T08:27:04Z"
+  },
+  {
+    "id": "34819223692",
+    "branch": "main",
+    "sha": "348b7eb23106b120ac3aa5b87f9fae312156cb1a",
+    "capturedAt": "2026-09-14T08:01:20Z"
+  },
+  {
+    "id": "34814633001",
+    "branch": "task/wb-348-grant-simulator-location",
+    "sha": "a21506e1f6a5935329c98beac644f3573f7bd268",
+    "capturedAt": "2026-09-14T06:59:32Z"
+  },
+  {
+    "id": "34809397137",
+    "branch": "main",
+    "sha": "450a5468db9250d2045b160fc28ab2b400e075a3",
+    "capturedAt": "2026-09-14T05:47:43Z"
+  },
+  {
+    "id": "34807535486",
+    "branch": "task/wb-342-node-ids",
+    "sha": "18932355bff67692c3dce73dd247b2e5081897fe",
+    "capturedAt": "2026-09-14T05:06:35Z"
+  },
+  {
+    "id": "34799842854",
+    "branch": "main",
+    "sha": "86aea049589cbae8d353832c2b03f7c6be0e61ab",
+    "capturedAt": "2026-09-14T03:04:38Z"
+  },
+  {
+    "id": "34798514104",
+    "branch": "task/wb-347-academy-spec-blocking-log",
+    "sha": "29cfdb0fae072d631ee4903834256601871528ae",
+    "capturedAt": "2026-09-14T02:51:48Z"
+  }
+]
