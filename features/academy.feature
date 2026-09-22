@@ -25,6 +25,10 @@ Scenario: Complete a training exercise, correcting a mistake
   When I finish the training
   Then the menu is shown
   And I am wearing a "White belt with a yellow tip"
+  # A belt earned before signing in follows the trainee into their account.
+  When I am logged in as "test@example.com"
+  And I open my account from the menu
+  Then my belts earned include a "White belt with a yellow tip"
 
 # An unidentified cell grades as incorrect, so the feedback this scenario is
 # about is reachable without walking the whole course.
