@@ -129,13 +129,13 @@ describe("MenuViewModel", function () {
   });
 
   it("shows the belt once the user holds one", function () {
-    const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
+    const vm = makeViewModel({ belt: { color: "#FFFFFF", tipColor: "#FEFF46" } });
     expect(vm.beltVisible).to.be.true;
   });
 
   it("wears the belt's own colour along its length", function () {
-    const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
-    expect(vm.beltColor).to.equal("#ffe11a");
+    const vm = makeViewModel({ belt: { color: "#FFFFFF", tipColor: "#FEFF46" } });
+    expect(vm.beltColor).to.equal("#FFFFFF");
   });
 
   it("shows the tip when the belt has one", function () {
@@ -159,8 +159,8 @@ describe("MenuViewModel", function () {
   });
 
   it("wears the belt's tip colour at the tip", function () {
-    const vm = makeViewModel({ belt: { color: "#ffe11a", tipColor: "#ffffff" } });
-    expect(vm.beltTipColor).to.equal("#ffffff");
+    const vm = makeViewModel({ belt: { color: "#FFFFFF", tipColor: "#FEFF46" } });
+    expect(vm.beltTipColor).to.equal("#FEFF46");
   });
 
 });
