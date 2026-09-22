@@ -44,6 +44,14 @@ NAMES[BLUE] = "blue";
 NAMES[BLACK] = "black";
 NAMES[WHITE] = "white";
 
+// The same belt named to sit inside a sentence of the caller's own — "your
+// white with yellow tip belt" — rather than standing on its own.
+exports.nameOf = function (belt) {
+    if (!belt) return null;
+    const color = NAMES[belt.color];
+    return belt.tipColor ? `${color} with ${NAMES[belt.tipColor]} tip` : color;
+};
+
 exports.describe = function (belt) {
     if (!belt) return null;
     const name = capitalise(NAMES[belt.color]) + " belt";
