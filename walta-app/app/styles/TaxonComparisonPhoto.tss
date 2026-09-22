@@ -27,11 +27,21 @@
 	height: Ti.UI.FILL
 }
 
-// Across the bottom of its own photo, as in the designs.
+// Across the bottom of its own photo, as in the designs. The name is the only
+// place the screen says which taxon is which, and it sits on a photograph that
+// can be anything from black gravel to a white tray, so white alone disappears
+// on half of them. Titanium has no text stroke, so the dark edge is a shadow —
+// and the two platforms draw it differently: Android blurs it into a halo,
+// while iOS ignores shadowRadius and draws a hard copy at the offset. One pixel
+// of offset is what reads on both — enough to edge the glyphs on iOS, while
+// staying inside Android's blur rather than doubling the text.
 ".comparisonCaption": {
 	bottom: "6dp",
 	left: "8dp",
 	color: Alloy.CFG.colors.white,
+	shadowColor: Alloy.CFG.colors.black,
+	shadowOffset: { x: 1, y: 1 },
+	shadowRadius: 2,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontStyle: "italic", fontSize: "13dp" }
 }
 
