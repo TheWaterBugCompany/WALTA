@@ -2,10 +2,9 @@ const { collection } = require("util/bindView");
 const TaxonComparisonViewModel = require("mvvm/viewmodels/TaxonComparison");
 
 // Titanium-free screen controller for the taxon comparison modal: the verdict
-// icon and sentence, the one-or-two photo cards, and the action that belongs to
-// this verdict. See docs/patterns/screen-controllers.md.
+// heading, the one-or-two photo cards each carrying its own mark, and the action
+// that belongs to this verdict. See docs/patterns/screen-controllers.md.
 const BINDINGS = {
-  verdictIcon:       { image: "verdictImage" },
   comparisonMessage: { text: "message" },
   photos:            { cards: collection("cards", "TaxonComparisonPhoto") },
   action:            { onClick: "activate" },

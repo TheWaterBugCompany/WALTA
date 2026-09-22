@@ -41,10 +41,13 @@ describe("TaxonComparisonViewModel", function () {
         return vm.cards.map((c) => ({ name: c.name, photoUrl: c.photoUrl, hasPhoto: c.hasPhoto }));
     }
     function incorrect() { return build({ selectedTaxonId: "WB2", correctTaxonId: "WB1" }); }
+    function verdicts(vm) { return vm.cards.map((c) => c.verdictImage); }
 
     describe("a correct identification", function () {
-        it("says so, naming the taxon", function () {
-            expect(correct().message).to.equal("You correctly identified this taxon: Sleeping bag caddis.");
+        // The photo below carries the name on its caption, so the sentence that
+        // introduces it would only say it twice.
+        it("says so, and leaves the naming to the photo", function () {
+            expect(correct().message).to.equal("You correctly identified this taxon:");
         });
 
         it("shows the one taxon, with nothing to compare it against", function () {
@@ -57,8 +60,8 @@ describe("TaxonComparisonViewModel", function () {
             expect(correct().showsWhichQuestion).to.equal(false);
         });
 
-        it("marks itself with the same tick the tray uses", function () {
-            expect(correct().verdictImage).to.equal("/images/tick-icon.png");
+        it("marks the photo with the same tick the tray uses", function () {
+            expect(verdicts(correct())).to.deep.equal(["/images/tick-icon.png"]);
         });
 
         it("offers only a way out, since there is nothing to follow up", function () {
@@ -75,9 +78,10 @@ describe("TaxonComparisonViewModel", function () {
     });
 
     describe("an incorrect identification", function () {
-        it("names what was chosen and what it should have been", function () {
-            expect(incorrect().message)
-                .to.equal("You incorrectly identified this taxon as Anisops but it should have been Sleeping bag caddis.");
+        // Which was chosen and which was right is told by the tick and cross
+        // against the photos, not by naming them both again in the sentence.
+        it("says so, and leaves the naming to the photos", function () {
+            expect(incorrect().message).to.equal("You incorrectly identified this taxon:");
         });
 
         // The chosen one first, the correct one second — the reader's own answer
@@ -93,8 +97,13 @@ describe("TaxonComparisonViewModel", function () {
             expect(incorrect().showsWhichQuestion).to.equal(true);
         });
 
-        it("marks itself with the same cross the tray uses", function () {
-            expect(incorrect().verdictImage).to.equal("/images/cross-icon.png");
+        // The mark belongs against the photo it judges: a cross on what was
+        // chosen, a tick on what it should have been.
+        it("crosses the chosen photo and ticks the correct one", function () {
+            expect(verdicts(incorrect())).to.deep.equal([
+                "/images/cross-icon.png",
+                "/images/tick-icon.png",
+            ]);
         });
 
         // The follow-up replaces the plain dismissal rather than sitting beside it

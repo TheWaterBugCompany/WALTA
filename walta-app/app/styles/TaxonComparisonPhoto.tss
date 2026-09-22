@@ -1,11 +1,62 @@
 // One taxon card: the photo with its name across the bottom. Alloy resolves TSS
 // per controller, so these live here rather than with the screen that hosts them.
 
-".comparisonCard": {
-	width: "150dp",
-	height: "112dp",
+// The mark and the photo it judges, side by side. The margins live here rather
+// than on the card so the gap between two entries stays the same whether or not
+// a mark is showing.
+".comparisonEntry": {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
 	left: "6dp",
 	right: "6dp"
+}
+
+// As tall as the card beside it, so the mark centres against the photo rather
+// than riding the row's top edge. The height has to be repeated from
+// .comparisonCard rather than taken with Ti.UI.FILL: the row that holds both is
+// itself Ti.UI.SIZE, so a FILL child has nothing resolved to fill and the whole
+// modal loses its height. The extra width over the icon is the gap before the
+// photo.
+".comparisonVerdict": {
+	width: "40dp",
+	height: "112dp"
+}
+
+".comparisonVerdict[if=Alloy.Globals.isHighRes]": {
+	width: "52dp",
+	height: "150dp"
+}
+
+".comparisonVerdict[if=Alloy.Globals.isXHighRes]": {
+	width: "72dp",
+	height: "210dp"
+}
+
+// No left/top: a composite parent centres a child that anchors to no edge, which
+// is how the mark finds the middle of the card's height.
+".comparisonVerdictIcon": {
+	width: "32dp",
+	height: "32dp",
+	right: "8dp",
+	// Titanium paints a hairline for a border colour set at zero width, so the
+	// icon needs no colour rather than a hidden one — the same quirk the key's
+	// hinted branches hit.
+	borderColor: "transparent"
+}
+
+".comparisonVerdictIcon[if=Alloy.Globals.isHighRes]": {
+	width: "44dp",
+	height: "44dp"
+}
+
+".comparisonVerdictIcon[if=Alloy.Globals.isXHighRes]": {
+	width: "64dp",
+	height: "64dp"
+}
+
+".comparisonCard": {
+	width: "150dp",
+	height: "112dp"
 }
 
 ".comparisonCard[if=Alloy.Globals.isHighRes]": {
