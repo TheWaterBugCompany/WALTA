@@ -21,6 +21,17 @@ describe("BeltRepository", function () {
         removeDatabase(TEST_DB);
     });
 
+    // A belt outlives the scenario that earned it, and what the Academy offers
+    // next follows from the level held — so a leaked belt changes the screen the
+    // next scenario opens on.
+    it("clears every belt it holds", function () {
+        repo.awardBeltLevel("38", 3);
+        repo.awardBeltLevel(null, 2);
+        repo.clear();
+        expect(repo.beltLevelFor("38")).to.equal(null);
+        expect(repo.beltLevelFor(null)).to.equal(null);
+    });
+
     it("holds no belt for a user who has never earned one", function () {
         expect(repo.beltLevelFor("38")).to.equal(null);
     });

@@ -9,6 +9,7 @@ const Topics = require('ui/Topics');
 const SampleSync = require('logic/SampleSync');
 const LogRepository = require('repository/LogRepository');
 const TrainingRepository = require('repository/TrainingRepository');
+const BeltRepository = require('repository/BeltRepository');
 
 async function reset() {
   // Cancel any in-flight sync and wait for it to actually stop *before*
@@ -76,6 +77,13 @@ async function reset() {
   const trainingRepo = TrainingRepository.open('waterbug_data');
   trainingRepo.clear();
   trainingRepo.close();
+
+  // And the belt it earned. What the Academy offers follows from the level
+  // held, so a belt left behind sends the next scenario to a different course
+  // — or to a screen with nothing to start at all.
+  const beltRepo = BeltRepository.open('waterbug_data');
+  beltRepo.clear();
+  beltRepo.close();
 }
 
 exports.reset = reset;
