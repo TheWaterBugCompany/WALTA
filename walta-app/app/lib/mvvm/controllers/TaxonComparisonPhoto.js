@@ -1,9 +1,10 @@
-// Titanium-free component for one taxon on the comparison screen: its photo, its
-// name across the bottom, and the single tap surface that browses out to it.
-// The card's view-model owns the browse intent, so the screen wires nothing per
-// card — the same shape as SampleTaxaIcon.
+// Titanium-free component for one taxon on the comparison screen: the mark that
+// judges it, its photo, its name across the bottom, and the single tap surface
+// that browses out to it. The card's view-model owns the browse intent, so the
+// screen wires nothing per card — the same shape as SampleTaxaIcon.
 const BINDINGS = {
   TaxonComparisonPhoto: { accessibilityLabel: "name", onClick: "open" },
+  verdictIcon:          { image: "verdictImage" },
   photo:                { image: "photoUrl", visible: "hasPhoto" },
   caption:              { text: "name" },
 };

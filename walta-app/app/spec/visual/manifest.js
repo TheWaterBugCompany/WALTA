@@ -524,7 +524,8 @@ function taxonComparisonIncorrect() {
 }
 
 // The two longest names the real key carries, both at once — a whole group of
-// families reads as one taxon here, and the verdict sentence names two of them.
+// families reads as one taxon here, and each caption has to carry one of them
+// over its photo.
 function taxonComparisonLongNames() {
 	return {
 		key: comparisonKey("Tabanidae, Dolichopodidae, Empididae & some Tipulidae",

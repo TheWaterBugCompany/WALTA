@@ -1,6 +1,13 @@
 <Alloy>
-	<View id="TaxonComparisonPhoto" class="comparisonCard">
-		<ImageView id="photo" class="comparisonPhoto"/>
-		<Label id="caption" class="comparisonCaption"/>
+	<View id="TaxonComparisonPhoto" class="comparisonEntry" layout="horizontal" horizontalWrap="false">
+		<!-- The mark sits beside the photo it judges, in a box as tall as the card
+		     so it centres against the photo rather than riding its top edge. -->
+		<View class="comparisonVerdict">
+			<ImageView id="verdictIcon" class="comparisonVerdictIcon"/>
+		</View>
+		<View class="comparisonCard">
+			<ImageView id="photo" class="comparisonPhoto"/>
+			<Label id="caption" class="comparisonCaption"/>
+		</View>
 	</View>
 </Alloy>

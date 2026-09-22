@@ -4,10 +4,7 @@
 			<View class="titlebar">
 				<Require id="closeButton" src="CloseButton"/>
 			</View>
-			<View id="verdictRow" class="verdictRow">
-				<ImageView id="verdictIcon" class="verdictIcon"/>
-				<Label id="comparisonMessage" class="comparisonMessage" accessibilityLabel="taxon_comparison_message"/>
-			</View>
+			<Label id="comparisonMessage" class="comparisonMessage" accessibilityLabel="taxon_comparison_message"/>
 			<View id="photos" class="comparisonPhotos"/>
 			<!-- A Titanium Button sizes to its title and ignores padding on iOS, so the
 			     chrome and the text are separate views — the NavButton idiom. -->

@@ -9,65 +9,29 @@
 	layout: "vertical"
 }
 
-// The verdict icon sits beside the message rather than above it, so the tick or
-// cross reads as part of the sentence. Composite rather than horizontal: a
-// horizontal row measures a FILL child against the whole row but lays it out in
-// what is left of it, one line short of what the sentence wraps to.
-".verdictRow": {
-	top: "4dp",
+// The whole width of the modal, centred: it is a heading over the photos now,
+// not a sentence with an icon beside it. Nothing shares its row, so the Android
+// mis-measure that clipped its last line has nothing left to happen in.
+//
+// Back at the size of the rest of the modal's text. It was dropped to fit a
+// sentence that named two taxa; the names live on the photo captions now, so
+// the heading is a fixed length and the photos keep their room.
+".comparisonMessage": {
+	top: "8dp",
 	height: Ti.UI.SIZE,
 	left: "6%",
-	right: "6%"
-}
-
-".verdictIcon": {
-	width: "32dp",
-	height: "32dp",
-	left: 0,
-	top: "2dp",
-	// Titanium paints a hairline for a border colour set at zero width, so the
-	// icon needs no colour rather than a hidden one — the same quirk the key's
-	// hinted branches hit.
-	borderColor: "transparent"
-}
-
-".verdictIcon[if=Alloy.Globals.isHighRes]": {
-	width: "44dp",
-	height: "44dp"
-}
-
-".verdictIcon[if=Alloy.Globals.isXHighRes]": {
-	width: "64dp",
-	height: "64dp"
-}
-
-// Anchored left and right rather than given a width, so the text wraps to
-// exactly the line it is laid out in. The left inset is the icon above plus an
-// 8dp gap, and has to follow it through the buckets: 32+8, 44+8, 64+8.
-//
-// Smaller than the rest of the modal's text on purpose. Several taxa are named
-// for a whole group of families and the sentence names two of them, so on a
-// short landscape screen the verdict is what pushes the photos and the action
-// off the bottom. At this size even the longest pair in the key fits the room
-// left over on the shortest screen we have measured.
-".comparisonMessage": {
-	height: Ti.UI.SIZE,
-	top: 0,
-	left: "40dp",
-	right: 0,
+	right: "6%",
 	color: Alloy.CFG.colors.primary,
-	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "12dp" }
-}
-
-".comparisonMessage[if=Alloy.Globals.isHighRes]": {
-	left: "52dp",
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "16dp" }
 }
 
+".comparisonMessage[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
+}
+
 ".comparisonMessage[if=Alloy.Globals.isXHighRes]": {
-	left: "72dp",
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "24dp" }
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "32dp" }
 }
 
 // Horizontal so one card centres itself and two sit side by side without the

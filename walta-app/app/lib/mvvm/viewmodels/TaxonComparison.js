@@ -20,14 +20,13 @@ class TaxonComparisonViewModel extends ChangeNotifier {
 
   get isCorrect() { return this._selectedTaxonId === this._correctTaxonId; }
 
+  // Names no taxon: each photo captions itself, and the tick and cross say which
+  // of the two was chosen and which was right.
   get message() {
-    const correct = this._nameOf(this._correctTaxonId);
-    if (this.isCorrect) { return `You correctly identified this taxon: ${correct}.`; }
-    return `You incorrectly identified this taxon as ${this._nameOf(this._selectedTaxonId)}`
-      + ` but it should have been ${correct}.`;
+    return this.isCorrect
+      ? "You correctly identified this taxon:"
+      : "You incorrectly identified this taxon:";
   }
-
-  _nameOf(taxonId) { return this._key.findTaxonById(taxonId).name; }
 
   // Browsing out to a taxon is a jump to its place in the key, so it needs the
   // ref — a separate id space from the taxonId, and the wrong one silently
@@ -35,11 +34,6 @@ class TaxonComparisonViewModel extends ChangeNotifier {
   _refOf(taxonId) { return this._key.findTaxonById(taxonId).id; }
 
   get cards() { return this._cards; }
-
-  // The same tick/cross vocabulary the training tray and the key hints use.
-  get verdictImage() {
-    return this.isCorrect ? "/images/tick-icon.png" : "/images/cross-icon.png";
-  }
 
   // A wrong answer has somewhere to go next, so the follow-up replaces the plain
   // dismissal rather than sitting beside it — the ✕ is still there to just leave.
@@ -90,6 +84,7 @@ class TaxonComparisonViewModel extends ChangeNotifier {
       key: taxonId,
       name: taxon.name,
       photoUrl: taxon.photoUrls.length > 0 ? taxon.photoUrls[0] : null,
+      isCorrect: taxonId === this._correctTaxonId,
       // Feedback on an assessment, not a step in an identification — so browsing
       // out to a taxon from here must not offer to add it to the sample.
       onOpen: () => this._topics.fireTopicEvent(this._topics.JUMPTO, { id: this._refOf(taxonId), allowAddToSample: false }),

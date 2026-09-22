@@ -5,7 +5,6 @@ var { View } = require("logic/View");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
 var { makeBinder } = require("util/bindView");
 var createTaxonComparison = require("mvvm/controllers/TaxonComparison");
-var TaxonComparisonViewModel = require("mvvm/viewmodels/TaxonComparison");
 
 var Taxon = require('logic/Taxon');
 var Topics = require('ui/Topics');
@@ -31,24 +30,13 @@ function comparisonKey(chosenName, correctName) {
 // One word rather than several, so the length at which a name stops fitting a
 // line is a length in characters rather than a jump of a whole word.
 function nameOfLength(length) {
-	return "Waterbugidae".repeat(8).slice(0, length);
+	return "Waterbugidae".repeat(16).slice(0, length);
 }
 
-// The two longest names the key carries — a taxon named for a whole group of
-// families, and the verdict names two of them.
+// The two longest names the key carries — a taxon can be named for a whole group
+// of families, and each caption has to carry one of them over its photo.
 var LONGEST_CHOSEN = "Tabanidae, Dolichopodidae, Empididae & some Tipulidae";
 var LONGEST_CORRECT = "Some Oecetis sp. (Leptoceridae) and Odontoceridae";
-
-// The sentence the screen would show for that name, without opening the screen
-// to find out.
-function verdictFor(chosenName) {
-	return new TaxonComparisonViewModel({
-		key: comparisonKey(chosenName),
-		topics: Topics,
-		selectedTaxonId: "WBchosen",
-		correctTaxonId: "WBcorrect"
-	}).message;
-}
 
 // Drives the real modal — Alloy presenter plus the Titanium-free screen
 // controller through bindView — so the on-device layout is exercised. The
@@ -106,22 +94,35 @@ describe('TaxonComparison modal', function() {
 		return height;
 	}
 
-	// The shortest name whose verdict needs one more line than a one-letter name
-	// does. Binary search is sound because a longer name never needs fewer lines.
+	// The shortest name needing one more line than a one-letter name does, at the
+	// width given. Binary search is sound because a longer name never needs fewer
+	// lines.
 	async function shortestNameNeedingAnExtraLine(font, width) {
-		var shortestVerdict = await heightNeededFor( verdictFor( nameOfLength(1) ), font, width );
-		var lo = 1, hi = 80;
+		var oneLine = await heightNeededFor( nameOfLength(1), font, width );
+		var lo = 1, hi = 160;
 		while ( lo < hi ) {
 			var mid = Math.floor( (lo + hi) / 2 );
-			var height = await heightNeededFor( verdictFor( nameOfLength(mid) ), font, width );
-			if ( height > shortestVerdict ) { hi = mid; } else { lo = mid + 1; }
+			if ( await heightNeededFor( nameOfLength(mid), font, width ) > oneLine ) { hi = mid; }
+			else { lo = mid + 1; }
+		}
+		if ( await heightNeededFor( nameOfLength(lo), font, width ) <= oneLine ) {
+			throw new Error(`no name up to ${hi} characters wraps at ${width}px`);
 		}
 		return nameOfLength( lo );
 	}
 
+	// An entry's children are [ verdict box, card ]; the mark is the box's only
+	// child, and the card's are [ photo, caption ].
+	function entries() { return mod.photos.children; }
+	function verdictBoxOf(entry) { return entry.children[0]; }
+	function markOf(entry) { return verdictBoxOf(entry).children[0]; }
+	function cardOf(entry) { return entry.children[1]; }
+	function captionOf(entry) { return cardOf(entry).children[1]; }
+
 	function laidOut() {
 		return waitFor(function() {
-			return mod.verdictIcon.rect.height > 0 && mod.comparisonMessage.rect.height > 0;
+			return mod.comparisonMessage.rect.height > 0
+				&& entries().length > 0 && cardOf( entries()[0] ).rect.width > 0;
 		});
 	}
 
@@ -145,31 +146,31 @@ describe('TaxonComparison modal', function() {
 		});
 	});
 
-	// The names that clip are the ones needing one more line in the room the icon
-	// leaves than in the whole row, and which names those are depends on the
-	// device's width and the font — so the fixture is measured here, not guessed.
-	it('shows the whole verdict sentence however long the name is', async () => {
+	// The caption is the only place the screen says which taxon is which, so a name
+	// that clips is the screen failing at its job. Android measures a
+	// margin-anchored label at a width it is not laid out in, and which names that
+	// bites depends on the device's width and the font — so the fixture is
+	// measured here, not guessed.
+	it('shows the whole taxon name however long it is', async () => {
 		await openIncorrect();
 		await laidOut();
-		var font = mod.comparisonMessage.font;
-		var lineWidth = mod.comparisonMessage.rect.width, rowWidth = mod.verdictRow.rect.width;
-		var name = await shortestNameNeedingAnExtraLine( font, lineWidth );
-		if ( await heightNeededFor( verdictFor(name), font, rowWidth )
-			>= await heightNeededFor( verdictFor(name), font, lineWidth ) ) {
-			throw new Error(`no name wraps differently across the ${rowWidth}px row and the ${lineWidth}px line it leaves`);
-		}
+		var caption = captionOf( entries()[0] );
+		var font = caption.font;
+		var name = await shortestNameNeedingAnExtraLine( font, caption.rect.width );
 		await closeCurrent();
 
 		await openIncorrect( name );
 		await laidOut();
-		expect( mod.comparisonMessage.rect.height, "message height" ).to.be.at.least(
-			await heightNeededFor( mod.comparisonMessage.text, font, mod.comparisonMessage.rect.width ) );
+		var wrapped = captionOf( entries()[0] );
+		expect( wrapped.rect.height, "caption height" ).to.be.at.least(
+			await heightNeededFor( wrapped.text, font, wrapped.rect.width ) );
 	});
 
-	// The sentence is what grows, and everything below it is what gets pushed off
-	// a short landscape screen: Titanium hands the action a negative height rather
-	// than shrink the photos. Only a screen tight enough to run out of room can
-	// fail this — which is the screen the reader reported it from.
+	// Long names wrap inside their own card now rather than growing a sentence
+	// above the photos, so nothing below them should move. Worth keeping pinned:
+	// when the modal did outgrow a short landscape screen, Titanium handed the
+	// action a negative height rather than shrink anything above it, so the button
+	// was simply not there.
 	it('keeps the action on screen under the longest names in the key', async () => {
 		await openIncorrect( LONGEST_CHOSEN, LONGEST_CORRECT );
 		await laidOut();
@@ -177,17 +178,21 @@ describe('TaxonComparison modal', function() {
 		expect( mod.comparisonWindow.rect.height, "modal height" ).to.be.at.most( viewportHeight() );
 	});
 
-	// The icon belongs beside the sentence, not above it — on the narrower phone
-	// for both verdicts, on the wider one only for the longer "incorrect" one.
+	// The mark judges a photo, so it reads as the photo's own rather than the
+	// screen's only when it sits beside it. Two photos each carry their own, which
+	// is what tells the reader which of the pair was chosen.
 	[
 		{ name: "correct", openIt: openCorrect },
 		{ name: "incorrect", openIt: openIncorrect },
 	].forEach(function(verdict) {
-		it(`keeps the ${verdict.name} verdict icon on the same row as its message`, async () => {
+		it(`keeps each ${verdict.name} mark beside the photo it judges`, async () => {
 			await verdict.openIt();
 			await laidOut();
-			var icon = mod.verdictIcon.rect, message = mod.comparisonMessage.rect;
-			expect( message.x, "message starts right of the icon" ).to.be.at.least( icon.x + icon.width );
+			entries().forEach(function(entry, i) {
+				var box = verdictBoxOf( entry ).rect, mark = markOf( entry ).rect, card = cardOf( entry ).rect;
+				expect( mark.width, `mark ${i} is drawn` ).to.be.greaterThan( 0 );
+				expect( box.x + mark.x + mark.width, `mark ${i} ends left of its photo` ).to.be.at.most( card.x );
+			});
 		});
 	});
 });
