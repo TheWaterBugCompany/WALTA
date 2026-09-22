@@ -51,6 +51,11 @@ class MenuScreen extends BaseScreen {
       await this.click("Photo Gallery");
       await this.world.gallery.waitFor();
     }
+    // Signed in, the login text is the way into the account.
+    async selectAccount() {
+      await this.click("You are Logged in");
+    }
+
     async selectAcademy() {
       await this.click("Academy");
       await this.world.academy.waitFor();
