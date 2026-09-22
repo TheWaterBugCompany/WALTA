@@ -66,6 +66,13 @@ describe("Belts", function () {
     expect(Belts.nameOf(Belts.at(9))).to.equal("blue with black tip");
   });
 
+  // The home screen shows nothing for a user who has never trained, but the
+  // Academy has to name where they are starting from.
+  it("starts everyone on a plain white belt, below the ladder", function () {
+    expect(Belts.STARTING).to.deep.equal({ color: "#FFFFFF", tipColor: null });
+    expect(Belts.nameOf(Belts.STARTING)).to.equal("white");
+  });
+
   it("has no name for no belt", function () {
     expect(Belts.nameOf(null)).to.equal(null);
   });

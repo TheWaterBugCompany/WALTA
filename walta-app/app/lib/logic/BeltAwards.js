@@ -63,6 +63,12 @@ module.exports = function createBeltAwards({ repository, exercises, cerdiApi }) 
             return earned;
         },
 
+        // Nought, not null, for a user with no belt: everyone starts below the
+        // first level rather than off the ladder altogether.
+        currentLevel() {
+            return repository.beltLevelFor(currentUserId()) || 0;
+        },
+
         currentBelt() {
             return Belts.at(repository.beltLevelFor(currentUserId()));
         },

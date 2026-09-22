@@ -24,6 +24,11 @@ const BELTS = [
 
 exports.HIGHEST = BELTS.length;
 
+// What everyone wears before their first course. Below the ladder rather than
+// on it: the home screen shows nothing for it, but the Academy still has to
+// name where a new trainee is starting from.
+exports.STARTING = { color: WHITE, tipColor: null };
+
 // Null below the first level — that is a user who has never trained, wearing
 // the plain white belt the ladder starts above, not an error. Levels past the
 // last stay on the highest belt, so a future session added ahead of its artwork

@@ -73,12 +73,23 @@
 	font: { fontFamily: "Tahoma", fontSize: "38dp" }
 }
 
+// An explicit height, not Ti.UI.SIZE: the belt is mounted into this holder
+// after it has laid out, and a holder sized to its contents never measures
+// again — so it would stay flat and the belt would never appear.
 ".beltHolder": {
 	width: "84%",
-	height: Ti.UI.SIZE,
+	height: "32dp",
 	left: "8%",
 	top: "10dp",
 	visible: false
+}
+
+".beltHolder[if=Alloy.Globals.isHighRes]": {
+	height: "44dp"
+}
+
+".beltHolder[if=Alloy.Globals.isXHighRes]": {
+	height: "64dp"
 }
 
 ".finishButton": {

@@ -1,6 +1,8 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
-var { wrapViewInWindow, windowOpenTest, closeWindow, waitFor } = require('spec/util/TestUtils');
+var { wrapViewInWindow, windowOpenTest, closeWindow } = require('spec/util/TestUtils');
+var { View } = require("logic/View");
+var { makeTestServices } = require("spec/fixtures/Services_fixture");
 
 describe('Academy modal', function() {
 	var ctl, win;
@@ -15,10 +17,9 @@ describe('Academy modal', function() {
 		closeWindow( win, done );
 	});
 
-	it('renders the modal with the code boxes and buttons', function() {
-		expect( ctl.digit1 ).to.exist;
-		expect( ctl.digit2 ).to.exist;
-		expect( ctl.digit3 ).to.exist;
+	it('renders the modal with the belts and buttons', function() {
+		expect( ctl.currentBelt ).to.exist;
+		expect( ctl.nextBelt ).to.exist;
 		expect( ctl.startButton ).to.exist;
 		expect( ctl.cancelButton ).to.exist;
 	});
@@ -26,40 +27,87 @@ describe('Academy modal', function() {
 });
 
 // Drives the real ViewModel + bindView onto the Alloy widgets the way
-// View.openModal does, so the Start button's rendered enabled/colour reflects
-// the entered code — the shell-only describe above can't exercise that.
-describe('Academy start button state', function() {
+// View.openModal does, so the belts render and the Start button's enabled
+// state and colour reflect whether the next course has been written — the
+// shell-only describe above can't exercise that.
+describe('Academy belt levels', function() {
 	var makeBinder = require('util/bindView').makeBinder;
 	var createAcademy = require('mvvm/controllers/Academy');
 	var createTraining = require('logic/Training');
 	var createTrainingExercises = require('logic/TrainingExercises');
+	var Belts = require('logic/Belts');
 
-	var ctl, win, lib;
+	var host, ctl, win, lib;
 
-	beforeEach( function(done) {
-		ctl = Alloy.createController("Academy");
-		win = wrapViewInWindow( ctl.getView() );
-		windowOpenTest( win, function() {
-			var exercises = createTrainingExercises({ "101": [90,198,176,131], "999": [181,179] });
-			var topics = { fireTopicEvent: function(){}, TRAINING_STARTED: "t", TRAININGTRAY: "s" };
-			var repo = { startSession: function(){ return { length: 0, taxa: function(){ return []; } }; } };
-			var services = { Training: createTraining({ topics: topics, repo: repo, exercises: exercises }), topics: topics };
-			lib = createAcademy({ view: ctl, close: function(){}, services: services, bindView: makeBinder(function(){}, Alloy.CFG.colors) });
-			done();
+	function openAt( level ) {
+		return new Promise( function(resolve) {
+			host = new View(makeTestServices());
+			ctl = Alloy.createController("Academy");
+			win = wrapViewInWindow( ctl.getView() );
+			windowOpenTest( win, function() {
+				var exercises = createTrainingExercises({ "101": { beltLevel: 1, taxa: [90,198,176,131] } });
+				var topics = { fireTopicEvent: function(){}, TRAININGTRAY: "s" };
+				var repo = { startSession: function(){ return { length: 0, taxa: function(){ return []; } }; },
+				             currentSessionCode: function(){ return null; } };
+				var services = {
+					Training: createTraining({ topics: topics, repo: repo, exercises: exercises }),
+					belts: { currentLevel: function(){ return level; } },
+					topics: topics
+				};
+				lib = createAcademy({
+					view: ctl,
+					close: function(){},
+					services: services,
+					bindView: makeBinder(function(name, a) { return host.createComponent(name, a); }, Alloy.CFG.colors)
+				});
+				resolve();
+			});
 		});
-	});
+	}
 
 	afterEach( function(done) {
 		if ( lib ) lib.dispose();
 		closeWindow( win, done );
 	});
 
-	function enter( code ) {
-		String(code).split("").forEach( function(d, i){ lib.vm["digit" + (i+1)] = d; });
-	}
+	it('names the belt held and the one the next course earns', async function() {
+		await openAt( 0 );
+		expect( ctl.currentMessage.text ).to.equal("You are currently a white belt:");
+		expect( ctl.nextMessage.text ).to.equal("Complete your next course to earn a white with yellow tip belt:");
+	});
 
-	it('greys and disables Start for an invalid full code', function() {
-		enter("123");
+	it('draws a belt for each', async function() {
+		await openAt( 0 );
+		expect( ctl.currentBelt.children.length ).to.equal( 1 );
+		expect( ctl.nextBelt.children.length ).to.equal( 1 );
+	});
+
+	// A belt the user cannot see is the bug this screen is most likely to have:
+	// the first one is white on a white modal, so only its outline says it is
+	// there at all. Pin that it is laid out with a real frame.
+	it('gives each belt a frame with width and height', async function() {
+		await openAt( 0 );
+		var current = ctl.currentBelt.children[0];
+		Ti.API.info("BELTPROBE holder x=" + ctl.currentBelt.rect.x + " y=" + ctl.currentBelt.rect.y
+			+ " w=" + ctl.currentBelt.rect.width + " h=" + ctl.currentBelt.rect.height
+			+ " visible=" + ctl.currentBelt.visible);
+		Ti.API.info("BELTPROBE belt x=" + current.rect.x + " y=" + current.rect.y
+			+ " w=" + current.rect.width + " h=" + current.rect.height
+			+ " visible=" + current.visible + " bg=" + current.backgroundColor
+			+ " border=" + current.borderColor + " bw=" + current.borderWidth
+			+ " opacity=" + current.opacity + " kids=" + current.children.length);
+		expect( current.rect.width, "belt width" ).to.be.greaterThan( 0 );
+		expect( current.rect.height, "belt height" ).to.be.greaterThan( 0 );
+	});
+
+	it('greens and enables Start when the next course has been written', async function() {
+		await openAt( 0 );
+		expect( ctl.startButton.enabled ).to.equal( true );
+		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.success );
+	});
+
+	it('greys and disables Start when the next course is unwritten', async function() {
+		await openAt( 1 );
 		expect( ctl.startButton.enabled ).to.equal( false );
 		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.disabled );
 		// Newer Android paints a disabled button its enabled backgroundColor unless
@@ -67,25 +115,9 @@ describe('Academy start button state', function() {
 		expect( ctl.startButton.backgroundDisabledColor ).to.equal( Alloy.CFG.colors.disabled );
 	});
 
-	// The real proof that one keyboard session fills the whole code: a digit in
-	// the first box moves the caret on, so the next keystroke lands in the second.
-	it('hands the keyboard to the next box once a digit is typed', function(done) {
-		var advanced = false;
-		ctl.digit2.addEventListener("focus", function(){ advanced = true; });
-		enter("1");
-		waitFor( function(){ return advanced; } ).then( function(){ done(); }, done );
-	});
-
-	it('greens and enables Start for a valid code', function() {
-		enter("101");
-		expect( ctl.startButton.enabled ).to.equal( true );
-		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.success );
-	});
-
-	it('reverts Start to the disabled look when a valid code is edited to an invalid one', function() {
-		enter("101");            // valid → green + enabled
-		lib.vm.digit3 = "2";     // "101" → "102" (invalid)
-		expect( ctl.startButton.enabled ).to.equal( false );
-		expect( ctl.startButton.backgroundColor ).to.equal( Alloy.CFG.colors.disabled );
+	it('drops the next belt once the highest is held', async function() {
+		await openAt( Belts.HIGHEST );
+		expect( ctl.nextMessage.visible ).to.equal( false );
+		expect( ctl.nextBelt.visible ).to.equal( false );
 	});
 });

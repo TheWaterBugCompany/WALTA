@@ -51,6 +51,16 @@ describe("logic/BeltAwards", function () {
     expect(awards.currentBelt()).to.equal(null);
   });
 
+  // The Academy works out the next course from the level, so it needs the
+  // number rather than the colours — and a level for a user with no belt at
+  // all, since everyone starts below the first one.
+  it("reports the level held, and nought before any is earned", function () {
+    const { awards } = make();
+    expect(awards.currentLevel()).to.equal(0);
+    awards.awardFor("101");
+    expect(awards.currentLevel()).to.equal(3);
+  });
+
   it("pushes a newly earned belt to the server", async function () {
     const { awards, cerdiApi } = make();
     awards.awardFor("101");

@@ -2,144 +2,81 @@ require("mocha");
 const { expect } = require("chai");
 const AcademyViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/Academy");
 const Palette = require("../../walta-app/app/lib/util/Palette");
+const Belts = require("../../walta-app/app/lib/logic/Belts");
 
 describe("AcademyViewModel", function () {
-  let vm;
-  // Default validator treats any complete 3-digit code as valid, so the entry
-  // tests read naturally; the validity-specific tests inject their own.
-  beforeEach(function () { vm = new AcademyViewModel({ isValidCode: (code) => code.length === 3 }); });
 
-  // Records every box the keyboard is handed to, plus the end of entry, so a
-  // test can assert on where typing left the caret.
-  function recordEntryMoves(vm) {
-    const moves = [];
-    [1, 2, 3].forEach((n) => vm.on("focusDigit" + n, () => moves.push(n)));
-    vm.on("codeComplete", () => moves.push("done"));
-    return moves;
+  // Courses run 101..110, one per belt level. Only the first is written, which
+  // is what the default validator says.
+  function build({ level = 0, written = ["101"] } = {}) {
+    return new AcademyViewModel({
+      level,
+      isValidCode: (code) => written.indexOf(code) >= 0,
+    });
   }
 
-  function type(vm, code) {
-    String(code).split("").forEach((d, i) => { vm["digit" + (i + 1)] = d; });
-  }
-
-  it("starts empty with Start disabled", function () {
-    expect(vm.digit1).to.equal("");
-    expect(vm.digit2).to.equal("");
-    expect(vm.digit3).to.equal("");
-    expect(vm.code).to.equal("");
-    expect(vm.startEnabled).to.equal(false);
+  it("names the belt a new trainee is starting from", function () {
+    const vm = build({ level: 0 });
+    expect(vm.currentMessage).to.equal("You are currently a white belt:");
+    expect(vm.currentBeltVm.color).to.equal(Belts.STARTING.color);
   });
 
-  it("assembles the code from the digits typed into each box", function () {
-    type(vm, "123");
-    expect(vm.code).to.equal("123");
+  it("names the belt already earned", function () {
+    const vm = build({ level: 1 });
+    expect(vm.currentMessage).to.equal("You are currently a white with yellow tip belt:");
+    expect(vm.currentBeltVm.tipColor).to.equal(Belts.at(1).tipColor);
   });
 
-  it("moves the keyboard on to the next box once a digit is typed", function () {
-    const moves = recordEntryMoves(vm);
-    vm.digit1 = "1";
-    expect(moves).to.deep.equal([2]);
+  it("offers the belt the next course earns", function () {
+    const vm = build({ level: 0 });
+    expect(vm.nextMessage).to.equal("Complete your next course to earn a white with yellow tip belt:");
+    expect(vm.nextBeltVm.tipColor).to.equal(Belts.at(1).tipColor);
   });
 
-  it("steps the keyboard back a box when a digit is deleted", function () {
-    type(vm, "10");
-    const moves = recordEntryMoves(vm);
-    vm.digit2 = "";
-    expect(moves).to.deep.equal([1]);
-  });
-
-  it("dismisses the keyboard once the third digit lands, uncovering Start", function () {
-    const moves = recordEntryMoves(vm);
-    type(vm, "101");
-    expect(moves).to.deep.equal([2, 3, "done"]);
-  });
-
-  it("leaves the keyboard where it is when the first box is cleared", function () {
-    type(vm, "1");
-    const moves = recordEntryMoves(vm);
-    vm.digit1 = "";
-    expect(moves).to.deep.equal([]);
-  });
-
-  it("leaves the keyboard where it is when a box is retyped with the same digit", function () {
-    type(vm, "1");
-    const moves = recordEntryMoves(vm);
-    vm.digit1 = "1";
-    expect(moves).to.deep.equal([]);
-  });
-
-  it("treats a cleared box as no digit", function () {
-    type(vm, "123");
-    vm.digit2 = null;
-    expect(vm.digit2).to.equal("");
-    expect(vm.code).to.equal("13");
-  });
-
-  // Typing into a box that already holds a digit appends to it, so the box has
-  // to take the digit just typed rather than keeping the one already there.
-  it("replaces the digit when one is typed into a box that is already full", function () {
-    type(vm, "1");
-    vm.digit1 = "15";
-    expect(vm.digit1).to.equal("5");
-    expect(vm.code).to.equal("5");
-  });
-
-  it("retyping a box replaces its digit", function () {
-    type(vm, "1");
-    vm.digit1 = "9";
-    expect(vm.digit1).to.equal("9");
-  });
-
-  it("enables Start only when all three digits are present", function () {
-    type(vm, "12");
-    expect(vm.startEnabled).to.equal(false);
-    vm.digit3 = "3";
-    expect(vm.startEnabled).to.equal(true);
-  });
-
-  it("enables Start only for a code that maps to a real exercise", function () {
-    vm = new AcademyViewModel({ isValidCode: (code) => code === "101" });
-    type(vm, "102");
-    expect(vm.startEnabled).to.equal(false);
-    vm.digit3 = "1";
-    expect(vm.startEnabled).to.equal(true);
-  });
-
-  it("shows the Start button green when the code is valid, grey when not", function () {
-    vm = new AcademyViewModel({ isValidCode: (code) => code === "101" });
-    type(vm, "102");
-    expect(vm.startColor).to.equal(Palette.disabled);
-    vm.digit3 = "1";
-    expect(vm.startColor).to.equal(Palette.success);
-  });
-
-  it("notifies listeners when a digit is typed", function () {
-    let notified = 0;
-    vm.addListener(() => notified++);
-    vm.digit1 = "4";
-    expect(notified).to.equal(1);
-  });
-
-  it("triggers 'start' with the code when Start is enabled", function () {
-    type(vm, "456");
+  it("starts the course that earns the next belt", function () {
+    const vm = build({ level: 0 });
     let started = null;
     vm.on("start", (code) => { started = code; });
     vm.start();
-    expect(started).to.equal("456");
+    expect(started).to.equal("101");
   });
 
-  it("does not trigger 'start' while the code is incomplete", function () {
-    type(vm, "4");
-    let started = false;
-    vm.on("start", () => { started = true; });
+  it("offers Start only for a course that has been written", function () {
+    expect(build({ level: 0 }).startEnabled).to.equal(true);
+    expect(build({ level: 1 }).startEnabled).to.equal(false);
+  });
+
+  it("greys Start out when the next course is unwritten", function () {
+    expect(build({ level: 0 }).startColor).to.equal(Palette.success);
+    expect(build({ level: 1 }).startColor).to.equal(Palette.disabled);
+  });
+
+  it("does nothing when Start is pressed on an unwritten course", function () {
+    const vm = build({ level: 1 });
+    let started = null;
+    vm.on("start", (code) => { started = code; });
     vm.start();
-    expect(started).to.equal(false);
+    expect(started).to.equal(null);
   });
 
-  it("triggers 'close' on close()", function () {
-    let closed = false;
-    vm.on("close", () => { closed = true; });
-    vm.close();
-    expect(closed).to.equal(true);
+  // Nothing above the last belt, so the screen has no next course to offer and
+  // no belt to draw for one.
+  it("has no next belt once the highest is held", function () {
+    const vm = build({ level: Belts.HIGHEST });
+    expect(vm.nextVisible).to.equal(false);
+    expect(vm.startEnabled).to.equal(false);
   });
+
+  it("shows the next belt while there is one to earn", function () {
+    expect(build({ level: 0 }).nextVisible).to.equal(true);
+  });
+
+  it("closes when asked", function () {
+    const vm = build();
+    let closed = 0;
+    vm.on("close", () => closed++);
+    vm.close();
+    expect(closed).to.equal(1);
+  });
+
 });

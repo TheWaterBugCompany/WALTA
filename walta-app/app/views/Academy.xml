@@ -1,23 +1,19 @@
 <Alloy>
 	<View class="overlay">
-		<ScrollView id="entryScroll" class="entryScroll">
 		<View class="window academyWindow" layout="vertical">
 			<View class="titlebar">
 				<Label id="academyTitle" class="titleText" accessibilityLabel="Academy">Academy</Label>
 				<Require id="closeButton" src="CloseButton"/>
 			</View>
-			<Label class="academyIntro">Test your macroinvertebrate identification chops: navigate to https://waterbugblitz.org/academy (on a separate device) and follow along with the video tutorial.</Label>
-			<Label class="academyPrompt">When prompted enter the 3 digit code below:</Label>
-			<View class="codeRow" layout="horizontal">
-				<TextField id="digit1" class="codeBox" accessibilityLabel="academy_code_1"/>
-				<TextField id="digit2" class="codeBox" accessibilityLabel="academy_code_2"/>
-				<TextField id="digit3" class="codeBox" accessibilityLabel="academy_code_3"/>
-			</View>
+			<Label id="currentMessage" class="beltCaption" accessibilityLabel="academy_current_belt"/>
+			<View id="currentBelt" class="academyBelt"/>
+			<Label id="nextMessage" class="beltCaption" accessibilityLabel="academy_next_belt"/>
+			<View id="nextBelt" class="academyBelt"/>
+			<Label class="academyIntro">Go to https://waterbugblitz.org.au/academy on a separate device, and select your next course.</Label>
 			<View class="academyButtons" layout="horizontal">
 				<Button id="cancelButton" class="actionButton" accessibilityLabel="academy_close">Close</Button>
 				<Button id="startButton" class="actionButton startButton" accessibilityLabel="academy_start">Start</Button>
 			</View>
 		</View>
-		</ScrollView>
 	</View>
 </Alloy>
