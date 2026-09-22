@@ -19,18 +19,22 @@
   visible: false,
   zIndex: "0",
   borderWidth: "2dp",
+  borderColor: Alloy.CFG.colors.black,
   transform: Alloy.Globals.diagonalRibbon
 }
 
 // Positioned along the bar, not the screen: the bar is anchored to the right
 // edge, so the rotated tip lands the same distance in from the corner on any
-// screen width. Inset by the border so the outline runs unbroken past it and
-// the tip reads as part of the belt rather than a gap in it.
+// screen width. Run flush to the belt's edges so the two outlines meet and the
+// tip reads as a band across the belt rather than a block sitting on it.
 "#beltTip": {
   width: "26dp",
-  top: "2dp",
-  bottom: "2dp",
-  right: "110dp"
+  top: "0dp",
+  bottom: "0dp",
+  right: "110dp",
+  visible: false,
+  borderWidth: "2dp",
+  borderColor: Alloy.CFG.colors.black
 }
 
 "#logInOrRegister" : {

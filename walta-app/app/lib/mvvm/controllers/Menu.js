@@ -5,9 +5,8 @@ const MenuViewModel = require("mvvm/viewmodels/Menu");
 const BINDINGS = {
   appVersion:      { text: "versionLabel", color: "versionColor" },
   logInLabel:      { text: "loginLabel", accessibilityLabel: "loginLabel" },
-  belt:            { visible: "beltVisible", backgroundColor: "beltColor", borderColor: "beltOutlineColor",
-                     accessibilityLabel: "beltLabel" },
-  beltTip:         { backgroundColor: "beltTipColor" },
+  belt:            { visible: "beltVisible", backgroundColor: "beltColor", accessibilityLabel: "beltLabel" },
+  beltTip:         { visible: "beltTipVisible", backgroundColor: "beltTipColor" },
   logInOrRegister: { onClick: "loginOrOut" },
   detailed:        { onClick: "detailed" },
   identify:        { onClick: "identify" },

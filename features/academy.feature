@@ -20,7 +20,7 @@ Scenario: Complete a training exercise, correcting a mistake
   Then the training success screen is shown
   When I finish the training
   Then the menu is shown
-  And I am wearing a "Yellow belt with a white tip"
+  And I am wearing a "White belt with a yellow tip"
 
 Scenario: Browse to a creature from the training feedback
   When I open the Academy from the menu
