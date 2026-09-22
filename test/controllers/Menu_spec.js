@@ -16,8 +16,8 @@ function makeView() {
     gallery:         makeWidget({}),
     academy:         makeWidget({}),
     about:           makeWidget({}),
-    belt:            makeWidget({ visible: false, backgroundColor: null, borderColor: null, accessibilityLabel: "" }),
-    beltTip:         makeWidget({ backgroundColor: null }),
+    belt:            makeWidget({ visible: false, backgroundColor: null, accessibilityLabel: "" }),
+    beltTip:         makeWidget({ visible: false, backgroundColor: null }),
   };
 }
 
@@ -87,16 +87,22 @@ describe("Menu controller", function () {
   });
 
   it("wears the held belt's two colours on the home screen", function () {
-    build({ belt: { color: "#FEFF46", tipColor: "#FFFFFF" } });
+    build({ belt: { color: "#FFFFFF", tipColor: "#FEFF46" } });
     expect(view.belt.visible).to.equal(true);
-    expect(view.belt.backgroundColor).to.equal("#FEFF46");
-    expect(view.beltTip.backgroundColor).to.equal("#FFFFFF");
-    expect(view.belt.borderColor, "outlined so the tip doesn't read as a break").to.equal("#E5E63F");
+    expect(view.belt.backgroundColor).to.equal("#FFFFFF");
+    expect(view.beltTip.visible).to.equal(true);
+    expect(view.beltTip.backgroundColor).to.equal("#FEFF46");
+  });
+
+  it("leaves an untipped belt one unbroken colour", function () {
+    build({ belt: { color: "#FEFF46", tipColor: null } });
+    expect(view.belt.visible).to.equal(true);
+    expect(view.beltTip.visible).to.equal(false);
   });
 
   it("says which belt it is, for anyone who cannot see it", function () {
-    build({ belt: { color: "#FEFF46", tipColor: "#FFFFFF" } });
-    expect(view.belt.accessibilityLabel).to.equal("Yellow belt with a white tip");
+    build({ belt: { color: "#FFFFFF", tipColor: "#FEFF46" } });
+    expect(view.belt.accessibilityLabel).to.equal("White belt with a yellow tip");
   });
 
   it("fires the DETAILED topic when the survey button is tapped", function () {

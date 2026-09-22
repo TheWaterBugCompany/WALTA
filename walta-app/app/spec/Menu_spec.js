@@ -78,13 +78,20 @@ describe('Menu belt', function() {
 		await openWith({ color: "#FEFF46", tipColor: "#F4C437" });
 		expect( mnu.belt.visible ).to.equal( true );
 		expect( mnu.belt.backgroundColor ).to.equal( "#FEFF46" );
+		expect( mnu.beltTip.visible ).to.equal( true );
 		expect( mnu.beltTip.backgroundColor ).to.equal( "#F4C437" );
+	});
+
+	it('should leave an untipped belt one unbroken colour', async function() {
+		await openWith({ color: "#FEFF46", tipColor: null });
+		expect( mnu.belt.visible ).to.equal( true );
+		expect( mnu.beltTip.visible ).to.equal( false );
 	});
 
 	// iOS drops accessibilityLabel writes made before the view is realised, so
 	// this also pins bindView re-applying them once it has laid out.
 	it('should say which belt it is for anyone who cannot see it', async function() {
-		await openWith({ color: "#FEFF46", tipColor: "#FFFFFF" });
-		expect( mnu.belt.accessibilityLabel ).to.equal( "Yellow belt with a white tip" );
+		await openWith({ color: "#FFFFFF", tipColor: "#FEFF46" });
+		expect( mnu.belt.accessibilityLabel ).to.equal( "White belt with a yellow tip" );
 	});
 });

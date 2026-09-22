@@ -38,11 +38,19 @@ function menu() {
 }
 
 // The belt is parameterised, so the screen only renders one when a belt is
-// supplied. Captured wearing the first belt a user can earn, from the real
-// table rather than a colour invented for the fixture.
+// supplied. Captured from the real table rather than a colour invented for the
+// fixture: the first belt a user can earn, white with a yellow tip, which is
+// also the one that leans hardest on the outline to show up at all.
 function menuWithBeltServices() {
 	var Belts = require("logic/Belts");
 	return { belts: { currentBelt: function () { return Belts.at(1); } } };
+}
+
+// The other half of the belt artwork: a belt past its tip is one unbroken
+// colour, with no tip drawn on it at all.
+function menuWithUntippedBeltServices() {
+	var Belts = require("logic/Belts");
+	return { belts: { currentBelt: function () { return Belts.at(2); } } };
 }
 
 // A modal is captured over the screen it is reached from — see openEntry.js.
@@ -538,6 +546,7 @@ function taxonComparisonLongNames() {
 module.exports = [
 	{ name: "Menu", args: menu },
 	{ name: "MenuWithBelt", screen: "Menu", args: menu, services: menuWithBeltServices },
+	{ name: "MenuWithUntippedBelt", screen: "Menu", args: menu, services: menuWithUntippedBeltServices },
 	{ name: "MethodSelect", args: methodSelect, host: "Menu" },
 	{ name: "Speedbug", args: speedbug },
 	{ name: "TaxonDetails", args: taxonDetails },
