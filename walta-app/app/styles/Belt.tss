@@ -1,0 +1,28 @@
+// A belt drawn flat: a bar outlined in black, with the tip banded across it
+// near the right-hand end. The tip runs flush to the bar's edges so the two
+// outlines meet and it reads as a band across the belt rather than a block
+// sitting on it — the same construction as the home screen's corner ribbon.
+".belt": {
+	width: Ti.UI.FILL,
+	height: "32dp",
+	borderWidth: "2dp",
+	borderColor: Alloy.CFG.colors.black
+}
+
+".beltTip": {
+	width: "7%",
+	top: "0dp",
+	bottom: "0dp",
+	right: "8%",
+	visible: false,
+	borderWidth: "2dp",
+	borderColor: Alloy.CFG.colors.black
+}
+
+".belt[if=Alloy.Globals.isHighRes]": {
+	height: "44dp"
+}
+
+".belt[if=Alloy.Globals.isXHighRes]": {
+	height: "64dp"
+}

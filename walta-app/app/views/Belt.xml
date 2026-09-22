@@ -1,0 +1,5 @@
+<Alloy>
+	<View id="belt" class="belt">
+		<View id="beltTip" class="beltTip"/>
+	</View>
+</Alloy>
