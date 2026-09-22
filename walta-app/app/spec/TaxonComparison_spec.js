@@ -69,11 +69,17 @@ describe('TaxonComparison modal', function() {
 		return open({ key: comparisonKey(chosenName, correctName), selectedTaxonId: "WBchosen", correctTaxonId: "WBcorrect" });
 	}
 
-	// Landscape, so the short edge is the height whichever way the platform
-	// reports the screen.
-	function viewportHeight() {
+	// Landscape, so the short edge is the height and the long edge the width,
+	// whichever way the platform reports the screen.
+	function viewportHeight() { return viewportEdge( Math.min ); }
+	function viewportWidth() { return viewportEdge( Math.max ); }
+
+	// displayCaps reports points on iOS and pixels on Android, and rect reports the
+	// same unit on each, so the two compare directly — scaling by the density
+	// factor made the screen three times bigger than it is.
+	function viewportEdge( pick ) {
 		var caps = Ti.Platform.displayCaps;
-		return Math.min( caps.platformWidth, caps.platformHeight ) * (OS_ANDROID ? caps.logicalDensityFactor : 1);
+		return pick( caps.platformWidth, caps.platformHeight );
 	}
 
 	async function closeCurrent() {
@@ -176,6 +182,21 @@ describe('TaxonComparison modal', function() {
 		await laidOut();
 		expect( mod.action.rect.height, "action height" ).to.be.greaterThan( 0 );
 		expect( mod.comparisonWindow.rect.height, "modal height" ).to.be.at.most( viewportHeight() );
+	});
+
+	// The two photos are side by side so they can be compared, which only works if
+	// both are actually on screen. The cards are sized in dp per resolution bucket
+	// while the modal was a percentage of the screen, and the bucket says nothing
+	// about how wide the screen is — so on a narrow phone in the same bucket as a
+	// wide one, the second photo ran off the edge of the modal.
+	it('fits both photos inside a modal that fits the screen', async () => {
+		await openIncorrect();
+		await laidOut();
+		var last = entries()[ entries().length - 1 ].rect;
+		expect( last.x + last.width, "right edge of the last photo against the modal" )
+			.to.be.at.most( mod.photos.rect.width );
+		expect( mod.comparisonWindow.rect.width, "modal against the screen" )
+			.to.be.at.most( viewportWidth() );
 	});
 
 	// The mark judges a photo, so it reads as the photo's own rather than the

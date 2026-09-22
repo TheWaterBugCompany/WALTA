@@ -1,10 +1,13 @@
 <Alloy>
 	<View class="overlay">
 		<View id="comparisonWindow" class="window comparisonWindow" layout="vertical">
-			<View class="titlebar">
+			<!-- The heading shares the titlebar with the ✕ rather than sitting in a
+			     row beneath it, so it starts at the top of the modal — the same
+			     shape as the other modal titles. -->
+			<View class="titlebar comparisonTitlebar">
+				<Label id="comparisonMessage" class="comparisonMessage" accessibilityLabel="taxon_comparison_message"/>
 				<Require id="closeButton" src="CloseButton"/>
 			</View>
-			<Label id="comparisonMessage" class="comparisonMessage" accessibilityLabel="taxon_comparison_message"/>
 			<View id="photos" class="comparisonPhotos"/>
 			<!-- A Titanium Button sizes to its title and ignores padding on iOS, so the
 			     chrome and the text are separate views — the NavButton idiom. -->
