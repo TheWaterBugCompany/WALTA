@@ -26,16 +26,6 @@ module.exports = function createMenuController({ view, services, bindView }) {
   });
   const unbind = bindView(view, vm, BINDINGS);
 
-  // Confirm logout through the native-dialog seam; the VM owns the decision.
-  vm.on("confirmLogout", async () => {
-    const confirmed = await services.dialogs.confirm({
-      title: "Confirm Log Out",
-      message: "Are you sure you want to log out?",
-      confirmLabel: "Log Out",
-    });
-    if (confirmed) vm.logOut();
-  });
-
   return {
     vm,
     dispose() {

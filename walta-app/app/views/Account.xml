@@ -1,0 +1,22 @@
+<Alloy>
+	<View id="content" layout="vertical">
+		<View id="accountHeader">
+			<View id="accountFields" layout="vertical">
+				<View class="fieldRow">
+					<Label class="fieldLabel" text="Email:"/>
+					<Label id="emailValue" class="fieldValue" accessibilityLabel="account_email"/>
+				</View>
+				<View class="fieldRow">
+					<Label class="fieldLabel" text="Name:"/>
+					<Label id="nameValue" class="fieldValue" accessibilityLabel="account_name"/>
+				</View>
+			</View>
+			<View id="accountActions" layout="vertical">
+				<Button id="logOutButton" class="accountButton logOutButton" accessibilityLabel="account_log_out">LOG OUT</Button>
+				<Button id="deleteButton" class="accountButton deleteButton" accessibilityLabel="account_delete">DELETE ACCOUNT</Button>
+			</View>
+		</View>
+		<Label id="beltsHeading" class="beltsHeading" accessibilityLabel="account_belts_heading">Belts Earned</Label>
+		<View id="beltGrid" layout="horizontal"/>
+	</View>
+</Alloy>

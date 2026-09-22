@@ -31,9 +31,6 @@ function fakeCerdiApi(userToken) {
 
 const PALETTE = { primary: "PRIMARY", errorDark: "ERRORDARK" };
 
-// Let the async confirmLogout handler's awaited promise settle.
-function flush() { return new Promise(resolve => setImmediate(resolve)); }
-
 describe("Menu controller", function () {
   let view, cerdiApi, dialogs, ctl;
 
@@ -133,30 +130,11 @@ describe("Menu controller", function () {
     expect(fired()).to.be.true;
   });
 
-  it("asks the dialog seam to confirm before logging out when tapped logged in", function () {
+  it("opens the account screen when tapped logged in", function () {
     build({ userToken: "a-token" });
+    const fired = recordTopic(Topics.ACCOUNT);
     view.logInOrRegister.fireEvent("click");
-    expect(dialogs.confirmCalls.length).to.equal(1);
-    expect(dialogs.confirmCalls[0].confirmLabel).to.equal("Log Out");
-  });
-
-  it("logs out and relabels when the logout is confirmed", async function () {
-    build({ userToken: "a-token", confirm: true });
-    const loggedOut = recordTopic(Topics.LOGGEDOUT);
-    view.logInOrRegister.fireEvent("click");
-    await flush();
-    expect(cerdiApi.retrieveUserToken()).to.equal(null);
-    expect(loggedOut()).to.be.true;
-    expect(view.logInLabel.text).to.equal("Log In");
-  });
-
-  it("keeps the user logged in when the logout is cancelled", async function () {
-    build({ userToken: "a-token", confirm: false });
-    const loggedOut = recordTopic(Topics.LOGGEDOUT);
-    view.logInOrRegister.fireEvent("click");
-    await flush();
-    expect(cerdiApi.retrieveUserToken()).to.equal("a-token");
-    expect(loggedOut()).to.equal(false);
+    expect(fired()).to.be.true;
   });
 
   it("stops updating the widgets after dispose", function () {
