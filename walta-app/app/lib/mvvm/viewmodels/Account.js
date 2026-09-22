@@ -51,9 +51,11 @@ class AccountViewModel extends ChangeNotifier {
     this._topics.fireTopicEvent(this._topics.HOME);
   }
 
-  // Deleting an account is a card of its own. The button is here so the screen
-  // is the shape it will keep; it does nothing yet.
-  deleteAccount() {}
+  // Deleting an account cannot be undone, so the modal asks for the password
+  // before anything is destroyed.
+  deleteAccount() {
+    this._topics.fireTopicEvent(this._topics.DELETE_ACCOUNT);
+  }
 }
 
 function beltsUpTo(level) {

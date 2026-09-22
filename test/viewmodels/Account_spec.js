@@ -112,14 +112,19 @@ describe("AccountViewModel", function () {
     expect(fired).to.deep.equal(["loggedout", "home"]);
   });
 
-  // Deleting an account is a card of its own; the button is here so the screen
-  // is the shape it will keep, and does nothing yet.
-  it("does nothing when delete account is pressed", function () {
-    const vm = build();
-    let fired = 0;
-    vm.on("deleteAccount", () => fired++);
+  it("opens the delete-account modal when delete account is pressed", function () {
+    let fired = [];
+    const vm = new AccountViewModel({
+      level: 0,
+      topics: { DELETE_ACCOUNT: "deleteaccount", fireTopicEvent: (t) => fired.push(t) },
+      cerdiApi: {
+        retrieveUsername: () => "test@example.com",
+        retrieveUser: () => Promise.resolve({}),
+        storeUserToken: () => {},
+      },
+    });
     vm.deleteAccount();
-    expect(fired).to.equal(0);
+    expect(fired).to.deep.equal(["deleteaccount"]);
   });
 
 });

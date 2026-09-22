@@ -4,6 +4,7 @@
 module.exports = {
   Academy: require("./Academy"),
   Account: require("./Account"),
+  DeleteAccount: require("./DeleteAccount"),
   Belt: require("./Belt"),
   GalleryPhoto: require("./GalleryPhoto"),
   KeySearch: require("./KeySearch"),

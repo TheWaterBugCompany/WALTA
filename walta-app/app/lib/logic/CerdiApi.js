@@ -281,6 +281,13 @@ function createCerdiApi(serverUrl, client_secret, opts = {}) {
             return http.makeJsonGetRequest(this.serverUrl + '/user', accessToken);
         },
 
+        // Anonymises the account: the server removes the personal details and
+        // reassigns submitted samples to its shared anonymous user.
+        deleteUser() {
+            let accessToken = this._requireAccessToken();
+            return http.makeJsonDeleteRequest(this.serverUrl + '/user', accessToken);
+        },
+
         updateUser(userInfo) {
             let accessToken = this._requireAccessToken();
             return http.makeJsonPutRequest(this.serverUrl + '/user', userInfo, accessToken);

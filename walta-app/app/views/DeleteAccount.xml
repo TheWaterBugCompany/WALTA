@@ -1,0 +1,16 @@
+<Alloy>
+	<View class="overlay">
+		<View class="window deleteWindow" layout="vertical">
+			<View class="titlebar">
+				<Require id="closeButton" src="CloseButton"/>
+			</View>
+			<Label id="deleteWarning" class="deleteText" accessibilityLabel="delete_account_warning">Delete your account permanently. This action is unrecoverable, all Personally Identifiable Information will be removed from the server and your submitted samples will be anonymised.</Label>
+			<Label id="deletePrompt" class="deleteText" accessibilityLabel="delete_account_prompt">Enter your password below to proceed:</Label>
+			<TextField id="passwordField" class="deletePassword" accessibilityLabel="delete_account_password"/>
+			<View class="deleteButtons" layout="horizontal">
+				<Button id="cancelButton" class="actionButton" accessibilityLabel="delete_account_close">Close</Button>
+				<Button id="deleteButton" class="actionButton deleteConfirmButton" accessibilityLabel="delete_account_confirm">DELETE ACCOUNT</Button>
+			</View>
+		</View>
+	</View>
+</Alloy>
