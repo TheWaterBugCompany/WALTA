@@ -9,7 +9,7 @@ const { startTrainingSession } = require('../features/support/drivers/training-d
 
 async function beginTrainingIdentifyViaKey(world) {
     await world.menu.selectAcademy();
-    await startTrainingSession(world, "999");
+    await startTrainingSession(world);
     await world.sample.waitFor();   // the empty training tray
     await world.sample.selectCell(1);
     await world.methodSelect.viaKey();

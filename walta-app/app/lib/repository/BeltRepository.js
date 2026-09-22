@@ -81,6 +81,12 @@ exports.open = function (dbName) {
             db.execute("DELETE FROM user WHERE userId = ?", SIGNED_OUT);
         },
 
+        // Drops every user's belt. Per-scenario housekeeping for the acceptance
+        // suite, which reuses one install across scenarios.
+        clear: function () {
+            db.execute("DELETE FROM user");
+        },
+
         close: function () {
             db.close();
         },

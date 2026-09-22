@@ -1,27 +1,35 @@
 const { When, Then } = require('@cucumber/cucumber');
 const {
-  GASTROPOD, LIMPET, MUSSEL_FROM_HINT,
+  FLATWORM, LEECH, WORM_FROM_HINT, DAMSELFLY, MAYFLY, WRONG_LEECH,
   startTrainingSession,
   identifyTrainingTaxonViaKey,
   chooseThroughKeyToTraining,
 } = require('../support/drivers/training-driver');
 
-const WRONG_LIMPET = 184;   // Ancylidae — what the exercise expects to be corrected
-
-When('I start the training session {string}', async function (code) {
-  await startTrainingSession(this, code);
+When('I start my next training course', async function () {
+  await startTrainingSession(this);
 });
 
 Then('an empty training tray is shown', async function () {
   await this.sample.waitForEmptyTray();
 });
 
-When('I identify a gastropod through the key', async function () {
-  await identifyTrainingTaxonViaKey(this, GASTROPOD, 1);
+When('I identify a flatworm through the key', async function () {
+  await identifyTrainingTaxonViaKey(this, FLATWORM, 1);
 });
 
-When('I identify a freshwater limpet through the key', async function () {
-  await identifyTrainingTaxonViaKey(this, LIMPET, 2);
+// The deliberate mistake: a leech where the course expects a worm. The two part
+// company at one couplet, which is the one the follow-up hint reopens at.
+When('I mistake a leech for a worm through the key', async function () {
+  await identifyTrainingTaxonViaKey(this, LEECH, 2);
+});
+
+When('I identify a damselfly through the key', async function () {
+  await identifyTrainingTaxonViaKey(this, DAMSELFLY, 3);
+});
+
+When('I identify a mayfly through the key', async function () {
+  await identifyTrainingTaxonViaKey(this, MAYFLY, 4);
 });
 
 When('I assess the training tray', async function () {
@@ -33,21 +41,21 @@ Then('an incorrect taxon is highlighted', async function () {
 });
 
 When('I select the incorrect taxon', async function () {
-  await this.sample.openComparison(WRONG_LIMPET);
+  await this.sample.openComparison(WRONG_LEECH);
 });
 
-Then('the comparison shows the mussel beside the limpet I chose', async function () {
-  await this.taxonComparison.waitForText('Ancylidae');
-  await this.taxonComparison.waitForText('Hyriidae');
+Then('the comparison shows the worm beside the leech I chose', async function () {
+  await this.taxonComparison.waitForText('Hirudinea');
+  await this.taxonComparison.waitForText('Oligochaeta');
 });
 
-When('I tap the limpet photo in the comparison', async function () {
-  await this.taxonComparison.openTaxon('Ancylidae');
+When('I tap the leech photo in the comparison', async function () {
+  await this.taxonComparison.openTaxon('Hirudinea');
 });
 
-Then('the limpet details are shown', async function () {
+Then('the leech details are shown', async function () {
   await this.taxon.waitFor();
-  await this.taxon.waitForText('Ancylidae');
+  await this.taxon.waitForText('Hirudinea');
 });
 
 When('I ask which question I got wrong', async function () {
@@ -61,8 +69,8 @@ Then('the key marks the branch I should have taken', async function () {
 
 // The key reopened at the couplet that went wrong, so the correction is walked
 // from there rather than from the root.
-When('I choose the mussel instead', async function () {
-  await chooseThroughKeyToTraining(this, MUSSEL_FROM_HINT);
+When('I choose the worm instead', async function () {
+  await chooseThroughKeyToTraining(this, WORM_FROM_HINT);
 });
 
 Then('the training success screen is shown', async function () {
