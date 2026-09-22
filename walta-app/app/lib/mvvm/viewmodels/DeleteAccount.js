@@ -33,11 +33,13 @@ class DeleteAccountViewModel extends ChangeNotifier {
   }
 
   // The account no longer exists, so the app cannot stay signed in to it.
+  // The modal goes first and the navigation follows: going home while this is
+  // still up leaves it closing over a window that has already been torn down.
   _accountIsGone() {
+    this.trigger("close");
     this._cerdiApi.storeUserToken(null, null);
     this._topics.fireTopicEvent(this._topics.LOGGEDOUT);
     this._topics.fireTopicEvent(this._topics.HOME);
-    this.trigger("close");
   }
 
   close() { this.trigger("close"); }

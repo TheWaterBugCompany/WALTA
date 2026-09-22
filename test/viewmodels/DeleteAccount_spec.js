@@ -88,6 +88,19 @@ describe("DeleteAccountViewModel", function () {
     expect(fired).to.deep.equal(["loggedout", "home"]);
   });
 
+  // Going home while the modal is still up leaves it closing over a window
+  // that has already been torn down, which wedges the app.
+  it("closes before it navigates away", async function () {
+    const { vm, fired } = build();
+    const order = [];
+    vm.on("close", () => order.push("close"));
+    const topicsSeen = () => order.push(...fired.splice(0));
+    vm.password = "password";
+    await vm.confirmDelete();
+    topicsSeen();
+    expect(order).to.deep.equal(["close", "loggedout", "home"]);
+  });
+
   it("says so when the account could not be deleted", async function () {
     const { vm, cerdiApi, fired } = build({ deleteFails: true });
     let told = 0;

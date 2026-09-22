@@ -171,6 +171,21 @@ function createMockCerdiServer(callback) {
                     "oauth_network": null,
                     "accessToken": "testusertoken"
                 });
+            // The account screen asks who it is signed in as.
+            this.hockServer
+                .get("/user")
+                .many()
+                .reply(200, {
+                    "id": 38,
+                    "name": "Test User",
+                    "email": email,
+                    "qaqc_level": 0
+                });
+            // Deleting the account anonymises it server-side and answers 204.
+            this.hockServer
+                .delete("/user")
+                .many()
+                .reply(204, "");
         },
         makeMockSample() {
             this.registerAccount({ email: "test@example.com", password: "password" });

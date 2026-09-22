@@ -46,6 +46,19 @@ class BaseScreen {
         await this.waitForRaw( this.selector(label), `${label} not present` );
     }
 
+    // A native alert belongs to no screen's view tree, so it is read and
+    // dismissed through the driver's own alert API rather than by selector.
+    async waitForAlert(text, timeout = 20000) {
+        await this.driver.waitUntil(async () => {
+            try {
+                return (await this.driver.getAlertText() || '').includes(text);
+            } catch (_) {
+                return false;   // no alert up yet
+            }
+        }, { timeout, timeoutMsg: `alert "${text}" not present` });
+        await this.driver.acceptAlert();
+    }
+
     async waitForText(text, timeout = 90000) {
         if ( this.isIos() ) {
             // visible == 1 filters out off-screen/overlay duplicates that share
@@ -117,6 +130,16 @@ class BaseScreen {
         } else {
             await this.driver.hideKeyboard();
         }
+    }
+
+    // Click something WDA reports as invisible though it is plainly painted —
+    // as it does the belt and the training verdict overlays. The buttons on a
+    // modal that the screen behind it paints over are the same case: wait for
+    // the element to exist, then click it.
+    async clickWhenPresent( sel ) {
+        var el = await this.driver.$( this.selector( sel ) );
+        await el.waitForExist({ timeout: 30000 });
+        await el.click();
     }
 
     async clickByText( text ) {
