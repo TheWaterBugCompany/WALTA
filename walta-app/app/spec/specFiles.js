@@ -39,6 +39,7 @@ module.exports = [
   "SampleEditMenu",
   "TrainingSuccess",
   "Account",
+  "DeleteAccount",
   "TaxonComparison",
   "SampleHistory",
   "Gallery",

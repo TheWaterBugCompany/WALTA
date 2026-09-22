@@ -91,6 +91,9 @@ var topics = {
 	// Opens the Account Details screen.
 	ACCOUNT: 'account',
 
+	// Opens the Delete Account modal.
+	DELETE_ACCOUNT: 'deleteaccount',
+
 	DIAGNOSTICS: 'diagnostics',
 
 	LOGIN: 'login',

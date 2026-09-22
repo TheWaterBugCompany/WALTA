@@ -595,6 +595,7 @@ module.exports = [
 	{ name: "Gallery", args: gallery },
 	{ name: "PhotoViewer", args: photoViewer },
 	{ name: "Account", args: account, services: accountServices },
+	{ name: "DeleteAccount", args: account, services: accountServices, host: "Account" },
 	{ name: "LogIn", args: logIn },
 	{ name: "Register", args: register },
 	{ name: "SiteDetails", args: siteDetails },

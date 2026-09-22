@@ -22,4 +22,24 @@ function confirm({ title, message, confirmLabel, cancelLabel = "Cancel" }) {
   });
 }
 
+// Show a native alert with a single way out — for telling the user something
+// they have to acknowledge but cannot act on here.
+function alert({ title, message, buttonLabel = "OK" }) {
+  return new Promise(function (resolve) {
+    var dialog = Ti.UI.createAlertDialog({
+      title: title,
+      message: message,
+      persistent: true,
+      buttonNames: [buttonLabel],
+    });
+    dialog.addEventListener("click", function onClick() {
+      dialog.removeEventListener("click", onClick);
+      dialog.hide();
+      resolve();
+    });
+    dialog.show();
+  });
+}
+
 exports.confirm = confirm;
+exports.alert = alert;
