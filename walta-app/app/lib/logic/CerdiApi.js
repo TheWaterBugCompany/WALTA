@@ -59,7 +59,11 @@ function sendOnce(method, url, contentType, acceptType, accessToken, sendDataFun
                 const headers = parsedHeaders.formatForLog();
                 onResponseHeaders(parsedHeaders);
                 if (acceptType === 'application/json') {
-                    const parsed = JSON.parse(this.responseText);
+                    // A 204 answers with no body at all. Parsing that throws
+                    // inside Titanium's own callback, where no caller can catch
+                    // it — the request never settles and the app is left
+                    // waiting on a promise that will not resolve.
+                    const parsed = this.responseText ? JSON.parse(this.responseText) : null;
                     trace(`<- ${this.status} ${method} ${url} ${JSON.stringify(redactBody(parsed))}${headers}`);
                     resolve(parsed);
                 } else {

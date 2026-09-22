@@ -23,13 +23,3 @@ Then('I am wearing a {string}', async function (name) {
   const share = await outlineShareOf(this.driver, belt);
   expect(share, `outline share of the ${name}`).to.be.greaterThan(OUTLINE_DRAWN);
 });
-
-When('I open my account from the menu', async function () {
-  await this.menu.selectAccount();
-  await this.account.waitFor();
-});
-
-Then('my belts earned include a {string}', async function (name) {
-  const share = await this.account.waitForBelt(name);
-  expect(share, `outline share of the ${name}`).to.be.greaterThan(OUTLINE_DRAWN);
-});

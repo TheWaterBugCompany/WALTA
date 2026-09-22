@@ -11,6 +11,10 @@ class AccountScreen extends BaseScreen {
     // A belt is drawn as two coloured views, so its accessibility label is what
     // names it. Being in the tree is not enough to know it was drawn, though —
     // the outline says whether it was really painted there.
+    async chooseDeleteAccount() {
+        await this.click("account_delete");
+    }
+
     async waitForBelt( name ) {
         const belt = await this.waitForExisting( name );
         return outlineShareOf( this.world.driver, belt );
