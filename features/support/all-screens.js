@@ -23,6 +23,7 @@ const SyncFeedbackScreen = require('./screens/sync-feedback-screen.js');
 const createPhotoLibraryScreen = require('./screens/photo-library-screen.js');
 const createSurveyDatePickerScreen = require('./screens/survey-date-picker-screen.js');
 const AcademyScreen = require('./screens/academy-screen.js');
+const AccountScreen = require('./screens/account-screen.js');
 const TrainingSuccessScreen = require('./screens/training-success-screen.js');
 const TaxonComparisonScreen = require('./screens/taxon-comparison-screen.js');
 
@@ -54,6 +55,7 @@ function setUpWorld(world) {
     world.photoLibrary = createPhotoLibraryScreen( world );
     world.surveyDatePicker = createSurveyDatePickerScreen( world );
     world.academy = new AcademyScreen( world );
+    world.account = new AccountScreen( world );
     world.trainingSuccess = new TrainingSuccessScreen( world );
     world.taxonComparison = new TaxonComparisonScreen( world );
 }
