@@ -1,49 +1,26 @@
 // Feedback on one identification from a training assessment.
 //
-// The width is derived from what it has to hold rather than taken as a share of
-// the screen: the incorrect state sets two photo entries side by side, and those
-// are sized in dp per resolution bucket. A percentage looked fine on a wide
-// phone and clipped the second photo on a narrow one, because the bucket says
-// nothing about how wide the screen is. So the modal is two entries wide plus
-// the padding — .comparisonEntry's 6dp margins either side of a verdict box and
-// a card, which comes to 202 / 264 / 364dp an entry through the buckets. The
-// rest is the breathing room either side: a card's outer edge sits 36 / 52 /
-// 60dp from the modal's, so two entries plus twice that is the width.
+// Nothing here is sized in fixed dp any more. The screen used to take a share
+// of the width and size its cards per resolution bucket, but the bucket is
+// chosen by height and spans 300-700 of it, so a 640-wide phone and a 914-wide
+// one were handed the same card: the second photo ran off the narrow one and
+// the wide one went half empty. util/comparisonLayout works out the largest
+// photo the real screen can carry, and everything below reads its answers —
+// see the notes there for how the two budgets are spent.
 ".comparisonWindow": {
-	width: "464dp",
+	width: Alloy.Globals.comparison.css.modalWidth,
 	height: Ti.UI.SIZE,
 	borderWidth: "1dp",
 	borderRadius: "6dp",
 	layout: "vertical"
 }
 
-".comparisonWindow[if=Alloy.Globals.isHighRes]": {
-	width: "620dp"
-}
-
-".comparisonWindow[if=Alloy.Globals.isXHighRes]": {
-	width: "836dp"
-}
-
 // One gap over and over — above the heading, under it, under the photos and
-// under the action — so the modal reads as evenly spaced top to bottom.
-//
-// The two margins above the photos are short of that gap by the slack the ✕
-// leaves around the heading: the titlebar is as tall as the button (taller than
-// the text, which centres itself in it), and that extra shows up as white space
-// on both sides of the heading. Measured at 13dp a side in the high-res bucket,
-// so 20dp of gap is a 7dp margin. In the extra-high bucket the heading is taller
-// than the button and there is no slack to take off.
+// under the action — so the modal reads as evenly spaced top to bottom. The two
+// above the photos are short of it by the slack the ✕ leaves around the
+// heading, which comparisonLayout takes off for us.
 ".comparisonTitlebar": {
-	top: "9dp"
-}
-
-".comparisonTitlebar[if=Alloy.Globals.isHighRes]": {
-	top: "7dp"
-}
-
-".comparisonTitlebar[if=Alloy.Globals.isXHighRes]": {
-	top: "28dp"
+	top: Alloy.Globals.comparison.css.aboveGap
 }
 
 // No top or bottom: a composite parent centres a child that anchors to neither,
@@ -72,7 +49,7 @@
 // Horizontal so one card centres itself and two sit side by side without the
 // screen knowing which state it is in.
 ".comparisonPhotos": {
-	top: "9dp",
+	top: Alloy.Globals.comparison.css.aboveGap,
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE,
 	layout: "horizontal",
@@ -88,10 +65,10 @@
 // padding on iOS, so the border sat on the glyphs. Chrome here, text in
 // .comparisonActionLabel, whose margins are the padding — the NavButton idiom.
 ".comparisonAction": {
-	top: "14dp",
-	bottom: "14dp",
+	top: Alloy.Globals.comparison.css.gap,
+	bottom: Alloy.Globals.comparison.css.gap,
 	width: Ti.UI.SIZE,
-	height: "36dp",
+	height: Alloy.Globals.comparison.css.actionHeight,
 	backgroundColor: Alloy.CFG.colors.white,
 	borderColor: Alloy.CFG.colors.primary,
 	borderWidth: "1dp",
@@ -111,30 +88,10 @@
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
 }
 
-".comparisonPhotos[if=Alloy.Globals.isHighRes]": {
-	top: "7dp"
-}
-
-".comparisonPhotos[if=Alloy.Globals.isXHighRes]": {
-	top: "28dp"
-}
-
-".comparisonAction[if=Alloy.Globals.isHighRes]": {
-	top: "20dp",
-	bottom: "20dp",
-	height: "48dp"
-}
-
 ".comparisonActionLabel[if=Alloy.Globals.isHighRes]": {
 	left: "22dp",
 	right: "22dp",
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "20dp" }
-}
-
-".comparisonAction[if=Alloy.Globals.isXHighRes]": {
-	top: "28dp",
-	bottom: "28dp",
-	height: "64dp"
 }
 
 ".comparisonActionLabel[if=Alloy.Globals.isXHighRes]": {

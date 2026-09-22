@@ -199,6 +199,20 @@ describe('TaxonComparison modal', function() {
 			.to.be.at.most( viewportWidth() );
 	});
 
+	// The photos are sized from the screen actually in front of the reader, not
+	// from the smallest screen in its resolution bucket — so whichever budget runs
+	// out first should be nearly spent, rather than the modal sitting well inside
+	// both. Measured on the rendered modal, so it also catches the stylesheet
+	// failing to read the computed sizes at all.
+	it('fills the screen it is on rather than the smallest in its bucket', async () => {
+		await openIncorrect();
+		await laidOut();
+		var win = mod.comparisonWindow.rect;
+		var card = cardOf( entries()[0] ).rect;
+		var spare = Math.min( viewportWidth() - win.width, viewportHeight() - win.height );
+		expect( spare, "slack left in the tighter of the two budgets" ).to.be.below( card.width / 2 );
+	});
+
 	// The mark judges a photo, so it reads as the photo's own rather than the
 	// screen's only when it sits beside it. Two photos each carry their own, which
 	// is what tells the reader which of the pair was chosen.
