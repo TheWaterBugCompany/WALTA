@@ -1,6 +1,6 @@
 <Alloy>
 	<View class="overlay">
-		<View class="window comparisonWindow" layout="vertical">
+		<View id="comparisonWindow" class="window comparisonWindow" layout="vertical">
 			<View class="titlebar">
 				<Require id="closeButton" src="CloseButton"/>
 			</View>

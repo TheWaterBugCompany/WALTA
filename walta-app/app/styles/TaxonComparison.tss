@@ -44,6 +44,12 @@
 // Anchored left and right rather than given a width, so the text wraps to
 // exactly the line it is laid out in. The left inset is the icon above plus an
 // 8dp gap, and has to follow it through the buckets: 32+8, 44+8, 64+8.
+//
+// Smaller than the rest of the modal's text on purpose. Several taxa are named
+// for a whole group of families and the sentence names two of them, so on a
+// short landscape screen the verdict is what pushes the photos and the action
+// off the bottom. At this size even the longest pair in the key fits the room
+// left over on the shortest screen we have measured.
 ".comparisonMessage": {
 	height: Ti.UI.SIZE,
 	top: 0,
@@ -51,17 +57,17 @@
 	right: 0,
 	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "16dp" }
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "12dp" }
 }
 
 ".comparisonMessage[if=Alloy.Globals.isHighRes]": {
 	left: "52dp",
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "16dp" }
 }
 
 ".comparisonMessage[if=Alloy.Globals.isXHighRes]": {
 	left: "72dp",
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "32dp" }
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "24dp" }
 }
 
 // Horizontal so one card centres itself and two sit side by side without the

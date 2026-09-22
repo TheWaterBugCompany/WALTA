@@ -12,11 +12,11 @@ var Topics = require('ui/Topics');
 
 // The screen asks a key for nothing but findTaxonById, so two taxa are the whole
 // fixture — the same shape the visual manifest uses.
-function comparisonKey(chosenName) {
+function comparisonKey(chosenName, correctName) {
 	var taxa = {
 		WBcorrect: Taxon.createTaxon({
 			id: "WBcorrect",
-			name: "Sleeping bag caddis",
+			name: correctName || "Sleeping bag caddis",
 			mediaUrls: ["/spec/resources/simpleKey1/media/parastacide_01.jpg"]
 		}),
 		WBchosen: Taxon.createTaxon({
@@ -33,6 +33,11 @@ function comparisonKey(chosenName) {
 function nameOfLength(length) {
 	return "Waterbugidae".repeat(8).slice(0, length);
 }
+
+// The two longest names the key carries — a taxon named for a whole group of
+// families, and the verdict names two of them.
+var LONGEST_CHOSEN = "Tabanidae, Dolichopodidae, Empididae & some Tipulidae";
+var LONGEST_CORRECT = "Some Oecetis sp. (Leptoceridae) and Odontoceridae";
 
 // The sentence the screen would show for that name, without opening the screen
 // to find out.
@@ -72,8 +77,15 @@ describe('TaxonComparison modal', function() {
 		return open({ key: comparisonKey(), selectedTaxonId: "WBcorrect", correctTaxonId: "WBcorrect" });
 	}
 
-	function openIncorrect(chosenName) {
-		return open({ key: comparisonKey(chosenName), selectedTaxonId: "WBchosen", correctTaxonId: "WBcorrect" });
+	function openIncorrect(chosenName, correctName) {
+		return open({ key: comparisonKey(chosenName, correctName), selectedTaxonId: "WBchosen", correctTaxonId: "WBcorrect" });
+	}
+
+	// Landscape, so the short edge is the height whichever way the platform
+	// reports the screen.
+	function viewportHeight() {
+		var caps = Ti.Platform.displayCaps;
+		return Math.min( caps.platformWidth, caps.platformHeight ) * (OS_ANDROID ? caps.logicalDensityFactor : 1);
 	}
 
 	async function closeCurrent() {
@@ -152,6 +164,17 @@ describe('TaxonComparison modal', function() {
 		await laidOut();
 		expect( mod.comparisonMessage.rect.height, "message height" ).to.be.at.least(
 			await heightNeededFor( mod.comparisonMessage.text, font, mod.comparisonMessage.rect.width ) );
+	});
+
+	// The sentence is what grows, and everything below it is what gets pushed off
+	// a short landscape screen: Titanium hands the action a negative height rather
+	// than shrink the photos. Only a screen tight enough to run out of room can
+	// fail this — which is the screen the reader reported it from.
+	it('keeps the action on screen under the longest names in the key', async () => {
+		await openIncorrect( LONGEST_CHOSEN, LONGEST_CORRECT );
+		await laidOut();
+		expect( mod.action.rect.height, "action height" ).to.be.greaterThan( 0 );
+		expect( mod.comparisonWindow.rect.height, "modal height" ).to.be.at.most( viewportHeight() );
 	});
 
 	// The icon belongs beside the sentence, not above it — on the narrower phone
