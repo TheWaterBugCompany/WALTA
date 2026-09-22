@@ -20,6 +20,21 @@ describe("TrainingSuccessViewModel", function () {
       .to.equal("Well done! You've identified the 1 correct creature!");
   });
 
+  it("names the belt the session just earned", function () {
+    const vm = build({ correctCount: 6, belt: { color: "#FFFFFF", tipColor: "#FEFF46" } });
+    expect(vm.beltMessage).to.equal("You've earned your white with yellow tip belt:");
+  });
+
+  it("says nothing about a belt when the session carries none", function () {
+    const vm = build({ correctCount: 6, belt: null });
+    expect(vm.beltVisible).to.be.false;
+  });
+
+  it("shows the belt it earned", function () {
+    const vm = build({ correctCount: 6, belt: { color: "#FFFFFF", tipColor: "#FEFF46" } });
+    expect(vm.beltVisible).to.be.true;
+  });
+
   it("returns to the main menu and closes when Finish is pressed", function () {
     const vm = build({ correctCount: 4 });
     let home = false;

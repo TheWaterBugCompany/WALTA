@@ -325,6 +325,13 @@ function trainingSuccess() {
 	return { correctCount: 6 };
 }
 
+// The screen as a trainee actually reaches it: a session that earned a belt.
+// Taken from the real belt table, at the level the first course awards.
+function trainingSuccessBeltServices() {
+	var Belts = require("logic/Belts");
+	return { belts: { currentBelt: function () { return Belts.at(1); } } };
+}
+
 function sampleEditMenu() {
 	return { sampleId: 1 };
 }
@@ -577,6 +584,8 @@ module.exports = [
 	{ name: "Academy", args: academy, services: academyServices, host: "Menu" },
 	{ name: "AcademyCodeEntered", screen: "Academy", args: academy, services: academyServices, host: "Menu", after: enterAcademyCode },
 	{ name: "TrainingSuccess", args: trainingSuccess, host: "TrainingTray" },
+	{ name: "TrainingSuccessWithBelt", screen: "TrainingSuccess", args: trainingSuccess,
+	  services: trainingSuccessBeltServices, host: "TrainingTray" },
 	// Both verdicts: one photo and a way out when the answer was right, two photos
 	// to compare and a follow-up when it wasn't.
 	{ name: "TaxonComparisonCorrect", screen: "TaxonComparison", args: taxonComparisonCorrect, host: "TrainingTray" },

@@ -1,38 +1,45 @@
 ".successWindow": {
-	width: "56%",
+	width: "65%",
 	height: Ti.UI.SIZE,
 	borderWidth: "1dp",
 	borderRadius: "6dp",
 	layout: "vertical"
 }
 
-"#successMessage": {
-	top: "8dp",
-	// FILL + SIZE (not left/right margins alone): Android otherwise measures the
-	// label at an unconstrained width, wraps to fewer lines, and clips.
+// The congratulation reads as one line of thought: the confetti to the left of
+// the sentence it belongs to, rather than stacked above it.
+"#successHeader": {
 	width: Ti.UI.FILL,
 	height: Ti.UI.SIZE,
-	left: "8%",
-	right: "8%",
+	top: "8dp"
+}
+
+"#successMessage": {
+	// An explicit width (not left/right margins alone): Android otherwise
+	// measures the label at a width it is not laid out in, wraps to fewer lines,
+	// and clips.
+	width: "62%",
+	height: Ti.UI.SIZE,
+	left: "4%",
 	color: Alloy.CFG.colors.primary,
-	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "20dp" }
+	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+	font: { fontFamily: "Tahoma", fontSize: "20dp" }
 }
 
 "#successMessage[if=Alloy.Globals.isHighRes]": {
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "26dp" }
+	font: { fontFamily: "Tahoma", fontSize: "26dp" }
 }
 
 "#successMessage[if=Alloy.Globals.isXHighRes]": {
-	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "38dp" }
+	font: { fontFamily: "Tahoma", fontSize: "38dp" }
 }
 
 // Sized by height (width SIZE keeps the aspect) so the whole modal — titlebar,
-// message, graphic, button — fits the shortest landscape viewport without
+// message, graphic, belt, button — fits the shortest landscape viewport without
 // scrolling. Scales up with the screen-height buckets; the base serves the
 // smallest screens.
 ".successGraphic": {
-	top: "12dp",
+	left: "8%",
 	width: Ti.UI.SIZE,
 	height: "44dp"
 }
@@ -42,11 +49,40 @@
 }
 
 ".successGraphic[if=Alloy.Globals.isXHighRes]": {
-	height: "120dp"
+	height: "104dp"
+}
+
+// The belt and the sentence that introduces it share a left edge, so the
+// sentence reads as a label on the belt below it.
+".beltMessage": {
+	width: "84%",
+	height: Ti.UI.SIZE,
+	left: "8%",
+	top: "16dp",
+	visible: false,
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+	font: { fontFamily: "Tahoma", fontSize: "20dp" }
+}
+
+".beltMessage[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontSize: "26dp" }
+}
+
+".beltMessage[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontSize: "38dp" }
+}
+
+".beltHolder": {
+	width: "84%",
+	height: Ti.UI.SIZE,
+	left: "8%",
+	top: "10dp",
+	visible: false
 }
 
 ".finishButton": {
-	top: "12dp",
+	top: "16dp",
 	bottom: "12dp",
 	color: Alloy.CFG.colors.primary,
 	backgroundColor: Alloy.CFG.colors.white,
