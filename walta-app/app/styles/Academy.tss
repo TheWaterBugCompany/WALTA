@@ -33,9 +33,8 @@
 	font: { fontFamily: "Tahoma", fontSize: "28dp" }
 }
 
-// An explicit height, not Ti.UI.SIZE: the belt is mounted into this holder
-// after it has laid out, and a holder sized to its contents never measures
-// again — so it would stay flat and the belt would never appear.
+// The holder gives the belt its thickness — the belt itself fills whatever it
+// is mounted into.
 ".academyBelt": {
 	width: "84%",
 	height: "32dp",

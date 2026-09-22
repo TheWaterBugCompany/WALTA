@@ -44,30 +44,31 @@ describe('Academy belt levels', function() {
 			host = new View(makeTestServices());
 			ctl = Alloy.createController("Academy");
 			win = wrapViewInWindow( ctl.getView() );
-			windowOpenTest( win, function() {
-				var exercises = createTrainingExercises({ "101": { beltLevel: 1, taxa: [90,198,176,131] } });
-				var topics = { fireTopicEvent: function(){}, TRAININGTRAY: "s" };
-				var repo = { startSession: function(){ return { length: 0, taxa: function(){ return []; } }; },
-				             currentSessionCode: function(){ return null; } };
-				var services = {
-					Training: createTraining({ topics: topics, repo: repo, exercises: exercises }),
-					belts: { currentLevel: function(){ return level; } },
-					topics: topics
-				};
-				lib = createAcademy({
-					view: ctl,
-					close: function(){},
-					services: services,
-					bindView: makeBinder(function(name, a) { return host.createComponent(name, a); }, Alloy.CFG.colors)
-				});
-				resolve();
+			var exercises = createTrainingExercises({ "101": { beltLevel: 1, taxa: [90,198,176,131] } });
+			var topics = { fireTopicEvent: function(){}, TRAININGTRAY: "s" };
+			var repo = { startSession: function(){ return { length: 0, taxa: function(){ return []; } }; },
+			             currentSessionCode: function(){ return null; } };
+			var services = {
+				Training: createTraining({ topics: topics, repo: repo, exercises: exercises }),
+				belts: { currentLevel: function(){ return level; } },
+				topics: topics
+			};
+			lib = createAcademy({
+				view: ctl,
+				close: function(){},
+				services: services,
+				bindView: makeBinder(function(name, a) { return host.createComponent(name, a); }, Alloy.CFG.colors)
 			});
+			windowOpenTest( win, resolve );
 		});
 	}
 
-	afterEach( function(done) {
+	// Close before disposing: disposing unmounts the belts, so a teardown that
+	// ran the other way round would leave the screen bare for anyone looking at
+	// it (and for a screenshot taken in --manual).
+	afterEach( async function() {
+		await closeWindow( win );
 		if ( lib ) lib.dispose();
-		closeWindow( win, done );
 	});
 
 	it('names the belt held and the one the next course earns', async function() {
@@ -88,14 +89,6 @@ describe('Academy belt levels', function() {
 	it('gives each belt a frame with width and height', async function() {
 		await openAt( 0 );
 		var current = ctl.currentBelt.children[0];
-		Ti.API.info("BELTPROBE holder x=" + ctl.currentBelt.rect.x + " y=" + ctl.currentBelt.rect.y
-			+ " w=" + ctl.currentBelt.rect.width + " h=" + ctl.currentBelt.rect.height
-			+ " visible=" + ctl.currentBelt.visible);
-		Ti.API.info("BELTPROBE belt x=" + current.rect.x + " y=" + current.rect.y
-			+ " w=" + current.rect.width + " h=" + current.rect.height
-			+ " visible=" + current.visible + " bg=" + current.backgroundColor
-			+ " border=" + current.borderColor + " bw=" + current.borderWidth
-			+ " opacity=" + current.opacity + " kids=" + current.children.length);
 		expect( current.rect.width, "belt width" ).to.be.greaterThan( 0 );
 		expect( current.rect.height, "belt height" ).to.be.greaterThan( 0 );
 	});
