@@ -6,9 +6,11 @@
 // phone and clipped the second photo on a narrow one, because the bucket says
 // nothing about how wide the screen is. So the modal is two entries wide plus
 // the padding — .comparisonEntry's 6dp margins either side of a verdict box and
-// a card, which comes to 202 / 264 / 364dp an entry through the buckets.
+// a card, which comes to 202 / 264 / 364dp an entry through the buckets. The
+// rest is the breathing room either side: a card's outer edge sits 36 / 52 /
+// 60dp from the modal's, so two entries plus twice that is the width.
 ".comparisonWindow": {
-	width: "428dp",
+	width: "464dp",
 	height: Ti.UI.SIZE,
 	borderWidth: "1dp",
 	borderRadius: "6dp",
@@ -16,26 +18,32 @@
 }
 
 ".comparisonWindow[if=Alloy.Globals.isHighRes]": {
-	width: "568dp"
+	width: "620dp"
 }
 
 ".comparisonWindow[if=Alloy.Globals.isXHighRes]": {
-	width: "776dp"
+	width: "836dp"
 }
 
-// One gap, used above the heading, under it, and under the photos, so the
-// spacing reads as even top to bottom. The titlebar is as tall as the ✕ and the
-// heading centres itself against it.
+// One gap over and over — above the heading, under it, under the photos and
+// under the action — so the modal reads as evenly spaced top to bottom.
+//
+// The two margins above the photos are short of that gap by the slack the ✕
+// leaves around the heading: the titlebar is as tall as the button (taller than
+// the text, which centres itself in it), and that extra shows up as white space
+// on both sides of the heading. Measured at 13dp a side in the high-res bucket,
+// so 20dp of gap is a 7dp margin. In the extra-high bucket the heading is taller
+// than the button and there is no slack to take off.
 ".comparisonTitlebar": {
-	top: "12dp"
+	top: "9dp"
 }
 
 ".comparisonTitlebar[if=Alloy.Globals.isHighRes]": {
-	top: "20dp"
+	top: "7dp"
 }
 
 ".comparisonTitlebar[if=Alloy.Globals.isXHighRes]": {
-	top: "24dp"
+	top: "28dp"
 }
 
 // No top or bottom: a composite parent centres a child that anchors to neither,
@@ -64,7 +72,7 @@
 // Horizontal so one card centres itself and two sit side by side without the
 // screen knowing which state it is in.
 ".comparisonPhotos": {
-	top: "12dp",
+	top: "9dp",
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE,
 	layout: "horizontal",
@@ -80,8 +88,8 @@
 // padding on iOS, so the border sat on the glyphs. Chrome here, text in
 // .comparisonActionLabel, whose margins are the padding — the NavButton idiom.
 ".comparisonAction": {
-	top: "12dp",
-	bottom: "12dp",
+	top: "14dp",
+	bottom: "14dp",
 	width: Ti.UI.SIZE,
 	height: "36dp",
 	backgroundColor: Alloy.CFG.colors.white,
@@ -104,11 +112,11 @@
 }
 
 ".comparisonPhotos[if=Alloy.Globals.isHighRes]": {
-	top: "20dp"
+	top: "7dp"
 }
 
 ".comparisonPhotos[if=Alloy.Globals.isXHighRes]": {
-	top: "24dp"
+	top: "28dp"
 }
 
 ".comparisonAction[if=Alloy.Globals.isHighRes]": {
@@ -124,8 +132,8 @@
 }
 
 ".comparisonAction[if=Alloy.Globals.isXHighRes]": {
-	top: "24dp",
-	bottom: "24dp",
+	top: "28dp",
+	bottom: "28dp",
 	height: "64dp"
 }
 
