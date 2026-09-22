@@ -8,6 +8,7 @@
 const Topics = require('ui/Topics');
 const SampleSync = require('logic/SampleSync');
 const LogRepository = require('repository/LogRepository');
+const TrainingRepository = require('repository/TrainingRepository');
 
 async function reset() {
   // Cancel any in-flight sync and wait for it to actually stop *before*
@@ -66,6 +67,15 @@ async function reset() {
   const logRepo = LogRepository.open('waterbug_data');
   logRepo.clear();
   logRepo.close();
+
+  // Drop any training session and its tray. A session is deliberately durable
+  // so an app the OS reclaims resumes where it left off — which also means it
+  // outlives the scenario that started it, and the academy then resumes that
+  // one instead of starting the next scenario's fresh. The tray comes back
+  // holding the previous scenario's creatures, so its empty slots are gone.
+  const trainingRepo = TrainingRepository.open('waterbug_data');
+  trainingRepo.clear();
+  trainingRepo.close();
 }
 
 exports.reset = reset;
