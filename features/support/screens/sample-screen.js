@@ -9,6 +9,27 @@ class SampleScreen extends BaseScreen {
         await this.world.methodSelect.waitFor();
     }
 
+    // Both halves of "empty", neither of which needs to know how many creatures
+    // the exercise asks for: the first slot is still a numbered placeholder, and
+    // nothing has been identified into the tray at all. Waiting only for the
+    // screen let a tray resumed from a previous session — slots filled, numbers
+    // gone — pass as empty, and the scenario then died three steps later on a
+    // locator timeout that named the wrong thing.
+    async waitForEmptyTray() {
+        await this.waitFor();
+        await this.waitForLabel("Cell 1");
+        const identified = await this.driver.$( this.anyTaxonSelector() );
+        if ( await identified.isExisting() ) {
+            throw new Error("the training tray already holds a taxon, so it is not empty");
+        }
+    }
+
+    anyTaxonSelector() {
+        return this.isIos()
+            ? "-ios predicate string:label BEGINSWITH 'Taxon '"
+            : 'android=new UiSelector().descriptionStartsWith("Taxon ")';
+    }
+
     // Training: a cell still waiting to be identified is labelled by its number;
     // tapping it opens the method chooser for that position. Training has no
     // add-to-sample plus — the number is how a taxon gets added.
