@@ -87,3 +87,10 @@ log(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isH
 // Alloy's TSS parser takes values, not call expressions, so a matrix a style
 // needs has to be built here and referenced by name.
 Alloy.Globals.diagonalRibbon = Ti.UI.createMatrix2D().rotate(45);
+
+// Same reason: the taxon comparison screen sizes its photos from the screen it
+// is actually on rather than from the resolution bucket, and that sum has to be
+// done here for TaxonComparison.tss to read the answers back by name.
+Alloy.Globals.comparison = require("util/comparisonLayout")(screen);
+
+log(`comparison card=${Alloy.Globals.comparison.cardWidth}x${Alloy.Globals.comparison.cardHeight} modal=${Alloy.Globals.comparison.modalWidth}x${Alloy.Globals.comparison.modalHeight}`);

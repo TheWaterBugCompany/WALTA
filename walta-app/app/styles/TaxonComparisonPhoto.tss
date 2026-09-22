@@ -4,69 +4,42 @@
 // The mark and the photo it judges, side by side. The margins live here rather
 // than on the card so the gap between two entries stays the same whether or not
 // a mark is showing.
+//
+// Every size below comes from util/comparisonLayout, which fits the photos to
+// the screen actually in front of the reader rather than to the smallest screen
+// in its resolution bucket.
 ".comparisonEntry": {
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE,
-	left: "6dp",
-	right: "6dp"
+	left: Alloy.Globals.comparison.css.entryMargin,
+	right: Alloy.Globals.comparison.css.entryMargin
 }
 
 // As tall as the card beside it, so the mark centres against the photo rather
-// than riding the row's top edge. The height has to be repeated from
-// .comparisonCard rather than taken with Ti.UI.FILL: the row that holds both is
-// itself Ti.UI.SIZE, so a FILL child has nothing resolved to fill and the whole
-// modal loses its height. The extra width over the icon is the gap before the
-// photo.
+// than riding the row's top edge. The height is repeated from .comparisonCard
+// rather than taken with Ti.UI.FILL: the row that holds both is itself
+// Ti.UI.SIZE, so a FILL child has nothing resolved to fill and the whole modal
+// loses its height. The extra width over the icon is the gap before the photo.
 ".comparisonVerdict": {
-	width: "40dp",
-	height: "112dp"
-}
-
-".comparisonVerdict[if=Alloy.Globals.isHighRes]": {
-	width: "52dp",
-	height: "150dp"
-}
-
-".comparisonVerdict[if=Alloy.Globals.isXHighRes]": {
-	width: "72dp",
-	height: "210dp"
+	width: Alloy.Globals.comparison.css.verdictWidth,
+	height: Alloy.Globals.comparison.css.cardHeight
 }
 
 // No left/top: a composite parent centres a child that anchors to no edge, which
 // is how the mark finds the middle of the card's height.
 ".comparisonVerdictIcon": {
-	width: "32dp",
-	height: "32dp",
-	right: "8dp",
+	width: Alloy.Globals.comparison.css.iconSize,
+	height: Alloy.Globals.comparison.css.iconSize,
+	right: Alloy.Globals.comparison.css.iconGap,
 	// Titanium paints a hairline for a border colour set at zero width, so the
 	// icon needs no colour rather than a hidden one — the same quirk the key's
 	// hinted branches hit.
 	borderColor: "transparent"
 }
 
-".comparisonVerdictIcon[if=Alloy.Globals.isHighRes]": {
-	width: "44dp",
-	height: "44dp"
-}
-
-".comparisonVerdictIcon[if=Alloy.Globals.isXHighRes]": {
-	width: "64dp",
-	height: "64dp"
-}
-
 ".comparisonCard": {
-	width: "150dp",
-	height: "112dp"
-}
-
-".comparisonCard[if=Alloy.Globals.isHighRes]": {
-	width: "200dp",
-	height: "150dp"
-}
-
-".comparisonCard[if=Alloy.Globals.isXHighRes]": {
-	width: "280dp",
-	height: "210dp"
+	width: Alloy.Globals.comparison.css.cardWidth,
+	height: Alloy.Globals.comparison.css.cardHeight
 }
 
 // A fixed box rather than SIZE: an ImageView asked for its intrinsic size takes
