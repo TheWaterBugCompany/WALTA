@@ -37,20 +37,29 @@ function menu() {
 	return { unknown_bug: true };
 }
 
+// Stands in for the belt-award store at a given level, with the whole surface
+// its callers use: the home screen asks which belt is worn, the Academy asks
+// which level it is, to work out the course that comes next.
+function beltsAt(level) {
+	var Belts = require("logic/Belts");
+	return {
+		currentLevel: function () { return level; },
+		currentBelt: function () { return Belts.at(level); },
+	};
+}
+
 // The belt is parameterised, so the screen only renders one when a belt is
 // supplied. Captured from the real table rather than a colour invented for the
 // fixture: the first belt a user can earn, white with a yellow tip, which is
 // also the one that leans hardest on the outline to show up at all.
 function menuWithBeltServices() {
-	var Belts = require("logic/Belts");
-	return { belts: { currentBelt: function () { return Belts.at(1); } } };
+	return { belts: beltsAt(1) };
 }
 
 // The other half of the belt artwork: a belt past its tip is one unbroken
 // colour, with no tip drawn on it at all.
 function menuWithUntippedBeltServices() {
-	var Belts = require("logic/Belts");
-	return { belts: { currentBelt: function () { return Belts.at(2); } } };
+	return { belts: beltsAt(2) };
 }
 
 // A modal is captured over the screen it is reached from — see openEntry.js.
@@ -314,7 +323,7 @@ function academyServicesAt(level) {
 		JSON.parse(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "training-exercises.json").read().text));
 	return {
 		Training: createTraining({ repo: TrainingRepository.open("waterbug_data"), exercises: exercises }),
-		belts: { currentLevel: function () { return level; } },
+		belts: beltsAt(level),
 	};
 }
 
@@ -337,8 +346,7 @@ function trainingSuccess() {
 // The screen as a trainee actually reaches it: a session that earned a belt.
 // Taken from the real belt table, at the level the first course awards.
 function trainingSuccessBeltServices() {
-	var Belts = require("logic/Belts");
-	return { belts: { currentBelt: function () { return Belts.at(1); } } };
+	return { belts: beltsAt(1) };
 }
 
 function sampleEditMenu() {

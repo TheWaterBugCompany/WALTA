@@ -3,10 +3,8 @@
 // outlines meet and it reads as a band across the belt rather than a block
 // sitting on it — the same construction as the home screen's corner ribbon.
 //
-// The belt fills the holder the screen mounts it into, and so it is the screen
-// that says how thick a belt is drawn there. A holder sized to its contents
-// instead would never show one: it measures itself before the belt is mounted,
-// and adding a child later doesn't make it measure again.
+// The belt fills the holder the screen mounts it into, so how thick a belt is
+// drawn is the hosting screen's business rather than the component's.
 ".belt": {
 	width: "100%",
 	height: "100%",
