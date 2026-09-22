@@ -13,7 +13,7 @@ When('I start the training session {string}', async function (code) {
 });
 
 Then('an empty training tray is shown', async function () {
-  await this.sample.waitFor();
+  await this.sample.waitForEmptyTray();
 });
 
 When('I identify a gastropod through the key', async function () {
