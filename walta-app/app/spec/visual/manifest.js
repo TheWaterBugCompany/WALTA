@@ -298,27 +298,36 @@ function videoPlayer() {
 // Drive the code in through the ViewModel rather than the keyboard, so the
 // capture is of the filled boxes and the green Start — not of whichever
 // keyboard the host happens to raise.
-function enterAcademyCode(opened) {
-	var { waitFor } = require("spec/util/TestUtils");
-	var modal = opened.seam.getCurrentModal();
-	"101".split("").forEach(function (d, i) { modal.lib.vm["digit" + (i + 1)] = d; });
-	return waitFor(function () { return modal.alloyCtl.startButton.enabled === true; });
-}
-
 function academy() {
 	return {};
 }
 
 // The real Training service over the real repo and the real bundled exercises —
 // the Academy screen greys its Start button from them, so a stub would render a
-// screen the app never shows.
-function academyServices() {
+// screen the app never shows. The belt level is the one thing parameterised:
+// it decides which course is next, and so whether Start is offered at all.
+function academyServicesAt(level) {
 	var TrainingRepository = require("repository/TrainingRepository");
 	var createTrainingExercises = require("logic/TrainingExercises");
 	var createTraining = require("logic/Training");
 	var exercises = createTrainingExercises(
 		JSON.parse(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "training-exercises.json").read().text));
-	return { Training: createTraining({ repo: TrainingRepository.open("waterbug_data"), exercises: exercises }) };
+	return {
+		Training: createTraining({ repo: TrainingRepository.open("waterbug_data"), exercises: exercises }),
+		belts: { currentLevel: function () { return level; } },
+	};
+}
+
+// A trainee who has never trained: starting from the plain white belt, with the
+// one written course ahead of them and Start offered.
+function academyServices() {
+	return academyServicesAt(0);
+}
+
+// A trainee who has taken that course. The belt beyond it exists but the course
+// that earns it has not been written, so Start is greyed out.
+function academyUnwrittenServices() {
+	return academyServicesAt(1);
 }
 
 function trainingSuccess() {
@@ -582,7 +591,7 @@ module.exports = [
 
 	// Modals — captured over the screen a user reaches them from.
 	{ name: "Academy", args: academy, services: academyServices, host: "Menu" },
-	{ name: "AcademyCodeEntered", screen: "Academy", args: academy, services: academyServices, host: "Menu", after: enterAcademyCode },
+	{ name: "AcademyNextCourseUnwritten", screen: "Academy", args: academy, services: academyUnwrittenServices, host: "Menu" },
 	{ name: "TrainingSuccess", args: trainingSuccess, host: "TrainingTray" },
 	{ name: "TrainingSuccessWithBelt", screen: "TrainingSuccess", args: trainingSuccess,
 	  services: trainingSuccessBeltServices, host: "TrainingTray" },

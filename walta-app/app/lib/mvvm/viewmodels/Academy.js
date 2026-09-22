@@ -1,64 +1,56 @@
 const ChangeNotifier = require("../../util/ChangeNotifier");
 const Palette = require("../../util/Palette");
+const Belts = require("../../logic/Belts");
+const BeltViewModel = require("./Belt");
 
-const LAST = 2;
+// The course that earns each belt: level 1 is course 101, and so on up the
+// ladder. Only the first is written so far — the rest have a belt but no video,
+// which is what leaves Start disabled.
+const FIRST_COURSE = 100;
 
-// State for the Academy training-session start modal. The three code boxes are
-// single-digit inputs the native numeric keyboard fills: each digit typed hands
-// the keyboard to the next box, so one keyboard session enters the whole code.
+// State for the Academy training-session start modal. A trainee is shown the
+// belt they hold and the one the next course earns; which course that is
+// follows from the level, so there is no code to enter.
 // Titanium-free.
 class AcademyViewModel extends ChangeNotifier {
-  constructor({ isValidCode } = {}) {
+  constructor({ level = 0, isValidCode } = {}) {
     super();
-    this._digits = ["", "", ""];
+    this._level = level;
     this._isValidCode = isValidCode || (() => false);
+    this._currentBeltVm = new BeltViewModel(Belts.at(level) || Belts.STARTING);
+    this._nextBeltVm = new BeltViewModel(this._nextBelt);
   }
 
-  get digit1() { return this._digits[0]; }
-  set digit1(v) { this._setDigit(0, v); }
-  get digit2() { return this._digits[1]; }
-  set digit2(v) { this._setDigit(1, v); }
-  get digit3() { return this._digits[2]; }
-  set digit3(v) { this._setDigit(2, v); }
-
-  _setDigit(index, value) {
-    // A box that already holds a digit appends the one just typed, so the last
-    // character is the one the user means.
-    const typed = value == null ? "" : String(value);
-    const next = typed.slice(-1);
-    if (this._digits[index] === next) {
-      // Same digit, but the box is still showing what was typed into it —
-      // notify anyway so the binding puts the single digit back.
-      if (typed !== next) this.notifyListeners();
-      return;
-    }
-    this._digits[index] = next;
-    this._moveEntryOn(index, next);
-    this.notifyListeners();
+  get _nextBelt() {
+    return this._level < Belts.HIGHEST ? Belts.at(this._level + 1) : null;
   }
 
-  // Typing a digit hands the keyboard to the next box, deleting one hands it
-  // back, and filling the last box ends entry so the keyboard stops covering
-  // Start.
-  _moveEntryOn(index, digit) {
-    if (digit === "") {
-      if (index > 0) this.trigger("focusDigit" + index);
-    } else if (index < LAST) {
-      this.trigger("focusDigit" + (index + 2));
-    } else {
-      this.trigger("codeComplete");
-    }
+  get currentBeltVm() { return this._currentBeltVm; }
+  get nextBeltVm() { return this._nextBeltVm; }
+
+  get currentMessage() {
+    return `You are currently a ${Belts.nameOf(Belts.at(this._level) || Belts.STARTING)} belt:`;
   }
 
-  get code() { return this._digits.join(""); }
+  // Nothing to offer once the highest belt is held, so the whole next-belt half
+  // of the screen goes rather than naming a belt that does not exist.
+  get nextVisible() { return Boolean(this._nextBelt); }
 
-  // Start is offered only once the entered code maps to a real exercise — the
-  // green button is the "valid code" signal; it stays grey/disabled otherwise.
-  get startEnabled() { return this._isValidCode(this.code); }
+  get nextMessage() {
+    return this.nextVisible
+      ? `Complete your next course to earn a ${Belts.nameOf(this._nextBelt)} belt:`
+      : null;
+  }
+
+  get nextCourse() { return String(FIRST_COURSE + this._level + 1); }
+
+  // Start is offered only for a course that has actually been written — the
+  // green button is the "there is something to do" signal.
+  get startEnabled() { return this.nextVisible && this._isValidCode(this.nextCourse); }
   get startColor() { return this.startEnabled ? Palette.success : Palette.disabled; }
 
   start() {
-    if (this.startEnabled) this.trigger("start", this.code);
+    if (this.startEnabled) this.trigger("start", this.nextCourse);
   }
 
   close() {

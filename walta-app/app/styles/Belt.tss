@@ -2,9 +2,14 @@
 // near the right-hand end. The tip runs flush to the bar's edges so the two
 // outlines meet and it reads as a band across the belt rather than a block
 // sitting on it — the same construction as the home screen's corner ribbon.
+//
+// The belt fills the holder the screen mounts it into, and so it is the screen
+// that says how thick a belt is drawn there. A holder sized to its contents
+// instead would never show one: it measures itself before the belt is mounted,
+// and adding a child later doesn't make it measure again.
 ".belt": {
-	width: Ti.UI.FILL,
-	height: "32dp",
+	width: "100%",
+	height: "100%",
 	borderWidth: "2dp",
 	borderColor: Alloy.CFG.colors.black
 }
@@ -17,12 +22,4 @@
 	visible: false,
 	borderWidth: "2dp",
 	borderColor: Alloy.CFG.colors.black
-}
-
-".belt[if=Alloy.Globals.isHighRes]": {
-	height: "44dp"
-}
-
-".belt[if=Alloy.Globals.isXHighRes]": {
-	height: "64dp"
 }

@@ -3,136 +3,125 @@ const { expect } = require("chai");
 const createAcademyController = require("../../walta-app/app/lib/mvvm/controllers/Academy");
 const { makeBinder } = require("../../walta-app/app/lib/util/bindView");
 const { makeWidget, makeBackboneTarget } = require("../fixtures/fakeWidgets");
+const Belts = require("../../walta-app/app/lib/logic/Belts");
 
-// A code box: a text field the keyboard can be handed to, recording the focus
-// and blur the controller drives it with.
-function makeCodeBox(keyboard, name) {
-  return makeWidget({
-    value: "",
-    focus() { keyboard.push(name); },
-    blur() { keyboard.push("dismissed"); },
-  });
+// A widget that can take a mounted child, which makeWidget alone cannot.
+function makeContainer() {
+  const widget = makeWidget({ visible: false });
+  widget.children = [];
+  widget.add = (child) => widget.children.push(child);
+  widget.remove = (child) => { widget.children = widget.children.filter((c) => c !== child); };
+  return widget;
 }
 
-function makeView(keyboard) {
+function makeView() {
   return {
-    digit1: makeCodeBox(keyboard, "digit1"),
-    digit2: makeCodeBox(keyboard, "digit2"),
-    digit3: makeCodeBox(keyboard, "digit3"),
+    currentMessage: makeWidget({ text: "" }),
+    currentBelt: makeContainer(),
+    nextMessage: makeWidget({ text: "", visible: false }),
+    nextBelt: makeContainer(),
     startButton: makeWidget({ enabled: null }),
     closeButton: makeBackboneTarget(),
     cancelButton: makeWidget({}),
   };
 }
 
-describe("Academy controller", function () {
-  let view, closed, ctl, training, fired, services, keyboard;
+// Stands in for View.createComponent. The real factory binds the child to this
+// view-model, so a null one is a failure on device however harmless it is here.
+function makeComponentFactory(mounted) {
+  return function (name, { rowVm }) {
+    if (!rowVm) throw new Error(`component ${name} mounted with no view-model`);
+    const handle = { name, rowVm, view: { name } };
+    mounted.push(handle);
+    return handle;
+  };
+}
 
-  // Fake training service: records the started code, validates against a known set
-  // (the Academy gates Start on isValidCode), and owns the session's tray/assessor
-  // that the controller threads into the tray it opens.
+describe("Academy controller", function () {
+  let view, closed, ctl, training, fired, mounted;
+
+  // Fake training service: records the started code and validates against the
+  // courses actually written (the Academy gates Start on isValidCode).
   function fakeTraining(knownCodes) {
-    const tray = { length: 0, taxa: () => [] };
-    const assessor = { assess: () => ({}) };
     return {
       startedWith: null,
-      tray, assessor,
       isValidCode(code) { return knownCodes.includes(code); },
       startTraining(code) { this.startedWith = code; return knownCodes.includes(code); },
-      currentTray() { return tray; },
-      currentAssessor() { return assessor; },
     };
   }
 
-  beforeEach(function () {
-    keyboard = [];
-    view = makeView(keyboard);
+  function build({ level = 0, written = ["101"] } = {}) {
+    view = makeView();
     closed = 0;
     fired = [];
-    training = fakeTraining(["789"]);
-    services = {
-      Training: training,
-      topics: { TRAININGTRAY: "trainingtray", fireTopicEvent: (t, d) => fired.push({ t, d }) },
-    };
-    ctl = createAcademyController({ view, close: () => closed++, services, bindView: makeBinder() });
-  });
-
-  // A digit typed into a box: the native keyboard writes it and fires change.
-  function typeInto(boxIndex, digit) {
-    const box = view["digit" + (boxIndex + 1)];
-    box.value = String(digit);
-    box.fireEvent("change", { value: box.value });
+    mounted = [];
+    training = fakeTraining(written);
+    ctl = createAcademyController({
+      view,
+      close: () => closed++,
+      services: {
+        Training: training,
+        belts: { currentLevel: () => level },
+        topics: { TRAININGTRAY: "trainingtray", fireTopicEvent: (t, d) => fired.push({ t, d }) },
+      },
+      bindView: makeBinder(makeComponentFactory(mounted)),
+    });
   }
 
-  function typeCode(a, b, c) {
-    typeInto(0, a); typeInto(1, b); typeInto(2, c);
-  }
-
-  it("assembles the code from the digits typed into each box", function () {
-    typeCode(1, 2, 3);
-    expect(ctl.vm.code).to.equal("123");
+  afterEach(function () {
+    if (ctl) ctl.dispose();
+    ctl = null;
   });
 
-  it("hands the keyboard to the next box as each digit is typed", function () {
-    typeInto(0, 1);
-    typeInto(1, 2);
-    expect(keyboard).to.deep.equal(["digit2", "digit3"]);
+  it("tells a new trainee which belt they are starting from", function () {
+    build({ level: 0 });
+    expect(view.currentMessage.text).to.equal("You are currently a white belt:");
   });
 
-  it("hands the keyboard back a box when a digit is deleted", function () {
-    typeCode(1, 2, 3);
-    keyboard.length = 0;
-    typeInto(1, "");
-    expect(keyboard).to.deep.equal(["digit1"]);
+  it("names the belt already earned", function () {
+    build({ level: 1 });
+    expect(view.currentMessage.text).to.equal("You are currently a white with yellow tip belt:");
   });
 
-  it("dismisses the keyboard once the last box is filled", function () {
-    typeCode(1, 2, 3);
-    expect(keyboard).to.deep.equal(["digit2", "digit3", "dismissed"]);
+  it("offers the belt the next course earns", function () {
+    build({ level: 0 });
+    expect(view.nextMessage.text).to.equal("Complete your next course to earn a white with yellow tip belt:");
+    expect(view.nextMessage.visible).to.equal(true);
+    expect(view.nextBelt.visible).to.equal(true);
   });
 
-  // The keyboard appends into a full box, so the box briefly holds two
-  // characters; it has to be put back to the single digit it stands for.
-  it("replaces the digit when one is typed into a box that is already full", function () {
-    typeInto(0, 1);
-    typeInto(0, "15");
-    expect(view.digit1.value).to.equal("5");
-    expect(ctl.vm.code).to.equal("5");
+  it("draws both belts", function () {
+    build({ level: 0 });
+    expect(mounted.map((m) => m.name)).to.deep.equal(["Belt", "Belt"]);
+    expect(mounted[0].rowVm.color).to.equal(Belts.STARTING.color);
+    expect(mounted[1].rowVm.tipColor).to.equal(Belts.at(1).tipColor);
   });
 
-  it("puts the box back to one digit when the same digit is retyped into it", function () {
-    typeInto(0, 1);
-    typeInto(0, "11");
-    expect(view.digit1.value).to.equal("1");
-  });
-
-  it("keeps Start disabled until the code is a valid exercise", function () {
+  it("drops the next-belt half of the screen once the highest belt is held", function () {
+    build({ level: Belts.HIGHEST });
+    expect(view.nextMessage.visible).to.equal(false);
+    expect(view.nextBelt.visible).to.equal(false);
     expect(view.startButton.enabled).to.equal(false);
-    typeCode(1, 2, 3);   // not a known exercise
-    expect(view.startButton.enabled).to.equal(false);
-    typeCode(7, 8, 9);   // known
+  });
+
+  it("offers Start only for a course that has been written", function () {
+    build({ level: 0 });
     expect(view.startButton.enabled).to.equal(true);
+    build({ level: 1 });
+    expect(view.startButton.enabled).to.equal(false);
   });
 
-  it("Start triggers the ViewModel start with the code", function () {
-    typeCode(7, 8, 9);
-    let started = null;
-    ctl.vm.on("start", (code) => { started = code; });
+  it("Start launches the course for the next belt, then closes and opens the tray", function () {
+    build({ level: 0 });
     view.startButton.fireEvent("click");
-    expect(started).to.equal("789");
-  });
-
-  it("Start launches training for a known code, then closes and opens the tray", function () {
-    typeCode(7, 8, 9);
-    view.startButton.fireEvent("click");
-    expect(training.startedWith).to.equal("789");
+    expect(training.startedWith).to.equal("101");
     expect(closed).to.equal(1);
     // The session's tray and assessor are the route's business, not the modal's.
     expect(fired).to.deep.equal([{ t: "trainingtray", d: undefined }]);
   });
 
-  it("does nothing when Start is tapped on an invalid (disabled) code", function () {
-    typeCode(1, 2, 3);   // invalid → Start stays disabled, start() is a no-op
+  it("does nothing when Start is tapped on an unwritten (disabled) course", function () {
+    build({ level: 1 });
     view.startButton.fireEvent("click");
     expect(training.startedWith).to.equal(null);
     expect(closed).to.equal(0);
@@ -140,18 +129,14 @@ describe("Academy controller", function () {
   });
 
   it("the ✕ (closeButton) asks the host to close", function () {
+    build();
     view.closeButton.trigger("close");
     expect(closed).to.equal(1);
   });
 
   it("the Close button asks the host to close", function () {
+    build();
     view.cancelButton.fireEvent("click");
     expect(closed).to.equal(1);
-  });
-
-  it("dispose stops further box→VM updates", function () {
-    ctl.dispose();
-    typeInto(0, 7);
-    expect(ctl.vm.code).to.equal("");
   });
 });
