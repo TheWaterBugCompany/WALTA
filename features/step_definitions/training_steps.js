@@ -41,6 +41,15 @@ Then('the comparison shows the mussel beside the limpet I chose', async function
   await this.taxonComparison.waitForText('Hyriidae');
 });
 
+When('I tap the limpet photo in the comparison', async function () {
+  await this.taxonComparison.openTaxon('Ancylidae');
+});
+
+Then('the limpet details are shown', async function () {
+  await this.taxon.waitFor();
+  await this.taxon.waitForText('Ancylidae');
+});
+
 When('I ask which question I got wrong', async function () {
   await this.taxonComparison.whichQuestion();
 });

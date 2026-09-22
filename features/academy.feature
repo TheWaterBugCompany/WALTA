@@ -21,3 +21,19 @@ Scenario: Complete a training exercise, correcting a mistake
   When I finish the training
   Then the menu is shown
   And I am wearing a "Yellow belt with a white tip"
+
+# A creature on the feedback is a way into the key as well as an explanation.
+# This lives at the acceptance layer because only a real hit-tested tap can show
+# the listener is reachable: a device spec fires `click` synthetically on the
+# container, which bubbles on both platforms and so passes either way.
+Scenario: Browse to a creature from the training feedback
+  When I open the Academy from the menu
+  And I start the training session "999"
+  Then an empty training tray is shown
+  When I identify a gastropod through the key
+  And I identify a freshwater limpet through the key
+  And I assess the training tray
+  Then an incorrect taxon is highlighted
+  When I select the incorrect taxon
+  And I tap the limpet photo in the comparison
+  Then the limpet details are shown
