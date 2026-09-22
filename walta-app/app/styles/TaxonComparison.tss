@@ -1,32 +1,59 @@
-// Feedback on one identification from a training assessment. Wider than the
-// other modals because the incorrect state sets two photos side by side and the
-// reader is comparing them — that comparison is the whole point of the screen.
+// Feedback on one identification from a training assessment.
+//
+// The width is derived from what it has to hold rather than taken as a share of
+// the screen: the incorrect state sets two photo entries side by side, and those
+// are sized in dp per resolution bucket. A percentage looked fine on a wide
+// phone and clipped the second photo on a narrow one, because the bucket says
+// nothing about how wide the screen is. So the modal is two entries wide plus
+// the padding — .comparisonEntry's 6dp margins either side of a verdict box and
+// a card, which comes to 202 / 264 / 364dp an entry through the buckets.
 ".comparisonWindow": {
-	width: "72%",
+	width: "428dp",
 	height: Ti.UI.SIZE,
 	borderWidth: "1dp",
 	borderRadius: "6dp",
 	layout: "vertical"
 }
 
-// The whole width of the modal, centred: it is a heading over the photos now,
-// not a sentence with an icon beside it. Nothing shares its row, so the Android
-// mis-measure that clipped its last line has nothing left to happen in.
-//
-// Back at the size of the rest of the modal's text. It was dropped to fit a
-// sentence that named two taxa; the names live on the photo captions now, so
-// the heading is a fixed length and the photos keep their room.
+".comparisonWindow[if=Alloy.Globals.isHighRes]": {
+	width: "568dp"
+}
+
+".comparisonWindow[if=Alloy.Globals.isXHighRes]": {
+	width: "776dp"
+}
+
+// One gap, used above the heading, under it, and under the photos, so the
+// spacing reads as even top to bottom. The titlebar is as tall as the ✕ and the
+// heading centres itself against it.
+".comparisonTitlebar": {
+	top: "12dp"
+}
+
+".comparisonTitlebar[if=Alloy.Globals.isHighRes]": {
+	top: "20dp"
+}
+
+".comparisonTitlebar[if=Alloy.Globals.isXHighRes]": {
+	top: "24dp"
+}
+
+// No top or bottom: a composite parent centres a child that anchors to neither,
+// which is what levels the heading with the ✕ beside it. The left and right
+// margins are the ✕'s own width plus a gap, kept equal so the heading stays
+// centred in the modal while never running under the button.
 ".comparisonMessage": {
-	top: "8dp",
 	height: Ti.UI.SIZE,
-	left: "6%",
-	right: "6%",
+	left: "36dp",
+	right: "36dp",
 	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "16dp" }
 }
 
 ".comparisonMessage[if=Alloy.Globals.isHighRes]": {
+	left: "60dp",
+	right: "60dp",
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "22dp" }
 }
 
@@ -37,7 +64,7 @@
 // Horizontal so one card centres itself and two sit side by side without the
 // screen knowing which state it is in.
 ".comparisonPhotos": {
-	top: "10dp",
+	top: "12dp",
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE,
 	layout: "horizontal",
@@ -76,7 +103,17 @@
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
 }
 
+".comparisonPhotos[if=Alloy.Globals.isHighRes]": {
+	top: "20dp"
+}
+
+".comparisonPhotos[if=Alloy.Globals.isXHighRes]": {
+	top: "24dp"
+}
+
 ".comparisonAction[if=Alloy.Globals.isHighRes]": {
+	top: "20dp",
+	bottom: "20dp",
 	height: "48dp"
 }
 
@@ -87,6 +124,8 @@
 }
 
 ".comparisonAction[if=Alloy.Globals.isXHighRes]": {
+	top: "24dp",
+	bottom: "24dp",
 	height: "64dp"
 }
 
