@@ -88,6 +88,9 @@ var topics = {
 
 	ACADEMY: 'academy',
 
+	// Opens the Account Details screen.
+	ACCOUNT: 'account',
+
 	DIAGNOSTICS: 'diagnostics',
 
 	LOGIN: 'login',

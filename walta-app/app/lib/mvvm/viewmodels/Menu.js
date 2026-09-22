@@ -24,18 +24,10 @@ class MenuViewModel extends ChangeNotifier {
     this._topics.fireTopicEvent(this._topics.SELECT_METHOD, { allowAddToSample: false, surveyType: null });
   }
 
+  // Signed in, the same text opens the account rather than offering to log out:
+  // logging out is one of the things the account screen is for.
   loginOrOut() {
-    if (this.loggedIn) {
-      this.trigger("confirmLogout");
-    } else {
-      this._topics.fireTopicEvent(this._topics.LOGIN);
-    }
-  }
-
-  logOut() {
-    this._cerdiApi.storeUserToken(null, null);
-    this._topics.fireTopicEvent(this._topics.LOGGEDOUT);
-    this.notifyListeners();
+    this._topics.fireTopicEvent(this.loggedIn ? this._topics.ACCOUNT : this._topics.LOGIN);
   }
 
   detailed() {

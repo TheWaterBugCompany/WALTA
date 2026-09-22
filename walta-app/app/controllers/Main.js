@@ -95,6 +95,7 @@ async function startApp(options) {
   routePromise(Topics.HABITAT,  (data) =>  Navigation.openController("Habitat", data));
   routePromise(Topics.COMPLETE,  (data) =>  Navigation.openController("Summary", data));
   routePromise(Topics.HISTORY,  (data) =>  Navigation.openController("SampleHistory", data));
+  routePromise(Topics.ACCOUNT,  (data) =>  Navigation.openController("Account", data));
   routePromise(Topics.SPEEDBUG,  (data) =>  Navigation.openController("Speedbug", data));
   routePromise(Topics.GALLERY,  (data) =>  Navigation.openController("Gallery", data));
   // openModal does not thread the survey context the way onOpenView does, so the

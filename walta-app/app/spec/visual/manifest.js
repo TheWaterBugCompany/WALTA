@@ -62,6 +62,26 @@ function menuWithUntippedBeltServices() {
 	return { belts: beltsAt(2) };
 }
 
+// The account as a trainee who has been through a few courses sees it: the
+// details it is signed in as, and the belts earned so far.
+function account() {
+	var CerdiApi = require("spec/mocks/MockCerdiApi");
+	Alloy.Globals.CerdiApi = CerdiApi.createCerdiApi(Alloy.CFG.cerdiServerUrl, Alloy.CFG.cerdiApiSecret);
+	return {};
+}
+
+function accountServices() {
+	return {
+		belts: beltsAt(4),
+		cerdiApi: {
+			retrieveUsername: function () { return "test.user@example.com"; },
+			retrieveUser: function () { return Promise.resolve({ email: "test.user@example.com", name: "Test User" }); },
+			retrieveUserId: function () { return 38; },
+			storeUserToken: function () {},
+		},
+	};
+}
+
 // A modal is captured over the screen it is reached from — see openEntry.js.
 function methodSelect() {
 	return { unknownBug: true };
@@ -574,6 +594,7 @@ module.exports = [
 	{ name: "TaxonList", args: taxonList },
 	{ name: "Gallery", args: gallery },
 	{ name: "PhotoViewer", args: photoViewer },
+	{ name: "Account", args: account, services: accountServices },
 	{ name: "LogIn", args: logIn },
 	{ name: "Register", args: register },
 	{ name: "SiteDetails", args: siteDetails },

@@ -1,0 +1,130 @@
+"#content": {
+	backgroundColor: Alloy.CFG.colors.white,
+	layout: "vertical"
+}
+
+// The account's details on the left, the two things you can do to it on the
+// right — so neither reads as a caption for the other.
+"#accountHeader": {
+	top: "4%",
+	width: "92%",
+	height: Ti.UI.SIZE
+}
+
+"#accountFields": {
+	left: "0dp",
+	width: "62%",
+	height: Ti.UI.SIZE
+}
+
+".fieldRow": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.SIZE,
+	top: "6dp",
+	bottom: "6dp"
+}
+
+".fieldLabel": {
+	left: "0dp",
+	width: "18%",
+	height: Ti.UI.SIZE,
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_RIGHT,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
+}
+
+// A Label, not a TextField: these are shown, not edited. Boxed so they read as
+// the account's own details rather than as more of the page.
+".fieldValue": {
+	left: "22%",
+	right: "0dp",
+	width: Ti.UI.FILL,
+	height: Ti.UI.SIZE,
+	color: Alloy.CFG.colors.black,
+	borderColor: Alloy.CFG.colors.primary,
+	borderWidth: "1dp",
+	borderRadius: "6dp",
+	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
+}
+
+"#accountActions": {
+	right: "0dp",
+	width: "34%",
+	height: Ti.UI.SIZE
+}
+
+".accountButton": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.SIZE,
+	top: "6dp",
+	bottom: "6dp",
+	borderRadius: "6dp",
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
+}
+
+".logOutButton": {
+	color: Alloy.CFG.colors.primary,
+	backgroundColor: Alloy.CFG.colors.primaryLight
+}
+
+// Deleting an account cannot be undone, so it is coloured like the warning it
+// is rather than like the button above it.
+".deleteButton": {
+	color: Alloy.CFG.colors.white,
+	backgroundColor: Alloy.CFG.colors.error,
+	borderColor: Alloy.CFG.colors.failure,
+	borderWidth: "2dp"
+}
+
+".beltsHeading": {
+	left: "4%",
+	top: "4%",
+	width: "92%",
+	height: Ti.UI.SIZE,
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+	font: { fontFamily: "Tahoma", fontSize: "22dp" }
+}
+
+// The belts earned, three to a row and wrapping onto the next — lowest first,
+// so the grid reads in the order they were won. Each belt sizes itself (the
+// view-model says how wide and tall), so the grid only has to hold them.
+"#beltGrid": {
+	top: "2%",
+	width: "92%",
+	height: Ti.UI.FILL,
+	horizontalWrap: true
+}
+
+".fieldLabel[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "19dp" }
+}
+
+".fieldValue[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "19dp" }
+}
+
+".accountButton[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "19dp" }
+}
+
+".beltsHeading[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontSize: "28dp" }
+}
+
+".fieldLabel[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "28dp" }
+}
+
+".fieldValue[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "28dp" }
+}
+
+".accountButton[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "28dp" }
+}
+
+".beltsHeading[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontSize: "40dp" }
+}
