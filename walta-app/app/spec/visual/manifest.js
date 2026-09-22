@@ -499,7 +499,7 @@ function taxonDetails() {
 // A key with just the two taxa the comparison shows. The screen asks a key for
 // nothing but findTaxonById, so a whole key would only add ways for the fixture
 // to drift.
-function comparisonKey(correctName, chosenName) {
+function comparisonKey(chosenName, correctName) {
 	var taxa = {
 		WBcorrect: Taxon.createTaxon({
 			id: "WBcorrect",
@@ -527,8 +527,8 @@ function taxonComparisonIncorrect() {
 // families reads as one taxon here, and the verdict sentence names two of them.
 function taxonComparisonLongNames() {
 	return {
-		key: comparisonKey("Some Oecetis sp. (Leptoceridae) and Odontoceridae",
-			"Tabanidae, Dolichopodidae, Empididae & some Tipulidae"),
+		key: comparisonKey("Tabanidae, Dolichopodidae, Empididae & some Tipulidae",
+			"Some Oecetis sp. (Leptoceridae) and Odontoceridae"),
 		selectedTaxonId: "WBchosen",
 		correctTaxonId: "WBcorrect"
 	};
