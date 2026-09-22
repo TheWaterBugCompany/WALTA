@@ -4,8 +4,12 @@
 			<View class="titlebar">
 				<Require id="closeButton" src="CloseButton"/>
 			</View>
-			<Label id="successMessage" class="successMessage" accessibilityLabel="training_success_message"/>
-			<ImageView id="successGraphic" class="successGraphic" image="/images/success-graphic.png"/>
+			<View id="successHeader" layout="horizontal">
+				<ImageView id="successGraphic" class="successGraphic" image="/images/success-graphic.png"/>
+				<Label id="successMessage" class="successMessage" accessibilityLabel="training_success_message"/>
+			</View>
+			<Label id="beltMessage" class="beltMessage" accessibilityLabel="training_success_belt_message"/>
+			<View id="beltHolder" class="beltHolder"/>
 			<Button id="finishButton" class="actionButton finishButton" accessibilityLabel="training_success_finish">Finish</Button>
 		</View>
 	</View>
