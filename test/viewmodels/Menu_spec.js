@@ -89,24 +89,12 @@ describe("MenuViewModel", function () {
     expect(fired()).to.be.true;
   });
 
-  it("asks the view to confirm before logging out", function () {
+  // Signed in, the same text opens the account rather than offering to log
+  // out — logging out is one of the things the account screen is for.
+  it("opens the account screen when pressed logged in", function () {
     const vm = makeViewModel({ userToken: "a-token" });
-    let asked = false;
-    vm.on("confirmLogout", () => { asked = true; });
+    const fired = recordTopic(Topics.ACCOUNT);
     vm.loginOrOut();
-    expect(asked).to.be.true;
-  });
-
-  it("discards the stored token when the logout is confirmed", function () {
-    const vm = makeViewModel({ userToken: "a-token" });
-    vm.logOut();
-    expect(vm.loginLabel).to.equal("Log In");
-  });
-
-  it("announces the logout so the rest of the app can react", function () {
-    const vm = makeViewModel({ userToken: "a-token" });
-    const fired = recordTopic(Topics.LOGGEDOUT);
-    vm.logOut();
     expect(fired()).to.be.true;
   });
 

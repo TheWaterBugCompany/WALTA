@@ -2,7 +2,8 @@
 // outline and — where the belt has one — a tip banded across it.
 // See docs/patterns/screen-controllers.md.
 const BINDINGS = {
-  belt:    { backgroundColor: "color", accessibilityLabel: "label" },
+  belt:    { width: "width", height: "height", left: "left", top: "top",
+             backgroundColor: "color", accessibilityLabel: "label" },
   beltTip: { visible: "tipVisible", backgroundColor: "tipColor" },
 };
 
