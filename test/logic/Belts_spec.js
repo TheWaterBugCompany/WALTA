@@ -57,4 +57,17 @@ describe("Belts", function () {
     expect(Belts.describe(null)).to.equal(null);
   });
 
+  // The screens that congratulate you on a belt, or offer you the next one,
+  // put its name inside a sentence of their own: "your white with yellow tip
+  // belt", "a yellow belt".
+  it("names a belt for use inside a sentence", function () {
+    expect(Belts.nameOf(Belts.at(1))).to.equal("white with yellow tip");
+    expect(Belts.nameOf(Belts.at(2))).to.equal("yellow");
+    expect(Belts.nameOf(Belts.at(9))).to.equal("blue with black tip");
+  });
+
+  it("has no name for no belt", function () {
+    expect(Belts.nameOf(null)).to.equal(null);
+  });
+
 });
