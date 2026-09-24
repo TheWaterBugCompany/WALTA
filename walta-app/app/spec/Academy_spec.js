@@ -89,6 +89,9 @@ describe('Academy belt levels', function() {
 	it('gives each belt a frame with width and height', async function() {
 		await openAt( 0 );
 		var current = ctl.currentBelt.children[0];
+		// The window being open does not mean the belt inside it has been laid
+		// out yet — on a loaded machine the first read comes back a 0x0 frame.
+		await waitFor( function() { return current.rect.height > 0; } );
 		expect( current.rect.width, "belt width" ).to.be.greaterThan( 0 );
 		expect( current.rect.height, "belt height" ).to.be.greaterThan( 0 );
 	});

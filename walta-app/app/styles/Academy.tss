@@ -107,6 +107,14 @@
 	borderColor: Alloy.CFG.colors.success
 }
 
+// The belt keeps the thickness it has on a phone at the roomy end of the band
+// only if there is room for it. There isn't: the shortest screen the app runs
+// on is ~320dp, and a belt that costs the buttons their place is worse than a
+// thinner belt.
+".academyBelt[if=Alloy.Globals.isShort]": {
+	height: "32dp"
+}
+
 ".academyIntro[if=Alloy.Globals.isShort]": {
 	top: "12dp",
 	font: { fontFamily: "Tahoma", fontSize: "15dp" }
