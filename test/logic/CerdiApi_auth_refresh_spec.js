@@ -74,4 +74,24 @@ describe("CerdiApi: server-token 401 refresh", function () {
         expect(rejected).to.deep.equal({ message: "Wrong password." });
         expect(attempts).to.have.length(3);
     });
+
+    // Proving the password is a guard against a fat-fingered delete, not a
+    // re-login: getting it wrong must leave the session exactly as it was.
+    it("leaves the signed-in user alone when the password is wrong", async function () {
+        props.setObject("userAccessUsername", "testlogin@example.com");
+        props.setObject("userAccessTokenLive", { access_token: "the-user-token" });
+        scripted.push(
+            { status: 401, body: '{"message":"Unauthenticated."}' },
+            { status: 200, body: '{"access_token":"fresh-server-token","expires_in":31536000}' },
+            { status: 401, body: '{"message":"Wrong password."}' },
+        );
+        const cerdi = CerdiApi.createCerdiApi("http://test.example", "secret", { retry: FAST_RETRY });
+
+        try {
+            await cerdi.loginUser("testlogin@example.com", "wrong");
+        } catch (err) { /* the caller decides what a wrong password means */ }
+
+        expect(props.getObject("userAccessTokenLive"), "user token").to.deep.equal({ access_token: "the-user-token" });
+        expect(cerdi.retrieveUsername(), "signed in as").to.equal("testlogin@example.com");
+    });
 });
