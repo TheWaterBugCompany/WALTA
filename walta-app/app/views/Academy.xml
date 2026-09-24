@@ -1,6 +1,6 @@
 <Alloy>
 	<View class="overlay">
-		<View class="window academyWindow" layout="vertical">
+		<View id="academyWindow" class="window academyWindow" layout="vertical">
 			<View class="titlebar">
 				<Label id="academyTitle" class="titleText" accessibilityLabel="Academy">Academy</Label>
 				<Require id="closeButton" src="CloseButton"/>
@@ -10,7 +10,7 @@
 			<Label id="nextMessage" class="beltCaption" accessibilityLabel="academy_next_belt"/>
 			<View id="nextBelt" class="academyBelt"/>
 			<Label class="academyIntro">Go to https://waterbugblitz.org.au/academy on a separate device, and select your next course.</Label>
-			<View class="academyButtons" layout="horizontal">
+			<View id="buttonRow" class="academyButtons" layout="horizontal">
 				<Button id="cancelButton" class="actionButton" accessibilityLabel="academy_close">Close</Button>
 				<Button id="startButton" class="actionButton startButton" accessibilityLabel="academy_start">Start</Button>
 			</View>

@@ -1,5 +1,5 @@
 ".academyWindow": {
-	width: "65%",
+	width: "85%",
 	height: Ti.UI.SIZE,
 	layout: "vertical"
 }
@@ -31,6 +31,19 @@
 
 ".beltCaption[if=Alloy.Globals.isXHighRes]": {
 	font: { fontFamily: "Tahoma", fontSize: "28dp" }
+}
+
+// A short screen cannot take the high-res sizes: the modal is only ~336dp of
+// usable height there, and the buttons are the last thing in a vertical layout,
+// so they are what Titanium squeezes away. Smaller words, full-size belts.
+".beltCaption[if=Alloy.Globals.isShort]": {
+	font: { fontFamily: "Tahoma", fontSize: "15dp" }
+}
+
+// The caption sits directly under the title, so it needs less air above it
+// than the captions that separate one belt group from the next.
+"#currentMessage": {
+	top: "8dp"
 }
 
 // The holder gives the belt its thickness — the belt itself fills whatever it
@@ -92,4 +105,13 @@
 	// reads as a startable one. An explicit disabled background fixes the paint.
 	backgroundDisabledColor: Alloy.CFG.colors.disabled,
 	borderColor: Alloy.CFG.colors.success
+}
+
+".academyIntro[if=Alloy.Globals.isShort]": {
+	top: "12dp",
+	font: { fontFamily: "Tahoma", fontSize: "15dp" }
+}
+
+".academyButtons[if=Alloy.Globals.isShort]": {
+	top: "12dp"
 }

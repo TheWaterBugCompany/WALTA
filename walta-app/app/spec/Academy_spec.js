@@ -1,6 +1,6 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
-var { wrapViewInWindow, windowOpenTest, closeWindow } = require('spec/util/TestUtils');
+var { wrapViewInWindow, windowOpenTest, closeWindow, waitFor } = require('spec/util/TestUtils');
 var { View } = require("logic/View");
 var { makeTestServices } = require("spec/fixtures/Services_fixture");
 
@@ -106,6 +106,25 @@ describe('Academy belt levels', function() {
 		// Newer Android paints a disabled button its enabled backgroundColor unless
 		// a disabled background is set explicitly — this guards that fix.
 		expect( ctl.startButton.backgroundDisabledColor ).to.equal( Alloy.CFG.colors.disabled );
+	});
+
+	// Titanium will not grow the modal past the screen — it squeezes the last
+	// child instead, handing the button row a NEGATIVE height starting below the
+	// modal's bottom edge. That is how the buttons disappear on a short screen,
+	// which landscape makes ~360dp tall on a small phone.
+	// Titanium does not clip an overfull vertical layout — it squeezes the last
+	// child, handing it a negative or sliver height while the button inside keeps
+	// its own size and runs off the bottom of the screen. So a height > 0 check on
+	// the row is not enough: what matters is that the button's own bottom edge,
+	// measured through the row it sits in, lands inside the modal.
+	it('lays the action buttons out inside the modal', async function() {
+		await openAt( 0 );
+		await waitFor( function() { return ctl.academyWindow.rect.height > 0; } );
+		var m = ctl.academyWindow, row = ctl.buttonRow.rect, b = ctl.startButton.rect;
+		var caps = Ti.Platform.displayCaps;
+		var seen = `row ${row.y}+${row.height} button ${b.y}+${b.height}`
+			+ ` in a ${m.rect.height} modal on ${caps.platformWidth}x${caps.platformHeight}@${caps.logicalDensityFactor}`;
+		expect( row.y + b.y + b.height, seen ).to.be.at.most( m.rect.height );
 	});
 
 	it('drops the next belt once the highest is held', async function() {
