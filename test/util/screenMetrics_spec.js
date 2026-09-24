@@ -57,6 +57,40 @@ describe("screenMetrics", function () {
 		});
 	});
 
+	// The isHighRes band is more than twice as wide as it is tall in dp terms —
+	// 300dp to 700dp — and everything inside it is written in fixed dp. A screen
+	// at the bottom of the band has to be told apart from one at the top, or the
+	// same layout that fits the roomy end overflows the short end.
+	describe("short screens", function () {
+		function shortAt(relHeight) {
+			return screenMetrics({ platformWidth: relHeight * 2, platformHeight: relHeight, logicalDensityFactor: 1 }, "iphone").isShort;
+		}
+
+		it("calls a screen short when its short edge is under 380dp", function () {
+			expect(shortAt(379)).to.equal(true);
+		});
+
+		it("stops calling a screen short from 380dp up", function () {
+			expect(shortAt(380)).to.equal(false);
+		});
+
+		// Additive, not a re-partition: a short screen is still isHighRes, so every
+		// existing [if=isHighRes] rule keeps applying and a screen only overrides
+		// the handful of values it actually has to.
+		it("leaves a short screen in the high bucket as well", function () {
+			const nexus5 = screenMetrics({ platformWidth: 1920, platformHeight: 1080, logicalDensityFactor: 3 }, "android");
+			expect(nexus5.isShort, "short").to.equal(true);
+			expect(nexus5.isHighRes, "still high-res").to.equal(true);
+		});
+
+		it("does not call the devices the layouts were drawn on short", function () {
+			const iphone17 = screenMetrics({ platformWidth: 874, platformHeight: 402, logicalDensityFactor: 3 }, "iphone");
+			const mediumPhone = screenMetrics({ platformWidth: 2400, platformHeight: 1080, logicalDensityFactor: 2.625 }, "android");
+			expect(iphone17.isShort, "iPhone 17").to.equal(false);
+			expect(mediumPhone.isShort, "medium phone").to.equal(false);
+		});
+	});
+
 	// The regression this module exists for: an iPhone and an Android phone of
 	// near-identical physical size must land in the same bucket.
 	describe("real devices", function () {
