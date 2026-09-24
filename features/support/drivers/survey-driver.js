@@ -86,6 +86,15 @@ async function addTaxaViaBrowse(world, taxa = SURVEY_TAXA) {
     }
 }
 
+// The key questions (verbatim from the taxonomy) that reach Gastropoda, taxonId
+// 181 — the survey's own key path. It used to be borrowed from training-driver,
+// which no longer walks this taxon.
+const GASTROPOD = [
+    "Animal with a shell (snails and mussels)",
+    "Animals look like snails or limpets.",
+    "Order level ID Gastropoda.",
+];
+
 // Add a taxon to the sample via the key, with a photo. The survey path — ends on
 // selectAddToSample + save, unlike training (see training-driver).
 async function addTaxonViaKeyToSample(world, questions) {
@@ -141,6 +150,7 @@ exports.fillSiteDetails = fillSiteDetails;
 exports.fillHabitat = fillHabitat;
 exports.reachSampleTray = reachSampleTray;
 exports.addTaxaViaBrowse = addTaxaViaBrowse;
+exports.GASTROPOD = GASTROPOD;
 exports.addTaxonViaKeyToSample = addTaxonViaKeyToSample;
 exports.addTaxonViaSpeedBug = addTaxonViaSpeedBug;
 exports.markSurveyComplete = markSurveyComplete;

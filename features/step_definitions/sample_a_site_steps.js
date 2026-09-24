@@ -1,11 +1,10 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const { SAMPLE_TRAY_TILE_MISSING } = require('../support/environmental-failures');
 const {
-    SURVEY_TAXA, FULL_HABITAT,
+    SURVEY_TAXA, FULL_HABITAT, GASTROPOD,
     fillSiteDetails, fillHabitat, addTaxaViaBrowse, addTaxonViaKeyToSample,
     markSurveyComplete, submitFromSummary, expectTrayTile,
 } = require('../support/drivers/survey-driver');
-const { GASTROPOD } = require('../support/drivers/training-driver');
 
 Given('a user has arrived at a site to sample', async function () {
     await this.menu.waitFor();
