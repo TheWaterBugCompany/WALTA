@@ -453,17 +453,39 @@ function iosSurveyDatePicker() {
 // Both signals are needed. The load event never comes if the page beat us here,
 // and document.readyState only reads back synchronously on iOS — Android hands
 // it to the callback and returns null.
+//
+// readyState is polled rather than sampled once: a single sample that catches a
+// page mid-load leaves the whole wait riding on a load event that, on a loaded
+// runner, may already have been and gone. That hung the About capture until
+// mocha gave up at 30s. Bounded like pageDrawn below, and for the same reason —
+// a page that never reports itself loaded should let the host capture whatever
+// is on screen rather than strand the run.
 function pageLoaded(webview) {
 	return new Promise(function (resolve) {
+		var settled = false;
 		function ready() {
+			if (settled) { return; }
+			settled = true;
 			webview.removeEventListener("load", ready);
 			resolve();
 		}
 		webview.addEventListener("load", ready);
-		var loadedAlready = webview.evalJS("document.readyState", function (state) {
-			if (/complete/.test(state)) { ready(); }
-		});
-		if (/complete/.test(loadedAlready)) { ready(); }
+
+		var deadline = Date.now() + 10000;
+		(function sampleReadyState() {
+			if (settled) { return; }
+			var sync = webview.evalJS("document.readyState", function (state) {
+				if (/complete/.test(state)) { ready(); }
+			});
+			if (/complete/.test(sync)) { ready(); }
+			if (settled) { return; }
+			if (Date.now() >= deadline) {
+				Ti.API.error("VISUAL_WEBVIEW_NOT_LOADED readyState never reached complete");
+				ready();
+				return;
+			}
+			setTimeout(sampleReadyState, 50);
+		})();
 	});
 }
 
