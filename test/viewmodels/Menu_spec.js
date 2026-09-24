@@ -68,7 +68,7 @@ describe("MenuViewModel", function () {
     expect(fired()).to.be.true;
   });
 
-  it("opens the Academy code-entry modal when academy is pressed", function () {
+  it("opens the Academy when academy is pressed", function () {
     const vm = makeViewModel();
     const fired = recordTopic(Topics.ACADEMY);
     vm.academy();
