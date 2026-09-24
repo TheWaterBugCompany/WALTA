@@ -304,9 +304,6 @@ function videoPlayer() {
 
 // --- Modals, captured over the screen they are reached from ----------------
 
-// Drive the code in through the ViewModel rather than the keyboard, so the
-// capture is of the filled boxes and the green Start — not of whichever
-// keyboard the host happens to raise.
 function academy() {
 	return {};
 }
