@@ -33,17 +33,15 @@
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
 }
 
-// A Label, not a TextField: these are shown, not edited. Boxed so they read as
-// the account's own details rather than as more of the page.
+// Unboxed, and the same colour as every other line on the page: these are
+// shown, not edited, and a border around them reads as a text field inviting a
+// tap that does nothing.
 ".fieldValue": {
 	left: "22%",
 	right: "0dp",
 	width: Ti.UI.FILL,
 	height: Ti.UI.SIZE,
-	color: Alloy.CFG.colors.black,
-	borderColor: Alloy.CFG.colors.primary,
-	borderWidth: "1dp",
-	borderRadius: "6dp",
+	color: Alloy.CFG.colors.primary,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
 	font: { fontFamily: "Tahoma", fontWeight: "bold", fontSize: "15dp" }
 }
