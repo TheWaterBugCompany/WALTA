@@ -70,6 +70,14 @@ function account() {
 	return {};
 }
 
+// A trainee before their first belt: the state every account starts in, and the
+// one where the grid has nothing to draw.
+function accountNoBeltsServices() {
+	var services = accountServices();
+	services.belts = beltsAt(0);
+	return services;
+}
+
 function accountServices() {
 	return {
 		belts: beltsAt(4),
@@ -617,6 +625,7 @@ module.exports = [
 	{ name: "Gallery", args: gallery },
 	{ name: "PhotoViewer", args: photoViewer },
 	{ name: "Account", args: account, services: accountServices },
+	{ name: "AccountNoBelts", screen: "Account", args: account, services: accountNoBeltsServices },
 	{ name: "DeleteAccount", args: account, services: accountServices, host: "Account" },
 	{ name: "LogIn", args: logIn },
 	{ name: "Register", args: register },

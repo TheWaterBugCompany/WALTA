@@ -1,13 +1,16 @@
 const AccountViewModel = require("mvvm/viewmodels/Account");
 // Markers only — the binder itself is injected (pre-bound by the View seam);
 // these are needed here at module scope to build BINDINGS.
-const { collection } = require("util/bindView");
+const { collection, present } = require("util/bindView");
 
 // Titanium-free screen controller for the Account Details window.
 // See docs/patterns/screen-controllers.md.
 const BINDINGS = {
   emailValue:     { text: "email" },
   nameValue:      { text: "name" },
+  // present, not visible: a hidden label in a vertical layout keeps its band,
+  // which would leave the grid sitting below a gap once belts arrive.
+  noBeltsNotice:  { text: "noBeltsMessage", visible: present("noBeltsVisible") },
   beltGrid:       { belts: collection("belts", "Belt") },
   logOutButton:   { onClick: "logOut" },
   deleteButton:   { onClick: "deleteAccount" },
