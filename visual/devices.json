@@ -8,6 +8,6 @@
   "android": [
     { "label": "medium", "avd": "Medium_Phone_API_34", "profile": "medium_phone",  "api": 34, "screen": { "width": 914,  "height": 387 } },
     { "label": "small",  "avd": "Nexus5_API34",        "profile": "Nexus 5",       "api": 34, "screen": { "width": 640,  "height": 336 } },
-    { "label": "tablet", "avd": "Medium_Tablet_API34", "profile": "medium_tablet", "api": 34, "screen": { "width": 1280, "height": 800 } }
+    { "label": "tablet", "avd": "Medium_Tablet_API34", "profile": "medium_tablet", "api": 34, "screen": { "width": 1280, "height": 740 } }
   ]
 }
