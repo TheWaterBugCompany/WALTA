@@ -5,6 +5,7 @@
 // finish drawing, so capturing on postlayout alone yields blank frames.
 var { openEntry, runsHere } = require("spec/visual/openEntry");
 var waitForStable = require("util/waitForStable");
+var screenMetrics = require("util/screenMetrics");
 
 var OUTPUT_SUBDIR = "visual";
 
@@ -46,7 +47,7 @@ function markerFile(name) {
 
 var port = {
 	exists: function (name) { return markerFile(name).exists(); },
-	write: function (name) { markerFile(name).write(""); },
+	write: function (name, contents) { markerFile(name).write(contents || ""); },
 	sleep: sleep
 };
 
@@ -98,6 +99,9 @@ async function captureAll(entries, { grep } = {}) {
 	// finished", so it pulls the previous run's screenshots and reports them as
 	// this one's — while terminating the app part-way through actually capturing.
 	clearOutputDir();
+	// Before the first screen, so a run that dies part-way through still says which
+	// screen it was rendering on.
+	handshake.recordScreen(port, screenMetrics(Ti.Platform.displayCaps, Ti.Platform.osname));
 	var results = [];
 	for (var i = 0; i < entries.length; i++) {
 		if (grep && entries[i].name.indexOf(grep) === -1) { continue; }

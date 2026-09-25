@@ -85,6 +85,8 @@ A baseline rendered on one simulator/emulator won't match a differently-rendered
 
 The devices CI covers are declared **once**, in [`visual/devices.json`](../../visual/devices.json) — currently iOS `iphone-17` / `iphone-17-pro-max` and Android `medium` / `small` (distinct logical widths). The `visual-devices` job publishes it, the two capture jobs build their matrices from it with `fromJSON`, and the report reads it to know which columns to expect. **Add a device there, not in the workflow** (then commit that leg's first CI-rendered baselines). Each leg uploads its captures/diffs as `visual-<platform>-<label>`.
 
+Each leg reports the screen it rendered on, because nothing on the host can work it out: the size bands are drawn against the landscape short edge in **dp**, and `displayCaps` reports points on iOS but pixels on Android, so a device profile's advertised resolution is not the figure the bands are compared against. The runner writes what [`screenMetrics`](../../walta-app/app/lib/util/screenMetrics.js) made of its own display into the captures, the host reads it into the run's `results.json`, and the report prints it under each column (`874×402dp`) — so which size band a column stands for is readable off the gallery, and a device's short edge is a measurement rather than an approximation.
+
 That single declaration is what lets the report notice a leg that produced *nothing*: without it a dead leg's column would simply vanish, leaving a report that looked complete. Declared devices are always columns, so a leg that captured nothing reads as a column of gaps marked **no captures**. (A run on an undeclared device — a local capture on your own simulator — is still shown; it just isn't expected.)
 
 ## Why not Appium?

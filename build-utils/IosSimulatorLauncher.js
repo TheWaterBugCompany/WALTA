@@ -2,6 +2,7 @@ import { execFile as defaultExecFile, spawn as defaultSpawn } from "child_proces
 import fs from "fs";
 import path from "path";
 import { Jimp } from "jimp";
+import { SCREEN_FILE } from "./visual/measuredScreen.js";
 
 function buildLaunchArgv(launchArgs) {
   if (!launchArgs) return [];
@@ -267,12 +268,12 @@ class IosSimulatorLauncher {
     const container = (await this._exec(["simctl", "get_app_container", this._udid, appId, "data"])).trim();
     const srcDir = path.join(container, "Documents", subdir);
     fs.mkdirSync(destDir, { recursive: true });
-    const pngs = fs.readdirSync(srcDir).filter((f) => f.endsWith(".png"));
-    return pngs.map((f) => {
+    const wanted = fs.readdirSync(srcDir).filter((f) => f.endsWith(".png") || f === SCREEN_FILE);
+    return wanted.map((f) => {
       const target = path.join(destDir, f);
       fs.copyFileSync(path.join(srcDir, f), target);
       return target;
-    });
+    }).filter((f) => f.endsWith(".png"));
   }
 }
 

@@ -34,6 +34,15 @@ describe("visual report page", function () {
             .and.to.contain("ios").and.to.contain("iphone-17");
     });
 
+    // Reading a gallery of legs means knowing which size each column is: "small"
+    // and "iphone-17" are names, and the size band is the reason the leg exists.
+    it("labels a column with the screen it rendered on", function () {
+        const sized = renderReport(buildReportModel([
+            { platform: "ios", device: "iphone-17", screen: { relWidth: 874, relHeight: 402 }, results: [] },
+        ]), { title: "Visual review" });
+        expect(sized).to.contain("874×402dp");
+    });
+
     it("references the baseline, capture and diff image of a differing screen", function () {
         const sources = imageSources(html);
         expect(sources).to.include("android/small/baseline/Menu.png");

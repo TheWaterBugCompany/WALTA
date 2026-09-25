@@ -28,6 +28,18 @@ describe("visual capture runner", function () {
 		expect(outputFile("Menu.png").exists(), "this run's capture is missing").to.equal(true);
 	});
 
+	// The host cannot work out which size band a leg exercised: the bands are drawn
+	// against the landscape short edge in dp, and displayCaps reports points on iOS
+	// but pixels on Android. Only the device can say, so it reports it alongside the
+	// captures — and a report the host cannot read back is no report at all.
+	it("reports the screen it rendered on alongside the captures", async function () {
+		await capture.captureAll([menuEntry()], { grep: "Menu" });
+
+		var reported = JSON.parse(outputFile("screen.json").read().text);
+		expect(reported).to.deep.equal(
+			require("util/screenMetrics")(Ti.Platform.displayCaps, Ti.Platform.osname));
+	});
+
 	// The real manifest entry, so the spec exercises the shape the suite captures
 	// rather than a hand-rolled stand-in — captured as a toImage snapshot, which
 	// needs no host on the other end of the handshake.

@@ -16,8 +16,8 @@ describe("visual run persistence", function () {
     });
     afterEach(function () { fs.rmSync(root, { recursive: true, force: true }); });
 
-    function persist(results) {
-        return persistRun({ platform: "ios", device: "iphone-17", deviceDir, baselineDir, results });
+    function persist(results, screen) {
+        return persistRun({ platform: "ios", device: "iphone-17", deviceDir, baselineDir, results, screen });
     }
 
     it("records the run where the report builder looks for it", function () {
@@ -38,6 +38,22 @@ describe("visual run persistence", function () {
         fs.writeFileSync(path.join(deviceDir, "baseline", "Retired.png"), "stale");
         persist([]);
         expect(fs.existsSync(path.join(deviceDir, "baseline", "Retired.png"))).to.equal(false);
+    });
+
+    // Which bands a leg exercises is a fact about the screen it rendered on, and
+    // every figure the matrix was picked on was an approximation until the device
+    // reported one. Recording it is what lets the report name the size each
+    // column stands for, and a declared size be checked rather than believed.
+    it("records the screen the device rendered on", function () {
+        persist([{ name: "Menu", status: "pass" }], { relWidth: 874, relHeight: 402, isShort: false });
+        const [run] = collectRuns(path.join(root, "captures"));
+        expect(run.screen).to.deep.equal({ relWidth: 874, relHeight: 402, isShort: false });
+    });
+
+    it("records a run whose device never reported its screen", function () {
+        persist([{ name: "Menu", status: "pass" }]);
+        const [run] = collectRuns(path.join(root, "captures"));
+        expect(run.screen).to.equal(null);
     });
 
     it("records a first run that has no baselines to copy yet", function () {

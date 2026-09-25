@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import * as tar from "tar";
 import { Jimp } from "jimp";
+import { SCREEN_FILE } from "./visual/measuredScreen.js";
 
 function defaultAdb() {
   if (process.env.ANDROID_SDK_ROOT) {
@@ -297,9 +298,10 @@ class AndroidLauncher {
     await tar.x({ file: tmpTar, cwd: destDir });
     fs.unlinkSync(tmpTar);
     // The tar carries the whole visual dir, including the .ready/.shot/capture-done
-    // handshake markers — drop them so the uploaded artifact is just screenshots.
+    // handshake markers — drop them so the uploaded artifact is just screenshots
+    // and the screen the runner measured, which nothing on this end can recover.
     for (const f of fs.readdirSync(destDir)) {
-      if (!f.endsWith(".png")) { fs.rmSync(path.join(destDir, f), { force: true }); }
+      if (!f.endsWith(".png") && f !== SCREEN_FILE) { fs.rmSync(path.join(destDir, f), { force: true }); }
     }
     return fs.readdirSync(destDir)
       .filter((f) => f.endsWith(".png"))

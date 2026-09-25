@@ -559,6 +559,34 @@ describe("AndroidLauncher", function() {
       fs.rmSync(fixture, { recursive: true, force: true });
       fs.rmSync(dest, { recursive: true, force: true });
     });
+
+    // The tar carries the whole visual dir, handshake markers included, and those
+    // are stripped so the artifact is just screenshots. The runner's screen record
+    // has to survive that strip: only the device can measure it.
+    it("keeps the runner's screen record while stripping the handshake markers", async function() {
+      const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "android-visual-src-"));
+      fs.writeFileSync(path.join(fixture, "Menu.png"), "png-a");
+      fs.writeFileSync(path.join(fixture, "screen.json"), '{"relHeight":360}');
+      fs.writeFileSync(path.join(fixture, "capture-done"), "");
+      const tarBuf = tar.c({ cwd: fixture, sync: true }, ["."]).read();
+
+      const { stub: fakeSpawn } = makeBinarySpawn(tarBuf);
+      const launcher = new AndroidLauncher({
+        execFile: makeExecFile({ "devices": DEVICES_OUTPUT }),
+        spawn: fakeSpawn,
+      });
+      await launcher.connect();
+
+      const dest = fs.mkdtempSync(path.join(os.tmpdir(), "android-visual-dest-"));
+      const pulled = await launcher.pullCapturedScreenshots(APP_ID, { deviceDir: DEVICE_DIR, destDir: dest });
+
+      expect(fs.readFileSync(path.join(dest, "screen.json"), "utf8")).to.equal('{"relHeight":360}');
+      expect(fs.existsSync(path.join(dest, "capture-done")), "a handshake marker survived").to.be.false;
+      expect(pulled, "the screen record is not a capture").to.have.length(1);
+
+      fs.rmSync(fixture, { recursive: true, force: true });
+      fs.rmSync(dest, { recursive: true, force: true });
+    });
   });
 });
 

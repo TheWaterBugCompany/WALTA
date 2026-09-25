@@ -992,7 +992,8 @@ module.exports = function(grunt) {
         import('./build-utils/visual/compareRun.js'),
         import('./build-utils/visual/persistRun.js'),
         import('./build-utils/visual/deviceLabel.js'),
-      ]).then(async ([launcher, { collectHandshake }, { compareRun }, { persistRun }, { deviceLabel }]) => {
+        import('./build-utils/visual/measuredScreen.js'),
+      ]).then(async ([launcher, { collectHandshake }, { compareRun }, { persistRun }, { deviceLabel }, { readMeasuredScreen }]) => {
         const fs = require('fs');
         // Baselines are renderer-specific, so absent an explicit --device the
         // device that rendered the run decides which set it belongs to — a
@@ -1057,13 +1058,23 @@ module.exports = function(grunt) {
         // container, Android via run-as), so no device path needs reporting.
         await launcher.pullCapturedScreenshots(APP_ID, { subdir: 'visual', destDir: actualDir });
 
+        // Which size band this leg exercised is the device's answer, not one the
+        // host can work out: the bands are drawn against the landscape short edge
+        // in dp, and displayCaps reports points on iOS but pixels on Android.
+        const screen = readMeasuredScreen(actualDir);
+        if (screen) {
+          grunt.log.writeln(`Rendered on a ${Math.round(screen.relWidth)}x${Math.round(screen.relHeight)}dp screen`);
+        } else {
+          grunt.log.writeln('The runner reported no screen — this build predates the screen record.');
+        }
+
         const run = await compareRun({ baselineDir, actualDir, outDir, update });
         for (const res of run.results) {
           grunt.log.writeln(`  ${res.status.padEnd(8)} ${res.name}${res.diffPixels != null ? ` (${res.diffPixels}px)` : ''}`);
         }
         // Persist and re-render the review page before the pass/fail verdict —
         // a failing run is exactly the one whose report you want to open.
-        persistRun({ platform, device, deviceName, deviceDir, baselineDir, results: run.results, capturedAt: new Date().toISOString() });
+        persistRun({ platform, device, deviceName, deviceDir, baselineDir, results: run.results, screen, capturedAt: new Date().toISOString() });
         await writeVisualReport(grunt);
 
         if (update) {
