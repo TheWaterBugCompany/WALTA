@@ -348,6 +348,8 @@ jobs:
   # - API 34 google_apis: ships the modern system photo picker (API 33+) ✓
   # - ubuntu-latest: cheapest runner option ✓
   # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
+  # `profile:` is not optional: without it the runner builds the AVD at
+  # 640x320 density 1, a shorter screen than any device the app ships on.
   # ── 3a. Android emulator build ────────────────────────────────────────────
   # Builds Waterbug.apk once for the x86_64 emulator and uploads it as a
   # workflow artifact. Smaller savings than the iOS equivalent (Linux
@@ -466,6 +468,8 @@ jobs:
   # - API 34 google_apis: ships the modern system photo picker (API 33+) ✓
   # - ubuntu-latest: cheapest runner option ✓
   # The AVD name "Medium_Phone_API_36.1" matches AndroidEmulatorLauncher.js.
+  # `profile:` is not optional: without it the runner builds the AVD at
+  # 640x320 density 1, a shorter screen than any device the app ships on.
   android-emulator-tests:
     name: Android emulator unit tests
     needs: [changes, android-build]
@@ -537,6 +541,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: Medium_Phone_API_36.1
+          profile: medium_phone
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: echo "AVD snapshot ready for caching"
@@ -549,7 +554,7 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-34
-          key: avd-34-google_apis-x86_64
+          key: avd-34-google_apis-x86_64-medium_phone
 
       - name: Boot Android emulator and run tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -558,6 +563,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: Medium_Phone_API_36.1
+          profile: medium_phone
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           # Retry once on infrastructure flake (WB-54: AAPT
@@ -782,7 +788,7 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-34
-          key: avd-34-google_apis-x86_64
+          key: avd-34-google_apis-x86_64-medium_phone
 
       - name: Capture screens and diff against baselines
         uses: reactivecircus/android-emulator-runner@v2
@@ -1128,7 +1134,7 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-34
-          key: avd-34-google_apis-x86_64
+          key: avd-34-google_apis-x86_64-medium_phone
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -1138,6 +1144,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: Medium_Phone_API_36.1
+          profile: medium_phone
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: echo "AVD snapshot ready for caching"
@@ -1150,7 +1157,7 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-34
-          key: avd-34-google_apis-x86_64
+          key: avd-34-google_apis-x86_64-medium_phone
 
       # Appium creates `node_modules/.cache/appium` on first start to hold
       # driver-hash files; caching it across runs avoids re-doing that
@@ -1172,6 +1179,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: Medium_Phone_API_36.1
+          profile: medium_phone
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           # Shared smart retry (WB-203): identical policy to the iOS job via the
@@ -1385,7 +1393,7 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-34
-          key: avd-34-google_apis-x86_64
+          key: avd-34-google_apis-x86_64-medium_phone
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -1395,6 +1403,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: Medium_Phone_API_36.1
+          profile: medium_phone
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: echo "AVD snapshot ready for caching"
@@ -1407,7 +1416,7 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-34
-          key: avd-34-google_apis-x86_64
+          key: avd-34-google_apis-x86_64-medium_phone
 
       - name: Cache Appium driver hashes
         uses: actions/cache@v5
@@ -1424,6 +1433,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: Medium_Phone_API_36.1
+          profile: medium_phone
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
