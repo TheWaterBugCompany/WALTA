@@ -526,8 +526,8 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-${{ matrix.device.api }}
-          key: avd-${{ matrix.device.api }}-google_apis-x86_64
+            /usr/local/lib/android/sdk/system-images/android-34
+          key: avd-34-google_apis-x86_64
 
       - name: Pre-warm AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
