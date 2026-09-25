@@ -160,12 +160,6 @@ overrode the settings with other TSS, XML, or JS settings:
   color: Alloy.CFG.colors.primary
 }
 
-".labelText[if=Alloy.Globals.isLowRes]": {
-    font: {
-      fontSize: "16dp"
-    }
-}
-
 ".labelText[if=Alloy.Globals.isHighRes]": {
     font: {
       fontSize: "18dp"
@@ -244,10 +238,6 @@ overrode the settings with other TSS, XML, or JS settings:
         fontSize: "16dp"
     },
     visible: false
-}
-
-".error[if=Alloy.Globals.isLowRes]": {
-  fontSize: "14dp"
 }
 
 ".error[if=Alloy.Globals.isHighRes]": {

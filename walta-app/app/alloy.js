@@ -78,12 +78,11 @@ log(`relWidth=${screen.relWidth}, relHeight=${screen.relHeight}, aspectRatio=${s
 
 Alloy.Globals.isSquare = screen.isSquare;
 
-Alloy.Globals.isLowRes = screen.isLowRes;
 Alloy.Globals.isHighRes = screen.isHighRes;
 Alloy.Globals.isXHighRes = screen.isXHighRes;
 Alloy.Globals.isShort = screen.isShort;
 
-log(`isSquare=${Alloy.Globals.isSquare}, isLowRes=${Alloy.Globals.isLowRes}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}, isShort=${Alloy.Globals.isShort}`);
+log(`isSquare=${Alloy.Globals.isSquare}, isHighRes=${Alloy.Globals.isHighRes}, isXHighRes=${Alloy.Globals.isXHighRes}, isShort=${Alloy.Globals.isShort}`);
 
 // Alloy's TSS parser takes values, not call expressions, so a matrix a style
 // needs has to be built here and referenced by name.

@@ -79,12 +79,6 @@
   color: Alloy.CFG.colors.primary
 }
 
-".bigMenuText[if=Alloy.Globals.isLowRes]": {
-   font: {
-    fontSize: "25dp"
-  }
-}
-
 ".bigMenuText[if=Alloy.Globals.isHighRes]": {
    font: {
     fontSize: "34dp"
@@ -148,12 +142,6 @@
     fontSize: "14dp"
   },
   color: Alloy.CFG.colors.primary
-}
-
-".smallMenuText[if=Alloy.Globals.isLowRes]": {
-   font: {
-    fontSize: "14dp"
-  }
 }
 
 "#smallOptions[if=Alloy.Globals.isHighRes]": {

@@ -37,23 +37,27 @@ describe("screenMetrics", function () {
 	describe("size buckets", function () {
 		function bucketOf(relHeight) {
 			var metrics = screenMetrics({ platformWidth: relHeight * 2, platformHeight: relHeight, logicalDensityFactor: 1 }, "iphone");
-			if (metrics.isLowRes) { return "low"; }
 			if (metrics.isHighRes) { return "high"; }
 			if (metrics.isXHighRes) { return "xhigh"; }
 			return "none";
 		}
 
-		it("puts screens under 300dp tall in the low bucket", function () {
-			expect(bucketOf(299)).to.equal("low");
-		});
-
-		it("puts screens from 300dp to under 700dp tall in the high bucket", function () {
+		it("puts every screen under 700dp tall in the high bucket", function () {
+			expect(bucketOf(299)).to.equal("high");
 			expect(bucketOf(300)).to.equal("high");
 			expect(bucketOf(699)).to.equal("high");
 		});
 
 		it("puts screens 700dp tall and over in the extra-high bucket", function () {
 			expect(bucketOf(700)).to.equal("xhigh");
+		});
+
+		// No device the app ships on is this short: Android's smallest supported
+		// screen is 320dp and the smallest iPhone ever made is 320pt, so a band
+		// below that was a set of rules nothing rendered.
+		it("has no bucket below the high one", function () {
+			expect(screenMetrics({ platformWidth: 598, platformHeight: 299, logicalDensityFactor: 1 }, "iphone"))
+				.to.not.have.property("isLowRes");
 		});
 	});
 

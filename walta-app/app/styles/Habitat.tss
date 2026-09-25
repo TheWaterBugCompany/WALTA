@@ -82,9 +82,6 @@
     height: Ti.UI.SIZE,
     horizontalWrap: false
 }
-"#grid[if=Alloy.Globals.isLowRes]" : {
-    top: 0
-}
 
 ".gridColumn": {
     width: Ti.UI.SIZE,

@@ -11,7 +11,6 @@ function landscape(width, height) {
 	return height > width ? { relWidth: height, relHeight: width } : { relWidth: width, relHeight: height };
 }
 
-var LOW_RES_MAX = 300;
 // The bottom of the high-res band. Everything in that band is written in fixed
 // dp, and the band runs to 700dp, so a screen down here cannot take the sizes a
 // screen at the top of it can.
@@ -28,8 +27,7 @@ function screenMetrics(displayCaps, osname) {
 		relHeight: size.relHeight,
 		aspectRatio: aspectRatio,
 		isSquare: aspectRatio < SQUARE_MAX_ASPECT,
-		isLowRes: size.relHeight < LOW_RES_MAX,
-		isHighRes: size.relHeight >= LOW_RES_MAX && size.relHeight < HIGH_RES_MAX,
+		isHighRes: size.relHeight < HIGH_RES_MAX,
 		isXHighRes: size.relHeight >= HIGH_RES_MAX,
 		// Deliberately overlaps the buckets rather than splitting them: a short
 		// screen is still isHighRes, so a style only overrides what it must.

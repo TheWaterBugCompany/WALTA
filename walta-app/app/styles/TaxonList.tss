@@ -15,13 +15,6 @@
   color: Alloy.CFG.colors.primary
 }
 
-".speciesItem[if=Alloy.Globals.isLowRes]": {
-    height: "30dp",
-    font: {
-      fontSize: "20dp"
-    }
-}
-
 ".speciesItem[if=Alloy.Globals.isHighRes]": {
     height: "31dp",
     font: {
