@@ -46,6 +46,16 @@ describe("visual report model", function () {
         expect(model.runs[0]).to.include({ deviceName: "iPhone 17 Pro · iOS 26.3", capturedAt: "2026-08-26T02:39:47.801Z" });
     });
 
+    // A column's baseline set is a name, not a size, so the screen it stands for
+    // has to travel with it: the whole point of a matrix leg is the size band it
+    // exercises, and two legs can differ only in that.
+    it("carries the screen size a column stands for", function () {
+        const model = buildReportModel([
+            { platform: "ios", device: "iphone-17", screen: { relWidth: 874, relHeight: 402 }, results: [] },
+        ]);
+        expect(model.runs[0].screen).to.deep.equal({ relWidth: 874, relHeight: 402 });
+    });
+
     it("points a differing cell at its baseline, capture and diff images", function () {
         const model = buildReportModel([run("android", "small", [{ name: "Menu", status: "fail", diffPixels: 42 }])]);
         expect(model.screens[0].cells[0].images).to.deep.equal({

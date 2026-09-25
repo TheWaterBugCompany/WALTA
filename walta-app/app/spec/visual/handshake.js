@@ -11,6 +11,7 @@ const POLL_MS = 100;
 
 const DONE = "capture-done";
 const COLLECTOR_READY = "collector-ready";
+const SCREEN = "screen.json";
 
 function readyMarker(name) { return `${name}.ready`; }
 function shotMarker(name) { return `${name}.shot`; }
@@ -45,4 +46,13 @@ function signalDone(port) {
 	port.write(DONE);
 }
 
-module.exports = { holdUntilShot, signalDone, readyMarker, shotMarker, DONE, COLLECTOR_READY, POLL_MS };
+// Report what screenMetrics made of this device's display, so the run records the
+// screen it rendered on. Nothing on the host can work this out for itself: the
+// bands are drawn against the landscape short edge in dp, and displayCaps reports
+// points on iOS but pixels on Android, so only the device can say which band it is
+// in.
+function recordScreen(port, screen) {
+	port.write(SCREEN, JSON.stringify(screen));
+}
+
+module.exports = { holdUntilShot, signalDone, recordScreen, readyMarker, shotMarker, DONE, COLLECTOR_READY, SCREEN, POLL_MS };

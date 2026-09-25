@@ -593,5 +593,29 @@ describe("IosSimulatorLauncher", function() {
       fs.rmSync(container, { recursive: true, force: true });
       fs.rmSync(dest, { recursive: true, force: true });
     });
+
+    // The runner reports the screen it rendered on beside the captures, and only
+    // the device can measure it — left behind it is unrecoverable.
+    it("brings the runner's screen record back with the captures", async function() {
+      const container = fs.mkdtempSync(path.join(os.tmpdir(), "ios-container-"));
+      const src = path.join(container, "Documents", "visual");
+      fs.mkdirSync(src, { recursive: true });
+      fs.writeFileSync(path.join(src, "Menu.png"), "png-a");
+      fs.writeFileSync(path.join(src, "screen.json"), '{"relHeight":402}');
+      const dest = fs.mkdtempSync(path.join(os.tmpdir(), "ios-pulled-"));
+
+      const fakeExecFile = makeExecFile({
+        [`simctl get_app_container ${UDID} ${APP_ID} data`]: `${container}\n`,
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+
+      const pulled = await launcher.pullCapturedScreenshots(APP_ID, { subdir: "visual", destDir: dest });
+
+      expect(fs.readFileSync(path.join(dest, "screen.json"), "utf8")).to.equal('{"relHeight":402}');
+      expect(pulled, "the screen record is not a capture").to.have.length(1);
+
+      fs.rmSync(container, { recursive: true, force: true });
+      fs.rmSync(dest, { recursive: true, force: true });
+    });
   });
 });
