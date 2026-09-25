@@ -61,6 +61,34 @@ describe('DeleteAccount modal', function() {
 		expect( mod.deleteButton.enabled ).to.equal( true );
 	});
 
+	// The disabled look has to be a real one on both platforms: iOS ignores
+	// backgroundDisabledColor, so a stylesheet's account of "not ready" left the
+	// button fully red there, and Android greyed only the body and kept the red
+	// outline over it.
+	it('greys the button and its outline together until a password is typed', async function() {
+		await open();
+		expect( mod.deleteButton.backgroundColor ).to.equal( Alloy.CFG.colors.disabled );
+		expect( mod.deleteButtonFrame.borderColor ).to.equal( Alloy.CFG.colors.disabled );
+	});
+
+	it('turns the button and its outline the colour of the warning once armed', async function() {
+		await open();
+		mod.passwordField.value = "password";
+		mod.passwordField.fireEvent("change", { value: "password" });
+		await waitFor(function () { return ctl.vm.deleteEnabled; });
+		expect( mod.deleteButton.backgroundColor ).to.equal( Alloy.CFG.colors.error );
+		expect( mod.deleteButtonFrame.borderColor ).to.equal( Alloy.CFG.colors.failure );
+	});
+
+	// White between the button and its outline, so the two reds never meet.
+	it('holds the button clear of its outline', async function() {
+		await open();
+		await waitFor(function () { return mod.deleteButton.rect.width > 0; });
+		expect( mod.deleteButtonFrame.backgroundColor ).to.equal( Alloy.CFG.colors.white );
+		expect( mod.deleteButton.rect.x, "button flush against the frame" ).to.be.greaterThan( 0 );
+		expect( mod.deleteButton.rect.y, "button flush against the frame" ).to.be.greaterThan( 0 );
+	});
+
 	it('tells the user when the password was wrong, and stays open', async function() {
 		await open({ loginFails: true });
 		mod.passwordField.value = "wrong";

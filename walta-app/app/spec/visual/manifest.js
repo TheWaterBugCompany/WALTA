@@ -318,6 +318,17 @@ function assessTrainingTray(opened) {
 	});
 }
 
+// The Delete button is grey until a password is typed, so the armed look — red
+// body, white gap, red outline — is only reachable by typing one.
+function armDeleteAccount(opened) {
+	var { waitFor } = require("spec/util/TestUtils");
+	var modal = opened.seam.getCurrentModal();
+	modal.lib.vm.password = "a-password";
+	return waitFor(function () {
+		return modal.alloyCtl.deleteButton.backgroundColor === Alloy.CFG.colors.error;
+	});
+}
+
 function videoPlayer() {
 	return { url: "/spec/resources/simpleKey1/media/test_clip.mp4" };
 }
@@ -618,6 +629,7 @@ module.exports = [
 	{ name: "PhotoViewer", args: photoViewer },
 	{ name: "Account", args: account, services: accountServices },
 	{ name: "DeleteAccount", args: account, services: accountServices, host: "Account" },
+	{ name: "DeleteAccountArmed", screen: "DeleteAccount", args: account, services: accountServices, host: "Account", after: armDeleteAccount },
 	{ name: "LogIn", args: logIn },
 	{ name: "Register", args: register },
 	{ name: "SiteDetails", args: siteDetails },

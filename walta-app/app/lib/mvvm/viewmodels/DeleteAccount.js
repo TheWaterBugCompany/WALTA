@@ -1,4 +1,5 @@
 const ChangeNotifier = require("../../util/ChangeNotifier");
+const Palette = require("../../util/Palette");
 
 // State for the Delete Account modal. Deleting an account cannot be undone, so
 // the password is proved against the server before anything is destroyed — a
@@ -21,6 +22,14 @@ class DeleteAccountViewModel extends ChangeNotifier {
   }
 
   get deleteEnabled() { return this._password.length > 0; }
+
+  // How ready the button is has to be readable in its colours, and the platforms
+  // do not agree on a stylesheet's account of that: iOS ignores
+  // backgroundDisabledColor, and Android honours it for the body while keeping
+  // the red outline over the grey. So the state says what colour it is.
+  get deleteColor() { return this.deleteEnabled ? Palette.error : Palette.disabled; }
+
+  get deleteOutlineColor() { return this.deleteEnabled ? Palette.failure : Palette.disabled; }
 
   confirmDelete() {
     if (!this.deleteEnabled) return Promise.resolve();

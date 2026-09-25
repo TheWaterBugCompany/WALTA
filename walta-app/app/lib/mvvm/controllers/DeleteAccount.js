@@ -7,7 +7,10 @@ const { twoWay } = require("util/bindView");
 // See docs/patterns/modals.md for the pattern.
 const BINDINGS = {
   passwordField: { value: twoWay("password") },
-  deleteButton:  { enabled: "deleteEnabled", onClick: "confirmDelete" },
+  deleteButton:  { enabled: "deleteEnabled", backgroundColor: "deleteColor", onClick: "confirmDelete" },
+  // The outline lives on a frame around the button, with white between the two,
+  // so the body colour and the outline colour never meet.
+  deleteButtonFrame: { borderColor: "deleteOutlineColor" },
   closeButton:   { onClose: "close" },   // the ✕ (CloseButton Require)
   cancelButton:  { onClick: "close" },   // the "Close" text button
 };

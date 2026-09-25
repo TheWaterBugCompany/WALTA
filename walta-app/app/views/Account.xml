@@ -13,7 +13,9 @@
 			</View>
 			<View id="accountActions" layout="vertical">
 				<Button id="logOutButton" class="accountButton logOutButton" accessibilityLabel="account_log_out">LOG OUT</Button>
-				<Button id="deleteButton" class="accountButton deleteButton" accessibilityLabel="account_delete">DELETE ACCOUNT</Button>
+				<View class="deleteButtonFrame">
+					<Button id="deleteButton" class="accountButton deleteButton" accessibilityLabel="account_delete">DELETE ACCOUNT</Button>
+				</View>
 			</View>
 		</View>
 		<Label id="beltsHeading" class="beltsHeading" accessibilityLabel="account_belts_heading">Belts Earned</Label>
