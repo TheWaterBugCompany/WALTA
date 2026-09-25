@@ -574,6 +574,12 @@ jobs:
           # cycle for nothing. See WB-48.
           script: |
             echo "Emulator booted"
+            # Android shows its one-time "Viewing full screen" immersive dialog on a
+            # fresh AVD's first fullscreen entry, and it sits over the app — so the
+            # UI tree Appium reads is the dialog's, not the app's. Pre-confirm it.
+            # These jobs had been relying on a long-lived cached AVD that had it
+            # dismissed, which made a new one look like the app failing to launch.
+            adb shell settings put secure immersive_mode_confirmations confirmed
             bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=android --simulator --skip-build unit-test
 
   # ── 3a2. The declared visual device matrix ────────────────────────────────
@@ -1190,6 +1196,12 @@ jobs:
           # environmental flake (slow GPS fix, leaked app state).
           script: |
             echo "Emulator booted"
+            # Android shows its one-time "Viewing full screen" immersive dialog on a
+            # fresh AVD's first fullscreen entry, and it sits over the app — so the
+            # UI tree Appium reads is the dialog's, not the app's. Pre-confirm it.
+            # These jobs had been relying on a long-lived cached AVD that had it
+            # dismissed, which made a new one look like the app failing to launch.
+            adb shell settings put secure immersive_mode_confirmations confirmed
             bash build-utils/run-acceptance-with-retry.sh android
 
       - name: Upload per-scenario failure artifacts
@@ -1438,6 +1450,12 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             echo "Emulator booted"
+            # Android shows its one-time "Viewing full screen" immersive dialog on a
+            # fresh AVD's first fullscreen entry, and it sits over the app — so the
+            # UI tree Appium reads is the dialog's, not the app's. Pre-confirm it.
+            # These jobs had been relying on a long-lived cached AVD that had it
+            # dismissed, which made a new one look like the app failing to launch.
+            adb shell settings put secure immersive_mode_confirmations confirmed
             npx grunt --platform=android --simulator --skip-build end-to-end-test || { echo "::warning ::Android e2e first attempt failed; retrying once"; npx grunt --platform=android --simulator --skip-build end-to-end-test; }
 
       - name: Upload failure artifacts
