@@ -83,10 +83,10 @@
 }
 
 ".deleteButton": {
-	top: "3dp",
-	bottom: "3dp",
-	left: "3dp",
-	right: "3dp",
+	top: "5dp",
+	bottom: "5dp",
+	left: "5dp",
+	right: "5dp",
 	color: Alloy.CFG.colors.white,
 	backgroundColor: Alloy.CFG.colors.error,
 	borderWidth: 0
