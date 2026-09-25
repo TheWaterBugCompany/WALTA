@@ -67,12 +67,29 @@
 }
 
 // Deleting an account cannot be undone, so it is coloured like the warning it
-// is rather than like the button above it.
+// is rather than like the button above it. The outline sits on a frame with
+// white between it and the button: two reds meeting edge to edge read as one
+// muddy border, and a view has only the one border to give.
+".deleteButtonFrame": {
+	width: Ti.UI.FILL,
+	height: Ti.UI.SIZE,
+	top: "6dp",
+	bottom: "6dp",
+	layout: "vertical",
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.failure,
+	borderWidth: "2dp",
+	borderRadius: "8dp"
+}
+
 ".deleteButton": {
+	top: "3dp",
+	bottom: "3dp",
+	left: "3dp",
+	right: "3dp",
 	color: Alloy.CFG.colors.white,
 	backgroundColor: Alloy.CFG.colors.error,
-	borderColor: Alloy.CFG.colors.failure,
-	borderWidth: "2dp"
+	borderWidth: 0
 }
 
 ".beltsHeading": {

@@ -1,6 +1,7 @@
 require("mocha");
 const { expect } = require("chai");
 const DeleteAccountViewModel = require("../../walta-app/app/lib/mvvm/viewmodels/DeleteAccount");
+const Palette = require("../../walta-app/app/lib/util/Palette");
 
 describe("DeleteAccountViewModel", function () {
 
@@ -35,6 +36,25 @@ describe("DeleteAccountViewModel", function () {
     expect(vm.deleteEnabled).to.be.false;
     vm.password = "password";
     expect(vm.deleteEnabled).to.be.true;
+  });
+
+  // Whether the button can be pressed has to be visible in its colours, and on
+  // both platforms: iOS ignores backgroundDisabledColor entirely, and Android
+  // honours it for the body while keeping the stylesheet's red outline — so a
+  // disabled button read as ready to press on one and half-ready on the other.
+  describe("how ready to delete the button looks", function () {
+    it("is grey through and through with no password typed", function () {
+      const { vm } = build();
+      expect(vm.deleteColor).to.equal(Palette.disabled);
+      expect(vm.deleteOutlineColor).to.equal(Palette.disabled);
+    });
+
+    it("turns the colour of the warning it is once a password is typed", function () {
+      const { vm } = build();
+      vm.password = "password";
+      expect(vm.deleteColor).to.equal(Palette.error);
+      expect(vm.deleteOutlineColor).to.equal(Palette.failure);
+    });
   });
 
   it("does nothing at all when asked to delete with no password", async function () {

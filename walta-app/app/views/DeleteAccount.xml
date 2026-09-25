@@ -2,15 +2,17 @@
 	<View class="overlay">
 		<ScrollView id="entryScroll" class="entryScroll">
 		<View class="window deleteWindow" layout="vertical">
-			<View class="titlebar">
+			<View class="titlebar deleteTitlebar">
+				<Label id="deleteWarning" class="titleText deleteWarning">Delete your account permanently. This action is unrecoverable, all Personally Identifiable Information will be removed from the server and your submitted samples will be anonymised.</Label>
 				<Require id="closeButton" src="CloseButton"/>
 			</View>
-			<Label id="deleteWarning" class="deleteText">Delete your account permanently. This action is unrecoverable, all Personally Identifiable Information will be removed from the server and your submitted samples will be anonymised.</Label>
 			<Label id="deletePrompt" class="deleteText">Enter your password below to proceed:</Label>
 			<TextField id="passwordField" class="deletePassword" accessibilityLabel="delete_account_password"/>
 			<View class="deleteButtons" layout="horizontal">
 				<Button id="cancelButton" class="actionButton" accessibilityLabel="delete_account_close">Close</Button>
-				<Button id="deleteButton" class="actionButton deleteConfirmButton" accessibilityLabel="delete_account_confirm">DELETE ACCOUNT</Button>
+				<View id="deleteButtonFrame" class="deleteButtonFrame">
+					<Button id="deleteButton" class="actionButton deleteConfirmButton" accessibilityLabel="delete_account_confirm">DELETE ACCOUNT</Button>
+				</View>
 			</View>
 		</View>
 		</ScrollView>

@@ -18,6 +18,22 @@
 	layout: "vertical"
 }
 
+// The warning is this modal's title — it shares the titlebar with the ✕ the way
+// every other modal's title does, rather than leaving the ✕ a line of its own
+// with an empty band under it. The room that gives back is the room the password
+// field needs.
+".deleteTitlebar": {
+	top: "8dp"
+}
+
+".deleteWarning": {
+	left: "8%",
+	width: "76%",
+	height: Ti.UI.SIZE,
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT
+}
+
 ".deleteText": {
 	top: "12dp",
 	// An explicit width (not left/right margins alone): Android otherwise
@@ -39,10 +55,13 @@
 	font: { fontFamily: "Tahoma", fontSize: "28dp" }
 }
 
+// An explicit height rather than Ti.UI.SIZE: sized to its text alone the field
+// is barely taller than one line of it, which reads as a box that is not meant
+// to be typed in.
 ".deletePassword": {
 	top: "12dp",
 	width: "84%",
-	height: Ti.UI.SIZE,
+	height: "40dp",
 	left: "8%",
 	passwordMask: true,
 	backgroundColor: Alloy.CFG.colors.white,
@@ -73,25 +92,44 @@
 	borderWidth: "1dp"
 }
 
-// Coloured like the warning it is. Newer Android keeps a disabled button on its
-// enabled backgroundColor unless a disabled background is set explicitly — so
-// without this, "no password typed yet" would still read as ready to go.
-"#deleteButton": {
+// The outline, held a button's width away from the button itself. Two reds meeting
+// edge to edge read as one muddy border, so white sits between them — which takes
+// a frame, since a view has only the one border to give.
+// The colours are the view-model's: whether the button can be pressed is state,
+// and neither platform renders a stylesheet's account of it correctly (iOS
+// ignores backgroundDisabledColor; Android greys the body but keeps the outline).
+// The frame carries the width the button used to, because the button can no
+// longer carry one: an explicit width alongside left and right margins is the
+// over-constraint that makes a Classic parent grow instead of inset its child.
+// So the frame is the sized one and the button fills it, less the gap.
+".deleteButtonFrame": {
 	left: "12dp",
 	// Wider than the shared action button: "DELETE ACCOUNT" is a long label and
 	// gets elided to nonsense at the standard width.
-	width: "190dp",
+	width: "200dp",
+	height: Ti.UI.SIZE,
+	layout: "vertical",
+	backgroundColor: Alloy.CFG.colors.white,
+	borderColor: Alloy.CFG.colors.failure,
+	borderWidth: "2dp",
+	borderRadius: "8dp"
+}
+
+".deleteButtonFrame[if=Alloy.Globals.isHighRes]": {
+	width: "240dp"
+}
+
+".deleteButtonFrame[if=Alloy.Globals.isXHighRes]": {
+	width: "330dp"
+}
+
+"#deleteButton": {
+	top: "3dp",
+	bottom: "3dp",
+	left: "3dp",
+	right: "3dp",
+	width: Ti.UI.FILL,
 	color: Alloy.CFG.colors.white,
 	backgroundColor: Alloy.CFG.colors.error,
-	backgroundDisabledColor: Alloy.CFG.colors.disabled,
-	borderColor: Alloy.CFG.colors.failure,
-	borderWidth: "2dp"
-}
-
-"#deleteButton[if=Alloy.Globals.isHighRes]": {
-	width: "230dp"
-}
-
-"#deleteButton[if=Alloy.Globals.isXHighRes]": {
-	width: "320dp"
+	borderWidth: 0
 }
