@@ -85,6 +85,26 @@
 	font: { fontFamily: "Tahoma", fontSize: "22dp" }
 }
 
+// Reads as body text under the heading rather than as a second heading: it
+// stands in for the grid, so it sits where the first row of belts would.
+".noBeltsNotice": {
+	left: "4%",
+	top: "3%",
+	width: "92%",
+	height: Ti.UI.SIZE,
+	color: Alloy.CFG.colors.primary,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+	font: { fontFamily: "Tahoma", fontSize: "15dp" }
+}
+
+".noBeltsNotice[if=Alloy.Globals.isHighRes]": {
+	font: { fontFamily: "Tahoma", fontSize: "19dp" }
+}
+
+".noBeltsNotice[if=Alloy.Globals.isXHighRes]": {
+	font: { fontFamily: "Tahoma", fontSize: "28dp" }
+}
+
 // The belts earned, three to a row and wrapping onto the next — lowest first,
 // so the grid reads in the order they were won. Each belt sizes itself (the
 // view-model says how wide and tall), so the grid only has to hold them.

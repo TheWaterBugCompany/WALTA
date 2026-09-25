@@ -41,6 +41,18 @@ class AccountViewModel extends ChangeNotifier {
 
   get belts() { return this._belts; }
 
+  // A heading with nothing under it reads as a screen that failed to load, not
+  // as a score of zero. The note stands in for the grid until the first belt
+  // is earned, and says where belts come from while it is there.
+  get noBeltsVisible() { return this._belts.length === 0; }
+
+  // Empty rather than held behind a hidden label: a Label keeps the height of
+  // whatever text it holds even when it is told to take up none, so the text has
+  // to go for the band above the grid to go with it.
+  get noBeltsMessage() {
+    return this.noBeltsVisible ? "No belts earned yet. Complete academy courses to earn belts." : "";
+  }
+
   // Logging out is worth a second thought, so the view asks; the account is
   // only given up once it comes back confirmed.
   logOut() { this.trigger("confirmLogOut"); }

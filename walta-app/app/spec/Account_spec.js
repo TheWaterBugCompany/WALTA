@@ -48,6 +48,22 @@ describe('Account screen', function() {
 		expect( ctl.beltGrid.children.length ).to.equal( 0 );
 	});
 
+	it('says why the grid is empty, rather than leaving a heading over nothing', async function() {
+		await open({ level: 0 });
+		expect( ctl.noBeltsNotice.visible ).to.equal( true );
+		expect( ctl.noBeltsNotice.text ).to.contain( "No belts earned yet" );
+	});
+
+	// Merely hiding it would leave its band behind and push the first row of belts
+	// down a gap it never had, so the notice gives its height and margins back
+	// too — which is `present`, not `visible`.
+	it('takes no room once there are belts to show instead', async function() {
+		await open({ level: 3 });
+		expect( ctl.noBeltsNotice.visible, "still visible" ).to.equal( false );
+		expect( ctl.noBeltsNotice.height, "still tall" ).to.equal( 0 );
+		expect( ctl.noBeltsNotice.top, "still pushing the grid down" ).to.equal( 0 );
+	});
+
 	// The belts are mounted after the grid has laid out, so their frames arrive
 	// a pass later — poll for one rather than reading a rect that isn't there.
 	async function laidOutBelts() {

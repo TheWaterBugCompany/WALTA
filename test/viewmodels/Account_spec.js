@@ -52,6 +52,22 @@ describe("AccountViewModel", function () {
     expect(build({ level: 0 }).belts).to.deep.equal([]);
   });
 
+  // A heading with nothing under it reads as a screen that failed to load
+  // rather than as a score of zero — which is every trainee's first look at
+  // this screen. The note also says where belts come from, which the heading
+  // on its own does not.
+  it("says why the grid is empty when no belt has been earned", function () {
+    const vm = build({ level: 0 });
+    expect(vm.noBeltsVisible).to.equal(true);
+    expect(vm.noBeltsMessage).to.equal("No belts earned yet. Complete academy courses to earn belts.");
+  });
+
+  it("drops the note once there is a belt to show instead", function () {
+    const vm = build({ level: 1 });
+    expect(vm.noBeltsVisible).to.equal(false);
+    expect(vm.noBeltsMessage).to.equal("");
+  });
+
   // Lowest first, so the grid reads top-left to bottom-right in the order they
   // were earned.
   it("shows every belt earned, lowest first", function () {

@@ -17,6 +17,7 @@
 			</View>
 		</View>
 		<Label id="beltsHeading" class="beltsHeading" accessibilityLabel="account_belts_heading">Belts Earned</Label>
+		<Label id="noBeltsNotice" class="noBeltsNotice" accessibilityLabel="account_no_belts"/>
 		<View id="beltGrid" layout="horizontal"/>
 	</View>
 </Alloy>
