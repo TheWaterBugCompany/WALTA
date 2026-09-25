@@ -56,6 +56,16 @@ describe("visual report model", function () {
         expect(model.runs[0].screen).to.deep.equal({ relWidth: 874, relHeight: 402 });
     });
 
+    // A leg whose declared screen is not the one it rendered on makes the band
+    // coverage the matrix claims wrong while every cell in the column still passes,
+    // so the column has to say so where the legs are being read.
+    it("carries a column's declared screen being the wrong one", function () {
+        const model = buildReportModel([
+            { platform: "ios", device: "iphone-se", screenMismatch: { measured: "874x402dp", declared: "667x375dp" }, results: [] },
+        ]);
+        expect(model.runs[0].screenMismatch).to.deep.equal({ measured: "874x402dp", declared: "667x375dp" });
+    });
+
     it("points a differing cell at its baseline, capture and diff images", function () {
         const model = buildReportModel([run("android", "small", [{ name: "Menu", status: "fail", diffPixels: 42 }])]);
         expect(model.screens[0].cells[0].images).to.deep.equal({

@@ -46,8 +46,8 @@ export function buildReportModel(runs) {
         }),
     }));
     return {
-        runs: runs.map(({ platform, device, deviceName, screen, capturedAt, uncaptured }) =>
-            ({ platform, device, deviceName, screen, capturedAt, uncaptured, id: `${platform}/${device}` })),
+        runs: runs.map(({ platform, device, deviceName, screen, screenMismatch, capturedAt, uncaptured }) =>
+            ({ platform, device, deviceName, screen, screenMismatch, capturedAt, uncaptured, id: `${platform}/${device}` })),
         screens,
         summary: summarise(screens),
     };

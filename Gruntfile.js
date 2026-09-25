@@ -993,7 +993,8 @@ module.exports = function(grunt) {
         import('./build-utils/visual/persistRun.js'),
         import('./build-utils/visual/deviceLabel.js'),
         import('./build-utils/visual/measuredScreen.js'),
-      ]).then(async ([launcher, { collectHandshake }, { compareRun }, { persistRun }, { deviceLabel }, { readMeasuredScreen }]) => {
+        import('./build-utils/visual/devices.js'),
+      ]).then(async ([launcher, { collectHandshake }, { compareRun }, { persistRun }, { deviceLabel }, { readMeasuredScreen, screenMismatch }, { readDevices, declaredScreenFor }]) => {
         const fs = require('fs');
         // Baselines are renderer-specific, so absent an explicit --device the
         // device that rendered the run decides which set it belongs to — a
@@ -1068,15 +1069,27 @@ module.exports = function(grunt) {
           grunt.log.writeln('The runner reported no screen — this build predates the screen record.');
         }
 
+        // visual/devices.json's declared screen is what the band-coverage guard
+        // reasons about, so a declaration that has drifted from the device makes
+        // that guard's answer wrong while it still reads as green.
+        const drift = screenMismatch(screen, declaredScreenFor(readDevices(), platform, device));
+        if (drift) {
+          grunt.log.error(`visual/devices.json declares ${platform}/${device} as ${drift.declared}, but it rendered on ${drift.measured}. `
+            + 'The band coverage claimed for this leg is wrong until the declaration matches.');
+        }
+
         const run = await compareRun({ baselineDir, actualDir, outDir, update });
         for (const res of run.results) {
           grunt.log.writeln(`  ${res.status.padEnd(8)} ${res.name}${res.diffPixels != null ? ` (${res.diffPixels}px)` : ''}`);
         }
         // Persist and re-render the review page before the pass/fail verdict —
         // a failing run is exactly the one whose report you want to open.
-        persistRun({ platform, device, deviceName, deviceDir, baselineDir, results: run.results, screen, capturedAt: new Date().toISOString() });
+        persistRun({ platform, device, deviceName, deviceDir, baselineDir, results: run.results, screen, screenMismatch: drift, capturedAt: new Date().toISOString() });
         await writeVisualReport(grunt);
 
+        if (drift) {
+          grunt.fail.fatal(`Visual regression: ${platform}/${device} is declared as the wrong screen. Fix visual/devices.json.`);
+        }
         if (update) {
           grunt.log.writeln(`Baselines written to ${baselineDir}`);
         } else if (run.pass) {
