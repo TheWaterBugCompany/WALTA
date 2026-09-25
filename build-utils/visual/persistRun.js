@@ -8,13 +8,13 @@ import { RESULTS_FILE } from "./collectRuns.js";
 // without the copy a downloaded CI artifact would show captures with nothing to
 // compare them against.
 
-export function persistRun({ platform, device, deviceName, deviceDir, baselineDir, results, screen, capturedAt }) {
+export function persistRun({ platform, device, deviceName, deviceDir, baselineDir, results, screen, screenMismatch, capturedAt }) {
     copyBaselines(baselineDir, path.join(deviceDir, "baseline"));
     const reportDir = path.join(deviceDir, "report");
     fs.mkdirSync(reportDir, { recursive: true });
     fs.writeFileSync(
         path.join(reportDir, RESULTS_FILE),
-        JSON.stringify({ platform, device, deviceName, capturedAt, screen: screen || null, results }, null, 2),
+        JSON.stringify({ platform, device, deviceName, capturedAt, screen: screen || null, screenMismatch: screenMismatch || null, results }, null, 2),
     );
 }
 

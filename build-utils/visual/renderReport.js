@@ -64,6 +64,7 @@ function renderHead(runs) {
         + runs.map((run) => `<th scope="col"><span class="platform">${esc(run.platform)}</span>`
             + `<span class="device">${esc(run.device)}</span>`
             + (run.screen ? `<span class="screen-size">${esc(screenSize(run.screen))}</span>` : "")
+            + (run.screenMismatch ? `<span class="screen-drift">declared ${esc(run.screenMismatch.declared)}</span>` : "")
             + (run.deviceName ? `<span class="rendered-on">${esc(run.deviceName)}</span>` : "")
             + (run.uncaptured ? `<span class="uncaptured">no captures</span>` : "")
             + (run.capturedAt ? `<span class="captured-at">${esc(shortTime(run.capturedAt))}</span>` : "")
@@ -215,6 +216,7 @@ thead th {
 thead .platform { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 thead .device { display: block; font-size: 13px; }
 thead .screen-size { display: block; font-size: 11px; font-weight: 600; color: var(--muted); }
+thead .screen-drift { display: block; font-size: 11px; font-weight: 600; color: var(--missing); }
 thead .rendered-on, thead .captured-at { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
 thead .uncaptured { display: block; font-size: 11px; font-weight: 600; color: var(--missing); }
 thead th.corner, tbody th { position: sticky; left: 0; z-index: 2; background: var(--bg); }

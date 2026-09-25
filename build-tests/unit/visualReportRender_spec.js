@@ -43,6 +43,14 @@ describe("visual report page", function () {
         expect(sized).to.contain("874×402dp");
     });
 
+    it("says on the column when a leg did not render on the screen it is declared to", function () {
+        const drifted = renderReport(buildReportModel([
+            { platform: "ios", device: "iphone-se", screen: { relWidth: 874, relHeight: 402 },
+              screenMismatch: { measured: "874x402dp", declared: "667x375dp" }, results: [] },
+        ]), { title: "Visual review" });
+        expect(drifted).to.contain("667x375dp").and.to.contain("declared");
+    });
+
     it("references the baseline, capture and diff image of a differing screen", function () {
         const sources = imageSources(html);
         expect(sources).to.include("android/small/baseline/Menu.png");

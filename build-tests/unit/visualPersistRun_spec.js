@@ -16,8 +16,8 @@ describe("visual run persistence", function () {
     });
     afterEach(function () { fs.rmSync(root, { recursive: true, force: true }); });
 
-    function persist(results, screen) {
-        return persistRun({ platform: "ios", device: "iphone-17", deviceDir, baselineDir, results, screen });
+    function persist(results, screen, screenMismatch) {
+        return persistRun({ platform: "ios", device: "iphone-17", deviceDir, baselineDir, results, screen, screenMismatch });
     }
 
     it("records the run where the report builder looks for it", function () {
@@ -54,6 +54,15 @@ describe("visual run persistence", function () {
         persist([{ name: "Menu", status: "pass" }]);
         const [run] = collectRuns(path.join(root, "captures"));
         expect(run.screen).to.equal(null);
+    });
+
+    // The visual legs are advisory and their job status is not read, so a drifted
+    // declaration has to survive into the record the report is built from or nobody
+    // finds out.
+    it("records a declared screen that was not the one rendered on", function () {
+        persist([], { relWidth: 874, relHeight: 402 }, { measured: "874x402dp", declared: "667x375dp" });
+        const [run] = collectRuns(path.join(root, "captures"));
+        expect(run.screenMismatch).to.deep.equal({ measured: "874x402dp", declared: "667x375dp" });
     });
 
     it("records a first run that has no baselines to copy yet", function () {

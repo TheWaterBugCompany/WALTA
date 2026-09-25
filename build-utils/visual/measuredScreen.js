@@ -15,4 +15,19 @@ export function readMeasuredScreen(dir) {
     return screen;
 }
 
+// Whether what the device rendered on is the screen visual/devices.json says that
+// leg renders on. The declaration is what the band-coverage guard reasons about,
+// so a declaration that has drifted makes the guard's answer wrong while it still
+// reads as green — and only the device can measure the figure to check it against.
+//
+// Rounded to whole dp: a declaration is written in them, and a density that does
+// not divide the pixel count evenly gives the device a fraction.
+export function screenMismatch(measured, declared) {
+    if (!measured || !declared) return null;
+    const asDp = (width, height) => `${Math.round(width)}x${Math.round(height)}dp`;
+    const measuredDp = asDp(measured.relWidth, measured.relHeight);
+    const declaredDp = asDp(declared.width, declared.height);
+    return measuredDp === declaredDp ? null : { measured: measuredDp, declared: declaredDp };
+}
+
 export { SCREEN_FILE };
