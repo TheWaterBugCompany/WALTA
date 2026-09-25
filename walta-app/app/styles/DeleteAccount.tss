@@ -27,6 +27,7 @@
 }
 
 ".deleteWarning": {
+	top: "12dp",
 	left: "8%",
 	width: "76%",
 	height: Ti.UI.SIZE,
@@ -106,7 +107,7 @@
 	left: "12dp",
 	// Wider than the shared action button: "DELETE ACCOUNT" is a long label and
 	// gets elided to nonsense at the standard width.
-	width: "200dp",
+	width: "204dp",
 	height: Ti.UI.SIZE,
 	layout: "vertical",
 	backgroundColor: Alloy.CFG.colors.white,
@@ -116,18 +117,18 @@
 }
 
 ".deleteButtonFrame[if=Alloy.Globals.isHighRes]": {
-	width: "240dp"
+	width: "244dp"
 }
 
 ".deleteButtonFrame[if=Alloy.Globals.isXHighRes]": {
-	width: "330dp"
+	width: "334dp"
 }
 
 "#deleteButton": {
-	top: "3dp",
-	bottom: "3dp",
-	left: "3dp",
-	right: "3dp",
+	top: "5dp",
+	bottom: "5dp",
+	left: "5dp",
+	right: "5dp",
 	width: Ti.UI.FILL,
 	color: Alloy.CFG.colors.white,
 	backgroundColor: Alloy.CFG.colors.error,
