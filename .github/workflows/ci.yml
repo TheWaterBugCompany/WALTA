@@ -580,6 +580,14 @@ jobs:
             # These jobs had been relying on a long-lived cached AVD that had it
             # dismissed, which made a new one look like the app failing to launch.
             adb shell settings put secure immersive_mode_confirmations confirmed
+            # Same problem from the other direction: a hard reset clears the app's
+            # data and leaves the launcher foreground while the app restarts, and on
+            # a cold emulator Nexus Launcher can miss its input deadline there. Its
+            # "isn't responding" dialog then owns the UI tree, and would be
+            # composited into a framebuffer capture just as readily. No system
+            # dialog is ever the thing under test, and a crash of the app itself
+            # reads better off logcat than off a box over the screen.
+            adb shell settings put global hide_error_dialogs 1
             bash build-utils/run-unit-tests-with-retry.sh npx grunt --platform=android --simulator --skip-build unit-test
 
   # ── 3a2. The declared visual device matrix ────────────────────────────────
@@ -811,6 +819,14 @@ jobs:
             # dialog on first fullscreen entry, which occludes the early screens.
             # Pre-confirm it so it never appears.
             adb shell settings put secure immersive_mode_confirmations confirmed
+            # Same problem from the other direction: a hard reset clears the app's
+            # data and leaves the launcher foreground while the app restarts, and on
+            # a cold emulator Nexus Launcher can miss its input deadline there. Its
+            # "isn't responding" dialog then owns the UI tree, and would be
+            # composited into a framebuffer capture just as readily. No system
+            # dialog is ever the thing under test, and a crash of the app itself
+            # reads better off logcat than off a box over the screen.
+            adb shell settings put global hide_error_dialogs 1
             # A cold-booted emulator (snapshot cache miss) can drop the app launch
             # or logcat stream, so the capture times out with no frames. Retry once
             # on the now-warm emulator — visual-test re-launches with `-S`, so it's
@@ -1202,6 +1218,14 @@ jobs:
             # These jobs had been relying on a long-lived cached AVD that had it
             # dismissed, which made a new one look like the app failing to launch.
             adb shell settings put secure immersive_mode_confirmations confirmed
+            # Same problem from the other direction: a hard reset clears the app's
+            # data and leaves the launcher foreground while the app restarts, and on
+            # a cold emulator Nexus Launcher can miss its input deadline there. Its
+            # "isn't responding" dialog then owns the UI tree, and would be
+            # composited into a framebuffer capture just as readily. No system
+            # dialog is ever the thing under test, and a crash of the app itself
+            # reads better off logcat than off a box over the screen.
+            adb shell settings put global hide_error_dialogs 1
             bash build-utils/run-acceptance-with-retry.sh android
 
       - name: Upload per-scenario failure artifacts
@@ -1456,6 +1480,14 @@ jobs:
             # These jobs had been relying on a long-lived cached AVD that had it
             # dismissed, which made a new one look like the app failing to launch.
             adb shell settings put secure immersive_mode_confirmations confirmed
+            # Same problem from the other direction: a hard reset clears the app's
+            # data and leaves the launcher foreground while the app restarts, and on
+            # a cold emulator Nexus Launcher can miss its input deadline there. Its
+            # "isn't responding" dialog then owns the UI tree, and would be
+            # composited into a framebuffer capture just as readily. No system
+            # dialog is ever the thing under test, and a crash of the app itself
+            # reads better off logcat than off a box over the screen.
+            adb shell settings put global hide_error_dialogs 1
             npx grunt --platform=android --simulator --skip-build end-to-end-test || { echo "::warning ::Android e2e first attempt failed; retrying once"; npx grunt --platform=android --simulator --skip-build end-to-end-test; }
 
       - name: Upload failure artifacts
