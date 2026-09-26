@@ -1,0 +1,186 @@
+{
+  "platform": "ios",
+  "device": "ipad",
+  "deviceName": "iPad (A16) · iOS 26.5",
+  "capturedAt": "2026-09-25T14:39:01.744Z",
+  "screen": {
+    "relWidth": 1180,
+    "relHeight": 820,
+    "aspectRatio": 1.4390243902439024,
+    "isSquare": true,
+    "isHighRes": false,
+    "isXHighRes": true,
+    "isShort": false
+  },
+  "screenMismatch": null,
+  "results": [
+    {
+      "name": "About",
+      "status": "new"
+    },
+    {
+      "name": "Academy",
+      "status": "new"
+    },
+    {
+      "name": "AcademyNextCourseUnwritten",
+      "status": "new"
+    },
+    {
+      "name": "Account",
+      "status": "new"
+    },
+    {
+      "name": "AccountNoBelts",
+      "status": "new"
+    },
+    {
+      "name": "DeleteAccount",
+      "status": "new"
+    },
+    {
+      "name": "EditTaxon",
+      "status": "new"
+    },
+    {
+      "name": "Gallery",
+      "status": "new"
+    },
+    {
+      "name": "Habitat",
+      "status": "new"
+    },
+    {
+      "name": "Help",
+      "status": "new"
+    },
+    {
+      "name": "IosSurveyDatePicker",
+      "status": "new"
+    },
+    {
+      "name": "KeySearch",
+      "status": "new"
+    },
+    {
+      "name": "KeySearchFromTray",
+      "status": "new"
+    },
+    {
+      "name": "KeySearchHinted",
+      "status": "new"
+    },
+    {
+      "name": "KeySearchMixedMedia",
+      "status": "new"
+    },
+    {
+      "name": "LocationEntry",
+      "status": "new"
+    },
+    {
+      "name": "LogIn",
+      "status": "new"
+    },
+    {
+      "name": "Menu",
+      "status": "new"
+    },
+    {
+      "name": "MenuWithBelt",
+      "status": "new"
+    },
+    {
+      "name": "MenuWithUntippedBelt",
+      "status": "new"
+    },
+    {
+      "name": "MethodSelect",
+      "status": "new"
+    },
+    {
+      "name": "Notes",
+      "status": "new"
+    },
+    {
+      "name": "PhotoSelect",
+      "status": "new"
+    },
+    {
+      "name": "PhotoViewer",
+      "status": "new"
+    },
+    {
+      "name": "Question",
+      "status": "new"
+    },
+    {
+      "name": "Register",
+      "status": "new"
+    },
+    {
+      "name": "SampleEditMenu",
+      "status": "new"
+    },
+    {
+      "name": "SampleHistory",
+      "status": "new"
+    },
+    {
+      "name": "SampleTray",
+      "status": "new"
+    },
+    {
+      "name": "SiteDetails",
+      "status": "new"
+    },
+    {
+      "name": "Speedbug",
+      "status": "new"
+    },
+    {
+      "name": "Summary",
+      "status": "new"
+    },
+    {
+      "name": "SyncFeedback",
+      "status": "new"
+    },
+    {
+      "name": "TaxonComparisonCorrect",
+      "status": "new"
+    },
+    {
+      "name": "TaxonComparisonIncorrect",
+      "status": "new"
+    },
+    {
+      "name": "TaxonComparisonLongNames",
+      "status": "new"
+    },
+    {
+      "name": "TaxonDetails",
+      "status": "new"
+    },
+    {
+      "name": "TaxonList",
+      "status": "new"
+    },
+    {
+      "name": "TrainingSuccess",
+      "status": "new"
+    },
+    {
+      "name": "TrainingSuccessWithBelt",
+      "status": "new"
+    },
+    {
+      "name": "TrainingTray",
+      "status": "new"
+    },
+    {
+      "name": "VideoPlayer",
+      "status": "new"
+    }
+  ]
+}

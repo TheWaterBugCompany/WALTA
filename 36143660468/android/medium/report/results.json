@@ -1,0 +1,260 @@
+{
+  "platform": "android",
+  "device": "medium",
+  "deviceName": "sdk_gphone64_x86_64 · Android 14 · 1080x2400 @420dpi",
+  "capturedAt": "2026-09-25T14:01:21.168Z",
+  "screen": {
+    "relWidth": 914.2857142857143,
+    "relHeight": 387.42857142857144,
+    "aspectRatio": 2.359882005899705,
+    "isSquare": false,
+    "isHighRes": true,
+    "isXHighRes": false,
+    "isShort": false
+  },
+  "screenMismatch": null,
+  "results": [
+    {
+      "name": "About",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Academy",
+      "status": "fail",
+      "diffRatio": 0.3854510030864198,
+      "diffPixels": 999089,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/android/medium/report/Academy.diff.png"
+    },
+    {
+      "name": "AcademyNextCourseUnwritten",
+      "status": "new"
+    },
+    {
+      "name": "Account",
+      "status": "new"
+    },
+    {
+      "name": "AccountNoBelts",
+      "status": "new"
+    },
+    {
+      "name": "DeleteAccount",
+      "status": "new"
+    },
+    {
+      "name": "EditTaxon",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Gallery",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Habitat",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Help",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearch",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearchFromTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearchHinted",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearchMixedMedia",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "LocationEntry",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "LogIn",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Menu",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "MenuWithBelt",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "MenuWithUntippedBelt",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "MethodSelect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Notes",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "PhotoSelect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "PhotoViewer",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Question",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Register",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleEditMenu",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleHistory",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SiteDetails",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Speedbug",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Summary",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SyncFeedback",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TaxonComparisonCorrect",
+      "status": "fail",
+      "diffRatio": 0.27390740740740743,
+      "diffPixels": 709968,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/android/medium/report/TaxonComparisonCorrect.diff.png"
+    },
+    {
+      "name": "TaxonComparisonIncorrect",
+      "status": "fail",
+      "diffRatio": 0.31925655864197533,
+      "diffPixels": 827513,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/android/medium/report/TaxonComparisonIncorrect.diff.png"
+    },
+    {
+      "name": "TaxonComparisonLongNames",
+      "status": "new"
+    },
+    {
+      "name": "TaxonDetails",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TaxonList",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TrainingSuccess",
+      "status": "fail",
+      "diffRatio": 0.12016435185185186,
+      "diffPixels": 311466,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/android/medium/report/TrainingSuccess.diff.png"
+    },
+    {
+      "name": "TrainingSuccessWithBelt",
+      "status": "new"
+    },
+    {
+      "name": "TrainingTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "VideoPlayer",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    }
+  ]
+}

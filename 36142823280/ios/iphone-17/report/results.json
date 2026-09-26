@@ -1,0 +1,265 @@
+{
+  "platform": "ios",
+  "device": "iphone-17",
+  "deviceName": "iPhone 17 · iOS 26.5",
+  "capturedAt": "2026-09-25T14:00:18.883Z",
+  "screen": {
+    "relWidth": 874,
+    "relHeight": 402,
+    "aspectRatio": 2.174129353233831,
+    "isSquare": false,
+    "isHighRes": true,
+    "isXHighRes": false,
+    "isShort": false
+  },
+  "results": [
+    {
+      "name": "About",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Academy",
+      "status": "fail",
+      "diffRatio": 0.39072530811490475,
+      "diffPixels": 1235525,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/Academy.diff.png"
+    },
+    {
+      "name": "AcademyNextCourseUnwritten",
+      "status": "new"
+    },
+    {
+      "name": "Account",
+      "status": "new"
+    },
+    {
+      "name": "AccountNoBelts",
+      "status": "new"
+    },
+    {
+      "name": "DeleteAccount",
+      "status": "new"
+    },
+    {
+      "name": "EditTaxon",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Gallery",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Habitat",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Help",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "IosSurveyDatePicker",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearch",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearchFromTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearchHinted",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "KeySearchMixedMedia",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "LocationEntry",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "LogIn",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Menu",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "MenuWithBelt",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "MenuWithUntippedBelt",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "MethodSelect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Notes",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "PhotoSelect",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "PhotoViewer",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Question",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Register",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleEditMenu",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleHistory",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SampleTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SiteDetails",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Speedbug",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "Summary",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "SyncFeedback",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TaxonComparisonCorrect",
+      "status": "fail",
+      "diffRatio": 0.3829226610400831,
+      "diffPixels": 1210852,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/TaxonComparisonCorrect.diff.png"
+    },
+    {
+      "name": "TaxonComparisonIncorrect",
+      "status": "fail",
+      "diffRatio": 0.4193872994549247,
+      "diffPixels": 1326158,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/TaxonComparisonIncorrect.diff.png"
+    },
+    {
+      "name": "TaxonComparisonLongNames",
+      "status": "new"
+    },
+    {
+      "name": "TaxonDetails",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TaxonList",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "TrainingSuccess",
+      "status": "fail",
+      "diffRatio": 0.12161067279923798,
+      "diffPixels": 384549,
+      "dimensionsMatch": true,
+      "diffImagePath": "builds/visual/ios/iphone-17/report/TrainingSuccess.diff.png"
+    },
+    {
+      "name": "TrainingSuccessWithBelt",
+      "status": "new"
+    },
+    {
+      "name": "TrainingTray",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    },
+    {
+      "name": "VideoPlayer",
+      "status": "pass",
+      "diffRatio": 0,
+      "diffPixels": 0
+    }
+  ]
+}

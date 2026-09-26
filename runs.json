@@ -1,0 +1,62 @@
+[
+  {
+    "id": "36225982889",
+    "branch": "main",
+    "sha": "6cedd76bef1c9d948e6fb58cec9d1d12b242ace5",
+    "capturedAt": "2026-09-26T07:38:02Z"
+  },
+  {
+    "id": "36226190712",
+    "branch": "dependabot/npm_and_yarn/dev-dependencies-0195ecc859",
+    "sha": "cce85442f25516aa23611cf6720dbf2a02a5f84e",
+    "capturedAt": "2026-09-26T07:16:59Z"
+  },
+  {
+    "id": "36225959586",
+    "branch": "main",
+    "sha": "cbeda06308e1cdef3eaa6980ce9f93abc969d3f7",
+    "capturedAt": "2026-09-26T07:11:11Z"
+  },
+  {
+    "id": "36144596980",
+    "branch": "task/wb-365-delete-account-polish",
+    "sha": "bdc156163d490a03724b92ae46076c304fed488e",
+    "capturedAt": "2026-09-25T14:54:03Z"
+  },
+  {
+    "id": "36143660468",
+    "branch": "main",
+    "sha": "b7edd2a0c3ed7592e0ee18a7d57f995aef9aea21",
+    "capturedAt": "2026-09-25T14:40:28Z"
+  },
+  {
+    "id": "36142823280",
+    "branch": "dependabot/npm_and_yarn/multi-5362bf5adb",
+    "sha": "c116a1f80db242db66b2151cd0fc9ce161dfbd17",
+    "capturedAt": "2026-09-25T14:02:38Z"
+  },
+  {
+    "id": "36142775560",
+    "branch": "main",
+    "sha": "8378e314e200b22083a7954fac26989f8e21955f",
+    "capturedAt": "2026-09-25T13:52:21Z"
+  },
+  {
+    "id": "36142660115",
+    "branch": "main",
+    "sha": "700ba440e02576c6684b4544ad2368ed473d6eb7",
+    "capturedAt": "2026-09-25T13:44:49Z"
+  },
+  {
+    "id": "36114777379",
+    "branch": "task/wb-362-avd-cache-key",
+    "sha": "e2bef9ea825414e60881205983d966a4d1eeeebc",
+    "capturedAt": "2026-09-25T09:33:17Z"
+  },
+  {
+    "id": "36114658706",
+    "branch": "task/wb-361-band-coverage",
+    "sha": "747ab2d0aef60ac7ade1a01b4cd6899fc5545655",
+    "capturedAt": "2026-09-25T09:13:25Z"
+  }
+]
