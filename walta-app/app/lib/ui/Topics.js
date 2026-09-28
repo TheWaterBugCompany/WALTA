@@ -5,12 +5,31 @@
  * navigation logic with the app.
  */
 
+var Logger = require('util/Logger');
+
 function createEventBus() {
 	let subs = {};
 	return {
 		on(evt, cb) { (subs[evt] = subs[evt] || []).push(cb); },
 		off(evt, cb) { if (subs[evt]) subs[evt] = subs[evt].filter(c => c !== cb); },
-		trigger(evt, data) { (subs[evt] || []).slice().forEach(cb => cb(data)); },
+		// Every subscriber is delivered to, then the first failure is raised.
+		// Subscribers have never heard of each other — that is what the bus is
+		// for — so one that throws must not cancel the ones behind it, which
+		// made each handler quietly depend on those registered before it. The
+		// error still reaches the caller: a broken handler is a defect to see,
+		// not to absorb.
+		trigger(evt, data) {
+			let failure = null;
+			(subs[evt] || []).slice().forEach(cb => {
+				try {
+					cb(data);
+				} catch (e) {
+					Logger.error(`subscriber for ${evt} threw: ${e && e.message}`);
+					if (!failure) { failure = e; }
+				}
+			});
+			if (failure) { throw failure; }
+		},
 		clear() { subs = {}; }
 	};
 }
