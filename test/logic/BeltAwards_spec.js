@@ -30,6 +30,17 @@ describe("logic/BeltAwards", function () {
     expect(repository.beltLevelFor("38")).to.equal(6);
   });
 
+  // Going back over the very course a belt was won with is the refresh case:
+  // the belt stays exactly where it was, and nothing is left pending a push.
+  it("leaves the belt alone when the course that earned it is refreshed", function () {
+    const { awards, repository } = make();
+    awards.awardFor("101");
+    repository.markBeltPushed("38", 3);
+    expect(awards.awardFor("101")).to.equal(3);
+    expect(repository.beltLevelFor("38")).to.equal(3);
+    expect(repository.beltNeedingPush("38")).to.equal(null);
+  });
+
   // retrieveUserId returns undefined with nobody signed in; null is what the
   // store is asked with. Both have to land on the signed-out row.
   [undefined, null].forEach(function (absent) {
