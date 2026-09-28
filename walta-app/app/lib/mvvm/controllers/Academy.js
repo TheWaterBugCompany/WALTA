@@ -12,6 +12,7 @@ const BINDINGS = {
   // a refresh — which has no belt on offer — would open with a hole in it.
   nextMessage:     { text: "nextMessage", visible: present("nextVisible") },
   nextBelt:        { visible: present("nextVisible"), belt: component("nextBeltVm", "Belt") },
+  refreshGap:      { visible: present("isRefresh") },
   introMessage:    { text: "introMessage" },
   startButton:     { title: "actionLabel", enabled: "actionEnabled", backgroundColor: "actionColor", borderColor: "actionColor", onClick: "start" },
   closeButton:     { onClose: "close" },   // the ✕ (CloseButton Require)

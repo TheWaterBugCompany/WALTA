@@ -20,6 +20,7 @@ function makeView() {
     currentBelt: makeContainer(),
     nextMessage: makeWidget({ text: "", visible: false, height: "18dp", top: "6dp" }),
     nextBelt: makeContainer(),
+    refreshGap: makeWidget({ visible: false, height: "44dp", top: "8dp" }),
     introMessage: makeWidget({ text: "" }),
     startButton: makeWidget({ title: "", enabled: null }),
     closeButton: makeBackboneTarget(),
@@ -120,6 +121,20 @@ describe("Academy controller", function () {
   it("takes back the space of the next-belt half rather than leaving a hole", function () {
     build({ level: 3, refreshing: 1 });
     expect([view.nextMessage.visible, view.nextMessage.height, view.nextMessage.top])
+      .to.deep.equal([false, 0, 0]);
+  });
+
+  // The modal keeps roughly the footprint it has when a belt is on offer: the
+  // room the next-belt half would have taken becomes deliberate air, rather
+  // than the screen collapsing around a single belt.
+  it("holds the room the next belt would have taken", function () {
+    build({ level: 3, refreshing: 1 });
+    expect(view.refreshGap.visible).to.equal(true);
+  });
+
+  it("keeps that room out of the way when a belt is on offer", function () {
+    build({ level: 0 });
+    expect([view.refreshGap.visible, view.refreshGap.height, view.refreshGap.top])
       .to.deep.equal([false, 0, 0]);
   });
 
