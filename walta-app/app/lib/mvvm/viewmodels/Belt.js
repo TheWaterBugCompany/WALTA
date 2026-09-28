@@ -9,10 +9,11 @@ class BeltViewModel extends ChangeNotifier {
   // its size; a screen showing a grid of them sizes each one instead, so they
   // can sit side by side.
   constructor(belt, { level = null, width = "100%", height = "100%",
-                      left = "0dp", top = "0dp" } = {}) {
+                      left = "0dp", top = "0dp", onSelect = null } = {}) {
     super();
     this._belt = belt;
     this._level = level;
+    this._onSelect = onSelect;
     this._width = width;
     this._height = height;
     this._left = left;
@@ -40,6 +41,10 @@ class BeltViewModel extends ChangeNotifier {
   get tipColor() { return this._belt && this._belt.tipColor; }
 
   get label() { return Belts.describe(this._belt); }
+
+  // A belt is only tappable where the screen above it gave it somewhere to go;
+  // one drawn to say which belt is meant has nothing to do when pressed.
+  select() { if (this._onSelect) this._onSelect(); }
 }
 
 module.exports = BeltViewModel;

@@ -143,6 +143,22 @@ describe("logic/Training", function () {
     expect(switched.currentTray().length, "old taxa cleared").to.equal(0);
   });
 
+  // Going back over a course already passed must not re-open the finished tray
+  // it was passed with — the whole point is to do the identifications again.
+  it("clears the tray when a course is restarted, even the one in progress", function () {
+    training.startTraining("101");
+    training.addTaxon(90);
+
+    const again = createTraining({ repo, exercises, keyTrail: noTrail });
+    expect(again.restartTraining("101")).to.equal(true);
+    expect(again.currentTray().length, "old taxa cleared").to.equal(0);
+    expect(again.currentAssessor().expectedCount).to.equal(4);
+  });
+
+  it("will not restart a course that does not exist", function () {
+    expect(training.restartTraining("999")).to.equal(false);
+  });
+
   it("reports the code of the session in progress", function () {
     training.startTraining("101");
     expect(training.currentSessionCode()).to.equal("101");

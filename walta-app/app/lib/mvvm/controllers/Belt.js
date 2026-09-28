@@ -3,7 +3,7 @@
 // See docs/patterns/screen-controllers.md.
 const BINDINGS = {
   belt:    { width: "width", height: "height", left: "left", top: "top",
-             backgroundColor: "color", accessibilityLabel: "label" },
+             backgroundColor: "color", accessibilityLabel: "label", onClick: "select" },
   beltTip: { visible: "tipVisible", backgroundColor: "tipColor" },
 };
 

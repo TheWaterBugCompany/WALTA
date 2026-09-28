@@ -90,6 +90,24 @@ describe("AccountViewModel", function () {
     expect(belt.height).to.not.equal("100%");
   });
 
+  // A belt on this screen is a course the trainee has passed, so tapping it is
+  // how they go back over it — the Academy opens on that course rather than the
+  // one above their level.
+  it("re-opens the course a tapped belt was earned for", function () {
+    const fired = [];
+    const vm = new AccountViewModel({
+      level: 3,
+      topics: { ACADEMY: "academy", fireTopicEvent: (t, d) => fired.push({ t, d }) },
+      cerdiApi: {
+        retrieveUsername: () => "test@example.com",
+        retrieveUser: () => Promise.resolve({}),
+        storeUserToken: () => {},
+      },
+    });
+    vm.belts[0].select();
+    expect(fired).to.deep.equal([{ t: "academy", d: { refreshing: 1 } }]);
+  });
+
   it("asks the view to confirm before logging out", function () {
     const vm = build();
     let asked = 0;
