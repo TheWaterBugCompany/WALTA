@@ -1,3 +1,5 @@
+const sameTaxon = require("logic/sameTaxon");
+
 // Grades a training attempt against the exercise's expected taxa, by position.
 // One verdict per numbered cell, in cell order — an unidentified cell is
 // incorrect, so the tray can cross it.
@@ -15,11 +17,7 @@ module.exports = function createTrainingAssessor(expectedOrder = []) {
     assess(cells) {
       return expectedOrder.map(function (expectedTaxonId, i) {
         const cell = cells[i];
-        // The key yields string taxonIds ("181"); exercises are authored as
-        // numbers (181). Compare as strings so the two sources line up.
-        return cell && String(cell.taxonId) === String(expectedTaxonId)
-          ? "correct"
-          : "incorrect";
+        return cell && sameTaxon(cell.taxonId, expectedTaxonId) ? "correct" : "incorrect";
       });
     },
   };

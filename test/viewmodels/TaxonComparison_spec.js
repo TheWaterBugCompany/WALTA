@@ -10,6 +10,9 @@ const TAXA = {
     "WB1": { id: "caddis-ref", name: "Sleeping bag caddis", photoUrls: ["/photos/caddis.jpg"] },
     "WB2": { id: "anisops-ref", name: "Anisops", photoUrls: ["/photos/anisops.jpg", "/photos/anisops-2.jpg"] },
     "WB3": { id: "nameless-ref", name: "Nameless", photoUrls: [] },
+    // Looked up by either spelling, as the real key is: its taxonIds index an
+    // object, so 198 and "198" reach the same taxon.
+    "198": { id: "ancylidae-ref", name: "Ancylidae", photoUrls: ["/photos/ancylidae.jpg"] },
 };
 const KEY = {
     findTaxonById(id) { return TAXA[id]; },
@@ -74,6 +77,16 @@ describe("TaxonComparisonViewModel", function () {
             vm.on("close", () => closed++);
             vm.activate();
             expect(closed).to.equal(1);
+        });
+    });
+
+    // The trainee's answer arrives from the key, which spells a taxonId as a
+    // string; what the exercise expected is authored as a number. The tray
+    // grades the two equal, so this screen has to as well.
+    describe("a right answer whose two ids are spelled differently", function () {
+        it("shows the correct variant, as the tray's tick already said", function () {
+            const vm = build({ selectedTaxonId: "198", correctTaxonId: 198 });
+            expect(vm.message).to.equal("You correctly identified this taxon:");
         });
     });
 

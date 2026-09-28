@@ -1,5 +1,6 @@
 const ChangeNotifier = require("../../util/ChangeNotifier");
 const TaxonComparisonPhotoViewModel = require("./TaxonComparisonPhoto");
+const sameTaxon = require("../../logic/sameTaxon");
 
 // Feedback on one identification made during a training assessment: what was
 // chosen, what it should have been, and the photos side by side when they differ.
@@ -18,7 +19,7 @@ class TaxonComparisonViewModel extends ChangeNotifier {
     this._cards = this._taxonIds().map((id) => this._card(id));
   }
 
-  get isCorrect() { return this._selectedTaxonId === this._correctTaxonId; }
+  get isCorrect() { return sameTaxon(this._selectedTaxonId, this._correctTaxonId); }
 
   // Names no taxon: each photo captions itself, and the tick and cross say which
   // of the two was chosen and which was right.
@@ -84,7 +85,7 @@ class TaxonComparisonViewModel extends ChangeNotifier {
       key: taxonId,
       name: taxon.name,
       photoUrl: taxon.photoUrls.length > 0 ? taxon.photoUrls[0] : null,
-      isCorrect: taxonId === this._correctTaxonId,
+      isCorrect: sameTaxon(taxonId, this._correctTaxonId),
       // Feedback on an assessment, not a step in an identification — so browsing
       // out to a taxon from here must not offer to add it to the sample.
       onOpen: () => this._topics.fireTopicEvent(this._topics.JUMPTO, { id: this._refOf(taxonId), allowAddToSample: false }),
