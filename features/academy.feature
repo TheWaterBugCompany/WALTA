@@ -43,3 +43,15 @@ Scenario: Browse to a creature from the training feedback
   When I select the incorrect taxon
   And I tap the leech photo in the comparison
   Then the leech details are shown
+
+# The two ids reach the comparison from different sources — the key hands out a
+# string taxonId, the exercise authors a number — so a right answer once opened
+# the wrong half of this modal.
+Scenario: Read the feedback on a taxon identified correctly
+  When I open the Academy from the menu
+  And I start my next training course
+  Then an empty training tray is shown
+  When I identify a flatworm through the key
+  And I assess the training tray
+  And I select the correct taxon
+  Then the comparison shows the flatworm on its own

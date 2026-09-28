@@ -1,6 +1,7 @@
 const { When, Then } = require('@cucumber/cucumber');
+const { expect } = require('chai');
 const {
-  FLATWORM, LEECH, WORM_FROM_HINT, DAMSELFLY, MAYFLY, WRONG_LEECH,
+  FLATWORM, LEECH, WORM_FROM_HINT, DAMSELFLY, MAYFLY, WRONG_LEECH, RIGHT_FLATWORM,
   startTrainingSession,
   identifyTrainingTaxonViaKey,
   chooseThroughKeyToTraining,
@@ -42,6 +43,15 @@ Then('an incorrect taxon is highlighted', async function () {
 
 When('I select the incorrect taxon', async function () {
   await this.sample.openComparison(WRONG_LEECH);
+});
+
+When('I select the correct taxon', async function () {
+  await this.sample.openComparison(RIGHT_FLATWORM);
+});
+
+Then('the comparison shows the flatworm on its own', async function () {
+  await this.taxonComparison.waitForLabel('Turbellaria');
+  expect(await this.taxonComparison.cardsFor('Turbellaria')).to.equal(1);
 });
 
 Then('the comparison shows the worm beside the leech I chose', async function () {

@@ -26,6 +26,7 @@ const WORM = [   // Oligochaeta, taxonId 176
     "without hard mouthparts",
 ];
 const WRONG_LEECH = 175;   // Hirudinea — what the course expects to be corrected
+const RIGHT_FLATWORM = 198;   // Turbellaria — the one the course does expect
 const LEECH = [   // Hirudinea, taxonId 175 — the deliberately-wrong pick
     "Animal without a shell",
     "Animal without legs",
@@ -132,6 +133,7 @@ exports.WORM_FROM_HINT = WORM_FROM_HINT;
 exports.DAMSELFLY = DAMSELFLY;
 exports.MAYFLY = MAYFLY;
 exports.WRONG_LEECH = WRONG_LEECH;
+exports.RIGHT_FLATWORM = RIGHT_FLATWORM;
 exports.startTrainingSession = startTrainingSession;
 exports.identifyTrainingTaxonViaKey = identifyTrainingTaxonViaKey;
 exports.chooseThroughKeyToTraining = chooseThroughKeyToTraining;
