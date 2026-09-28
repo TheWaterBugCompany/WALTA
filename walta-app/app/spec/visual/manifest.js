@@ -347,6 +347,12 @@ function academy() {
 	return {};
 }
 
+// A trainee going back over the first course, whose belt they already hold: one
+// belt on show, no belt on offer, and the action reading Refresh.
+function academyRefresh() {
+	return { refreshing: 1 };
+}
+
 // The real Training service over the real repo and the real bundled exercises —
 // the Academy screen greys its Start button from them, so a stub would render a
 // screen the app never shows. The belt level is the one thing parameterised:
@@ -662,6 +668,7 @@ module.exports = [
 	// Modals — captured over the screen a user reaches them from.
 	{ name: "Academy", args: academy, services: academyServices, host: "Menu" },
 	{ name: "AcademyNextCourseUnwritten", screen: "Academy", args: academy, services: academyUnwrittenServices, host: "Menu" },
+	{ name: "AcademyRefreshCourse", screen: "Academy", args: academyRefresh, services: academyUnwrittenServices, host: "Menu" },
 	{ name: "TrainingSuccess", args: trainingSuccess, host: "TrainingTray" },
 	{ name: "TrainingSuccessWithBelt", screen: "TrainingSuccess", args: trainingSuccess,
 	  services: trainingSuccessBeltServices, host: "TrainingTray" },
