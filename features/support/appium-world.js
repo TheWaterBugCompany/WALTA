@@ -227,10 +227,17 @@ async function softResetInApp() {
     // is a reliable "reset complete" signal. Polling for it (rather than a
     // fixed sleep) avoids the race where the next scenario logs in before
     // reset finishes and reset then nulls the freshly-set token.
+    // The deadline is generous because it is spent on observation, not on the
+    // app: a WDA session that has been up for half an hour takes seconds per
+    // accessibility snapshot, and at 15s that left room for about five looks —
+    // so a reset that had already finished read as one that never happened
+    // (the captured page source showed the logged-out menu each time). Nothing
+    // here waits out a fixed period; it still proceeds the moment the menu is
+    // there, and only a genuinely stuck reset spends the full budget.
     await global.driver.waitUntil(async () => {
         const el = await global.driver.$('~Log In.');
         return el.isDisplayed().catch(() => false);
-    }, { timeout: 15000, interval: 200, timeoutMsg: 'app did not return to the logged-out menu after reset' });
+    }, { timeout: 60000, interval: 200, timeoutMsg: 'app did not return to the logged-out menu after reset' });
 }
 
 async function sessionIsAlive() {
