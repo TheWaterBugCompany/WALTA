@@ -9,6 +9,11 @@
 			<View id="currentBelt" class="academyBelt"/>
 			<Label id="nextMessage" class="beltCaption" accessibilityLabel="academy_next_belt"/>
 			<View id="nextBelt" class="academyBelt"/>
+			<!-- Refreshing offers no belt, so the half above is absent. The modal
+			     keeps its shape by holding that room open rather than closing up
+			     around a single belt — the same height, so it tracks the belt
+			     across the size bands. -->
+			<View id="refreshGap" class="academyBelt"/>
 			<Label id="introMessage" class="academyIntro" accessibilityLabel="academy_intro"/>
 			<View id="buttonRow" class="academyButtons" layout="horizontal">
 				<Button id="cancelButton" class="actionButton" accessibilityLabel="academy_close">Close</Button>
