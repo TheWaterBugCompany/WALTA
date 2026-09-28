@@ -8,8 +8,8 @@ const Topics = require("../../walta-app/app/lib/ui/Topics");
 function makeView() {
   return {
     successMessage: makeWidget({ text: "" }),
-    beltMessage: makeWidget({ text: "", visible: false }),
-    beltHolder: makeContainer(),
+    beltMessage: makeWidget({ text: "", visible: false, height: "26dp", top: "16dp" }),
+    beltHolder: makeContainer({ height: "44dp", top: "10dp" }),
     finishButton: makeWidget({}),
     closeButton: makeBackboneTarget(),
   };
@@ -73,11 +73,21 @@ describe("TrainingSuccess controller", function () {
     expect(mounted[0].rowVm.color).to.equal("#FFFFFF");
   });
 
+  // Not merely hidden: a hidden view keeps its band in a vertical layout, which
+  // left a hole of white between the congratulation and Finish.
   it("drops the belt half of the screen when the session carries none", function () {
     build({ correctCount: 6 }, null);
-    expect(view.beltMessage.visible).to.equal(false);
-    expect(view.beltHolder.visible).to.equal(false);
+    expect([view.beltMessage.visible, view.beltMessage.height, view.beltMessage.top])
+      .to.deep.equal([false, 0, 0]);
+    expect([view.beltHolder.visible, view.beltHolder.height, view.beltHolder.top])
+      .to.deep.equal([false, 0, 0]);
     expect(mounted[0].rowVm.color, "a hidden belt still has a view-model").to.equal(null);
+  });
+
+  it("gives the belt half its space back when there is a belt to show", function () {
+    build({ correctCount: 6 }, { color: "#FFFFFF", tipColor: "#FEFF46" });
+    expect([view.beltHolder.visible, view.beltHolder.height, view.beltHolder.top])
+      .to.deep.equal([true, "44dp", "10dp"]);
   });
 
   it("Finish returns to the main menu and closes", function () {
