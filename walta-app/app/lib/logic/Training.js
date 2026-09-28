@@ -6,16 +6,26 @@ module.exports = function createTraining({ repo, exercises, keyTrail }) {
   let tray = null;
   let assessor = null;
 
+  // False for a code that maps to no exercise; otherwise the session is live and
+  // its tray and assessor are the ones the training screens read.
+  function openSession(code, resumable) {
+    const order = exercises.loadExercise(code);
+    if (!order) return false;
+    const resuming = resumable && repo.currentSessionCode() === code;
+    tray = resuming ? repo.loadTray() : repo.startSession(code);
+    assessor = createTrainingAssessor(order);
+    return true;
+  }
+
   return {
-    startTraining(code) {
-      const order = exercises.loadExercise(code);
-      if (!order) return false;
-      // Re-entering the same code retains the in-progress tray where the user left
-      // off; a different code starts a fresh session (wiping the old one).
-      tray = repo.currentSessionCode() === code ? repo.loadTray() : repo.startSession(code);
-      assessor = createTrainingAssessor(order);
-      return true;
-    },
+    // Re-entering the same code retains the in-progress tray where the user left
+    // off; a different code starts a fresh session (wiping the old one).
+    startTraining(code) { return openSession(code, true); },
+
+    // Going back over a course already passed: the tray it was passed with is
+    // exactly what must not come back, so this wipes the session whether or not
+    // the code is the one in progress.
+    restartTraining(code) { return openSession(code, false); },
 
     // The code of the session in progress — what earned belt is looked up by.
     currentSessionCode() { return repo.currentSessionCode(); },

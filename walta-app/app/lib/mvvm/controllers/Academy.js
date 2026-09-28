@@ -27,7 +27,12 @@ module.exports = function createAcademyController({ view, args, close, services,
   const unbind = bindView(view, vm, BINDINGS);
 
   vm.on("start", function (code) {
-    if (services.Training.startTraining(code)) {
+    // A refresh always opens an empty tray; the ordinary climb picks up an
+    // unfinished attempt where it was left.
+    const opened = vm.isRefresh
+      ? services.Training.restartTraining(code)
+      : services.Training.startTraining(code);
+    if (opened) {
       close();
       services.topics.fireTopicEvent(services.topics.TRAININGTRAY);
     }

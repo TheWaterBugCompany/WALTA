@@ -1,5 +1,7 @@
 <Alloy>
 	<View id="belt" class="belt">
-		<View id="beltTip" class="beltTip"/>
+		<!-- The tip is painted over the belt, not a target of its own: iOS gives the
+		     tap to whatever it hits and will not pass it up to a listener-less parent. -->
+		<View id="beltTip" class="beltTip" touchEnabled="false"/>
 	</View>
 </Alloy>

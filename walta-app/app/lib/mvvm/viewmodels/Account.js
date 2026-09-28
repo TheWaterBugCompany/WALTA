@@ -21,7 +21,7 @@ class AccountViewModel extends ChangeNotifier {
     // be reached at all.
     this._email = cerdiApi.retrieveUsername() || "";
     this._name = "";
-    this._belts = beltsUpTo(level);
+    this._belts = beltsUpTo(level, (at) => this._refresh(at));
   }
 
   // The account's full name only exists on the server. A screen that cannot
@@ -53,6 +53,12 @@ class AccountViewModel extends ChangeNotifier {
     return this.noBeltsVisible ? "No belts earned yet. Complete academy courses to earn belts." : "";
   }
 
+  // Every belt here was earned, so the Academy it opens is about going back
+  // over that course rather than climbing to the next one.
+  _refresh(level) {
+    this._topics.fireTopicEvent(this._topics.ACADEMY, { refreshing: level });
+  }
+
   // Logging out is worth a second thought, so the view asks; the account is
   // only given up once it comes back confirmed.
   logOut() { this.trigger("confirmLogOut"); }
@@ -70,12 +76,13 @@ class AccountViewModel extends ChangeNotifier {
   }
 }
 
-function beltsUpTo(level) {
+function beltsUpTo(level, onSelect) {
   const belts = [];
   for (let at = 1; at <= level && at <= Belts.HIGHEST; at++) {
     belts.push(new BeltViewModel(Belts.at(at), {
       level: at, width: BELT_WIDTH, height: BELT_HEIGHT,
       left: BELT_GAP_ACROSS, top: BELT_GAP_DOWN,
+      onSelect: () => onSelect(at),
     }));
   }
   return belts;
