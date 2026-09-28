@@ -1,13 +1,16 @@
 const TrainingSuccessViewModel = require("mvvm/viewmodels/TrainingSuccess");
-const { component } = require("util/bindView");
+const { component, present } = require("util/bindView");
 
 // Titanium-free screen controller for the training TrainingSuccess modal. Binds the
 // congratulation message and routes Finish (→ main menu) / ✕ (dismiss).
 // See docs/patterns/screen-controllers.md.
 const BINDINGS = {
   successMessage: { text: "message" },
-  beltMessage:    { text: "beltMessage", visible: "beltVisible" },
-  beltHolder:     { visible: "beltVisible", belt: component("beltVm", "Belt") },
+  // present, not visible: the window is a vertical layout, where a hidden view
+  // keeps its band — a session that earns no belt would open with a hole of
+  // white between the congratulation and Finish.
+  beltMessage:    { text: "beltMessage", visible: present("beltVisible") },
+  beltHolder:     { visible: present("beltVisible"), belt: component("beltVm", "Belt") },
   finishButton:   { onClick: "finish" },
   closeButton:    { onClose: "close" },
 };
