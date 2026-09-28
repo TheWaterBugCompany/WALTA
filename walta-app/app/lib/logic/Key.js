@@ -9,6 +9,7 @@
  */
 if ( typeof(_) == "undefined") _ = require('underscore')._;
 var Logger = require('util/Logger');
+var sameTaxon = require('logic/sameTaxon');
 var error = (m, tag = "key") => Logger.error(m, tag);
 
 // Every route from the root down to a taxon (root first, taxon last). The key is
@@ -269,7 +270,7 @@ function createKey( args ) {
 		hintForIncorrectDecision: function( { selectedTaxonId, expectedTaxonId, selectedRoute = null } ) {
 			var routes = routesToTaxa( this.root );
 			var routesFor = ( taxonId ) => routes.filter(
-				( r ) => String( _.last( r ).taxonId ) === String( taxonId ) );
+				( r ) => sameTaxon( _.last( r ).taxonId, taxonId ) );
 			var expected = routesFor( expectedTaxonId );
 			var best = null;
 			narrowToWalked( routesFor( selectedTaxonId ), selectedRoute )
