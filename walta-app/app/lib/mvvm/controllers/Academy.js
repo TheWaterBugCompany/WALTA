@@ -10,14 +10,18 @@ const BINDINGS = {
   currentBelt:     { belt: component("currentBeltVm", "Belt") },
   nextMessage:     { text: "nextMessage", visible: "nextVisible" },
   nextBelt:        { visible: "nextVisible", belt: component("nextBeltVm", "Belt") },
-  startButton:     { enabled: "startEnabled", backgroundColor: "startColor", borderColor: "startColor", onClick: "start" },
+  introMessage:    { text: "introMessage" },
+  startButton:     { title: "actionLabel", enabled: "actionEnabled", backgroundColor: "actionColor", borderColor: "actionColor", onClick: "start" },
   closeButton:     { onClose: "close" },   // the ✕ (CloseButton Require)
   cancelButton:    { onClick: "close" },   // the "Close" text button
 };
 
-module.exports = function createAcademyController({ view, close, services, bindView }) {
+module.exports = function createAcademyController({ view, args, close, services, bindView }) {
   const vm = new AcademyViewModel({
     level: services.belts ? services.belts.currentLevel() : 0,
+    // Set when the trainee tapped a belt they already hold: this modal then
+    // offers that course again rather than the one above it.
+    refreshing: (args && args.refreshing) != null ? args.refreshing : null,
     isValidCode: (code) => services.Training.isValidCode(code),
   });
   const unbind = bindView(view, vm, BINDINGS);

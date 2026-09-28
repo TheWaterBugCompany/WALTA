@@ -20,7 +20,8 @@ function makeView() {
     currentBelt: makeContainer(),
     nextMessage: makeWidget({ text: "", visible: false }),
     nextBelt: makeContainer(),
-    startButton: makeWidget({ enabled: null }),
+    introMessage: makeWidget({ text: "" }),
+    startButton: makeWidget({ title: "", enabled: null }),
     closeButton: makeBackboneTarget(),
     cancelButton: makeWidget({}),
   };
@@ -50,7 +51,7 @@ describe("Academy controller", function () {
     };
   }
 
-  function build({ level = 0, written = ["101"] } = {}) {
+  function build({ level = 0, written = ["101"], refreshing = null } = {}) {
     view = makeView();
     closed = 0;
     fired = [];
@@ -58,6 +59,7 @@ describe("Academy controller", function () {
     training = fakeTraining(written);
     ctl = createAcademyController({
       view,
+      args: { refreshing },
       close: () => closed++,
       services: {
         Training: training,
@@ -102,6 +104,24 @@ describe("Academy controller", function () {
     expect(view.nextMessage.visible).to.equal(false);
     expect(view.nextBelt.visible).to.equal(false);
     expect(view.startButton.enabled).to.equal(false);
+  });
+
+  // A Titanium Button carries its label in `title`; writing `text` leaves the
+  // button blank on device however right the view-model is.
+  it("labels the button for what pressing it does", function () {
+    build({ level: 0 });
+    expect(view.startButton.title).to.equal("Start");
+    build({ level: 3, refreshing: 1 });
+    expect(view.startButton.title).to.equal("Refresh");
+  });
+
+  it("re-opens an already-earned course rather than the next one", function () {
+    build({ level: 3, refreshing: 1 });
+    expect(view.currentMessage.text)
+      .to.equal("You've already earned this belt, but you can refresh your knowledge:");
+    expect(view.nextMessage.visible).to.equal(false);
+    expect(view.introMessage.text).to.equal(
+      "Go to https://waterbugblitz.org.au/academy on a separate device, and select this course.");
   });
 
   it("offers Start only for a course that has been written", function () {
