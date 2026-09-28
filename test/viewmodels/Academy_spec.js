@@ -42,13 +42,13 @@ describe("AcademyViewModel", function () {
   });
 
   it("offers Start only for a course that has been written", function () {
-    expect(build({ level: 0 }).startEnabled).to.equal(true);
-    expect(build({ level: 1 }).startEnabled).to.equal(false);
+    expect(build({ level: 0 }).actionEnabled).to.equal(true);
+    expect(build({ level: 1 }).actionEnabled).to.equal(false);
   });
 
   it("greys Start out when the next course is unwritten", function () {
-    expect(build({ level: 0 }).startColor).to.equal(Palette.success);
-    expect(build({ level: 1 }).startColor).to.equal(Palette.disabled);
+    expect(build({ level: 0 }).actionColor).to.equal(Palette.success);
+    expect(build({ level: 1 }).actionColor).to.equal(Palette.disabled);
   });
 
   it("does nothing when Start is pressed on an unwritten course", function () {
@@ -64,11 +64,56 @@ describe("AcademyViewModel", function () {
   it("has no next belt once the highest is held", function () {
     const vm = build({ level: Belts.HIGHEST });
     expect(vm.nextVisible).to.equal(false);
-    expect(vm.startEnabled).to.equal(false);
+    expect(vm.actionEnabled).to.equal(false);
   });
 
   it("shows the next belt while there is one to earn", function () {
     expect(build({ level: 0 }).nextVisible).to.equal(true);
+  });
+
+  // Tapping a belt already earned opens the same modal to refresh that course,
+  // rather than the next one — so the screen is about the belt it was asked
+  // for, not the ladder.
+  describe("refreshing a course already passed", function () {
+    function refresh({ level = 3, refreshing = 1, written = ["101"] } = {}) {
+      return new AcademyViewModel({
+        level,
+        refreshing,
+        isValidCode: (code) => written.indexOf(code) >= 0,
+      });
+    }
+
+    it("says the belt is already earned rather than naming the one held", function () {
+      expect(refresh().currentMessage)
+        .to.equal("You've already earned this belt, but you can refresh your knowledge:");
+    });
+
+    it("draws the belt being refreshed, not the one held", function () {
+      expect(refresh({ level: 3, refreshing: 1 }).currentBeltVm.tipColor)
+        .to.equal(Belts.at(1).tipColor);
+    });
+
+    it("drops the next-belt half, because no belt is on offer", function () {
+      expect(refresh().nextVisible).to.equal(false);
+    });
+
+    it("sends the reader to this course rather than their next one", function () {
+      expect(refresh().introMessage).to.equal(
+        "Go to https://waterbugblitz.org.au/academy on a separate device, and select this course.");
+    });
+
+    it("labels the action for what it does", function () {
+      expect(refresh().actionLabel).to.equal("Refresh");
+      expect(build({ level: 0 }).actionLabel).to.equal("Start");
+    });
+
+    it("starts the course that earned the belt being refreshed", function () {
+      const vm = refresh({ level: 3, refreshing: 1 });
+      let started = null;
+      vm.on("start", (code) => { started = code; });
+      vm.start();
+      expect(started).to.equal("101");
+    });
   });
 
   it("closes when asked", function () {
