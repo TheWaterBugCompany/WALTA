@@ -18,7 +18,7 @@ function makeView() {
   return {
     currentMessage: makeWidget({ text: "" }),
     currentBelt: makeContainer(),
-    nextMessage: makeWidget({ text: "", visible: false }),
+    nextMessage: makeWidget({ text: "", visible: false, height: "18dp", top: "6dp" }),
     nextBelt: makeContainer(),
     introMessage: makeWidget({ text: "" }),
     startButton: makeWidget({ title: "", enabled: null }),
@@ -113,6 +113,14 @@ describe("Academy controller", function () {
     expect(view.startButton.title).to.equal("Start");
     build({ level: 3, refreshing: 1 });
     expect(view.startButton.title).to.equal("Refresh");
+  });
+
+  // A hidden Titanium view keeps its band in a vertical layout, so hiding the
+  // next-belt half would leave the modal with a hole where it used to be.
+  it("takes back the space of the next-belt half rather than leaving a hole", function () {
+    build({ level: 3, refreshing: 1 });
+    expect([view.nextMessage.visible, view.nextMessage.height, view.nextMessage.top])
+      .to.deep.equal([false, 0, 0]);
   });
 
   it("re-opens an already-earned course rather than the next one", function () {

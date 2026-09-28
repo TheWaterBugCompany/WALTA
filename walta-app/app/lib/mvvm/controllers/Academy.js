@@ -1,15 +1,17 @@
 const AcademyViewModel = require("mvvm/viewmodels/Academy");
 // Markers only — the binder itself is injected (pre-bound by the View seam);
 // these are needed here at module scope to build BINDINGS.
-const { component } = require("util/bindView");
+const { component, present } = require("util/bindView");
 
 // Titanium-free screen controller for the Academy modal.
 // See docs/patterns/modals.md for the pattern.
 const BINDINGS = {
   currentMessage:  { text: "currentMessage" },
   currentBelt:     { belt: component("currentBeltVm", "Belt") },
-  nextMessage:     { text: "nextMessage", visible: "nextVisible" },
-  nextBelt:        { visible: "nextVisible", belt: component("nextBeltVm", "Belt") },
+  // present, not visible: a hidden view keeps its band in a vertical layout, so
+  // a refresh — which has no belt on offer — would open with a hole in it.
+  nextMessage:     { text: "nextMessage", visible: present("nextVisible") },
+  nextBelt:        { visible: present("nextVisible"), belt: component("nextBeltVm", "Belt") },
   introMessage:    { text: "introMessage" },
   startButton:     { title: "actionLabel", enabled: "actionEnabled", backgroundColor: "actionColor", borderColor: "actionColor", onClick: "start" },
   closeButton:     { onClose: "close" },   // the ✕ (CloseButton Require)
