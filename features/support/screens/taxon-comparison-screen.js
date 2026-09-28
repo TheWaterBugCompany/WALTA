@@ -15,6 +15,16 @@ class TaxonComparisonScreen extends BaseScreen {
         await this.clickWhenStable( this.selector( name ) );
     }
 
+    // The two variants differ in how many taxa they draw: a right answer shows
+    // the one taxon, a wrong one shows the chosen taxon beside the expected one.
+    // The heading would say so in words, but its accessibilityLabel is what the
+    // a11y tree reports for that label, so the message text is not readable from
+    // here — the cards are.
+    async cardsFor( name ) {
+        const cards = await this.driver.$$( this.selector( name ) );
+        return cards.length;
+    }
+
     // "Which question did I get wrong?" — the modal dismisses itself and the key
     // reopens at the couplet the two taxa part at.
     async whichQuestion() {
