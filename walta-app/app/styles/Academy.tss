@@ -63,6 +63,23 @@
 	height: "64dp"
 }
 
+// Half a belt of air, taken twice: the room the next-belt half would have used
+// is split above and below the one belt on show, so it sits in the middle of it.
+".academyGap": {
+	width: "84%",
+	height: "16dp",
+	left: "8%",
+	top: "8dp"
+}
+
+".academyGap[if=Alloy.Globals.isHighRes]": {
+	height: "22dp"
+}
+
+".academyGap[if=Alloy.Globals.isXHighRes]": {
+	height: "32dp"
+}
+
 ".academyIntro": {
 	top: "20dp",
 	width: "84%",
@@ -113,6 +130,10 @@
 // thinner belt.
 ".academyBelt[if=Alloy.Globals.isShort]": {
 	height: "32dp"
+}
+
+".academyGap[if=Alloy.Globals.isShort]": {
+	height: "16dp"
 }
 
 ".academyIntro[if=Alloy.Globals.isShort]": {
