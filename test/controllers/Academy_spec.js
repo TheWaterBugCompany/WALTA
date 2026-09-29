@@ -20,7 +20,8 @@ function makeView() {
     currentBelt: makeContainer(),
     nextMessage: makeWidget({ text: "", visible: false, height: "18dp", top: "6dp" }),
     nextBelt: makeContainer(),
-    refreshGap: makeWidget({ visible: false, height: "44dp", top: "8dp" }),
+    refreshGapAbove: makeWidget({ visible: false, height: "22dp", top: "8dp" }),
+    refreshGapBelow: makeWidget({ visible: false, height: "22dp", top: "8dp" }),
     introMessage: makeWidget({ text: "" }),
     startButton: makeWidget({ title: "", enabled: null }),
     closeButton: makeBackboneTarget(),
@@ -125,16 +126,20 @@ describe("Academy controller", function () {
   });
 
   // The modal keeps roughly the footprint it has when a belt is on offer: the
-  // room the next-belt half would have taken becomes deliberate air, rather
-  // than the screen collapsing around a single belt.
-  it("holds the room the next belt would have taken", function () {
+  // room the next-belt half would have taken becomes deliberate air. It is held
+  // open on both sides of the belt, so the belt sits in the middle of that room
+  // rather than at the top of it with all the air beneath.
+  it("holds the room open above and below the belt it shows", function () {
     build({ level: 3, refreshing: 1 });
-    expect(view.refreshGap.visible).to.equal(true);
+    expect([view.refreshGapAbove.visible, view.refreshGapBelow.visible])
+      .to.deep.equal([true, true]);
   });
 
   it("keeps that room out of the way when a belt is on offer", function () {
     build({ level: 0 });
-    expect([view.refreshGap.visible, view.refreshGap.height, view.refreshGap.top])
+    expect([view.refreshGapAbove.visible, view.refreshGapAbove.height, view.refreshGapAbove.top])
+      .to.deep.equal([false, 0, 0]);
+    expect([view.refreshGapBelow.visible, view.refreshGapBelow.height, view.refreshGapBelow.top])
       .to.deep.equal([false, 0, 0]);
   });
 
