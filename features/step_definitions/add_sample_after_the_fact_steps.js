@@ -29,7 +29,11 @@ Given('a photo is already in the phone gallery', function () {
     }
 });
 
-When('the user fills out the site details choosing a photo from the gallery', { timeout: 180000 }, async function () {
+// A step's budget has to exceed the sum of the waits inside it, or its own
+// diagnostics are unreachable: cucumber kills the step first and reports
+// "function timed out", which the infra classifier cannot read. The picker
+// alone is allowed 60s to present and 90s to take a tap.
+When('the user fills out the site details choosing a photo from the gallery', { timeout: 300000 }, async function () {
     await this.menu.selectWaterbugSurvey();
     await this.siteDetails.selectDetailed();
     await this.siteDetails.selectRiver();
@@ -42,7 +46,7 @@ When('the user fills out the site details choosing a photo from the gallery', { 
     await this.siteDetails.goNext();
 });
 
-When('the user identifies a taxon choosing a photo from the gallery', { timeout: 180000 }, async function () {
+When('the user identifies a taxon choosing a photo from the gallery', { timeout: 300000 }, async function () {
     await this.sample.waitFor();
     await this.sample.selectAddSample();
     await this.methodSelect.viaBrowse();
