@@ -13,10 +13,15 @@
 // the wait imports it, so the message and the classifier can't fall out of sync.
 const GPS_LOCK_NOT_OBTAINED = "GPS lock not obtained on Site Details";
 const SAMPLE_TRAY_TILE_MISSING = "Sample tray is missing tile";
+// The iOS photo picker is hosted out of process. When that service stalls the
+// app is left showing a blank sheet with a spinner and the grid never enters
+// the accessibility tree — the app asked correctly and has no part in it.
+const IOS_PHOTO_PICKER_NOT_PRESENTED = "iOS photo picker grid did not appear";
 
 const ENVIRONMENTAL_FAILURE_MESSAGES = [
     GPS_LOCK_NOT_OBTAINED,
     SAMPLE_TRAY_TILE_MISSING,
+    IOS_PHOTO_PICKER_NOT_PRESENTED,
 ];
 
 function isEnvironmentalFailure(message) {
@@ -26,6 +31,7 @@ function isEnvironmentalFailure(message) {
 module.exports = {
     GPS_LOCK_NOT_OBTAINED,
     SAMPLE_TRAY_TILE_MISSING,
+    IOS_PHOTO_PICKER_NOT_PRESENTED,
     ENVIRONMENTAL_FAILURE_MESSAGES,
     isEnvironmentalFailure,
 };

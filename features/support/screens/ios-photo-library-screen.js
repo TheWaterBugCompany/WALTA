@@ -1,5 +1,6 @@
 const BaseScreen = require('./base-screen');
 const dismissPermissionAlert = require('../dismiss-permission-alert');
+const { IOS_PHOTO_PICKER_NOT_PRESENTED } = require('../environmental-failures');
 
 // Drives the real iOS photo picker presented by Ti.Media.openPhotoGallery.
 // The first open shows the photo-library permission alert; we grant full
@@ -11,6 +12,13 @@ class IosPhotoLibraryScreen extends BaseScreen {
         this.presenceSelector = "-ios class chain:**/XCUIElementTypeNavigationBar[`name == 'Photos'`]";
     }
 
+    // The picker phase has to fit inside the budget of the step that calls it,
+    // or cucumber kills the step first and the failure arrives as "function
+    // timed out" — a message the infra classifier cannot read, which costs the
+    // run both its diagnosis and the fresh-device retry a stalled picker needs.
+    static PRESENT_TIMEOUT_MS = 60000;
+    static SELECT_TIMEOUT_MS = 90000;
+
     async waitFor() {
         // The first open shows the photo-library permission alert, and the
         // out-of-process PHPicker is slow to present — ~10s even on an idle local
@@ -19,12 +27,13 @@ class IosPhotoLibraryScreen extends BaseScreen {
         // appears — a single fixed-timeout tap misses a late alert or one whose
         // tap didn't register. The grid showing is the signal the alert is gone.
         const allowFullAccess = "-ios predicate string:type == 'XCUIElementTypeButton' AND name == 'Allow Full Access'";
-        await dismissPermissionAlert({
+        const presented = await dismissPermissionAlert({
             isDone: () => this.isDisplayedRaw( this.presenceSelector ),
             tapAccept: () => this.tapIfDisplayedRaw( allowFullAccess ),
             sleep: (ms) => this.sleep(ms),
+            timeoutMs: IosPhotoLibraryScreen.PRESENT_TIMEOUT_MS,
         });
-        await this.waitForRaw( this.presenceSelector, "iOS photo picker grid did not appear", 5000 );
+        if ( !presented ) throw new Error( IOS_PHOTO_PICKER_NOT_PRESENTED );
     }
 
     async selectFirstPhoto() {
@@ -45,11 +54,11 @@ class IosPhotoLibraryScreen extends BaseScreen {
                 await this.tapFirstCell();
                 taps++;
                 return false;
-            }, { timeout: 90000, interval: 1500, timeoutMsg: 'grid still up' });
+            }, { timeout: IosPhotoLibraryScreen.SELECT_TIMEOUT_MS, interval: 1500, timeoutMsg: 'grid still up' });
         } catch (e) {
             // Say how many taps were spent: one means the budget was the problem,
             // several means the taps themselves are not landing.
-            throw new Error(`iOS photo picker did not dismiss after ${taps} tap(s) over 90s`);
+            throw new Error(`iOS photo picker did not dismiss after ${taps} tap(s) over ${IosPhotoLibraryScreen.SELECT_TIMEOUT_MS / 1000}s`);
         }
     }
 

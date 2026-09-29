@@ -4,6 +4,7 @@ const {
     isEnvironmentalFailure,
     GPS_LOCK_NOT_OBTAINED,
     SAMPLE_TRAY_TILE_MISSING,
+    IOS_PHOTO_PICKER_NOT_PRESENTED,
 } = require("../features/support/environmental-failures");
 
 describe("environmental-failure classifier", function () {
@@ -14,6 +15,12 @@ describe("environmental-failure classifier", function () {
     it("flags a sample-tray-tile timeout as environmental (any tile fragment)", function () {
         expect(isEnvironmentalFailure(`${SAMPLE_TRAY_TILE_MISSING} starting with "Taxon 12, "`)).to.equal(true);
         expect(isEnvironmentalFailure(`${SAMPLE_TRAY_TILE_MISSING} for "Water Boatman"`)).to.equal(true);
+    });
+
+    // The picker is hosted out of process; when that service stalls, its grid
+    // never enters the app's accessibility tree and no app code is involved.
+    it("flags a photo picker that never presented as environmental", function () {
+        expect(isEnvironmentalFailure("Error: " + IOS_PHOTO_PICKER_NOT_PRESENTED)).to.equal(true);
     });
 
     it("does not flag a genuine assertion failure", function () {

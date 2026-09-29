@@ -4,14 +4,16 @@ const dismissPermissionAlert = require("../features/support/dismiss-permission-a
 
 // Fakes the two IO seams: whether we've reached the target screen (alert gone),
 // and a tap on the accept button. sleep is a no-op so the loop runs instantly.
-function harness({ doneSequence }) {
+function harness({ doneSequence, msPerRound = 0 }) {
     let i = 0;
     let taps = 0;
+    let clock = 0;
     return {
         taps: () => taps,
         isDone: async () => doneSequence[Math.min(i++, doneSequence.length - 1)],
         tapAccept: async () => { taps++; },
-        sleep: async () => {},
+        sleep: async () => { clock += msPerRound; },
+        now: () => clock,
     };
 }
 
@@ -33,12 +35,15 @@ describe("dismissPermissionAlert", function () {
         expect(h.taps()).to.equal(3);
     });
 
-    // Bounded, so an alert that never clears fails fast with a truthful result
-    // rather than looping until the CI job hits its ceiling.
-    it("gives up after maxRounds and reports the final state", async function () {
-        const h = harness({ doneSequence: [false] });
-        const ok = await dismissPermissionAlert({ isDone: h.isDone, tapAccept: h.tapAccept, sleep: h.sleep, maxRounds: 5 });
+    // Bounded by the clock, not by a round count: a round costs whatever the
+    // device takes to answer, so counting rounds promises a budget it cannot
+    // keep — on a degraded session the same 180 rounds outlive the step that
+    // is waiting for them, and the caller's own message never gets to fire.
+    it("gives up once the budget is spent, however few rounds that took", async function () {
+        const h = harness({ doneSequence: [false], msPerRound: 10000 });
+        const ok = await dismissPermissionAlert({
+            isDone: h.isDone, tapAccept: h.tapAccept, sleep: h.sleep, now: h.now, timeoutMs: 30000 });
         expect(ok).to.be.false;
-        expect(h.taps()).to.equal(5);
+        expect(h.taps()).to.equal(3);
     });
 });
