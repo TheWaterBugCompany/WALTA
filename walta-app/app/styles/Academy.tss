@@ -63,21 +63,58 @@
 	height: "64dp"
 }
 
-// Half a belt of air, taken twice: the room the next-belt half would have used
-// is split above and below the one belt on show, so it sits in the middle of it.
-".academyGap": {
+// The room the next-belt half would have used, spread so the caption, the belt
+// and the instruction sit one even step apart under the title. Each spacer tops
+// its own line's margin up to that step, and the three differ because what sits
+// above them differs: the titlebar's box runs well below its text, and the
+// instruction already carries the largest margin of the three.
+//
+// The heights are measured off a capture, not derived — a label's ink is
+// shorter than its box, so what reads as even on screen is not what the boxes
+// add up to.
+".academyGapAbove": {
 	width: "84%",
-	height: "16dp",
+	height: "10dp",
 	left: "8%",
-	top: "8dp"
+	top: "0dp"
 }
 
-".academyGap[if=Alloy.Globals.isHighRes]": {
-	height: "22dp"
+".academyGapAbove[if=Alloy.Globals.isHighRes]": {
+	height: "13dp"
 }
 
-".academyGap[if=Alloy.Globals.isXHighRes]": {
+".academyGapAbove[if=Alloy.Globals.isXHighRes]": {
+	height: "19dp"
+}
+
+".academyGapBelt": {
+	width: "84%",
+	height: "23dp",
+	left: "8%",
+	top: "0dp"
+}
+
+".academyGapBelt[if=Alloy.Globals.isHighRes]": {
 	height: "32dp"
+}
+
+".academyGapBelt[if=Alloy.Globals.isXHighRes]": {
+	height: "46dp"
+}
+
+".academyGapBeforeIntro": {
+	width: "84%",
+	height: "12dp",
+	left: "8%",
+	top: "0dp"
+}
+
+".academyGapBeforeIntro[if=Alloy.Globals.isHighRes]": {
+	height: "16dp"
+}
+
+".academyGapBeforeIntro[if=Alloy.Globals.isXHighRes]": {
+	height: "23dp"
 }
 
 ".academyIntro": {
@@ -132,8 +169,16 @@
 	height: "32dp"
 }
 
-".academyGap[if=Alloy.Globals.isShort]": {
-	height: "16dp"
+".academyGapAbove[if=Alloy.Globals.isShort]": {
+	height: "10dp"
+}
+
+".academyGapBelt[if=Alloy.Globals.isShort]": {
+	height: "23dp"
+}
+
+".academyGapBeforeIntro[if=Alloy.Globals.isShort]": {
+	height: "12dp"
 }
 
 ".academyIntro[if=Alloy.Globals.isShort]": {
