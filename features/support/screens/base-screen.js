@@ -1,5 +1,6 @@
 var { expect } = require('chai');
 var isSessionDeadError = require('../is-session-dead-error');
+var enterText = require('../enter-text');
 class BaseScreen {
     constructor( world ) {
         this.driver = world.driver;
@@ -109,12 +110,47 @@ class BaseScreen {
         }]);
     }
 
+    // Type into a field and confirm it took the text — see enter-text.js for
+    // why a write the driver calls a success can leave the field empty.
     async enter( sel, text ) {
+        await enterText({
+            field: sel,
+            text,
+            write: (value) => this.writeInto( sel, value ),
+            read: () => this.readFieldValue( sel ),
+            blur: () => this.dismissKeyboard(),
+        });
+    }
+
+    // The element the text actually goes into — on Android the editable child
+    // rather than the labelled wrapper. Reading back has to resolve the same
+    // element the write went to, or it reports on a different widget.
+    async fieldElement( sel ) {
         var el = await this.driver.$( this.selector( sel ) );
         if ( this.isAndroid() && el.getTagName() !== "android.widget.EditText" ) {
             el = await el.$("//android.widget.EditText");
         }
-        await el.setValue(text);
+        return el;
+    }
+
+    async writeInto( sel, text ) {
+        await (await this.fieldElement( sel )).setValue(text);
+    }
+
+    // An accessibilityLabel takes over a field's name and label, so on iOS the
+    // text a user typed is only in `value`; Android keeps it in the editable
+    // child's text. A field that isn't there yet reads as empty rather than
+    // throwing — the caller is mid-poll.
+    async readFieldValue( sel ) {
+        try {
+            var el = await this.fieldElement( sel );
+            return await ( this.isAndroid() ? el.getText() : el.getValue() );
+        } catch (_) {
+            return "";
+        }
+    }
+
+    async dismissKeyboard() {
         if ( this.isIos() ) {
             // hideKeyboard() fails on Titanium text fields; tap above the
             // keyboard to blur the field and dismiss it.

@@ -17,11 +17,16 @@ const SAMPLE_TRAY_TILE_MISSING = "Sample tray is missing tile";
 // app is left showing a blank sheet with a spinner and the grid never enters
 // the accessibility tree — the app asked correctly and has no part in it.
 const IOS_PHOTO_PICKER_NOT_PRESENTED = "iOS photo picker grid did not appear";
+// A field that never took keyboard focus receives none of what XCUITest types,
+// and the driver reports the write as a success. Nothing in the app takes part:
+// the tap that would have focused it was swallowed by the device.
+const FIELD_DID_NOT_TAKE_TEXT = "field did not take the text typed into it";
 
 const ENVIRONMENTAL_FAILURE_MESSAGES = [
     GPS_LOCK_NOT_OBTAINED,
     SAMPLE_TRAY_TILE_MISSING,
     IOS_PHOTO_PICKER_NOT_PRESENTED,
+    FIELD_DID_NOT_TAKE_TEXT,
 ];
 
 function isEnvironmentalFailure(message) {
@@ -32,6 +37,7 @@ module.exports = {
     GPS_LOCK_NOT_OBTAINED,
     SAMPLE_TRAY_TILE_MISSING,
     IOS_PHOTO_PICKER_NOT_PRESENTED,
+    FIELD_DID_NOT_TAKE_TEXT,
     ENVIRONMENTAL_FAILURE_MESSAGES,
     isEnvironmentalFailure,
 };
