@@ -13,6 +13,7 @@ const BINDINGS = {
   nextMessage:     { text: "nextMessage", visible: present("nextVisible") },
   nextBelt:        { visible: present("nextVisible"), belt: component("nextBeltVm", "Belt") },
   refreshGapAbove: { visible: present("isRefresh") },
+  refreshGapBelt:  { visible: present("isRefresh") },
   refreshGapBelow: { visible: present("isRefresh") },
   introMessage:    { text: "introMessage" },
   startButton:     { title: "actionLabel", enabled: "actionEnabled", backgroundColor: "actionColor", borderColor: "actionColor", onClick: "start" },

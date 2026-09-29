@@ -20,8 +20,9 @@ function makeView() {
     currentBelt: makeContainer(),
     nextMessage: makeWidget({ text: "", visible: false, height: "18dp", top: "6dp" }),
     nextBelt: makeContainer(),
-    refreshGapAbove: makeWidget({ visible: false, height: "22dp", top: "8dp" }),
-    refreshGapBelow: makeWidget({ visible: false, height: "22dp", top: "8dp" }),
+    refreshGapAbove: makeWidget({ visible: false, height: "24dp", top: "0dp" }),
+    refreshGapBelt: makeWidget({ visible: false, height: "24dp", top: "0dp" }),
+    refreshGapBelow: makeWidget({ visible: false, height: "12dp", top: "0dp" }),
     introMessage: makeWidget({ text: "" }),
     startButton: makeWidget({ title: "", enabled: null }),
     closeButton: makeBackboneTarget(),
@@ -125,22 +126,21 @@ describe("Academy controller", function () {
       .to.deep.equal([false, 0, 0]);
   });
 
-  // The modal keeps roughly the footprint it has when a belt is on offer: the
-  // room the next-belt half would have taken becomes deliberate air. It is held
-  // open on both sides of the belt, so the belt sits in the middle of that room
-  // rather than at the top of it with all the air beneath.
-  it("holds the room open above and below the belt it shows", function () {
+  // The room the next-belt half would have taken becomes deliberate air, spread
+  // evenly: one spacer before each of the three lines, so the title, the
+  // caption, the belt and the instruction sit at an even rhythm down the modal
+  // rather than the belt being pinned to its caption with the air elsewhere.
+  it("spaces the three lines evenly down the modal", function () {
     build({ level: 3, refreshing: 1 });
-    expect([view.refreshGapAbove.visible, view.refreshGapBelow.visible])
-      .to.deep.equal([true, true]);
+    expect([view.refreshGapAbove.visible, view.refreshGapBelt.visible, view.refreshGapBelow.visible])
+      .to.deep.equal([true, true, true]);
   });
 
   it("keeps that room out of the way when a belt is on offer", function () {
     build({ level: 0 });
-    expect([view.refreshGapAbove.visible, view.refreshGapAbove.height, view.refreshGapAbove.top])
-      .to.deep.equal([false, 0, 0]);
-    expect([view.refreshGapBelow.visible, view.refreshGapBelow.height, view.refreshGapBelow.top])
-      .to.deep.equal([false, 0, 0]);
+    for (const gap of [view.refreshGapAbove, view.refreshGapBelt, view.refreshGapBelow]) {
+      expect([gap.visible, gap.height, gap.top]).to.deep.equal([false, 0, 0]);
+    }
   });
 
   it("re-opens an already-earned course rather than the next one", function () {
