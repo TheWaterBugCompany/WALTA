@@ -11,6 +11,12 @@ When('I start my next training course', async function () {
   await startTrainingSession(this);
 });
 
+// Training has no survey stack behind it, so the tray's Back goes to the menu.
+When('I leave the training tray', async function () {
+  await this.sample.click("Back");
+  await this.menu.waitFor();
+});
+
 Then('an empty training tray is shown', async function () {
   await this.sample.waitForEmptyTray();
 });

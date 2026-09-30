@@ -2,9 +2,21 @@ const createTrainingAssessor = require("logic/TrainingAssessor");
 
 // Training-session service — the training-mode counterpart to Survey. Owns the
 // active session's SampleTray + assessor. Titanium-free.
-module.exports = function createTraining({ repo, exercises, keyTrail }) {
+module.exports = function createTraining({ repo, exercises, keyTrail, topics }) {
   let tray = null;
   let assessor = null;
+
+  // The session belongs to whoever was signed in when it started, and there is
+  // one per device — so signing out has to take it with them. Left behind, the
+  // next trainee starting the same course is handed that tray, and for a course
+  // already passed that is every taxon, correct and in position.
+  topics.subscribe(topics.LOGGEDOUT, endSession);
+
+  function endSession() {
+    repo.clear();
+    tray = null;
+    assessor = null;
+  }
 
   // False for a code that maps to no exercise; otherwise the session is live and
   // its tray and assessor are the ones the training screens read.
@@ -29,6 +41,11 @@ module.exports = function createTraining({ repo, exercises, keyTrail }) {
 
     // The code of the session in progress — what earned belt is looked up by.
     currentSessionCode() { return repo.currentSessionCode(); },
+
+    // The session is over — passed, or abandoned because its owner signed out.
+    // Nothing is left for startTraining to resume, so the course begins afresh
+    // next time rather than handing back the tray it was finished with.
+    endSession,
 
     // The active session's tray + assessor — the training screens thread these into
     // their args (the session lives here, its owner, not in Navigation).

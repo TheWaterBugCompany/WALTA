@@ -42,17 +42,57 @@ function fakeRepo(tray) {
       this.removed.push({ tray: t, taxon });
       t.remove(taxon);
     },
+    clear() { this.started = null; tray._items = []; },
+  };
+}
+
+// Records what was subscribed so a spec can fire it.
+function fakeTopics() {
+  const handlers = {};
+  return {
+    LOGGEDOUT: "loggedout",
+    subscribe(topic, fn) { (handlers[topic] = handlers[topic] || []).push(fn); },
+    fire(topic) { (handlers[topic] || []).forEach((fn) => fn()); },
   };
 }
 
 describe("logic/Training", function () {
   let tray, repo, exercises, training;
 
+  let topics;
+
   beforeEach(function () {
     tray = fakeTray();
     repo = fakeRepo(tray);
+    topics = fakeTopics();
     exercises = fakeExercises({ "101": [90, 198, 176, 131], "202": [3, 4] });
-    training = createTraining({ repo, exercises, keyTrail: noTrail });
+    training = createTraining({ repo, exercises, keyTrail: noTrail, topics });
+  });
+
+  // The session belongs to whoever was signed in when it started. Left behind,
+  // the next trainee starts the same course and is handed that tray — which for
+  // a course already passed is every taxon, correct and in position.
+  it("ends the session when the trainee logs out", function () {
+    training.startTraining("101");
+    training.addTaxon(90);
+
+    topics.fire(topics.LOGGEDOUT);
+
+    expect(repo.currentSessionCode()).to.equal(null);
+    expect(training.startTraining("101")).to.equal(true);
+    expect(training.currentTray().length).to.equal(0);
+  });
+
+  // A finished course is not an attempt to pick up where it was left off, so
+  // starting it again is a fresh run rather than the tray it was passed with.
+  it("starts afresh rather than resuming a session that has ended", function () {
+    training.startTraining("101");
+    training.addTaxon(90);
+    training.endSession();
+
+    training.startTraining("101");
+
+    expect(training.currentTray().length).to.equal(0);
   });
 
   it("starts a session for a known code and exposes the tray + assessor", function () {
@@ -125,7 +165,7 @@ describe("logic/Training", function () {
     training.addTaxon(90);
 
     // A fresh Training over the same repo stands in for leaving and re-entering.
-    const resumed = createTraining({ repo, exercises, keyTrail: noTrail });
+    const resumed = createTraining({ repo, exercises, keyTrail: noTrail, topics: fakeTopics() });
     expect(resumed.startTraining("101")).to.equal(true);
     expect(resumed.currentTray()).to.equal(tray);
     expect(resumed.currentTray().length, "existing taxon retained").to.equal(1);
@@ -137,7 +177,7 @@ describe("logic/Training", function () {
     training.startTraining("101");
     training.addTaxon(90);
 
-    const switched = createTraining({ repo, exercises, keyTrail: noTrail });
+    const switched = createTraining({ repo, exercises, keyTrail: noTrail, topics: fakeTopics() });
     expect(switched.startTraining("202")).to.equal(true);
     expect(repo.started, "started a fresh session for the new code").to.equal("202");
     expect(switched.currentTray().length, "old taxa cleared").to.equal(0);
@@ -149,7 +189,7 @@ describe("logic/Training", function () {
     training.startTraining("101");
     training.addTaxon(90);
 
-    const again = createTraining({ repo, exercises, keyTrail: noTrail });
+    const again = createTraining({ repo, exercises, keyTrail: noTrail, topics: fakeTopics() });
     expect(again.restartTraining("101")).to.equal(true);
     expect(again.currentTray().length, "old taxa cleared").to.equal(0);
     expect(again.currentAssessor().expectedCount).to.equal(4);
@@ -175,6 +215,7 @@ describe("Training records the route walked to an identification", function () {
       repo,
       exercises: fakeExercises({ 101: { beltLevel: 1, taxa: [90, 198] } }),
       keyTrail: { route: () => route },
+      topics: fakeTopics(),
     });
     training.startTraining(101);
     return { training, repo };
@@ -202,6 +243,7 @@ describe("Training records the route walked to an identification", function () {
       repo,
       exercises: fakeExercises({ 101: { beltLevel: 1, taxa: [90, 198] } }),
       keyTrail: { route: () => walked },
+      topics: fakeTopics(),
     });
     training.startTraining(101);
     training.addTaxon(999, 0);

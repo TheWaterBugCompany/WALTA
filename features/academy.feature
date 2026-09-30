@@ -55,3 +55,20 @@ Scenario: Read the feedback on a taxon identified correctly
   And I assess the training tray
   And I select the correct taxon
   Then the comparison shows the flatworm on its own
+
+
+# The training session is one per device and belongs to whoever was signed in
+# when it started. Left behind at logout, the next trainee starting the same
+# course was handed that tray — for a course already passed, every taxon
+# correct and in position, so one more identification assessed as a pass.
+Scenario: A training session does not outlive the trainee who started it
+  When I am logged in as "test@example.com"
+  And I open the Academy from the menu
+  And I start my next training course
+  Then an empty training tray is shown
+  When I identify a flatworm through the key
+  And I leave the training tray
+  And I log out
+  And I open the Academy from the menu
+  And I start my next training course
+  Then an empty training tray is shown

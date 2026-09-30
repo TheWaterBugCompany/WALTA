@@ -145,6 +145,7 @@ let training = createTraining({
   repo: TrainingRepository.open("waterbug_data"),
   exercises: trainingExercises,
   keyTrail: keyTrail,
+  topics: Topics,
 });
 
 // Belts earned by completing those exercises, kept per user in the same DB.
