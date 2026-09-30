@@ -33,7 +33,11 @@ describe("TrainingTray controller", function () {
     const ctl = createTrainingTray({
       view: {},
       args: { tray, key: fakeKey(), assessor },
-      services: { topics, platform: fakePlatform() },
+      services: {
+        topics,
+        platform: fakePlatform(),
+        Training: { currentSessionCode: () => "101", endSession() {} },
+      },
       bindView: stubBindView(),
     });
 
@@ -100,7 +104,7 @@ describe("TrainingTray controller", function () {
       services: {
         topics,
         platform: fakePlatform(),
-        Training: { currentSessionCode: () => "101" },
+        Training: { currentSessionCode: () => "101", endSession() {} },
         belts: { awardFor: (code) => awarded.push(code) },
       },
       bindView: stubBindView(),
@@ -109,6 +113,38 @@ describe("TrainingTray controller", function () {
     ctl.vm.assess();
 
     expect(awarded).to.deep.equal(["101"]);
+    ctl.dispose();
+  });
+
+  // A passed course is finished, not an attempt to pick up later — so the
+  // session goes, and the belt is read off it before it does.
+  it("ends the session once the course is passed, after awarding the belt", function () {
+    const order = [];
+    const topics = {
+      ASSESS: "assess",
+      TRAINING_SUCCESS: "trainingsuccess",
+      subscribe() {}, unsubscribe() {},
+      fireTopicEvent: () => {},
+    };
+    const tray = new SampleTray([new Taxon({ id: 1, taxonId: 90, position: 0 })]);
+    const ctl = createTrainingTray({
+      view: {},
+      args: { tray, key: fakeKey(), assessor: createTrainingAssessor([90]) },
+      services: {
+        topics,
+        platform: fakePlatform(),
+        Training: {
+          currentSessionCode: () => "101",
+          endSession: () => order.push("ended"),
+        },
+        belts: { awardFor: (code) => order.push(`awarded ${code}`) },
+      },
+      bindView: stubBindView(),
+    });
+
+    ctl.vm.assess();
+
+    expect(order).to.deep.equal(["awarded 101", "ended"]);
     ctl.dispose();
   });
 
@@ -127,7 +163,7 @@ describe("TrainingTray controller", function () {
       services: {
         topics,
         platform: fakePlatform(),
-        Training: { currentSessionCode: () => "101" },
+        Training: { currentSessionCode: () => "101", endSession() {} },
         belts: { awardFor: (code) => awarded.push(code) },
       },
       bindView: stubBindView(),

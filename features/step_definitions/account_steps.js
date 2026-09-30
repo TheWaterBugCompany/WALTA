@@ -37,6 +37,14 @@ When('I close the delete account dialogue', async function () {
   await this.deleteAccount.close();
 });
 
+When('I log out', async function () {
+  await this.menu.selectAccount();
+  await this.account.waitFor();
+  await this.account.click("account_log_out");
+  await this.account.confirmLogOut();
+  await this.menu.waitForLabel("Log In");
+});
+
 Then('I am logged out', async function () {
   await this.menu.waitFor();
   await this.menu.waitForLabel("Log In");

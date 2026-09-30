@@ -15,6 +15,16 @@ class AccountScreen extends BaseScreen {
         await this.click("account_delete");
     }
 
+    // The Ti confirm is a native dialog — it belongs to no screen's view tree,
+    // and WDA's acceptAlert leaves it standing. Tap its button by label and
+    // watch for the menu behind it, re-tapping if the tap did not land.
+    async confirmLogOut() {
+        const logOut = this.isIos()
+            ? "-ios predicate string:type == 'XCUIElementTypeButton' AND label == 'Log Out'"
+            : 'android=new UiSelector().text("Log Out")';
+        await this.clickUntil( logOut, () => this.world.menu.isPresent() );
+    }
+
     async waitForBelt( name ) {
         const belt = await this.waitForExisting( name );
         return outlineShareOf( this.world.driver, belt );

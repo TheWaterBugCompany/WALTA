@@ -17,7 +17,11 @@ module.exports = function createTrainingTray({ view, args, services, bindView })
   });
 
   vm.on("allCorrect", (correctCount) => {
+    // Read the belt off the session before ending it: a passed course is
+    // finished, so starting it again is a fresh run rather than the tray it
+    // was passed with.
     if (services.belts) services.belts.awardFor(services.Training.currentSessionCode());
+    services.Training.endSession();
     services.topics.fireTopicEvent(services.topics.TRAINING_SUCCESS, { correctCount });
   });
 

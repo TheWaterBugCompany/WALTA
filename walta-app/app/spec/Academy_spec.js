@@ -45,7 +45,8 @@ describe('Academy belt levels', function() {
 			ctl = Alloy.createController("Academy");
 			win = wrapViewInWindow( ctl.getView() );
 			var exercises = createTrainingExercises({ "101": { beltLevel: 1, taxa: [90,198,176,131] } });
-			var topics = { fireTopicEvent: function(){}, TRAININGTRAY: "s" };
+			var topics = { fireTopicEvent: function(){}, subscribe: function(){},
+			               TRAININGTRAY: "s", LOGGEDOUT: "loggedout" };
 			var repo = { startSession: function(){ return { length: 0, taxa: function(){ return []; } }; },
 			             currentSessionCode: function(){ return null; } };
 			var services = {

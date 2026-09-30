@@ -364,7 +364,13 @@ function academyServicesAt(level) {
 	var exercises = createTrainingExercises(
 		JSON.parse(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "training-exercises.json").read().text));
 	return {
-		Training: createTraining({ repo: TrainingRepository.open("waterbug_data"), exercises: exercises }),
+		// Capture-only: nothing here logs out, so the session-ending subscription
+		// has nowhere to come from.
+		Training: createTraining({
+			repo: TrainingRepository.open("waterbug_data"),
+			exercises: exercises,
+			topics: { subscribe: function () {}, LOGGEDOUT: "loggedout" },
+		}),
 		belts: beltsAt(level),
 	};
 }
