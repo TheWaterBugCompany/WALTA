@@ -51,6 +51,25 @@ describe("enterText", function () {
         expect(err.message).to.include("Edge Plants");
     });
 
+    // A secure field gives back bullets rather than the text, so the characters
+    // cannot be compared — but the count still confirms the write landed.
+    it("accepts a masked field whose mask is as long as the text", async function () {
+        const f = fakeField();
+        f.read = async () => "\u2022".repeat(8);
+        const writes = await enterText({ field: "password", text: "password", ...f });
+        expect(writes).to.equal(1);
+    });
+
+    it("rejects a masked field whose mask is the wrong length", async function () {
+        const f = fakeField();
+        f.read = async () => "\u2022".repeat(3);
+        let err = null;
+        try {
+            await enterText({ field: "password", text: "password", ...f, timeoutMs: 2000 });
+        } catch (e) { err = e; }
+        expect(err).to.be.an("error");
+    });
+
     // iOS gives a TextArea's accessibility label as its value, so the typed
     // text is not readable at all. Such a field is unobservable rather than
     // wrong, and re-typing into it would spend the whole budget every time.
