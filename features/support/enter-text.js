@@ -2,6 +2,8 @@
 
 const { FIELD_DID_NOT_TAKE_TEXT } = require('./environmental-failures');
 
+const MASKED = /^[\u2022\u25cf\u002a]+$/;
+
 // Types text into a field and confirms it actually got there.
 //
 // WebDriverAgent answers 200 to a setValue that typed into nothing. XCUITest
@@ -27,6 +29,10 @@ module.exports = async function enterText({
         await blur();
         held = String(await read());
         if (held === String(text)) return writes;
+        // A secure field hands back bullets rather than the characters. The
+        // count still confirms the write — eight bullets for an eight-character
+        // password — and a mask of the wrong length is still a failed write.
+        if (MASKED.test(held) && held.length === String(text).length) return writes;
         // iOS hands back a TextArea's accessibility label where its value
         // should be, so a field that reads as its own name is one we cannot see
         // into. Re-typing would spend the whole budget to learn nothing; an
