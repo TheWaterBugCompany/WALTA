@@ -22,6 +22,12 @@ function makeTestServices(overrides) {
     },
     topics: Topics,
     dialogs: Dialogs,
+    // A passed course ends its training session, so any spec that opens the
+    // training tray needs somewhere for that to go — as index-app wires it.
+    Training: {
+      currentSessionCode: function () { return null; },
+      endSession: function () {},
+    },
     platform: PlatformSpecific,
     photoSize: PhotoUtils.photoSize,
     environment: Alloy.CFG.environment,
