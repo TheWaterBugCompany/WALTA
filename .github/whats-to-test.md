@@ -11,6 +11,29 @@ Worth a look on the smallest phone you have. The Close and Start buttons were
 being pushed off the bottom edge and were unreachable. They should now be fully
 visible with room to spare, with both belts still drawn at full width.
 
+GO BACK OVER A COURSE YOU HAVE PASSED (new)
+Account Details > tap one of the belts you have earned. The Academy opens on
+that course rather than the next one up: one belt, no next-belt half, and the
+button says Refresh. Refreshing gives you an empty tray to walk the course again.
+Your belt does not change — finish it and you still hold the highest belt you
+have earned, not the one that course awards.
+
+A RIGHT ANSWER SHOWS THE RIGHT FEEDBACK (fixed)
+After an Academy assessment, tap a tick. It should show that one creature on its
+own. It used to open the side-by-side comparison meant for a wrong answer, every
+time — so if you see two creatures after tapping a tick, that is worth reporting.
+
+FINISHING WITHOUT EARNING A BELT (fixed)
+Get everything right in a course whose belt you already hold and the success
+screen has no belt on it. There should be no band of empty white where the belt
+would have been — just the congratulation and Finish.
+
+LOGGING OUT MID-COURSE (fixed)
+Start an Academy course, identify a creature or two, then log out. Starting that
+course again should give you an empty tray. It used to hand back the tray the
+last person left behind, which for a course already passed meant every creature
+already correct — one more identification and it assessed as a pass.
+
 ACCOUNT DETAILS (new)
 Menu > You are Logged in. Shows the email and name you are signed in as, and the
 belts you have earned in a grid. Log out has moved here from the menu. The email
