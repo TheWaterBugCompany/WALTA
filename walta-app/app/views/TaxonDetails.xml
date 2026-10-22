@@ -41,7 +41,7 @@
 			</ScrollView>
 			<View id="actions">
 				<View id="photoSelectWrapper">
-					<Require type="view" readonly=true src="PhotoSelect" id="photoSelect" />
+					<Require type="view" readonly=true aspectFit=true src="PhotoSelect" id="photoSelect" />
 				</View>
 				<View id="actionBtns"></View>
 			</View>

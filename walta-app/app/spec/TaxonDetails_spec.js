@@ -1,6 +1,6 @@
 require("spec/lib/ti-mocha");
 var { expect } = require('spec/lib/chai');
-var { checkTestResult, closeWindow, controllerOpenTest, setManualTests, actionFiresTopicTest } = require('spec/util/TestUtils');
+var { checkTestResult, closeWindow, controllerOpenTest, setManualTests, actionFiresTopicTest, waitFor } = require('spec/util/TestUtils');
 var Topics = require('ui/Topics');
 var Taxon = require('logic/Taxon');
 describe('TaxonDetails controller', function() {
@@ -153,6 +153,40 @@ describe('TaxonDetails controller', function() {
 		it('offers none when the taxon was not reached from a tray', async function() {
 			await open({ allowAddToSample: false });
 			expect( trayButton( tv ).visible ).to.equal( false );
+		});
+	});
+
+	// The photo panel is a percentage of the screen, so on a tablet it comes out
+	// taller than it is wide. A reference photo centre-cropped to that shape loses
+	// its sides — the diagnostic features the key just asked the user to match.
+	// The panel is given a portrait shape here so the case under test is the
+	// test's, not whichever simulator happens to be running it.
+	context('reference photo on a tall panel', function() {
+		var PHOTO = '/spec/resources/simpleKey1/media/amphipoda_01.jpg';
+		var tv;
+		before( function(done) {
+			tv = Alloy.createController( "TaxonDetails", {
+				node: Taxon.createTaxon({
+					id: "t1", name: "Test", commonName: "Test bug", scientificName: [],
+					size: 1, habitat: "", movement: "", confusedWith: "", signalScore: 1,
+					description: "", mediaUrls: [ PHOTO ]
+				})
+			});
+			tv.photoSelectWrapper.width = "200dp";
+			tv.photoSelectWrapper.height = "400dp";
+			controllerOpenTest( tv, done );
+		});
+		after( function(done) { closeWindow( tv.getView(), done ); });
+
+		it('shows the whole photo rather than cropping its sides away', async function() {
+			var source = Ti.Filesystem.getFile( Ti.Filesystem.resourcesDirectory, PHOTO ).read();
+			var sourceRatio = source.width / source.height;
+			// The fitted dimensions land on a layout pass after the photo loads, and
+			// the panel-sized photo already has a height, so wait on the ratio itself.
+			await waitFor( () => tv.photoSelect.photo.size.height > 0 &&
+				Math.abs( tv.photoSelect.photo.size.width / tv.photoSelect.photo.size.height - sourceRatio ) < 0.05 );
+			var shown = tv.photoSelect.photo.size;
+			expect( shown.width / shown.height ).to.be.closeTo( sourceRatio, 0.05 );
 		});
 	});
 
