@@ -16,6 +16,7 @@ $.TopLevelWindow.addEventListener('close', function cleanUp() {
 	$.destroy();
 	$.off();
 	actions.forEach( (a) => a.cleanUp() );
+	$.photoSelect.cleanUp();
 	$.trayButton.cleanUp();
 	$.TopLevelWindow.removeEventListener('close', cleanUp );
 });
