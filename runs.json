@@ -1,0 +1,62 @@
+[
+  {
+    "id": "39971056421",
+    "branch": "main",
+    "sha": "ba01c84069eee3cbd9e8bcbf93b01ea76f5aad8f",
+    "capturedAt": "2026-10-23T15:06:51Z"
+  },
+  {
+    "id": "39965302394",
+    "branch": "main",
+    "sha": "fa7359c9bf383b1d28aaf3204fe12457b9f27bd8",
+    "capturedAt": "2026-10-23T14:38:49Z"
+  },
+  {
+    "id": "39965354863",
+    "branch": "task/wb-380-ipad-photo-crop",
+    "sha": "12a13c82b9b1d48af58de69ab9d70c4ef4140fe6",
+    "capturedAt": "2026-10-23T14:24:00Z"
+  },
+  {
+    "id": "39953688848",
+    "branch": "task/wb-383-ios-reset-escalation",
+    "sha": "a0b052b8a04593ceea3534d3c428d032fa03c572",
+    "capturedAt": "2026-10-23T12:51:20Z"
+  },
+  {
+    "id": "39740647855",
+    "branch": "task/wb-380-ipad-photo-crop",
+    "sha": "b87678519149537fbef5e502b7de74776e7dd52f",
+    "capturedAt": "2026-10-22T07:54:44Z"
+  },
+  {
+    "id": "39470554425",
+    "branch": "dependabot/npm_and_yarn/follow-redirects-1.16.1",
+    "sha": "b247477d7dfe00e6fb941d9806cd11574d1bc6f2",
+    "capturedAt": "2026-10-20T18:28:03Z"
+  },
+  {
+    "id": "38383760534",
+    "branch": "dependabot/npm_and_yarn/dev-dependencies-ad1029fb4c",
+    "sha": "0465f3bb7735a98101c867866bbe215f00ae565c",
+    "capturedAt": "2026-10-13T10:32:17Z"
+  },
+  {
+    "id": "37404914086",
+    "branch": "dependabot/npm_and_yarn/moment-2.31.0",
+    "sha": "abcd7f5c95f638e12b2ce0618eefcca9ad6dcec7",
+    "capturedAt": "2026-10-06T03:01:53Z"
+  },
+  {
+    "id": "37309012634",
+    "branch": "dependabot/npm_and_yarn/dev-dependencies-0195ecc859",
+    "sha": "899250a19469cc69a783919c23346dd5f5a53050",
+    "capturedAt": "2026-10-05T12:24:19Z"
+  },
+  {
+    "id": "36719003587",
+    "branch": "main",
+    "sha": "3efa0ff14157d8d933536e5b03c4ff6ebc09cf75",
+    "capturedAt": "2026-09-30T13:32:31Z"
+  }
+]
