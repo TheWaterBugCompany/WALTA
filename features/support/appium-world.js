@@ -7,6 +7,7 @@ const { execFileSync } = require('child_process');
 const { createMockCerdiServer } = require('./mock-cerdi-server');
 const recoverSession = require('./recover-session');
 const dismissPermissionAlert = require('./dismiss-permission-alert');
+const resetToMenu = require('./reset-to-menu');
 
 const APP_ID = 'net.thewaterbug.waterbug';
 
@@ -219,21 +220,39 @@ async function launchAndroidAndWaitForMenu({ restart }) {
     }
 }
 
-// In-app reset via the `walta://reset` deeplink (lib/util/AppReset.js).
+// Reset between scenarios, escalating to a relaunch if the menu never arrives.
 async function softResetInApp() {
+    await resetToMenu({
+        softReset: fireResetDeepLink,
+        waitForMenu: waitForLoggedOutMenu,
+        // A stuck out-of-process sheet goes away with the app that presented
+        // it, and nothing the driver can say to the running app will shift it.
+        relaunch: async () => {
+            console.warn('[appium-world] reset did not reach the logged-out menu — relaunching to clear a stuck sheet');
+            await global.launcher.terminate(APP_ID);
+            await global.launcher.launch(APP_ID, launchArgs());
+        },
+    });
+}
+
+// In-app reset via the `walta://reset` deeplink (lib/util/AppReset.js).
+async function fireResetDeepLink() {
     await global.driver.execute('mobile: deepLink', { url: 'walta://reset', bundleId: global.launcher.appId });
-    // Reset announces the logout (menu shows "Log In") only *after* it has
-    // quiesced any in-flight sync and cleared the token — so the Log In button
-    // is a reliable "reset complete" signal. Polling for it (rather than a
-    // fixed sleep) avoids the race where the next scenario logs in before
-    // reset finishes and reset then nulls the freshly-set token.
-    // The deadline is generous because it is spent on observation, not on the
-    // app: a WDA session that has been up for half an hour takes seconds per
-    // accessibility snapshot, and at 15s that left room for about five looks —
-    // so a reset that had already finished read as one that never happened
-    // (the captured page source showed the logged-out menu each time). Nothing
-    // here waits out a fixed period; it still proceeds the moment the menu is
-    // there, and only a genuinely stuck reset spends the full budget.
+}
+
+// Reset announces the logout (menu shows "Log In") only *after* it has
+// quiesced any in-flight sync and cleared the token — so the Log In button
+// is a reliable "reset complete" signal. Polling for it (rather than a
+// fixed sleep) avoids the race where the next scenario logs in before
+// reset finishes and reset then nulls the freshly-set token.
+// The deadline is generous because it is spent on observation, not on the
+// app: a WDA session that has been up for half an hour takes seconds per
+// accessibility snapshot, and at 15s that left room for about five looks —
+// so a reset that had already finished read as one that never happened
+// (the captured page source showed the logged-out menu each time). Nothing
+// here waits out a fixed period; it still proceeds the moment the menu is
+// there, and only a genuinely stuck reset spends the full budget.
+async function waitForLoggedOutMenu() {
     await global.driver.waitUntil(async () => {
         const el = await global.driver.$('~Log In.');
         return el.isDisplayed().catch(() => false);
