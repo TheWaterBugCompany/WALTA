@@ -621,6 +621,64 @@ describe("Sample model in-progress edit durability", function() {
   });
 });
 
+// An unfinished survey is the user's unsaved work, so losing one is data loss.
+// More than one row can match the in-progress predicate (a blank survey backed
+// out of, a stranded edit copy), and the resume must still land on the survey
+// the user was last working in.
+describe("Sample model in-progress survey handling", function() {
+  beforeEach( clearDatabase );
+
+  function makeInProgressSurvey(attrs) {
+    return makeSampleData(Object.assign({
+      dateCompleted: null,
+      serverSampleId: null,
+    }, attrs));
+  }
+
+  // What `createNewSample` writes: a row with an owner and nothing else.
+  function makeBlankSurvey() {
+    let blank = Alloy.createModel("sample", { serverUserId: 38 });
+    blank.save();
+    return blank;
+  }
+
+  it('resumes the survey holding the work rather than a blank one saved later', async function() {
+    let inFlight = makeInProgressSurvey({ waterbodyName: "in flight" });
+    inFlight.save();
+    makeBlankSurvey();
+
+    let resumed = Alloy.createModel("sample");
+    await resumed.loadCurrent();
+
+    expect( resumed.get("sampleId"), "resumes the survey holding the work" ).to.equal( inFlight.get("sampleId") );
+    expect( resumed.get("waterbodyName") ).to.equal("in flight");
+  });
+
+  function inProgressRows() {
+    let rows = Alloy.createCollection("sample");
+    rows.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL" });
+    return rows.models;
+  }
+
+  it('clears a blank survey instead of leaving it behind when starting another', function() {
+    makeBlankSurvey();
+
+    Alloy.Collections.instance("sample").createNewSample(38);
+
+    expect( inProgressRows().length, "only the new survey is left in progress" ).to.equal(1);
+  });
+
+  it('keeps a survey holding work when starting another', function() {
+    let inFlight = makeInProgressSurvey({ waterbodyName: "in flight" });
+    inFlight.save();
+
+    Alloy.Collections.instance("sample").createNewSample(38);
+
+    expect( _.map(inProgressRows(), (s) => s.get("sampleId")), "the survey holding work survives" )
+      .to.include( inFlight.get("sampleId") );
+  });
+});
+
 describe("Sample model", function() { 
   var initialSampleId;
 
