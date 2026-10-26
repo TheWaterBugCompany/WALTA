@@ -1,0 +1,62 @@
+[
+  {
+    "id": "40321886825",
+    "branch": "dependabot/npm_and_yarn/dev-dependencies-ad1029fb4c",
+    "sha": "111064b2abb51f7b778c39fbdce73abe515ee412",
+    "capturedAt": "2026-10-26T12:23:35Z"
+  },
+  {
+    "id": "40263731399",
+    "branch": "task/wb-384-restart-loses-in-flight-sample",
+    "sha": "bb1af3c0ed1040dbcddf1d4a08b557669b9ea1ec",
+    "capturedAt": "2026-10-26T03:52:01Z"
+  },
+  {
+    "id": "40263207652",
+    "branch": "task/wb-384-restart-loses-in-flight-sample",
+    "sha": "2d6fa1b8d33df5756417704152cb636c36e4a90b",
+    "capturedAt": "2026-10-26T03:25:08Z"
+  },
+  {
+    "id": "40259474118",
+    "branch": "task/wb-384-restart-loses-in-flight-sample",
+    "sha": "4787ed1cba5296f41c3c313e2dec554dc4ff9128",
+    "capturedAt": "2026-10-26T02:59:14Z"
+  },
+  {
+    "id": "39971056421",
+    "branch": "main",
+    "sha": "ba01c84069eee3cbd9e8bcbf93b01ea76f5aad8f",
+    "capturedAt": "2026-10-23T15:06:51Z"
+  },
+  {
+    "id": "39965302394",
+    "branch": "main",
+    "sha": "fa7359c9bf383b1d28aaf3204fe12457b9f27bd8",
+    "capturedAt": "2026-10-23T14:38:49Z"
+  },
+  {
+    "id": "39965354863",
+    "branch": "task/wb-380-ipad-photo-crop",
+    "sha": "12a13c82b9b1d48af58de69ab9d70c4ef4140fe6",
+    "capturedAt": "2026-10-23T14:24:00Z"
+  },
+  {
+    "id": "39953688848",
+    "branch": "task/wb-383-ios-reset-escalation",
+    "sha": "a0b052b8a04593ceea3534d3c428d032fa03c572",
+    "capturedAt": "2026-10-23T12:51:20Z"
+  },
+  {
+    "id": "39740647855",
+    "branch": "task/wb-380-ipad-photo-crop",
+    "sha": "b87678519149537fbef5e502b7de74776e7dd52f",
+    "capturedAt": "2026-10-22T07:54:44Z"
+  },
+  {
+    "id": "39470554425",
+    "branch": "dependabot/npm_and_yarn/follow-redirects-1.16.1",
+    "sha": "b247477d7dfe00e6fb941d9806cd11574d1bc6f2",
+    "capturedAt": "2026-10-20T18:28:03Z"
+  }
+]
