@@ -29,6 +29,20 @@ function countPopulatedFields(sample) {
 	return _.filter(DATA_FIELDS, (f) => hasValue(sample.get(f))).length;
 }
 
+// isBlank() reads numeric fields as empty, so it can't decide anything
+// destructive — a survey with only habitat counts would look discardable.
+function holdsNoWork(sample) {
+	return countPopulatedFields(sample) === 0 && sample.loadTaxa().length === 0;
+}
+
+// A survey started and backed out of holds nothing, but its row still matches
+// the in-progress predicate — left behind it makes the next resume ambiguous.
+function discardBlankSurveys() {
+	let surveys = Alloy.createCollection("sample");
+	surveys.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL AND originalSampleId IS NULL" });
+	_.filter( surveys.models, holdsNoWork ).forEach( (s) => s.destroy() );
+}
+
 // More than one row can match the in-progress predicate — a blank survey that
 // was backed out of, a stranded edit copy — and resuming the wrong one
 // abandons the user's unsaved work, so prefer whichever row holds the most of
@@ -596,6 +610,7 @@ exports.definition = {
 			// Note sets the singleton sample (FIXME?)
 			createNewSample: function(serverUserId) {
 				debug("Creating new sample...");
+				discardBlankSurveys();
 				Alloy.Models.sample = Alloy.createModel("sample");
 				this.add(Alloy.Models.sample);
 				Alloy.Models.sample.set("serverUserId",serverUserId);
