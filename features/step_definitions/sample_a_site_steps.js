@@ -37,6 +37,15 @@ Then('the sample tray is filled with each identification', async function () {
     }
 });
 
+When('the user resumes the survey', { timeout: 120000 }, async function () {
+    // Reopening the survey lands back on site details, already filled in, so
+    // walk forward through the screens the user would to reach their tray.
+    await this.menu.selectWaterbugSurvey();
+    await this.siteDetails.goNext();
+    await this.habitat.goNext();
+    await this.sample.waitFor();
+});
+
 Then('a signal score is calculated and displayed to the user', async function () {
     // Summary calculates SIGNAL score from the taxa collected. Setting
     // accessibilityLabel on the Label masks its text on iOS, so assert
