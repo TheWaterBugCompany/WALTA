@@ -621,6 +621,40 @@ describe("Sample model in-progress edit durability", function() {
   });
 });
 
+// An unfinished survey is the user's unsaved work, so losing one is data loss.
+// More than one row can match the in-progress predicate (a blank survey backed
+// out of, a stranded edit copy), and the resume must still land on the survey
+// the user was last working in.
+describe("Sample model in-progress survey resume", function() {
+  beforeEach( clearDatabase );
+
+  function makeInProgressSurvey(attrs) {
+    return makeSampleData(Object.assign({
+      dateCompleted: null,
+      serverSampleId: null,
+    }, attrs));
+  }
+
+  // What `createNewSample` writes: a row with an owner and nothing else.
+  function makeBlankSurvey() {
+    let blank = Alloy.createModel("sample", { serverUserId: 38 });
+    blank.save();
+    return blank;
+  }
+
+  it('resumes the survey holding the work rather than a blank one saved later', async function() {
+    let inFlight = makeInProgressSurvey({ waterbodyName: "in flight" });
+    inFlight.save();
+    makeBlankSurvey();
+
+    let resumed = Alloy.createModel("sample");
+    await resumed.loadCurrent();
+
+    expect( resumed.get("sampleId"), "resumes the survey holding the work" ).to.equal( inFlight.get("sampleId") );
+    expect( resumed.get("waterbodyName") ).to.equal("in flight");
+  });
+});
+
 describe("Sample model", function() { 
   var initialSampleId;
 
