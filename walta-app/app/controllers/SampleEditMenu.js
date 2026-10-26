@@ -1,17 +1,22 @@
 var Topics = require('ui/Topics');
 
+// Loading into the current-sample singleton would leave it pointing at a
+// finished sample while the user's unfinished survey still sits in the table,
+// and the next "start survey" would replace that survey.
 function onViewClick() {
-    Alloy.Models.instance("sample").loadById($.args.sampleId);
-    Alloy.Collections.instance("taxa").load($.args.sampleId);
+    let viewed = Alloy.createModel("sample");
+    viewed.loadById($.args.sampleId);
+    let viewedTaxa = Alloy.createCollection("taxa");
+    viewedTaxa.load($.args.sampleId);
     Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
-        sample: Alloy.Models.instance("sample"),
-        taxa: Alloy.Collections.instance("taxa"),
+        sample: viewed,
+        taxa: viewedTaxa,
     });
     Topics.fireTopicEvent( Topics.SITEDETAILS, {slide:"right",readonly:true});
 }
 
 function onEditClick() {
-    let sample = Alloy.Models.instance("sample");
+    let sample = Alloy.createModel("sample");
     sample.loadById($.args.sampleId);
     let tempSample = sample.createTemporaryForEdit();
     Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
