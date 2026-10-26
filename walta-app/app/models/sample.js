@@ -19,6 +19,29 @@ let DATA_FIELDS = [ "lat", "lng", "accuracy", "surveyType",
 					"openWater", "edgePlants", "serverSitePhotoId", "sitePhotoPath",
 					"complete", "notes" ];
 
+function hasValue(value) {
+	if ( _.isNull(value) || _.isUndefined(value) ) return false;
+	if ( _.isString(value) ) return value.trim() !== "";
+	return true;
+}
+
+function countPopulatedFields(sample) {
+	return _.filter(DATA_FIELDS, (f) => hasValue(sample.get(f))).length;
+}
+
+// More than one row can match the in-progress predicate — a blank survey that
+// was backed out of, a stranded edit copy — and resuming the wrong one
+// abandons the user's unsaved work, so prefer whichever row holds the most of
+// it. sortBy is stable, so the last key listed is the primary one.
+function holdingMostWork(samples) {
+	return _.chain(samples)
+		.sortBy( (s) => s.get("sampleId") )
+		.sortBy( (s) => countPopulatedFields(s) )
+		.sortBy( (s) => s.loadTaxa().length )
+		.last()
+		.value();
+}
+
 exports.definition = {
 	config: {
 		columns: {
@@ -160,12 +183,11 @@ exports.definition = {
 
 			loadCurrent() {
 				debug("loadCurrent");
-				return new Promise( (resolve,reject) =>
-					this.fetch({ 
-						query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL",
-						success: resolve, 
-						error: reject
-					}));
+				let inProgress = Alloy.createCollection("sample");
+				inProgress.fetch({ query: "SELECT * FROM sample WHERE dateCompleted IS NULL AND serverSampleId IS NULL" });
+				let resumable = holdingMostWork(inProgress.models);
+				if ( !resumable ) return Promise.resolve();
+				return this.loadById( resumable.get("sampleId") );
 			},
 
 			loadById(sampleId) {
