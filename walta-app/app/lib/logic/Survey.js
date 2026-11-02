@@ -12,9 +12,13 @@ exports.Survey = {
 
     startSurvey: function( surveyType ) {
         Alloy.Collections.instance("sample").startNewSurveyIfComplete(surveyType, Alloy.Globals.CerdiApi.retrieveUserId());
+        // Read the taxa off the sample we just settled on: reopening an
+        // unfinished survey leaves the taxa singleton empty, and handing that
+        // over shows an empty tray and reads as the identifications being lost.
+        let sample = Alloy.Models.instance("sample");
         Topics.fireTopicEvent(Topics.SURVEY_STARTED, {
-            sample: Alloy.Models.instance("sample"),
-            taxa: Alloy.Collections.instance("taxa"),
+            sample: sample,
+            taxa: sample.loadTaxa(),
         });
     },
 
