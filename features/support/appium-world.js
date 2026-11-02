@@ -103,6 +103,10 @@ async function connectAndPrepareApp({ platform, isSimulator }) {
 // each window opens in and two screens can settle 180° apart — after which every
 // coordinate Appium sends is inverted and swipes scroll the wrong way. Giving the
 // device a definite orientation leaves nothing to re-resolve.
+//
+// Only the frontmost app's supported orientations count, so this has to wait
+// until Waterbug is foreground: against the portrait-only iPhone Springboard,
+// iOS 26.3 refuses outright with "Unable To Rotate Device".
 async function pinSimulatorLandscape() {
     await global.driver.setOrientation('LANDSCAPE');
 }
@@ -116,7 +120,6 @@ async function prepareIosSimApp() {
     } catch (e) {
         console.warn(`[appium-world] simctl keychain reset failed: ${e.message}`);
     }
-    await pinSimulatorLandscape();
     try { await global.driver.removeApp(appId); } catch (_) {}
     await global.driver.installApp(appPath);
     // "location" not "location-always": the app requests WHEN_IN_USE and
@@ -132,6 +135,7 @@ async function prepareIosSimApp() {
         if (state === 4) break;
         await new Promise(r => setTimeout(r, 500));
     }
+    await pinSimulatorLandscape();
     // index-app requests notification (badge) permission at startup (WB-10); the
     // system alert overlays the menu. Pre-granting it isn't an option — simctl
     // privacy has no notifications service — so dismiss it by tapping. Poll and
