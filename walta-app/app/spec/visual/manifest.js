@@ -376,15 +376,16 @@ function academyServicesAt(level) {
 }
 
 // A trainee who has never trained: starting from the plain white belt, with the
-// one written course ahead of them and Start offered.
+// first course ahead of them and Start offered.
 function academyServices() {
 	return academyServicesAt(0);
 }
 
-// A trainee who has taken that course. The belt beyond it exists but the course
-// that earns it has not been written, so Start is greyed out.
+// A trainee holding the highest belt a written course awards. The belt beyond it
+// exists but the course that earns it has not been written, so Start is greyed
+// out — so this level has to move up as each new course is written.
 function academyUnwrittenServices() {
-	return academyServicesAt(1);
+	return academyServicesAt(2);
 }
 
 function trainingSuccess() {
