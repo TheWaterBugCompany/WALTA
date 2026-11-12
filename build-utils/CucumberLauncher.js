@@ -1,4 +1,5 @@
 import { spawn as defaultSpawn } from "child_process";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { isAppiumRunning as defaultIsAppiumRunning } from "./AppiumLauncher.js";
@@ -28,6 +29,7 @@ class CucumberLauncher {
     tags = "not @skip", name = null, appiumOptions = {}, spawn = defaultSpawn,
     isAppiumRunning = defaultIsAppiumRunning, killProcess = null,
     appiumBin = DEFAULT_APPIUM_BIN, serverStartTimeoutMs = 300_000,
+    retryScenariosIn = null, retryScenariosOut = null,
   } = {}) {
     this._tags = tags;
     this._name = name;
@@ -39,6 +41,8 @@ class CucumberLauncher {
     });
     this._appiumBin = appiumBin;
     this._serverStartTimeoutMs = serverStartTimeoutMs;
+    this._retryScenariosIn = retryScenariosIn;
+    this._retryScenariosOut = retryScenariosOut;
     this._serverPid = null;
   }
 
@@ -75,6 +79,7 @@ class CucumberLauncher {
 
     let { code, sawSummary, output } = await this._runCucumber([
       ...(this._name ? ["--name", this._name] : []),
+      ...nameArgs(this._scenariosToRetry()),
     ]);
 
     if (code !== 0 && !sawSummary) {
@@ -95,18 +100,32 @@ class CucumberLauncher {
           // settled). A fresh Appium session on the same device can't cure it,
           // so escalate to EX_TEMPFAIL and let the CI shell retry on a freshly
           // booted device (WB-203).
+          // The fresh device is what it needs; a second full suite is not, and
+          // on iOS that difference overran the job's ceiling (WB-391).
+          this._recordScenariosToRetry(infra.map(f => f.name));
           this._stopServer();
           return EX_TEMPFAIL;
         }
         // Only dropped sessions — cheaper to re-run those scenarios in-process
         // on a fresh session than to reboot the whole device (WB-200).
-        const nameArgs = infra.flatMap(f => ["--name", `^${escapeRegExp(f.name)}$`]);
-        ({ code } = await this._runCucumber(nameArgs));
+        ({ code } = await this._runCucumber(nameArgs(infra.map(f => f.name))));
       }
     }
 
     this._stopServer();
     return code;
+  }
+
+  // Reading and writing are separate paths on purpose: an attempt that only
+  // writes cannot be narrowed by a list some earlier run left behind.
+  _scenariosToRetry() {
+    if (!this._retryScenariosIn || !fs.existsSync(this._retryScenariosIn)) return [];
+    return fs.readFileSync(this._retryScenariosIn, "utf8").split("\n").filter(Boolean);
+  }
+
+  _recordScenariosToRetry(names) {
+    if (!this._retryScenariosOut) return;
+    fs.writeFileSync(this._retryScenariosOut, names.map(n => `${n}\n`).join(""));
   }
 
   _runCucumber(extraArgs) {
@@ -149,6 +168,12 @@ class CucumberLauncher {
 function failedCount(output) {
   const match = output.match(/\d+ scenarios? \([^)]*?(\d+) failed[^)]*\)/);
   return match ? Number(match[1]) : 0;
+}
+
+// Cucumber matches --name as a regex, so an exact name has to be anchored and
+// escaped or a scenario whose name contains another's would drag it along.
+function nameArgs(names) {
+  return names.flatMap(n => ["--name", `^${escapeRegExp(n)}$`]);
 }
 
 function escapeRegExp(s) {
