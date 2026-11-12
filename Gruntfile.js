@@ -546,12 +546,18 @@ module.exports = function(grunt) {
       const tags = grunt.option('cucumber-tags')
         || (platform === 'ios' ? 'not @skip and not @skip-ios' : 'not @skip and not @skip-android');
       const name = grunt.option('grep') || null;
+      // The CI retry shell hands attempt 1 somewhere to record the scenarios an
+      // environmental failure broke, and gives attempt 2 that list to run (WB-391).
+      const retryScenariosIn = grunt.option('retry-scenarios-in') || null;
+      const retryScenariosOut = grunt.option('retry-scenarios-out') || null;
       const appiumOptions = {
         platform,
         isSimulator: !!grunt.option('simulator'),
       };
       import("./build-utils/CucumberLauncher.js")
-        .then(({ default: CucumberLauncher }) => new CucumberLauncher({ tags, name, appiumOptions }).run())
+        .then(({ default: CucumberLauncher }) => new CucumberLauncher({
+          tags, name, appiumOptions, retryScenariosIn, retryScenariosOut,
+        }).run())
         .then((code) => {
           if (code !== 0) {
             // WB-94: propagate the launcher's specific exit code so the

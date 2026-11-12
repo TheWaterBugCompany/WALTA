@@ -967,10 +967,13 @@ jobs:
     if: needs.changes.outputs.relevant == 'true'
     runs-on: macos-latest
     # Sized for the worst run the retry policy can legitimately produce, not a
-    # healthy one: EX_TEMPFAIL also retries after a FULL first attempt, so the
-    # ceiling has to cover attempt + erase/reboot + attempt (~56 min measured),
-    # and runner speed has been seen to swing 1.77x. Android needs no such
-    # headroom — same script, ~10 min.
+    # healthy one. A single healthy attempt has been measured anywhere from 17
+    # to 48 minutes on the same suite, so the ceiling is read off the top of
+    # that range plus the erase/reboot and the narrowed retry that follows it
+    # (~55 min), never off the average. It used to have to cover a SECOND full
+    # attempt, which at the top of that range cannot fit under any sane ceiling
+    # — that is what run-acceptance-with-retry.sh narrowing the retry fixed.
+    # Android needs no such headroom — same script, ~10 min.
     timeout-minutes: 75
     env:
       # Stable path for the prebuilt WebDriverAgent DerivedData. Cached
