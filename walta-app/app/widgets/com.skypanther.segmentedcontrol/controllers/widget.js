@@ -36,8 +36,7 @@ exports.init = function (labels, cb, opts) {
 	if (opts) {
 		skipindex = opts.skipindex;
 	}
-	var wrapperWidthIsCalculated = false,
-		calculatedWidth;
+	var calculatedWidth;
 	if (typeof cb === 'function') {
 		callback = cb;
 	}
@@ -49,7 +48,6 @@ exports.init = function (labels, cb, opts) {
 			calculatedWidth = Ti.Platform.displayCaps.platformWidth / Ti.Platform.displayCaps.logicalDensityFactor * parseInt($.segCtrlWrapper.width) / 100;
 		} else if (isNaN(parseInt($.segCtrlWrapper.width))) {
 			calculatedWidth = Ti.Platform.displayCaps.platformWidth / Ti.Platform.displayCaps.logicalDensityFactor;
-			wrapperWidthIsCalculated = true;
 		} else {
 			calculatedWidth = parseInt($.segCtrlWrapper.width);
 		}
@@ -70,26 +68,30 @@ exports.init = function (labels, cb, opts) {
 		}
 	}
 
-	var btnWidth = calculatedWidth / labels.length;
-	if (OS_ANDROID) {
-		btnWidth += 'dp';
-	}
+	// The control paints its border inside its own width, so buttons sized to the
+	// full width cover it at both ends.
+	var innerWidth = calculatedWidth - 2 * borderWidth();
+	// A filled width still starts at the outer edge, so the row is placed inside the
+	// border explicitly — left and width, never a right, which would push the row
+	// back out past its parent.
+	$.segCtrlButtonContainer.left = OS_ANDROID ? borderWidth() + 'dp' : borderWidth();
+	$.segCtrlButtonContainer.width = OS_ANDROID ? innerWidth + 'dp' : innerWidth;
+	// The buttons add up to exactly this width, and a horizontal row wraps a child
+	// that misses fitting by a rounding pixel — which drops the last segment's
+	// label out of the control while its divider stays behind.
+	$.segCtrlButtonContainer.horizontalWrap = false;
+	// The remainder goes on the last button so the row adds back up to innerWidth
+	// exactly, at any density or button count.
+	var btnWidth = Math.floor(innerWidth / labels.length);
+	var lastBtnWidth = innerWidth - btnWidth * (labels.length - 1);
 
 	// make our buttons
 	for (var i = 0, j = labels.length; i < j; i++) {
-		if (!wrapperWidthIsCalculated && i === j - 1 && !onThreeDPDevice()) {
-			// if an explicit width has been set, we need to shrink the last button
-			// by 1 or it will be too wide for the container and won't be shown
-			btnWidth = (parseInt(btnWidth) - 1);
-
-			if (OS_ANDROID) {
-				btnWidth += 'dp';
-			}
-		}
+		var width = (i === j - 1) ? lastBtnWidth : btnWidth;
 		var btn = Widget.createController('button', { // jshint ignore:line
 			text: labels[i],
 			accessibilityLabel: labels[i],
-			width: btnWidth,
+			width: OS_ANDROID ? width + 'dp' : width,
 			height: Ti.UI.FILL,
 			left: 0,
 			top: 0,
@@ -109,7 +111,10 @@ exports.init = function (labels, cb, opts) {
 	if (args.withDividers) {
 		var left;
 		for (var i = 0, j = labels.length - 1; i < j; i++) { // jshint ignore:line
-			left = OS_ANDROID ? ((parseInt(btnWidth) * (i + 1) + 1) + 'dp') : (btnWidth * (i + 1) + (!onThreeDPDevice() ? 1 : -1));
+			left = btnWidth * (i + 1) + borderWidth();
+			if (OS_ANDROID) {
+				left += 'dp';
+			}
 			$.segCtrlWrapper.add(Ti.UI.createView({
 				width: OS_ANDROID ? '1dp' : 1,
 				height: height,
@@ -128,13 +133,10 @@ exports.init = function (labels, cb, opts) {
 			x: e.x,
 			y: e.y
 		}, $.segCtrlWrapper);
-		if (OS_ANDROID) {
-			butWid = parseFloat(btnWidth.replace('dp', '')) * Ti.Platform.displayCaps.logicalDensityFactor;
-			clickedButton = Math.floor(point.x / butWid);
-		} else {
-			butWid = btnWidth;
-			clickedButton = Math.floor(point.x / butWid);
-		}
+		butWid = OS_ANDROID ? btnWidth * Ti.Platform.displayCaps.logicalDensityFactor : btnWidth;
+		// The last button carries the rounding remainder, so a click past the end of
+		// the evenly sized ones still belongs to it rather than to no button at all.
+		clickedButton = Math.min(Math.floor(point.x / butWid), buttons.length - 1);
 		if (buttons[clickedButton].disabled) {
 			return;
 		}
@@ -268,9 +270,10 @@ exports.getButtons = function() {
 	return buttons;
 }
 
-function onThreeDPDevice() {
-	// If we are on a 3DP device (6+ or 6s+) we need to slightly adjust the button width.
-	// There appears to be no way to tell if we're running a specific type of iOS sim. So
-	// we'll make the (possibly flawed) assumption that a sim is an @3x device.
-	return OS_IOS && (parseInt(Ti.Platform.displayCaps.logicalDensityFactor) === 3 || Ti.Platform.model === 'Simulator');
+// Titanium draws a one-unit border for a border colour given without a width, so
+// an unset borderWidth still costs the buttons room on both sides.
+function borderWidth() {
+	if (!borderColor || borderColor === 'transparent') return 0;
+	var declared = parseInt($.segCtrlWrapper.borderWidth);
+	return isNaN(declared) ? 1 : declared;
 }
