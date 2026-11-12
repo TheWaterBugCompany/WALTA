@@ -87,7 +87,12 @@
     width: "300dp",
     height: "40dp",
     bottom: "4dp",
-    borderRadius: 6,
+    // The error wrapper rounds and masks this control, so a radius of its own that
+    // disagrees is carved away at both ends: the border dissolves into a tick and
+    // the selected button is left bulging past it. Concentric means the wrapper's
+    // radius less the wrapper's border, and it has to track every bucket the
+    // wrapper scales through.
+    borderRadius: 9,
 	borderColor: "#b4d2d9",
 	selectedButtonColor: Alloy.CFG.colors.primary,
 	unselectedButtonColor: Alloy.CFG.colors.white, 
@@ -99,11 +104,13 @@
 ".tabs[if=Alloy.Globals.isHighRes]": {
     width: "300dp",
     height: "40dp",
+    borderRadius: 19,
 }
 
 ".tabs[if=Alloy.Globals.isXHighRes]": {
     width: "600dp",
     height: "70dp",
+    borderRadius: 45,
 }
 
 "#locationIndicator": {
