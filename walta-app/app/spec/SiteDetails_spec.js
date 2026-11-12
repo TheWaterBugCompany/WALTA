@@ -35,6 +35,44 @@ describe("SiteDetails controller", function() {
 		controllerOpenTest( ctl, done );
     });
 
+    // The control draws its own rounded border, so a button reaching the control's
+    // edge paints over it, and whatever overhangs is carved into a pill by the
+    // rounded mask the error wrapper puts over the top.
+    var CONTROL_BORDER = 1;
+
+    // Button rects are relative to the row that holds them, so the row's own
+    // offset has to come back in to compare them against the bordered control.
+    function buttonBounds( select ) {
+        var buttons = select.getButtons();
+        var last = buttons[ buttons.length - 1 ];
+        var rowX = select.segCtrlButtonContainer.rect.x;
+        return {
+            left: rowX + buttons[0].rect.x,
+            right: rowX + last.rect.x + last.rect.width,
+            width: select.segCtrlWrapper.rect.width
+        };
+    }
+
+    // A horizontal row wraps a child that misses fitting by even a rounding pixel,
+    // and the wrapped button leaves the control's height — the cell still has its
+    // divider, so what shows is a segment that lost its label.
+    it('keeps the survey level buttons on a single row', function(done) {
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
+        controllerOpenTest( ctl, () => checkTestResult( done, () => {
+            var tops = ctl.surveyLevelSelect.getButtons().map( (b) => b.rect.y );
+            expect( _.uniq( tops ), `button tops ${tops}` ).to.have.lengthOf( 1 );
+        }));
+    });
+
+    it('keeps the survey level buttons inside the control border', function(done) {
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
+        controllerOpenTest( ctl, () => checkTestResult( done, () => {
+            var b = buttonBounds( ctl.surveyLevelSelect );
+            var inside = b.left >= CONTROL_BORDER && b.right <= b.width - CONTROL_BORDER;
+            expect( inside, `buttons span ${b.left}..${b.right} in a control ${b.width} wide` ).to.be.true;
+        }));
+    });
+
     it('should save the survey type field', function(done) {   
         ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
 		controllerOpenTest( ctl, function() {
