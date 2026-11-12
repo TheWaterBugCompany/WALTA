@@ -1,6 +1,9 @@
 import sinon from "sinon";
 import { expect } from "chai";
 import { EventEmitter } from "events";
+import fs from "fs";
+import os from "os";
+import path from "path";
 import CucumberLauncher from "../../build-utils/CucumberLauncher.js";
 
 function makeFakeChild() {
@@ -423,7 +426,82 @@ describe("CucumberLauncher", function() {
       expect(fakeSpawn.calledOnce).to.be.true;
     });
   });
+
+  // WB-391: a fresh device is what an environmental failure needs; re-running
+  // every scenario on it is not. Attempt 1 already knows which scenarios the
+  // environment broke, so it writes them down and the CI shell hands the list
+  // to attempt 2. Reading and writing are separate paths on purpose — an
+  // attempt that only writes cannot be narrowed by a list left behind by an
+  // earlier run.
+  describe("narrowing the fresh-device retry", function() {
+    const ENV_MARKER = "[infra-failure] environmental :: ";
+    let scenarioList;
+
+    beforeEach(function() {
+      scenarioList = path.join(os.tmpdir(), `walta-retry-${process.pid}-${Math.random().toString(36).slice(2)}.txt`);
+    });
+
+    afterEach(function() {
+      if (fs.existsSync(scenarioList)) fs.unlinkSync(scenarioList);
+    });
+
+    it("writes the environmentally-failed scenario names when it escalates", async function() {
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn, isAppiumRunning: fakeIsRunning, retryScenariosOut: scenarioList,
+      });
+      const promise = launcher.run();
+      await exitAfterSpawnEmit(fakeSpawn, 0, {
+        stdoutChunks: [
+          `${ENV_MARKER}Sample collection\n`,
+          `${ENV_MARKER}Enter a sample from gallery photos\n`,
+          "17 scenarios (15 passed, 2 failed)\n",
+        ],
+        code: 1,
+      });
+      expect(await promise).to.equal(75);
+      expect(fs.readFileSync(scenarioList, "utf8").split("\n").filter(Boolean))
+        .to.deep.equal(["Sample collection", "Enter a sample from gallery photos"]);
+    });
+
+    it("writes no list when the run never reached a scenario, so the retry covers the whole suite", async function() {
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn, isAppiumRunning: fakeIsRunning, retryScenariosOut: scenarioList,
+      });
+      const promise = launcher.run();
+      await exitAfterSpawn(fakeSpawn, 0, 1);
+      expect(await promise).to.equal(75);
+      expect(fs.existsSync(scenarioList), "nothing to narrow with — the retry must run everything").to.be.false;
+    });
+
+    it("runs only the listed scenarios when handed a retry list", async function() {
+      fs.writeFileSync(scenarioList, "Sample collection\nEnter a sample from gallery photos\n");
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn, isAppiumRunning: fakeIsRunning, retryScenariosIn: scenarioList,
+      });
+      const promise = launcher.run();
+      await exitAfterSpawn(fakeSpawn, 0, 0);
+      await promise;
+      expect(namedScenarios(fakeSpawn.getCall(0)))
+        .to.deep.equal(["^Sample collection$", "^Enter a sample from gallery photos$"]);
+    });
+
+    it("runs the whole suite when the retry list is missing", async function() {
+      const launcher = new CucumberLauncher({
+        spawn: fakeSpawn, isAppiumRunning: fakeIsRunning, retryScenariosIn: scenarioList,
+      });
+      const promise = launcher.run();
+      await exitAfterSpawn(fakeSpawn, 0, 0);
+      await promise;
+      expect(namedScenarios(fakeSpawn.getCall(0))).to.be.empty;
+    });
+  });
 });
+
+// The scenario patterns a spawned cucumber-js was told to run, in order.
+function namedScenarios(spawnCall) {
+  const args = spawnCall.args[1];
+  return args.filter((arg, i) => args[i - 1] === "--name");
+}
 
 // Helper: wait for the spawn at childIndex, emit any stdout/stderr chunks,
 // then exit with the given code. Generalises exitAfterSpawn for tests that

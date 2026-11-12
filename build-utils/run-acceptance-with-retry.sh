@@ -17,10 +17,19 @@
 # state (emulator GPS provider, leaked app state) that a same-device re-run
 # can't cure. Rebooting is a first-class feature on BOTH platforms — the only
 # per-platform difference is the OS-level reboot primitive below.
+#
+# The reboot is what the retry needs; a second full suite is not. Attempt 1
+# records which scenarios the environment broke and attempt 2 runs only those,
+# which is what keeps the pair inside the job's time budget — iOS has been seen
+# to take 48 minutes for a single healthy attempt, so two of them plus the
+# reboot overran the ceiling and the job was cancelled with no verdict (WB-391).
+# When attempt 1 died before reaching any scenario there are no names to record,
+# the list is absent, and attempt 2 correctly falls back to the whole suite.
 set -uo pipefail
 
 PLATFORM="${1:?usage: run-acceptance-with-retry.sh <android|ios>}"
 EX_TEMPFAIL=75
+RETRY_SCENARIOS=/tmp/acceptance-artifacts/retry-scenarios.txt
 
 run_attempt() {
     # Tee the run into the uploaded artifacts so the cucumber "Failed scenarios"
@@ -28,7 +37,7 @@ run_attempt() {
     # (the emulator-runner job log often won't serve). pipefail keeps grunt's
     # exit code as the function's result so the EX_TEMPFAIL logic still works.
     mkdir -p /tmp/acceptance-artifacts
-    npx grunt --platform="$PLATFORM" --simulator --skip-build acceptance-test 2>&1 \
+    npx grunt --platform="$PLATFORM" --simulator --skip-build "$@" acceptance-test 2>&1 \
         | tee -a /tmp/acceptance-artifacts/acceptance-output.log
 }
 
@@ -70,14 +79,21 @@ reset_device() {
     esac
 }
 
+mkdir -p /tmp/acceptance-artifacts
+rm -f "$RETRY_SCENARIOS"
+
 rc=0
-run_attempt || rc=$?
+run_attempt "--retry-scenarios-out=$RETRY_SCENARIOS" || rc=$?
 [ "$rc" -eq 0 ] && exit 0
 [ "$rc" -ne "$EX_TEMPFAIL" ] && exit "$rc"
 
-echo "::warning ::Acceptance attempt 1 was infra/environmental (EX_TEMPFAIL 75); retrying once on a fresh device (WB-203)"
+if [ -s "$RETRY_SCENARIOS" ]; then
+    echo "::warning ::Acceptance attempt 1 was infra/environmental (EX_TEMPFAIL 75); retrying these on a fresh device (WB-203): $(tr '\n' '|' < "$RETRY_SCENARIOS")"
+else
+    echo "::warning ::Acceptance attempt 1 never reached a scenario (EX_TEMPFAIL 75); retrying the whole suite on a fresh device (WB-203)"
+fi
 reset_device
 
 rc=0
-run_attempt || rc=$?
+run_attempt "--retry-scenarios-in=$RETRY_SCENARIOS" || rc=$?
 exit "$rc"
