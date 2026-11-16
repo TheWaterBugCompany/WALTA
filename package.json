@@ -52,7 +52,7 @@
     "image-size": "^2.0.2",
     "jimp": "^1.6.1",
     "leaflet": "^1.9.4",
-    "mocha": "^11.8.0",
+    "mocha": "^12.0.3",
     "moment": "^2.31.0",
     "nock": "^14.0.17",
     "node-ios-device": "^8.0.0",
