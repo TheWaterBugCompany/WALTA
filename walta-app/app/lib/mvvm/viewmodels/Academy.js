@@ -8,7 +8,7 @@ const BeltViewModel = require("./Belt");
 // which is what leaves Start disabled.
 const FIRST_COURSE = 100;
 
-const ACADEMY_URL = "https://waterbugblitz.org.au/academy";
+const ACADEMY_URL = "https://waterbugblitz.org.au";
 
 // State for the Academy training-session start modal, in either of its two
 // moods: offering the course that earns the next belt, or re-opening one whose

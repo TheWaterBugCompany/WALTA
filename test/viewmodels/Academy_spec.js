@@ -99,7 +99,7 @@ describe("AcademyViewModel", function () {
 
     it("sends the reader to this course rather than their next one", function () {
       expect(refresh().introMessage).to.equal(
-        "Go to https://waterbugblitz.org.au/academy on a separate device, and select this course.");
+        "Go to https://waterbugblitz.org.au on a separate device, and select this course.");
     });
 
     it("labels the action for what it does", function () {
