@@ -356,13 +356,13 @@ exports.definition = {
 			},
 
 			calculateWeightedSignalScore(taxa,key) {
-				var count = 0;
-				
+				var totalWeight = 0;
+
 				return (taxa.reduce( (acc,t) => {
-					var n = t.getAbundance();
-					count += n;
-					return acc+this.lookUpSignalScore(t,key)*n;
-				}, 0)/count).toFixed(1);
+					var weight = t.getAbundanceWeight();
+					totalWeight += weight;
+					return acc+this.lookUpSignalScore(t,key)*weight;
+				}, 0)/totalWeight).toFixed(1);
 			},
 
 			transform: function() { 

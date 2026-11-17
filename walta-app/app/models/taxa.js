@@ -2,6 +2,9 @@ var Logger = require('util/Logger');
 var log = (m, tag = "sample") => Logger.log(m, tag);
 var moment = require("lib/moment");
 var { removeFilesBeginningWith } = require('logic/FileUtils');
+
+const ABUNDANCE_BUCKETS = [ "1-2", "3-5", "6-10", "11-20", "> 20" ];
+
 exports.definition = {
 	config: {
 		columns: {
@@ -40,6 +43,15 @@ exports.definition = {
 					if ( abundance.startsWith(">")) return 30;
 					let [ min, max ] = abundance.split("-").map((a) => parseInt(a) );
 					return Math.round((min+max)/2);
+				} else {
+					return undefined;
+				}
+			},
+			// The weighted SIGNAL score weights a taxon by where its bucket sits in this order, not by how many creatures the bucket holds.
+			getAbundanceWeight() {
+				var abundance = this.get("abundance");
+				if ( abundance ) {
+					return ABUNDANCE_BUCKETS.indexOf( abundance ) + 1;
 				} else {
 					return undefined;
 				}
