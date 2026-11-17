@@ -820,14 +820,16 @@ describe("Sample model", function() {
     expect( Alloy.Models.sample.calculateSignalScore(taxa,key) ).to.equal("7.5");
   });
 
-  it('should the calculate the correct weighted SIGNAL score ', function() {
-    var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "11-20" ) ];
-		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.4");
-  });
-
-  it('should the calculate the correct weighted SIGNAL score with >20 ', function() {
-    var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", "> 20" ) ];
-		expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal("9.7"); 
+  // Weights are the abundance bucket's ordinal (1..5), as the website scores — not the bucket's median count, which is what CERDI gets as a creature count.
+  [ [ "1-2",   1, "7.5" ],
+    [ "3-5",   2, "8.3" ],
+    [ "6-10",  3, "8.8" ],
+    [ "11-20", 4, "9.0" ],
+    [ "> 20",  5, "9.2" ] ].forEach( ([ abundance, weight, expected ]) => {
+    it(`should weight a ${abundance} taxon by ${weight} in the weighted SIGNAL score`, function() {
+      var taxa = [ newTaxa("193", "1-2" ), newTaxa("22", abundance ) ];
+      expect( Alloy.Models.sample.calculateWeightedSignalScore(taxa,key) ).to.equal(expected);
+    });
   });
 
 
