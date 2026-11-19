@@ -93,7 +93,10 @@
 
 // The survey button. Placed and sized in percentages so it tracks the
 // stretched backgroundImage on any screen: it has to clear the grey "Waterbug"
-// script, which tails out around 36% of the way down.
+// script, which tails out around 36% of the way down. That is why it sits
+// beside #bigOptions rather than in it — that group carries the safe-area
+// inset, so percentages inside it are measured against a box the backdrop
+// doesn't share, and the button would be a different width on a notched phone.
 "#detailed": {
   top: "41%",
   width: "56%",
