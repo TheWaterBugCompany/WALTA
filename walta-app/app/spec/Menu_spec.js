@@ -23,6 +23,16 @@ describe('Menu controller', function() {
 		actionFiresTopicTest( mnu.detailed, 'click', Topics.DETAILED, () => done() );
 	});
 
+	it('should label the survey button for the action it starts', function() {
+		expect( mnu.detailedLabel.text ).to.equal("Start Survey");
+	});
+
+	// Acceptance tests tap this by accessibility id, and voice control matches
+	// on what is written, so the two have to agree.
+	it('should name the survey button the same way it is written', function() {
+		expect( mnu.detailedLabel.accessibilityLabel ).to.equal( mnu.detailedLabel.text );
+	});
+
 	it('should fire the GALLERY topic', function(done) {
 		actionFiresTopicTest( mnu.gallery, 'click', Topics.GALLERY, () => done() );
 	});

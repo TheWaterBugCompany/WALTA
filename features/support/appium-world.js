@@ -142,7 +142,7 @@ async function prepareIosSimApp() {
     // re-tap until the menu is actually reachable: a one-shot tap misses a late
     // alert and a tap WDA reports as succeeded but that didn't close the alert.
     await dismissPermissionAlert({
-        isDone: () => isDisplayed('~Waterbug Survey.'),
+        isDone: () => isDisplayed('~Start Survey.'),
         tapAccept: () => tapIfDisplayed("-ios predicate string:label == 'Allow'"),
         sleep: (ms) => new Promise(r => setTimeout(r, ms)),
     });
@@ -216,7 +216,7 @@ async function launchAndroidAndWaitForMenu({ restart }) {
     await global.launcher.launch(APP_ID, launchArgs(), { restart, wait: false });
     try {
         await global.driver.waitUntil(
-            () => isDisplayed('~Waterbug Survey.'),
+            () => isDisplayed('~Start Survey.'),
             { timeout: 30000, interval: 500, timeoutMsg: 'menu not shown after Android hard reset' });
     } catch (e) {
         if (restart) throw e;

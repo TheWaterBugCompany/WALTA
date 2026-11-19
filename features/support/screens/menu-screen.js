@@ -4,7 +4,7 @@ const waitForSettled = require('../wait-for-settled');
 class MenuScreen extends BaseScreen {
     constructor( world ) {
         super( world );
-        this.presenceSelector = this.selector("Waterbug Survey");
+        this.presenceSelector = this.selector("Start Survey");
     }
 
     // On iOS the Menu tears down and re-opens when LOGGEDIN fires, so a click
@@ -39,7 +39,7 @@ class MenuScreen extends BaseScreen {
         // moving was not enough — a stationary menu has swallowed the tap too, and
         // the app then sits here until SiteDetails' own waitFor fails, minutes
         // later and blaming the wrong screen. Tap until the survey actually opens.
-        await this.clickUntil( this.selector("Waterbug Survey"),
+        await this.clickUntil( this.selector("Start Survey"),
             () => this.world.siteDetails.isPresent() );
         await this.world.siteDetails.waitFor();
     }
