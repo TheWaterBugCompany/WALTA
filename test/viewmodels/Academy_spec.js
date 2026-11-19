@@ -33,6 +33,11 @@ describe("AcademyViewModel", function () {
     expect(vm.nextBeltVm.tipColor).to.equal(Belts.at(1).tipColor);
   });
 
+  it("sends the reader to the Academy section to find their next course", function () {
+    expect(build({ level: 0 }).introMessage).to.equal(
+      "Go to https://waterbugblitz.org.au on a separate device, and find your next course in the Academy section.");
+  });
+
   it("starts the course that earns the next belt", function () {
     const vm = build({ level: 0 });
     let started = null;
@@ -99,7 +104,7 @@ describe("AcademyViewModel", function () {
 
     it("sends the reader to this course rather than their next one", function () {
       expect(refresh().introMessage).to.equal(
-        "Go to https://waterbugblitz.org.au on a separate device, and select this course.");
+        "Go to https://waterbugblitz.org.au on a separate device, and find this course in the Academy section.");
     });
 
     it("labels the action for what it does", function () {

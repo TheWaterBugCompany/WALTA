@@ -149,7 +149,7 @@ describe("Academy controller", function () {
       .to.equal("You've already earned this belt, but you can refresh your knowledge:");
     expect(view.nextMessage.visible).to.equal(false);
     expect(view.introMessage.text).to.equal(
-      "Go to https://waterbugblitz.org.au on a separate device, and select this course.");
+      "Go to https://waterbugblitz.org.au on a separate device, and find this course in the Academy section.");
   });
 
   it("offers Start only for a course that has been written", function () {
