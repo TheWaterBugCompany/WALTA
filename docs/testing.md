@@ -97,7 +97,7 @@ target screen appears, retrying — via the shared
 
 ```js
 await dismissPermissionAlert({
-    isDone:    () => isDisplayed('~Waterbug Survey.'),         // alert gone once the menu is reachable
+    isDone:    () => isDisplayed('~Start Survey.'),         // alert gone once the menu is reachable
     tapAccept: () => tapIfDisplayed("… label == 'Allow'"),    // no-op if it isn't showing
     sleep,
 });
