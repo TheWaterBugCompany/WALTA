@@ -11,9 +11,9 @@
 				<View>
 
 				</View>
-				<View id="detailed">
-					<Label id="detailedLabel" class="bigMenuText" text="Start Survey" accessibilityLabel="Start Survey"/>
-				</View>
+			</View>
+			<View id="detailed">
+				<Label id="detailedLabel" class="bigMenuText" text="Start Survey" accessibilityLabel="Start Survey"/>
 			</View>
 			<View id="smallOptions" layout="horizontal">
 				<View id="identify" class="smallButton">
