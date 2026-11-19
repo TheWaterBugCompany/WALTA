@@ -65,11 +65,11 @@ class AcademyViewModel extends ChangeNotifier {
   }
 
   // The course is picked for the trainee either way, so the instruction names
-  // which one to find on the website.
+  // which one to find. The link is the site, not the course listing, so it also
+  // has to say which part of the site the courses live in.
   get introMessage() {
-    return this.isRefresh
-      ? `Go to ${ACADEMY_URL} on a separate device, and select this course.`
-      : `Go to ${ACADEMY_URL} on a separate device, and select your next course.`;
+    const course = this.isRefresh ? "this course" : "your next course";
+    return `Go to ${ACADEMY_URL} on a separate device, and find ${course} in the Academy section.`;
   }
 
   get actionLabel() { return this.isRefresh ? "Refresh" : "Start"; }
