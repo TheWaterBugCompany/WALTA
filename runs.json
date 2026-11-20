@@ -1,0 +1,62 @@
+[
+  {
+    "id": "44679397105",
+    "branch": "main",
+    "sha": "6b4351c20139fdc617beaf7564b8ca7ea7ea9491",
+    "capturedAt": "2026-11-20T05:39:38Z"
+  },
+  {
+    "id": "44675720836",
+    "branch": "main",
+    "sha": "d4182561a3322d8eeb51dc68bb867ec019b242dd",
+    "capturedAt": "2026-11-20T05:13:38Z"
+  },
+  {
+    "id": "44675605906",
+    "branch": "task/wb-395-start-survey-button",
+    "sha": "6afe6a256f0adb8ede9b8e4defada437b1ae3773",
+    "capturedAt": "2026-11-20T05:07:08Z"
+  },
+  {
+    "id": "44666524024",
+    "branch": "task/wb-395-start-survey-button",
+    "sha": "2e3b81e50e9f3860c815f6031a5ba4aed8637b7d",
+    "capturedAt": "2026-11-20T03:39:20Z"
+  },
+  {
+    "id": "44463754022",
+    "branch": "task/wb-395-start-survey-button",
+    "sha": "e8bdb94af2f578b794a42d0fc575ed70e1e92408",
+    "capturedAt": "2026-11-19T05:44:06Z"
+  },
+  {
+    "id": "44459704688",
+    "branch": "task/wb-393-academy-url",
+    "sha": "fc4dc9f7a25bdcb7d1f119d7f63716f137e9dedd",
+    "capturedAt": "2026-11-19T05:15:28Z"
+  },
+  {
+    "id": "44457508979",
+    "branch": "task/wb-395-start-survey-button",
+    "sha": "d8bf5b3c973907ef1b9f25bd8142932b5474f510",
+    "capturedAt": "2026-11-19T04:46:49Z"
+  },
+  {
+    "id": "44452734401",
+    "branch": "task/wb-393-academy-url",
+    "sha": "742acb094b5483ed3456eafd30e83878144ee345",
+    "capturedAt": "2026-11-19T04:24:15Z"
+  },
+  {
+    "id": "44452368602",
+    "branch": "main",
+    "sha": "9e3b0f28b679fd8b04319b11d10c9749b9f877b5",
+    "capturedAt": "2026-11-19T04:06:37Z"
+  },
+  {
+    "id": "44065815504",
+    "branch": "task/wb-393-academy-url",
+    "sha": "60b55fd24daa80df0f3df631605c254cba3b7b75",
+    "capturedAt": "2026-11-17T10:56:43Z"
+  }
+]
