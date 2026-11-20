@@ -24,13 +24,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.25"
-     inkscape:cx="1522"
-     inkscape:cy="1110"
-     inkscape:window-width="1504"
+     inkscape:zoom="0.1767767"
+     inkscape:cx="115.96551"
+     inkscape:cy="2684.1773"
+     inkscape:window-width="1980"
      inkscape:window-height="1210"
-     inkscape:window-x="139"
-     inkscape:window-y="30"
+     inkscape:window-x="428"
+     inkscape:window-y="47"
      inkscape:window-maximized="0"
      inkscape:current-layer="layer1"
      showguides="true"><sodipodi:guide
@@ -328,7 +328,7 @@
          in2="comp1"
          id="feComposite93" /></filter></defs><path
      style="fill:none;fill-opacity:1;stroke:#d1e9f6;stroke-width:57.9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.697161;marker-end:url(#Triangle)"
-     d="m 82.55,259.29166 c 258.01923,-2.5205 426.16444,-3.06328 534.45832,30.69167 94.83558,29.56003 79.27835,93.04171 61.38334,130.17499 -32.2563,66.93386 -112.34156,95.13891 -223.30834,105.83334 -125.96614,12.14 -401.470898,-3.51906 -375.70832,131.23333 9.57891,50.10294 -0.368586,69.23336 50.42254,113.79564 96.30681,84.49609 327.27502,57.81014 393.4575,55.67522"
+     d="m 82.55,259.29166 c 258.01923,-2.5205 426.16444,-3.06328 534.45832,30.69167 94.83558,29.56003 79.27835,93.04171 61.38334,130.17499 -32.2563,66.93386 -112.34156,95.13891 -223.30834,105.83334 -125.96614,12.14 -401.470898,-3.51906 -375.70832,131.23333 9.57891,50.10294 -0.368586,69.23336 50.42254,113.79564 96.30681,84.49609 270.61925,53.04764 336.80173,50.91272"
      id="path81"
      sodipodi:nodetypes="csssssc"
      inkscape:label="squish" /><g
@@ -1213,7 +1213,7 @@
          xml:space="preserve"
          transform="matrix(0.26458333,0,0,0.26458333,-100.54167,-29.633333)"
          id="text94"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:42.6667px;line-height:1.3;font-family:Geneva;-inkscape-font-specification:'Geneva, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect94);fill:none;fill-opacity:1;stroke:#606060;stroke-width:4.91339;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.697161" /></g><g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:42.6667px;line-height:1.3;font-family:Geneva;-inkscape-font-specification:'Geneva, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect94);display:inline;fill:none;fill-opacity:1;stroke:#606060;stroke-width:4.91339;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.697161" /></g><g
        id="g30-1-7"
        transform="matrix(0.97964544,0,0,0.98733853,-129.82909,694.83193)"
        inkscape:label="analysis"><g
@@ -1258,7 +1258,8 @@
        id="image1-20"
        x="583.71039"
        y="731.13196"
-       style="filter:url(#filter93)" /><image
+       style="filter:url(#filter93)"
+       transform="matrix(1.2683736,0,0,1.2009606,-197.69887,-162.03878)" /><image
        width="230.36394"
        height="208.85213"
        preserveAspectRatio="none"
@@ -1267,7 +1268,8 @@
        x="533.10944"
        y="857.06458"
        style="display:inline;filter:url(#filter85)"
-       inkscape:label="landuse" /><g
+       inkscape:label="landuse"
+       transform="matrix(1.218276,0,0,1.1535257,-132.99513,-145.85631)" /><g
        id="g92"
        transform="translate(-1.0583333,-22.225)"><rect
          style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.209;stroke-dasharray:none;stroke-opacity:1"
@@ -1321,7 +1323,7 @@
            x="220.65039"
            y="1074.4488"
            id="tspan51">www.waterbugblitz.org.au</tspan></text><rect
-         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.0741622;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.697161"
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.0741622;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.697161"
          id="rect89"
          width="195.81752"
          height="92.100822"
