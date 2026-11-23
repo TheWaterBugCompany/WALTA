@@ -96,6 +96,24 @@ describe("IosSimulatorLauncher", function() {
       expect(bootstatus.args[1]).to.deep.equal(["simctl", "bootstatus", UDID]);
     });
 
+    // The simulator's framebuffer is always the device's physical one, so what
+    // the app owns decides what a screenshot holds. Left portrait, iPadOS gives a
+    // landscape-locked app a scaled window on a portrait screen and the capture
+    // is a shrunken, sideways picture of it that no quarter turn recovers. Turned
+    // landscape, the app has the whole display and the frame comes back upright.
+    it("turns the device landscape, so the app's landscape UI has the whole display", async function() {
+      const fakeExecFile = makeExecFile({
+        [`simctl boot ${UDID}`]: "",
+        [`simctl bootstatus ${UDID}`]: "",
+        [`devicectl device orientation set -d ${UDID} landscapeLeft`]: "New Device Orientation: landscapeLeft",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      await launcher.connect();
+      const rotate = fakeExecFile.getCalls().find(c => c.args[1][0] === "devicectl");
+      expect(rotate, "expected the device to be turned landscape after boot").to.exist;
+      expect(rotate.args[1]).to.deep.equal(["devicectl", "device", "orientation", "set", "-d", UDID, "landscapeLeft"]);
+    });
+
     it("retries a transient boot failure and succeeds on the retry", async function() {
       // A contended runner can fail `simctl boot` with a fatal that lands
       // before cucumber, so the exit-75 infra retry never sees it. Retry here.
