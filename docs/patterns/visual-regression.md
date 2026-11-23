@@ -27,7 +27,7 @@ The handshake directory is cleared by the **host, before the app is launched**. 
 1. A dedicated run mode. `index.js` dispatches on the `visual_capture` launch arg (set by `--visual`/the `visual-test` task) to [`VisualCapture.js`](../../walta-app/app/controllers/VisualCapture.js) instead of the app or the mocha runner — reusing the test-sim binary. See [`RuntimeMode`](../../walta-app/app/lib/util/RuntimeMode.js).
 2. Capture. [`spec/visual/captureScreens.js`](../../walta-app/app/spec/visual/captureScreens.js) renders each entry in [`spec/visual/manifest.js`](../../walta-app/app/spec/visual/manifest.js) with its spec fixtures (no live GPS/network/navigation) and settles. By default the **host** then grabs the actual simulator/emulator **framebuffer** (the runner holds the screen and emits a `VISUAL_FRAMEBUFFER_READY` marker). A screen can opt into an in-app `view.toImage()` snapshot instead with `capture: "toimage"`.
 3. Settle gate. [`waitForStable`](../../walta-app/app/lib/util/waitForStable.js) re-captures until two consecutive `toImage()` blobs are the same size. This is essential: `postlayout` fires *before* lazy tiles (Speedbug) and async photos (TaxonDetails) finish drawing, so capturing on `postlayout` alone yields blank frames. (`toImage()` is used only as the settle signal here — it reflects native layout cheaply.)
-4. Collect + diff. The `visual-collect` grunt task streams the device log: on each `VISUAL_FRAMEBUFFER_READY` it screenshots the frame (iOS `simctl io`, rotated to landscape; Android `adb screencap`), and on `VISUAL_CAPTURE_DONE` it pulls any `toimage` PNGs (iOS `simctl get_app_container`; Android `run-as` tar stream, since the app dir isn't world-readable). Each is diffed against the baseline with [`compareScreenshots`](../../build-utils/visual/compareScreenshots.js) (pixelmatch); mismatches get a baseline/actual diff image for the CI artifact.
+4. Collect + diff. The `visual-collect` grunt task streams the device log: on each `VISUAL_FRAMEBUFFER_READY` it screenshots the frame (iOS `simctl io` on a device turned landscape; Android `adb screencap`), and on `VISUAL_CAPTURE_DONE` it pulls any `toimage` PNGs (iOS `simctl get_app_container`; Android `run-as` tar stream, since the app dir isn't world-readable). Each is diffed against the baseline with [`compareScreenshots`](../../build-utils/visual/compareScreenshots.js) (pixelmatch); mismatches get a baseline/actual diff image for the CI artifact.
 5. Report. The run is recorded as `results.json` and its baselines copied in beside the captures ([`persistRun`](../../build-utils/visual/persistRun.js)), then [`buildReport`](../../build-utils/visual/buildReport.js) renders `builds/visual/report.html` — see below.
 
 ## The review page
@@ -77,7 +77,27 @@ The runner therefore pins the landscape it captures in (`CAPTURE_LANDSCAPE` in [
 - `Ti.Gesture.orientation` is the *physical* device orientation, which a simulator that has never been rotated reports as `UNKNOWN`.
 - a window's `orientation` reports the *interface* orientation, which stays put while the window itself renders rotated — measured directly: with the runner's root window pinned to `LANDSCAPE_LEFT`, the first screen demonstrably rendered left (its capture came out a half-turn from the baseline) while reporting `LANDSCAPE_RIGHT`, as did every other screen in the run.
 
-Because the landscape is pinned, the host's turn is a **constant** (`img.rotate(90)` in [`IosSimulatorLauncher`](../../build-utils/IosSimulatorLauncher.js)). Both directions produce a landscape image of the right size, so neither the shape nor code review can tell a wrong constant from a right one — only the pixels can. The direction is covered by a spec that marks a corner of the frame and asserts where it lands, and the run-to-run stability by comparing a capture against the reference *and* against the reference turned 180°.
+## The simulator device is turned landscape, not just the picture
+
+`connect()` turns the device itself landscape before anything is captured:
+
+```sh
+xcrun devicectl device orientation set -d <udid> landscapeLeft
+```
+
+`simctl` has no orientation command — this is `devicectl`, and it is a plain CLI, so it works on a headless CI runner with no Simulator.app (or DeviceHub.app) running.
+
+It is needed because a landscape-locked app on a portrait device is handled differently per platform, and only one of those is capturable. iOS hands an iPhone the whole display and draws the UI sideways into the portrait framebuffer — recoverable with a quarter turn. iPadOS keeps the display portrait and scales the app into a window on it, so the frame holds a shrunken, already-upright picture of the app surrounded by dead space; a quarter turn only lays that on its side. Turned landscape, every simulator gives the app its whole display the right way up, and iPad captures come back full-screen at full resolution instead of a scaled window.
+
+The host's quarter turn (`img.rotate(90)` in [`IosSimulatorLauncher`](../../build-utils/IosSimulatorLauncher.js)) is kept as a backstop for a runtime that accepts the orientation without honouring it, and fires on no leg we run today. It is a **constant**, because the landscape is pinned at both ends: both directions produce a landscape image of the right size, so neither the shape nor code review can tell a wrong constant from a right one — only the pixels can. The direction is covered by a spec that marks a corner of the frame and asserts where it lands, and the run-to-run stability by comparing a capture against the reference *and* against the reference turned 180°.
+
+Turning the device changes no iPhone pixels: the same leg captured with and against the turn came back identical on all 44 screens. Android needs none of this — the tablet AVD's natural orientation *is* landscape, and the phone AVDs rotate themselves because the app sets `screenOrientation="sensorLandscape"`. Pinning `user_rotation` there would turn the tablet into portrait.
+
+## A capture is refused while something else is in front
+
+The framebuffer holds whatever the OS composited, app or not — a system dialog over the screen makes a well-drawn frame of the wrong thing, and every later check passes it. So the collector asks Android which window has focus (`dumpsys window`, `mCurrentFocus`) and re-grabs rather than acking a frame taken behind a foreign one. iOS has no equivalent, so the check stays off there rather than guessing.
+
+Waiting is right for an intruder that clears on its own — an app still arriving in the foreground is the common case. It is wrong for one that never clears: a tablet leg once spent two 600s attempts behind the same launcher window and uploaded no screenshots at all, with the app alive and signalling ready the whole time. After 15s behind the same window the collector therefore puts the app back in front (`bringToForeground`, an `am start` with no `-S`, so a run already under way is rescued rather than restarted) and goes on waiting. The host's own timeout stays the only clock.
 
 ## Baselines are renderer-specific
 
