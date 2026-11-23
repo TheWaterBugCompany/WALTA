@@ -24,6 +24,12 @@ function runtimeName(runtime) {
   return match ? `${match[1]} ${match[2].replace(/-/g, ".")}` : runtime;
 }
 
+// The landscape the capture runner pins the app to (Ti.UI.LANDSCAPE_RIGHT) seen
+// from the device's side. The two frameworks name the same quarter turn
+// differently, so this pairing is the measured one, not the matching name: it is
+// what renders the app upright in the framebuffer.
+const LANDSCAPE = "landscapeLeft";
+
 class IosSimulatorLauncher {
   constructor({ execFile = defaultExecFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)", sleep = (ms) => new Promise(r => setTimeout(r, ms)) } = {}) {
     this._execFile = execFile;
@@ -71,8 +77,19 @@ class IosSimulatorLauncher {
     }
     if (lastErr) throw lastErr;
     await this._exec(["simctl", "bootstatus", this._udid], { timeout: 180000 });
+    await this._turnLandscape();
     this._booted = true;
     return this;
+  }
+
+  // The app is landscape-locked, and what it does with a portrait device differs
+  // by platform: iOS hands an iPhone the whole display and draws the UI sideways
+  // into it, while iPadOS keeps the display portrait and scales the app into a
+  // window on it. Turning the device itself landscape removes the difference —
+  // every simulator then gives the app its whole display the right way up, and a
+  // screenshot is a picture of the app rather than of a window holding it.
+  async _turnLandscape() {
+    await this._exec(["devicectl", "device", "orientation", "set", "-d", this._udid, LANDSCAPE]);
   }
 
   async launch(appId, appPath, launchArgs) {
@@ -189,12 +206,11 @@ class IosSimulatorLauncher {
 
   // Captures the actual simulator framebuffer (unlike toImage(), this includes
   // WebView / video / map content) and writes it upright-landscape to destPath.
-  // The simulator screenshots the device's *physical* framebuffer, which is
-  // portrait, while the app is landscape-locked — so it is turned a quarter to
-  // match. Which quarter depends on the landscape the app rendered in, and the
-  // capture runner pins that (Ti.UI.LANDSCAPE_RIGHT) precisely so this is a
-  // constant: nothing here can tell the two apart from the pixels, and neither
-  // can code review, since both give a landscape image of the right size.
+  // The device is turned landscape at connect, so the framebuffer is landscape
+  // and already upright. The quarter turn below is what the capture relied on
+  // before that, back when the device was left portrait and the app was drawn
+  // sideways into it; it is kept as a backstop for a runtime that accepts the
+  // orientation without honouring it, and fires on no leg we run today.
   async screenshotFramebuffer(destPath) {
     // simctl resolves relative paths against its own cwd, not ours — pass absolute.
     const abs = path.resolve(destPath);
