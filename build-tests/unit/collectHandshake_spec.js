@@ -235,6 +235,44 @@ describe("collectHandshake foreign windows", function () {
         expect(result.count).to.equal(1);
     });
 
+    // Waiting was the whole strategy, and a launcher that never gives the app
+    // focus back beat it: an Android tablet leg spent two 600s attempts behind
+    // the same launcher window and uploaded no screenshots at all. Holding is
+    // right for an intruder that clears on its own; for one that doesn't, the
+    // only thing that ends the wait is putting the app back in front.
+    it("brings the app back to the front when a window stays in the way", async function() {
+        const launcher = fakeLauncherWithWindows([["Menu.ready"]], [ANR_DIALOG]);
+        launcher.foregrounded = [];
+        launcher.bringToForeground = async (appId) => { launcher.foregrounded.push(appId); };
+        const { now, sleep } = fakeClock();
+        try {
+            await collectHandshake({
+                launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 60000, pollMs: 100, now, sleep,
+                looksBlank: async () => false, fingerprint: stillFrame,
+            });
+        } catch (e) { /* the run still times out; what matters is that it tried */ }
+        expect(launcher.foregrounded).to.not.be.empty;
+        expect(launcher.foregrounded[0]).to.equal("com.thewaterbugcompany.walta");
+    });
+
+    // An app still arriving in the foreground is the common case, and poking it
+    // mid-launch is how a capture run gets restarted for no reason.
+    it("leaves an intruder that clears on its own alone", async function() {
+        const launcher = fakeLauncherWithWindows([
+            ["Menu.ready"],
+            ["Menu.ready"],
+            ["Menu.ready", "capture-done"],
+        ], [ANR_DIALOG, APP_WINDOW]);
+        launcher.foregrounded = [];
+        launcher.bringToForeground = async (appId) => { launcher.foregrounded.push(appId); };
+        const { now, sleep } = fakeClock();
+        await collectHandshake({
+            launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 60000, pollMs: 100, now, sleep,
+            looksBlank: async () => false, fingerprint: stillFrame,
+        });
+        expect(launcher.foregrounded).to.be.empty;
+    });
+
     // The runner holds the screen until it is acked, so there is nothing to race:
     // the host's own timeout is the only clock. An earlier version had a second
     // one — a fixed attempt budget — which failed a leg five seconds in while an

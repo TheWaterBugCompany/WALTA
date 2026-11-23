@@ -136,6 +136,7 @@ describe("AndroidEmulatorLauncher", function() {
         streamLogs: sinon.stub().returns(() => {}),
         captureDiagnostics: sinon.stub().resolves("device state"),
         foregroundWindow: sinon.stub().resolves("Window{1 u0 net.thewaterbug.waterbug/x}"),
+        bringToForeground: sinon.stub().resolves(),
       };
       launcher = new AndroidEmulatorLauncher({ execFile: fakeExecFile, innerLauncher: fakeLauncher });
       await launcher.connect();
@@ -181,6 +182,14 @@ describe("AndroidEmulatorLauncher", function() {
       const report = await launcher.captureDiagnostics("com.example.app");
       expect(fakeLauncher.captureDiagnostics.calledWith("com.example.app")).to.be.true;
       expect(report).to.equal("device state");
+    });
+
+    // Same reason as foregroundWindow below: undelegated, the collector cannot
+    // see the method, so its recovery silently does nothing on the emulator —
+    // which is the only place a leg has ever been stranded behind a launcher.
+    it("delegates bringToForeground() to the inner launcher", async function() {
+      await launcher.bringToForeground("com.example.app");
+      expect(fakeLauncher.bringToForeground.calledWith("com.example.app")).to.be.true;
     });
 
     // Without this the visual collector's foreign-window check silently stays

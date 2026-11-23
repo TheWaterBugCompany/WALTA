@@ -33,6 +33,13 @@ const BLANK_ATTEMPTS = 3;
 // those must not strand the runner or lose the screens queued behind it.
 const SETTLE_ATTEMPTS = 4;
 
+// How long a window stays in the way before the collector stops waiting for it
+// to clear and puts the app back in front. An app still arriving in the
+// foreground is the common case and clears in well under this, so it is never
+// poked mid-launch; a launcher that has taken focus and is not giving it back
+// never clears at all, and waiting on it costs the whole run.
+const RECOVER_AFTER_MS = 15000;
+
 // The window the OS has focused, when it belongs to something other than the app
 // under capture. Launchers that can't answer (iOS has no equivalent of dumpsys)
 // leave the check off rather than guessing.
@@ -40,6 +47,18 @@ async function foreignWindow(launcher, appId) {
     if (!launcher.foregroundWindow) return null;
     const focused = await launcher.foregroundWindow();
     return focused && !focused.includes(appId) ? focused : null;
+}
+
+// Put the app back in front. Only some launchers can — and a failure here is
+// not the capture's failure, so it is noted and the wait goes on.
+async function bringToFront(launcher, appId, note) {
+    if (!launcher.bringToForeground) return;
+    note("  visual: the app is still not in front — bringing it back");
+    try {
+        await launcher.bringToForeground(appId);
+    } catch (e) {
+        note(`  visual: could not bring the app to the front (${e && e.message ? e.message : e})`);
+    }
 }
 
 export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, pollMs = 200, now, sleep, log,
@@ -55,6 +74,7 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
     const settleTries = new Map();
     const lastFrame = new Map();
     let obscuredBy = null;
+    let obscuredSince = 0;
     const deadline = clock() + timeoutMs;
     let reachable = null;
 
@@ -103,6 +123,10 @@ export async function collectHandshake({ launcher, appId, actualDir, timeoutMs, 
                     if (obscuredBy !== intruder) {
                         note(`  visual: ${name} came back behind ${intruder}, holding until it clears`);
                         obscuredBy = intruder;
+                        obscuredSince = clock();
+                    } else if (clock() - obscuredSince >= RECOVER_AFTER_MS) {
+                        obscuredSince = clock();
+                        await bringToFront(launcher, appId, note);
                     }
                     continue;
                 }

@@ -141,6 +141,17 @@ class AndroidLauncher {
     }
   }
 
+  // Put the app back in front without restarting it. The capture collector calls
+  // this when a window — a launcher that has taken focus and is not giving it
+  // back — has been standing in front of the app long enough that waiting for it
+  // to clear has stopped being plausible. No `-S`: the run already under way is
+  // the thing being rescued, and force-stopping it would throw the run away.
+  async bringToForeground(appId) {
+    await this.connect();
+    await this._exec(["shell", "am", "start", "-a", "android.intent.action.MAIN",
+      "-c", "android.intent.category.LAUNCHER", "-p", appId]);
+  }
+
   async terminate(appId) {
     await this.connect();
     await this._exec(["shell", "am", "force-stop", appId]);

@@ -619,3 +619,18 @@ describe("AndroidLauncher.foregroundWindow()", function() {
     expect(await launcher.foregroundWindow()).to.equal(null);
   });
 });
+
+// Resuming the app's existing task, not restarting it: a capture run that is
+// part-way through has state the restart would throw away. `-S` is what the
+// launch path uses to force a fresh JS runtime; this path must not.
+describe("AndroidLauncher.bringToForeground()", function() {
+  it("starts the app's launcher activity without force-stopping it", async function() {
+    const execFile = makeExecFile({ "devices": DEVICES_OUTPUT });
+    const launcher = new AndroidLauncher({ execFile });
+    await launcher.bringToForeground("net.thewaterbug.waterbug");
+    const start = execFile.getCalls().map(c => c.args[1]).find(a => a.includes("start"));
+    expect(start, "expected an am start for the app").to.exist;
+    expect(start).to.include("net.thewaterbug.waterbug");
+    expect(start, "must not force-stop a run in progress").to.not.include("-S");
+  });
+});
