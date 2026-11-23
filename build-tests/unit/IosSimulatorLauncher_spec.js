@@ -96,22 +96,18 @@ describe("IosSimulatorLauncher", function() {
       expect(bootstatus.args[1]).to.deep.equal(["simctl", "bootstatus", UDID]);
     });
 
-    // The simulator's framebuffer is always the device's physical one, so what
-    // the app owns decides what a screenshot holds. Left portrait, iPadOS gives a
-    // landscape-locked app a scaled window on a portrait screen and the capture
-    // is a shrunken, sideways picture of it that no quarter turn recovers. Turned
-    // landscape, the app has the whole display and the frame comes back upright.
-    it("turns the device landscape, so the app's landscape UI has the whole display", async function() {
+    // Turning a simulator needs a tool only some toolchains have, and booting one
+    // must not depend on it: every leg but the visual capture boots a simulator
+    // and none of them care which way up it is.
+    it("boots without touching the orientation, which not every toolchain can set", async function() {
       const fakeExecFile = makeExecFile({
         [`simctl boot ${UDID}`]: "",
         [`simctl bootstatus ${UDID}`]: "",
-        [`devicectl device orientation set -d ${UDID} landscapeLeft`]: "New Device Orientation: landscapeLeft",
       });
       const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
       await launcher.connect();
-      const rotate = fakeExecFile.getCalls().find(c => c.args[1][0] === "devicectl");
-      expect(rotate, "expected the device to be turned landscape after boot").to.exist;
-      expect(rotate.args[1]).to.deep.equal(["devicectl", "device", "orientation", "set", "-d", UDID, "landscapeLeft"]);
+      expect(fakeExecFile.getCalls().find(c => c.args[1][0] === "devicectl"),
+        "booting should not need the orientation tool").to.not.exist;
     });
 
     it("retries a transient boot failure and succeeds on the retry", async function() {
@@ -167,6 +163,50 @@ describe("IosSimulatorLauncher", function() {
       } catch (err) {
         expect(err.message).to.match(/requires a udid/);
       }
+    });
+  });
+
+  // The simulator's framebuffer is always the device's physical one, so what the
+  // app owns decides what a screenshot holds. Left portrait, iPadOS gives a
+  // landscape-locked app a scaled window on a portrait screen and the capture is
+  // a shrunken, sideways picture of it that no quarter turn recovers. Turned
+  // landscape, the app has the whole display and the frame comes back upright.
+  describe("turnLandscape()", function() {
+    it("turns the device, so the app's landscape UI has the whole display", async function() {
+      const fakeExecFile = makeExecFile({
+        [`devicectl device orientation set -d ${UDID} landscapeLeft`]: "New Device Orientation: landscapeLeft",
+      });
+      const launcher = new IosSimulatorLauncher({ execFile: fakeExecFile, udid: UDID });
+      expect(await launcher.turnLandscape()).to.deep.include({ turned: true });
+      const turn = fakeExecFile.getCalls().find(c => c.args[1][0] === "devicectl");
+      expect(turn.args[1]).to.deep.equal(["devicectl", "device", "orientation", "set", "-d", UDID, "landscapeLeft"]);
+    });
+
+    // Older toolchains answer "not found" for a simulator that is booted and
+    // right there — they can only address physical devices. The capture is worth
+    // having whichever way up it comes out, so this is reported, not thrown.
+    it("reports the device was left as it booted when the tool cannot address simulators", async function() {
+      const notFound = new Error("Command failed: xcrun devicectl device orientation set\n"
+        + "ERROR: The specified device was not found. (com.apple.dt.CoreDeviceError error 1000 (0x3E8))");
+      const launcher = new IosSimulatorLauncher({
+        execFile: makeExecFile({ "devicectl device orientation set": notFound }), udid: UDID,
+      });
+      const result = await launcher.turnLandscape();
+      expect(result.turned).to.equal(false);
+      expect(result.reason, "the reason belongs in the log the caller writes").to.be.a("string").that.is.not.empty;
+    });
+
+    // Anything else is a real failure of a tool that does work here, and
+    // swallowing it would hand back captures that are silently the wrong way up.
+    it("fails when the tool is there and the turn did not work", async function() {
+      const launcher = new IosSimulatorLauncher({
+        execFile: makeExecFile({ "devicectl device orientation set": new Error("ERROR: The device is locked.") }),
+        udid: UDID,
+      });
+      let raised = null;
+      try { await launcher.turnLandscape(); } catch (e) { raised = e; }
+      expect(raised, "expected the failure to surface").to.exist;
+      expect(raised.message).to.contain("locked");
     });
   });
 

@@ -977,6 +977,15 @@ module.exports = function(grunt) {
       getLauncher(platform, grunt.option('simulator'))
         .then(async (launcher) => {
           await launcher.connect();
+          // Before the app starts, so it lays out once, at the size it keeps for
+          // the whole capture. Only this leg asks: nothing else cares which way
+          // up the device is, and not every toolchain can turn one.
+          if (typeof launcher.turnLandscape === 'function') {
+            const landscape = await launcher.turnLandscape();
+            if (!landscape.turned) {
+              grunt.log.writeln(`  visual: capturing the device as it booted — ${landscape.reason}`);
+            }
+          }
           await launcher.clearVisualCaptureFiles(APP_ID, { subdir: 'visual' });
         })
         .then(done)

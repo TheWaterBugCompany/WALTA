@@ -30,6 +30,11 @@ function runtimeName(runtime) {
 // what renders the app upright in the framebuffer.
 const LANDSCAPE = "landscapeLeft";
 
+// devicectl addresses simulators only from Xcode 27 on. Older toolchains answer
+// this for a simulator that is booted and right there, having looked for a
+// physical device of that name and found none.
+const NO_SUCH_DEVICE = /specified device was not found|CoreDeviceError error 1000/;
+
 class IosSimulatorLauncher {
   constructor({ execFile = defaultExecFile, spawn = defaultSpawn, udid = null, logProcessName = "Waterbug(TitaniumKit)", sleep = (ms) => new Promise(r => setTimeout(r, ms)) } = {}) {
     this._execFile = execFile;
@@ -77,7 +82,6 @@ class IosSimulatorLauncher {
     }
     if (lastErr) throw lastErr;
     await this._exec(["simctl", "bootstatus", this._udid], { timeout: 180000 });
-    await this._turnLandscape();
     this._booted = true;
     return this;
   }
@@ -88,8 +92,20 @@ class IosSimulatorLauncher {
   // window on it. Turning the device itself landscape removes the difference —
   // every simulator then gives the app its whole display the right way up, and a
   // screenshot is a picture of the app rather than of a window holding it.
-  async _turnLandscape() {
-    await this._exec(["devicectl", "device", "orientation", "set", "-d", this._udid, LANDSCAPE]);
+  //
+  // Only the visual capture cares, so only it asks: a toolchain that cannot turn
+  // a simulator would otherwise take every leg that boots one down with it. When
+  // it can't, the caller is told rather than thrown at, and the capture goes
+  // ahead whichever way up the simulator booted.
+  async turnLandscape() {
+    await this.connect();
+    try {
+      await this._exec(["devicectl", "device", "orientation", "set", "-d", this._udid, LANDSCAPE]);
+      return { turned: true };
+    } catch (err) {
+      if (!NO_SUCH_DEVICE.test(err.message)) throw err;
+      return { turned: false, reason: "this Xcode's devicectl cannot address simulators (needs Xcode 27)" };
+    }
   }
 
   async launch(appId, appPath, launchArgs) {
@@ -206,11 +222,11 @@ class IosSimulatorLauncher {
 
   // Captures the actual simulator framebuffer (unlike toImage(), this includes
   // WebView / video / map content) and writes it upright-landscape to destPath.
-  // The device is turned landscape at connect, so the framebuffer is landscape
-  // and already upright. The quarter turn below is what the capture relied on
-  // before that, back when the device was left portrait and the app was drawn
-  // sideways into it; it is kept as a backstop for a runtime that accepts the
-  // orientation without honouring it, and fires on no leg we run today.
+  // A device turned landscape gives a landscape framebuffer that is already
+  // upright; one left portrait — because the toolchain could not turn it — gives
+  // a portrait one holding the app drawn sideways, which the quarter turn below
+  // recovers. It recovers an iPhone that way, not an iPad, whose portrait frame
+  // holds an upright app scaled into a window; see docs/patterns/visual-regression.md.
   async screenshotFramebuffer(destPath) {
     // simctl resolves relative paths against its own cwd, not ours — pass absolute.
     const abs = path.resolve(destPath);
