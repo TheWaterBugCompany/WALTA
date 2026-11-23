@@ -108,6 +108,7 @@ class AndroidEmulatorLauncher {
   async screenshotFramebuffer(destPath) { await this.connect(); return this._inner.screenshotFramebuffer(destPath); }
   async captureDiagnostics(appId) { await this.connect(); return this._inner.captureDiagnostics(appId); }
   async foregroundWindow() { await this.connect(); return this._inner.foregroundWindow(); }
+  async bringToForeground(appId) { await this.connect(); return this._inner.bringToForeground(appId); }
   async describeDevice() { await this.connect(); return this._inner.describeDevice(); }
   getDriver() { return null; }
 }
