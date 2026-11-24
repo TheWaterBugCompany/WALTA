@@ -4,12 +4,15 @@
   height: "96%"
 }
 
+// Sized by what it holds. The buttons scale with the screen band — a tablet
+// gives them a 34dp font — and a bar fixed at phone proportions either clips
+// them or leaves them squeezed against each other.
 "#buttonBar": {
   horizontalWrap: false,
   bottom: "1%",
   right: 0,
-  width: "250dp",
-  height: "50dp"
+  width: Ti.UI.SIZE,
+  height: Ti.UI.SIZE
 }
 
 "#locateButton": {
@@ -28,14 +31,15 @@
   height: "30dp"
 }
 
+// No width here: these are .actionButton, which sizes itself for the band, and
+// a width set over it is a phone's width applied to every screen — on a tablet
+// the title no longer fits and renders as an ellipsis.
 "#cancelButton": {
   backgroundColor: "#ef8b8b",
-  left: "5%",
-  width: "80dp"
+  left: "5%"
 }
 
 "#saveButton": {
   backgroundColor: "#92d050",
-  left: "5%",
-  width: "80dp"
+  left: "5%"
 }

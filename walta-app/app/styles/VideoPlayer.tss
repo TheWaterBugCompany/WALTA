@@ -14,6 +14,10 @@
     autoplay: false,
     backgroundColor: "black",
     mediaControlStyle:Ti.Media.VIDEO_CONTROL_FULLSCREEN,
-    scalingMode:Titanium.Media.VIDEO_SCALING_MODE_FILL,
+    // The SDK defines VIDEO_SCALING_RESIZE, _RESIZE_ASPECT and
+    // _RESIZE_ASPECT_FILL — and nothing else. A name outside that set resolves
+    // to undefined without complaint and the player quietly fits the video
+    // inside the view instead, which is the letterbox bars above and below it.
+    scalingMode: Ti.Media.VIDEO_SCALING_RESIZE_ASPECT_FILL,
     showsControls: false
 }

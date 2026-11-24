@@ -35,6 +35,44 @@ describe("LocationEntry controller", function() {
     closeWindow( win, done );
   });
 
+  // What the title needs, measured the same way the button measures it: a label
+  // with the same text and font, left to size itself. A button narrower than
+  // this renders its title as an ellipsis, which is what the tablet band did —
+  // the class scales the font to 34dp there, while the button kept a width set
+  // for a phone.
+  function widthNeededFor( button ) {
+    var probe = Ti.UI.createLabel({ text: button.title, font: button.font,
+      width: Ti.UI.SIZE, height: Ti.UI.SIZE });
+    win.add( probe );
+    var needed = probe.rect.width;
+    win.remove( probe );
+    return needed;
+  }
+
+  describe('on a tablet', function() {
+    var wasXHighRes;
+    beforeEach( function(done) {
+      wasXHighRes = Alloy.Globals.isXHighRes;
+      Alloy.Globals.isXHighRes = true;
+      createMap();
+      windowOpenTest( win, done );
+    });
+    afterEach( function() { Alloy.Globals.isXHighRes = wasXHighRes; });
+
+    it('gives the Close and Save buttons room for their titles', function() {
+      [ scr.cancelButton, scr.saveButton ].forEach( function( button ) {
+        expect( button.rect.width, 'the title "' + button.title + '" does not fit its button' )
+          .to.be.at.least( widthNeededFor( button ) );
+      });
+    });
+
+    it('keeps the buttons inside the bar that holds them', function() {
+      var bar = scr.buttonBar.rect;
+      var last = scr.saveButton.rect;
+      expect( last.x + last.width ).to.be.at.most( bar.width );
+    });
+  });
+
   it('should display overlay', function(done) {
     createMap();
     windowOpenTest( win, done );
