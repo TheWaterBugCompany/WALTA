@@ -16,6 +16,23 @@ describe('VideoView', function() {
 	    closeWindow( ctl.getView(), done );
 	});
 
+    // The stylesheet asked for a constant the SDK does not define, so scalingMode
+    // was set to undefined and the player fell back to fitting the video inside
+    // the view — the letterbox bars above and below it on every device. A name
+    // that does not resolve fails silently, so the test is that the player ends
+    // up with a scaling mode at all, and that it is the one that fills.
+    it('fills the screen with the video rather than letterboxing it', function(done) {
+        controllerOpenTest( ctl, function() {
+            checkTestResult( done, function() {
+                expect( Ti.Media.VIDEO_SCALING_RESIZE_ASPECT_FILL,
+                    'the SDK no longer defines the scaling constant this asserts on' ).to.not.be.undefined;
+                expect( ctl.videoPlayer.scalingMode,
+                    'scalingMode is unset, so the video is fitted inside the view' ).to.not.be.undefined;
+                expect( ctl.videoPlayer.scalingMode ).to.equal( Ti.Media.VIDEO_SCALING_RESIZE_ASPECT_FILL );
+            });
+        });
+    });
+
 	it('should fire the complete event when the video has finished playing', function(done) {
         function success() {
             ctl.videoPlayer.removeEventListener("complete", success);

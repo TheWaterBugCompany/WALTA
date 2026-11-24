@@ -29,12 +29,15 @@
 }
 
 
+// Each column carries a 2% gap before it, so the two widths and the two gaps
+// have to come to 100% or less. At 50/50 they came to 104% and the photo
+// selector was pushed off the right of the screen.
 "#left[if=Alloy.Globals.isXHighRes]" : {
-    width: "50%"
+    width: "48%"
 }
 
 "#right[if=Alloy.Globals.isXHighRes]" : {
-    width: "50%"
+    width: "48%"
 }
 
 "#photoSelectWrapper" : {
@@ -107,8 +110,12 @@
     borderRadius: 19,
 }
 
+// In dp, and narrow enough for the column it sits in on the smallest tablet
+// we render at: at 600dp it measured 605 and lost the end of "Detailed" and
+// "Lake/Dam" off the side. Not a percentage — the segmented control divides a
+// dp width between its buttons and drops the ones it cannot place.
 ".tabs[if=Alloy.Globals.isXHighRes]": {
-    width: "600dp",
+    width: "540dp",
     height: "70dp",
     borderRadius: 45,
 }

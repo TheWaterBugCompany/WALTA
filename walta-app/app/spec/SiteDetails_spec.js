@@ -30,6 +30,33 @@ describe("SiteDetails controller", function() {
         ctl = null;
     });
     
+    // The two columns sit side by side in a horizontal row, each with a 2% gap
+    // before it, so their widths and those gaps have to come to 100% or less.
+    // On the tablet band they came to 104% and the right-hand column — the
+    // photo selector — was pushed off the edge of the screen.
+    it("keeps both columns on screen on a tablet", async function() {
+        var wasXHighRes = Alloy.Globals.isXHighRes;
+        Alloy.Globals.isXHighRes = true;
+        try {
+            ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
+            await controllerOpenTest( ctl );
+            await waitFor( () => ctl.content.rect.width > 0 && ctl.right.rect.width > 0 );
+            var rightEdge = ctl.right.rect.x + ctl.right.rect.width;
+            expect( rightEdge, "the right column runs past the content it sits in" )
+                .to.be.at.most( ctl.content.rect.width );
+            // Narrowing a column to make the row fit is only a fix if what is in
+            // the column still fits it: the tab controls are a fixed width and
+            // lose the end of "Detailed" and "Lake/Dam" to a column cut short.
+            [ ctl.surveyLevelSelect, ctl.waterbodyTypeSelect ].forEach( function( widget ) {
+                var tabs = widget.getView();
+                expect( tabs.rect.x + tabs.rect.width, "a tab control runs past the column holding it" )
+                    .to.be.at.most( ctl.left.rect.width );
+            });
+        } finally {
+            Alloy.Globals.isXHighRes = wasXHighRes;
+        }
+    });
+
 	it('should display the SiteDetails view', function(done) {
         ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
 		controllerOpenTest( ctl, done );
