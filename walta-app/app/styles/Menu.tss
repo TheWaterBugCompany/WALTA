@@ -4,11 +4,6 @@
   backgroundImage: "/images/menu-background.png"
 }
 
-".container[if=Alloy.Globals.isSquare]": { 
-  top: "10%",
-  height: "60%" 
-}
-
 // A corner ribbon: a horizontal bar laid across the top-right corner and
 // rotated 45 degrees about its centre, so both ends run off screen.
 "#belt": {

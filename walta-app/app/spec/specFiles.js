@@ -8,6 +8,7 @@ module.exports = [
   "CloseButton",
   "VideoView",
   "AnchorBar",
+  "TopLevelWindowLayout",
   "TaxonList",
   "Habitat",
   "KeyNode",

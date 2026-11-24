@@ -15,11 +15,13 @@ function openWindow() {
 	if ( $.TopLevelWindow.title ) {
 		anchorBar.setTitle( $.TopLevelWindow.title );
 		$.content.width = Ti.UI.FILL;
-		
 		if ( Alloy.Globals.isSquare ) {
-			$.content.top = "10%";
-			$.content.height = "80%";
-			anchorBar.getView().height = "5%";
+			// The bar is anchored to the bottom, so the content is anchored to the
+			// top: left to a composite window's centring it sits half a gap down
+			// and hides its last tenth behind the bar.
+			$.content.top = 0;
+			$.content.height = "90%";
+			anchorBar.getView().height = "10%";
 		} else {
 			$.content.height = "90%";
 			anchorBar.getView().height = "10%";
