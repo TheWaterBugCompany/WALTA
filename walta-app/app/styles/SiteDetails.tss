@@ -29,15 +29,19 @@
 }
 
 
-// Each column carries a 2% gap before it, so the two widths and the two gaps
-// have to come to 100% or less. At 50/50 they came to 104% and the photo
-// selector was pushed off the right of the screen.
+// Each column carries a 2% gap before it and nothing after the last one, so the
+// trailing margin is whatever the widths leave over: they have to come to 96%
+// for the gutter past the photo selector to match the three before it. At 50/50
+// they came to 104% and the selector was pushed off the right of the screen; at
+// 48/48 it reached the edge exactly and had no margin at all.
 "#left[if=Alloy.Globals.isXHighRes]" : {
     width: "48%"
 }
 
+// The 2% comes out of this column rather than the other one: the left holds the
+// tab controls, which are a fixed dp wide and drop buttons they cannot place.
 "#right[if=Alloy.Globals.isXHighRes]" : {
-    width: "48%"
+    width: "46%"
 }
 
 "#photoSelectWrapper" : {
@@ -82,8 +86,11 @@
     borderRadius: 25,
     borderWidth: "6dp",
 }
+// In dp, because a bare number is points on iOS and raw pixels on Android: at
+// 50 the iPad drew a 50dp curve into a 37dp half-height and flared the ends out
+// to points, while the Android tablet drew the 25dp this asks for.
 ".errorWrap[if=Alloy.Globals.isXHighRes]": {
-    borderRadius: 50,
+    borderRadius: "25dp",
     borderWidth: "5px"
 }
 ".tabs" : {
@@ -117,7 +124,7 @@
 ".tabs[if=Alloy.Globals.isXHighRes]": {
     width: "540dp",
     height: "70dp",
-    borderRadius: 45,
+    borderRadius: "22dp",
 }
 
 "#locationIndicator": {
