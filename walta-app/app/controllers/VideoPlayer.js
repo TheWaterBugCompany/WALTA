@@ -9,6 +9,8 @@ var Topics = require('ui/Topics');
 
 exports.baseController  = "TopLevelWindow";
 $.name = "video-player";
+// Full bleed: inset for the home indicator and the window's white shows through.
+$.TopLevelWindow.useUnSafeArea = true;
 $.videoPlayer.url = $.args.url;
 
 $.TopLevelWindow.addEventListener('close', function cleanUp() {

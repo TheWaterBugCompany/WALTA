@@ -1,7 +1,7 @@
 require("spec/lib/ti-mocha");
 var Topics = require('ui/Topics');
 var { expect } = require("spec/lib/chai");
-var { checkTestResult, closeWindow, controllerOpenTest } = require("spec/util/TestUtils");
+var { checkTestResult, closeWindow, controllerOpenTest, waitFor } = require("spec/util/TestUtils");
 
 describe('VideoView', function() {
 	var ctl;
@@ -66,6 +66,12 @@ describe('VideoView', function() {
         } 
         ctl.videoPlayer.addEventListener("complete", first );
         controllerOpenTest( ctl, function() {} );
+    });
+
+    it('should fill the window it was given, under the home indicator', async function() {
+        await controllerOpenTest( ctl );
+        await waitFor( () => ctl.isSafeAreaApplied() );
+        expect( ctl.content.rect.height ).to.equal( ctl.TopLevelWindow.rect.height );
     });
 
     it('should pause the video if the screen is clicked',function(done){
