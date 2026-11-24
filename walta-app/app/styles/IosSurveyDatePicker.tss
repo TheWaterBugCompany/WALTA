@@ -1,13 +1,16 @@
+// As tall as the calendar in it, not as tall as the screen it opens over.
+// Pinned top and bottom it was square on a phone and a tall empty strip on a
+// tablet; what keeps it inside a short screen is the calendar scaling in
+// fitPickerToCard, which measures against the screen rather than this card.
 "#pickerWindow": {
     width: "380dp",
-    top: "12dp",
-    bottom: "12dp",
+    height: Ti.UI.SIZE,
     borderWidth: "1dp",
     borderRadius: "12dp"
 }
 "#pickerCard": {
     width: Ti.UI.FILL,
-    height: Ti.UI.FILL
+    height: Ti.UI.SIZE
 }
 "#pickerFrame": {
     width: Ti.UI.FILL,

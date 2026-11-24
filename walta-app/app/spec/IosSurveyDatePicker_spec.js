@@ -25,6 +25,21 @@ describe("IosSurveyDatePicker controller", function () {
   });
   afterEach(async () => { if (win) await closeWindow(win); });
 
+  // The dialog was pinned 12dp from the top and bottom of whatever it opened
+  // over, so its height came from the screen rather than from the calendar in
+  // it. On a phone in landscape that is close to square and looks deliberate;
+  // on a tablet it is a tall narrow strip with the calendar at the top and two
+  // thirds of it empty.
+  it("is only as tall as what it holds", function () {
+    // Siblings in the card, so all three are measured against the same parent
+    // — a child's rect is relative to what contains it, not to the dialog.
+    var content = ctl.titleBar.rect.height + ctl.pickerFrame.rect.height
+        + ctl.buttonBar.rect.height;
+    var deadSpace = ctl.pickerWindow.rect.height - content;
+    expect( deadSpace, "empty dialog around what it holds (" + ctl.pickerWindow.rect.height
+        + " tall for " + content + " of content)" ).to.be.at.most( 40 );
+  });
+
   it("seeds an inline date picker with the given date", function () {
     expect(ctl.datePicker.type).to.equal(Ti.UI.PICKER_TYPE_DATE);
     if (OS_IOS) {
