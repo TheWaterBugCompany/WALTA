@@ -81,6 +81,10 @@ describe("TopLevelWindow layout", function () {
 	describe("on a wide screen", function () {
 		beforeEach(function () { return openSquare(false); });
 
+		it("starts the content at the top of the window", function () {
+			expect(geometry().content.y).to.equal(0);
+		});
+
 		it("gives the whole window to the content and the anchor bar", function () {
 			var g = geometry();
 			expect(g.content.height + g.bar.height).to.equal(g.window.height);
