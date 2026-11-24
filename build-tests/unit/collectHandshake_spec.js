@@ -216,6 +216,8 @@ function fakeLauncherWithWindows(snapshots, windows) {
 
 const APP_WINDOW = "Window{a1 u0 com.thewaterbugcompany.walta/org.appcelerator.titanium.TiActivity}";
 const ANR_DIALOG = "Window{b2 u0 Application Not Responding: com.google.android.apps.nexuslauncher}";
+// A system dialog drawn over the app, which keeps the foreground throughout.
+const OVERLAY_WINDOW = "Window{c3 u0 ImmersiveModeConfirmation}";
 
 describe("collectHandshake foreign windows", function () {
     it("grabs a screen again rather than acking one shot behind a system dialog", async function () {
@@ -253,6 +255,26 @@ describe("collectHandshake foreign windows", function () {
         } catch (e) { /* the run still times out; what matters is that it tried */ }
         expect(launcher.foregrounded).to.not.be.empty;
         expect(launcher.foregrounded[0]).to.equal("com.thewaterbugcompany.walta");
+    });
+
+    // The dialog that wedged an Android tablet leg sat over an app that had
+    // never left the foreground, so every re-launch was a no-op: thirteen of
+    // them in one run, each logged as a rescue. An app that is already in front
+    // cannot be brought there, and saying so is the difference between a
+    // diagnosable log and a misleading one.
+    it("does not try to bring back an app that is already in front", async function() {
+        const launcher = fakeLauncherWithWindows([["Menu.ready"]], [OVERLAY_WINDOW]);
+        launcher.foregroundApp = async () => "com.thewaterbugcompany.walta";
+        launcher.foregrounded = [];
+        launcher.bringToForeground = async (appId) => { launcher.foregrounded.push(appId); };
+        const { now, sleep } = fakeClock();
+        try {
+            await collectHandshake({
+                launcher, appId: "com.thewaterbugcompany.walta", actualDir: "/out", timeoutMs: 60000, pollMs: 100, now, sleep,
+                looksBlank: async () => false, fingerprint: stillFrame,
+            });
+        } catch (e) { /* it still times out; the point is that it did not pretend to fix it */ }
+        expect(launcher.foregrounded, "the app never left, so there is nothing to bring back").to.be.empty;
     });
 
     // An app still arriving in the foreground is the common case, and poking it

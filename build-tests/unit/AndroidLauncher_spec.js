@@ -36,6 +36,14 @@ const STAY_AWAKE_RESPONSES = {
   "-s emulator-5554 shell input keyevent KEYCODE_WAKEUP": "",
 };
 
+// Find a call by what it does rather than by where it falls in the sequence:
+// a device-preparation step added before it should not fail every assertion
+// about the commands that follow.
+function callWith(execFile, ...words) {
+  return execFile.getCalls().map(c => c.args[1])
+    .find(a => words.every(w => a.includes(w)));
+}
+
 describe("AndroidLauncher", function() {
   // The pin is read from the environment, so each test starts without one.
   let savedSerial;
@@ -154,7 +162,7 @@ describe("AndroidLauncher", function() {
       });
       const launcher = new AndroidLauncher({ execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
-      expect(fakeExecFile.getCall(4).args[1]).to.deep.equal([
+      expect(callWith(fakeExecFile, "am", "start")).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start", "-W",
         "-a", "android.intent.action.MAIN",
@@ -172,7 +180,7 @@ describe("AndroidLauncher", function() {
       });
       const launcher = new AndroidLauncher({ activity: ".WaterbugActivity", execFile: fakeExecFile });
       await launcher.launch("net.thewaterbug.waterbug");
-      expect(fakeExecFile.getCall(4).args[1]).to.deep.equal([
+      expect(callWith(fakeExecFile, "am", "start")).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start", "-W", "-n", "net.thewaterbug.waterbug/.WaterbugActivity"
       ]);
@@ -206,9 +214,9 @@ describe("AndroidLauncher", function() {
       await launcher.launch("net.thewaterbug.waterbug", "./builds/unit-test/Waterbug.apk");
       const allArgs = fakeExecFile.getCalls().map(c => c.args[1]);
       expect(allArgs).to.not.deep.include(["-s", "emulator-5554", "uninstall", "net.thewaterbug.waterbug"]);
-      expect(fakeExecFile.getCall(3).args[1]).to.deep.equal(["-s", "emulator-5554", "install", "-r", "-g", "./builds/unit-test/Waterbug.apk"]);
-      expect(fakeExecFile.getCall(4).args[1]).to.deep.equal(["-s", "emulator-5554", "logcat", "-c"]);
-      expect(fakeExecFile.getCall(5).args[1]).to.deep.equal([
+      expect(callWith(fakeExecFile, "install")).to.deep.equal(["-s", "emulator-5554", "install", "-r", "-g", "./builds/unit-test/Waterbug.apk"]);
+      expect(callWith(fakeExecFile, "logcat", "-c")).to.deep.equal(["-s", "emulator-5554", "logcat", "-c"]);
+      expect(callWith(fakeExecFile, "am", "start")).to.deep.equal([
         "-s", "emulator-5554",
         "shell", "am", "start", "-W",
         "-a", "android.intent.action.MAIN",
@@ -595,6 +603,10 @@ describe("AndroidLauncher", function() {
 const FOCUS_CMD = "-s emulator-5554 shell dumpsys window";
 const LAUNCHER_FOCUS = "  mCurrentFocus=Window{4301d29 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n";
 const APP_FOCUS = "  mCurrentFocus=Window{2b1f9a4 u0 net.thewaterbug.waterbug/org.appcelerator.titanium.TiActivity}\n";
+// The full-screen confirmation holds the focus while the app stays in front.
+const OVERLAY_FOCUS = "  mCurrentFocus=Window{636ac98 u0 ImmersiveModeConfirmation}\n";
+const APP_FOCUSED_ACTIVITY = "  mFocusedApp=ActivityRecord{3453397 u0 net.thewaterbug.waterbug/org.appcelerator.titanium.TiActivity t11}\n";
+const LAUNCHER_FOCUSED_ACTIVITY = "  mFocusedApp=ActivityRecord{98c21 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t3}\n";
 
 describe("AndroidLauncher.foregroundWindow()", function() {
   function launcherWith(focusOutput) {
@@ -618,6 +630,47 @@ describe("AndroidLauncher.foregroundWindow()", function() {
     const { launcher } = launcherWith("  mCurrentFocus=null\n");
     expect(await launcher.foregroundWindow()).to.equal(null);
   });
+});
+
+// A full-screen app draws a system dialog over itself the first time it hides
+// the bars — "Viewing full screen, to exit swipe down from the top" — and it
+// waits for a tap that a capture run never gives it. It is a real window over
+// the app, so every frame taken behind it is a frame of the dialog.
+describe("AndroidLauncher.launch() device preparation", function() {
+	it("tells the device not to ask about full screen", async function() {
+		const execFile = makeExecFile({ "devices": DEVICES_OUTPUT, ...STAY_AWAKE_RESPONSES });
+		const launcher = new AndroidLauncher({ execFile });
+		await launcher.launch("net.thewaterbug.waterbug");
+		const settings = execFile.getCalls().map(c => c.args[1])
+			.find(a => a.includes("settings") && a.includes("immersive_mode_confirmations"));
+		expect(settings, "expected the full-screen confirmation to be suppressed").to.exist;
+		expect(settings).to.include("confirmed");
+	});
+});
+
+// Which window has input focus and which app is in front are different
+// questions. A system dialog takes the focus without the app ever leaving the
+// foreground, and the answer decides whether anything can be done about it:
+// an app that is already in front cannot be brought there.
+describe("AndroidLauncher.foregroundApp()", function() {
+	function launcherWith(out) {
+		return new AndroidLauncher({ execFile: makeExecFile({ "devices": DEVICES_OUTPUT, [FOCUS_CMD]: out }) });
+	}
+
+	it("names the app in front even while a dialog holds the focus", async function() {
+		const launcher = launcherWith(OVERLAY_FOCUS + APP_FOCUSED_ACTIVITY);
+		expect(await launcher.foregroundApp()).to.contain("net.thewaterbug.waterbug");
+	});
+
+	it("names the other app when one is genuinely in front", async function() {
+		const launcher = launcherWith(LAUNCHER_FOCUS + LAUNCHER_FOCUSED_ACTIVITY);
+		expect(await launcher.foregroundApp()).to.contain("nexuslauncher");
+	});
+
+	it("answers nothing when the device reports no focused app", async function() {
+		const launcher = launcherWith("  mFocusedApp=null\n");
+		expect(await launcher.foregroundApp()).to.equal(null);
+	});
 });
 
 // Resuming the app's existing task, not restarting it: a capture run that is
