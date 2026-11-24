@@ -1,3 +1,35 @@
+ON A TABLET, ANYTHING AT ALL (fixed)
+This build is mostly about the iPad, where several screens were laid out for a
+phone. Every screen is worth a glance on a tablet if you have one. Nothing here
+changes what the app does — only where things sit — so anything that looks
+cramped, cut off, or stretched is worth reporting even if it still works.
+
+THE WHOLE SCREEN IS USED (fixed)
+Any screen with a title bar. There used to be a strip of dead white above the
+content and the bottom tenth of it hid behind the bar. Content should now start
+at the top of the screen and stop where the bar begins. This one affects phones
+too, not just tablets.
+
+SITE DETAILS ON A TABLET (fixed)
+Start a survey. The photo panel on the right was pushed off the edge of the
+screen; it should now sit fully on screen with the same margin down the right
+as the form has down the left. The Survey level and Waterbody type selectors
+should read Mayfly / Quick / Detailed and River / Wetland / Lake/Dam in full,
+with gently rounded ends — not ends drawn out into points.
+
+VIDEO (fixed)
+Any creature video. It should fill the screen corner to corner: no white strip
+along the bottom, and no black bars down the sides.
+
+PICKING A LOCATION BY HAND (fixed)
+Site Details > tap the coordinates > the map. The Close and Save buttons were
+rendering as "..." on a tablet; they should show their full titles on any
+device.
+
+CHOOSING THE SURVEY DATE (fixed, iOS)
+Site Details > tap the date. The picker was a tall narrow strip down the middle
+of a tablet screen; it should now be about the size of the calendar it holds.
+
 ACADEMY WITHOUT A CODE (changed)
 Menu > Academy. There is no 3-digit code any more: the screen shows the belt you
 are wearing and the belt your next course earns, and Start just goes. Start is
