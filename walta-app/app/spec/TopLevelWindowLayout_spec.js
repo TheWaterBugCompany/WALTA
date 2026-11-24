@@ -51,7 +51,9 @@ describe("TopLevelWindow layout", function () {
 
 		it("gives the whole window to the content and the anchor bar", function () {
 			var g = geometry();
-			expect(g.content.height + g.bar.height).to.equal(g.window.height);
+			// Within a point: the two are percentages of the window and round
+			// independently, so 90% + 10% of 402 lands on 401.
+			expect(g.content.height + g.bar.height).to.be.closeTo(g.window.height, 1);
 		});
 	});
 
@@ -87,7 +89,9 @@ describe("TopLevelWindow layout", function () {
 
 		it("gives the whole window to the content and the anchor bar", function () {
 			var g = geometry();
-			expect(g.content.height + g.bar.height).to.equal(g.window.height);
+			// Within a point: the two are percentages of the window and round
+			// independently, so 90% + 10% of 402 lands on 401.
+			expect(g.content.height + g.bar.height).to.be.closeTo(g.window.height, 1);
 		});
 	});
 });
