@@ -116,6 +116,13 @@ class AndroidLauncher {
     // Keep screen on while USB-connected to prevent lock-mode test failures
     await this._exec(["shell", "svc", "power", "stayon", "usb"]).catch(() => {});
     await this._exec(["shell", "input", "keyevent", "KEYCODE_WAKEUP"]).catch(() => {});
+    // The first time a full-screen app hides the system bars the device draws
+    // "Viewing full screen" over it and waits for a tap nobody is there to
+    // give. It is a real window over the app, so every frame taken behind it is
+    // a frame of the dialog — and bringing the app forward cannot clear it,
+    // because the app never left. Answer it before the app starts.
+    await this._exec(["shell", "settings", "put", "secure",
+      "immersive_mode_confirmations", "confirmed"]).catch(() => {});
     if (apkPath) {
       // Reinstall in place (-r) and grant all manifest runtime permissions (-g).
       // No uninstall: it would wipe runtime grants, so the freshly-installed app
@@ -242,6 +249,21 @@ class AndroidLauncher {
   // A system dialog — an ANR, a crash report, a permission prompt — takes focus
   // from the app, which is how a screenshot of "the app" can hold something else
   // entirely. Null when nothing is focused.
+  // The app the device has in front, as a package name. Distinct from
+  // foregroundWindow(): a system dialog takes the input focus without the app
+  // ever leaving the foreground, and only this answers whether anything can be
+  // done about what is covering the screen. Null when nothing is focused.
+  async foregroundApp() {
+    await this.connect();
+    const out = await this._exec(["shell", "dumpsys", "window"]);
+    const focus = /mFocusedApp=(.+)/.exec(out);
+    if (!focus) return null;
+    const app = focus[1].trim();
+    if (app === "null") return null;
+    const named = /\su0\s(\S+?)\//.exec(app);
+    return named ? named[1] : app;
+  }
+
   async foregroundWindow() {
     await this.connect();
     const out = await this._exec(["shell", "dumpsys", "window"]);

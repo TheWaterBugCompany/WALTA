@@ -49,10 +49,21 @@ async function foreignWindow(launcher, appId) {
     return focused && !focused.includes(appId) ? focused : null;
 }
 
-// Put the app back in front. Only some launchers can — and a failure here is
-// not the capture's failure, so it is noted and the wait goes on.
+// Put the app back in front — when that is a thing that could help. A system
+// dialog takes the input focus without the app ever leaving the foreground, and
+// re-launching an app that never left does nothing: a wedged tablet leg logged
+// thirteen such rescues while the screen stayed exactly as it was. Only some
+// launchers can answer either question, and a failure here is not the capture's
+// failure, so it is noted and the wait goes on.
 async function bringToFront(launcher, appId, note) {
     if (!launcher.bringToForeground) return;
+    if (launcher.foregroundApp) {
+        const inFront = await launcher.foregroundApp();
+        if (inFront && inFront.includes(appId)) {
+            note("  visual: the app is in front and something is drawn over it — waiting it out");
+            return;
+        }
+    }
     note("  visual: the app is still not in front — bringing it back");
     try {
         await launcher.bringToForeground(appId);
