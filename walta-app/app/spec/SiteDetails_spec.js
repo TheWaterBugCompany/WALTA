@@ -55,6 +55,22 @@ describe("SiteDetails controller", function() {
         });
     });
 
+    // Each column is preceded by a 2% gap; the gap after the last one is only
+    // whatever the widths leave over, and at 48/48 that was nothing — the photo
+    // selector ran flush to the edge of the screen.
+    it("leaves a margin after the photo selector on a tablet", async function() {
+        if ( !Alloy.Globals.isXHighRes ) this.skip();
+        ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
+        await controllerOpenTest( ctl );
+        await waitFor( () => ctl.content.rect.width > 0 && ctl.right.rect.width > 0 );
+        var before = ctl.left.rect.x;
+        var after = ctl.content.rect.width - ( ctl.right.rect.x + ctl.right.rect.width );
+        // The margin is what four truncated percentages leave over, so it lands
+        // within a few dp of the gutter rather than exactly on it.
+        expect( after, "the photo selector runs to the edge of the screen" )
+            .to.be.closeTo( before, 4 );
+    });
+
 	it('should display the SiteDetails view', function(done) {
         ctl = Alloy.createController("SiteDetails", { sample: Alloy.Models.instance("sample") });
 		controllerOpenTest( ctl, done );
