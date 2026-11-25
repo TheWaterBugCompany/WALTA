@@ -97,10 +97,12 @@ Every build number is cut exactly once, and the git tag records the environment:
 
 ## Always dry-run first
 
-`dry_run=true` exercises the **real** store APIs without publishing (iOS prepares the App Store version + attaches the build but doesn't submit; Android validates the promotion and rolls it back). It catches most store-side gaps safely.
+`dry_run=true` exercises the **real** store APIs without going public (iOS prepares the App Store version + attaches the build but doesn't submit; Android validates the promotion and rolls it back). It catches most store-side gaps safely.
+
+**It is not a no-op on iOS — it uploads the release notes for real.** The `deliver` call runs with `--skip_metadata false` whenever the notes file exists, so once a dry run has finished the "What's New" text is already live in ASC against that version (`Will begin uploading metadata for '<marketing>'` in the log). Use that: it's a free proofreading pass at the exact copy that will go public. But don't describe a dry run as publishing nothing — on iOS it publishes metadata, just not the submission.
 
 ```bash
-# 1. Dry run — real APIs, publishes nothing
+# 1. Dry run — real APIs, nothing goes public (does upload iOS notes)
 gh workflow run release-to-production.yml \
   -f version=2.0.4.50 -f dry_run=true -f platforms=both
 
@@ -113,6 +115,8 @@ gh workflow run release-to-production.yml \
 ```
 
 `platforms` and a `notes_locale` input (default `en-AU`) are also available. On a real run `record-release` pushes a `production-released/v<version>` marker tag.
+
+**That marker only means "at least one platform was promoted".** `record-release` needs just one of `promote-ios`/`promote-android` to have succeeded, so a single-platform run still tags `production-released/v<version>` — with a message naming both stores. Promote iOS alone and the marker claims Play as well, until the Android run follows. Nothing breaks (the second run skips the step with "already exists — skipping (single-platform retry)", and the guard never consults the marker), but the markers are not a record of which store a given build actually reached.
 
 ## Release notes ("What's New")
 
