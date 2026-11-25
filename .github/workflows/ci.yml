@@ -120,7 +120,7 @@ jobs:
     env:
       # Pinned to match the acceptance job's WDA cache key — also used by
       # ios-simulator-tests, so all three iOS jobs share the same Xcode.
-      XCODE_VERSION: "26.3"
+      XCODE_VERSION: "26.6"
     steps:
       - uses: actions/checkout@v6
 
@@ -233,7 +233,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     env:
-      XCODE_VERSION: "26.3"
+      XCODE_VERSION: "26.6"
     steps:
       - uses: actions/checkout@v6
 
@@ -635,7 +635,7 @@ jobs:
       matrix:
         device: ${{ fromJSON(needs.visual-devices.outputs.ios) }}
     env:
-      XCODE_VERSION: "26.3"
+      XCODE_VERSION: "26.6"
     steps:
       - uses: actions/checkout@v6
 
@@ -984,7 +984,7 @@ jobs:
       # Pinned Xcode version — the DerivedData cache is only reusable when
       # the same Xcode/toolchain built it, and unpinned runners drift
       # between versions. 26.3 is the current App Store submission target.
-      XCODE_VERSION: "26.3"
+      XCODE_VERSION: "26.6"
     steps:
       - uses: actions/checkout@v6
 
@@ -1275,7 +1275,7 @@ jobs:
     timeout-minutes: 30
     env:
       WDA_DERIVED_DATA_PATH: ${{ github.workspace }}/.wda-derived
-      XCODE_VERSION: "26.3"
+      XCODE_VERSION: "26.6"
     steps:
       - uses: actions/checkout@v6
 
