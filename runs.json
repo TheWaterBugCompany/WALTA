@@ -1,0 +1,62 @@
+[
+  {
+    "id": "45720260529",
+    "branch": "ci/xcode-26-6-simulator-orientation",
+    "sha": "ff894e9073ea05c97d6caef3ec61262d2c13c9a5",
+    "capturedAt": "2026-11-26T00:08:10Z"
+  },
+  {
+    "id": "45720180381",
+    "branch": "test/visual-rebless-sitedetails-tablet",
+    "sha": "2f83f10eb6c8f5cc2f448d5ee409cf6b798a7c90",
+    "capturedAt": "2026-11-25T23:44:32Z"
+  },
+  {
+    "id": "45714056914",
+    "branch": "ci/xcode-26-6-simulator-orientation",
+    "sha": "ff894e9073ea05c97d6caef3ec61262d2c13c9a5",
+    "capturedAt": "2026-11-25T23:05:56Z"
+  },
+  {
+    "id": "45711439000",
+    "branch": "test/visual-rebless-sitedetails-tablet",
+    "sha": "ec92186981ab8d49b6779a7aa037662476929981",
+    "capturedAt": "2026-11-25T22:41:02Z"
+  },
+  {
+    "id": "45385406166",
+    "branch": "main",
+    "sha": "c6703611d87a37443bae25282955afc752c9622e",
+    "capturedAt": "2026-11-24T11:39:43Z"
+  },
+  {
+    "id": "45373975985",
+    "branch": "task/wb-399-tablet-controls",
+    "sha": "000bb5b2b4b605889b603c09255ab40774c377f5",
+    "capturedAt": "2026-11-24T10:57:57Z"
+  },
+  {
+    "id": "45372965782",
+    "branch": "task/wb-399-tablet-controls",
+    "sha": "74b98fc3c3444213a4584fd252885f3e657b3478",
+    "capturedAt": "2026-11-24T10:25:34Z"
+  },
+  {
+    "id": "45362307868",
+    "branch": "task/wb-399-tablet-controls",
+    "sha": "3e0774e72f44813524eebb14a91d74ec95fcee25",
+    "capturedAt": "2026-11-24T09:42:05Z"
+  },
+  {
+    "id": "45353178461",
+    "branch": "task/wb-399-tablet-controls",
+    "sha": "ecb366ee20714f724b40d352860069e2af173b69",
+    "capturedAt": "2026-11-24T08:27:01Z"
+  },
+  {
+    "id": "45337867586",
+    "branch": "main",
+    "sha": "20c45fb49bb2706d72d0503ab2d3f9a64a6e7bf0",
+    "capturedAt": "2026-11-24T06:51:08Z"
+  }
+]
